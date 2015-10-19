@@ -25,16 +25,16 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^0.4.9",
-    "appium-express": "0.0.6",
-    "appium-jsonwp-proxy": "^1.2.4",
+    "appium-base-driver": "^1.0.2",
+    "appium-express": "^1.0.0",
+    "appium-jsonwp-proxy": "^1.4.0",
     "appium-logger": "^2.0.0",
     "appium-support": "^2.0.0",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.9.32",
     "lodash": "^3.10.1",
-    "mobile-json-wire-protocol": "^0.22.6",
+    "mobile-json-wire-protocol": "^1.0.2",
     "node-simctl": "^3.1.0",
     "source-map-support": "^0.3.1"
   },
