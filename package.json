@@ -27,6 +27,7 @@
   "dependencies": {
     "appium-base-driver": "^1.0.2",
     "appium-express": "^1.0.0",
+    "appium-ios-simulator": "^1.0.1",
     "appium-jsonwp-proxy": "^1.4.0",
     "appium-logger": "^2.0.0",
     "appium-support": "^2.0.0",
@@ -49,6 +50,7 @@
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.8.11",
     "ios-test-app": "^2.3.2",
+    "request-promise": "^1.0.1",
     "wd": "^0.3.12",
     "yargs": "^3.10.0"
   }
