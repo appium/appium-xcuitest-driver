@@ -4,6 +4,7 @@ import { createDevice, deleteDevice } from 'node-simctl';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
 import WebDriverAgent from '../../lib/webDriverAgent.js';
+import B from 'bluebird';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -17,10 +18,10 @@ describe('WebDriverAgentDriver', () => {
     this.timeout(30 * 1000);
     let simUdid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
     sim = await getSimulator(simUdid);
-    await sim.run();
   });
 
-  after(async () => {
+  after(async function () {
+    this.timeout(20 * 1000);
     await deleteDevice(sim.udid);
   });
 
@@ -40,7 +41,7 @@ describe('WebDriverAgentDriver', () => {
     });
 
     await agent.launch('sessionId');
-
+    await B.delay(3000);
     await request(testUrl);
   });
 });
