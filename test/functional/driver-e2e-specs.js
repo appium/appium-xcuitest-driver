@@ -13,12 +13,12 @@ const HOST = "localhost",
 
 const DEFAULT_CAPS = {
   platformName: 'iOS',
-  platformVersion: '8.4',
+  platformVersion: '9.1',
   app: APP,
   bundleId: "io.appium.TestApp",
   deviceName: "iPhone 6",
-  udid: "75036442-8970-4D09-9200-E296EEB0C78A",
-  automationName: "WebDriverAgent"
+  automationName: "WebDriverAgent",
+  agentPath: process.env.AGENT_PATH
 };
 
 describe('WebDriverAgentDriver', () => {
@@ -34,7 +34,8 @@ describe('WebDriverAgentDriver', () => {
     server.close();
   });
 
-  it('should start and stop a session', async () => {
+  it('should start and stop a session', async function () {
+    this.timeout(120 * 1000);
     await driver.init(DEFAULT_CAPS);
     let els = await driver.elementsByClassName("UIAButton");
     els.length.should.equal(7);
