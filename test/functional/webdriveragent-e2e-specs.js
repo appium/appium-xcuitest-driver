@@ -4,7 +4,6 @@ import { createDevice, deleteDevice } from 'node-simctl';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
 import WebDriverAgent from '../../lib/webDriverAgent.js';
-import B from 'bluebird';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -37,11 +36,12 @@ describe('WebDriverAgentDriver', () => {
       udid: sim.udid,
       platformVersion: PLATFORM_VERSION,
       host: 'localhost',
-      port: 8100
+      port: 8100,
+      agentPath: process.env.AGENT_PATH
     });
 
     await agent.launch('sessionId');
-    await B.delay(3000);
+    console.log('requesting url now');
     await request(testUrl);
   });
 });
