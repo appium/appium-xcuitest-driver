@@ -7,6 +7,8 @@ Clone with the `git clone --recursive` flag. Or, after cloning normally run `git
 
 The `git diff --submodule` flag is useful here. It can also be set as the default `diff` format: `git config --global diff.submodule log`
 
+`git config status.submodulesummary 1` is also useful.
+
 ## Watch
 
 ```
