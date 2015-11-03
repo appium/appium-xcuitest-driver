@@ -7,7 +7,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 let fakeConstructorArgs = {
-  udid: '4',
+  sim: 'some sim',
   platformVersion: '9',
   host: 'me',
   port: '5000',
@@ -17,7 +17,7 @@ describe('Constructor', () => {
   it('should require all parameters', () => {
     (() => {
       new WebDriverAgent();
-    }).should.throw(/must send in the 'udid'/);
+    }).should.throw(/must send in the 'sim'/);
   });
 
   it('should have a binary for the webdriver agent', async () => {

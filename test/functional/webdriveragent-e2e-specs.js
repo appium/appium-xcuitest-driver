@@ -4,6 +4,7 @@ import { createDevice, deleteDevice } from 'node-simctl';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
 import WebDriverAgent from '../../lib/webDriverAgent.js';
+import { SubProcess } from 'teen_process';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -35,30 +36,58 @@ describe('WebDriverAgentDriver', () => {
         this.timeout(90 * 1000);
         await sim.run();
         let agent = new WebDriverAgent({
-          udid: sim.udid,
+          sim: sim,
           platformVersion: PLATFORM_VERSION,
           host: 'localhost',
-          port: 8100,
-          agentPath: process.env.AGENT_PATH
+          port: 8100
         });
 
         await agent.launch('sessionId');
         await request(testUrl);
+        await agent.quit();
       });
     });
 
     describe('with sim not booted', () => {
-      it('should exit if sim is not booted', async function () {
-        this.timeout(20 * 1000);
+      it('should boot sim if not booted', async function () {
+        this.timeout(45 * 1000);
         let agent = new WebDriverAgent({
-          udid: sim.udid,
+          sim: sim,
           platformVersion: PLATFORM_VERSION,
           host: 'localhost',
-          port: 8100,
-          agentPath: process.env.AGENT_PATH
+          port: 8100
         });
 
-        await agent.launch('sessionId').should.be.rejectedWith('is not in \'booted\'');
+        await agent.launch('sessionId');
+        await request(testUrl);
+        await agent.quit();
+      });
+
+      it('should fail if xcodebuild fails', async function () {
+        this.timeout(35 * 1000);
+
+        let agent = new WebDriverAgent({
+          sim: sim,
+          platformVersion: PLATFORM_VERSION,
+          host: 'localhost',
+          port: 8100
+        });
+
+        agent.createXcodeBuildSubProcess = function () {
+          let args = [
+            '-workspace',
+            this.agentPath,
+            // '-scheme',
+            // 'XCTUITestRunner',
+            '-destination',
+            `id=${this.sim.udid}`,
+            'test'
+          ];
+          return new SubProcess('xcodebuild', args);
+        };
+
+        let prom = agent.launch('sessionId');
+        await prom.should.be.rejectedWith('xcodebuild failed');
       });
     });
   });
