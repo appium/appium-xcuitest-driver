@@ -73,7 +73,7 @@ describe('WebDriverAgentDriver', () => {
       simsAfter.should.equal(simsBefore);
     });
 
-    it.only('with udid: uses sim and shuts it down afterwards', async function () {
+    it('with udid: uses sim and shuts it down afterwards', async function () {
       this.timeout(120 * 1000);
 
       // before
@@ -95,6 +95,7 @@ describe('WebDriverAgentDriver', () => {
       let simsDuring = await getNumSims();
       await driver.quit();
       let simsAfter = await getNumSims();
+      (await simBooted(udid)).should.be.false;
 
       simsDuring.should.equal(simsBefore);
       simsAfter.should.equal(simsBefore);
@@ -155,6 +156,39 @@ describe('WebDriverAgentDriver', () => {
       await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
     });
 
+    it('with noReset set to true: leaves sim booted', async function () {
+      this.timeout(120 * 1000);
+
+      // before
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
+      let sim = await getSimulator(udid);
+
+      // test
+      let caps = {
+        platformName: 'iOS',
+        platformVersion: PLATFORM_VERSION,
+        app: APP,
+        bundleId: BUNDLE_ID,
+        deviceName: "iPhone 6",
+        automationName: "WebDriverAgent",
+        udid: udid,
+        noReset: true
+      };
+
+      let simsBefore = await getNumSims();
+      await driver.init(caps);
+      let simsDuring = await getNumSims();
+      await driver.quit();
+      let simsAfter = await getNumSims();
+      (await simBooted(udid)).should.be.true;
+
+      simsDuring.should.equal(simsBefore);
+      simsAfter.should.equal(simsBefore);
+
+      // cleanup
+      await sim.shutdown();
+      await deleteDevice(udid);
+    });
 
   });
 
