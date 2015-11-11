@@ -73,7 +73,7 @@ describe('WebDriverAgentDriver', () => {
       simsAfter.should.equal(simsBefore);
     });
 
-    it('with udid: uses sim and shuts it down afterwards', async function () {
+    it.only('with udid: uses sim and shuts it down afterwards', async function () {
       this.timeout(120 * 1000);
 
       // before
@@ -103,7 +103,7 @@ describe('WebDriverAgentDriver', () => {
       await deleteDevice(udid);
     });
 
-    it.only('with udid booted: uses sim and leaves it afterwards', async function () {
+    it('with udid booted: uses sim and leaves it afterwards', async function () {
       this.timeout(120 * 1000);
 
       // before
@@ -136,6 +136,23 @@ describe('WebDriverAgentDriver', () => {
       // cleanup
       await sim.shutdown();
       await deleteDevice(udid);
+    });
+
+    it('with invalid udid: throws an error', async function () {
+      this.timeout(120 * 1000);
+
+      // test
+      let caps = {
+        platformName: 'iOS',
+        platformVersion: PLATFORM_VERSION,
+        app: APP,
+        bundleId: BUNDLE_ID,
+        deviceName: "iPhone 6",
+        automationName: "WebDriverAgent",
+        udid: 'some-random-udid'
+      };
+
+      await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
     });
 
 

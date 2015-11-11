@@ -20,7 +20,7 @@ If a udid is provided and the simulator is already running, this driver will lea
 In short, this driver tries to leave things as it found them.
 
 You can use the `noReset` capability to adjust this behavior.
-Setting `noReset` to `true` will leave the simulator running at the end of a test session. Additionally, the session will start on whichever simulator is currently booted (or whichever real device is currently connect)
+Setting `noReset` to `true` will leave the simulator running at the end of a test session. Additionally, the session will start on whichever simulator is currently booted (or whichever real device is currently connected)
 
 ## Usage
 
