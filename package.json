@@ -51,14 +51,10 @@
     "appium-gulp-plugins": "^1.2.12",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
-    "del": "^2.1.0",
-    "dev-null": "^0.1.1",
     "gulp": "^3.8.11",
     "ios-test-app": "^2.3.3",
     "request-promise": "^1.0.1",
-    "rimraf": "^2.4.3",
     "through2": "^2.0.0",
-    "vinyl-paths": "^2.1.0",
     "wd": "^0.3.12",
     "yargs": "^3.10.0"
   }
