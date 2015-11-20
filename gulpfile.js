@@ -1,6 +1,10 @@
 "use strict";
 
-var copySymlinks = require('./build/lib/copySymlinks.js').copySymlinks;
+try {
+  var copySymlinks = require('./build/lib/copySymlinks.js').copySymlinks;
+} catch (e) {
+  // we catch this, so that `gulp watch` can keep looping.
+}
 
 var gulp = require('gulp'),
     boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
