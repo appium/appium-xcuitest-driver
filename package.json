@@ -6,7 +6,7 @@
     "ios",
     "webdriveragent"
   ],
-  "version": "0.0.7",
+  "version": "0.0.9",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
