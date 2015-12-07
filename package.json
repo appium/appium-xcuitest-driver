@@ -30,6 +30,7 @@
     "appium-ios-simulator": "^1.0.1",
     "appium-jsonwp-proxy": "^1.4.0",
     "appium-logger": "^2.0.0",
+    "appium-safari-driver": "^1.0.0",
     "appium-support": "^2.0.0",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
@@ -38,6 +39,7 @@
     "lodash": "^3.10.1",
     "mobile-json-wire-protocol": "^1.0.2",
     "node-simctl": "^3.1.0",
+    "safari-launcher": "^2.0.5",
     "source-map-support": "^0.3.1",
     "teen_process": "^1.5.1",
     "yargs": "^3.29.0"
