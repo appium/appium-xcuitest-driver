@@ -1,4 +1,4 @@
-appium-webdriveragent-driver
+appium-xcuitest-driver
 ===================
 
 This project has git submodules!
