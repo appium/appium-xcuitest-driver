@@ -1,4 +1,6 @@
 import { startServer } from '../..';
+import path from 'path';
+import apps from 'ios-webview-app';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
@@ -8,21 +10,19 @@ chai.use(chaiAsPromised);
 
 const HOST = "localhost",
       PORT = 4994,
-      BUNDLE_ID = 'com.apple.mobilesafari',
       PLATFORM_VERSION = '9.1';
 
 const DEFAULT_CAPS = {
   platformName: 'iOS',
   platformVersion: PLATFORM_VERSION,
-  browserName: 'Safari',
-  bundleId: BUNDLE_ID,
+  app: path.resolve(require.resolve('ios-webview-app'), '..', apps[1]),
   deviceName: "iPhone 6",
   automationName: "WebDriverAgent",
 };
 
 
 
-describe('Safari', () => {
+describe('Webview', () => {
   let server;
   let driver = wd.promiseChainRemote(HOST, PORT);
   before(async () => {
@@ -39,14 +39,16 @@ describe('Safari', () => {
     this.timeout(120 * 1000);
     await driver.init(DEFAULT_CAPS);
     let contexts = await driver.contexts();
-    contexts.length.should.be.above(0);
-    await driver.context(contexts[0]);
+    contexts.length.should.equal(2);
+
+    let urlBar = await driver.elementByClassName('UIATextField');
+    let button = await driver.elementByClassName('UIAButton');
+    await urlBar.sendKeys('appium.io');
+    await button.click();
+
+    await driver.context('WEBVIEW_1');
     let title = await driver.title();
     title.should.equal('Appium: Mobile App Automation Made Awesome.');
-
-    await driver.get('http://saucelabs.com');
-    title = await driver.title();
-    title.should.include('Sauce Labs');
 
     await driver.quit();
   });
