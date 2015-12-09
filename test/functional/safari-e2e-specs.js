@@ -51,4 +51,12 @@ describe('Safari', () => {
     await driver.quit();
   });
 
+  it('should delete a session, then be able to start another session', async function () {
+    this.timeout(120 * 1000);
+    await driver.init(DEFAULT_CAPS);
+    await driver.quit();
+    await driver.init(DEFAULT_CAPS);
+    await driver.quit();
+  });
+
 });
