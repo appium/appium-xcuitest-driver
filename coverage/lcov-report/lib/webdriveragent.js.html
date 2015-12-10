@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/webdriveragent.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">lib/</a> webdriveragent.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">69.23% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>99/143</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">63.77% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>44/69</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">52.63% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>10/19</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">26.67% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>16/60</span>
+      </div>
+      <div class='fl pad1y'>
+        <span class="strong">32 statements, 3 functions, 21 branches</span>
+        <span class="quiet">Ignored</span>  &nbsp;&nbsp;&nbsp;&nbsp;
+      </div>
+    </div>
+  </div>
+  <div class='status-line medium'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import _ from 'lodash';
+import path from 'path';
+import url from 'url';
+import B from 'bluebird';
+import { SubProcess } from 'teen_process';
+import { JWProxy } from 'appium-jsonwp-proxy';
+import { fs } from 'appium-support';
+import log from './logger';
+import { getLogger } from 'appium-logger';
+import { systemLogExists } from './simulatorManagement.js';
+&nbsp;
+const agentLog = getLogger('WebDriverAgent');
+const AGENT_PATH = path.resolve(__dirname, '..', '..', 'WebDriverAgent', 'WebDriverAgent.xcworkspace');
+const REQ_ARGS = ['sim', 'platformVersion', 'host'];
+const AGENT_LOG_PREFIX = 'XCTStubApps[';
+const AGENT_STARTED_REGEX = /ServerURLHere-&gt;(.*)&lt;-ServerURLHere/;
+&nbsp;
+&nbsp;
+&nbsp;
+class WebDriverAgent {
+&nbsp;
+  // agentPath (optional): Path to WebdriverAgent Executable (inside WebDriverAgent.app)
+  constructor (args = {}) {
+    for (let reqArg of REQ_ARGS) {
+      if (_.isUndefined(args[reqArg])) {
+        throw new Error(`You must send in the '${reqArg}' argument`);
+      }
+    }
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (args.agentPath) {
+<span class="cstat-no" title="statement not covered" >      log.info(`Custom agent path specified: ${args.agentPath}`);</span>
+    } else {
+      log.info(`Using default agent`);
+    }
+&nbsp;
+    this.sim = args.sim;
+    this.platformVersion = args.platformVersion;
+    this.host = args.host;
+    this.agentPath = args.agentPath || path.resolve(AGENT_PATH);
+  }
+&nbsp;
+  async launch <span class="fstat-no" title="function not covered" >(sessionId)</span> {
+    return new B(<span class="fstat-no" title="function not covered" >async (resolve, reject)</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >      log.info("Launching WebDriverAgent on the device");</span>
+&nbsp;
+      if (!await fs.exists(this.agentPath)) {
+        throw new Error(`Trying to use WebDriverAgent project at ${this.agentPath} but the ` +
+                        `file does not exist`);
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      this.simLogs = this.createSimLogsSubProcess();</span>
+<span class="cstat-no" title="statement not covered" >      this.simLogs.on('output', <span class="fstat-no" title="function not covered" >(d, e) =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >        if (d.length &amp;&amp; d.indexOf(AGENT_LOG_PREFIX) &gt; -1) {</span>
+<span class="cstat-no" title="statement not covered" >          agentLog.info(d);</span>
+        }
+<span class="cstat-no" title="statement not covered" >        if (e.length &amp;&amp; d.indexOf(AGENT_LOG_PREFIX) &gt; -1) {</span>
+<span class="cstat-no" title="statement not covered" >          agentLog.error(e);</span>
+        }
+      });
+<span class="cstat-no" title="statement not covered" >      this.simLogs.on('exit', <span class="fstat-no" title="function not covered" >(code) =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >        reject(new Error(`tailing of simulator log exited with code ${code}`));</span>
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      this.xcodebuild = this.createXcodeBuildSubProcess();</span>
+<span class="cstat-no" title="statement not covered" >      this.xcodebuild.on('exit', <span class="fstat-no" title="function not covered" >(code, signal) =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >        log.info(`xcodebuild exited with code ${code} and signal ${signal}`);</span>
+<span class="cstat-no" title="statement not covered" >        if (!signal &amp;&amp; code !== 0) {</span>
+<span class="cstat-no" title="statement not covered" >          reject(new Error(`xcodebuild failed with code ${code}`));</span>
+        }
+<span class="cstat-no" title="statement not covered" >        this.quit();</span>
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      this.xcodebuild.start();</span>
+&nbsp;
+      // we have to wait for the sim to start before we can tail the log file
+      await systemLogExists(this.sim);
+&nbsp;
+      let <span class="cstat-no" title="statement not covered" >agentUrl;</span>
+      let <span class="cstat-no" title="statement not covered" >agentStartedOnDevice = this.simLogs.start(<span class="fstat-no" title="function not covered" >(stdout) =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >        let match = AGENT_STARTED_REGEX.exec(stdout);</span>
+<span class="cstat-no" title="statement not covered" >        if (match) {</span>
+<span class="cstat-no" title="statement not covered" >          agentUrl = match[1];</span>
+<span class="cstat-no" title="statement not covered" >          log.info(`detected that WebDriverAgent is running at url ${agentUrl}`);</span>
+<span class="cstat-no" title="statement not covered" >          if (!agentUrl) {</span>
+<span class="cstat-no" title="statement not covered" >            log.errorAndThrow(new Error('No url detected from WebDriverAgent'));</span>
+          }
+<span class="cstat-no" title="statement not covered" >          return true;</span>
+        }
+      });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      log.info(`Waiting for WebDriverAgent to start on device`);</span>
+      await agentStartedOnDevice;
+<span class="cstat-no" title="statement not covered" >      log.info(`WebDriverAgent started at url ${agentUrl}`);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      this.url = url.parse(agentUrl);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      this.jwproxy = new JWProxy({host: this.url.hostname, port: this.url.port, base: ''});</span>
+<span class="cstat-no" title="statement not covered" >      this.jwproxy.sessionId = sessionId;</span>
+<span class="cstat-no" title="statement not covered" >      this.proxyReqRes = this.jwproxy.proxyReqRes.bind(this.jwproxy);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      resolve(url);</span>
+    });
+  }
+&nbsp;
+  createXcodeBuildSubProcess <span class="fstat-no" title="function not covered" >() {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    let args = [</span>
+      '-workspace',
+      this.agentPath,
+      '-scheme',
+      'XCTUITestRunner',
+      '-destination',
+      `id=${this.sim.udid}`,
+      'test'
+    ];
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new SubProcess('xcodebuild', args);</span>
+  }
+&nbsp;
+  createSimLogsSubProcess <span class="fstat-no" title="function not covered" >() {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    let args = [</span>
+      '-f',
+      '-n',
+      '0',
+      path.resolve(this.sim.getLogDir(), 'system.log')
+    ];
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return new SubProcess('tail', args);</span>
+  }
+&nbsp;
+  async quit <span class="fstat-no" title="function not covered" >(</span>) {
+<span class="cstat-no" title="statement not covered" >    log.info('Shutting down WebDriverAgent');</span>
+    let <span class="cstat-no" title="statement not covered" >stops = [];</span>
+<span class="cstat-no" title="statement not covered" >    if (this.xcodebuild &amp;&amp; this.xcodebuild.proc) {</span>
+<span class="cstat-no" title="statement not covered" >      stops.push(this.xcodebuild.stop());</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (this.simLogs &amp;&amp; this.simLogs.proc) {</span>
+<span class="cstat-no" title="statement not covered" >      stops.push(this.simLogs.stop());</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this.jwproxy.sessionId = null;</span>
+&nbsp;
+    await B.all(stops);
+  }
+}
+&nbsp;
+export default WebDriverAgent;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Dec 09 2015 17:05:22 GMT-0800 (PST)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
