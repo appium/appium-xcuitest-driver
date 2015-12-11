@@ -30,6 +30,11 @@ describe('Safari', () => {
     server = await startServer(PORT, HOST);
   });
 
+  afterEach(async () => {
+    this.timeout(3 * 60 * 1000);
+    driver.quit();
+  });
+
   after(() => {
     // TODO I don't think this is actually shutting the server down, figure
     // that out
@@ -54,8 +59,6 @@ describe('Safari', () => {
     await driver.get('http://saucelabs.com');
     title = await driver.title();
     title.should.include('Sauce Labs');
-
-    await driver.quit();
   });
 
   it('should delete a session, then be able to start another session', async function () {
@@ -63,7 +66,6 @@ describe('Safari', () => {
     await driver.init(DEFAULT_CAPS);
     await driver.quit();
     await driver.init(DEFAULT_CAPS);
-    await driver.quit();
   });
 
 });
