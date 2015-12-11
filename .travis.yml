@@ -11,8 +11,6 @@ before_install:
   # code from http://stackoverflow.com/a/24600210/375688
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
-  - ls -la /Users/travis/build/appium/appium-xcuitest-driver
-  - ls -la /Users/travis/build/appium/appium-xcuitest-driver/WebDriverAgent
   # TavisCI's OSX environment gives us node 0.10.32
   # Use NVM to update it to 0.12
   - rm -rf ~/.nvm
