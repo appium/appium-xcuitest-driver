@@ -7,6 +7,8 @@ git: # Handle git submodules yourself
 before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
+  - ls -la /Users/travis/build/appium/appium-xcuitest-driver
+  - ls -la /Users/travis/build/appium/appium-xcuitest-driver/WebDriverAgent
 # /submodules
 
 env:
