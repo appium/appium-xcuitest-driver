@@ -1,4 +1,5 @@
 import { startServer } from '../..';
+import { retry } from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
@@ -41,7 +42,13 @@ describe('Safari', () => {
     let contexts = await driver.contexts();
     contexts.length.should.be.above(0);
     await driver.context(contexts[0]);
-    let title = await driver.title();
+    let title = await retry(10, async () => {
+      let title = await driver.title();
+      if (!title) {
+        throw new Error('did not get page title');
+      }
+      return title;
+    });
     title.should.equal('Appium: Mobile App Automation Made Awesome.');
 
     await driver.get('http://saucelabs.com');
@@ -52,7 +59,7 @@ describe('Safari', () => {
   });
 
   it('should delete a session, then be able to start another session', async function () {
-    this.timeout(120 * 1000);
+    this.timeout(4 * 60 * 1000);
     await driver.init(DEFAULT_CAPS);
     await driver.quit();
     await driver.init(DEFAULT_CAPS);
