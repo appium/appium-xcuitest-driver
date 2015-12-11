@@ -33,7 +33,7 @@ describe('WebDriverAgent', () => {
       });
 
       it.only('should launch agent on a sim', async function () {
-        this.timeout(3 * 60 * 1000);
+        this.timeout(6 * 60 * 1000);
         await sim.run();
         let agent = new WebDriverAgent({
           sim: sim,
