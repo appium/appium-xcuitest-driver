@@ -24,7 +24,7 @@ before_script:
   - npm install
   - npm install -g gulp
   - npm install -g mocha
-  - gulp transpile
+#  - gulp transpile we don't need to transpile here since `gulp test` runs transpilation
 script:
   - gulp test
   - gulp coveralls
