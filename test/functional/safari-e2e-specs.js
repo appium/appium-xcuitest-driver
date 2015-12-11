@@ -30,7 +30,7 @@ describe('Safari', () => {
     server = await startServer(PORT, HOST);
   });
 
-  afterEach(async () => {
+  afterEach(async function () {
     this.timeout(3 * 60 * 1000);
     driver.quit();
   });
