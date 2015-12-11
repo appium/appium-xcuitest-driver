@@ -12,28 +12,28 @@ chai.use(chaiAsPromised);
 const PLATFORM_VERSION = '9.0';
 let testUrl = 'http://localhost:8100/tree';
 
-describe('WebDriverAgentDriver', () => {
+describe('WebDriverAgent', () => {
   describe('with fresh sim', () => {
     let sim;
     before(async function () {
-      this.timeout(30 * 1000);
+      this.timeout(2 * 60 * 1000);
       let simUdid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
       sim = await getSimulator(simUdid);
     });
 
     after(async function () {
-      this.timeout(20 * 1000);
+      this.timeout(2 * 60 * 1000);
       await deleteDevice(sim.udid);
     });
 
     describe('with running sim', () => {
       afterEach(async function () {
-        this.timeout(30 * 1000);
+        this.timeout(60 * 1000);
         await sim.shutdown();
       });
 
-      it('should launch agent on a sim', async function () {
-        this.timeout(90 * 1000);
+      it.only('should launch agent on a sim', async function () {
+        this.timeout(3 * 60 * 1000);
         await sim.run();
         let agent = new WebDriverAgent({
           sim: sim,

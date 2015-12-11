@@ -9,6 +9,8 @@ before_install:
   - git submodule update --init --recursive
 # /submodules
 
+env:
+  - _FORCE_LOGS=1
 language:
   - objective-c
 osx_image: xcode7.1
