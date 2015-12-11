@@ -9,7 +9,7 @@ git: # Handle git submodules yourself
 before_install:
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
-  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
   - ls -la /Users/travis/build/appium/appium-xcuitest-driver
   - ls -la /Users/travis/build/appium/appium-xcuitest-driver/WebDriverAgent
