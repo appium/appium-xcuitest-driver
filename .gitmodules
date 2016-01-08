@@ -1,4 +1,4 @@
 [submodule "WebDriverAgent"]
 	path = WebDriverAgent
-	url = git@github.com:truveris/WebDriverAgent.git
+	url = git@github.com:facebook/WebDriverAgent.git
 	branch = master
