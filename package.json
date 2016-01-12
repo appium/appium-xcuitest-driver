@@ -1,20 +1,22 @@
 {
-  "name": "appium-webdriveragent-driver",
-  "description": "Appium driver for WebDriverAgent",
+  "name": "appium-xcuitest-driver",
+  "description": "Appium driver for iOS using XCUITest for backend",
   "keywords": [
     "appium",
     "ios",
-    "webdriveragent"
+    "webdriveragent",
+    "xcuitest",
+    "xctest"
   ],
   "version": "1.0.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appium/appium-webdriveragent-driver.git"
+    "url": "https://github.com/appium/appium-xcuitest-driver.git"
   },
   "bugs": {
-    "url": "https://github.com/appium/appium-webdriveragent-driver/issues"
+    "url": "https://github.com/appium/appium-xcuitest-driver/issues"
   },
   "engines": [
     "node"
