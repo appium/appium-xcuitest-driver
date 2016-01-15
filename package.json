@@ -36,13 +36,13 @@
     "appium-support": "^2.0.0",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
-    "bluebird": "^2.10.2",
+    "bluebird": "^3.1.1",
     "ios-app-utils": "^1.0.0",
-    "lodash": "^3.10.1",
+    "lodash": "^4.0.0",
     "mobile-json-wire-protocol": "^1.0.2",
     "node-simctl": "^3.1.0",
     "safari-launcher": "^2.0.5",
-    "source-map-support": "^0.3.1",
+    "source-map-support": "^0.4.0",
     "teen_process": "^1.5.1",
     "yargs": "^3.29.0"
   },
@@ -58,9 +58,9 @@
     "gulp": "^3.8.11",
     "ios-test-app": "^2.3.3",
     "ios-webview-app": "^1.0.3",
-    "request-promise": "^1.0.1",
+    "request-promise": "^2.0.0",
     "through2": "^2.0.0",
-    "wd": "^0.3.12",
+    "wd": "^0.4.0",
     "yargs": "^3.10.0"
   }
 }

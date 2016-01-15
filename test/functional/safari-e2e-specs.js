@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 const HOST = "localhost",
       PORT = 4994,
       BUNDLE_ID = 'com.apple.mobilesafari',
-      PLATFORM_VERSION = '9.1';
+      PLATFORM_VERSION = '9.2';
 
 const DEFAULT_CAPS = {
   platformName: 'iOS',

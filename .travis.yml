@@ -3,7 +3,7 @@ env:
   - _FORCE_LOGS=1
 language:
   - objective-c
-osx_image: xcode7.1
+osx_image: xcode7.2
 git: # Handle git submodules yourself
   submodules: false
 before_install:

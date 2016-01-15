@@ -9,7 +9,7 @@ import { SubProcess } from 'teen_process';
 chai.should();
 chai.use(chaiAsPromised);
 
-const PLATFORM_VERSION = '9.0';
+const PLATFORM_VERSION = '9.2';
 let testUrl = 'http://localhost:8100/tree';
 
 describe('WebDriverAgent', () => {
