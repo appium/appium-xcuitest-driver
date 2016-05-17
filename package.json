@@ -27,10 +27,8 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^1.0.2",
-    "appium-express": "^1.0.0",
+    "appium-base-driver": "^2.0.1",
     "appium-ios-simulator": "^1.0.1",
-    "appium-jsonwp-proxy": "^1.4.0",
     "appium-logger": "^2.0.0",
     "appium-safari-driver": "^1.0.0",
     "appium-support": "^2.0.0",
@@ -39,7 +37,6 @@
     "bluebird": "^3.1.1",
     "ios-app-utils": "^1.0.0",
     "lodash": "^4.0.0",
-    "mobile-json-wire-protocol": "^1.0.2",
     "node-simctl": "^3.1.0",
     "safari-launcher": "^2.0.5",
     "source-map-support": "^0.4.0",
