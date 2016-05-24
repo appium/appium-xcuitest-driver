@@ -7,9 +7,6 @@ osx_image: xcode7.2
 git: # Handle git submodules yourself
   submodules: false
 before_install:
-  # Use sed to replace the SSH URL with the public URL, then initialize submodules
-  # code from http://stackoverflow.com/a/24600210/375688
-  - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
   # TavisCI's OSX environment gives us node 0.10.32
   # Use NVM to update it to 0.12
@@ -17,12 +14,13 @@ before_install:
   - git clone https://github.com/creationix/nvm.git ~/.nvm
   - source ~/.nvm/nvm.sh
   - nvm install 0.12
-
 before_script:
   - npm install
   - npm install -g gulp
   - npm install -g mocha
-#  - gulp transpile we don't need to transpile here since `gulp test` runs transpilation
+  # fail early if there are linting issues
+  # TODO: update once eslint is in place
+  - gulp jshint
 script:
   - gulp test
   - gulp coveralls
