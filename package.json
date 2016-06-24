@@ -27,11 +27,12 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^2.0.1",
+    "appium-base-driver": "^2.0.5",
     "appium-ios-simulator": "^1.0.1",
     "appium-logger": "^2.0.0",
     "appium-safari-driver": "^1.0.0",
     "appium-support": "^2.0.0",
+    "appium-xcode": "^3.1.0",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
@@ -50,14 +51,19 @@
   },
   "devDependencies": {
     "appium-gulp-plugins": "^1.2.12",
+    "babel-eslint": "^6.1.0",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
+    "eslint": "^2.13.1",
+    "eslint-config-appium": "^0.0.6",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-import": "^1.9.2",
+    "eslint-plugin-mocha": "^3.0.0",
     "gulp": "^3.8.11",
     "ios-test-app": "^2.3.3",
     "ios-webview-app": "^1.0.3",
     "request-promise": "^2.0.0",
     "through2": "^2.0.0",
-    "wd": "^0.4.0",
-    "yargs": "^3.10.0"
+    "wd": "^0.4.0"
   }
 }

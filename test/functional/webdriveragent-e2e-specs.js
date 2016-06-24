@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { createDevice, deleteDevice } from 'node-simctl';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
-import WebDriverAgent from '../../lib/webDriverAgent.js';
+import WebDriverAgent from '../../lib/webdriveragent';
 import { SubProcess } from 'teen_process';
 
 chai.should();
@@ -36,7 +36,7 @@ describe('WebDriverAgent', () => {
         this.timeout(6 * 60 * 1000);
         await sim.run();
         let agent = new WebDriverAgent({
-          sim: sim,
+          sim,
           platformVersion: PLATFORM_VERSION,
           host: 'localhost',
           port: 8100
@@ -52,7 +52,7 @@ describe('WebDriverAgent', () => {
       it('should boot sim if not booted', async function () {
         this.timeout(75 * 1000);
         let agent = new WebDriverAgent({
-          sim: sim,
+          sim,
           platformVersion: PLATFORM_VERSION,
           host: 'localhost',
           port: 8100
@@ -68,7 +68,7 @@ describe('WebDriverAgent', () => {
         this.timeout(35 * 1000);
 
         let agent = new WebDriverAgent({
-          sim: sim,
+          sim,
           platformVersion: PLATFORM_VERSION,
           host: 'localhost',
           port: 8100

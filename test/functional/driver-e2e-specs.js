@@ -7,6 +7,7 @@ import wd from 'wd';
 import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 
+
 chai.should();
 chai.use(chaiAsPromised);
 
@@ -32,21 +33,24 @@ let getNumSims = async () => {
 describe('WebDriverAgentDriver', () => {
   let server;
   let driver = wd.promiseChainRemote(HOST, PORT);
+
   before(async () => {
     server = await startServer(PORT, HOST);
   });
-
-  after(() => {
-    // TODO I don't think this is actually shutting the server down, figure
-    // that out
-    server.close();
+  after(async () => {
+    await server.close();
+  });
+  afterEach(async () => {
+    try {
+      await driver.quit();
+    } catch (ign) {}
   });
 
   it('should start and stop a session', async function () {
     this.timeout(120 * 1000);
     await driver.init(DEFAULT_CAPS);
     let els = await driver.elementsByClassName("UIAButton");
-    els.length.should.equal(7);
+    els.length.should.be.above(6);
     await driver.quit();
   });
 
@@ -65,7 +69,9 @@ describe('WebDriverAgentDriver', () => {
       await killAllSimulators();
       let simsBefore = await getNumSims();
       await driver.init(caps);
+
       let simsDuring = await getNumSims();
+
       await driver.quit();
       let simsAfter = await getNumSims();
 
@@ -87,7 +93,7 @@ describe('WebDriverAgentDriver', () => {
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
         automationName: "WebDriverAgent",
-        udid: udid
+        udid
       };
 
       let simsBefore = await getNumSims();
@@ -120,7 +126,7 @@ describe('WebDriverAgentDriver', () => {
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
         automationName: "WebDriverAgent",
-        udid: udid
+        udid
       };
 
       (await simBooted(udid)).should.be.true;
@@ -171,7 +177,7 @@ describe('WebDriverAgentDriver', () => {
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
         automationName: "WebDriverAgent",
-        udid: udid,
+        udid,
         noReset: true
       };
 
