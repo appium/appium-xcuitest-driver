@@ -32,13 +32,11 @@ describe('Safari', () => {
 
   afterEach(async function () {
     this.timeout(3 * 60 * 1000);
-    driver.quit();
+    await driver.quit();
   });
 
-  after(() => {
-    // TODO I don't think this is actually shutting the server down, figure
-    // that out
-    server.close();
+  after(async () => {
+    await server.close();
   });
 
   it('should start a session, navigate to url, get title', async function () {

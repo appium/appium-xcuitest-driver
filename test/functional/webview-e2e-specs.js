@@ -22,35 +22,40 @@ const DEFAULT_CAPS = {
 
 
 
-describe('Webview', () => {
+describe('Webview', function () {
+  this.timeout(120 * 1000);
+
   let server;
   let driver = wd.promiseChainRemote(HOST, PORT);
+
   before(async () => {
     server = await startServer(PORT, HOST);
   });
-
-  after(() => {
+  after(async () => {
     // TODO I don't think this is actually shutting the server down, figure
     // that out
-    server.close();
+    await server.close();
   });
 
-  it('should start a session, navigate to url, get title', async function () {
-    this.timeout(120 * 1000);
+  beforeEach(async () => {
     await driver.init(DEFAULT_CAPS);
+  });
+  afterEach(async () => {
+    await driver.quit();
+  });
+
+  it('should start a session, navigate to url, get title', async () => {
     let contexts = await driver.contexts();
     contexts.length.should.equal(2);
 
     let urlBar = await driver.elementByClassName('UIATextField');
-    let button = await driver.elementByClassName('UIAButton');
     await urlBar.sendKeys('appium.io');
+
+    let button = await driver.elementByClassName('UIAButton');
     await button.click();
 
     await driver.context('WEBVIEW_1');
     let title = await driver.title();
     title.should.equal('Appium: Mobile App Automation Made Awesome.');
-
-    await driver.quit();
   });
-
 });
