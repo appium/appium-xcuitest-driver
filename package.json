@@ -28,9 +28,10 @@
   },
   "dependencies": {
     "appium-base-driver": "^2.0.5",
-    "appium-ios-simulator": "^1.0.1",
+    "appium-ios-driver": "^1.12.5",
+    "appium-ios-simulator": "^1.7.1",
     "appium-logger": "^2.0.0",
-    "appium-safari-driver": "^1.0.0",
+    "appium-safari-driver": "^1.1.1",
     "appium-support": "^2.0.0",
     "appium-xcode": "^3.1.0",
     "asyncbox": "^2.3.1",
@@ -42,7 +43,7 @@
     "safari-launcher": "^2.0.5",
     "source-map-support": "^0.4.0",
     "teen_process": "^1.5.1",
-    "yargs": "^3.29.0"
+    "yargs": "^3.32.0"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
@@ -55,7 +56,7 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "eslint": "^2.13.1",
-    "eslint-config-appium": "^0.0.6",
+    "eslint-config-appium": "0.0.6",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-mocha": "^3.0.0",

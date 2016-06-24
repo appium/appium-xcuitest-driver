@@ -17,7 +17,7 @@ describe('Constructor', () => {
   it('should require all parameters', () => {
     (() => {
       new WebDriverAgent();
-    }).should.throw(/must send in the 'sim'/);
+    }).should.throw(/You must send in the following required arguments/);
   });
 
   it('should have a binary for the webdriver agent', async () => {
