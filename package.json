@@ -60,9 +60,8 @@
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-mocha": "^3.0.0",
     "gulp": "^3.8.11",
-    "ios-test-app": "^2.3.3",
-    "ios-webview-app": "^1.0.3",
     "request-promise": "^2.0.0",
+    "sample-apps": "^2.0.4",
     "through2": "^2.0.0",
     "wd": "^0.4.0"
   }

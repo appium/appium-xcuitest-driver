@@ -2,7 +2,7 @@ import { startServer } from '../..';
 import { simBooted } from '../../lib/simulatorManagement.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { absolute } from 'ios-test-app';
+import getAppPath from 'sample-apps';
 import wd from 'wd';
 import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
@@ -13,7 +13,7 @@ chai.use(chaiAsPromised);
 
 const HOST = "localhost",
       PORT = 4994,
-      APP = absolute.iphonesimulator,
+      APP = getAppPath('TestApp', false),
       BUNDLE_ID = 'io.appium.TestApp',
       PLATFORM_VERSION = '9.2';
 

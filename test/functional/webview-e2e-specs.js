@@ -1,6 +1,6 @@
 import { startServer } from '../..';
 import path from 'path';
-import apps from 'ios-webview-app';
+import getAppPath from 'sample-apps';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
@@ -15,7 +15,7 @@ const HOST = "localhost",
 const DEFAULT_CAPS = {
   platformName: 'iOS',
   platformVersion: PLATFORM_VERSION,
-  app: path.resolve(require.resolve('ios-webview-app'), '..', apps[1]),
+  app: getAppPath('WebViewApp7.1', false),
   deviceName: "iPhone 6",
   automationName: "WebDriverAgent",
 };
