@@ -5,36 +5,34 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 
+
 chai.should();
 chai.use(chaiAsPromised);
 
 const HOST = "localhost",
       PORT = 4994,
-      PLATFORM_VERSION = '9.2';
+      PLATFORM_VERSION = '9.3';
 
 const DEFAULT_CAPS = {
   platformName: 'iOS',
   platformVersion: PLATFORM_VERSION,
   app: path.resolve(require.resolve('ios-webview-app'), '..', apps[1]),
   deviceName: "iPhone 6",
-  automationName: "WebDriverAgent",
 };
 
-
-
-describe('Webview', function () {
+describe.skip('Webview', function () {
   this.timeout(120 * 1000);
 
-  let server;
-  let driver = wd.promiseChainRemote(HOST, PORT);
-
+  let server, driver;
   before(async () => {
+    driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
   after(async () => {
-    // TODO I don't think this is actually shutting the server down, figure
-    // that out
     await server.close();
+    try {
+      await driver.quit();
+    } catch (ign) {}
   });
 
   beforeEach(async () => {
@@ -48,13 +46,18 @@ describe('Webview', function () {
     let contexts = await driver.contexts();
     contexts.length.should.equal(2);
 
-    let urlBar = await driver.elementByClassName('UIATextField');
+    let urlBar = await driver.elementByClassName('XCUIElementTypeTextField');
     await urlBar.sendKeys('appium.io');
 
-    let button = await driver.elementByClassName('UIAButton');
+    let button = await driver.elementByClassName('XCUIElementTypeButton');
     await button.click();
 
-    await driver.context('WEBVIEW_1');
+    await driver.setImplicitWaitTimeout(10000);
+    await driver.context(contexts[0]);
+
+    // wait for something on the page, before checking on title
+    await driver.elementById('downloadLink');
+
     let title = await driver.title();
     title.should.equal('Appium: Mobile App Automation Made Awesome.');
   });

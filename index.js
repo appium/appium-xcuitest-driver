@@ -2,7 +2,7 @@
 
 import yargs from 'yargs';
 import { asyncify } from 'asyncbox';
-import { WebDriverAgentDriver } from './lib/driver';
+import { XCUITestDriver } from './lib/driver';
 import { startServer } from './lib/server';
 
 const DEFAULT_HOST = "localhost";
@@ -18,4 +18,4 @@ if (require.main === module) {
   asyncify(main);
 }
 
-export { WebDriverAgentDriver, startServer };
+export { XCUITestDriver, startServer };

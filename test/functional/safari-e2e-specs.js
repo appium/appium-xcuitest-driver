@@ -18,20 +18,21 @@ const DEFAULT_CAPS = {
   browserName: 'Safari',
   bundleId: BUNDLE_ID,
   deviceName: "iPhone 6",
-  automationName: "WebDriverAgent",
+  automationName: "XCUITest",
 };
 
 
 
-describe('Safari', () => {
-  let server;
-  let driver = wd.promiseChainRemote(HOST, PORT);
+describe.skip('Safari', function () {
+  this.timeout(4 * 60 * 1000);
+
+  let server, driver;
   before(async () => {
+    driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
 
   afterEach(async function () {
-    this.timeout(3 * 60 * 1000);
     await driver.quit();
   });
 
@@ -40,11 +41,7 @@ describe('Safari', () => {
   });
 
   it('should start a session, navigate to url, get title', async function () {
-    this.timeout(120 * 1000);
     await driver.init(DEFAULT_CAPS);
-    let contexts = await driver.contexts();
-    contexts.length.should.be.above(0);
-    await driver.context(contexts[0]);
     let title = await retry(10, async () => {
       let title = await driver.title();
       if (!title) {
@@ -60,10 +57,8 @@ describe('Safari', () => {
   });
 
   it('should delete a session, then be able to start another session', async function () {
-    this.timeout(4 * 60 * 1000);
     await driver.init(DEFAULT_CAPS);
     await driver.quit();
     await driver.init(DEFAULT_CAPS);
   });
-
 });

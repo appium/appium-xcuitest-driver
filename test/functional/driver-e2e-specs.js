@@ -15,7 +15,7 @@ const HOST = "localhost",
       PORT = 4994,
       APP = absolute.iphonesimulator,
       BUNDLE_ID = 'io.appium.TestApp',
-      PLATFORM_VERSION = '9.2';
+      PLATFORM_VERSION = '9.3';
 
 const DEFAULT_CAPS = {
   platformName: 'iOS',
@@ -23,39 +23,40 @@ const DEFAULT_CAPS = {
   app: APP,
   bundleId: BUNDLE_ID,
   deviceName: "iPhone 6",
-  automationName: "WebDriverAgent",
+  automationName: "XCUITest",
 };
 
 let getNumSims = async () => {
   return (await getDevices())[PLATFORM_VERSION].length;
 };
 
-describe('WebDriverAgentDriver', () => {
-  let server;
-  let driver = wd.promiseChainRemote(HOST, PORT);
-
+describe('XCUITestDriver', () => {
+  let server, driver;
   before(async () => {
+    driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
   after(async () => {
     await server.close();
   });
   afterEach(async () => {
+    // try to get rid of the driver, so if a test fails the rest of the
+    // tests aren't compromised
     try {
       await driver.quit();
     } catch (ign) {}
   });
 
   it('should start and stop a session', async function () {
-    this.timeout(120 * 1000);
+    this.timeout(200 * 1000);
     await driver.init(DEFAULT_CAPS);
-    let els = await driver.elementsByClassName("UIAButton");
-    els.length.should.be.above(6);
+    let els = await driver.elementsByClassName("XCUIElementTypeButton");
+    els.length.should.equal(7);
     await driver.quit();
   });
 
   describe('reset', () => {
-    it('default: creates sim and deletes it afterwards', async function () {
+    it.skip('default: creates sim and deletes it afterwards', async function () {
       this.timeout(120 * 1000);
       let caps = {
         platformName: 'iOS',
@@ -63,7 +64,7 @@ describe('WebDriverAgentDriver', () => {
         app: APP,
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
-        automationName: "WebDriverAgent",
+        automationName: "XCUITest",
       };
 
       await killAllSimulators();
@@ -84,6 +85,7 @@ describe('WebDriverAgentDriver', () => {
 
       // before
       let udid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
+      let sim = await getSimulator(udid);
 
       // test
       let caps = {
@@ -92,7 +94,7 @@ describe('WebDriverAgentDriver', () => {
         app: APP,
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
-        automationName: "WebDriverAgent",
+        automationName: "XCUITest",
         udid
       };
 
@@ -101,7 +103,7 @@ describe('WebDriverAgentDriver', () => {
       let simsDuring = await getNumSims();
       await driver.quit();
       let simsAfter = await getNumSims();
-      (await simBooted(udid)).should.be.false;
+      (await simBooted(sim)).should.be.false;
 
       simsDuring.should.equal(simsBefore);
       simsAfter.should.equal(simsBefore);
@@ -125,17 +127,17 @@ describe('WebDriverAgentDriver', () => {
         app: APP,
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
-        automationName: "WebDriverAgent",
+        automationName: "XCUITest",
         udid
       };
 
-      (await simBooted(udid)).should.be.true;
+      (await simBooted(sim)).should.be.true;
       let simsBefore = await getNumSims();
       await driver.init(caps);
       let simsDuring = await getNumSims();
       await driver.quit();
       let simsAfter = await getNumSims();
-      (await simBooted(udid)).should.be.true;
+      (await simBooted(sim)).should.be.true;
 
       simsDuring.should.equal(simsBefore);
       simsAfter.should.equal(simsBefore);
@@ -155,7 +157,7 @@ describe('WebDriverAgentDriver', () => {
         app: APP,
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
-        automationName: "WebDriverAgent",
+        automationName: "XCUITest",
         udid: 'some-random-udid'
       };
 
@@ -176,7 +178,7 @@ describe('WebDriverAgentDriver', () => {
         app: APP,
         bundleId: BUNDLE_ID,
         deviceName: "iPhone 6",
-        automationName: "WebDriverAgent",
+        automationName: "XCUITest",
         udid,
         noReset: true
       };
@@ -186,7 +188,7 @@ describe('WebDriverAgentDriver', () => {
       let simsDuring = await getNumSims();
       await driver.quit();
       let simsAfter = await getNumSims();
-      (await simBooted(udid)).should.be.true;
+      (await simBooted(sim)).should.be.true;
 
       simsDuring.should.equal(simsBefore);
       simsAfter.should.equal(simsBefore);

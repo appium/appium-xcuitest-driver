@@ -3,13 +3,13 @@ import chaiAsPromised from 'chai-as-promised';
 import { createDevice, deleteDevice } from 'node-simctl';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
-import WebDriverAgent from '../../lib/webdriveragent';
+import WebDriverAgent from '../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const PLATFORM_VERSION = '9.2';
+const PLATFORM_VERSION = '9.3';
 let testUrl = 'http://localhost:8100/tree';
 
 describe('WebDriverAgent', () => {
@@ -26,15 +26,16 @@ describe('WebDriverAgent', () => {
       await deleteDevice(sim.udid);
     });
 
-    describe('with running sim', () => {
-      afterEach(async function () {
-        this.timeout(60 * 1000);
+    describe('with running sim', function () {
+      this.timeout(6 * 60 * 1000);
+      beforeEach(async () => {
+        await sim.run();
+      });
+      afterEach(async () => {
         await sim.shutdown();
       });
 
       it('should launch agent on a sim', async function () {
-        this.timeout(6 * 60 * 1000);
-        await sim.run();
         let agent = new WebDriverAgent({
           sim,
           platformVersion: PLATFORM_VERSION,
@@ -89,6 +90,7 @@ describe('WebDriverAgent', () => {
 
         let prom = agent.launch('sessionId');
         await prom.should.be.rejectedWith('xcodebuild failed');
+        await agent.quit();
       });
     });
   });
