@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "appium-gulp-plugins": "^1.2.12",
+    "appium-test-support": "0.0.5",
     "babel-eslint": "^6.1.0",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
@@ -62,8 +63,10 @@
     "eslint-plugin-mocha": "^3.0.0",
     "gulp": "^3.8.11",
     "ios-test-app": "^2.3.3",
+    "ios-uicatalog": "^1.0.3",
     "ios-webview-app": "^1.0.3",
     "request-promise": "^2.0.0",
+    "sinon": "^1.17.4",
     "through2": "^2.0.0",
     "wd": "^0.4.0"
   }

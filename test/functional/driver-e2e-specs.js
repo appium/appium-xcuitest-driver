@@ -2,32 +2,20 @@ import { startServer } from '../..';
 import { simBooted } from '../../lib/simulatorManagement.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { absolute } from 'ios-test-app';
 import wd from 'wd';
 import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
-
+import _ from 'lodash';
+import { TESTAPP_CAPS } from './desired';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 const HOST = "localhost",
-      PORT = 4994,
-      APP = absolute.iphonesimulator,
-      BUNDLE_ID = 'io.appium.TestApp',
-      PLATFORM_VERSION = '9.3';
-
-const DEFAULT_CAPS = {
-  platformName: 'iOS',
-  platformVersion: PLATFORM_VERSION,
-  app: APP,
-  bundleId: BUNDLE_ID,
-  deviceName: "iPhone 6",
-  automationName: "XCUITest",
-};
+      PORT = 4994;
 
 let getNumSims = async () => {
-  return (await getDevices())[PLATFORM_VERSION].length;
+  return (await getDevices())[TESTAPP_CAPS.platformVersion].length;
 };
 
 describe('XCUITestDriver', () => {
@@ -49,7 +37,7 @@ describe('XCUITestDriver', () => {
 
   it('should start and stop a session', async function () {
     this.timeout(200 * 1000);
-    await driver.init(DEFAULT_CAPS);
+    await driver.init(TESTAPP_CAPS);
     let els = await driver.elementsByClassName("XCUIElementTypeButton");
     els.length.should.equal(7);
     await driver.quit();
@@ -58,14 +46,7 @@ describe('XCUITestDriver', () => {
   describe('reset', () => {
     it.skip('default: creates sim and deletes it afterwards', async function () {
       this.timeout(120 * 1000);
-      let caps = {
-        platformName: 'iOS',
-        platformVersion: PLATFORM_VERSION,
-        app: APP,
-        bundleId: BUNDLE_ID,
-        deviceName: "iPhone 6",
-        automationName: "XCUITest",
-      };
+      let caps = TESTAPP_CAPS;
 
       await killAllSimulators();
       let simsBefore = await getNumSims();
@@ -84,19 +65,13 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // before
-      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_CAPS.platformVersion);
       let sim = await getSimulator(udid);
 
       // test
-      let caps = {
-        platformName: 'iOS',
-        platformVersion: PLATFORM_VERSION,
-        app: APP,
-        bundleId: BUNDLE_ID,
-        deviceName: "iPhone 6",
-        automationName: "XCUITest",
+      let caps = _.defaults({
         udid
-      };
+      }, TESTAPP_CAPS);
 
       let simsBefore = await getNumSims();
       await driver.init(caps);
@@ -116,20 +91,14 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // before
-      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_CAPS.platformVersion);
       let sim = await getSimulator(udid);
       await sim.run();
 
       // test
-      let caps = {
-        platformName: 'iOS',
-        platformVersion: PLATFORM_VERSION,
-        app: APP,
-        bundleId: BUNDLE_ID,
-        deviceName: "iPhone 6",
-        automationName: "XCUITest",
+      let caps = _.defaults({
         udid
-      };
+      }, TESTAPP_CAPS);
 
       (await simBooted(sim)).should.be.true;
       let simsBefore = await getNumSims();
@@ -151,15 +120,9 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // test
-      let caps = {
-        platformName: 'iOS',
-        platformVersion: PLATFORM_VERSION,
-        app: APP,
-        bundleId: BUNDLE_ID,
-        deviceName: "iPhone 6",
-        automationName: "XCUITest",
+      let caps = _.defaults({
         udid: 'some-random-udid'
-      };
+      }, TESTAPP_CAPS);
 
       await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
     });
@@ -168,20 +131,14 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // before
-      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_CAPS.platformVersion);
       let sim = await getSimulator(udid);
 
       // test
-      let caps = {
-        platformName: 'iOS',
-        platformVersion: PLATFORM_VERSION,
-        app: APP,
-        bundleId: BUNDLE_ID,
-        deviceName: "iPhone 6",
-        automationName: "XCUITest",
+      let caps = _.defaults({
         udid,
         noReset: true
-      };
+      }, TESTAPP_CAPS);
 
       let simsBefore = await getNumSims();
       await driver.init(caps);
