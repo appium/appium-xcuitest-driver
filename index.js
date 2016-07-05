@@ -19,3 +19,4 @@ if (require.main === module) {
 }
 
 export { XCUITestDriver, startServer };
+export default XCUITestDriver;
