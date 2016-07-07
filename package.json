@@ -38,6 +38,7 @@
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
     "ios-app-utils": "^1.0.0",
+    "js2xmlparser2": "^0.2.0",
     "lodash": "^4.0.0",
     "node-simctl": "^3.1.0",
     "safari-launcher": "^2.0.5",
