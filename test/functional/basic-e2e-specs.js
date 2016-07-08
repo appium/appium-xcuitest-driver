@@ -32,4 +32,13 @@ describe('XCUITestDriver - basics', function () {
       src.indexOf('<AppiumAUT>').should.not.eql(-1);
     });
   });
+
+  describe('deactivate app', () => {
+    it('should background the app for the specified time', async () => {
+      let before = Date.now();
+      await driver.backgroundApp(4);
+      (Date.now() - before).should.be.above(4000);
+      (await driver.source()).indexOf('<AppiumAUT>').should.not.eql(-1);
+    });
+  });
 });
