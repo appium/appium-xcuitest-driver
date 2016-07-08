@@ -25,6 +25,13 @@ describe('XCUITestDriver - basics', function () {
     await server.close();
   });
 
+  describe('status', () => {
+    it('should get the server status', async () => {
+      let status = await driver.status();
+      status.wda.should.exist;
+    });
+  });
+
   describe('source', () => {
     it('should get the source for the page', async () => {
       let src = await driver.source();
