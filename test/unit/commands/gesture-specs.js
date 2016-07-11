@@ -39,4 +39,56 @@ describe('gesture commands', () => {
       proxySpy.firstCall.args[1].should.eql('POST');
     });
   });
+
+  describe('mobile methods', () => {
+    describe('anything other than scroll', () => {
+      it('should throw an error', async () => {
+        await driver.execute('mobile: somesuch').should.be.rejected;
+      });
+    });
+
+    describe('scroll', () => {
+      it('should throw an error if no element is specified', () => {
+        driver.execute('mobile: scroll', {})
+          .should.eventually.be.rejectedWith(/Mobile scroll needs an element/);
+      });
+      it('should throw an error if no scroll type is specified', () => {
+        driver.execute('mobile: scroll', {element: 4})
+          .should.eventually.be.rejectedWith(/Mobile scroll supports the following strategies/);
+      });
+      it('should pass through bare element', () => {
+        driver.execute('mobile: scroll', {element: 4, direction: 'down'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[1].should.eql('POST');
+      });
+      it('should unpack element object', () => {
+        driver.execute('mobile: scroll', {element: {ELEMENT: 4}, direction: 'down'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[1].should.eql('POST');
+      });
+      it('should pass name strategy exclusively', () => {
+        driver.execute('mobile: scroll', {element: 4, direction: 'down', name: 'something'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[1].should.eql('POST');
+        proxySpy.firstCall.args[2].should.eql({name: 'something'});
+      });
+      it('should pass direction strategy exclusively', () => {
+        driver.execute('mobile: scroll', {element: 4, direction: 'down', predicateString: 'something'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[1].should.eql('POST');
+        proxySpy.firstCall.args[2].should.eql({direction: 'down'});
+      });
+      it('should pass predicateString strategy exclusively', () => {
+        driver.execute('mobile: scroll', {element: 4, toVisible: true, predicateString: 'something'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[1].should.eql('POST');
+        proxySpy.firstCall.args[2].should.eql({predicateString: 'something'});
+      });
+    });
+  });
 });
