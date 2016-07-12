@@ -22,5 +22,6 @@ before_script:
 #  - gulp transpile we don't need to transpile here since `gulp test` runs transpilation
 script:
   - gulp eslint
-  - gulp test
+  - gulp once
+  - gulp e2e-test
   - gulp coveralls
