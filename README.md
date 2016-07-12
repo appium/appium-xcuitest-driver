@@ -33,6 +33,7 @@ Differences noted here
 |Capability|Description|Values|
 |----------|-----------|------|
 |`noReset`|Do not destroy or shut down sim after test. Start tests running on whichever sim is running, or device is plugged in. Default `false`|`true`, `false`|
+|`processArguments`|This should be passed as object like this let proArgs = { args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }; or as JSON string like this let proArgsString = "{\"args\": [\"a\", \"b\", \"c\"], \"env\": { \"a\": \"b\", \"c\": \"d\" }}";|proArgs = { args: [], env: { } }; or proArgsString = "{\"args\": [], \"env\": {  }}";|
 
 ## Watch
 
