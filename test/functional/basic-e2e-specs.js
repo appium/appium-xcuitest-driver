@@ -2,6 +2,7 @@ import { startServer } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
+import B from 'bluebird';
 import { UICATALOG_CAPS } from './desired';
 
 
@@ -46,6 +47,28 @@ describe('XCUITestDriver - basics', function () {
       await driver.backgroundApp(4);
       (Date.now() - before).should.be.above(4000);
       (await driver.source()).indexOf('<AppiumAUT>').should.not.eql(-1);
+    });
+  });
+
+  describe('screenshot', () => {
+    it('should get an app screenshot', async () => {
+      (await driver.takeScreenshot()).should.exist;
+    });
+
+    it('should get an app screenshot in landscape mode', async () => {
+      let screenshot1 = (await driver.takeScreenshot());
+      screenshot1.should.exist;
+
+      try {
+        await driver.setOrientation("LANDSCAPE");
+      } catch (ign) {}
+      // take a little pause while it orients, otherwise you get the screenshot
+      // on an angle
+      await B.delay(500);
+
+      let screenshot2 = await driver.takeScreenshot();
+      screenshot2.should.exist;
+      screenshot2.should.not.eql(screenshot1);
     });
   });
 });
