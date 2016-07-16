@@ -55,4 +55,4 @@ merging, and pushing. Then, in this repository update the submodule.
 
 There is a chance that the update changed something critical, which will manifest
 itself as `xcodebuild` throwing errors. The easiest remedy is to delete the
-files, which are somewhere like ``/Users/isaac/Library/Developer/Xcode/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll`.
+files, which are somewhere like `/Users/isaac/Library/Developer/Xcode/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll`.
