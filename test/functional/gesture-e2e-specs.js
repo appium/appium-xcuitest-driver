@@ -1,37 +1,23 @@
-import { startServer } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import B from 'bluebird';
+import wd from 'wd';
 import { UICATALOG_CAPS } from './desired';
+import { clickButton } from './helpers/navigation';
+import { initSession, deleteSession } from './helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const HOST = "localhost",
-      PORT = 4994;
-
-async function clickButton (driver, name) {
-  let el = (await driver.elementsByXPath(`//UIAButton[@name = '${name}']`))[0];
-  if (el && (await el.isDisplayed())) {
-    await el.click();
-  }
-}
-
 describe('XCUITestDriver - gestures', function () {
   this.timeout(200 * 1000);
 
-  let server, driver;
+  let driver;
   before(async () => {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-    await driver.init(UICATALOG_CAPS);
+    driver = await initSession(UICATALOG_CAPS);
   });
-  after(async () => {
-    await driver.quit();
-    await server.close();
-  });
+  after(deleteSession);
 
   // make sure that elements are mixed up
   describe('tap', () => {

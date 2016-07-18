@@ -1,37 +1,23 @@
-import { startServer } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from './desired';
+import { clickBack } from './helpers/navigation';
+import { initSession, deleteSession } from './helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const HOST = "localhost",
-      PORT = 4994;
-
-async function clickBack (driver) {
-  let el = (await driver.elementsByAccessibilityId('Back'))[0];
-  if (el && (await el.isDisplayed())) {
-    await el.click();
-  }
-}
-
 describe('XCUITestDriver - alerts', function () {
   this.timeout(200 * 1000);
 
-  let server, driver;
+  let driver;
   before(async () => {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-    await driver.init(UICATALOG_CAPS);
+    driver = await initSession(UICATALOG_CAPS);
   });
-  after(async () => {
-    await driver.quit();
-    await server.close();
-  });
+  after(deleteSession);
+
 
   beforeEach(async () => {
     let el1 = await driver.elementByAccessibilityId('Alert Views');

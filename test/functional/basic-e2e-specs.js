@@ -1,30 +1,21 @@
-import { startServer } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from './desired';
+import { initSession, deleteSession } from './helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const HOST = "localhost",
-      PORT = 4994;
-
 describe('XCUITestDriver - basics', function () {
   this.timeout(200 * 1000);
 
-  let server, driver;
+  let driver;
   before(async () => {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-    await driver.init(UICATALOG_CAPS);
+    driver = await initSession(UICATALOG_CAPS);
   });
-  after(async () => {
-    await driver.quit();
-    await server.close();
-  });
+  after(deleteSession);
 
   describe('status', () => {
     it('should get the server status', async () => {
