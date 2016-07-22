@@ -7,12 +7,11 @@ import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
 import { TESTAPP_CAPS } from './desired';
+import { HOST, PORT } from './helpers/session';
+
 
 chai.should();
 chai.use(chaiAsPromised);
-
-const HOST = "localhost",
-      PORT = 4994;
 
 let getNumSims = async () => {
   return (await getDevices())[TESTAPP_CAPS.platformVersion].length;

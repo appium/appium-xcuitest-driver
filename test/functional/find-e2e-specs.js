@@ -1,38 +1,23 @@
-import { startServer } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import B from 'bluebird';
 import _ from 'lodash';
 import { UICATALOG_CAPS, TESTAPP_CAPS } from './desired';
+import { clickButton } from './helpers/navigation';
+import { initSession, deleteSession } from './helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const HOST = "localhost",
-      PORT = 4994;
-
-async function clickButton (driver, name) {
-  let el = (await driver.elementsByXPath(`//XCUIElementTypeButton[@name = '${name}']`))[0];
-  if (el && (await el.isDisplayed())) {
-    await el.click();
-  }
-}
-
 describe('XCUITestDriver - find', function () {
   this.timeout(200 * 1000);
 
-  let server, driver;
+  let driver;
   before(async () => {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-    await driver.init(TESTAPP_CAPS);
+    driver = await initSession(TESTAPP_CAPS);
   });
-  after(async () => {
-    await driver.quit();
-    await server.close();
-  });
+  after(deleteSession);
 
   describe('by id', () => {
     it('should find a single element by id', async () => {
@@ -70,16 +55,11 @@ describe('XCUITestDriver - find', function () {
 describe('XCUITestDriver - find', function () {
   this.timeout(200 * 1000);
 
-  let server, driver;
+  let driver;
   before(async () => {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-    await driver.init(UICATALOG_CAPS);
+    driver = await initSession(UICATALOG_CAPS);
   });
-  after(async () => {
-    await driver.quit();
-    await server.close();
-  });
+  after(deleteSession);
 
   // establish that the basic things work as we imagine
   describe('basics', () => {
