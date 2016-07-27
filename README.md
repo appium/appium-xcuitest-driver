@@ -32,6 +32,47 @@ In short, this driver tries to leave things as it found them.
 You can use the `noReset` capability to adjust this behavior.
 Setting `noReset` to `true` will leave the simulator running at the end of a test session.
 
+## Real devices
+
+The `appium-xcuitest-driver` has provisional support for iOS real devices. Not all functionality is currently supported.
+
+The main issue with testing on real devices is that the app under test must be built with the same provisioning profile as the WebDriverAgent is built. At the moment, the command being used to build the WebDriver agent is (with adjustments for paths):
+
+```
+xcodebuild \
+  -project' <path-to-WebDriverAgent>/WebDriverAgent.xcodeproj \
+  -scheme WebDriverAgentRunner \
+  -sdk iphoneos \
+  -destination platform=iOS,id=<UDID> \
+  CODE_SIGN_IDENTITY=iPhone Developer \
+  CODE_SIGNING_REQUIRED=YES \
+  test
+```
+
+Therefore it is recommended that the app under test be built with the same command, making sure it is built for the same device and, also importantly, for debugging:
+
+```
+xcodebuild \
+  -project ./<APP>.xcodeproj \
+  -sdk iphoneos \
+  -destination platform=iOS,id=<UDID> \
+  CODE_SIGN_IDENTITY='iPhone Developer' \
+  CODE_SIGNING_REQUIRED=YES \
+  -configuration Debug \
+  clean build
+```
+
+Internally it also expects `idevicesyslog` to be installed (see installation instructions for [libimobiledevice](http://www.libimobiledevice.org/)).
+
+**Note:** Running WebDriverAgent tests on a real device is particularly flakey. If things stop responding, the only recourse is, most often, to restart the device. Logs in the form of the following _may_ start to occur:
+
+```shell
+info JSONWP Proxy Proxying [POST /session] to [POST http://10.35.4.122:8100/session] with body: {"desiredCapabilities":{"ap...
+dbug WebDriverAgent Device: Jul 26 13:20:42 iamPhone XCTRunner[240] <Warning>: Listening on USB
+dbug WebDriverAgent Device: Jul 26 13:21:42 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - Unable to update application state promptly. <unknown> 0 1
+dbug WebDriverAgent Device: Jul 26 13:21:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - Failed to get screenshot within 15s <unknown> 0 1
+dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - App state of (null) is still unknown <unknown> 0 1
+```
 
 ## Usage
 

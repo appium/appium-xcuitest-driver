@@ -41,6 +41,7 @@
     "ios-app-utils": "^1.0.0",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.0.0",
+    "node-ios-device": "^0.9.5",
     "node-simctl": "^3.1.0",
     "safari-launcher": "^2.0.5",
     "source-map-support": "^0.4.0",
