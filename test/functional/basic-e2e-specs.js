@@ -62,4 +62,25 @@ describe('XCUITestDriver - basics', function () {
       screenshot2.should.not.eql(screenshot1);
     });
   });
+
+  describe('logging', () => {
+    describe('types', () => {
+      it('should get the list of available logs', async () => {
+        let expectedTypes = ['syslog', 'crashlog', 'performance'];
+        (await driver.logTypes()).should.eql(expectedTypes);
+      });
+    });
+
+    describe('retrieval', () => {
+      it('should throw an error when an invalid type is given', async () => {
+        await driver.log('something-random').should.eventually.be.rejected;
+      });
+      it('should get system logs', async () => {
+        (await driver.log('syslog')).should.be.an.Array;
+      });
+      it('should get crash logs', async () => {
+        (await driver.log('crashlog')).should.be.an.Array;
+      });
+    });
+  });
 });
