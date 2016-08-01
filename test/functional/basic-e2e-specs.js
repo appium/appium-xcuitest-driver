@@ -83,4 +83,22 @@ describe('XCUITestDriver - basics', function () {
       });
     });
   });
+
+  describe('orientation', () => {
+    it('should get the current orientation', async () => {
+      let orientation = await driver.getOrientation();
+      ['PORTRAIT', 'LANDSCAPE'].should.include(orientation);
+    });
+    it('should set the orientation', async () => {
+      let orientation = await driver.getOrientation();
+
+      let newOrientation = (orientation === 'PORTRAIT' ? 'LANDSCAPE' : 'PORTRAIT');
+      await driver.setOrientation(newOrientation);
+
+      (await driver.getOrientation()).should.eql(newOrientation);
+
+      // return it to the state we started in
+      await driver.setOrientation(orientation);
+    });
+  });
 });
