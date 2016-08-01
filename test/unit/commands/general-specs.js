@@ -42,4 +42,14 @@ describe('general commands', () => {
       proxySpy.firstCall.args[2].should.eql({match: false});
     });
   });
+
+  describe('homescreen', () => {
+    it('should send translated POST request to WDA', () => {
+      driver.homeScreen();
+      proxySpy.calledOnce.should.be.true;
+      proxySpy.firstCall.args[0].should.eql('/homescreen');
+      proxySpy.firstCall.args[1].should.eql('POST');
+    });
+  });
+
 });
