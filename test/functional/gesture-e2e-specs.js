@@ -38,5 +38,4 @@ describe('XCUITestDriver - gestures', function () {
       el2.should.exist;
     });
   });
-
 });

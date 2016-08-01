@@ -16,7 +16,9 @@ async function initSession (caps) {
 }
 
 async function deleteSession () {
-  await driver.quit();
+  try {
+    await driver.quit();
+  } catch (ign) {}
   await server.close();
 }
 

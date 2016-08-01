@@ -7,10 +7,11 @@ chai.should();
 chai.use(chaiAsPromised);
 
 let fakeConstructorArgs = {
-  sim: 'some sim',
+  device: 'some sim',
   platformVersion: '9',
   host: 'me',
   port: '5000',
+  realDevice: false
 };
 
 describe('Constructor', () => {

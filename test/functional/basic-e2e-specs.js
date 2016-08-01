@@ -42,6 +42,11 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('screenshot', () => {
+    after(async () => {
+      try {
+        await driver.setOrientation("PORTRAIT");
+      } catch (ign) {}
+    });
     it('should get an app screenshot', async () => {
       (await driver.takeScreenshot()).should.exist;
     });

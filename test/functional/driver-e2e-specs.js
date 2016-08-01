@@ -6,15 +6,15 @@ import wd from 'wd';
 import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
-import { TESTAPP_CAPS } from './desired';
 import { HOST, PORT } from './helpers/session';
+import { TESTAPP_SIM_CAPS } from './desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 let getNumSims = async () => {
-  return (await getDevices())[TESTAPP_CAPS.platformVersion].length;
+  return (await getDevices())[TESTAPP_SIM_CAPS.platformVersion].length;
 };
 
 describe('XCUITestDriver', () => {
@@ -36,16 +36,16 @@ describe('XCUITestDriver', () => {
 
   it('should start and stop a session', async function () {
     this.timeout(200 * 1000);
-    await driver.init(TESTAPP_CAPS);
+    await driver.init(TESTAPP_SIM_CAPS);
     let els = await driver.elementsByClassName("XCUIElementTypeButton");
-    els.length.should.equal(7);
+    els.length.should.be.at.least(4);
     await driver.quit();
   });
 
   describe('reset', () => {
     it.skip('default: creates sim and deletes it afterwards', async function () {
       this.timeout(120 * 1000);
-      let caps = TESTAPP_CAPS;
+      let caps = TESTAPP_SIM_CAPS;
 
       await killAllSimulators();
       let simsBefore = await getNumSims();
@@ -64,13 +64,13 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // before
-      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_CAPS.platformVersion);
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_SIM_CAPS.platformVersion);
       let sim = await getSimulator(udid);
 
       // test
       let caps = _.defaults({
         udid
-      }, TESTAPP_CAPS);
+      }, TESTAPP_SIM_CAPS);
 
       let simsBefore = await getNumSims();
       await driver.init(caps);
@@ -90,14 +90,14 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // before
-      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_CAPS.platformVersion);
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_SIM_CAPS.platformVersion);
       let sim = await getSimulator(udid);
       await sim.run();
 
       // test
       let caps = _.defaults({
         udid
-      }, TESTAPP_CAPS);
+      }, TESTAPP_SIM_CAPS);
 
       (await simBooted(sim)).should.be.true;
       let simsBefore = await getNumSims();
@@ -121,7 +121,17 @@ describe('XCUITestDriver', () => {
       // test
       let caps = _.defaults({
         udid: 'some-random-udid'
-      }, TESTAPP_CAPS);
+      }, TESTAPP_SIM_CAPS);
+
+      await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
+    });
+
+    it('with non-existent udid: throws an error', async function () {
+      this.timeout(120 * 1000);
+
+      // test
+      let udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
+      let caps = _.defaults({udid}, TESTAPP_SIM_CAPS);
 
       await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
     });
@@ -130,14 +140,14 @@ describe('XCUITestDriver', () => {
       this.timeout(120 * 1000);
 
       // before
-      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_CAPS.platformVersion);
+      let udid = await createDevice('webDriverAgentTest', 'iPhone 6', TESTAPP_SIM_CAPS.platformVersion);
       let sim = await getSimulator(udid);
 
       // test
       let caps = _.defaults({
         udid,
         noReset: true
-      }, TESTAPP_CAPS);
+      }, TESTAPP_SIM_CAPS);
 
       let simsBefore = await getNumSims();
       await driver.init(caps);
@@ -153,7 +163,5 @@ describe('XCUITestDriver', () => {
       await sim.shutdown();
       await deleteDevice(udid);
     });
-
   });
-
 });
