@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { UICATALOG_CAPS } from './desired';
+import { UICATALOG_CAPS, PLATFORM_VERSION } from './desired';
 import { initSession, deleteSession } from './helpers/session';
 
 
@@ -94,7 +94,11 @@ describe('XCUITestDriver - basics', function () {
       let orientation = await driver.getOrientation();
       ['PORTRAIT', 'LANDSCAPE'].should.include(orientation);
     });
-    it('should set the orientation', async () => {
+    it('should set the orientation', async function () {
+      // currently setting the orientation on iOS 10 does not work through WDA
+      // so skip this test for now
+      if (PLATFORM_VERSION === '10.0') this.skip();
+
       let orientation = await driver.getOrientation();
 
       let newOrientation = (orientation === 'PORTRAIT' ? 'LANDSCAPE' : 'PORTRAIT');

@@ -4,14 +4,14 @@ import apps from 'ios-webview-app';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
+import { PLATFORM_VERSION } from './desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 const HOST = "localhost",
-      PORT = 4994,
-      PLATFORM_VERSION = '9.3';
+      PORT = 4994;
 
 const DEFAULT_CAPS = {
   platformName: 'iOS',

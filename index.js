@@ -5,7 +5,7 @@ import { asyncify } from 'asyncbox';
 import { XCUITestDriver } from './lib/driver';
 import { startServer } from './lib/server';
 
-const DEFAULT_HOST = "localhost";
+const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4723;
 
 async function main () {
