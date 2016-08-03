@@ -79,8 +79,5 @@
     "sinon": "^1.17.4",
     "through2": "^2.0.0",
     "wd": "^0.4.0"
-  },
-  "optionalDependencies": {
-    "node-ios-device": "^0.10.1"
   }
 }
