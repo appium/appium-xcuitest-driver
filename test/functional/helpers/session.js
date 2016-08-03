@@ -2,7 +2,7 @@ import wd from 'wd';
 import { startServer } from '../../..';
 
 
-const HOST = "localhost",
+const HOST = 'localhost',
       PORT = 4994;
 
 let driver, server;

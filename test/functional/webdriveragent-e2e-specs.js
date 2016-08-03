@@ -5,12 +5,12 @@ import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
 import WebDriverAgent from '../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
+import { PLATFORM_VERSION } from './desired';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const PLATFORM_VERSION = '9.3';
 let testUrl = 'http://localhost:8100/tree';
 
 function getStartOpts (device) {
@@ -34,6 +34,9 @@ describe('WebDriverAgent', () => {
 
     after(async function () {
       this.timeout(2 * 60 * 1000);
+
+      await device.shutdown();
+
       await deleteDevice(device.udid);
     });
 
