@@ -19,6 +19,15 @@ The `git diff --submodule` flag is useful here. It can also be set as the defaul
 `git config status.submodulesummary 1` is also useful.
 
 
+## External dependencies
+
+In addition to the git submodules mentioned above, this package currently depends on `libimobiledevice` to do certain things. Install it with [Homebrew](http://brew.sh/),
+
+```
+brew install ideviceinstaller
+```
+
+
 ## Sim Resetting
 
 By default, this driver will create a new iOS simulator and run tests on it, deleting the simulator afterward.
