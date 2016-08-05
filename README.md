@@ -126,3 +126,4 @@ git commit -m "Updating upstream WebDriverAgent changes"
 There is a chance that the update changed something critical, which will manifest
 itself as `xcodebuild` throwing errors. The easiest remedy is to delete the
 files, which are somewhere like `/Users/isaac/Library/Developer/Xcode/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll`.
+This is also necessary when switching SDKs (e.g., moving from Xcode 7.3 to 8).
