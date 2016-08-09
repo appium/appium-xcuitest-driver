@@ -1,8 +1,9 @@
-import { startServer } from '../..';
+import { startServer } from '../../..';
 import { retry } from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
+
 
 chai.should();
 chai.use(chaiAsPromised);

@@ -3,9 +3,9 @@ import chaiAsPromised from 'chai-as-promised';
 import { createDevice, deleteDevice } from 'node-simctl';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
-import WebDriverAgent from '../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
+import WebDriverAgent from '../../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
-import { PLATFORM_VERSION } from './desired';
+import { PLATFORM_VERSION } from '../desired';
 
 
 chai.should();

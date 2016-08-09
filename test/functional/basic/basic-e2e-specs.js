@@ -1,8 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { UICATALOG_CAPS, PLATFORM_VERSION } from './desired';
-import { initSession, deleteSession } from './helpers/session';
+import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
+import { initSession, deleteSession } from '../helpers/session';
 
 
 chai.should();

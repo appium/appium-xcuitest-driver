@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { UICATALOG_CAPS } from './desired';
-import { clickButton } from './helpers/navigation';
-import { initSession, deleteSession } from './helpers/session';
+import { UICATALOG_CAPS } from '../desired';
+import { clickButton } from '../helpers/navigation';
+import { initSession, deleteSession } from '../helpers/session';
 
 
 chai.should();
@@ -103,7 +103,7 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
-  // TODO: investigate why these break on Travis. 
+  // TODO: investigate why these break on Travis.
   describe.skip('interactions', () => {
     let text1 = 'bunchoftext';
     let text2 = 'differenttext';
