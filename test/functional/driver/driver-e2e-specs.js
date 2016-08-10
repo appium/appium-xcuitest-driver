@@ -1,13 +1,13 @@
-import { startServer } from '../..';
-import { simBooted } from '../../lib/simulatorManagement.js';
+import { startServer } from '../../..';
+import { simBooted } from '../../../lib/simulatorManagement.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
-import { HOST, PORT } from './helpers/session';
-import { TESTAPP_SIM_CAPS } from './desired';
+import { HOST, PORT } from '../helpers/session';
+import { TESTAPP_SIM_CAPS } from '../desired';
 
 
 chai.should();

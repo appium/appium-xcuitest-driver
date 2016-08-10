@@ -1,10 +1,10 @@
-import { startServer } from '../..';
+import { startServer } from '../../..';
 import path from 'path';
 import apps from 'ios-webview-app';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
-import { PLATFORM_VERSION } from './desired';
+import { PLATFORM_VERSION } from '../desired';
 
 
 chai.should();

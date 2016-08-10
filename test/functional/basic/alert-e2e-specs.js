@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { UICATALOG_CAPS } from './desired';
-import { clickBack } from './helpers/navigation';
-import { initSession, deleteSession } from './helpers/session';
+import { UICATALOG_CAPS } from '../desired';
+import { clickBack } from '../helpers/navigation';
+import { initSession, deleteSession } from '../helpers/session';
 
 
 chai.should();
