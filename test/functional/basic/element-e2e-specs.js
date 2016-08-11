@@ -103,14 +103,16 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
-  // TODO: investigate why these break on Travis.
-  describe.skip('interactions', () => {
+  describe('interactions', function () {
     let text1 = 'bunchoftext';
     let text2 = 'differenttext';
     let secureText = _.map(new Array(text1.length), () => '•').join('');
     let phText = 'Placeholder text';
 
-    beforeEach(async () => {
+    beforeEach(async function () {
+      // TODO: investigate why these break on Travis.
+      if (process.env.TRAVIS) this.skip();
+
       let el = await driver.elementByAccessibilityId('Text Fields');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();

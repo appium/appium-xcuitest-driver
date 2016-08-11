@@ -7,9 +7,15 @@ const HOST = 'localhost',
 
 let driver, server;
 
-async function initSession (caps) {
+async function initDriver () {
   driver = wd.promiseChainRemote(HOST, PORT);
   server = await startServer(PORT, HOST);
+
+  return driver;
+}
+
+async function initSession (caps) {
+  await initDriver();
   await driver.init(caps);
 
   return driver;
@@ -22,4 +28,4 @@ async function deleteSession () {
   await server.close();
 }
 
-export { initSession, deleteSession, HOST, PORT };
+export { initDriver, initSession, deleteSession, HOST, PORT };

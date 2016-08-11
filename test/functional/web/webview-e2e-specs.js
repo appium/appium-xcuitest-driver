@@ -1,42 +1,30 @@
-import { startServer } from '../../..';
-import path from 'path';
-import apps from 'ios-webview-app';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
-import { PLATFORM_VERSION } from '../desired';
+import _ from 'lodash';
+import { killAllSimulators } from 'appium-ios-simulator';
+import { UICATALOG_CAPS } from '../desired';
+import { initDriver, deleteSession, HOST, PORT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const HOST = "localhost",
-      PORT = 4994;
-
-const DEFAULT_CAPS = {
-  platformName: 'iOS',
-  platformVersion: PLATFORM_VERSION,
-  app: path.resolve(require.resolve('ios-webview-app'), '..', apps[1]),
-  deviceName: "iPhone 6",
-};
-
-describe.skip('Webview', function () {
+describe('Webview', function () {
   this.timeout(120 * 1000);
 
-  let server, driver;
+  let driver;
   before(async () => {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
+    driver = await initDriver();
   });
-  after(async () => {
-    await server.close();
-    try {
-      await driver.quit();
-    } catch (ign) {}
-  });
+  after(deleteSession);
 
   beforeEach(async () => {
-    await driver.init(DEFAULT_CAPS);
+    await killAllSimulators();
+    
+    await driver.init(UICATALOG_CAPS);
+    let el = await driver.elementByAccessibilityId('Web View');
+    await driver.execute('mobile: scroll', {element: el, toVisible: true});
+    await el.click();
   });
   afterEach(async () => {
     await driver.quit();
@@ -44,21 +32,22 @@ describe.skip('Webview', function () {
 
   it('should start a session, navigate to url, get title', async () => {
     let contexts = await driver.contexts();
-    contexts.length.should.equal(2);
+    contexts.length.should.be.at.least(2);
 
     let urlBar = await driver.elementByClassName('XCUIElementTypeTextField');
-    await urlBar.sendKeys('appium.io');
+    await urlBar.clear();
+    await urlBar.sendKeys(`http://${HOST}:${PORT}/test/guinea-pig`);
 
-    let button = await driver.elementByClassName('XCUIElementTypeButton');
-    await button.click();
+    let buttons = await driver.elementsByClassName('XCUIElementTypeButton');
+    await _.last(buttons).click();
 
     await driver.setImplicitWaitTimeout(10000);
-    await driver.context(contexts[0]);
+    await driver.context(contexts[1]);
 
     // wait for something on the page, before checking on title
-    await driver.elementById('downloadLink');
+    await driver.elementById('i_am_a_textbox');
 
     let title = await driver.title();
-    title.should.equal('Appium: Mobile App Automation Made Awesome.');
+    title.should.equal('I am a page title');
   });
 });

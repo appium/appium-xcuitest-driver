@@ -1,4 +1,4 @@
-import uiCatalog from 'ios-uicatalog';
+import uiCatalogApp from 'ios-uicatalog';
 import { absolute } from 'ios-test-app';
 import _ from 'lodash';
 import path from 'path';
@@ -17,11 +17,11 @@ const GENERIC_CAPS = {
 };
 
 const UICATALOG_CAPS = _.defaults({
-  app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalog[REAL_DEVICE ? 0 : 1]),
+  app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[REAL_DEVICE ? 0 : 1]),
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
 const UICATALOG_SIM_CAPS = _.defaults({
-  app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalog[1]),
+  app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]),
 }, GENERIC_CAPS);
 
 const TESTAPP_CAPS = _.defaults({
@@ -34,4 +34,9 @@ const TESTAPP_SIM_CAPS = _.defaults({
   bundleId: 'io.appium.TestApp',
 }, GENERIC_CAPS);
 
-export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, TESTAPP_CAPS, TESTAPP_SIM_CAPS, PLATFORM_VERSION };
+const SAFARI_CAPS = _.defaults({
+  browserName: 'Safari',
+}, GENERIC_CAPS, REAL_DEVICE_CAPS);
+
+export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, TESTAPP_CAPS, TESTAPP_SIM_CAPS,
+         SAFARI_CAPS, PLATFORM_VERSION };
