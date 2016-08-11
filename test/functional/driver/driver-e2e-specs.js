@@ -20,6 +20,8 @@ let getNumSims = async () => {
 describe('XCUITestDriver', () => {
   let server, driver;
   before(async () => {
+    await killAllSimulators();
+    
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
