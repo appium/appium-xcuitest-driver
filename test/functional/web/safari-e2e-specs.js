@@ -1,27 +1,25 @@
 import { startServer } from '../../..';
-import { retry } from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import { killAllSimulators } from 'appium-ios-simulator';
 import { HOST, PORT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
+import { spinTitle, GUINEA_PIG_PAGE } from './helpers';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('Safari', function () {
-  this.timeout(4 * 60 * 1000);
+  this.timeout(10 * 60 * 1000);
 
   let server, driver;
   before(async () => {
+    await killAllSimulators();
+
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
-  });
-
-  beforeEach(async () => {
-    await killAllSimulators();
   });
 
   afterEach(async function () {
@@ -34,16 +32,10 @@ describe('Safari', function () {
 
   it('should start a session, navigate to url, get title', async function () {
     await driver.init(SAFARI_CAPS);
-    let title = await retry(10, async () => {
-      let title = await driver.title();
-      if (!title) {
-        throw new Error('did not get page title');
-      }
-      return title;
-    });
+    let title = await spinTitle(driver);
     title.should.equal('Appium/welcome');
 
-    await driver.get(`http://${HOST}:${PORT}/test/guinea-pig`);
+    await driver.get(GUINEA_PIG_PAGE);
     title = await driver.title();
     title.should.include('I am a page title');
   });
