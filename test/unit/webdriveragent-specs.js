@@ -15,12 +15,6 @@ let fakeConstructorArgs = {
 };
 
 describe('Constructor', () => {
-  it('should require all parameters', () => {
-    (() => {
-      new WebDriverAgent();
-    }).should.throw(/You must send in the following required arguments/);
-  });
-
   it('should have a binary for the webdriver agent', async () => {
     let agent = new WebDriverAgent(fakeConstructorArgs);
     await fs.exists(agent.agentPath);
