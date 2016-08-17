@@ -21,10 +21,20 @@ The `git diff --submodule` flag is useful here. It can also be set as the defaul
 
 ## External dependencies
 
-In addition to the git submodules mentioned above, this package currently depends on `libimobiledevice` to do certain things. Install it with [Homebrew](http://brew.sh/),
+In addition to the git submodules mentioned above, this package currently depends
+on `libimobiledevice` to do certain things. Install it with [Homebrew](http://brew.sh/),
 
 ```
 brew install ideviceinstaller
+```
+
+There is also a dependency, made necessary by Facebook's [WebDriverAgent](https://github.com/facebook/WebDriverAgent),
+for the [Carthage](https://github.com/Carthage/Carthage) dependency manager. If you
+do not have Carthage on your system, it can also be installed with
+[Homebrew]((http://brew.sh/)
+
+```
+brew install carthage
 ```
 
 
