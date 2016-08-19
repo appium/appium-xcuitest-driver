@@ -37,7 +37,7 @@ do not have Carthage on your system, it can also be installed with
 brew install carthage
 ```
 ideviceinstaller doesn't work with ios 10 yet. So we need to install [fruitstrap](https://github.com/ghughes/fruitstrap)
-And pass its absolute path as capability `fruitstrap`
+and pass it's absolute path as capability `fruitstrap`
 
 ## Sim Resetting
 
