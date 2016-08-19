@@ -1,5 +1,5 @@
 import { startServer } from '../../..';
-import { simBooted } from '../../../lib/simulatorManagement.js';
+import { simBooted } from '../../../lib/simulator-management.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
@@ -21,7 +21,7 @@ describe('XCUITestDriver', () => {
   let server, driver;
   before(async () => {
     await killAllSimulators();
-    
+
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
