@@ -31,7 +31,7 @@ brew install ideviceinstaller
 There is also a dependency, made necessary by Facebook's [WebDriverAgent](https://github.com/facebook/WebDriverAgent),
 for the [Carthage](https://github.com/Carthage/Carthage) dependency manager. If you
 do not have Carthage on your system, it can also be installed with
-[Homebrew]((http://brew.sh/)
+[Homebrew](http://brew.sh/)
 
 ```
 brew install carthage
