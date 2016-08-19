@@ -15,7 +15,6 @@ describe('process args', () => {
 
   let desired = {
     desiredCapabilities: {
-      app: "testapp.app",
       bundleId: "com.test.app",
       arguments: PROCESS_ARGS_OBJECT.args,
       environment: PROCESS_ARGS_OBJECT.env,
@@ -33,12 +32,12 @@ describe('process args', () => {
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
-        app: desired.desiredCapabilities.app,
+        app: "testapp.app",
         bundleId: desired.desiredCapabilities.bundleId,
         processArguments: PROCESS_ARGS_OBJECT,
       };
       driver.validateDesiredCaps(desiredWithProArgsObejct);
-      driver.startWdaSession(desiredWithProArgsObejct.app, desiredWithProArgsObejct.bundleId, desiredWithProArgsObejct.processArguments);
+      driver.startWdaSession(desiredWithProArgsObejct.bundleId, desiredWithProArgsObejct.processArguments);
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');
@@ -52,12 +51,12 @@ describe('process args', () => {
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
-        app: desired.desiredCapabilities.app,
+        app: "testapp.app",
         bundleId: desired.desiredCapabilities.bundleId,
         processArguments: processArgsString,
       };
       driver.validateDesiredCaps(desiredWithProArgsString);  
-      driver.startWdaSession(desiredWithProArgsString.app, desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
+      driver.startWdaSession(desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');
