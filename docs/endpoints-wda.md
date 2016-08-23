@@ -29,9 +29,6 @@
 | POST   | /source                                | | accessible |
 | GET    | /element/:uuid/enabled                 | | |
 | GET    | /element/:uuid/rect                    | | |
-| GET    | /element/:uuid/size                    | | |
-| GET    | /element/:uuid/location                | | |
-| GET    | /element/:uuid/location_in_view        | | |
 | GET    | /element/:uuid/attribute/:name         | | |
 | GET    | /element/:uuid/text                    | | |
 | GET    | /element/:uuid/displayed               | | |
