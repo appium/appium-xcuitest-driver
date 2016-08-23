@@ -26,6 +26,7 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
     }, SAFARI_CAPS);
     driver = await initSession(caps);
     await driver.setPageLoadTimeout(100);
+    await driver.setImplicitWaitTimeout(5000);
   });
   after(deleteSession);
 
@@ -46,6 +47,7 @@ describe('safari - windows and frames', function () {
       nativeWebTap: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
+    await driver.setImplicitWaitTimeout(5000);
   });
   after(deleteSession);
 

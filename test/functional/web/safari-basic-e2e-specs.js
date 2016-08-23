@@ -68,7 +68,7 @@ describe('Safari', function () {
 
     describe('small timeout, slow page load', function () {
       it('should go to the requested page', async () => {
-        await driver.setPageLoadTimeout(5000);
+        await driver.setPageLoadTimeout(3000);
         await driver.get(`${GUINEA_PIG_PAGE}?delay=30000`);
 
         // the page should not have time to load
@@ -79,13 +79,13 @@ describe('Safari', function () {
       let startMs = Date.now();
 
       it('should go to the requested page', async () => {
-        await driver.setCommandTimeout(120000);
+        await driver.setCommandTimeout(12000);
         await driver.setPageLoadTimeout(0);
-        await driver.get(`${GUINEA_PIG_PAGE}?delay=30000`);
+        await driver.get(`${GUINEA_PIG_PAGE}?delay=3000`);
 
         // the page should load after 70000
         (await driver.source()).should.include('I am some page content');
-        (Date.now() - startMs).should.be.above(30000);
+        (Date.now() - startMs).should.be.above(3000);
       });
     });
   });
