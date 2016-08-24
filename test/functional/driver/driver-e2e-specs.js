@@ -17,7 +17,9 @@ let getNumSims = async () => {
   return (await getDevices())[TESTAPP_SIM_CAPS.platformVersion].length;
 };
 
-describe('XCUITestDriver', () => {
+describe('XCUITestDriver', function () {
+  this.timeout(200 * 1000);
+
   let server, driver;
   before(async () => {
     await killAllSimulators();
