@@ -36,6 +36,7 @@ describe('driver commands', () => {
       stubs.push(sinon.stub(d, "startWdaSession", anoop));
       stubs.push(sinon.stub(d, "startWda", anoop));
       stubs.push(sinon.stub(d, "extractBundleId", anoop));
+      stubs.push(sinon.stub(d, "installApp", anoop));
       stubs.push(sinon.stub(iosSettings, "setLocale", anoop));
       stubs.push(sinon.stub(iosSettings, "setPreferences", anoop));
     });
