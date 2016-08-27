@@ -25,7 +25,9 @@ async function deleteSession () {
   try {
     await driver.quit();
   } catch (ign) {}
-  await server.close();
+  try {
+    await server.close();
+  } catch (ign) {}
 }
 
 export { initDriver, initSession, deleteSession, HOST, PORT };
