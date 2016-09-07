@@ -155,6 +155,30 @@ describe('XCUITestDriver - element(s)', function () {
         text.length.should.eql(text1.length);
         text.should.eql(secureText);
       });
+      it('should type a backspace', async () => {
+        let el = await driver.elementByClassName('XCUIElementTypeTextField');
+
+        await driver.type(el, ['0123456789\uE003']);
+
+        let text = await el.text();
+        text.should.eql('012345678');
+      });
+      it('should type a delete', async () => {
+        let el = await driver.elementByClassName('XCUIElementTypeTextField');
+
+        await driver.type(el, ['0123456789\ue017']);
+
+        let text = await el.text();
+        text.should.eql('012345678');
+      });
+      it('should type a newline', async () => {
+        let el = await driver.elementByClassName('XCUIElementTypeTextField');
+
+        await driver.type(el, ['0123456789\uE006']);
+
+        let text = await el.text();
+        text.should.eql('0123456789');
+      });
     });
 
     describe('clear', () => {
