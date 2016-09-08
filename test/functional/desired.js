@@ -6,6 +6,7 @@ import path from 'path';
 
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '9.3';
+const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
 
 const REAL_DEVICE = !!process.env.REAL_DEVICE;
 const REAL_DEVICE_CAPS = REAL_DEVICE ? {udid: 'auto'} : {};
@@ -13,7 +14,7 @@ const REAL_DEVICE_CAPS = REAL_DEVICE ? {udid: 'auto'} : {};
 const GENERIC_CAPS = {
   platformName: 'iOS',
   platformVersion: PLATFORM_VERSION,
-  deviceName: 'iPhone 6',
+  deviceName: DEVICE_NAME,
   automationName: 'XCUITest'
 };
 
