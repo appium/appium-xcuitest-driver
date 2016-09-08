@@ -24,6 +24,7 @@ before_script:
   - npm install -g gulp
   - npm install -g mocha
   - node --version # just print out the node version, so we know for sure
+  - gulp transpile
 script:
   - gulp eslint
   - mocha --recursive build/test/$TEST -g @skip-ci -i
