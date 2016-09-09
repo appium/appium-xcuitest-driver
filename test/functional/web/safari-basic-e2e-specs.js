@@ -136,7 +136,18 @@ describe('Safari', function () {
         (await driver.title()).should.include("I am a page title");
       });
     });
+  });
 
+  describe('basics - element', function () {
+    before(async () => {
+      await driver.init(_.defaults({
+        safariIgnoreFraudWarning: false,
+      }, caps));
+    });
+    after(async () => {
+      await driver.quit();
+    });
+    
     describe('element handling', function () {
       beforeEach(async () => {
         await driver.get(GUINEA_PIG_PAGE);
