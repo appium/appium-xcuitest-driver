@@ -53,4 +53,9 @@ describe('XCUITestDriver - alerts', function () {
     (await driver.alertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();
   });
+
+  it('should throw a NoAlertOpenError when no alert is open', async () => {
+    await driver.acceptAlert()
+      .should.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
+  });
 });
