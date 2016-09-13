@@ -139,19 +139,20 @@ describe('Safari', function () {
   });
 
   describe('basics - element', function () {
-    before(async () => {
-      await driver.init(_.defaults({
-        safariIgnoreFraudWarning: false,
-      }, caps));
+    beforeEach(async () => {
+      await driver.get(GUINEA_PIG_PAGE);
     });
-    after(async () => {
-      await driver.quit();
-    });
-    
+
     describe('element handling', function () {
-      beforeEach(async () => {
-        await driver.get(GUINEA_PIG_PAGE);
+      before(async () => {
+        await driver.init(_.defaults({
+          safariIgnoreFraudWarning: false,
+        }, caps));
       });
+      after(async () => {
+        await driver.quit();
+      });
+
       it('should find a web element in the web view', async () => {
         (await driver.elementById('i_am_an_id')).should.exist;
       });
@@ -213,6 +214,17 @@ describe('Safari', function () {
         await el.sendKeys('hello world');
         ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
+    });
+    describe('element handling', function () {
+      before(async () => {
+        await driver.init(_.defaults({
+          safariIgnoreFraudWarning: false,
+        }, caps));
+      });
+      after(async () => {
+        await driver.quit();
+      });
+
       it('should send keystrokes to active element', async () => {
         let el = await driver.elementById('comments');
         await el.clear();
@@ -316,6 +328,15 @@ describe('Safari', function () {
     });
 
     describe('safariIgnoreFraudWarning false', function () {
+      before(async () => {
+        await driver.init(_.defaults({
+          safariIgnoreFraudWarning: false,
+        }, caps));
+      });
+      after(async () => {
+        await driver.quit();
+      });
+      
       it('should display a phishing warning', async () => {
         await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
         (await driver.source()).toLowerCase().should.include('phishing');
