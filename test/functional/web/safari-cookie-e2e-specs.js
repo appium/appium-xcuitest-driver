@@ -21,7 +21,9 @@ describe('safari - cookies', function () {
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   describe('within iframe webview', function () {
     it('should be able to get cookies for a page with none', async () => {

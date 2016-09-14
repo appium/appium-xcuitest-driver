@@ -15,7 +15,9 @@ describe('XCUITestDriver - basics', function () {
   before(async () => {
     driver = await initSession(UICATALOG_CAPS);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   describe('status', () => {
     it('should get the server status', async () => {

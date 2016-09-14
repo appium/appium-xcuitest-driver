@@ -27,7 +27,9 @@ describe('safari - execute', function () {
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   describe('synchronous', function () {
     it('should bubble up javascript errors', async () => {

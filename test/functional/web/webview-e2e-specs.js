@@ -17,7 +17,9 @@ describe.skip('Webview', function () {
   before(async () => {
     driver = await initSession(WEBVIEW_CAPS);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   it('should start a session, navigate to url, get title', async () => {
     let contexts = await driver.contexts();

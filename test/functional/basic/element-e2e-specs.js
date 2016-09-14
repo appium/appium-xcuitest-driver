@@ -16,7 +16,9 @@ describe('XCUITestDriver - element(s)', function () {
   before(async () => {
     driver = await initSession(UICATALOG_CAPS);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   describe('text', () => {
     it('should get the text of an element', async () => {

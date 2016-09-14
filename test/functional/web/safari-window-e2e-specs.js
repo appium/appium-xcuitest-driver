@@ -28,7 +28,9 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
     await driver.setPageLoadTimeout(100);
     await driver.setImplicitWaitTimeout(5000);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   it('should not be able to open js popup windows', async () => {
     await driver.execute("window.open('/test/guinea-pig2.html', null)");
@@ -49,7 +51,9 @@ describe('safari - windows and frames', function () {
     driver = await initSession(caps);
     await driver.setImplicitWaitTimeout(5000);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   describe('windows', function () {
     before(async () => {
