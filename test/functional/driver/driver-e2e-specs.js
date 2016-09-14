@@ -46,6 +46,27 @@ describe('XCUITestDriver', function () {
     await driver.quit();
   });
 
+  /* jshint ignore:start */
+  describe('initial orientation', async () => {
+    async function runOrientationTest (initialOrientation) {
+      let caps = _.defaults({
+        orientation: initialOrientation
+      }, TESTAPP_SIM_CAPS);
+      await driver.init(caps);
+
+      let orientation = await driver.getOrientation();
+      orientation.should.eql(initialOrientation);
+    }
+
+    for (let orientation of ['LANDSCAPE', 'PORTRAIT']) {
+      it(`should be able to start in a ${orientation} mode`, async function () {
+        this.timeout(200 * 1000);
+        await runOrientationTest(orientation);
+      });
+    }
+  });
+  /* jshint ignore:end */
+
   describe('reset', () => {
     it.skip('default: creates sim and deletes it afterwards', async function () {
       this.timeout(120 * 1000);
