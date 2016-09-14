@@ -17,7 +17,9 @@ describe('XCUITestDriver - gestures', function () {
   before(async () => {
     driver = await initSession(UICATALOG_CAPS);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   // make sure that elements are mixed up
   describe('tap', () => {

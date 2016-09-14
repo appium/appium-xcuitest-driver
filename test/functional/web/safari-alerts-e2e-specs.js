@@ -24,7 +24,9 @@ describe('safari - alerts', function () {
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   it('should accept alert', async () => {
     let el = await driver.elementById('alert1');

@@ -17,7 +17,9 @@ describe('XCUITestDriver - find', function () {
   before(async () => {
     driver = await initSession(TESTAPP_CAPS);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   describe('by id', () => {
     it('should find a single element by id', async () => {
@@ -59,7 +61,9 @@ describe('XCUITestDriver - find', function () {
   before(async () => {
     driver = await initSession(UICATALOG_CAPS);
   });
-  after(deleteSession);
+  after(async () => {
+    await deleteSession();
+  });
 
   // establish that the basic things work as we imagine
   describe('basics', () => {
