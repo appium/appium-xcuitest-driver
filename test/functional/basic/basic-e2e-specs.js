@@ -32,6 +32,10 @@ describe('XCUITestDriver - basics', function () {
       (typeof src).should.eql('string');
       src.indexOf('<AppiumAUT>').should.not.eql(-1);
     });
+    it('should have full types for elements', async () => {
+      let src = await driver.source();
+      src.indexOf('<XCUIElementTypeWindow').should.not.eql(-1);
+    });
   });
 
   describe('deactivate app', () => {
