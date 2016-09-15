@@ -112,4 +112,15 @@ describe('XCUITestDriver - basics', function () {
       await driver.setOrientation(orientation);
     });
   });
+
+  describe('window size', () => {
+    it('should be able to get the current window size', async () => {
+      let size = await driver.getWindowSize('current');
+      size.width.should.exist;
+      size.height.should.exist;
+    });
+    it('should not be able to get random window size', async () => {
+      await driver.getWindowSize('something-random').should.be.rejectedWith(/Currently only getting current window size is supported/);
+    });
+  });
 });
