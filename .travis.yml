@@ -1,9 +1,9 @@
 sudo: required
 env:
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=unit
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/basic
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/driver
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/web
+  - _FORCE_LOGS=1 PLATFORM_VERSION=10.0 TEST=unit
+  - _FORCE_LOGS=1 PLATFORM_VERSION=10.0 TEST=functional/basic
+  - _FORCE_LOGS=1 PLATFORM_VERSION=10.0 TEST=functional/driver
+  - _FORCE_LOGS=1 PLATFORM_VERSION=10.0 TEST=functional/web
 language:
   - objective-c
 osx_image: xcode8
