@@ -120,8 +120,8 @@ describe('XCUITestDriver - basics', function () {
   describe('window size', () => {
     it('should be able to get the current window size', async () => {
       let size = await driver.getWindowSize('current');
-      size.width.should.exist;
-      size.height.should.exist;
+      size.width.should.be.a.number;
+      size.height.should.be.a.number;
     });
     it('should not be able to get random window size', async () => {
       await driver.getWindowSize('something-random').should.be.rejectedWith(/Currently only getting current window size is supported/);
