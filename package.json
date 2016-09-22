@@ -42,7 +42,6 @@
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.0.0",
     "node-simctl": "^3.1.0",
-    "safari-launcher": "^2.0.5",
     "source-map-support": "^0.4.0",
     "teen_process": "^1.5.1",
     "yargs": "^3.32.0"
