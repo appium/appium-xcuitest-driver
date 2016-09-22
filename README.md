@@ -40,7 +40,7 @@ ideviceinstaller doesn't work with ios 10 yet. So we need to install [ios-deploy
 
 ```
 npm install -g ios-deploy
-``` 
+```
 
 ## Sim Resetting
 
@@ -109,8 +109,9 @@ Differences noted here
 |----------|-----------|------|
 |`noReset`|Do not destroy or shut down sim after test. Start tests running on whichever sim is running, or device is plugged in. Default `false`|`true`, `false`|
 |`processArguments`|Process arguments and environment which will be sent to the WebDriverAgent server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
-|`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (Need to get this from https://github.com/rpetrich/deviceconsole) or `idevicesyslog` (This comes with libimobiledevice)|`idevicesyslog`, `/abs/path/to/deviceconsole`|
-|`wdaLocalPort`|This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.|`eg. 8100`|
+|`wdaLocalPort`|This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.|e.g., `8100`|
+|`showXcodeLog`|Whether to display the output of the Xcode command used to run the tests. If this is `true`, there will be **lots** of extra logging at startup. Defaults to `false`|e.g., `true`|
+|`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (You can install `npm install deviceconsole`.A compiled binary named `deviceconsole` will be added to `./node_modules/deviceconsole/`.) or `idevicesyslog` (This comes with libimobiledevice)|`idevicesyslog`, `/abs/path/to/deviceconsole`|
 
 ## Watch
 
