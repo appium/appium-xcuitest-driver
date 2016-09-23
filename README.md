@@ -59,33 +59,27 @@ Setting `noReset` to `true` will leave the simulator running at the end of a tes
 
 The `appium-xcuitest-driver` has provisional support for iOS real devices. Not all functionality is currently supported.
 
-The main issue with testing on real devices is that the app under test must be built with the same provisioning profile as the WebDriverAgent is built. At the moment, the command being used to build the WebDriver agent is (with adjustments for paths):
+WebDriverAgent needs to be built with `development team` and `provisioning profile` installed on device.
 
-```
-xcodebuild \
-  -project' <path-to-WebDriverAgent>/WebDriverAgent.xcodeproj \
-  -scheme WebDriverAgentRunner \
-  -sdk iphoneos \
-  -destination platform=iOS,id=<UDID> \
-  CODE_SIGN_IDENTITY=iPhone Developer \
-  CODE_SIGNING_REQUIRED=YES \
-  test
-```
+* Open terminal go to `node_modules/appium-xcuitest-driver/WebDriverAgent` (This path is relative to you appium installation).
+    ```
+    mkdir -p Resources/WebDriverAgent.bundle
+    sh ./Scripts/bootstrap.sh -d
+  ```
 
-Therefore it is recommended that the app under test be built with the same command, making sure it is built for the same device and, also importantly, for debugging:
+* Open `WebDriverAgent.xcodeproj`. Select your `development team`. This should also auto select `Signing Ceritificate`. This should look like as shown below.
 
-```
-xcodebuild \
-  -project ./<APP>.xcodeproj \
-  -sdk iphoneos \
-  -destination platform=iOS,id=<UDID> \
-  CODE_SIGN_IDENTITY='iPhone Developer' \
-  CODE_SIGNING_REQUIRED=YES \
-  -configuration Debug \
-  clean build
-```
+  ![alt WebDriverAgent in Xcode project](https://cloud.githubusercontent.com/assets/12143988/18771980/2dc4f412-80f8-11e6-9ad6-c6883dbf6a03.png)
 
-Internally it also expects `idevicesyslog` to be installed (see installation instructions for [libimobiledevice](http://www.libimobiledevice.org/)).
+* Build `WebDriverAgent` once to verify all above steps worked. 
+  ```
+    xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' test
+
+  ```
+  Last line on build ouput above command should be `Listening on USB`. Then you are all set!
+
+  Internally it also expects idevicesyslog to be installed. For iOS 10 you need to install it like this `brew install libimobiledevice --HEAD` and for iOS 9 `brew install libimobiledevice`
+
 
 **Note:** Running WebDriverAgent tests on a real device is particularly flakey. If things stop responding, the only recourse is, most often, to restart the device. Logs in the form of the following _may_ start to occur:
 
@@ -111,7 +105,7 @@ Differences noted here
 |`processArguments`|Process arguments and environment which will be sent to the WebDriverAgent server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
 |`wdaLocalPort`|This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.|e.g., `8100`|
 |`showXcodeLog`|Whether to display the output of the Xcode command used to run the tests. If this is `true`, there will be **lots** of extra logging at startup. Defaults to `false`|e.g., `true`|
-|`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (You can install `npm install deviceconsole`.A compiled binary named `deviceconsole` will be added to `./node_modules/deviceconsole/`.) or `idevicesyslog` (This comes with libimobiledevice)|`idevicesyslog`, `/abs/path/to/deviceconsole`|
+|`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (You can install `npm install deviceconsole`. A compiled binary named `deviceconsole` will be added to `./node_modules/deviceconsole/`.) or `idevicesyslog` (This comes with libimobiledevice)|`idevicesyslog`, `/abs/path/to/deviceconsole`|
 
 ## Watch
 
