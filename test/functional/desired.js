@@ -26,13 +26,19 @@ const UICATALOG_SIM_CAPS = _.defaults({
   app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]),
 }, GENERIC_CAPS);
 
+
+// building the test app, especially on Travis, often fails
+// so use static one. Keep the npm-installed one so real device tests can be
+// run
+let testAppSim = path.resolve('test', 'assets', 'TestApp-iphonesimulator.app');
+
 const TESTAPP_CAPS = _.defaults({
-  app: REAL_DEVICE ? absolute.iphoneos : absolute.iphonesimulator,
+  app: REAL_DEVICE ? absolute.iphoneos : testAppSim,
   bundleId: 'io.appium.TestApp',
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
 const TESTAPP_SIM_CAPS = _.defaults({
-  app: absolute.iphonesimulator,
+  app: testAppSim,
   bundleId: 'io.appium.TestApp',
 }, GENERIC_CAPS);
 
