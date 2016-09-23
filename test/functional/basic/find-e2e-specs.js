@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
-import { UICATALOG_CAPS, TESTAPP_CAPS, PLATFORM_VERSION } from '../desired';
+import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
 import { clickButton } from '../helpers/navigation';
 import { initSession, deleteSession } from '../helpers/session';
 
@@ -15,7 +15,7 @@ describe('XCUITestDriver - find', function () {
 
   let driver;
   before(async () => {
-    driver = await initSession(TESTAPP_CAPS);
+    driver = await initSession(UICATALOG_CAPS);
   });
   after(async () => {
     await deleteSession();
@@ -23,23 +23,23 @@ describe('XCUITestDriver - find', function () {
 
   describe('by id', () => {
     it('should find a single element by id', async () => {
-      let el = await driver.elementById('ComputeSumButton');
+      let el = await driver.elementById('Alert Views');
       el.should.exist;
     });
 
     it('should find a single element by id wrapped in array for multi', async () => {
-      let els = await driver.elementsById('ComputeSumButton');
+      let els = await driver.elementsById('Alert Views');
       els.should.have.length(1);
     });
 
     it('should first attempt to match accessibility id', async () => {
-      let el = await driver.elementById('ComputeSumButton');
-      (await el.getAttribute('label')).should.equal('Compute Sum');
+      let el = await driver.elementById('Alert Views');
+      (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
     it('should attempt to match by string if no accessibility id matches', async () => {
-      let el = await driver.elementById('Compute Sum');
-      (await el.getAttribute('label')).should.equal('Compute Sum');
+      let el = await driver.elementById('Alert Views');
+      (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
     it.skip('should use a localized string if the id is a localization key', async () => {
@@ -48,7 +48,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it.skip('should be able to return multiple matches', async () => {
-      let els = await driver.elementsById('TextField');
+      let els = await driver.elementsById('Cell');
       els.length.should.be.greaterThan(1);
     });
   });

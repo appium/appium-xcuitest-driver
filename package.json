@@ -71,7 +71,6 @@
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-mocha": "^3.0.0",
     "gulp": "^3.8.11",
-    "ios-test-app": "^2.3.3",
     "ios-uicatalog": "^1.0.4",
     "ios-webview-app": "^1.0.4",
     "pre-commit": "^1.1.3",
