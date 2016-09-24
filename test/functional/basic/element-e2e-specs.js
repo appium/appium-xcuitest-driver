@@ -106,128 +106,159 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('interactions', function () {
-    let text1 = 'bunchoftext';
-    let text2 = 'differenttext';
-    let secureText = _.map(new Array(text1.length), () => '•').join('');
-    let phText = 'Placeholder text';
+    describe('text fields', () => {
+      let text1 = 'bunchoftext';
+      let text2 = 'differenttext';
+      let secureText = _.map(new Array(text1.length), () => '•').join('');
+      let phText = 'Placeholder text';
 
-    async function clearAndType (element, text) {
-      await element.clear();
-      await element.type(text);
-    }
+      async function clearAndType (element, text) {
+        await element.clear();
+        await element.type(text);
+      }
 
-    beforeEach(async function () {
-      // TODO: investigate why these break on Travis.
-      if (process.env.TRAVIS) this.skip();
+      beforeEach(async function () {
+        // TODO: investigate why these break on Travis.
+        if (process.env.TRAVIS) this.skip();
 
-      let el = await driver.elementByAccessibilityId('Text Fields');
-      await driver.execute('mobile: scroll', {element: el, toVisible: true});
-      await el.click();
+        let el = await driver.elementByAccessibilityId('Text Fields');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+        await el.click();
+      });
+      afterEach(async () => {
+        await clickButton(driver, 'UICatalog');
+      });
+
+      describe('set value', () => {
+        it('should type in the text field', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          await clearAndType(el, text1);
+
+          let text = await el.text();
+          text.should.eql(text1);
+        });
+        it('should be able to type into two text fields', async () => {
+          let els = await driver.elementsByClassName('XCUIElementTypeTextField');
+          await clearAndType(els[0], text1);
+
+          let text = await els[0].text();
+          text.should.eql(text1);
+
+          await clearAndType(els[1], text2);
+
+          text = await els[1].text();
+          text.should.eql(text2);
+        });
+        it('should type in a secure text field', async () => {
+          let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
+          await clearAndType(els[0], text1);
+
+          let text = await els[0].text();
+          text.should.not.eql(text1);
+          text.length.should.eql(text1.length);
+          text.should.eql(secureText);
+        });
+        it('should type a backspace', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+
+          await driver.type(el, ['0123456789\uE003']);
+
+          let text = await el.text();
+          text.should.eql('012345678');
+        });
+        it('should type a delete', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+
+          await driver.type(el, ['0123456789\ue017']);
+
+          let text = await el.text();
+          text.should.eql('012345678');
+        });
+        it('should type a newline', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+
+          await driver.type(el, ['0123456789\uE006']);
+
+          let text = await el.text();
+          text.should.eql('0123456789');
+        });
+      });
+
+      describe('clear', () => {
+        it('should clear a text field', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          await clearAndType(el, text1);
+
+          let text = await el.text();
+          text.should.eql(text1);
+
+          await el.clear();
+
+          text = await el.text();
+          text.should.eql(phText);
+        });
+        it('should be able to clear two text fields', async () => {
+          let els = await driver.elementsByClassName('XCUIElementTypeTextField');
+          await clearAndType(els[0], text1);
+
+          let text = await els[0].text();
+          text.should.eql(text1);
+
+          await clearAndType(els[1], text2);
+
+          text = await els[1].text();
+          text.should.eql(text2);
+
+          await els[0].clear();
+
+          text = await els[0].text();
+          text.should.eql(phText);
+
+          await els[1].clear();
+
+          text = await els[1].text();
+          text.should.eql(phText);
+        });
+        it('should clear a secure text field', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeSecureTextField');
+          await clearAndType(el, text1);
+
+          let text = await el.text();
+          text.should.eql(secureText);
+
+          await el.clear();
+          text = await el.text();
+          text.should.eql(phText);
+        });
+      });
+      describe('keys', () => {
+        it('should be able to send text to the active element', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          await el.click();
+
+          await driver.keys('this is a test');
+        });
+      });
     });
-    afterEach(async () => {
-      await clickButton(driver, 'UICatalog');
-    });
+    describe('picker wheel', () => {
+      it('should be able to set the value', async () => {
+        let el = await driver.elementByAccessibilityId('Picker View');
+        await el.click();
 
-    describe('set value', () => {
-      it('should type in the text field', async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeTextField');
-        await clearAndType(el, text1);
+        let wheels = await driver.elementsByClassName('XCUIElementTypePickerWheel');
 
-        let text = await el.text();
-        text.should.eql(text1);
-      });
-      it('should be able to type into two text fields', async () => {
-        let els = await driver.elementsByClassName('XCUIElementTypeTextField');
-        await clearAndType(els[0], text1);
+        let values = [65, 205, 120];
+        for (let i = 0; i < 3; i++) {
+          let wheel = wheels[i];
 
-        let text = await els[0].text();
-        text.should.eql(text1);
+          let value = await wheel.getAttribute('value');
+          parseInt(value, 10).should.eql(values[i]);
 
-        await clearAndType(els[1], text2);
+          await wheel.type(150);
 
-        text = await els[1].text();
-        text.should.eql(text2);
-      });
-      it('should type in a secure text field', async () => {
-        let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
-        await clearAndType(els[0], text1);
-
-        let text = await els[0].text();
-        text.should.not.eql(text1);
-        text.length.should.eql(text1.length);
-        text.should.eql(secureText);
-      });
-      it('should type a backspace', async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeTextField');
-
-        await driver.type(el, ['0123456789\uE003']);
-
-        let text = await el.text();
-        text.should.eql('012345678');
-      });
-      it('should type a delete', async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeTextField');
-
-        await driver.type(el, ['0123456789\ue017']);
-
-        let text = await el.text();
-        text.should.eql('012345678');
-      });
-      it('should type a newline', async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeTextField');
-
-        await driver.type(el, ['0123456789\uE006']);
-
-        let text = await el.text();
-        text.should.eql('0123456789');
-      });
-    });
-
-    describe('clear', () => {
-      it('should clear a text field', async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeTextField');
-        await clearAndType(el, text1);
-
-        let text = await el.text();
-        text.should.eql(text1);
-
-        await el.clear();
-
-        text = await el.text();
-        text.should.eql(phText);
-      });
-      it('should be able to clear two text fields', async () => {
-        let els = await driver.elementsByClassName('XCUIElementTypeTextField');
-        await clearAndType(els[0], text1);
-
-        let text = await els[0].text();
-        text.should.eql(text1);
-
-        await clearAndType(els[1], text2);
-
-        text = await els[1].text();
-        text.should.eql(text2);
-
-        await els[0].clear();
-
-        text = await els[0].text();
-        text.should.eql(phText);
-
-        await els[1].clear();
-
-        text = await els[1].text();
-        text.should.eql(phText);
-      });
-      it('should clear a secure text field', async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeSecureTextField');
-        await clearAndType(el, text1);
-
-        let text = await el.text();
-        text.should.eql(secureText);
-
-        await el.clear();
-        text = await el.text();
-        text.should.eql(phText);
+          value = await wheel.getAttribute('value');
+          parseInt(value, 10).should.eql(150);
+        }
       });
     });
   });
