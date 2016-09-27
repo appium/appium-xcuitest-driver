@@ -109,6 +109,7 @@ describe('XCUITestDriver - element(s)', function () {
     describe('text fields', () => {
       let text1 = 'bunchoftext';
       let text2 = 'differenttext';
+      let text3 = 'http://appium.io/';
       let secureText = _.map(new Array(text1.length), () => '•').join('');
       let phText = 'Placeholder text';
 
@@ -136,6 +137,13 @@ describe('XCUITestDriver - element(s)', function () {
 
           let text = await el.text();
           text.should.eql(text1);
+        });
+        it('should type a url in the text field', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          await clearAndType(el, text3);
+
+          let text = await el.text();
+          text.should.eql(text3);
         });
         it('should be able to type into two text fields', async () => {
           let els = await driver.elementsByClassName('XCUIElementTypeTextField');
