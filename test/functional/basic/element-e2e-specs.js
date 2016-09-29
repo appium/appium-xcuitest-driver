@@ -247,6 +247,20 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.keys('this is a test');
         });
       });
+      describe('hide keyboard', () => {
+        it('should be able to hide the keyboard', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          await el.click();
+
+          let db = await driver.elementByAccessibilityId('Done');
+          (await db.isDisplayed()).should.be.true;
+
+          await driver.hideKeyboard();
+
+          db = await driver.elementByAccessibilityId('Done');
+          (await db.isDisplayed()).should.be.false;
+        });
+      });
     });
     describe('picker wheel', () => {
       it('should be able to set the value', async () => {
