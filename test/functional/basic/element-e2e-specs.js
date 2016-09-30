@@ -149,8 +149,7 @@ describe('XCUITestDriver - element(s)', function () {
           let els = await driver.elementsByClassName('XCUIElementTypeTextField');
           await clearAndType(els[0], text1);
 
-          let el = await driver.elementByAccessibilityId('Done');
-          el.click();
+          await driver.hideKeyboard();
 
           await clearAndType(els[1], text2);
 
@@ -215,8 +214,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await els[0].text();
           text.should.eql(text1);
 
-          let el = await driver.elementByAccessibilityId('Done');
-          el.click();
+          await driver.hideKeyboard();
 
           await clearAndType(els[1], text2);
 
@@ -228,7 +226,7 @@ describe('XCUITestDriver - element(s)', function () {
           text = await els[0].text();
           text.should.eql(phText);
 
-          el.click();
+          await driver.hideKeyboard();
 
           await els[1].clear();
 
