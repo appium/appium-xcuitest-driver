@@ -27,7 +27,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^2.0.17",
+    "appium-base-driver": "^2.0.19",
     "appium-ios-driver": "^1.12.21",
     "appium-ios-log": "^1.2.0",
     "appium-ios-simulator": "^1.7.9",
@@ -43,7 +43,7 @@
     "lodash": "^4.0.0",
     "node-simctl": "^3.1.0",
     "source-map-support": "^0.4.0",
-    "teen_process": "^1.5.1",
+    "teen_process": "^1.7.1",
     "yargs": "^3.32.0"
   },
   "scripts": {
@@ -65,7 +65,7 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "eslint": "^2.13.1",
-    "eslint-config-appium": "0.0.6",
+    "eslint-config-appium": "^0.0.7",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-mocha": "^3.0.0",
