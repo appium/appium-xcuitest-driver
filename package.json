@@ -69,6 +69,7 @@
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-mocha": "^3.0.0",
+    "glob": "^7.1.0",
     "gulp": "^3.8.11",
     "ios-uicatalog": "^1.0.4",
     "ios-webview-app": "^1.0.4",
