@@ -38,7 +38,7 @@ describe('XCUITestDriver', function () {
 
   it('should start and stop a session', async function () {
     await driver.init(UICATALOG_SIM_CAPS);
-    let els = await driver.elementsByClassName("XCUIElementTypeButton");
+    let els = await driver.elementsByClassName("XCUIElementTypeWindow");
     els.length.should.be.at.least(1);
     await driver.quit();
   });
@@ -118,7 +118,8 @@ describe('XCUITestDriver', function () {
 
       // test
       let caps = _.defaults({
-        udid
+        udid,
+        noReset: true
       }, UICATALOG_SIM_CAPS);
 
       (await simBooted(sim)).should.be.true;
