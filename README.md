@@ -102,6 +102,24 @@ dbug WebDriverAgent Device: Jul 26 13:21:57 iamPhone XCTRunner[240] <Warning>: E
 dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - App state of (null) is still unknown <unknown> 0 1
 ```
 
+### Real device security settings
+
+On some systems there are Accessibility restrictions that make the `WebDriverAgent` system unable to run. This is usually manifest
+by `xcodebuild` returning an error code `65`. A workaround for this is to use a private key that is not stored on the system
+keychain. See [this issue](https://github.com/appium/appium/issues/6955) and [this Stack Exchange post](http://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails).
+
+To export the key, use
+
+```
+security create-keychain -p [keychain_password] MyKeychain.keychain
+security import MyPrivateKey.p12 -t agg -k MyKeychain.keychain -P [p12_Password] -A
+```
+
+where `MyPrivateKey.p12` is the private development key exported from the system keychain.
+
+The full path to the keychain can then be sent to the Appium system using the `keychainPath` desired capability,
+and the password sent through the `keychainPassword` capability.
+
 ## Usage
 
 Desired Capabilities:
@@ -119,6 +137,10 @@ Differences noted here
 |`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (installed with `npm install deviceconsole`, a compiled binary named `deviceconsole` will be added to `./node_modules/deviceconsole/`) or `idevicesyslog` (comes with libimobiledevice). Defaults to `idevicesyslog`|`idevicesyslog`, `/abs/path/to/deviceconsole`|
 |`iosInstallPause`|Time in milliseconds to pause between installing the application and starting WebDriverAgent on the device. Used particularly for larger applications. Defaults to `0`|e.g., `8000`|
 |`xcodeConfigFile`|Full path to an optional Xcode configuration file that specifies the code signing identity and team for running the WebDriverAgent on the real device.|e.g., `/path/to/myconfig.xcconfig`|
+|`keychainPath`|Full path to the private development key exported from the system keychain. Used in conjunction with `keychainPassword` when testing on real devices.|e.g., `/path/to/MyPrivateKey.p12`|
+|`keychainPassword`|Password for unlocking keychain specified in `keychainPath`.|e.g., `super awesome password`|
+
+
 ## Watch
 
 ```
