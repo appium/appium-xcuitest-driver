@@ -45,6 +45,12 @@ On some systems the default logger, `idevicesyslog`, does not work. You can inst
 npm install -g deviceconsole
 ```
 
+For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
+
+```
+gem install xcpretty
+```
+
 
 ## Sim Resetting
 
