@@ -20,12 +20,16 @@ if [[ -n "$keychainPath" && -n "$keychainPassword" ]] ; then
     security set-keychain-settings -t 3600 -l "$keychainPath"
 fi
 
-cmd=("xcodebuild" "build" "test" "-project" $project "-scheme" $scheme "-destination" $destination "-configuration" "Debug")
+cmd=("xcodebuild" "build" "test" "-project" "$project" "-scheme" "$scheme" "-destination" "$destination" "-configuration" "Debug")
 
 if [[ -n "$xcodeConfigFile" ]] ; then
-    cmd=("${cmd[@]}" '-xcconfig' $xcodeConfigFile)
+    cmd=("${cmd[@]}" "-xcconfig" "$xcodeConfigFile")
+fi
+
+if command -v xcpretty >/dev/null; then
+    cmd=("${cmd[@]}" "|" "xcpretty")
 fi
 
 echo "Running command '${cmd[@]}'"
 
-${cmd[@]} | xcpretty
+eval ${cmd[@]}
