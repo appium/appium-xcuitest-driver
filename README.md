@@ -40,6 +40,8 @@ npm install -g ios-deploy
 ```
 
 On some systems the default logger, `idevicesyslog`, does not work. You can install `deviceconsole` and specify its path with the `realDeviceLogger` capability
+(**note:** This path should be the path to the _executable_ installed by the below command. It will be the directory created by the below command, followed by
+`/deviceconsole`).
 
 ```
 npm install -g deviceconsole
