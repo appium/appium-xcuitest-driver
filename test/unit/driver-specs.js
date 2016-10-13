@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import { settings as iosSettings } from 'appium-ios-driver';
 import XCUITestDriver from '../..';
+import xcode from 'appium-xcode';
 
 
 describe('driver commands', () => {
@@ -39,6 +40,9 @@ describe('driver commands', () => {
       stubs.push(sinon.stub(d, "installApp", anoop));
       stubs.push(sinon.stub(iosSettings, "setLocale", anoop));
       stubs.push(sinon.stub(iosSettings, "setPreferences", anoop));
+      stubs.push(sinon.stub(xcode, "getMaxIOSSDK", async () => {
+        return '10.0';
+      }));
     });
 
     afterEach(() => {
