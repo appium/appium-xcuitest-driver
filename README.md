@@ -13,6 +13,11 @@
 
 * Setting geo location (https://github.com/appium/appium/issues/6856)
 * Auto accepting alerts (https://github.com/appium/appium/issues/6863)
+* Touch Actions
+
+## Known issues
+
+* Unable to interact with elements on iPads in Landscape mode (https://github.com/appium/appium/issues/6994)
 
 
 ## External dependencies
