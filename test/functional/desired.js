@@ -26,7 +26,8 @@ const GENERIC_CAPS = {
   platformName: 'iOS',
   platformVersion: PLATFORM_VERSION,
   deviceName: DEVICE_NAME,
-  automationName: 'XCUITest'
+  automationName: 'XCUITest',
+  noReset: true,
 };
 
 const UICATALOG_CAPS = _.defaults({
@@ -36,6 +37,7 @@ const UICATALOG_CAPS = _.defaults({
 const UICATALOG_SIM_CAPS = _.defaults({
   app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]),
 }, GENERIC_CAPS);
+delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests that use this
 
 const WEBVIEW_CAPS = _.defaults({
   app: path.resolve('.', 'node_modules', 'ios-webview-app', iosWebViewApp[REAL_DEVICE ? 0 : 1]),
