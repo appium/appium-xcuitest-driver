@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
-import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
+import { UICATALOG_CAPS } from '../desired';
 import { clickButton } from '../helpers/navigation';
 import { initSession, deleteSession } from '../helpers/session';
 
@@ -253,9 +253,13 @@ describe('XCUITestDriver - find', function () {
   });
 
   describe('by class name', () => {
+    afterEach(async () => {
+      await clickButton(driver, 'UICatalog');
+    });
     it('should return all image elements with internally generated ids', async function () {
-      // TODO: figure out why this test fails on iOS 10
-      if (PLATFORM_VERSION === '10.0') this.skip();
+      let el = await driver.elementByAccessibilityId('Image View');
+      await el.click();
+
       let els = await driver.elementsByClassName('XCUIElementTypeImage');
       els.length.should.be.above(0);
       for (let el of els) {
@@ -264,10 +268,6 @@ describe('XCUITestDriver - find', function () {
     });
 
     describe('textfield case', () => {
-      after(async () => {
-        await clickButton(driver, 'UICatalog');
-      });
-
       it('should find only one textfield', async () => {
         let el1 = await driver.elementByAccessibilityId('Action Sheets');
         await el1.click();
