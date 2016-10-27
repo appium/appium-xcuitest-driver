@@ -28,6 +28,11 @@ describe('general commands', () => {
 
     it('should convert class names from UIA to XCUI', async () => {
       await verifyFind('class name', 'UIAButton', 'XCUIElementTypeButton');
+      await verifyFind('class name', 'UIAMapView', 'XCUIElementTypeMap');
+      await verifyFind('class name', 'UIAScrollView', 'XCUIElementTypeScrollView');
+      await verifyFind('class name', 'UIACollectionView', 'XCUIElementTypeCollectionView');
+      await verifyFind('class name', 'UIATextView', 'XCUIElementTypeTextView');
+      await verifyFind('class name', 'UIAWebView', 'XCUIElementTypeWebView');
     });
 
     it('should convert xpaths from UIA to XCUI', async () => {
@@ -44,6 +49,9 @@ describe('general commands', () => {
       await verifyFind('xpath',
                        '//UIAButton/Weird',
                        '//XCUIElementTypeButton/Weird');
+      await verifyFind('xpath',
+                        '//UIAMapView/UIAScrollView',
+                        '//XCUIElementTypeMap/XCUIElementTypeScrollView');
     });
   });
 });
