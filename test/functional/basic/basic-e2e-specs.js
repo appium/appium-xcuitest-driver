@@ -96,24 +96,27 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('orientation', () => {
+    beforeEach(async () => {
+      await driver.setOrientation('PORTRAIT');
+    });
     it('should get the current orientation', async () => {
       let orientation = await driver.getOrientation();
       ['PORTRAIT', 'LANDSCAPE'].should.include(orientation);
     });
     it('should set the orientation', async function () {
-      // currently setting the orientation on iOS 10 does not work through WDA
-      // so skip this test for now
-      if (PLATFORM_VERSION === '10.0') this.skip();
+      await driver.setOrientation('LANDSCAPE');
 
-      let orientation = await driver.getOrientation();
+      (await driver.getOrientation()).should.eql('LANDSCAPE');
+    });
+    it('should be able to interact with an element in LANDSCAPE', async function () {
+      if (parseFloat(PLATFORM_VERSION) >= '10') this.skip();
 
-      let newOrientation = (orientation === 'PORTRAIT' ? 'LANDSCAPE' : 'PORTRAIT');
-      await driver.setOrientation(newOrientation);
+      await driver.setOrientation('LANDSCAPE');
 
-      (await driver.getOrientation()).should.eql(newOrientation);
+      let el = await driver.elementByAccessibilityId('Buttons');
+      await el.click();
 
-      // return it to the state we started in
-      await driver.setOrientation(orientation);
+      await driver.elementByAccessibilityId('Button').should.not.be.rejected;
     });
   });
 
