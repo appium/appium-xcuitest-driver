@@ -3,7 +3,6 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { UICATALOG_CAPS } from '../desired';
-import { clickButton } from '../helpers/navigation';
 import { initSession, deleteSession } from '../helpers/session';
 
 
@@ -96,7 +95,7 @@ describe('XCUITestDriver - find', function () {
   // make sure that elements are mixed up
   describe.skip('no mix up', () => {
     after(async() => {
-      await clickButton(driver, 'UICatalog');
+      await driver.back();
     });
 
     it('should not allow found elements to be mixed up', async () => {
@@ -126,7 +125,7 @@ describe('XCUITestDriver - find', function () {
       before(async () => {
         // before anything, try to go back
         // otherwise the tests will fail erroneously
-        await clickButton(driver, 'UICatalog');
+        await driver.back();
 
         // and make sure we are at the top of the page
         try {
@@ -139,7 +138,7 @@ describe('XCUITestDriver - find', function () {
         await el.click();
       });
       afterEach(async () => {
-        await clickButton(driver, 'UICatalog');
+        await driver.back();
       });
 
       it('should respect implicit wait', async () => {
@@ -200,7 +199,7 @@ describe('XCUITestDriver - find', function () {
         await el.click();
       });
       after(async () => {
-        await clickButton(driver, 'UICatalog');
+        await driver.back();
       });
 
       let test = function (path, minLength) {
@@ -228,7 +227,7 @@ describe('XCUITestDriver - find', function () {
 
   describe('by accessibility id', () => {
     afterEach(async () => {
-      await clickButton(driver, 'UICatalog');
+      await driver.back();
     });
 
     it('should find one element', async () => {
@@ -254,7 +253,7 @@ describe('XCUITestDriver - find', function () {
 
   describe('by class name', () => {
     afterEach(async () => {
-      await clickButton(driver, 'UICatalog');
+      await driver.back();
     });
     it('should return all image elements with internally generated ids', async function () {
       let el = await driver.elementByAccessibilityId('Image View');
@@ -287,7 +286,7 @@ describe('XCUITestDriver - find', function () {
       await driver.setImplicitWaitTimeout(5000);
     });
     afterEach(async () => {
-      await clickButton(driver, 'UICatalog');
+      await driver.back();
     });
 
     it('should find only one element per text field', async () => {
