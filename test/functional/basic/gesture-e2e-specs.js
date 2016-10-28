@@ -16,52 +16,69 @@ describe('XCUITestDriver - gestures', function () {
 
   let driver;
 
-  describe('tap and press', () => {
+  describe('dynamic gestures', () => {
     before(async () => {
       driver = await initSession(UICATALOG_CAPS);
-    });
-    beforeEach(async () => {
-      let el = await driver.elementByAccessibilityId('Action Sheets');
-      await el.click();
     });
     after(async () => {
       await deleteSession();
     });
     afterEach(async () => {
-      // wait a moment to allow alert to be closed
+      // wait a moment to allow anything to happen
       await B.delay(1000);
       await clickButton(driver, 'UICatalog');
     });
 
-    it('should tap on the element', async () => {
-      let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
-      let action = new wd.TouchAction(driver);
-      action.tap({el: el1});
-      await action.perform();
+    describe('tap, press, longpress', () => {
+      beforeEach(async () => {
+        let el = await driver.elementByAccessibilityId('Action Sheets');
+        await el.click();
+      });
+      it('should tap on the element', async () => {
+        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let action = new wd.TouchAction(driver);
+        action.tap({el: el1});
+        await action.perform();
 
-      let el3 = await driver.elementByAccessibilityId('OK');
-      await el3.click();
+        let el3 = await driver.elementByAccessibilityId('OK');
+        await el3.click();
+      });
+      it('should long press on an element', async () => {
+        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let action = new wd.TouchAction(driver);
+        action.longPress({el: el1});
+        await action.perform();
+
+        let el3 = await driver.elementByAccessibilityId('Cancel');
+        await el3.click();
+      });
+      it('should long press on an element with duration through press-wait-release', async () => {
+        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let action = new wd.TouchAction(driver);
+        action.press({el: el1}).wait(1200).release();
+        await action.perform();
+
+        let el3 = await driver.elementByAccessibilityId('Cancel');
+        await el3.click();
+      });
     });
-    it('should long press on an element', async () => {
-      let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+    it('should scroll using touch actions', async function () {
+      // TODO: investigate why this fails in Travis
+      //   it seems to go into the "Page Control" view before trying to scroll?
+      if (process.env.TRAVIS) this.skip();
+      let el1 = await driver.elementByAccessibilityId('Action Sheets');
+      let el2 = await driver.elementByAccessibilityId('Text Fields');
+
       let action = new wd.TouchAction(driver);
-      action.longPress({el: el1});
+      action.press({el: el1}).moveTo({el: el2}).release();
       await action.perform();
 
-      let el3 = await driver.elementByAccessibilityId('Cancel');
-      await el3.click();
-    });
-    it('should long press on an element with duration through press-wait-release', async () => {
-      let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
-      let action = new wd.TouchAction(driver);
-      action.press({el: el1}).wait(1200).release();
-      await action.perform();
-
-      let el3 = await driver.elementByAccessibilityId('Cancel');
-      await el3.click();
+      let el3 = await driver.elementByAccessibilityId('Text Fields');
+      await el3.click().should.not.be.rejected;
     });
   });
   describe('tap with tapWithShortPressDuration cap', () => {
+    // needs a special cap, so has to be in its own session
     before(async () => {
       driver = await initSession(_.defaults({
         tapWithShortPressDuration: 0.01
