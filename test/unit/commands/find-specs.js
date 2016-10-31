@@ -52,6 +52,12 @@ describe('general commands', () => {
       await verifyFind('xpath',
                         '//UIAMapView/UIAScrollView',
                         '//XCUIElementTypeMap/XCUIElementTypeScrollView');
+      await verifyFind('xpath',
+                        '//UIAMapView/UIAScrollView[@name="UIADummyData"]',
+                        '//XCUIElementTypeMap/XCUIElementTypeScrollView[@name="UIADummyData"]');
+      await verifyFind('xpath',
+                        '//XCUIElementTypeMap[@name="UIADummyData"]',
+                        '//XCUIElementTypeMap[@name="UIADummyData"]');
     });
   });
 });
