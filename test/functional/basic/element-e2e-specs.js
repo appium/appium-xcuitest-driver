@@ -138,6 +138,13 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.text();
           text.should.eql(text1);
         });
+        it('should type in the text field even before the keyboard is up', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          await el.type(text1);
+
+          let text = await el.text();
+          text.should.eql(text1);
+        });
         it('should type a url in the text field', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await clearAndType(el, text3);
@@ -248,9 +255,40 @@ describe('XCUITestDriver - element(s)', function () {
       describe('keys', () => {
         it('should be able to send text to the active element', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          // make sure the keyboard is up
           await el.click();
 
           await driver.keys('this is a test');
+        });
+        it('should type a backspace', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          // make sure the keyboard is up
+          await el.click();
+
+          await driver.keys('0123456789\uE003');
+
+          let text = await el.text();
+          text.should.eql('012345678');
+        });
+        it('should type a delete', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          // make sure the keyboard is up
+          await el.click();
+
+          await driver.keys('0123456789\ue017');
+
+          let text = await el.text();
+          text.should.eql('012345678');
+        });
+        it('should type a newline', async () => {
+          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          // make sure the keyboard is up
+          await el.click();
+
+          await driver.keys('0123456789\uE006');
+
+          let text = await el.text();
+          text.should.eql('0123456789');
         });
       });
       describe('hide keyboard', () => {
