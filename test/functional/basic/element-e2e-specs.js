@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { UICATALOG_CAPS } from '../desired';
-import { clickButton } from '../helpers/navigation';
 import { initSession, deleteSession } from '../helpers/session';
 
 
@@ -122,7 +121,7 @@ describe('XCUITestDriver - element(s)', function () {
         await el.click();
       });
       afterEach(async () => {
-        await clickButton(driver, 'UICatalog');
+        await driver.back();
       });
 
       describe('set value', () => {

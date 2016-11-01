@@ -5,7 +5,6 @@ import wd from 'wd';
 import _ from 'lodash';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
-import { clickButton } from '../helpers/navigation';
 
 
 chai.should();
@@ -26,7 +25,7 @@ describe('XCUITestDriver - gestures', function () {
     afterEach(async () => {
       // wait a moment to allow anything to happen
       await B.delay(1000);
-      await clickButton(driver, 'UICatalog');
+      await driver.back();
     });
 
     describe('tap, press, longpress', () => {
