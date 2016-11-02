@@ -22,7 +22,7 @@
 
 ## External dependencies
 
-In addition to the git submodules mentioned above, this package currently depends
+In addition to the git submodules mentioned below (see 'Development'), this package currently depends
 on `libimobiledevice` to do certain things. Install it with [Homebrew](http://brew.sh/),
 
 ```

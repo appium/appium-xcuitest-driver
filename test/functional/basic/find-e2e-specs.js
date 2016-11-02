@@ -306,4 +306,14 @@ describe('XCUITestDriver - find', function () {
       els.should.have.length(1);
     });
   });
+
+  describe.only('by predicate string', () => {
+    it.only('should find visible and invisible elements', async () => {
+      let els = await driver.elements('-ios predicate string', 'isWDVisible=false');
+      els.should.have.length.above(1);
+      els = await driver.elements('-ios predicate string', 'isWDVisible=true');
+      els.should.have.length.above(1);
+    });
+  });
+
 });
