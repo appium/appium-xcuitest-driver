@@ -13,6 +13,11 @@
 
 * Setting geo location (https://github.com/appium/appium/issues/6856)
 * Auto accepting alerts (https://github.com/appium/appium/issues/6863)
+* Touch Actions
+
+## Known issues
+
+* Unable to interact with elements on iPads in Landscape mode (https://github.com/appium/appium/issues/6994)
 
 
 ## External dependencies
@@ -33,7 +38,7 @@ do not have Carthage on your system, it can also be installed with
 brew install carthage
 ```
 
-`ideviceinstaller` doesn't work with iOS 10 yet. So we need to install [ios-deploy]()(https://github.com/phonegap/ios-deploy)
+`ideviceinstaller` doesn't work with iOS 10 yet. So we need to install [ios-deploy](https://github.com/phonegap/ios-deploy)
 
 ```
 npm install -g ios-deploy
