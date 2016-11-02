@@ -307,8 +307,8 @@ describe('XCUITestDriver - find', function () {
     });
   });
 
-  describe.only('by predicate string', () => {
-    it.only('should find visible and invisible elements', async () => {
+  describe('by predicate string', () => {
+    it('should find visible and invisible elements', async () => {
       let els = await driver.elements('-ios predicate string', 'isWDVisible=false');
       els.should.have.length.above(1);
       els = await driver.elements('-ios predicate string', 'isWDVisible=true');
