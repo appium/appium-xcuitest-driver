@@ -305,4 +305,38 @@ describe('XCUITestDriver - find', function () {
       els.should.have.length(1);
     });
   });
+
+  describe('by predicate string', () => {
+    it('should find visible elements', async () => {
+      let els = await driver.elements('-ios predicate string', 'isWDVisible=true');
+      els.should.have.length.above(0);
+    });
+
+    it('should find invisible elements', async () => {
+      let els = await driver.elements('-ios predicate string', 'isWDVisible=0');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with widths above 0', async () => {
+      let els = await driver.elements('-ios predicate string', 'wdRect.width >= 0');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with widths between 100 and 200', async () => {
+      let els = await driver.elements('-ios predicate string', 'wdRect.width BETWEEN {100,200}');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements that end in the word "View" in the name', async () => {
+      let els = await driver.elements('-ios predicate string', "wdName LIKE '* View'");
+      els.should.have.length.above(1);
+    });
+
+    it('should find elements that have x and y coordinates greater than 0', async () => {
+      let els = await driver.elements('-ios predicate string', 'wdRect.x >= 0 AND wdRect.y >= 0');
+      els.should.have.length.above(1);
+    });
+
+  });
+
 });
