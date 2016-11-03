@@ -1,4 +1,4 @@
-# appium-xcuitest-driver
+=# appium-xcuitest-driver
 
 [![NPM version](http://img.shields.io/npm/v/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
 [![Downloads](http://img.shields.io/npm/dm/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
@@ -22,7 +22,7 @@
 
 ## External dependencies
 
-In addition to the git submodules mentioned below (see 'Development'), this package currently depends
+In addition to the git submodules mentioned below (see [Development](#development)), this package currently depends
 on `libimobiledevice` to do certain things. Install it with [Homebrew](http://brew.sh/),
 
 ```
@@ -177,7 +177,7 @@ Differences noted here
 
 
 
-## Development
+## Development<a id="development"></a>
 
 This project has git submodules!
 
