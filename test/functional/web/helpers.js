@@ -1,8 +1,9 @@
 import { retry } from 'asyncbox';
 import { HOST, PORT } from '../helpers/session';
+import { util } from 'appium-support';
 
 
-const TEST_END_POINT = `http://${HOST}:${PORT}/test`;
+const TEST_END_POINT = `http://${process.env.REAL_DEVICE ? util.localIp() : HOST}:${PORT}/test`;
 const GUINEA_PIG_PAGE = `${TEST_END_POINT}/guinea-pig`;
 const GUINEA_PIG_FRAME_PAGE = `${TEST_END_POINT}/frameset.html`;
 const GUINEA_PIG_IFRAME_PAGE = `${TEST_END_POINT}/iframes.html`;
