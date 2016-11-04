@@ -1,0 +1,82 @@
+I am facing exception issues in APPIUM testing for real IOS devices from Mac.[Ipad version 10.0.2] Please help on this.
+
+Appium version - 1.6
+Xcode 8.1 
+iPAD Version - 10.0.2
+Selenium WebDriver TestNG framework
+
+As per my understanding BadParameterError is the problem. How to give this properly? Please advice.
+But I have used MobileCpabilityType & CapabilityType values. 
+Then I did with RemoteWebDriver, IOSDriver. No workarounds or combinations didnt work.
+
+
+
+I am attaching my log results below that Appium given.
+
+[Appium] Welcome to Appium v1.6.0
+[Appium] Non-default server args:
+[Appium]   address: '127.0.0.1'
+[Appium]   forceIpad: true
+[Appium] Appium REST http interface listener started on 127.0.0.1:4723
+[HTTP] --> POST /wd/hub/session {"capabilities":{"desiredCapabilities":{"app":"../../../Downloads/file.ipa","automationName":"XCUITest","browserName":"iOS","iOS":"Mac","version":"10.0.2","deviceName":"iPad mini 2 (Model A1490)","platform":"MAC"},"requiredCapabilities":{}},"desiredCapabilities":{"app":"../../../Downloads/com.apparound.mobile.partner.ipa","automationName":"XCUITest","browserName":"iOS","iOS":"Mac","version":"10.0.2","deviceName":"iPad di Gianluca","platform":"MAC"},"requiredCapabilities":{}}
+[debug] [MJSONWP] Bad parameters: BadParametersError: Parameters were incorrect. We wanted {"required":["desiredCapabilities"],"optional":["requiredCapabilities","sessionId","id"]} and you sent ["capabilities","desiredCapabilities","requiredCapabilities"]
+[HTTP] <-- POST /wd/hub/session 400 6 ms - 201 
+[HTTP] --> POST /wd/hub/session {"desiredCapabilities":{"app":"../../../Downloads/com.apparound.mobile.partner.ipa","automationName":"XCUITest","browserName":"iOS","iOS":"Mac","version":"10.0.2","deviceName":"iPad mini 2 (Model A1490)","platform":"MAC"},"requiredCapabilities":{}}
+[MJSONWP] Calling AppiumDriver.createSession() with args: [{"app":"../../../Downloads...
+[MJSONWP] Encountered internal error running command: Error: You must include a platformName capability
+    at AppiumDriver.getDriverForCaps (lib/appium.js:43:13)
+    at AppiumDriver.createSession$ (lib/appium.js:119:28)
+    at tryCatch (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:67:40)
+    at GeneratorFunctionPrototype.invoke [as _invoke] (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:315:22)
+    at GeneratorFunctionPrototype.prototype.(anonymous function) [as next] (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:100:21)
+    at invoke (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:136:37)
+    at enqueueResult (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:185:17)
+    at Promise.F (/usr/local/lib/node_modules/appium/node_modules/core-js/library/modules/$.export.js:30:36)
+    at AsyncIterator.enqueue (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:184:12)
+    at AsyncIterator.prototype.(anonymous function) [as next] (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:100:21)
+    at Object.runtime.async (/usr/local/lib/node_modules/appium/node_modules/babel-runtime/regenerator/runtime.js:209:12)
+    at AppiumDriver.createSession (lib/appium.js:150:31)
+    at lib/basedriver/driver.js:174:24
+    at tryCatcher (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/util.js:26:23)
+    at Promise._settlePromiseFromHandler (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/promise.js:510:31)
+    at Promise._settlePromiseAt (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/promise.js:584:18)
+    at Promise._settlePromiseAtPostResolution (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/promise.js:248:10)
+    at Async._drainQueue (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/async.js:128:12)
+    at Async._drainQueues (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/async.js:133:10)
+    at Immediate.Async.drainQueues (/usr/local/lib/node_modules/appium/node_modules/bluebird/js/main/async.js:15:14)
+    at runCallback (timers.js:637:20)
+    at tryOnImmediate (timers.js:610:5)
+    at processImmediate [as _immediateCallback] (timers.js:582:5)
+[HTTP] <-- POST /wd/hub/session 500 27 ms - 179 
+[HTTP] --> POST /wd/hub/session {"capabilities":{"desiredCapabilities":{"app":"../../../Downloads/file.ipa","automationName":"XCUITest","browserName":"iOS","iOS":"Mac","version":"10.0.2","deviceName":"iPad mini 2 (Model A1490)","platform":"MAC"},"requiredCapabilities":{}}}
+[debug] [MJSONWP] Bad parameters: BadParametersError: Parameters were incorrect. We wanted {"required":["desiredCapabilities"],"optional":["requiredCapabilities","sessionId","id","sessionId","id","sessionId","id"]} and you sent ["capabilities"]
+
+ECLIPSE Desired Capabilities SetUP:
+
+		
+				 DesiredCapabilities capabilities = DesiredCapabilities.ipad();
+				
+				// File applicationPath = new File("../../../Downloads/file.ipa");
+			
+				 	//capabilities.setPlatform(Platform.valueOf("MAC"));
+				 	//capabilities.setCapability(mobilecapabilitytype., value);
+				 	
+				 	
+				 	    capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
+				      capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "iOS");
+			        capabilities.setCapability(CapabilityType.VERSION, "10.0.2");
+			        //capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Mac");
+			        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPad mini 2 (Model A1490)");
+			       capabilities.setCapability("bundleid", "bundleID"); 
+			       capabilities.setCapability("UDID", "UUIDValue");
+			        capabilities.setCapability(MobilePlatform.IOS, "Mac");
+			        
+			        capabilities.setCapability(MobileCapabilityType.APP,"../../../Downloads/file.ipa");
+			       // capabilities.setCapability(MobileCapabilityType.APP, applicationPath.getAbsolutePath());
+			      
+              
+			        driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+              
+			    
+			        ((WebDriver) driver).manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+			        System.out.println("App Launched");
