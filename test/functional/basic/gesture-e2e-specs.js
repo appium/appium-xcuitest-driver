@@ -34,14 +34,27 @@ describe('XCUITestDriver - gestures', function () {
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
       });
-      it('should tap on the element', async () => {
-        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
-        let action = new wd.TouchAction(driver);
-        action.tap({el: el1});
-        await action.perform();
+      describe('tap', () => {
+        it('should tap on the element', async () => {
+          let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+          let action = new wd.TouchAction(driver);
+          action.tap({el: el1});
+          await action.perform();
 
-        let el3 = await driver.elementByAccessibilityId('OK');
-        await el3.click();
+          let el2 = await driver.elementByAccessibilityId('OK');
+          await el2.click();
+        });
+        it('should tap on arbitrary coordinates', async () => {
+          let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+          let loc = await el1.getLocation();
+
+          let action = new wd.TouchAction(driver);
+          action.tap(loc);
+          await action.perform();
+
+          let el2 = await driver.elementByAccessibilityId('OK');
+          await el2.click();
+        });
       });
       it('should long press on an element', async () => {
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
@@ -49,8 +62,8 @@ describe('XCUITestDriver - gestures', function () {
         action.longPress({el: el1});
         await action.perform();
 
-        let el3 = await driver.elementByAccessibilityId('Cancel');
-        await el3.click();
+        let el2 = await driver.elementByAccessibilityId('Cancel');
+        await el2.click();
       });
       it('should long press on an element with duration through press-wait-release', async () => {
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
@@ -58,8 +71,19 @@ describe('XCUITestDriver - gestures', function () {
         action.press({el: el1}).wait(1200).release();
         await action.perform();
 
-        let el3 = await driver.elementByAccessibilityId('Cancel');
-        await el3.click();
+        let el2 = await driver.elementByAccessibilityId('Cancel');
+        await el2.click();
+      });
+      it('should long press on arbitrary coordinate', async () => {
+        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let loc = await el1.getLocation();
+
+        let action = new wd.TouchAction(driver);
+        action.press(loc).wait(500).release();
+        await action.perform();
+
+        let el2 = await driver.elementByAccessibilityId('OK');
+        await el2.click();
       });
     });
     it('should scroll using touch actions', async function () {

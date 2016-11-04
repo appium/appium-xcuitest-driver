@@ -17,7 +17,7 @@ describe('gesture commands', () => {
       ];
       driver.performTouch(actions);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/tap/');
+      proxySpy.firstCall.args[0].should.eql('/tap/0');
       proxySpy.firstCall.args[1].should.eql('POST');
     });
     it('should send POST request to /tap/element on WDA', () => {
