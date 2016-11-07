@@ -19,13 +19,15 @@ describe('XCUITestDriver - gestures', function () {
     before(async () => {
       driver = await initSession(UICATALOG_CAPS);
     });
+    beforeEach(async () => {
+      await driver.back();
+    });
     after(async () => {
       await deleteSession();
     });
     afterEach(async () => {
       // wait a moment to allow anything to happen
-      await B.delay(1000);
-      await driver.back();
+      await B.delay(500);
     });
 
     describe('tap, press, longpress', () => {

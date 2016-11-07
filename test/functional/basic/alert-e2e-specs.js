@@ -41,7 +41,9 @@ describe('XCUITestDriver - alerts', function () {
   it('should detect Okay', async () => {
     let el = await driver.elementByAccessibilityId('Okay / Cancel');
     await el.click();
-    await B.delay(2000);
+
+    // small pause for alert to open
+    await B.delay(1000);
 
     (await driver.alertText()).should.include('A Short Title Is Best');
     await driver.acceptAlert();
@@ -50,7 +52,9 @@ describe('XCUITestDriver - alerts', function () {
   it('should detect Other', async () => {
     let el = await driver.elementByAccessibilityId('Other');
     await el.click();
-    await B.delay(2000);
+
+    // small pause for alert to open
+    await B.delay(1000);
 
     (await driver.alertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();

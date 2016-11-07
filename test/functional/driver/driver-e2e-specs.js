@@ -65,8 +65,7 @@ describe('XCUITestDriver', function () {
   /* jshint ignore:end */
 
   describe('reset', () => {
-    it.skip('default: creates sim and deletes it afterwards', async function () {
-      this.timeout(120 * 1000);
+    it.skip('default: creates sim and deletes it afterwards', async () => {
       let caps = UICATALOG_SIM_CAPS;
 
       await killAllSimulators();
@@ -82,9 +81,7 @@ describe('XCUITestDriver', function () {
       simsAfter.should.equal(simsBefore);
     });
 
-    it('with udid: uses sim and shuts it down afterwards', async function () {
-      this.timeout(120 * 1000);
-
+    it('with udid: uses sim and shuts it down afterwards', async () => {
       // before
       let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
       let sim = await getSimulator(udid);
@@ -108,9 +105,7 @@ describe('XCUITestDriver', function () {
       await deleteDevice(udid);
     });
 
-    it('with udid booted: uses sim and leaves it afterwards', async function () {
-      this.timeout(120 * 1000);
-
+    it('with udid booted: uses sim and leaves it afterwards', async () => {
       // before
       let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
       let sim = await getSimulator(udid);
@@ -138,9 +133,7 @@ describe('XCUITestDriver', function () {
       await deleteDevice(udid);
     });
 
-    it('with invalid udid: throws an error', async function () {
-      this.timeout(120 * 1000);
-
+    it('with invalid udid: throws an error', async () => {
       // test
       let caps = _.defaults({
         udid: 'some-random-udid'
@@ -149,9 +142,7 @@ describe('XCUITestDriver', function () {
       await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
     });
 
-    it('with non-existent udid: throws an error', async function () {
-      this.timeout(120 * 1000);
-
+    it('with non-existent udid: throws an error', async () => {
       // test
       let udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
       let caps = _.defaults({udid}, UICATALOG_SIM_CAPS);
