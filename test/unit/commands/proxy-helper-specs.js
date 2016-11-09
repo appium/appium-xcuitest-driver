@@ -35,7 +35,7 @@ describe('proxy commands', () => {
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if no endpoint is given', async () => {
-      await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.eventually.be.rejectedWith(/GET or POST/);
+      await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.eventually.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async () => {
