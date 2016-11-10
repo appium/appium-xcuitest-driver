@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
+import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
 
 
@@ -108,9 +108,7 @@ describe('XCUITestDriver - basics', function () {
 
       (await driver.getOrientation()).should.eql('LANDSCAPE');
     });
-    it('should be able to interact with an element in LANDSCAPE', async function () {
-      if (parseFloat(PLATFORM_VERSION) >= '10') this.skip();
-
+    it.skip('should be able to interact with an element in LANDSCAPE', async function () {
       await driver.setOrientation('LANDSCAPE');
 
       let el = await driver.elementByAccessibilityId('Buttons');

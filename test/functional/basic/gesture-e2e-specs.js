@@ -31,6 +31,7 @@ describe('XCUITestDriver - gestures', function () {
     describe('tap, press, longpress', () => {
       beforeEach(async () => {
         let el = await driver.elementByAccessibilityId('Action Sheets');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
       });
       it('should tap on the element', async () => {
