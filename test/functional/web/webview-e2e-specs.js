@@ -1,7 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { WEBVIEW_CAPS } from '../desired';
+import B from 'bluebird';
+import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
 
@@ -9,13 +10,17 @@ import { GUINEA_PIG_PAGE } from './helpers';
 chai.should();
 chai.use(chaiAsPromised);
 
-// TODO: the rd gets disconnected for some reason
-describe.skip('Webview', function () {
+describe('Webview', function () {
   this.timeout(120 * 1000);
 
   let driver;
   before(async () => {
-    driver = await initSession(WEBVIEW_CAPS);
+    driver = await initSession(UICATALOG_CAPS);
+
+    let el = await driver.elementByAccessibilityId('Web View');
+    await driver.execute('mobile: scroll', {element: el, toVisible: true});
+    await el.click();
+    await B.delay(500);
   });
   after(async () => {
     await deleteSession();
