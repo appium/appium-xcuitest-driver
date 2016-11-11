@@ -2,6 +2,7 @@ import uiCatalogApp from 'ios-uicatalog';
 import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
+import fs from 'fs';
 
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '9.3';
@@ -29,12 +30,27 @@ const GENERIC_CAPS = {
   noReset: true,
 };
 
+let simApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]);
+let realApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[0]);
+
+// on Travis, when load is high, the app often fails to build,
+// and tests fail, so use static one in assets if necessary,
+// but prefer to have one build locally
+// only do this for sim, since real device one needs to be built with dev creds
+if (!REAL_DEVICE) {
+  // this happens a single time, at load-time for the test suite,
+  // so sync method is not overly problematic
+  if (!fs.existsSync(simApp)) {
+    simApp = path.resolve('.', 'test', 'assets', 'UICatalog-iphonesimulator.app');
+  }
+}
+
 const UICATALOG_CAPS = _.defaults({
-  app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[REAL_DEVICE ? 0 : 1]),
+  app: REAL_DEVICE ? realApp : simApp,
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
 const UICATALOG_SIM_CAPS = _.defaults({
-  app: path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]),
+  app: simApp,
 }, GENERIC_CAPS);
 delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests that use this
 
