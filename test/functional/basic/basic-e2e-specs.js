@@ -1,8 +1,10 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
+import _ from 'lodash';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
+import { GUINEA_PIG_PAGE } from '../web/helpers';
 
 
 chai.should();
@@ -99,6 +101,9 @@ describe('XCUITestDriver - basics', function () {
     beforeEach(async () => {
       await driver.setOrientation('PORTRAIT');
     });
+    afterEach(async () => {
+      await driver.setOrientation('PORTRAIT');
+    });
     it('should get the current orientation', async () => {
       let orientation = await driver.getOrientation();
       ['PORTRAIT', 'LANDSCAPE'].should.include(orientation);
@@ -126,6 +131,41 @@ describe('XCUITestDriver - basics', function () {
     });
     it('should not be able to get random window size', async () => {
       await driver.getWindowSize('something-random').should.be.rejectedWith(/Currently only getting current window size is supported/);
+    });
+  });
+
+  describe.skip('contexts', () => {
+    before(async () => {
+      let el = await driver.elementByAccessibilityId('Web View');
+      await driver.execute('mobile: scroll', {element: el, toVisible: true});
+      await el.click();
+    });
+    after(async () => {
+      await driver.back();
+      await driver.execute('mobile: scroll', {direction: 'up'});
+    });
+
+    it('should start a session, navigate to url, get title', async () => {
+      let contexts = await driver.contexts();
+      contexts.length.should.be.at.least(2);
+
+      let urlBar = await driver.elementByClassName('XCUIElementTypeTextField');
+      await urlBar.clear();
+      await urlBar.sendKeys(GUINEA_PIG_PAGE);
+
+      let buttons = await driver.elementsByClassName('XCUIElementTypeButton');
+      await _.last(buttons).click();
+
+      await driver.setImplicitWaitTimeout(10000);
+      await driver.context(contexts[1]);
+
+      // wait for something on the page, before checking on title
+      await driver.elementById('i_am_a_textbox');
+
+      let title = await driver.title();
+      title.should.equal('I am a page title');
+
+      await driver.context(contexts[0]);
     });
   });
 });

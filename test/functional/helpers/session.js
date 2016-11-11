@@ -18,6 +18,8 @@ async function initSession (caps) {
   await initDriver();
   await driver.init(caps);
 
+  await driver.setImplicitWaitTimeout(5000);
+
   return driver;
 }
 
