@@ -102,6 +102,18 @@ describe('XCUITestDriver - gestures', function () {
       let el3 = await driver.elementByAccessibilityId('Text Fields');
       await el3.click().should.not.be.rejected;
     });
+    it('should double tap on an element', async () => {
+      let el = await driver.elementByAccessibilityId('Steppers');
+      await driver.execute('mobile: scroll', {element: el, toVisible: true});
+      await el.click();
+
+      let stepper = await driver.elementByAccessibilityId('Increment');
+      let action = new wd.TouchAction(driver);
+      action.tap({el: stepper, count: 2});
+      await action.perform();
+
+      await driver.elementByAccessibilityId('2').should.not.be.rejected;
+    });
   });
   describe('tap with tapWithShortPressDuration cap', () => {
     // needs a special cap, so has to be in its own session
