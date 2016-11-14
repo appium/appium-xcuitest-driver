@@ -9,6 +9,7 @@ while [[ "$#" > 1 ]]; do case $1 in
     --scheme) scheme="$2";;
     --destination) destination="$2";;
     --xcode-config-file) xcodeConfigFile="$2";;
+    --xcode-version) xcodeVersion="$2";;
     *) break;;
   esac; shift; shift
 done
@@ -20,7 +21,12 @@ if [[ -n "$keychainPath" && -n "$keychainPassword" ]] ; then
     security set-keychain-settings -t 3600 -l "$keychainPath"
 fi
 
-cmd=("xcodebuild" "build" "test" "-project" "$project" "-scheme" "$scheme" "-destination" "$destination" "-configuration" "Debug")
+if [[ $xcodeVersion -lt 8 ]] ; then
+    cmd=("xcodebuild" "build" "test")
+else
+    cmd=("xcodebuild" "build-for-testing" "test-without-building")
+fi
+cmd=("${cmd[@]}" "-project" "$project" "-scheme" "$scheme" "-destination" "$destination" "-configuration" "Debug")
 
 if [[ -n "$xcodeConfigFile" ]] ; then
     cmd=("${cmd[@]}" "-xcconfig" "$xcodeConfigFile")
