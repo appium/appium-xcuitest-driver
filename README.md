@@ -21,6 +21,7 @@
 * `shake` is not implemented due to lack of support from Apple
 * `lock` is not implemented due to lack of support from Apple
 * Setting geo-location not supported due to lack of support from Apple
+* Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
 
 
 ## External dependencies
