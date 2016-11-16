@@ -2,6 +2,8 @@
 #
 #https://github.com/appium/appium/issues/6955
 
+set -e
+
 while [[ "$#" > 1 ]]; do case $1 in
     --keychain-path) keychainPath="$2";;
     --keychain-password) keychainPassword="$2";;
@@ -21,11 +23,7 @@ if [[ -n "$keychainPath" && -n "$keychainPassword" ]] ; then
     security set-keychain-settings -t 3600 -l "$keychainPath"
 fi
 
-if [[ $xcodeVersion -lt 8 ]] ; then
-    cmd=("xcodebuild" "build" "test")
-else
-    cmd=("xcodebuild" "build-for-testing" "test-without-building")
-fi
+cmd=("xcodebuild" "build" "test")
 cmd=("${cmd[@]}" "-project" "$project" "-scheme" "$scheme" "-destination" "$destination" "-configuration" "Debug")
 
 if [[ -n "$xcodeConfigFile" ]] ; then
