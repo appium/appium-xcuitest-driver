@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.0.30",
+  "version": "2.0.37",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -65,10 +65,11 @@
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "eslint": "^2.13.1",
-    "eslint-config-appium": "^0.0.7",
+    "eslint-config-appium": "^0.1.0",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^1.9.2",
     "eslint-plugin-mocha": "^3.0.0",
+    "eslint-plugin-promise": "^3.3.1",
     "glob": "^7.1.0",
     "gulp": "^3.8.11",
     "ios-uicatalog": "^1.0.4",

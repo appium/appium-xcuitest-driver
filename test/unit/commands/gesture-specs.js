@@ -11,7 +11,7 @@ describe('gesture commands', () => {
   });
 
   describe('tap', () => {
-    it('should send POST request to /tap/0 on WDA', () => {
+    it('should send POST request to /tap on WDA when no element is given', () => {
       let actions = [
         {action: 'tap'}
       ];

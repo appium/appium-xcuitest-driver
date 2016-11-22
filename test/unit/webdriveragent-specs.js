@@ -16,7 +16,7 @@ let fakeConstructorArgs = {
 
 describe('Constructor', () => {
   it('should have a binary for the webdriver agent', async () => {
-    let agent = new WebDriverAgent(fakeConstructorArgs);
-    await fs.exists(agent.agentPath);
+    let agent = new WebDriverAgent({}, fakeConstructorArgs);
+    (await fs.exists(agent.agentPath)).should.be.true;
   });
 });
