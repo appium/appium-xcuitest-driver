@@ -7,20 +7,15 @@ import B from 'bluebird';
 import { killAllSimulators } from 'appium-ios-simulator';
 import { HOST, PORT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
-import pem_orig from 'pem';
-import https_orig from 'https';
+import https from 'https';
 
-const pem = B.promisifyAll(pem_orig);
-const https = B.promisifyAll(https_orig);
+const pem = B.promisifyAll(require('pem'));
 
 chai.should();
 chai.use(chaiAsPromised);
-//let expect = chai.expect;
 
 let caps = _.defaults({
-  safariInitialUrl: "https://localhost:9758",
-  safariAllowPopups: true,
-  nativeWebTap: true,
+  safariInitialUrl: "https://localhost:9758/"
 }, SAFARI_CAPS);
 
 let pemCertificate;
@@ -42,9 +37,8 @@ describe('Safari SSL', function () {
 
     // Host an SSL server that uses that certificate
     server = https.createServer({key: keys.serviceKey, cert: pemCertificate}, function (req, res){ 
-      res.end('If you are seeing this the certificate has been installed');
+      res.end('Arbitrary text');
     }).listen(9758);
-
   });
 
   after(async () => {
@@ -59,6 +53,10 @@ describe('Safari SSL', function () {
     it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
       caps.customSSLCert = pemCertificate;
       await driver.init(caps);
+      await driver.setPageLoadTimeout(3000);
+      await driver.get('https://localhost:9758/');
+      let source = await driver.source();
+      source.should.include('Arbitrary text');
       driver.quit();
     });
   });
