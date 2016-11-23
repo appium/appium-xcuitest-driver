@@ -1,4 +1,3 @@
-import { startServer } from '../../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
@@ -28,7 +27,6 @@ describe('Safari SSL', function () {
     await killAllSimulators();
 
     driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
 
     // Create a random pem certificate
     let privateKey = await pem.createPrivateKeyAsync();
