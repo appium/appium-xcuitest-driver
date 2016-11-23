@@ -17,7 +17,10 @@
 
 ## Known issues
 
-* Unable to interact with elements on iPads in Landscape mode (https://github.com/appium/appium/issues/6994)
+* Unable to interact with elements on devices in Landscape mode (https://github.com/appium/appium/issues/6994)
+* `shake` is not implemented due to lack of support from Apple
+* `lock` is not implemented due to lack of support from Apple
+* Setting geo-location not supported due to lack of support from Apple
 
 
 ## External dependencies

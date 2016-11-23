@@ -134,6 +134,24 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
+  describe('geo location', () => {
+    it('should throw a not-yet-implemented error', async () => {
+      await driver.setGeoLocation('0', '0', '0').should.be.rejectedWith(/Method has not yet been implemented/);
+    });
+  });
+
+  describe('shake', () => {
+    it('should throw a not-yet-implemented error', async () => {
+      await driver.shake().should.be.rejectedWith(/Method has not yet been implemented/);
+    });
+  });
+
+  describe('lock', () => {
+    it('should throw a not-yet-implemented error', async () => {
+      await driver.lock().should.be.rejectedWith(/Method has not yet been implemented/);
+    });
+  });
+
   describe.skip('contexts', () => {
     before(async () => {
       let el = await driver.elementByAccessibilityId('Web View');
