@@ -6,6 +6,7 @@ import B from 'bluebird';
 import { killAllSimulators } from 'appium-ios-simulator';
 import { HOST, PORT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
+import { startServer } from '../../..';
 import https from 'https';
 
 const pem = B.promisifyAll(require('pem'));
@@ -22,11 +23,12 @@ let pemCertificate;
 describe('Safari SSL', function () {
   this.timeout(4 * 60 * 1000);
 
-  let server, driver;
+  let server, sslServer, driver;
   before(async () => {
     await killAllSimulators();
 
     driver = wd.promiseChainRemote(HOST, PORT);
+    server = await startServer(PORT, HOST);
 
     // Create a random pem certificate
     let privateKey = await pem.createPrivateKeyAsync();
@@ -34,13 +36,14 @@ describe('Safari SSL', function () {
     pemCertificate = keys.certificate;
 
     // Host an SSL server that uses that certificate
-    server = https.createServer({key: keys.serviceKey, cert: pemCertificate}, function (req, res){ 
+    sslServer = https.createServer({key: keys.serviceKey, cert: pemCertificate}, function (req, res){ 
       res.end('Arbitrary text');
     }).listen(9758);
   });
 
   after(async () => {
     await server.close();
+    await sslServer.close();
   });
 
   describe('ssl cert', () => {
