@@ -310,7 +310,7 @@ describe('XCUITestDriver - find', function () {
     before(async () => {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
-    });
+    }); 
     it('should find visible elements', async () => {
       let els = await driver.elements('-ios predicate string', 'isWDVisible=true');
       els.should.have.length.above(0);
@@ -340,5 +340,6 @@ describe('XCUITestDriver - find', function () {
       let els = await driver.elements('-ios predicate string', 'wdRect.x >= 0 AND wdRect.y >= 0');
       els.should.have.length.above(1);
     });
+
   });
 });

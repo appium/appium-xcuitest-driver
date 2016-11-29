@@ -1,4 +1,4 @@
-# appium-xcuitest-driver
+=# appium-xcuitest-driver
 
 [![NPM version](http://img.shields.io/npm/v/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
 [![Downloads](http://img.shields.io/npm/dm/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
@@ -17,7 +17,11 @@
 
 ## Known issues
 
-* Unable to interact with elements on iPads in Landscape mode (https://github.com/appium/appium/issues/6994)
+* Unable to interact with elements on devices in Landscape mode (https://github.com/appium/appium/issues/6994)
+* `shake` is not implemented due to lack of support from Apple
+* `lock` is not implemented due to lack of support from Apple
+* Setting geo-location not supported due to lack of support from Apple
+* Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
 
 
 ## External dependencies
@@ -176,6 +180,7 @@ Differences noted here
 |`keychainPassword`|Password for unlocking keychain specified in `keychainPath`.|e.g., `super awesome password`|
 |`scaleFactor`|Simulator scale factor. This is useful to have if the default resolution of simulated device is greater than the actual display resolution. So you can scale the simulator to see the whole device screen without scrolling. |Acceptable values are: `'1.0', '0.75', '0.5', '0.33' and '0.25'`. The value should be a string.|
 |`usePrebuiltWDA`|Skips the build phase of running the WDA app. Building is then the responsibility of the user. Only works for Xcode 8+. Defaults to `false`.|e.g., `true`|
+|'preventWDAAttachments`|Sets read only permissons to Attachments subfolder of WebDriverAgent root inside Xcode's DerivedData. This is necessary to prevent XCTest framework from creating tons of unnecessary screenshots and logs, which are impossible to shutdown using programming interfaces provided by Apple.|Setting the capability to `true` will set Posix permissions of the folder to `555` and `false` will reset them back to `755`|
 
 
 
