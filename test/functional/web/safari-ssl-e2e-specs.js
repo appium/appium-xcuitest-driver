@@ -36,7 +36,8 @@ describe('Safari SSL', function () {
     pemCertificate = keys.certificate;
 
     // Host an SSL server that uses that certificate
-    sslServer = https.createServer({key: keys.serviceKey, cert: pemCertificate}, function (req, res){ 
+    const serverOpts = {key: keys.serviceKey, cert: pemCertificate};
+    sslServer = https.createServer(serverOpts, (req, res) => {
       res.end('Arbitrary text');
     }).listen(9758);
   });
