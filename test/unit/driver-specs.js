@@ -6,15 +6,15 @@ import xcode from 'appium-xcode';
 
 describe('driver commands', () => {
   let driver = new XCUITestDriver();
-  let proxySpy = sinon.spy(driver, 'proxyCommand');
+  let proxySpy = sinon.stub(driver, 'proxyCommand');
 
   afterEach(() => {
     proxySpy.reset();
   });
 
   describe('status', () => {
-    it('should send status request to WDA', () => {
-      driver.getStatus();
+    it('should send status request to WDA', async () => {
+      await driver.getStatus();
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/status');
       proxySpy.firstCall.args[1].should.eql('GET');
