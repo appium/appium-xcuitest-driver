@@ -93,8 +93,8 @@ describe('WebDriverAgent', () => {
           return xcodebuild;
         };
 
-        let prom = agent.launch('sessionId');
-        await prom.should.eventually.be.rejectedWith('xcodebuild failed');
+        await agent.launch('sessionId')
+          .should.eventually.be.rejectedWith('xcodebuild failed');
 
         await agent.quit();
       });
