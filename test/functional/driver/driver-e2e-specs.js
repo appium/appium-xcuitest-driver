@@ -153,7 +153,7 @@ describe('XCUITestDriver', function () {
       });
 
       it('with noReset set to true: leaves sim booted', async function () {
-        this.timeout(120 * 1000);
+        this.timeout(180 * 1000);
 
         // before
         let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);

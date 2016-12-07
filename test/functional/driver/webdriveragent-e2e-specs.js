@@ -65,7 +65,7 @@ describe('WebDriverAgent', () => {
 
     describe('with sim not booted', () => {
       it('should boot sim if not booted', async function () {
-        this.timeout(75 * 1000);
+        this.timeout(180 * 1000);
         let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
         await agent.launch('sessionId');
