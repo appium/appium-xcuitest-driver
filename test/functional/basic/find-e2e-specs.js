@@ -169,6 +169,8 @@ describe('XCUITestDriver - find', function () {
         await driver.elementByXPath('/XCUIElementTypeButton').should.be.rejectedWith(/NoSuchElement/);
       });
       it('should search an extended path by child', async () => {
+        // pause a moment or the next command gtes stuck getting the xpath :(
+        await B.delay(500);
         let el = await driver.elementByXPath('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
         (await el.getAttribute('name')).should.equal('Buttons');
       });
