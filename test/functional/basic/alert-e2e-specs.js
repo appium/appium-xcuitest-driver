@@ -11,6 +11,9 @@ chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - alerts', function () {
   this.timeout(200 * 1000);
+  if (process.env.TRAVIS) {
+    this.timeout(400 * 1000);
+  }
 
   let driver;
   before(async () => {
