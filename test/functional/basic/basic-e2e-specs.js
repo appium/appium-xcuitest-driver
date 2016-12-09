@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
 
@@ -25,6 +25,24 @@ describe('XCUITestDriver - basics', function () {
     it('should get the server status', async () => {
       let status = await driver.status();
       status.wda.should.exist;
+    });
+  });
+
+  describe('session', () => {
+    it('should get session details with our caps merged with WDA response', async () => {
+      let extraWdaCaps = {
+        CFBundleIdentifier: "com.example.apple-samplecode.UICatalog",
+        browserName: "UICatalog",
+        device: "iphone",
+        sdkVersion: PLATFORM_VERSION,
+      };
+      let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
+      let actual = await driver.sessionCapabilities();
+      actual.udid.should.exist;
+      // don't really know a priori what the udid should be, so just ensure
+      // it's there, and validate the rest
+      delete actual.udid;
+      actual.should.eql(expected);
     });
   });
 
