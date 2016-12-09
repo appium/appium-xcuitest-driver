@@ -1,12 +1,14 @@
-import WebDriverAgent from '../../lib/webdriveragent';
+import { WebDriverAgent, BOOTSTRAP_PATH } from '../../lib/webdriveragent';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { fs } from 'appium-support';
+import path from 'path';
+import _ from 'lodash';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 
-let fakeConstructorArgs = {
+const fakeConstructorArgs = {
   device: 'some sim',
   platformVersion: '9',
   host: 'me',
@@ -14,9 +16,29 @@ let fakeConstructorArgs = {
   realDevice: false
 };
 
+const defaultAgentPath = path.resolve(BOOTSTRAP_PATH, 'WebDriverAgent.xcodeproj');
+const customBootstrapPath = '/path/to/wda';
+const customAgentPath = '/path/to/some/agent/WebDriverAgent.xcodeproj';
+
 describe('Constructor', () => {
-  it('should have a binary for the webdriver agent', async () => {
+  it('should have a default wda agent if not specified', () => {
     let agent = new WebDriverAgent({}, fakeConstructorArgs);
-    (await fs.exists(agent.agentPath)).should.be.true;
+    agent.bootstrapPath.should.eql(BOOTSTRAP_PATH);
+    agent.agentPath.should.eql(defaultAgentPath);
+  });
+  it('should have custom wda bootstrap and default agent if only bootstrap specified', () => {
+    let agent = new WebDriverAgent({}, _.defaults({
+      bootstrapPath: customBootstrapPath,
+    }, fakeConstructorArgs));
+    agent.bootstrapPath.should.eql(customBootstrapPath);
+    agent.agentPath.should.eql(path.resolve(customBootstrapPath, 'WebDriverAgent.xcodeproj'));
+  });
+  it('should have custom wda bootstrap and agent if both specified', () => {
+    let agent = new WebDriverAgent({}, _.defaults({
+      bootstrapPath: customBootstrapPath,
+      agentPath: customAgentPath,
+    }, fakeConstructorArgs));
+    agent.bootstrapPath.should.eql(customBootstrapPath);
+    agent.agentPath.should.eql(customAgentPath);
   });
 });
