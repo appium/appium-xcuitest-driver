@@ -42,3 +42,14 @@ describe('Constructor', () => {
     agent.agentPath.should.eql(customAgentPath);
   });
 });
+
+describe('launch', () => {
+  it('should use webDriverAgentUrl override', async () => {
+    let override = "http://mockUrl:8100";
+    let args = Object.assign({}, fakeConstructorArgs);
+    args.webDriverAgentUrl = override;
+    let agent = new WebDriverAgent({}, args);
+
+    (await agent.launch("sessionId")).should.be.equal(override);
+  });
+});
