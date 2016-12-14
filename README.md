@@ -13,7 +13,7 @@
 ## Missing functionality
 
 * Setting geo location (https://github.com/appium/appium/issues/6856)
-* Auto accepting alerts (https://github.com/appium/appium/issues/6863)
+* Auto accepting/dismissing alerts (https://github.com/appium/appium/issues/6863)
 * Touch Actions
 
 ## Known issues
