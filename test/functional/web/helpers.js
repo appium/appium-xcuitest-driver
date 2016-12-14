@@ -1,4 +1,4 @@
-import { retry } from 'asyncbox';
+import { retry, retryInterval } from 'asyncbox';
 import { HOST, PORT } from '../helpers/session';
 import { util } from 'appium-support';
 
@@ -31,19 +31,8 @@ async function spinTitleEquals (driver, expectedTitle, tries = 90) {
 }
 
 async function spinWait (fn, waitMs = 10000, intMs = 500) {
-  let end = Date.now() + waitMs;
-  let spin = async () => {
-    try {
-      await fn();
-    } catch (err) {
-      if (Date.now() > end) {
-        throw new Error(`Condition unfulfilled. Error: ${err}`);
-      }
-
-      return setTimeout(async () => await spin(), intMs);
-    }
-  };
-  await spin();
+  let tries = parseInt(waitMs / intMs, 10);
+  await retryInterval(tries, intMs, fn);
 }
 
 export { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,

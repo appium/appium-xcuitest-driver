@@ -287,7 +287,7 @@ describe('Safari', function () {
         await form.submit();
         await spinWait(async () => {
           let el = await driver.elementById('your_comments');
-          (await el.getText()).should.be.equal('Your comments: This is a comment');
+          (await el.text()).should.be.equal('Your comments: This is a comment');
         });
       });
       it('should return true when the element is displayed', async () => {
