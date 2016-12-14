@@ -1,8 +1,9 @@
-import { retry } from 'asyncbox';
+import { retry, retryInterval } from 'asyncbox';
 import { HOST, PORT } from '../helpers/session';
+import { util } from 'appium-support';
 
 
-const TEST_END_POINT = `http://${HOST}:${PORT}/test`;
+const TEST_END_POINT = `http://${process.env.REAL_DEVICE ? util.localIp() : HOST}:${PORT}/test`;
 const GUINEA_PIG_PAGE = `${TEST_END_POINT}/guinea-pig`;
 const GUINEA_PIG_FRAME_PAGE = `${TEST_END_POINT}/frameset.html`;
 const GUINEA_PIG_IFRAME_PAGE = `${TEST_END_POINT}/iframes.html`;
@@ -30,19 +31,8 @@ async function spinTitleEquals (driver, expectedTitle, tries = 90) {
 }
 
 async function spinWait (fn, waitMs = 10000, intMs = 500) {
-  let end = Date.now() + waitMs;
-  let spin = async () => {
-    try {
-      await fn();
-    } catch (err) {
-      if (Date.now() > end) {
-        throw new Error(`Condition unfulfilled. Error: ${err}`);
-      }
-
-      return setTimeout(async () => await spin(), intMs);
-    }
-  };
-  await spin();
+  let tries = parseInt(waitMs / intMs, 10);
+  await retryInterval(tries, intMs, fn);
 }
 
 export { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,

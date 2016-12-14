@@ -42,9 +42,11 @@ describe('Safari', function () {
     });
 
     it('should start a session with default init', async function () {
+      let expectedTitle = process.env.REAL_DEVICE ? 'Appium: Mobile App Automation Made Awesome.'
+                                                  : 'Appium/welcome';
       await driver.init(SAFARI_CAPS);
       let title = await spinTitle(driver);
-      title.should.equal('Appium/welcome');
+      title.should.equal(expectedTitle);
     });
 
     it('should start a session with custom init', async function () {
@@ -227,9 +229,8 @@ describe('Safari', function () {
 
       it('should send keystrokes to active element', async () => {
         let el = await driver.elementById('comments');
-        await el.clear();
         await el.click();
-        await driver.keys('hello world');
+        await el.type('hello world');
         ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
       it('should clear element', async () => {
@@ -286,7 +287,7 @@ describe('Safari', function () {
         await form.submit();
         await spinWait(async () => {
           let el = await driver.elementById('your_comments');
-          (await el.getText()).should.be.equal('Your comments: This is a comment');
+          (await el.text()).should.be.equal('Your comments: This is a comment');
         });
       });
       it('should return true when the element is displayed', async () => {
@@ -336,7 +337,7 @@ describe('Safari', function () {
       after(async () => {
         await driver.quit();
       });
-      
+
       it('should display a phishing warning', async () => {
         await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
         (await driver.source()).toLowerCase().should.include('phishing');
