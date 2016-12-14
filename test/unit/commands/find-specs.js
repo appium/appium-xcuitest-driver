@@ -4,7 +4,7 @@ import XCUITestDriver from '../../..';
 
 describe('general commands', () => {
   let driver = new XCUITestDriver();
-  let proxySpy = sinon.spy(driver, 'proxyCommand');
+  let proxySpy = sinon.stub(driver, 'proxyCommand');
 
   afterEach(() => {
     proxySpy.reset();

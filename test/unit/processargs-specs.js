@@ -1,10 +1,12 @@
 import sinon from 'sinon';
+import chai from 'chai';
 import XCUITestDriver from '../..';
 
+chai.should();
 
 describe('process args', () => {
   let driver = new XCUITestDriver();
-  let proxySpy = sinon.spy(driver, 'proxyCommand');
+  let proxySpy = sinon.stub(driver, 'proxyCommand');
 
   const PROCESS_ARGS_OBJECT = {
     args: ["a", "b", "c"]
@@ -27,7 +29,7 @@ describe('process args', () => {
   });
 
   describe('send process args as object', () => {
-    it('should send translated POST /session request with valid desired caps to WDA', () => {
+    it('should send translated POST /session request with valid desired caps to WDA', async () => {
       let desiredWithProArgsObejct = {
         platformName: 'iOS',
         platformVersion: '9.3',
@@ -37,7 +39,7 @@ describe('process args', () => {
         processArguments: PROCESS_ARGS_OBJECT,
       };
       driver.validateDesiredCaps(desiredWithProArgsObejct);
-      driver.startWdaSession(desiredWithProArgsObejct.bundleId, desiredWithProArgsObejct.processArguments);
+      await driver.startWdaSession(desiredWithProArgsObejct.bundleId, desiredWithProArgsObejct.processArguments);
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');
@@ -46,7 +48,7 @@ describe('process args', () => {
   });
 
   describe('send process args json string', () => {
-    it('should send translated POST /session request with valid desired caps to WDA', () => {
+    it('should send translated POST /session request with valid desired caps to WDA', async () => {
       let desiredWithProArgsString = {
         platformName: 'iOS',
         platformVersion: '9.3',
@@ -55,8 +57,8 @@ describe('process args', () => {
         bundleId: desired.desiredCapabilities.bundleId,
         processArguments: processArgsString,
       };
-      driver.validateDesiredCaps(desiredWithProArgsString);  
-      driver.startWdaSession(desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
+      driver.validateDesiredCaps(desiredWithProArgsString);
+      await driver.startWdaSession(desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');

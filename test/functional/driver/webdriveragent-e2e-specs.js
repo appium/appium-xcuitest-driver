@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { createDevice, deleteDevice } from 'node-simctl';
+import { getVersion } from 'appium-xcode';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
 import WebDriverAgent from '../../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
@@ -24,6 +25,10 @@ function getStartOpts (device) {
 }
 
 describe('WebDriverAgent', () => {
+  let xcodeVersion;
+  before(async () => {
+    xcodeVersion = await getVersion(true);
+  });
   describe('with fresh sim', () => {
     let device;
     before(async function () {
@@ -50,7 +55,7 @@ describe('WebDriverAgent', () => {
       });
 
       it('should launch agent on a sim', async function () {
-        let agent = new WebDriverAgent(getStartOpts(device));
+        let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
         await agent.launch('sessionId');
         await request(testUrl);
@@ -60,8 +65,8 @@ describe('WebDriverAgent', () => {
 
     describe('with sim not booted', () => {
       it('should boot sim if not booted', async function () {
-        this.timeout(75 * 1000);
-        let agent = new WebDriverAgent(getStartOpts(device));
+        this.timeout(180 * 1000);
+        let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
         await agent.launch('sessionId');
         await request(testUrl);
@@ -72,7 +77,7 @@ describe('WebDriverAgent', () => {
       it('should fail if xcodebuild fails', async function () {
         this.timeout(35 * 1000);
 
-        let agent = new WebDriverAgent(getStartOpts(device));
+        let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
         agent.createXcodeBuildSubProcess = async function () {
           let args = [
@@ -88,8 +93,8 @@ describe('WebDriverAgent', () => {
           return xcodebuild;
         };
 
-        let prom = agent.launch('sessionId');
-        await prom.should.eventually.be.rejectedWith('xcodebuild failed');
+        await agent.launch('sessionId')
+          .should.eventually.be.rejectedWith('xcodebuild failed');
 
         await agent.quit();
       });
