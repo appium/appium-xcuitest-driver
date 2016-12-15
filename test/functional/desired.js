@@ -31,7 +31,7 @@ const GENERIC_CAPS = {
 };
 
 let simApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]);
-let realApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[0]);
+let realApp = process.env.UICATALOG_REAL_DEVICE || path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[0]);
 
 // on Travis, when load is high, the app often fails to build,
 // and tests fail, so use static one in assets if necessary,

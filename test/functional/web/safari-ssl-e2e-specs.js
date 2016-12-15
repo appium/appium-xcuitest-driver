@@ -25,7 +25,9 @@ describe('Safari SSL', function () {
 
   let server, sslServer, driver;
   before(async () => {
-    await killAllSimulators();
+    if (!process.env.REAL_DEVICE) {
+      await killAllSimulators();
+    }
 
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
@@ -43,8 +45,12 @@ describe('Safari SSL', function () {
   });
 
   after(async () => {
-    await server.close();
-    await sslServer.close();
+    if (server) {
+      await server.close();
+    }
+    if (sslServer) {
+      await sslServer.close();
+    }
   });
 
   describe('ssl cert', () => {

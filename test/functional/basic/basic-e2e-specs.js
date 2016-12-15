@@ -42,6 +42,7 @@ describe('XCUITestDriver - basics', function () {
       // don't really know a priori what the udid should be, so just ensure
       // it's there, and validate the rest
       delete actual.udid;
+      delete expected.udid; // for real device tests
       actual.should.eql(expected);
     });
   });
