@@ -51,6 +51,7 @@ describe('XCUITestDriver - basics', function () {
       let src = await driver.source();
       (typeof src).should.eql('string');
       src.indexOf('<AppiumAUT>').should.not.eql(-1);
+      src.indexOf('<XCUIElementTypeApplication').should.not.eql(-1);
     });
     it('should have full types for elements', async () => {
       let src = await driver.source();
