@@ -90,7 +90,7 @@ to do this is to specify them as desired capabilities:
 
 ```
 {
-  "xcodeOrgId": "<Your Team ID>",
+  "xcodeOrgId": "<Team ID>",
   "xcodeSigningId": "iPhone Developer"
 }
 ```
@@ -191,7 +191,7 @@ Differences noted here
 |`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (installed with `npm install deviceconsole`, a compiled binary named `deviceconsole` will be added to `./node_modules/deviceconsole/`) or `idevicesyslog` (comes with libimobiledevice). Defaults to `idevicesyslog`|`idevicesyslog`, `/abs/path/to/deviceconsole`|
 |`iosInstallPause`|Time in milliseconds to pause between installing the application and starting WebDriverAgent on the device. Used particularly for larger applications. Defaults to `0`|e.g., `8000`|
 |`xcodeOrgId`|Apple developer team identifier string. Must be used in conjunction with `xcodeSigningId` to take effect.|e.g., `JWL241K123`|
-|`xcodeSigningId`|String representing a signing certificate. Must be used in conjunction with `xcodeOrgId`. This is usually just "iPhone Developer"|e.g., `iPhone Developer`|
+|`xcodeSigningId`|String representing a signing certificate. Must be used in conjunction with `xcodeOrgId`. This is usually just `iPhone Developer`, so the default (if not included) is `iPhone Developer`|e.g., `iPhone Developer`|
 |`xcodeConfigFile`|Full path to an optional Xcode configuration file that specifies the code signing identity and team for running the WebDriverAgent on the real device.|e.g., `/path/to/myconfig.xcconfig`|
 |`keychainPath`|Full path to the private development key exported from the system keychain. Used in conjunction with `keychainPassword` when testing on real devices.|e.g., `/path/to/MyPrivateKey.p12`|
 |`keychainPassword`|Password for unlocking keychain specified in `keychainPath`.|e.g., `super awesome password`|
