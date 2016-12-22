@@ -7,7 +7,7 @@ env:
 language:
   - objective-c
 os: osx
-osx_image: xcode8
+osx_image: xcode82
 git: # Handle git submodules yourself
   submodules: false
 node_js:
@@ -22,6 +22,7 @@ before_install:
   - pushd WebDriverAgent && ./Scripts/bootstrap.sh && popd
 before_script:
   - rvm get head
+  - node --version
   - npm install
   - npm install -g gulp
   - npm install -g mocha

@@ -90,9 +90,6 @@ describe('XCUITestDriver - gestures', function () {
       });
     });
     it('should scroll using touch actions', async function () {
-      // TODO: investigate why this fails in Travis
-      //   it seems to go into the "Page Control" view before trying to scroll?
-      if (process.env.TRAVIS) this.skip();
       let el1 = await driver.elementByAccessibilityId('Action Sheets');
       let el2 = await driver.elementByAccessibilityId('Text Fields');
 
