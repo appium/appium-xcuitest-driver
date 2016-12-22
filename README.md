@@ -50,14 +50,6 @@ brew install carthage
 npm install -g ios-deploy
 ```
 
-On some systems the default logger, `idevicesyslog`, does not work. You can install `deviceconsole` and specify its path with the `realDeviceLogger` capability
-(**note:** This path should be the path to the _executable_ installed by the below command. It will be the directory created by the below command, followed by
-`/deviceconsole`).
-
-```
-npm install -g deviceconsole
-```
-
 For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
 
 ```
@@ -135,16 +127,7 @@ targets. This should also auto select `Signing Ceritificate`. The outcome should
 
 ### Known problems
 
-#### Logger not working
-
-If the system stops with log output like
-
-```
-[XCUITest] Waiting for WebDriverAgent to start on device
-[debug] [XCUITest] Log file for xcodebuild test: /Users/user/Library/Developer/Xcode/DerivedData/WebDriverAgent-dmeyhiwwsjtvnpfsgvqwxasavdxs/Logs/Test/23E16C13-3EFF-4980-95BD-8F69A04D91E3/Session-WebDriverAgentRunner-2016-10-07_095258-KgtUwt.log
-```
-
-The culprit is usually the real device logger. By default the system uses `idevicesyslog`, which is installed with `libimobiledevice`, but on some machines this does not work. You can test by running `idevicesyslog` in a terminal window. If it fails, you can use `deviceconsole`, specifying the full path to the program with the `realDeviceLogger` capability.
+After many failures on real devices, there can be a state where the device will no longer accept connections. To possibly remedy this, set the `useNewWDA` capability to `true`.
 
 #### Weird state
 
@@ -188,7 +171,6 @@ Differences noted here
 |`processArguments`|Process arguments and environment which will be sent to the WebDriverAgent server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
 |`wdaLocalPort`|This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.|e.g., `8100`|
 |`showXcodeLog`|Whether to display the output of the Xcode command used to run the tests. If this is `true`, there will be **lots** of extra logging at startup. Defaults to `false`|e.g., `true`|
-|`realDeviceLogger`|Device logger for real devices. It could be path to `deviceconsole` (installed with `npm install deviceconsole`, a compiled binary named `deviceconsole` will be added to `./node_modules/deviceconsole/`) or `idevicesyslog` (comes with libimobiledevice). Defaults to `idevicesyslog`|`idevicesyslog`, `/abs/path/to/deviceconsole`|
 |`iosInstallPause`|Time in milliseconds to pause between installing the application and starting WebDriverAgent on the device. Used particularly for larger applications. Defaults to `0`|e.g., `8000`|
 |`xcodeOrgId`|Apple developer team identifier string. Must be used in conjunction with `xcodeSigningId` to take effect.|e.g., `JWL241K123`|
 |`xcodeSigningId`|String representing a signing certificate. Must be used in conjunction with `xcodeOrgId`. This is usually just `iPhone Developer`, so the default (if not included) is `iPhone Developer`|e.g., `iPhone Developer`|
@@ -199,7 +181,8 @@ Differences noted here
 |`usePrebuiltWDA`|Skips the build phase of running the WDA app. Building is then the responsibility of the user. Only works for Xcode 8+. Defaults to `false`.|e.g., `true`|
 |`preventWDAAttachments`|Sets read only permissons to Attachments subfolder of WebDriverAgent root inside Xcode's DerivedData. This is necessary to prevent XCTest framework from creating tons of unnecessary screenshots and logs, which are impossible to shutdown using programming interfaces provided by Apple.|Setting the capability to `true` will set Posix permissions of the folder to `555` and `false` will reset them back to `755`|
 |`webDriverAgentUrl`|If provided, Appium will connect to an existing WebDriverAgent instance at this URL instead of starting a new one.|e.g., `http://localhost:8100`|
-
+|`useNewWDA`|If `true`, forces uninstall of any existing WebDriverAgent app on device. This can provide stability in some situations. Defaults to `false`.|e.g., `true`|
+|`wdaLaunchTimeout`|Time, in ms, to wait for WebDriverAgewnt to be pingable. Defaults to 60000ms.|e.g., `30000`|
 
 
 
@@ -226,6 +209,18 @@ npm run watch
 ```
 npm test
 ```
+
+There are also a number of environment variables that can be used when running
+the tests locally. These include:
+
+* `REAL_DEVICE` - set to anything truthy, makes the tests use real device capabilities
+* `_FORCE_LOGS` - set to `1` to get the log output, not just spec
+* `PLATFORM_VERSION` - change the version to run the tests against (defaults to `9.3`)
+* `XCCONFIG_FILE` - specify where the xcode config file is for a real device run (if
+  blank, and running a real device test, it will search for the first file in
+  the root directory of the repo with the extension "xcconfig")
+* `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
+  the npm installed one is not built for real device
 
 
 ### WebDriverAgent Updating

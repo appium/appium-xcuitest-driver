@@ -61,18 +61,6 @@ describe('WebDriverAgent', () => {
         await request(testUrl);
         await agent.quit();
       });
-    });
-
-    describe('with sim not booted', () => {
-      it('should boot sim if not booted', async function () {
-        this.timeout(180 * 1000);
-        let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
-
-        await agent.launch('sessionId');
-        await request(testUrl);
-        await agent.quit();
-        await device.shutdown();
-      });
 
       it('should fail if xcodebuild fails', async function () {
         this.timeout(35 * 1000);

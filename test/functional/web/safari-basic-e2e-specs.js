@@ -26,14 +26,18 @@ describe('Safari', function () {
 
   let server, driver;
   before(async () => {
-    await killAllSimulators();
+    if (!process.env.REAL_DEVICE) {
+      await killAllSimulators();
+    }
 
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
 
   after(async () => {
-    await server.close();
+    if (server) {
+      await server.close();
+    }
   });
 
   describe('init', () => {
