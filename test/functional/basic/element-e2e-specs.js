@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
+import B from 'bluebird';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
 
@@ -295,8 +296,12 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.hideKeyboard();
 
-          db = await driver.elementByAccessibilityId('Done');
-          (await db.isDisplayed()).should.be.false;
+          // pause for a second to allow keyboard to go out of view
+          // otherwise slow systems will reject the search for `Done` and
+          // fast ones will get the element but it will be invisible
+          await B.delay(1000);
+
+          db = await driver.elementByAccessibilityId('Done').should.eventually.be.rejected;
         });
       });
     });

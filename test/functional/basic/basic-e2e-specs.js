@@ -172,7 +172,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe.skip('contexts', () => {
+  describe('contexts', () => {
     before(async () => {
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
@@ -189,6 +189,7 @@ describe('XCUITestDriver - basics', function () {
 
       let urlBar = await driver.elementByClassName('XCUIElementTypeTextField');
       await urlBar.clear();
+
       await urlBar.sendKeys(GUINEA_PIG_PAGE);
 
       let buttons = await driver.elementsByClassName('XCUIElementTypeButton');
