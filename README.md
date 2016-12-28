@@ -121,9 +121,15 @@ targets. This should also auto select `Signing Ceritificate`. The outcome should
     xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' test
 
   ```
-  Last line on build output above command should be `Listening on USB`. Then you are all set!
+  One of the last lines of build output from the above command should be something like `Test Case '-[UITestingUITests testRunner]' started.`.
+  To completely verify, you can try accessing the WebDriverAgent server status (**note:** on a real device you will need to know the
+  device url, and substitute it for `localhost` in the `DEVICE_URL` environment variable below):
+  ```
+    export DEVICE_URL='http://localhost:8100'
+    export JSON_HEADER='-H "Content-Type: application/json;charset=UTF-8, accept: application/json"'
+    curl -X GET $JSON_HEADER $DEVICE_URL/status
+  ```
 
-  Internally it also expects `idevicesyslog` to be installed. For iOS 10 you need to install it like this `brew install libimobiledevice --HEAD` and for iOS 9 `brew install libimobiledevice`
 
 ### Known problems
 
