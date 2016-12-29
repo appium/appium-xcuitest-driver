@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
 
 
@@ -11,7 +11,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - basics', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
@@ -173,7 +173,11 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('contexts', () => {
-    before(async () => {
+    before(async function () {
+      if (process.env.TRAVIS) {
+        this.skip();
+      }
+
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();

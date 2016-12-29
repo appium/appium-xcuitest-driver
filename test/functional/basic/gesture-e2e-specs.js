@@ -5,14 +5,14 @@ import wd from 'wd';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - gestures', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
 

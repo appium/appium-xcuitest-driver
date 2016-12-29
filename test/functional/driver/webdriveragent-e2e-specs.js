@@ -7,6 +7,7 @@ import request from 'request-promise';
 import WebDriverAgent from '../../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
 import { PLATFORM_VERSION } from '../desired';
+import { MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
@@ -24,7 +25,9 @@ function getStartOpts (device) {
   };
 }
 
-describe('WebDriverAgent', () => {
+describe('WebDriverAgent', function () {
+  this.timeout(MOCHA_TIMEOUT);
+
   let xcodeVersion;
   before(async () => {
     xcodeVersion = await getVersion(true);
@@ -32,13 +35,12 @@ describe('WebDriverAgent', () => {
   describe('with fresh sim', () => {
     let device;
     before(async function () {
-      this.timeout(2 * 60 * 1000);
       let simUdid = await createDevice('webDriverAgentTest', 'iPhone 6', PLATFORM_VERSION);
       device = await getSimulator(simUdid);
     });
 
     after(async function () {
-      this.timeout(2 * 60 * 1000);
+      this.timeout(MOCHA_TIMEOUT);
 
       await device.shutdown();
 
@@ -63,6 +65,7 @@ describe('WebDriverAgent', () => {
       });
 
       it('should fail if xcodebuild fails', async function () {
+        // short timeout
         this.timeout(35 * 1000);
 
         let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));

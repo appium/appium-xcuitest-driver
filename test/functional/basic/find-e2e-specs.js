@@ -3,14 +3,14 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - find', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
@@ -54,7 +54,7 @@ describe('XCUITestDriver - find', function () {
 });
 
 describe('XCUITestDriver - find', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {

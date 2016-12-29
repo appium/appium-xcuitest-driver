@@ -6,7 +6,7 @@ import wd from 'wd';
 import { killAllSimulators, getSimulator } from 'appium-ios-simulator';
 import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
-import { HOST, PORT } from '../helpers/session';
+import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
 
 
@@ -18,7 +18,7 @@ let getNumSims = async () => {
 };
 
 describe('XCUITestDriver', function () {
-  this.timeout(400 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let server, driver;
   before(async () => {
@@ -59,7 +59,7 @@ describe('XCUITestDriver', function () {
 
       for (let orientation of ['LANDSCAPE', 'PORTRAIT']) {
         it(`should be able to start in a ${orientation} mode`, async function () {
-          this.timeout(200 * 1000);
+          this.timeout(MOCHA_TIMEOUT);
           await runOrientationTest(orientation);
         });
       }
@@ -153,7 +153,7 @@ describe('XCUITestDriver', function () {
       });
 
       it('with noReset set to true: leaves sim booted', async function () {
-        this.timeout(180 * 1000);
+        this.timeout(MOCHA_TIMEOUT);
 
         // before
         let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);

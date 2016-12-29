@@ -2,7 +2,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { SAFARI_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
 
 
@@ -16,7 +16,7 @@ const GET_WRONG_INNERHTML = `return document.body.innerHTML.indexOf('I am not so
 const GET_ELEM_BY_TAGNAME = `return document.getElementsByTagName('a');`;
 
 describe('safari - execute', function () {
-  this.timeout(4 * 60 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {

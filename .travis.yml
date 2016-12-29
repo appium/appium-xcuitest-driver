@@ -1,13 +1,13 @@
 sudo: required
 env:
-  - _FORCE_LOGS=1 PLATFORM_VERSION=10.2 TEST=unit
-  - _FORCE_LOGS=1 PLATFORM_VERSION=10.2 TEST=functional/basic
-  - _FORCE_LOGS=1 PLATFORM_VERSION=10.2 TEST=functional/driver
-  - _FORCE_LOGS=1 PLATFORM_VERSION=10.2 TEST=functional/web
+  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=unit
+  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/basic
+  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/driver
+  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/web
 language:
   - objective-c
 os: osx
-osx_image: xcode8.2
+osx_image: xcode8
 git: # Handle git submodules yourself
   submodules: false
 node_js:
@@ -29,4 +29,4 @@ before_script:
   - gulp transpile
 script:
   - gulp eslint
-  - mocha --recursive build/test/$TEST -g @skip-ci -i
+  - mocha -t 480000 --recursive build/test/$TEST -g @skip-ci -i
