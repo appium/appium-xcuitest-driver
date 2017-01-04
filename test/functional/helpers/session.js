@@ -4,6 +4,7 @@ import { startServer } from '../../..';
 
 const HOST = '0.0.0.0',
       PORT = 4994;
+const MOCHA_TIMEOUT = 60 * 1000 * (process.env.TRAVIS ? 8 : 4);
 
 let driver, server;
 
@@ -32,4 +33,4 @@ async function deleteSession () {
   } catch (ign) {}
 }
 
-export { initDriver, initSession, deleteSession, HOST, PORT };
+export { initDriver, initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT };

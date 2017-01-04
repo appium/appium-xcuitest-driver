@@ -5,14 +5,14 @@ import stream from 'stream';
 import unzip from 'unzip';
 import path from 'path';
 import { UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - file movement', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {

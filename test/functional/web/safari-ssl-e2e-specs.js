@@ -4,7 +4,7 @@ import wd from 'wd';
 import _ from 'lodash';
 import B from 'bluebird';
 import { killAllSimulators } from 'appium-ios-simulator';
-import { HOST, PORT } from '../helpers/session';
+import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { startServer } from '../../..';
 import https from 'https';
@@ -21,7 +21,7 @@ let caps = _.defaults({
 let pemCertificate;
 
 describe('Safari SSL', function () {
-  this.timeout(4 * 60 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let server, sslServer, driver;
   before(async () => {

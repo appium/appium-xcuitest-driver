@@ -3,14 +3,14 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - element(s)', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
@@ -102,6 +102,16 @@ describe('XCUITestDriver - element(s)', function () {
       let size = await el.getSize();
       size.width.should.exist;
       size.height.should.exist;
+    });
+  });
+
+  describe('touch click', () => {
+    it('should click an element', async () => {
+      let el = await driver.elementByAccessibilityId('Buttons');
+      await el.tap();
+      (await driver.elementsByClassName('XCUIElementTypeButton')).should.have.length.above(4);
+
+      await driver.back();
     });
   });
 

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { SAFARI_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE, GUINEA_PIG_IFRAME_PAGE } from './helpers';
 
 
@@ -10,7 +10,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('safari - cookies', function () {
-  this.timeout(4 * 60 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {

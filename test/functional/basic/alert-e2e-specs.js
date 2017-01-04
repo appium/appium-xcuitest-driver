@@ -3,17 +3,14 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from '../desired';
 import { clickBack } from '../helpers/navigation';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - alerts', function () {
-  this.timeout(200 * 1000);
-  if (process.env.TRAVIS) {
-    this.timeout(400 * 1000);
-  }
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
