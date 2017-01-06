@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from '../desired';
-import { clickBack } from '../helpers/navigation';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
@@ -26,7 +25,7 @@ describe('XCUITestDriver - alerts', function () {
     await el1.click();
   });
   afterEach(async () => {
-    await clickBack(driver);
+    await driver.back();
   });
 
   it('should detect Simple', async () => {
@@ -57,6 +56,22 @@ describe('XCUITestDriver - alerts', function () {
     await B.delay(1000);
 
     (await driver.alertText()).should.include('A Short Title Is Best');
+    await driver.dismissAlert();
+  });
+
+  it('should be able to interact with text field', async () => {
+    let el = await driver.elementByAccessibilityId('Text Entry');
+    await el.click();
+
+    // small pause for alert to open
+    await B.delay(1000);
+
+    let textField = await driver.elementByClassName('XCUIElementTypeTextField');
+    await textField.type('hello world');
+
+    let text = await textField.text();
+    text.should.equal('hello world');
+
     await driver.dismissAlert();
   });
 
