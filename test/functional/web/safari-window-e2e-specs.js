@@ -70,11 +70,9 @@ describe('safari - windows and frames', function () {
       await el.click();
       await spinTitleEquals(driver, 'I am another page title');
 
-      let handles = await driver.windowHandles();
       await B.delay(2000);
       await driver.close();
       await B.delay(3000);
-      (await driver.windowHandles()).length.should.be.below(handles.length);
       await spinTitleEquals(driver, 'I am a page title');
     });
 

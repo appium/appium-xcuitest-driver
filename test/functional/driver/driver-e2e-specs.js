@@ -29,15 +29,15 @@ describe('XCUITestDriver', function () {
     await server.close();
   });
 
-  if (!process.env.REAL_DEVICE) {
-    afterEach(async () => {
-      // try to get rid of the driver, so if a test fails the rest of the
-      // tests aren't compromised
-      try {
-        await driver.quit();
-      } catch (ign) {}
-    });
+  afterEach(async () => {
+    // try to get rid of the driver, so if a test fails the rest of the
+    // tests aren't compromised
+    try {
+      await driver.quit();
+    } catch (ign) {}
+  });
 
+  if (!process.env.REAL_DEVICE) {
     it('should start and stop a session', async function () {
       await driver.init(UICATALOG_SIM_CAPS);
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");

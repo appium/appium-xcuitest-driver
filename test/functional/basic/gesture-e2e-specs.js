@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
+import { APPIUM_IMAGE } from '../web/helpers';
 
 
 chai.should();
@@ -123,7 +124,7 @@ describe('XCUITestDriver - gestures', function () {
       // in automation, this just checks that errors aren't thrown
       it('should be able to pinch', async () => {
         let ctxs;
-        await retryInterval(4, 500, async () => {
+        await retryInterval(10, 1000, async () => {
           // on some systems (like Travis) it takes a while to load the webview
           ctxs = await driver.contexts();
           if (ctxs.length === 1) {
@@ -132,7 +133,7 @@ describe('XCUITestDriver - gestures', function () {
         });
         await driver.context(ctxs[1]);
 
-        await driver.get('https://avatars1.githubusercontent.com/u/3221291?v=3&s=400');
+        await driver.get(APPIUM_IMAGE);
 
         await driver.context(ctxs[0]);
 
