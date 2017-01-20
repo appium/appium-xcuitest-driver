@@ -4,7 +4,7 @@
 
 | method | endpoint                               | req params | opt params |
 | ------ | -------------------------------------- | ---------- | ---------- |
-| POST   | /homescreen                            | | |
+| POST   | /wda/homescreen                        | | |
 | POST   | /source                                | | accessible |
 | GET    | /inspector                             | | |
 | GET    | /inspector.js                          | | |
@@ -24,7 +24,7 @@
 | GET    | /alert/text                            | | |
 | POST   | /alert/accept                          | | |
 | POST   | /alert/dismiss                         | | |
-| POST   | /deactivateApp                         | | duration |
+| POST   | /wda/deactivateApp                     | | duration |
 | POST   | /timeouts                              | * | |
 | POST   | /source                                | | accessible |
 | GET    | /element/:uuid/enabled                 | | |
@@ -32,28 +32,28 @@
 | GET    | /element/:uuid/attribute/:name         | | |
 | GET    | /element/:uuid/text                    | | |
 | GET    | /element/:uuid/displayed               | | |
-| GET    | /element/:uuid/accessible              | | |
+| GET    | /wda/element/:uuid/accessible          | | |
 | GET    | /element/:uuid/name                    | | |
 | POST   | /element/:uuid/value                   | value | |
 | POST   | /element/:uuid/click                   | | |
 | POST   | /element/:uuid/clear                   | | |
-| POST   | /uiaElement/:uuid/doubleTap            | | |
-| POST   | /uiaElement/:uuid/touchAndHold         | duration | |
-| POST   | /uiaElement/:uuid/scroll               | | name, direction, predicateString, toVisible |
+| POST   | /wda/element/:uuid/doubleTap        | | |
+| POST   | /wda/element/:uuid/touchAndHold     | duration | |
+| POST   | /wda/element/:uuid/scroll           | | name, direction, predicateString, toVisible |
 | POST   | /uiaElement/:uuid/value                | value | |
-| POST   | /uiaTarget/:uuid/dragfromtoforduration | fromX, fromY, toX, toY, duration | |
-| POST   | /tap/:uuid                             | x, y | |
-| POST   | /keys                                  | value | |
-| GET    | /window/:uuid/size                     | | |
+| POST   | /wda/element/:uuid/dragfromtoforduration | fromX, fromY, toX, toY, duration | |
+| POST   | /wda/tap/:uuid                         | x, y | |
+| POST   | /wda/keys                              | value | |
+| GET    | /window/size                           | | |
 | POST   | /element                               | using, value | |
 | POST   | /elements                              | using, value | |
-| GET    | /uiaElement/:uuid/getVisibleCells      | | |
+| GET    | /wda/uiaElement/:uuid/getVisibleCells  | | |
 | POST   | /element/:uuid/element                 | using, value | |
 | POST   | /element/:uuid/elements                | using, value | |
 | GET    | /orientation                           | | |
 | POST   | /orientation                           | orientation | |
 | GET    | /screenshot                            | | |
-| POST   | /simulator/touch_id                    | match | |
+| POST   | /wda/simulator/touch_id                | match | |
 
 
 \* implemented but intentionally not supported

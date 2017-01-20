@@ -17,7 +17,7 @@ describe('gesture commands', () => {
       ];
       await driver.performTouch(actions);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/tap/0');
+      proxySpy.firstCall.args[0].should.eql('/wda/tap/0');
       proxySpy.firstCall.args[1].should.eql('POST');
     });
     it('should send POST request to /tap/element on WDA', async () => {
@@ -26,7 +26,7 @@ describe('gesture commands', () => {
       ];
       await driver.performTouch(actions);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/tap/42');
+      proxySpy.firstCall.args[0].should.eql('/wda/tap/42');
       proxySpy.firstCall.args[1].should.eql('POST');
     });
     it('should send POST request to /tap/element with offset on WDA', async () => {
@@ -35,7 +35,7 @@ describe('gesture commands', () => {
       ];
       await driver.performTouch(actions);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/tap/42');
+      proxySpy.firstCall.args[0].should.eql('/wda/tap/42');
       proxySpy.firstCall.args[1].should.eql('POST');
     });
   });
@@ -55,33 +55,33 @@ describe('gesture commands', () => {
       it('should pass through bare element', async () => {
         await driver.execute('mobile: scroll', {element: 4, direction: 'down'});
         proxySpy.calledOnce.should.be.true;
-        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[0].should.eql('/wda/element/4/scroll');
         proxySpy.firstCall.args[1].should.eql('POST');
       });
       it('should unpack element object', async () => {
         await driver.execute('mobile: scroll', {element: {ELEMENT: 4}, direction: 'down'});
         proxySpy.calledOnce.should.be.true;
-        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[0].should.eql('/wda/element/4/scroll');
         proxySpy.firstCall.args[1].should.eql('POST');
       });
       it('should pass name strategy exclusively', async () => {
         await driver.execute('mobile: scroll', {element: 4, direction: 'down', name: 'something'});
         proxySpy.calledOnce.should.be.true;
-        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[0].should.eql('/wda/element/4/scroll');
         proxySpy.firstCall.args[1].should.eql('POST');
         proxySpy.firstCall.args[2].should.eql({name: 'something'});
       });
       it('should pass direction strategy exclusively', async () => {
         await driver.execute('mobile: scroll', {element: 4, direction: 'down', predicateString: 'something'});
         proxySpy.calledOnce.should.be.true;
-        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[0].should.eql('/wda/element/4/scroll');
         proxySpy.firstCall.args[1].should.eql('POST');
         proxySpy.firstCall.args[2].should.eql({direction: 'down'});
       });
       it('should pass predicateString strategy exclusively', async () => {
         await driver.execute('mobile: scroll', {element: 4, toVisible: true, predicateString: 'something'});
         proxySpy.calledOnce.should.be.true;
-        proxySpy.firstCall.args[0].should.eql('/uiaElement/4/scroll');
+        proxySpy.firstCall.args[0].should.eql('/wda/element/4/scroll');
         proxySpy.firstCall.args[1].should.eql('POST');
         proxySpy.firstCall.args[2].should.eql({predicateString: 'something'});
       });

@@ -308,25 +308,23 @@ describe('XCUITestDriver - find', function () {
     });
   });
 
-  describe('by predicate string', () => {
+  describe.skip('by predicate string', () => {
     before(async () => {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
     });
-    it.skip('should find visible elements', async () => {
-      // skipped until WDA fixes predicates
+    it('should find visible elements', async () => {
       let els = await driver.elements('-ios predicate string', 'visible = 1');
       els.should.have.length.above(0);
     });
 
-    it.skip('should find invisible elements', async () => {
-      // skipped until WDA fixes predicates
+    it('should find invisible elements', async () => {
       let els = await driver.elements('-ios predicate string', 'visible = 0');
       els.should.have.length.above(0);
     });
 
     it('should find elements with widths above 0', async () => {
-      let els = await driver.elements('-ios predicate string', 'wdRect.width >= 0');
+      let els = await driver.elements('-ios predicate string', 'wdRect. >= 0');
       els.should.have.length.above(0);
     });
 
@@ -344,6 +342,5 @@ describe('XCUITestDriver - find', function () {
       let els = await driver.elements('-ios predicate string', 'wdRect.x >= 0 AND wdRect.y >= 0');
       els.should.have.length.above(1);
     });
-
   });
 });
