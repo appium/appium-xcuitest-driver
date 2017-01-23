@@ -2,8 +2,9 @@ import wd from 'wd';
 import { startServer } from '../../..';
 
 
-const HOST = 'localhost',
+const HOST = '0.0.0.0',
       PORT = 4994;
+const MOCHA_TIMEOUT = 60 * 1000 * (process.env.TRAVIS ? 8 : 4);
 
 let driver, server;
 
@@ -18,6 +19,8 @@ async function initSession (caps) {
   await initDriver();
   await driver.init(caps);
 
+  await driver.setImplicitWaitTimeout(5000);
+
   return driver;
 }
 
@@ -30,4 +33,4 @@ async function deleteSession () {
   } catch (ign) {}
 }
 
-export { initDriver, initSession, deleteSession, HOST, PORT };
+export { initDriver, initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT };

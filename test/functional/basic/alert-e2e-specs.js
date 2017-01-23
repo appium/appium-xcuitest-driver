@@ -2,15 +2,14 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from '../desired';
-import { clickBack } from '../helpers/navigation';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - alerts', function () {
-  this.timeout(200 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
@@ -26,7 +25,7 @@ describe('XCUITestDriver - alerts', function () {
     await el1.click();
   });
   afterEach(async () => {
-    await clickBack(driver);
+    await driver.back();
   });
 
   it('should detect Simple', async () => {
@@ -41,7 +40,9 @@ describe('XCUITestDriver - alerts', function () {
   it('should detect Okay', async () => {
     let el = await driver.elementByAccessibilityId('Okay / Cancel');
     await el.click();
-    await B.delay(2000);
+
+    // small pause for alert to open
+    await B.delay(1000);
 
     (await driver.alertText()).should.include('A Short Title Is Best');
     await driver.acceptAlert();
@@ -50,9 +51,27 @@ describe('XCUITestDriver - alerts', function () {
   it('should detect Other', async () => {
     let el = await driver.elementByAccessibilityId('Other');
     await el.click();
-    await B.delay(2000);
+
+    // small pause for alert to open
+    await B.delay(1000);
 
     (await driver.alertText()).should.include('A Short Title Is Best');
+    await driver.dismissAlert();
+  });
+
+  it('should be able to interact with text field', async () => {
+    let el = await driver.elementByAccessibilityId('Text Entry');
+    await el.click();
+
+    // small pause for alert to open
+    await B.delay(1000);
+
+    let textField = await driver.elementByClassName('XCUIElementTypeTextField');
+    await textField.type('hello world');
+
+    let text = await textField.text();
+    text.should.equal('hello world');
+
     await driver.dismissAlert();
   });
 

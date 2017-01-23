@@ -3,7 +3,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { SAFARI_CAPS } from '../desired';
-import { initSession, deleteSession } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
          GUINEA_PIG_IFRAME_PAGE } from './helpers';
 
@@ -15,7 +15,7 @@ const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`
 const GET_ELEM_ASYNC = `arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);`;
 
 describe('safari - windows and frames - without safariAllowPopups', function () {
-  this.timeout(4 * 60 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
@@ -39,7 +39,7 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
 });
 
 describe('safari - windows and frames', function () {
-  this.timeout(4 * 60 * 1000);
+  this.timeout(MOCHA_TIMEOUT);
 
   let driver;
   before(async () => {
@@ -70,11 +70,9 @@ describe('safari - windows and frames', function () {
       await el.click();
       await spinTitleEquals(driver, 'I am another page title');
 
-      let handles = await driver.windowHandles();
       await B.delay(2000);
       await driver.close();
       await B.delay(3000);
-      (await driver.windowHandles()).length.should.be.below(handles.length);
       await spinTitleEquals(driver, 'I am a page title');
     });
 
