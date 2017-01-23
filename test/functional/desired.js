@@ -15,7 +15,9 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
   // this happens once, at the start of a test run, so using sync method is ok
   let cwd = path.resolve(__dirname, '..', '..', '..');
   let files = glob.sync('*.xcconfig', {cwd});
-  XCCONFIG_FILE = path.resolve(cwd, _.first(files));
+  if (files.length) {
+    XCCONFIG_FILE = path.resolve(cwd, _.first(files));
+  }
 }
 const REAL_DEVICE_CAPS = REAL_DEVICE ? {
   udid: 'auto',
