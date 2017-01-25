@@ -133,7 +133,7 @@ describe('XCUITestDriver - basics', function () {
 
       (await driver.getOrientation()).should.eql('LANDSCAPE');
     });
-    it.skip('should be able to interact with an element in LANDSCAPE', async function () {
+    it('should be able to interact with an element in LANDSCAPE', async function () {
       await driver.setOrientation('LANDSCAPE');
 
       let el = await driver.elementByAccessibilityId('Buttons');

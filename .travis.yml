@@ -19,7 +19,7 @@ before_install:
   # code from http://stackoverflow.com/a/24600210/375688
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
-  - pushd WebDriverAgent && ./Scripts/bootstrap.sh && popd
+  - pushd WebDriverAgent && ./Scripts/bootstrap.sh -d && popd
 before_script:
   - node --version
   - npm install
