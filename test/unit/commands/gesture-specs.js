@@ -86,5 +86,23 @@ describe('gesture commands', () => {
         proxySpy.firstCall.args[2].should.eql({predicateString: 'something'});
       });
     });
+
+    describe('swipe', () => {
+      it('should throw an error if no direction is specified', async () => {
+        await driver.execute('mobile: swipe', {element: 4}).should.be.rejectedWith(/Error: Mobile swipe requires direction/);
+      });
+
+      it('should throw an error if invalid direction', async () => {
+        await driver.execute('mobile: swipe', {element: 4, direction: 'foo'}).should.be.rejectedWith(/Error: Direction must be up, down, left or right/);
+      });
+
+      it('should proxy a swipe up request through to WDA', async () => {
+        await driver.execute('mobile: swipe', {element: 4, direction: 'up'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/wda/element/4/swipe');
+        proxySpy.firstCall.args[1].should.eql('POST');
+        return proxySpy.firstCall.args[2].should.eql({direction: 'up'});
+      });
+    });
   });
 });
