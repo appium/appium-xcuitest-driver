@@ -11,6 +11,7 @@ import { APPIUM_IMAGE } from '../web/helpers';
 
 chai.should();
 chai.use(chaiAsPromised);
+let expect = chai.expect;
 
 describe('XCUITestDriver - gestures', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -112,6 +113,15 @@ describe('XCUITestDriver - gestures', function () {
       await action.perform();
 
       await driver.elementByAccessibilityId('2').should.not.be.rejected;
+    });
+    it('should swipe the table and the bottom cell\'s Y position should change accordingly', async () => {
+      let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
+      let toolbarsEl = await driver.elementByAccessibilityId('Toolbars');
+      let yInit = (await toolbarsEl.getLocation()).y;
+      await driver.execute('mobile: swipe', {element: winEl, direction: 'up'}).should.not.be.rejected;
+      expect((await toolbarsEl.getLocation()).y).to.be.above(yInit);
+      await driver.execute('mobile: swipe', {element: winEl, direction: 'down'}).should.not.be.rejected;
+      expect((await toolbarsEl.getLocation()).y).to.equal(yInit);
     });
     describe('pinch and zoom', () => {
       beforeEach(async () => {
