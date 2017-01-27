@@ -31,6 +31,12 @@ describe('safari - execute', function () {
     await deleteSession();
   });
 
+  describe('mobile: x methods', function () {
+    it('should run in native context', async () => {
+      await driver.execute('mobile: scroll', {direction: 'down'}).should.not.be.rejected;
+    });
+  });
+
   describe('synchronous', function () {
     it('should bubble up javascript errors', async () => {
       await driver.execute(`'nan'--`).should.eventually.be.rejected;
