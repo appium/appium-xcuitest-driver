@@ -308,7 +308,7 @@ describe('XCUITestDriver - find', function () {
     });
   });
 
-  describe.skip('by predicate string', () => {
+  describe('by predicate string', () => {
     before(async () => {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
@@ -324,7 +324,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find elements with widths above 0', async () => {
-      let els = await driver.elements('-ios predicate string', 'wdRect. >= 0');
+      let els = await driver.elements('-ios predicate string', 'wdRect.width >= 0');
       els.should.have.length.above(0);
     });
 
