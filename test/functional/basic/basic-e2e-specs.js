@@ -140,6 +140,8 @@ describe('XCUITestDriver - basics', function () {
       await el.click();
 
       await driver.elementByAccessibilityId('Button').should.not.be.rejected;
+
+      await driver.back();
     });
   });
 
@@ -174,10 +176,6 @@ describe('XCUITestDriver - basics', function () {
 
   describe('contexts', () => {
     before(async function () {
-      if (process.env.TRAVIS) {
-        this.skip();
-      }
-
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();
