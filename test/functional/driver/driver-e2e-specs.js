@@ -83,30 +83,6 @@ describe('XCUITestDriver', function () {
         simsAfter.should.equal(simsBefore);
       });
 
-      it('with udid: uses sim and shuts it down afterwards', async () => {
-        // before
-        let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
-        let sim = await getSimulator(udid);
-
-        // test
-        let caps = _.defaults({
-          udid
-        }, UICATALOG_SIM_CAPS);
-
-        let simsBefore = await getNumSims();
-        await driver.init(caps);
-        let simsDuring = await getNumSims();
-        await driver.quit();
-        let simsAfter = await getNumSims();
-        (await simBooted(sim)).should.be.false;
-
-        simsDuring.should.equal(simsBefore);
-        simsAfter.should.equal(simsBefore);
-
-        // cleanup
-        await deleteDevice(udid);
-      });
-
       it('with udid booted: uses sim and leaves it afterwards', async () => {
         // before
         let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
