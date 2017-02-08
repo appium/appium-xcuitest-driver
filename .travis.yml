@@ -7,7 +7,7 @@ env:
 language:
   - objective-c
 os: osx
-osx_image: xcode8
+osx_image: xcode8.2
 git: # Handle git submodules yourself
   submodules: false
 node_js:

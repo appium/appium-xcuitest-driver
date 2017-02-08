@@ -124,9 +124,6 @@ describe('XCUITestDriver - element(s)', function () {
       let phText = 'Placeholder text';
 
       beforeEach(async function () {
-        // TODO: investigate why these break on Travis.
-        if (process.env.TRAVIS) this.skip();
-
         let el = await driver.elementByAccessibilityId('Text Fields');
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
