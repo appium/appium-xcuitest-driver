@@ -137,7 +137,7 @@ Differences noted here
 |`useNewWDA`|If `true`, forces uninstall of any existing WebDriverAgent app on device. This can provide stability in some situations. Defaults to `false`.|e.g., `true`|
 |`wdaLaunchTimeout`|Time, in ms, to wait for WebDriverAgewnt to be pingable. Defaults to 60000ms.|e.g., `30000`|
 |`wdaConnectionTimeout`|Timeout, in ms, for waiting for a response from WebDriverAgent. Defaults to 240000ms.|e.g., `1000`|
-
+|`resetOnSessionStartOnly`|Whether to perform reset on test session finish (`false`) or not (`true`). This was the default behavior prior to Appium 1.6.4. Keeping this variable set to `true` (the default behaviour since 1.6.4) may significantly shorten time perion betweeen test sessions.|Either `true` or `false`. Defaults to `true`|
 
 
 ## Development<a id="development"></a>
