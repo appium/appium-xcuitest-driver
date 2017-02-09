@@ -176,6 +176,7 @@ describe('XCUITestDriver - basics', function () {
 
   describe('contexts', () => {
     before(async function () {
+      if (process.env.TRAVIS) return this.skip();
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();
