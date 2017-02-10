@@ -83,16 +83,20 @@ describe('XCUITestDriver', function () {
         simsAfter.should.equal(simsBefore);
       });
 
-      it('with udid: uses sim and shuts it down afterwards', async () => {
+      it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async () => {
         // before
         let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
+        await sim.run();
 
         // test
         let caps = _.defaults({
-          udid
+          udid,
+          fullReset: true,
+          resetOnSessionStartOnly: false
         }, UICATALOG_SIM_CAPS);
 
+        (await simBooted(sim)).should.be.true;
         let simsBefore = await getNumSims();
         await driver.init(caps);
         let simsDuring = await getNumSims();
@@ -100,6 +104,7 @@ describe('XCUITestDriver', function () {
         let simsAfter = await getNumSims();
         (await simBooted(sim)).should.be.false;
 
+        // make sure no new simulators were created during the test
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
 
