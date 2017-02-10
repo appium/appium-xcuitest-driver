@@ -4,6 +4,7 @@ import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
 import log from '../../lib/logger';
+import * as utils from '../../lib/utils';
 
 
 const caps = {platformName: "iOS", deviceName: "iPhone 6", app: "/foo.app"};
@@ -46,7 +47,6 @@ describe('driver commands', () => {
         };
       });
       sandbox.stub(d, "configureApp", anoop);
-      sandbox.stub(d, "checkAppPresent", anoop);
       sandbox.stub(d, "startLogCapture", anoop);
       sandbox.stub(d, "startSim", anoop);
       sandbox.stub(d, "startWdaSession", anoop);
@@ -58,6 +58,7 @@ describe('driver commands', () => {
       sandbox.stub(xcode, "getMaxIOSSDK", async () => {
         return '10.0';
       });
+      sandbox.stub(utils, "checkAppPresent", anoop);
     });
 
     afterEach(() => {
