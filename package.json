@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.5.3",
+  "version": "2.8.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -29,7 +29,7 @@
   "dependencies": {
     "appium-base-driver": "^2.1.4",
     "appium-ios-driver": "^1.15.1",
-    "appium-ios-simulator": "^1.9.0",
+    "appium-ios-simulator": "^1.14.0",
     "appium-logger": "^2.0.0",
     "appium-support": "^2.3.2",
     "appium-xcode": "^3.1.0",
@@ -37,7 +37,7 @@
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
     "lodash": "^4.0.0",
-    "node-simctl": "^3.1.0",
+    "node-simctl": "^3.5.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "source-map-support": "^0.4.0",

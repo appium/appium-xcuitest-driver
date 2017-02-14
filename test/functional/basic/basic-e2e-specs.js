@@ -133,13 +133,15 @@ describe('XCUITestDriver - basics', function () {
 
       (await driver.getOrientation()).should.eql('LANDSCAPE');
     });
-    it.skip('should be able to interact with an element in LANDSCAPE', async function () {
+    it('should be able to interact with an element in LANDSCAPE', async function () {
       await driver.setOrientation('LANDSCAPE');
 
       let el = await driver.elementByAccessibilityId('Buttons');
       await el.click();
 
       await driver.elementByAccessibilityId('Button').should.not.be.rejected;
+
+      await driver.back();
     });
   });
 
@@ -174,10 +176,7 @@ describe('XCUITestDriver - basics', function () {
 
   describe('contexts', () => {
     before(async function () {
-      if (process.env.TRAVIS) {
-        this.skip();
-      }
-
+      if (process.env.TRAVIS) return this.skip();
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();

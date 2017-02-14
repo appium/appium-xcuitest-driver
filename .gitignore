@@ -3,3 +3,4 @@ build
 coverage
 *.log
 *.xcconfig
+.DS_Store

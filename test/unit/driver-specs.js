@@ -34,7 +34,16 @@ describe('driver commands', () => {
       d = new XCUITestDriver();
       sandbox = sinon.sandbox.create();
       sandbox.stub(d, "determineDevice", async () => {
-        return {device: null, udid: null, realDevice: null};
+        return {
+          device: {
+            shutdown: anoop,
+            stat () {
+              return {state: 'Booted'};
+            }
+          },
+          udid: null,
+          realDevice: null
+        };
       });
       sandbox.stub(d, "configureApp", anoop);
       sandbox.stub(d, "checkAppPresent", anoop);
