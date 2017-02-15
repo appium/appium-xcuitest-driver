@@ -17,7 +17,10 @@ async function initDriver () {
 
 async function initSession (caps) {
   await initDriver();
-  await driver.init(caps);
+  let serverRes = await driver.init(caps);
+  if (!caps.udid && !caps.fullReset && serverRes[1].udid) {
+    caps.udid = serverRes[1].udid;
+  }
 
   await driver.setImplicitWaitTimeout(5000);
 
