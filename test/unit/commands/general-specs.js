@@ -23,21 +23,21 @@ describe('general commands', () => {
     it('should send translated POST request to WDA', async () => {
       await driver.touchId();
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/simulator/touch_id');
+      proxySpy.firstCall.args[0].should.eql('/wda/touch_id');
       proxySpy.firstCall.args[1].should.eql('POST');
       proxySpy.firstCall.args[2].should.eql({match: true});
     });
     it('should send translated POST request to WDA with true', async () => {
       await driver.touchId(true);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/simulator/touch_id');
+      proxySpy.firstCall.args[0].should.eql('/wda/touch_id');
       proxySpy.firstCall.args[1].should.eql('POST');
       proxySpy.firstCall.args[2].should.eql({match: true});
     });
     it('should send translated POST request to WDA with false', async () => {
       await driver.touchId(false);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/simulator/touch_id');
+      proxySpy.firstCall.args[0].should.eql('/wda/touch_id');
       proxySpy.firstCall.args[1].should.eql('POST');
       proxySpy.firstCall.args[2].should.eql({match: false});
     });
