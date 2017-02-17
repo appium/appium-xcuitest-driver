@@ -53,7 +53,7 @@
 | GET    | /orientation                           | | |
 | POST   | /orientation                           | orientation | |
 | GET    | /screenshot                            | | |
-| POST   | /wda/simulator/touch_id                | match | |
+| POST   | /wda/touch_id                | match | |
 
 
 \* implemented but intentionally not supported
