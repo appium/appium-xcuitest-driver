@@ -10,7 +10,7 @@ const appiumFootTag = '</AppiumAUT>';
 
 describe('source commands', () => {
   let driver = new XCUITestDriver();
-  let proxySpy = sinon.stub(driver, 'proxyCommand', async() => { return {tree: srcTree}; });
+  let proxySpy = sinon.stub(driver, 'proxyCommand', async () => { return srcTree; });
 
   afterEach(() => {
     proxySpy.reset();
@@ -20,7 +20,7 @@ describe('source commands', () => {
     it('should send translated GET request to WDA', async () => {
       await driver.getPageSource();
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/source/xml');
+      proxySpy.firstCall.args[0].should.eql('/source');
       proxySpy.firstCall.args[1].should.eql('GET');
     });
     it('should insert received xml into AppiumAUT tags', async () => {
