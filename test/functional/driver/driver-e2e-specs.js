@@ -45,6 +45,13 @@ describe('XCUITestDriver', function () {
       await driver.quit();
     });
 
+    it('should start and stop a session doing pre-build', async function () {
+      await driver.init(_.defaults({prebuildWDA: true}, UICATALOG_SIM_CAPS));
+      let els = await driver.elementsByClassName("XCUIElementTypeWindow");
+      els.length.should.be.at.least(1);
+      await driver.quit();
+    });
+
     /* jshint ignore:start */
     describe('initial orientation', async () => {
       async function runOrientationTest (initialOrientation) {
