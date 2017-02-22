@@ -282,8 +282,8 @@ describe('XCUITestDriver - find', function () {
   describe('duplicate text field', () => {
     beforeEach(async () => {
       try {
-        let element = await driver.elementByClassName('XCUIElementTypeTable');
-        await driver.execute('mobile: scroll', {element, direction: 'down', name: 'Text Fields'});
+        let element = await driver.elementByAccessibilityId('Text Fields');
+        await driver.execute('mobile: scroll', {element, toVisible: true});
       } catch (ign) {}
       await driver.setImplicitWaitTimeout(5000);
     });
