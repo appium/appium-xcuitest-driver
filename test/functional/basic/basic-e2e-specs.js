@@ -26,6 +26,18 @@ describe('XCUITestDriver - basics', function () {
       let status = await driver.status();
       status.wda.should.exist;
     });
+
+    it('should return status immediately if another operation is in progress', async () => {
+      await driver.setImplicitWaitTimeout(10000);
+      let findElementPromise = B.Promise.resolve(driver.elementById('WrongLocator'));
+      let status = await driver.status();
+      status.wda.should.exist;
+      let isFindElementPromiseFulfilled = findElementPromise.isFulfilled();
+      isFindElementPromiseFulfilled.should.be.false;
+      try {
+        await findElementPromise;
+      } catch (err) {}
+    });
   });
 
   describe('session', () => {
