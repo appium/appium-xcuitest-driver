@@ -1,8 +1,10 @@
 import sinon from 'sinon';
 import { settings as iosSettings } from 'appium-ios-driver';
+import { JWProxy } from 'appium-base-driver';
 import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
+import chai from 'chai';
 import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
 
@@ -18,12 +20,35 @@ describe('driver commands', () => {
     proxySpy.reset();
   });
 
-  describe('status', () => {
-    it('should send status request to WDA', async () => {
-      await driver.getStatus();
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/status');
-      proxySpy.firstCall.args[1].should.eql('GET');
+  describe('status caching', () => {
+    let d;
+    let jwproxyCommandSpy;
+
+    beforeEach(() => {
+      d = new XCUITestDriver();
+      let fakeProxy = new JWProxy();
+      jwproxyCommandSpy = sinon.stub(fakeProxy, "command", async () => {
+        return {some: 'thing'};
+      });
+      d.wda = {jwproxy: fakeProxy};
+    });
+
+    afterEach(() => {
+      jwproxyCommandSpy.reset();
+    });
+
+    it('wda status is not present by default', async () => {
+      let status = await d.getStatus();
+      jwproxyCommandSpy.calledOnce.should.be.false;
+      chai.should().equal(status.wda, undefined);
+    });
+
+    it('should cache wda status', async () => {
+      d.proxyCommand('/status', 'GET');
+      let status = await d.getStatus();
+      jwproxyCommandSpy.calledOnce.should.be.true;
+      jwproxyCommandSpy.calledTwice.should.be.false;
+      status.wda.should.exist;
     });
   });
 
@@ -79,3 +104,4 @@ describe('driver commands', () => {
     });
   });
 });
+
