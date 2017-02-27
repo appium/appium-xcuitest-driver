@@ -114,7 +114,7 @@ describe('XCUITestDriver - gestures', function () {
 
       await driver.elementByAccessibilityId('2').should.not.be.rejected;
     });
-    it('should swipe the table and the bottom cell\'s Y position should change accordingly', async () => {
+    it(`should swipe the table and the bottom cell's Y position should change accordingly`, async () => {
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
       let toolbarsEl = await driver.elementByAccessibilityId('Toolbars');
       let yInit = (await toolbarsEl.getLocation()).y;
