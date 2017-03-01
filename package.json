@@ -31,7 +31,7 @@
     "appium-ios-driver": "^1.15.1",
     "appium-ios-simulator": "^1.17.1",
     "appium-support": "^2.4.0",
-    "appium-xcode": "^3.1.0",
+    "appium-xcode": "^3.2.0",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
