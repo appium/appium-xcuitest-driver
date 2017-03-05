@@ -10,7 +10,7 @@ import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
 
 
-chai.should();
+const should = chai.should();
 chai.use(chaiAsPromised);
 
 let getNumSims = async () => {
@@ -190,6 +190,17 @@ describe('XCUITestDriver', function () {
         // cleanup
         await sim.shutdown();
         await deleteDevice(udid);
+      });
+    });
+
+    describe('event timings', () => {
+      it('should include event timings if cap is used', async () => {
+        let newCaps = Object.assign({}, UICATALOG_SIM_CAPS, {eventTimings: true});
+        await driver.init(newCaps);
+        let res = await driver.sessionCapabilities();
+        should.exist(res.events);
+        should.exist(res.events.newSessionStarted);
+        res.events.newSessionStarted[0].should.be.above(res.events.newSessionRequested[0]);
       });
     });
   } else {
