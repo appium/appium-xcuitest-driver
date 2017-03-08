@@ -3,8 +3,7 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-
-
+import { absolute as testAppPath } from 'ios-test-app';
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '9.3';
 const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
 
@@ -60,4 +59,8 @@ const SAFARI_CAPS = _.defaults({
   browserName: 'Safari',
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
-export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, PLATFORM_VERSION };
+const TESTAPP_CAPS = _.defaults({
+  app: testAppPath.iphonesimulator,
+}, GENERIC_CAPS);
+
+export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS, PLATFORM_VERSION };
