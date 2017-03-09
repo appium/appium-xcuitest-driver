@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
+import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
@@ -151,8 +152,11 @@ describe('XCUITestDriver - element(s)', function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.type(text3);
 
-          let text = await el.text();
-          text.should.eql(text3);
+          // in Travis this sometimes gets the wrong text
+          await retryInterval(5, 100, async () => {
+            let text = await el.text();
+            text.should.eql(text3);
+          });
         });
         it('should be able to type into two text fields', async () => {
           let els = await driver.elementsByClassName('XCUIElementTypeTextField');
