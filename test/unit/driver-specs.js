@@ -7,7 +7,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
-
+import request from 'request-promise';
 
 const caps = {platformName: "iOS", deviceName: "iPhone 6", app: "/foo.app"};
 const anoop = async () => {};
@@ -102,6 +102,18 @@ describe('driver commands', () => {
         .should.have.length(1);
       warnStub.restore();
     });
+  });
+
+  describe('startIWDP()', () => {
+
+    it('should start and stop IWDP server', async () => {
+      await driver.startIWDP();
+      let endpoint = driver.iwdpServer.endpoint;
+      await request(endpoint).should.eventually.have.string('<html');
+      await driver.stopIWDP();
+      await request(endpoint).should.eventually.be.rejected;
+    });
+
   });
 });
 
