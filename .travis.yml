@@ -20,6 +20,7 @@ before_install:
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
   - pushd WebDriverAgent && ./Scripts/bootstrap.sh -d && popd
+  - brew install ios-webkit-debug-proxy
 before_script:
   - node --version
   - npm install
