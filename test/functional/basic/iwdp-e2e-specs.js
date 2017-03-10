@@ -21,7 +21,7 @@ if (process.env.REAL_DEVICE) {
 
     afterEach(async () => {
       await deleteSession();
-      await B.delay(2000);
+      await B.delay(500);
     });
 
     it('Should start a Safari session if "caps.startIWDP === true"', async () => {
@@ -33,7 +33,7 @@ if (process.env.REAL_DEVICE) {
 
     it('Should not start a Safari session if "caps.startIWDP === false"', async () => {
       caps.startIWDP = false;
-      await initSession(caps).should.be.rejected;
+      await initSession(caps).should.be.rejectedWith(/environment you requested was unavailable/);
     });
   });
 }
