@@ -343,4 +343,31 @@ describe('XCUITestDriver - find', function () {
       els.should.have.length.above(1);
     });
   });
+
+  describe('by class chain', () => {
+    before(async () => {
+      // if we don't pause, WDA freaks out sometimes, especially on fast systems
+      await B.delay(500);
+    });
+    it('should find elements', async () => {
+      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow');
+      els.should.have.length.above(0);
+    });
+
+    it('should find child elements', async () => {
+      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with index', async () => {
+      let els1 = await driver.elements('-ios class chain', 'XCUIElementTypeWindow[1]/*');
+      let els2 = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*');
+      els1.should.have.length(els2.length);
+    });
+
+    it('should find elements with negative index', async () => {
+      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*[-1]');
+      els.should.have.length(1);
+    });
+  });
 });
