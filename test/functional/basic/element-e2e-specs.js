@@ -149,11 +149,12 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(text1);
         });
         it('should type a url in the text field', async () => {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
-          await el.type(text3);
-
           // in Travis this sometimes gets the wrong text
-          await retryInterval(5, 100, async () => {
+          let retries = process.env.TRAVIS ? 5 : 1;
+          await retryInterval(retries, 100, async () => {
+            let el = await driver.elementByClassName('XCUIElementTypeTextField');
+            await el.type(text3);
+
             let text = await el.text();
             text.should.eql(text3);
           });

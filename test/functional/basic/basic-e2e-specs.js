@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
@@ -202,8 +203,12 @@ describe('XCUITestDriver - basics', function () {
     });
 
     it('should start a session, navigate to url, get title', async () => {
-      let contexts = await driver.contexts();
-      contexts.length.should.be.at.least(2);
+      let contexts;
+      await retryInterval(10, 1000, async () => {
+        // on some systems (like Travis) it takes a while to load the webview
+        contexts = await driver.contexts();
+        contexts.length.should.be.at.least(2);
+      });
 
       let urlBar = await driver.elementByClassName('XCUIElementTypeTextField');
       await urlBar.clear();
