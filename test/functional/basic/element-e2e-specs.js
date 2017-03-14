@@ -153,6 +153,7 @@ describe('XCUITestDriver - element(s)', function () {
           let retries = process.env.TRAVIS ? 5 : 1;
           await retryInterval(retries, 100, async () => {
             let el = await driver.elementByClassName('XCUIElementTypeTextField');
+            await el.clear();
             await el.type(text3);
 
             let text = await el.text();
