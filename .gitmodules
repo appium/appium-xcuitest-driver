@@ -1,0 +1,3 @@
+[submodule "WebDriverAgent"]
+	path = WebDriverAgent
+	url = https://github.com/appium/WebDriverAgent.git
