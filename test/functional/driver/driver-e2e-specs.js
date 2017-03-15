@@ -101,7 +101,7 @@ describe('XCUITestDriver', function () {
         // before
         let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
-        await sim.run();
+        await sim.run(MOCHA_TIMEOUT);
 
         // test
         let caps = _.defaults({
@@ -130,7 +130,7 @@ describe('XCUITestDriver', function () {
         // before
         let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
-        await sim.run();
+        await sim.run(MOCHA_TIMEOUT);
 
         // test
         let caps = _.defaults({

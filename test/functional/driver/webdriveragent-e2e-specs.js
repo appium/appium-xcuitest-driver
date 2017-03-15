@@ -48,9 +48,9 @@ describe('WebDriverAgent', function () {
     });
 
     describe('with running sim', function () {
-      this.timeout(6 * 60 * 1000);
+      this.timeout(MOCHA_TIMEOUT);
       beforeEach(async () => {
-        await device.run();
+        await device.run(MOCHA_TIMEOUT);
       });
       afterEach(async () => {
         await device.shutdown();

@@ -33,6 +33,10 @@ const GENERIC_CAPS = {
   noReset: true,
 };
 
+if (process.env.TRAVIS) {
+  GENERIC_CAPS.simLaunchTimeout = 240000;
+}
+
 let simUICatalogApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]);
 let realUICatalogApp = process.env.UICATALOG_REAL_DEVICE || path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[0]);
 
