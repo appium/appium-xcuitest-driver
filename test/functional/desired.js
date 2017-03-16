@@ -72,4 +72,8 @@ const TESTAPP_CAPS = _.defaults({
   app: simTestAppApp,
 }, GENERIC_CAPS);
 
-export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS, PLATFORM_VERSION };
+const TOUCHIDAPP_CAPS = _.defaults({
+  app: path.resolve('.', 'test', 'assets', 'TouchIDExample.app'),
+}, GENERIC_CAPS);
+
+export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS, PLATFORM_VERSION, TOUCHIDAPP_CAPS };
