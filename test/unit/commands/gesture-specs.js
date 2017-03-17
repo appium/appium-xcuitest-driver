@@ -10,6 +10,48 @@ describe('gesture commands', () => {
     proxySpy.reset();
   });
 
+  describe('gesturesChainToString', () => {
+    it('should properly transform simple chain', () => {
+      const result = driver.gesturesChainToString([{action: 'press'}, {'action': 'release'}]);
+      result.should.be.equal('press-release');
+    });
+
+    it('should properly transform complex chain', () => {
+      const result = driver.gesturesChainToString([{action: 'press', options: {count: 1}}, {'action': 'release'}]);
+      result.should.be.equal('press(options={"count":1})-release');
+    });
+  });
+
+  describe('isSameGestures', () => {
+    it('should return true if simple chains are similar', () => {
+      const original = [{action: 'press'}, {'action': 'release'}];
+      const candidate = [{action: 'press'}, {'action': 'release'}];
+      const result = driver.isSameGestures(original, candidate);
+      result.should.be.true;
+    });
+
+    it('should return true if simple chains are not similar', () => {
+      const original = [{action: 'press'}, {'action': 'press'}];
+      const candidate = [{action: 'press'}, {'action': 'release'}];
+      const result = driver.isSameGestures(original, candidate);
+      result.should.be.false;
+    });
+
+    it('should return true if complex chains are similar', () => {
+      const original = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
+      const candidate = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
+      const result = driver.isSameGestures(original, candidate);
+      result.should.be.true;
+    });
+
+    it('should return false if complex chains are not similar', () => {
+      const original = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
+      const candidate = [{action: 'press', options: {count: 1}}, {'action': 'release'}];
+      const result = driver.isSameGestures(original, candidate);
+      result.should.be.false;
+    });
+  });
+
   describe('tap', () => {
     it('should send POST request to /tap on WDA when no element is given', async () => {
       let actions = [
