@@ -30,14 +30,15 @@ describe('XCUITestDriver - basics', function () {
 
     it('should return status immediately if another operation is in progress', async () => {
       await driver.setImplicitWaitTimeout(10000);
-      let findElementPromise = B.Promise.resolve(driver.elementById('WrongLocator'));
+      let findElementPromise = B.resolve(driver.elementById('WrongLocator'));
       let status = await driver.status();
       status.wda.should.exist;
-      let isFindElementPromiseFulfilled = findElementPromise.isFulfilled();
-      isFindElementPromiseFulfilled.should.be.false;
+      findElementPromise.isPending().should.be.true;
       try {
         await findElementPromise;
-      } catch (err) {}
+      } catch (err) {
+        err.status.should.eql(7);
+      }
     });
   });
 
