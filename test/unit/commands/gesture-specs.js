@@ -30,7 +30,7 @@ describe('gesture commands', () => {
       result.should.be.true;
     });
 
-    it('should return true if simple chains are not similar', () => {
+    it('should return false if simple chains are not similar', () => {
       const original = [{action: 'press'}, {'action': 'press'}];
       const candidate = [{action: 'press'}, {'action': 'release'}];
       const result = driver.isSameGestures(original, candidate);
