@@ -16,9 +16,19 @@ describe('gesture commands', () => {
       result.should.be.equal('press-release');
     });
 
-    it('should properly transform complex chain', () => {
-      const result = driver.gesturesChainToString([{action: 'press', options: {count: 1}}, {'action': 'release'}]);
+    it('should properly transform complex chain with default keys', () => {
+      const result = driver.gesturesChainToString([{action: 'press', x: 1, options: {count: 1}}, {'action': 'release'}]);
       result.should.be.equal('press(options={"count":1})-release');
+    });
+
+    it('should properly transform complex chain with custom keys', () => {
+      const result = driver.gesturesChainToString([{action: 'press', x: 1, options: {count: 1}}, {'action': 'release'}], ['x']);
+      result.should.be.equal('press(x=1)-release');
+    });
+
+    it('should properly transform complex chain with all keys', () => {
+      const result = driver.gesturesChainToString([{action: 'press', x: 1}, {'action': 'release'}], null);
+      result.should.be.equal('press(x=1)-release');
     });
   });
 
