@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
+import { isSameGestures, gesturesChainToString } from '../../../lib/commands/gesture';
 
 
 describe('gesture commands', () => {
@@ -8,6 +9,58 @@ describe('gesture commands', () => {
 
   afterEach(() => {
     proxySpy.reset();
+  });
+
+  describe('gesturesChainToString', () => {
+    it('should properly transform simple chain', () => {
+      const result = gesturesChainToString([{action: 'press'}, {'action': 'release'}]);
+      result.should.be.equal('press-release');
+    });
+
+    it('should properly transform complex chain with default keys', () => {
+      const result = gesturesChainToString([{action: 'press', x: 1, options: {count: 1}}, {'action': 'release'}]);
+      result.should.be.equal('press(options={"count":1})-release');
+    });
+
+    it('should properly transform complex chain with custom keys', () => {
+      const result = gesturesChainToString([{action: 'press', x: 1, options: {count: 1}}, {'action': 'release'}], ['x']);
+      result.should.be.equal('press(x=1)-release');
+    });
+
+    it('should properly transform complex chain with all keys', () => {
+      const result = gesturesChainToString([{action: 'press', x: 1}, {'action': 'release'}], null);
+      result.should.be.equal('press(x=1)-release');
+    });
+  });
+
+  describe('isSameGestures', () => {
+    it('should return true if simple chains are similar', () => {
+      const original = [{action: 'press'}, {'action': 'release'}];
+      const candidate = [{action: 'press'}, {'action': 'release'}];
+      const result = isSameGestures(original, candidate);
+      result.should.be.true;
+    });
+
+    it('should return false if simple chains are not similar', () => {
+      const original = [{action: 'press'}, {'action': 'press'}];
+      const candidate = [{action: 'press'}, {'action': 'release'}];
+      const result = isSameGestures(original, candidate);
+      result.should.be.false;
+    });
+
+    it('should return true if complex chains are similar', () => {
+      const original = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
+      const candidate = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
+      const result = isSameGestures(original, candidate);
+      result.should.be.true;
+    });
+
+    it('should return false if complex chains are not similar', () => {
+      const original = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
+      const candidate = [{action: 'press', options: {count: 1}}, {'action': 'release'}];
+      const result = isSameGestures(original, candidate);
+      result.should.be.false;
+    });
   });
 
   describe('tap', () => {
