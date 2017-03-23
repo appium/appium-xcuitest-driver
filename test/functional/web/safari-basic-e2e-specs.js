@@ -63,39 +63,6 @@ describe('Safari', function () {
     });
   });
 
-  // TODO: in appium-remote-debugger, figure out how to check if a page is loaded
-  describe.skip('page load timeouts', () => {
-    before(async () => {
-      await driver.init(SAFARI_CAPS);
-    });
-    after(async () => {
-      await driver.quit();
-    });
-
-    describe('small timeout, slow page load', function () {
-      it('should go to the requested page', async () => {
-        await driver.setPageLoadTimeout(3000);
-        await driver.get(`${GUINEA_PIG_PAGE}?delay=30000`);
-
-        // the page should not have time to load
-        (await driver.source()).should.include('Let\'s browse!');
-      });
-    });
-    describe('no timeout, very slow page', function () {
-      let startMs = Date.now();
-
-      it('should go to the requested page', async () => {
-        await driver.setCommandTimeout(12000);
-        await driver.setPageLoadTimeout(0);
-        await driver.get(`${GUINEA_PIG_PAGE}?delay=3000`);
-
-        // the page should load after 70000
-        (await driver.source()).should.include('I am some page content');
-        (Date.now() - startMs).should.be.above(3000);
-      });
-    });
-  });
-
   describe('basics', () => {
     before(async () => {
       await driver.init(_.defaults({
@@ -104,6 +71,33 @@ describe('Safari', function () {
     });
     after(async () => {
       await driver.quit();
+    });
+
+
+    // TODO: in appium-remote-debugger, figure out how to check if a page is loaded
+    describe.skip('page load timeouts', () => {
+      describe('small timeout, slow page load', function () {
+        it('should go to the requested page', async () => {
+          await driver.setPageLoadTimeout(3000);
+          await driver.get(`${GUINEA_PIG_PAGE}?delay=30000`);
+
+          // the page should not have time to load
+          (await driver.source()).should.include('Let\'s browse!');
+        });
+      });
+      describe('no timeout, very slow page', function () {
+        let startMs = Date.now();
+
+        it('should go to the requested page', async () => {
+          await driver.setCommandTimeout(12000);
+          await driver.setPageLoadTimeout(0);
+          await driver.get(`${GUINEA_PIG_PAGE}?delay=3000`);
+
+          // the page should load after 70000
+          (await driver.source()).should.include('I am some page content');
+          (Date.now() - startMs).should.be.above(3000);
+        });
+      });
     });
 
     describe('context', () => {
@@ -142,21 +136,10 @@ describe('Safari', function () {
         (await driver.title()).should.include("I am a page title");
       });
     });
-  });
-
-  describe('basics - element', function () {
-    beforeEach(async () => {
-      await driver.get(GUINEA_PIG_PAGE);
-    });
 
     describe('element handling', function () {
-      before(async () => {
-        await driver.init(_.defaults({
-          safariIgnoreFraudWarning: false,
-        }, caps));
-      });
-      after(async () => {
-        await driver.quit();
+      beforeEach(async () => {
+        await driver.get(GUINEA_PIG_PAGE);
       });
 
       it('should find a web element in the web view', async () => {
@@ -222,13 +205,8 @@ describe('Safari', function () {
       });
     });
     describe('element handling', function () {
-      before(async () => {
-        await driver.init(_.defaults({
-          safariIgnoreFraudWarning: false,
-        }, caps));
-      });
-      after(async () => {
-        await driver.quit();
+      beforeEach(async () => {
+        await driver.get(GUINEA_PIG_PAGE);
       });
 
       it('should send keystrokes to active element', async () => {
@@ -331,8 +309,10 @@ describe('Safari', function () {
         await driver.refresh();
       });
     });
+  });
 
-    describe('safariIgnoreFraudWarning false', function () {
+  describe('safariIgnoreFraudWarning', () => {
+    describe('false', function () {
       before(async () => {
         await driver.init(_.defaults({
           safariIgnoreFraudWarning: false,
@@ -342,24 +322,6 @@ describe('Safari', function () {
         await driver.quit();
       });
 
-      it('should display a phishing warning', async () => {
-        await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
-        (await driver.source()).toLowerCase().should.include('phishing');
-      });
-    });
-  });
-
-  describe('basics', () => {
-    before(async () => {
-      await driver.init(_.defaults({
-        safariIgnoreFraudWarning: false,
-      }, caps));
-    });
-    after(async () => {
-      await driver.quit();
-    });
-
-    describe('safariIgnoreFraudWarning false', function () {
       it('should display a phishing warning', async () => {
         await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
         (await driver.source()).toLowerCase().should.include('phishing');
