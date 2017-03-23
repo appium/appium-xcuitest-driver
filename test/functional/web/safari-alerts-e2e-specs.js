@@ -15,9 +15,13 @@ describe('safari - alerts', function () {
   let driver;
   before(async function () {
     // TODO: why does this not work for 9.3? Argh.
-    if (PLATFORM_VERSION === '9.3') this.skip();
+    if (PLATFORM_VERSION === '9.3') {
+      return this.skip();
+    }
     // TODO: why does this fail on Travis? popup happens but button is "send"
-    if (process.env.TRAVIS) this.skip();
+    if (process.env.TRAVIS) {
+      return this.skip();
+    }
 
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
