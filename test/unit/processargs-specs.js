@@ -20,7 +20,8 @@ describe('process args', () => {
       bundleId: "com.test.app",
       arguments: PROCESS_ARGS_OBJECT.args,
       environment: PROCESS_ARGS_OBJECT.env,
-      shouldWaitForQuiescence: true
+      shouldWaitForQuiescence: true,
+      shouldUseTestManagerForVisibilityDetection: true
     }
   };
 
@@ -30,7 +31,7 @@ describe('process args', () => {
 
   describe('send process args as object', () => {
     it('should send translated POST /session request with valid desired caps to WDA', async () => {
-      let desiredWithProArgsObejct = {
+      let desiredWithProArgsObject = {
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
@@ -38,8 +39,8 @@ describe('process args', () => {
         bundleId: desired.desiredCapabilities.bundleId,
         processArguments: PROCESS_ARGS_OBJECT,
       };
-      driver.validateDesiredCaps(desiredWithProArgsObejct);
-      await driver.startWdaSession(desiredWithProArgsObejct.bundleId, desiredWithProArgsObejct.processArguments);
+      driver.validateDesiredCaps(desiredWithProArgsObject);
+      await driver.startWdaSession(desiredWithProArgsObject.bundleId, desiredWithProArgsObject.processArguments);
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');
