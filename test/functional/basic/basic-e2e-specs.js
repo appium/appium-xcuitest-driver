@@ -190,15 +190,13 @@ describe('XCUITestDriver - basics', function () {
 
   describe('contexts', () => {
     before(async function () {
+      // TODO: figure out why this fails in Travis
       if (process.env.TRAVIS) {
         return this.skip();
       }
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();
-
-      // pause a moment to allow the view to load before trying to do anything
-      await B.delay(1000);
     });
     after(async () => {
       await driver.back();
