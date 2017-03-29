@@ -1,7 +1,5 @@
 import wd from 'wd';
 import { startServer } from '../../..';
-import request from 'request-promise';
-
 
 const HOST = '0.0.0.0',
       PORT = 4994;
@@ -24,12 +22,6 @@ async function initSession (caps) {
   }
 
   await driver.setImplicitWaitTimeout(5000);
-
-  // TODO: Get rid of this monkey patch once https://github.com/admc/wd/pull/468 is committed
-  driver.toggleTouchIdEnrollment = async function () {
-    let sessionId = driver.sessionID;
-    return JSON.parse(await request.post(`http://0.0.0.0:4994/wd/hub/session/${sessionId}/appium/simulator/toggle_touch_id_enrollment`));
-  };
 
   return driver;
 }
