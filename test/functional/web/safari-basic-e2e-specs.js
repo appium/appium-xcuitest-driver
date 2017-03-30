@@ -17,7 +17,6 @@ let expect = chai.expect;
 
 let caps = _.defaults({
   safariInitialUrl: GUINEA_PIG_PAGE,
-  safariAllowPopups: true,
   nativeWebTap: true,
 }, SAFARI_CAPS);
 
@@ -325,6 +324,21 @@ describe('Safari', function () {
       it('should display a phishing warning', async () => {
         await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
         (await driver.source()).toLowerCase().should.include('phishing');
+      });
+    });
+    describe('true', function () {
+      before(async () => {
+        await driver.init(_.defaults({
+          safariIgnoreFraudWarning: true,
+        }, caps));
+      });
+      after(async () => {
+        await driver.quit();
+      });
+
+      it('should display a phishing warning', async () => {
+        await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
+        (await driver.source()).toLowerCase().should.not.include('phishing');
       });
     });
   });
