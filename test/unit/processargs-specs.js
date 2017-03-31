@@ -21,7 +21,8 @@ describe('process args', () => {
       arguments: PROCESS_ARGS_OBJECT.args,
       environment: PROCESS_ARGS_OBJECT.env,
       shouldWaitForQuiescence: true,
-      shouldUseTestManagerForVisibilityDetection: true
+      shouldUseTestManagerForVisibilityDetection: true,
+      maxTypingFrequency: 60
     }
   };
 
