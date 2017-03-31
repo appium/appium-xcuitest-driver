@@ -336,5 +336,49 @@ describe('gesture commands', () => {
         proxySpy.firstCall.args[2].should.have.keys(['duration', 'fromX', 'fromY', 'toX', 'toY']);
       });
     });
+
+    describe('getCoordinates', () => {
+      it('should properly parse coordinates if they are presented as string values', async () => {
+        const gesture = {
+          action: 'moveTo',
+          options: {
+            x: '100',
+            y: '300'
+          }
+        };
+        const coords = await driver.getCoordinates(gesture);
+        coords.areOffsets.should.be.true;
+        coords.x.should.be.within(100, 101);
+        coords.y.should.be.within(300, 301);
+      });
+      it('should properly parse coordinates if they are presented as numeric values', async () => {
+        const gesture = {
+          action: 'press',
+          options: {
+            x: 100.5,
+            y: 300
+          }
+        };
+        const coords = await driver.getCoordinates(gesture);
+        coords.areOffsets.should.be.false;
+        coords.x.should.be.within(100, 101);
+        coords.y.should.be.within(300, 301);
+      });
+      it('should throw an exception if coordinates cannot be parsed', async () => {
+        const gesture = {
+          action: 'moveTo',
+          options: {
+            x: 'a',
+            y: 300
+          }
+        };
+        try {
+          await driver.getCoordinates(gesture);
+          sinon.assert.fail('An exception is expected to be thrown');
+        } catch (e) {
+          // this is expected
+        }
+      });
+    });
   });
 });
