@@ -144,6 +144,7 @@ Differences noted here
 |`connectHardwareKeyboard`|Set this option to `true` in order to enable hardware keyboard in Simulator. It is set to `false` by default, because this helps to workaround some XCTest bugs.|`true` or `false`|
 |`maxTypingFrequency`|Maximum frequency of keystrokes for typing and clear. If your tests are failing because of typing errors, you may want to adjust this. Defaults to 60 keystrokes per minute.|e.g., `30`|
 |`simpleIsVisibleCheck`|Use native methods for determining visibility of elements. In some cases this takes a long time. Setting this capability to `false` will cause the system to use the position and size of elements to make sure they are visible on the screen. This can, however, lead to false results in some situations. Defaults to `true`.|e.g., `true`, `false`|
+|`useCarthageSsl`|Use SSL to download dependencies for WebDriverAgent. Defaults to `false`|e.g., `true`|
 
 
 ## Development<a id="development"></a>
