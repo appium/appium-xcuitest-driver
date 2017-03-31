@@ -90,7 +90,9 @@ describe('XCUITestDriver - basics', function () {
       } catch (ign) {}
     });
     it('should get an app screenshot', async () => {
-      (await driver.takeScreenshot()).should.exist;
+      let screenshot = await driver.takeScreenshot();
+      screenshot.should.exist;
+      screenshot.should.be.a.string;
     });
 
     it('should get an app screenshot in landscape mode', async () => {
