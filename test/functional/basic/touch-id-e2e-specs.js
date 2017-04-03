@@ -14,17 +14,9 @@ describe('touchID() ', function () {
   this.timeout(MOCHA_TIMEOUT);
   let caps, driver;
 
-  beforeEach(async () => {
-    await killAllSimulators();
-  });
-
   afterEach(async () => {
     await deleteSession();
     await B.delay(500);
-  });
-
-  after(async () => {
-    await killAllSimulators();
   });
 
   it('should throw an error if allowTouchIdEnroll desired capability is not set', async () => {
@@ -37,6 +29,10 @@ describe('touchID() ', function () {
   });
 
   describe('touchID enrollment functional tests applied to TouchId sample app', function () {
+    before(async () => {
+      await killAllSimulators();
+    });
+
     beforeEach(async () => {
       caps = Object.assign(TOUCHIDAPP_CAPS);
       caps.allowTouchIdEnroll = true;
