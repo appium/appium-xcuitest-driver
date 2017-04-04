@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { TESTAPP_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
-import _ from 'lodash';
+
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -15,7 +15,7 @@ if (!process.env.REAL_DEVICE) {
     let driver, caps;
 
     beforeEach(() => {
-      caps = _.defaults({noReset: false}, TESTAPP_CAPS);
+      caps = Object.assign({}, TESTAPP_CAPS);
     });
 
     afterEach(async () => {
