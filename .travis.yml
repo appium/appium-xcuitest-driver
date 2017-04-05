@@ -4,6 +4,7 @@ env:
   - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/basic
   - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/driver
   - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/web
+  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/long
 language:
   - objective-c
 os: osx
