@@ -22,7 +22,8 @@ describe('process args', () => {
       environment: PROCESS_ARGS_OBJECT.env,
       shouldWaitForQuiescence: true,
       shouldUseTestManagerForVisibilityDetection: true,
-      maxTypingFrequency: 60
+      maxTypingFrequency: 60,
+      shouldUseSingletonTestManager: true,
     }
   };
 
