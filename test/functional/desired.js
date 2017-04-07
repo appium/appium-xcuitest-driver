@@ -32,6 +32,7 @@ const GENERIC_CAPS = {
   automationName: 'XCUITest',
   noReset: true,
   maxTypingFrequency: 30,
+  clearSystemFiles: true,
 };
 
 let simUICatalogApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]);
