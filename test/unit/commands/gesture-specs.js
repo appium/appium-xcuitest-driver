@@ -291,6 +291,28 @@ describe('gesture commands', () => {
       });
     });
 
+    describe('selectPickerWheelValue', () => {
+      const commandName = 'selectPickerWheelValue';
+
+      it('should throw an error if no mandatory parameter is specified', async () => {
+        await driver.execute(`mobile: ${commandName}`, {}).should.be.rejectedWith(/Element id is expected to be set/);
+        await driver.execute(`mobile: ${commandName}`, {element: 4}).should.be.rejectedWith(/is expected to be equal/);
+        await driver.execute(`mobile: ${commandName}`, {order: 'next'}).should.be.rejectedWith(/Element id is expected to be set/);
+      });
+
+      it('should throw an error if param is invalid', async () => {
+        await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'bla'}).should.be.rejectedWith(/is expected to be equal/);
+      });
+
+      it('should proxy a selectPickerWheel request for an element through to WDA', async () => {
+        await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'next'});
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/wda/pickerwheel/4/select');
+        proxySpy.firstCall.args[1].should.eql('POST');
+        proxySpy.firstCall.args[2].should.have.property('order', 'next');
+      });
+    });
+
     describe('dragFromToForDuration', () => {
       const commandName = 'dragFromToForDuration';
 
