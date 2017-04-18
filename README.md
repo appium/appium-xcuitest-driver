@@ -147,6 +147,7 @@ Differences noted here
 |`useCarthageSsl`|Use SSL to download dependencies for WebDriverAgent. Defaults to `false`|e.g., `true`|
 |`shouldUseSingletonTestManager`|Use default proxy for test management within WebDriverAgent. Setting this to `false` sometimes helps with socket hangup problems. Defaults to `true`.|e.g., `false`|
 |`startIWDP`|Set this to `true` if you want to start ios_webkit_debug proxy server automatically for accessing webviews on iOS. The capatibility only works for real device automation. Defaults to `false`.|e.g., `true`|
+|`allowTouchIdEnroll`|Set this to `true` if you want to enroll simulator for touch id. Defaults to `false`.|e.g., `true`|
 
 
 ## Development<a id="development"></a>
