@@ -300,16 +300,21 @@ describe('gesture commands', () => {
         await driver.execute(`mobile: ${commandName}`, {order: 'next'}).should.be.rejectedWith(/Element id is expected to be set/);
       });
 
+      it('should throw an error if offset value cannot be parsed', async () => {
+        await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'next', offset: 'bla'}).should.be.rejectedWith(/should be a valid number/);
+      });
+
       it('should throw an error if param is invalid', async () => {
         await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'bla'}).should.be.rejectedWith(/is expected to be equal/);
       });
 
       it('should proxy a selectPickerWheel request for an element through to WDA', async () => {
-        await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'next'});
+        await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'next', offset: 0.3});
         proxySpy.calledOnce.should.be.true;
         proxySpy.firstCall.args[0].should.eql('/wda/pickerwheel/4/select');
         proxySpy.firstCall.args[1].should.eql('POST');
         proxySpy.firstCall.args[2].should.have.property('order', 'next');
+        proxySpy.firstCall.args[2].should.have.keys('order', 'offset');
       });
     });
 
