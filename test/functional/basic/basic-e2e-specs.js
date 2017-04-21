@@ -192,10 +192,6 @@ describe('XCUITestDriver - basics', function () {
 
   describe('contexts', () => {
     before(async function () {
-      // TODO: figure out why this fails in Travis
-      if (process.env.TRAVIS) {
-        return this.skip();
-      }
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();
@@ -207,7 +203,7 @@ describe('XCUITestDriver - basics', function () {
 
     it('should start a session, navigate to url, get title', async () => {
       let contexts;
-      await retryInterval(10, 1000, async () => {
+      await retryInterval(100, 1000, async () => {
         // on some systems (like Travis) it takes a while to load the webview
         contexts = await driver.contexts();
         contexts.length.should.be.at.least(2);
@@ -221,14 +217,12 @@ describe('XCUITestDriver - basics', function () {
       let buttons = await driver.elementsByClassName('XCUIElementTypeButton');
       await _.last(buttons).click();
 
-      await driver.setImplicitWaitTimeout(10000);
       await driver.context(contexts[1]);
 
-      // wait for something on the page, before checking on title
-      await driver.elementById('i_am_a_textbox');
-
-      let title = await driver.title();
-      title.should.equal('I am a page title');
+      await retryInterval(100, 1000, async () => {
+        let title = await driver.title();
+        title.should.equal('I am a page title');
+      });
 
       await driver.context(contexts[0]);
     });
