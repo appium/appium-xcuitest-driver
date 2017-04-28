@@ -59,6 +59,12 @@ describe('XCUITestDriver', function () {
       await driver.quit();
     });
 
+    it('should fail to start and stop a session', async function () {
+      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'io.blahblahblah.blah'});
+      caps.app = null;
+      await driver.init(caps).should.eventually.be.rejected;
+    });
+
     /* jshint ignore:start */
     describe('initial orientation', async () => {
       async function runOrientationTest (initialOrientation) {
