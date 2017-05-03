@@ -54,10 +54,11 @@ describe('alert commands', () => {
 
     it('should send accept alert request to WDA with encoded button label', async () => {
       const buttonLabel = 'some label';
-      await driver.execute(`mobile: ${commandName}`, {action: 'accept', buttonLabel: buttonLabel});
+      await driver.execute(`mobile: ${commandName}`, {action: 'accept', buttonLabel});
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql(`/alert/accept?name=${encodeURIComponent(buttonLabel)}`);
+      proxySpy.firstCall.args[0].should.eql('/alert/accept');
       proxySpy.firstCall.args[1].should.eql('POST');
+      proxySpy.firstCall.args[2].should.have.property('name', buttonLabel);
     });
 
     it('should send dimsiss alert request to WDA if button label is not provided', async () => {
