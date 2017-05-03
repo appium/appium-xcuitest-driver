@@ -43,4 +43,35 @@ describe('alert commands', () => {
       proxySpy.firstCall.args[1].should.eql('POST');
     });
   });
+
+  describe('mobile: alert', () => {
+    const commandName = 'alert';
+
+    it('should reject request to WDA if action parameter is not supported', async () => {
+      await driver.execute(`mobile: ${commandName}`, {action: 'blabla'})
+        .should.be.rejectedWith(/should be either/);
+    });
+
+    it('should send accept alert request to WDA with encoded button label', async () => {
+      const buttonLabel = 'some label';
+      await driver.execute(`mobile: ${commandName}`, {action: 'accept', buttonLabel: buttonLabel});
+      proxySpy.calledOnce.should.be.true;
+      proxySpy.firstCall.args[0].should.eql(`/alert/accept?name=${encodeURIComponent(buttonLabel)}`);
+      proxySpy.firstCall.args[1].should.eql('POST');
+    });
+
+    it('should send dimsiss alert request to WDA if button label is not provided', async () => {
+      await driver.execute(`mobile: ${commandName}`, {action: 'dismiss'});
+      proxySpy.calledOnce.should.be.true;
+      proxySpy.firstCall.args[0].should.eql(`/alert/dismiss`);
+      proxySpy.firstCall.args[1].should.eql('POST');
+    });
+
+    it('should send get alert buttons request to WDA', async () => {
+      await driver.execute(`mobile: ${commandName}`, {action: 'getButtons'});
+      proxySpy.calledOnce.should.be.true;
+      proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
+      proxySpy.firstCall.args[1].should.eql('GET');
+    });
+  });
 });
