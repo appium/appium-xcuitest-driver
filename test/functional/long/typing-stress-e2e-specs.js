@@ -12,7 +12,8 @@ describe('XCUITestDriver - long tests', function () {
 
   let driver;
   before(async () => {
-    driver = await initSession(UICATALOG_CAPS);
+    let caps = Object.assign({}, UICATALOG_CAPS, {maxTypingFrequency: 20});
+    driver = await initSession(caps);
   });
   after(async () => {
     await deleteSession();
@@ -31,7 +32,7 @@ describe('XCUITestDriver - long tests', function () {
     it('should not fail in typing', async () => {
       let text = 'bunchoftext';
       let el = await driver.elementByClassName('XCUIElementTypeTextField');
-      for (let i = 0; i < 300; i++) {
+      for (let i = 0; i < 200; i++) {
         await el.type(text);
 
         (await el.text()).should.include(text);
