@@ -1,5 +1,6 @@
 import sinon from 'sinon';
-import { settings as iosSettings } from 'appium-ios-driver';
+import { settings as iosSettings } from 'appium-ios-driver'; // eslint-disable-line import/no-duplicates
+import * as iosDriver from 'appium-ios-driver'; // eslint-disable-line import/no-duplicates
 import { JWProxy } from 'appium-base-driver';
 import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
@@ -7,7 +8,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
-import request from 'request-promise';
+
 
 const caps = {platformName: "iOS", deviceName: "iPhone 6", app: "/foo.app"};
 const anoop = async () => {};
@@ -105,15 +106,19 @@ describe('driver commands', () => {
   });
 
   describe('startIWDP()', () => {
-
     it('should start and stop IWDP server', async () => {
+      let startStub = sinon.stub();
+      let stopStub = sinon.stub();
+      iosDriver.IWDP = function () {
+        this.start = startStub;
+        this.stop = stopStub;
+      };
       await driver.startIWDP();
-      let endpoint = driver.iwdpServer.endpoint;
-      await request(endpoint).should.eventually.have.string('<html');
       await driver.stopIWDP();
-      await request(endpoint).should.eventually.be.rejected;
+
+      startStub.calledOnce.should.be.true;
+      stopStub.calledOnce.should.be.true;
     });
 
   });
 });
-
