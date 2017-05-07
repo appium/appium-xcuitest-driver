@@ -1,6 +1,9 @@
 import wd from 'wd';
 import { startServer } from '../../..';
 
+require('./ci-metrics');
+
+
 const HOST = '0.0.0.0',
       PORT = 4994;
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.TRAVIS ? 8 : 4);

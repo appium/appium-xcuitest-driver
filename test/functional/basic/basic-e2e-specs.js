@@ -57,6 +57,9 @@ describe('XCUITestDriver - basics', function () {
       // it's there, and validate the rest
       delete actual.udid;
       delete expected.udid; // for real device tests
+      // if we are getting metrics for this run (such as on Travis) there will
+      // be events in the result, but we cannot know what they should be
+      delete actual.events;
       actual.should.eql(expected);
     });
   });
