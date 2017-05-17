@@ -4,3 +4,4 @@ coverage
 *.log
 *.xcconfig
 .DS_Store
+ci-metrics

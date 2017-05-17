@@ -1,6 +1,14 @@
 import wd from 'wd';
 import { startServer } from '../../..';
 
+import patchDriverWithEvents from './ci-metrics';
+
+
+// if we are tracking CI metrics, patch the wd framework
+if (process.env.CI_METRICS) {
+  patchDriverWithEvents();
+}
+
 const HOST = '0.0.0.0',
       PORT = 4994;
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.TRAVIS ? 8 : 4);

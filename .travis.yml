@@ -1,32 +1,38 @@
 sudo: required
 env:
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=unit
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/basic
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/driver
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/web
-  - _FORCE_LOGS=1 PLATFORM_VERSION=9.3 TEST=functional/long
+  global:
+    - PLATFORM_VERSION=9.3
+    - _FORCE_LOGS=1
+    - secure: ls4nb5gcu0USHauJOkB9R5p86PMPJd/wCIQWjj/bhAfLNpSNNthtss2Ss9M7BjJg8lth8c85MrGfkAZOGgXknNtlQ2HHwKK4fbEiLAKLDS9diac6/OpAsxxE1/OvletYhkKLQSqb8d5Ju3S/xY6SmNDIzHUpeTYV2/5Ve+7Fh9zc1RztxsPwV1vxPtL6w0IAzNS9PQOmDXQ6x9KuZModtR7ohVKD47A91MzBlu3kk1CSaeQ4I8l7eXi4R9J6F81jkr51Vzoam4B6+4HTepSdfo02irBQWzaJ3VtRCbazFRBc/wfe4YgOPQTD9k69FiP19sa28lP9eSn6h5OCSXA9M803kju33Ml6OItRWDG0gUG1dzTroVXELEIcfnw1iTsFqKWoJLaEzEiXV8n2RsXLaLC5SHPgKwGEigGMfWDxM9leIC8hgervjQvApmx7btzq9S50tMcrzba5qwXDDrjJi1wKSjd4pQajhSj9VgOH9D5ihZBdn++VLwEvfAd4yQhjdsr9+COV1HrgK7Ro1HAHWgGnPtwBKiQdVU20QdQzNrhRdF2MLrJ4BfWpNm92JwlPxP/ojuA2l8mr9nDqlfBgXlnG32j59988gi85vaMfXssrUXtdJqsKJckI01c/mgaRh9pvG3UPX8K39quKBI5ftS8aCCa8tbF6bLq/ZuI2TRU=
+  matrix:
+    - TEST=unit
+    - CI_METRICS=1 TEST=functional/basic
+    - CI_METRICS=1 TEST=functional/driver
+    - CI_METRICS=1 TEST=functional/web
+    - CI_METRICS=1 TEST=functional/long
 language:
-  - objective-c
+- objective-c
 os: osx
 osx_image: xcode8.2
-git: # Handle git submodules yourself
+git:
   submodules: false
-node_js:
-  - "7"
-  - "6"
-  - "4"
 before_install:
+  # objC project, so manually handle node version
+  - nvm install 4
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
-  - pushd WebDriverAgent && ./Scripts/bootstrap.sh -d && popd
+  # - pushd WebDriverAgent && ./Scripts/bootstrap.sh -d && popd
 before_script:
   - node --version
-  - npm install
   - npm install -g gulp
   - npm install -g mocha
-  - node --version # just print out the node version, so we know for sure
+  - npm install
   - gulp transpile
 script:
   - gulp eslint && mocha -t 480000 --recursive build/test/$TEST -g @skip-ci -i
+  - if [ -n "$CI_METRICS" ]; then ls -la ./ci-metrics; fi
+  - if [ -n "$CI_METRICS" ]; then nvm install 7; fi
+  - if [ -n "$CI_METRICS" ]; then npm install -g appium-event-parser; fi
+  - if [ -n "$CI_METRICS" ]; then appium-event-parser -s -i ./ci-metrics; fi
