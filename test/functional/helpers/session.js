@@ -1,8 +1,13 @@
 import wd from 'wd';
 import { startServer } from '../../..';
 
-require('./ci-metrics');
+import patchDriverWithEvents from './ci-metrics';
 
+
+// if we are tracking CI metrics, patch the wd framework
+if (process.env.CI_METRICS) {
+  patchDriverWithEvents();
+}
 
 const HOST = '0.0.0.0',
       PORT = 4994;
