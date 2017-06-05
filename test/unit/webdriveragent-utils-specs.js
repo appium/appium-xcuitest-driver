@@ -1,4 +1,4 @@
-import { checkForDependencies } from '../../lib/webdriveragent-utils';
+import { checkForDependencies } from '../../lib/wda/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as teen_process from 'teen_process';
@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 
 const bootstrapPath = '/path/to/wda';
 
-describe('webdriveragent-utils', () => {
+describe('webdriveragent utils', () => {
   describe('checkForDependencies', withMocks({teen_process, fs}, (mocks) => {
     it('should run script with -d argument in correct directory', async () => {
       mocks.fs.expects('which').once().returns(true);

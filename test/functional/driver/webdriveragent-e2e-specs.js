@@ -4,7 +4,7 @@ import { createDevice, deleteDevice } from 'node-simctl';
 import { getVersion } from 'appium-xcode';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
-import WebDriverAgent from '../../../lib/webDriverAgent'; // eslint-disable-line import/no-unresolved
+import WebDriverAgent from '../../../lib/wda/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
 import { PLATFORM_VERSION } from '../desired';
 import { MOCHA_TIMEOUT } from '../helpers/session';
@@ -70,7 +70,7 @@ describe('WebDriverAgent', function () {
 
         let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
-        agent.createXcodeBuildSubProcess = async function () {
+        agent.xcodebuild.createSubProcess = async function () {
           let args = [
             '-workspace',
             this.agentPath,
