@@ -1,4 +1,4 @@
-import { WebDriverAgent, BOOTSTRAP_PATH } from '../../lib/webdriveragent';
+import { WebDriverAgent, BOOTSTRAP_PATH } from '../../lib/wda/webdriveragent';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
