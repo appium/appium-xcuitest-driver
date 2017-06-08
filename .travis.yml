@@ -18,12 +18,11 @@ git:
   submodules: false
 before_install:
   # objC project, so manually handle node version
-  - nvm install 4
+  - nvm install 6
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
-  # - pushd WebDriverAgent && ./Scripts/bootstrap.sh -d && popd
 before_script:
   - node --version
   - npm install -g gulp
