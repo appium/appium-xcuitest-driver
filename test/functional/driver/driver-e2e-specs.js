@@ -82,6 +82,23 @@ describe('XCUITestDriver', function () {
       await driver.init(caps).should.eventually.be.rejected;
     });
 
+    describe('WebdriverAgent port', function () {
+      it('should run on default port if no other specified', async function () {
+        let caps = Object.assign({}, UICATALOG_SIM_CAPS, {fullReset: true, showIOSLog: true});
+        caps.wdaLocalPort = null;
+        await driver.init(caps);
+        let logs = await driver.log('syslog');
+        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.true;
+      });
+      it('should run on port specified', async function () {
+        let caps = Object.assign({}, UICATALOG_SIM_CAPS, {fullReset: true, showIOSLog: true, wdaLocalPort: 6000});
+        await driver.init(caps);
+        let logs = await driver.log('syslog');
+        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.false;
+        logs.some((line) => line.message.indexOf(':6000<-') !== -1).should.be.true;
+      });
+    });
+
     /* jshint ignore:start */
     describe('initial orientation', async () => {
       async function runOrientationTest (initialOrientation) {
