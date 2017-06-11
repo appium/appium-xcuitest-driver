@@ -121,4 +121,23 @@ describe('driver commands', () => {
     });
 
   });
+
+  describe('determineDevice', () => {
+    let d;
+    beforeEach(() => {
+      d = new XCUITestDriver();
+    });
+    it('should set the correct iPad simultor generic device', async () => {
+      let deviceName = await d.translateDeviceName("10.1.2", "iPad Simulator");
+      deviceName.should.equal("iPad Retina");
+      deviceName = await d.translateDeviceName(10.103, "iPad Simulator");
+      deviceName.should.equal("iPad Retina");
+      deviceName = await d.translateDeviceName("10.3", "iPad Simulator");
+      deviceName.should.equal("iPad Air");
+      deviceName = await d.translateDeviceName(10.3, "iPad Simulator");
+      deviceName.should.equal("iPad Air");
+      deviceName = await d.translateDeviceName(10.3, "iPhone Simulator");
+      deviceName.should.equal("iPhone 6");
+    });
+  });
 });
