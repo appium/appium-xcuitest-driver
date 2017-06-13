@@ -42,27 +42,61 @@ describe('XCUITestDriver', function () {
       await driver.init(UICATALOG_SIM_CAPS);
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
-      await driver.quit();
     });
 
     it('should start and stop a session doing pre-build', async function () {
       await driver.init(_.defaults({prebuildWDA: true}, UICATALOG_SIM_CAPS));
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
-      await driver.quit();
     });
 
     it('should start and stop a session doing simple build-test', async function () {
       await driver.init(_.defaults({useSimpleBuildTest: true}, UICATALOG_SIM_CAPS));
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
-      await driver.quit();
     });
 
-    it('should fail to start and stop a session', async function () {
+    it('should start and stop a session with only bundle id', async function () {
+      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      caps.app = null;
+      await driver.init(caps).should.not.eventually.be.rejected;
+    });
+
+    it('should start and stop a session with only bundle id when no sim is running', async function () {
+      await killAllSimulators();
+      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      caps.app = null;
+      await driver.init(caps).should.not.eventually.be.rejected;
+    });
+
+    it('should fail to start and stop a session if unknown bundle id used', async function () {
       let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'io.blahblahblah.blah'});
       caps.app = null;
       await driver.init(caps).should.eventually.be.rejected;
+    });
+
+    it('should fail to start and stop a session if unknown bundle id used when no sim is running', async function () {
+      await killAllSimulators();
+      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'io.blahblahblah.blah'});
+      caps.app = null;
+      await driver.init(caps).should.eventually.be.rejected;
+    });
+
+    describe('WebdriverAgent port', function () {
+      it('should run on default port if no other specified', async function () {
+        let caps = Object.assign({}, UICATALOG_SIM_CAPS, {fullReset: true, showIOSLog: true});
+        caps.wdaLocalPort = null;
+        await driver.init(caps);
+        let logs = await driver.log('syslog');
+        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.true;
+      });
+      it('should run on port specified', async function () {
+        let caps = Object.assign({}, UICATALOG_SIM_CAPS, {fullReset: true, showIOSLog: true, wdaLocalPort: 6000});
+        await driver.init(caps);
+        let logs = await driver.log('syslog');
+        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.false;
+        logs.some((line) => line.message.indexOf(':6000<-') !== -1).should.be.true;
+      });
     });
 
     /* jshint ignore:start */
