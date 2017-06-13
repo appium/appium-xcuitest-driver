@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
@@ -134,8 +135,12 @@ describe('XCUITestDriver - find', function () {
       });
       beforeEach(async () => {
         // go into the right page
-        let el = await driver.elementByAccessibilityId('Buttons');
-        await el.click();
+        await retryInterval(10, 500, async () => {
+          let el = await driver.elementByAccessibilityId('Buttons');
+          await el.click();
+
+          (await driver.elementsByAccessibilityId('Button')).should.have.length.at.least(1);
+        });
       });
       afterEach(async () => {
         await driver.back();
