@@ -47,7 +47,6 @@ describe('XCUITestDriver - basics', function () {
         CFBundleIdentifier: "com.example.apple-samplecode.UICatalog",
         browserName: "UICatalog",
         device: "iphone",
-        sdkVersion: PLATFORM_VERSION,
       };
       let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
       let actual = await driver.sessionCapabilities();
@@ -59,6 +58,9 @@ describe('XCUITestDriver - basics', function () {
       // if we are getting metrics for this run (such as on Travis) there will
       // be events in the result, but we cannot know what they should be
       delete actual.events;
+      // sdk version can be a longer version
+      actual.sdkVersion.indexOf(PLATFORM_VERSION).should.eql(0);
+      delete actual.sdkVersion;
       actual.should.eql(expected);
     });
   });
