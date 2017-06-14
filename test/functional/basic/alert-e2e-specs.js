@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
+import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
@@ -21,10 +22,17 @@ describe('XCUITestDriver - alerts', function () {
 
 
   beforeEach(async () => {
-    let el1 = await driver.elementByAccessibilityId('Alert Views');
-    await el1.click();
+    await retryInterval(5, 500, async () => {
+      let el = await driver.elementByAccessibilityId('Alert Views');
+      await el.click();
+
+      (await driver.elementsByAccessibilityId('Simple')).should.have.length(1);
+    });
   });
   afterEach(async () => {
+    try {
+      await driver.acceptAlert();
+    } catch (ign) {}
     await driver.back();
   });
 

@@ -1,7 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
@@ -212,15 +211,8 @@ describe('XCUITestDriver - basics', function () {
         contexts.length.should.be.at.least(2);
       });
 
-      let urlBar = await driver.elementByClassName('XCUIElementTypeTextField');
-      await urlBar.clear();
-
-      await urlBar.sendKeys(GUINEA_PIG_PAGE);
-
-      let buttons = await driver.elementsByClassName('XCUIElementTypeButton');
-      await _.last(buttons).click();
-
       await driver.context(contexts[1]);
+      await driver.get(GUINEA_PIG_PAGE);
 
       await retryInterval(100, 1000, async () => {
         let title = await driver.title();
