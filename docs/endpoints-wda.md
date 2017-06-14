@@ -5,7 +5,7 @@
 | method | endpoint                               | req params | opt params |
 | ------ | -------------------------------------- | ---------- | ---------- |
 | POST   | /wda/homescreen                        | | |
-| POST   | /source                                | | accessible |
+| GET    | /source                                | | accessible |
 | GET    | /inspector                             | | |
 | GET    | /inspector.js                          | | |
 | GET    | /screenshot                            | | |
@@ -26,7 +26,7 @@
 | POST   | /alert/dismiss                         | | |
 | POST   | /wda/deactivateApp                     | | duration |
 | POST   | /timeouts                              | * | |
-| POST   | /source                                | | accessible |
+| GET    | /source                                | | accessible |
 | GET    | /element/:uuid/enabled                 | | |
 | GET    | /element/:uuid/rect                    | | |
 | GET    | /element/:uuid/attribute/:name         | | |
