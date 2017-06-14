@@ -1,4 +1,4 @@
-import { clearSystemFiles } from '../../lib/utils';
+import { clearSystemFiles, translateDeviceName } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -29,4 +29,18 @@ describe('utils', () => {
       mocks.iosUtils.verify();
     });
   }));
+  describe('determineDevice', () => {
+    it('should set the correct iPad simultor generic device', async () => {
+      let deviceName = await translateDeviceName("10.1.2", "iPad Simulator");
+      deviceName.should.equal("iPad Retina");
+      deviceName = await translateDeviceName(10.103, "iPad Simulator");
+      deviceName.should.equal("iPad Retina");
+      deviceName = await translateDeviceName("10.3", "iPad Simulator");
+      deviceName.should.equal("iPad Air");
+      deviceName = await translateDeviceName(10.3, "iPad Simulator");
+      deviceName.should.equal("iPad Air");
+      deviceName = await translateDeviceName(10.3, "iPhone Simulator");
+      deviceName.should.equal("iPhone 6");
+    });
+  });
 });
