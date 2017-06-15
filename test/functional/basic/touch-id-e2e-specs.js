@@ -51,7 +51,6 @@ describe('touchID() ', function () {
     });
 
     it('should accept matching fingerprint if touchID is enrolled or it should not be supported if phone doesn\'t support touchID', async () => {
-      await driver.toggleTouchIdEnrollment();
       let authenticateButton = await driver.elementByName(' Authenticate with Touch ID');
       await authenticateButton.click();
       await driver.touchId(true);
@@ -60,11 +59,9 @@ describe('touchID() ', function () {
       } catch (ign) {
         await driver.elementByName('TouchID not supported').should.eventually.exist;
       }
-      await driver.toggleTouchIdEnrollment();
     });
 
     it('should reject not matching fingerprint if touchID is enrolled or it should not be supported if phone doesn\'t support touchID', async () => {
-      await driver.toggleTouchIdEnrollment();
       let authenticateButton = await driver.elementByName(' Authenticate with Touch ID');
       await authenticateButton.click();
       await driver.touchId(false);
@@ -73,11 +70,11 @@ describe('touchID() ', function () {
       } catch (ign) {
         await driver.elementByName('TouchID not supported').should.eventually.exist;
       }
-      await driver.toggleTouchIdEnrollment();
     });
 
     it('should enroll touchID and accept matching fingerprints then unenroll touchID and not be supported', async () => {
-      // Don't enroll
+      //Unenroll
+      await driver.toggleTouchIdEnrollment();
       let authenticateButton = await driver.elementByName(' Authenticate with Touch ID');
       await authenticateButton.click();
       await driver.elementByName('TouchID not supported').should.eventually.exist;
@@ -85,7 +82,7 @@ describe('touchID() ', function () {
       await okButton.click();
       await B.delay(1000);
 
-      // Enroll
+      // Re-enroll
       await driver.toggleTouchIdEnrollment();
       await authenticateButton.click();
       await driver.touchId(true);
@@ -98,7 +95,7 @@ describe('touchID() ', function () {
       await okButton.click();
       await B.delay(1000);
 
-      // Unenroll
+      // Unenroll again
       await driver.toggleTouchIdEnrollment();
       authenticateButton = await driver.elementByName(' Authenticate with Touch ID');
       await authenticateButton.click();
