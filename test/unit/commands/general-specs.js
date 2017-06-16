@@ -98,4 +98,39 @@ describe('general commands', () => {
       enrollTouchIDSpy.notCalled.should.be.true;
     });
   });
+
+  describe('nativeWebTap as a setting', () => {
+    // create new driver with no opts
+    let driver, startStub;
+    const baseCaps = {platformName: 'iOS', deviceName: 'bar', app: '/fake'};
+
+    beforeEach(() => {
+      driver = new XCUITestDriver();
+      startStub = sinon.stub(driver, 'start');
+    });
+
+    afterEach(() => {
+      startStub.restore();
+      driver = null;
+    });
+
+    it('should start out with setting defaulting to false', async () => {
+      await driver.getSettings().should.eventually.eql({nativeWebTap: false});
+    });
+
+    it('should default to value sent in caps after session starts', async () => {
+      await driver.createSession(Object.assign({nativeWebTap: true}, baseCaps));
+      await driver.getSettings().should.eventually.eql({nativeWebTap: true});
+    });
+
+    it('should update opts value based on settings update', async () => {
+      await driver.getSettings().should.eventually.eql({nativeWebTap: false});
+      await driver.updateSettings({nativeWebTap: true});
+      await driver.getSettings().should.eventually.eql({nativeWebTap: true});
+      driver.opts.nativeWebTap.should.be.true;
+      await driver.updateSettings({nativeWebTap: false});
+      await driver.getSettings().should.eventually.eql({nativeWebTap: false});
+      driver.opts.nativeWebTap.should.be.false;
+    });
+  });
 });
