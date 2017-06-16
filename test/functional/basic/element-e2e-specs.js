@@ -3,12 +3,13 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, skipIOS11, isIOS11 } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 describe('XCUITestDriver - element(s)', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -22,6 +23,10 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('text', () => {
+    before(function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+    });
+
     it('should get the text of an element', async () => {
       let el = await driver.elementByAccessibilityId('Buttons');
       let text = await el.text();
@@ -47,6 +52,10 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('displayed', () => {
+    before(function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+    });
+
     it('should get the displayed status for a displayed element', async () => {
       let el = await driver.elementByAccessibilityId('Buttons');
       let displayed = await el.isDisplayed();
@@ -60,6 +69,10 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('location', () => {
+    before(function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+    });
+
     it('should get the location of an element', async () => {
       let el = await driver.elementByAccessibilityId('Buttons');
       let loc = await el.getLocation();
@@ -79,6 +92,10 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('location_in_view', () => {
+    before(function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+    });
+
     it('should get the location of an element', async () => {
       let el = await driver.elementByAccessibilityId('Buttons');
       let loc = await el.getLocation();
@@ -98,6 +115,10 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('size', () => {
+    before(function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+    });
+
     it('should get the size of the element', async () => {
       let el = await driver.elementByAccessibilityId('Buttons');
       let size = await el.getSize();
@@ -117,6 +138,13 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('interactions', function () {
+    function shouldEqual (str1, str2) {
+      if (isIOS11()) {
+        str2 = '';
+      }
+      str1.should.eql(str2);
+    }
+
     describe('text fields', () => {
       let text1 = 'bunchoftext';
       let text2 = 'differenttext';
@@ -139,14 +167,14 @@ describe('XCUITestDriver - element(s)', function () {
           await el.type(text1);
 
           let text = await el.text();
-          text.should.eql(text1);
+          shouldEqual(text, text1);
         });
         it('should type in the text field even before the keyboard is up', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.type(text1);
 
           let text = await el.text();
-          text.should.eql(text1);
+          shouldEqual(text, text1);
         });
         it('should type a url in the text field', async () => {
           // in Travis this sometimes gets the wrong text
@@ -157,7 +185,7 @@ describe('XCUITestDriver - element(s)', function () {
             await el.type(text3);
 
             let text = await el.text();
-            text.should.eql(text3);
+            shouldEqual(text, text3);
           });
         });
         it('should be able to type into two text fields', async () => {
@@ -169,19 +197,23 @@ describe('XCUITestDriver - element(s)', function () {
           await els[1].type(text2);
 
           let text = await els[0].text();
-          text.should.eql(text1);
+          shouldEqual(text, text1);
 
           text = await els[1].text();
-          text.should.eql(text2);
+          shouldEqual(text, text2);
         });
         it('should type in a secure text field', async () => {
           let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
           await els[0].type(text1);
 
           let text = await els[0].text();
-          text.should.not.eql(text1);
-          text.length.should.eql(text1.length);
-          text.should.eql(secureText);
+          if (isIOS11()) {
+            expect(text).to.be.null;
+          } else {
+            text.should.not.eql(text1);
+            text.length.should.eql(text1.length);
+            shouldEqual(text, secureText);
+          }
         });
         it('should type a backspace', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
@@ -189,7 +221,7 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.type(el, ['0123456789\uE003']);
 
           let text = await el.text();
-          text.should.eql('012345678');
+          shouldEqual(text, '012345678');
         });
         it('should type a delete', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
@@ -197,7 +229,7 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.type(el, ['0123456789\ue017']);
 
           let text = await el.text();
-          text.should.eql('012345678');
+          shouldEqual(text, '012345678');
         });
         it('should type a newline', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
@@ -205,7 +237,7 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.type(el, ['0123456789\uE006']);
 
           let text = await el.text();
-          text.should.eql('0123456789');
+          shouldEqual(text, '0123456789');
         });
       });
 
@@ -215,49 +247,57 @@ describe('XCUITestDriver - element(s)', function () {
           await el.type(text1);
 
           let text = await el.text();
-          text.should.eql(text1);
+          shouldEqual(text, text1);
 
           await el.clear();
 
           text = await el.text();
-          text.should.eql(phText);
+          shouldEqual(text, phText);
         });
         it('should be able to clear two text fields', async () => {
           let els = await driver.elementsByClassName('XCUIElementTypeTextField');
           await els[0].type(text1);
 
           let text = await els[0].text();
-          text.should.eql(text1);
+          shouldEqual(text, text1);
 
           await driver.hideKeyboard();
 
           await els[1].type(text2);
 
           text = await els[1].text();
-          text.should.eql(text2);
+          shouldEqual(text, text2);
 
           await els[0].clear();
 
           text = await els[0].text();
-          text.should.eql(phText);
+          shouldEqual(text, phText);
 
           await driver.hideKeyboard();
 
           await els[1].clear();
 
           text = await els[1].text();
-          text.should.eql(phText);
+          shouldEqual(text, phText);
         });
         it('should clear a secure text field', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeSecureTextField');
           await el.type(text1);
 
           let text = await el.text();
-          text.should.eql(secureText);
+          if (isIOS11()) {
+            expect(text).to.be.null;
+          } else {
+            shouldEqual(text, secureText);
+          }
 
           await el.clear();
           text = await el.text();
-          text.should.eql(phText);
+          if (isIOS11()) {
+            expect(text).to.be.null;
+          } else {
+            shouldEqual(text, phText);
+          }
         });
       });
       describe('keys', () => {
@@ -276,7 +316,7 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.keys('0123456789\uE003');
 
           let text = await el.text();
-          text.should.eql('012345678');
+          shouldEqual(text, '012345678');
         });
         it('should type a delete', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
@@ -286,7 +326,7 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.keys('0123456789\ue017');
 
           let text = await el.text();
-          text.should.eql('012345678');
+          shouldEqual(text, '012345678');
         });
         it('should type a newline', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
@@ -296,10 +336,14 @@ describe('XCUITestDriver - element(s)', function () {
           await driver.keys('0123456789\uE006');
 
           let text = await el.text();
-          text.should.eql('0123456789');
+          shouldEqual(text, '0123456789');
         });
       });
       describe('hide keyboard', () => {
+        before(function () {
+          if (skipIOS11(this)) return; // eslint-disable-line curly
+        });
+
         it('should be able to hide the keyboard', async () => {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.click();
@@ -330,12 +374,20 @@ describe('XCUITestDriver - element(s)', function () {
           let wheel = wheels[i];
 
           let value = await wheel.getAttribute('value');
-          parseInt(value, 10).should.eql(values[i]);
+          if (isIOS11()) {
+            expect(value).to.be.null;
+          } else {
+            parseInt(value, 10).should.eql(values[i]);
+          }
 
           await wheel.type(150);
 
           value = await wheel.getAttribute('value');
-          parseInt(value, 10).should.eql(150);
+          if (isIOS11()) {
+            expect(value).to.be.null;
+          } else {
+            parseInt(value, 10).should.eql(150);
+          }
         }
       });
     });

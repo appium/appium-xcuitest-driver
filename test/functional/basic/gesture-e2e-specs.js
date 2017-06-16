@@ -4,7 +4,7 @@ import B from 'bluebird';
 import wd from 'wd';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, skipIOS11 } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
 
@@ -51,7 +51,9 @@ describe('XCUITestDriver - gestures', function () {
           let el2 = await driver.elementByAccessibilityId('OK');
           await el2.click();
         });
-        it('should tap on arbitrary coordinates', async () => {
+        it('should tap on arbitrary coordinates', async function () {
+          if (skipIOS11(this)) return; // eslint-disable-line curly
+
           let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
           let loc = await el1.getLocation();
 
@@ -90,7 +92,9 @@ describe('XCUITestDriver - gestures', function () {
         let el2 = await driver.elementByAccessibilityId('Cancel');
         await el2.click();
       });
-      it('should long press on arbitrary coordinate', async () => {
+      it('should long press on arbitrary coordinate', async function () {
+        if (skipIOS11(this)) return; // eslint-disable-line curly
+
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
         let loc = await el1.getLocation();
 
@@ -125,7 +129,9 @@ describe('XCUITestDriver - gestures', function () {
 
       await driver.elementByAccessibilityId('2').should.not.be.rejected;
     });
-    it(`should swipe the table and the bottom cell's Y position should change accordingly`, async () => {
+    it(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
       let toolbarsEl = await driver.elementByAccessibilityId('Toolbars');
       let yInit = (await toolbarsEl.getLocation()).y;

@@ -10,7 +10,7 @@ import { killAllSimulators } from 'appium-ios-simulator';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('touchID() ', function () {
+describe('touch ID', function () {
   this.timeout(MOCHA_TIMEOUT);
   let caps, driver;
 
