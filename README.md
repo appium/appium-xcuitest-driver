@@ -79,7 +79,7 @@ See [real device configuration documentation](docs/real-device-config.md).
 
 ### Known problems
 
-After many failures on real devices, there can be a state where the device will no longer accept connections. To possibly remedy this, set the `useNewWDA` capability to `true`.
+After many failures on real devices, there can be a state where the device will no longer accept connections. To possibly remedy this reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details. [Getting full control](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/wda-custom-server.md) over WDA server might help to workaround the problem.
 
 #### Weird state
 
@@ -134,7 +134,7 @@ Differences noted here
 |`usePrebuiltWDA`|Skips the build phase of running the WDA app. Building is then the responsibility of the user. Only works for Xcode 8+. Defaults to `false`.|e.g., `true`|
 |`preventWDAAttachments`|Sets read only permissions to Attachments subfolder of WebDriverAgent root inside Xcode's DerivedData. This is necessary to prevent XCTest framework from creating tons of unnecessary screenshots and logs, which are impossible to turn off using programming interfaces provided by Apple.|Setting the capability to `true` will set Posix permissions of the folder to `555` and `false` will reset them back to `755`. `true` by default|
 |`webDriverAgentUrl`|If provided, Appium will connect to an existing WebDriverAgent instance at this URL instead of starting a new one.|e.g., `http://localhost:8100`|
-|`useNewWDA`|If `true`, forces uninstall of any existing WebDriverAgent app on device. This can provide stability in some situations. Defaults to `false`.|e.g., `true`|
+|`useNewWDA`|If `true`, forces uninstall of any existing WebDriverAgent app on device. This can provide stability in some situations when the app runs on Simulator. The `false` value (the default behaviour since Appium 1.6.6) will try to detect currently running WDA listener executed by previous testing session(s) and reuse it if possible, which is highly recommended for real device testing and to speed up suites of multiple tests in general. A new WDA session will be triggered at the default URL (http://localhost:8100) if WDA is not listening and `webDriverAgentUrl` capability is not set. The negative/unset value of `useNewWDA` capability has no effect prior to Appium 1.6.6.|e.g., `true`|
 |`wdaLaunchTimeout`|Time, in ms, to wait for WebDriverAgewnt to be pingable. Defaults to 60000ms.|e.g., `30000`|
 |`wdaConnectionTimeout`|Timeout, in ms, for waiting for a response from WebDriverAgent. Defaults to 240000ms.|e.g., `1000`|
 |`resetOnSessionStartOnly`|Whether to perform reset on test session finish (`false`) or not (`true`). Keeping this variable set to `true` and Simulator running (the default behaviour since version 1.6.4) may significantly shorten the duratiuon of test session initialization.|Either `true` or `false`. Defaults to `true`|
