@@ -115,21 +115,22 @@ describe('general commands', () => {
     });
 
     it('should start out with setting defaulting to false', async () => {
-      await driver.getSettings().should.eventually.eql({nativeWebTap: false});
+      (await driver.getSettings()).nativeWebTap.should.eql(false);
     });
 
     it('should default to value sent in caps after session starts', async () => {
+      (await driver.getSettings()).nativeWebTap.should.eql(false);
       await driver.createSession(Object.assign({nativeWebTap: true}, baseCaps));
-      await driver.getSettings().should.eventually.eql({nativeWebTap: true});
+      (await driver.getSettings()).nativeWebTap.should.eql(true);
     });
 
     it('should update opts value based on settings update', async () => {
-      await driver.getSettings().should.eventually.eql({nativeWebTap: false});
+      (await driver.getSettings()).nativeWebTap.should.eql(false);
       await driver.updateSettings({nativeWebTap: true});
-      await driver.getSettings().should.eventually.eql({nativeWebTap: true});
+      (await driver.getSettings()).nativeWebTap.should.eql(true);
       driver.opts.nativeWebTap.should.be.true;
       await driver.updateSettings({nativeWebTap: false});
-      await driver.getSettings().should.eventually.eql({nativeWebTap: false});
+      (await driver.getSettings()).nativeWebTap.should.eql(false);
       driver.opts.nativeWebTap.should.be.false;
     });
   });
