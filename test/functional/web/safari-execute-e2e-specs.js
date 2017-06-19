@@ -78,8 +78,8 @@ describe('safari - execute', function () {
     });
 
     describe('asynchronous', function () {
-      it('should bubble up javascript errors', async () => {
-        await driver.execute(`'nan'--`).should.eventually.be.rejected;
+      before(function () {
+        if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
       });
 
       it('should execute async javascript', async () => {
@@ -92,10 +92,10 @@ describe('safari - execute', function () {
         await driver.executeAsync(`return 1 + 2`).should.eventually.be.rejected;
       });
 
-      // it('should work with an HTTPS site', async () => {
-      //   await driver.get('https://google.com');
-      //   (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
-      // });
+      it('should work with an HTTPS site', async () => {
+        await driver.get('https://google.com');
+        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
+      });
     });
   }
 
