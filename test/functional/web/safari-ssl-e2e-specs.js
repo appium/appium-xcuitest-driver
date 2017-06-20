@@ -24,10 +24,10 @@ describe('Safari SSL', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let server, sslServer, driver;
-  before(async () => {
-    if (!process.env.REAL_DEVICE) {
-      await killAllSimulators();
-    }
+  before(async function () {
+    if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
+
+    await killAllSimulators();
 
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
@@ -55,7 +55,9 @@ describe('Safari SSL', function () {
 
   describe('ssl cert', () => {
     afterEach(async function () {
-      await driver.quit();
+      if (driver) {
+        await driver.quit();
+      }
     });
 
     it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
