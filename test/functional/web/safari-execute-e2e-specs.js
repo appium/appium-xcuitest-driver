@@ -91,11 +91,6 @@ describe('safari - execute', function () {
         await driver.setAsyncScriptTimeout(1000);
         await driver.executeAsync(`return 1 + 2`).should.eventually.be.rejected;
       });
-
-      it('should work with an HTTPS site', async () => {
-        await driver.get('https://google.com');
-        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
-      });
     });
   }
 
