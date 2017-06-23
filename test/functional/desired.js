@@ -77,4 +77,17 @@ const TOUCHIDAPP_CAPS = _.defaults({
   app: path.resolve('.', 'test', 'assets', 'TouchIDExample.app'),
 }, GENERIC_CAPS);
 
-export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS, PLATFORM_VERSION, TOUCHIDAPP_CAPS };
+function skipIOS11 (mochaContext) {
+  if (PLATFORM_VERSION === '11.0') {
+    mochaContext.skip();
+    return true;
+  }
+  return false;
+}
+
+function isIOS11 () {
+  return PLATFORM_VERSION === '11.0';
+}
+
+export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
+         PLATFORM_VERSION, TOUCHIDAPP_CAPS, skipIOS11, isIOS11 };

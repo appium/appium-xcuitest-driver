@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
+import { UICATALOG_CAPS, skipIOS11 } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
 
@@ -59,7 +59,7 @@ describe('XCUITestDriver - basics', function () {
       // be events in the result, but we cannot know what they should be
       delete actual.events;
       // sdk version can be a longer version
-      actual.sdkVersion.indexOf(PLATFORM_VERSION).should.eql(0);
+      actual.sdkVersion.indexOf(UICATALOG_CAPS.platformVersion).should.eql(0);
       delete actual.sdkVersion;
       actual.should.eql(expected);
     });
@@ -79,6 +79,9 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('deactivate app', () => {
+    before(function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+    });
     it('should background the app for the specified time', async () => {
       let before = Date.now();
       await driver.backgroundApp(4);

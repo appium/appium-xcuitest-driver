@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, skipIOS11 } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
@@ -123,7 +123,9 @@ describe('XCUITestDriver - find', function () {
 
   describe('by xpath', () => {
     describe('individual calls', function () {
-      before(async () => {
+      before(async function () {
+        if (skipIOS11(this)) return; // eslint-disable-line curly
+
         // before anything, try to go back
         // otherwise the tests will fail erroneously
         await driver.back();
@@ -314,7 +316,9 @@ describe('XCUITestDriver - find', function () {
   });
 
   describe('by predicate string', () => {
-    before(async () => {
+    before(async function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
     });
@@ -350,7 +354,9 @@ describe('XCUITestDriver - find', function () {
   });
 
   describe('by class chain', () => {
-    before(async () => {
+    before(async function () {
+      if (skipIOS11(this)) return; // eslint-disable-line curly
+
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
     });
