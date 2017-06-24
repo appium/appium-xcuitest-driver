@@ -2,6 +2,7 @@ import B from 'bluebird';
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { killAllSimulators } from 'appium-ios-simulator';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
@@ -19,6 +20,9 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
 
   let driver;
   before(async () => {
+    if (!process.env.REAL_DEVICE) {
+      await killAllSimulators();
+    }
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: false,
@@ -26,7 +30,6 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
     }, SAFARI_CAPS);
     driver = await initSession(caps);
     await driver.setPageLoadTimeout(100);
-    await driver.setImplicitWaitTimeout(5000);
   });
   after(async () => {
     await deleteSession();
@@ -43,13 +46,15 @@ describe('safari - windows and frames', function () {
 
   let driver;
   before(async () => {
+    if (!process.env.REAL_DEVICE) {
+      await killAllSimulators();
+    }
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
       nativeWebTap: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
-    await driver.setImplicitWaitTimeout(5000);
   });
   after(async () => {
     await deleteSession();
