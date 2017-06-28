@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 chai.should();
 chai.use(chaiAsPromised);
+const expect = chai.expect;
 
 const fakeConstructorArgs = {
   device: 'some sim',
@@ -45,11 +46,13 @@ describe('Constructor', () => {
 
 describe('launch', () => {
   it('should use webDriverAgentUrl override', async () => {
-    let override = "http://mockUrl:8100";
+    let override = "http://mockurl:8100/";
     let args = Object.assign({}, fakeConstructorArgs);
     args.webDriverAgentUrl = override;
     let agent = new WebDriverAgent({}, args);
 
-    (await agent.launch("sessionId")).should.be.equal(override);
+    expect(await agent.launch("sessionId")).to.be.undefined;
+
+    agent.url.href.should.eql(override);
   });
 });
