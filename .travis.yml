@@ -25,12 +25,10 @@ before_install:
   - git submodule update --init --recursive
 before_script:
   - node --version
-  - npm install -g gulp
-  - npm install -g mocha
   - npm install
-  - gulp transpile
+  - npm run build
 script:
-  - gulp eslint && mocha -t 480000 --recursive build/test/$TEST -g @skip-ci -i
+  - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i
   - if [ -n "$CI_METRICS" ]; then ls -la ./ci-metrics; fi
   - if [ -n "$CI_METRICS" ]; then nvm install 7; fi
   - if [ -n "$CI_METRICS" ]; then npm install -g appium-event-parser; fi
