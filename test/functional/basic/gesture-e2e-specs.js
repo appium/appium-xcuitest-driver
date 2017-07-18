@@ -133,10 +133,12 @@ describe('XCUITestDriver - gestures', function () {
       if (skipIOS11(this)) return; // eslint-disable-line curly
 
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
-      let toolbarsEl = await driver.elementByAccessibilityId('Toolbars');
+      let toolbarsEl = await driver.elementByAccessibilityId('Picker View');
       let yInit = (await toolbarsEl.getLocation()).y;
+
       await driver.execute('mobile: swipe', {element: winEl, direction: 'up'}).should.not.be.rejected;
-      expect((await toolbarsEl.getLocation()).y).to.be.above(yInit);
+      expect((await toolbarsEl.getLocation()).y).to.be.below(yInit);
+
       await driver.execute('mobile: swipe', {element: winEl, direction: 'down'}).should.not.be.rejected;
       expect((await toolbarsEl.getLocation()).y).to.equal(yInit);
     });
