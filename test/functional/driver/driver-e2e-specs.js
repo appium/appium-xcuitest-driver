@@ -1,5 +1,4 @@
 import { startServer } from '../../..';
-import { simBooted } from '../../../lib/simulator-management.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
@@ -167,13 +166,13 @@ describe('XCUITestDriver', function () {
           resetOnSessionStartOnly: false
         }, UICATALOG_SIM_CAPS);
 
-        (await simBooted(sim)).should.be.true;
+        (await sim.isRunning()).should.be.true;
         let simsBefore = await getNumSims();
         await driver.init(caps);
         let simsDuring = await getNumSims();
         await driver.quit();
         let simsAfter = await getNumSims();
-        (await simBooted(sim)).should.be.false;
+        (await sim.isRunning()).should.be.false;
 
         // make sure no new simulators were created during the test
         simsDuring.should.equal(simsBefore);
@@ -197,13 +196,13 @@ describe('XCUITestDriver', function () {
           noReset: true
         }, UICATALOG_SIM_CAPS);
 
-        (await simBooted(sim)).should.be.true;
+        (await sim.isRunning()).should.be.true;
         let simsBefore = await getNumSims();
         await driver.init(caps);
         let simsDuring = await getNumSims();
         await driver.quit();
         let simsAfter = await getNumSims();
-        (await simBooted(sim)).should.be.true;
+        (await sim.isRunning()).should.be.true;
 
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
@@ -251,7 +250,7 @@ describe('XCUITestDriver', function () {
         let simsDuring = await getNumSims();
         await driver.quit();
         let simsAfter = await getNumSims();
-        (await simBooted(sim)).should.be.true;
+        (await sim.isRunning()).should.be.true;
 
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
