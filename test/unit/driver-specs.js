@@ -64,9 +64,12 @@ describe('driver commands', () => {
         return {
           device: {
             shutdown: anoop,
+            isRunning () {
+              return true;
+            },
             stat () {
               return {state: 'Booted'};
-            }
+            },
           },
           udid: null,
           realDevice: null
