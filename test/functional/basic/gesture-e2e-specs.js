@@ -11,7 +11,6 @@ import { APPIUM_IMAGE } from '../web/helpers';
 
 chai.should();
 chai.use(chaiAsPromised);
-let expect = chai.expect;
 
 describe('XCUITestDriver - gestures', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -41,6 +40,19 @@ describe('XCUITestDriver - gestures', function () {
           await el.click();
         });
       });
+
+      async function exitModal (name) {
+        // should exist, will throw error if it doesn't
+        let els = await driver.elementsByAccessibilityId(name);
+        els.should.have.length(1);
+
+        await retryInterval(5, 100, async () => {
+          await els[0].click();
+
+          els = await driver.elementsByAccessibilityId(name);
+          els.should.have.length(0);
+        });
+      }
       describe('tap', () => {
         it('should tap on the element', async () => {
           let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
@@ -48,8 +60,7 @@ describe('XCUITestDriver - gestures', function () {
           action.tap({el: el1});
           await action.perform();
 
-          let el2 = await driver.elementByAccessibilityId('OK');
-          await el2.click();
+          await exitModal('OK');
         });
         it('should tap on arbitrary coordinates', async function () {
           if (skipIOS11(this)) return; // eslint-disable-line curly
@@ -61,8 +72,7 @@ describe('XCUITestDriver - gestures', function () {
           action.tap(loc);
           await action.perform();
 
-          let el2 = await driver.elementByAccessibilityId('OK');
-          await el2.click();
+          await exitModal('OK');
         });
       });
       it('should long press on an element', async () => {
@@ -71,8 +81,7 @@ describe('XCUITestDriver - gestures', function () {
         action.longPress({el: el1});
         await action.perform();
 
-        let el2 = await driver.elementByAccessibilityId('Cancel');
-        await el2.click();
+        await exitModal('Cancel');
       });
       it('should long press on an element with duration through press-wait-release', async () => {
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
@@ -80,8 +89,7 @@ describe('XCUITestDriver - gestures', function () {
         action.press({el: el1}).wait(1200).release();
         await action.perform();
 
-        let el2 = await driver.elementByAccessibilityId('Cancel');
-        await el2.click();
+        await exitModal('Cancel');
       });
       it('should long press on an element with duration through pressOpts.duration', async () => {
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
@@ -89,8 +97,7 @@ describe('XCUITestDriver - gestures', function () {
         action.longPress({el: el1, duration: 1200});
         await action.perform();
 
-        let el2 = await driver.elementByAccessibilityId('Cancel');
-        await el2.click();
+        await exitModal('Cancel');
       });
       it('should long press on arbitrary coordinate', async function () {
         if (skipIOS11(this)) return; // eslint-disable-line curly
@@ -102,8 +109,7 @@ describe('XCUITestDriver - gestures', function () {
         action.press(loc).wait(500).release();
         await action.perform();
 
-        let el2 = await driver.elementByAccessibilityId('OK');
-        await el2.click();
+        await exitModal('OK');
       });
     });
     it('should scroll using touch actions', async function () {
@@ -133,14 +139,16 @@ describe('XCUITestDriver - gestures', function () {
       if (skipIOS11(this)) return; // eslint-disable-line curly
 
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
-      let toolbarsEl = await driver.elementByAccessibilityId('Picker View');
-      let yInit = (await toolbarsEl.getLocation()).y;
+      let pickerEl = await driver.elementByAccessibilityId('Picker View');
+      let yInit = (await pickerEl.getLocation()).y;
 
       await driver.execute('mobile: swipe', {element: winEl, direction: 'up'}).should.not.be.rejected;
-      expect((await toolbarsEl.getLocation()).y).to.be.below(yInit);
+      let yMiddle = (await pickerEl.getLocation()).y;
+      yMiddle.should.be.below(yInit);
 
       await driver.execute('mobile: swipe', {element: winEl, direction: 'down'}).should.not.be.rejected;
-      expect((await toolbarsEl.getLocation()).y).to.equal(yInit);
+      let yFinal = (await pickerEl.getLocation()).y;
+      yFinal.should.be.above(yMiddle);
     });
     describe('pinch and zoom', () => {
       beforeEach(async () => {
