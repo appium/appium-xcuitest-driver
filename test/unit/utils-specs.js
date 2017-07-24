@@ -11,10 +11,17 @@ chai.use(chaiAsPromised);
 
 describe('utils', () => {
   const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
-  describe('clearSystemFiles', withMocks({iosUtils}, (mocks) => {
+  describe('clearSystemFiles', withMocks({iosUtils, fs}, (mocks) => {
     it('should delete logs', async () => {
-      let wda = {};
-      wda.retrieveDerivedDataPath = () => DERIVED_DATA_ROOT;
+      let wda = {
+        retrieveDerivedDataPath () {
+          return DERIVED_DATA_ROOT;
+        }
+      };
+      mocks.fs.expects('exists')
+        .once()
+        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs`)
+        .returns(true);
       mocks.iosUtils.expects('clearLogs')
         .once()
         .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
@@ -23,8 +30,11 @@ describe('utils', () => {
       mocks.iosUtils.verify();
     });
     it('should do nothing if no derived data path is found', async () => {
-      let wda = {};
-      wda.retrieveDerivedDataPath = () => null;
+      let wda = {
+        retrieveDerivedDataPath () {
+          return null;
+        }
+      };
       mocks.iosUtils.expects('clearLogs')
         .never();
       await clearSystemFiles(wda);
@@ -33,8 +43,11 @@ describe('utils', () => {
   }));
   describe('adjustWDAAttachmentsPermissions', withMocks({fs}, (mocks) => {
     it('should change permissions to Attachments folder', async () => {
-      let wda = {};
-      wda.retrieveDerivedDataPath = () => DERIVED_DATA_ROOT;
+      let wda = {
+        retrieveDerivedDataPath () {
+          return DERIVED_DATA_ROOT;
+        }
+      };
       mocks.fs.expects('exists')
         .once()
         .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`)
@@ -47,8 +60,11 @@ describe('utils', () => {
       mocks.fs.verify();
     });
     it('should do nothing if no derived data path is found', async () => {
-      let wda = {};
-      wda.retrieveDerivedDataPath = () => null;
+      let wda = {
+        retrieveDerivedDataPath () {
+          return null;
+        }
+      };
       mocks.fs.expects('exists').never();
       mocks.fs.expects('chmod').never();
       await adjustWDAAttachmentsPermissions(wda, '777');
