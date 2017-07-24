@@ -124,8 +124,6 @@ describe('XCUITestDriver - find', function () {
   describe('by xpath', () => {
     describe('individual calls', function () {
       before(async function () {
-        if (skipIOS11(this)) return; // eslint-disable-line curly
-
         // before anything, try to go back
         // otherwise the tests will fail erroneously
         await driver.back();
@@ -176,6 +174,8 @@ describe('XCUITestDriver - find', function () {
         await driver.elementByXPath('/XCUIElementTypeButton').should.be.rejectedWith(/NoSuchElement/);
       });
       it('should search an extended path by child', async () => {
+        if (skipIOS11(this)) return; // eslint-disable-line curly
+
         // pause a moment or the next command gets stuck getting the xpath :(
         await B.delay(500);
         let el = await driver.elementByXPath('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
@@ -317,8 +317,6 @@ describe('XCUITestDriver - find', function () {
 
   describe('by predicate string', () => {
     before(async function () {
-      if (skipIOS11(this)) return; // eslint-disable-line curly
-
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
     });
@@ -355,8 +353,6 @@ describe('XCUITestDriver - find', function () {
 
   describe('by class chain', () => {
     before(async function () {
-      if (skipIOS11(this)) return; // eslint-disable-line curly
-
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(500);
     });
