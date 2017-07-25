@@ -24,16 +24,18 @@ describe('XCUITestDriver - long tests', function () {
 
   describe('typing', function () {
     let text = 'bunchoftext';
-
+    let el;
     before(async function () {
-      let el = await driver.elementByAccessibilityId('Text Fields');
-      await driver.execute('mobile: scroll', {element: el, toVisible: true});
-      await el.click();
+      let tfEl = await driver.elementByAccessibilityId('Text Fields');
+      await driver.execute('mobile: scroll', {element: tfEl, toVisible: true});
+      await tfEl.click();
+
+      // get the text field for the subsequent tests
+      el = await driver.elementByClassName('XCUIElementTypeTextField');
     });
 
     for (let i = 0; i < TYPING_TRIES; i++) {
       it(`should not fail in typing (try #${i+1})`, async () => {
-        let el = await driver.elementByClassName('XCUIElementTypeTextField');
 
         await el.type(text);
 
