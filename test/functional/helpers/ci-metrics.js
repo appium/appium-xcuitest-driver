@@ -44,10 +44,8 @@ function patchDriverWithEvents () {
       let driver = promiseChainRemote.apply(wd, args);
 
       // build identification
-      // jshint ignore: start
       let buildDate = Date.now(); // eslint-disable-line no-unused-vars
       let gitRev = ''; // eslint-disable-line no-unused-vars
-      // jshint ignore: end
 
       // rewrite `init` so `eventTimings` is on
       let init = driver.init;

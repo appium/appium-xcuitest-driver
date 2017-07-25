@@ -106,7 +106,6 @@ describe('XCUITestDriver', function () {
       });
     });
 
-    /* jshint ignore:start */
     describe('initial orientation', async () => {
       async function runOrientationTest (initialOrientation) {
         let caps = _.defaults({
@@ -125,7 +124,6 @@ describe('XCUITestDriver', function () {
         });
       }
     });
-    /* jshint ignore:end */
 
     describe('reset', () => {
       beforeEach(async function () {
