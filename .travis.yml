@@ -50,7 +50,7 @@ before_script:
   - npm run build
 script:
   - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i
-  - if [ -n "$CI_METRICS" ]; then ls -la ./ci-metrics; fi
+  - if [ -n "$CI_METRICS" ]; then mkdir -p ./ci-metrics && ls -la ./ci-metrics; fi
   - if [ -n "$CI_METRICS" ]; then nvm install 7; fi
   - if [ -n "$CI_METRICS" ]; then npm install -g appium-event-parser; fi
   - if [ -n "$CI_METRICS" ]; then appium-event-parser -s -i ./ci-metrics; fi
