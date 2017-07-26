@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS, isIOS11 } from '../desired';
+import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
@@ -78,9 +78,7 @@ describe('XCUITestDriver - alerts', function () {
     await textField.type('hello world');
 
     let text = await textField.text();
-    // TODO: when alert text works in xcode 9, this will fail and we can fix
-    let expectedText = isIOS11() ? '' : 'hello world';
-    text.should.equal(expectedText);
+    text.should.equal('hello world');
 
     // on some devices the keyboard obscurs the buttons so no dismiss is possible
     await textField.type('\n');

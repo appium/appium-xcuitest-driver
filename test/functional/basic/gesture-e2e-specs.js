@@ -99,7 +99,7 @@ describe('XCUITestDriver - gestures', function () {
 
         await exitModal('Cancel');
       });
-      it('should long press on arbitrary coordinate', async function () {
+      it('should long press on arbitrary coordinates', async function () {
         if (skipIOS11(this)) return; // eslint-disable-line curly
 
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
@@ -136,8 +136,6 @@ describe('XCUITestDriver - gestures', function () {
       await driver.elementByAccessibilityId('2').should.not.be.rejected;
     });
     it(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
-      if (skipIOS11(this)) return; // eslint-disable-line curly
-
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
       let pickerEl = await driver.elementByAccessibilityId('Picker View');
       let yInit = (await pickerEl.getLocation()).y;

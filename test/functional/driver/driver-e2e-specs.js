@@ -8,7 +8,7 @@ import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
 import B from 'bluebird';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
-import { UICATALOG_CAPS, UICATALOG_SIM_CAPS, skipIOS11, isIOS11 } from '../desired';
+import { UICATALOG_CAPS, UICATALOG_SIM_CAPS, isIOS11 } from '../desired';
 
 
 const should = chai.should();
@@ -58,9 +58,6 @@ describe('XCUITestDriver', function () {
     });
 
     it('should start and stop a session with only bundle id', async function () {
-      // TODO: why?
-      if (skipIOS11(this)) return; // eslint-disable-line curly
-
       let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'com.example.apple-samplecode.UICatalog'});
       caps.app = null;
       await driver.init(caps).should.not.eventually.be.rejected;
