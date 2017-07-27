@@ -47,7 +47,6 @@ describe('XCUITestDriver - basics', function () {
         CFBundleIdentifier: "com.example.apple-samplecode.UICatalog",
         browserName: "UICatalog",
         device: "iphone",
-        isFirstSession: true,
       };
       let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
       let actual = await driver.sessionCapabilities();
