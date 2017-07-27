@@ -11,9 +11,12 @@ import { killAllSimulators } from 'appium-ios-simulator';
 chai.should();
 chai.use(chaiAsPromised);
 
+const MOCHA_RETRIES = process.env.TRAVIS ? 3 : 1;
+
 if (!process.env.REAL_DEVICE) {
   describe('touchID() ', function () {
     this.timeout(MOCHA_TIMEOUT);
+    this.retries(MOCHA_RETRIES);
     let caps, driver;
 
     beforeEach(async () => {
