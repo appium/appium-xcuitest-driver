@@ -15,7 +15,7 @@ const MOCHA_RETRIES = process.env.TRAVIS ? 3 : 1;
 
 if (!process.env.REAL_DEVICE) {
   describe('touchID() ', function () {
-    this.timeout(MOCHA_TIMEOUT);
+    this.timeout(MOCHA_TIMEOUT * 2);
     this.retries(MOCHA_RETRIES);
     let caps, driver;
 
@@ -33,7 +33,6 @@ if (!process.env.REAL_DEVICE) {
     });
 
     it('should throw an error if allowTouchIdEnroll desired capability is not set', async () => {
-      await killAllSimulators();
       caps = Object.assign(TOUCHIDAPP_CAPS);
       caps.allowTouchIdEnroll = false;
       driver = await initSession(caps);
