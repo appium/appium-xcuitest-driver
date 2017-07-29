@@ -14,6 +14,7 @@ describe('XCUITestDriver - parallel Simulators', function () {
   let drivers = [];
   let server;
   const DEFAULT_WDA_PORT = 8100;
+  const DEFAULT_PLATFORM_VERSION = '11.0';
   before(async () => {
     server = await startServer(PORT, HOST);
   });
@@ -41,7 +42,7 @@ describe('XCUITestDriver - parallel Simulators', function () {
       }
     });
 
-    it('should start parallel sessions and return WDA status', async () => {
+    it('should start parallel sessions and return WDA status for each of them', async () => {
       const initPromises = [];
       let wdaPort = DEFAULT_WDA_PORT;
       for (const name of ALL_DEVICES.slice(0, 2)) {
@@ -50,14 +51,17 @@ describe('XCUITestDriver - parallel Simulators', function () {
         const caps = Object.assign({}, UICATALOG_CAPS, {
           deviceName: name,
           wdaLocalPort: wdaPort++,
+          platformVersion: DEFAULT_PLATFORM_VERSION,
         });
         initPromises.push(drv.init(caps));
       }
-      initPromises.map(async (x) => await x);
-      drivers.map(async (drv) => {
+      for (const initPromise of initPromises) {
+        await initPromise;
+      }
+      for (const drv of drivers) {
         const status = await drv.status();
         status.wda.should.exist;
-      });
+      }
     });
   });
 });
