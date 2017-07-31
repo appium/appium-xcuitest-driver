@@ -18,6 +18,8 @@ let expect = chai.expect;
 let caps = _.defaults({
   safariInitialUrl: GUINEA_PIG_PAGE,
   nativeWebTap: true,
+  deviceName: 'iPad',
+  udid: 'A30F7A38-0778-4298-86C4-42F941AC1CF5',
 }, SAFARI_CAPS);
 
 describe('Safari', function () {
@@ -26,7 +28,7 @@ describe('Safari', function () {
   let server, driver;
   before(async () => {
     if (!process.env.REAL_DEVICE) {
-      await killAllSimulators();
+      // await killAllSimulators();
     }
 
     driver = wd.promiseChainRemote(HOST, PORT);
@@ -66,6 +68,7 @@ describe('Safari', function () {
     before(async () => {
       await driver.init(_.defaults({
         safariIgnoreFraudWarning: false,
+        safariInitialUrl: 'http://localhost:4994/test/guinea-pig',
       }, caps));
     });
     after(async () => {
@@ -306,6 +309,34 @@ describe('Safari', function () {
       });
       it('should be able to refresh', async () => {
         await driver.refresh();
+      });
+    });
+
+    describe.only('nativeWebTap coordinate conversion', function () {
+      afterEach(async function () {
+        await driver.close();
+      });
+      it('should be able to tap on an element when there are tabs', async function () {
+        // open a new tab and go to it
+        let el = await driver.elementByLinkText('i am a new window link');
+        await el.click();
+
+        // get the correct page
+        await driver.get(GUINEA_PIG_PAGE);
+
+        el = await driver.elementByLinkText('i am a link');
+        await el.click();
+
+        await spinTitleEquals(driver, 'I am another page title');
+      });
+      it.skip('should be able to tap on an element', async function () {
+        await driver.get('http://localhost:4994/test/guinea-pig-scrollable');
+        await driver.execute('mobile: scroll', {direction: 'down'});
+
+        let el = await driver.elementByLinkText('i am a link');
+        await el.click();
+
+        await spinTitleEquals(driver, 'I am another page title');
       });
     });
   });

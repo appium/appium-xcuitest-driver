@@ -341,7 +341,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find elements that end in the word "View" in the name', async () => {
-      let els = await driver.elements('-ios predicate string', "wdName LIKE '* View'");
+      let els = await driver.elements('-ios predicate string', "wdName LIKE '*, View'");
       els.should.have.length.above(1);
     });
 
