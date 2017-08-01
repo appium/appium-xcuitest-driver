@@ -4,11 +4,10 @@ import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import _ from 'lodash';
 import B from 'bluebird';
-import { killAllSimulators } from 'appium-ios-simulator';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
-         PHISHING_END_POINT } from './helpers';
+         PHISHING_END_POINT, GUINEA_PIG_SCROLLABLE_PAGE } from './helpers';
 
 
 chai.should();
@@ -18,8 +17,6 @@ let expect = chai.expect;
 let caps = _.defaults({
   safariInitialUrl: GUINEA_PIG_PAGE,
   nativeWebTap: true,
-  deviceName: 'iPad',
-  udid: 'A30F7A38-0778-4298-86C4-42F941AC1CF5',
 }, SAFARI_CAPS);
 
 describe('Safari', function () {
@@ -27,10 +24,6 @@ describe('Safari', function () {
 
   let server, driver;
   before(async () => {
-    if (!process.env.REAL_DEVICE) {
-      // await killAllSimulators();
-    }
-
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
@@ -311,33 +304,66 @@ describe('Safari', function () {
         await driver.refresh();
       });
     });
+  });
+  describe('nativeWebTap coordinate conversion - iPad', function () {
+    before(async () => {
+      await driver.init(_.defaults({
+        deviceName: 'iPad Simulator',
+      }, caps));
+    });
+    after(async function () {
+      await driver.quit();
+    });
+    describe('with tabs', function () {
+      beforeEach(async function () {
+        await driver.get(GUINEA_PIG_PAGE);
 
-    describe.only('nativeWebTap coordinate conversion', function () {
-      afterEach(async function () {
-        await driver.close();
-      });
-      it('should be able to tap on an element when there are tabs', async function () {
         // open a new tab and go to it
         let el = await driver.elementByLinkText('i am a new window link');
         await el.click();
+      });
+      afterEach(async function () {
+        await driver.close();
+        let contexts = await driver.contexts();
+        await driver.context(contexts[1]);
+      });
 
+      it('should be able to tap on an element', async function () {
         // get the correct page
         await driver.get(GUINEA_PIG_PAGE);
 
-        el = await driver.elementByLinkText('i am a link');
+        let el = await driver.elementByLinkText('i am a link to page 3');
         await el.click();
 
-        await spinTitleEquals(driver, 'I am another page title');
+        await spinTitleEquals(driver, 'Another Page: page 3');
       });
-      it.skip('should be able to tap on an element', async function () {
-        await driver.get('http://localhost:4994/test/guinea-pig-scrollable');
+      it('should be able to tap on an element after scrolling', async function () {
+        await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
         await driver.execute('mobile: scroll', {direction: 'down'});
 
-        let el = await driver.elementByLinkText('i am a link');
+        let el = await driver.elementByLinkText('i am a link to page 3');
         await el.click();
 
-        await spinTitleEquals(driver, 'I am another page title');
+        await spinTitleEquals(driver, 'Another Page: page 3');
       });
+    });
+    it('should be able to tap on an element', async function () {
+      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+      await driver.execute('mobile: scroll', {direction: 'down'});
+
+      let el = await driver.elementByLinkText('i am a link to page 3');
+      await el.click();
+
+      await spinTitleEquals(driver, 'Another Page: page 3');
+    });
+    it.skip('should be able to tap on an element part 2', async function () {
+      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+      // await driver.execute('mobile: scroll', {direction: 'down'});
+
+      let el = await driver.elementByLinkText('i am a link');
+      await el.click();
+
+      await spinTitleEquals(driver, 'Another Page: page 2');
     });
   });
 
