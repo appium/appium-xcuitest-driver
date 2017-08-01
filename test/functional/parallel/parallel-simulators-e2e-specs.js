@@ -54,10 +54,10 @@ describe('XCUITestDriver - parallel Simulators', function () {
 
     it('should start parallel sessions and return WDA status for each of them', async () => {
       const initPromises = [];
-      for (const [devName, server, serverPort, wdaPort] of _.zip(DEVICES.slice(0, SESSIONS_COUNT)),
+      for (const [devName, server, serverPort, wdaPort] of _.zip(DEVICES.slice(0, SESSIONS_COUNT),
                                                                  sessionsMapping.keys(),
                                                                  _.range(DEFAULT_SERVER_PORT, DEFAULT_SERVER_PORT + SESSIONS_COUNT),
-                                                                 _.range(DEFAULT_WDA_PORT, DEFAULT_WDA_PORT + SESSIONS_COUNT)) {
+                                                                 _.range(DEFAULT_WDA_PORT, DEFAULT_WDA_PORT + SESSIONS_COUNT))) {
         const drv = wd.promiseChainRemote(HOST, serverPort);
         sessionsMapping.set(server, drv);
         const caps = Object.assign({}, UICATALOG_CAPS, {
