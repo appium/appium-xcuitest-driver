@@ -61,7 +61,7 @@ describe('Safari', function () {
     before(async () => {
       await driver.init(_.defaults({
         safariIgnoreFraudWarning: false,
-        safariInitialUrl: 'http://localhost:4994/test/guinea-pig',
+        safariInitialUrl: GUINEA_PIG_PAGE,
       }, caps));
     });
     after(async () => {
@@ -314,6 +314,17 @@ describe('Safari', function () {
     after(async function () {
       await driver.quit();
     });
+
+    it('should be able to tap on an element', async function () {
+      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+      await driver.execute('mobile: scroll', {direction: 'down'});
+
+      let el = await driver.elementByLinkText('i am a link to page 3');
+      await el.click();
+
+      await spinTitleEquals(driver, 'Another Page: page 3');
+    });
+
     describe('with tabs', function () {
       beforeEach(async function () {
         await driver.get(GUINEA_PIG_PAGE);
@@ -346,24 +357,6 @@ describe('Safari', function () {
 
         await spinTitleEquals(driver, 'Another Page: page 3');
       });
-    });
-    it('should be able to tap on an element', async function () {
-      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
-      await driver.execute('mobile: scroll', {direction: 'down'});
-
-      let el = await driver.elementByLinkText('i am a link to page 3');
-      await el.click();
-
-      await spinTitleEquals(driver, 'Another Page: page 3');
-    });
-    it.skip('should be able to tap on an element part 2', async function () {
-      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
-      // await driver.execute('mobile: scroll', {direction: 'down'});
-
-      let el = await driver.elementByLinkText('i am a link');
-      await el.click();
-
-      await spinTitleEquals(driver, 'Another Page: page 2');
     });
   });
 
