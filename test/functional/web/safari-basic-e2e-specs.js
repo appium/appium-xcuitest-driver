@@ -336,6 +336,7 @@ describe('Safari', function () {
       afterEach(async function () {
         await driver.close();
         let contexts = await driver.contexts();
+        contexts.should.have.length.at.least(2);
         await driver.context(contexts[1]);
       });
 
