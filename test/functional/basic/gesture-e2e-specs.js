@@ -137,6 +137,7 @@ describe('XCUITestDriver - gestures', function () {
     });
     it(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
+
       let pickerEl = await driver.elementByAccessibilityId('Picker View');
       let yInit = (await pickerEl.getLocation()).y;
 

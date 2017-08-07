@@ -9,7 +9,7 @@ if (process.env.CI_METRICS) {
   patchDriverWithEvents();
 }
 
-const HOST = '0.0.0.0',
+const HOST = 'localhost',
       PORT = 4994;
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.TRAVIS ? 8 : 4);
 

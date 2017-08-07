@@ -6,7 +6,7 @@ import fs from 'fs';
 import { absolute as testAppPath } from 'ios-test-app';
 
 
-const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '9.3';
+const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '10.3';
 const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
 
 const REAL_DEVICE = !!process.env.REAL_DEVICE;

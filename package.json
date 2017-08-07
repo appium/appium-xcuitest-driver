@@ -27,8 +27,8 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^2.10.1",
-    "appium-ios-driver": "^1.24.1",
+    "appium-base-driver": "^2.11.1",
+    "appium-ios-driver": "^1.26.1",
     "appium-ios-simulator": "^2.0.0",
     "appium-support": "^2.4.0",
     "appium-xcode": "^3.2.0",
