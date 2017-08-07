@@ -326,25 +326,6 @@ describe('Safari', function () {
       await spinTitleEquals(driver, 'Another Page: page 3');
     });
 
-    it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
-      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
-      await driver.execute('mobile: scroll', {direction: 'down'});
-
-      let el = await driver.elementByLinkText('i am a link to page 3');
-      await el.click();
-
-      await spinTitleEquals(driver, 'Another Page: page 3');
-
-      // going back will reveal the full url bar
-      await driver.back();
-
-      // make sure we get the correct position again
-      el = await driver.elementByLinkText('i am a link to page 3');
-      await el.click();
-
-      await spinTitleEquals(driver, 'Another Page: page 3');
-    });
-
     describe('with tabs', function () {
       beforeEach(async function () {
         await driver.get(GUINEA_PIG_PAGE);
@@ -382,6 +363,24 @@ describe('Safari', function () {
         await driver.execute('mobile: scroll', {direction: 'down'});
 
         let el = await driver.elementByLinkText('i am a link to page 3');
+        await el.click();
+
+        await spinTitleEquals(driver, 'Another Page: page 3');
+      });
+      it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
+        await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+        await driver.execute('mobile: scroll', {direction: 'down'});
+
+        let el = await driver.elementByLinkText('i am a link to page 3');
+        await el.click();
+
+        await spinTitleEquals(driver, 'Another Page: page 3');
+
+        // going back will reveal the full url bar
+        await driver.back();
+
+        // make sure we get the correct position again
+        el = await driver.elementByLinkText('i am a link to page 3');
         await el.click();
 
         await spinTitleEquals(driver, 'Another Page: page 3');

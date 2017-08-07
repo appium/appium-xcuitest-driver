@@ -24,8 +24,8 @@ async function spinTitle (driver) {
   return title;
 }
 
-async function spinTitleEquals (driver, expectedTitle, tries = 90) {
-  await retry(tries, async () => {
+async function spinTitleEquals (driver, expectedTitle, tries = 90, interval = 500) {
+  await retryInterval(tries, interval, async () => {
     let title = await spinTitle(driver);
     if (title !== expectedTitle) {
       throw new Error(`Could not find expected title. Found: '${title}'`);
