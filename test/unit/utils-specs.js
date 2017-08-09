@@ -5,6 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
 import { utils as iosUtils } from 'appium-ios-driver';
 import { fs } from 'appium-support';
+import B from 'bluebird';
 
 
 chai.should();
@@ -96,6 +97,23 @@ describe('utils', () => {
       await adjustWDAAttachmentsPermissions(wda, '333');
       await adjustWDAAttachmentsPermissions(wda, '444');
       await adjustWDAAttachmentsPermissions(wda, '444');
+      mocks.fs.verify();
+    });
+    it('should not repeat permissions change with equal flags for the particular folder in parallel sessions', async () => {
+      let wda = {
+        retrieveDerivedDataPath () {
+          return DERIVED_DATA_ROOT;
+        }
+      };
+      mocks.fs.expects('exists')
+        .atLeast(2)
+        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`)
+        .returns(true);
+      mocks.fs.expects('chmod')
+        .twice()
+        .returns();
+      await B.map([[wda, '123'], [wda, '123']], ([w, perms]) => adjustWDAAttachmentsPermissions(w, perms));
+      await B.map([[wda, '234'], [wda, '234']], ([w, perms]) => adjustWDAAttachmentsPermissions(w, perms));
       mocks.fs.verify();
     });
     it('should do nothing if no derived data path is found', async () => {
