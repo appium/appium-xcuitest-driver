@@ -6,5 +6,8 @@ let gulp = require('gulp'),
 
 boilerplate({
   build: 'appium-xcuitest-driver',
-  jscs: false
+  coverage: {
+    files: ['./test/unit/**/*-specs.js', '!./test/functional/**'],
+    verbose: true
+  },
 });
