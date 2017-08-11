@@ -26,14 +26,9 @@ matrix:
 
     - osx_image: xcode9
       env: CI_METRICS=1 TEST=functional/parallel
-
-
-osx_image: xcode8.3
 git:
   submodules: false
 before_install:
-  # objC project, so manually handle node version
-  - nvm install 6
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
@@ -41,7 +36,6 @@ before_install:
 before_script:
   - node --version
   - npm install
-  - npm run build
 script:
   - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
