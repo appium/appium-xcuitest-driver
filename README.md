@@ -147,7 +147,6 @@ Differences noted here
 |`useCarthageSsl`|Use SSL to download dependencies for WebDriverAgent. Defaults to `false`|e.g., `true`|
 |`shouldUseSingletonTestManager`|Use default proxy for test management within WebDriverAgent. Setting this to `false` sometimes helps with socket hangup problems. Defaults to `true`.|e.g., `false`|
 |`startIWDP`|Set this to `true` if you want to start ios_webkit_debug proxy server automatically for accessing webviews on iOS. The capatibility only works for real device automation. Defaults to `false`.|e.g., `true`|
-|`allowTouchIdEnroll`|Set this to `true` if you want to enroll simulator for touch id. Defaults to `false`.|e.g., `true`|
 |`calendarAccessAuthorized`|Set this to `true` if you want to enable calendar access on IOS Simulator with given bundleId. Set to `false`, if you want to disable calendar access on IOS Simulator with given bundleId. If not set, the calendar authorization status will not be set.|e.g., `true`|
 |`isHeadless`|Set this capability to `true` if automated tests are running on Simulator and the device display is not needed to be visible. This only has an effect since Xcode9 and only for simulators. All running instances of Simulator UI are going to be automatically terminated if headless test is started. `false` is the default value.|e.g., `true`|
 
