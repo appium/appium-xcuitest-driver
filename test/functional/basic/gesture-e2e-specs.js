@@ -4,7 +4,7 @@ import B from 'bluebird';
 import wd from 'wd';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS, skipIOS11 } from '../desired';
+import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
 
@@ -63,8 +63,6 @@ describe('XCUITestDriver - gestures', function () {
           await exitModal('OK');
         });
         it('should tap on arbitrary coordinates', async function () {
-          if (skipIOS11(this)) return; // eslint-disable-line curly
-
           let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
           let loc = await el1.getLocation();
 
@@ -100,8 +98,6 @@ describe('XCUITestDriver - gestures', function () {
         await exitModal('Cancel');
       });
       it('should long press on arbitrary coordinates', async function () {
-        if (skipIOS11(this)) return; // eslint-disable-line curly
-
         let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
         let loc = await el1.getLocation();
 
