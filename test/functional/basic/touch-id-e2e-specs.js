@@ -37,7 +37,7 @@ if (!process.env.REAL_DEVICE) {
         if (process.env.TRAVIS) {
           // ignore tests on Travis, since Appium process does not have access to
           // system Accessibility there
-          this.skip();
+          return this.skip();
         }
         driver = await initSession(TOUCHIDAPP_CAPS);
         await B.delay(2000); // Give the app a couple seconds to open
