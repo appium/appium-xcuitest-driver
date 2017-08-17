@@ -79,11 +79,6 @@ describe('general commands', () => {
       enrollTouchIDSpy.restore();
     });
 
-    it('should throw exception if allowTouchIdEnroll is not set', async () => {
-      optsStub.object.realDevice = false;
-      await driver.toggleEnrollTouchId().should.be.rejectedWith(/enroll touchId/);
-    });
-
     it('should be called on a Simulator', async () => {
       deviceStub.object.realDevice = false;
       deviceStub.object.allowTouchIdEnroll = true;
