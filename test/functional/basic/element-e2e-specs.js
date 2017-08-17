@@ -117,6 +117,8 @@ describe('XCUITestDriver - element(s)', function () {
   });
 
   describe('interactions', function () {
+    this.retries(2);
+
     describe('text fields', () => {
       let text1 = 'bunchoftext';
       let text2 = 'differenttext';
