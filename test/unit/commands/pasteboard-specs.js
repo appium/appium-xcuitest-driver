@@ -6,42 +6,42 @@ const simctlModule = require('node-simctl');
 
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
-  let optsStub, deviceStub, setPasteboardSpy, getPasteboardSpy;
+  let isSimulatorSpy, deviceStub, setPasteboardSpy, getPasteboardSpy;
 
   beforeEach(() => {
-    optsStub = sinon.mock(driver.opts);
     deviceStub = sinon.mock(driver.opts, 'device');
+    isSimulatorSpy = sinon.stub(driver, 'isSimulator');
     setPasteboardSpy = sinon.stub(simctlModule, 'setPasteboard');
     getPasteboardSpy = sinon.stub(simctlModule, 'getPasteboard');
   });
 
   afterEach(() => {
     deviceStub.restore();
-    optsStub.restore();
+    isSimulatorSpy.restore();
     setPasteboardSpy.restore();
     getPasteboardSpy.restore();
   });
 
   it('setPasteboard should not be called on a real device', async function () {
-    deviceStub.object.realDevice = true;
+    isSimulatorSpy.returns(false);
     await driver.mobileSetPasteboard({content: 'bla'}).should.eventually.be.rejectedWith(/not supported/);
     setPasteboardSpy.notCalled.should.be.true;
   });
 
   it('setPasteboard should fail if no content is provided', async function () {
-    deviceStub.object.realDevice = false;
+    isSimulatorSpy.returns(true);
     await driver.mobileSetPasteboard().should.eventually.be.rejectedWith(/mandatory to set/);
     setPasteboardSpy.notCalled.should.be.true;
   });
 
   it('getPasteboard should not be called on a real device', async function () {
-    deviceStub.object.realDevice = true;
+    isSimulatorSpy.returns(false);
     await driver.mobileGetPasteboard().should.eventually.be.rejectedWith(/not supported/);
     getPasteboardSpy.notCalled.should.be.true;
   });
 
   it('setPasteboard should invoke correct simctl method', async function () {
-    deviceStub.object.realDevice = false;
+    isSimulatorSpy.returns(true);
     const opts = {
       content: 'bla',
       encoding: 'latin-1',
@@ -53,7 +53,7 @@ describe('pasteboard commands', function () {
   });
 
   it('getPasteboard should invoke correct simctl method', async function () {
-    deviceStub.object.realDevice = false;
+    isSimulatorSpy.returns(true);
     const content = 'bla';
     getPasteboardSpy.returns(content);
     const result = await driver.mobileGetPasteboard();
