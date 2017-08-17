@@ -3,6 +3,7 @@ import XCUITestDriver from '../../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
+import _ from 'lodash';
 
 
 chai.should();
@@ -25,6 +26,45 @@ describe('element commands', function () {
       mocks.driver.verify();
     });
   }));
+
+  describe('getAttribute', function () {
+    const elementId = 2;
+    const attribute = 'enabled';
+
+    afterEach(function () {
+      proxySpy.calledOnce.should.be.true;
+    });
+
+    it('should properly parse boolean true attribute presented as integer', async function () {
+      proxySpy.returns(1);
+      (await driver.getAttribute(attribute, elementId)).should.eql('true');
+    });
+
+    it('should properly parse boolean false attribute presented as integer', async function () {
+      proxySpy.returns(0);
+      (await driver.getAttribute(attribute, elementId)).should.eql('false');
+    });
+
+    it('should properly parse integer attribute presented as string', async function () {
+      proxySpy.returns('0');
+      (await driver.getAttribute(attribute, elementId)).should.eql('0');
+    });
+
+    it('should properly parse boolean attribute presented as bool', async function () {
+      proxySpy.returns(false);
+      (await driver.getAttribute(attribute, elementId)).should.eql('false');
+    });
+
+    it('should properly parse null attribute', async function () {
+      proxySpy.returns(null);
+      _.isNull(await driver.getAttribute(attribute, elementId)).should.be.true;
+    });
+
+    it('should properly parse string attribute', async function () {
+      proxySpy.returns('value');
+      (await driver.getAttribute(attribute, elementId)).should.eql('value');
+    });
+  });
 
   describe('setValue', function () {
     const elementId = 2;
