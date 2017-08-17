@@ -37,7 +37,7 @@
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
     "lodash": "^4.0.0",
-    "node-simctl": "^3.7.0",
+    "node-simctl": "^3.9.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "source-map-support": "^0.4.0",

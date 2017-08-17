@@ -11,8 +11,8 @@ describe('pasteboard commands', function () {
   beforeEach(() => {
     optsStub = sinon.mock(driver.opts);
     deviceStub = sinon.mock(driver.opts, 'device');
-    setPasteboardSpy = sinon.spy(simctlModule, 'setPasteboard');
-    getPasteboardSpy = sinon.spy(simctlModule, 'getPasteboard');
+    setPasteboardSpy = sinon.stub(simctlModule, 'setPasteboard');
+    getPasteboardSpy = sinon.stub(simctlModule, 'getPasteboard');
   });
 
   afterEach(() => {
