@@ -3,56 +3,12 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS, skipIOS11 } from '../desired';
+import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
-
-describe('XCUITestDriver - find', function () {
-  this.timeout(MOCHA_TIMEOUT);
-
-  let driver;
-  before(async () => {
-    driver = await initSession(UICATALOG_CAPS);
-  });
-  after(async () => {
-    await deleteSession();
-  });
-
-  describe('by id', () => {
-    it('should find a single element by id', async () => {
-      let el = await driver.elementById('Alert Views');
-      el.should.exist;
-    });
-
-    it('should find a single element by id wrapped in array for multi', async () => {
-      let els = await driver.elementsById('Alert Views');
-      els.should.have.length(1);
-    });
-
-    it('should first attempt to match accessibility id', async () => {
-      let el = await driver.elementById('Alert Views');
-      (await el.getAttribute('label')).should.equal('Alert Views');
-    });
-
-    it('should attempt to match by string if no accessibility id matches', async () => {
-      let el = await driver.elementById('Alert Views');
-      (await el.getAttribute('label')).should.equal('Alert Views');
-    });
-
-    it.skip('should use a localized string if the id is a localization key', async () => {
-      let el = await driver.elementById('main.button.computeSum');
-      (await el.getAttribute('label')).should.equal('Compute Sum');
-    });
-
-    it.skip('should be able to return multiple matches', async () => {
-      let els = await driver.elementsById('Cell');
-      els.length.should.be.greaterThan(1);
-    });
-  });
-});
 
 describe('XCUITestDriver - find', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -121,6 +77,38 @@ describe('XCUITestDriver - find', function () {
     });
   });
 
+  describe('by id', () => {
+    it('should find a single element by id', async () => {
+      let el = await driver.elementById('Alert Views');
+      el.should.exist;
+    });
+
+    it('should find a single element by id wrapped in array for multi', async () => {
+      let els = await driver.elementsById('Alert Views');
+      els.should.have.length(1);
+    });
+
+    it('should first attempt to match accessibility id', async () => {
+      let el = await driver.elementById('Alert Views');
+      (await el.getAttribute('label')).should.equal('Alert Views');
+    });
+
+    it('should attempt to match by string if no accessibility id matches', async () => {
+      let el = await driver.elementById('Alert Views');
+      (await el.getAttribute('label')).should.equal('Alert Views');
+    });
+
+    it.skip('should use a localized string if the id is a localization key', async () => {
+      let el = await driver.elementById('main.button.computeSum');
+      (await el.getAttribute('label')).should.equal('Compute Sum');
+    });
+
+    it.skip('should be able to return multiple matches', async () => {
+      let els = await driver.elementsById('Cell');
+      els.length.should.be.greaterThan(1);
+    });
+  });
+
   describe('by xpath', () => {
     describe('individual calls', function () {
       before(async function () {
@@ -164,7 +152,7 @@ describe('XCUITestDriver - find', function () {
       });
       it('should return multiple elements', async () => {
         let els = await driver.elementsByXPath('//XCUIElementTypeButton');
-        els.should.have.length.above(5);
+        els.should.have.length.above(4);
       });
       it('should filter by name', async () => {
         let el = await driver.elementByXPath("//XCUIElementTypeButton[@name='X Button']");
@@ -173,9 +161,7 @@ describe('XCUITestDriver - find', function () {
       it('should know how to restrict root-level elements', async () => {
         await driver.elementByXPath('/XCUIElementTypeButton').should.be.rejectedWith(/NoSuchElement/);
       });
-      it('should search an extended path by child', async () => {
-        if (skipIOS11(this)) return; // eslint-disable-line curly
-
+      it('should search an extended path by child', async function () {
         // pause a moment or the next command gets stuck getting the xpath :(
         await B.delay(500);
         let el = await driver.elementByXPath('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
