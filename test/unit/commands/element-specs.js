@@ -59,11 +59,11 @@ describe('element commands', function () {
     describe('failure', function () {
       it('should throw invalid argument exception for null', async function () {
         await driver.setValue(null, elementId)
-          .should.eventually.be.rejectedWith(/Invalid argument to setValue: 'null'/);
+          .should.eventually.be.rejectedWith(/Only strings and arrays of strings are supported as input arguments. Received: 'null'/);
       });
       it('should throw invalid argument exception for object', async function () {
         await driver.setValue({hi: 'there'}, elementId)
-          .should.eventually.be.rejectedWith(/Invalid argument to setValue: '{"hi":"there"}'/);
+          .should.eventually.be.rejectedWith(/Only strings and arrays of strings are supported as input arguments. Received: '{"hi":"there"}'/);
       });
     });
   });

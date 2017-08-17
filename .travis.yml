@@ -33,9 +33,6 @@ before_install:
   # code from http://stackoverflow.com/a/24600210/375688
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
-before_script:
-  - node --version
-  - npm install
 script:
   - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
