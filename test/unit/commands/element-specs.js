@@ -31,27 +31,40 @@ describe('element commands', function () {
     const expectedEndpoint = `/element/${elementId}/value`;
     const expectedMethod = 'POST';
 
-    afterEach(function () {
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql(expectedEndpoint);
-      proxySpy.firstCall.args[1].should.eql(expectedMethod);
+    describe('success', function () {
+      afterEach(function () {
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql(expectedEndpoint);
+        proxySpy.firstCall.args[1].should.eql(expectedMethod);
+      });
+
+      it('should proxy string as array of characters', async function () {
+        await driver.setValue('hello', elementId);
+        proxySpy.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
+      });
+      it('should proxy integer as array of characters', async function () {
+        await driver.setValue(1234, elementId);
+        proxySpy.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
+      });
+      it('should proxy string array as array of characters', async function () {
+        await driver.setValue(['hel', 'lo'], elementId);
+        proxySpy.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
+      });
+      it('should proxy integer array as array of characters', async function () {
+        await driver.setValue([1234], elementId);
+        proxySpy.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
+      });
     });
 
-    it('should proxy string as array of characters', async function () {
-      await driver.setValue('hello', elementId);
-      proxySpy.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
-    });
-    it('should proxy integer as array of characters', async function () {
-      await driver.setValue(1234, elementId);
-      proxySpy.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
-    });
-    it('should proxy string array as array of characters', async function () {
-      await driver.setValue(['hel', 'lo'], elementId);
-      proxySpy.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
-    });
-    it('should proxy integer array as array of characters', async function () {
-      await driver.setValue([1234], elementId);
-      proxySpy.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
+    describe('failure', function () {
+      it('should throw invalid argument exception for null', async function () {
+        await driver.setValue(null, elementId)
+          .should.eventually.be.rejectedWith(/Invalid argument to setValue: 'null'/);
+      });
+      it('should throw invalid argument exception for object', async function () {
+        await driver.setValue({hi: 'there'}, elementId)
+          .should.eventually.be.rejectedWith(/Invalid argument to setValue: '{"hi":"there"}'/);
+      });
     });
   });
 });

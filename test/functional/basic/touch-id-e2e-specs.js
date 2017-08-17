@@ -13,7 +13,8 @@ chai.use(chaiAsPromised);
 
 const MOCHA_RETRIES = process.env.TRAVIS ? 3 : 1;
 
-if (!process.env.REAL_DEVICE) {
+// touch id tests need to be on sims and need accessibility turned on
+if (!process.env.REAL_DEVICE && !process.env.TRAVIS) {
   describe('touchID() ', function () {
     this.timeout(MOCHA_TIMEOUT * 2);
     this.retries(MOCHA_RETRIES);
