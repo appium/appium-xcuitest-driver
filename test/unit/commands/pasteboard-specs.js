@@ -6,17 +6,15 @@ const simctlModule = require('node-simctl');
 
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
-  let isSimulatorSpy, deviceStub, setPasteboardSpy, getPasteboardSpy;
+  let isSimulatorSpy, setPasteboardSpy, getPasteboardSpy;
 
   beforeEach(() => {
-    deviceStub = sinon.mock(driver.opts, 'device');
     isSimulatorSpy = sinon.stub(driver, 'isSimulator');
     setPasteboardSpy = sinon.stub(simctlModule, 'setPasteboard');
     getPasteboardSpy = sinon.stub(simctlModule, 'getPasteboard');
   });
 
   afterEach(() => {
-    deviceStub.restore();
     isSimulatorSpy.restore();
     setPasteboardSpy.restore();
     getPasteboardSpy.restore();
