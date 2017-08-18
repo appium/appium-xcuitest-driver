@@ -87,12 +87,12 @@ describe('screenshots commands', () => {
 
         pathSpy.calledTwice.should.be.true;
       } finally {
-        fsExistsSpy.reset();
-        fsWhichSpy.reset();
-        fsReadFileSpy.reset();
-        fsRimRafSpy.reset();
-        execSpy.reset();
-        pathSpy.reset();
+        fsExistsSpy.restore();
+        fsWhichSpy.restore();
+        fsReadFileSpy.restore();
+        fsRimRafSpy.restore();
+        execSpy.restore();
+        pathSpy.restore();
       }
     });
   });
