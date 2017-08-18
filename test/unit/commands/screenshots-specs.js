@@ -64,27 +64,36 @@ describe('screenshots commands', () => {
       pathSpy.withArgs({prefix: `screenshot-${udid}`, suffix: '.tiff'}).returns(tiffPath);
       pathSpy.withArgs({prefix: `screenshot-${udid}`, suffix: '.png'}).returns(pngPath);
 
-      driver.opts.realDevice = true;
-      driver.opts.udid = udid;
-      (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
+      try {
+        driver.opts.realDevice = true;
+        driver.opts.udid = udid;
+        (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
 
-      proxySpy.calledOnce.should.be.true;
+        proxySpy.calledOnce.should.be.true;
 
-      fsWhichSpy.calledOnce.should.be.true;
-      fsWhichSpy.firstCall.args[0].should.eql(toolName);
+        fsWhichSpy.calledOnce.should.be.true;
+        fsWhichSpy.firstCall.args[0].should.eql(toolName);
 
-      execSpy.calledTwice.should.be.true;
-      execSpy.firstCall.args[0].should.eql(toolName);
-      execSpy.firstCall.args[1].should.eql(['-u', udid, tiffPath]);
-      execSpy.secondCall.args[0].should.eql('sips');
-      execSpy.secondCall.args[1].should.eql(['-s', 'format', 'png', tiffPath, '--out', pngPath]);
+        execSpy.calledTwice.should.be.true;
+        execSpy.firstCall.args[0].should.eql(toolName);
+        execSpy.firstCall.args[1].should.eql(['-u', udid, tiffPath]);
+        execSpy.secondCall.args[0].should.eql('sips');
+        execSpy.secondCall.args[1].should.eql(['-s', 'format', 'png', tiffPath, '--out', pngPath]);
 
-      fsRimRafSpy.callCount.should.eql(4);
+        fsRimRafSpy.callCount.should.eql(4);
 
-      fsReadFileSpy.calledOnce.should.be.true;
-      fsReadFileSpy.firstCall.args[0].should.eql(pngPath);
+        fsReadFileSpy.calledOnce.should.be.true;
+        fsReadFileSpy.firstCall.args[0].should.eql(pngPath);
 
-      pathSpy.calledTwice.should.be.true;
+        pathSpy.calledTwice.should.be.true;
+      } finally {
+        fsExistsSpy.reset();
+        fsWhichSpy.reset();
+        fsReadFileSpy.reset();
+        fsRimRafSpy.reset();
+        execSpy.reset();
+        pathSpy.reset();
+      }
     });
   });
 });
