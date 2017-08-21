@@ -54,15 +54,16 @@
     "watch": "gulp watch",
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint"
   },
   "pre-commit": [
     "precommit-msg",
-    "test"
+    "precommit-test"
   ],
   "devDependencies": {
     "appium-event-parser": "^1.0.0",
-    "appium-gulp-plugins": "^2.1.4",
+    "appium-gulp-plugins": "^2.2.0",
     "appium-test-support": "^0.4.0",
     "babel-eslint": "^7.1.1",
     "chai": "^3.0.0",
