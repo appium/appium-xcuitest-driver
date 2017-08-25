@@ -32,18 +32,24 @@ describe('XCUITestDriver - parallel Simulators', function () {
   const DEVICES = ['iPhone 6', 'iPhone 6s'];
   const HOST = '127.0.0.1';
 
-  after(async () => {
+  before(async function () {
+    if (process.env.TRAVIS) {
+      // Skip tests, because they're unstable due to CI slowness
+      return this.skip();
+    }
+  });
+  after(async function () {
     await resetMapping(sessionsMapping);
   });
 
-  describe('sessions initialization', () => {
+  describe('sessions initialization', function () {
     const SESSIONS_COUNT = DEVICES.length;
 
     after(async () => {
       await resetMapping(sessionsMapping);
     });
 
-    it('should start parallel sessions and return WDA status for each of them', async () => {
+    it('should start parallel sessions and return WDA status for each of them', async function () {
       const sessionsPromisesMapping = new Map();
       for (const [devName, serverPort, wdaPort] of _.zip(DEVICES.slice(0, SESSIONS_COUNT),
                                                          _.range(DEFAULT_SERVER_PORT, DEFAULT_SERVER_PORT + SESSIONS_COUNT),
