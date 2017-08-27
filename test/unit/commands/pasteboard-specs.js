@@ -46,8 +46,8 @@ describe('pasteboard commands', function () {
     };
     await driver.mobileSetPasteboard(opts);
     setPasteboardSpy.calledOnce.should.be.true;
-    setPasteboardSpy.firstCall.args[0].should.eql(opts.content);
-    setPasteboardSpy.firstCall.args[1].should.eql(opts.encoding);
+    setPasteboardSpy.firstCall.args[1].should.eql(opts.content);
+    setPasteboardSpy.firstCall.args[2].should.eql(opts.encoding);
   });
 
   it('getPasteboard should invoke correct simctl method', async function () {
