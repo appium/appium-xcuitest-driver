@@ -10,17 +10,18 @@
 
 *Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 
+
 ## Missing functionality
 
 * Setting geo location (https://github.com/appium/appium/issues/6856)
 * Auto accepting/dismissing alerts (https://github.com/appium/appium/issues/6863)
-* Touch Actions
+* Touch Actions support is limited. Only basic actions, like drag-n-drop, long tap, double tap and tap are supported. Gestures, which are natively supported by XCTest, are implemented via the corresponding ["mobile:" endpoints](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios-xctest-mobile-gestures.md)
+
 
 ## Known issues
 
-* Unable to interact with elements on devices in Landscape mode (https://github.com/appium/appium/issues/6994)
 * `shake` is not implemented due to lack of support from Apple
-* `lock` is not implemented due to lack of support from Apple
+* `lock` and lock-screen interaction in general is not implemented due to lack of support from Apple
 * Setting geo-location not supported due to lack of support from Apple
 * Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
 
