@@ -33,7 +33,7 @@ matrix:
 
     # smoke test on xcode  9
     - osx_image: xcode9
-      env: CI_METRICS=1 PLATFORM_VERSION=11 TEST=functional/basic
+      env: CI_METRICS=1 PLATFORM_VERSION=11.0 TEST=functional/basic
 git:
   submodules: false
 before_install:
