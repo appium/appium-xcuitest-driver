@@ -23,7 +23,8 @@ async function resetMapping (mapping) {
   mapping.clear();
 }
 
-describe('XCUITestDriver - parallel Simulators', function () {
+// skip tests in Travis, because they're unstable due to slowness
+describe('XCUITestDriver - parallel Simulators @skip-ci', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   const sessionsMapping = new Map();
@@ -32,12 +33,6 @@ describe('XCUITestDriver - parallel Simulators', function () {
   const DEVICES = ['iPhone 6', 'iPhone 6s'];
   const HOST = '127.0.0.1';
 
-  before(async function () {
-    if (process.env.TRAVIS) {
-      // Skip tests, because they're unstable due to CI slowness
-      return this.skip();
-    }
-  });
   after(async function () {
     await resetMapping(sessionsMapping);
   });

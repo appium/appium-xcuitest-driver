@@ -152,6 +152,8 @@ Differences noted here
 |`isHeadless`|Set this capability to `true` if automated tests are running on Simulator and the device display is not needed to be visible. This only has an effect since Xcode9 and only for simulators. All running instances of Simulator UI are going to be automatically terminated if headless test is started. `false` is the default value.|e.g., `true`|
 |`webkitDebugProxyPort`|Local port number used for communication with ios-webkit-debug-proxy. Only relevant for real devices. The default value equals to `27753`.|e.g. `20000`|
 |`useXCTESTRUNFile`|Use XCTESTRUN file to launch WDA. It will search for such file in `bootstrapPath`. Expected name of file is `WebDriverAgentRunner_iphoneos<platformVersion>-arm64.xctestrun` for real device and `WebDriverAgentRunner_iphonesimulator<platformVersion>-x86_64.xctestrun` for simulator. One can do `build-for-testing` for `WebDriverAgent` project for simulator and real device and then you will see [Product Folder like this](docs/useXCTESTRUNFile.png) and you need to copy this entire folder at `bootstrapPath` location. Since, this capability expects that you have already built `WDA` project, it neither check whether you have necessary dependencies to build `WDA` nor it try to build project. Defaults to `false`|e.g., `true`|
+|`absoluteWebLocations`|This capability will direct the `Get Element Location` command, when used within webviews, to return coordinates which are relative to the origin of the page, rather than relative to the current scroll offset. This capability has no effect outside of webviews. Default `false`.|e.g., `true`|
+
 
 ## Development<a id="development"></a>
 
