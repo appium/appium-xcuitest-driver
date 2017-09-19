@@ -7,7 +7,9 @@ import B from 'bluebird';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
-         PHISHING_END_POINT, GUINEA_PIG_SCROLLABLE_PAGE } from './helpers';
+         PHISHING_END_POINT, GUINEA_PIG_SCROLLABLE_PAGE,
+         GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
+import { killAllSimulators } from 'appium-ios-simulator';
 
 
 chai.should();
@@ -305,15 +307,27 @@ describe('Safari', function () {
       });
     });
   });
-  describe('nativeWebTap coordinate conversion - iPad', function () {
+  describe('nativeWebTap coordinate conversion - iPad -', function () {
     before(async () => {
       await driver.init(_.defaults({
         deviceName: 'iPad Simulator',
+        fullReset: true,
+        noReset: false,
       }, caps));
       await driver.setImplicitWaitTimeout(5000);
     });
     after(async function () {
       await driver.quit();
+      await killAllSimulators();
+    });
+
+    it('should be able to tap on an element when the app banner is up', async function () {
+      await driver.get(GUINEA_PIG_APP_BANNER_PAGE);
+
+      let el = await driver.elementByLinkText('i am a link to page 3');
+      await el.click();
+
+      await spinTitleEquals(driver, 'Another Page: page 3');
     });
 
     it('should be able to tap on an element after scrolling', async function () {
