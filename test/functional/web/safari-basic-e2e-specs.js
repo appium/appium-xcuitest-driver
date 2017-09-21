@@ -7,9 +7,7 @@ import B from 'bluebird';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
-         PHISHING_END_POINT, GUINEA_PIG_SCROLLABLE_PAGE,
-         GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
-import { killAllSimulators } from 'appium-ios-simulator';
+         PHISHING_END_POINT } from './helpers';
 
 
 chai.should();
@@ -304,100 +302,6 @@ describe('Safari', function () {
       });
       it('should be able to refresh', async () => {
         await driver.refresh();
-      });
-    });
-  });
-  describe('nativeWebTap coordinate conversion - iPad -', function () {
-    before(async () => {
-      await driver.init(_.defaults({
-        deviceName: 'iPad Simulator',
-        fullReset: true,
-        noReset: false,
-      }, caps));
-      await driver.setImplicitWaitTimeout(5000);
-    });
-    after(async function () {
-      await driver.quit();
-      await killAllSimulators();
-    });
-
-    it('should be able to tap on an element when the app banner is up', async function () {
-      await driver.get(GUINEA_PIG_APP_BANNER_PAGE);
-
-      let el = await driver.elementByLinkText('i am a link to page 3');
-      await el.click();
-
-      await spinTitleEquals(driver, 'Another Page: page 3');
-    });
-
-    it('should be able to tap on an element after scrolling', async function () {
-      await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
-      await driver.execute('mobile: scroll', {direction: 'down'});
-
-      let el = await driver.elementByLinkText('i am a link to page 3');
-      await el.click();
-
-      await spinTitleEquals(driver, 'Another Page: page 3');
-    });
-
-    describe('with tabs', function () {
-      beforeEach(async function () {
-        await driver.get(GUINEA_PIG_PAGE);
-
-        // open a new tab and go to it
-        let el = await driver.elementByLinkText('i am a new window link');
-        await el.click();
-      });
-      afterEach(async function () {
-        await driver.close();
-        let contexts = await driver.contexts();
-        contexts.should.have.length.at.least(2);
-        await driver.context(contexts[1]);
-      });
-
-      it('should be able to tap on an element', async function () {
-        // get the correct page
-        await driver.get(GUINEA_PIG_PAGE);
-
-        let el = await driver.elementByLinkText('i am a link to page 3');
-        await el.click();
-
-        await spinTitleEquals(driver, 'Another Page: page 3');
-
-        await driver.back();
-
-        // try again, just to make sure
-        el = await driver.elementByLinkText('i am a link to page 3');
-        await el.click();
-
-        await spinTitleEquals(driver, 'Another Page: page 3');
-      });
-      it('should be able to tap on an element after scrolling', async function () {
-        await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
-        await driver.execute('mobile: scroll', {direction: 'down'});
-
-        let el = await driver.elementByLinkText('i am a link to page 3');
-        await el.click();
-
-        await spinTitleEquals(driver, 'Another Page: page 3');
-      });
-      it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
-        await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
-        await driver.execute('mobile: scroll', {direction: 'down'});
-
-        let el = await driver.elementByLinkText('i am a link to page 3');
-        await el.click();
-
-        await spinTitleEquals(driver, 'Another Page: page 3');
-
-        // going back will reveal the full url bar
-        await driver.back();
-
-        // make sure we get the correct position again
-        el = await driver.elementByLinkText('i am a link to page 3');
-        await el.click();
-
-        await spinTitleEquals(driver, 'Another Page: page 3');
       });
     });
   });
