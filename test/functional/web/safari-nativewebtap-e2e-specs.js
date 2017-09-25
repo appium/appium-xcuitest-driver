@@ -136,7 +136,31 @@ describe('Safari', function () {
     });
   }
 
-  for (let deviceName of ['iPhone 6', 'iPad Simulator']) {
+  // Full tests take a *long* time so skip unless necessary to check conversion
+
+  // // xcode 8.3
+  // const deviceNames = ['iPhone 5', 'iPhone 5s',
+  //                    'iPhone 6', 'iPhone 6 Plus',
+  //                    'iPhone 6s', 'iPhone 6s Plus',
+  //                    'iPhone 7', 'iPhone 7 Plus',
+  //                    'iPhone SE',
+  //                    'iPad Air', 'iPad Air 2',
+  //                    'iPad (5th generation)',
+  //                    'iPad Pro (9.7-inch)', 'iPad Pro (12.9-inch)', 'iPad Pro (12.9-inch) (2nd generation)', 'iPad Pro (10.5-inch)'];
+
+  // // xcode 9
+  // const deviceNames = ['iPhone 6', 'iPhone 6 Plus',
+  //                      'iPhone 6s', 'iPhone 6s Plus',
+  //                      'iPhone 7', 'iPhone 7 Plus',
+  //                      'iPhone SE',
+  //                      'iPhone2017-A', 'iPhone2017-B', // 'iPhone2017-C', does not work for iPhone X yet
+  //                      'iPad Air', 'iPad Air 2',
+  //                      'iPad (5th generation)',
+  //                      'iPad Pro (9.7-inch)', 'iPad Pro (12.9-inch)', 'iPad Pro (12.9-inch) (2nd generation)', 'iPad Pro (10.5-inch)'];
+
+  const deviceNames = ['iPad Simulator', 'iPhone 6'];
+
+  for (let deviceName of deviceNames) {
     runTests(deviceName);
   }
 });
