@@ -189,6 +189,10 @@ describe('Safari', function () {
       it('should get updated URL without breaking window handles', async () => {
         let el = await driver.elementByLinkText('i am an anchor link');
         await el.click();
+
+        // allow the click to happen
+        await B.delay(500);
+
         (await driver.url()).should.contain('#anchor');
         (await driver.windowHandles()).should.be.ok;
       });
@@ -221,6 +225,10 @@ describe('Safari', function () {
         let el = await driver.elementById('unchecked_checkbox');
         (await el.isSelected()).should.not.be.ok;
         await el.click();
+
+        // let the click occur
+        await B.delay(500);
+
         (await el.isSelected()).should.be.ok;
       });
       it('should be able to retrieve css properties', async () => {
@@ -294,6 +302,9 @@ describe('Safari', function () {
       it('should properly navigate to anchor', async () => {
         let el = await driver.elementByLinkText('i am an anchor link');
         await el.click();
+
+        // let the click happen
+        await B.delay(500);
 
         let url = await driver.url();
         await driver.get(url);
