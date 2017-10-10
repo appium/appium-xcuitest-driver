@@ -131,17 +131,32 @@ describe('utils', () => {
     });
   }));
   describe('determineDevice', () => {
-    it('should set the correct iPad simultor generic device', async () => {
-      let deviceName = await translateDeviceName("10.1.2", "iPad Simulator");
+    it('should set the correct iPad simulator generic device', async function () {
+      const ipadDeviceName = 'iPad Simulator';
+      let deviceName = await translateDeviceName("10.1.2", ipadDeviceName);
       deviceName.should.equal("iPad Retina");
-      deviceName = await translateDeviceName(10.103, "iPad Simulator");
+      deviceName = await translateDeviceName(10.103, ipadDeviceName);
       deviceName.should.equal("iPad Retina");
-      deviceName = await translateDeviceName("10.3", "iPad Simulator");
+      deviceName = await translateDeviceName("10.3", ipadDeviceName);
       deviceName.should.equal("iPad Air");
-      deviceName = await translateDeviceName(10.3, "iPad Simulator");
+      deviceName = await translateDeviceName(10.3, ipadDeviceName);
       deviceName.should.equal("iPad Air");
-      deviceName = await translateDeviceName(10.3, "iPhone Simulator");
+    });
+    it('should set the correct iPhone simulator generic device', async function () {
+      let deviceName = await translateDeviceName(10.3, "iPhone Simulator");
       deviceName.should.equal("iPhone 6");
+    });
+    it('should set the correct device name for iPhone 8', async function () {
+      let deviceName = await translateDeviceName("10.1.2", "iPhone 8");
+      deviceName.should.equal("iPhone2017-A");
+    });
+    it('should set the correct device name for iPhone 8 Plus', async function () {
+      let deviceName = await translateDeviceName("10.1.2", "iPhone 8 PLus");
+      deviceName.should.equal("iPhone2017-B");
+    });
+    it('should set the correct device name for iPhone X', async function () {
+      let deviceName = await translateDeviceName("10.1.2", "iPhone X");
+      deviceName.should.equal("iPhone2017-C");
     });
   });
 });
