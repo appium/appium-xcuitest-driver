@@ -1,5 +1,8 @@
 ## Touch ID
 
+**NOTE: Touch ID enrollment on simulators in Xcode 9 does not work because of an
+issue with AppleScript**
+
 Appium has the capability to simulate [Touch ID](https://support.apple.com/en-ca/HT201371) on iOS Simulators.
 
 ### Support
