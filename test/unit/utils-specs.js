@@ -29,6 +29,7 @@ describe('utils', () => {
         .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
         .returns();
       await clearSystemFiles(wda);
+      mocks.fs.verify();
       mocks.iosUtils.verify();
     });
     it('should only delete logs once if the same folder was marked twice for deletion', async () => {
@@ -48,6 +49,7 @@ describe('utils', () => {
       await markSystemFilesForCleanup(wda);
       await clearSystemFiles(wda);
       await clearSystemFiles(wda);
+      mocks.fs.verify();
       mocks.iosUtils.verify();
     });
     it('should do nothing if no derived data path is found', async () => {
