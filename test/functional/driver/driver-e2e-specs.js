@@ -21,13 +21,23 @@ let getNumSims = async () => {
 describe('XCUITestDriver', function () {
   this.timeout(MOCHA_TIMEOUT);
 
+  let caps;
+
   let server, driver;
   before(async () => {
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
+
+    let udid = await createDevice('xcuitestDriverTest',
+      UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+    caps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
   });
   after(async () => {
     await server.close();
+
+    const sim = await getSimulator(caps.udid);
+    await sim.shutdown();
+    await deleteDevice(caps.udid);
   });
 
   afterEach(async () => {
@@ -40,54 +50,54 @@ describe('XCUITestDriver', function () {
 
   if (!process.env.REAL_DEVICE) {
     it('should start and stop a session', async function () {
-      await driver.init(UICATALOG_SIM_CAPS);
+      await driver.init(caps);
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
     });
 
     it('should start and stop a session doing pre-build', async function () {
-      await driver.init(_.defaults({prebuildWDA: true}, UICATALOG_SIM_CAPS));
+      await driver.init(Object.assign({prebuildWDA: true}, caps));
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
     });
 
     it('should start and stop a session doing simple build-test', async function () {
-      await driver.init(_.defaults({useSimpleBuildTest: true}, UICATALOG_SIM_CAPS));
+      await driver.init(Object.assign({useSimpleBuildTest: true}, caps));
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
     });
 
     it('should start and stop a session with only bundle id', async function () {
-      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'com.example.apple-samplecode.UICatalog'});
-      caps.app = null;
-      await driver.init(caps).should.not.eventually.be.rejected;
+      let localCaps = Object.assign({}, caps, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      localCaps.app = null;
+      await driver.init(localCaps).should.not.eventually.be.rejected;
     });
 
     it('should start and stop a session with only bundle id when no sim is running', async function () {
       await killAllSimulators();
-      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'com.example.apple-samplecode.UICatalog'});
-      caps.app = null;
-      await driver.init(caps).should.not.eventually.be.rejected;
+      let localCaps = Object.assign({}, caps, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      localCaps.app = null;
+      await driver.init(localCaps).should.not.eventually.be.rejected;
     });
 
     it('should fail to start and stop a session if unknown bundle id used', async function () {
-      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'io.blahblahblah.blah'});
-      caps.app = null;
-      await driver.init(caps).should.eventually.be.rejected;
+      let localCaps = Object.assign({}, caps, {bundleId: 'io.blahblahblah.blah'});
+      localCaps.app = null;
+      await driver.init(localCaps).should.eventually.be.rejected;
     });
 
     it('should fail to start and stop a session if unknown bundle id used when no sim is running', async function () {
       await killAllSimulators();
-      let caps = Object.assign({}, UICATALOG_SIM_CAPS, {bundleId: 'io.blahblahblah.blah'});
-      caps.app = null;
-      await driver.init(caps).should.eventually.be.rejected;
+      let localCaps = Object.assign({}, caps, {bundleId: 'io.blahblahblah.blah'});
+      localCaps.app = null;
+      await driver.init(localCaps).should.eventually.be.rejected;
     });
 
     describe('WebdriverAgent port', function () {
       it('should run on default port if no other specified', async function () {
-        let caps = Object.assign({}, UICATALOG_SIM_CAPS, {fullReset: true, showIOSLog: true});
-        caps.wdaLocalPort = null;
-        await driver.init(caps);
+        let localCaps = Object.assign({}, caps, {fullReset: true, showIOSLog: true});
+        localCaps.wdaLocalPort = null;
+        await driver.init(localCaps);
         let logs = await driver.log('syslog');
         if (!isIOS11()) {
           // currently on iOS 11 there is no device log
@@ -95,8 +105,8 @@ describe('XCUITestDriver', function () {
         }
       });
       it('should run on port specified', async function () {
-        let caps = Object.assign({}, UICATALOG_SIM_CAPS, {fullReset: true, showIOSLog: true, wdaLocalPort: 6000});
-        await driver.init(caps);
+        let localCaps = Object.assign({}, caps, {fullReset: true, showIOSLog: true, wdaLocalPort: 6000});
+        await driver.init(localCaps);
         let logs = await driver.log('syslog');
         if (!isIOS11()) {
           // currently on iOS 11 there is no device log
@@ -108,10 +118,10 @@ describe('XCUITestDriver', function () {
 
     describe('initial orientation', async () => {
       async function runOrientationTest (initialOrientation) {
-        let caps = _.defaults({
+        let localCaps = _.defaults({
           orientation: initialOrientation
-        }, UICATALOG_SIM_CAPS);
-        await driver.init(caps);
+        }, caps);
+        await driver.init(localCaps);
 
         let orientation = await driver.getOrientation();
         orientation.should.eql(initialOrientation);
@@ -258,7 +268,7 @@ describe('XCUITestDriver', function () {
 
     describe('event timings', () => {
       it('should include event timings if cap is used', async () => {
-        let newCaps = Object.assign({}, UICATALOG_SIM_CAPS, {eventTimings: true});
+        let newCaps = Object.assign({}, caps, {eventTimings: true});
         await driver.init(newCaps);
         let res = await driver.sessionCapabilities();
         should.exist(res.events);
