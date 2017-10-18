@@ -135,7 +135,7 @@ describe('XCUITestDriver', function () {
       }
     });
 
-    describe('reset', () => {
+    describe.only('reset', () => { // eslint-disable-line
       beforeEach(async function () {
         await retryInterval(5, 1000, async () => {
           await killAllSimulators();
@@ -160,7 +160,7 @@ describe('XCUITestDriver', function () {
 
       it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async () => {
         // before
-        let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
+        let udid = await createDevice('xcuitestDriverTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
         await sim.run();
 
@@ -189,7 +189,7 @@ describe('XCUITestDriver', function () {
 
       it('with udid booted: uses sim and leaves it afterwards', async () => {
         // before
-        let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
+        let udid = await createDevice('xcuitestDriverTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
         await sim.run();
 
@@ -238,7 +238,7 @@ describe('XCUITestDriver', function () {
         this.timeout(MOCHA_TIMEOUT);
 
         // before
-        let udid = await createDevice('webDriverAgentTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
+        let udid = await createDevice('xcuitestDriverTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
 
         // some systems require a pause before initializing.
