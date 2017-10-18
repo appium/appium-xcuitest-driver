@@ -135,7 +135,7 @@ describe('XCUITestDriver', function () {
       }
     });
 
-    describe.only('reset', () => { // eslint-disable-line
+    describe('reset', () => {
       beforeEach(async function () {
         await retryInterval(5, 1000, async () => {
           await killAllSimulators();
