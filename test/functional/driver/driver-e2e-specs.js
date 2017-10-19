@@ -11,6 +11,8 @@ import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS, isIOS11 } from '../desired';
 
 
+const SIM_DEVICE_NAME = 'xcuitestDriverTest';
+
 const should = chai.should();
 chai.use(chaiAsPromised);
 
@@ -28,7 +30,7 @@ describe('XCUITestDriver', function () {
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
 
-    let udid = await createDevice('xcuitestDriverTest',
+    const udid = await createDevice(SIM_DEVICE_NAME,
       UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
     caps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
   });
@@ -160,7 +162,8 @@ describe('XCUITestDriver', function () {
 
       it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async () => {
         // before
-        let udid = await createDevice('xcuitestDriverTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
+        const udid = await createDevice(SIM_DEVICE_NAME,
+          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
         await sim.run();
 
@@ -189,7 +192,8 @@ describe('XCUITestDriver', function () {
 
       it('with udid booted: uses sim and leaves it afterwards', async () => {
         // before
-        let udid = await createDevice('xcuitestDriverTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
+        const udid = await createDevice(SIM_DEVICE_NAME,
+          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
         await sim.run();
 
@@ -238,7 +242,8 @@ describe('XCUITestDriver', function () {
         this.timeout(MOCHA_TIMEOUT);
 
         // before
-        let udid = await createDevice('xcuitestDriverTest', 'iPhone 6', UICATALOG_SIM_CAPS.platformVersion);
+        const udid = await createDevice(SIM_DEVICE_NAME,
+          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
         let sim = await getSimulator(udid);
 
         // some systems require a pause before initializing.
