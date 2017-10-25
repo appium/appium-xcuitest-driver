@@ -70,6 +70,7 @@ describe('driver commands', () => {
             stat () {
               return {state: 'Booted'};
             },
+            clearCaches: anoop,
           },
           udid: null,
           realDevice: null
@@ -82,7 +83,6 @@ describe('driver commands', () => {
       sandbox.stub(d, "startWda", anoop);
       sandbox.stub(d, "extractBundleId", anoop);
       sandbox.stub(d, "installApp", anoop);
-      sandbox.stub(d, "clearCaches", anoop);
       sandbox.stub(iosSettings, "setLocale", anoop);
       sandbox.stub(iosSettings, "setPreferences", anoop);
       sandbox.stub(xcode, "getMaxIOSSDK", async () => {
