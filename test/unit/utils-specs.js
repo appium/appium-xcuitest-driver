@@ -131,11 +131,10 @@ describe('utils', () => {
     });
   }));
   describe('determineDevice', () => {
-    const XCODE8 = {major: 8, minor: 3};
-    const XCODE9_0 = {major: 9, minor: 0};
-    const XCODE9_1 = {major: 9, minor: 1};
-    const XCODE10 = {major: 10, minor: 0};
-
+    const XCODE8 = {versionFloat: 8.3};
+    const XCODE9_0 = {versionFloat: 9.0};
+    const XCODE9_1 = {versionFloat: 9.1};
+    const XCODE10 = {versionFloat: 10.0};
 
     it('should set the correct iPad simulator generic device', async function () {
       const ipadDeviceName = 'iPad Simulator';
