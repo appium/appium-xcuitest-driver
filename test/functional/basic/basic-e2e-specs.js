@@ -177,14 +177,24 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('geo location', () => {
-    it('should throw a not-yet-implemented error', async () => {
-      await driver.setGeoLocation('0', '0', '0').should.be.rejectedWith(/Method has not yet been implemented/);
+    it('should work on Simulator', async function () {
+      if (process.env.TRAVIS || !driver.isSimulator()) {
+        // skip on Travis, since Appium process should have access to system accessibility
+        // in order to run this method successfully
+        this.skip();
+      }
+      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be.rejected;
     });
   });
 
   describe('shake', () => {
-    it('should throw a not-yet-implemented error', async () => {
-      await driver.shake().should.be.rejectedWith(/Method has not yet been implemented/);
+    it('should work on Simulator', async function () {
+      if (process.env.TRAVIS || !driver.isSimulator()) {
+        // skip on Travis, since Appium process should have access to system accessibility
+        // in order to run this method successfully
+        this.skip();
+      }
+      await driver.mobileShake().should.not.be.rejected;
     });
   });
 
