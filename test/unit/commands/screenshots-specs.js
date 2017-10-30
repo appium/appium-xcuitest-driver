@@ -44,9 +44,7 @@ describe('screenshots commands', () => {
       simctlSpy.calledOnce.should.be.true;
     });
 
-    it('should use idevicescreenshot fallback if WDA fails to take a screenshot on real device', async function () {
-      proxySpy.throws();
-
+    it('should use idevicescreenshot to take a screenshot on real device', async function () {
       const toolName = 'idevicescreenshot';
       const tiffPath = '/some/file.tiff';
       const pngPath = '/some/file.png';
@@ -69,7 +67,7 @@ describe('screenshots commands', () => {
         driver.opts.udid = udid;
         (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
 
-        proxySpy.calledOnce.should.be.true;
+        proxySpy.called.should.be.false;
 
         fsWhichSpy.calledOnce.should.be.true;
         fsWhichSpy.firstCall.args[0].should.eql(toolName);
