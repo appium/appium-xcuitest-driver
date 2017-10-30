@@ -70,6 +70,7 @@ describe('driver commands', () => {
             stat () {
               return {state: 'Booted'};
             },
+            clearCaches: anoop,
           },
           udid: null,
           realDevice: null
