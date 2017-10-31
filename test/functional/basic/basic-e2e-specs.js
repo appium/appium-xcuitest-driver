@@ -97,6 +97,10 @@ describe('XCUITestDriver - basics', function () {
       let screenshot = await driver.takeScreenshot();
       screenshot.should.exist;
       screenshot.should.be.a.string;
+
+      // make sure WDA didn't crash, by using it again
+      let els = await driver.elementsByAccessibilityId('Action Sheets');
+      els.length.should.eql(1);
     });
 
     it('should get an app screenshot in landscape mode', async () => {
