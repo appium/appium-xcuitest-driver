@@ -130,49 +130,57 @@ describe('utils', () => {
       mocks.fs.verify();
     });
   }));
-  describe('determineDevice', () => {
-    const XCODE8 = {versionFloat: 8.3};
-    const XCODE9_0 = {versionFloat: 9.0};
-    const XCODE9_1 = {versionFloat: 9.1};
-    const XCODE10 = {versionFloat: 10.0};
+  describe('determineDevice', function () {
+    const XCODE_8 = {major: 8, minor: 3};
+    const XCODE_9_0 = {major: 9, minor: 0};
+    const XCODE_9_0_0 = {major: 9, minor: 0, patch: 0};
+    const XCODE_9_0_1 = {major: 9, minor: 0, patch: 1};
+    const XCODE_9_1 = {major: 9, minor: 1};
+    const XCODE_10 = {major: 10, minor: 0};
 
     it('should set the correct iPad simulator generic device', async function () {
       const ipadDeviceName = 'iPad Simulator';
-      let deviceName = await translateDeviceName(XCODE8, "10.1.2", ipadDeviceName);
+      let deviceName = await translateDeviceName(XCODE_8, '10.1.2', ipadDeviceName);
+      deviceName.should.equal('iPad Retina');
+      deviceName = await translateDeviceName(XCODE_10, 10.103, ipadDeviceName);
       deviceName.should.equal("iPad Retina");
-      deviceName = await translateDeviceName(XCODE10, 10.103, ipadDeviceName);
-      deviceName.should.equal("iPad Retina");
-      deviceName = await translateDeviceName(XCODE9_1, "10.3", ipadDeviceName);
-      deviceName.should.equal("iPad Air");
-      deviceName = await translateDeviceName(XCODE9_0, 10.3, ipadDeviceName);
-      deviceName.should.equal("iPad Air");
+      deviceName = await translateDeviceName(XCODE_9_1, '10.3', ipadDeviceName);
+      deviceName.should.equal('iPad Air');
+      deviceName = await translateDeviceName(XCODE_9_0, 10.3, ipadDeviceName);
+      deviceName.should.equal('iPad Air');
     });
     it('should set the correct iPhone simulator generic device', async function () {
-      let deviceName = await translateDeviceName(XCODE8, 10.3, "iPhone Simulator");
-      deviceName.should.equal("iPhone 6");
+      let deviceName = await translateDeviceName(XCODE_8, 10.3, 'iPhone Simulator');
+      deviceName.should.equal('iPhone 6');
     });
     it('should set the correct device name for iPhone 8', async function () {
       const testData = [
         {
-          xcodeVersion: XCODE8,
+          xcodeVersion: XCODE_9_0,
           platformVersion: "10.1.2",
           actualName: "iPhone 8",
           expectedName: "iPhone2017-A"
         },
         {
-          xcodeVersion: XCODE9_0,
+          xcodeVersion: XCODE_9_0_0,
           platformVersion: "10.1.2",
           actualName: "iPhone 8",
           expectedName: "iPhone2017-A"
         },
         {
-          xcodeVersion: XCODE9_1,
+          xcodeVersion: XCODE_9_0_1,
           platformVersion: "10.1.2",
           actualName: "iPhone 8",
           expectedName: "iPhone 8"
         },
         {
-          xcodeVersion: XCODE10,
+          xcodeVersion: XCODE_9_1,
+          platformVersion: "10.1.2",
+          actualName: "iPhone 8",
+          expectedName: "iPhone 8"
+        },
+        {
+          xcodeVersion: XCODE_10,
           platformVersion: "10.1.2",
           actualName: "iPhone 8",
           expectedName: "iPhone 8"
@@ -186,27 +194,33 @@ describe('utils', () => {
     it('should set the correct device name for iPhone 8 Plus', async function () {
       const testData = [
         {
-          xcodeVersion: XCODE8,
+          xcodeVersion: XCODE_9_0,
           platformVersion: "10.1.2",
-          actualName: "iPhone 8 PLus",
+          actualName: "iPhone 8 Plus",
           expectedName: "iPhone2017-B"
         },
         {
-          xcodeVersion: XCODE9_0,
+          xcodeVersion: XCODE_9_0_0,
           platformVersion: "10.1.2",
-          actualName: "iPhone 8 PLus",
+          actualName: "iPhone 8 Plus",
           expectedName: "iPhone2017-B"
         },
         {
-          xcodeVersion: XCODE9_1,
+          xcodeVersion: XCODE_9_0_1,
           platformVersion: "10.1.2",
-          actualName: "iPhone 8 PLus",
+          actualName: "iPhone 8 Plus",
           expectedName: "iPhone 8 Plus"
         },
         {
-          xcodeVersion: XCODE10,
+          xcodeVersion: XCODE_9_1,
           platformVersion: "10.1.2",
-          actualName: "iPhone 8 PLus",
+          actualName: "iPhone 8 Plus",
+          expectedName: "iPhone 8 Plus"
+        },
+        {
+          xcodeVersion: XCODE_10,
+          platformVersion: "10.1.2",
+          actualName: "iPhone 8 Plus",
           expectedName: "iPhone 8 Plus"
         },
       ];
@@ -218,25 +232,31 @@ describe('utils', () => {
     it('should set the correct device name for iPhone X', async function () {
       const testData = [
         {
-          xcodeVersion: XCODE8,
-          platformVersion: "10.1.2",
-          actualName: "iPhone x",
-          expectedName: "iPhone2017-C"
-        },
-        {
-          xcodeVersion: XCODE9_0,
+          xcodeVersion: XCODE_9_0,
           platformVersion: "10.1.2",
           actualName: "iPhone X",
           expectedName: "iPhone2017-C"
         },
         {
-          xcodeVersion: XCODE9_1,
+          xcodeVersion: XCODE_9_0_0,
           platformVersion: "10.1.2",
-          actualName: "iphone x",
+          actualName: "iPhone X",
+          expectedName: "iPhone2017-C"
+        },
+        {
+          xcodeVersion: XCODE_9_0_1,
+          platformVersion: "10.1.2",
+          actualName: "iPhone X",
           expectedName: "iPhone X"
         },
         {
-          xcodeVersion: XCODE10,
+          xcodeVersion: XCODE_9_1,
+          platformVersion: "10.1.2",
+          actualName: "iPhone X",
+          expectedName: "iPhone X"
+        },
+        {
+          xcodeVersion: XCODE_10,
           platformVersion: "10.1.2",
           actualName: "iPhone X",
           expectedName: "iPhone X"
