@@ -182,10 +182,10 @@ describe('XCUITestDriver - basics', function () {
 
   describe('geo location', () => {
     it('should work on Simulator', async function () {
-      if (process.env.TRAVIS || !driver.isSimulator()) {
+      if (process.env.TRAVIS || process.env.REAL_DEVICE) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
-        this.skip();
+        return this.skip();
       }
       await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be.rejected;
     });
@@ -193,10 +193,10 @@ describe('XCUITestDriver - basics', function () {
 
   describe('shake', () => {
     it('should work on Simulator', async function () {
-      if (process.env.TRAVIS || !driver.isSimulator()) {
+      if (process.env.TRAVIS || process.env.REAL_DEVICE) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
-        this.skip();
+        return this.skip();
       }
       await driver.mobileShake().should.not.be.rejected;
     });
