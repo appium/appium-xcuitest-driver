@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import sinon from 'sinon';
+import * as Logs from '../../lib/device-log/ios-log';
 import * as IOSDriver from 'appium-ios-driver';
 import { startLogCapture } from '../../lib/commands/log';
 
@@ -21,7 +22,7 @@ describe('XCUITestDriver - startLogCapture', function () {
     crashLogStub = sinon.stub(IOSDriver, 'IOSCrashLog', function () {
       this.startCapture = _.noop;
     });
-    iosLogStub = sinon.stub(IOSDriver, 'IOSLog', function () {
+    iosLogStub = sinon.stub(Logs, 'IOSLog', function () {
       this.startCapture = spy.startCapture;
     });
   });
