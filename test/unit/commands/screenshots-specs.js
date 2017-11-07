@@ -20,6 +20,8 @@ describe('screenshots commands', () => {
   describe('getScreenshot', () => {
     it('should get a screenshot from WDA if no errors are detected', async function () {
       proxySpy.returns(base64Response);
+      driver.opts.realDevice = false;
+
       await driver.getScreenshot();
 
       proxySpy.calledOnce.should.be.true;
@@ -61,13 +63,12 @@ describe('screenshots commands', () => {
       const pathSpy = sinon.stub(tempDir, 'path');
       pathSpy.withArgs({prefix: `screenshot-${udid}`, suffix: '.tiff'}).returns(tiffPath);
       pathSpy.withArgs({prefix: `screenshot-${udid}`, suffix: '.png'}).returns(pngPath);
+      driver.getOrientation = () => 'LANDSCAPE';
 
       try {
         driver.opts.realDevice = true;
         driver.opts.udid = udid;
         (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
-
-        proxySpy.called.should.be.false;
 
         fsWhichSpy.calledOnce.should.be.true;
         fsWhichSpy.firstCall.args[0].should.eql(toolName);
@@ -76,7 +77,8 @@ describe('screenshots commands', () => {
         execSpy.firstCall.args[0].should.eql(toolName);
         execSpy.firstCall.args[1].should.eql(['-u', udid, tiffPath]);
         execSpy.secondCall.args[0].should.eql('sips');
-        execSpy.secondCall.args[1].should.eql(['-s', 'format', 'png', tiffPath, '--out', pngPath]);
+        execSpy.secondCall.args[1].should.eql(
+          ['-r', '-90', '-s', 'format', 'png', tiffPath, '--out', pngPath]);
 
         fsRimRafSpy.callCount.should.eql(4);
 
