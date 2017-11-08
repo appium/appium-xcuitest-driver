@@ -67,21 +67,41 @@ describe('XCUITestDriver - alerts', function () {
     await driver.dismissAlert();
   });
 
-  it('should be able to interact with text field', async () => {
-    let el = await driver.elementByAccessibilityId('Text Entry');
-    await el.click();
+  describe('prompt', function () {
+    const testData = [
+      {
+        name: 'text field',
+        alert: 'Text Entry',
+        field: 'XCUIElementTypeTextField',
+        text: 'hello world',
+        expectedText: 'hello world',
+      },
+      {
+        name: 'secure text field',
+        alert: 'Secure Text Entry',
+        field: 'XCUIElementTypeSecureTextField',
+        text: 'hello world',
+        expectedText: '•••••••••••'
+      }
+    ];
+    for (let test of testData) {
+      it(`should be able to interact with a prompt with a ${test.name}`, async function () {
+        let el = await driver.elementByAccessibilityId(test.alert);
+        await el.click();
 
-    // small pause for alert to open
-    await B.delay(1000);
+        // small pause for alert to open
+        await B.delay(1000);
 
-    let textField = await driver.elementByClassName('XCUIElementTypeTextField');
-    await textField.type('hello world');
+        await driver.alertKeys(test.text);
 
-    let text = await textField.text();
-    text.should.equal('hello world');
+        let textField = await driver.elementByClassName(test.field);
+        let text = await textField.text();
+        text.should.equal(test.expectedText);
 
-    // on some devices the keyboard obscurs the buttons so no dismiss is possible
-    await textField.type('\n');
+        // on some devices the keyboard obscurs the buttons so no dismiss is possible
+        await textField.type('\n');
+      });
+    }
   });
 
   it('should throw a NoAlertOpenError when no alert is open', async () => {
