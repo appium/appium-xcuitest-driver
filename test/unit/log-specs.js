@@ -43,6 +43,7 @@ describe('XCUITestDriver - startLogCapture', function () {
     startCaptureSpy.callCount.should.equal(0);
     await startLogCapture.call(fakeInstance);
     startCaptureSpy.callCount.should.equal(1);
+    fakeInstance.logs.syslog.isCapturing = true;
     await startLogCapture.call(fakeInstance);
     startCaptureSpy.callCount.should.equal(1);
   });
