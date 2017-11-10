@@ -46,7 +46,7 @@ describe('screenshots commands', () => {
       simctlSpy.calledOnce.should.be.true;
     });
 
-    it.only('should use idevicescreenshot to take a screenshot on real device', async function () {
+    it('should use idevicescreenshot to take a screenshot on real device', async function () {
       const toolName = 'idevicescreenshot';
       const tiffPath = '/some/file.tiff';
       const pngPath = '/some/file.png';
