@@ -63,12 +63,16 @@ describe('screenshots commands', () => {
       const pathSpy = sinon.stub(tempDir, 'path');
       pathSpy.withArgs({prefix: `screenshot-${udid}`, suffix: '.tiff'}).returns(tiffPath);
       pathSpy.withArgs({prefix: `screenshot-${udid}`, suffix: '.png'}).returns(pngPath);
-      driver.getOrientation = () => 'LANDSCAPE';
+      proxySpy.returns('LANDSCAPE');
 
       try {
         driver.opts.realDevice = true;
         driver.opts.udid = udid;
         (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
+
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/orientation');
+        proxySpy.firstCall.args[1].should.eql('GET');
 
         fsWhichSpy.calledOnce.should.be.true;
         fsWhichSpy.firstCall.args[0].should.eql(toolName);
