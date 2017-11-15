@@ -102,7 +102,7 @@ describe('driver commands', () => {
     it('should warn', async () => {
       let warnStub = sinon.stub(log, "warn", async () => {});
       await d.createSession(_.defaults({autoAcceptAlerts: true}, caps));
-      warnStub.calledTwice.should.be.true;
+      warnStub.calledOnce.should.be.true;
       _.filter(warnStub.args, (arg) => arg[0].indexOf('autoAcceptAlerts') !== -1)
         .should.have.length(1);
       warnStub.restore();
