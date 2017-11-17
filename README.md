@@ -154,7 +154,7 @@ Differences noted here
 |`useXctestrunFile`|Use Xctestrun file to launch WDA. It will search for such file in `bootstrapPath`. Expected name of file is `WebDriverAgentRunner_iphoneos<platformVersion>-arm64.xctestrun` for real device and `WebDriverAgentRunner_iphonesimulator<platformVersion>-x86_64.xctestrun` for simulator. One can do `build-for-testing` for `WebDriverAgent` project for simulator and real device and then you will see [Product Folder like this](docs/useXctestrunFile.png) and you need to copy content of this folder at `bootstrapPath` location. Since, this capability expects that you have already built `WDA` project, it neither check whether you have necessary dependencies to build `WDA` nor it try to build project. Defaults to `false`|e.g., `true`|
 |`absoluteWebLocations`|This capability will direct the `Get Element Location` command, when used within webviews, to return coordinates which are relative to the origin of the page, rather than relative to the current scroll offset. This capability has no effect outside of webviews. Default `false`.|e.g., `true`|
 |`simulatorWindowCenter`|Allows to explicitly set the coordinates of Simulator window center for Xcode9+ SDK. This capability only has an effect if Simulator window has not been opened yet for the current session before it started.|e.g. `{-100.0,100.0}` or `{500,500}`, spaces are not allowed|
-|`useFastSource`|Get JSON source from WDA and parse into XML on Appium server. This can be much faster, especially on large devices. Defaults to `false`.|e.g., `true`|
+|`useJSONSource`|Get JSON source from WDA and parse into XML on Appium server. This can be much faster, especially on large devices. Defaults to `false`.|e.g., `true`|
 
 ## Development<a id="development"></a>
 
