@@ -329,7 +329,7 @@ describe('Safari', function () {
       });
 
       it('should display a phishing warning', async () => {
-        await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
+        await driver.get(PHISHING_END_POINT);
         (await driver.source()).toLowerCase().should.include('phishing');
       });
     });
@@ -344,7 +344,7 @@ describe('Safari', function () {
       });
 
       it('should display a phishing warning', async () => {
-        await driver.get(`${PHISHING_END_POINT}/guinea-pig2.html`);
+        await driver.get(PHISHING_END_POINT);
         (await driver.source()).toLowerCase().should.not.include('phishing');
       });
     });
