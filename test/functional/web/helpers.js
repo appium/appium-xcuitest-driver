@@ -10,7 +10,7 @@ const GUINEA_PIG_SCROLLABLE_PAGE = `${GUINEA_PIG_PAGE}-scrollable`;
 const GUINEA_PIG_APP_BANNER_PAGE = `${GUINEA_PIG_PAGE}-app-banner`;
 const GUINEA_PIG_FRAME_PAGE = `${TEST_END_POINT}/frameset.html`;
 const GUINEA_PIG_IFRAME_PAGE = `${TEST_END_POINT}/iframes.html`;
-const PHISHING_END_POINT = TEST_END_POINT.replace('http://', 'http://foo:bar@');
+const PHISHING_END_POINT = 'http://malware.testing.google.test/testing/malware/*';
 const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
 
 async function spinTitle (driver) {
