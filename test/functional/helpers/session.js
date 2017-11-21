@@ -23,6 +23,13 @@ async function initDriver () {
 }
 
 async function initSession (caps) {
+  if (process.env.TESTOBJECT_E2E_TESTS) {
+    driver = await wd.promiseChainRemote();
+    delete caps.app;
+    await driver.init(caps);
+    return driver;
+  }
+
   await initDriver();
   let serverRes = await driver.init(caps);
   if (!caps.udid && !caps.fullReset && serverRes[1].udid) {

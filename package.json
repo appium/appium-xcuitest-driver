@@ -56,7 +56,8 @@
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp once",
-    "lint": "gulp eslint"
+    "lint": "gulp eslint",
+    "e2e:testobject": "gulp transpile && cross-env TESTOBJECT_E2E_TESTS=true REAL_DEVICE=true mocha -t 6400000 -R spec build/test/functional/helpers/mocha-scripts.js build/test/functional/**/*-specs.js build/test/functional/*-specs.js"
   },
   "pre-commit": [
     "precommit-msg",
@@ -69,6 +70,7 @@
     "babel-eslint": "^7.1.1",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
+    "cross-env": "^5.1.1",
     "eslint": "^3.18.0",
     "eslint-config-appium": "^2.0.1",
     "eslint-plugin-babel": "^3.3.0",

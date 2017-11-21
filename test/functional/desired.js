@@ -9,7 +9,7 @@ import { absolute as testAppPath } from 'ios-test-app';
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '10.3';
 const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
 
-const REAL_DEVICE = !!process.env.REAL_DEVICE;
+const REAL_DEVICE = process.env.REAL_DEVICE || process.env.TESTOBJECT_E2E_TESTS;
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
 if (REAL_DEVICE && !XCCONFIG_FILE) {
   // no xcconfig file specified, so try to find in the root directory of the package
@@ -58,6 +58,7 @@ if (!REAL_DEVICE) {
 
 const UICATALOG_CAPS = _.defaults({
   app: REAL_DEVICE ? realUICatalogApp : simUICatalogApp,
+  testobject_api_key: process.env.TESTOBJECT_UICATALOG_CAPS_KEY,
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
 const UICATALOG_SIM_CAPS = _.defaults({
