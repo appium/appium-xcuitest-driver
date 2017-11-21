@@ -1,0 +1,17 @@
+environment:
+  nodejs_version: "6"
+  TESTOBJECT_E2E_TESTS: true
+  matrix:
+    - TESTOBJECT_PLATFORM_VERSION: 9
+    - TESTOBJECT_PLATFORM_VERSION: 10
+    - TESTOBJECT_PLATFORM_VERSION: 11
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm install
+test_script:
+  - node --version
+  - npm --version
+  - npm run build
+  - npm run e2e
+
+build: off
