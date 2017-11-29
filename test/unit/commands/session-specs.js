@@ -4,6 +4,12 @@ import chai from 'chai';
 
 chai.should();
 
+function stubbed (val) {
+  return async () => {
+    return val;
+  };
+}
+
 describe('session commands', () => {
   let driver = new XCUITestDriver();
   driver.opts.udid = "cecinestpasuneudid";
@@ -18,9 +24,17 @@ describe('session commands', () => {
     }
     return {};
   });
+  let otherStubs = [
+    sinon.stub(driver, 'getStatusBarHeight', stubbed(20)),
+    sinon.stub(driver, 'getViewportRect', stubbed({x: 1, y: 2, height: 3, width: 4})),
+    sinon.stub(driver, 'getDevicePixelRatio', stubbed(3))
+  ];
 
   afterEach(() => {
     proxySpy.reset();
+    for (let stub of otherStubs) {
+      stub.reset();
+    }
   });
 
   describe('getSession', () => {
@@ -38,6 +52,9 @@ describe('session commands', () => {
         platformName: "iOS",
         javascript_enabled: true,
         udid: "cecinestpasuneudid",
+        statBarHeight: 20,
+        viewportRect: {x: 1, y: 2, height: 3, width: 4},
+        pixelRatio: 3,
       });
     });
   });
