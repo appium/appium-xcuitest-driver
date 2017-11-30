@@ -129,4 +129,40 @@ describe('general commands', () => {
       driver.opts.nativeWebTap.should.be.false;
     });
   });
+
+  describe('getDevicePixelRatio', function () {
+    let windowSizeStub;
+    beforeEach(() => {
+      windowSizeStub = sinon.stub(driver, 'getWindowSize');
+    });
+    afterEach(() => {
+      windowSizeStub.restore();
+    });
+    it('should be 3.0 if height is plus size', async () => {
+      windowSizeStub.returns({height: 736});
+      await driver.getDevicePixelRatio().should.eventually.eql(3.0);
+    });
+    it('should be 2.0 if height is less than plus size', async () => {
+      windowSizeStub.returns({height: 735});
+      await driver.getDevicePixelRatio().should.eventually.eql(2.0);
+    });
+  });
+
+  describe('getStatusBarHeight', function () {
+    let findStub, sizeStub;
+    before(() => {
+      findStub = sinon.stub(driver, 'findNativeElementOrElements');
+      sizeStub = sinon.stub(driver, 'getSize');
+    });
+    after(() => {
+      findStub.restore();
+      sizeStub.restore();
+    });
+    it('should return the height of the status bar', async () => {
+      findStub.withArgs('class name', 'XCUIElementTypeStatusBar', false).returns({ELEMENT: 'foo'});
+      sizeStub.withArgs({ELEMENT: 'foo'}).returns({height: 150});
+      await driver.getStatusBarHeight().should.eventually.eql(150);
+
+    });
+  });
 });

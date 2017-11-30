@@ -4,12 +4,6 @@ import chai from 'chai';
 
 chai.should();
 
-function stubbed (val) {
-  return async () => {
-    return val;
-  };
-}
-
 describe('session commands', () => {
   let driver = new XCUITestDriver();
   driver.opts.udid = "cecinestpasuneudid";
@@ -25,9 +19,9 @@ describe('session commands', () => {
     return {};
   });
   let otherStubs = [
-    sinon.stub(driver, 'getStatusBarHeight', stubbed(20)),
-    sinon.stub(driver, 'getViewportRect', stubbed({x: 1, y: 2, height: 3, width: 4})),
-    sinon.stub(driver, 'getDevicePixelRatio', stubbed(3))
+    sinon.stub(driver, 'getStatusBarHeight').returns(20),
+    sinon.stub(driver, 'getViewportRect').returns({x: 1, y: 2, height: 3, width: 4}),
+    sinon.stub(driver, 'getDevicePixelRatio').returns(3)
   ];
 
   afterEach(() => {
