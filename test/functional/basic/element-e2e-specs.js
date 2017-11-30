@@ -106,6 +106,35 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
+  describe('contentSize', () => {
+    it('should get the contentSize of a table', async () => {
+      let table = await driver.elementByClassName("XCUIElementTypeTable");
+      let contentSize = await table.getAttribute('contentSize');
+      contentSize.width.should.be.a.number;
+      contentSize.height.should.be.a.number;
+      contentSize.top.should.be.a.number;
+      contentSize.left.should.be.a.number;
+      contentSize.scrollableOffset.should.be.a.number;
+      // make some vague verifications because we don't want to be too specific
+      // about how things might fall pixel-wise on different screen dimensions
+      contentSize.top.should.be.above(40);
+      contentSize.height.should.be.above(500);
+      // basically, the height of the inner content should be at least 200
+      // pixels more than the height of the container
+      contentSize.scrollableOffset.should.be.above(contentSize.height + 200);
+    });
+
+    it.skip('should get the contentSize of a collection view', async () => {
+      // TODO UICatalog doesn't seem to have collection views I could find
+    });
+
+    it('should not get the contentSize of other kinds of elements', async () => {
+      let wrongTypeEl = await driver.elementByAccessibilityId("UICatalog");
+      await wrongTypeEl.getAttribute('contentSize').should.eventually
+        .be.rejectedWith(/Can't get content size for type/);
+    });
+  });
+
   describe('touch click', () => {
     it('should click an element', async () => {
       let el = await driver.elementByAccessibilityId('Buttons');

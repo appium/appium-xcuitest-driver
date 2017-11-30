@@ -369,4 +369,23 @@ describe('XCUITestDriver - find', function () {
       els.should.have.length(1);
     });
   });
+
+  describe('magic first visible child xpath', () => {
+    it('should find the first visible child of an element', async () => {
+      let el = await driver.elementByClassName('XCUIElementTypeTable');
+      let child = await el.elementByXPath('/*[@firstVisible="true"]');
+      await child.getAttribute("type").should.eventually.eql("XCUIElementTypeCell");
+      // do another call and double-check the different quote/spacing works
+      let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
+      await grandchild.getAttribute("name").should.eventually.eql("Action Sheets");
+    });
+  });
+
+  describe('magic scrollable descendents xpath', () => {
+    it('should find any scrollable elements', async () => {
+      let els = await driver.elementsByXPath('//*[@scrollable="true"]');
+      els.should.have.length(1);
+      await els[0].getAttribute("type").should.eventually.eql("XCUIElementTypeTable");
+    });
+  });
 });
