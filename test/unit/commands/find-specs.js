@@ -12,15 +12,15 @@ describe('general commands', () => {
 
   describe('findNativeElementOrElements', () => {
 
-    async function verifyFind (strategy, selector, modSelector) {
+    async function verifyFind (strategy, selector, modSelector, modStrategy = null, mult = false) {
       try {
-        await driver.findNativeElementOrElements(strategy, selector, false);
+        await driver.findNativeElementOrElements(strategy, selector, mult);
       } catch (ign) {}
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/element');
+      proxySpy.firstCall.args[0].should.eql(`/element${mult ? 's' : ''}`);
       proxySpy.firstCall.args[1].should.eql('POST');
       proxySpy.firstCall.args[2].should.eql({
-        using: strategy,
+        using: modStrategy || strategy,
         value: modSelector
       });
       proxySpy.reset();
@@ -58,6 +58,46 @@ describe('general commands', () => {
       await verifyFind('xpath',
                         '//XCUIElementTypeMap[@name="UIADummyData"]',
                         '//XCUIElementTypeMap[@name="UIADummyData"]');
+    });
+
+    it('should convert magic first visible child xpath to class chain', async () => {
+      await verifyFind('xpath',
+                       '/*[@firstVisible="true"]',
+                       '*[`visible == 1`][1]',
+                       'class chain');
+      await verifyFind('xpath',
+                       "/*[@firstVisible='true']",
+                       '*[`visible == 1`][1]',
+                       'class chain');
+      await verifyFind('xpath',
+                       "/*[@firstVisible = 'true']",
+                       '*[`visible == 1`][1]',
+                       'class chain');
+    });
+
+    it('should convert magic is scrollable xpath to class chain', async () => {
+      const multSel = "**/*[`type == \"XCUIElementTypeScrollView\" OR " +
+        "type == \"XCUIElementTypeTable\" OR " +
+        "type == \"XCUIElementTypeCollectionView\" OR " +
+        "type == \"XCUIElementTypeWebView\"`]";
+      const singleSel = `${multSel}[1]`;
+      await verifyFind('xpath',
+                       '//*[@scrollable="true"]',
+                       singleSel,
+                       'class chain');
+      await verifyFind('xpath',
+                       `//*[@scrollable='true']`,
+                       singleSel,
+                       'class chain');
+      await verifyFind('xpath',
+                       `//*[@scrollable = 'true']`,
+                       singleSel,
+                       'class chain');
+      await verifyFind('xpath',
+                       '//*[@scrollable="true"]',
+                       multSel,
+                       'class chain',
+                       true);
     });
   });
 });
