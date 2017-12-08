@@ -1,0 +1,3 @@
+const MOCHA_LONG_TIMEOUT = 16000;
+
+export { MOCHA_LONG_TIMEOUT };

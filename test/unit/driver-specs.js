@@ -8,6 +8,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
+import { MOCHA_LONG_TIMEOUT } from './helpers';
 
 
 const caps = {platformName: "iOS", deviceName: "iPhone 6", app: "/foo.app"};
@@ -95,6 +96,7 @@ describe('driver commands', function () {
     });
 
     it('should include server capabilities', async function () {
+      this.timeout(MOCHA_LONG_TIMEOUT);
       let resCaps = await d.createSession(caps);
       resCaps[1].javascriptEnabled.should.be.true;
     });
