@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
-import { isSameGestures, gesturesChainToString } from '../../../lib/commands/gesture';
+import { gesturesChainToString } from '../../../lib/commands/gesture';
 
 
 describe('gesture commands', () => {
@@ -33,63 +33,16 @@ describe('gesture commands', () => {
     });
   });
 
-  describe('isSameGestures', () => {
-    it('should return true if simple chains are similar', () => {
-      const original = [{action: 'press'}, {'action': 'release'}];
-      const candidate = [{action: 'press'}, {'action': 'release'}];
-      const result = isSameGestures(original, candidate);
-      result.should.be.true;
-    });
-
-    it('should return false if simple chains are not similar', () => {
-      const original = [{action: 'press'}, {'action': 'press'}];
-      const candidate = [{action: 'press'}, {'action': 'release'}];
-      const result = isSameGestures(original, candidate);
-      result.should.be.false;
-    });
-
-    it('should return true if complex chains are similar', () => {
-      const original = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
-      const candidate = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
-      const result = isSameGestures(original, candidate);
-      result.should.be.true;
-    });
-
-    it('should return false if complex chains are not similar', () => {
-      const original = [{action: 'press', options: {count: 2}}, {'action': 'release'}];
-      const candidate = [{action: 'press', options: {count: 1}}, {'action': 'release'}];
-      const result = isSameGestures(original, candidate);
-      result.should.be.false;
-    });
-  });
-
   describe('tap', () => {
-    it('should send POST request to /tap on WDA when no element is given', async () => {
+    it('should send POST request to /wda/touch/perform on WDA', async () => {
       let actions = [
         {action: 'tap'}
       ];
       await driver.performTouch(actions);
       proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/tap/0');
+      proxySpy.firstCall.args[0].should.eql('/wda/touch/perform');
       proxySpy.firstCall.args[1].should.eql('POST');
-    });
-    it('should send POST request to /tap/element on WDA', async () => {
-      let actions = [
-        {action: 'tap', options: {element: 42}}
-      ];
-      await driver.performTouch(actions);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/tap/42');
-      proxySpy.firstCall.args[1].should.eql('POST');
-    });
-    it('should send POST request to /tap/element with offset on WDA', async () => {
-      let actions = [
-        {action: 'tap', options: {element: 42, x: 1, y: 2}}
-      ];
-      await driver.performTouch(actions);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/tap/42');
-      proxySpy.firstCall.args[1].should.eql('POST');
+      proxySpy.firstCall.args[2].should.eql({actions});
     });
   });
 
