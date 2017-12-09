@@ -60,19 +60,54 @@ describe('general commands', () => {
                         '//XCUIElementTypeMap[@name="UIADummyData"]');
     });
 
+    it('should reject request for first visible child with no context', async () => {
+      await driver.findNativeElementOrElements(
+        'xpath', '/*[@firstVisible="true"]', false)
+        .should.eventually.be.rejectedWith(/without a context element/);
+    });
+
+    it('should reject request for multiple first visible children', async () => {
+      await driver.findNativeElementOrElements(
+        'xpath', '/*[@firstVisible="true"]', true)
+        .should.eventually.be.rejectedWith(/Cannot get multiple/);
+    });
+
     it('should convert magic first visible child xpath to class chain', async () => {
-      await verifyFind('xpath',
-                       '/*[@firstVisible="true"]',
-                       '*[`visible == 1`][1]',
-                       'class chain');
-      await verifyFind('xpath',
-                       "/*[@firstVisible='true']",
-                       '*[`visible == 1`][1]',
-                       'class chain');
-      await verifyFind('xpath',
-                       "/*[@firstVisible = 'true']",
-                       '*[`visible == 1`][1]',
-                       'class chain');
+      const variants = [
+        '/*[@firstVisible="true"]',
+        "/*[@firstVisible='true']",
+        "/*[@firstVisible = 'true']"
+      ];
+      let attribSpy = sinon.stub(driver, 'getAttribute');
+      for (let variant of variants) {
+        proxySpy.withArgs(
+          '/element/ctx/element',
+          'POST',
+          {using: 'class chain', value: '*[1]'}
+        ).returns({ELEMENT: 1});
+        proxySpy.withArgs(
+          '/element/ctx/element',
+          'POST',
+          {using: 'class chain', value: '*[2]'}
+        ).returns({ELEMENT: 2});
+        attribSpy.withArgs('wdVisible', {ELEMENT: 1}).returns("false");
+        attribSpy.withArgs('wdVisible', {ELEMENT: 2}).returns("true");
+        let el = await driver.findNativeElementOrElements('xpath',
+          variant, false, {ELEMENT: 'ctx'});
+        proxySpy.calledTwice.should.be.true;
+        proxySpy.firstCall.args[2].should.eql({
+          using: 'class chain',
+          value: '*[1]',
+        });
+        proxySpy.secondCall.args[2].should.eql({
+          using: 'class chain',
+          value: '*[2]',
+        });
+        attribSpy.calledTwice.should.be.true;
+        el.should.eql({ELEMENT: 2});
+        proxySpy.reset();
+        attribSpy.reset();
+      }
     });
 
     it('should convert magic is scrollable xpath to class chain', async () => {
