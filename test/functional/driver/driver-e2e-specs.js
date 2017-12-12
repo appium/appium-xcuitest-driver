@@ -227,7 +227,7 @@ describe('XCUITestDriver', function () {
           udid: 'some-random-udid'
         }, UICATALOG_SIM_CAPS);
 
-        await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
+        await driver.init(caps).should.be.rejectedWith('Unknown device or simulator UDID');
       });
 
       it('with non-existent udid: throws an error', async () => {
@@ -235,7 +235,7 @@ describe('XCUITestDriver', function () {
         let udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
         let caps = _.defaults({udid}, UICATALOG_SIM_CAPS);
 
-        await driver.init(caps).should.be.rejectedWith('environment you requested was unavailable');
+        await driver.init(caps).should.be.rejectedWith('Unknown device or simulator UDID');
       });
 
       it('with noReset set to true: leaves sim booted', async function () {
