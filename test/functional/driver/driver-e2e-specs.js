@@ -8,7 +8,7 @@ import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
 import B from 'bluebird';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
-import { UICATALOG_CAPS, UICATALOG_SIM_CAPS, isIOS11 } from '../desired';
+import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
@@ -97,24 +97,27 @@ describe('XCUITestDriver', function () {
 
     describe('WebdriverAgent port', function () {
       it('should run on default port if no other specified', async function () {
-        let localCaps = Object.assign({}, caps, {fullReset: true, showIOSLog: true});
+        let localCaps = Object.assign({}, caps, {
+          fullReset: true,
+          showIOSLog: true,
+          useNewWDA: true,
+        });
         localCaps.wdaLocalPort = null;
         await driver.init(localCaps);
         let logs = await driver.log('syslog');
-        if (!isIOS11()) {
-          // currently on iOS 11 there is no device log
-          logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.true;
-        }
+        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.true;
       });
       it('should run on port specified', async function () {
-        let localCaps = Object.assign({}, caps, {fullReset: true, showIOSLog: true, wdaLocalPort: 6000});
+        let localCaps = Object.assign({}, caps, {
+          fullReset: true,
+          showIOSLog: true,
+          wdaLocalPort: 6000,
+          useNewWDA: true,
+        });
         await driver.init(localCaps);
         let logs = await driver.log('syslog');
-        if (!isIOS11()) {
-          // currently on iOS 11 there is no device log
-          logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.false;
-          logs.some((line) => line.message.indexOf(':6000<-') !== -1).should.be.true;
-        }
+        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.false;
+        logs.some((line) => line.message.indexOf(':6000<-') !== -1).should.be.true;
       });
     });
 
