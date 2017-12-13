@@ -9,6 +9,8 @@ import { absolute as testAppPath } from 'ios-test-app';
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '10.3';
 const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
 
+const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG;
+
 const REAL_DEVICE = !!process.env.REAL_DEVICE;
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
 if (REAL_DEVICE && !XCCONFIG_FILE) {
@@ -33,6 +35,7 @@ const GENERIC_CAPS = {
   noReset: true,
   maxTypingFrequency: 30,
   clearSystemFiles: true,
+  showXcodeLog: SHOW_XCODE_LOG,
 };
 
 let simUICatalogApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]);
