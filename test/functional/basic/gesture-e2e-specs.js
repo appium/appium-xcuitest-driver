@@ -47,10 +47,9 @@ describe('XCUITestDriver - gestures', function () {
         els.should.have.length(1);
 
         await retryInterval(5, 100, async () => {
+          let els = await driver.elementsByAccessibilityId(name);
+          if (els.length === 0) return; // eslint-disable-line curly
           await els[0].click();
-
-          els = await driver.elementsByAccessibilityId(name);
-          els.should.have.length(0);
         });
       }
       describe('tap', () => {
@@ -63,8 +62,14 @@ describe('XCUITestDriver - gestures', function () {
           await exitModal('OK');
         });
         it('should tap on arbitrary coordinates', async function () {
-          let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
-          let loc = await el1.getLocation();
+          let el = await driver.elementByAccessibilityId('Okay / Cancel');
+          let loc = await el.getLocation();
+          let size = await el.getSize();
+
+          loc = {
+            x: loc.x + size.width / 2,
+            y: loc.y + size.height / 2,
+          };
 
           let action = new wd.TouchAction(driver);
           action.tap(loc);
@@ -98,8 +103,14 @@ describe('XCUITestDriver - gestures', function () {
         await exitModal('Cancel');
       });
       it('should long press on arbitrary coordinates', async function () {
-        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
-        let loc = await el1.getLocation();
+        let el = await driver.elementByAccessibilityId('Okay / Cancel');
+        let loc = await el.getLocation();
+        let size = await el.getSize();
+
+        loc = {
+          x: loc.x + size.width / 2,
+          y: loc.y + size.height / 2,
+        };
 
         let action = new wd.TouchAction(driver);
         action.press(loc).wait(500).release();
