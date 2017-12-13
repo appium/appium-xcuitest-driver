@@ -77,9 +77,5 @@ const TOUCHIDAPP_CAPS = _.defaults({
   app: path.resolve('.', 'test', 'assets', 'TouchIDExample.app'),
 }, GENERIC_CAPS);
 
-function isIOS11 () {
-  return PLATFORM_VERSION === '11.0';
-}
-
 export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-         PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, isIOS11 };
+         PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME };
