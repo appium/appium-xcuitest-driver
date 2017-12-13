@@ -201,7 +201,7 @@ describe('XCUITestDriver - basics', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be.rejected;
+      await driver.setGeoLocation('30.0001', '21.0002').should.not.be.rejected;
     });
   });
 
@@ -212,7 +212,7 @@ describe('XCUITestDriver - basics', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.mobileShake().should.not.be.rejected;
+      await driver.shakeDevice().should.not.be.rejected;
     });
   });
 

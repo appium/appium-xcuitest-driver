@@ -309,6 +309,9 @@ describe('XCUITestDriver - element(s)', function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.click();
 
+          // pause to make sure the keyboard comes up
+          await B.delay(500);
+
           let db = await driver.elementByAccessibilityId('Done');
           (await db.isDisplayed()).should.be.true;
 
