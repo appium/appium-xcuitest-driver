@@ -152,7 +152,7 @@ describe('XCUITestDriver - element(s)', function () {
         });
         it('should type a url in the text field', async () => {
           // in Travis this sometimes gets the wrong text
-          let retries = process.env.TRAVIS ? 5 : 1;
+          let retries = process.env.CI ? 5 : 1;
           await retryInterval(retries, 100, async () => {
             let el = await driver.elementByClassName('XCUIElementTypeTextField');
             await el.clear();
