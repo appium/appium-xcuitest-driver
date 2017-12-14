@@ -16,8 +16,11 @@ const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-let getNumSims = async () => {
+const getNumSims = async () => {
   return (await getDevices())[UICATALOG_SIM_CAPS.platformVersion].length;
+};
+const deleteDeviceWithRetry = async function (udid) {
+  await retryInterval(5, 500, deleteDevice, udid);
 };
 
 describe('XCUITestDriver', function () {
@@ -39,7 +42,7 @@ describe('XCUITestDriver', function () {
 
     const sim = await getSimulator(caps.udid);
     await sim.shutdown();
-    await deleteDevice(caps.udid);
+    await deleteDeviceWithRetry(caps.udid);
   });
 
   afterEach(async () => {
@@ -190,7 +193,7 @@ describe('XCUITestDriver', function () {
         simsAfter.should.equal(simsBefore);
 
         // cleanup
-        await deleteDevice(udid);
+        await deleteDeviceWithRetry(udid);
       });
 
       it('with udid booted: uses sim and leaves it afterwards', async () => {
@@ -221,7 +224,7 @@ describe('XCUITestDriver', function () {
 
         // cleanup
         await sim.shutdown();
-        await deleteDevice(udid);
+        await deleteDeviceWithRetry(udid);
       });
 
       it('with invalid udid: throws an error', async () => {
@@ -270,7 +273,7 @@ describe('XCUITestDriver', function () {
 
         // cleanup
         await sim.shutdown();
-        await deleteDevice(udid);
+        await deleteDeviceWithRetry(udid);
       });
     });
 
