@@ -11,7 +11,7 @@ if (process.env.CI_METRICS) {
 
 const HOST = 'localhost',
       PORT = 4994;
-const MOCHA_TIMEOUT = 60 * 1000 * (process.env.TRAVIS ? 8 : 4);
+const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 8 : 4);
 
 let driver, server;
 
