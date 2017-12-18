@@ -8,10 +8,14 @@ import { absolute as testAppPath } from 'ios-test-app';
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '10.3';
 const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
-
 const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG;
-
-const REAL_DEVICE = !!process.env.REAL_DEVICE;
+const REAL_DEVICE = (function () {
+  let rd = parseInt(process.env.REAL_DEVICE,  10);
+  if (isNaN(rd)) {
+    rd = process.env.REAL_DEVICE;
+  }
+  return !!rd;
+})();
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
 if (REAL_DEVICE && !XCCONFIG_FILE) {
   // no xcconfig file specified, so try to find in the root directory of the package

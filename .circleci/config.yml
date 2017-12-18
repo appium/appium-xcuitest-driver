@@ -1,0 +1,183 @@
+version: 2
+
+os_version: &os_version
+  macos:
+    xcode: "9.1.0"
+
+jobs:
+  lint:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Linting
+          command: npm run lint
+  unit_tests:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Unit Tests
+          command: npm run test
+  basic_functional_tests:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Install dependencies
+          command: brew install libimobiledevice --HEAD
+      - run:
+          name: Functional Tests - Basic
+          command: npm run mocha -- -t 480000 --recursive build/test/functional/basic -g @skip-ci -i
+          environmen:
+            CI_METRICS: 1
+            CI: 1
+            REAL_DEVICE: 0
+            PLATFORM_VERSION: 11.1
+  driver_functional_tests:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Install dependencies
+          command: brew install libimobiledevice --HEAD
+      - run:
+          name: Functional Tests - Driver
+          command: npm run mocha -- -t 480000 --recursive build/test/functional/driver -g @skip-ci -i
+          environmen:
+            CI_METRICS: 1
+            CI: 1
+            REAL_DEVICE: 0
+            PLATFORM_VERSION: 11.1
+  long_functional_tests:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Functional Tests - Long
+          command: npm run mocha -- -t 480000 --recursive build/test/functional/long -g @skip-ci -i
+          environmen:
+            CI_METRICS: 1
+            CI: 1
+            REAL_DEVICE: 0
+  parallel_functional_tests:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Functional Tests - Parallel
+          command: npm run mocha -- -t 480000 --recursive build/test/functional/parallel -g @skip-ci -i
+          environmen:
+            CI_METRICS: 1
+            CI: 1
+            REAL_DEVICE: 0
+  web_functional_tests:
+    <<: *os_version
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Functional Tests - Web
+          command: npm run mocha -- -t 480000 --recursive build/test/functional/web -g @skip-ci -i
+          environmen:
+            CI_METRICS: 1
+            CI: 1
+            REAL_DEVICE: 0
+  8_3_smoke_functional_tests:
+    macos:
+      xcode: "8.3.3"
+    steps:
+      - checkout
+      - run:
+          name: WDA Init
+          command: git submodule update --init
+      - run:
+          name: Install node@7
+          command: |
+            set +e
+            touch $BASH_ENV
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+            echo 'nvm install v7' >> $BASH_ENV
+            echo 'nvm alias default v7' >> $BASH_ENV
+      - run: node --version || true
+      - run: npm -- version || true
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Functional Tests - Xcode 8.3 Smoke Tests
+          command: npm run mocha -- -t 480000 --recursive build/test/functional/basic -g @skip-ci -i
+          environmen:
+            CI_METRICS: 1
+            CI: 1
+            REAL_DEVICE: 0
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - lint
+      - unit_tests
+      - basic_functional_tests:
+          requires:
+              - lint
+              - unit_tests
+      - driver_functional_tests:
+          requires:
+              - lint
+              - unit_tests
+      - long_functional_tests:
+          requires:
+              - lint
+              - unit_tests
+      - parallel_functional_tests:
+          requires:
+              - lint
+              - unit_tests
+      - web_functional_tests:
+          requires:
+              - lint
+              - unit_tests
+      - 8_3_smoke_functional_tests:
+          requires:
+              - lint
+              - unit_tests
