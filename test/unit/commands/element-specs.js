@@ -108,7 +108,8 @@ describe('element commands', function () {
       getRectSpy.returns({x: 0, y: 0, height: 100, width: 200});
       getSizeSpy.returns({height: 100, width: 200});
       getLocationSpy.returns({x: 0, y: 0});
-      await driver.getContentSize(el).should.eventually.eql({
+      const contentSizeObj = JSON.parse(await driver.getContentSize(el));
+      contentSizeObj.should.eql({
         width: 200,
         height: 100,
         top: 0,
@@ -126,7 +127,8 @@ describe('element commands', function () {
       getRectSpy.withArgs(el2).returns({x: 10, y: 80, width: 60, height: 100});
       getSizeSpy.returns({height: 100, width: 200});
       getLocationSpy.returns({x: 0, y: 0});
-      await driver.getContentSize(el).should.eventually.eql({
+      const contentSizeObj = JSON.parse(await driver.getContentSize(el));
+      contentSizeObj.should.eql({
         width: 200,
         height: 100,
         top: 0,
@@ -152,7 +154,8 @@ describe('element commands', function () {
       }
       getSizeSpy.returns({height: 100, width: 200});
       getLocationSpy.returns({x: 0, y: 0});
-      await driver.getContentSize(el).should.eventually.eql({
+      const contentSizeObj = JSON.parse(await driver.getContentSize(el));
+      contentSizeObj.should.eql({
         width: 200,
         height: 100,
         top: 0,

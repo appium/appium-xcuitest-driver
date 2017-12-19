@@ -109,7 +109,7 @@ describe('XCUITestDriver - element(s)', function () {
   describe('contentSize', () => {
     it('should get the contentSize of a table', async () => {
       let table = await driver.elementByClassName("XCUIElementTypeTable");
-      let contentSize = await table.getAttribute('contentSize');
+      let contentSize = JSON.parse(await table.getAttribute('contentSize'));
       contentSize.width.should.be.a.number;
       contentSize.height.should.be.a.number;
       contentSize.top.should.be.a.number;
