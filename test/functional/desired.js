@@ -84,5 +84,12 @@ const TOUCHIDAPP_CAPS = _.defaults({
   app: path.resolve('.', 'test', 'assets', 'TouchIDExample.app'),
 }, GENERIC_CAPS);
 
+const W3C_CAPS = {
+  capabilities: {
+    alwaysMatch: UICATALOG_CAPS,
+    firstMatch: [{}],
+  }
+};
+
 export { UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-         PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME };
+         PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS };
