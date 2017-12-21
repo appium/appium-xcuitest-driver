@@ -27,9 +27,13 @@ matrix:
     - osx_image: xcode9
       env: CI_METRICS=1 TEST=functional/parallel
 
-    # smoke test on xcode  9
+    # smoke test on xcode 9
     - osx_image: xcode9
       env: CI_METRICS=1 PLATFORM_VERSION=11.0 TEST=functional/basic
+
+    # smoke test on xcode 8.2
+    - osx_image: xcode8.2
+      env: CI_METRICS=1 PLATFORM_VERSION=10.2 TEST=functional/basic
 git:
   submodules: false
 before_install:

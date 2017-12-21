@@ -151,68 +151,6 @@ jobs:
             CI_METRICS: 1
             CI: 1
             REAL_DEVICE: 0
-  8_2_10_2_smoke_functional_tests:
-    macos:
-      xcode: "8.2.1"
-    steps:
-      - checkout
-      - run:
-          name: WDA Init
-          command: git submodule update --init
-      - run:
-          name: Install node@7
-          command: |
-            set +e
-            touch $BASH_ENV
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
-            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
-            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-            echo 'nvm install v7' >> $BASH_ENV
-            echo 'nvm alias default v7' >> $BASH_ENV
-      - run: node --version || true
-      - run: npm -- version || true
-      - run:
-          name: Install
-          command: npm install
-      - run:
-          name: Functional Tests - Xcode 8.3 Smoke Tests
-          command: npm run mocha -- -t 480000 --recursive build/test/functional/basic -g @skip-ci -i
-          environment:
-            CI_METRICS: 1
-            CI: 1
-            REAL_DEVICE: 0
-            PLATFORM_VERSION: 10.2
-  8_2_10_0_smoke_functional_tests:
-    macos:
-      xcode: "8.2.1"
-    steps:
-      - checkout
-      - run:
-          name: WDA Init
-          command: git submodule update --init
-      - run:
-          name: Install node@7
-          command: |
-            set +e
-            touch $BASH_ENV
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
-            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
-            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-            echo 'nvm install v7' >> $BASH_ENV
-            echo 'nvm alias default v7' >> $BASH_ENV
-      - run: node --version || true
-      - run: npm -- version || true
-      - run:
-          name: Install
-          command: npm install
-      - run:
-          name: Functional Tests - Xcode 8.3 Smoke Tests
-          command: npm run mocha -- -t 480000 --recursive build/test/functional/basic -g @skip-ci -i
-          environment:
-            CI_METRICS: 1
-            CI: 1
-            REAL_DEVICE: 0
-            PLATFORM_VERSION: 10.0
 
 workflows:
   version: 2
@@ -241,14 +179,6 @@ workflows:
               - lint
               - unit_tests
       - 8_3_smoke_functional_tests:
-          requires:
-              - lint
-              - unit_tests
-      - 8_2_10_2_smoke_functional_tests:
-          requires:
-              - lint
-              - unit_tests
-      - 8_2_10_0_smoke_functional_tests:
           requires:
               - lint
               - unit_tests
