@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
 
@@ -196,7 +196,7 @@ describe('XCUITestDriver - basics', function () {
 
   describe('geo location', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI || process.env.REAL_DEVICE) {
+      if (process.env.CI || REAL_DEVICE) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
         return this.skip();
@@ -207,7 +207,7 @@ describe('XCUITestDriver - basics', function () {
 
   describe('shake', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI || process.env.REAL_DEVICE) {
+      if (process.env.CI || REAL_DEVICE) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
         return this.skip();

@@ -1,9 +1,10 @@
 import { retry, retryInterval } from 'asyncbox';
 import { HOST, PORT } from '../helpers/session';
 import { util } from 'appium-support';
+import { REAL_DEVICE } from '../desired';
 
 
-const BASE_END_POINT = `http://${process.env.REAL_DEVICE ? util.localIp() : HOST}:${PORT}`;
+const BASE_END_POINT = `http://${REAL_DEVICE ? util.localIp() : HOST}:${PORT}`;
 const TEST_END_POINT = `${BASE_END_POINT}/test`;
 const GUINEA_PIG_PAGE = `${TEST_END_POINT}/guinea-pig`;
 const GUINEA_PIG_SCROLLABLE_PAGE = `${GUINEA_PIG_PAGE}-scrollable`;

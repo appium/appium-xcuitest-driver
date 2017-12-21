@@ -2,14 +2,14 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { SAFARI_CAPS } from '../desired';
+import { SAFARI_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import B from 'bluebird';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-if (process.env.REAL_DEVICE) {
+if (REAL_DEVICE) {
   describe('ios_webkit_debug_proxy: ', function () {
     this.timeout(MOCHA_TIMEOUT);
     let caps, driver;

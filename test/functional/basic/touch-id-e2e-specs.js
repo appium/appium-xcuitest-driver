@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { TOUCHIDAPP_CAPS } from '../desired';
+import { TOUCHIDAPP_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import B from 'bluebird';
 import { killAllSimulators } from 'appium-ios-simulator';
@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 const MOCHA_RETRIES = process.env.CI ? 3 : 1;
 
 // touch id tests need to be on sims and need accessibility turned on
-if (!process.env.REAL_DEVICE && !process.env.CI) {
+if (!REAL_DEVICE && !process.env.CI) {
   describe('touchID() ', function () {
     this.timeout(MOCHA_TIMEOUT * 2);
     this.retries(MOCHA_RETRIES);

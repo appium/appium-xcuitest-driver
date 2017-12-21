@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { SAFARI_CAPS } from '../desired';
+import { SAFARI_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
 
@@ -79,7 +79,7 @@ describe('safari - execute', function () {
 
     describe('asynchronous', function () {
       before(function () {
-        if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
+        if (REAL_DEVICE) return this.skip(); // eslint-disable-line curly
       });
 
       it('should execute async javascript', async () => {

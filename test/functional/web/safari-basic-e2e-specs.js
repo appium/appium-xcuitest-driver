@@ -5,7 +5,7 @@ import wd from 'wd';
 import _ from 'lodash';
 import B from 'bluebird';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
-import { SAFARI_CAPS } from '../desired';
+import { SAFARI_CAPS, REAL_DEVICE } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
          PHISHING_END_POINT } from './helpers';
 
@@ -40,8 +40,8 @@ describe('Safari', function () {
     });
 
     it('should start a session with default init', async function () {
-      let expectedTitle = process.env.REAL_DEVICE ? 'Appium: Mobile App Automation Made Awesome.'
-                                                  : 'Appium/welcome';
+      let expectedTitle = REAL_DEVICE ? 'Appium: Mobile App Automation Made Awesome.'
+                                      : 'Appium/welcome';
       await driver.init(SAFARI_CAPS);
       let title = await spinTitle(driver);
       title.should.equal(expectedTitle);

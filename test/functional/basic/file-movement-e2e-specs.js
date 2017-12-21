@@ -4,14 +4,14 @@ import B from 'bluebird';
 import stream from 'stream';
 import unzip from 'unzip';
 import path from 'path';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-if (!process.env.REAL_DEVICE) {
+if (!REAL_DEVICE) {
   describe('XCUITestDriver - file movement', function () {
     this.timeout(MOCHA_TIMEOUT);
 

@@ -1,13 +1,13 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { TESTAPP_CAPS } from '../desired';
+import { TESTAPP_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-if (!process.env.REAL_DEVICE) {
+if (!REAL_DEVICE) {
 
   describe('XCUITestDriver - calendar', function () {
     this.timeout(MOCHA_TIMEOUT);
