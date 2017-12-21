@@ -46,7 +46,6 @@ jobs:
           command: npm run mocha -- -t 480000 --recursive build/test/functional/basic -g @skip-ci -i
           environment:
             CI_METRICS: 1
-            CI: 1
             REAL_DEVICE: 0
             PLATFORM_VERSION: 11.1
   driver_functional_tests:
@@ -67,7 +66,6 @@ jobs:
           command: npm run mocha -- -t 480000 --recursive build/test/functional/driver -g @skip-ci -i
           environment:
             CI_METRICS: 1
-            CI: 1
             REAL_DEVICE: 0
             PLATFORM_VERSION: 11.1
   long_functional_tests:
@@ -85,7 +83,6 @@ jobs:
           command: npm run mocha -- -t 480000 --recursive build/test/functional/long -g @skip-ci -i
           environment:
             CI_METRICS: 1
-            CI: 1
             REAL_DEVICE: 0
   parallel_functional_tests:
     <<: *os_version
@@ -102,7 +99,6 @@ jobs:
           command: npm run mocha -- -t 480000 --recursive build/test/functional/parallel -g @skip-ci -i
           environment:
             CI_METRICS: 1
-            CI: 1
             REAL_DEVICE: 0
   web_functional_tests:
     <<: *os_version
@@ -119,7 +115,6 @@ jobs:
           command: npm run mocha -- -t 480000 --recursive build/test/functional/web -g @skip-ci -i
           environment:
             CI_METRICS: 1
-            CI: 1
             REAL_DEVICE: 0
   8_3_smoke_functional_tests:
     macos:
@@ -149,7 +144,6 @@ jobs:
           command: npm run mocha -- -t 480000 --recursive build/test/functional/basic -g @skip-ci -i
           environment:
             CI_METRICS: 1
-            CI: 1
             REAL_DEVICE: 0
 
 workflows:

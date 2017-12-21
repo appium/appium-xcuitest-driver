@@ -17,12 +17,12 @@ chai.use(chaiAsPromised);
 
 let testUrl = 'http://localhost:8100/tree';
 
-function getStartOpts (device) {
+function getStartOpts (device, port = 8100) {
   return {
     device,
     platformVersion: PLATFORM_VERSION,
     host: 'localhost',
-    port: 8100,
+    wdaLocalPort: port,
     realDevice: false
   };
 }
@@ -70,7 +70,7 @@ describe('WebDriverAgent', function () {
         // short timeout
         this.timeout(35 * 1000);
 
-        let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
+        let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device, 8200));
 
         agent.xcodebuild.createSubProcess = async function () {
           let args = [
@@ -78,9 +78,9 @@ describe('WebDriverAgent', function () {
             this.agentPath,
             // '-scheme',
             // 'XCTUITestRunner',
-            '-destination',
-            `id=${this.device.udid}`,
-            'test'
+            // '-destination',
+            // `id=${this.device.udid}`,
+            // 'test'
           ];
           let xcodebuild = new SubProcess('xcodebuild', args);
           return xcodebuild;

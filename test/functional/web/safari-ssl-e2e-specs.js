@@ -5,7 +5,7 @@ import _ from 'lodash';
 import B from 'bluebird';
 import { killAllSimulators } from 'appium-ios-simulator';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
-import { SAFARI_CAPS } from '../desired';
+import { SAFARI_CAPS, REAL_DEVICE } from '../desired';
 import { startServer } from '../../..';
 import https from 'https';
 
@@ -25,7 +25,7 @@ describe('Safari SSL', function () {
 
   let server, sslServer, driver;
   before(async function () {
-    if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
+    if (REAL_DEVICE) return this.skip(); // eslint-disable-line curly
 
     await killAllSimulators();
 

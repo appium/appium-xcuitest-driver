@@ -8,7 +8,7 @@ import { getDevices, createDevice, deleteDevice } from 'node-simctl';
 import _ from 'lodash';
 import B from 'bluebird';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
-import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
+import { UICATALOG_CAPS, UICATALOG_SIM_CAPS, REAL_DEVICE } from '../desired';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
@@ -55,7 +55,7 @@ describe('XCUITestDriver', function () {
     } catch (ign) {}
   });
 
-  if (!process.env.REAL_DEVICE) {
+  if (!REAL_DEVICE) {
     it('should start and stop a session', async function () {
       await driver.init(caps);
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");

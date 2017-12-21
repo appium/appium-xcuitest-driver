@@ -3,7 +3,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { killAllSimulators } from 'appium-ios-simulator';
-import { SAFARI_CAPS } from '../desired';
+import { SAFARI_CAPS, REAL_DEVICE } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
          GUINEA_PIG_IFRAME_PAGE } from './helpers';
@@ -26,7 +26,7 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
 
   let driver;
   before(async () => {
-    if (!process.env.REAL_DEVICE) {
+    if (!REAL_DEVICE) {
       await killAllSimulators();
     }
     let caps = _.defaults({
@@ -52,7 +52,7 @@ describe('safari - windows and frames', function () {
 
   let driver;
   before(async () => {
-    if (!process.env.REAL_DEVICE) {
+    if (!REAL_DEVICE) {
       await killAllSimulators();
     }
     let caps = _.defaults({
