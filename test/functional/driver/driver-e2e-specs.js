@@ -298,10 +298,12 @@ describe('XCUITestDriver', function () {
       const sessionUrl = `http://${HOST}:${PORT}/wd/hub/session`;
       it('should accept w3c formatted caps', async function () {
         const { status, value, sessionId } = await request.post({url: sessionUrl, json: W3C_CAPS});
-        status.should.equal(0);
+        should.not.exist(status);
         value.should.exist;
-        sessionId.should.exist;
-        await request.delete({url: `${sessionUrl}/${sessionId}`});
+        value.capabilities.should.exists;
+        should.not.exist(sessionId);
+        should.exist(value.sessionId);
+        await request.delete({url: `${sessionUrl}/${value.sessionId}`});
       });
       it('should not accept w3c caps if missing "platformName" capability', async function () {
         await request.post({
@@ -318,12 +320,13 @@ describe('XCUITestDriver', function () {
         alwaysMatch['appium:deviceName'] = deviceName;
         const { value } = await request.post({url: sessionUrl, json: w3cCaps});
         value.should.exist;
+        await request.delete(`${sessionUrl}/${value.sessionId}`);
       });
       it('should receive 404 status code if call findElement on one that does not exist', async function () {
-        const { sessionId } = await request.post({url: sessionUrl, json: W3C_CAPS});
+        const { value } = await request.post({url: sessionUrl, json: W3C_CAPS});
         try {
           await request.post({
-            url: `${sessionUrl}/${sessionId}/element`,
+            url: `${sessionUrl}/${value.sessionId}/element`,
             json: {
               using: 'accessibility id',
               value: 'Bad Selector'
@@ -332,7 +335,7 @@ describe('XCUITestDriver', function () {
         } catch (e) {
           e.statusCode.should.equal(404);
         }
-        await request.delete({url: `${sessionUrl}/${sessionId}`});
+        await request.delete({url: `${sessionUrl}/${value.sessionId}`});
       });
     });
   } else {
