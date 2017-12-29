@@ -165,7 +165,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('logging -', function () {
     describe('types -', function () {
       it('should get the list of available logs', async function () {
-        let expectedTypes = ['syslog', 'crashlog', 'performance', 'server'];
+        let expectedTypes = ['syslog', 'crashlog', 'performance', 'safariConsole'];
         (await driver.logTypes()).should.eql(expectedTypes);
       });
     });
