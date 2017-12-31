@@ -90,8 +90,8 @@ describe('general commands', () => {
           'POST',
           {using: 'class chain', value: '*[2]'}
         ).returns({ELEMENT: 2});
-        attribSpy.withArgs('wdVisible', {ELEMENT: 1}).returns("false");
-        attribSpy.withArgs('wdVisible', {ELEMENT: 2}).returns("true");
+        attribSpy.withArgs('isVisible', {ELEMENT: 1}).returns("false");
+        attribSpy.withArgs('isVisible', {ELEMENT: 2}).returns("true");
         let el = await driver.findNativeElementOrElements('xpath',
           variant, false, {ELEMENT: 'ctx'});
         proxySpy.calledTwice.should.be.true;
