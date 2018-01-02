@@ -13,7 +13,6 @@
 
 ## Missing functionality
 
-* Setting geo location (https://github.com/appium/appium/issues/6856)
 * Auto accepting/dismissing alerts (https://github.com/appium/appium/issues/6863)
 * Touch Actions support is limited. Only basic actions, like drag-n-drop, long tap, double tap and tap are supported. Gestures, which are natively supported by XCTest, are implemented via the corresponding ["mobile:" endpoints](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios-xctest-mobile-gestures.md)
 
@@ -21,8 +20,7 @@
 ## Known issues
 
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
-* `lock` and lock-screen interaction in general is not implemented due to lack of support from Apple
-* Setting geo-location is implemented via AppleScript and works only on Simulator due to lack of support from Apple
+* Setting geo-location is implemented via AppleScript and works only on Simulator due to lack of support from Apple. In order to make it work on real devices one should have `idevicelocation` tool available.
 * Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
 
 

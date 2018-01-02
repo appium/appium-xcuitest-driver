@@ -242,8 +242,14 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('lock', function () {
-    it('should throw a not-yet-implemented error', async function () {
-      await driver.lock().should.be.rejectedWith(/Method has not yet been implemented/);
+    it('should properly lock and unlock the device', async function () {
+      try {
+        await driver.lock();
+        (await driver.isLocked()).should.be.true;
+      } finally {
+        await driver.unlock();
+      }
+      (await driver.isLocked()).should.be.false;
     });
   });
 
