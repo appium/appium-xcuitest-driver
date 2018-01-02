@@ -66,28 +66,26 @@ describe('XCUITestDriver - basics', function () {
   });
 
   describe('source', function () {
+    function checkSource (src) {
+      // should have full elements
+      src.should.include('<AppiumAUT>');
+      src.should.include('<XCUIElementTypeApplication');
+
+      // should not have any XCTest errors
+      src.should.not.include('AX error');
+    }
     describe('plain', function () {
       it('should get the source for the page', async function () {
         let src = await driver.source();
         (typeof src).should.eql('string');
-        src.indexOf('<AppiumAUT>').should.not.eql(-1);
-        src.indexOf('<XCUIElementTypeApplication').should.not.eql(-1);
-      });
-      it('should have full types for elements', async function () {
-        let src = await driver.source();
-        src.indexOf('<XCUIElementTypeWindow').should.not.eql(-1);
+        checkSource(src);
       });
     });
     describe('json parsed', function () {
       it('should get source with useJSONSource', async function () {
         await driver.updateSettings({useJSONSource: true});
         let src = await driver.source();
-        src.indexOf('<XCUIElementTypeWindow').should.not.eql(-1);
-      });
-      it('should have full types for elements', async function () {
-        await driver.updateSettings({useJSONSource: true});
-        let src = await driver.source();
-        src.indexOf('<XCUIElementTypeWindow').should.not.eql(-1);
+        checkSource(src);
       });
     });
   });
