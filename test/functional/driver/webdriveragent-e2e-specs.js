@@ -8,6 +8,7 @@ import WebDriverAgent from '../../../lib/wda/webDriverAgent'; // eslint-disable-
 import { SubProcess } from 'teen_process';
 import { PLATFORM_VERSION, DEVICE_NAME } from '../desired';
 import { MOCHA_TIMEOUT } from '../helpers/session';
+import { retryInterval } from 'asyncbox';
 
 
 const SIM_DEVICE_NAME = 'webDriverAgentTest';
@@ -55,7 +56,9 @@ describe('WebDriverAgent', function () {
         await device.run();
       });
       afterEach(async () => {
-        await device.shutdown();
+        try {
+          await retryInterval(5, 1000, device.shutdown.bind(device));
+        } catch (ign) {}
       });
 
       it('should launch agent on a sim', async function () {
