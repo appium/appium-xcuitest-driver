@@ -131,17 +131,13 @@ describe('general commands', () => {
   });
 
   describe('getDevicePixelRatio and getStatusBarHeight', function () {
-    beforeEach(() => {
-      proxySpy
-        .withArgs('/wda/screen', 'GET')
-        .returns({
-          statusBarSize: {width: 100, height: 200},
-          scale: 3
-        });
-    });
-    afterEach(() => {
-      proxySpy.restore();
-    });
+    proxySpy
+      .withArgs('/wda/screen', 'GET')
+      .returns({
+        statusBarSize: {width: 100, height: 200},
+        scale: 3
+      });
+
     it('should get the pixel ratio from WDA', async () => {
       await driver.getDevicePixelRatio().should.eventually.eql(3);
     });
