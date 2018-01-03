@@ -130,39 +130,24 @@ describe('general commands', () => {
     });
   });
 
-  describe('getDevicePixelRatio', function () {
-    let windowSizeStub;
+  describe('getDevicePixelRatio and getStatusBarHeight', function () {
     beforeEach(() => {
-      windowSizeStub = sinon.stub(driver, 'getWindowSize');
+      proxySpy
+        .withArgs('/wda/screen', 'GET')
+        .returns({
+          statusBarSize: {width: 100, height: 200},
+          scale: 3
+        });
     });
     afterEach(() => {
-      windowSizeStub.restore();
+      proxySpy.restore();
     });
-    it('should be 3.0 if height is plus size', async () => {
-      windowSizeStub.returns({height: 736});
-      await driver.getDevicePixelRatio().should.eventually.eql(3.0);
+    it('should get the pixel ratio from WDA', async () => {
+      await driver.getDevicePixelRatio().should.eventually.eql(3);
     });
-    it('should be 2.0 if height is less than plus size', async () => {
-      windowSizeStub.returns({height: 735});
-      await driver.getDevicePixelRatio().should.eventually.eql(2.0);
-    });
-  });
 
-  describe('getStatusBarHeight', function () {
-    let findStub, sizeStub;
-    before(() => {
-      findStub = sinon.stub(driver, 'findNativeElementOrElements');
-      sizeStub = sinon.stub(driver, 'getSize');
-    });
-    after(() => {
-      findStub.restore();
-      sizeStub.restore();
-    });
     it('should return the height of the status bar', async () => {
-      findStub.withArgs('class name', 'XCUIElementTypeStatusBar', false).returns({ELEMENT: 'foo'});
-      sizeStub.withArgs({ELEMENT: 'foo'}).returns({height: 150});
-      await driver.getStatusBarHeight().should.eventually.eql(150);
-
+      await driver.getStatusBarHeight().should.eventually.eql(200);
     });
   });
 });

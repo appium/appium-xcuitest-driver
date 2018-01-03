@@ -155,7 +155,7 @@ describe('XCUITestDriver - basics', function () {
       await B.promisify(fullImg.parse, {context: fullImg})(fullB64);
       const viewImg = new PNG({filterType: 4});
       await B.promisify(viewImg.parse, {context: viewImg})(viewB64);
-      fullImg.height.should.eql(viewImg.height + (statBarHeight * pixelRatio));
+      fullImg.height.should.eql(viewImg.height + Math.round(statBarHeight * pixelRatio));
       fullImg.width.should.eql(viewImg.width);
     });
   });
