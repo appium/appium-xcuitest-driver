@@ -134,7 +134,7 @@ describe('general commands', () => {
     proxySpy
       .withArgs('/wda/screen', 'GET')
       .returns({
-        statusBarSize: {width: 100, height: 200},
+        statusBarSize: {width: 100, height: 20},
         scale: 3
       });
 
@@ -143,7 +143,7 @@ describe('general commands', () => {
     });
 
     it('should return the height of the status bar', async () => {
-      await driver.getStatusBarHeight().should.eventually.eql(200);
+      await driver.getStatusBarHeight().should.eventually.eql(60);
     });
   });
 });
