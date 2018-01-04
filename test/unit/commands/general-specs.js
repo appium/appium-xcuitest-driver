@@ -143,7 +143,7 @@ describe('general commands', () => {
     });
 
     it('should return the height of the status bar', async () => {
-      await driver.getStatusBarHeight().should.eventually.eql(60);
+      await driver.getStatusBarHeight().should.eventually.eql(20);
     });
   });
 });

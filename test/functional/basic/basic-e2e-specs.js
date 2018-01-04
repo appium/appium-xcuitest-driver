@@ -146,7 +146,7 @@ describe('XCUITestDriver - basics', function () {
 
   describe('viewportScreenshot', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
-      const {statBarHeight, viewportRect} = await driver.sessionCapabilities();
+      const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute("mobile: viewportScreenshot");
       const fullB64 = new Buffer(fullScreen, 'base64');
@@ -155,7 +155,7 @@ describe('XCUITestDriver - basics', function () {
       await B.promisify(fullImg.parse, {context: fullImg})(fullB64);
       const viewImg = new PNG({filterType: 4});
       await B.promisify(viewImg.parse, {context: viewImg})(viewB64);
-      fullImg.height.should.eql(viewImg.height + statBarHeight);
+      fullImg.height.should.eql(viewImg.height + Math.round(pixelRatio * statBarHeight));
       viewImg.height.should.eql(viewportRect.height);
       fullImg.width.should.eql(viewImg.width);
     });
