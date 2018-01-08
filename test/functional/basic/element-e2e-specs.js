@@ -115,9 +115,6 @@ describe('XCUITestDriver - element(s)', function () {
       contentSize.top.should.be.a.number;
       contentSize.left.should.be.a.number;
       contentSize.scrollableOffset.should.be.a.number;
-      // make some vague verifications because we don't want to be too specific
-      // about how things might fall pixel-wise on different screen dimensions
-      contentSize.top.should.be.above(40);
       contentSize.height.should.be.above(500);
       // basically, the height of the inner content should be at least 200
       // pixels more than the height of the container
