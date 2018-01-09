@@ -129,4 +129,21 @@ describe('general commands', () => {
       driver.opts.nativeWebTap.should.be.false;
     });
   });
+
+  describe('getDevicePixelRatio and getStatusBarHeight', function () {
+    proxySpy
+      .withArgs('/wda/screen', 'GET')
+      .returns({
+        statusBarSize: {width: 100, height: 20},
+        scale: 3
+      });
+
+    it('should get the pixel ratio from WDA', async () => {
+      await driver.getDevicePixelRatio().should.eventually.eql(3);
+    });
+
+    it('should return the height of the status bar', async () => {
+      await driver.getStatusBarHeight().should.eventually.eql(20);
+    });
+  });
 });

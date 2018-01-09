@@ -279,7 +279,7 @@ describe('XCUITestDriver - find', function () {
   });
 
   describe('duplicate text field', () => {
-    beforeEach(async () => {
+    before(async () => {
       try {
         let element = await driver.elementByAccessibilityId('Text Fields');
         await driver.execute('mobile: scroll', {element, toVisible: true});
@@ -288,6 +288,12 @@ describe('XCUITestDriver - find', function () {
     });
     afterEach(async () => {
       await driver.back();
+    });
+
+    after(async () => {
+      // make sure we scroll back so as not to mess up subsequent tests
+      let element = await driver.elementByAccessibilityId('Action Sheets');
+      await driver.execute('mobile: scroll', {element, toVisible: true});
     });
 
     it('should find only one element per text field', async () => {
@@ -367,6 +373,25 @@ describe('XCUITestDriver - find', function () {
     it('should find elements with negative index', async () => {
       let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*[-1]');
       els.should.have.length(1);
+    });
+  });
+
+  describe('magic first visible child xpath', () => {
+    it('should find the first visible child of an element', async () => {
+      let el = await driver.elementByClassName('XCUIElementTypeTable');
+      let child = await el.elementByXPath('/*[@firstVisible="true"]');
+      await child.getAttribute("type").should.eventually.eql("XCUIElementTypeCell");
+      // do another call and double-check the different quote/spacing works
+      let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
+      await grandchild.getAttribute("name").should.eventually.eql("Action Sheets");
+    });
+  });
+
+  describe('magic scrollable descendents xpath', () => {
+    it('should find any scrollable elements', async () => {
+      let els = await driver.elementsByXPath('//*[@scrollable="true"]');
+      els.should.have.length(1);
+      await els[0].getAttribute("type").should.eventually.eql("XCUIElementTypeTable");
     });
   });
 });

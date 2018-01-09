@@ -5,6 +5,7 @@ import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
+import { PNG } from 'pngjs';
 
 
 chai.should();
@@ -61,6 +62,15 @@ describe('XCUITestDriver - basics', function () {
       // sdk version can be a longer version
       actual.sdkVersion.indexOf(UICATALOG_CAPS.platformVersion).should.eql(0);
       delete actual.sdkVersion;
+      // now test for the visual and dimension data
+      actual.statBarHeight.should.be.a.number;
+      delete actual.statBarHeight;
+      actual.pixelRatio.should.be.a.number;
+      delete actual.pixelRatio;
+      actual.viewportRect.should.exist;
+      actual.viewportRect.height.should.be.a.number;
+      actual.viewportRect.width.should.be.a.number;
+      delete actual.viewportRect;
       actual.should.eql(expected);
     });
   });
@@ -129,6 +139,23 @@ describe('XCUITestDriver - basics', function () {
       let screenshot2 = await driver.takeScreenshot();
       screenshot2.should.exist;
       screenshot2.should.not.eql(screenshot1);
+    });
+  });
+
+  describe('viewportScreenshot', function () {
+    it('should get a cropped screenshot of the viewport without statusbar', async function () {
+      const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
+      const fullScreen = await driver.takeScreenshot();
+      const viewScreen = await driver.execute("mobile: viewportScreenshot");
+      const fullB64 = new Buffer(fullScreen, 'base64');
+      const viewB64 = new Buffer(viewScreen, 'base64');
+      const fullImg = new PNG({filterType: 4});
+      await B.promisify(fullImg.parse, {context: fullImg})(fullB64);
+      const viewImg = new PNG({filterType: 4});
+      await B.promisify(viewImg.parse, {context: viewImg})(viewB64);
+      fullImg.height.should.eql(viewImg.height + Math.round(pixelRatio * statBarHeight));
+      viewImg.height.should.eql(viewportRect.height);
+      fullImg.width.should.eql(viewImg.width);
     });
   });
 
