@@ -46,7 +46,7 @@ describe('XCUITestDriver - gestures', function () {
         let els = await driver.elementsByAccessibilityId(name);
         els.should.have.length(1);
 
-        await retryInterval(5, 100, async () => {
+        await retryInterval(15, 100, async () => {
           let els = await driver.elementsByAccessibilityId(name);
           if (els.length === 0) return; // eslint-disable-line curly
           await els[0].click();
