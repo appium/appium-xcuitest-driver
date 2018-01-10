@@ -124,7 +124,7 @@ describe('XCUITestDriver - gestures', function () {
       let el2 = await driver.elementByAccessibilityId('Text Fields');
 
       let action = new wd.TouchAction(driver);
-      action.press({el: el1}).moveTo({el: el2}).release();
+      action.press({el: el1}).wait(100).moveTo({el: el2}).release();
       await action.perform();
 
       let el3 = await driver.elementByAccessibilityId('Text Fields');
