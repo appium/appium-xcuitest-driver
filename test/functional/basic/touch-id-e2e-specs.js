@@ -20,16 +20,16 @@ if (!process.env.REAL_DEVICE && !process.env.CI) {
     this.retries(MOCHA_RETRIES);
     let driver;
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       await killAllSimulators();
     });
 
-    afterEach(async () => {
+    afterEach(async function () {
       await deleteSession();
       await B.delay(500);
     });
 
-    after(async () => {
+    after(async function () {
       await killAllSimulators();
     });
 

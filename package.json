@@ -56,7 +56,8 @@
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp once",
-    "lint": "gulp eslint"
+    "lint": "gulp eslint",
+    "lint:fix": "gulp eslint --fix"
   },
   "pre-commit": [
     "precommit-msg",

@@ -14,15 +14,15 @@ if (!process.env.REAL_DEVICE) {
 
     let driver, caps;
 
-    beforeEach(() => {
+    beforeEach(function () {
       caps = Object.assign({}, TESTAPP_CAPS);
     });
 
-    afterEach(async () => {
+    afterEach(async function () {
       await deleteSession();
     });
 
-    it('should authorize calendar access if calendarAccessAuthorized == true', async () => {
+    it('should authorize calendar access if calendarAccessAuthorized == true', async function () {
       caps.calendarAccessAuthorized = true;
       driver = await initSession(caps);
       let checkCalendarButton = await driver.elementByName('Check calendar authorized');
@@ -30,7 +30,7 @@ if (!process.env.REAL_DEVICE) {
       await driver.elementByName('authorized');
     });
 
-    it('should disable calendar access if calendarAccessAuthorized == false', async () => {
+    it('should disable calendar access if calendarAccessAuthorized == false', async function () {
       caps.calendarAccessAuthorized = false;
       driver = await initSession(caps);
       let checkCalendarButton = await driver.elementByName('Check calendar authorized');
