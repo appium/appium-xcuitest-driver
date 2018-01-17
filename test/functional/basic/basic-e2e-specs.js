@@ -214,6 +214,13 @@ describe('XCUITestDriver - basics', function () {
       size.width.should.be.a.number;
       size.height.should.be.a.number;
     });
+    it('should be able to get the current window size with Rect', async function () {
+      let size = await driver.getWindowRect();
+      size.width.should.be.a.number;
+      size.height.should.be.a.number;
+      size.x.should.equal(0);
+      size.y.should.equal(0);
+    });
     it('should not be able to get random window size', async function () {
       await driver.getWindowSize('something-random').should.be.rejectedWith(/Currently only getting current window size is supported/);
     });
