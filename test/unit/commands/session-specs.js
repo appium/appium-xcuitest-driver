@@ -4,7 +4,7 @@ import chai from 'chai';
 
 chai.should();
 
-describe('session commands', () => {
+describe('session commands', function () {
   let driver = new XCUITestDriver();
   driver.opts.udid = "cecinestpasuneudid";
   let proxySpy = sinon.stub(driver, 'proxyCommand', async (endpoint, method) => {
@@ -24,15 +24,15 @@ describe('session commands', () => {
     sinon.stub(driver, 'getDevicePixelRatio').returns(3)
   ];
 
-  afterEach(() => {
+  afterEach(function () {
     proxySpy.reset();
     for (let stub of otherStubs) {
       stub.reset();
     }
   });
 
-  describe('getSession', () => {
-    it('should merge caps with WDA response', async () => {
+  describe('getSession', function () {
+    it('should merge caps with WDA response', async function () {
       driver.caps = {
         platformName: "iOS",
         javascript_enabled: true,

@@ -23,18 +23,18 @@ describe('Safari', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let server, driver;
-  before(async () => {
+  before(async function () {
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
 
-  after(async () => {
+  after(async function () {
     if (server) {
       await server.close();
     }
   });
 
-  describe('init', () => {
+  describe('init', function () {
     afterEach(async function () {
       await driver.quit();
     });
@@ -57,22 +57,22 @@ describe('Safari', function () {
     });
   });
 
-  describe('basics', () => {
-    before(async () => {
+  describe('basics', function () {
+    before(async function () {
       await driver.init(_.defaults({
         safariIgnoreFraudWarning: false,
         safariInitialUrl: GUINEA_PIG_PAGE,
       }, caps));
     });
-    after(async () => {
+    after(async function () {
       await driver.quit();
     });
 
 
     // TODO: in appium-remote-debugger, figure out how to check if a page is loaded
-    describe.skip('page load timeouts', () => {
+    describe.skip('page load timeouts', function () {
       describe('small timeout, slow page load', function () {
-        it('should go to the requested page', async () => {
+        it('should go to the requested page', async function () {
           await driver.setPageLoadTimeout(3000);
           await driver.get(`${GUINEA_PIG_PAGE}?delay=30000`);
 
@@ -83,7 +83,7 @@ describe('Safari', function () {
       describe('no timeout, very slow page', function () {
         let startMs = Date.now();
 
-        it('should go to the requested page', async () => {
+        it('should go to the requested page', async function () {
           await driver.setCommandTimeout(12000);
           await driver.setPageLoadTimeout(0);
           await driver.get(`${GUINEA_PIG_PAGE}?delay=3000`);
@@ -95,15 +95,15 @@ describe('Safari', function () {
       });
     });
 
-    describe('context', () => {
-      it('getting current context should work initially', async () => {
+    describe('context', function () {
+      it('getting current context should work initially', async function () {
         await B.delay(500);
         (await driver.currentContext()).should.be.ok;
       });
     });
 
-    describe('implicit wait', () => {
-      it('should set the implicit wait for finding web elements', async () => {
+    describe('implicit wait', function () {
+      it('should set the implicit wait for finding web elements', async function () {
         await driver.setImplicitWaitTimeout(7 * 1000);
 
         let before = new Date().getTime() / 1000;
@@ -126,47 +126,47 @@ describe('Safari', function () {
       });
     });
 
-    describe('window title', () => {
-      it('should return a valid title on web view', async () => {
+    describe('window title', function () {
+      it('should return a valid title on web view', async function () {
         (await driver.title()).should.include("I am a page title");
       });
     });
 
     describe('element handling', function () {
-      beforeEach(async () => {
+      beforeEach(async function () {
         await driver.get(GUINEA_PIG_PAGE);
       });
 
-      it('should find a web element in the web view', async () => {
+      it('should find a web element in the web view', async function () {
         (await driver.elementById('i_am_an_id')).should.exist;
       });
-      it('should find multiple web elements in the web view', async () => {
+      it('should find multiple web elements in the web view', async function () {
         (await driver.elementsByTagName('a')).should.have.length.at.least(5);
       });
-      it('should fail gracefully to find multiple missing web elements in the web view', async () => {
+      it('should fail gracefully to find multiple missing web elements in the web view', async function () {
         (await driver.elementsByTagName('blar')).should.have.length(0);
       });
-      it('should find element from another element', async () => {
+      it('should find element from another element', async function () {
         let el = await driver.elementByClassName('border');
         (await el.elementByXPath('./form')).should.exist;
       });
-      it('should be able to click links', async () => {
+      it('should be able to click links', async function () {
         let el = await driver.elementByLinkText('i am a link');
         await el.click();
         await spinTitleEquals(driver, 'I am another page title');
       });
-      it('should retrieve an element attribute', async () => {
+      it('should retrieve an element attribute', async function () {
         let el = await driver.elementById('i_am_an_id');
         (await el.getAttribute('id')).should.be.equal('i_am_an_id');
         expect(await el.getAttribute('blar')).to.be.null;
       });
-      it('should retrieve implicit attributes', async () => {
+      it('should retrieve implicit attributes', async function () {
         let els = await driver.elementsByTagName('option');
         els.should.have.length(3);
 
         (await els[2].getAttribute('index')).should.be.equal('2');
       });
-      it('should retrieve an element text', async () => {
+      it('should retrieve an element text', async function () {
         let el = await driver.elementById('i_am_an_id');
         (await el.text()).should.be.equal('I am a div');
       });
@@ -176,17 +176,17 @@ describe('Safari', function () {
         let el2 = await driver.elementByCss('#i_am_an_id');
         el1.should.be.equal(el2);
       });
-      it('should return the page source', async () => {
+      it('should return the page source', async function () {
         let source = await driver.source();
         source.should.include('<html');
         source.should.include('I am a page title');
         source.should.include('i appear 3 times');
         source.should.include('</html>');
       });
-      it('should get current url', async () => {
+      it('should get current url', async function () {
         (await driver.url()).should.include('test/guinea-pig');
       });
-      it('should get updated URL without breaking window handles', async () => {
+      it('should get updated URL without breaking window handles', async function () {
         let el = await driver.elementByLinkText('i am an anchor link');
         await el.click();
 
@@ -196,7 +196,7 @@ describe('Safari', function () {
         (await driver.url()).should.contain('#anchor');
         (await driver.windowHandles()).should.be.ok;
       });
-      it('should send keystrokes to specific element', async () => {
+      it('should send keystrokes to specific element', async function () {
         let el = await driver.elementById('comments');
         await el.clear();
         await el.sendKeys('hello world');
@@ -204,24 +204,24 @@ describe('Safari', function () {
       });
     });
     describe('element handling', function () {
-      beforeEach(async () => {
+      beforeEach(async function () {
         await driver.get(GUINEA_PIG_PAGE);
       });
 
-      it('should send keystrokes to active element', async () => {
+      it('should send keystrokes to active element', async function () {
         let el = await driver.elementById('comments');
         await el.click();
         await el.type('hello world');
         ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
-      it('should clear element', async () => {
+      it('should clear element', async function () {
         let el = await driver.elementById('comments');
         await el.sendKeys('hello world');
         (await el.getAttribute('value')).should.have.length.above(0);
         await el.clear();
         (await el.getAttribute('value')).should.be.equal('');
       });
-      it('should say whether an input is selected', async () => {
+      it('should say whether an input is selected', async function () {
         let el = await driver.elementById('unchecked_checkbox');
         (await el.isSelected()).should.not.be.ok;
         await el.click();
@@ -231,17 +231,17 @@ describe('Safari', function () {
 
         (await el.isSelected()).should.be.ok;
       });
-      it('should be able to retrieve css properties', async () => {
+      it('should be able to retrieve css properties', async function () {
         let el = await driver.elementById('fbemail');
         (await el.getComputedCss('background-color')).should.be.equal('rgba(255, 255, 255, 1)');
       });
-      it('should retrieve an element size', async () => {
+      it('should retrieve an element size', async function () {
         let el = await driver.elementById('i_am_an_id');
         let size = await el.getSize();
         size.width.should.be.above(0);
         size.height.should.be.above(0);
       });
-      it('should get location of an element', async () => {
+      it('should get location of an element', async function () {
         let el = await driver.elementById('fbemail');
         let loc = await el.getLocation();
         loc.x.should.be.above(0);
@@ -254,18 +254,18 @@ describe('Safari', function () {
         (await el.getTagName()).should.be.equal('input');
         (await a.getTagName()).should.be.equal('a');
       });
-      it('should retrieve a window size', async () => {
+      it('should retrieve a window size', async function () {
         let size = await driver.getWindowSize();
         size.height.should.be.above(0);
         size.width.should.be.above(0);
       });
-      it('should move to an arbitrary x-y element and click on it', async () => {
+      it('should move to an arbitrary x-y element and click on it', async function () {
         let el = await driver.elementByLinkText('i am a link');
         await driver.moveTo(el, 5, 15);
         await el.click();
         await spinTitleEquals(driver, 'I am another page title');
       });
-      it('should submit a form', async () => {
+      it('should submit a form', async function () {
         let el = await driver.elementById('comments');
         let form = await driver.elementById('jumpContact');
         await el.sendKeys('This is a comment');
@@ -275,31 +275,31 @@ describe('Safari', function () {
           (await el.text()).should.be.equal('Your comments: This is a comment');
         });
       });
-      it('should return true when the element is displayed', async () => {
+      it('should return true when the element is displayed', async function () {
         let el = await driver.elementByLinkText('i am a link');
         (await el.isDisplayed()).should.be.ok;
       });
-      it('should return false when the element is not displayed', async () => {
+      it('should return false when the element is not displayed', async function () {
         let el = await driver.elementById('invisible div');
         (await el.isDisplayed()).should.not.be.ok;
       });
-      it('should return true when the element is enabled', async () => {
+      it('should return true when the element is enabled', async function () {
         let el = await driver.elementByLinkText('i am a link');
         (await el.isEnabled()).should.be.ok;
       });
-      it('should return false when the element is not enabled', async () => {
+      it('should return false when the element is not enabled', async function () {
         let el = await driver.elementById('fbemail');
         await driver.execute(`$('#fbemail').attr('disabled', 'disabled');`);
         (await el.isEnabled()).should.not.be.ok;
       });
-      it('should return the active element', async () => {
+      it('should return the active element', async function () {
         let testText = 'hi there';
         let el = await driver.elementById('i_am_a_textbox');
         await el.sendKeys(testText);
         let activeEl = await driver.active();
         (await activeEl.getAttribute('value')).should.be.equal(testText);
       });
-      it('should properly navigate to anchor', async () => {
+      it('should properly navigate to anchor', async function () {
         let el = await driver.elementByLinkText('i am an anchor link');
         await el.click();
 
@@ -311,39 +311,39 @@ describe('Safari', function () {
 
         (await driver.url()).should.include('#anchor');
       });
-      it('should be able to refresh', async () => {
+      it('should be able to refresh', async function () {
         await driver.refresh();
       });
     });
   });
 
-  describe('safariIgnoreFraudWarning', () => {
+  describe('safariIgnoreFraudWarning', function () {
     describe('false', function () {
-      before(async () => {
+      before(async function () {
         await driver.init(_.defaults({
           safariIgnoreFraudWarning: false,
         }, caps));
       });
-      after(async () => {
+      after(async function () {
         await driver.quit();
       });
 
-      it('should display a phishing warning', async () => {
+      it('should display a phishing warning', async function () {
         await driver.get(PHISHING_END_POINT);
         (await driver.source()).toLowerCase().should.include('phishing');
       });
     });
     describe('true', function () {
-      before(async () => {
+      before(async function () {
         await driver.init(_.defaults({
           safariIgnoreFraudWarning: true,
         }, caps));
       });
-      after(async () => {
+      after(async function () {
         await driver.quit();
       });
 
-      it('should display a phishing warning', async () => {
+      it('should display a phishing warning', async function () {
         await driver.get(PHISHING_END_POINT);
         (await driver.source()).toLowerCase().should.not.include('phishing');
       });

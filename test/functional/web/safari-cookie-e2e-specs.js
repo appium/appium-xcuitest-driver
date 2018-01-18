@@ -13,7 +13,7 @@ describe('safari - cookies', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  before(async () => {
+  before(async function () {
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
@@ -21,12 +21,12 @@ describe('safari - cookies', function () {
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
   describe('within iframe webview', function () {
-    it('should be able to get cookies for a page with none', async () => {
+    it('should be able to get cookies for a page with none', async function () {
       await driver.get(GUINEA_PIG_IFRAME_PAGE);
       await driver.deleteAllCookies();
       await driver.get(GUINEA_PIG_IFRAME_PAGE);
@@ -58,18 +58,18 @@ describe('safari - cookies', function () {
       cookies.map((c) => c.value).should.not.include(cookie.value);
     };
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       await driver.get(GUINEA_PIG_PAGE);
     });
 
-    it('should be able to get cookies for a page', async () => {
+    it('should be able to get cookies for a page', async function () {
       let cookies = await driver.allCookies();
       cookies.length.should.equal(2);
       doesIncludeCookie(cookies, oldCookie1);
       doesIncludeCookie(cookies, oldCookie2);
     });
 
-    it('should be able to set a cookie for a page', async () => {
+    it('should be able to set a cookie for a page', async function () {
       await driver.deleteCookie(newCookie.name);
       let cookies = await driver.allCookies();
       doesNotIncludeCookie(cookies, newCookie);
@@ -83,7 +83,7 @@ describe('safari - cookies', function () {
       doesIncludeCookie(cookies, oldCookie2);
     });
 
-    it('should be able to set a cookie with expiry', async () => {
+    it('should be able to set a cookie with expiry', async function () {
       let expiredCookie = _.defaults({
         expiry: parseInt(Date.now() / 1000, 10) - 1000 // set cookie in past
       }, newCookie);
@@ -102,7 +102,7 @@ describe('safari - cookies', function () {
       doesIncludeCookie(cookies, oldCookie2);
     });
 
-    it('should be able to delete one cookie', async () => {
+    it('should be able to delete one cookie', async function () {
       await driver.deleteCookie(newCookie.name);
       let cookies = await driver.allCookies();
       doesNotIncludeCookie(cookies, newCookie);
@@ -119,7 +119,7 @@ describe('safari - cookies', function () {
       doesIncludeCookie(cookies, oldCookie2);
     });
 
-    it('should be able to delete all cookies', async () => {
+    it('should be able to delete all cookies', async function () {
       await driver.deleteCookie(newCookie.name);
       let cookies = await driver.allCookies();
       doesNotIncludeCookie(cookies, newCookie);

@@ -4,7 +4,7 @@ import XCUITestDriver from '../..';
 
 chai.should();
 
-describe('process args', () => {
+describe('process args', function () {
   let driver = new XCUITestDriver();
   let proxySpy = sinon.stub(driver, 'proxyCommand');
 
@@ -27,12 +27,12 @@ describe('process args', () => {
     }
   };
 
-  afterEach(() => {
+  afterEach(function () {
     proxySpy.reset();
   });
 
-  describe('send process args as object', () => {
-    it('should send translated POST /session request with valid desired caps to WDA', async () => {
+  describe('send process args as object', function () {
+    it('should send translated POST /session request with valid desired caps to WDA', async function () {
       let desiredWithProArgsObject = {
         platformName: 'iOS',
         platformVersion: '9.3',
@@ -50,8 +50,8 @@ describe('process args', () => {
     });
   });
 
-  describe('send process args json string', () => {
-    it('should send translated POST /session request with valid desired caps to WDA', async () => {
+  describe('send process args json string', function () {
+    it('should send translated POST /session request with valid desired caps to WDA', async function () {
       let desiredWithProArgsString = {
         platformName: 'iOS',
         platformVersion: '9.3',
