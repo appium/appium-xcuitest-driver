@@ -34,7 +34,7 @@ describe('XCUITestDriver - startLogCapture', function () {
   });
 
   // establish that the basic things work as we imagine
-  it('should not spawn more than one instance of idevicesyslog', async () => {
+  it('should not spawn more than one instance of idevicesyslog', async function () {
     const fakeInstance = {
       logs: undefined,
       opts: {},

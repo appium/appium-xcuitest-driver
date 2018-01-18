@@ -19,7 +19,7 @@ if (!process.env.REAL_DEVICE) {
     before(async function () {
       driver = await initSession(UICATALOG_CAPS);
     });
-    after(async () => {
+    after(async function () {
       await deleteSession();
     });
 
@@ -29,23 +29,23 @@ if (!process.env.REAL_DEVICE) {
     }
 
     describe('sim relative', function () {
-      describe('files', () => {
-        it('should not be able to fetch a file from the file system at large', async () => {
+      describe('files', function () {
+        it('should not be able to fetch a file from the file system at large', async function () {
           await driver.pullFile(__filename).should.eventually.be.rejected;
         });
 
-        it('should be able to fetch the Address book', async () => {
+        it('should be able to fetch the Address book', async function () {
           let file = 'Library/AddressBook/AddressBook.sqlitedb';
           let stringData = await pullFileAsString(file);
           stringData.indexOf('SQLite').should.not.equal(-1);
         });
 
-        it('should not be able to fetch something that does not exist', async () => {
+        it('should not be able to fetch something that does not exist', async function () {
           await driver.pullFile('Library/AddressBook/nothere.txt')
             .should.eventually.be.rejectedWith(/13/);
         });
 
-        it('should be able to push and pull a file', async () => {
+        it('should be able to push and pull a file', async function () {
           let stringData = `random string data ${Math.random()}`;
           let base64Data = new Buffer(stringData).toString('base64');
           let remotePath = 'Library/AppiumTest/remote.txt';
@@ -56,17 +56,17 @@ if (!process.env.REAL_DEVICE) {
         });
       });
 
-      describe('folders', () => {
-        it('should not pull folders from file system', async () => {
+      describe('folders', function () {
+        it('should not pull folders from file system', async function () {
           await driver.pullFolder(__dirname).should.eventually.be.rejected;
         });
 
-        it('should not be able to fetch a folder that does not exist', async () => {
+        it('should not be able to fetch a folder that does not exist', async function () {
           await driver.pullFolder('Library/Rollodex')
             .should.eventually.be.rejectedWith(/13/);
         });
 
-        it('should pull all the files in Library/AddressBook', async () => {
+        it('should pull all the files in Library/AddressBook', async function () {
           let entryCount = 0;
           let data = await driver.pullFolder('Library/AddressBook');
           await new B((resolve) => {
@@ -90,8 +90,8 @@ if (!process.env.REAL_DEVICE) {
       });
     });
 
-    describe('app relative', () => {
-      it('should be able to push and pull a file from the app directory', async () => {
+    describe('app relative', function () {
+      it('should be able to push and pull a file from the app directory', async function () {
         let stringData = `random string data ${Math.random()}`;
         let base64Data = new Buffer(stringData).toString('base64');
         let remotePath = path.resolve('/UICatalog.app', 'somefile.tmp');

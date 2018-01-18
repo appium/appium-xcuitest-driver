@@ -44,7 +44,7 @@ describe('Safari SSL', function () {
     }).listen(9758);
   });
 
-  after(async () => {
+  after(async function () {
     if (server) {
       await server.close();
     }
@@ -53,7 +53,7 @@ describe('Safari SSL', function () {
     }
   });
 
-  describe('ssl cert', () => {
+  describe('ssl cert', function () {
     afterEach(async function () {
       if (driver) {
         await driver.quit();
