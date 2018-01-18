@@ -2,10 +2,9 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import XCUITestDriver from '../../..';
 import { withMocks } from 'appium-test-support';
-import { fs } from 'appium-support';
+import { fs, tempDir } from 'appium-support';
 import * as utils from '../../../lib/utils';
 import * as teen_process from 'teen_process';
-import temp from 'temp';
 import sinon from 'sinon';
 import B from 'bluebird';
 
@@ -14,7 +13,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const driver = new XCUITestDriver();
-describe('basic', withMocks({driver, fs, temp, utils, teen_process}, function (mocks) {
+describe('basic', withMocks({driver, fs, tempDir, utils, teen_process}, function (mocks) {
   const localFile = '/path/to/local.mp4';
   const mediaContent = new Buffer('appium');
   const udid = '1234';
@@ -35,7 +34,7 @@ describe('basic', withMocks({driver, fs, temp, utils, teen_process}, function (m
       mocks.driver.verify();
       mocks.utils.verify();
       mocks.teen_process.verify();
-      mocks.temp.verify();
+      mocks.tempDir.verify();
       mocks.fs.verify();
     });
 
@@ -54,7 +53,7 @@ describe('basic', withMocks({driver, fs, temp, utils, teen_process}, function (m
       mocks.fs.expects('stat').atLeast(1).returns({size: 39571});
       mocks.fs.expects('readFile').once().withExactArgs(previousPath).returns(mediaContent);
       mocks.fs.expects('rimraf').once().withExactArgs(previousPath);
-      mocks.temp.expects('path').once().returns(localFile);
+      mocks.tempDir.expects('path').once().returns(localFile);
 
       driver._recentScreenRecordingPath = previousPath;
       (await driver.startRecordingScreen())
@@ -87,7 +86,7 @@ describe('basic', withMocks({driver, fs, temp, utils, teen_process}, function (m
       mocks.driver.verify();
       mocks.utils.verify();
       mocks.teen_process.verify();
-      mocks.temp.verify();
+      mocks.tempDir.verify();
       mocks.fs.verify();
     });
 
