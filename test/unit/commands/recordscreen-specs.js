@@ -44,6 +44,7 @@ describe('basic', withMocks({driver, fs, temp, utils, teen_process}, function (m
       mocks.fs.expects('stat').once().returns({size: 39571});
 
       await driver.startRecordingScreen();
+      driver._recentScreenRecordingPath.should.not.be.empty;
     });
 
     it('should return previous capture before starting a new recording', async function () {

@@ -30,7 +30,7 @@
     "appium-base-driver": "^2.14.0",
     "appium-ios-driver": "^1.30.0",
     "appium-ios-simulator": "^2.6.0",
-    "appium-support": "^2.12.0",
+    "appium-support": "^2.13.0",
     "appium-xcode": "^3.2.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
