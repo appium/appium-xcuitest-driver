@@ -21,12 +21,12 @@ const spinRetries = 5;
 
 describe('Safari', function () {
   let server, driver;
-  before(async () => {
+  before(async function () {
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
   });
 
-  after(async () => {
+  after(async function () {
     if (server) {
       await server.close();
     }
@@ -36,7 +36,7 @@ describe('Safari', function () {
     describe(`coordinate conversion - ${deviceName} -`, function () {
       this.timeout(MOCHA_TIMEOUT * 2);
 
-      before(async () => {
+      before(async function () {
         await driver.init(_.defaults({
           deviceName,
           fullReset: true,

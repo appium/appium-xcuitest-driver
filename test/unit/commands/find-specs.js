@@ -2,15 +2,15 @@ import sinon from 'sinon';
 import XCUITestDriver from '../../..';
 
 
-describe('general commands', () => {
+describe('general commands', function () {
   let driver = new XCUITestDriver();
   let proxySpy = sinon.stub(driver, 'proxyCommand');
 
-  afterEach(() => {
+  afterEach(function () {
     proxySpy.reset();
   });
 
-  describe('findNativeElementOrElements', () => {
+  describe('findNativeElementOrElements', function () {
 
     async function verifyFind (strategy, selector, modSelector, modStrategy = null, mult = false) {
       try {
@@ -26,7 +26,7 @@ describe('general commands', () => {
       proxySpy.reset();
     }
 
-    it('should convert class names from UIA to XCUI', async () => {
+    it('should convert class names from UIA to XCUI', async function () {
       await verifyFind('class name', 'UIAButton', 'XCUIElementTypeButton');
       await verifyFind('class name', 'UIAMapView', 'XCUIElementTypeMap');
       await verifyFind('class name', 'UIAScrollView', 'XCUIElementTypeScrollView');
@@ -35,7 +35,7 @@ describe('general commands', () => {
       await verifyFind('class name', 'UIAWebView', 'XCUIElementTypeWebView');
     });
 
-    it('should convert xpaths from UIA to XCUI', async () => {
+    it('should convert xpaths from UIA to XCUI', async function () {
       await verifyFind('xpath', '//UIAButton', '//XCUIElementTypeButton');
       await verifyFind('xpath',
                        '//UIAButton/UIATextField',
@@ -60,19 +60,19 @@ describe('general commands', () => {
                         '//XCUIElementTypeMap[@name="UIADummyData"]');
     });
 
-    it('should reject request for first visible child with no context', async () => {
+    it('should reject request for first visible child with no context', async function () {
       await driver.findNativeElementOrElements(
         'xpath', '/*[@firstVisible="true"]', false)
         .should.eventually.be.rejectedWith(/without a context element/);
     });
 
-    it('should reject request for multiple first visible children', async () => {
+    it('should reject request for multiple first visible children', async function () {
       await driver.findNativeElementOrElements(
         'xpath', '/*[@firstVisible="true"]', true)
         .should.eventually.be.rejectedWith(/Cannot get multiple/);
     });
 
-    it('should convert magic first visible child xpath to class chain', async () => {
+    it('should convert magic first visible child xpath to class chain', async function () {
       const variants = [
         '/*[@firstVisible="true"]',
         "/*[@firstVisible='true']",
@@ -110,7 +110,7 @@ describe('general commands', () => {
       }
     });
 
-    it('should convert magic is scrollable xpath to class chain', async () => {
+    it('should convert magic is scrollable xpath to class chain', async function () {
       const multSel = "**/*[`type == \"XCUIElementTypeScrollView\" OR " +
         "type == \"XCUIElementTypeTable\" OR " +
         "type == \"XCUIElementTypeCollectionView\" OR " +

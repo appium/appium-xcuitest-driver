@@ -8,13 +8,13 @@ describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
   let isSimulatorSpy, setPasteboardSpy, getPasteboardSpy;
 
-  beforeEach(() => {
+  beforeEach(function () {
     isSimulatorSpy = sinon.stub(driver, 'isSimulator');
     setPasteboardSpy = sinon.stub(simctlModule, 'setPasteboard');
     getPasteboardSpy = sinon.stub(simctlModule, 'getPasteboard');
   });
 
-  afterEach(() => {
+  afterEach(function () {
     isSimulatorSpy.restore();
     setPasteboardSpy.restore();
     getPasteboardSpy.restore();
