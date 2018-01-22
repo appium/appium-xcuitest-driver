@@ -32,7 +32,7 @@ describe('XCUITestDriver', function () {
   let caps;
 
   let server, driver;
-  before(async () => {
+  before(async function () {
     driver = wd.promiseChainRemote(HOST, PORT);
     server = await startServer(PORT, HOST);
 
@@ -40,7 +40,7 @@ describe('XCUITestDriver', function () {
       UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
     caps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
   });
-  after(async () => {
+  after(async function () {
     await server.close();
 
     const sim = await getSimulator(caps.udid);
@@ -48,7 +48,7 @@ describe('XCUITestDriver', function () {
     await deleteDeviceWithRetry(caps.udid);
   });
 
-  afterEach(async () => {
+  afterEach(async function () {
     // try to get rid of the driver, so if a test fails the rest of the
     // tests aren't compromised
     try {
@@ -131,7 +131,7 @@ describe('XCUITestDriver', function () {
       });
     });
 
-    describe('initial orientation', async () => {
+    describe('initial orientation', async function () {
       async function runOrientationTest (initialOrientation) {
         let localCaps = _.defaults({
           orientation: initialOrientation
@@ -150,7 +150,7 @@ describe('XCUITestDriver', function () {
       }
     });
 
-    describe('reset', () => {
+    describe('reset', function () {
       beforeEach(async function () {
         await retryInterval(5, 1000, async () => {
           await killAllSimulators();
@@ -173,7 +173,7 @@ describe('XCUITestDriver', function () {
         simsAfter.should.equal(simsBefore);
       });
 
-      it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async () => {
+      it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
         // before
         const udid = await createDevice(SIM_DEVICE_NAME,
           UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
@@ -203,7 +203,7 @@ describe('XCUITestDriver', function () {
         await deleteDeviceWithRetry(udid);
       });
 
-      it('with udid booted: uses sim and leaves it afterwards', async () => {
+      it('with udid booted: uses sim and leaves it afterwards', async function () {
         // before
         const udid = await createDevice(SIM_DEVICE_NAME,
           UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
@@ -234,7 +234,7 @@ describe('XCUITestDriver', function () {
         await deleteDeviceWithRetry(udid);
       });
 
-      it('with invalid udid: throws an error', async () => {
+      it('with invalid udid: throws an error', async function () {
         // test
         let caps = _.defaults({
           udid: 'some-random-udid'
@@ -243,7 +243,7 @@ describe('XCUITestDriver', function () {
         await driver.init(caps).should.be.rejectedWith('Unknown device or simulator UDID');
       });
 
-      it('with non-existent udid: throws an error', async () => {
+      it('with non-existent udid: throws an error', async function () {
         // test
         let udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
         let caps = _.defaults({udid}, UICATALOG_SIM_CAPS);
@@ -284,8 +284,8 @@ describe('XCUITestDriver', function () {
       });
     });
 
-    describe('event timings', () => {
-      it('should include event timings if cap is used', async () => {
+    describe('event timings', function () {
+      it('should include event timings if cap is used', async function () {
         let newCaps = Object.assign({}, caps, {eventTimings: true});
         await driver.init(newCaps);
         let res = await driver.sessionCapabilities();
@@ -294,7 +294,7 @@ describe('XCUITestDriver', function () {
         res.events.newSessionStarted[0].should.be.above(res.events.newSessionRequested[0]);
       });
     });
-    describe('w3c compliance', () => {
+    describe('w3c compliance', function () {
       const sessionUrl = `http://${HOST}:${PORT}/wd/hub/session`;
       it('should accept w3c formatted caps', async function () {
         const { status, value, sessionId } = await request.post({url: sessionUrl, json: W3C_CAPS});
@@ -309,7 +309,7 @@ describe('XCUITestDriver', function () {
         await request.post({
           url: sessionUrl,
           json: _.omit(W3C_CAPS, ['capabilities.alwaysMatch.platformName']),
-        }).should.eventually.be.rejectedWith(/platformName can\'t be blank/);
+        }).should.eventually.be.rejectedWith(/\'platformName\' can\'t be blank/);
       });
       it('should accept the "appium:" prefix', async function () {
         const w3cCaps = _.cloneDeep(W3C_CAPS);
@@ -340,8 +340,8 @@ describe('XCUITestDriver', function () {
     });
   } else {
     // real device tests
-    describe('handle multiple back-to-back sessions', () => {
-      it('should not fail when the new session is initiated', async () => {
+    describe('handle multiple back-to-back sessions', function () {
+      it('should not fail when the new session is initiated', async function () {
         await driver.init(UICATALOG_CAPS);
         await driver.quit();
 

@@ -4,12 +4,12 @@ import XCUITestDriver from '../..';
 
 chai.should();
 
-describe('language and locale', () => {
+describe('language and locale', function () {
   const LANGUAGE = "en";
   const LOCALE = "en_US";
 
-  describe('send only language and locale', () => {
-    it('should send translated POST /session request with valid desired caps to WDA', async () => {
+  describe('send only language and locale', function () {
+    it('should send translated POST /session request with valid desired caps to WDA', async function () {
 
       const expectedWDACapabilities = {
         desiredCapabilities: {
@@ -47,8 +47,8 @@ describe('language and locale', () => {
     });
   });
 
-  describe('send process args, language and locale json', () => {
-    it('should send translated POST /session request with valid desired caps to WDA', async () => {
+  describe('send process args, language and locale json', function () {
+    it('should send translated POST /session request with valid desired caps to WDA', async function () {
 
       let processArguments = {
         args: ["a", "b", "c"]

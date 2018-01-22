@@ -21,20 +21,20 @@ const defaultAgentPath = path.resolve(BOOTSTRAP_PATH, 'WebDriverAgent.xcodeproj'
 const customBootstrapPath = '/path/to/wda';
 const customAgentPath = '/path/to/some/agent/WebDriverAgent.xcodeproj';
 
-describe('Constructor', () => {
-  it('should have a default wda agent if not specified', () => {
+describe('Constructor', function () {
+  it('should have a default wda agent if not specified', function () {
     let agent = new WebDriverAgent({}, fakeConstructorArgs);
     agent.bootstrapPath.should.eql(BOOTSTRAP_PATH);
     agent.agentPath.should.eql(defaultAgentPath);
   });
-  it('should have custom wda bootstrap and default agent if only bootstrap specified', () => {
+  it('should have custom wda bootstrap and default agent if only bootstrap specified', function () {
     let agent = new WebDriverAgent({}, _.defaults({
       bootstrapPath: customBootstrapPath,
     }, fakeConstructorArgs));
     agent.bootstrapPath.should.eql(customBootstrapPath);
     agent.agentPath.should.eql(path.resolve(customBootstrapPath, 'WebDriverAgent.xcodeproj'));
   });
-  it('should have custom wda bootstrap and agent if both specified', () => {
+  it('should have custom wda bootstrap and agent if both specified', function () {
     let agent = new WebDriverAgent({}, _.defaults({
       bootstrapPath: customBootstrapPath,
       agentPath: customAgentPath,
@@ -44,8 +44,8 @@ describe('Constructor', () => {
   });
 });
 
-describe('launch', () => {
-  it('should use webDriverAgentUrl override', async () => {
+describe('launch', function () {
+  it('should use webDriverAgentUrl override', async function () {
     let override = "http://mockurl:8100/";
     let args = Object.assign({}, fakeConstructorArgs);
     args.webDriverAgentUrl = override;

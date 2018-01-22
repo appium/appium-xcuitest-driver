@@ -14,20 +14,20 @@ describe('XCUITestDriver - element(s)', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  before(async () => {
+  before(async function () {
     driver = await initSession(UICATALOG_CAPS);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
-  describe('text', () => {
-    it('should get the text of an element', async () => {
+  describe('text', function () {
+    it('should get the text of an element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       let text = await el.text();
       text.should.eql('Buttons');
     });
-    it('should not mix up elements', async () => {
+    it('should not mix up elements', async function () {
       let el1 = await driver.elementByAccessibilityId('Buttons');
       let text1 = await el1.text();
       text1.should.eql('Buttons');
@@ -38,35 +38,35 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
-  describe('name', () => {
-    it('should get the name of an element', async () => {
+  describe('name', function () {
+    it('should get the name of an element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       let name = await el.getTagName();
       name.should.eql('XCUIElementTypeStaticText');
     });
   });
 
-  describe('displayed', () => {
-    it('should get the displayed status for a displayed element', async () => {
+  describe('displayed', function () {
+    it('should get the displayed status for a displayed element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       let displayed = await el.isDisplayed();
       displayed.should.be.true;
     });
-    it('should get the displayed status for an undisplayed element', async () => {
+    it('should get the displayed status for an undisplayed element', async function () {
       let el = await driver.elementByAccessibilityId('Toolbars');
       let displayed = await el.isDisplayed();
       displayed.should.be.false;
     });
   });
 
-  describe('location', () => {
-    it('should get the location of an element', async () => {
+  describe('location', function () {
+    it('should get the location of an element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       let loc = await el.getLocation();
       loc.x.should.exist;
       loc.y.should.exist;
     });
-    it('should not mix up locations', async () => {
+    it('should not mix up locations', async function () {
       let el1 = await driver.elementByAccessibilityId('Buttons');
       let loc1 = await el1.getLocation();
 
@@ -78,14 +78,14 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
-  describe('location_in_view', () => {
-    it('should get the location of an element', async () => {
+  describe('location_in_view', function () {
+    it('should get the location of an element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       let loc = await el.getLocation();
       loc.x.should.exist;
       loc.y.should.exist;
     });
-    it('should not mix up locations', async () => {
+    it('should not mix up locations', async function () {
       let el1 = await driver.elementByAccessibilityId('Buttons');
       let loc1 = await el1.getLocation();
 
@@ -97,8 +97,8 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
-  describe('size', () => {
-    it('should get the size of the element', async () => {
+  describe('size', function () {
+    it('should get the size of the element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       let size = await el.getSize();
       size.width.should.exist;
@@ -106,8 +106,8 @@ describe('XCUITestDriver - element(s)', function () {
     });
   });
 
-  describe('contentSize', () => {
-    it('should get the contentSize of a table', async () => {
+  describe('contentSize', function () {
+    it('should get the contentSize of a table', async function () {
       let table = await driver.elementByClassName("XCUIElementTypeTable");
       let contentSize = JSON.parse(await table.getAttribute('contentSize'));
       contentSize.width.should.be.a.number;
@@ -125,15 +125,15 @@ describe('XCUITestDriver - element(s)', function () {
       // TODO UICatalog doesn't seem to have collection views I could find
     });
 
-    it('should not get the contentSize of other kinds of elements', async () => {
+    it('should not get the contentSize of other kinds of elements', async function () {
       let wrongTypeEl = await driver.elementByAccessibilityId("UICatalog");
       await wrongTypeEl.getAttribute('contentSize').should.eventually
         .be.rejectedWith(/Can't get content size for type/);
     });
   });
 
-  describe('touch click', () => {
-    it('should click an element', async () => {
+  describe('touch click', function () {
+    it('should click an element', async function () {
       let el = await driver.elementByAccessibilityId('Buttons');
       await el.tap();
       (await driver.elementsByClassName('XCUIElementTypeButton')).should.have.length.above(4);
@@ -145,7 +145,7 @@ describe('XCUITestDriver - element(s)', function () {
   describe('interactions', function () {
     this.retries(2);
 
-    describe('text fields', () => {
+    describe('text fields', function () {
       let text1 = 'bunchoftext';
       let text2 = 'differenttext';
       let text3 = 'http://appium.io/';
@@ -157,26 +157,26 @@ describe('XCUITestDriver - element(s)', function () {
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
       });
-      afterEach(async () => {
+      afterEach(async function () {
         await driver.back();
       });
 
-      describe('set value', () => {
-        it('should type in the text field', async () => {
+      describe('set value', function () {
+        it('should type in the text field', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.type(text1);
 
           let text = await el.text();
           text.should.eql(text1);
         });
-        it('should type in the text field even before the keyboard is up', async () => {
+        it('should type in the text field even before the keyboard is up', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.type(text1);
 
           let text = await el.text();
           text.should.eql(text1);
         });
-        it('should type a url in the text field', async () => {
+        it('should type a url in the text field', async function () {
           // in Travis this sometimes gets the wrong text
           let retries = process.env.CI ? 5 : 1;
           await retryInterval(retries, 100, async () => {
@@ -188,7 +188,7 @@ describe('XCUITestDriver - element(s)', function () {
             text.should.eql(text3);
           });
         });
-        it('should be able to type into two text fields', async () => {
+        it('should be able to type into two text fields', async function () {
           let els = await driver.elementsByClassName('XCUIElementTypeTextField');
           await els[0].type(text1);
 
@@ -202,7 +202,7 @@ describe('XCUITestDriver - element(s)', function () {
           text = await els[1].text();
           text.should.eql(text2);
         });
-        it('should type in a secure text field', async () => {
+        it('should type in a secure text field', async function () {
           let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
           await els[0].type(text1);
 
@@ -211,7 +211,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.length.should.eql(text1.length);
           text.should.eql(secureText);
         });
-        it('should type a backspace', async () => {
+        it('should type a backspace', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
 
           await driver.type(el, ['0123456789\uE003']);
@@ -219,7 +219,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.text();
           text.should.eql('012345678');
         });
-        it('should type a delete', async () => {
+        it('should type a delete', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
 
           await driver.type(el, ['0123456789\ue017']);
@@ -227,7 +227,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.text();
           text.should.eql('012345678');
         });
-        it('should type a newline', async () => {
+        it('should type a newline', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
 
           await driver.type(el, ['0123456789\uE006']);
@@ -237,8 +237,8 @@ describe('XCUITestDriver - element(s)', function () {
         });
       });
 
-      describe('clear', () => {
-        it('should clear a text field', async () => {
+      describe('clear', function () {
+        it('should clear a text field', async function () {
           let text1 = '0123456789abcdefghijklmnopqrstuvwxyz';
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           await el.type(text1);
@@ -251,7 +251,7 @@ describe('XCUITestDriver - element(s)', function () {
           text = await el.text();
           text.should.eql(phText);
         });
-        it('should be able to clear two text fields', async () => {
+        it('should be able to clear two text fields', async function () {
           let els = await driver.elementsByClassName('XCUIElementTypeTextField');
           await els[0].type(text1);
 
@@ -277,7 +277,7 @@ describe('XCUITestDriver - element(s)', function () {
           text = await els[1].text();
           text.should.eql(phText);
         });
-        it('should clear a secure text field', async () => {
+        it('should clear a secure text field', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeSecureTextField');
           await el.type(text1);
 
@@ -289,15 +289,15 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(phText);
         });
       });
-      describe('keys', () => {
-        it('should be able to send text to the active element', async () => {
+      describe('keys', function () {
+        it('should be able to send text to the active element', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
           await driver.keys('this is a test');
         });
-        it('should type a backspace', async () => {
+        it('should type a backspace', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
@@ -307,7 +307,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.text();
           text.should.eql('012345678');
         });
-        it('should type a delete', async () => {
+        it('should type a delete', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
@@ -317,7 +317,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.text();
           text.should.eql('012345678');
         });
-        it('should type a newline', async () => {
+        it('should type a newline', async function () {
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
@@ -328,8 +328,8 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql('0123456789');
         });
       });
-      describe('hide keyboard', () => {
-        it('should be able to hide the keyboard', async () => {
+      describe('hide keyboard', function () {
+        it('should be able to hide the keyboard', async function () {
           // pause for a second, or else some systems will falsely fail on this test
           await B.delay(1000);
           let el = await driver.elementByClassName('XCUIElementTypeTextField');
@@ -352,8 +352,8 @@ describe('XCUITestDriver - element(s)', function () {
         });
       });
     });
-    describe('picker wheel', () => {
-      it('should be able to set the value', async () => {
+    describe('picker wheel', function () {
+      it('should be able to set the value', async function () {
         let el = await driver.elementByAccessibilityId('Picker View');
         await el.click();
 

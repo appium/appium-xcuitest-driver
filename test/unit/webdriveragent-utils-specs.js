@@ -11,9 +11,9 @@ chai.use(chaiAsPromised);
 
 const bootstrapPath = '/path/to/wda';
 
-describe('webdriveragent utils', () => {
+describe('webdriveragent utils', function () {
   describe('checkForDependencies', withMocks({teen_process, fs}, (mocks) => {
-    it('should run script with -d argument in correct directory', async () => {
+    it('should run script with -d argument in correct directory', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').thrice()
         .onFirstCall().returns(false)
@@ -26,7 +26,7 @@ describe('webdriveragent utils', () => {
       mocks.teen_process.verify();
       mocks.fs.verify();
     });
-    it('should run script with -D argument when SSL requested', async () => {
+    it('should run script with -D argument when SSL requested', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').thrice()
         .onFirstCall().returns(false)
@@ -39,7 +39,7 @@ describe('webdriveragent utils', () => {
       mocks.teen_process.verify();
       mocks.fs.verify();
     });
-    it('should not run script if Carthage directory already present', async () => {
+    it('should not run script if Carthage directory already present', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').thrice()
         .onFirstCall().returns(true)
@@ -50,7 +50,7 @@ describe('webdriveragent utils', () => {
       mocks.teen_process.verify();
       mocks.fs.verify();
     });
-    it('should delete Carthage folder and throw error on script error', async () => {
+    it('should delete Carthage folder and throw error on script error', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').once()
         .onFirstCall().returns(false);
@@ -61,7 +61,7 @@ describe('webdriveragent utils', () => {
       mocks.teen_process.verify();
       mocks.fs.verify();
     });
-    it('should create Resources folder if not already there', async () => {
+    it('should create Resources folder if not already there', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').thrice()
         .onFirstCall().returns(true)
@@ -74,7 +74,7 @@ describe('webdriveragent utils', () => {
       mocks.teen_process.verify();
       mocks.fs.verify();
     });
-    it('should create WDA bundle if not already there', async () => {
+    it('should create WDA bundle if not already there', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').thrice()
         .onFirstCall().returns(true)

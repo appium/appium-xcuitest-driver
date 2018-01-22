@@ -32,10 +32,10 @@ describe('WebDriverAgent', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let xcodeVersion;
-  before(async () => {
+  before(async function () {
     xcodeVersion = await getVersion(true);
   });
-  describe('with fresh sim', () => {
+  describe('with fresh sim', function () {
     let device;
     before(async function () {
       let simUdid = await createDevice(SIM_DEVICE_NAME, DEVICE_NAME, PLATFORM_VERSION);
@@ -52,10 +52,10 @@ describe('WebDriverAgent', function () {
 
     describe('with running sim', function () {
       this.timeout(6 * 60 * 1000);
-      beforeEach(async () => {
+      beforeEach(async function () {
         await device.run();
       });
-      afterEach(async () => {
+      afterEach(async function () {
         try {
           await retryInterval(5, 1000, device.shutdown.bind(device));
         } catch (ign) {}
