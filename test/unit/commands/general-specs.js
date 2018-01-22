@@ -94,6 +94,19 @@ describe('general commands', function () {
     });
   });
 
+  describe('window size', function () {
+    it('should be able to get the current window size with Rect', async function () {
+      proxySpy
+        .withArgs('/window/size', 'GET')
+        .returns({width: 100, height: 20});
+
+      await driver.getWindowRect();
+      proxySpy.calledOnce.should.be.true;
+      proxySpy.firstCall.args[0].should.eql('/window/size');
+      proxySpy.firstCall.args[1].should.eql('GET');
+    });
+  });
+
   describe('nativeWebTap as a setting', function () {
     // create new driver with no opts
     let driver, startStub;
