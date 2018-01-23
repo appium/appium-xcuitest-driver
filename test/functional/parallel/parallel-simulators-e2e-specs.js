@@ -40,7 +40,7 @@ describe('XCUITestDriver - parallel Simulators @skip-ci', function () {
   describe('sessions initialization', function () {
     const SESSIONS_COUNT = DEVICES.length;
 
-    after(async () => {
+    after(async function () {
       await resetMapping(sessionsMapping);
     });
 

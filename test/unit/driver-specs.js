@@ -91,7 +91,7 @@ describe('driver commands', function () {
       sandbox.stub(utils, "checkAppPresent", anoop);
     });
 
-    afterEach(() => {
+    afterEach(function () {
       sandbox.restore();
     });
 
@@ -100,7 +100,7 @@ describe('driver commands', function () {
       let resCaps = await d.createSession(caps);
       resCaps[1].javascriptEnabled.should.be.true;
     });
-    it('should warn', async () => {
+    it('should warn', async function () {
       let warnStub = sinon.stub(log, "warn", async function () {});
       await d.createSession(_.defaults({autoAcceptAlerts: true}, caps));
       warnStub.calledOnce.should.be.true;
@@ -110,7 +110,7 @@ describe('driver commands', function () {
     });
   });
 
-  describe('startIWDP()', () => {
+  describe('startIWDP()', function () {
     it('should start and stop IWDP server', async function () {
       let startStub = sinon.stub();
       let stopStub = sinon.stub();

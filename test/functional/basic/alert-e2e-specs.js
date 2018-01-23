@@ -13,15 +13,15 @@ describe('XCUITestDriver - alerts', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  before(async () => {
+  before(async function () {
     driver = await initSession(UICATALOG_CAPS);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
 
-  beforeEach(async () => {
+  beforeEach(async function () {
     await retryInterval(5, 500, async () => {
       let el = await driver.elementByAccessibilityId('Alert Views');
       await el.click();
@@ -29,14 +29,14 @@ describe('XCUITestDriver - alerts', function () {
       (await driver.elementsByAccessibilityId('Simple')).should.have.length(1);
     });
   });
-  afterEach(async () => {
+  afterEach(async function () {
     try {
       await driver.dismissAlert();
     } catch (ign) {}
     await driver.back();
   });
 
-  it('should detect Simple', async () => {
+  it('should detect Simple', async function () {
     let el = await driver.elementByAccessibilityId('Simple');
     await el.click();
     await B.delay(2000);
@@ -45,7 +45,7 @@ describe('XCUITestDriver - alerts', function () {
     await driver.dismissAlert();
   });
 
-  it('should detect Okay', async () => {
+  it('should detect Okay', async function () {
     let el = await driver.elementByAccessibilityId('Okay / Cancel');
     await el.click();
 
@@ -56,7 +56,7 @@ describe('XCUITestDriver - alerts', function () {
     await driver.acceptAlert();
   });
 
-  it('should detect Other', async () => {
+  it('should detect Other', async function () {
     let el = await driver.elementByAccessibilityId('Other');
     await el.click();
 
@@ -104,7 +104,7 @@ describe('XCUITestDriver - alerts', function () {
     }
   });
 
-  it('should throw a NoAlertOpenError when no alert is open', async () => {
+  it('should throw a NoAlertOpenError when no alert is open', async function () {
     await driver.acceptAlert()
       .should.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
   });

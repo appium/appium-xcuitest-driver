@@ -208,7 +208,7 @@ describe('element commands', function () {
     });
   });
 
-  describe('getLocation for web elements', () => {
+  describe('getLocation for web elements', function () {
     let driver = new XCUITestDriver();
     const oldContext = driver.curContext;
     const webEl = {ELEMENT: '5000'};
@@ -220,11 +220,11 @@ describe('element commands', function () {
     let proxyStub = sinon.stub(driver, 'proxyCommand');
     atomStub.returns({x: 0, y: 0});
 
-    beforeEach(() => {
+    beforeEach(function () {
       driver.curContext = "fake web context";
     });
 
-    afterEach(() => {
+    afterEach(function () {
       driver.curContext = oldContext;
       executeStub.reset();
       atomsElStub.reset();
@@ -232,7 +232,7 @@ describe('element commands', function () {
       proxyStub.reset();
     });
 
-    it('should get location relative to scroll by default', async () => {
+    it('should get location relative to scroll by default', async function () {
       const loc = await driver.getLocation(webEl);
       executeStub.calledOnce.should.be.false;
       atomStub.calledOnce.should.be.true;
@@ -241,7 +241,7 @@ describe('element commands', function () {
       loc.y.should.equal(0);
     });
 
-    it('should get location relative to document with abosluteWebLocations cap', async () => {
+    it('should get location relative to document with abosluteWebLocations cap', async function () {
       driver.opts.absoluteWebLocations = true;
       const loc = await driver.getLocation(webEl);
       executeStub.calledOnce.should.be.true;

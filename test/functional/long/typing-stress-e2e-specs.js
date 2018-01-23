@@ -18,7 +18,7 @@ describe('XCUITestDriver - long tests', function () {
     let caps = Object.assign({}, UICATALOG_CAPS, {maxTypingFrequency: 20});
     driver = await initSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
@@ -35,7 +35,7 @@ describe('XCUITestDriver - long tests', function () {
     });
 
     for (let i = 0; i < TYPING_TRIES; i++) {
-      it(`should not fail in typing (try #${i+1})`, async () => {
+      it(`should not fail in typing (try #${i+1})`, async function () {
 
         await el.type(text);
 

@@ -25,7 +25,7 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  before(async () => {
+  before(async function () {
     if (!process.env.REAL_DEVICE) {
       await killAllSimulators();
     }
@@ -37,11 +37,11 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
     driver = await initSession(caps);
     await driver.setPageLoadTimeout(100);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
-  it('should not be able to open js popup windows', async () => {
+  it('should not be able to open js popup windows', async function () {
     await driver.execute("window.open('/test/guinea-pig2.html', null)");
     await spinTitleEquals(driver, 'I am another page title', 5).should.eventually.be.rejected;
   });
@@ -51,7 +51,7 @@ describe('safari - windows and frames', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  before(async () => {
+  before(async function () {
     if (!process.env.REAL_DEVICE) {
       await killAllSimulators();
     }
@@ -62,21 +62,21 @@ describe('safari - windows and frames', function () {
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
   describe('windows', function () {
-    before(async () => {
+    before(async function () {
       // minimize waiting if something goes wrong
       await driver.setImplicitWaitTimeout(1000);
     });
 
-    it('should throw nosuchwindow if there is not one', async () => {
+    it('should throw nosuchwindow if there is not one', async function () {
       await driver.window('noexistman').should.eventually.be.rejectedWith(/window could not be found/);
     });
 
-    it('should be able to open and close windows', async () => {
+    it('should be able to open and close windows', async function () {
       let el = await driver.elementById('blanklink');
       await el.click();
       await spinTitleEquals(driver, 'I am another page title');
@@ -87,7 +87,7 @@ describe('safari - windows and frames', function () {
       await spinTitleEquals(driver, 'I am a page title');
     });
 
-    it('should be able to go back and forward', async () => {
+    it('should be able to go back and forward', async function () {
       let link = await driver.elementByLinkText('i am a link');
       await link.click();
       await driver.elementById('only_on_page_2');
@@ -99,7 +99,7 @@ describe('safari - windows and frames', function () {
     });
 
     // broken on real devices, see https://github.com/appium/appium/issues/5167
-    it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async () => {
+    it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async function () {
       let link = await driver.elementByLinkText('i am a new window link');
       await link.click();
       await spinTitleEquals(driver, 'I am another page title', 30);
@@ -107,11 +107,11 @@ describe('safari - windows and frames', function () {
   });
 
   describe('frames', function () {
-    beforeEach(async () => {
+    beforeEach(async function () {
       await driver.get(GUINEA_PIG_FRAME_PAGE);
     });
 
-    it('should switch to frame by name', async () => {
+    it('should switch to frame by name', async function () {
       await driver.frame('first');
       (await driver.title()).should.be.equal(FRAMESET_TITLE);
 
@@ -119,7 +119,7 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_1_TITLE);
     });
 
-    it('should switch to frame by index', async () => {
+    it('should switch to frame by index', async function () {
       await driver.frame(1);
       (await driver.title()).should.be.equal(FRAMESET_TITLE);
 
@@ -127,7 +127,7 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_2_TITLE);
     });
 
-    it('should switch to frame by id', async () => {
+    it('should switch to frame by id', async function () {
       await driver.frame('frame3');
       (await driver.title()).should.be.equal(FRAMESET_TITLE);
 
@@ -135,7 +135,7 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_3_TITLE);
     });
 
-    it('should switch back to default content from frame', async () => {
+    it('should switch back to default content from frame', async function () {
       await driver.frame('first');
       (await driver.title()).should.be.equal(FRAMESET_TITLE);
 
@@ -146,7 +146,7 @@ describe('safari - windows and frames', function () {
       (await driver.elementByTagName('frameset')).should.exist;
     });
 
-    it('should switch to child frames', async () => {
+    it('should switch to child frames', async function () {
       await driver.frame('third');
       (await driver.title()).should.be.equal(FRAMESET_TITLE);
 
@@ -154,7 +154,7 @@ describe('safari - windows and frames', function () {
       (await driver.elementById('only_on_page_2')).should.exist;
     });
 
-    it('should execute javascript in frame', async () => {
+    it('should execute javascript in frame', async function () {
       await driver.frame('first');
       (await driver.execute(GET_ELEM_SYNC)).should.be.equal(SUB_FRAME_1_TITLE);
     });
@@ -177,11 +177,11 @@ describe('safari - windows and frames', function () {
   });
 
   describe('iframes', function () {
-    beforeEach(async () => {
+    beforeEach(async function () {
       await driver.get(GUINEA_PIG_IFRAME_PAGE);
     });
 
-    it('should switch to iframe by name', async () => {
+    it('should switch to iframe by name', async function () {
       await driver.frame('iframe1');
       (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
 
@@ -189,7 +189,7 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_1_TITLE);
     });
 
-    it('should switch to iframe by index', async () => {
+    it('should switch to iframe by index', async function () {
       await driver.frame(1);
       (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
 
@@ -197,7 +197,7 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_2_TITLE);
     });
 
-    it('should switch to iframe by id', async () => {
+    it('should switch to iframe by id', async function () {
       await driver.frame('id-iframe3');
       (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
 
@@ -205,7 +205,7 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_3_TITLE);
     });
 
-    it('should switch to iframe by element', async () => {
+    it('should switch to iframe by element', async function () {
       let frame = await driver.elementById('id-iframe3');
       await driver.frame(frame);
       (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
@@ -214,12 +214,12 @@ describe('safari - windows and frames', function () {
       (await h1.text()).should.be.equal(SUB_FRAME_3_TITLE);
     });
 
-    it('should not switch to iframe by element of wrong type', async () => {
+    it('should not switch to iframe by element of wrong type', async function () {
       let h1 = await driver.elementByTagName('h1');
       await driver.frame(h1).should.eventually.be.rejected;
     });
 
-    it('should switch back to default content from iframe', async () => {
+    it('should switch back to default content from iframe', async function () {
       await driver.frame('iframe1');
       (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
 

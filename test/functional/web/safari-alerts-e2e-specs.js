@@ -30,38 +30,38 @@ describe('safari - alerts', function () {
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
-  after(async () => {
+  after(async function () {
     await deleteSession();
   });
 
-  it('should accept alert', async () => {
+  it('should accept alert', async function () {
     let el = await driver.elementById('alert1');
     await el.click();
     await driver.acceptAlert();
     (await driver.title()).should.include('I am a page title');
   });
 
-  it('should dismiss alert', async () => {
+  it('should dismiss alert', async function () {
     let el = await driver.elementById('alert1');
     await el.click();
     await driver.dismissAlert();
     (await driver.title()).should.include('I am a page title');
   });
 
-  it('should get text of alert', async () => {
+  it('should get text of alert', async function () {
     let el = await driver.elementById('alert1');
     await el.click();
     (await driver.alertText()).should.include('I am an alert');
     await driver.dismissAlert();
   });
-  it('should not get text of alert that closed', async () => {
+  it('should not get text of alert that closed', async function () {
     let el = await driver.elementById('alert1');
     await el.click();
     await driver.acceptAlert();
     await driver.alertText()
       .should.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
   });
-  it('should set text of prompt', async () => {
+  it('should set text of prompt', async function () {
     let el = await driver.elementById('prompt1');
     await el.click();
     await driver.alertKeys('of course!');
@@ -70,7 +70,7 @@ describe('safari - alerts', function () {
     el = await driver.elementById('promptVal');
     (await el.getAttribute('value')).should.eql('of course!');
   });
-  it('should fail to set text of alert', async () => {
+  it('should fail to set text of alert', async function () {
     let el = await driver.elementById('alert1');
     await el.click();
     await driver.alertKeys('yes I do!')
