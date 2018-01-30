@@ -82,7 +82,7 @@ describe('driver commands', function () {
       sandbox.stub(d, "startWdaSession", anoop);
       sandbox.stub(d, "startWda", anoop);
       sandbox.stub(d, "extractBundleId", anoop);
-      sandbox.stub(d, "installApp", anoop);
+      sandbox.stub(d, "installAUT", anoop);
       sandbox.stub(iosSettings, "setLocale", anoop);
       sandbox.stub(iosSettings, "setPreferences", anoop);
       sandbox.stub(xcode, "getMaxIOSSDK", async function () {
