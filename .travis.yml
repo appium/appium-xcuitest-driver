@@ -16,7 +16,7 @@ matrix:
       env: CI_METRICS=1 TEST=functional/basic
 
     - osx_image: xcode8.3
-      env: CI_METRICS=1 TEST=functional/driver
+      env: TEST=functional/driver
 
     - osx_image: xcode8.3
       env: CI_METRICS=1 TEST=functional/web
