@@ -4,6 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
+import { killAllSimulators } from 'appium-ios-simulator';
 
 
 chai.should();
@@ -15,7 +16,7 @@ const GET_RIGHT_INNERHTML = `return document.body.innerHTML.indexOf('I am some p
 const GET_WRONG_INNERHTML = `return document.body.innerHTML.indexOf('I am not some page content') > 0`;
 const GET_ELEM_BY_TAGNAME = `return document.getElementsByTagName('a');`;
 
-describe('safari - execute', function () {
+describe('safari - execute -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
@@ -96,6 +97,7 @@ describe('safari - execute', function () {
 
   describe('http', function () {
     before(async function () {
+      await killAllSimulators();
       let caps = _.defaults({
         safariInitialUrl: GUINEA_PIG_PAGE,
         nativeWebTap: true,
@@ -104,11 +106,13 @@ describe('safari - execute', function () {
     });
     after(async function () {
       await deleteSession();
+      await killAllSimulators();
     });
     runTests();
   });
   describe('https', function () {
     before(async function () {
+      await killAllSimulators();
       let caps = _.defaults({
         safariInitialUrl: GUINEA_PIG_PAGE,
         nativeWebTap: true,
@@ -119,6 +123,7 @@ describe('safari - execute', function () {
     });
     after(async function () {
       await deleteSession();
+      await killAllSimulators();
     });
     runTests(true);
   });
