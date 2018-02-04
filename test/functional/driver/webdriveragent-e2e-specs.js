@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { createDevice, deleteDevice } from 'node-simctl';
 import { getVersion } from 'appium-xcode';
-import { getSimulator } from 'appium-ios-simulator';
+import { getSimulator, killAllSimulators } from 'appium-ios-simulator';
 import request from 'request-promise';
 import WebDriverAgent from '../../../lib/wda/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
@@ -53,6 +53,7 @@ describe('WebDriverAgent', function () {
     describe('with running sim', function () {
       this.timeout(6 * 60 * 1000);
       beforeEach(async function () {
+        await killAllSimulators();
         await device.run();
       });
       afterEach(async function () {
@@ -78,12 +79,12 @@ describe('WebDriverAgent', function () {
         agent.xcodebuild.createSubProcess = async function () {
           let args = [
             '-workspace',
-            this.agentPath,
+            `${this.agentPath}dfgs`,
             // '-scheme',
             // 'XCTUITestRunner',
-            '-destination',
-            `id=${this.device.udid}`,
-            'test'
+            // '-destination',
+            // `id=${this.device.udid}`,
+            // 'test'
           ];
           let xcodebuild = new SubProcess('xcodebuild', args);
           return xcodebuild;

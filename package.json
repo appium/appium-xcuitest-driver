@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.67.0",
+  "version": "2.68.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -27,7 +27,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^2.14.0",
+    "appium-base-driver": "^2.20.3",
     "appium-ios-driver": "^1.30.0",
     "appium-ios-simulator": "^2.6.0",
     "appium-support": "^2.13.0",

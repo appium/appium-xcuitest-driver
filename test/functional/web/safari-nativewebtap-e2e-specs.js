@@ -1,9 +1,7 @@
-import { startServer } from '../../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import _ from 'lodash';
-import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_SCROLLABLE_PAGE,
          GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
@@ -20,24 +18,14 @@ const caps = _.defaults({
 const spinRetries = 5;
 
 describe('Safari', function () {
-  let server, driver;
-  before(async function () {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-  });
-
-  after(async function () {
-    if (server) {
-      await server.close();
-    }
-  });
+  let driver;
 
   function runTests (deviceName) {
     describe(`coordinate conversion - ${deviceName} -`, function () {
       this.timeout(MOCHA_TIMEOUT * 2);
 
       before(async function () {
-        await driver.init(_.defaults({
+        driver = await initSession(_.defaults({
           deviceName,
           fullReset: true,
           noReset: false,
@@ -45,7 +33,7 @@ describe('Safari', function () {
         await driver.setImplicitWaitTimeout(5000);
       });
       after(async function () {
-        await driver.quit();
+        await deleteSession();
         await killAllSimulators();
       });
 
