@@ -38,6 +38,9 @@ describe('XCUITestDriver - gestures', function () {
           let el = await driver.elementByAccessibilityId('Action Sheets');
           await driver.execute('mobile: scroll', {element: el, toVisible: true});
           await el.click();
+          // wait a moment to switch views
+          await B.delay(500);
+          await driver.elementByAccessibilityId('Okay / Cancel');
         });
       });
 
@@ -83,25 +86,25 @@ describe('XCUITestDriver - gestures', function () {
         });
       });
       it('should long press on an element', async function () {
-        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId('Okay / Cancel');
         let action = new wd.TouchAction(driver);
-        action.longPress({el: el1});
+        action.longPress({el});
         await action.perform();
 
         await exitModal('Cancel');
       });
       it('should long press on an element with duration through press-wait-release', async function () {
-        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId('Okay / Cancel');
         let action = new wd.TouchAction(driver);
-        action.press({el: el1}).wait(1200).release();
+        action.press({el}).wait(1200).release();
         await action.perform();
 
         await exitModal('Cancel');
       });
       it('should long press on an element with duration through pressOpts.duration', async function () {
-        let el1 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId('Okay / Cancel');
         let action = new wd.TouchAction(driver);
-        action.longPress({el: el1, duration: 1200});
+        action.longPress({el, duration: 1200});
         await action.perform();
 
         await exitModal('Cancel');
