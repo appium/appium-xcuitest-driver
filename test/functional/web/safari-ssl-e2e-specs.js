@@ -17,7 +17,8 @@ chai.use(chaiAsPromised);
 const HTTPS_PORT = 9762;
 
 let caps = _.defaults({
-  safariInitialUrl: `https://localhost:${HTTPS_PORT}/`
+  safariInitialUrl: `https://localhost:${HTTPS_PORT}/`,
+  noReset: false,
 }, SAFARI_CAPS);
 
 let pemCertificate;
@@ -48,29 +49,26 @@ describe('Safari SSL', function () {
   });
 
   after(async function () {
-    if (server) {
-      await server.close();
-    }
-    if (sslServer) {
-      await sslServer.close();
-    }
+    await server.close();
+    await sslServer.close();
   });
 
-  describe('ssl cert', function () {
-    afterEach(async function () {
-      if (driver) {
-        await driver.quit();
-      }
-    });
+  it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
+    caps.customSSLCert = pemCertificate;
+    await driver.init(caps);
+    await driver.setPageLoadTimeout(3000);
+    await driver.get(`https://localhost:${HTTPS_PORT}/`);
+    let source = await driver.source();
+    source.should.include('Arbitrary text');
+    driver.quit();
+    await B.delay(1000);
 
-    it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
-      caps.customSSLCert = pemCertificate;
-      await driver.init(caps);
-      await driver.setPageLoadTimeout(3000);
-      await driver.get(`https://localhost:${HTTPS_PORT}/`);
-      let source = await driver.source();
-      source.should.include('Arbitrary text');
-      driver.quit();
-    });
+    // Now do another session using the same cert to verify that it still works
+    await driver.init(caps);
+    await driver.setPageLoadTimeout(3000);
+    await driver.get(`https://localhost:${HTTPS_PORT}/`);
+    source = await driver.source();
+    source.should.include('Arbitrary text');
+    await driver.quit();
   });
 });
