@@ -3,13 +3,14 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import stream from 'stream';
 import unzip from 'unzip';
-import path from 'path';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
 chai.use(chaiAsPromised);
+
+const UICAT_CONTAINER = `@com.example.apple-samplecode.UICatalog`;
 
 if (!process.env.REAL_DEVICE) {
   describe('XCUITestDriver - file movement', function () {
@@ -35,8 +36,8 @@ if (!process.env.REAL_DEVICE) {
         });
 
         it('should be able to fetch the Address book', async function () {
-          let file = 'Library/AddressBook/AddressBook.sqlitedb';
-          let stringData = await pullFileAsString(file);
+          let file = '../../../../../Library/AddressBook/AddressBook.sqlitedb';
+          let stringData = await pullFileAsString(`${UICAT_CONTAINER}/${file}`);
           stringData.indexOf('SQLite').should.not.equal(-1);
         });
 
@@ -48,7 +49,7 @@ if (!process.env.REAL_DEVICE) {
         it('should be able to push and pull a file', async function () {
           let stringData = `random string data ${Math.random()}`;
           let base64Data = new Buffer(stringData).toString('base64');
-          let remotePath = 'Library/AppiumTest/remote.txt';
+          let remotePath = `${UICAT_CONTAINER}/remote.txt`;
 
           await driver.pushFile(remotePath, base64Data);
           let remoteStringData = await pullFileAsString(remotePath);
@@ -68,7 +69,8 @@ if (!process.env.REAL_DEVICE) {
 
         it('should pull all the files in Library/AddressBook', async function () {
           let entryCount = 0;
-          let data = await driver.pullFolder('Library/AddressBook');
+          let remotePath = `Library/AddressBook`;
+          let data = await driver.pullFolder(remotePath);
           await new B((resolve) => {
             let zipStream = new stream.Readable();
             zipStream._read = function noop () {};
@@ -94,7 +96,7 @@ if (!process.env.REAL_DEVICE) {
       it('should be able to push and pull a file from the app directory', async function () {
         let stringData = `random string data ${Math.random()}`;
         let base64Data = new Buffer(stringData).toString('base64');
-        let remotePath = path.resolve('/UICatalog.app', 'somefile.tmp');
+        let remotePath = `${UICAT_CONTAINER}/UICatalog.app/somefile.tmp`;
 
         await driver.pushFile(remotePath, base64Data);
         let remoteStringData = await pullFileAsString(remotePath);
