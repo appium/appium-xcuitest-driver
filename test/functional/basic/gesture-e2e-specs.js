@@ -7,6 +7,7 @@ import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
+import xcode from 'appium-xcode';
 
 
 chai.should();
@@ -147,7 +148,9 @@ describe('XCUITestDriver - gestures', function () {
       action.tap({el: stepper, count: 2});
       await action.perform();
 
-      await driver.elementByAccessibilityId('2').should.not.be.rejected;
+      // FIXME: Multitouch does not work as expected in Xcode < 9.
+      await driver.elementByAccessibilityId((await xcode.getVersion(true)).major < 9 ? '1' : '2')
+        .should.not.be.rejected;
     });
     it(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
