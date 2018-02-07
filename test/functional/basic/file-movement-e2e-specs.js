@@ -36,9 +36,8 @@ if (!process.env.REAL_DEVICE) {
         });
 
         it('should be able to fetch the Address book', async function () {
-          let file = '../../../../../Library/AddressBook/AddressBook.sqlitedb';
-          let stringData = await pullFileAsString(`${UICAT_CONTAINER}/${file}`);
-          stringData.indexOf('SQLite').should.not.equal(-1);
+          let stringData = await pullFileAsString(`${UICAT_CONTAINER}/PkgInfo`);
+          stringData.indexOf('APPL').should.not.equal(-1);
         });
 
         it('should not be able to fetch something that does not exist', async function () {
