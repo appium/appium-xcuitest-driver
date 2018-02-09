@@ -139,6 +139,11 @@ describe('XCUITestDriver - gestures', function () {
       await el3.click().should.not.be.rejected;
     });
     it('should double tap on an element', async function () {
+      // FIXME: Multitouch does not work as expected in Xcode < 9.
+      if ((await xcode.getVersion(true)).major < 9) {
+        return this.skip();
+      }
+
       let el = await driver.elementByAccessibilityId('Steppers');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
       await el.click();
@@ -148,8 +153,7 @@ describe('XCUITestDriver - gestures', function () {
       action.tap({el: stepper, count: 2});
       await action.perform();
 
-      // FIXME: Multitouch does not work as expected in Xcode < 9.
-      await driver.elementByAccessibilityId((await xcode.getVersion(true)).major < 9 ? '1' : '2')
+      await driver.elementByAccessibilityId('2')
         .should.not.be.rejected;
     });
     it(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
