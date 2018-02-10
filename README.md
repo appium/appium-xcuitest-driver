@@ -154,6 +154,8 @@ Differences noted here
 |`simulatorWindowCenter`|Allows to explicitly set the coordinates of Simulator window center for Xcode9+ SDK. This capability only has an effect if Simulator window has not been opened yet for the current session before it started.|e.g. `{-100.0,100.0}` or `{500,500}`, spaces are not allowed|
 |`useJSONSource`|Get JSON source from WDA and parse into XML on Appium server. This can be much faster, especially on large devices. Defaults to `false`.|e.g., `true`|
 |`shutdownOtherSimulators`|If this capability set to `true` and the current device under test is an iOS Simulator then Appium will try to shutdown all the other running Simulators before to start a new session. This might be useful while executing webview tests on different devices, since only one device can be debugged remotely at once due to an Apple bug. The capability only has an effect if `--relaxed-security` command line argument is provided to the server. Defaults to `false`.|e.g. `true`|
+|`keepKeyChains`|Set the capability to `true` in order to preserve Simulator keychains folder after full reset. This feature has no effect on real devices. Defaults to `false`|e.g. `true`|
+|`keychainsExcludePatterns`|This capability accepts comma-sepearated file name patterns, which are going to be excluded from keychains restore while full reset is being performed on Simulator. It might be useful if you want to exclude only particular keychain types from being restored, like applications keychain. This feature has no effect on real devices.|e.g. `keychain*.db*` to exclude applications keychains from being restored|
 
 ## Development<a id="development"></a>
 
