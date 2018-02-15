@@ -9,7 +9,7 @@ import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver - alerts', function () {
+describe('XCUITestDriver - alerts -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
@@ -67,7 +67,7 @@ describe('XCUITestDriver - alerts', function () {
     await driver.dismissAlert();
   });
 
-  describe('prompt', function () {
+  describe('prompt -', function () {
     const testData = [
       {
         name: 'text field',

@@ -11,7 +11,7 @@ import { PNG } from 'pngjs';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver - basics', function () {
+describe('XCUITestDriver - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
@@ -22,7 +22,7 @@ describe('XCUITestDriver - basics', function () {
     await deleteSession();
   });
 
-  describe('status', function () {
+  describe('status -', function () {
     it('should get the server status', async function () {
       let status = await driver.status();
       status.wda.should.exist;
@@ -42,7 +42,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('session', function () {
+  describe('session -', function () {
     it('should get session details with our caps merged with WDA response', async function () {
       let extraWdaCaps = {
         CFBundleIdentifier: "com.example.apple-samplecode.UICatalog",
@@ -62,6 +62,9 @@ describe('XCUITestDriver - basics', function () {
       // sdk version can be a longer version
       actual.sdkVersion.indexOf(UICATALOG_CAPS.platformVersion).should.eql(0);
       delete actual.sdkVersion;
+      // there might have been added wdaLocalPort and webDriverAgentUrl
+      delete actual.wdaLocalPort;
+      delete actual.webDriverAgentUrl;
       // now test for the visual and dimension data
       actual.statBarHeight.should.be.a.number;
       delete actual.statBarHeight;
@@ -75,7 +78,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('source', function () {
+  describe('source -', function () {
     function checkSource (src) {
       // should have full elements
       src.should.include('<AppiumAUT>');
@@ -84,14 +87,14 @@ describe('XCUITestDriver - basics', function () {
       // should not have any XCTest errors
       src.should.not.include('AX error');
     }
-    describe('plain', function () {
+    describe('plain -', function () {
       it('should get the source for the page', async function () {
         let src = await driver.source();
         (typeof src).should.eql('string');
         checkSource(src);
       });
     });
-    describe('json parsed', function () {
+    describe('json parsed -', function () {
       it('should get source with useJSONSource', async function () {
         await driver.updateSettings({useJSONSource: true});
         let src = await driver.source();
@@ -100,7 +103,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('deactivate app', function () {
+  describe('deactivate app -', function () {
     it('should background the app for the specified time', async function () {
       let before = Date.now();
       await driver.backgroundApp(4);
@@ -109,7 +112,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('screenshot', function () {
+  describe('screenshot -', function () {
     after(async function () {
       try {
         await driver.setOrientation("PORTRAIT");
@@ -142,7 +145,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('viewportScreenshot', function () {
+  describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
       const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
       const fullScreen = await driver.takeScreenshot();
@@ -159,15 +162,15 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('logging', function () {
-    describe('types', function () {
+  describe('logging -', function () {
+    describe('types -', function () {
       it('should get the list of available logs', async function () {
         let expectedTypes = ['syslog', 'crashlog', 'performance'];
         (await driver.logTypes()).should.eql(expectedTypes);
       });
     });
 
-    describe('retrieval', function () {
+    describe('retrieval -', function () {
       it('should throw an error when an invalid type is given', async function () {
         await driver.log('something-random').should.eventually.be.rejected;
       });
@@ -180,7 +183,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('orientation', function () {
+  describe('orientation -', function () {
     beforeEach(async function () {
       await driver.setOrientation('PORTRAIT');
     });
@@ -208,7 +211,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('window size', function () {
+  describe('window size -', function () {
     it('should be able to get the current window size', async function () {
       let size = await driver.getWindowSize('current');
       size.width.should.be.a.number;
@@ -219,7 +222,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('geo location', function () {
+  describe('geo location -', function () {
     it('should work on Simulator', async function () {
       if (process.env.CI || process.env.REAL_DEVICE) {
         // skip on Travis, since Appium process should have access to system accessibility
@@ -230,7 +233,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('shake', function () {
+  describe('shake -', function () {
     it('should work on Simulator', async function () {
       if (process.env.CI || process.env.REAL_DEVICE) {
         // skip on Travis, since Appium process should have access to system accessibility
@@ -241,8 +244,11 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('lock', function () {
+  describe('lock -', function () {
     it('should properly lock and unlock the device', async function () {
+      if (process.env.REAL_DEVICE) {
+        return this.skip();
+      }
       try {
         await driver.lock();
         (await driver.isLocked()).should.be.true;
@@ -253,7 +259,7 @@ describe('XCUITestDriver - basics', function () {
     });
   });
 
-  describe('contexts', function () {
+  describe.skip('contexts -', function () {
     before(async function () {
       let el = await driver.elementByAccessibilityId('Web View');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});

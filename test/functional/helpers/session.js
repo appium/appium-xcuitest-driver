@@ -1,4 +1,5 @@
 import wd from 'wd';
+import request from 'request-promise';
 import { startServer } from '../../..';
 
 import patchDriverWithEvents from './ci-metrics';
@@ -9,21 +10,51 @@ if (process.env.CI_METRICS) {
   patchDriverWithEvents();
 }
 
-const HOST = 'localhost',
-      PORT = 4994;
+const HOST = 'localhost';
+const PORT = 4994;
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 8 : 4);
+const WDA_PORT = 8200;
 
 let driver, server;
 
 async function initDriver () {
   driver = wd.promiseChainRemote(HOST, PORT);
-  server = await startServer(PORT, HOST);
 
   return driver;
 }
 
+async function initServer () {
+  server = await startServer(PORT, HOST);
+}
+
+async function initWDA (caps) {
+  // first, see if this is necessary
+  try {
+    await request.get({url: `http://${HOST}:${WDA_PORT}/status`});
+  } catch (err) {
+    // easiest way to initialize WDA is to go through a test startup
+    // otherwise every change to the system would require a change here
+    const desiredCaps = Object.assign({
+      autoLaunch: false,
+      wdaLocalPort: WDA_PORT,
+    }, caps);
+    await driver.init(desiredCaps);
+    await driver.quit();
+  }
+}
+
 async function initSession (caps) {
+  await initServer();
   await initDriver();
+
+  if (process.env.USE_WEBDRIVERAGENTURL) {
+    await initWDA(caps);
+    caps = Object.assign({
+      webDriverAgentUrl: `http://${HOST}:${WDA_PORT}`,
+      wdaLocalPort: WDA_PORT,
+    }, caps);
+  }
+
   let serverRes = await driver.init(caps);
   if (!caps.udid && !caps.fullReset && serverRes[1].udid) {
     caps.udid = serverRes[1].udid;
