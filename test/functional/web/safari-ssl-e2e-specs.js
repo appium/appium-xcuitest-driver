@@ -60,7 +60,7 @@ describe('Safari SSL', function () {
     await driver.get(`https://localhost:${HTTPS_PORT}/`);
     let source = await driver.source();
     source.should.include('Arbitrary text');
-    driver.quit();
+    await driver.quit();
     await B.delay(1000);
 
     // Now do another session using the same cert to verify that it still works
