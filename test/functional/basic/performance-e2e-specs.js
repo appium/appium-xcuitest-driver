@@ -24,7 +24,7 @@ describe('XCUITestDriver - perfomance', function () {
 
     it('should return recorded trace file on stop', async function () {
       if (process.env.CI) {
-        // It looks like Travis is just way to slow to execute it properly
+        // It looks like Travis is just way too slow
         return this.skip();
       }
       await driver.execute('mobile: startPerfRecord', {});
