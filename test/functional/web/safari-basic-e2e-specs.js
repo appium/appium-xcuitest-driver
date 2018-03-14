@@ -318,13 +318,15 @@ describe('Safari', function () {
   });
 
   describe('safariIgnoreFraudWarning', function () {
+    this.retries(2);
+
     describe('false', function () {
-      before(async function () {
+      beforeEach(async function () {
         await driver.init(_.defaults({
           safariIgnoreFraudWarning: false,
         }, caps));
       });
-      after(async function () {
+      afterEach(async function () {
         await driver.quit();
       });
 
@@ -334,16 +336,16 @@ describe('Safari', function () {
       });
     });
     describe('true', function () {
-      before(async function () {
+      beforeEach(async function () {
         await driver.init(_.defaults({
           safariIgnoreFraudWarning: true,
         }, caps));
       });
-      after(async function () {
+      afterEach(async function () {
         await driver.quit();
       });
 
-      it('should display a phishing warning', async function () {
+      it('should not display a phishing warning', async function () {
         await driver.get(PHISHING_END_POINT);
         (await driver.source()).toLowerCase().should.not.include('phishing');
       });
