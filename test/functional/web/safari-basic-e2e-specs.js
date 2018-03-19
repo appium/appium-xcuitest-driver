@@ -1,10 +1,8 @@
-import { startServer } from '../../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import _ from 'lodash';
 import B from 'bluebird';
-import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
+import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
          PHISHING_END_POINT } from './helpers';
@@ -22,27 +20,18 @@ let caps = _.defaults({
 describe('Safari', function () {
   this.timeout(MOCHA_TIMEOUT);
 
-  let server, driver;
-  before(async function () {
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
-  });
-
-  after(async function () {
-    if (server) {
-      await server.close();
-    }
-  });
+  let driver;
 
   describe('init', function () {
+    this.retries(3);
     afterEach(async function () {
-      await driver.quit();
+      await deleteSession();
     });
 
     it('should start a session with default init', async function () {
       let expectedTitle = process.env.REAL_DEVICE ? 'Appium: Mobile App Automation Made Awesome.'
                                                   : 'Appium/welcome';
-      await driver.init(SAFARI_CAPS);
+      driver = await initSession(SAFARI_CAPS);
       let title = await spinTitle(driver);
       title.should.equal(expectedTitle);
     });
@@ -51,7 +40,7 @@ describe('Safari', function () {
       let caps = _.defaults({
         safariInitialUrl: GUINEA_PIG_PAGE
       }, SAFARI_CAPS);
-      await driver.init(caps);
+      driver = await initSession(caps);
       let title = await spinTitle(driver);
       title.should.equal('I am a page title');
     });
@@ -59,13 +48,13 @@ describe('Safari', function () {
 
   describe('basics', function () {
     before(async function () {
-      await driver.init(_.defaults({
+      driver = await initSession(_.defaults({
         safariIgnoreFraudWarning: false,
         safariInitialUrl: GUINEA_PIG_PAGE,
       }, caps));
     });
     after(async function () {
-      await driver.quit();
+      await deleteSession();
     });
 
 
@@ -171,7 +160,7 @@ describe('Safari', function () {
         (await el.text()).should.be.equal('I am a div');
       });
       // TODO: figure out what equality means here
-      it.skip('should check if two elements are equal', async () => {
+      it.skip('should check if two elements are equal', async function () {
         let el1 = await driver.elementById('i_am_an_id');
         let el2 = await driver.elementByCss('#i_am_an_id');
         el1.should.be.equal(el2);
@@ -248,7 +237,7 @@ describe('Safari', function () {
         loc.y.should.be.above(0);
       });
       // getTagName not supported by mjwp
-      it.skip('should retrieve tag name of an element', async () => {
+      it.skip('should retrieve tag name of an element', async function () {
         let el = await driver.elementById('fbemail');
         let a = await driver.elementByCss('a');
         (await el.getTagName()).should.be.equal('input');
@@ -318,16 +307,16 @@ describe('Safari', function () {
   });
 
   describe('safariIgnoreFraudWarning', function () {
-    this.retries(2);
+    this.retries(3);
 
     describe('false', function () {
       beforeEach(async function () {
-        await driver.init(_.defaults({
+        driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: false,
         }, caps));
       });
       afterEach(async function () {
-        await driver.quit();
+        await deleteSession();
       });
 
       it('should display a phishing warning', async function () {
@@ -337,12 +326,12 @@ describe('Safari', function () {
     });
     describe('true', function () {
       beforeEach(async function () {
-        await driver.init(_.defaults({
+        driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: true,
         }, caps));
       });
       afterEach(async function () {
-        await driver.quit();
+        await deleteSession();
       });
 
       it('should not display a phishing warning', async function () {
