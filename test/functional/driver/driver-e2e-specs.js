@@ -103,7 +103,7 @@ describe('XCUITestDriver', function () {
         localCaps.wdaLocalPort = null;
         driver = await initSession(localCaps);
         let logs = await driver.log('syslog');
-        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.true;
+        logs.some((line) => line.message.includes(':8100<-')).should.be.true;
       });
       it('should run on port specified', async function () {
         const localCaps = Object.assign({}, baseCaps, {
@@ -113,8 +113,8 @@ describe('XCUITestDriver', function () {
         });
         driver = await initSession(localCaps);
         let logs = await driver.log('syslog');
-        logs.some((line) => line.message.indexOf(':8100<-') !== -1).should.be.false;
-        logs.some((line) => line.message.indexOf(':6000<-') !== -1).should.be.true;
+        logs.some((line) => line.message.includes(':8100<-')).should.be.false;
+        logs.some((line) => line.message.includes(':6000<-')).should.be.true;
       });
     });
 
