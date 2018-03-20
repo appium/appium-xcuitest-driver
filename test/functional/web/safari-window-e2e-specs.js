@@ -2,7 +2,7 @@ import B from 'bluebird';
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { killAllSimulators } from 'appium-ios-simulator';
+import { killAllSimulators } from '../helpers/simulator';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
@@ -159,7 +159,7 @@ describe('safari - windows and frames', function () {
       (await driver.execute(GET_ELEM_SYNC)).should.be.equal(SUB_FRAME_1_TITLE);
     });
 
-    it.skip('should execute async javascript in frame', async () => {
+    it.skip('should execute async javascript in frame', async function () {
       await driver.frame('first');
       (await driver.executeAsync(GET_ELEM_ASYNC)).should.be.equal(SUB_FRAME_1_TITLE);
     });

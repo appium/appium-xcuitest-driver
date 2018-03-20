@@ -1,13 +1,12 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
 import _ from 'lodash';
 import B from 'bluebird';
-import { killAllSimulators } from 'appium-ios-simulator';
-import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
+import { killAllSimulators } from '../helpers/simulator';
+import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
-import { startServer } from '../../..';
 import https from 'https';
+
 
 const pem = B.promisifyAll(require('pem'));
 
@@ -27,14 +26,11 @@ let pemCertificate;
 describe('Safari SSL', function () {
   this.timeout(MOCHA_TIMEOUT);
 
-  let server, sslServer, driver;
+  let sslServer, driver;
   before(async function () {
     if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
 
     await killAllSimulators();
-
-    driver = wd.promiseChainRemote(HOST, PORT);
-    server = await startServer(PORT, HOST);
 
     // Create a random pem certificate
     let privateKey = await pem.createPrivateKeyAsync();
@@ -47,16 +43,14 @@ describe('Safari SSL', function () {
       res.end('Arbitrary text');
     }).listen(HTTPS_PORT);
   });
-
   after(async function () {
-    await server.close();
+    await deleteSession();
     await sslServer.close();
   });
 
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     caps.customSSLCert = pemCertificate;
-    await driver.init(caps);
-    await driver.setPageLoadTimeout(3000);
+    driver = await initSession(caps);
     await driver.get(`https://localhost:${HTTPS_PORT}/`);
     let source = await driver.source();
     source.should.include('Arbitrary text');
@@ -65,10 +59,8 @@ describe('Safari SSL', function () {
 
     // Now do another session using the same cert to verify that it still works
     await driver.init(caps);
-    await driver.setPageLoadTimeout(3000);
     await driver.get(`https://localhost:${HTTPS_PORT}/`);
     source = await driver.source();
     source.should.include('Arbitrary text');
-    await driver.quit();
   });
 });

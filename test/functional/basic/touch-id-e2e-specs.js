@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { TOUCHIDAPP_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import B from 'bluebird';
-import { killAllSimulators } from 'appium-ios-simulator';
+import { killAllSimulators } from '../helpers/simulator';
 
 
 chai.should();

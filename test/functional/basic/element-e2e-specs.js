@@ -121,7 +121,7 @@ describe('XCUITestDriver - element(s)', function () {
       contentSize.scrollableOffset.should.be.above(contentSize.height + 200);
     });
 
-    it.skip('should get the contentSize of a collection view', async () => {
+    it.skip('should get the contentSize of a collection view', async function () {
       // TODO UICatalog doesn't seem to have collection views I could find
     });
 

@@ -1,8 +1,8 @@
 node_modules
-package-lock.json
 build
 coverage
 *.log
 *.xcconfig
 .DS_Store
 ci-metrics
+package-lock.json*
