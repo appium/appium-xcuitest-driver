@@ -38,7 +38,7 @@ describe('XCUITestDriver - find', function () {
         .should.be.rejectedWith(/Error response status: 7/);
     });
 
-    it.skip('should find some elements within itself', async () => {
+    it.skip('should find some elements within itself', async function () {
       let els = await el1.elementsByClassName('XCUIElementTypeStaticText');
       els.should.have.length(2);
     });
@@ -98,12 +98,12 @@ describe('XCUITestDriver - find', function () {
       (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
-    it.skip('should use a localized string if the id is a localization key', async () => {
+    it.skip('should use a localized string if the id is a localization key', async function () {
       let el = await driver.elementById('main.button.computeSum');
       (await el.getAttribute('label')).should.equal('Compute Sum');
     });
 
-    it.skip('should be able to return multiple matches', async () => {
+    it.skip('should be able to return multiple matches', async function () {
       let els = await driver.elementsById('Cell');
       els.length.should.be.greaterThan(1);
     });
@@ -142,7 +142,7 @@ describe('XCUITestDriver - find', function () {
           .should.eventually.be.rejected;
         (Date.now() - begin).should.be.above(5000);
       });
-      it.skip('should return the last button', async () => {
+      it.skip('should return the last button', async function () {
         let el = await driver.elementByXPath('//XCUIElementTypeButton[last()]');
         (await el.getAttribute('name')).should.equal('Button'); // this is the name of the last button
       });
@@ -179,7 +179,7 @@ describe('XCUITestDriver - find', function () {
         texts.should.not.include('UICatalog');
         texts.should.include('X Button');
       });
-      it.skip('should filter by indices', async () => {
+      it.skip('should filter by indices', async function () {
         await driver.setImplicitWaitTimeout(10000);
         let el = await driver.elementByXPath('//XCUIElementTypeTable[1]//XCUIElementTypeButton[4]');
         (await el.getAttribute('name')).should.equal('X Button');
@@ -238,7 +238,7 @@ describe('XCUITestDriver - find', function () {
       (await el2.getAttribute('name')).should.equal('Okay / Cancel');
     });
 
-    it.skip('should find several elements', async () => {
+    it.skip('should find several elements', async function () {
       let el1 = await driver.elementByAccessibilityId('Action Sheets');
       await el1.click();
       let els = await driver.elementsByAccessibilityId('Okay / Cancel');
