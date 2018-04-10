@@ -1,6 +1,5 @@
 import sinon from 'sinon';
-import { settings as iosSettings } from 'appium-ios-driver'; // eslint-disable-line import/no-duplicates
-import * as iosDriver from 'appium-ios-driver'; // eslint-disable-line import/no-duplicates
+import * as iosDriver from 'appium-ios-driver';
 import { JWProxy } from 'appium-base-driver';
 import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
@@ -11,28 +10,27 @@ import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
 
 
+chai.should();
+const expect = chai.expect;
+
 const caps = {platformName: "iOS", deviceName: "iPhone 6", app: "/foo.app"};
-const anoop = async () => {};
 
 describe('driver commands', function () {
-  let driver = new XCUITestDriver();
-  let proxySpy = sinon.stub(driver, 'proxyCommand');
-
-  afterEach(function () {
-    proxySpy.reset();
-  });
-
   describe('status', function () {
-    let d;
+    let driver;
     let jwproxyCommandSpy;
 
     beforeEach(function () {
-      d = new XCUITestDriver();
-      let fakeProxy = new JWProxy();
-      jwproxyCommandSpy = sinon.stub(fakeProxy, "command", async function () {
+      driver = new XCUITestDriver();
+
+      // fake the proxy to WDA
+      const jwproxy = new JWProxy();
+      jwproxyCommandSpy = sinon.stub(jwproxy, 'command', async function () {
         return {some: 'thing'};
       });
-      d.wda = {jwproxy: fakeProxy};
+      driver.wda = {
+        jwproxy,
+      };
     });
 
     afterEach(function () {
@@ -40,55 +38,53 @@ describe('driver commands', function () {
     });
 
     it('should not have wda status by default', async function () {
-      let status = await d.getStatus();
+      const status = await driver.getStatus();
       jwproxyCommandSpy.calledOnce.should.be.false;
-      chai.should().equal(status.wda, undefined);
+      expect(status.wda).to.be.undefined;
     });
 
-    it('should return wda status is cached', async function () {
-      d.cachedWdaStatus = {};
-      let status = await d.getStatus();
+    it('should return wda status if cached', async function () {
+      driver.cachedWdaStatus = {};
+      const status = await driver.getStatus();
       jwproxyCommandSpy.called.should.be.false;
       status.wda.should.exist;
     });
   });
 
   describe('createSession', function () {
-    let d;
+    let driver;
     let sandbox;
 
     beforeEach(function () {
-      d = new XCUITestDriver();
+      driver = new XCUITestDriver();
       sandbox = sinon.sandbox.create();
-      sandbox.stub(d, "determineDevice", async function () {
+      sandbox.stub(driver, 'determineDevice', async function () {
         return {
           device: {
-            shutdown: anoop,
+            shutdown: _.noop,
             isRunning () {
               return true;
             },
             stat () {
               return {state: 'Booted'};
             },
-            clearCaches: anoop,
+            clearCaches: _.noop,
           },
           udid: null,
           realDevice: null
         };
       });
-      sandbox.stub(d, "configureApp", anoop);
-      sandbox.stub(d, "startLogCapture", anoop);
-      sandbox.stub(d, "startSim", anoop);
-      sandbox.stub(d, "startWdaSession", anoop);
-      sandbox.stub(d, "startWda", anoop);
-      sandbox.stub(d, "extractBundleId", anoop);
-      sandbox.stub(d, "installAUT", anoop);
-      sandbox.stub(iosSettings, "setLocale", anoop);
-      sandbox.stub(iosSettings, "setPreferences", anoop);
-      sandbox.stub(xcode, "getMaxIOSSDK", async function () {
-        return '10.0';
-      });
-      sandbox.stub(utils, "checkAppPresent", anoop);
+      sandbox.stub(driver, 'configureApp', _.noop);
+      sandbox.stub(driver, 'startLogCapture', _.noop);
+      sandbox.stub(driver, 'startSim', _.noop);
+      sandbox.stub(driver, 'startWdaSession', _.noop);
+      sandbox.stub(driver, 'startWda', _.noop);
+      sandbox.stub(driver, 'installAUT', _.noop);
+      sandbox.stub(iosDriver.settings, 'setLocale', _.noop);
+      sandbox.stub(iosDriver.settings, 'setPreferences', _.noop);
+      sandbox.stub(xcode, 'getMaxIOSSDK', async () => '10.0');
+      sandbox.stub(utils, 'checkAppPresent', _.noop);
+      sandbox.stub(iosDriver.appUtils, 'extractBundleId', _.noop);
     });
 
     afterEach(function () {
@@ -97,12 +93,12 @@ describe('driver commands', function () {
 
     it('should include server capabilities', async function () {
       this.timeout(MOCHA_LONG_TIMEOUT);
-      let resCaps = await d.createSession(caps);
+      const resCaps = await driver.createSession(caps);
       resCaps[1].javascriptEnabled.should.be.true;
     });
     it('should warn', async function () {
-      let warnStub = sinon.stub(log, "warn", async function () {});
-      await d.createSession(_.defaults({autoAcceptAlerts: true}, caps));
+      const warnStub = sinon.stub(log, 'warn', async function () {});
+      await driver.createSession(_.defaults({autoAcceptAlerts: true}, caps));
       warnStub.calledOnce.should.be.true;
       _.filter(warnStub.args, (arg) => arg[0].indexOf('autoAcceptAlerts') !== -1)
         .should.have.length(1);
@@ -111,6 +107,8 @@ describe('driver commands', function () {
   });
 
   describe('startIWDP()', function () {
+    let driver = new XCUITestDriver();
+
     it('should start and stop IWDP server', async function () {
       let startStub = sinon.stub();
       let stopStub = sinon.stub();
