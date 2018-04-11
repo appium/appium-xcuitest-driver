@@ -11,11 +11,15 @@ import B from 'bluebird';
 chai.should();
 chai.use(chaiAsPromised);
 
+const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
+
 describe('utils', function () {
-  const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
-  describe('clearSystemFiles', withMocks({iosUtils, fs}, (mocks) => {
+  describe('clearSystemFiles', withMocks({iosUtils, fs}, function (mocks) {
+    afterEach(function () {
+      mocks.verify();
+    });
     it('should delete logs', async function () {
-      let wda = {
+      const wda = {
         retrieveDerivedDataPath () {
           return DERIVED_DATA_ROOT;
         }
@@ -29,9 +33,8 @@ describe('utils', function () {
         .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
         .returns();
       await clearSystemFiles(wda);
-      mocks.fs.verify();
-      mocks.iosUtils.verify();
     });
+
     it('should only delete logs once if the same folder was marked twice for deletion', async function () {
       let wda = {
         retrieveDerivedDataPath () {
@@ -49,8 +52,6 @@ describe('utils', function () {
       await markSystemFilesForCleanup(wda);
       await clearSystemFiles(wda);
       await clearSystemFiles(wda);
-      mocks.fs.verify();
-      mocks.iosUtils.verify();
     });
     it('should do nothing if no derived data path is found', async function () {
       let wda = {
@@ -61,10 +62,13 @@ describe('utils', function () {
       mocks.iosUtils.expects('clearLogs')
         .never();
       await clearSystemFiles(wda);
-      mocks.iosUtils.verify();
     });
   }));
-  describe('adjustWDAAttachmentsPermissions', withMocks({fs}, (mocks) => {
+  describe('adjustWDAAttachmentsPermissions', withMocks({fs}, function (mocks) {
+    afterEach(function () {
+      mocks.verify();
+    });
+
     it('should change permissions to Attachments folder', async function () {
       let wda = {
         retrieveDerivedDataPath () {
@@ -80,7 +84,6 @@ describe('utils', function () {
         .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`, '555')
         .returns();
       await adjustWDAAttachmentsPermissions(wda, '555');
-      mocks.fs.verify();
     });
     it('should not repeat permissions change with equal flags for the particular folder', async function () {
       let wda = {
@@ -99,7 +102,6 @@ describe('utils', function () {
       await adjustWDAAttachmentsPermissions(wda, '333');
       await adjustWDAAttachmentsPermissions(wda, '444');
       await adjustWDAAttachmentsPermissions(wda, '444');
-      mocks.fs.verify();
     });
     it('should not repeat permissions change with equal flags for the particular folder in parallel sessions', async function () {
       let wda = {
@@ -116,7 +118,6 @@ describe('utils', function () {
         .returns();
       await B.map([[wda, '123'], [wda, '123']], ([w, perms]) => adjustWDAAttachmentsPermissions(w, perms));
       await B.map([[wda, '234'], [wda, '234']], ([w, perms]) => adjustWDAAttachmentsPermissions(w, perms));
-      mocks.fs.verify();
     });
     it('should do nothing if no derived data path is found', async function () {
       let wda = {
@@ -127,7 +128,6 @@ describe('utils', function () {
       mocks.fs.expects('exists').never();
       mocks.fs.expects('chmod').never();
       await adjustWDAAttachmentsPermissions(wda, '777');
-      mocks.fs.verify();
     });
   }));
   describe('determineDevice', function () {

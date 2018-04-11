@@ -12,7 +12,7 @@ describe('proxy commands', function () {
   let driver = new XCUITestDriver();
   // give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
-  let proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
+  const proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
 
   afterEach(function () {
     if (proxyStub) {
@@ -34,7 +34,7 @@ describe('proxy commands', function () {
       await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.eventually.be.rejectedWith(/endpoint/);
       proxyStub.callCount.should.eql(0);
     });
-    it('should throw an error if no endpoint is given', async function () {
+    it('should throw an error if no method is given', async function () {
       await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.eventually.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });
