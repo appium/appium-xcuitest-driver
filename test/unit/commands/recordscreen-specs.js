@@ -23,16 +23,13 @@ describe('basic', withMocks({driver, fs, tempDir, utils, teen_process}, function
     }
   };
 
+  afterEach(function () {
+    mocks.verify();
+  });
+
   describe('startRecordingScreen', function () {
     beforeEach(function () {
       driver._recentScreenRecordingPath = null;
-    });
-    afterEach(function () {
-      mocks.driver.verify();
-      mocks.utils.verify();
-      mocks.teen_process.verify();
-      mocks.tempDir.verify();
-      mocks.fs.verify();
     });
 
     it('should call simctl to start screen recording on Simulator', async function () {
@@ -88,13 +85,6 @@ describe('basic', withMocks({driver, fs, tempDir, utils, teen_process}, function
   describe('stopRecordingScreen', function () {
     beforeEach(function () {
       mocks.driver.expects('isRealDevice').returns(false);
-    });
-    afterEach(function () {
-      mocks.driver.verify();
-      mocks.utils.verify();
-      mocks.teen_process.verify();
-      mocks.tempDir.verify();
-      mocks.fs.verify();
     });
 
     it('should kill the process and get the content of the created mp4 file using ps', async function () {

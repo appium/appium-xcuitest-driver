@@ -1,61 +1,67 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
-
-const simctlModule = require('node-simctl');
+import * as simctl from 'node-simctl';
 
 
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
-  let isSimulatorSpy, setPasteboardSpy, getPasteboardSpy;
+  let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
   beforeEach(function () {
-    isSimulatorSpy = sinon.stub(driver, 'isSimulator');
-    setPasteboardSpy = sinon.stub(simctlModule, 'setPasteboard');
-    getPasteboardSpy = sinon.stub(simctlModule, 'getPasteboard');
+    isSimulatorStub = sinon.stub(driver, 'isSimulator');
+    setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
+    getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
   });
 
   afterEach(function () {
-    isSimulatorSpy.restore();
-    setPasteboardSpy.restore();
-    getPasteboardSpy.restore();
+    isSimulatorStub.restore();
+    setPasteboardStub.restore();
+    getPasteboardStub.restore();
   });
 
-  it('setPasteboard should not be called on a real device', async function () {
-    isSimulatorSpy.returns(false);
-    await driver.mobileSetPasteboard({content: 'bla'}).should.eventually.be.rejectedWith(/not supported/);
-    setPasteboardSpy.notCalled.should.be.true;
+  describe('real device', function () {
+    beforeEach(function () {
+      isSimulatorStub.returns(false);
+    });
+
+    it('setPasteboard should not be called', async function () {
+      await driver.mobileSetPasteboard({content: 'bla'}).should.eventually.be.rejectedWith(/not supported/);
+      setPasteboardStub.notCalled.should.be.true;
+    });
+
+    it('getPasteboard should not be called', async function () {
+      await driver.mobileGetPasteboard().should.eventually.be.rejectedWith(/not supported/);
+      getPasteboardStub.notCalled.should.be.true;
+    });
   });
 
-  it('setPasteboard should fail if no content is provided', async function () {
-    isSimulatorSpy.returns(true);
-    await driver.mobileSetPasteboard().should.eventually.be.rejectedWith(/mandatory to set/);
-    setPasteboardSpy.notCalled.should.be.true;
-  });
+  describe('simulator', function () {
+    beforeEach(function () {
+      isSimulatorStub.returns(true);
+    });
 
-  it('getPasteboard should not be called on a real device', async function () {
-    isSimulatorSpy.returns(false);
-    await driver.mobileGetPasteboard().should.eventually.be.rejectedWith(/not supported/);
-    getPasteboardSpy.notCalled.should.be.true;
-  });
+    it('setPasteboard should fail if no content is provided', async function () {
+      await driver.mobileSetPasteboard().should.eventually.be.rejectedWith(/mandatory to set/);
+      setPasteboardStub.notCalled.should.be.true;
+    });
 
-  it('setPasteboard should invoke correct simctl method', async function () {
-    isSimulatorSpy.returns(true);
-    const opts = {
-      content: 'bla',
-      encoding: 'latin-1',
-    };
-    await driver.mobileSetPasteboard(opts);
-    setPasteboardSpy.calledOnce.should.be.true;
-    setPasteboardSpy.firstCall.args[1].should.eql(opts.content);
-    setPasteboardSpy.firstCall.args[2].should.eql(opts.encoding);
-  });
+    it('setPasteboard should invoke correct simctl method', async function () {
+      const opts = {
+        content: 'bla',
+        encoding: 'latin-1',
+      };
+      await driver.mobileSetPasteboard(opts);
+      setPasteboardStub.calledOnce.should.be.true;
+      setPasteboardStub.firstCall.args[1].should.eql(opts.content);
+      setPasteboardStub.firstCall.args[2].should.eql(opts.encoding);
+    });
 
-  it('getPasteboard should invoke correct simctl method', async function () {
-    isSimulatorSpy.returns(true);
-    const content = 'bla';
-    getPasteboardSpy.returns(content);
-    const result = await driver.mobileGetPasteboard();
-    getPasteboardSpy.calledOnce.should.be.true;
-    result.should.eql(content);
+    it('getPasteboard should invoke correct simctl method', async function () {
+      const content = 'bla';
+      getPasteboardStub.returns(content);
+      const result = await driver.mobileGetPasteboard();
+      getPasteboardStub.calledOnce.should.be.true;
+      result.should.eql(content);
+    });
   });
 });

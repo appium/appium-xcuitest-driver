@@ -3,8 +3,8 @@ import XCUITestDriver from '../../..';
 
 
 describe('general commands', function () {
-  let driver = new XCUITestDriver();
-  let proxySpy = sinon.stub(driver, 'proxyCommand');
+  const driver = new XCUITestDriver();
+  const proxySpy = sinon.stub(driver, 'proxyCommand');
 
   afterEach(function () {
     proxySpy.reset();

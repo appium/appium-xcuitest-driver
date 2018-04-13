@@ -11,19 +11,21 @@ chai.use(chaiAsPromised);
 
 describe('element commands', function () {
   let driver = new XCUITestDriver();
-  let proxySpy = sinon.stub(driver, 'proxyCommand');
+  let proxyStub = sinon.stub(driver, 'proxyCommand');
 
   afterEach(function () {
-    proxySpy.reset();
+    proxyStub.reset();
   });
 
   describe('setValueImmediate', withMocks({driver}, (mocks) => {
+    afterEach(function () {
+      mocks.verify();
+    });
     it('should call setValue', async function () {
       mocks.driver
         .expects('setValue')
         .once().withExactArgs('hello', 2).returns();
       await driver.setValueImmediate('hello', 2);
-      mocks.driver.verify();
     });
   }));
 
@@ -32,82 +34,86 @@ describe('element commands', function () {
     const attribute = 'enabled';
 
     afterEach(function () {
-      proxySpy.calledOnce.should.be.true;
+      proxyStub.calledOnce.should.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
-      proxySpy.returns(1);
+      proxyStub.returns(1);
       (await driver.getAttribute(attribute, elementId)).should.eql('true');
     });
 
     it('should properly parse boolean false attribute presented as integer', async function () {
-      proxySpy.returns(0);
+      proxyStub.returns(0);
       (await driver.getAttribute(attribute, elementId)).should.eql('false');
     });
 
     it('should properly parse integer attribute presented as string', async function () {
-      proxySpy.returns('0');
+      proxyStub.returns('0');
       (await driver.getAttribute(attribute, elementId)).should.eql('0');
     });
 
     it('should properly parse boolean attribute presented as bool', async function () {
-      proxySpy.returns(false);
+      proxyStub.returns(false);
       (await driver.getAttribute(attribute, elementId)).should.eql('false');
     });
 
     it('should properly parse null attribute', async function () {
-      proxySpy.returns(null);
+      proxyStub.returns(null);
       _.isNull(await driver.getAttribute(attribute, elementId)).should.be.true;
     });
 
     it('should properly parse string attribute', async function () {
-      proxySpy.returns('value');
+      proxyStub.returns('value');
       (await driver.getAttribute(attribute, elementId)).should.eql('value');
     });
   });
 
   describe('getAttribute - special contentSize', withSandbox({}, function (S) {
-    const attr = 'contentSize', elId = 2;
-
     it('should call the internal method instead of WDA', async function () {
-      let getContentSizeSpy = S.sandbox.stub(driver, 'getContentSize');
-      getContentSizeSpy.returns('foo');
-      (await driver.getAttribute(attr, elId)).should.eql('foo');
-      proxySpy.called.should.be.false;
-      getContentSizeSpy.calledOnce.should.be.true;
+      const getContentSizeStub = S.sandbox.stub(driver, 'getContentSize');
+      getContentSizeStub.returns('foo');
+      (await driver.getAttribute('contentSize', 2)).should.eql('foo');
+      proxyStub.called.should.be.false;
+      getContentSizeStub.calledOnce.should.be.true;
     });
   }));
 
   describe('getContentSize', withSandbox({}, function (S) {
     const el = {ELEMENT: '1234'};
-    let getAttrSpy, getRectSpy, findElSpy, getSizeSpy, getLocationSpy;
+    let getAttrStub, getRectStub, findElStub, getSizeStub, getLocationStub;
 
     beforeEach(function () {
-      getAttrSpy = S.sandbox.stub(driver, 'getAttribute');
-      getRectSpy = S.sandbox.stub(driver, 'getRect');
-      findElSpy = S.sandbox.stub(driver, 'findElOrEls');
-      getSizeSpy = S.sandbox.stub(driver, 'getSize');
-      getLocationSpy = S.sandbox.stub(driver, 'getLocationInView');
+      getAttrStub = S.sandbox.stub(driver, 'getAttribute');
+      getRectStub = S.sandbox.stub(driver, 'getRect');
+      findElStub = S.sandbox.stub(driver, 'findElOrEls');
+      getSizeStub = S.sandbox.stub(driver, 'getSize');
+      getLocationStub = S.sandbox.stub(driver, 'getLocationInView');
     });
 
-    it('should throw when in a web context', async function () {
-      let oldContext = driver.curContext;
-      driver.curContext = 'WEBVIEW';
-      await driver.getContentSize(el).should.eventually.be.rejectedWith(/not yet implemented/);
-      driver.curContext = oldContext;
+    describe('web context', function () {
+      const oldContext = driver.curContext;
+      beforeEach(function () {
+        driver.curContext = 'WEBVIEW';
+      });
+      afterEach(function () {
+        driver.curContext = oldContext;
+      });
+      it('should throw when in a web context', async function () {
+        await driver.getContentSize(el).should.eventually.be.rejectedWith(/not yet implemented/);
+      });
     });
 
     it('should throw if trying to get contentSize of something other than table or collection', async function () {
-      getAttrSpy.returns('XCUIElementTypeStatusBar');
+      getAttrStub.returns('XCUIElementTypeStatusBar');
       await driver.getContentSize(el).should.eventually.be.rejectedWith(/Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
-      getAttrSpy.returns('XCUIElementTypeTable');
-      findElSpy.returns([{ELEMENT: 'foo'}]);
-      getRectSpy.returns({x: 0, y: 0, height: 100, width: 200});
-      getSizeSpy.returns({height: 100, width: 200});
-      getLocationSpy.returns({x: 0, y: 0});
+      getAttrStub.returns('XCUIElementTypeTable');
+      findElStub.returns([{ELEMENT: 'foo'}]);
+      getRectStub.returns({x: 0, y: 0, height: 100, width: 200});
+      getSizeStub.returns({height: 100, width: 200});
+      getLocationStub.returns({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el));
       contentSizeObj.should.eql({
         width: 200,
@@ -116,17 +122,17 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset: 100
       });
-      getRectSpy.calledOnce.should.be.true;
+      getRectStub.calledOnce.should.be.true;
     });
 
     it('should get simple difference in element positions of a table', async function () {
       const el1 = {ELEMENT: 1}, el2 = {ELEMENT: 2};
-      getAttrSpy.returns('XCUIElementTypeTable');
-      findElSpy.returns([el1, el2]);
-      getRectSpy.withArgs(el1).returns({x: 0, y: 10, width: 50, height: 60});
-      getRectSpy.withArgs(el2).returns({x: 10, y: 80, width: 60, height: 100});
-      getSizeSpy.returns({height: 100, width: 200});
-      getLocationSpy.returns({x: 0, y: 0});
+      getAttrStub.returns('XCUIElementTypeTable');
+      findElStub.returns([el1, el2]);
+      getRectStub.withArgs(el1).returns({x: 0, y: 10, width: 50, height: 60});
+      getRectStub.withArgs(el2).returns({x: 10, y: 80, width: 60, height: 100});
+      getSizeStub.returns({height: 100, width: 200});
+      getLocationStub.returns({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el));
       contentSizeObj.should.eql({
         width: 200,
@@ -135,7 +141,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset: 170
       });
-      getRectSpy.calledTwice.should.be.true;
+      getRectStub.calledTwice.should.be.true;
     });
 
     it('should be sensitive to row items in the case of a collection view', async function () {
@@ -147,13 +153,13 @@ describe('element commands', function () {
         {id: 5, x: 0, y: 120, height: 50}
       ];
       const scrollableOffset = 170; // 3 rows plus space between two
-      getAttrSpy.returns('XCUIElementTypeCollectionView');
-      findElSpy.returns(fixtures.map(el => ({ELEMENT: el.id})));
+      getAttrStub.returns('XCUIElementTypeCollectionView');
+      findElStub.returns(fixtures.map(el => ({ELEMENT: el.id})));
       for (let item of fixtures) {
-        getRectSpy.withArgs({ELEMENT: item.id}).returns(item);
+        getRectStub.withArgs({ELEMENT: item.id}).returns(item);
       }
-      getSizeSpy.returns({height: 100, width: 200});
-      getLocationSpy.returns({x: 0, y: 0});
+      getSizeStub.returns({height: 100, width: 200});
+      getLocationStub.returns({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el));
       contentSizeObj.should.eql({
         width: 200,
@@ -162,7 +168,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset
       });
-      getRectSpy.callCount.should.equal(3);
+      getRectStub.callCount.should.equal(3);
     });
   }));
 
@@ -173,26 +179,26 @@ describe('element commands', function () {
 
     describe('success', function () {
       afterEach(function () {
-        proxySpy.calledOnce.should.be.true;
-        proxySpy.firstCall.args[0].should.eql(expectedEndpoint);
-        proxySpy.firstCall.args[1].should.eql(expectedMethod);
+        proxyStub.calledOnce.should.be.true;
+        proxyStub.firstCall.args[0].should.eql(expectedEndpoint);
+        proxyStub.firstCall.args[1].should.eql(expectedMethod);
       });
 
       it('should proxy string as array of characters', async function () {
         await driver.setValue('hello', elementId);
-        proxySpy.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
+        proxyStub.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
       });
       it('should proxy integer as array of characters', async function () {
         await driver.setValue(1234, elementId);
-        proxySpy.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
+        proxyStub.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
       });
       it('should proxy string array as array of characters', async function () {
         await driver.setValue(['hel', 'lo'], elementId);
-        proxySpy.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
+        proxyStub.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
       });
       it('should proxy integer array as array of characters', async function () {
         await driver.setValue([1234], elementId);
-        proxySpy.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
+        proxyStub.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
       });
     });
 

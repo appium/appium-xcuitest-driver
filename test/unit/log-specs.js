@@ -11,11 +11,10 @@ chai.should();
 chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - startLogCapture', function () {
-
   let startCaptureSpy, crashLogStub, iosLogStub;
 
   before(function () {
-    let spy = {
+    const spy = {
       startCapture: _.noop,
     };
     startCaptureSpy = sinon.spy(spy, 'startCapture');
@@ -44,6 +43,7 @@ describe('XCUITestDriver - startLogCapture', function () {
     await startLogCapture.call(fakeInstance);
     startCaptureSpy.callCount.should.equal(1);
     fakeInstance.logs.syslog.isCapturing = true;
+
     await startLogCapture.call(fakeInstance);
     startCaptureSpy.callCount.should.equal(1);
   });
