@@ -129,7 +129,7 @@ describe('XCUITestDriver - gestures', function () {
     });
     it('should scroll using touch actions', async function () {
       let el1 = await driver.elementByAccessibilityId('Action Sheets');
-      let el2 = await driver.elementByAccessibilityId('Text Fields');
+      let el2 = await driver.elementByAccessibilityId('Progress Views');
 
       let action = new wd.TouchAction(driver);
       action.press({el: el1}).wait(500).moveTo({el: el2}).release();
