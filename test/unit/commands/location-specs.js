@@ -1,12 +1,11 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
 import { fs } from 'appium-support';
-
-const teenProcessModule = require('teen_process');
+import * as teenProcess from 'teen_process';
 
 describe('location commands', function () {
-  let driver = new XCUITestDriver();
-  let proxySpy = sinon.stub(driver, 'proxyCommand');
+  const driver = new XCUITestDriver();
+  const proxySpy = sinon.stub(driver, 'proxyCommand');
 
   afterEach(function () {
     proxySpy.reset();
@@ -14,17 +13,17 @@ describe('location commands', function () {
 
   describe('setLocation', function () {
     const location = {latitude: '1', longitude: '2'};
-    let execSpy;
-    let fsWhichSpy;
+    let execStub;
+    let fsWhichStub;
 
     beforeEach(function () {
-      execSpy = sinon.stub(teenProcessModule, 'exec');
-      fsWhichSpy = sinon.stub(fs, 'which');
+      execStub = sinon.stub(teenProcess, 'exec');
+      fsWhichStub = sinon.stub(fs, 'which');
     });
 
     afterEach(function () {
-      execSpy.restore();
-      fsWhichSpy.restore();
+      execStub.restore();
+      fsWhichStub.restore();
     });
 
     it('fail when location object is wrong', async function () {
@@ -39,12 +38,12 @@ describe('location commands', function () {
 
       const toolName = 'idevicelocation';
 
-      fsWhichSpy.returns(toolName);
+      fsWhichStub.returns(toolName);
       await driver.setGeoLocation(location);
 
-      execSpy.calledOnce.should.be.true;
-      execSpy.firstCall.args[0].should.eql(toolName);
-      execSpy.firstCall.args[1].should.eql(['-u', udid, location.latitude, location.longitude]);
+      execStub.calledOnce.should.be.true;
+      execStub.firstCall.args[0].should.eql(toolName);
+      execStub.firstCall.args[1].should.eql(['-u', udid, location.latitude, location.longitude]);
     });
 
     it('fail when idevicelocation doesnt exist on the host for real devices', async function () {
@@ -52,17 +51,28 @@ describe('location commands', function () {
       await driver.setGeoLocation(location).should.be.rejectedWith(`idevicelocation doesn't exist on the host`);
     });
 
-    it('set geo location on simulator', async function () {
-      driver.opts.realDevice = false;
-      let deviceStub = sinon.mock(driver.opts, 'device');
-      deviceStub.object.device = {
-        setGeolocation: () => {},
-      };
-      let setGeolocationSpy = sinon.spy(driver.opts.device, 'setGeolocation');
+    describe('simulator', function () {
+      let deviceSetLocationSpy;
+      const realDevice = driver.opts.realDevice;
+      const device = driver.opts.device;
+      beforeEach(function () {
+        driver.opts.realDevice = false;
 
-      await driver.setGeoLocation(location);
-      setGeolocationSpy.firstCall.args[0].should.eql(location.latitude);
-      setGeolocationSpy.firstCall.args[1].should.eql(location.longitude);
+        deviceSetLocationSpy = sinon.spy();
+        driver.opts.device = {
+          setGeolocation: deviceSetLocationSpy,
+        };
+      });
+      afterEach(function () {
+        driver.opts.realDevice = realDevice;
+        driver.opts.device = device;
+        deviceSetLocationSpy.reset();
+      });
+      it('should set on device', async function () {
+        await driver.setGeoLocation(location);
+        deviceSetLocationSpy.firstCall.args[0].should.eql(location.latitude);
+        deviceSetLocationSpy.firstCall.args[1].should.eql(location.longitude);
+      });
     });
   });
 });

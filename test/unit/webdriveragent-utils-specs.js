@@ -13,6 +13,9 @@ const bootstrapPath = '/path/to/wda';
 
 describe('webdriveragent utils', function () {
   describe('checkForDependencies', withMocks({teen_process, fs}, (mocks) => {
+    afterEach(function () {
+      mocks.verify();
+    });
     it('should run script with -d argument in correct directory', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').thrice()
@@ -23,8 +26,6 @@ describe('webdriveragent utils', function () {
         .once().withExactArgs('Scripts/bootstrap.sh', ['-d'], {cwd: '/path/to/wda'})
         .returns('');
       await checkForDependencies(bootstrapPath);
-      mocks.teen_process.verify();
-      mocks.fs.verify();
     });
     it('should run script with -D argument when SSL requested', async function () {
       mocks.fs.expects('which').once().returns(true);
@@ -36,8 +37,6 @@ describe('webdriveragent utils', function () {
         .once().withExactArgs('Scripts/bootstrap.sh', ['-d', '-D'], {cwd: '/path/to/wda'})
         .returns('');
       await checkForDependencies(bootstrapPath, true);
-      mocks.teen_process.verify();
-      mocks.fs.verify();
     });
     it('should not run script if Carthage directory already present', async function () {
       mocks.fs.expects('which').once().returns(true);
@@ -47,8 +46,6 @@ describe('webdriveragent utils', function () {
         .onThirdCall().returns(true);
       mocks.teen_process.expects("exec").never();
       await checkForDependencies(bootstrapPath);
-      mocks.teen_process.verify();
-      mocks.fs.verify();
     });
     it('should delete Carthage folder and throw error on script error', async function () {
       mocks.fs.expects('which').once().returns(true);
@@ -58,8 +55,6 @@ describe('webdriveragent utils', function () {
         .once().withExactArgs('Scripts/bootstrap.sh', ['-d'], {cwd: '/path/to/wda'})
         .throws({stdout: '', stderr: '', message: 'Bootstrap script failure'});
       await checkForDependencies(bootstrapPath).should.eventually.be.rejectedWith(/Bootstrap script failure/);
-      mocks.teen_process.verify();
-      mocks.fs.verify();
     });
     it('should create Resources folder if not already there', async function () {
       mocks.fs.expects('which').once().returns(true);
@@ -71,8 +66,6 @@ describe('webdriveragent utils', function () {
         .withExactArgs(`${bootstrapPath}/Resources`);
       mocks.teen_process.expects("exec").never();
       await checkForDependencies(bootstrapPath);
-      mocks.teen_process.verify();
-      mocks.fs.verify();
     });
     it('should create WDA bundle if not already there', async function () {
       mocks.fs.expects('which').once().returns(true);
@@ -84,8 +77,6 @@ describe('webdriveragent utils', function () {
         .withExactArgs(`${bootstrapPath}/Resources/WebDriverAgent.bundle`);
       mocks.teen_process.expects("exec").never();
       await checkForDependencies(bootstrapPath);
-      mocks.teen_process.verify();
-      mocks.fs.verify();
     });
   }));
 });

@@ -49,19 +49,20 @@ describe('language and locale', function () {
 
   describe('send process args, language and locale json', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
-
-      let processArguments = {
-        args: ["a", "b", "c"]
-        , env: { "a": "b", "c": "d" }
+      const processArguments = {
+        args: ["a", "b", "c"],
+        env: { "a": "b", "c": "d" }
       };
 
-      let augmentedProcessArgumentsWithLanguage = {
-        args: processArguments.args,
+      const augmentedProcessArgumentsWithLanguage = {
+        args: [
+          ...processArguments.args,
+          '-AppleLanguages', `(${LANGUAGE})`,
+          '-NSLanguages', `(${LANGUAGE})`,
+          '-AppleLocale', LOCALE,
+        ],
         env: processArguments.env
       };
-      augmentedProcessArgumentsWithLanguage.args.push('-AppleLanguages', `(${LANGUAGE})`);
-      augmentedProcessArgumentsWithLanguage.args.push('-NSLanguages', `(${LANGUAGE})`);
-      augmentedProcessArgumentsWithLanguage.args.push('-AppleLocale', LOCALE);
 
       const expectedWDACapabilities = {
         desiredCapabilities: {
@@ -75,7 +76,7 @@ describe('language and locale', function () {
         }
       };
 
-      let desiredCapabilities = {
+      const desiredCapabilities = {
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',

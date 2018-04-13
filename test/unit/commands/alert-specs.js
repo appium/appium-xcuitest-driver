@@ -23,13 +23,15 @@ describe('alert commands', function () {
       proxySpy.firstCall.args[1].should.eql('GET');
     });
   });
-  describe.skip('setAlertText', function () {
+  describe('setAlertText', function () {
     it('should send translated POST request to WDA', async function () {
       await driver.setAlertText('some text');
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/alert/text');
       proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql('some text');
+      proxySpy.firstCall.args[2].should.eql({value:
+        ['s', 'o', 'm', 'e', ' ', 't', 'e', 'x', 't'],
+      });
     });
   });
   describe('postAcceptAlert', function () {
