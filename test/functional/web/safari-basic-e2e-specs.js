@@ -340,15 +340,15 @@ describe('Safari', function () {
           'Log something to error',
         ];
 
-        await driver.execute(`console.log('${strings[0]}');`);
-        await driver.execute(`console.warn('${strings[1]}');`);
-        await driver.execute(`console.error('${strings[2]}');`);
+        for (const line of strings) {
+          await driver.execute(`console.log('${line}');`);
+        }
 
         const logs = await driver.log('safariConsole');
         checkTexts(logs, strings);
 
         // execute some more and see that we don't have overlap
-        await driver.execute('console.log("HELLO WORLD")');
+        await driver.execute(`console.log('HELLO WORLD')`);
 
         // new logs should _just_ be the above statement
         let logs2 = await driver.log('safariConsole');
