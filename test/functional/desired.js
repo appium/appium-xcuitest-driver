@@ -29,6 +29,7 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
 const REAL_DEVICE_CAPS = REAL_DEVICE ? {
   udid: 'auto',
   xcodeConfigFile: XCCONFIG_FILE,
+  webkitResponseTimeout: 30000,
 } : {};
 
 const GENERIC_CAPS = {
