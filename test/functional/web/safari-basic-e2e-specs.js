@@ -51,6 +51,7 @@ describe('Safari', function () {
       driver = await initSession(_.defaults({
         safariIgnoreFraudWarning: false,
         safariInitialUrl: GUINEA_PIG_PAGE,
+        showSafariConsoleLog: true,
       }, caps));
     });
     after(async function () {
@@ -302,6 +303,59 @@ describe('Safari', function () {
       });
       it('should be able to refresh', async function () {
         await driver.refresh();
+      });
+    });
+    describe('console logging', function () {
+      beforeEach(async function () {
+        // get the logs to clear anything out
+        await driver.log('safariConsole');
+      });
+
+      // there can be other things logged, so check that the text is there somewhere
+      function checkTexts (logs, expectedTexts) {
+        const logText = _.map(logs, (el) => el.text).join(',');
+        for (let line of expectedTexts) {
+          logText.should.include(line);
+        }
+      }
+
+      it('should get console logs for JS on the page', async function () {
+        // reload the page to execute JS
+        await driver.get(GUINEA_PIG_PAGE);
+
+        const logs = await driver.log('safariConsole');
+        checkTexts(logs, ['Hello from Appium', 'Loading guinea-pig page', 'Done']);
+      });
+      it('should get console logs for JS on the page with error', async function () {
+        // reload the page to execute JS
+        await driver.get(`${GUINEA_PIG_PAGE}?throwError=xcuitest-error`);
+
+        const logs = await driver.log('safariConsole');
+        checkTexts(logs, ['Hello from Appium', 'Loading guinea-pig page', 'Done', 'JavaScript Error: xcuitest-error']);
+      });
+      it('should get console logs for inserted JS', async function () {
+        const strings = [
+          'Log something to debug',
+          'Log something to warn',
+          'Log something to error',
+        ];
+
+        for (const line of strings) {
+          await driver.execute(`console.log('${line}');`);
+        }
+
+        const logs = await driver.log('safariConsole');
+        checkTexts(logs, strings);
+
+        // execute some more and see that we don't have overlap
+        await driver.execute(`console.log('HELLO WORLD')`);
+
+        // new logs should _just_ be the above statement
+        let logs2 = await driver.log('safariConsole');
+        logs2.should.have.length(1);
+
+        // there should be no overlap
+        _.intersection(logs, logs2).should.have.length(0);
       });
     });
   });

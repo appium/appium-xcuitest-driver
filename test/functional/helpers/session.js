@@ -1,7 +1,7 @@
 import wd from 'wd';
 import request from 'request-promise';
 import { startServer } from '../../..';
-
+import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
 
 
@@ -10,8 +10,8 @@ if (process.env.CI_METRICS) {
   patchDriverWithEvents();
 }
 
-const HOST = 'localhost';
-const PORT = 4994;
+const HOST = process.env.REAL_DEVICE ? util.localIp() : 'localhost',
+      PORT = 4994;
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 8 : 4);
 const WDA_PORT = 8200;
 
