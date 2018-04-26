@@ -27,7 +27,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^2.20.3",
+    "appium-base-driver": "^2.28.0",
     "appium-ios-driver": "^2.2.0",
     "appium-ios-simulator": "^2.9.0",
     "appium-remote-debugger": "^3.10.0",
@@ -44,9 +44,11 @@
     "request-promise": "^4.1.1",
     "source-map-support": "^0.4.0",
     "teen_process": "^1.7.1",
+    "uuid-js": "^0.7.5",
     "ws": "^5.0.0",
     "xmldom": "^0.1.27",
-    "yargs": "^8.0.2"
+    "yargs": "^8.0.2",
+    "x509": "^0.3.3"
   },
   "scripts": {
     "build": "gulp transpile",
