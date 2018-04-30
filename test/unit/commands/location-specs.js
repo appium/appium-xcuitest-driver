@@ -66,7 +66,7 @@ describe('location commands', function () {
       afterEach(function () {
         driver.opts.realDevice = realDevice;
         driver.opts.device = device;
-        deviceSetLocationSpy.reset();
+        deviceSetLocationSpy.resetHistory();
       });
       it('should set on device', async function () {
         await driver.setGeoLocation(location);
