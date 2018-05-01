@@ -47,8 +47,7 @@
     "uuid-js": "^0.7.5",
     "ws": "^5.0.0",
     "xmldom": "^0.1.27",
-    "yargs": "^8.0.2",
-    "x509": "^0.3.3"
+    "yargs": "^8.0.2"
   },
   "scripts": {
     "build": "gulp transpile",
