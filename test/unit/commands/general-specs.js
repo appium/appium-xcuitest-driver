@@ -4,18 +4,18 @@ import XCUITestDriver from '../../..';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
-  const proxySpy = sinon.stub(driver, 'proxyCommand');
+  const proxyStub = sinon.stub(driver, 'proxyCommand');
 
   afterEach(function () {
-    proxySpy.reset();
+    proxyStub.reset();
   });
 
   describe('background', function () {
     it('should send translated POST request to WDA', async function () {
       await driver.background();
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/deactivateApp');
-      proxySpy.firstCall.args[1].should.eql('POST');
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/wda/deactivateApp');
+      proxyStub.firstCall.args[1].should.eql('POST');
     });
   });
 
@@ -32,32 +32,32 @@ describe('general commands', function () {
 
     it('should send translated POST request to WDA', async function () {
       await driver.touchId();
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/touch_id');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql({match: true});
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/wda/touch_id');
+      proxyStub.firstCall.args[1].should.eql('POST');
+      proxyStub.firstCall.args[2].should.eql({match: true});
     });
 
     it('should send translated POST request to WDA with true', async function () {
       await driver.touchId(true);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/touch_id');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql({match: true});
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/wda/touch_id');
+      proxyStub.firstCall.args[1].should.eql('POST');
+      proxyStub.firstCall.args[2].should.eql({match: true});
     });
 
     it('should send translated POST request to WDA with false', async function () {
       await driver.touchId(false);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/touch_id');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql({match: false});
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/wda/touch_id');
+      proxyStub.firstCall.args[1].should.eql('POST');
+      proxyStub.firstCall.args[2].should.eql({match: false});
     });
 
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
       await driver.touchId().should.eventually.be.rejectedWith(/not supported/g);
-      proxySpy.notCalled.should.be.true;
+      proxyStub.notCalled.should.be.true;
     });
   });
 
@@ -96,14 +96,14 @@ describe('general commands', function () {
 
   describe('window size', function () {
     it('should be able to get the current window size with Rect', async function () {
-      proxySpy
+      proxyStub
         .withArgs('/window/size', 'GET')
         .returns({width: 100, height: 20});
 
       await driver.getWindowRect();
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/window/size');
-      proxySpy.firstCall.args[1].should.eql('GET');
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/window/size');
+      proxyStub.firstCall.args[1].should.eql('GET');
     });
   });
 
@@ -144,12 +144,17 @@ describe('general commands', function () {
   });
 
   describe('getDevicePixelRatio and getStatusBarHeight', function () {
-    proxySpy
-      .withArgs('/wda/screen', 'GET')
-      .returns({
-        statusBarSize: {width: 100, height: 20},
-        scale: 3
-      });
+    beforeEach(function () {
+      proxyStub
+        .withArgs('/wda/screen', 'GET')
+        .returns({
+          statusBarSize: {
+            width: 100,
+            height: 20,
+          },
+          scale: 3,
+        });
+    });
 
     it('should get the pixel ratio from WDA', async function () {
       await driver.getDevicePixelRatio().should.eventually.eql(3);

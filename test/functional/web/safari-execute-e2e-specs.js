@@ -58,7 +58,7 @@ describe('safari - execute -', function () {
 
         it('should catch stale or undefined element as arg', async function () {
           let el = await driver.elementById('useragent');
-          return driver.execute(SCROLL_INTO_VIEW, [{'ELEMENT': (el.value + 1)}]).should.beRejected;
+          return driver.execute(SCROLL_INTO_VIEW, [{'ELEMENT': (el.value + 1)}]).should.be.rejected;
         });
 
         it('should be able to return multiple elements from javascript', async function () {

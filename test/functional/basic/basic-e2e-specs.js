@@ -66,13 +66,13 @@ describe('XCUITestDriver - basics -', function () {
       delete actual.wdaLocalPort;
       delete actual.webDriverAgentUrl;
       // now test for the visual and dimension data
-      actual.statBarHeight.should.be.a.number;
+      actual.statBarHeight.should.be.a('number');
       delete actual.statBarHeight;
-      actual.pixelRatio.should.be.a.number;
+      actual.pixelRatio.should.be.a('number');
       delete actual.pixelRatio;
       actual.viewportRect.should.exist;
-      actual.viewportRect.height.should.be.a.number;
-      actual.viewportRect.width.should.be.a.number;
+      actual.viewportRect.height.should.be.a('number');
+      actual.viewportRect.width.should.be.a('number');
       delete actual.viewportRect;
       actual.should.eql(expected);
     });
@@ -121,7 +121,7 @@ describe('XCUITestDriver - basics -', function () {
     it('should get an app screenshot', async function () {
       let screenshot = await driver.takeScreenshot();
       screenshot.should.exist;
-      screenshot.should.be.a.string;
+      screenshot.should.be.a('string');
 
       // make sure WDA didn't crash, by using it again
       let els = await driver.elementsByAccessibilityId('Action Sheets');
@@ -175,10 +175,10 @@ describe('XCUITestDriver - basics -', function () {
         await driver.log('something-random').should.eventually.be.rejected;
       });
       it('should get system logs', async function () {
-        (await driver.log('syslog')).should.be.an.Array;
+        (await driver.log('syslog')).should.be.an('array');
       });
       it('should get crash logs', async function () {
-        (await driver.log('crashlog')).should.be.an.Array;
+        (await driver.log('crashlog')).should.be.an('array');
       });
     });
   });
@@ -214,8 +214,8 @@ describe('XCUITestDriver - basics -', function () {
   describe('window size -', function () {
     it('should be able to get the current window size', async function () {
       let size = await driver.getWindowSize('current');
-      size.width.should.be.a.number;
-      size.height.should.be.a.number;
+      size.width.should.be.a('number');
+      size.height.should.be.a('number');
     });
     it('should not be able to get random window size', async function () {
       await driver.getWindowSize('something-random').should.be.rejectedWith(/Currently only getting current window size is supported/);
