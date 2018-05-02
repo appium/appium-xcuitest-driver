@@ -110,11 +110,11 @@ describe('XCUITestDriver - element(s)', function () {
     it('should get the contentSize of a table', async function () {
       let table = await driver.elementByClassName("XCUIElementTypeTable");
       let contentSize = JSON.parse(await table.getAttribute('contentSize'));
-      contentSize.width.should.be.a.number;
-      contentSize.height.should.be.a.number;
-      contentSize.top.should.be.a.number;
-      contentSize.left.should.be.a.number;
-      contentSize.scrollableOffset.should.be.a.number;
+      contentSize.width.should.be.a('number');
+      contentSize.height.should.be.a('number');
+      contentSize.top.should.be.a('number');
+      contentSize.left.should.be.a('number');
+      contentSize.scrollableOffset.should.be.a('number');
       contentSize.height.should.be.above(500);
       // basically, the height of the inner content should be at least 200
       // pixels more than the height of the container

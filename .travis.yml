@@ -43,7 +43,7 @@ before_install:
   - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
   - git submodule update --init --recursive
 script:
-  - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i
+  - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i --exit
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
       mkdir -p ./ci-metrics && ls -la ./ci-metrics;

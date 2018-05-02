@@ -116,12 +116,12 @@ describe('gesture commands', function () {
 
       it('should throw an error if no direction is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4})
-          .should.be.rejectedWith(/Error: Mobile swipe requires direction/);
+          .should.be.rejectedWith(/Mobile swipe requires direction/);
       });
 
       it('should throw an error if invalid direction', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'})
-          .should.be.rejectedWith(/Error: Direction must be up, down, left or right/);
+          .should.be.rejectedWith(/Direction must be up, down, left or right/);
       });
 
       it('should proxy a swipe up request through to WDA', async function () {

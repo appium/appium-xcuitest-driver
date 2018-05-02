@@ -29,7 +29,7 @@ describe('XCUITestDriver', function () {
         const {status, value, sessionId} = await request.post({url: sessionUrl, json: W3C_CAPS});
         should.not.exist(status);
         value.should.exist;
-        value.capabilities.should.exists;
+        value.capabilities.should.exist;
         should.not.exist(sessionId);
         should.exist(value.sessionId);
         await request.delete({url: `${sessionUrl}/${value.sessionId}`});

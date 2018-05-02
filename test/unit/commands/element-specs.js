@@ -219,23 +219,34 @@ describe('element commands', function () {
     const oldContext = driver.curContext;
     const webEl = {ELEMENT: '5000'};
     const fixtureXOffset = 100, fixtureYOffset = 200;
-    let executeStub = sinon.stub(driver, 'execute');
-    executeStub.returns([fixtureXOffset, fixtureYOffset]);
-    let atomsElStub = sinon.stub(driver, 'useAtomsElement', (el) => el);
-    let atomStub = sinon.stub(driver, 'executeAtom');
-    let proxyStub = sinon.stub(driver, 'proxyCommand');
-    atomStub.returns({x: 0, y: 0});
+    let executeStub;
+    let atomsElStub;
+    let atomStub;
+    let proxyStub;
 
-    beforeEach(function () {
-      driver.curContext = "fake web context";
+    before(function () {
+      executeStub = sinon.stub(driver, 'execute').returns([fixtureXOffset, fixtureYOffset]);
+      atomsElStub = sinon.stub(driver, 'useAtomsElement').callsFake((el) => el);
+      atomStub = sinon.stub(driver, 'executeAtom').returns({x: 0, y: 0});
+      proxyStub = sinon.stub(driver, 'proxyCommand');
     });
-
-    afterEach(function () {
-      driver.curContext = oldContext;
+    after(function () {
       executeStub.reset();
       atomsElStub.reset();
       atomStub.reset();
       proxyStub.reset();
+    });
+
+    beforeEach(function () {
+      driver.curContext = "fake web context";
+    });
+    afterEach(function () {
+      driver.curContext = oldContext;
+
+      executeStub.resetHistory();
+      atomsElStub.resetHistory();
+      atomStub.resetHistory();
+      proxyStub.resetHistory();
     });
 
     it('should get location relative to scroll by default', async function () {
@@ -247,7 +258,7 @@ describe('element commands', function () {
       loc.y.should.equal(0);
     });
 
-    it('should get location relative to document with abosluteWebLocations cap', async function () {
+    it('should get location relative to document with absoluteWebLocations cap', async function () {
       driver.opts.absoluteWebLocations = true;
       const loc = await driver.getLocation(webEl);
       executeStub.calledOnce.should.be.true;

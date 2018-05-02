@@ -25,7 +25,7 @@ describe('driver commands', function () {
 
       // fake the proxy to WDA
       const jwproxy = new JWProxy();
-      jwproxyCommandSpy = sinon.stub(jwproxy, 'command', async function () {
+      jwproxyCommandSpy = sinon.stub(jwproxy, 'command').callsFake(async function () {
         return {some: 'thing'};
       });
       driver.wda = {
@@ -57,8 +57,8 @@ describe('driver commands', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver();
-      sandbox = sinon.sandbox.create();
-      sandbox.stub(driver, 'determineDevice', async function () {
+      sandbox = sinon.createSandbox();
+      sandbox.stub(driver, 'determineDevice').callsFake(async function () {
         return {
           device: {
             shutdown: _.noop,
@@ -74,17 +74,17 @@ describe('driver commands', function () {
           realDevice: null
         };
       });
-      sandbox.stub(driver, 'configureApp', _.noop);
-      sandbox.stub(driver, 'startLogCapture', _.noop);
-      sandbox.stub(driver, 'startSim', _.noop);
-      sandbox.stub(driver, 'startWdaSession', _.noop);
-      sandbox.stub(driver, 'startWda', _.noop);
-      sandbox.stub(driver, 'installAUT', _.noop);
-      sandbox.stub(iosDriver.settings, 'setLocale', _.noop);
-      sandbox.stub(iosDriver.settings, 'setPreferences', _.noop);
-      sandbox.stub(xcode, 'getMaxIOSSDK', async () => '10.0');
-      sandbox.stub(utils, 'checkAppPresent', _.noop);
-      sandbox.stub(iosDriver.appUtils, 'extractBundleId', _.noop);
+      sandbox.stub(driver, 'configureApp').callsFake(_.noop);
+      sandbox.stub(driver, 'startLogCapture').callsFake(_.noop);
+      sandbox.stub(driver, 'startSim').callsFake(_.noop);
+      sandbox.stub(driver, 'startWdaSession').callsFake(_.noop);
+      sandbox.stub(driver, 'startWda').callsFake(_.noop);
+      sandbox.stub(driver, 'installAUT').callsFake(_.noop);
+      sandbox.stub(iosDriver.settings, 'setLocale').callsFake(_.noop);
+      sandbox.stub(iosDriver.settings, 'setPreferences').callsFake(_.noop);
+      sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0');
+      sandbox.stub(utils, 'checkAppPresent').callsFake(_.noop);
+      sandbox.stub(iosDriver.appUtils, 'extractBundleId').callsFake(_.noop);
     });
 
     afterEach(function () {
@@ -97,7 +97,7 @@ describe('driver commands', function () {
       resCaps[1].javascriptEnabled.should.be.true;
     });
     it('should warn', async function () {
-      const warnStub = sinon.stub(log, 'warn', async function () {});
+      const warnStub = sinon.stub(log, 'warn').callsFake(async function () {});
       await driver.createSession(_.defaults({autoAcceptAlerts: true}, caps));
       warnStub.calledOnce.should.be.true;
       _.filter(warnStub.args, (arg) => arg[0].indexOf('autoAcceptAlerts') !== -1)
