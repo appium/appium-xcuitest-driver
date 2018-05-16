@@ -10,6 +10,7 @@ import { UICATALOG_SIM_CAPS } from '../desired';
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
+const should = chai.should(); // eslint-disable-line no-unused-vars
 chai.use(chaiAsPromised);
 
 const deleteDeviceWithRetry = async function (udid) {
@@ -51,7 +52,6 @@ describe('XCUITestDriver', function () {
     it.skip('should start and stop a session', async function () {
       driver = await initSession(caps);
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
-      console.log(els); // eslint-disable-line
       els.length.should.be.at.least(1);
     });
   }
