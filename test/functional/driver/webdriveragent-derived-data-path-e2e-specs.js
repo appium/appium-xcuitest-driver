@@ -57,7 +57,7 @@ describe('XCUITestDriver', function () {
   });
 
   if (!process.env.REAL_DEVICE) {
-    it('should start and stop a session', async function () {
+    it.skip('should start and stop a session', async function () {
       driver = await initSession(caps);
       let els = await driver.elementsByClassName("XCUIElementTypeWindow");
       els.length.should.be.at.least(1);
