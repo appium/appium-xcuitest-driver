@@ -26,7 +26,7 @@ if (!process.env.REAL_DEVICE) {
 
     async function pullFileAsString (remotePath) {
       let remoteData64 = await driver.pullFile(remotePath);
-      return new Buffer(remoteData64, 'base64').toString();
+      return Buffer.from(remoteData64, 'base64').toString();
     }
 
     describe('sim relative', function () {
@@ -47,7 +47,7 @@ if (!process.env.REAL_DEVICE) {
 
         it('should be able to push and pull a file', async function () {
           let stringData = `random string data ${Math.random()}`;
-          let base64Data = new Buffer(stringData).toString('base64');
+          let base64Data = Buffer.from(stringData).toString('base64');
           let remotePath = `${UICAT_CONTAINER}/remote.txt`;
 
           await driver.pushFile(remotePath, base64Data);
@@ -94,7 +94,7 @@ if (!process.env.REAL_DEVICE) {
     describe('app relative', function () {
       it('should be able to push and pull a file from the app directory', async function () {
         let stringData = `random string data ${Math.random()}`;
-        let base64Data = new Buffer(stringData).toString('base64');
+        let base64Data = Buffer.from(stringData).toString('base64');
         let remotePath = `${UICAT_CONTAINER}/UICatalog.app/somefile.tmp`;
 
         await driver.pushFile(remotePath, base64Data);
