@@ -16,7 +16,7 @@ chai.use(chaiAsPromised);
 const driver = new XCUITestDriver();
 describe('basic', withMocks({driver, fs, tempDir, utils, teen_process}, function (mocks) {
   const localFile = '/path/to/local.mp4';
-  const mediaContent = new Buffer('appium');
+  const mediaContent = Buffer.from('appium');
   const udid = '1234';
   driver.opts = {
     device: {

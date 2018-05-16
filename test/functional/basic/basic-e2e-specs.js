@@ -150,8 +150,8 @@ describe('XCUITestDriver - basics -', function () {
       const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute("mobile: viewportScreenshot");
-      const fullB64 = new Buffer(fullScreen, 'base64');
-      const viewB64 = new Buffer(viewScreen, 'base64');
+      const fullB64 = Buffer.from(fullScreen, 'base64');
+      const viewB64 = Buffer.from(viewScreen, 'base64');
       const fullImg = new PNG({filterType: 4});
       await B.promisify(fullImg.parse, {context: fullImg})(fullB64);
       const viewImg = new PNG({filterType: 4});
