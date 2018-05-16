@@ -20,7 +20,7 @@ const fakeConstructorArgs = {
 const defaultAgentPath = path.resolve(BOOTSTRAP_PATH, 'WebDriverAgent.xcodeproj');
 const customBootstrapPath = '/path/to/wda';
 const customAgentPath = '/path/to/some/agent/WebDriverAgent.xcodeproj';
-const customDerivedDataPath = '/path/to/some/agent/DerivedDate/';
+const customDerivedDataPath = '/path/to/some/agent/DerivedData/';
 
 describe('Constructor', function () {
   it('should have a default wda agent if not specified', function () {
