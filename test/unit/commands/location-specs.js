@@ -48,6 +48,7 @@ describe('location commands', function () {
 
     it('fail when idevicelocation doesnt exist on the host for real devices', async function () {
       driver.opts.realDevice = true;
+      fsWhichStub.throws();
       await driver.setGeoLocation(location).should.be.rejectedWith(`idevicelocation doesn't exist on the host`);
     });
 
