@@ -4,6 +4,9 @@ import { fs } from 'appium-support';
 import * as teenProcess from 'teen_process';
 
 describe('location commands', function () {
+  const udid = '1234';
+  const toolName = 'idevicelocation';
+
   const driver = new XCUITestDriver();
   const proxySpy = sinon.stub(driver, 'proxyCommand');
 
@@ -12,7 +15,6 @@ describe('location commands', function () {
   });
 
   describe('setLocation', function () {
-    const location = {latitude: '1', longitude: '2'};
     let execStub;
     let fsWhichStub;
 
@@ -26,36 +28,45 @@ describe('location commands', function () {
       fsWhichStub.restore();
     });
 
-    it('fail when location object is wrong', async function () {
+    it('should fail when location object is wrong', async function () {
       await driver.setGeoLocation({}).should.be.rejectedWith('Both latitude and longitude should be set');
     });
 
-    it('use idevicelocation to set the location on real devices', async function () {
-      const udid = '1234';
+    describe('on real device', function () {
+      beforeEach(function () {
+        driver.opts.udid = udid;
+        driver.opts.realDevice = true;
+      });
 
-      driver.opts.udid = udid;
-      driver.opts.realDevice = true;
+      it('should use idevicelocation to set a location', async function () {
+        fsWhichStub.returns(toolName);
+        await driver.setGeoLocation({latitude: '1.234', longitude: '2.789'});
 
-      const toolName = 'idevicelocation';
+        execStub.calledOnce.should.be.true;
+        execStub.firstCall.args[0].should.eql(toolName);
+        execStub.firstCall.args[1].should.eql(['-u', udid, '1.234', '2.789']);
+      });
 
-      fsWhichStub.returns(toolName);
-      await driver.setGeoLocation(location);
+      it('should use idevicelocation to set a location with negative values', async function () {
+        fsWhichStub.returns(toolName);
+        await driver.setGeoLocation({latitude: 1.234, longitude: -2});
 
-      execStub.calledOnce.should.be.true;
-      execStub.firstCall.args[0].should.eql(toolName);
-      execStub.firstCall.args[1].should.eql(['-u', udid, location.latitude, location.longitude]);
+        execStub.calledOnce.should.be.true;
+        execStub.firstCall.args[0].should.eql(toolName);
+        execStub.firstCall.args[1].should.eql(['-u', udid, '1.234', '--', '-2']);
+      });
+
+      it('should fail when idevicelocation doesnt exist on the host', async function () {
+        fsWhichStub.throws();
+        await driver.setGeoLocation({
+          latitude: '1.234',
+          longitude: '2.789'}
+        ).should.be.rejectedWith(`idevicelocation doesn't exist on the host`);
+      });
     });
 
-    it('fail when idevicelocation doesnt exist on the host for real devices', async function () {
-      driver.opts.realDevice = true;
-      fsWhichStub.throws();
-      await driver.setGeoLocation(location).should.be.rejectedWith(`idevicelocation doesn't exist on the host`);
-    });
-
-    describe('simulator', function () {
+    describe('on simulator', function () {
       let deviceSetLocationSpy;
-      const realDevice = driver.opts.realDevice;
-      const device = driver.opts.device;
       beforeEach(function () {
         driver.opts.realDevice = false;
 
@@ -65,14 +76,17 @@ describe('location commands', function () {
         };
       });
       afterEach(function () {
-        driver.opts.realDevice = realDevice;
-        driver.opts.device = device;
         deviceSetLocationSpy.resetHistory();
       });
-      it('should set on device', async function () {
-        await driver.setGeoLocation(location);
-        deviceSetLocationSpy.firstCall.args[0].should.eql(location.latitude);
-        deviceSetLocationSpy.firstCall.args[1].should.eql(location.longitude);
+      it('should set string coordinates', async function () {
+        await driver.setGeoLocation({latitude: '1.234', longitude: '2.789'});
+        deviceSetLocationSpy.firstCall.args[0].should.eql('1.234');
+        deviceSetLocationSpy.firstCall.args[1].should.eql('2.789');
+      });
+      it('should set number coordinates', async function () {
+        await driver.setGeoLocation({latitude: 1, longitude: -2});
+        deviceSetLocationSpy.firstCall.args[0].should.eql('1');
+        deviceSetLocationSpy.firstCall.args[1].should.eql('-2');
       });
     });
   });
