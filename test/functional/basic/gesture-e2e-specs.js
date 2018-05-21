@@ -228,17 +228,17 @@ describe('XCUITestDriver - gestures', function () {
         await driver.elementByAccessibilityId('ControlCenterView')
           .should.eventually.be.rejectedWith(/An element could not be located/);
 
-        const window = await driver.elementByClassName("XCUIElementTypeWindow");
-        const size = await window.getSize();
+        const window = await driver.elementByClassName('XCUIElementTypeWindow');
+        const {width, height} = await window.getSize();
 
         let action = new wd.TouchAction(driver);
         action.press({
-          x: size.width / 2,
-          y: size.height - 5,
+          x: width / 2,
+          y: height - 5,
         }).wait(500)
         .moveTo({
-          x: size.width / 2,
-          y: size.height / 2,
+          x: width / 2,
+          y: height / 2,
         });
         await action.perform();
 
