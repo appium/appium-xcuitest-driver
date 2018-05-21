@@ -224,7 +224,7 @@ describe('XCUITestDriver - gestures', function () {
       });
     });
     describe('special actions', function () {
-      it('should open the tool thingo at the bottom', async function () {
+      it('should open the control center by swiping up at the bottom', async function () {
         await driver.elementByAccessibilityId('ControlCenterView')
           .should.eventually.be.rejectedWith(/An element could not be located/);
 
