@@ -223,6 +223,29 @@ describe('XCUITestDriver - gestures', function () {
         await doPinch();
       });
     });
+    describe('special actions', function () {
+      it('should open the control center by swiping up at the bottom', async function () {
+        await driver.elementByAccessibilityId('ControlCenterView')
+          .should.eventually.be.rejectedWith(/An element could not be located/);
+
+        const window = await driver.elementByClassName('XCUIElementTypeWindow');
+        const {width, height} = await window.getSize();
+
+        let action = new wd.TouchAction(driver);
+        action.press({
+          x: width / 2,
+          y: height - 5,
+        }).wait(500)
+        .moveTo({
+          x: width / 2,
+          y: height / 2,
+        });
+        await action.perform();
+
+        // Control Center ought to be visible now
+        await driver.elementByAccessibilityId('ControlCenterView');
+      });
+    });
   });
   describe('tap with tapWithShortPressDuration cap', function () {
     // needs a special cap, so has to be in its own session
