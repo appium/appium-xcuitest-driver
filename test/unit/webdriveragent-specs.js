@@ -47,7 +47,7 @@ describe('Constructor', function () {
     let agent = new WebDriverAgent({}, _.defaults({
       derivedDataPath: customDerivedDataPath
     }, fakeConstructorArgs));
-    agent.xcodebuild._derivedDataPath.should.eql(customDerivedDataPath);
+    agent.xcodebuild.derivedDataPath.should.eql(customDerivedDataPath);
   });
 });
 
