@@ -131,12 +131,17 @@ describe('XCUITestDriver - gestures', function () {
       let el1 = await driver.elementByAccessibilityId('Action Sheets');
       let el2 = await driver.elementByAccessibilityId('Progress Views');
 
+      let el3 = await driver.elementByAccessibilityId('Text Fields');
+      await el3.isDisplayed().should.eventually.be.false;
+
       let action = new wd.TouchAction(driver);
-      action.press({el: el1}).wait(500).moveTo({el: el2}).release();
+      action.press({el: el2}).wait(500).moveTo({el: el1}).release();
       await action.perform();
 
-      let el3 = await driver.elementByAccessibilityId('Text Fields');
-      await el3.click().should.not.be.rejected;
+      await el3.isDisplayed().should.eventually.be.true;
+
+      // go back
+      await driver.execute('mobile: scroll', {element: el1, toVisible: true});
     });
     it('should double tap on an element', async function () {
       // FIXME: Multitouch does not work as expected in Xcode < 9.
