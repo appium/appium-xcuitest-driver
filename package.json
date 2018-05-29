@@ -35,7 +35,7 @@
     "appium-xcode": "^3.2.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
-    "babel-runtime": "6.26.0",
+    "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.0.0",
@@ -70,14 +70,14 @@
     "appium-event-parser": "^1.0.0",
     "appium-gulp-plugins": "^2.2.0",
     "appium-test-support": "^1.0.0",
-    "babel-eslint": "^8.2.3",
+    "babel-eslint": "^7.1.1",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^4.19.1",
+    "eslint": "^3.18.0",
     "eslint-config-appium": "^2.0.1",
-    "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-promise": "^3.3.1",
     "glob": "^7.1.0",
     "gulp": "^3.8.11",
@@ -91,5 +91,18 @@
     "through2": "^2.0.0",
     "unzip": "^0.1.11",
     "wd": "^1.5.0"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "babel-eslint",
+      "babel-preset-env",
+      "eslint",
+      "eslint-plugin-babel",
+      "eslint-plugin-import",
+      "eslint-plugin-mocha",
+      "eslint-plugin-promise",
+      "gulp",
+      "babel-runtime"
+    ]
   }
 }
