@@ -91,5 +91,18 @@
     "through2": "^2.0.0",
     "unzip": "^0.1.11",
     "wd": "^1.5.0"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "babel-eslint",
+      "babel-preset-env",
+      "eslint",
+      "eslint-plugin-babel",
+      "eslint-plugin-import",
+      "eslint-plugin-mocha",
+      "eslint-plugin-promise",
+      "gulp",
+      "babel-runtime"
+    ]
   }
 }
