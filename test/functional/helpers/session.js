@@ -27,6 +27,10 @@ async function initServer () {
   server = await startServer(PORT, HOST);
 }
 
+function getServer () {
+  return server;
+}
+
 async function initWDA (caps) {
   // first, see if this is necessary
   try {
@@ -74,4 +78,4 @@ async function deleteSession () {
   } catch (ign) {}
 }
 
-export { initDriver, initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT };
+export { initDriver, initSession, deleteSession, getServer, HOST, PORT, MOCHA_TIMEOUT };
