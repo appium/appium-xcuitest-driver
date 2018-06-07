@@ -6,6 +6,7 @@ import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
          PHISHING_END_POINT } from './helpers';
+import { util } from 'appium-support';
 
 
 chai.should();
@@ -86,9 +87,14 @@ describe('Safari', function () {
     });
 
     describe('context', function () {
-      it('getting current context should work initially', async function () {
+      it('should be able to get current context initially', async function () {
         await B.delay(500);
         (await driver.currentContext()).should.be.ok;
+      });
+      it('should get full context list through mobile: getContexts', async function () {
+        const ctxs = await driver.execute('mobile: getContexts');
+        const webviews = ctxs.filter((ctx) => ctx.id !== 'NATIVE_APP');
+        webviews.every((ctx) => util.hasValue(ctx.title) && util.hasValue(ctx.url)).should.be.true;
       });
     });
 
