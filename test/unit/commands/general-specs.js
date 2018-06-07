@@ -62,35 +62,35 @@ describe('general commands', function () {
   });
 
   describe('toggleEnrollTouchID', function () {
-    let deviceStub, enrollTouchIDSpy, optsStub;
+    let deviceStub, enrollBiometricSpy, optsStub;
 
     beforeEach(function () {
       optsStub = sinon.mock(driver.opts);
       deviceStub = sinon.mock(driver.opts, 'device');
       deviceStub.object.device = {
-        enrollTouchID: () => {},
+        enrollBiometric: () => {},
       };
-      enrollTouchIDSpy = sinon.spy(driver.opts.device, 'enrollTouchID');
+      enrollBiometricSpy = sinon.spy(driver.opts.device, 'enrollBiometric');
     });
 
     afterEach(function () {
       deviceStub.restore();
       optsStub.restore();
-      enrollTouchIDSpy.restore();
+      enrollBiometricSpy.restore();
     });
 
     it('should be called on a Simulator', async function () {
       deviceStub.object.realDevice = false;
       deviceStub.object.allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId();
-      enrollTouchIDSpy.calledOnce.should.be.true;
+      enrollBiometricSpy.calledOnce.should.be.true;
     });
 
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
       deviceStub.object.allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId().should.eventually.be.rejectedWith(/not supported/g);
-      enrollTouchIDSpy.notCalled.should.be.true;
+      enrollBiometricSpy.notCalled.should.be.true;
     });
   });
 
