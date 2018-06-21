@@ -5,11 +5,15 @@ import { getVersion } from 'appium-xcode';
 import { getSimulator } from 'appium-ios-simulator';
 import { killAllSimulators, shutdownSimulator } from '../helpers/simulator';
 import request from 'request-promise';
-import WebDriverAgent from '../../../lib/wda/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
 import { PLATFORM_VERSION, DEVICE_NAME } from '../desired';
 import { MOCHA_TIMEOUT } from '../helpers/session';
 import { retryInterval } from 'asyncbox';
+
+let WebDriverAgent;
+if (!process.env.CLOUD) {
+  WebDriverAgent = require('../../../lib/wda/webDriverAgent');
+}
 
 
 const SIM_DEVICE_NAME = 'webDriverAgentTest';
@@ -31,6 +35,12 @@ function getStartOpts (device) {
 
 
 describe('WebDriverAgent', function () {
+
+  // Don't do these tests on Sauce Labs
+  if (process.env.CLOUD) {
+    this.skip();
+  }
+
   this.timeout(MOCHA_TIMEOUT);
   this.retries(2);
 

@@ -25,7 +25,11 @@ describe('XCUITestDriver - basics -', function () {
   describe('status -', function () {
     it('should get the server status', async function () {
       let status = await driver.status();
-      status.wda.should.exist;
+      if (process.env.SAUCE_EMUSIM) {
+        status.build.version.should.equal('Sauce Labs');
+      } else {
+        status.wda.should.exist;
+      }
     });
 
     it('should return status immediately if another operation is in progress', async function () {

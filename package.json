@@ -81,8 +81,6 @@
     "eslint-plugin-promise": "^3.3.1",
     "glob": "^7.1.0",
     "gulp": "^3.8.11",
-    "ios-test-app": "^2.5.7",
-    "ios-uicatalog": "^1.0.4",
     "mocha": "^5.1.1",
     "pem": "^1.8.3",
     "pngjs": "^3.3.1",
@@ -91,6 +89,10 @@
     "through2": "^2.0.0",
     "unzip": "^0.1.11",
     "wd": "^1.5.0"
+  },
+  "optionalDependencies": {
+    "ios-test-app": "^2.5.7",
+    "ios-uicatalog": "^1.0.4"
   },
   "greenkeeper": {
     "ignore": [
