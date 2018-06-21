@@ -21,6 +21,10 @@ describe('session commands', function () {
   let otherStubs = [
     sinon.stub(driver, 'getStatusBarHeight').returns(20),
     sinon.stub(driver, 'getViewportRect').returns({x: 1, y: 2, height: 3, width: 4}),
+    sinon.stub(driver, 'getScreenInfo').returns({
+      statusBarSize: {width: 400, height:20},
+      scale: 3
+    }),
     sinon.stub(driver, 'getDevicePixelRatio').returns(3)
   ];
 
