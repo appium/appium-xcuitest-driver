@@ -7,7 +7,7 @@ const log = logger.getLogger('CI STAGING TESTS');
 let env = {};
 
 // Get the environment ariables
-if (!_.isEmpty(process.env.SAUCE_EMUSIM_DEVICE_INDEX)) {
+if (!_.isEmpty(process.env.SAUCE_EMUSIM_DEVICE_INDEX) || process.env.SAUCE_EMUSIM) {
   Object.assign(env, require('./env-ios-sim'));
 }
 

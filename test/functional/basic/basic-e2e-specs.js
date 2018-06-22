@@ -33,6 +33,9 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should return status immediately if another operation is in progress', async function () {
+      // TODO: Do we need this test on cloud?
+      this.skip();
+
       await driver.setImplicitWaitTimeout(10000);
       let findElementPromise = B.resolve(driver.elementById('WrongLocator'));
       let status = await driver.status();
