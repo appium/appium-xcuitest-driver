@@ -35,17 +35,16 @@ function getStartOpts (device) {
 
 
 describe('WebDriverAgent', function () {
-
-  // Don't do these tests on Sauce Labs
-  if (process.env.CLOUD) {
-    this.skip();
-  }
-
   this.timeout(MOCHA_TIMEOUT);
   this.retries(2);
 
   let xcodeVersion;
   before(async function () {
+    // Don't do these tests on Sauce Labs
+    if (process.env.CLOUD) {
+      this.skip();
+    }
+
     xcodeVersion = await getVersion(true);
   });
   describe('with fresh sim', function () {
