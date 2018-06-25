@@ -12,7 +12,7 @@ if (process.env.CI_METRICS) {
 }
 
 function getPort () {
-  if (SAUCE_EMUSIM) {
+  if (SAUCE_EMUSIM || SAUCE_RDC) {
     return 80;
   } else if (SAUCE_RDC) {
     // TODO: Add this later
@@ -21,10 +21,10 @@ function getPort () {
 }
 
 function getHost () {
-  if (SAUCE_EMUSIM) {
+  if (SAUCE_RDC) {
+    return 'appium.staging.testobject.org';
+  } else if (SAUCE_EMUSIM) {
     return 'ondemand.saucelabs.com';
-  } else if (SAUCE_RDC) {
-    // TODO: Add this later
   }
 
   return process.env.REAL_DEVICE ? util.localIp() : 'localhost';
@@ -39,7 +39,6 @@ let driver, server;
 
 async function initDriver () {
   driver = wd.promiseChainRemote(HOST, PORT);
-
   return driver;
 }
 

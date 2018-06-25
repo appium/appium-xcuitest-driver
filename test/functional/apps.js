@@ -15,7 +15,7 @@ const {REAL_DEVICE, CLOUD} = process.env;
 
 if (REAL_DEVICE) {
   if (CLOUD) {
-    // TODO: Add real device IPAs. Should be an app number.
+    apps.testAppId = 1;
   } else {
     apps.iosTestApp = testAppPath.iphoneos;
     apps.uiCatalogApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[0]);

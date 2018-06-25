@@ -2,9 +2,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import envBase from './env-base';
 import { logger } from 'appium-support';
-import platformDefinition from './ios-platforms';
-
-const log = logger.getLogger('CI STAGING TESTS');
+import platformDefinition from './ios-sim-platforms';
 
 const platforms = [];
 
@@ -30,7 +28,7 @@ do {
 const platformIndex = (moment().dayOfYear() * 5) % platforms.length + (parseInt(process.env.SAUCE_EMUSIM_DEVICE_INDEX, 0) || 0);
 const [CLOUD_PLATFORM_VERSION, CLOUD_DEVICE_NAME] = platforms[platformIndex % platforms.length];
 
-log.info(`Running tests on iOS ${CLOUD_PLATFORM_VERSION}, device "${CLOUD_DEVICE_NAME}"`);
+logger.getLogger('CI STAGING TESTS').info(`Running tests on iOS ${CLOUD_PLATFORM_VERSION}, device "${CLOUD_DEVICE_NAME}"`);
 
 export default {
   ...envBase,

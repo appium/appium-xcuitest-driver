@@ -6,9 +6,14 @@ const log = logger.getLogger('CI STAGING TESTS');
 
 let env = {};
 
-// Get the environment ariables
+
+// Get the environment variables
 if (!_.isEmpty(process.env.SAUCE_EMUSIM_DEVICE_INDEX) || process.env.SAUCE_EMUSIM) {
+  log.info('Running tests on SauceLabs OnDemand');
   Object.assign(env, require('./env-ios-sim'));
+} else if (!_.isEmpty(process.env.SAUCE_RDC_DEVICE_INDEX) || process.env.SAUCE_RDC) {
+  log.info('Running tests on SauceLabs real device cloud');
+  Object.assign(env, require('./env-ios-real'));
 }
 
 if (env.CLOUD) {
