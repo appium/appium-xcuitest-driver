@@ -48,7 +48,7 @@ describe('pasteboard commands', function () {
     it('setPasteboard should invoke correct simctl method', async function () {
       const opts = {
         content: 'bla',
-        encoding: 'latin-1',
+        encoding: 'latin1',
       };
       await driver.mobileSetPasteboard(opts);
       setPasteboardStub.calledOnce.should.be.true;
