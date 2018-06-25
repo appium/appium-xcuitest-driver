@@ -72,6 +72,7 @@ delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests 
 
 const SAFARI_CAPS = _.defaults({
   browserName: 'Safari',
+  testobject_api_key: process.env.SAUCE_RDC_WEB_ACCESS_KEY,
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
 const TESTAPP_CAPS = _.defaults({

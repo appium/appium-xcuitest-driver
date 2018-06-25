@@ -3,7 +3,7 @@ import envBase from './env-base';
 import { logger } from 'appium-support';
 
 const platforms = [
-  '11'
+  '11',
 ];
 
 const configIndex = process.env.SAUCE_RDC_DEVICE_INDEX || 0;
@@ -20,6 +20,7 @@ export default {
   REAL_DEVICE: 1,
   SAUCE_RDC: true,
   SAUCE_RDC_USERNAME: process.env.TESTOBJECT_USERNAME || process.env.SAUCE_USERNAME,
-  SAUCE_RDC_ACCESS_KEY: process.env.TESTOBJECT_API_KEY || process.env.SAUCE_ACCESS_KEY,
+  SAUCE_RDC_ACCESS_KEY: process.env.TESTOBJECT_API_KEY,
+  SAUCE_RDC_WEB_ACCESS_KEY: process.env.TESTOBJECT_WEB_API_KEY,
   CLOUD_PLATFORM_VERSION,
 };

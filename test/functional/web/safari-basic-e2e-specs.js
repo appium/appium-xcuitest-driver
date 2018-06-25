@@ -43,7 +43,8 @@ describe('Safari', function () {
       }, SAFARI_CAPS);
       driver = await initSession(caps);
       let title = await spinTitle(driver);
-      title.should.equal('I am a page title');
+      const expectedTitle = process.env.CLOUD ? 'I am a page title - Sauce Labs' : 'I am a page title';
+      title.should.equal(expectedTitle);
     });
   });
 
@@ -149,7 +150,7 @@ describe('Safari', function () {
       it('should be able to click links', async function () {
         let el = await driver.elementByLinkText('i am a link');
         await el.click();
-        await spinTitleEquals(driver, 'I am another page title');
+        await spinTitleEquals(driver, 'I am another page title - Sauce Labs');
       });
       it('should retrieve an element attribute', async function () {
         let el = await driver.elementById('i_am_an_id');
