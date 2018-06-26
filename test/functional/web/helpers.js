@@ -4,7 +4,7 @@ import { util } from 'appium-support';
 
 
 const LOCAL_BASE_END_POINT = `http://${process.env.REAL_DEVICE ? util.localIp() : HOST}:${PORT}`;
-const REMOTE_BASE_END_POINT = `https://saucelabs.com`;
+const REMOTE_BASE_END_POINT = `https://quizzical-tesla-615650.netlify.com`;
 const BASE_END_POINT = process.env.CLOUD ? REMOTE_BASE_END_POINT : LOCAL_BASE_END_POINT;
 const TEST_END_POINT = `${BASE_END_POINT}/test`;
 const GUINEA_PIG_PAGE = `${TEST_END_POINT}/guinea-pig`;

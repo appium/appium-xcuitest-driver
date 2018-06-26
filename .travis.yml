@@ -26,7 +26,7 @@ matrix:
 
     # smoke test on xcode 9.3/iOS 11.2 web
     #- osx_image: xcode9.3
-      #env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
+      #env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web 
 
     # smoke test on xcode 8.3 web
     #- osx_image: xcode8.3
@@ -105,12 +105,20 @@ git:
 before_install:
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
+  - npm install -g mocha-parallel-tests
+  - npm install -g mocha
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
       git submodule update --init --recursive;
     fi
 script:
-  - npm run lint && npm run mocha -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
+  - npm run lint
+  - if [ "$CLOUD" ]; then
+      npm run mocha-parallel-tests -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
+    fi
+  - if [ -n "$CLOUD" ]; then
+      npm run mocha -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
+    fi
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
       mkdir -p ./ci-metrics && ls -la ./ci-metrics;
