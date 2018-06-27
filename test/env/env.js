@@ -21,8 +21,7 @@ if (env.CLOUD) {
   log.info('Getting the sha of the most recent master commit');
 
   // (does a synchronous URL get which is okay because it just does this once before any other scripts are called)
-  //console.log('@@@@@', process.env.GITHUB_TOKEN);
-  /*const commits = request('GET', 'https://api.github.com/repos/appium/appium/commits', {
+  const commits = request('GET', 'https://api.github.com/repos/appium/appium/commits', {
     headers: {
       'User-Agent': 'node.js'
     },
@@ -32,8 +31,7 @@ if (env.CLOUD) {
     },
     json: true,
   }).getBody('utf8');
-  const sha = JSON.parse(commits)[0].sha;*/
-  const sha = '123';
+  const sha = JSON.parse(commits)[0].sha;
   log.info(`Most recent commit found is: ${sha}`);
 
   // Get the URL of the latest

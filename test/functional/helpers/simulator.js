@@ -9,7 +9,7 @@ async function killAllSimulators () {
   if (process.env.CLOUD) {
     return;
   }
-  
+
   const allDevices = _.flatMap(_.values(await getDevices()));
   const bootedDevices = allDevices.filter((device) => device.state === 'Booted');
 
