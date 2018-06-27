@@ -12,9 +12,8 @@ import { retryInterval } from 'asyncbox';
 
 let WebDriverAgent;
 if (!process.env.CLOUD) {
-  WebDriverAgent = require('../../../lib/wda/webDriverAgent');
+  WebDriverAgent = require('../../../lib/wda/webDriverAgent').WebDriverAgent;
 }
-
 
 const SIM_DEVICE_NAME = 'webDriverAgentTest';
 
