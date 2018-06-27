@@ -23,7 +23,7 @@ describe('XCUITestDriver - performance', function () {
     });
 
     it('should return recorded trace file on stop', async function () {
-      if (process.env.CI) {
+      if (process.env.CI || process.env.CLOUD) {
         // It looks like Travis is just way too slow
         return this.skip();
       }

@@ -32,4 +32,6 @@ if (REAL_DEVICE) {
   }
 }
 
+console.log('@@@@@apps', apps);
+
 export default apps;
