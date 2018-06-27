@@ -20,7 +20,7 @@ if (env.CLOUD) {
   // Find the latest git commit
   log.info('Getting the sha of the most recent master commit');
 
-  // (does a synchronous URL get which is okay because it just does this once before any other scripts are called)
+  // (gets the commits synchronously, this is okay because it just does this once before any other scripts are called)
   const commits = request('GET', 'https://api.github.com/repos/appium/appium/commits', {
     headers: {
       'User-Agent': 'node.js'

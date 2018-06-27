@@ -31,7 +31,7 @@ const REAL_DEVICE_CAPS = REAL_DEVICE ? {
   webkitResponseTimeout: 30000,
   testobject_app_id: apps.testAppId,
   testobject_api_key: process.env.SAUCE_RDC_ACCESS_KEY,
-  //testobject_remote_appium_url: process.env.APPIUM_STAGING_URL, // TODO: Find out why this is not being supported by TO
+  //testobject_remote_appium_url: process.env.APPIUM_STAGING_URL, // TODO: Once RDC starts supporting this again, re-insert this
 } : {};
 
 const GENERIC_CAPS = {
