@@ -42,68 +42,69 @@ matrix:
 
     # Sauce Emusim tests
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/long
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/long
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/long
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/long
     - os: linux
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/long
 
     # Sauce RDC Tests
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/long
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/basic
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/web
     - os: linux
-      if: env(TRAVIS_EVENT_TYPE) =~ cron
+      if: type != cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/long
     
 git:
