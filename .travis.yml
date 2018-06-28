@@ -32,7 +32,7 @@ matrix:
     - osx_image: xcode8.3
       env: CI_METRICS=1 PLATFORM_VERSION=10.3 TEST=functional/web
 
-    # smoke test on xcode 9.3 web
+    # smoke test on xcode 9.2 web
     - osx_image: xcode9.2
       env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
 git:

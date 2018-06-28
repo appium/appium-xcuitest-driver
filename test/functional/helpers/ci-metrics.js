@@ -29,7 +29,7 @@ async function sendToSumoLogic (events) {
   return await request(opts);
 }
 
-const getGitRev = _.memoize (
+const getGitRev = _.memoize(
   async function gitDetails () {
     let {stdout} = await exec('git', ['rev-parse', 'HEAD']);
     return (stdout || '').trim();
