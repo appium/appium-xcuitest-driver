@@ -8,6 +8,7 @@ import chai from 'chai';
 import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
+import WebDriverAgent from "../../lib/wda/webdriveragent";
 
 
 chai.should();
@@ -78,7 +79,7 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'startLogCapture').callsFake(_.noop);
       sandbox.stub(driver, 'startSim').callsFake(_.noop);
       sandbox.stub(driver, 'startWdaSession').callsFake(_.noop);
-      sandbox.stub(driver, 'startWda').callsFake(_.noop);
+      sandbox.stub(driver, 'uninstallWDAIfRunningBundleIdIsDifferent').callsFake(_.noop);
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setLocale').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setPreferences').callsFake(_.noop);
@@ -121,6 +122,70 @@ describe('driver commands', function () {
 
       startStub.calledOnce.should.be.true;
       stopStub.calledOnce.should.be.true;
+    });
+  });
+
+  describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
+    let driver;
+    let wda;
+    let wdaStub;
+    let wdaStubUninstall;
+
+    beforeEach(function () {
+      driver = new XCUITestDriver();
+      wda = new WebDriverAgent("1");
+      driver.wda = wda;
+    });
+
+    afterEach(function () {
+      wdaStub.reset();
+      wdaStubUninstall.reset();
+    });
+
+    it('should not call uninstall since bundle id is null', async function () {
+      wdaStub = sinon.stub(driver.wda, 'getRunningBundleId').callsFake(function () {
+        return null;
+      });
+      wdaStubUninstall = sinon.stub(driver.wda, 'uninstall').callsFake(_.noop);
+
+      await driver.uninstallWDAIfRunningBundleIdIsDifferent();
+      wdaStub.calledOnce.should.be.true;
+      wdaStubUninstall.notCalled.should.be.true;
+    });
+
+    it('should call uninstall once since bundle id is not default without updatedWDABundleId capability', async function () {
+      wdaStub = sinon.stub(driver.wda, 'getRunningBundleId').callsFake(function () {
+        return 'com.example.WebDriverAgent';
+      });
+      wdaStubUninstall = sinon.stub(driver.wda, 'uninstall').callsFake(_.noop);
+
+      await driver.uninstallWDAIfRunningBundleIdIsDifferent();
+      wdaStub.calledOnce.should.be.true;
+      wdaStubUninstall.calledOnce.should.be.true;
+    });
+
+    it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
+      driver.opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      wdaStub = sinon.stub(driver.wda, 'getRunningBundleId').callsFake(function fakeFn () {
+        return 'com.example.different.WebDriverAgent';
+      });
+      wdaStubUninstall = sinon.stub(driver.wda, 'uninstall').callsFake(_.noop);
+
+      await driver.uninstallWDAIfRunningBundleIdIsDifferent();
+      wdaStub.calledOnce.should.be.true;
+      wdaStubUninstall.calledOnce.should.be.true;
+    });
+
+    it('should not call uninstall since bundle id is same with updatedWDABundleId capability', async function () {
+      driver.opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      wdaStub = sinon.stub(driver.wda, 'getRunningBundleId').callsFake(function fakeFn () {
+        return 'com.example.WebDriverAgent';
+      });
+      wdaStubUninstall = sinon.stub(driver.wda, 'uninstall').callsFake(_.noop);
+
+      await driver.uninstallWDAIfRunningBundleIdIsDifferent();
+      wdaStub.calledOnce.should.be.true;
+      wdaStubUninstall.notCalled.should.be.true;
     });
   });
 });
