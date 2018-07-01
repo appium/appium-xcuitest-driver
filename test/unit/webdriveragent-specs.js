@@ -84,7 +84,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
     });
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallWDAIfRunningBundleIdIsDifferent();
+    await wda.uninstallIfRunningBundleIdIsDifferent();
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -96,7 +96,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
     });
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallWDAIfRunningBundleIdIsDifferent();
+    await wda.uninstallIfRunningBundleIdIsDifferent();
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
@@ -108,7 +108,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
     });
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallWDAIfRunningBundleIdIsDifferent();
+    await wda.uninstallIfRunningBundleIdIsDifferent();
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -122,13 +122,13 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
 
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallWDAIfRunningBundleIdIsDifferent(updatedWDABundleId);
+    await wda.uninstallIfRunningBundleIdIsDifferent(updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
-  it('should not call uninstall since bundle id is same with updatedWDABundleId capability', async function () {
+  it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
     const updatedWDABundleId = 'com.example.WebDriverAgent';
     wdaStub = sinon.stub(wda, 'getStatus').callsFake(function () {
       return {build: { time: "Jun 24 2018 17:08:21", productBundleIdentifier: 'com.example.WebDriverAgent' }};
@@ -136,7 +136,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
 
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallWDAIfRunningBundleIdIsDifferent(updatedWDABundleId);
+    await wda.uninstallIfRunningBundleIdIsDifferent(updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
