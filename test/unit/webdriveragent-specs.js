@@ -84,7 +84,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
     });
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallIfRunningBundleIdIsDifferent();
+    await wda.setupCaching();
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -96,7 +96,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
     });
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallIfRunningBundleIdIsDifferent();
+    await wda.setupCaching();
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
@@ -108,7 +108,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
     });
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallIfRunningBundleIdIsDifferent();
+    await wda.setupCaching();
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -122,7 +122,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
 
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallIfRunningBundleIdIsDifferent(updatedWDABundleId);
+    await wda.setupCaching(updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -136,7 +136,7 @@ describe('uninstallWDAIfRunningBundleIdIsDifferent()', function () {
 
     wdaStubUninstall = sinon.stub(wda, 'uninstall').callsFake(_.noop);
 
-    await wda.uninstallIfRunningBundleIdIsDifferent(updatedWDABundleId);
+    await wda.setupCaching(updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
