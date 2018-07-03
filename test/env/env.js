@@ -17,25 +17,13 @@ if (!_.isEmpty(process.env.SAUCE_EMUSIM_DEVICE_INDEX) || process.env.SAUCE_EMUSI
 }
 
 if (env.CLOUD) {
-  // Find the latest git commit
+  // Find the latest bundle
   log.info('Getting the sha of the most recent master commit');
+  const res = request('GET', 'https://api.bintray.com/packages/appium-builds/appium/appium/files', {json: true});
+  const {name:bundleName} = JSON.parse(res.getBody('utf8'))[0];
 
-  // (gets the commits synchronously, this is okay because it just does this once before any other scripts are called)
-  const commits = request('GET', 'https://api.github.com/repos/appium/appium/commits', {
-    headers: {
-      'User-Agent': 'node.js'
-    },
-    auth: {
-      user: process.env.GITHUB_USERNAME,
-      pass: process.env.GITHUB_TOKEN,
-    },
-    json: true,
-  }).getBody('utf8');
-  const sha = JSON.parse(commits)[0].sha;
-  log.info(`Most recent commit found is: ${sha}`);
-
-  // Get the URL of the latest
-  const stagingUrl = `https://bintray.com/appium-builds/appium/download_file?file_path=appium-${sha}.zip`;
+  // Get the URL
+  const stagingUrl = `https://bintray.com/appium-builds/appium/download_file?file_path=${bundleName}`;
   log.info(`Using staging URL: ${stagingUrl}`);
   env.APPIUM_STAGING_URL = stagingUrl;
 }

@@ -1,10 +1,11 @@
 import path from 'path';
+import { system } from 'appium-support';
 
 let testAppPath, uiCatalogApp;
 
 // Had to make these two optional dependencies so the tests
 // can still run in linux
-if (process.platform === 'darwin') {
+if (system.isMac()) {
   testAppPath = require('ios-test-app').absolute;
   uiCatalogApp = require('ios-uicatalog');
 }

@@ -14,8 +14,6 @@ if (process.env.CI_METRICS) {
 function getPort () {
   if (SAUCE_EMUSIM || SAUCE_RDC) {
     return 80;
-  } else if (SAUCE_RDC) {
-    // TODO: Add this later
   }
   return 4994;
 }

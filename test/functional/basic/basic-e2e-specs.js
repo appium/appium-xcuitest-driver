@@ -33,6 +33,7 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should return status immediately if another operation is in progress', async function () {
+      // Sauce EmuSim/RDC don't seem to support getting status and running an operation concurrently
       if (process.env.CLOUD) {
         this.skip();
       }
