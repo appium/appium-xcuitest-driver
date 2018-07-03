@@ -120,7 +120,7 @@ git:
 before_install:
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
-  - if [ "$TRAVIS_OS_NAME" != "linux" ]; then
+  - if [ -n "$CLOUD" ]; then
       sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
       git submodule update --init --recursive;
     fi
