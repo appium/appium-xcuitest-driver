@@ -25,7 +25,7 @@ async function spinTitle (driver) {
   return title;
 }
 
-async function spinTitleEquals (driver, expectedTitle, tries = 90, interval = 500) {
+async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 500) {
   await retryInterval(tries, interval, async () => {
     let title = await spinTitle(driver);
     if (title !== expectedTitle) {

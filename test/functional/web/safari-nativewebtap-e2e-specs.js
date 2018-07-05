@@ -6,6 +6,8 @@ import { SAFARI_CAPS } from '../desired';
 import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_SCROLLABLE_PAGE,
          GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
 import { killAllSimulators } from '../helpers/simulator';
+import { retryInterval } from 'asyncbox';
+import wd from 'wd';
 import B from 'bluebird';
 
 
@@ -28,13 +30,22 @@ describe('Safari', function () {
 
   function runTests (deviceName) {
     describe(`coordinate conversion - ${deviceName} -`, function () {
+      let skipped = false;
       before(async function () {
-        driver = await initSession(_.defaults({
-          deviceName,
-          fullReset: true,
-          noReset: false,
-        }, caps));
-        await driver.setImplicitWaitTimeout(5000);
+        skipped = false;
+        try {
+          driver = await initSession(_.defaults({
+            deviceName,
+            fullReset: true,
+            noReset: false,
+          }, caps));
+        } catch (err) {
+          if (err.message.includes('Invalid device type: iPhone X')) {
+            skipped = true;
+            return this.skip();
+          }
+          throw err;
+        }
       });
       after(async function () {
         await deleteSession();
@@ -69,11 +80,31 @@ describe('Safari', function () {
         await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
       });
 
+      it('should be able to tap on a button', async function () {
+        await driver.get(GUINEA_PIG_PAGE);
+
+        (await driver.source()).should.not.include('Your comments: Hello');
+
+        let textArea = await driver.elementByName('comments');
+        await textArea.type('Hello');
+
+        // console.log(await driver.source());
+        let el = await driver.elementByName('submit');
+        await el.click();
+
+        await retryInterval(5, 500, async function () {
+          (await driver.source()).should.include('Your comments: Hello');
+        });
+      });
+
       describe('with tabs -', function () {
         beforeEach(async function () {
           await driver.get(GUINEA_PIG_PAGE);
         });
         before(async function () {
+          if (skipped) {
+            return this.skip();
+          }
           await driver.get(GUINEA_PIG_PAGE);
 
           // open a new tab and go to it
@@ -107,20 +138,30 @@ describe('Safari', function () {
           await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
         });
         it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
+          // this test can be flakey on Travis
+          this.retries(4);
+
           await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
           await driver.execute('mobile: scroll', {direction: 'down'});
 
-          let el = await driver.elementByLinkText('i am a link to page 3');
-          await el.click();
+          // to get the url bar, click at the top
+          const ctx = await driver.currentContext();
+          try {
+            await driver.context('NATIVE_APP');
+            const action = new wd.TouchAction(driver);
+            action.tap({
+              x: 10,
+              y: 5,
+            });
+            await action.perform();
 
-          await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+            // time for things to happen
+            await B.delay(1000);
+          } finally {
+            await driver.context(ctx);
+          }
 
-          // going back will reveal the full url bar
-          await driver.back();
-          await B.delay(500);
-
-          // make sure we get the correct position again
-          el = await driver.elementByLinkText('i am a link to page 3');
+          const el = await driver.elementByLinkText('i am a link to page 3');
           await el.click();
 
           await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
@@ -151,7 +192,10 @@ describe('Safari', function () {
   //                      'iPad (5th generation)',
   //                      'iPad Pro (9.7-inch)', 'iPad Pro (12.9-inch)', 'iPad Pro (12.9-inch) (2nd generation)', 'iPad Pro (10.5-inch)'];
 
-  const deviceNames = ['iPad Simulator', 'iPhone 6'];
+  let deviceNames = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
+  if (process.env.DEVICE_NAME) {
+    deviceNames = [process.env.DEVICE_NAME];
+  }
 
   for (let deviceName of deviceNames) {
     runTests(deviceName);
