@@ -45,11 +45,6 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
 
     describe('touchID enrollment functional tests applied to TouchId sample app', function () {
       beforeEach(async function () {
-        if (process.env.CI) {
-          // ignore tests on Travis, since Appium process does not have access to
-          // system Accessibility there
-          return this.skip();
-        }
         driver = await initSession(TOUCHIDAPP_CAPS);
         await B.delay(2000); // Give the app a couple seconds to open
       });

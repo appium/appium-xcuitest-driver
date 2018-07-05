@@ -3,7 +3,11 @@ import envBase from './env-base';
 import { logger } from 'appium-support';
 
 const platforms = [
+  '10',
   '11',
+  '10.3',
+  '11.3',
+  '11.4'
 ];
 
 const configIndex = process.env.SAUCE_RDC_DEVICE_INDEX || 0;

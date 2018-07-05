@@ -5,7 +5,13 @@ import fs from 'fs';
 import apps from './apps';
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-const DEVICE_NAME = process.env.DEVICE_NAME ? process.env.DEVICE_NAME : 'iPhone 6';
+let DEVICE_NAME = process.env.DEVICE_NAME;
+
+// If it's real device cloud, don't set a device name. Use dynamic device allocation.
+if (!process.env.DEVICE_NAME && !process.env.SAUCE_RDC) {
+  DEVICE_NAME = 'iPhone 6';
+}
+
 const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG;
 const REAL_DEVICE = (function () {
   let rd = parseInt(process.env.REAL_DEVICE, 10);
