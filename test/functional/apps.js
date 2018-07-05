@@ -23,8 +23,8 @@ if (REAL_DEVICE) {
   }
 } else {
   if (CLOUD) {
-    apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp7.1.app.zip';
-    apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog7.1.app.zip';
+    apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp9.4.app.zip';
+    apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
     apps.touchIdApp = null; // TODO: Upload this to appium.io
   } else {
     apps.iosTestApp = testAppPath.iphonesimulator;
