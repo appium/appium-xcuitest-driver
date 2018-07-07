@@ -67,6 +67,8 @@ describe('Safari SSL', function () {
     await driver.get(LOCAL_HTTPS_URL);
     source = await driver.source();
     source.should.include('Arbitrary text');
+
+    await deleteSession();
   });
 
   describe('cookies', function () {
