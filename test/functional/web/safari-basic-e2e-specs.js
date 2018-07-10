@@ -43,7 +43,8 @@ describe('Safari', function () {
       }, SAFARI_CAPS);
       driver = await initSession(caps);
       let title = await spinTitle(driver);
-      title.should.equal('I am a page title');
+      const expectedTitle = 'I am a page title';
+      title.should.equal(expectedTitle);
     });
   });
 

@@ -10,40 +10,122 @@ env:
 matrix:
   include:
     - osx_image: xcode9.3
+      if: type != cron
       env: TEST=unit COVERALLS=1 _FORCE_LOGS=0
 
     - osx_image: xcode9.3
+      if: type != cron
       env: CI_METRICS=1 TEST=functional/basic
 
     - osx_image: xcode9.3
+      if: type != cron
       env: TEST=functional/driver
 
     - osx_image: xcode9.3
+      if: type != cron
       env: CI_METRICS=1 TEST=functional/web
 
     - osx_image: xcode9.3
+      if: type != cron
       env: CI_METRICS=1 TEST=functional/long
 
     # smoke test on xcode 9.3/iOS 11.2 web
     - osx_image: xcode9.3
+      if: type != cron
       env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
 
     # smoke test on xcode 8.3 web
     - osx_image: xcode8.3
+      if: type != cron
       env: CI_METRICS=1 PLATFORM_VERSION=10.3 TEST=functional/web
 
     # smoke test on xcode 9.2 web
     - osx_image: xcode9.2
       env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
+      
+    # smoke test on xcode 9.3 web
+    - osx_image: xcode9.2
+      if: type != cron
+      env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
+
+    # Sauce Emusim tests
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/long
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/long
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/long
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/long
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/long
+
+    # Sauce RDC Tests
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/long
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/basic
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/web
+    - os: linux
+      if: type = cron
+      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/long
+    
 git:
   submodules: false
 before_install:
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
-  - sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules
-  - git submodule update --init --recursive
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
+      git submodule update --init --recursive;
+    fi
 script:
-  - npm run lint && npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i --exit
+  - npm run lint && npm run mocha -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
       mkdir -p ./ci-metrics && ls -la ./ci-metrics;

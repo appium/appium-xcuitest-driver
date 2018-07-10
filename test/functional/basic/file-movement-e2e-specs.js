@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 
 const UICAT_CONTAINER = `@com.example.apple-samplecode.UICatalog`;
 
-if (!process.env.REAL_DEVICE) {
+if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
   describe('XCUITestDriver - file movement', function () {
     this.timeout(MOCHA_TIMEOUT);
 
