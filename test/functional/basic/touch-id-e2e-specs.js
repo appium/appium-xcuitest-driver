@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 const MOCHA_RETRIES = process.env.CI ? 3 : 1;
 
 // touch id tests need to be on sims and need accessibility turned on
-if (!process.env.REAL_DEVICE && !process.env.CI) {
+if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
   describe('touchID() ', function () {
     this.timeout(MOCHA_TIMEOUT * 2);
     this.retries(MOCHA_RETRIES);
@@ -45,11 +45,6 @@ if (!process.env.REAL_DEVICE && !process.env.CI) {
 
     describe('touchID enrollment functional tests applied to TouchId sample app', function () {
       beforeEach(async function () {
-        if (process.env.CI) {
-          // ignore tests on Travis, since Appium process does not have access to
-          // system Accessibility there
-          return this.skip();
-        }
         driver = await initSession(TOUCHIDAPP_CAPS);
         await B.delay(2000); // Give the app a couple seconds to open
       });

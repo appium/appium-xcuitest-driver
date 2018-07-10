@@ -4,14 +4,32 @@ import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
 
+const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD} = process.env;
 
 // if we are tracking CI metrics, patch the wd framework
 if (process.env.CI_METRICS) {
   patchDriverWithEvents();
 }
 
-const HOST = process.env.REAL_DEVICE ? util.localIp() : 'localhost',
-      PORT = 4994;
+function getPort () {
+  if (SAUCE_EMUSIM || SAUCE_RDC) {
+    return 80;
+  }
+  return 4994;
+}
+
+function getHost () {
+  if (SAUCE_RDC) {
+    return 'appium.staging.testobject.org';
+  } else if (SAUCE_EMUSIM) {
+    return 'ondemand.saucelabs.com';
+  }
+
+  return process.env.REAL_DEVICE ? util.localIp() : 'localhost';
+}
+
+const HOST = getHost();
+const PORT = getPort();
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 8 : 4);
 const WDA_PORT = 8200;
 
@@ -19,7 +37,6 @@ let driver, server;
 
 async function initDriver () {
   driver = wd.promiseChainRemote(HOST, PORT);
-
   return driver;
 }
 
@@ -48,7 +65,9 @@ async function initWDA (caps) {
 }
 
 async function initSession (caps) {
-  await initServer();
+  if (!CLOUD) {
+    await initServer();
+  }
   await initDriver();
 
   if (process.env.USE_WEBDRIVERAGENTURL) {

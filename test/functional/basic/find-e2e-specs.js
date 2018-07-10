@@ -10,6 +10,8 @@ import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 chai.should();
 chai.use(chaiAsPromised);
 
+const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 500;
+
 describe('XCUITestDriver - find', function () {
   this.timeout(MOCHA_TIMEOUT);
 
@@ -163,7 +165,7 @@ describe('XCUITestDriver - find', function () {
       });
       it('should search an extended path by child', async function () {
         // pause a moment or the next command gets stuck getting the xpath :(
-        await B.delay(500);
+        await B.delay(TEST_PAUSE_DURATION);
 
         let el;
         try {
@@ -320,7 +322,7 @@ describe('XCUITestDriver - find', function () {
   describe('by predicate string', function () {
     before(async function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
-      await B.delay(500);
+      await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find visible elements', async function () {
       let els = await driver.elements('-ios predicate string', 'visible = 1');
@@ -356,7 +358,7 @@ describe('XCUITestDriver - find', function () {
   describe('by class chain', function () {
     before(async function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
-      await B.delay(500);
+      await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find elements', async function () {
       let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow');

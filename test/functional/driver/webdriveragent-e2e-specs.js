@@ -5,12 +5,15 @@ import { getVersion } from 'appium-xcode';
 import { getSimulator } from 'appium-ios-simulator';
 import { killAllSimulators, shutdownSimulator } from '../helpers/simulator';
 import request from 'request-promise';
-import WebDriverAgent from '../../../lib/wda/webDriverAgent'; // eslint-disable-line import/no-unresolved
 import { SubProcess } from 'teen_process';
 import { PLATFORM_VERSION, DEVICE_NAME } from '../desired';
 import { MOCHA_TIMEOUT } from '../helpers/session';
 import { retryInterval } from 'asyncbox';
 
+let WebDriverAgent;
+if (!process.env.CLOUD) {
+  WebDriverAgent = require('../../../lib/wda/webDriverAgent').WebDriverAgent;
+}
 
 const SIM_DEVICE_NAME = 'webDriverAgentTest';
 
@@ -36,6 +39,11 @@ describe('WebDriverAgent', function () {
 
   let xcodeVersion;
   before(async function () {
+    // Don't do these tests on Sauce Labs
+    if (process.env.CLOUD) {
+      this.skip();
+    }
+
     xcodeVersion = await getVersion(true);
   });
   describe('with fresh sim', function () {
