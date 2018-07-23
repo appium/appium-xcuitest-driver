@@ -42,11 +42,7 @@ matrix:
     # smoke test on xcode 9.2 web
     - osx_image: xcode9.2
       env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
-      
-    # smoke test on xcode 9.3 web
-    - osx_image: xcode9.2
-      if: type != cron
-      env: CI_METRICS=1 PLATFORM_VERSION=11.2 TEST=functional/web
+
 
     # Sauce Emusim tests
     - os: linux
@@ -114,7 +110,7 @@ matrix:
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/long
-    
+
 git:
   submodules: false
 before_install:
