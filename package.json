@@ -107,7 +107,7 @@
     "sinon": "^6.0.0",
     "sync-request": "^6.0.0",
     "unzip": "^0.1.11",
-    "wd": "^1.5.0"
+    "wd": "^1.10.3"
   },
   "greenkeeper": {
     "ignore": []

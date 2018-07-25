@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
+import path from 'path';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
@@ -9,6 +10,9 @@ import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 chai.should();
 chai.use(chaiAsPromised);
+
+const TESTAPP_BUTTON_IMG = path.resolve('.', 'test', 'assets', 'compute-sum-button.png');
+const UICATALOG_LIST_IMG = path.resolve('.', 'test', 'assets', 'buttons-list-element.png');
 
 const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 500;
 
@@ -398,6 +402,55 @@ describe('XCUITestDriver - find', function () {
       let els = await driver.elementsByXPath('//*[@scrollable="true"]');
       els.should.have.length(1);
       await els[0].getAttribute("type").should.eventually.eql("XCUIElementTypeTable");
+    });
+  });
+
+  describe('by image', function () {
+    before(async function () {
+      // use the driver settings that cause the most code paths to be exercised
+      await driver.updateSettings({
+        fixImageTemplateSize: true,
+        autoUpdateImageElementPosition: true,
+      });
+    });
+    it('should find image elements', async function () {
+      let els = await driver.elementsByImageFile(UICATALOG_LIST_IMG);
+      els.should.have.length(1);
+    });
+    it('should find an image element', async function () {
+      let el = await driver.elementByImageFile(UICATALOG_LIST_IMG);
+      el.value.should.match(/appium-image-element/);
+    });
+    it('should not find an image element that is not matched', async function () {
+      await driver.elementByImageFile(TESTAPP_BUTTON_IMG)
+        .should.eventually.be.rejectedWith(/Error response status: 7/);
+    });
+    it('should find anything with a threshold low enough', async function () {
+      const {imageMatchThreshold} = await driver.settings();
+      await driver.updateSettings({imageMatchThreshold: 0});
+      await driver.elementByImageFile(TESTAPP_BUTTON_IMG).should.eventually.exist;
+      await driver.updateSettings({imageMatchThreshold});
+    });
+    it('should be able to get basic element properties', async function () {
+      let el = await driver.elementByImageFile(UICATALOG_LIST_IMG);
+      await el.isDisplayed().should.eventually.be.true;
+      let size = await el.getSize();
+      size.width.should.be.above(0);
+      size.height.should.be.above(0);
+      let loc = await el.getLocation();
+      (loc.x >= 0).should.be.true;
+      (loc.y >= 0).should.be.true;
+      let locInView = await el.getLocationInView();
+      locInView.x.should.eql(loc.x);
+      locInView.y.should.eql(loc.y);
+    });
+    it('should be able to click an element', async function () {
+      let el = await driver.elementByImageFile(UICATALOG_LIST_IMG);
+      await el.click();
+
+      // prove that the click happened by asserting on the view
+      await driver.elementByAccessibilityId("IMAGE")
+        .should.eventually.exist;
     });
   });
 });
