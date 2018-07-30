@@ -27,7 +27,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-base-driver": "^3.0.0",
+    "appium-base-driver": "^3.4.0",
     "appium-ios-driver": "^2.4.3",
     "appium-ios-simulator": "^3.0.0",
     "appium-remote-debugger": "^3.16.0",
