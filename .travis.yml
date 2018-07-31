@@ -16,7 +16,7 @@ matrix:
 
     - osx_image: xcode10
       if: type != cron
-      env: CI_METRICS=1 TEST=functional/basic
+      env: CI_METRICS=1 TEST=functional/basic OPENCV=1
 
     - osx_image: xcode10
       if: type != cron
