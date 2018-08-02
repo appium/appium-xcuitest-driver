@@ -320,7 +320,7 @@ describe('Safari', function () {
 
       // there can be other things logged, so check that the text is there somewhere
       function checkTexts (logs, expectedTexts) {
-        const logText = _.map(logs, (el) => el.text).join(',');
+        const logText = _.map(logs, (el) => el.message).join(',');
         for (let line of expectedTexts) {
           logText.should.include(line);
         }
