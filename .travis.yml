@@ -122,7 +122,7 @@ before_install:
       git submodule update --init --recursive;
     fi
 script:
-  - if [ -n "$OPENCV" ]; then npm install -g opencv4nodejs; fi
+  - if [ -n "$OPENCV" ]; then npm install opencv4nodejs; fi
   - npm run lint && npm run mocha -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
