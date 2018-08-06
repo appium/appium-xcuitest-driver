@@ -50,11 +50,17 @@
     "yargs": "^12.0.1"
   },
   "scripts": {
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "build": "gulp transpile",
     "mocha": "mocha",
     "prepublish": "gulp prepublish",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
+    "e2e-test:basic": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/basic --exit",
+    "e2e-test:driver": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/driver --exit",
+    "e2e-test:long": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/long --exit",
+    "e2e-test:parallel": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/parallel --exit",
+    "e2e-test:web": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/web --exit",
     "watch": "gulp watch",
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
