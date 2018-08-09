@@ -39,6 +39,7 @@
     "bluebird": "^3.1.1",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
+    "minicap": "^0.1.0",
     "node-simctl": "^3.10.0",
     "portscanner": "^2.1.1",
     "request": "^2.79.0",
