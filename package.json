@@ -44,14 +44,12 @@
     "portscanner": "^2.1.1",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
-    "sharp": "^0.20.5",
     "source-map-support": "^0.5.5",
     "teen_process": "^1.7.1",
     "uuid-js": "^0.7.5",
     "ws": "^6.0.0",
     "xmldom": "^0.1.27",
-    "yargs": "^12.0.1",
-    "whammy": "^0.0.1"
+    "yargs": "^12.0.1"
   },
   "scripts": {
     "build": "gulp transpile",
