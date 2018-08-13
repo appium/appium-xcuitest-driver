@@ -40,7 +40,6 @@
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
     "node-simctl": "^3.10.0",
-    "portscanner": "^2.1.1",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "source-map-support": "^0.5.5",
