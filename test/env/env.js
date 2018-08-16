@@ -22,7 +22,7 @@ if (env.CLOUD) {
   const res = request('GET', 'https://api.bintray.com/packages/appium-builds/appium/appium/files', {json: true});
   const fileInfoArray = JSON.parse(res.getBody('utf8'));
   const latestFile = fileInfoArray.sort((fileInfo1, fileInfo2) => (
-    Math.sign(+new Date(fileInfo2.created), +new Date(fileInfo1.created))
+    Math.sign(+new Date(fileInfo2.created) - (+new Date(fileInfo1.created)))
   ))[0];
   const {name:bundleName} = latestFile;
 
