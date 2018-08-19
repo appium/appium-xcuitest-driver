@@ -5,7 +5,6 @@ import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
 import chai from 'chai';
-import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
 
