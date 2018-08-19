@@ -12,12 +12,6 @@
 *Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 
 
-## Missing functionality
-
-* Auto accepting/dismissing alerts (https://github.com/appium/appium/issues/6863)
-* Touch Actions support is limited. Only basic actions, like drag-n-drop, long tap, double tap and tap are supported. Gestures, which are natively supported by XCTest, are implemented via the corresponding ["mobile:" endpoints](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios-xctest-mobile-gestures.md)
-
-
 ## Known issues
 
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
