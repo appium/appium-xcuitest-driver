@@ -96,14 +96,6 @@ describe('driver commands', function () {
       const resCaps = await driver.createSession(caps);
       resCaps[1].javascriptEnabled.should.be.true;
     });
-    it('should warn', async function () {
-      const warnStub = sinon.stub(log, 'warn').callsFake(async function () {});
-      await driver.createSession(_.defaults({autoAcceptAlerts: true}, caps));
-      warnStub.calledOnce.should.be.true;
-      _.filter(warnStub.args, (arg) => arg[0].indexOf('autoAcceptAlerts') !== -1)
-        .should.have.length(1);
-      warnStub.restore();
-    });
   });
 
   describe('startIWDP()', function () {
