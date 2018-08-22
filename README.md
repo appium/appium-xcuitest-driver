@@ -159,6 +159,7 @@ Differences noted here
 |`keepKeyChains`|Set the capability to `true` in order to preserve Simulator keychains folder after full reset. This feature has no effect on real devices. Defaults to `false`|e.g. `true`|
 |`keychainsExcludePatterns`|This capability accepts comma-separated path patterns, which are going to be excluded from keychains restore while full reset is being performed on Simulator. It might be useful if you want to exclude only particular keychain types from being restored, like the applications keychain. This feature has no effect on real devices.|e.g. `*keychain*.db*` to exclude applications keychain from being restored|
 |`realDeviceScreenshotter`|Name of the alternative screenshot system to use for real devices. Defaults to the XCUITest screenshot functionality through WebDriverAgent. Possible value is `idevicescreenshot` to use the screenshot program from libimobiledevice.|e.g., `idevicescreenshot`|
+|`mjpegServerPort`|The port number on which WDA broadcasts screenshots stream encoded into MJPEG format from the device under test. It might be necessary to change this value if the default port is busy because of other tests running in parallel. Default value: `9100`|e.g. `12000`|
 
 ## Development<a id="development"></a>
 
