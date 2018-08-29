@@ -69,7 +69,7 @@ describe('setupCaching()', function () {
   let wda;
   let wdaStub;
   let wdaStubUninstall;
-  const getHashStub = sinon.stub(utils, 'getWDACommitHash');
+  const getTimestampStub = sinon.stub(utils, 'getWDAUpgradeTimestamp');
 
   beforeEach(function () {
     wda = new WebDriverAgent("1");
@@ -78,7 +78,7 @@ describe('setupCaching()', function () {
   });
 
   afterEach(function () {
-    for (const stub of [wdaStub, wdaStubUninstall, getHashStub]) {
+    for (const stub of [wdaStub, wdaStubUninstall, getTimestampStub]) {
       if (stub) {
         stub.reset();
       }
@@ -151,9 +151,9 @@ describe('setupCaching()', function () {
 
   it('should call uninstall if current revision differs from the bundled one', async function () {
     wdaStub.callsFake(function () {
-      return {build: { commitHash: '1' }};
+      return {build: { upgraded_at: '1' }};
     });
-    getHashStub.callsFake(() => '2');
+    getTimestampStub.callsFake(() => '2');
     wdaStubUninstall.callsFake(_.noop);
 
     await wda.setupCaching('something');
@@ -163,9 +163,9 @@ describe('setupCaching()', function () {
 
   it('should not call uninstall if current revision is the same as the bundled one', async function () {
     wdaStub.callsFake(function () {
-      return {build: { commitHash: '1' }};
+      return {build: { upgraded_at: '1' }};
     });
-    getHashStub.callsFake(() => '1');
+    getTimestampStub.callsFake(() => '1');
     wdaStubUninstall.callsFake(_.noop);
 
     await wda.setupCaching('something');
@@ -177,7 +177,7 @@ describe('setupCaching()', function () {
     wdaStub.callsFake(function () {
       return {build: {}};
     });
-    getHashStub.callsFake(() => '1');
+    getTimestampStub.callsFake(() => '1');
     wdaStubUninstall.callsFake(_.noop);
 
     await wda.setupCaching('something');
@@ -187,9 +187,9 @@ describe('setupCaching()', function () {
 
   it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
     wdaStub.callsFake(function () {
-      return {build: { commitHash: '1' }};
+      return {build: { upgraded_at: '1' }};
     });
-    getHashStub.callsFake(() => null);
+    getTimestampStub.callsFake(() => null);
     wdaStubUninstall.callsFake(_.noop);
 
     await wda.setupCaching('something');
