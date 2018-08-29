@@ -33,7 +33,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
       await killAllSimulators();
     });
 
-    async function doEnrollment (toggle=true) {
+    async function doEnrollment (toggle = true) {
       try {
         await driver.toggleTouchIdEnrollment(toggle);
       } catch (e) {
@@ -57,9 +57,8 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         }
       });
 
-      it('should accept matching fingerprint if touchID is enrolled or it should not be supported if phone doesn\'t support touchID', async function () {
+      it('should accept matching fingerprint if touchID is enrolled or it should not be supported if phone does not support touchID', async function () {
         if (await doEnrollment()) {
-          await driver.toggleTouchIdEnrollment(true);
           let authenticateButton = await driver.elementByName(' Authenticate with Touch ID');
           await authenticateButton.click();
           await driver.touchId(true);
@@ -71,10 +70,8 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         }
       });
 
-      it('should reject not matching fingerprint if touchID is enrolled or it should not be supported if phone doesn\'t support touchID', async function () {
+      it('should reject not matching fingerprint if touchID is enrolled or it should not be supported if phone does not support touchID', async function () {
         if (await doEnrollment()) {
-          process.exit();
-          await driver.toggleTouchIdEnrollment(true);
           let authenticateButton = await driver.elementByName(' Authenticate with Touch ID');
           await authenticateButton.click();
           await driver.touchId(false);
