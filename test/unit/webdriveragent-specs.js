@@ -151,7 +151,7 @@ describe('setupCaching()', function () {
 
   it('should call uninstall if current revision differs from the bundled one', async function () {
     wdaStub.callsFake(function () {
-      return {build: { upgraded_at: '1' }};
+      return {build: { upgradedAt: '1' }};
     });
     getTimestampStub.callsFake(() => '2');
     wdaStubUninstall.callsFake(_.noop);
@@ -163,7 +163,7 @@ describe('setupCaching()', function () {
 
   it('should not call uninstall if current revision is the same as the bundled one', async function () {
     wdaStub.callsFake(function () {
-      return {build: { upgraded_at: '1' }};
+      return {build: { upgradedAt: '1' }};
     });
     getTimestampStub.callsFake(() => '1');
     wdaStubUninstall.callsFake(_.noop);
@@ -187,7 +187,7 @@ describe('setupCaching()', function () {
 
   it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
     wdaStub.callsFake(function () {
-      return {build: { upgraded_at: '1' }};
+      return {build: { upgradedAt: '1' }};
     });
     getTimestampStub.callsFake(() => null);
     wdaStubUninstall.callsFake(_.noop);
