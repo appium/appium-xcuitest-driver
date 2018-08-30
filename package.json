@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.87.0",
+  "version": "2.92.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -50,11 +50,17 @@
     "yargs": "^12.0.1"
   },
   "scripts": {
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "build": "gulp transpile",
     "mocha": "mocha",
     "prepublish": "gulp prepublish",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
+    "e2e-test:basic": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/basic --exit",
+    "e2e-test:driver": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/driver --exit",
+    "e2e-test:long": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/long --exit",
+    "e2e-test:parallel": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/parallel --exit",
+    "e2e-test:web": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/web --exit",
     "watch": "gulp watch",
     "coverage": "gulp coveralls",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
@@ -81,6 +87,8 @@
     "eslint-plugin-promise": "^3.3.1",
     "glob": "^7.1.0",
     "gulp": "^3.8.11",
+    "ios-test-app": "^2.5.7",
+    "ios-uicatalog": "^1.0.4",
     "mocha": "^5.1.1",
     "moment": "^2.22.2",
     "pem": "^1.8.3",
@@ -91,10 +99,6 @@
     "through2": "^2.0.0",
     "unzip": "^0.1.11",
     "wd": "^1.10.3"
-  },
-  "optionalDependencies": {
-    "ios-test-app": "^2.5.7",
-    "ios-uicatalog": "^1.0.4"
   },
   "greenkeeper": {
     "ignore": [
