@@ -5,7 +5,6 @@ import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
 import chai from 'chai';
-import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
 
@@ -95,14 +94,6 @@ describe('driver commands', function () {
       this.timeout(MOCHA_LONG_TIMEOUT);
       const resCaps = await driver.createSession(caps);
       resCaps[1].javascriptEnabled.should.be.true;
-    });
-    it('should warn', async function () {
-      const warnStub = sinon.stub(log, 'warn').callsFake(async function () {});
-      await driver.createSession(_.defaults({autoAcceptAlerts: true}, caps));
-      warnStub.calledOnce.should.be.true;
-      _.filter(warnStub.args, (arg) => arg[0].indexOf('autoAcceptAlerts') !== -1)
-        .should.have.length(1);
-      warnStub.restore();
     });
   });
 
