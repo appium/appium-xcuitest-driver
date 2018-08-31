@@ -50,7 +50,7 @@ const GENERIC_CAPS = {
   clearSystemFiles: true,
   showXcodeLog: SHOW_XCODE_LOG,
   'appium-version': {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
-  // TODO: If it's SAUCE_EMUSIM or SAUCE_RDC add the appium staging URL
+  // TODO: If it's SAUCE_RDC add the appium staging URL
 };
 
 // on Travis, when load is high, the app often fails to build,
