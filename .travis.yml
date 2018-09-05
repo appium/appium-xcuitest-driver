@@ -127,6 +127,7 @@ install:
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised wd unzip mocha sync-request;
+      npm run build;
     fi
 script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
