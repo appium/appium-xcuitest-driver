@@ -79,6 +79,7 @@
     "babel-eslint": "^7.1.1",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "chai-subset": "^1.6.0",
     "eslint": "^3.18.0",
     "eslint-config-appium": "^2.0.1",
     "eslint-plugin-babel": "^3.3.0",

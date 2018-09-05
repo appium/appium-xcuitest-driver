@@ -49,7 +49,8 @@ const GENERIC_CAPS = {
   maxTypingFrequency: 30,
   clearSystemFiles: true,
   showXcodeLog: SHOW_XCODE_LOG,
-  'appium-version': {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
+  [process.env.APPIUM_BUNDLE_CAP]: {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
+  //'appium-version': {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
   // TODO: If it's SAUCE_RDC add the appium staging URL
 };
 
