@@ -130,12 +130,11 @@ install:
       npm run build;
     fi
 script:
-  - if [ -z "$CLOUD" ]; then
-      npm run lint;
-      npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i --exit
-    fi
   - if [ -n "$CLOUD" ]; then
       npm run mocha-parallel-tests -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
+    else
+      npm run lint;
+      npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i --exit
     fi
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
