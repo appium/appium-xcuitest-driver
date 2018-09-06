@@ -126,14 +126,17 @@ install:
       npm install;
     else
       npm install --production;
-      npm install --no-save gulp appium-gulp-plugins chai chai-as-promised wd unzip mocha sync-request;
+      npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha sync-request;
       npm run build;
     fi
 script:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+  - if [ -z "$CLOUD" ]; then
       npm run lint;
+      npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i --exit
     fi
-  - npm run mocha -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
+  - if [ -n "$CLOUD" ]; then
+      npm run mocha-parallel-tests -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit
+    fi
   - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
       mkdir -p ./ci-metrics && ls -la ./ci-metrics;
