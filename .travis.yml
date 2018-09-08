@@ -141,7 +141,7 @@ install:
       npm install;
     else
       npm install --production;
-      npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha sync-request;
+      npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests sync-request;
       npm run build;
     fi
 script:
