@@ -76,6 +76,10 @@ const UICATALOG_SIM_CAPS = _.defaults({
 }, GENERIC_CAPS);
 delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests that use this
 
+const SETTINGS_CAPS = _.defaults({
+  bundleId: "com.apple.Preferences"
+}, GENERIC_CAPS);
+
 const SAFARI_CAPS = _.defaults({
   browserName: 'Safari',
   testobject_api_key: process.env.SAUCE_RDC_WEB_ACCESS_KEY,
@@ -98,5 +102,5 @@ const W3C_CAPS = {
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS
 };
