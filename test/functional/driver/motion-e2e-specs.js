@@ -49,26 +49,25 @@ describe('ReduceMotion', function () {
   if (!process.env.REAL_DEVICE) {
     it('should enable reduce motion', async function () {
       driver = await initSession(caps);
-      let el = await driver.elementsByXPath('//XCUIElementTypeCell[@name="General"]');
-      await el[0].click();
-      el = await driver.elementsByXPath('//XCUIElementTypeCell[@name="Accessibility"]');
-      await el[0].click();
-      el = await driver.elementsByXPath('//XCUIElementTypeCell[@name="Reduce Motion"]');
-      await el[0].click();
-      el = await driver.elementsByXPath('//XCUIElementTypeSwitch[@name="Reduce Motion"]');
-      (await el[0].getAttribute('value')).should.eql('1');
+      let el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeCell' AND name == 'General'");
+      await el.click();
+      el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeCell' AND name == 'Accessibility'");
+      await el.click();
+      el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeCell' AND name == 'Reduce Motion'");
+      await el.click();
+      el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'");
+      (await el.getAttribute('value')).should.eql('1');
     });
     it('should disable reduce motion', async function () {
-      caps.reduceMotion = false;
       driver = await initSession(caps);
-      let el = await driver.elementsByXPath('//XCUIElementTypeCell[@name="General"]');
-      await el[0].click();
-      el = await driver.elementsByXPath('//XCUIElementTypeCell[@name="Accessibility"]');
-      await el[0].click();
-      el = await driver.elementsByXPath('//XCUIElementTypeCell[@name="Reduce Motion"]');
-      await el[0].click();
-      el = await driver.elementsByXPath('//XCUIElementTypeSwitch[@name="Reduce Motion"]');
-      (await el[0].getAttribute('value')).should.eql('0');
+      let el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeCell' AND name == 'General'");
+      await el.click();
+      el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeCell' AND name == 'Accessibility'");
+      await el.click();
+      el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeCell' AND name == 'Reduce Motion'");
+      await el.click();
+      el = await driver.element('-ios predicate string', "type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'");
+      (await el.getAttribute('value')).should.eql('1');
     });
   }
 });
