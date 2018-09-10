@@ -155,6 +155,7 @@ Differences noted here
 |`realDeviceScreenshotter`|Name of the alternative screenshot system to use for real devices. Defaults to the XCUITest screenshot functionality through WebDriverAgent. Possible value is `idevicescreenshot` to use the screenshot program from libimobiledevice.|e.g., `idevicescreenshot`|
 |`mjpegServerPort`|The port number on which WDA broadcasts screenshots stream encoded into MJPEG format from the device under test. It might be necessary to change this value if the default port is busy because of other tests running in parallel. Default value: `9100`|e.g. `12000`|
 |`waitForQuiescence`| It allows to turn on/off waiting for application quiescence in WebDriverAgent, while performing queries. The default value is `true`. You can avoid [this kind of issues](https://github.com/appium/appium/issues/11132) if you turn it off. |e.g `false`|
+|`reduceMotion`| It allows to turn on/off reduce motion accestibility settings. Settings reduceMotion on helps to reduce flakyness on tests. Only fon simulators | e.g `true` |
 
 ## Development<a id="development"></a>
 
