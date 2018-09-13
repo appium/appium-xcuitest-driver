@@ -8,6 +8,8 @@
 [![Build Status](https://api.travis-ci.org/appium/appium-xcuitest-driver.png?branch=master)](https://travis-ci.org/appium/appium-xcuitest-driver)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-xcuitest-driver/badge.svg?branch=master)](https://coveralls.io/r/appium/appium-xcuitest-driver?branch=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium-xcuitest-driver.svg)](https://greenkeeper.io/)
+[![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/appium/appium-xcuitest-driver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/appium/appium-xcuitest-driver/context:javascript)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/appium/appium-xcuitest-driver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/appium/appium-xcuitest-driver/alerts)
 
 *Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 
