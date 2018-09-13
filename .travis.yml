@@ -44,6 +44,11 @@ matrix:
       if: type != cron
       env: CI_METRICS=1 PLATFORM_VERSION=11.3 TEST=functional/web
 
+    # smoke test on xcode 10.0 web
+    - osx_image: xcode10
+      if: type != cron
+      env: CI_METRICS=1 PLATFORM_VERSION=12.0 TEST=functional/web
+
 
     # Sauce Emusim tests
     - os: linux
@@ -52,7 +57,7 @@ matrix:
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/web
-      addons:
+      addons: &sc
         sauce_connect:
           no_ssl_bump_domains: localhost
     - os: linux
@@ -65,8 +70,7 @@ matrix:
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/web
       addons:
-        sauce_connect:
-          no_ssl_bump_domains: localhost
+        *sc
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/long
@@ -77,8 +81,7 @@ matrix:
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
       addons:
-        sauce_connect:
-          no_ssl_bump_domains: localhost
+        *sc
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/long
@@ -89,8 +92,7 @@ matrix:
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/web
       addons:
-        sauce_connect:
-          no_ssl_bump_domains: localhost
+        *sc
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/long
@@ -101,8 +103,7 @@ matrix:
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/web
       addons:
-        sauce_connect:
-          no_ssl_bump_domains: localhost
+        *sc
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/long
