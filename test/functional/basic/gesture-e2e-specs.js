@@ -233,18 +233,24 @@ describe('XCUITestDriver - gestures', function () {
         await driver.elementByAccessibilityId('ControlCenterView')
           .should.eventually.be.rejectedWith(/An element could not be located/);
 
+        let x, y0, y1;
         const window = await driver.elementByClassName('XCUIElementTypeWindow');
         const {width, height} = await window.getSize();
+        try {
+          // Try locating the 'Cellular' element (which can be pulled down)
+          const cellularEl = await driver.elementByAccessibilityId('Cellular');
+          const location = await cellularEl.getLocation();
+          x = location.x;
+          y0 = location.y;
+        } catch (e) {
+          // Otherwise, pull down the middle of the top of the Simulator
+          x = width / 2;
+          y0 = height - 5;
+        }
+        y1 = height / 2;
 
         let action = new wd.TouchAction(driver);
-        action.press({
-          x: width / 2,
-          y: height - 5,
-        }).wait(500)
-        .moveTo({
-          x: width / 2,
-          y: height / 2,
-        });
+        action.press({x, y: y0}).wait(500).moveTo({x, y: y1});
         await action.perform();
 
         // Control Center ought to be visible now
