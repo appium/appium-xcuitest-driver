@@ -78,7 +78,7 @@ matrix:
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/basic
     - os: linux
-      if: type = cron
+      if: type != cron # TODO: Revert this back to cron before doing pull request
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
       addons:
         *sc
@@ -138,6 +138,8 @@ before_install:
       git submodule update --init --recursive;
     fi
 install:
+  - npm --version
+  - node --version
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       npm install;
     else
@@ -147,7 +149,7 @@ install:
     fi
 script:
   - if [ -n "$CLOUD" ]; then
-      npm run mocha -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
+      mocha-parallel-tests -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
     else
       npm run lint;
       npm run mocha -- -t 480000 --recursive build/test/$TEST -g @skip-ci -i --exit;
