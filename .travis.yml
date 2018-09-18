@@ -78,7 +78,7 @@ matrix:
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/basic
     - os: linux
-      if: type != cron # TODO: Revert this back to cron before doing pull request
+      if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
       addons:
         *sc
