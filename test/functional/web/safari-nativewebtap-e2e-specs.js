@@ -150,8 +150,7 @@ describe('Safari', function () {
 
             // get the reload button, as multi-element find to bypass
             // the implicit wait
-            const els = driver.elementsByAccessibilityId('ReloadButton');
-            if (els.length === 0) {
+            if (_.isEmpty(await driver.elementsByAccessibilityId('ReloadButton'))) {
               // when there is no reload button, the URL bar is minimized
               // so tap on it to bring it up
               await driver.elementByAccessibilityId('URL').click();
