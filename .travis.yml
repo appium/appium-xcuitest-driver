@@ -143,6 +143,9 @@ install:
   - node --version
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       npm install;
+
+      # for mjpeg stuff
+      - npm install --no-save mjpeg-consumer
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests sync-request;
