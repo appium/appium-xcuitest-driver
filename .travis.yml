@@ -140,7 +140,7 @@ install:
       npm install;
 
       # for mjpeg stuff
-      - npm install --no-save mjpeg-consumer
+      npm install --no-save mjpeg-consumer
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests sync-request;
