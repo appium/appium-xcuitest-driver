@@ -35,7 +35,7 @@ const WDA_PORT = 8200;
 
 let driver, server;
 
-async function initDriver () {
+async function initDriver () { // eslint-disable-line require-await
   driver = wd.promiseChainRemote(HOST, PORT);
   return driver;
 }

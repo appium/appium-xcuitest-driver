@@ -26,7 +26,15 @@
   "directories": {
     "lib": "lib"
   },
+  "files": [
+    "index.js",
+    "lib",
+    "build/index.js",
+    "build/lib",
+    "WebDriverAgent"
+  ],
   "dependencies": {
+    "@babel/runtime": "^7.0.0",
     "appium-base-driver": "^3.0.0",
     "appium-ios-driver": "^2.4.3",
     "appium-ios-simulator": "^3.0.0",
@@ -35,7 +43,6 @@
     "appium-xcode": "^3.2.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
-    "babel-runtime": "=5.8.24",
     "bluebird": "^3.1.1",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
@@ -53,7 +60,7 @@
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "build": "gulp transpile",
     "mocha": "mocha",
-    "prepublish": "gulp prepublish",
+    "prepare": "gulp prepublish",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
     "e2e-test:basic": "npm run build && _FORCE_LOGS=1 npm run mocha -- -t 0 -R spec build/test/functional/basic --exit",
@@ -73,21 +80,21 @@
     "precommit-test"
   ],
   "devDependencies": {
+    "ajv": "^6.5.3",
     "appium-event-parser": "^1.0.0",
-    "appium-gulp-plugins": "^2.2.0",
+    "appium-gulp-plugins": "^3.1.0",
     "appium-test-support": "^1.0.0",
-    "babel-eslint": "^7.1.1",
+    "babel-eslint": "^10.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
-    "eslint": "^3.18.0",
-    "eslint-config-appium": "^2.0.1",
-    "eslint-plugin-babel": "^3.3.0",
+    "eslint": "^5.2.0",
+    "eslint-config-appium": "^3.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-mocha": "^4.7.0",
-    "eslint-plugin-promise": "^3.3.1",
+    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-promise": "^4.0.0",
     "glob": "^7.1.0",
-    "gulp": "^3.8.11",
+    "gulp": "^4.0.0",
     "ios-test-app": "^2.5.7",
     "ios-uicatalog": "^1.0.4",
     "mocha": "^5.1.1",
@@ -98,21 +105,10 @@
     "pre-commit": "^1.1.3",
     "sinon": "^6.0.0",
     "sync-request": "^6.0.0",
-    "through2": "^2.0.0",
     "unzip": "^0.1.11",
     "wd": "^1.5.0"
   },
   "greenkeeper": {
-    "ignore": [
-      "babel-eslint",
-      "babel-preset-env",
-      "eslint",
-      "eslint-plugin-babel",
-      "eslint-plugin-import",
-      "eslint-plugin-mocha",
-      "eslint-plugin-promise",
-      "gulp",
-      "babel-runtime"
-    ]
+    "ignore": []
   }
 }

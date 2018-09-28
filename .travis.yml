@@ -138,9 +138,7 @@ install:
   - node --version
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       npm install;
-
-      # for mjpeg stuff
-      - npm install --no-save mjpeg-consumer
+      npm install --no-save mjpeg-consumer;
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests sync-request;
@@ -153,7 +151,7 @@ script:
       npm run lint;
       npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
     fi
-  - if [ -n "$COVERALLS" ]; then npm run coverage; fi
+  # - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
       mkdir -p ./ci-metrics && ls -la ./ci-metrics;
       npm install -g appium-event-parser;

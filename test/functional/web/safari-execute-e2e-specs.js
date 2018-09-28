@@ -21,7 +21,7 @@ describe('safari - execute -', function () {
 
   let driver;
 
-  async function runTests (secure = false) {
+  async function runTests (secure = false) { // eslint-disable-line require-await
     describe('mobile: x methods', function () {
       it('should run in native context', async function () {
         await driver.execute('mobile: scroll', {direction: 'down'}).should.not.be.rejected;

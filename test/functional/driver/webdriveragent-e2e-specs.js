@@ -89,7 +89,7 @@ describe('WebDriverAgent', function () {
 
         let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
-        agent.xcodebuild.createSubProcess = async function () {
+        agent.xcodebuild.createSubProcess = async function () { // eslint-disable-line require-await
           let args = [
             '-workspace',
             `${this.agentPath}dfgs`,
