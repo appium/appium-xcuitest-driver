@@ -74,7 +74,7 @@
   ],
   "devDependencies": {
     "appium-event-parser": "^1.0.0",
-    "appium-gulp-plugins": "^2.2.0",
+    "appium-gulp-plugins": "^3.0.0",
     "appium-test-support": "^1.0.0",
     "babel-eslint": "^7.1.1",
     "chai": "^4.1.2",
