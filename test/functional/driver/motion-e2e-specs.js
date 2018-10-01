@@ -69,7 +69,7 @@ describe('ReduceMotion', function () {
       el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Reduce Motion'");
       await el.click();
       el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'");
-      (await el.getAttribute('value')).should.eql('1');
+      (await el.getAttribute('value')).should.eql('0');
     });
   }
 });
