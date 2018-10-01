@@ -20,12 +20,20 @@ if (env.CLOUD) {
   // Find the latest bundle
   log.info('Getting the sha of the most recent master commit');
   const res = request('GET', 'https://api.bintray.com/packages/appium-builds/appium/appium/files', {json: true});
-  const {name:bundleName} = JSON.parse(res.getBody('utf8'))[0];
+  const fileInfoArray = JSON.parse(res.getBody('utf8'));
+  const latestFile = fileInfoArray.sort((fileInfo1, fileInfo2) => (
+    Math.sign(+new Date(fileInfo2.created) - (+new Date(fileInfo1.created)))
+  ))[0];
+  const {name:bundleName} = latestFile;
 
   // Get the URL
   const stagingUrl = `https://bintray.com/appium-builds/appium/download_file?file_path=${bundleName}`;
   log.info(`Using staging URL: ${stagingUrl}`);
   env.APPIUM_STAGING_URL = stagingUrl;
+
+  // Get the SHA
+  const sha = bundleName.match(/appium-([\w\W]*?).zip/)[1];
+  env.APPIUM_SHA = sha;
 }
 
 Object.assign(process.env, env);

@@ -5,7 +5,7 @@ let testAppPath, uiCatalogApp;
 
 // Had to make these two optional dependencies so the tests
 // can still run in linux
-if (system.isMac()) {
+if (system.isMac() && !process.env.CLOUD) {
   testAppPath = require('ios-test-app').absolute;
   uiCatalogApp = require('ios-uicatalog');
 }

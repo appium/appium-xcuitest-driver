@@ -9,7 +9,6 @@ import { doesIncludeCookie, doesNotIncludeCookie,
 import { SAFARI_CAPS } from '../desired';
 import https from 'https';
 
-
 const pem = B.promisifyAll(require('pem'));
 
 chai.should();
@@ -32,9 +31,13 @@ describe('Safari SSL', function () {
 
   let sslServer, driver;
   before(async function () {
-    if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
+    if (process.env.REAL_DEVICE) {
+      return this.skip();
+    }
 
-    await killAllSimulators();
+    if (!process.env.CLOUD) {
+      await killAllSimulators();
+    }
 
     // Create a random pem certificate
     let privateKey = await pem.createPrivateKeyAsync();
@@ -63,10 +66,13 @@ describe('Safari SSL', function () {
     await B.delay(1000);
 
     // Now do another session using the same cert to verify that it still works
-    await driver.init(caps);
-    await driver.get(LOCAL_HTTPS_URL);
-    source = await driver.source();
-    source.should.include('Arbitrary text');
+    // (Don't do it on CLOUD. Restarting is too slow)
+    if (!process.env.CLOUD) {
+      await driver.init(caps);
+      await driver.get(LOCAL_HTTPS_URL);
+      source = await driver.source();
+      source.should.include('Arbitrary text');
+    }
 
     await deleteSession();
   });

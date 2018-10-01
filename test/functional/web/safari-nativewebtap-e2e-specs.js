@@ -7,7 +7,6 @@ import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_SCROLLABLE_PAGE,
          GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
 import { killAllSimulators } from '../helpers/simulator';
 import { retryInterval } from 'asyncbox';
-import wd from 'wd';
 import B from 'bluebird';
 
 
@@ -19,6 +18,9 @@ const caps = _.defaults({
   nativeWebTap: true,
 }, SAFARI_CAPS);
 const spinRetries = 5;
+
+const PAGE_3_LINK = 'i am a link to page 3';
+const PAGE_3_TITLE = 'Another Page: page 3';
 
 describe('Safari', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
@@ -40,7 +42,7 @@ describe('Safari', function () {
             noReset: false,
           }, caps));
         } catch (err) {
-          if (err.message.includes('Invalid device type: iPhone X')) {
+          if (err.message.includes('Invalid device type')) {
             skipped = true;
             return this.skip();
           }
@@ -55,29 +57,29 @@ describe('Safari', function () {
       it('should be able to tap on an element', async function () {
         await driver.get(GUINEA_PIG_PAGE);
 
-        let el = await driver.elementByLinkText('i am a link to page 3');
+        let el = await driver.elementByLinkText(PAGE_3_LINK);
         await el.click();
 
-        await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+        await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
       });
 
       it('should be able to tap on an element when the app banner is up', async function () {
         await driver.get(GUINEA_PIG_APP_BANNER_PAGE);
 
-        let el = await driver.elementByLinkText('i am a link to page 3');
+        let el = await driver.elementByLinkText(PAGE_3_LINK);
         await el.click();
 
-        await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+        await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
       });
 
       it('should be able to tap on an element after scrolling', async function () {
         await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
         await driver.execute('mobile: scroll', {direction: 'down'});
 
-        let el = await driver.elementByLinkText('i am a link to page 3');
+        let el = await driver.elementByLinkText(PAGE_3_LINK);
         await el.click();
 
-        await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+        await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
       });
 
       it('should be able to tap on a button', async function () {
@@ -115,56 +117,55 @@ describe('Safari', function () {
         it('should be able to tap on an element', async function () {
           await driver.get(GUINEA_PIG_PAGE);
 
-          let el = await driver.elementByLinkText('i am a link to page 3');
+          let el = await driver.elementByLinkText(PAGE_3_LINK);
           await el.click();
 
-          await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+          await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
 
           await driver.back();
 
           // try again, just to make sure
-          el = await driver.elementByLinkText('i am a link to page 3');
+          el = await driver.elementByLinkText(PAGE_3_LINK);
           await el.click();
 
-          await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+          await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
         });
         it('should be able to tap on an element after scrolling', async function () {
           await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
           await driver.execute('mobile: scroll', {direction: 'down'});
 
-          let el = await driver.elementByLinkText('i am a link to page 3');
+          let el = await driver.elementByLinkText(PAGE_3_LINK);
           await el.click();
 
-          await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+          await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
         });
         it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
-          // this test can be flakey on Travis
-          this.retries(4);
-
           await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
           await driver.execute('mobile: scroll', {direction: 'down'});
 
-          // to get the url bar, click at the top
+          // to get the url bar, click on the URL bar
           const ctx = await driver.currentContext();
           try {
             await driver.context('NATIVE_APP');
-            const action = new wd.TouchAction(driver);
-            action.tap({
-              x: 10,
-              y: 5,
-            });
-            await action.perform();
+
+            // get the reload button, as multi-element find to bypass
+            // the implicit wait
+            if (_.isEmpty(await driver.elementsByAccessibilityId('ReloadButton'))) {
+              // when there is no reload button, the URL bar is minimized
+              // so tap on it to bring it up
+              await driver.elementByAccessibilityId('URL').click();
+            }
 
             // time for things to happen
-            await B.delay(1000);
+            await B.delay(500);
           } finally {
             await driver.context(ctx);
           }
 
-          const el = await driver.elementByLinkText('i am a link to page 3');
+          const el = await driver.elementByLinkText(PAGE_3_LINK);
           await el.click();
 
-          await spinTitleEquals(driver, 'Another Page: page 3', spinRetries);
+          await spinTitleEquals(driver, PAGE_3_TITLE, spinRetries);
         });
       });
     });
@@ -192,12 +193,12 @@ describe('Safari', function () {
   //                      'iPad (5th generation)',
   //                      'iPad Pro (9.7-inch)', 'iPad Pro (12.9-inch)', 'iPad Pro (12.9-inch) (2nd generation)', 'iPad Pro (10.5-inch)'];
 
-  let deviceNames = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
+  let deviceNames = ['iPad Simulator', 'iPhone 6', 'iPhone X', 'iPhone XS Max'];
   if (process.env.DEVICE_NAME) {
     deviceNames = [process.env.DEVICE_NAME];
   }
 
-  for (let deviceName of deviceNames) {
+  for (const deviceName of deviceNames) {
     runTests(deviceName);
   }
 });
