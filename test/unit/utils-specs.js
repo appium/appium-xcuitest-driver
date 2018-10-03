@@ -138,22 +138,22 @@ describe('utils', function () {
     const XCODE_9_1 = {major: 9, minor: 1};
     const XCODE_10 = {major: 10, minor: 0};
 
-    it('should set the correct iPad simulator generic device', async function () {
+    it('should set the correct iPad simulator generic device', function () {
       const ipadDeviceName = 'iPad Simulator';
-      let deviceName = await translateDeviceName(XCODE_8, '10.1.2', ipadDeviceName);
+      let deviceName = translateDeviceName(XCODE_8, '10.1.2', ipadDeviceName);
       deviceName.should.equal('iPad Retina');
-      deviceName = await translateDeviceName(XCODE_10, 10.103, ipadDeviceName);
+      deviceName = translateDeviceName(XCODE_10, 10.103, ipadDeviceName);
       deviceName.should.equal("iPad Retina");
-      deviceName = await translateDeviceName(XCODE_9_1, '10.3', ipadDeviceName);
+      deviceName = translateDeviceName(XCODE_9_1, '10.3', ipadDeviceName);
       deviceName.should.equal('iPad Air');
-      deviceName = await translateDeviceName(XCODE_9_0, 10.3, ipadDeviceName);
+      deviceName = translateDeviceName(XCODE_9_0, 10.3, ipadDeviceName);
       deviceName.should.equal('iPad Air');
     });
-    it('should set the correct iPhone simulator generic device', async function () {
-      let deviceName = await translateDeviceName(XCODE_8, 10.3, 'iPhone Simulator');
+    it('should set the correct iPhone simulator generic device', function () {
+      let deviceName = translateDeviceName(XCODE_8, 10.3, 'iPhone Simulator');
       deviceName.should.equal('iPhone 6');
     });
-    it('should set the correct device name for iPhone 8', async function () {
+    it('should set the correct device name for iPhone 8', function () {
       const testData = [
         {
           xcodeVersion: XCODE_9_0,
@@ -187,11 +187,11 @@ describe('utils', function () {
         },
       ];
       for (const {xcodeVersion, platformVersion, actualName, expectedName} of testData) {
-        const deviceName = await translateDeviceName(xcodeVersion, platformVersion, actualName);
+        const deviceName = translateDeviceName(xcodeVersion, platformVersion, actualName);
         deviceName.should.equal(expectedName);
       }
     });
-    it('should set the correct device name for iPhone 8 Plus', async function () {
+    it('should set the correct device name for iPhone 8 Plus', function () {
       const testData = [
         {
           xcodeVersion: XCODE_9_0,
@@ -225,11 +225,11 @@ describe('utils', function () {
         },
       ];
       for (const {xcodeVersion, platformVersion, actualName, expectedName} of testData) {
-        const deviceName = await translateDeviceName(xcodeVersion, platformVersion, actualName);
+        const deviceName = translateDeviceName(xcodeVersion, platformVersion, actualName);
         deviceName.should.equal(expectedName);
       }
     });
-    it('should set the correct device name for iPhone X', async function () {
+    it('should set the correct device name for iPhone X', function () {
       const testData = [
         {
           xcodeVersion: XCODE_9_0,
@@ -263,7 +263,7 @@ describe('utils', function () {
         },
       ];
       for (const {xcodeVersion, platformVersion, actualName, expectedName} of testData) {
-        const deviceName = await translateDeviceName(xcodeVersion, platformVersion, actualName);
+        const deviceName = translateDeviceName(xcodeVersion, platformVersion, actualName);
         deviceName.should.equal(expectedName);
       }
     });

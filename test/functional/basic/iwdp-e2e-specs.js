@@ -14,7 +14,7 @@ if (process.env.REAL_DEVICE) {
     this.timeout(MOCHA_TIMEOUT);
     let caps, driver;
 
-    beforeEach(async function () {
+    beforeEach(function () {
       caps = Object.assign(SAFARI_CAPS);
       caps.startIWDP = true;
     });

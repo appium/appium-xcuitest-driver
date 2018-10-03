@@ -151,7 +151,7 @@ script:
       npm run lint;
       npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
     fi
-  - if [ -n "$COVERALLS" ]; then npm run coverage; fi
+  # - if [ -n "$COVERALLS" ]; then npm run coverage; fi
   - if [ -n "$CI_METRICS" ]; then
       mkdir -p ./ci-metrics && ls -la ./ci-metrics;
       npm install -g appium-event-parser;
