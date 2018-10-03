@@ -2,8 +2,12 @@
 
 import yargs from 'yargs';
 import { asyncify } from 'asyncbox';
-import { XCUITestDriver } from './lib/driver';
-import { startServer } from './lib/server';
+import * as driver from './lib/driver';
+import * as server from './lib/server';
+
+
+const { XCUITestDriver } = driver;
+const { startServer } = server;
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4723;
