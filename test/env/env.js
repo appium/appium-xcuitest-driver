@@ -24,7 +24,7 @@ if (env.CLOUD) {
   const latestFile = fileInfoArray.sort((fileInfo1, fileInfo2) => (
     Math.sign(+new Date(fileInfo2.created) - (+new Date(fileInfo1.created)))
   ))[0];
-  const {name:bundleName} = latestFile;
+  const {name: bundleName} = latestFile;
 
   // Get the URL
   const stagingUrl = `https://bintray.com/appium-builds/appium/download_file?file_path=${bundleName}`;

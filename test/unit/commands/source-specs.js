@@ -10,7 +10,7 @@ const appiumFootTag = '</AppiumAUT>';
 
 describe('source commands', function () {
   let driver = new XCUITestDriver();
-  let proxyStub = sinon.stub(driver, 'proxyCommand').callsFake(async () => srcTree);
+  let proxyStub = sinon.stub(driver, 'proxyCommand').callsFake(async () => srcTree); // eslint-disable-line require-await
 
   afterEach(function () {
     proxyStub.resetHistory();

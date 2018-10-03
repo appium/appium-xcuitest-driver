@@ -22,11 +22,11 @@ describe('general commands', function () {
   describe('touch id', function () {
     let deviceStub;
 
-    beforeEach(async function () {
+    beforeEach(function () {
       deviceStub = sinon.mock(driver.opts, 'device');
     });
 
-    afterEach(async function () {
+    afterEach(function () {
       deviceStub.restore();
     });
 

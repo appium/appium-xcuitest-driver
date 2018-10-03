@@ -41,7 +41,7 @@ describe('Safari SSL', function () {
 
     // Create a random pem certificate
     let privateKey = await pem.createPrivateKeyAsync();
-    let keys = await pem.createCertificateAsync({days:1, selfSigned: true, serviceKey: privateKey.key});
+    let keys = await pem.createCertificateAsync({days: 1, selfSigned: true, serviceKey: privateKey.key});
     pemCertificate = keys.certificate;
 
     // Host an SSL server that uses that certificate

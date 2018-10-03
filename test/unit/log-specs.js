@@ -4,7 +4,7 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import * as Logs from '../../lib/device-log/ios-log';
 import * as CrashLogs from '../../lib/device-log/ios-crash-log';
-import { startLogCapture } from '../../lib/commands/log';
+import log from '../../lib/commands/log';
 
 
 chai.should();
@@ -40,11 +40,11 @@ describe('XCUITestDriver - startLogCapture', function () {
       isRealDevice: _.noop,
     };
     startCaptureSpy.callCount.should.equal(0);
-    await startLogCapture.call(fakeInstance);
+    await log.startLogCapture.call(fakeInstance);
     startCaptureSpy.callCount.should.equal(1);
     fakeInstance.logs.syslog.isCapturing = true;
 
-    await startLogCapture.call(fakeInstance);
+    await log.startLogCapture.call(fakeInstance);
     startCaptureSpy.callCount.should.equal(1);
   });
 });

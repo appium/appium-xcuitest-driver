@@ -24,7 +24,7 @@ describe('driver commands', function () {
 
       // fake the proxy to WDA
       const jwproxy = new JWProxy();
-      jwproxyCommandSpy = sinon.stub(jwproxy, 'command').callsFake(async function () {
+      jwproxyCommandSpy = sinon.stub(jwproxy, 'command').callsFake(async function () { // eslint-disable-line require-await
         return {some: 'thing'};
       });
       driver.wda = {
@@ -57,7 +57,7 @@ describe('driver commands', function () {
     beforeEach(function () {
       driver = new XCUITestDriver();
       sandbox = sinon.createSandbox();
-      sandbox.stub(driver, 'determineDevice').callsFake(async function () {
+      sandbox.stub(driver, 'determineDevice').callsFake(async function () { // eslint-disable-line require-await
         return {
           device: {
             shutdown: _.noop,
@@ -81,7 +81,7 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setLocale').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setPreferences').callsFake(_.noop);
-      sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0');
+      sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0'); // eslint-disable-line require-await
       sandbox.stub(utils, 'checkAppPresent').callsFake(_.noop);
       sandbox.stub(iosDriver.appUtils, 'extractBundleId').callsFake(_.noop);
     });
