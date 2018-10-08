@@ -275,23 +275,24 @@ describe('element commands', function () {
     const getNativeRectStub = sinon.stub(driver, 'getNativeRect').returns({x: 0, y: 50, width: 100, height: 200});
     const getLocationStub = sinon.stub(driver, 'getLocation').returns({x: 0, y: 50});
     const getSizeStub = sinon.stub(driver, 'getSize').returns({width: 100, height: 200});
-    let isWebContext;
-    // const proxyStub = sinon.stub(driver, 'proxyCommand');
+    let isWebContextStub;
 
     afterEach(function () {
       getNativeRectStub.resetHistory();
       getLocationStub.resetHistory();
       getSizeStub.resetHistory();
       proxyStub.resetHistory();
-      isWebContext.restore();
+      if (isWebContextStub) {
+        isWebContextStub.restore();
+      }
     });
 
     it('should get element rect in native context', async function () {
-      isWebContext = sinon.stub(driver, 'isWebContext').returns(false);
+      isWebContextStub = sinon.stub(driver, 'isWebContext').returns(false);
 
       const rect = await driver.getElementRect(elem);
 
-      isWebContext.calledOnce.should.be.true;
+      isWebContextStub.calledOnce.should.be.true;
       getNativeRectStub.calledOnce.should.be.true;
       getLocationStub.calledOnce.should.be.false;
       getSizeStub.calledOnce.should.be.false;
@@ -302,11 +303,11 @@ describe('element commands', function () {
     });
 
     it('should get element rect in Web context', async function () {
-      isWebContext = sinon.stub(driver, 'isWebContext').returns(true);
+      isWebContextStub = sinon.stub(driver, 'isWebContext').returns(true);
 
       const rect = await driver.getElementRect(elem);
 
-      isWebContext.calledOnce.should.be.true;
+      isWebContextStub.calledOnce.should.be.true;
       getNativeRectStub.calledOnce.should.be.false;
       getLocationStub.calledOnce.should.be.true;
       getSizeStub.calledOnce.should.be.true;
