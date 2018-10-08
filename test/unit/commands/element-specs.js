@@ -84,7 +84,7 @@ describe('element commands', function () {
 
     beforeEach(function () {
       getAttrStub = S.sandbox.stub(driver, 'getAttribute');
-      getRectStub = S.sandbox.stub(driver, 'getRect');
+      getRectStub = S.sandbox.stub(driver, 'getElementRect');
       findElStub = S.sandbox.stub(driver, 'findElOrEls');
       getSizeStub = S.sandbox.stub(driver, 'getSize');
       getLocationStub = S.sandbox.stub(driver, 'getLocationInView');
