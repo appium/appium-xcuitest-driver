@@ -268,4 +268,52 @@ describe('element commands', function () {
       loc.y.should.equal(fixtureYOffset);
     });
   });
+
+  describe('getElementRect', function () {
+    let driver = new XCUITestDriver();
+    const elem = {ELEMENT: '5000'};
+    const getNativeRectStub = sinon.stub(driver, 'getNativeRect').returns({x: 0, y: 50, width: 100, height: 200});
+    const getLocationStub = sinon.stub(driver, 'getLocation').returns({x: 0, y: 50});
+    const getSizeStub = sinon.stub(driver, 'getSize').returns({width: 100, height: 200});
+    let isWebContext;
+    // const proxyStub = sinon.stub(driver, 'proxyCommand');
+
+    afterEach(function () {
+      getNativeRectStub.resetHistory();
+      getLocationStub.resetHistory();
+      getSizeStub.resetHistory();
+      proxyStub.resetHistory();
+      isWebContext.restore();
+    });
+
+    it('should get element rect in native context', async function () {
+      isWebContext = sinon.stub(driver, 'isWebContext').returns(false);
+
+      const rect = await driver.getElementRect(elem);
+
+      isWebContext.calledOnce.should.be.true;
+      getNativeRectStub.calledOnce.should.be.true;
+      getLocationStub.calledOnce.should.be.false;
+      getSizeStub.calledOnce.should.be.false;
+      rect.x.should.eql(0);
+      rect.y.should.eql(50);
+      rect.width.should.eql(100);
+      rect.height.should.eql(200);
+    });
+
+    it('should get element rect in Web context', async function () {
+      isWebContext = sinon.stub(driver, 'isWebContext').returns(true);
+
+      const rect = await driver.getElementRect(elem);
+
+      isWebContext.calledOnce.should.be.true;
+      getNativeRectStub.calledOnce.should.be.false;
+      getLocationStub.calledOnce.should.be.true;
+      getSizeStub.calledOnce.should.be.true;
+      rect.x.should.eql(0);
+      rect.y.should.eql(50);
+      rect.width.should.eql(100);
+      rect.height.should.eql(200);
+    });
+  });
 });
