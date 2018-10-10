@@ -10,7 +10,7 @@ import { SETTINGS_CAPS } from '../desired';
 const SIM_DEVICE_NAME = 'xcuitestDriverMotionTest';
 const PREDICATE_SEARCH = '-ios predicate string';
 
-const should = chai.should(); // eslint-disable-line no-unused-vars
+chai.should();
 chai.use(chaiAsPromised);
 
 const deleteDeviceWithRetry = async function (udid) {
@@ -21,6 +21,7 @@ const deleteDeviceWithRetry = async function (udid) {
 
 describe('ReduceMotion', function () {
   this.timeout(MOCHA_TIMEOUT);
+  this.retries(3);
 
   let baseCaps;
   let caps;
@@ -47,29 +48,26 @@ describe('ReduceMotion', function () {
     await shutdownSimulator(sim);
   });
 
+  async function getReduceMotion (driver) {
+    let el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'General'");
+    await el.click();
+    el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Accessibility'");
+    await el.click();
+    el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Reduce Motion'");
+    await el.click();
+    el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'");
+    return await el.getAttribute('value');
+  }
+
   if (!process.env.REAL_DEVICE) {
     it('should enable reduce motion', async function () {
       driver = await initSession(caps);
-      let el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'General'");
-      await el.click();
-      el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Accessibility'");
-      await el.click();
-      el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Reduce Motion'");
-      await el.click();
-      el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'");
-      (await el.getAttribute('value')).should.eql('1');
+      (await getReduceMotion(driver)).should.eql('1');
     });
     it('should disable reduce motion', async function () {
       caps.reduceMotion = false;
       driver = await initSession(caps);
-      let el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'General'");
-      await el.click();
-      el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Accessibility'");
-      await el.click();
-      el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeCell' AND name == 'Reduce Motion'");
-      await el.click();
-      el = await driver.element(PREDICATE_SEARCH, "type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'");
-      (await el.getAttribute('value')).should.eql('0');
+      (await getReduceMotion(driver)).should.eql('0');
     });
   }
 });

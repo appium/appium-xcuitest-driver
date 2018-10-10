@@ -50,7 +50,7 @@
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "source-map-support": "^0.5.5",
-    "teen_process": "^1.7.1",
+    "teen_process": "^1.14.0",
     "uuid-js": "^0.7.5",
     "ws": "^6.0.0",
     "xmldom": "^0.1.27",
