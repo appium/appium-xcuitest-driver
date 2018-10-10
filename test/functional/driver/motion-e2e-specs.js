@@ -10,7 +10,7 @@ import { SETTINGS_CAPS } from '../desired';
 const SIM_DEVICE_NAME = 'xcuitestDriverMotionTest';
 const PREDICATE_SEARCH = '-ios predicate string';
 
-const should = chai.should(); // eslint-disable-line no-unused-vars
+chai.should();
 chai.use(chaiAsPromised);
 
 const deleteDeviceWithRetry = async function (udid) {
@@ -21,6 +21,7 @@ const deleteDeviceWithRetry = async function (udid) {
 
 describe('ReduceMotion', function () {
   this.timeout(MOCHA_TIMEOUT);
+  this.retries(3);
 
   let baseCaps;
   let caps;
