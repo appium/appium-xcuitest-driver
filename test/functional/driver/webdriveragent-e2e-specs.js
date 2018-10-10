@@ -99,7 +99,7 @@ describe('WebDriverAgent', function () {
             // `id=${this.device.udid}`,
             // 'test'
           ];
-          let xcodebuild = new SubProcess('xcodebuild', args);
+          let xcodebuild = new SubProcess('xcodebuild', args, {detached: true});
           return xcodebuild;
         };
 
