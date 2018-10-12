@@ -21,7 +21,6 @@ const deleteDeviceWithRetry = async function (udid) {
 
 describe('ReduceMotion', function () {
   this.timeout(MOCHA_TIMEOUT);
-  this.retries(3);
 
   let baseCaps;
   let caps;
