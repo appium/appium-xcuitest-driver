@@ -124,6 +124,9 @@ git:
 before_install:
   # Use sed to replace the SSH URL with the public URL, then initialize submodules
   # code from http://stackoverflow.com/a/24600210/375688
+  - if [ -n "$OPENCV"]; then
+      npm install -g opencv4nodejs
+    fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
       git submodule update --init --recursive;
