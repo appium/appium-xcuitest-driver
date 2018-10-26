@@ -5,7 +5,6 @@ import XCUITestDriver from '../..';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
 import chai from 'chai';
-import log from '../../lib/logger';
 import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
 
@@ -25,7 +24,7 @@ describe('driver commands', function () {
 
       // fake the proxy to WDA
       const jwproxy = new JWProxy();
-      jwproxyCommandSpy = sinon.stub(jwproxy, 'command').callsFake(async function () {
+      jwproxyCommandSpy = sinon.stub(jwproxy, 'command').callsFake(async function () { // eslint-disable-line require-await
         return {some: 'thing'};
       });
       driver.wda = {
@@ -58,7 +57,7 @@ describe('driver commands', function () {
     beforeEach(function () {
       driver = new XCUITestDriver();
       sandbox = sinon.createSandbox();
-      sandbox.stub(driver, 'determineDevice').callsFake(async function () {
+      sandbox.stub(driver, 'determineDevice').callsFake(async function () { // eslint-disable-line require-await
         return {
           device: {
             shutdown: _.noop,
@@ -82,7 +81,7 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setLocale').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setPreferences').callsFake(_.noop);
-      sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0');
+      sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0'); // eslint-disable-line require-await
       sandbox.stub(utils, 'checkAppPresent').callsFake(_.noop);
       sandbox.stub(iosDriver.appUtils, 'extractBundleId').callsFake(_.noop);
     });
@@ -95,14 +94,6 @@ describe('driver commands', function () {
       this.timeout(MOCHA_LONG_TIMEOUT);
       const resCaps = await driver.createSession(caps);
       resCaps[1].javascriptEnabled.should.be.true;
-    });
-    it('should warn', async function () {
-      const warnStub = sinon.stub(log, 'warn').callsFake(async function () {});
-      await driver.createSession(_.defaults({autoAcceptAlerts: true}, caps));
-      warnStub.calledOnce.should.be.true;
-      _.filter(warnStub.args, (arg) => arg[0].indexOf('autoAcceptAlerts') !== -1)
-        .should.have.length(1);
-      warnStub.restore();
     });
   });
 

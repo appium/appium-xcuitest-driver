@@ -84,7 +84,7 @@ describe('element commands', function () {
 
     beforeEach(function () {
       getAttrStub = S.sandbox.stub(driver, 'getAttribute');
-      getRectStub = S.sandbox.stub(driver, 'getRect');
+      getRectStub = S.sandbox.stub(driver, 'getElementRect');
       findElStub = S.sandbox.stub(driver, 'findElOrEls');
       getSizeStub = S.sandbox.stub(driver, 'getSize');
       getLocationStub = S.sandbox.stub(driver, 'getLocationInView');
@@ -266,6 +266,55 @@ describe('element commands', function () {
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
       loc.x.should.equal(fixtureXOffset);
       loc.y.should.equal(fixtureYOffset);
+    });
+  });
+
+  describe('getElementRect', function () {
+    let driver = new XCUITestDriver();
+    const elem = {ELEMENT: '5000'};
+    const getNativeRectStub = sinon.stub(driver, 'getNativeRect').returns({x: 0, y: 50, width: 100, height: 200});
+    const getLocationStub = sinon.stub(driver, 'getLocation').returns({x: 0, y: 50});
+    const getSizeStub = sinon.stub(driver, 'getSize').returns({width: 100, height: 200});
+    let isWebContextStub;
+
+    afterEach(function () {
+      getNativeRectStub.resetHistory();
+      getLocationStub.resetHistory();
+      getSizeStub.resetHistory();
+      proxyStub.resetHistory();
+      if (isWebContextStub) {
+        isWebContextStub.restore();
+      }
+    });
+
+    it('should get element rect in native context', async function () {
+      isWebContextStub = sinon.stub(driver, 'isWebContext').returns(false);
+
+      const rect = await driver.getElementRect(elem);
+
+      isWebContextStub.calledOnce.should.be.true;
+      getNativeRectStub.calledOnce.should.be.true;
+      getLocationStub.calledOnce.should.be.false;
+      getSizeStub.calledOnce.should.be.false;
+      rect.x.should.eql(0);
+      rect.y.should.eql(50);
+      rect.width.should.eql(100);
+      rect.height.should.eql(200);
+    });
+
+    it('should get element rect in Web context', async function () {
+      isWebContextStub = sinon.stub(driver, 'isWebContext').returns(true);
+
+      const rect = await driver.getElementRect(elem);
+
+      isWebContextStub.calledOnce.should.be.true;
+      getNativeRectStub.calledOnce.should.be.false;
+      getLocationStub.calledOnce.should.be.true;
+      getSizeStub.calledOnce.should.be.true;
+      rect.x.should.eql(0);
+      rect.y.should.eql(50);
+      rect.width.should.eql(100);
+      rect.height.should.eql(200);
     });
   });
 });

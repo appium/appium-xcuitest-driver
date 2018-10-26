@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
@@ -10,6 +11,7 @@ import { PNG } from 'pngjs';
 
 chai.should();
 chai.use(chaiAsPromised);
+chai.use(chaiSubset);
 
 describe('XCUITestDriver - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -83,7 +85,16 @@ describe('XCUITestDriver - basics -', function () {
       actual.viewportRect.height.should.be.a('number');
       actual.viewportRect.width.should.be.a('number');
       delete actual.viewportRect;
-      actual.should.eql(expected);
+
+      if (process.env.CLOUD) {
+        delete expected.app;
+        delete expected[process.env.APPIUM_BUNDLE_CAP];
+
+        // Cloud has several extraneous keys. Check if the caps contain expected subset only.
+        actual.should.containSubset(expected);
+      } else {
+        actual.should.eql(expected);
+      }
     });
   });
 
@@ -175,9 +186,13 @@ describe('XCUITestDriver - basics -', function () {
     describe('types -', function () {
       it('should get the list of available logs', async function () {
         const expectedTypes = [
-          'syslog', 'crashlog', 'performance', 'server', 'safariConsole', 'safariNetwork'
+          'syslog', 'crashlog', 'performance', 'server', 'safariConsole'
         ];
-        (await driver.logTypes()).should.eql(expectedTypes);
+        if (!process.env.CLOUD) {
+          expectedTypes.push('safariNetwork');
+        }
+        const actualTypes = await driver.logTypes();
+        actualTypes.should.eql(expectedTypes);
       });
     });
 

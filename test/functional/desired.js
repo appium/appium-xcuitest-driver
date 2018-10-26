@@ -49,7 +49,9 @@ const GENERIC_CAPS = {
   maxTypingFrequency: 30,
   clearSystemFiles: true,
   showXcodeLog: SHOW_XCODE_LOG,
-  // TODO: If it's SAUCE_EMUSIM or SAUCE_RDC add the appium staging URL
+  [process.env.APPIUM_BUNDLE_CAP]: {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
+  //'appium-version': {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
+  // TODO: If it's SAUCE_RDC add the appium staging URL
 };
 
 // on Travis, when load is high, the app often fails to build,
@@ -76,6 +78,10 @@ const UICATALOG_SIM_CAPS = _.defaults({
 }, GENERIC_CAPS);
 delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests that use this
 
+const SETTINGS_CAPS = _.defaults({
+  bundleId: "com.apple.Preferences"
+}, GENERIC_CAPS);
+
 const SAFARI_CAPS = _.defaults({
   browserName: 'Safari',
   testobject_api_key: process.env.SAUCE_RDC_WEB_ACCESS_KEY,
@@ -98,5 +104,5 @@ const W3C_CAPS = {
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS
 };

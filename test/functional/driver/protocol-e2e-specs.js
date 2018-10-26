@@ -38,7 +38,7 @@ describe('XCUITestDriver', function () {
         await request.post({
           url: sessionUrl,
           json: _.omit(W3C_CAPS, ['capabilities.alwaysMatch.platformName']),
-        }).should.eventually.be.rejectedWith(/\'platformName\' can\'t be blank/);
+        }).should.eventually.be.rejectedWith(/'platformName' can't be blank/);
       });
       it('should accept the "appium:" prefix', async function () {
         const w3cCaps = _.cloneDeep(W3C_CAPS);

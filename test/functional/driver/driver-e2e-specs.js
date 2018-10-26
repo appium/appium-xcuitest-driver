@@ -118,7 +118,7 @@ describe('XCUITestDriver', function () {
       });
     });
 
-    describe('initial orientation', async function () {
+    describe('initial orientation', function () {
       async function runOrientationTest (initialOrientation) {
         let localCaps = _.defaults({
           orientation: initialOrientation

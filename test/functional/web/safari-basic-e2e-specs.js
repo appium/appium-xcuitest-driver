@@ -30,8 +30,9 @@ describe('Safari', function () {
     });
 
     it('should start a session with default init', async function () {
-      let expectedTitle = process.env.REAL_DEVICE ? 'Appium: Mobile App Automation Made Awesome.'
-                                                  : 'Appium/welcome';
+      let expectedTitle = process.env.REAL_DEVICE
+        ? 'Appium: Mobile App Automation Made Awesome.'
+        : 'Appium/welcome';
       driver = await initSession(SAFARI_CAPS);
       let title = await spinTitle(driver);
       title.should.equal(expectedTitle);
