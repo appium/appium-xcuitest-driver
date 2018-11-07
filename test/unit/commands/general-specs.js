@@ -21,43 +21,40 @@ describe('general commands', function () {
 
   describe('touch id', function () {
     let deviceStub;
+    let sendBiometricMatchSpy;
 
     beforeEach(function () {
       deviceStub = sinon.mock(driver.opts, 'device');
+      deviceStub.object.device = {
+        sendBiometricMatch: () => {},
+      };
+      sendBiometricMatchSpy = sinon.spy(driver.opts.device, 'sendBiometricMatch');
+      deviceStub.object.realDevice = false;
     });
 
     afterEach(function () {
       deviceStub.restore();
+      sendBiometricMatchSpy.restore();
     });
 
-    it('should send translated POST request to WDA', async function () {
+    it('should send default request to Simulator', async function () {
       await driver.touchId();
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/wda/touch_id');
-      proxyStub.firstCall.args[1].should.eql('POST');
-      proxyStub.firstCall.args[2].should.eql({match: true});
+      sendBiometricMatchSpy.calledOnce.should.be.true;
+      sendBiometricMatchSpy.firstCall.args[0].should.eql(true);
+      sendBiometricMatchSpy.firstCall.args[1].should.eql('touchId');
     });
 
-    it('should send translated POST request to WDA with true', async function () {
-      await driver.touchId(true);
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/wda/touch_id');
-      proxyStub.firstCall.args[1].should.eql('POST');
-      proxyStub.firstCall.args[2].should.eql({match: true});
-    });
-
-    it('should send translated POST request to WDA with false', async function () {
+    it('should send request to Simulator with false', async function () {
       await driver.touchId(false);
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/wda/touch_id');
-      proxyStub.firstCall.args[1].should.eql('POST');
-      proxyStub.firstCall.args[2].should.eql({match: false});
+      sendBiometricMatchSpy.calledOnce.should.be.true;
+      sendBiometricMatchSpy.firstCall.args[0].should.eql(false);
+      sendBiometricMatchSpy.firstCall.args[1].should.eql('touchId');
     });
 
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
-      await driver.touchId().should.eventually.be.rejectedWith(/not supported/g);
-      proxyStub.notCalled.should.be.true;
+      await driver.touchId().should.eventually.be.rejected;
+      sendBiometricMatchSpy.notCalled.should.be.true;
     });
   });
 
@@ -89,7 +86,7 @@ describe('general commands', function () {
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
       deviceStub.object.allowTouchIdEnroll = true;
-      await driver.toggleEnrollTouchId().should.eventually.be.rejectedWith(/not supported/g);
+      await driver.toggleEnrollTouchId().should.eventually.be.rejected;
       enrollBiometricSpy.notCalled.should.be.true;
     });
   });
