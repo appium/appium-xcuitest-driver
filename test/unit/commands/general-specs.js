@@ -89,7 +89,7 @@ describe('general commands', function () {
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
       deviceStub.object.allowTouchIdEnroll = true;
-      await driver.toggleEnrollTouchId().should.eventually.be.rejectedWith(/not supported/g);
+      await driver.toggleEnrollTouchId().should.eventually.be.rejected;
       enrollBiometricSpy.notCalled.should.be.true;
     });
   });
