@@ -95,6 +95,8 @@ describe('XCUITestDriver', function () {
     });
 
     describe('WebdriverAgent port', function () {
+      this.retries(3);
+
       it('should run on default port if no other specified', async function () {
         let localCaps = Object.assign({}, baseCaps, {
           fullReset: true,

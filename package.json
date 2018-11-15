@@ -83,7 +83,7 @@
   "devDependencies": {
     "ajv": "^6.5.3",
     "appium-event-parser": "^1.0.0",
-    "appium-gulp-plugins": "^3.1.0",
+    "appium-gulp-plugins": "^3.2.0",
     "appium-test-support": "^1.0.0",
     "babel-eslint": "^10.0.0",
     "chai": "^4.1.2",
