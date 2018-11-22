@@ -10,6 +10,8 @@ chai.use(chaiAsPromised);
 
 const MJPEG_SERVER_PORT = 8589;
 const MJPEG_SERVER_URL = `http://localhost:${MJPEG_SERVER_PORT}`;
+const PNG_MAGIC = '89504e47';
+const PNG_MAGIC_LENGTH = 4;
 
 describe('XCUITestDriver - screenshots - mjpeg server', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -30,8 +32,9 @@ describe('XCUITestDriver - screenshots - mjpeg server', function () {
   });
 
   it('should get the screenshot via an mjpeg server if requested', async function () {
-    const img = await driver.takeScreenshot();
-    img.indexOf('iVBOR').should.eql(0);
-    img.length.should.be.above(400);
+    const base64Image = await driver.takeScreenshot();
+
+    const imageMagic = Buffer.from(base64Image, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
+    imageMagic.should.be.equal(PNG_MAGIC);
   });
 });
