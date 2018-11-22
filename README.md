@@ -160,6 +160,7 @@ Differences noted here
 |`waitForQuiescence`| It allows to turn on/off waiting for application quiescence in WebDriverAgent, while performing queries. The default value is `true`. You can avoid [this kind of issues](https://github.com/appium/appium/issues/11132) if you turn it off. |e.g `false`|
 |`reduceMotion`| It allows to turn on/off reduce motion accessibility preference. Setting reduceMotion `on` helps to reduce flakiness during tests. Only fon simulators | e.g `true` |
 |`permissions`| Allows to set permissions for the specified application bundle on Simulator only. The capability value is expected to be a valid JSON string with `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}` format. It is required that `applesimutils` package is installed and available in PATH. The list of available service names and statuses can be found at https://github.com/wix/AppleSimulatorUtils. | e. g. `{"com.apple.mobilecal": {"calendar": "YES"}}` |
+|`screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc). Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command | e.g. `0`, `1`, `2` |
 
 ## Development<a id="development"></a>
 
