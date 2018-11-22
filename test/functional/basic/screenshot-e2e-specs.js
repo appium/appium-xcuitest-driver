@@ -29,9 +29,9 @@ describe('XCUITestDriver - screenshots - mjpeg server', function () {
     mjpegServer.close();
   });
 
-  it('should get the screenshot via an mjpeg server if requested', async function () {
+  it('should get the jpeg formatted screenshot via an mjpeg server if requested', async function () {
     const img = await driver.takeScreenshot();
-    img.indexOf('iVBOR').should.eql(0);
+    img.indexOf('/9j/4A').should.eql(0);
     img.length.should.be.above(400);
   });
 });
