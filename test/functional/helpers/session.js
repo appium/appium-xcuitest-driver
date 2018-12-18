@@ -4,10 +4,10 @@ import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
 
-const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD} = process.env;
+const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
 
 // if we are tracking CI metrics, patch the wd framework
-if (process.env.CI_METRICS) {
+if (CI_METRICS) {
   patchDriverWithEvents();
 }
 

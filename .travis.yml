@@ -43,8 +43,8 @@ matrix:
 
     # Sauce Emusim tests
     - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic
+      # if: type = cron
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic/basic-e2e-specs.js
     - os: linux
       if: type = cron
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/web
@@ -137,11 +137,12 @@ install:
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests sync-request;
+      node mpt-fix.js;
       npm run build;
     fi
 script:
   - if [ -n "$CLOUD" ]; then
-      mocha-parallel-tests -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
+      $(npm bin)/mocha-parallel-tests -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
     else
       npm run lint;
       npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
