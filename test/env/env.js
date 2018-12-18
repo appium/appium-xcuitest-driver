@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import request from 'sync-request';
 import log from './logger';
 import configRealDevice from './env-ios-real';
 import configSimulator from './env-ios-sim';
@@ -18,23 +17,8 @@ if (!_.isEmpty(process.env.SAUCE_EMUSIM_DEVICE_INDEX) || process.env.SAUCE_EMUSI
 }
 
 if (process.env.CLOUD) {
-  // Find the latest bundle
-  log.info('Getting the SHA of the most recent master commit');
-  const res = request('GET', 'https://api.bintray.com/packages/appium-builds/appium/appium/files', {json: true});
-  const fileInfoArray = JSON.parse(res.getBody('utf8'));
-  const latestFile = fileInfoArray.sort((fileInfo1, fileInfo2) => (
-    Math.sign(+new Date(fileInfo2.created) - (+new Date(fileInfo1.created)))
-  ))[0];
-  const {name: bundleName} = latestFile;
-
-  // Get the URL
-  const stagingUrl = `https://bintray.com/appium-builds/appium/download_file?file_path=${bundleName}`;
-  log.info(`Using Appium staging URL: '${stagingUrl}'`);
-  env.APPIUM_STAGING_URL = stagingUrl;
-
-  // Get the SHA
-  const sha = bundleName.match(/appium-([\w\W]*?).zip/)[1];
-  env.APPIUM_SHA = sha;
+  // get a unique build name for SauceLabs, based on the Travis build number
+  env.SAUCE_BUILD = `appium-xcuitest-driver CI: ${process.env.TRAVIS_BUILD_NUMBER}`;
 }
 
 Object.assign(process.env, env);

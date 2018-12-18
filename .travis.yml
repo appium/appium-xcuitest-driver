@@ -1,5 +1,6 @@
 sudo: required
 os: osx
+osx_image: xcode10.1
 language: node_js
 node_js: "8"
 env:
@@ -8,116 +9,143 @@ env:
     - _FORCE_LOGS=1
     - RECURSIVE=--recursive
     - secure: ls4nb5gcu0USHauJOkB9R5p86PMPJd/wCIQWjj/bhAfLNpSNNthtss2Ss9M7BjJg8lth8c85MrGfkAZOGgXknNtlQ2HHwKK4fbEiLAKLDS9diac6/OpAsxxE1/OvletYhkKLQSqb8d5Ju3S/xY6SmNDIzHUpeTYV2/5Ve+7Fh9zc1RztxsPwV1vxPtL6w0IAzNS9PQOmDXQ6x9KuZModtR7ohVKD47A91MzBlu3kk1CSaeQ4I8l7eXi4R9J6F81jkr51Vzoam4B6+4HTepSdfo02irBQWzaJ3VtRCbazFRBc/wfe4YgOPQTD9k69FiP19sa28lP9eSn6h5OCSXA9M803kju33Ml6OItRWDG0gUG1dzTroVXELEIcfnw1iTsFqKWoJLaEzEiXV8n2RsXLaLC5SHPgKwGEigGMfWDxM9leIC8hgervjQvApmx7btzq9S50tMcrzba5qwXDDrjJi1wKSjd4pQajhSj9VgOH9D5ihZBdn++VLwEvfAd4yQhjdsr9+COV1HrgK7Ro1HAHWgGnPtwBKiQdVU20QdQzNrhRdF2MLrJ4BfWpNm92JwlPxP/ojuA2l8mr9nDqlfBgXlnG32j59988gi85vaMfXssrUXtdJqsKJckI01c/mgaRh9pvG3UPX8K39quKBI5ftS8aCCa8tbF6bLq/ZuI2TRU=
-matrix:
+jobs:
   include:
-    - osx_image: xcode10.1
+    - stage: tests
       if: type != cron
+      osx_image: xcode10.1
       env: TEST=unit COVERALLS=1 _FORCE_LOGS=0
 
-    - osx_image: xcode10.1
+    - stage:
       if: type != cron
       env: CI_METRICS=1 TEST=functional/basic
 
-    - osx_image: xcode10.1
+    - stage:
       if: type != cron
       env: TEST=functional/driver
 
-    - osx_image: xcode10.1
+    - stage:
       if: type != cron
       env: CI_METRICS=1 TEST=functional/web
 
-    - osx_image: xcode10.1
+    - stage:
       if: type != cron
       env: CI_METRICS=1 TEST=functional/long
 
-    # smoke test on xcode 10 web
-    - osx_image: xcode10
+    - stage: # smoke test on xcode 10 web
       if: type != cron
+      osx_image: xcode10
       env: CI_METRICS=1 PLATFORM_VERSION=12.0 TEST=functional/web
 
-    # smoke test on xcode 9.4 web
-    - osx_image: xcode9.4
+    - stage: # smoke test on xcode 9.4 web
       if: type != cron
+      osx_image: xcode9.4
       env: CI_METRICS=1 PLATFORM_VERSION=11.4 TEST=functional/web
 
 
-    # Sauce Emusim tests
-    - os: linux
-      # if: type = cron
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic/basic-e2e-specs.js
-    - os: linux
+    - stage: "[CRON] Upload Appium build to Sauce Storage"
       if: type = cron
+      os: linux
+      env: CLOUD=1
+      script: $(npm bin)/gulp upload-to-sauce-storage
+
+    # Sauce Emusim tests
+    - stage: "[CRON] Sauce Emusim tests"
+      if: type = cron
+      os: linux
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic/basic-e2e-specs.js
+    - stage:
+      if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/web
       addons: &sc
         sauce_connect:
           no_ssl_bump_domains: localhost
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/long
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/basic
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/web
       addons:
         *sc
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/long
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/basic
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
       addons:
         *sc
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/long
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/basic
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/web
       addons:
         *sc
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/long
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/basic
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/web
       addons:
         *sc
-    - os: linux
+    - stage:
       if: type = cron
+      os: linux
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/long
 
-    # Sauce RDC Tests
-    - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/basic
-    - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/web
-    - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/long
-    - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/basic
-    - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/web
-    - os: linux
-      if: type = cron
-      env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/long
+    # - stage: "[CRON] Sauce RDC Tests"
+    #   if: type = cron
+    #   os: linux
+    #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/basic
+    # - stage:
+    #   if: type = cron
+    #   os: linux
+    #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/web
+    # - stage:
+    #   if: type = cron
+    #   os: linux
+    #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=0 TEST=functional/long
+    # - stage:
+    #   if: type = cron
+    #   os: linux
+    #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/basic
+    # - stage:
+    #   if: type = cron
+    #   os: linux
+    #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/web
+    # - stage:
+    #   if: type = cron
+    #   os: linux
+    #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/long
 
 git:
   submodules: false
@@ -136,13 +164,13 @@ install:
       npm install --no-save mjpeg-consumer;
     else
       npm install --production;
-      npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests sync-request;
-      node mpt-fix.js;
+      npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests fancy-log;
+      node ci/mpt-fix.js;
       npm run build;
     fi
 script:
   - if [ -n "$CLOUD" ]; then
-      $(npm bin)/mocha-parallel-tests -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
+      npm run mocha:parallel -- -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
     else
       npm run lint;
       npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
