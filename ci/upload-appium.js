@@ -17,10 +17,10 @@ const support = require('appium-support');
 gulp.task('upload-to-sauce-storage', function () {
   let tempDir;
   // Find the latest bundle
-  log.info('Getting the SHA of the most recent master commit');
+  log.info('Retrieving Bintray asset and uploading to Sauce Storage');
   return support.tempDir.openDir()
     .then(function (dir) {
-      log.info(`Temporary directory for download: ${dir}`);
+      log.info(`Temporary directory for download: '${dir}'`);
       tempDir = dir;
     })
     .then(function () {
