@@ -40,19 +40,25 @@ const REAL_DEVICE_CAPS = REAL_DEVICE ? {
   //testobject_remote_appium_url: process.env.APPIUM_STAGING_URL, // TODO: Once RDC starts supporting this again, re-insert this
 } : {};
 
-const GENERIC_CAPS = {
+let GENERIC_CAPS = {
   platformName: 'iOS',
-  platformVersion: process.env.CLOUD ? process.env.CLOUD_PLATFORM_VERSION : PLATFORM_VERSION,
+  platformVersion: PLATFORM_VERSION,
   deviceName: DEVICE_NAME,
   automationName: 'XCUITest',
   noReset: true,
   maxTypingFrequency: 30,
   clearSystemFiles: true,
   showXcodeLog: SHOW_XCODE_LOG,
-  [process.env.APPIUM_BUNDLE_CAP]: {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
-  //'appium-version': {"appium-url": `bintray:${process.env.APPIUM_SHA}`}
-  // TODO: If it's SAUCE_RDC add the appium staging URL
 };
+
+if (process.env.CLOUD) {
+  GENERIC_CAPS.platformVersion = process.env.CLOUD_PLATFORM_VERSION;
+  GENERIC_CAPS.build = process.env.SAUCE_BUILD;
+  GENERIC_CAPS.name = process.env.TRAVIS_JOB_NUMBER;
+  GENERIC_CAPS.showIOSLog = false;
+  GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP] = {'appium-url': 'sauce-storage:appium.zip'};
+  // TODO: If it's SAUCE_RDC add the appium staging URL
+}
 
 // on Travis, when load is high, the app often fails to build,
 // and tests fail, so use static one in assets if necessary,

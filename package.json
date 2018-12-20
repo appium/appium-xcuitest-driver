@@ -60,6 +60,7 @@
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "build": "gulp transpile",
     "mocha": "mocha",
+    "mocha:parallel": "mocha-parallel-tests",
     "prepare": "gulp prepublish",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
@@ -94,6 +95,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-mocha": "^5.0.0",
     "eslint-plugin-promise": "^4.0.0",
+    "fancy-log": "^1.3.3",
     "glob": "^7.1.0",
     "gulp": "^4.0.0",
     "ios-test-app": "^2.5.7",
@@ -105,7 +107,6 @@
     "pngjs": "^3.3.1",
     "pre-commit": "^1.1.3",
     "sinon": "^6.0.0",
-    "sync-request": "^6.0.0",
     "unzip": "^0.1.11",
     "wd": "^1.5.0"
   },
