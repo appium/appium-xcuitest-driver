@@ -165,7 +165,7 @@ install:
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests fancy-log;
-      node ci/mpt-fix.js;
+      $(npm bin)/gulp fix-mocha-parallel-tests;
       npm run build;
     fi
 script:
