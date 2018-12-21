@@ -6,7 +6,7 @@ const gulp = require('gulp');
 const B = require('bluebird');
 const log = require('fancy-log');
 const support = require('appium-support');
-
+const octokit = require('@octokit/rest')();
 
 /**
  * Temporary gulp task to prove that this works. Once everything is good,
@@ -14,38 +14,36 @@ const support = require('appium-support');
  * modules
  */
 
+const ASSET_NAME_REGEXP = /^appium-\S+.zip$/;
+
+const owner = 'appium';
+const repo = 'appium-build-store';
+
 gulp.task('upload-to-sauce-storage', function () {
   let tempDir;
   // Find the latest bundle
-  log.info('Retrieving Bintray asset and uploading to Sauce Storage');
+  log.info('Retrieving asset and uploading to Sauce Storage');
   return support.tempDir.openDir()
     .then(function (dir) {
       log.info(`Temporary directory for download: '${dir}'`);
       tempDir = dir;
     })
     .then(function () {
-      return requestPromise({
-        method: 'GET',
-        uri: 'https://api.bintray.com/packages/appium-builds/appium/appium/files',
-        json: true,
-      });
+      return octokit.repos.getLatestRelease({owner, repo});
     })
-    .then(function getLatest (parsedBody) {
-      const fileInfoArray = parsedBody;
-      const latestFile = fileInfoArray.sort((fileInfo1, fileInfo2) => (
-        Math.sign(+new Date(fileInfo2.created) - (+new Date(fileInfo1.created)))
-      ))[0];
-      const {name: bundleName} = latestFile;
-      return bundleName;
+    .then(function (res) {
+      // go through the assets and fine the correct one
+      for (const asset of res.data.assets) {
+        if (ASSET_NAME_REGEXP.test(asset.name)) {
+          log.info(`Downloading asset from '${asset.browser_download_url}'`);
+          return asset.browser_download_url;
+        }
+      }
+      throw new Error(`Unable to find Appium build asset`);
     })
-    .then(function getStagingUrl (bundleName) {
-      const stagingUrl = `https://bintray.com/appium-builds/appium/download_file?file_path=${bundleName}`;
-      log.info(`Using Appium staging URL: '${stagingUrl}'`);
-      return stagingUrl;
-    })
-    .then(function download (stagingUrl) {
+    .then(function download (url) {
       return new B((resolve, reject) => {
-        request(stagingUrl)
+        request(url)
           .on('error', reject) // handle real errors, like connection errors
           .on('response', (res) => {
             // handle responses that fail, like 404s
