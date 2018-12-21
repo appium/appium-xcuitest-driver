@@ -30,7 +30,8 @@ function getHost () {
 
 const HOST = getHost();
 const PORT = getPort();
-const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 16 : 4);
+// on CI the timeout needs to be long, mostly so WDA can be built the first time
+const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 32 : 4);
 const WDA_PORT = 8200;
 
 let driver, server;

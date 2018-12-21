@@ -4,6 +4,7 @@ import glob from 'glob';
 import fs from 'fs';
 import apps from './apps';
 
+
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
 let DEVICE_NAME = process.env.DEVICE_NAME;
 
