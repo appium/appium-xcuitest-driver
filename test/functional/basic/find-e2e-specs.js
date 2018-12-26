@@ -371,9 +371,8 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find elements with index', async function () {
-      let els1 = await driver.elements('-ios class chain', 'XCUIElementTypeWindow[1]/*');
-      let els2 = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*');
-      els1.should.have.length(els2.length);
+      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow[1]/*');
+      els.should.have.length.above(0);
     });
 
     it('should find elements with negative index', async function () {
