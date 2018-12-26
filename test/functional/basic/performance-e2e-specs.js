@@ -15,9 +15,11 @@ describe('XCUITestDriver - performance', function () {
 
   describe('record performance metrics', function () {
     before(async function () {
-      if (process.env.CLOUD) {
-        return this.skip();
+      // Don't do these tests on Sauce Labs
+      if (process.env.CLOUD || process.env.CI) {
+        this.skip();
       }
+
       driver = await initSession(UICATALOG_CAPS);
       getServer().driver.relaxedSecurityEnabled = true;
     });
@@ -26,10 +28,6 @@ describe('XCUITestDriver - performance', function () {
     });
 
     it('should return recorded trace file on stop', async function () {
-      if (process.env.CI) {
-        // It looks like Travis is just way too slow
-        return this.skip();
-      }
       await driver.execute('mobile: startPerfRecord', {});
       await B.delay(5000);
       (await driver.execute('mobile: stopPerfRecord', {})).should.not.be.empty;
