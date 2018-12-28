@@ -31,7 +31,7 @@ describe('Safari SSL', function () {
 
   let sslServer, driver;
   before(async function () {
-    if (process.env.REAL_DEVICE) {
+    if (process.env.REAL_DEVICE || process.env.CLOUD) {
       return this.skip();
     }
 

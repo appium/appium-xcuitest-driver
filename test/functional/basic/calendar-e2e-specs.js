@@ -8,7 +8,6 @@ chai.should();
 chai.use(chaiAsPromised);
 
 if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
-
   describe('XCUITestDriver - calendar', function () {
     this.timeout(MOCHA_TIMEOUT);
 

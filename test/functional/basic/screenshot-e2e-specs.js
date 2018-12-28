@@ -19,6 +19,10 @@ describe('XCUITestDriver - screenshots - mjpeg server', function () {
   let driver, mjpegServer;
 
   before(async function () {
+    // Don't do these tests on Sauce Labs
+    if (process.env.CLOUD) {
+      this.skip();
+    }
     mjpegServer = mjpeg.initMJpegServer(MJPEG_SERVER_PORT);
     driver = await initSession({
       ...UICATALOG_CAPS,
@@ -28,7 +32,9 @@ describe('XCUITestDriver - screenshots - mjpeg server', function () {
 
   after(async function () {
     await deleteSession();
-    mjpegServer.close();
+    if (mjpegServer) {
+      mjpegServer.close();
+    }
   });
 
   it('should get the screenshot via an mjpeg server if requested', async function () {

@@ -3,6 +3,9 @@ import request from 'request-promise';
 import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
+import SauceLabs from 'saucelabs';
+import B from 'bluebird';
+
 
 const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
 
@@ -35,6 +38,44 @@ const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 32 : 4);
 const WDA_PORT = 8200;
 
 let driver, server;
+
+let updateSauceJob;
+if (process.env.CLOUD) {
+  if (process.env.CLOUD) {
+    const sauceUserName = process.env.SAUCE_USERNAME;
+    const sauceAccessKey = process.env.SAUCE_ACCESS_KEY;
+    if (sauceUserName && sauceAccessKey) {
+      const saucelabs = new SauceLabs({
+        username: sauceUserName,
+        password: sauceAccessKey,
+      });
+      updateSauceJob = B.promisify(saucelabs.updateJob, {context: saucelabs});
+    }
+  }
+
+  // on Sauce Labs we need to track the status of the job, and a reasonable
+  // name for it
+  afterEach(function () {
+    const passed = this.currentTest.state === 'passed';
+    if (driver) {
+      // if we haven't already failed the suite, update with the current test
+      if (driver._appiumSuccess !== false) {
+        driver._appiumSuccess = passed;
+      }
+      // add a title, if it is not already added
+      if (!driver._appiumTitle) {
+        if (this.test.parent.suites.length) {
+          driver._appiumTitle = `${process.env.TRAVIS_JOB_NUMBER}: ${this.test.parent.suites[0].title}`;
+        }
+      }
+    }
+
+    // wd puts info into the error object that mocha can't display easily
+    if (this.currentTest.err) {
+      console.log('ERROR:', JSON.stringify(this.currentTest.err, 2)); // eslint-disable-line
+    }
+  });
+}
 
 async function initDriver () { // eslint-disable-line require-await
   driver = wd.promiseChainRemote(HOST, PORT);
@@ -90,6 +131,14 @@ async function initSession (caps) {
 }
 
 async function deleteSession () {
+  // for Sause Labs jobs, update the server
+  if (updateSauceJob && driver) {
+    updateSauceJob(driver.sessionID, {
+      passed: !!driver._appiumSuccess,
+      name: driver._appiumTitle,
+    });
+  }
+
   try {
     await driver.quit();
   } catch (ign) {}
