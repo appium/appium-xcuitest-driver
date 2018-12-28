@@ -7,6 +7,7 @@ const B = require('bluebird');
 const log = require('fancy-log');
 const support = require('appium-support');
 const octokit = require('@octokit/rest')();
+const _ = require('lodash');
 
 /**
  * Temporary gulp task to prove that this works. Once everything is good,
@@ -19,7 +20,23 @@ const ASSET_NAME_REGEXP = /^appium-\S+.zip$/;
 const owner = 'appium';
 const repo = 'appium-build-store';
 
-gulp.task('upload-to-sauce-storage', function () {
+
+gulp.task('authenticate', function (done) {
+  const githubToken = process.env.GITHUB_TOKEN;
+
+  if (_.isEmpty(githubToken)) {
+    log.warn('No GitHub token found in GITHUB_TOKEN environment variable');
+    return;
+  }
+
+  octokit.authenticate({
+    type: 'token',
+    token: githubToken,
+  });
+  done();
+});
+
+gulp.task('upload', function () {
   let tempDir;
   // Find the latest bundle
   log.info('Retrieving asset and uploading to Sauce Storage');
@@ -82,3 +99,5 @@ gulp.task('upload-to-sauce-storage', function () {
         });
     });
 });
+
+gulp.task('sauce-storage-upload', gulp.series(['authenticate', 'upload']));
