@@ -55,10 +55,11 @@ let GENERIC_CAPS = {
 if (process.env.CLOUD) {
   GENERIC_CAPS.platformVersion = process.env.CLOUD_PLATFORM_VERSION;
   GENERIC_CAPS.build = process.env.SAUCE_BUILD;
-  GENERIC_CAPS.name = process.env.TRAVIS_JOB_NUMBER;
   GENERIC_CAPS.showIOSLog = false;
-  GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP] = {'appium-url': 'sauce-storage:appium.zip'};
+  GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP || 'appium-version'] = {'appium-url': 'sauce-storage:appium.zip'};
   // TODO: If it's SAUCE_RDC add the appium staging URL
+
+  // `name` will be set during session initialization
 }
 
 // on Travis, when load is high, the app often fails to build,
@@ -111,5 +112,5 @@ const W3C_CAPS = {
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS,
 };

@@ -9,6 +9,7 @@ env:
     - _FORCE_LOGS=1
     - RECURSIVE=--recursive
     - MAX_PARALLEL=0
+    - DEBUG=mocha-parallel-tests
     - secure: ls4nb5gcu0USHauJOkB9R5p86PMPJd/wCIQWjj/bhAfLNpSNNthtss2Ss9M7BjJg8lth8c85MrGfkAZOGgXknNtlQ2HHwKK4fbEiLAKLDS9diac6/OpAsxxE1/OvletYhkKLQSqb8d5Ju3S/xY6SmNDIzHUpeTYV2/5Ve+7Fh9zc1RztxsPwV1vxPtL6w0IAzNS9PQOmDXQ6x9KuZModtR7ohVKD47A91MzBlu3kk1CSaeQ4I8l7eXi4R9J6F81jkr51Vzoam4B6+4HTepSdfo02irBQWzaJ3VtRCbazFRBc/wfe4YgOPQTD9k69FiP19sa28lP9eSn6h5OCSXA9M803kju33Ml6OItRWDG0gUG1dzTroVXELEIcfnw1iTsFqKWoJLaEzEiXV8n2RsXLaLC5SHPgKwGEigGMfWDxM9leIC8hgervjQvApmx7btzq9S50tMcrzba5qwXDDrjJi1wKSjd4pQajhSj9VgOH9D5ihZBdn++VLwEvfAd4yQhjdsr9+COV1HrgK7Ro1HAHWgGnPtwBKiQdVU20QdQzNrhRdF2MLrJ4BfWpNm92JwlPxP/ojuA2l8mr9nDqlfBgXlnG32j59988gi85vaMfXssrUXtdJqsKJckI01c/mgaRh9pvG3UPX8K39quKBI5ftS8aCCa8tbF6bLq/ZuI2TRU=
 jobs:
   include:
@@ -42,8 +43,7 @@ jobs:
       if: type != cron
       osx_image: xcode9.4
       env: CI_METRICS=1 PLATFORM_VERSION=11.4 TEST=functional/web
-
-
+    
     - stage: "[CRON] Upload Appium build to Sauce Storage"
       if: type = cron
       os: linux
@@ -118,27 +118,27 @@ jobs:
       if: type = cron
       os: linux
       name: Long, device 0
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/long
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 LONG=1 TEST=functional/long
     - stage:
       if: type = cron
       os: linux
       name: Long, device 1
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/long
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 LONG=1 TEST=functional/long
     - stage:
       if: type = cron
       os: linux
       name: Long, device 2
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/long
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 LONG=1 TEST=functional/long
     - stage:
       if: type = cron
       os: linux
       name: Long, device 3
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/long
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 LONG=1 TEST=functional/long
     - stage:
       if: type = cron
       os: linux
       name: Long, device 4
-      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/long
+      env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 LONG=1 TEST=functional/long
 
 
     # - stage: "[CRON] Sauce RDC Tests"
@@ -188,11 +188,20 @@ install:
       $(npm bin)/gulp fix-mocha-parallel-tests;
       npm run build;
     fi
+  # long tests timeout on Travis because mocha-parallel-tests batches output
+  # so outside of that process, produce output manually
+  - if [ -n "$LONG" ]; then
+      ./ci/periodic-output.sh & export LONG_PID=$!;
+    fi
 script:
   - if [ -n "$CLOUD" ]; then
-      npm run mocha:parallel -- --max-parallel $MAX_PARALLEL -t 480000 --require build/test/env/env --recursive build/test/$TEST -g @skip-ci -i --exit;
+      npm run mocha:parallel -- --max-parallel $MAX_PARALLEL --debug -t 480000 --require build/test/env/env --recursive build/test/$TEST;
     else
       npm run lint && npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
+    fi
+after_script:
+  - if [-n "$LONG_PID" ]; then
+      kill $LONG_PID;
     fi
 after_success:
   - if [ -n "$CI_METRICS" ]; then

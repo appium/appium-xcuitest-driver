@@ -13,12 +13,12 @@ chai.should();
 chai.use(chaiAsPromised);
 let expect = chai.expect;
 
-let caps = _.defaults({
+let DEFAULT_CAPS = _.defaults({
   safariInitialUrl: GUINEA_PIG_PAGE,
   nativeWebTap: true,
 }, SAFARI_CAPS);
 
-describe('Safari', function () {
+describe('Safari - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
@@ -30,19 +30,16 @@ describe('Safari', function () {
     });
 
     it('should start a session with default init', async function () {
-      let expectedTitle = process.env.REAL_DEVICE
+      const expectedTitle = process.env.REAL_DEVICE
         ? 'Appium: Mobile App Automation Made Awesome.'
         : 'Appium/welcome';
       driver = await initSession(SAFARI_CAPS);
-      let title = await spinTitle(driver);
+      const title = await spinTitle(driver);
       title.should.equal(expectedTitle);
     });
 
     it('should start a session with custom init', async function () {
-      let caps = _.defaults({
-        safariInitialUrl: GUINEA_PIG_PAGE
-      }, SAFARI_CAPS);
-      driver = await initSession(caps);
+      driver = await initSession(DEFAULT_CAPS);
       let title = await spinTitle(driver);
       const expectedTitle = 'I am a page title';
       title.should.equal(expectedTitle);
@@ -51,11 +48,11 @@ describe('Safari', function () {
 
   describe('basics', function () {
     before(async function () {
-      driver = await initSession(_.defaults({
+      const caps = _.defaults({
         safariIgnoreFraudWarning: false,
-        safariInitialUrl: GUINEA_PIG_PAGE,
         showSafariConsoleLog: true,
-      }, caps));
+      }, DEFAULT_CAPS);
+      driver = await initSession(caps);
     });
     after(async function () {
       await deleteSession();
@@ -321,8 +318,8 @@ describe('Safari', function () {
 
       // there can be other things logged, so check that the text is there somewhere
       function checkTexts (logs, expectedTexts) {
-        const logText = _.map(logs, (el) => el.message).join(',');
-        for (let line of expectedTexts) {
+        const logText = _.map(logs, (el) => el.message || el.text).join(',');
+        for (const line of expectedTexts) {
           logText.should.include(line);
         }
       }
@@ -375,7 +372,7 @@ describe('Safari', function () {
       beforeEach(async function () {
         driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: false,
-        }, caps));
+        }, DEFAULT_CAPS));
       });
       afterEach(async function () {
         await deleteSession();
@@ -390,7 +387,7 @@ describe('Safari', function () {
       beforeEach(async function () {
         driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: true,
-        }, caps));
+        }, DEFAULT_CAPS));
       });
       afterEach(async function () {
         await deleteSession();

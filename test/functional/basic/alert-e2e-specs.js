@@ -84,7 +84,7 @@ describe('XCUITestDriver - alerts -', function () {
         expectedText: '•••••••••••'
       }
     ];
-    for (let test of testData) {
+    for (const test of testData) {
       it(`should be able to interact with a prompt with a ${test.name}`, async function () {
         let el = await driver.elementByAccessibilityId(test.alert);
         await el.click();

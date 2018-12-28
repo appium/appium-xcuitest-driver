@@ -264,7 +264,7 @@ describe('XCUITestDriver - find', function () {
 
       let els = await driver.elementsByClassName('XCUIElementTypeImage');
       els.length.should.be.above(0);
-      for (let el of els) {
+      for (const el of els) {
         el.should.exist;
       }
     });

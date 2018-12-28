@@ -8,14 +8,16 @@ chai.should();
 chai.use(chaiAsPromised);
 
 // leave the long test to Travis
-const TYPING_TRIES = process.env.CI ? 200 : 10;
+const TYPING_TRIES = process.env.CI
+  ? process.env.CLOUD ? 100 : 200
+  : 10;
 
 describe('XCUITestDriver - long tests', function () {
   this.timeout(0);
 
   let driver;
   before(async function () {
-    let caps = Object.assign({}, UICATALOG_CAPS, {maxTypingFrequency: 20});
+    const caps = Object.assign({}, UICATALOG_CAPS, {maxTypingFrequency: 20});
     driver = await initSession(caps);
   });
   after(async function () {
@@ -23,7 +25,7 @@ describe('XCUITestDriver - long tests', function () {
   });
 
   describe('typing', function () {
-    let text = 'bunchoftext';
+    const text = 'bunchoftext';
     let el;
     before(async function () {
       let tfEl = await driver.elementByAccessibilityId('Text Fields');
