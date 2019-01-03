@@ -6,13 +6,13 @@ chai.should();
 
 describe('session commands', function () {
   let driver = new XCUITestDriver();
-  driver.opts.udid = "cecinestpasuneudid";
+  driver.opts.udid = 'cecinestpasuneudid';
   let proxySpy = sinon.stub(driver, 'proxyCommand').callsFake(async (endpoint, method) => { // eslint-disable-line require-await
-    if (endpoint === "/" && method === "GET") {
+    if (endpoint === '/' && method === 'GET') {
       return {
         capabilities: {
           sillyCap: true,
-          app: "LOL.app",
+          app: 'LOL.app',
         }
       };
     }
@@ -38,18 +38,18 @@ describe('session commands', function () {
   describe('getSession', function () {
     it('should merge caps with WDA response', async function () {
       driver.caps = {
-        platformName: "iOS",
+        platformName: 'iOS',
         javascript_enabled: true,
-        app: "NOTLOL.app",
+        app: 'NOTLOL.app',
       };
       let res = await driver.getSession();
       proxySpy.calledOnce.should.be.true;
       res.should.eql({
         sillyCap: true,
-        app: "LOL.app",
-        platformName: "iOS",
+        app: 'LOL.app',
+        platformName: 'iOS',
         javascript_enabled: true,
-        udid: "cecinestpasuneudid",
+        udid: 'cecinestpasuneudid',
         statBarHeight: 20,
         viewportRect: {x: 1, y: 2, height: 3, width: 4},
         pixelRatio: 3,

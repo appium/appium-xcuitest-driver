@@ -54,12 +54,12 @@ describe('Constructor', function () {
 
 describe('launch', function () {
   it('should use webDriverAgentUrl override', async function () {
-    let override = "http://mockurl:8100/";
+    let override = 'http://mockurl:8100/';
     let args = Object.assign({}, fakeConstructorArgs);
     args.webDriverAgentUrl = override;
     let agent = new WebDriverAgent({}, args);
 
-    expect(await agent.launch("sessionId")).to.be.undefined;
+    expect(await agent.launch('sessionId')).to.be.undefined;
 
     agent.url.href.should.eql(override);
   });
@@ -72,7 +72,7 @@ describe('setupCaching()', function () {
   const getTimestampStub = sinon.stub(utils, 'getWDAUpgradeTimestamp');
 
   beforeEach(function () {
-    wda = new WebDriverAgent("1");
+    wda = new WebDriverAgent('1');
     wdaStub = sinon.stub(wda, 'getStatus');
     wdaStubUninstall = sinon.stub(wda, 'uninstall');
   });
@@ -99,7 +99,7 @@ describe('setupCaching()', function () {
 
   it('should not call uninstall since running WDA has only time', async function () {
     wdaStub.callsFake(function () {
-      return {build: { time: "Jun 24 2018 17:08:21" }};
+      return {build: { time: 'Jun 24 2018 17:08:21' }};
     });
     wdaStubUninstall.callsFake(_.noop);
 
@@ -111,7 +111,7 @@ describe('setupCaching()', function () {
 
   it('should call uninstall once since bundle id is not default without updatedWDABundleId capability', async function () {
     wdaStub.callsFake(function () {
-      return {build: { time: "Jun 24 2018 17:08:21", productBundleIdentifier: 'com.example.WebDriverAgent' }};
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
     });
     wdaStubUninstall.callsFake(_.noop);
 
@@ -124,7 +124,7 @@ describe('setupCaching()', function () {
   it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
     const updatedWDABundleId = 'com.example.WebDriverAgent';
     wdaStub.callsFake(function () {
-      return {build: { time: "Jun 24 2018 17:08:21", productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
     });
 
     wdaStubUninstall.callsFake(_.noop);
@@ -138,7 +138,7 @@ describe('setupCaching()', function () {
   it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
     const updatedWDABundleId = 'com.example.WebDriverAgent';
     wdaStub.callsFake(function () {
-      return {build: { time: "Jun 24 2018 17:08:21", productBundleIdentifier: 'com.example.WebDriverAgent' }};
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
     });
 
     wdaStubUninstall.callsFake(_.noop);

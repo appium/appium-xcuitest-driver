@@ -52,19 +52,19 @@ describe('XCUITestDriver', function () {
   if (!process.env.REAL_DEVICE) {
     it('should start and stop a session', async function () {
       driver = await initSession(baseCaps);
-      let els = await driver.elementsByClassName("XCUIElementTypeWindow");
+      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
       els.length.should.be.at.least(1);
     });
 
     it('should start and stop a session doing pre-build', async function () {
       driver = await initSession(Object.assign({prebuildWDA: true}, baseCaps));
-      let els = await driver.elementsByClassName("XCUIElementTypeWindow");
+      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
       els.length.should.be.at.least(1);
     });
 
     it('should start and stop a session doing simple build-test', async function () {
       driver = await initSession(Object.assign({useSimpleBuildTest: true}, baseCaps));
-      let els = await driver.elementsByClassName("XCUIElementTypeWindow");
+      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
       els.length.should.be.at.least(1);
     });
 
