@@ -39,40 +39,54 @@ const WDA_PORT = 8200;
 
 let driver, server;
 
-let updateSauceJob;
 if (process.env.CLOUD) {
-  if (process.env.CLOUD) {
-    const sauceUserName = process.env.SAUCE_USERNAME;
-    const sauceAccessKey = process.env.SAUCE_ACCESS_KEY;
-    if (sauceUserName && sauceAccessKey) {
-      const saucelabs = new SauceLabs({
-        username: sauceUserName,
-        password: sauceAccessKey,
-      });
-      updateSauceJob = B.promisify(saucelabs.updateJob, {context: saucelabs});
-    }
+  let updateSauceJob;
+  const sauceUserName = process.env.SAUCE_USERNAME;
+  const sauceAccessKey = process.env.SAUCE_ACCESS_KEY;
+  if (sauceUserName && sauceAccessKey) {
+    const saucelabs = new SauceLabs({
+      username: sauceUserName,
+      password: sauceAccessKey,
+    });
+    updateSauceJob = B.promisify(saucelabs.updateJob, {context: saucelabs});
   }
 
-  // on Sauce Labs we need to track the status of the job, and a reasonable
-  // name for it
-  afterEach(function () {
+  before(function () {
+    process.env.SAUCE_JOB_NAME = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${this.test.parent.suites[0].title}`;
+  });
+
+  // on Sauce Labs we need to track the status of the job
+  let errored = false;
+  afterEach(async function () {
     const passed = this.currentTest.state === 'passed';
     if (driver) {
       // if we haven't already failed the suite, update with the current test
       if (driver._appiumSuccess !== false) {
         driver._appiumSuccess = passed;
       }
-      // add a title, if it is not already added
-      if (!driver._appiumTitle) {
-        if (this.test.parent.suites.length) {
-          driver._appiumTitle = `${process.env.TRAVIS_JOB_NUMBER}: ${this.test.parent.suites[0].title}`;
+
+      if (!errored) {
+        const name = passed
+          ? process.env.SAUCE_JOB_NAME
+          : `${process.env.SAUCE_JOB_NAME} (${this.currentTest.title})`;
+        // if this test failed, the job failed altogether
+        errored = !passed;
+
+        // the first failure should be noted in the Sauce job name
+        if (updateSauceJob) {
+          try {
+            await updateSauceJob(driver.sessionID, {passed, name});
+          } catch (err) {
+            console.error(`Error updating job: ${err.message}`); // eslint-disable-line
+          }
         }
+        // driver._appiumTitle = `${process.env.SAUCE_JOB_NAME} (${this.currentTest.title})`;
       }
     }
 
     // wd puts info into the error object that mocha can't display easily
     if (this.currentTest.err) {
-      console.log('ERROR:', JSON.stringify(this.currentTest.err, 2)); // eslint-disable-line
+      console.error('ERROR:', JSON.stringify(this.currentTest.err, 2)); // eslint-disable-line
     }
   });
 }
@@ -110,6 +124,14 @@ async function initSession (caps) {
   if (!CLOUD) {
     await initServer();
   }
+
+  if (process.env.CLOUD) {
+    // on cloud tests, we want to set the `name` capability
+    if (!caps.name) {
+      caps.name = process.env.SAUCE_JOB_NAME || process.env.TRAVIS_JOB_NUMBER || 'unnamed';
+    }
+  }
+
   await initDriver();
 
   if (process.env.USE_WEBDRIVERAGENTURL) {
@@ -125,20 +147,12 @@ async function initSession (caps) {
     caps.udid = serverRes[1].udid;
   }
 
-  await driver.setImplicitWaitTimeout(5000);
+  await driver.setImplicitWaitTimeout(process.env.CI ? 30000 : 5000);
 
   return driver;
 }
 
 async function deleteSession () {
-  // for Sause Labs jobs, update the server
-  if (updateSauceJob && driver) {
-    updateSauceJob(driver.sessionID, {
-      passed: !!driver._appiumSuccess,
-      name: driver._appiumTitle,
-    });
-  }
-
   try {
     await driver.quit();
   } catch (ign) {}

@@ -18,7 +18,8 @@ if (!process.env.SAUCE_BUILD) {
 
   if (process.env.CLOUD) {
     // get a unique build name for SauceLabs, based on the Travis build number
-    env.SAUCE_BUILD = `appium-xcuitest-driver CI: ${process.env.TRAVIS_BUILD_NUMBER}`;
+    // or the current date, for local testing
+    env.SAUCE_BUILD = `appium-xcuitest-driver CI: ${process.env.TRAVIS_BUILD_NUMBER || new Date().toISOString()}`;
   }
 
   Object.assign(process.env, env);

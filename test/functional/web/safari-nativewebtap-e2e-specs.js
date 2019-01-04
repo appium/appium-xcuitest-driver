@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
-import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_SCROLLABLE_PAGE,
+import { spinTitleEquals, spinTitle, GUINEA_PIG_PAGE, GUINEA_PIG_SCROLLABLE_PAGE,
          GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
 import { killAllSimulators } from '../helpers/simulator';
 import { retryInterval } from 'asyncbox';
@@ -37,7 +37,7 @@ const SPIN_RETRIES = 5;
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 
-describe('Safari', function () {
+describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
 
   let devices = [];
@@ -54,9 +54,17 @@ describe('Safari', function () {
       devices = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
     }
 
+    async function loadPage (driver, url) {
+      await retryInterval(5, 1000, async function () {
+        await driver.get(url);
+        const title = await spinTitle(driver);
+        title.should.not.include('Cannot Open Page');
+      });
+    }
+
     // define the tests, for each device
     for (const deviceName of devices) {
-      describe(`coordinate conversion - ${deviceName} -`, function () {
+      describe(`${deviceName} -`, function () {
         this.timeout(MOCHA_TIMEOUT * 2);
 
         let driver;
@@ -84,7 +92,7 @@ describe('Safari', function () {
         });
 
         it('should be able to tap on an element', async function () {
-          await driver.get(GUINEA_PIG_PAGE);
+          await loadPage(driver, GUINEA_PIG_PAGE);
 
           let el = await driver.elementByLinkText(PAGE_3_LINK);
           await el.click();
@@ -93,7 +101,7 @@ describe('Safari', function () {
         });
 
         it('should be able to tap on an element when the app banner is up', async function () {
-          await driver.get(GUINEA_PIG_APP_BANNER_PAGE);
+          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
 
           let el = await driver.elementByLinkText(PAGE_3_LINK);
           await el.click();
@@ -102,7 +110,7 @@ describe('Safari', function () {
         });
 
         it('should be able to tap on an element after scrolling', async function () {
-          await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+          await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
           await driver.execute('mobile: scroll', {direction: 'down'});
 
           let el = await driver.elementByLinkText(PAGE_3_LINK);
@@ -112,7 +120,7 @@ describe('Safari', function () {
         });
 
         it('should be able to tap on a button', async function () {
-          await driver.get(GUINEA_PIG_PAGE);
+          await loadPage(driver, GUINEA_PIG_PAGE);
 
           (await driver.source()).should.not.include('Your comments: Hello');
 
@@ -124,19 +132,29 @@ describe('Safari', function () {
           await el.click();
 
           await retryInterval(5, 500, async function () {
-            (await driver.source()).should.include('Your comments: Hello');
+            const src = await driver.source();
+            if (!src.includes('Cannot Open Page')) {
+              return src.should.include('Your comments: Hello');
+            }
+
+            // on Travis this sometimes happens. Try to reload the page
+            const ctx = await driver.currentContext();
+            await driver.setContext('NATIVE_APP');
+            await driver.elementByAccessibilityId('ReloadButton').click();
+            await driver.setContext(ctx);
+            throw new Error('Page could not load. Retrying after reload');
           });
         });
 
         describe('with tabs -', function () {
           beforeEach(async function () {
-            await driver.get(GUINEA_PIG_PAGE);
+            await loadPage(driver, GUINEA_PIG_PAGE);
           });
           before(async function () {
             if (skipped) {
               return this.skip();
             }
-            await driver.get(GUINEA_PIG_PAGE);
+            await loadPage(driver, GUINEA_PIG_PAGE);
 
             // open a new tab and go to it
             let el = await driver.elementByLinkText('i am a new window link');
@@ -144,7 +162,7 @@ describe('Safari', function () {
           });
 
           it('should be able to tap on an element', async function () {
-            await driver.get(GUINEA_PIG_PAGE);
+            await loadPage(driver, GUINEA_PIG_PAGE);
 
             let el = await driver.elementByLinkText(PAGE_3_LINK);
             await el.click();
@@ -160,7 +178,7 @@ describe('Safari', function () {
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
           it('should be able to tap on an element after scrolling', async function () {
-            await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+            await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
             await driver.execute('mobile: scroll', {direction: 'down'});
 
             let el = await driver.elementByLinkText(PAGE_3_LINK);
@@ -169,7 +187,7 @@ describe('Safari', function () {
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
           it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
-            await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
+            await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
             await driver.execute('mobile: scroll', {direction: 'down'});
 
             // to get the url bar, click on the URL bar

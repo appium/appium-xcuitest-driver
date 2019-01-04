@@ -155,7 +155,7 @@ describe('element commands', function () {
       const scrollableOffset = 170; // 3 rows plus space between two
       getAttrStub.returns('XCUIElementTypeCollectionView');
       findElStub.returns(fixtures.map(el => ({ELEMENT: el.id})));
-      for (let item of fixtures) {
+      for (const item of fixtures) {
         getRectStub.withArgs({ELEMENT: item.id}).returns(item);
       }
       getSizeStub.returns({height: 100, width: 200});

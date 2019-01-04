@@ -131,7 +131,7 @@ describe('XCUITestDriver', function () {
         orientation.should.eql(initialOrientation);
       }
 
-      for (let orientation of ['LANDSCAPE', 'PORTRAIT']) {
+      for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
         it(`should be able to start in a ${orientation} mode`, async function () {
           this.timeout(MOCHA_TIMEOUT);
           await runOrientationTest(orientation);
