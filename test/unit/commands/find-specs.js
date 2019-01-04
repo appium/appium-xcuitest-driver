@@ -79,7 +79,7 @@ describe('general commands', function () {
         "/*[@firstVisible = 'true']"
       ];
       let attribSpy = sinon.stub(driver, 'getAttribute');
-      for (let variant of variants) {
+      for (const variant of variants) {
         proxySpy.withArgs(
           '/element/ctx/element',
           'POST',

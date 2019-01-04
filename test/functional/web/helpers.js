@@ -16,15 +16,13 @@ const PHISHING_END_POINT = 'http://malware.testing.google.test/testing/malware/*
 const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
 
 async function spinTitle (driver) {
-  let title = await retry(10, async () => {
+  return await retry(10, async () => {
     let title = await driver.title();
     if (!title) {
       throw new Error('did not get page title');
     }
     return title;
   });
-
-  return title;
 }
 
 async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 500) {
