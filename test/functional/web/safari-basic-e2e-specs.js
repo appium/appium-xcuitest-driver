@@ -123,7 +123,7 @@ describe('Safari - basics -', function () {
 
     describe('window title', function () {
       it('should return a valid title on web view', async function () {
-        (await driver.title()).should.include("I am a page title");
+        (await driver.title()).should.include('I am a page title');
       });
     });
 
