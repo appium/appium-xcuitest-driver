@@ -87,7 +87,7 @@ const UICATALOG_SIM_CAPS = _.defaults({
 delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests that use this
 
 const SETTINGS_CAPS = _.defaults({
-  bundleId: "com.apple.Preferences"
+  bundleId: 'com.apple.Preferences'
 }, GENERIC_CAPS);
 
 const SAFARI_CAPS = _.defaults({

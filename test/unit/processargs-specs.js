@@ -9,15 +9,15 @@ describe('process args', function () {
   let proxySpy = sinon.stub(driver, 'proxyCommand');
 
   const PROCESS_ARGS_OBJECT = {
-    args: ["a", "b", "c"]
-    , env: { "a": "b", "c": "d" }
+    args: ['a', 'b', 'c']
+    , env: { 'a': 'b', 'c': 'd' }
   };
 
   let processArgsString = JSON.stringify(PROCESS_ARGS_OBJECT);
 
   let desired = {
     desiredCapabilities: {
-      bundleId: "com.test.app",
+      bundleId: 'com.test.app',
       arguments: PROCESS_ARGS_OBJECT.args,
       environment: PROCESS_ARGS_OBJECT.env,
       shouldWaitForQuiescence: true,
@@ -37,7 +37,7 @@ describe('process args', function () {
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
-        app: "testapp.app",
+        app: 'testapp.app',
         bundleId: desired.desiredCapabilities.bundleId,
         processArguments: PROCESS_ARGS_OBJECT,
       };
@@ -56,7 +56,7 @@ describe('process args', function () {
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
-        app: "testapp.app",
+        app: 'testapp.app',
         bundleId: desired.desiredCapabilities.bundleId,
         processArguments: processArgsString,
       };

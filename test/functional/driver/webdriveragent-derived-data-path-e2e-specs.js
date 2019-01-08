@@ -11,7 +11,7 @@ import fs from 'fs';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
-const TEMP_FOLDER = "/tmp/WebDriverAgent";
+const TEMP_FOLDER = '/tmp/WebDriverAgent';
 
 const should = chai.should(); // eslint-disable-line no-unused-vars
 chai.use(chaiAsPromised);
@@ -35,11 +35,11 @@ describe('XCUITestDriver', function () {
     baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
     caps = Object.assign({
       usePrebuiltWDA: true,
-      agentPath: path.join(TEMP_FOLDER, "WebDriverAgent.xcodeproj"),
-      derivedDataPath: path.join(TEMP_FOLDER, "DerivedData", "WebDriverAgent")
+      agentPath: path.join(TEMP_FOLDER, 'WebDriverAgent.xcodeproj'),
+      derivedDataPath: path.join(TEMP_FOLDER, 'DerivedData', 'WebDriverAgent')
     }, baseCaps);
     // copy existing WebDriverAgent to the selected derivedDataPath folder
-    const wda_path = path.join(process.cwd(), "WebDriverAgent");
+    const wda_path = path.join(process.cwd(), 'WebDriverAgent');
     fs.symlinkSync(wda_path, TEMP_FOLDER);
   });
   after(async function () {
@@ -59,7 +59,7 @@ describe('XCUITestDriver', function () {
   if (!process.env.REAL_DEVICE) {
     it.skip('should start and stop a session', async function () {
       driver = await initSession(caps, this);
-      let els = await driver.elementsByClassName("XCUIElementTypeWindow");
+      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
       els.length.should.be.at.least(1);
     });
   }

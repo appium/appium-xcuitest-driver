@@ -56,9 +56,9 @@ describe('XCUITestDriver - basics -', function () {
   describe('session -', function () {
     it('should get session details with our caps merged with WDA response', async function () {
       const extraWdaCaps = {
-        CFBundleIdentifier: "com.example.apple-samplecode.UICatalog",
-        browserName: "UICatalog",
-        device: "iphone",
+        CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
+        browserName: 'UICatalog',
+        device: 'iphone',
       };
       let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
 
@@ -140,7 +140,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('screenshot -', function () {
     after(async function () {
       try {
-        await driver.setOrientation("PORTRAIT");
+        await driver.setOrientation('PORTRAIT');
       } catch (ign) {}
     });
     it('should get an app screenshot', async function () {
@@ -158,7 +158,7 @@ describe('XCUITestDriver - basics -', function () {
       screenshot1.should.exist;
 
       try {
-        await driver.setOrientation("LANDSCAPE");
+        await driver.setOrientation('LANDSCAPE');
       } catch (ign) {}
       // take a little pause while it orients, otherwise you get the screenshot
       // on an angle
@@ -174,7 +174,7 @@ describe('XCUITestDriver - basics -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
       const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
       const fullScreen = await driver.takeScreenshot();
-      const viewScreen = await driver.execute("mobile: viewportScreenshot");
+      const viewScreen = await driver.execute('mobile: viewportScreenshot');
       const fullB64 = Buffer.from(fullScreen, 'base64');
       const viewB64 = Buffer.from(viewScreen, 'base64');
       const fullImg = new PNG({filterType: 4});

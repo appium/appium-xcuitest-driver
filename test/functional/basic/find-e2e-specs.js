@@ -32,7 +32,7 @@ describe('XCUITestDriver - find', function () {
     });
     it('should find an element within descendants', async function () {
       let el2 = await el1.elementByClassName('XCUIElementTypeStaticText');
-      (await el2.getAttribute('name')).should.contain("Buttons");
+      (await el2.getAttribute('name')).should.contain('Buttons');
     });
 
     it('should not find an element not within itself', async function () {
@@ -75,7 +75,7 @@ describe('XCUITestDriver - find', function () {
       el1Name.should.not.equal(el2Name);
 
       // el1 is gone, so it doesn't have a name anymore
-      (await el1.getAttribute('name')).should.equal("");
+      (await el1.getAttribute('name')).should.equal('');
     });
   });
 
@@ -222,7 +222,7 @@ describe('XCUITestDriver - find', function () {
 
       describe('finding //*', function () {
         for (let n = 0; n < runs; n++) {
-          describe(`test ${n + 1}`, test("//*", 52));
+          describe(`test ${n + 1}`, test('//*', 52));
         }
       });
     });
@@ -385,10 +385,10 @@ describe('XCUITestDriver - find', function () {
     it('should find the first visible child of an element', async function () {
       let el = await driver.elementByClassName('XCUIElementTypeTable');
       let child = await el.elementByXPath('/*[@firstVisible="true"]');
-      await child.getAttribute("type").should.eventually.eql("XCUIElementTypeCell");
+      await child.getAttribute('type').should.eventually.eql('XCUIElementTypeCell');
       // do another call and double-check the different quote/spacing works
       let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
-      await grandchild.getAttribute("name").should.eventually.eql("Action Sheets");
+      await grandchild.getAttribute('name').should.eventually.eql('Action Sheets');
     });
   });
 
@@ -396,7 +396,7 @@ describe('XCUITestDriver - find', function () {
     it('should find any scrollable elements', async function () {
       let els = await driver.elementsByXPath('//*[@scrollable="true"]');
       els.should.have.length(1);
-      await els[0].getAttribute("type").should.eventually.eql("XCUIElementTypeTable");
+      await els[0].getAttribute('type').should.eventually.eql('XCUIElementTypeTable');
     });
   });
 });
