@@ -108,7 +108,7 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
-      let table = await driver.elementByClassName("XCUIElementTypeTable");
+      let table = await driver.elementByClassName('XCUIElementTypeTable');
       let contentSize = JSON.parse(await table.getAttribute('contentSize'));
       contentSize.width.should.be.a('number');
       contentSize.height.should.be.a('number');
@@ -126,7 +126,7 @@ describe('XCUITestDriver - element(s)', function () {
     });
 
     it('should not get the contentSize of other kinds of elements', async function () {
-      let wrongTypeEl = await driver.elementByAccessibilityId("UICatalog");
+      let wrongTypeEl = await driver.elementByAccessibilityId('UICatalog');
       await wrongTypeEl.getAttribute('contentSize').should.eventually
         .be.rejectedWith(/Can't get content size for type/);
     });

@@ -22,7 +22,7 @@ describe('webdriveragent utils', function () {
         .onFirstCall().returns(false)
         .onSecondCall().returns(true)
         .onThirdCall().returns(true);
-      mocks.teen_process.expects("exec")
+      mocks.teen_process.expects('exec')
         .once().withExactArgs('Scripts/bootstrap.sh', ['-d'], {cwd: '/path/to/wda'})
         .returns('');
       await checkForDependencies(bootstrapPath);
@@ -33,7 +33,7 @@ describe('webdriveragent utils', function () {
         .onFirstCall().returns(false)
         .onSecondCall().returns(true)
         .onThirdCall().returns(true);
-      mocks.teen_process.expects("exec")
+      mocks.teen_process.expects('exec')
         .once().withExactArgs('Scripts/bootstrap.sh', ['-d', '-D'], {cwd: '/path/to/wda'})
         .returns('');
       await checkForDependencies(bootstrapPath, true);
@@ -44,14 +44,14 @@ describe('webdriveragent utils', function () {
         .onFirstCall().returns(true)
         .onSecondCall().returns(true)
         .onThirdCall().returns(true);
-      mocks.teen_process.expects("exec").never();
+      mocks.teen_process.expects('exec').never();
       await checkForDependencies(bootstrapPath);
     });
     it('should delete Carthage folder and throw error on script error', async function () {
       mocks.fs.expects('which').once().returns(true);
       mocks.fs.expects('hasAccess').once()
         .onFirstCall().returns(false);
-      mocks.teen_process.expects("exec")
+      mocks.teen_process.expects('exec')
         .once().withExactArgs('Scripts/bootstrap.sh', ['-d'], {cwd: '/path/to/wda'})
         .throws({stdout: '', stderr: '', message: 'Bootstrap script failure'});
       await checkForDependencies(bootstrapPath).should.eventually.be.rejectedWith(/Bootstrap script failure/);
@@ -64,7 +64,7 @@ describe('webdriveragent utils', function () {
         .onThirdCall().returns(true);
       mocks.fs.expects('mkdir')
         .withExactArgs(`${bootstrapPath}/Resources`);
-      mocks.teen_process.expects("exec").never();
+      mocks.teen_process.expects('exec').never();
       await checkForDependencies(bootstrapPath);
     });
     it('should create WDA bundle if not already there', async function () {
@@ -75,7 +75,7 @@ describe('webdriveragent utils', function () {
         .onThirdCall().returns(false);
       mocks.fs.expects('mkdir')
         .withExactArgs(`${bootstrapPath}/Resources/WebDriverAgent.bundle`);
-      mocks.teen_process.expects("exec").never();
+      mocks.teen_process.expects('exec').never();
       await checkForDependencies(bootstrapPath);
     });
   }));

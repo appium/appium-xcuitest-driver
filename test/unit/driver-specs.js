@@ -12,7 +12,7 @@ import { MOCHA_LONG_TIMEOUT } from './helpers';
 chai.should();
 const expect = chai.expect;
 
-const caps = {platformName: "iOS", deviceName: "iPhone 6", app: "/foo.app"};
+const caps = {platformName: 'iOS', deviceName: 'iPhone 6', app: '/foo.app'};
 
 describe('driver commands', function () {
   describe('status', function () {

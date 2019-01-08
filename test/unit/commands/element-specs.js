@@ -238,7 +238,7 @@ describe('element commands', function () {
     });
 
     beforeEach(function () {
-      driver.curContext = "fake web context";
+      driver.curContext = 'fake web context';
     });
     afterEach(function () {
       driver.curContext = oldContext;
