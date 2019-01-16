@@ -139,9 +139,9 @@ describe('Safari - coordinate conversion -', function () {
 
             // on Travis this sometimes happens. Try to reload the page
             const ctx = await driver.currentContext();
-            await driver.setContext('NATIVE_APP');
+            await driver.context('NATIVE_APP');
             await driver.elementByAccessibilityId('ReloadButton').click();
-            await driver.setContext(ctx);
+            await driver.context(ctx);
             throw new Error('Page could not load. Retrying after reload');
           });
         });
