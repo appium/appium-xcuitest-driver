@@ -28,7 +28,7 @@ describe('simulator management', function () {
       await createSim(caps);
 
       createDeviceStub.calledOnce.should.be.true;
-      createDeviceStub.firstCall.args[0].should.eql('appiumTest-iPhone 6');
+      /appiumTest-[\w-]{36}-iPhone 6/.test(createDeviceStub.firstCall.args[0]).should.be.true;
       createDeviceStub.firstCall.args[1].should.eql('iPhone 6');
       createDeviceStub.firstCall.args[2].should.eql('10.1');
       getSimulatorStub.calledOnce.should.be.true;
