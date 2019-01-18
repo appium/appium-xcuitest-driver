@@ -148,7 +148,7 @@ describe('XCUITestDriver', function () {
       });
 
       it('default: creates sim and deletes it afterwards', async function () {
-        const caps = Object.assign({}, UICATALOG_SIM_CAPS, {useNewSimulator: true});
+        const caps = Object.assign({}, UICATALOG_SIM_CAPS, {enforceFreshSimulatorCreation: true});
 
         const simsBefore = await getNumSims();
         await initSession(caps);
