@@ -120,6 +120,8 @@ describe('Safari - coordinate conversion -', function () {
         });
 
         it('should be able to tap on a button', async function () {
+          this.retries(5);
+
           await loadPage(driver, GUINEA_PIG_PAGE);
 
           (await driver.source()).should.not.include('Your comments: Hello');
@@ -127,22 +129,12 @@ describe('Safari - coordinate conversion -', function () {
           let textArea = await driver.elementByName('comments');
           await textArea.type('Hello');
 
-          // console.log(await driver.source());
           let el = await driver.elementByName('submit');
           await el.click();
 
           await retryInterval(5, 500, async function () {
             const src = await driver.source();
-            if (!src.includes('Cannot Open Page')) {
-              return src.should.include('Your comments: Hello');
-            }
-
-            // on Travis this sometimes happens. Try to reload the page
-            const ctx = await driver.currentContext();
-            await driver.context('NATIVE_APP');
-            await driver.elementByAccessibilityId('ReloadButton').click();
-            await driver.context(ctx);
-            throw new Error('Page could not load. Retrying after reload');
+            return src.should.include('Your comments: Hello');
           });
         });
 
