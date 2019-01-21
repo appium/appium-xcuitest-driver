@@ -43,7 +43,7 @@ jobs:
       if: type != cron
       osx_image: xcode9.4
       env: CI_METRICS=1 PLATFORM_VERSION=11.4 TEST=functional/web
-    
+
     - stage: "[CRON] Upload Appium build to Sauce Storage"
       if: type = cron
       os: linux
@@ -184,14 +184,10 @@ install:
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests;
-      npm install --no-save fancy-log @octokit/rest lodash saucelabs;
+      npm install --no-save saucelabs;
       $(npm bin)/gulp fix-mocha-parallel-tests;
       npm run build;
-    fi
-  # long tests timeout on Travis because mocha-parallel-tests batches output
-  # so outside of that process, produce output manually
-  - if [ -n "$LONG" ]; then
-      ./ci/periodic-output.sh & export LONG_PID=$!;
+      $(npm bin)/gulp periodic-output & export LONG_PID=$!;
     fi
 script:
   - if [ -n "$CLOUD" ]; then
