@@ -99,7 +99,7 @@
     "gulp": "^4.0.0",
     "ios-test-app": "^2.5.7",
     "ios-uicatalog": "^1.0.4",
-    "mocha": "^5.1.1",
+    "mocha": "^6.0.0",
     "mocha-parallel-tests": "^2.0.4",
     "moment": "^2.22.2",
     "pem": "^1.8.3",
