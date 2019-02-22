@@ -3,14 +3,17 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-trigger:
-- master
-
-pool:
-  vmImage: 'Ubuntu-16.04'
-
 steps:
-- task: Xcode@10
+- task: InstallAppleCertificate@2
+  inputs:
+    certSecureFile: 'chrisid_iOSDev_Nov2018.p12'
+    certPwd: $(P12Password)
+
+- task: InstallAppleProvisioningProfile@1
+  inputs:
+    provProfileSecureFile: '6ffac825-ed27-47d0-8134-95fcf37a666c.mobileprovision'
+
+- task: Xcode@5
   inputs:
     actions: 'build'
     scheme: ''
