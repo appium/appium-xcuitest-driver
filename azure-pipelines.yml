@@ -1,7 +1,6 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
+pool:
+  vmImage: 'macOS-10.13'
 
 steps:
 - task: Xcode@5
