@@ -10,12 +10,21 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 steps:
-- task: NodeTool@0
+#- task: NodeTool@0
+  #inputs:
+    #versionSpec: '11.x'
+  #displayName: 'Install Node.js'
+#- script: |
+    #npm install
+    #npm test
+  #displayName: 'NPM Install and Test'
+- task: NodeTool@0, Xcode@10
   inputs:
-    versionSpec: '8.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+    actions: 'build'
+    scheme: ''
+    sdk: 'iphoneos'
+    configuration: 'Release'
+    xcWorkspacePath: '**/*.xcodeproj/project.xcworkspace'
+    xcodeVersion: 'default' # Options: 8, 9, 10, default, specifyPath
+    signingOption: 'default' # Options: nosign, default, manual, auto
+    useXcpretty: 'false' # Makes it easier to diagnose build failures
