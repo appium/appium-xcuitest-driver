@@ -18,7 +18,7 @@ steps:
     #npm install
     #npm test
   #displayName: 'NPM Install and Test'
-- task: NodeTool@0, Xcode@10
+- task: Xcode@10
   inputs:
     actions: 'build'
     scheme: ''
