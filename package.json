@@ -97,7 +97,7 @@
     "eslint-plugin-promise": "^4.0.0",
     "glob": "^7.1.0",
     "gulp": "^4.0.0",
-    "ios-test-app": "^2.5.7",
+    "ios-test-app": "^3.0.0",
     "ios-uicatalog": "^1.0.4",
     "mocha": "^6.0.0",
     "mocha-parallel-tests": "^2.0.4",
