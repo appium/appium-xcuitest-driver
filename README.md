@@ -162,6 +162,8 @@ Differences noted here
 |`permissions`| Allows to set permissions for the specified application bundle on Simulator only. The capability value is expected to be a valid JSON string with `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}` format. It is required that `applesimutils` package is installed and available in PATH. The list of available service names and statuses can be found at https://github.com/wix/AppleSimulatorUtils. | e. g. `{"com.apple.mobilecal": {"calendar": "YES"}}` |
 |`screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc)  Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command. `0` might cause OutOfMemory crash on high-resolution devices like iPad Pro. | e.g. `0`, `1`, `2` |
 |`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
+|`useSimpleBuildTest`| Build with `build` and run test with `test` in xcodebuild for all Xcode version if this is `true`, or build with `build-for-testing` and run tests with `test-without-building` for over Xcode 8 if this is `false`. Defaults to `false`. | `true` or `false` |
+
 
 ## Development<a id="development"></a>
 
