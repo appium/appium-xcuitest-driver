@@ -24,7 +24,7 @@ describe('language and locale', function () {
           shouldUseTestManagerForVisibilityDetection: true,
           maxTypingFrequency: 60,
           shouldUseSingletonTestManager: true,
-          wdaEventloopIdleDelay: 0,
+          eventloopIdleDelaySec: 0,
         }
       };
       let desiredCapabilities = {
@@ -74,7 +74,7 @@ describe('language and locale', function () {
           shouldUseTestManagerForVisibilityDetection: true,
           maxTypingFrequency: 60,
           shouldUseSingletonTestManager: true,
-          wdaEventloopIdleDelay: 0,
+          eventloopIdleDelaySec: 0,
         }
       };
 

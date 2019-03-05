@@ -24,7 +24,7 @@ describe('process args', function () {
       shouldUseTestManagerForVisibilityDetection: false,
       maxTypingFrequency: 60,
       shouldUseSingletonTestManager: true,
-      wdaEventloopIdleDelay: 0,
+      eventloopIdleDelaySec: 0,
     }
   };
 
