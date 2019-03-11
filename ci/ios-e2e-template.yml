@@ -3,8 +3,8 @@ parameters:
     script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
     name: ios-e2e-test
     dependsOn: ''
-    platformVersion: 12.1
-    deviceName: 'iPhone X'
+    platformVersion: 10
+    deviceName: 'iPhone 5s'
     testResultsFiles: 'junit-test-results.xml'
 
 jobs:
@@ -35,4 +35,4 @@ jobs:
     - task: PublishTestResults@2
       condition: always()
       inputs:
-        testResultsFiles: ${{ parameters.workingDirectory }}/${{ parameters.testResultsFiles }}
+        testResultsFiles: ${{ parameters.testResultsFiles }}
