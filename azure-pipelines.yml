@@ -1,15 +1,24 @@
-# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
-pool:
-  vmImage: 'macOS-10.13'
+jobs:
+  - template: ./ci/ios/ios-e2e-template.yml
+    parameters:
+      name: e2e_basic_12
+      script: |
+        npm install --no-save mjpeg-consumer
+        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/basic -g @skip-ci -i --exit
 
-steps:
-- task: Xcode@5
-  inputs:
-    actions: 'build'
-    scheme: ''
-    sdk: 'iphoneos'
-    configuration: 'Release'
-    xcWorkspacePath: '**/*.xcodeproj/project.xcworkspace'
-    xcodeVersion: 'default' # Options: 8, 9, 10, default, specifyPath
-    signingOption: 'default' # Options: nosign, default, manual, auto
-    useXcpretty: 'false' # Makes it easier to diagnose build failures
+  - template: ./ci/ios/ios-e2e-template.yml
+    parameters:
+      name: e2e_driver_12
+      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/driver -g @skip-ci -i --exit
+
+  - template: ./ci/ios/ios-e2e-template.yml 
+    parameters:
+      name: e2e_web_12
+      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/web -g @skip-ci -i --exit
+
+  - template: ./ci/ios/ios-e2e-template.yml
+    parameters:
+      name: e2e_long_12
+      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/long -g @skip-ci -i --exit
+
+  

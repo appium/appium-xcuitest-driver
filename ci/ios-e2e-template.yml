@@ -1,0 +1,43 @@
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+parameters:
+    script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
+    workingDirectory: ''
+    name: ios-e2e-test
+    dependsOn: ''
+    platformVersion: 12.1
+    deviceName: 'iPhone X'
+    testResultsFiles: 'junit-test-results.xml'
+
+jobs:
+  - job: ${{ parameters.name }}
+    variables:
+      PLATFORM_VERSION: ${{ parameters.platformVersion }}
+      DEVICE_NAME: ${{ parameters.deviceName }}
+      MOCHA_FILE: 'junit-test-results.xml'
+      CI: true
+    pool:
+      vmImage: 'macOS 10.13'
+    steps:
+    - checkout: self
+      submodules: true
+    - task: NodeTool@0
+      inputs:
+        versionSpec: 11.x
+    - script: |
+        sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
+        git submodule update --init --recursive;
+      workingDirectory: packages/appium-xcuitest-driver
+      displayName: Checkout WDA submodule
+    - script: npm install
+      workingDirectory: packages/appium-xcuitest-driver
+      displayName: Install node dependencies
+    - script: npm run build
+      workingDirectory: packages/appium-xcuitest-driver
+      displayName: Build
+    - script: ${{ parameters.script }}
+      workingDirectory: packages/appium-xcuitest-driver
+      displayName: Run functional tests
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFiles: ${{ parameters.workingDirectory }}/${{ parameters.testResultsFiles }}
