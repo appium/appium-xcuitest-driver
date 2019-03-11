@@ -3,7 +3,7 @@ parameters:
     script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
     name: ios-e2e-test
     dependsOn: ''
-    platformVersion: 10
+    platformVersion: 10.0
     deviceName: 'iPhone 5s'
     testResultsFiles: 'junit-test-results.xml'
 
