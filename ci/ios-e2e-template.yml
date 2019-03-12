@@ -3,14 +3,15 @@ parameters:
     script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
     name: ios-e2e-test
     dependsOn: ''
-    platformVersion: 10.0
-    deviceName: 'iPhone 5s'
+    iosVersion: 12.0
+    xcodeVersion: 10
+    deviceName: 'iPhone X'
     testResultsFiles: 'junit-test-results.xml'
 
 jobs:
   - job: ${{ parameters.name }}
     variables:
-      PLATFORM_VERSION: ${{ parameters.platformVersion }}
+      PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
       MOCHA_FILE: 'junit-test-results.xml'
       CI: true
@@ -21,7 +22,7 @@ jobs:
       submodules: true
     - script: |
         ls /Applications/
-        xcode-select -s /Applications/Xcode_${{ parameters.platformVersion }}.app/Contents/Developer
+        xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
