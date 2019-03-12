@@ -14,17 +14,20 @@ jobs:
       DEVICE_NAME: ${{ parameters.deviceName }}
       MOCHA_FILE: '${{ parameters.name }}-tests.xml'
       CI: true
+      DEVELOPER_DIR: /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
     pool:
       vmImage: 'macOS 10.13'
     steps:
     - checkout: self
       submodules: true
     - script: |
+        echo "INSTALLED APPLICATIONS:""
         ls /Applications/
-        sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
+        echo "XCODE VERSION:"
         xcodebuild -version
+        echo "IOS SIMULATORS:"
         xcrun simctl list
-      displayName: XcodeSelect
+      displayName: Log Environment Info
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
