@@ -3,7 +3,7 @@ parameters:
     script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
     name: ios-e2e-test
     dependsOn: ''
-    iosVersion: 12.0
+    iosVersion: 12.1
     xcodeVersion: 10.1
     deviceName: 'iPhone X'
     testResultsFiles: 'junit-test-results.xml'
@@ -23,6 +23,8 @@ jobs:
     - script: |
         ls /Applications/
         sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
+        xcodebuild -version
+      displayName: XcodeSelect
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
