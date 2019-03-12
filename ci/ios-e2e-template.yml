@@ -19,9 +19,7 @@ jobs:
     steps:
     - checkout: self
       submodules: true
-    - task: Xcode@5
-      inputs:
-        xcodeVersion: 10
+    - script: xcodebuild -version
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
