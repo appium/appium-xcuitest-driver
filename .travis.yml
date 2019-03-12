@@ -191,7 +191,7 @@ install:
     fi
 script:
   - if [ -n "$CLOUD" ]; then
-      npm install mocha@5; # TO-DO: Take this out once `mocha-parallel-tests` supports mocha 6
+      npm install mocha@5;
       npm run mocha:parallel -- --max-parallel $MAX_PARALLEL --debug -t 480000 --require build/test/env/env --recursive build/test/$TEST;
     else
       npm run lint && npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
