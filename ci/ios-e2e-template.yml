@@ -41,4 +41,4 @@ jobs:
     - task: PublishTestResults@2
       condition: always()
       inputs:
-        testResultsFiles: ${{ parameters.testResultsFiles }}
+        testResultsFiles: $(MOCHA_FILE)
