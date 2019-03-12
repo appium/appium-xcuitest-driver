@@ -1,6 +1,6 @@
 # Pull request validation job
 jobs:
-  - template: ci/xcuitest-e2e-template.yml
+  - template: ./ci/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_12_1
       iosVersion: 12.1
