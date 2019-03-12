@@ -6,14 +6,13 @@ parameters:
     iosVersion: 12.1
     xcodeVersion: 10.1
     deviceName: 'iPhone X'
-    testResultsFiles: 'junit-test-results.xml'
 
 jobs:
   - job: ${{ parameters.name }}
     variables:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
-      MOCHA_FILE: 'junit-test-results.xml'
+      MOCHA_FILE: '${{ parameters.name }}-tests.xml'
       CI: true
     pool:
       vmImage: 'macOS 10.13'
@@ -24,6 +23,7 @@ jobs:
         ls /Applications/
         sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
         xcodebuild -version
+        xcrun simctl list
       displayName: XcodeSelect
     - task: NodeTool@0
       inputs:
