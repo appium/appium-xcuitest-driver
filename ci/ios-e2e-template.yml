@@ -12,22 +12,23 @@ jobs:
     variables:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
-      MOCHA_FILE: '${{ parameters.name }}-tests.xml' 
+      MOCHA_FILE: '${{ parameters.name }}-tests.xml'
       CI: true
-      DEVELOPER_DIR: /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
     pool:
       vmImage: 'macOS 10.13'
     steps:
     - checkout: self
       submodules: true
     - script: |
-        echo "INSTALLED APPLICATIONS:""
+        echo "INSTALLED APPLICATIONS:"
         ls /Applications/
+        echo "CHANGING TO Xcode_${{ paramaters.xcodeVersion }}"
+        sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
         echo "XCODE VERSION:"
         xcodebuild -version
         echo "IOS SIMULATORS:"
         xcrun simctl list
-      displayName: Log Environment Info
+      displayName: XcodeSelect
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
