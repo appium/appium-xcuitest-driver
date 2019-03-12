@@ -22,7 +22,7 @@ jobs:
     - script: |
         echo "INSTALLED APPLICATIONS:"
         ls /Applications/
-        echo "CHANGING TO Xcode_${{ paramaters.xcodeVersion }}"
+        echo "CHANGING TO Xcode_${{ parameters.xcodeVersion }}"
         sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
         echo "XCODE VERSION:"
         xcodebuild -version
