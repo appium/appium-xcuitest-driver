@@ -12,7 +12,7 @@ jobs:
     variables:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
-      MOCHA_FILE: '${{ parameters.name }}-tests.xml'
+      MOCHA_FILE: '${{ parameters.name }}-tests.xml' 
       CI: true
       DEVELOPER_DIR: /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
     pool:
