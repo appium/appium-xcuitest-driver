@@ -1,0 +1,41 @@
+parameters:
+  name: ''
+  iosVersion: ''
+  xcodeVersion: ''
+  deviceName: ''
+jobs:
+  - template: ./ci/ios-e2e-template.yml
+    parameters:
+      name: e2e_basic_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      script: |
+        npm install --no-save mjpeg-consumer
+        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/basic -g @skip-ci -i --exit
+
+  - template: ./ci/ios-e2e-template.yml
+    parameters:
+      name: e2e_driver_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/driver -g @skip-ci -i --exit
+
+  - template: ./ci/ios-e2e-template.yml 
+    parameters:
+      name: e2e_web_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/web -g @skip-ci -i --exit
+
+  - template: ./ci/ios-e2e-template.yml
+    parameters:
+      name: e2e_long_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/long -g @skip-ci -i --exit
+
+  
