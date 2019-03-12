@@ -1,24 +1,8 @@
+# Pull request validation job
 jobs:
-  - template: ./ci/ios-e2e-template.yml
+  - template: ci/xcuitest-e2e-template.yml
     parameters:
-      name: e2e_basic_12_1
-      script: |
-        npm install --no-save mjpeg-consumer
-        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/basic -g @skip-ci -i --exit
-
-  - template: ./ci/ios-e2e-template.yml
-    parameters:
-      name: e2e_driver_12_1
-      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/driver -g @skip-ci -i --exit
-
-  - template: ./ci/ios-e2e-template.yml 
-    parameters:
-      name: e2e_web_12_1
-      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/web -g @skip-ci -i --exit
-
-  - template: ./ci/ios-e2e-template.yml
-    parameters:
-      name: e2e_long_12_1
-      script: npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/long -g @skip-ci -i --exit
-
-  
+      name: iPhoneX_12_1
+      iosVersion: 12.1
+      xcodeVersion: 10.1
+      deviceName: "iPhone X"
