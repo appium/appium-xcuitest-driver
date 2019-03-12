@@ -22,7 +22,7 @@ jobs:
       submodules: true
     - script: |
         ls /Applications/
-        xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
