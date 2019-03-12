@@ -4,7 +4,7 @@ parameters:
     name: ios-e2e-test
     dependsOn: ''
     iosVersion: 12.0
-    xcodeVersion: 10
+    xcodeVersion: 10.1
     deviceName: 'iPhone X'
     testResultsFiles: 'junit-test-results.xml'
 
