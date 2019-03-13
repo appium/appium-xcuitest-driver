@@ -1,6 +1,6 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 parameters:
-    script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
+    script: ''
     name: ios-e2e-test
     dependsOn: ''
     iosVersion: 12.1
@@ -46,3 +46,7 @@ jobs:
       condition: always()
       inputs:
         testResultsFiles: $(MOCHA_FILE)
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: cobertura
+        summaryFileLocation: coverage/cobertura-coverage.xml
