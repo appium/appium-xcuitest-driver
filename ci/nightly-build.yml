@@ -11,7 +11,7 @@ jobs:
   - template: ./xcuitest-e2e-template.yml
     parameters:
       name: iPhone_8_12
-      iosVersion: 12
+      iosVersion: 12.0
       xcodeVersion: 10
       deviceName: "iPhone 8"
   - template: ./xcuitest-e2e-template.yml
