@@ -26,7 +26,10 @@ jobs:
       displayName: Install node dependencies
     - script: npm run build
       displayName: Build
-    - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0 --require build/test/env/env --recursive build/test/functional/long/
+    - script: |
+        npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter--require build/test/env/env --recursive build/test/functional/web/
+        npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter--require build/test/env/env --recursive build/test/functional/basic/
+        npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter--require build/test/env/env --recursive build/test/functional/long/
       displayName: Run Mocha tests
       env:
         SAUCE_ACCESS_KEY: $(SAUCE_ACCESS_KEY)
