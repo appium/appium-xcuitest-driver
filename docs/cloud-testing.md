@@ -21,5 +21,5 @@ With a little bit of configuration, the E2E tests can be run on SauceLabs Real D
 ## Running the Tests
 Run the tests with the following command:
 
-```gulp transpile && mocha mocha  --require build/test/env/env --timeout 4000000 --recursive build/<TEST_PATH>```
+```gulp transpile && npx mocha  --require build/test/env/env --timeout 4000000 --recursive build/<TEST_PATH>```
 
