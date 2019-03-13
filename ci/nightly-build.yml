@@ -1,8 +1,31 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 jobs:
+  - job: upload_bundle
+    steps:
   
-  # Run tests on grid of Sauce simulators
+  # Run the E2E tests on 3 (or more) of the most recent Xcode/iOS versions
+  - template: ./ci/xcuitest-e2e-template.yml
+    parameters:
+      name: iPhoneX_12_1
+      iosVersion: 12.1
+      xcodeVersion: 10.1
+      deviceName: "iPhone X"
+  - template: ./ci/xcuitest-e2e-template.yml
+    parameters:
+      name: iPhoneX_12_1
+      iosVersion: 12
+      xcodeVersion: 10
+      deviceName: "iPhone 8"
+  - template: ./ci/xcuitest-e2e-template.yml
+    parameters:
+      name: iPhoneX_12_1
+      iosVersion: 11.4
+      xcodeVersion: 9.4
+      deviceName: "iPhone 7"
+  
+  # Run E2E tests on grid of Sauce simulators
   - job: sauce_e2e
+    dependsOn: upload_bundle
     variables:
       MOCHA_FILE: '$(DEVICE_NAME)-$(CLOUD_PLATFORM_VERSION)-tests.xml'
       SAUCE_EMUSIM: true
