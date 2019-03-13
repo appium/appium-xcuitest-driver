@@ -4,7 +4,7 @@ jobs:
   # Run tests on grid of Sauce simulators
   - job: sauce_e2e
     variables:
-      MOCHA_FILE: 'iphone_xs_max_12.1-tests.xml'
+      MOCHA_FILE: '$(DEVICE_NAME)-$(CLOUD_PLATFORM_VERSION)-tests.xml'
       SAUCE_EMUSIM: true
       CLOUD: true
       CI: true
