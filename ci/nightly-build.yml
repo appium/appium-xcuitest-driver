@@ -23,7 +23,7 @@ jobs:
   
   # Run E2E tests on grid of Sauce simulators
   - job: sauce_e2e
-    dependsOn: upload_bundle
+    #dependsOn: upload_bundle
     variables:
       MOCHA_FILE: '$(DEVICE_NAME)-$(CLOUD_PLATFORM_VERSION)-tests.xml'
       SAUCE_EMUSIM: true
