@@ -10,13 +10,13 @@ jobs:
       deviceName: "iPhone X"
   - template: ./xcuitest-e2e-template.yml
     parameters:
-      name: iPhoneX_12_1
+      name: iPhone_8_12
       iosVersion: 12
       xcodeVersion: 10
       deviceName: "iPhone 8"
   - template: ./xcuitest-e2e-template.yml
     parameters:
-      name: iPhoneX_12_1
+      name: iPhone_7_11_4
       iosVersion: 11.4
       xcodeVersion: 9.4
       deviceName: "iPhone 7"
