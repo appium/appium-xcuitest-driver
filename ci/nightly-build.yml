@@ -22,8 +22,6 @@ jobs:
       deviceName: "iPhone 7"
   
   # Run E2E tests on grid of Sauce simulators
-  - job: upload_bundle
-    steps:
   - job: sauce_e2e
     dependsOn: upload_bundle
     variables:
