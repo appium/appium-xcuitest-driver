@@ -9,6 +9,7 @@ jobs:
       CLOUD: true
       CI: true
     strategy:
+      maxParallel: 6 # Don't hog all the agents
       matrix:
         iPhone_XS_Max_12_0:
           CLOUD_PLATFORM_VERSION: 12.0
