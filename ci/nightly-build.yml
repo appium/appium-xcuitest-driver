@@ -7,8 +7,8 @@ jobs:
       MOCHA_FILE: 'iphone_xs_max_12.1-tests.xml'
       SAUCE_EMUSIM: true
       CI: true
-    #pool:
-      #vmImage: 'macOS 10.13'
+    pool:
+      vmImage: 'macOS 10.13'
     steps:
     - checkout: self
       submodules: true
@@ -20,7 +20,7 @@ jobs:
     - script: npm run build
       displayName: Build
     - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0 --require build/test/env/env --recursive build/test/functional/long/
-      displayName: Run functional tests
+      displayName: Run Mocha tests
     - task: PublishTestResults@2
       condition: always()
       inputs:
