@@ -13,6 +13,9 @@ jobs:
     steps:
     - checkout: self
       submodules: true
+    - script: |
+        echo "HAS SAUCE ACCESS KEY"
+        echo $SAUCE_ACCESS_KEY
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
