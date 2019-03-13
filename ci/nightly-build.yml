@@ -27,15 +27,15 @@ jobs:
     - script: npm run build
       displayName: Build
     - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter --require build/test/env/env --recursive build/test/functional/web/
-      displayName: Basic E2E
+      displayName: Basic E2E $(DEVICE_NAME) $(CLOUD_PLATFORM_VERSION)
       env:
         SAUCE_ACCESS_KEY: $(SAUCE_ACCESS_KEY)
     - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter --require build/test/env/env --recursive build/test/functional/basic/
-      displayName: Web E2E
+      displayName: Web E2E $(DEVICE_NAME) $(CLOUD_PLATFORM_VERSION)
       env:
         SAUCE_ACCESS_KEY: $(SAUCE_ACCESS_KEY)
     - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter --require build/test/env/env --recursive build/test/functional/long/
-      displayName: Long E2E
+      displayName: Long E2E $(DEVICE_NAME) $(CLOUD_PLATFORM_VERSION)
       env:
         SAUCE_ACCESS_KEY: $(SAUCE_ACCESS_KEY)
     - task: PublishTestResults@2
