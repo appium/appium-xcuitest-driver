@@ -1,8 +1,6 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 jobs:
-  - job: upload_bundle
-    steps:
-  
+
   # Run the E2E tests on 3 (or more) of the most recent Xcode/iOS versions
   - template: ./ci/xcuitest-e2e-template.yml
     parameters:
@@ -24,6 +22,8 @@ jobs:
       deviceName: "iPhone 7"
   
   # Run E2E tests on grid of Sauce simulators
+  - job: upload_bundle
+    steps:
   - job: sauce_e2e
     dependsOn: upload_bundle
     variables:
