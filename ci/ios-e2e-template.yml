@@ -47,6 +47,7 @@ jobs:
       inputs:
         testResultsFiles: $(MOCHA_FILE)
     - task: PublishCodeCoverageResults@1
+      condition: always()
       inputs:
         codeCoverageTool: cobertura
         summaryFileLocation: coverage/cobertura-coverage.xml
