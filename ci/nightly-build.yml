@@ -11,10 +11,10 @@ jobs:
           CLOUD_PLATFORM_VERSION: 12.0
           DEVICE_NAME: "iPhone Xs Max Simulator"
         iPhone_7_12_0:
-          CLOUD_PLATFORM_VERSION: 12.0
+          CLOUD_PLATFORM_VERSION: 11.3
           DEVICE_NAME: "iPhone 7 Simulator"
 
-  # Locally the E2E tests on 3 (or more) of the most recent Xcode/iOS versions
+  # Run the E2E tests on local simulators across different ios and xcode versions
   - template: ./xcuitest-e2e-template.yml
     parameters:
       name: iPhoneXSMax_12_1
