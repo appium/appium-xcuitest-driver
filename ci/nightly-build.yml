@@ -2,19 +2,19 @@
 jobs:
 
   # Run the E2E tests on 3 (or more) of the most recent Xcode/iOS versions
-  - template: ./ci/xcuitest-e2e-template.yml
+  - template: ./xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_12_1
       iosVersion: 12.1
       xcodeVersion: 10.1
       deviceName: "iPhone X"
-  - template: ./ci/xcuitest-e2e-template.yml
+  - template: ./xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_12_1
       iosVersion: 12
       xcodeVersion: 10
       deviceName: "iPhone 8"
-  - template: ./ci/xcuitest-e2e-template.yml
+  - template: ./xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_12_1
       iosVersion: 11.4
