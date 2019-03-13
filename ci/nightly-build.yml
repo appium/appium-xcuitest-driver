@@ -6,6 +6,7 @@ jobs:
       DEVICE_NAME: "iPhone Xs Max"
       MOCHA_FILE: 'iphone_xs_max_12.1-tests.xml'
       SAUCE_EMUSIM: true
+      CLOUD: true
       CI: true
     pool:
       vmImage: 'macOS 10.13'
