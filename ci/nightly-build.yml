@@ -25,7 +25,7 @@ jobs:
   - job: sauce_e2e
     #dependsOn: upload_bundle
     variables:
-      MOCHA_FILE: '$(DEVICE_NAME)-$(CLOUD_PLATFORM_VERSION)-tests.xml'
+      MOCHA_FILE: '$(DEVICE_NAME)-$(CLOUD_PLATFORM_VERSION)-sauce-tests.xml'
       SAUCE_EMUSIM: true
       CLOUD: true
       CI: true
