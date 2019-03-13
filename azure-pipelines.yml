@@ -1,23 +1,5 @@
 # Pull request validation job
 jobs:
-  - job: Coverage
-    pool:
-      vmImage: 'macOS 10.13'
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: 11.x
-      - script: |
-          sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
-          git submodule update --init --recursive;
-        displayName: Checkout WDA submodule
-      - script: npm install
-        displayName: Install node dependencies
-      - script: npx gulp coverage
-        displayName: Test with coverage
-      - task: PublishCodeCoverageResults@1
-        inputs:
-          summaryFileLocation: coverage/lcov.info
   - template: ./ci/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_12_1
