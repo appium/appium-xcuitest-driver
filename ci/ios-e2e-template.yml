@@ -51,3 +51,4 @@ jobs:
       inputs:
         codeCoverageTool: cobertura
         summaryFileLocation: coverage/cobertura-coverage.xml
+        reporterDirectory: coverage/

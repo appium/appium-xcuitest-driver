@@ -1,6 +1,5 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 jobs:
-
   # Run the E2E tests on 3 (or more) of the most recent Xcode/iOS versions
   - template: ./xcuitest-e2e-template.yml
     parameters:
