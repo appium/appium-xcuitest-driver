@@ -38,6 +38,7 @@ const REAL_DEVICE_CAPS = REAL_DEVICE ? {
   webkitResponseTimeout: 30000,
   testobject_app_id: apps.testAppId,
   testobject_api_key: process.env.SAUCE_RDC_ACCESS_KEY,
+  // TODO: DO NOT COMMIT THIS! BRING IT BACK ONCE HAVE GH CREDZ
   //testobject_remote_appium_url: process.env.APPIUM_STAGING_URL, // TODO: Once RDC starts supporting this again, re-insert this
 } : {};
 
@@ -56,7 +57,7 @@ if (process.env.CLOUD) {
   GENERIC_CAPS.platformVersion = process.env.CLOUD_PLATFORM_VERSION;
   GENERIC_CAPS.build = process.env.SAUCE_BUILD;
   GENERIC_CAPS.showIOSLog = false;
-  GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP || 'appium-version'] = {'appium-url': 'sauce-storage:appium.zip'};
+  //GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP || 'appium-version'] = {'appium-url': 'sauce-storage:appium.zip'};
   // TODO: If it's SAUCE_RDC add the appium staging URL
 
   // `name` will be set during session initialization
