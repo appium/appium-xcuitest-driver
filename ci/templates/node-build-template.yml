@@ -3,7 +3,7 @@ parameters:
   name: UnitTest
 jobs:
   # Run unit tests on different Node versions
-  - job: ${{ parameters.name }}}
+  - job: ${{ parameters.name }}
     pool:
       vmImage: 'macOS 10.13'
     steps:
