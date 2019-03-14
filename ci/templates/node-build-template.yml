@@ -3,6 +3,8 @@ parameters:
 jobs:
   # Run unit tests on different Node versions
   - job: NodeTests
+    pool:
+      vmImage: 'macOS 10.13'
     steps:
     - checkout: self
       submodules: true
