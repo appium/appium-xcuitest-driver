@@ -5,9 +5,11 @@ jobs:
   - template: ./templates/node-build-template.yml
     parameters:
       nodeVersion: 10.x
+      name: Node10_Tests
   - template: ./templates/node-build-template.yml
     parameters:
       nodeVersion: 8.x
+      name: Node8_Tests
 
   # TODO: Real device tests go here
 
