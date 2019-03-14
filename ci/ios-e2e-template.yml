@@ -1,0 +1,48 @@
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+parameters:
+    script: 'npx mocha --timeout 480000 build/test/functional/ -g @skip-ci -i --exit'
+    name: ios-e2e-test
+    dependsOn: ''
+    iosVersion: 12.1
+    xcodeVersion: 10.1
+    deviceName: 'iPhone X'
+
+jobs:
+  - job: ${{ parameters.name }}
+    variables:
+      PLATFORM_VERSION: ${{ parameters.iosVersion }}
+      DEVICE_NAME: ${{ parameters.deviceName }}
+      MOCHA_FILE: '${{ parameters.name }}-tests.xml'
+      CI: true
+    pool:
+      vmImage: 'macOS 10.13'
+    steps:
+    - checkout: self
+      submodules: true
+    - script: |
+        echo "INSTALLED APPLICATIONS:"
+        ls /Applications/
+        echo "CHANGING TO Xcode_${{ parameters.xcodeVersion }}"
+        sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
+        echo "XCODE VERSION:"
+        xcodebuild -version
+        echo "IOS SIMULATORS:"
+        xcrun simctl list
+      displayName: XcodeSelect
+    - task: NodeTool@0
+      inputs:
+        versionSpec: 11.x
+    - script: |
+        sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
+        git submodule update --init --recursive;
+      displayName: Checkout WDA submodule
+    - script: npm install
+      displayName: Install node dependencies
+    - script: npm run build
+      displayName: Build
+    - script: ${{ parameters.script }}
+      displayName: Run functional tests
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testResultsFiles: $(MOCHA_FILE)
