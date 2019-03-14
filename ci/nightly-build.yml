@@ -1,6 +1,14 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 jobs:
 
+  # Run node tests on past node versions
+  - template: ./templates/node-build-template.yml
+    parameters:
+      nodeVersion: 10.x
+  - template: ./templates/node-build-template.yml
+    parameters:
+      nodeVersion: 8.x
+
   # TODO: Real device tests go here
 
   # Run E2E tests on grid of Sauce simulators
