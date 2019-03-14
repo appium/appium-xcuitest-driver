@@ -2,7 +2,7 @@ parameters:
   nodeVersion: 11.x
 jobs:
   # Run unit tests on different Node versions
-  - job: UnitTest
+  - job: UnitTest_Node${{parameters.nodeVersion}}
     pool:
       vmImage: 'macOS 10.13'
     steps:
