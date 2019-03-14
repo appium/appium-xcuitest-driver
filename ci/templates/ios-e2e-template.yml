@@ -19,16 +19,14 @@ jobs:
     steps:
     - checkout: self
       submodules: true
-    - script: |
-        echo "INSTALLED APPLICATIONS:"
-        ls /Applications/
-        echo "CHANGING TO Xcode_${{ parameters.xcodeVersion }}"
-        sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
-        echo "XCODE VERSION:"
-        xcodebuild -version
-        echo "IOS SIMULATORS:"
-        xcrun simctl list
-      displayName: XcodeSelect
+    - script: ls /Applications/
+      displayName: List Installed Applications
+    - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
+      displayName: Xcode Select ${{ parameters.xcodeVersion }}
+    - script: xcodebuild -version
+      displayName: Log Xcode Version
+    - script: xcrun simctl list
+      displayName: List Installed Simulators
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x

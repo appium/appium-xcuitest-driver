@@ -15,19 +15,19 @@ jobs:
           DEVICE_NAME: "iPhone 7 Simulator"
 
   # Run the E2E tests on local simulators across different ios and xcode versions
-  - template: ./xcuitest-e2e-template.yml
+  - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneXSMax_12_1
       iosVersion: 12.1
       xcodeVersion: 10.1
       deviceName: "iPhone XS Max"
-  - template: ./xcuitest-e2e-template.yml
+  - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhone8_12
       iosVersion: 12.0
       xcodeVersion: 10
       deviceName: "iPhone 8"
-  - template: ./xcuitest-e2e-template.yml
+  - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhone7_11_4
       iosVersion: 11.4
