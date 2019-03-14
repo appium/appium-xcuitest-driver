@@ -7,3 +7,4 @@ coverage
 ci-metrics
 package-lock.json*
 .nyc_output/
+test-results.xml
