@@ -1,5 +1,6 @@
-import { clearSystemFiles, translateDeviceName, adjustWDAAttachmentsPermissions,
-         markSystemFilesForCleanup } from '../../lib/utils';
+import {
+  clearSystemFiles, translateDeviceName, adjustWDAAttachmentsPermissions,
+  markSystemFilesForCleanup, compareVersions } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -145,6 +146,21 @@ describe('utils', function () {
     it('should set the correct iPhone simulator generic device', function () {
       let deviceName = translateDeviceName(10.3, 'iPhone Simulator');
       deviceName.should.equal('iPhone 6');
+    });
+  });
+  describe('compareVersions', function () {
+    it('should compare two correct version numbers', function () {
+      compareVersions('10.0', '<', '11.0').should.eql(true);
+      compareVersions('11.0', '>=', '11.0').should.eql(true);
+      compareVersions('11.0', '==', '11.0').should.eql(true);
+      compareVersions('13.10', '>', '13.5').should.eql(true);
+      compareVersions('11.1', '!=', '11.10').should.eql(true);
+      compareVersions('12.0', '<', 10).should.eql(false);
+    });
+    it('should return null if any of arguments is invalid', function () {
+      (compareVersions(undefined, '<', '11.0') === null).should.eql(true);
+      (compareVersions('11.0', '==', null) === null).should.eql(true);
+      (compareVersions('12.0', 'abc', 10) === null).should.eql(true);
     });
   });
 });
