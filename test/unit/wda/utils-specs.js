@@ -4,6 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
 import path from 'path';
+import { fail } from 'assert';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -83,6 +84,18 @@ describe('utils', function () {
         .returns(true);
       await getXctestrunFilePath(false, udid, platformVersion, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${platformVersion}.xctestrun`));
+    });
+
+    it('should raise an exception because of no files', async function () {
+      const expected = path.resolve(`${bootstrapPath}/WebDriverAgentRunner_iphonesimulator${sdkVersion}-x86_64.xctestrun`);
+      mocks.fs.expects('exists').exactly(4).returns(false);
+
+      try {
+        await getXctestrunFilePath(false, udid, platformVersion, sdkVersion, bootstrapPath);
+        fail();
+      } catch (err) {
+        err.message.should.equal(`if you are using useXctestrunFile capability then you need to have ${expected} file`);
+      }
     });
   }));
 });
