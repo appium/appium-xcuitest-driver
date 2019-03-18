@@ -26,7 +26,8 @@ describe('utils', function () {
         .returns(true);
       mocks.fs.expects('copyFile')
         .never();
-      await getXctestrunFilePath(true, udid, platformVersion, sdkVersion, bootstrapPath)
+      const deviceInfo = {isRealDevice: true, udid, platformVersion};
+      await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${sdkVersion}.xctestrun`));
     });
 
@@ -43,7 +44,8 @@ describe('utils', function () {
           path.resolve(`${bootstrapPath}/${udid}_${sdkVersion}.xctestrun`)
         )
         .returns(true);
-      await getXctestrunFilePath(true, udid, platformVersion, sdkVersion, bootstrapPath)
+      const deviceInfo = {isRealDevice: true, udid, platformVersion};
+      await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${sdkVersion}.xctestrun`));
     });
 
@@ -59,7 +61,8 @@ describe('utils', function () {
         .returns(true);
       mocks.fs.expects('copyFile')
         .never();
-      await getXctestrunFilePath(false, udid, platformVersion, sdkVersion, bootstrapPath)
+      const deviceInfo = {isRealDevice: false, udid, platformVersion};
+      await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${platformVersion}.xctestrun`));
     });
 
@@ -82,7 +85,9 @@ describe('utils', function () {
           path.resolve(`${bootstrapPath}/${udid}_${platformVersion}.xctestrun`)
         )
         .returns(true);
-      await getXctestrunFilePath(false, udid, platformVersion, sdkVersion, bootstrapPath)
+
+      const deviceInfo = {isRealDevice: false, udid, platformVersion};
+      await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${platformVersion}.xctestrun`));
     });
 
@@ -90,11 +95,12 @@ describe('utils', function () {
       const expected = path.resolve(`${bootstrapPath}/WebDriverAgentRunner_iphonesimulator${sdkVersion}-x86_64.xctestrun`);
       mocks.fs.expects('exists').exactly(4).returns(false);
 
+      const deviceInfo = {isRealDevice: false, udid, platformVersion};
       try {
-        await getXctestrunFilePath(false, udid, platformVersion, sdkVersion, bootstrapPath);
+        await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath);
         fail();
       } catch (err) {
-        err.message.should.equal(`if you are using useXctestrunFile capability then you need to have ${expected} file`);
+        err.message.should.equal(`If you are using 'useXctestrunFile' capability then you need to have a xctestrun file (expected: '${expected}')`);
       }
     });
   }));
