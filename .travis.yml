@@ -34,10 +34,10 @@ jobs:
       if: type != cron
       env: CI_METRICS=1 TEST=functional/long
 
-    - stage: # smoke test on xcode 10 web
+    - stage: # smoke test on xcode 10.2 web
       if: type != cron
-      osx_image: xcode10
-      env: CI_METRICS=1 PLATFORM_VERSION=12.0 TEST=functional/web
+      osx_image: xcode10.2
+      env: CI_METRICS=1 PLATFORM_VERSION=12.2 TEST=functional/web
 
     - stage: # smoke test on xcode 9.4 web
       if: type != cron
