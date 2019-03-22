@@ -3,20 +3,21 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
-import { GUINEA_PIG_PAGE, GUINEA_PIG_IFRAME_PAGE } from './helpers';
+import { openPage, GUINEA_PIG_PAGE, GUINEA_PIG_IFRAME_PAGE } from './helpers';
+import { retryInterval } from 'asyncbox';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const doesIncludeCookie = function (cookies, cookie) {
+function doesIncludeCookie (cookies, cookie) {
   cookies.map((c) => c.name).should.include(cookie.name);
   cookies.map((c) => c.value).should.include(cookie.value);
-};
-const doesNotIncludeCookie = function (cookies, cookie) {
+}
+function doesNotIncludeCookie (cookies, cookie) {
   cookies.map((c) => c.name).should.not.include(cookie.name);
   cookies.map((c) => c.value).should.not.include(cookie.value);
-};
+}
 
 const newCookie = {
   name: 'newcookie',
@@ -49,18 +50,19 @@ describe('safari - cookies', function () {
 
   describe('within iframe webview', function () {
     it('should be able to get cookies for a page with none', async function () {
-      await driver.get(GUINEA_PIG_IFRAME_PAGE);
+      await openPage(driver, GUINEA_PIG_IFRAME_PAGE);
       await driver.deleteAllCookies();
-      await driver.get(GUINEA_PIG_IFRAME_PAGE);
-      let cookies = await driver.allCookies();
-      cookies.should.have.length(0);
+
+      await retryInterval(5, 1000, async function () {
+        await driver.allCookies().should.eventually.have.length(0);
+      });
     });
   });
 
   describe('within webview', function () {
     describe('insecure', function () {
       beforeEach(async function () {
-        await driver.get(GUINEA_PIG_PAGE);
+        await openPage(driver, GUINEA_PIG_PAGE);
         await driver.deleteCookie(newCookie.name);
       });
 
