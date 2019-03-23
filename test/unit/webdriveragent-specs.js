@@ -8,7 +8,6 @@ import sinon from 'sinon';
 
 chai.should();
 chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 const fakeConstructorArgs = {
   device: 'some sim',
@@ -53,15 +52,19 @@ describe('Constructor', function () {
 });
 
 describe('launch', function () {
-  it('should use webDriverAgentUrl override', async function () {
+  it('should use webDriverAgentUrl override and return current status', async function () {
     let override = 'http://mockurl:8100/';
     let args = Object.assign({}, fakeConstructorArgs);
     args.webDriverAgentUrl = override;
     let agent = new WebDriverAgent({}, args);
+    let wdaStub = sinon.stub(agent, 'getStatus');
+    wdaStub.callsFake(function () {
+      return {build: 'data'};
+    });
 
-    expect(await agent.launch('sessionId')).to.be.undefined;
-
+    await agent.launch('sessionId').should.eventually.eql({build: 'data'});
     agent.url.href.should.eql(override);
+    wdaStub.reset();
   });
 });
 
