@@ -1,13 +1,13 @@
 import path from 'path';
 import { system } from 'appium-support';
 
-let testAppPath, uiCatalogApp;
 
 // Had to make these two optional dependencies so the tests
 // can still run in linux
+let testAppPath, uiCatalogPath;
 if (system.isMac() && !process.env.CLOUD) {
   testAppPath = require('ios-test-app').absolute;
-  uiCatalogApp = require('ios-uicatalog');
+  uiCatalogPath = require('ios-uicatalog').absolute;
 }
 
 const apps = {};
@@ -19,7 +19,7 @@ if (REAL_DEVICE) {
     apps.testAppId = 1;
   } else {
     apps.iosTestApp = testAppPath.iphoneos;
-    apps.uiCatalogApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[0]);
+    apps.uiCatalogApp = uiCatalogPath.iphoneos;
   }
 } else {
   if (CLOUD) {
@@ -28,7 +28,7 @@ if (REAL_DEVICE) {
     apps.touchIdApp = null; // TODO: Upload this to appium.io
   } else {
     apps.iosTestApp = testAppPath.iphonesimulator;
-    apps.uiCatalogApp = path.resolve('.', 'node_modules', 'ios-uicatalog', uiCatalogApp[1]);
+    apps.uiCatalogApp = uiCatalogPath.iphonesimulator;
     apps.touchIdApp = path.resolve('.', 'test', 'assets', 'TouchIDExample.app');
   }
 }
