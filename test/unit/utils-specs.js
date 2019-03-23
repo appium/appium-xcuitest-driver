@@ -1,5 +1,6 @@
-import { clearSystemFiles, translateDeviceName, adjustWDAAttachmentsPermissions,
-         markSystemFilesForCleanup } from '../../lib/utils';
+import {
+  clearSystemFiles, translateDeviceName, adjustWDAAttachmentsPermissions,
+  markSystemFilesForCleanup } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -136,7 +137,7 @@ describe('utils', function () {
       let deviceName = translateDeviceName('10.1.2', ipadDeviceName);
       deviceName.should.equal('iPad Retina');
       deviceName = translateDeviceName(10.103, ipadDeviceName);
-      deviceName.should.equal('iPad Retina');
+      deviceName.should.equal('iPad Air');
       deviceName = translateDeviceName('10.3', ipadDeviceName);
       deviceName.should.equal('iPad Air');
       deviceName = translateDeviceName(10.3, ipadDeviceName);
