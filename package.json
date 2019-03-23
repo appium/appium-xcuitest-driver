@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.109.0",
+  "version": "2.110.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -38,8 +38,8 @@
     "appium-base-driver": "^3.0.0",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.9.0",
-    "appium-remote-debugger": "^3.16.0",
-    "appium-support": "^2.26.0",
+    "appium-remote-debugger": "^4.0.0",
+    "appium-support": "^2.26.1",
     "appium-xcode": "^3.2.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",

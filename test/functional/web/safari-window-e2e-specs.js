@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { killAllSimulators } from '../helpers/simulator';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
-import { spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
+import { openPage, spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
          GUINEA_PIG_IFRAME_PAGE } from './helpers';
 
 
@@ -108,7 +108,7 @@ describe('safari - windows and frames', function () {
 
   describe('frames', function () {
     beforeEach(async function () {
-      await driver.get(GUINEA_PIG_FRAME_PAGE);
+      await openPage(driver, GUINEA_PIG_FRAME_PAGE);
     });
 
     it('should switch to frame by name', async function () {
@@ -178,7 +178,7 @@ describe('safari - windows and frames', function () {
 
   describe('iframes', function () {
     beforeEach(async function () {
-      await driver.get(GUINEA_PIG_IFRAME_PAGE);
+      await openPage(driver, GUINEA_PIG_IFRAME_PAGE);
     });
 
     it('should switch to iframe by name', async function () {

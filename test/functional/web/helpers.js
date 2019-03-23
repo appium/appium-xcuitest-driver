@@ -16,8 +16,8 @@ const PHISHING_END_POINT = 'http://malware.testing.google.test/testing/malware/*
 const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
 
 async function spinTitle (driver) {
-  return await retry(10, async () => {
-    let title = await driver.title();
+  return await retry(10, async function () {
+    const title = await driver.title();
     if (!title) {
       throw new Error('did not get page title');
     }
@@ -26,19 +26,35 @@ async function spinTitle (driver) {
 }
 
 async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 500) {
-  await retryInterval(tries, interval, async () => {
-    let title = await spinTitle(driver);
+  await retryInterval(tries, interval, async function () {
+    const title = await spinTitle(driver);
     if (title !== expectedTitle) {
       throw new Error(`Could not find expected title. Found: '${title}'`);
     }
   });
 }
 
+async function spinTitleNotEquals (driver, wrongTitle, tries = 10, interval = 500) {
+  await retryInterval(tries, interval, async function () {
+    const title = await spinTitle(driver);
+    if (title === wrongTitle) {
+      throw new Error(`Found title we did not expect: '${title}'`);
+    }
+  });
+}
+
 async function spinWait (fn, waitMs = 10000, intMs = 500) {
-  let tries = parseInt(waitMs / intMs, 10);
+  const tries = parseInt(waitMs / intMs, 10);
   await retryInterval(tries, intMs, fn);
 }
 
-export { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
+async function openPage (driver, url, tries = 10, interval = 500) {
+  await retryInterval(tries, interval, async function () {
+    await driver.get(url);
+    await spinTitleNotEquals(driver, 'cannot open page');
+  });
+}
+
+export { spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
   GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE, PHISHING_END_POINT,
   APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE };

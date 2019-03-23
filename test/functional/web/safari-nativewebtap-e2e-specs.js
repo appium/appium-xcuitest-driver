@@ -3,8 +3,8 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
-import { spinTitleEquals, spinTitle, GUINEA_PIG_PAGE, GUINEA_PIG_SCROLLABLE_PAGE,
-         GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
+import { openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
+         GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
 import { killAllSimulators } from '../helpers/simulator';
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
@@ -32,7 +32,7 @@ const caps = _.defaults({
   nativeWebTap: true,
 }, SAFARI_CAPS);
 
-const SPIN_RETRIES = 5;
+const SPIN_RETRIES = 25;
 
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
@@ -56,7 +56,7 @@ describe('Safari - coordinate conversion -', function () {
 
     async function loadPage (driver, url) {
       await retryInterval(5, 1000, async function () {
-        await driver.get(url);
+        await openPage(driver, url);
         const title = await spinTitle(driver);
         title.should.not.include('Cannot Open Page');
       });

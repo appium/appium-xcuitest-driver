@@ -4,9 +4,10 @@ import _ from 'lodash';
 import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
-import { spinTitle, spinTitleEquals, spinWait, GUINEA_PIG_PAGE,
+import { spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
          PHISHING_END_POINT } from './helpers';
 import { util } from 'appium-support';
+import { retryInterval } from 'asyncbox';
 
 
 chai.should();
@@ -24,7 +25,6 @@ describe('Safari - basics -', function () {
   let driver;
 
   describe('init', function () {
-    this.retries(3);
     afterEach(async function () {
       await deleteSession();
     });
@@ -64,7 +64,7 @@ describe('Safari - basics -', function () {
       describe('small timeout, slow page load', function () {
         it('should go to the requested page', async function () {
           await driver.setPageLoadTimeout(3000);
-          await driver.get(`${GUINEA_PIG_PAGE}?delay=30000`);
+          await openPage(driver, `${GUINEA_PIG_PAGE}?delay=30000`);
 
           // the page should not have time to load
           (await driver.source()).should.include('Let\'s browse!');
@@ -76,7 +76,7 @@ describe('Safari - basics -', function () {
         it('should go to the requested page', async function () {
           await driver.setCommandTimeout(12000);
           await driver.setPageLoadTimeout(0);
-          await driver.get(`${GUINEA_PIG_PAGE}?delay=3000`);
+          await openPage(driver, `${GUINEA_PIG_PAGE}?delay=3000`);
 
           // the page should load after 70000
           (await driver.source()).should.include('I am some page content');
@@ -129,7 +129,7 @@ describe('Safari - basics -', function () {
 
     describe('element handling', function () {
       beforeEach(async function () {
-        await driver.get(GUINEA_PIG_PAGE);
+        await openPage(driver, GUINEA_PIG_PAGE);
       });
 
       it('should find a web element in the web view', async function () {
@@ -200,7 +200,7 @@ describe('Safari - basics -', function () {
     });
     describe('element handling', function () {
       beforeEach(async function () {
-        await driver.get(GUINEA_PIG_PAGE);
+        await openPage(driver, GUINEA_PIG_PAGE);
       });
 
       it('should send keystrokes to active element', async function () {
@@ -302,7 +302,7 @@ describe('Safari - basics -', function () {
         await B.delay(500);
 
         let url = await driver.url();
-        await driver.get(url);
+        await openPage(driver, url);
 
         (await driver.url()).should.include('#anchor');
       });
@@ -326,14 +326,14 @@ describe('Safari - basics -', function () {
 
       it('should get console logs for JS on the page', async function () {
         // reload the page to execute JS
-        await driver.get(GUINEA_PIG_PAGE);
+        await openPage(driver, GUINEA_PIG_PAGE);
 
         const logs = await driver.log('safariConsole');
         checkTexts(logs, ['Hello from Appium', 'Loading guinea-pig page', 'Done']);
       });
       it('should get console logs for JS on the page with error', async function () {
         // reload the page to execute JS
-        await driver.get(`${GUINEA_PIG_PAGE}?throwError=xcuitest-error`);
+        await openPage(driver, `${GUINEA_PIG_PAGE}?throwError=xcuitest-error`);
 
         const logs = await driver.log('safariConsole');
         checkTexts(logs, ['Hello from Appium', 'Loading guinea-pig page', 'Done', 'JavaScript Error: xcuitest-error']);
@@ -366,10 +366,13 @@ describe('Safari - basics -', function () {
   });
 
   describe('safariIgnoreFraudWarning', function () {
-    this.retries(3);
-
     describe('false', function () {
       beforeEach(async function () {
+        // on 12.2 the site never loads, and never gets automatable
+        if (DEFAULT_CAPS.platformVersion === '12.2') {
+          return this.skip();
+        }
+
         driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: false,
         }, DEFAULT_CAPS));
@@ -379,8 +382,10 @@ describe('Safari - basics -', function () {
       });
 
       it('should display a phishing warning', async function () {
-        await driver.get(PHISHING_END_POINT);
-        (await driver.source()).toLowerCase().should.include('phishing');
+        await openPage(driver, PHISHING_END_POINT);
+        await retryInterval(60, 1000, async function () {
+          (await driver.source()).toLowerCase().should.include('phishing');
+        });
       });
     });
     describe('true', function () {
@@ -394,7 +399,7 @@ describe('Safari - basics -', function () {
       });
 
       it('should not display a phishing warning', async function () {
-        await driver.get(PHISHING_END_POINT);
+        await openPage(driver, PHISHING_END_POINT);
         (await driver.source()).toLowerCase().should.not.include('phishing');
       });
     });
