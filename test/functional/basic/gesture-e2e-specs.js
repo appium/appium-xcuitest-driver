@@ -235,7 +235,7 @@ describe('XCUITestDriver - gestures', function () {
           .should.eventually.be.rejectedWith(/An element could not be located/);
 
         let x, y0, y1;
-        const window = await driver.elementByClassName('XCUIElementTypeWindow');
+        const window = await driver.elementByClassName('XCUIElementTypeApplication');
         const {width, height} = await window.getSize();
         try {
           // Try locating the 'Cellular' element (which can be pulled down)
