@@ -1,4 +1,4 @@
-import { getXctestrunFilePath, getWDAPort, getXctestrunFilePathName } from '../../../lib/wda/utils';
+import { getXctestrunFilePath, getWDAPort, getXctestrunFileName } from '../../../lib/wda/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -15,7 +15,7 @@ describe('utils', function () {
     const sdkVersion = '12.2';
     const udid = 'xxxxxyyyyyyzzzzzz';
     const bootstrapPath = 'path/to/data';
-    const platformNameLowerCase = 'ios';
+    const platformName = 'ios';
 
     afterEach(function () {
       mocks.verify();
@@ -27,7 +27,7 @@ describe('utils', function () {
         .returns(true);
       mocks.fs.expects('copyFile')
         .never();
-      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformNameLowerCase};
+      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformName};
       await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${sdkVersion}.xctestrun`));
     });
@@ -122,39 +122,39 @@ describe('utils', function () {
     });
   });
 
-  describe('#getXctestrunFilePathName', function () {
+  describe('#getXctestrunFileName', function () {
     const platformVersion = '12.0';
     const udid = 'xxxxxyyyyyyzzzzzz';
 
     it('should return ios format, real device', function () {
-      const platformNameLowerCase = 'ios';
-      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformNameLowerCase};
+      const platformName = 'iOs';
+      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformName};
 
-      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+      getXctestrunFileName(deviceInfo, '10.2.0').should.equal(
         'WebDriverAgentRunner_iphoneos10.2.0-arm64.xctestrun');
     });
 
     it('should return ios format, simulator', function () {
-      const platformNameLowerCase = 'ios';
-      const deviceInfo = {isRealDevice: false, udid, platformVersion, platformNameLowerCase};
+      const platformName = 'ios';
+      const deviceInfo = {isRealDevice: false, udid, platformVersion, platformName};
 
-      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+      getXctestrunFileName(deviceInfo, '10.2.0').should.equal(
         'WebDriverAgentRunner_iphonesimulator10.2.0-x86_64.xctestrun');
     });
 
     it('should return tvos format, real device', function () {
-      const platformNameLowerCase = 'tvos';
-      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformNameLowerCase};
+      const platformName = 'tVos';
+      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformName};
 
-      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+      getXctestrunFileName(deviceInfo, '10.2.0').should.equal(
         'WebDriverAgentRunner_tvOS_appletvos10.2.0-arm64.xctestrun');
     });
 
     it('should return tvos format, simulator', function () {
-      const platformNameLowerCase = 'tvos';
-      const deviceInfo = {isRealDevice: false, udid, platformVersion, platformNameLowerCase};
+      const platformName = 'tvOS';
+      const deviceInfo = {isRealDevice: false, udid, platformVersion, platformName};
 
-      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+      getXctestrunFileName(deviceInfo, '10.2.0').should.equal(
         'WebDriverAgentRunner_tvOS_appletvsimulator10.2.0-x86_64.xctestrun');
     });
   });
