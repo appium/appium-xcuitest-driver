@@ -1,4 +1,5 @@
 import { getXctestrunFilePath, getWDAPort, getXctestrunFileName } from '../../../lib/wda/utils';
+import { PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS } from '../../../lib/desired-caps';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -15,7 +16,7 @@ describe('utils', function () {
     const sdkVersion = '12.2';
     const udid = 'xxxxxyyyyyyzzzzzz';
     const bootstrapPath = 'path/to/data';
-    const platformName = 'ios';
+    const platformName = PLATFORM_NAME_IOS;
 
     afterEach(function () {
       mocks.verify();
@@ -108,14 +109,14 @@ describe('utils', function () {
 
   describe('#getWDAPort', function () {
     it('should return ios format', function () {
-      const wdaPort = getWDAPort('ios', 8000);
+      const wdaPort = getWDAPort(PLATFORM_NAME_IOS, 8000);
       wdaPort.WebDriverAgentRunner
         .EnvironmentVariables.USE_PORT
         .should.equal(8000);
     });
 
     it('should return tvos format', function () {
-      const wdaPort = getWDAPort('tvos', '9000');
+      const wdaPort = getWDAPort(PLATFORM_NAME_TVOS, '9000');
       wdaPort.WebDriverAgentRunner_tvOS
         .EnvironmentVariables.USE_PORT
         .should.equal('9000');
