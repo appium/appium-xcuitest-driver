@@ -1,4 +1,4 @@
-import { getXctestrunFilePath } from '../../../lib/wda/utils';
+import { getXctestrunFilePath, getWDAPort, getXctestrunFilePathName } from '../../../lib/wda/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -15,6 +15,7 @@ describe('utils', function () {
     const sdkVersion = '12.2';
     const udid = 'xxxxxyyyyyyzzzzzz';
     const bootstrapPath = 'path/to/data';
+    const platformNameLowerCase = 'ios';
 
     afterEach(function () {
       mocks.verify();
@@ -26,7 +27,7 @@ describe('utils', function () {
         .returns(true);
       mocks.fs.expects('copyFile')
         .never();
-      const deviceInfo = {isRealDevice: true, udid, platformVersion};
+      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformNameLowerCase};
       await getXctestrunFilePath(deviceInfo, sdkVersion, bootstrapPath)
         .should.eventually.equal(path.resolve(`${bootstrapPath}/${udid}_${sdkVersion}.xctestrun`));
     });
@@ -104,4 +105,57 @@ describe('utils', function () {
       }
     });
   }));
+
+  describe('#getWDAPort', function () {
+    it('should return ios format', function () {
+      const wdaPort = getWDAPort('ios', 8000);
+      wdaPort.WebDriverAgentRunner
+        .EnvironmentVariables.USE_PORT
+        .should.equal(8000);
+    });
+
+    it('should return tvos format', function () {
+      const wdaPort = getWDAPort('tvos', '9000');
+      wdaPort.WebDriverAgentRunner_tvOS
+        .EnvironmentVariables.USE_PORT
+        .should.equal('9000');
+    });
+  });
+
+  describe('#getXctestrunFilePathName', function () {
+    const platformVersion = '12.0';
+    const udid = 'xxxxxyyyyyyzzzzzz';
+
+    it('should return ios format, real device', function () {
+      const platformNameLowerCase = 'ios';
+      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformNameLowerCase};
+
+      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+        'WebDriverAgentRunner_iphoneos10.2.0-arm64.xctestrun');
+    });
+
+    it('should return ios format, simulator', function () {
+      const platformNameLowerCase = 'ios';
+      const deviceInfo = {isRealDevice: false, udid, platformVersion, platformNameLowerCase};
+
+      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+        'WebDriverAgentRunner_iphonesimulator10.2.0-x86_64.xctestrun');
+    });
+
+    it('should return tvos format, real device', function () {
+      const platformNameLowerCase = 'tvos';
+      const deviceInfo = {isRealDevice: true, udid, platformVersion, platformNameLowerCase};
+
+      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+        'WebDriverAgentRunner_tvOS_appletvos10.2.0-arm64.xctestrun');
+    });
+
+    it('should return tvos format, simulator', function () {
+      const platformNameLowerCase = 'tvos';
+      const deviceInfo = {isRealDevice: false, udid, platformVersion, platformNameLowerCase};
+
+      getXctestrunFilePathName(deviceInfo, '10.2.0').should.equal(
+        'WebDriverAgentRunner_tvOS_appletvsimulator10.2.0-x86_64.xctestrun');
+    });
+  });
 });
