@@ -30,10 +30,43 @@ describe('simulator management', function () {
       createDeviceStub.calledOnce.should.be.true;
       /appiumTest-[\w-]{36}-iPhone 6/.test(createDeviceStub.firstCall.args[0]).should.be.true;
       createDeviceStub.firstCall.args[1].should.eql('iPhone 6');
-      createDeviceStub.firstCall.args[2].should.eql('10.1');
+      createDeviceStub.firstCall.args[2].should.eql('com.apple.CoreSimulator.SimRuntime.iOS-10-1');
       getSimulatorStub.calledOnce.should.be.true;
       getSimulatorStub.firstCall.args[0].should.eql('dummy-udid');
     });
+
+    it('should call appiumTest prefix name with tvOS', async function () {
+      createDeviceStub.returns('dummy-udid');
+      getSimulatorStub.returns('dummy-udid');
+
+      caps.platformName = 'tvOS';
+      await createSim(caps);
+
+      createDeviceStub.calledOnce.should.be.true;
+      /appiumTest-[\w-]{36}-iPhone 6/.test(createDeviceStub.firstCall.args[0]).should.be.true;
+      createDeviceStub.firstCall.args[1].should.eql('iPhone 6');
+      createDeviceStub.firstCall.args[2].should.eql('com.apple.CoreSimulator.SimRuntime.tvOS-10-1');
+      getSimulatorStub.calledOnce.should.be.true;
+      getSimulatorStub.firstCall.args[0].should.eql('dummy-udid');
+    });
+
+    it('should call appiumTest prefix name with old format', async function () {
+      createDeviceStub.onFirstCall().throws('Incompatible device')
+                      .onSecondCall().returns('dummy-udid');
+      getSimulatorStub.returns('dummy-udid');
+
+      try {
+        await createSim(caps);
+      } catch (ignore) {}
+
+      createDeviceStub.calledTwice.should.be.true;
+      /appiumTest-[\w-]{36}-iPhone 6/.test(createDeviceStub.secondCall.args[0]).should.be.true;
+      createDeviceStub.secondCall.args[1].should.eql('iPhone 6');
+      createDeviceStub.secondCall.args[2].should.eql('10.1');
+      getSimulatorStub.calledOnce.should.be.true;
+      getSimulatorStub.firstCall.args[0].should.eql('dummy-udid');
+    });
+
   });
 
   describe('getExistingSim', function () {
