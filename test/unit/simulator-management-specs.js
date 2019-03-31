@@ -55,9 +55,7 @@ describe('simulator management', function () {
                       .onSecondCall().returns('dummy-udid');
       getSimulatorStub.returns('dummy-udid');
 
-      try {
-        await createSim(caps);
-      } catch (ignore) {}
+      await createSim(caps);
 
       createDeviceStub.calledTwice.should.be.true;
       /appiumTest-[\w-]{36}-iPhone 6/.test(createDeviceStub.secondCall.args[0]).should.be.true;
