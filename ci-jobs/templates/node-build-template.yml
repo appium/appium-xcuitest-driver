@@ -1,0 +1,25 @@
+parameters:
+  nodeVersion: 11.x
+  name: UnitTest
+jobs:
+  # Run unit tests on different Node versions
+  - job: ${{ parameters.name }}
+    pool:
+      vmImage: 'macOS 10.13'
+    steps:
+    - checkout: self
+      submodules: true
+    - task: NodeTool@0
+      inputs:
+        versionSpec: ${{ parameters.nodeVersion }}
+      displayName: Install Node ${{ parameters.nodeVersion }}
+    - script: |
+        sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
+        git submodule update --init --recursive;
+      displayName: Checkout WDA submodule
+    - script: npm install
+      displayName: Install node dependencies
+    - script: npm run build
+      displayName: Build
+    - script: npm test
+      displayName: npm test
