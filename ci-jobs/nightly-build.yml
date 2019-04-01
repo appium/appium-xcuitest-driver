@@ -1,0 +1,54 @@
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+jobs:
+
+  # Run node tests on past node versions
+  - template: ./templates/node-build-template.yml
+    parameters:
+      nodeVersion: 10.x
+      name: Node10_Tests
+  - template: ./templates/node-build-template.yml
+    parameters:
+      nodeVersion: 8.x
+      name: Node8_Tests
+
+  # TODO: Real device tests go here
+
+  # Run E2E tests on grid of Sauce simulators
+  - template: ./templates/sauce-e2e-template.yml
+    parameters:
+      matrix:
+        iPhone_XS_Max_12_0:
+          CLOUD_PLATFORM_VERSION: 12.0
+          DEVICE_NAME: "iPhone Xs Max Simulator"
+        iPadPro_12_0:
+          CLOUD_PLATFORM_VERSION: 12.0
+          DEVICE_NAME: "iPad Pro (12.9 inch) Simulator"
+        iPhone_7_12_0:
+          CLOUD_PLATFORM_VERSION: 11.3
+          DEVICE_NAME: "iPhone 7 Simulator"
+        iPadPro_11_3:
+          CLOUD_PLATFORM_VERSION: 11.3
+          DEVICE_NAME: "iPad Pro (9.7 inch) Simulator"
+        iPhone7_11_3:
+          CLOUD_PLATFORM_VERSION: 11.3
+          DEVICE_NAME: "iPhone 7 Simulator"
+
+  # Run the E2E tests on local simulators across different ios and xcode versions
+  - template: ./templates/xcuitest-e2e-template.yml
+    parameters:
+      name: iPhoneXSMax_12_1
+      iosVersion: 12.1
+      xcodeVersion: 10.1
+      deviceName: "iPhone XS Max"
+  - template: ./templates/xcuitest-e2e-template.yml
+    parameters:
+      name: iPhone8_12
+      iosVersion: 12.0
+      xcodeVersion: 10
+      deviceName: "iPhone 8"
+  - template: ./templates/xcuitest-e2e-template.yml
+    parameters:
+      name: iPhone7_11_4
+      iosVersion: 11.4
+      xcodeVersion: 9.4
+      deviceName: "iPhone 7"
