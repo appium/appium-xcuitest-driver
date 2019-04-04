@@ -14,10 +14,6 @@ describe('XCUITestDriver - alerts -', function () {
 
   let driver;
   before(async function () {
-    // 'Cannot create a new session while one is in progress' Error happens frequently
-    // Make sure no session is active
-    await deleteSession();
-
     driver = await initSession(UICATALOG_CAPS);
   });
   after(async function () {
