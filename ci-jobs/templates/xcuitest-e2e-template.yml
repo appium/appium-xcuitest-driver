@@ -12,7 +12,7 @@ jobs:
       deviceName: ${{ parameters.deviceName }}
       script: |
         npm install --no-save mjpeg-consumer
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=./ci-jobs/mocha-config.js --recursive build/test/functional/basic -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=./ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
