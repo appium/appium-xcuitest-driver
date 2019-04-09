@@ -369,7 +369,7 @@ describe('Safari - basics -', function () {
     describe('false', function () {
       beforeEach(async function () {
         // on 12.2 the site never loads, and never gets automatable
-        if (DEFAULT_CAPS.platformVersion === '12.2') {
+        if (['12.1', '12.2'].includes(DEFAULT_CAPS.platformVersion)) {
           return this.skip();
         }
 
