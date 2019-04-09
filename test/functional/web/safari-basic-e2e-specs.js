@@ -398,9 +398,9 @@ describe('Safari - basics -', function () {
         await deleteSession();
       });
 
-      it.only('should not display a phishing warning', async function () {
+      it('should not display a phishing warning', async function () {
         await openPage(driver, PHISHING_END_POINT);
-        await B.delay(10000);
+        await B.delay(5000);
         (await driver.source()).toLowerCase().should.not.include('phishing');
       });
     });
