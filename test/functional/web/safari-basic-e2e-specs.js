@@ -368,11 +368,6 @@ describe('Safari - basics -', function () {
   describe('safariIgnoreFraudWarning', function () {
     describe('false', function () {
       beforeEach(async function () {
-        // on 12.2 the site never loads, and never gets automatable
-        if (['12.1', '12.2'].includes(DEFAULT_CAPS.platformVersion)) {
-          return this.skip();
-        }
-
         driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: false,
         }, DEFAULT_CAPS));
@@ -382,6 +377,10 @@ describe('Safari - basics -', function () {
       });
 
       it('should display a phishing warning', async function () {
+        // on 12.2 the site never loads, and never gets automatable
+        if (['12.1', '12.2'].includes(DEFAULT_CAPS.platformVersion)) {
+          return this.skip();
+        }
         await openPage(driver, PHISHING_END_POINT);
         await retryInterval(60, 1000, async function () {
           (await driver.source()).toLowerCase().should.include('phishing');
