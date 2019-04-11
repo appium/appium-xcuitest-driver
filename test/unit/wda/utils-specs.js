@@ -1,5 +1,5 @@
 import { getXctestrunFilePath, getAdditionalRunContent, getXctestrunFileName } from '../../../lib/wda/utils';
-import { DEVICE_TYPE_TV } from '../../../lib/desired-caps';
+import { DEVICE_TYPE_TV, DEVICE_TYPE_IPHONE } from '../../../lib/desired-caps';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -114,6 +114,14 @@ describe('utils', function () {
         .EnvironmentVariables.USE_PORT
         .should.equal(8000);
     });
+
+    it('should return ios format by device type iphone', function () {
+      const wdaPort = getAdditionalRunContent(DEVICE_TYPE_IPHONE, 8000);
+      wdaPort.WebDriverAgentRunner
+        .EnvironmentVariables.USE_PORT
+        .should.equal(8000);
+    });
+
 
     it('should return tvos format', function () {
       const wdaPort = getAdditionalRunContent(DEVICE_TYPE_TV, '9000');
