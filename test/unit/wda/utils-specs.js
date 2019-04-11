@@ -1,5 +1,5 @@
 import { getXctestrunFilePath, getAdditionalRunContent, getXctestrunFileName } from '../../../lib/wda/utils';
-import { DEVICE_TYPE_TVOS } from '../../../lib/desired-caps';
+import { DEVICE_TYPE_TV } from '../../../lib/desired-caps';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
@@ -116,7 +116,7 @@ describe('utils', function () {
     });
 
     it('should return tvos format', function () {
-      const wdaPort = getAdditionalRunContent(DEVICE_TYPE_TVOS, '9000');
+      const wdaPort = getAdditionalRunContent(DEVICE_TYPE_TV, '9000');
       wdaPort.WebDriverAgentRunner_tvOS
         .EnvironmentVariables.USE_PORT
         .should.equal('9000');
