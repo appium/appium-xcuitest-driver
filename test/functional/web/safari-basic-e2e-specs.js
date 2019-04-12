@@ -389,7 +389,7 @@ describe('Safari - basics -', function () {
         });
       });
     });
-    describe.only('true', function () {
+    describe('true', function () {
       beforeEach(async function () {
         driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: true,
