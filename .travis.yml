@@ -183,9 +183,10 @@ install:
       npm install --no-save mjpeg-consumer;
 
       pushd WebDriverAgent;
-      ./Scripts/bootstrap.sh -d
-      mkdir -p ./Resources/WebDriverAgent.bundle
-      popd
+      carthage bootstrap --no-use-binaries;
+      cp Cartfile.resolved Carthage;
+      mkdir -p ./Resources/WebDriverAgent.bundle;
+      popd;
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests;
