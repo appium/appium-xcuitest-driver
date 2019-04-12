@@ -181,6 +181,11 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       npm install;
       npm install --no-save mjpeg-consumer;
+
+      pushd WebDriverAgent;
+      ./Scripts/bootstrap.sh -d
+      mkdir -p ./Resources/WebDriverAgent.bundle
+      popd
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests;
