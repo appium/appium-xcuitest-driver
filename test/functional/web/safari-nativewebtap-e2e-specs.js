@@ -38,7 +38,7 @@ const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 
 if (!process.env.REAL_DEVICE) {
-  describe('Safari - coordinate conversion -', function () {
+  describe.only('Safari - coordinate conversion -', function () { // eslint-disable-line
     this.timeout(MOCHA_TIMEOUT * 2);
 
     let devices = [];
@@ -52,6 +52,7 @@ if (!process.env.REAL_DEVICE) {
       } else if (process.env.DEVICE_NAME) {
         devices = [process.env.DEVICE_NAME];
       } else {
+        // default to a relatively representative set of devices
         devices = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
       }
 
@@ -144,13 +145,16 @@ if (!process.env.REAL_DEVICE) {
               await loadPage(driver, GUINEA_PIG_PAGE);
             });
             before(async function () {
-              if (skipped) {
+              if (skipped || !deviceName.toLowerCase().includes('ipad')) {
                 return this.skip();
               }
               await loadPage(driver, GUINEA_PIG_PAGE);
 
+              console.log('\n\n\n\n'); // eslint-disable-line
+              console.log(await driver.source()); // eslint-disable-line
+
               // open a new tab and go to it
-              let el = await driver.elementByLinkText('i am a new window link');
+              const el = await driver.elementByLinkText('i am a new window link');
               await el.click();
             });
 
