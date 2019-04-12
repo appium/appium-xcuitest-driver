@@ -192,9 +192,9 @@ install:
 script:
   - if [ -n "$CLOUD" ]; then
       npm install mocha@5;
-      npm run mocha:parallel -- --max-parallel $MAX_PARALLEL --debug -t 480000 --require build/test/env/env --recursive build/test/$TEST;
+      npm run mocha:parallel -- --max-parallel $MAX_PARALLEL --debug -t 0 --require build/test/env/env --recursive build/test/$TEST;
     else
-      npm run lint && npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
+      npm run lint && npm run mocha -- -t 0 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
     fi
 after_script:
   - if [-n "$LONG_PID" ]; then
