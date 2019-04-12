@@ -12,7 +12,7 @@ jobs:
       maxParallel: 6 # Don't hog all the agents
       matrix: ${{ parameters.matrix }}
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macOS-10.14'
     steps:
     - checkout: self
       submodules: true
