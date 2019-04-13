@@ -12,7 +12,7 @@ jobs:
       maxParallel: 6 # Don't hog all the agents
       matrix: ${{ parameters.matrix }}
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macOS-10.14'
     steps:
     - checkout: self
       submodules: true
@@ -25,7 +25,7 @@ jobs:
       displayName: Install node dependencies
     - script: npm run build
       displayName: Build
-    - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-junit-reporter --require build/test/env/env --recursive 'build/test/functional/basic/' 'build/test/functional/web/' 'build/test/functional/long/'
+    - script: npx mocha-parallel-tests --timeout 400000 --max-parallel 0  --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --require build/test/env/env --recursive 'build/test/functional/basic/' 'build/test/functional/web/' 'build/test/functional/long/'
       displayName: Mocha E2E Tests for $(DEVICE_NAME) $(CLOUD_PLATFORM_VERSION)
       env:
         SAUCE_ACCESS_KEY: $(SAUCE_ACCESS_KEY)
