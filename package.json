@@ -96,6 +96,7 @@
     "ios-uicatalog": "^2.0.0",
     "mocha": "^6.0.0",
     "mocha-junit-reporter": "^1.18.0",
+    "mocha-multi-reporters": "^1.1.7",
     "mocha-parallel-tests": "^2.0.4",
     "moment": "^2.22.2",
     "pem": "^1.8.3",

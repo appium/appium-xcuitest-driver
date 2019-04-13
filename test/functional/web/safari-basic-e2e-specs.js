@@ -382,6 +382,7 @@ describe('Safari - basics -', function () {
       });
 
       it('should display a phishing warning', async function () {
+        // on 12.2 the site never loads, and never gets automatable
         await openPage(driver, PHISHING_END_POINT);
         await retryInterval(60, 1000, async function () {
           (await driver.source()).toLowerCase().should.include('phishing');

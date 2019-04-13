@@ -5,7 +5,7 @@ jobs:
   # Run unit tests on different Node versions
   - job: ${{ parameters.name }}
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macOS-10.14'
     steps:
     - checkout: self
       submodules: true

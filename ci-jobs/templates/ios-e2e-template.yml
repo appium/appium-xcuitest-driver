@@ -15,7 +15,7 @@ jobs:
       MOCHA_FILE: '$(DEVICE_NAME)-$(PLATFORM_VERSION)-tests.xml'
       CI: true
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macOS-10.14'
     steps:
     - checkout: self
       submodules: true

@@ -12,7 +12,7 @@ jobs:
       deviceName: ${{ parameters.deviceName }}
       script: |
         npm install --no-save mjpeg-consumer
-        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/basic -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -21,7 +21,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/driver -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/driver -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml 
     parameters:
@@ -30,7 +30,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/web -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/web -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -39,6 +39,6 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-junit-reporter --recursive build/test/functional/long -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
 
   

@@ -36,6 +36,12 @@ jobs:
   # Run the E2E tests on local simulators across different ios and xcode versions
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
+      name: iPhoneXR_12_2
+      iosVersion: 12.1
+      xcodeVersion: 10.2
+      deviceName: "iPhone XR"
+  - template: ./templates/xcuitest-e2e-template.yml
+    parameters:
       name: iPhoneXSMax_12_1
       iosVersion: 12.1
       xcodeVersion: 10.1
