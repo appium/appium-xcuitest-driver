@@ -37,7 +37,7 @@ jobs:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneXR_12_2
-      iosVersion: 12.1
+      iosVersion: 12.2
       xcodeVersion: 10.2
       deviceName: "iPhone XR"
   - template: ./templates/xcuitest-e2e-template.yml
