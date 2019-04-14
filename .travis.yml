@@ -15,7 +15,6 @@ jobs:
   include:
     - stage: tests
       if: type != cron
-      osx_image: xcode10.1
       env: TEST=unit COVERALLS=1 _FORCE_LOGS=0
 
     - stage:
