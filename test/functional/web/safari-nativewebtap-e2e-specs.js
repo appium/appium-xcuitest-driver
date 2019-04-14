@@ -38,7 +38,7 @@ const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 
 if (!process.env.REAL_DEVICE) {
-  describe.only('Safari - coordinate conversion -', function () { // eslint-disable-line
+  describe('Safari - coordinate conversion -', function () {
     this.timeout(MOCHA_TIMEOUT * 2);
 
     let devices = [];
@@ -149,9 +149,6 @@ if (!process.env.REAL_DEVICE) {
                 return this.skip();
               }
               await loadPage(driver, GUINEA_PIG_PAGE);
-
-              console.log('\n\n\n\n'); // eslint-disable-line
-              console.log(await driver.source()); // eslint-disable-line
 
               // open a new tab and go to it
               const el = await driver.elementByLinkText('i am a new window link');
