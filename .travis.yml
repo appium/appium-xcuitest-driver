@@ -5,7 +5,7 @@ language: node_js
 node_js: "8"
 env:
   global:
-    - PLATFORM_VERSION=12.2
+    - PLATFORM_VERSION=12.1
     - _FORCE_LOGS=1
     - RECURSIVE=--recursive
     - MAX_PARALLEL=0
