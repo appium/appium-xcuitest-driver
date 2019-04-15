@@ -52,6 +52,7 @@ if (!process.env.REAL_DEVICE) {
       } else if (process.env.DEVICE_NAME) {
         devices = [process.env.DEVICE_NAME];
       } else {
+        // default to a relatively representative set of devices
         devices = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
       }
 
@@ -144,13 +145,13 @@ if (!process.env.REAL_DEVICE) {
               await loadPage(driver, GUINEA_PIG_PAGE);
             });
             before(async function () {
-              if (skipped) {
+              if (skipped || !deviceName.toLowerCase().includes('ipad')) {
                 return this.skip();
               }
               await loadPage(driver, GUINEA_PIG_PAGE);
 
               // open a new tab and go to it
-              let el = await driver.elementByLinkText('i am a new window link');
+              const el = await driver.elementByLinkText('i am a new window link');
               await el.click();
             });
 

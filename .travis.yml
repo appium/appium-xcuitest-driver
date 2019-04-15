@@ -5,7 +5,7 @@ language: node_js
 node_js: "8"
 env:
   global:
-    - PLATFORM_VERSION=12.2
+    - PLATFORM_VERSION=12.1
     - _FORCE_LOGS=1
     - RECURSIVE=--recursive
     - MAX_PARALLEL=0
@@ -15,7 +15,6 @@ jobs:
   include:
     - stage: tests
       if: type != cron
-      osx_image: xcode10.1
       env: TEST=unit COVERALLS=1 _FORCE_LOGS=0
 
     - stage:
@@ -181,6 +180,12 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       npm install;
       npm install --no-save mjpeg-consumer;
+
+      pushd WebDriverAgent;
+      carthage bootstrap --no-use-binaries;
+      cp Cartfile.resolved Carthage;
+      mkdir -p ./Resources/WebDriverAgent.bundle;
+      popd;
     else
       npm install --production;
       npm install --no-save gulp appium-gulp-plugins chai chai-as-promised chai-subset wd unzip mocha mocha-parallel-tests;
@@ -192,9 +197,9 @@ install:
 script:
   - if [ -n "$CLOUD" ]; then
       npm install mocha@5;
-      npm run mocha:parallel -- --max-parallel $MAX_PARALLEL --debug -t 480000 --require build/test/env/env --recursive build/test/$TEST;
+      npm run mocha:parallel -- --max-parallel $MAX_PARALLEL --debug -t 0 --require build/test/env/env --recursive build/test/$TEST;
     else
-      npm run lint && npm run mocha -- -t 480000 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
+      npm run lint && npm run mocha -- -t 0 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
     fi
 after_script:
   - if [-n "$LONG_PID" ]; then
