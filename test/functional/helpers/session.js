@@ -48,14 +48,26 @@ if (CLOUD) {
     if (driver) {
       const passed = this.currentTest.state === 'passed';
 
+      // traverse the title tree to get the whole thing
+      let titles = [];
+      const currentTest = this.currentTest;
+      titles.push(currentTest.title);
+      let parent = currentTest.parent;
+      while (parent) {
+        titles.push(parent.title);
+        parent = parent.parent;
+      }
+      const fullTitle = titles.reverse().join('/');
+      const rootTitle = _.last(titles);
+
       // construct the name for the job
-      let name = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${this.test.parent.suites[0].title}`;
+      let name = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${rootTitle}`;
 
       // check for the first failure
       if (!errored) {
         if (!passed) {
           // add the first failed job title to the name of the job
-          name += ` (${this.currentTest.title})`;
+          name += ` (${fullTitle})`;
           // and fail the whole job
           errored = true;
         }
