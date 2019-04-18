@@ -3,8 +3,6 @@ import request from 'request-promise';
 import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
-import SauceLabs from 'saucelabs';
-import B from 'bluebird';
 
 
 const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
@@ -39,18 +37,7 @@ const WDA_PORT = 8200;
 
 let driver, server;
 
-if (process.env.CLOUD) {
-  let updateSauceJob;
-  const sauceUserName = process.env.SAUCE_USERNAME;
-  const sauceAccessKey = process.env.SAUCE_ACCESS_KEY;
-  if (sauceUserName && sauceAccessKey) {
-    const saucelabs = new SauceLabs({
-      username: sauceUserName,
-      password: sauceAccessKey,
-    });
-    updateSauceJob = B.promisify(saucelabs.updateJob, {context: saucelabs});
-  }
-
+if (CLOUD) {
   before(function () {
     process.env.SAUCE_JOB_NAME = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${this.test.parent.suites[0].title}`;
   });
@@ -58,41 +45,37 @@ if (process.env.CLOUD) {
   // on Sauce Labs we need to track the status of the job
   let errored = false;
   afterEach(async function () {
-    const passed = this.currentTest.state === 'passed';
     if (driver) {
-      // if we haven't already failed the suite, update with the current test
-      if (driver._appiumSuccess !== false) {
-        driver._appiumSuccess = passed;
-      }
+      const passed = this.currentTest.state === 'passed';
 
+      // construct the name for the job
+      let name = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${this.test.parent.suites[0].title}`;
+
+      // check for the first failure
       if (!errored) {
-        const name = passed
-          ? process.env.SAUCE_JOB_NAME
-          : `${process.env.SAUCE_JOB_NAME} (${this.currentTest.title})`;
-        // if this test failed, the job failed altogether
-        errored = !passed;
-
-        // the first failure should be noted in the Sauce job name
-        if (updateSauceJob) {
-          try {
-            await updateSauceJob(driver.sessionID, {passed, name});
-          } catch (err) {
-            console.error(`Error updating job: ${err.message}`); // eslint-disable-line
-          }
+        if (!passed) {
+          // add the first failed job title to the name of the job
+          name += ` (${this.currentTest.title})`;
+          // and fail the whole job
+          errored = true;
         }
-        // driver._appiumTitle = `${process.env.SAUCE_JOB_NAME} (${this.currentTest.title})`;
+        // update the name and status until there is an error, then just leave it
+        await driver.sauceJobUpdate({name, passed: !errored});
       }
     }
 
     // wd puts info into the error object that mocha can't display easily
     if (this.currentTest.err) {
-      console.error('ERROR:', JSON.stringify(this.currentTest.err, 2)); // eslint-disable-line
+      console.error('ERROR:', JSON.stringify(this.currentTest.err, null, 2)); // eslint-disable-line
     }
   });
 }
 
 async function initDriver () { // eslint-disable-line require-await
-  driver = wd.promiseChainRemote(HOST, PORT);
+  const config = {host: HOST, port: PORT};
+  driver = CLOUD
+    ? await wd.promiseChainRemote(config, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY)
+    : await wd.promiseChainRemote(config);
   return driver;
 }
 
