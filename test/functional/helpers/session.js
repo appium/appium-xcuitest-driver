@@ -3,6 +3,7 @@ import request from 'request-promise';
 import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
+import _ from 'lodash';
 
 
 const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
