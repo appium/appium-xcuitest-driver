@@ -77,10 +77,10 @@ describe('get url', function () {
 
   it('should use customised WDA listening url', function () {
     const wdaLocalPort = '9100';
-    const wdaCustomBaseURL = 'http://mockurl';
+    const wdaBaseUrl = 'http://mockurl';
 
     const args = Object.assign({}, fakeConstructorArgs);
-    args.wdaCustomBaseURL = wdaCustomBaseURL;
+    args.wdaBaseUrl = wdaBaseUrl;
     args.wdaLocalPort = wdaLocalPort;
 
     const agent = new WebDriverAgent({}, args);
