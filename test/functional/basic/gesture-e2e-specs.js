@@ -274,7 +274,7 @@ describe('XCUITestDriver - gestures', function () {
       let el1 = await driver.elementByAccessibilityId('Action Sheets');
       let action = new wd.TouchAction(driver);
       action.tap({el: el1});
-      action.perform();
+      await action.perform();
 
       // pause a moment so the alert can animate
       await B.delay(500);
