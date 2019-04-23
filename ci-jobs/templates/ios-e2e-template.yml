@@ -3,8 +3,8 @@ parameters:
     script: ''
     name: ios-e2e-test
     dependsOn: ''
-    iosVersion: 12.1
-    xcodeVersion: 10.1
+    iosVersion: 12.2
+    xcodeVersion: 10.2
     deviceName: 'iPhone X'
 
 jobs:
