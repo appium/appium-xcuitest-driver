@@ -68,6 +68,26 @@ describe('launch', function () {
   });
 });
 
+describe('get url', function () {
+  it('should use default WDA listening url', function () {
+    const args = Object.assign({}, fakeConstructorArgs);
+    const agent = new WebDriverAgent({}, args);
+    agent.url.href.should.eql('http://localhost:8100/');
+  });
+
+  it('should use customised WDA listening url', function () {
+    const wdaLocalPort = '9100';
+    const wdaCustomBaseURL = 'http://mockurl';
+
+    const args = Object.assign({}, fakeConstructorArgs);
+    args.wdaCustomBaseURL = wdaCustomBaseURL;
+    args.wdaLocalPort = wdaLocalPort;
+
+    const agent = new WebDriverAgent({}, args);
+    agent.url.href.should.eql('http://mockurl:9100/');
+  });
+});
+
 describe('setupCaching()', function () {
   let wda;
   let wdaStub;
