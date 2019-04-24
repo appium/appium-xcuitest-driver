@@ -156,6 +156,9 @@ describe('utils', function () {
     it('should true with ipv4 localhost', function () {
       isLocalHost('http://localhost').should.be.true;
     });
+    it('should true with ipv4 localhost with port', function () {
+      isLocalHost('http://localhost:8888').should.be.true;
+    });
     it('should true with ipv4 127.0.0.1', function () {
       isLocalHost('http://127.0.0.1').should.be.true;
     });
@@ -165,8 +168,14 @@ describe('utils', function () {
     it('should true with ipv6 ::ffff:127.0.0.1', function () {
       isLocalHost('http://[::ffff:127.0.0.1]').should.be.true;
     });
+    it('should true with ipv6 ::ffff:127.0.0.1 with port', function () {
+      isLocalHost('http://[::ffff:127.0.0.1]:8888').should.be.true;
+    });
     it('should false with ipv4 192.168.1.100', function () {
       isLocalHost('http://192.168.1.100').should.be.false;
+    });
+    it('should false with ipv4 192.168.1.100 with port', function () {
+      isLocalHost('http://192.168.1.100:8888').should.be.false;
     });
     it('should false with ipv6 2001:db8:85a3:8d3:1319:8a2e:370:7348', function () {
       isLocalHost('http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]').should.be.false;
