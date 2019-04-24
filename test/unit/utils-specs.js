@@ -150,6 +150,9 @@ describe('utils', function () {
   });
 
   describe('isLocalHost', function () {
+    it('should be false with invalid input, undefined', function () {
+      isLocalHost(undefined).should.be.false;
+    });
     it('should be false with invalid input, empty', function () {
       isLocalHost('').should.be.false;
     });
