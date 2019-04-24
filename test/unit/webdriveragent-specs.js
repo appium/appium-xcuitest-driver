@@ -74,10 +74,31 @@ describe('get url', function () {
     const agent = new WebDriverAgent({}, args);
     agent.url.href.should.eql('http://localhost:8100/');
   });
+  it('should use default WDA listening url with emply base url', function () {
+    const wdaLocalPort = '9100';
+    const wdaBaseUrl = '';
 
+    const args = Object.assign({}, fakeConstructorArgs);
+    args.wdaBaseUrl = wdaBaseUrl;
+    args.wdaLocalPort = wdaLocalPort;
+
+    const agent = new WebDriverAgent({}, args);
+    agent.url.href.should.eql('http://localhost:9100/');
+  });
   it('should use customised WDA listening url', function () {
     const wdaLocalPort = '9100';
     const wdaBaseUrl = 'http://mockurl';
+
+    const args = Object.assign({}, fakeConstructorArgs);
+    args.wdaBaseUrl = wdaBaseUrl;
+    args.wdaLocalPort = wdaLocalPort;
+
+    const agent = new WebDriverAgent({}, args);
+    agent.url.href.should.eql('http://mockurl:9100/');
+  });
+  it('should use customised WDA listening url with slash', function () {
+    const wdaLocalPort = '9100';
+    const wdaBaseUrl = 'http://mockurl/';
 
     const args = Object.assign({}, fakeConstructorArgs);
     args.wdaBaseUrl = wdaBaseUrl;
