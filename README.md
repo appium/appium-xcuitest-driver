@@ -133,7 +133,7 @@ Differences are noted here:
 |`wdaStartupRetries`|Number of times to try to build and launch WebDriverAgent onto the device. Defaults to 2.|e.g., `4`|
 |`wdaStartupRetryInterval`|Time, in ms, to wait between tries to build and launch WebDriverAgent. Defaults to 10000ms.|e.g., `20000`|
 |`wdaLocalPort`|This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.|e.g., `8100`|
-|`wdaBaseUrl`| This value if specified, will be used to listen WebDriverAgent to this URL. Defaults to `http://localhost` | e.g., `http://192.168.1.100`|
+|`wdaBaseUrl`| This value if specified, will be used as a prefix to build a custom WebDriverAgent url. It is different from `webDriverAgentUrl`, because if the latter is set then it expects WebDriverAgent to be already listening and skips the building phase. Defaults to `http://localhost` | e.g., `http://192.168.1.100`|
 |`showXcodeLog`|Whether to display the output of the Xcode command used to run the tests. If this is `true`, there will be **lots** of extra logging at startup. Defaults to `false`|e.g., `true`|
 |`iosInstallPause`|Time in milliseconds to pause between installing the application and starting WebDriverAgent on the device. Used particularly for larger applications. Defaults to `0`|e.g., `8000`|
 |`usePrebuiltWDA`|Skips the build phase of running the WDA app. Building is then the responsibility of the user. Only works for Xcode 8+. Defaults to `false`.|e.g., `true`|
