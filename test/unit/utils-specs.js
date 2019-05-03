@@ -1,12 +1,11 @@
 import {
-  clearSystemFiles, translateDeviceName, adjustWDAAttachmentsPermissions,
+  clearSystemFiles, translateDeviceName,
   markSystemFilesForCleanup, isLocalHost } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
 import { utils as iosUtils } from 'appium-ios-driver';
 import { fs } from 'appium-support';
-import B from 'bluebird';
 
 
 chai.should();
@@ -65,72 +64,7 @@ describe('utils', function () {
       await clearSystemFiles(wda);
     });
   }));
-  describe('adjustWDAAttachmentsPermissions', withMocks({fs}, function (mocks) {
-    afterEach(function () {
-      mocks.verify();
-    });
 
-    it('should change permissions to Attachments folder', async function () {
-      let wda = {
-        retrieveDerivedDataPath () {
-          return DERIVED_DATA_ROOT;
-        }
-      };
-      mocks.fs.expects('exists')
-        .once()
-        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`)
-        .returns(true);
-      mocks.fs.expects('chmod')
-        .once()
-        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`, '555')
-        .returns();
-      await adjustWDAAttachmentsPermissions(wda, '555');
-    });
-    it('should not repeat permissions change with equal flags for the particular folder', async function () {
-      let wda = {
-        retrieveDerivedDataPath () {
-          return DERIVED_DATA_ROOT;
-        }
-      };
-      mocks.fs.expects('exists')
-        .atLeast(2)
-        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`)
-        .returns(true);
-      mocks.fs.expects('chmod')
-        .twice()
-        .returns();
-      await adjustWDAAttachmentsPermissions(wda, '333');
-      await adjustWDAAttachmentsPermissions(wda, '333');
-      await adjustWDAAttachmentsPermissions(wda, '444');
-      await adjustWDAAttachmentsPermissions(wda, '444');
-    });
-    it('should not repeat permissions change with equal flags for the particular folder in parallel sessions', async function () {
-      let wda = {
-        retrieveDerivedDataPath () {
-          return DERIVED_DATA_ROOT;
-        }
-      };
-      mocks.fs.expects('exists')
-        .atLeast(2)
-        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs/Test/Attachments`)
-        .returns(true);
-      mocks.fs.expects('chmod')
-        .twice()
-        .returns();
-      await B.map([[wda, '123'], [wda, '123']], ([w, perms]) => adjustWDAAttachmentsPermissions(w, perms));
-      await B.map([[wda, '234'], [wda, '234']], ([w, perms]) => adjustWDAAttachmentsPermissions(w, perms));
-    });
-    it('should do nothing if no derived data path is found', async function () {
-      let wda = {
-        retrieveDerivedDataPath () {
-          return null;
-        }
-      };
-      mocks.fs.expects('exists').never();
-      mocks.fs.expects('chmod').never();
-      await adjustWDAAttachmentsPermissions(wda, '777');
-    });
-  }));
   describe('determineDevice', function () {
     it('should set the correct iPad simulator generic device', function () {
       const ipadDeviceName = 'iPad Simulator';
