@@ -365,7 +365,8 @@ describe('Safari - basics -', function () {
     });
   });
 
-  describe('safariIgnoreFraudWarning', function () {
+  // TODO: find another way to test this... the google site no longer loads on ios
+  describe.skip('safariIgnoreFraudWarning', function () {
     describe('false', function () {
       beforeEach(async function () {
         // on 12.2 the site never loads, and never gets automatable
@@ -385,7 +386,7 @@ describe('Safari - basics -', function () {
         // on 12.2 the site never loads, and never gets automatable
         await openPage(driver, PHISHING_END_POINT);
         await retryInterval(60, 1000, async function () {
-          (await driver.source()).toLowerCase().should.include('phishing');
+          (await driver.source()).toLowerCase().should.include('deceptive');
         });
       });
     });
@@ -401,7 +402,7 @@ describe('Safari - basics -', function () {
 
       it('should not display a phishing warning', async function () {
         await openPage(driver, PHISHING_END_POINT);
-        (await driver.source()).toLowerCase().should.not.include('phishing');
+        (await driver.source()).toLowerCase().should.not.include('deceptive');
       });
     });
   });
