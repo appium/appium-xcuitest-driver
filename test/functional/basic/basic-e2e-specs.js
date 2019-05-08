@@ -88,6 +88,10 @@ describe('XCUITestDriver - basics -', function () {
 
       delete expected.udid; // for real device tests
 
+      if (expected.showXcodeLog === undefined) {
+        delete expected.showXcodeLog;
+      }
+
       if (process.env.CLOUD) {
         delete expected.app;
         delete expected[process.env.APPIUM_BUNDLE_CAP];

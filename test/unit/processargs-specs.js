@@ -6,11 +6,12 @@ chai.should();
 
 describe('process args', function () {
   let driver = new XCUITestDriver();
+  driver.opts.platformVersion = '10.3';
   let proxySpy = sinon.stub(driver, 'proxyCommand');
 
   const PROCESS_ARGS_OBJECT = {
-    args: ['a', 'b', 'c']
-    , env: { 'a': 'b', 'c': 'd' }
+    args: ['a', 'b', 'c'],
+    env: { 'a': 'b', 'c': 'd' }
   };
 
   let processArgsString = JSON.stringify(PROCESS_ARGS_OBJECT);
@@ -36,7 +37,7 @@ describe('process args', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
       let desiredWithProArgsObject = {
         platformName: 'iOS',
-        platformVersion: '9.3',
+        platformVersion: '10.3',
         deviceName: 'iPhone 6',
         app: 'testapp.app',
         bundleId: desired.desiredCapabilities.bundleId,
@@ -51,11 +52,11 @@ describe('process args', function () {
     });
   });
 
-  describe.only('send process args json string', function () {
+  describe('send process args json string', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
       let desiredWithProArgsString = {
         platformName: 'iOS',
-        platformVersion: '9.3',
+        platformVersion: '10.3',
         deviceName: 'iPhone 6',
         app: 'testapp.app',
         bundleId: desired.desiredCapabilities.bundleId,

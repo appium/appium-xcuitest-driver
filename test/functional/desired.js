@@ -13,7 +13,7 @@ if (!process.env.DEVICE_NAME && !process.env.SAUCE_RDC) {
   DEVICE_NAME = 'iPhone 6';
 }
 
-const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG;
+const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG || undefined; // we do not want `false` in Travis, so we get some logging on errors
 const REAL_DEVICE = (function () {
   let rd = parseInt(process.env.REAL_DEVICE, 10);
   if (isNaN(rd)) {
