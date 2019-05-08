@@ -52,7 +52,7 @@ describe('process args', function () {
     });
   });
 
-  describe.only('send process args json string', function () {
+  describe('send process args json string', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
       let desiredWithProArgsString = {
         platformName: 'iOS',
