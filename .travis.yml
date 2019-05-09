@@ -2,7 +2,7 @@ sudo: required
 os: osx
 osx_image: xcode10.1
 language: node_js
-node_js: "8"
+node_js: "10"
 env:
   global:
     - PLATFORM_VERSION=12.1
