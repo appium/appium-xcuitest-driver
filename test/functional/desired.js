@@ -112,7 +112,14 @@ const W3C_CAPS = {
   }
 };
 
+let TVOS_CAPS = _.defaults({
+  platformName: 'tvOS',
+  bundleId: 'com.apple.TVSettings',
+  deviceName: 'Apple TV'
+}, GENERIC_CAPS);
+
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
   PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS,
+  TVOS_CAPS,
 };

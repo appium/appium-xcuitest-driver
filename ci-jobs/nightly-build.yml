@@ -40,21 +40,29 @@ jobs:
       iosVersion: 12.2
       xcodeVersion: 10.2
       deviceName: "iPhone XR"
+      tvosName: AppleTV_12_2
+      tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneXSMax_12_1
       iosVersion: 12.1
       xcodeVersion: 10.1
       deviceName: "iPhone XS Max"
+      tvosName: AppleTV_12_1
+      tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhone8_12
       iosVersion: 12.0
       xcodeVersion: 10
       deviceName: "iPhone 8"
+      tvosName: AppleTV_12
+      tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhone7_11_4
       iosVersion: 11.4
       xcodeVersion: 9.4
       deviceName: "iPhone 7"
+      tvosName: AppleTV_11_4
+      tvosDeviceName: "Apple TV"
