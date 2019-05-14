@@ -23,8 +23,6 @@ describe('tvOS', function () {
 
   let baseCaps;
   let caps;
-
-  let driver;
   before(async function () {
     const udid = await createDevice(
       SIM_DEVICE_NAME,
@@ -45,8 +43,8 @@ describe('tvOS', function () {
   });
 
   if (!process.env.REAL_DEVICE) {
-    it('should launch com.apple.TVSetting for tvOS', async function () {
-      driver = await initSession(baseCaps);
+    it('should launch com.apple.TVSetting', async function () {
+      const driver = await initSession(baseCaps);
       (await driver.elementByAccessibilityId('General')).should.exist;
     });
   }
