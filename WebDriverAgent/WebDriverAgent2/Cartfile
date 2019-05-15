@@ -1,0 +1,8 @@
+# Used for HTTP routing
+github "appium/RoutingHTTPServer"
+
+# Used by the element cache
+github "appium/YYCache"
+
+# Used by screenshots broadcaster
+github "robbiehanson/CocoaAsyncSocket"
