@@ -42,10 +42,8 @@ describe('tvOS', function () {
     await deleteSession();
   });
 
-  if (!process.env.REAL_DEVICE) {
-    it('should launch com.apple.TVSetting', async function () {
-      const driver = await initSession(baseCaps);
-      (await driver.elementByAccessibilityId('General')).should.exist;
-    });
-  }
+  it('should launch com.apple.TVSetting', async function () {
+    const driver = await initSession(baseCaps);
+    (await driver.elementByAccessibilityId('General')).should.exist;
+  });
 });
