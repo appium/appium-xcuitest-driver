@@ -6,3 +6,5 @@ jobs:
       iosVersion: 12.2
       xcodeVersion: 10.2
       deviceName: "iPhone X"
+      tvosName: AppleTV_12_2
+      tvosDeviceName: "Apple TV"

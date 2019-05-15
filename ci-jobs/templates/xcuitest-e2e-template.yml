@@ -3,6 +3,8 @@ parameters:
   iosVersion: ''
   xcodeVersion: ''
   deviceName: ''
+  tvosName: ''
+  tvosDeviceName: ''
 jobs:
   - template: ./ios-e2e-template.yml
     parameters:
@@ -23,7 +25,7 @@ jobs:
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/driver -g @skip-ci -i --exit
 
-  - template: ./ios-e2e-template.yml 
+  - template: ./ios-e2e-template.yml
     parameters:
       name: e2e_web_${{ parameters.name }}
       iosVersion: ${{ parameters.iosVersion }}
@@ -41,4 +43,11 @@ jobs:
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
 
-  
+  - template: ./ios-e2e-template.yml
+    parameters:
+      name: e2e_tvos_${{ parameters.tvosName }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.tvosDeviceName }}
+      script: |
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/tv -g @skip-ci -i --exit
