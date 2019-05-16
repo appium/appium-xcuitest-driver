@@ -54,7 +54,7 @@
     "source-map-support": "^0.5.5",
     "teen_process": "^1.14.0",
     "uuid-js": "^0.7.5",
-    "ws": "^6.0.0",
+    "ws": "^7.0.0",
     "xmldom": "^0.1.27",
     "yargs": "^13.1.0"
   },
