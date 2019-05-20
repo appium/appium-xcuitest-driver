@@ -22,6 +22,7 @@ jobs:
     - script: |
         npm install
         npm install mocha@5 # Fix until mocha-parallel-tests supports Mocha 6
+        npm install mocha-parallel-tests
       displayName: Install node dependencies
     - script: npm run build
       displayName: Build
