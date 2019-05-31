@@ -1,14 +1,34 @@
-import { getAvailableBundleIds } from '../../../lib/commands/file-movement';
+import { getAvailableBundleIds, parseContainerPath, isDocuments } from '../../../lib/commands/file-movement';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as teen_process from 'teen_process';
 import { withMocks } from 'appium-test-support';
-import { fs } from 'appium-support';
+import { fs, tempDir } from 'appium-support';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('file-movement', function () {
+  describe('parseContainerPath', function () {
+    it('should parse', async function () {
+      const mntRoot = await tempDir.openDir();
+      const [bundleId, pathInContainer] = await parseContainerPath('@io.appium.example/Documents/file.txt', mntRoot);
+
+      bundleId.should.eql('io.appium.example');
+      pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
+    });
+  });
+
+  describe('isDocuments', function () {
+    it('should true', function () {
+      isDocuments('@io.appium.example/Documents/file.txt').should.be.true;
+    });
+    it('should false', function () {
+      isDocuments('@io.appium.example/Photo/photo.png').should.be.false;
+    });
+  });
+
+
   describe('getAvailableBundleIds', withMocks({teen_process, fs}, (mocks) => {
     afterEach(function () {
       mocks.verify();
