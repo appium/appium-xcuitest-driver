@@ -67,14 +67,14 @@ io.appium.example, "1.0.205581.0.10", "Appium"
       await getAvailableBundleIds({ udid: '12345' })
         .should.eventually.be.rejectedWith(/tool is required/);
     });
-    it('raises no ifuse error', async function () {
+    it('should nothing happen', async function () {
       mocks.fs.expects('which')
         .withExactArgs('ifuse').once().returns(true);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
         .throws();
       await getAvailableBundleIds({ udid: '12345' })
-        .should.eventually.rejectedWith(/Cannot get a list of bundleIds/);
+        .should.eventually.be.undefined;
     });
   }));
 });
