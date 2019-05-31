@@ -23,6 +23,9 @@ describe('file-movement', function () {
     it('should true', function () {
       isDocuments('@io.appium.example/Documents/file.txt').should.be.true;
     });
+    it('should true but only documents', function () {
+      isDocuments('@io.appium.example/Documents').should.be.true;
+    });
     it('should false', function () {
       isDocuments('@io.appium.example/Photo/photo.png').should.be.false;
     });
@@ -39,10 +42,10 @@ describe('file-movement', function () {
         .withExactArgs('ifuse').once().returns(true);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .returns(`
+        .returns({stdout: `
 com.apple.Keynote, "6383", "Keynote"
 io.appium.example, "1.0.205581.0.10", "Appium"
-        `);
+        `, stderr: ''});
       await getAvailableBundleIds({ udid: '12345' }).should.eventually.eql([
         'com.apple.Keynote', 'io.appium.example'
       ]);
@@ -52,7 +55,7 @@ io.appium.example, "1.0.205581.0.10", "Appium"
         .withExactArgs('ifuse').once().returns(true);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .returns('');
+        .returns({stdout: '', stderr: ''});
       await getAvailableBundleIds({ udid: '12345' }).should.eventually.eql([]);
     });
     it('raises no ifuse error', async function () {
@@ -60,7 +63,7 @@ io.appium.example, "1.0.205581.0.10", "Appium"
         .withExactArgs('ifuse').once().returns(false);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .returns('');
+        .returns({stdout: '', stderr: ''});
       await getAvailableBundleIds({ udid: '12345' })
         .should.eventually.be.rejectedWith(/tool is required/);
     });
