@@ -1,4 +1,4 @@
-import { getAvailableBundleIds, parseContainerPath, isDocuments } from '../../../lib/commands/file-movement';
+import { getAvailableBundleIds, parseContainerPath } from '../../../lib/commands/file-movement';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as teen_process from 'teen_process';
@@ -40,22 +40,6 @@ describe('file-movement', function () {
     });
   });
 
-  describe('isDocuments', function () {
-    it('should true', function () {
-      isDocuments('documents').should.be.true;
-    });
-    it('should true with upper', function () {
-      isDocuments('DOCUMENTS').should.be.true;
-    });
-    it('should false with non documents', function () {
-      isDocuments('app').should.be.false;
-    });
-    it('should false with null', function () {
-      isDocuments(null).should.be.false;
-    });
-  });
-
-
   describe('getAvailableBundleIds', withMocks({teen_process, fs}, (mocks) => {
     afterEach(function () {
       mocks.verify();
@@ -68,7 +52,7 @@ describe('file-movement', function () {
 com.apple.Keynote, "6383", "Keynote"
 io.appium.example, "1.0.205581.0.10", "Appium"
         `, stderr: ''});
-      await getAvailableBundleIds({ udid: '12345' }).should.eventually.eql([
+      await getAvailableBundleIds('12345').should.eventually.eql([
         'com.apple.Keynote', 'io.appium.example'
       ]);
     });
@@ -76,13 +60,13 @@ io.appium.example, "1.0.205581.0.10", "Appium"
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
         .returns({stdout: '', stderr: ''});
-      await getAvailableBundleIds({ udid: '12345' }).should.eventually.eql([]);
+      await getAvailableBundleIds('12345').should.eventually.eql([]);
     });
     it('should nothing happen', async function () {
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
         .throws();
-      await getAvailableBundleIds({ udid: '12345' })
+      await getAvailableBundleIds('12345')
         .should.eventually.be.eql([]);
     });
   }));
