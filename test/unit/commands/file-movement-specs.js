@@ -5,29 +5,41 @@ import * as teen_process from 'teen_process';
 import { withMocks } from 'appium-test-support';
 import { fs, tempDir } from 'appium-support';
 
-chai.should();
+const should = chai.should();
 chai.use(chaiAsPromised);
 
 describe('file-movement', function () {
   describe('parseContainerPath', function () {
-    it('should parse', async function () {
+    it('should parse with container', async function () {
       const mntRoot = await tempDir.openDir();
-      const [bundleId, pathInContainer] = await parseContainerPath('@io.appium.example/Documents/file.txt', mntRoot);
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath('@io.appium.example:app/Documents/file.txt', mntRoot);
 
       bundleId.should.eql('io.appium.example');
       pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
+      containerType.should.eql('app');
+    });
+    it('should parse without container', async function () {
+      const mntRoot = await tempDir.openDir();
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath('@io.appium.example/Documents/file.txt', mntRoot);
+
+      bundleId.should.eql('io.appium.example');
+      pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
+      should.equal(containerType, null);
     });
   });
 
   describe('isDocuments', function () {
     it('should true', function () {
-      isDocuments('@io.appium.example/Documents/file.txt').should.be.true;
+      isDocuments('documents').should.be.true;
     });
-    it('should true but only documents', function () {
-      isDocuments('@io.appium.example/Documents').should.be.true;
+    it('should true with upper', function () {
+      isDocuments('DOCUMENTS').should.be.true;
     });
-    it('should false', function () {
-      isDocuments('@io.appium.example/Photo/photo.png').should.be.false;
+    it('should false with non documents', function () {
+      isDocuments('app').should.be.false;
+    });
+    it('should false with null', function () {
+      isDocuments(null).should.be.false;
     });
   });
 
