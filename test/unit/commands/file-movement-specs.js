@@ -34,6 +34,10 @@ describe('file-movement', function () {
       pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
       should.equal(containerType, null);
     });
+    it('should rase an error if no container path', async function () {
+      const mntRoot = await tempDir.openDir();
+      await parseContainerPath('@io.appium.example:documents', mntRoot).should.eventually.rejected;
+    });
   });
 
   describe('isDocuments', function () {
@@ -58,8 +62,6 @@ describe('file-movement', function () {
     });
 
     it('get available bundleIds with items', async function () {
-      mocks.fs.expects('which')
-        .withExactArgs('ifuse').once().returns(true);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
         .returns({stdout: `
@@ -71,30 +73,17 @@ io.appium.example, "1.0.205581.0.10", "Appium"
       ]);
     });
     it('get available bundleIds without items', async function () {
-      mocks.fs.expects('which')
-        .withExactArgs('ifuse').once().returns(true);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
         .returns({stdout: '', stderr: ''});
       await getAvailableBundleIds({ udid: '12345' }).should.eventually.eql([]);
     });
-    it('raises no ifuse error', async function () {
-      mocks.fs.expects('which')
-        .withExactArgs('ifuse').once().returns(false);
-      mocks.teen_process.expects('exec')
-        .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .returns({stdout: '', stderr: ''});
-      await getAvailableBundleIds({ udid: '12345' })
-        .should.eventually.be.rejectedWith(/tool is required/);
-    });
     it('should nothing happen', async function () {
-      mocks.fs.expects('which')
-        .withExactArgs('ifuse').once().returns(true);
       mocks.teen_process.expects('exec')
         .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
         .throws();
       await getAvailableBundleIds({ udid: '12345' })
-        .should.eventually.be.undefined;
+        .should.eventually.be.eql([]);
     });
   }));
 });
