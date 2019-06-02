@@ -34,9 +34,9 @@ describe('file-movement', function () {
       pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
       should.equal(containerType, null);
     });
-    it('should rase an error if no container path', async function () {
+    it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();
-      await parseContainerPath('@io.appium.example:documents', mntRoot).should.eventually.rejected;
+      await parseContainerPath('@io.appium.example:documents', mntRoot).should.eventually.be.rejected;
     });
   });
 
