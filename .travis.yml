@@ -15,7 +15,7 @@ jobs:
   include:
     - stage: tests
       name: Unit tests
-      if: &noncron type = cron
+      if: &noncron type != cron
       env:
         - TEST=unit
         - COVERALLS=1
@@ -67,7 +67,7 @@ jobs:
         - TEST=functional/web
 
     - stage: "[CRON] Upload Appium build to Sauce Storage"
-      if: &cron type != cron
+      if: &cron type = cron
       os: linux
       env: CLOUD=1
       script: npx gulp sauce-storage-upload
