@@ -15,7 +15,7 @@ jobs:
   include:
     - stage: tests
       name: Unit tests
-      if: type != cron
+      if: &noncron type != cron
       env:
         - TEST=unit
         - COVERALLS=1
@@ -23,34 +23,34 @@ jobs:
 
     - stage:
       name: Basic functional tests
-      if: type != cron
+      if: *noncron
       env:
         - CI_METRICS=1
         - TEST=functional/basic
 
     - stage:
       name: Driver functional tests
-      if: type != cron
+      if: *noncron
       env:
         - TEST=functional/driver
 
     - stage:
       name: Web tests
-      if: type != cron
+      if: *noncron
       env:
         - CI_METRICS=1
         - TEST=functional/web
 
     - stage:
       name: Long tests
-      if: type != cron
+      if: *noncron
       env:
         - CI_METRICS=1
         - TEST=functional/long
 
     - stage:
       name: Smoke test on Xcode 10.1 web
-      if: type != cron
+      if: *noncron
       osx_image: xcode10.1
       env:
         - CI_METRICS=1
@@ -59,7 +59,7 @@ jobs:
 
     - stage:
       name: Smoke tests on xcode 9.4 web
-      if: type != cron
+      if: *noncron
       osx_image: xcode9.4
       env:
         - CI_METRICS=1
@@ -67,40 +67,40 @@ jobs:
         - TEST=functional/web
 
     - stage: "[CRON] Upload Appium build to Sauce Storage"
-      if: type = cron
+      if: &cron type = cron
       os: linux
       env: CLOUD=1
       script: npx gulp sauce-storage-upload
 
     # Sauce Emusim tests
     - stage: "[CRON] Sauce Emusim tests"
-      if: type = cron
+      if: *cron
       os: linux
       name: Basic, device 0
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/basic
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Basic, device 1
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/basic
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Basic, device 2
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/basic
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Basic, device 3
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/basic
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Basic, device 4
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/basic
 
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Web, device 0
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 TEST=functional/web
@@ -108,28 +108,28 @@ jobs:
         sauce_connect:
           no_ssl_bump_domains: localhost
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Web, device 1
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 TEST=functional/web
       addons:
         *sc
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Web, device 2
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 TEST=functional/web
       addons:
         *sc
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Web, device 3
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 TEST=functional/web
       addons:
         *sc
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Web, device 4
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 TEST=functional/web
@@ -137,27 +137,27 @@ jobs:
         *sc
 
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Long, device 0
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=0 LONG=1 TEST=functional/long
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Long, device 1
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=1 LONG=1 TEST=functional/long
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Long, device 2
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=2 LONG=1 TEST=functional/long
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Long, device 3
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=3 LONG=1 TEST=functional/long
     - stage:
-      if: type = cron
+      if: *cron
       os: linux
       name: Long, device 4
       env: CLOUD=1 SAUCE_EMUSIM_DEVICE_INDEX=4 LONG=1 TEST=functional/long
