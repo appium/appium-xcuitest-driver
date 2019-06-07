@@ -204,7 +204,7 @@ install:
       npm install;
       npm install --no-save mjpeg-consumer;
 
-      pushd WebDriverAgent;
+      pushd node_modules/appium-webdriveragent;
       carthage bootstrap --no-use-binaries;
       cp Cartfile.resolved Carthage;
       mkdir -p ./Resources/WebDriverAgent.bundle;
