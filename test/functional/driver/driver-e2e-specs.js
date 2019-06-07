@@ -36,7 +36,10 @@ describe('XCUITestDriver', function () {
     const udid = await createDevice(SIM_DEVICE_NAME,
       UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
     baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
-    caps = Object.assign({usePrebuiltWDA: true}, baseCaps);
+    caps = Object.assign({
+      usePrebuiltWDA: true,
+      wdaStartupRetries: 0,
+    }, baseCaps);
   });
   after(async function () {
     const sim = await getSimulator(caps.udid);
