@@ -101,6 +101,11 @@ const TESTAPP_CAPS = _.defaults({
   app: apps.iosTestApp,
 }, GENERIC_CAPS);
 
+const MULTIPLE_APPS = _.defaults({
+  app: apps.uiCatalogApp,
+  otherApps: apps.iosTestApp
+}, GENERIC_CAPS);
+
 const TOUCHIDAPP_CAPS = _.defaults({
   app: apps.touchIdApp,
 }, GENERIC_CAPS);
@@ -121,5 +126,5 @@ let TVOS_CAPS = _.defaults({
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
   PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS,
-  TVOS_CAPS,
+  TVOS_CAPS, MULTIPLE_APPS
 };
