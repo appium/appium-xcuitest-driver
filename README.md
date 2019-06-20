@@ -179,6 +179,14 @@ Differences are noted here:
 |`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`safariGarbageCollect`|Turns on/off Web Inspector garbage collection when executing scripts on Safari. Turning on may improve performance. Defaults to `false`.|`true` or `false`|
 
+## Opt-in Features (With Security Risk)
+
+These can be enabled when running this driver through Appium, via the `--allow-insecure` or `--relaxed-security` flags.
+
+|Feature Name|Description|
+|------------|-----------|
+|shutdown_other_sims|Allow any session to use a capability to shutdown any running simulators on the host|
+|perf_record|Allow recording the system performance and other metrics of the simulator|
 
 ## Development<a id="development"></a>
 

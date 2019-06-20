@@ -35,7 +35,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-base-driver": "^3.0.0",
+    "appium-base-driver": "^3.17.0",
     "appium-idb": "^0.1.0",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.11.0",
