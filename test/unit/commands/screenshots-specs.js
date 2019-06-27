@@ -1,3 +1,4 @@
+import path from 'path';
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
 import { fs, tempDir } from 'appium-support';
@@ -9,7 +10,8 @@ describe('screenshots commands', function () {
   let driver;
   let proxyStub;
 
-  const base64Response = 'aGVsbG8=';
+  const base64PortraitResponse = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  const base64LandscapeResponse = 'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAD0lEQVR4AWNgqGeoZ0AGAA70AP/hygDpAAAAAElFTkSuQmCC';
 
   beforeEach(function () {
     driver = new XCUITestDriver();
@@ -28,7 +30,7 @@ describe('screenshots commands', function () {
       });
 
       it('should get a screenshot from WDA if no errors are detected', async function () {
-        proxyStub.returns(base64Response);
+        proxyStub.returns(base64PortraitResponse);
         driver.opts.realDevice = false;
 
         await driver.getScreenshot();
@@ -42,14 +44,14 @@ describe('screenshots commands', function () {
 
       it('should get a screenshot from simctl if WDA call fails and Xcode version >= 8.1', async function () {
         proxyStub.returns(null);
-        simctlStub.returns(base64Response);
+        simctlStub.returns(base64PortraitResponse);
 
         driver.opts.realDevice = false;
         driver.xcodeVersion = {
           versionFloat: 8.3
         };
         const result = await driver.getScreenshot();
-        result.should.equal(base64Response);
+        result.should.equal(base64PortraitResponse);
 
         proxyStub.calledOnce.should.be.true;
         simctlStub.calledOnce.should.be.true;
@@ -58,7 +60,7 @@ describe('screenshots commands', function () {
 
     describe('real device', function () {
       it('should get a screenshot from WDA if no errors are detected', async function () {
-        proxyStub.returns(base64Response);
+        proxyStub.returns(base64PortraitResponse);
         driver.opts.realDevice = true;
 
         await driver.getScreenshot();
@@ -69,11 +71,11 @@ describe('screenshots commands', function () {
       });
 
       describe('idevicescreenshot', function () {
-        const tiffPath = '/some/file.tiff';
         const pngPath = '/some/file.png';
         const udid = '1234';
         const toolName = 'idevicescreenshot';
-        const pngFileContent = 'blabla';
+        const file = path.resolve(__dirname, '..', '..', '..', '..', 'test', 'assets', 'test.png');
+        let pngFileContent;
 
         let fsExistsStub;
         let fsWhichStub;
@@ -81,6 +83,10 @@ describe('screenshots commands', function () {
         let fsReadFileStub;
         let execStub;
         let pathStub;
+
+        before(async function () {
+          pngFileContent = await fs.readFile(file);
+        });
 
         beforeEach(function () {
           driver.opts.realDevice = true;
@@ -110,31 +116,27 @@ describe('screenshots commands', function () {
             execStub = sinon.stub(teenProcessModule, 'exec');
 
             pathStub = sinon.stub(tempDir, 'path');
-            pathStub.withArgs({prefix: `screenshot-${udid}`, suffix: '.tiff'}).returns(tiffPath);
             pathStub.withArgs({prefix: `screenshot-${udid}`, suffix: '.png'}).returns(pngPath);
           });
           afterEach(function () {
             fsWhichStub.calledOnce.should.be.true;
             fsWhichStub.firstCall.args[0].should.eql(toolName);
 
-            execStub.calledTwice.should.be.true;
+            execStub.calledOnce.should.be.true;
             execStub.firstCall.args[0].should.eql(toolName);
-            execStub.firstCall.args[1].should.eql(['-u', udid, tiffPath]);
-            execStub.secondCall.args[0].should.eql('sips');
-            execStub.secondCall.args[1].should.eql(
-              ['-r', '-90', '-s', 'format', 'png', tiffPath, '--out', pngPath]);
+            execStub.firstCall.args[1].should.eql(['-u', udid, pngPath]);
 
-            fsRimRafStub.callCount.should.eql(4);
+            fsRimRafStub.callCount.should.eql(2);
 
             fsReadFileStub.calledOnce.should.be.true;
             fsReadFileStub.firstCall.args[0].should.eql(pngPath);
 
-            pathStub.calledTwice.should.be.true;
+            pathStub.calledOnce.should.be.true;
           });
 
           it('should use idevicescreenshot if WDA fails', async function () {
             proxyStub.onFirstCall().returns(null);
-            proxyStub.onSecondCall().returns('LANDSCAPE');
+            proxyStub.onSecondCall().returns('PORTRAIT');
 
             (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
 
@@ -146,7 +148,7 @@ describe('screenshots commands', function () {
             proxyStub.onFirstCall().returns('LANDSCAPE');
             driver.opts.realDeviceScreenshotter = 'idevicescreenshot';
 
-            (await driver.getScreenshot()).should.eql(pngFileContent.toString('base64'));
+            (await driver.getScreenshot()).should.eql(base64LandscapeResponse);
 
             proxyStub.callCount.should.eql(1);
           });
