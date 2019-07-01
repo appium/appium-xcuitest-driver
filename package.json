@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.117.0",
+  "version": "2.118.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -37,6 +37,7 @@
     "@babel/runtime": "^7.0.0",
     "appium-base-driver": "^3.0.0",
     "appium-idb": "^0.2.0",
+    "appium-ios-device": "^0.1.1",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.11.0",
     "appium-remote-debugger": "^4.0.0",
@@ -46,6 +47,7 @@
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
     "bluebird": "^3.1.1",
+    "jimp": "^0.6.4",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
     "node-simctl": "^5.0.1",
