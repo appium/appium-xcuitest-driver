@@ -21,7 +21,7 @@ describe('XCUITestDriver - startLogCapture', function () {
     crashLogStub = sinon.stub(CrashLogs, 'IOSCrashLog').callsFake(function () {
       this.startCapture = _.noop;
     });
-    iosLogStub = sinon.stub(Logs, 'IOSLog').callsFake(function () {
+    iosLogStub = sinon.stub(Logs, 'IOSSimulatorLog').callsFake(function () {
       this.startCapture = spy.startCapture;
     });
   });
