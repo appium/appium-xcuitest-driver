@@ -22,47 +22,17 @@ describe('get deviceinfo commands', function () {
 
   it('get device info', async function () {
     proxyStub.returns({
-      os: {
-        name: 'iOS',
-        version: '11.4',
-        sdkVersion: '11.3',
-      },
-      ios: {
-        currentLocale: 'ja_EN',
-        timeZone: 'US/Pacific',
-        simulatorVersion: '11.4',
-        ip: 'localhost'
-      },
-      build: {
-        time: 'Jun 24 2018 17:08:21',
-        productBundleIdentifier: 'com.facebook.WebDriverAgentRunner'
-      }
+      timeZone: 'America/New_York',
+      locale: 'ja_EN',
     });
-
 
     const out = await driver.mobileGetDeviceInfo();
     out.locale.should.eq('ja_EN');
-    out.timeZone.should.eq('US/Pacific');
+    out.timeZone.should.eq('America/New_York');
   });
 
-  it('get device info, but no proper info because of old WDA', async function () {
-    proxyStub.returns({
-      os: {
-        name: 'iOS',
-        version: '11.4',
-        sdkVersion: '11.3',
-      },
-      ios: {
-        simulatorVersion: '11.4',
-        ip: 'localhost'
-      },
-      build: {
-        time: 'Jun 24 2018 17:08:21',
-        productBundleIdentifier: 'com.facebook.WebDriverAgentRunner'
-      }
-    });
-
-    const out = await driver.mobileGetDeviceInfo();
-    out.should.be.empty;
+  it('get device info raise an error if the endpoint raises error', async function () {
+    proxyStub.throws();
+    await driver.mobileGetDeviceInfo().should.eventually.be.rejected;
   });
 });
