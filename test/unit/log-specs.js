@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import sinon from 'sinon';
-import * as Logs from '../../lib/device-log/ios-log';
+import * as Logs from '../../lib/device-log/ios-simulator-log';
 import * as CrashLogs from '../../lib/device-log/ios-crash-log';
 import log from '../../lib/commands/log';
 
@@ -21,7 +21,7 @@ describe('XCUITestDriver - startLogCapture', function () {
     crashLogStub = sinon.stub(CrashLogs, 'IOSCrashLog').callsFake(function () {
       this.startCapture = _.noop;
     });
-    iosLogStub = sinon.stub(Logs, 'IOSLog').callsFake(function () {
+    iosLogStub = sinon.stub(Logs, 'IOSSimulatorLog').callsFake(function () {
       this.startCapture = spy.startCapture;
     });
   });
