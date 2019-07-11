@@ -131,5 +131,35 @@ describe('simulator management', function () {
       await runSimulatorReset(stoppedDeviceDummy, opts);
       result.should.eql('cleaned');
     });
+    it('should call scrubCustomApp with fastReset and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        app: 'path/to/app.app',
+        noReset: false, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      should.equal(result, undefined);
+    });
+    it('should return immediately with noReset and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        app: 'path/to/app.app',
+        noReset: true, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      should.equal(result, undefined);
+    });
+    it('should call clean with fullRest and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        app: 'path/to/app.app',
+        noReset: false, fullReset: true
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      result.should.eql('cleaned');
+    });
   });
 });
