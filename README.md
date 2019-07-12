@@ -15,7 +15,6 @@
 ## Known issues
 
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
-* Setting geo-location is implemented via AppleScript and works only on Simulator due to lack of support from Apple. In order to make it work on real devices one should have `idevicelocation` tool available.
 * Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
 
 
