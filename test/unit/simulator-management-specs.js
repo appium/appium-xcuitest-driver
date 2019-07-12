@@ -1,8 +1,8 @@
-import { createSim, getExistingSim } from '../../lib/simulator-management.js';
+import { createSim, getExistingSim, runSimulatorReset } from '../../lib/simulator-management.js';
 import sinon from 'sinon';
 import chai from 'chai';
 
-chai.should();
+const should = chai.should();
 
 const caps = {platformName: 'iOS', deviceName: 'iPhone 6', platformVersion: '10.1', app: '/foo.app'};
 const simctlModule = require('node-simctl');
@@ -84,6 +84,90 @@ describe('simulator management', function () {
       createDeviceStub.calledOnce.should.be.true;
       createDeviceStub.firstCall.args[0].should.eql('10.1');
       getSimulatorStub.notCalled.should.be.true;
+    });
+  });
+  describe('runSimulatorReset', function () {
+    let result;
+    const stoppedDeviceDummy = {
+      isRunning: () => false,
+      scrubCustomApp: (path, bundleId) => {
+        result = {path, bundleId};
+      },
+      clean: () => {
+        result = 'cleaned';
+      },
+      shutdown: () => {}
+    };
+
+    beforeEach(function () {
+      result = undefined;
+    });
+
+    it('should call scrubCustomApp with fastReset', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        noReset: false, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      result.path.should.eql('');
+      result.bundleId.should.eql('io.appium.example');
+    });
+    it('should return immediately with noReset', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        noReset: true, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      should.equal(result, undefined);
+    });
+    it('should call clean with fullRest', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        noReset: false, fullReset: true
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      result.should.eql('cleaned');
+    });
+    it('should call scrubCustomApp with fastReset and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        app: 'path/to/app.app',
+        noReset: false, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      should.equal(result, undefined);
+    });
+    it('should return immediately with noReset and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        app: 'path/to/app.app',
+        noReset: true, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      should.equal(result, undefined);
+    });
+    it('should call clean with fullRest and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        bundleId: 'io.appium.example',
+        app: 'path/to/app.app',
+        noReset: false, fullReset: true
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      result.should.eql('cleaned');
+    });
+    it('should not call scrubCustomApp with fastReset, but no bundleid and app', async function () {
+      const opts = {
+        udid: '301CD634-00A9-4042-B463-BD4E755167EA',
+        noReset: false, fullReset: false
+      };
+      await runSimulatorReset(stoppedDeviceDummy, opts);
+      should.equal(result, undefined);
     });
   });
 });
