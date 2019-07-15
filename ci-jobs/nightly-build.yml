@@ -45,7 +45,7 @@ jobs:
       iosVersion: 12.2
       xcodeVersion: 10.2
       deviceName: "iPhone XR"
-      tvosName: AppleTV_12_2
+      tvosName: AppleTV_13
       tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
