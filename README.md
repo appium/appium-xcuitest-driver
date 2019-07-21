@@ -141,7 +141,7 @@ Differences are noted here:
 |`useSimpleBuildTest`| Build with `build` and run test with `test` in xcodebuild for all Xcode version if this is `true`, or build with `build-for-testing` and run tests with `test-without-building` for over Xcode 8 if this is `false`. Defaults to `false`. | `true` or `false` |
 |`wdaEventloopIdleDelay`|Delays the invocation of `-[XCUIApplicationProcess setEventLoopHasIdled:]` by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason). This increases the time for session creation because `-[XCUIApplicationProcess setEventLoopHasIdled:]` is called multiple times. If you enable this capability start with at least `3` seconds and try increasing it, if creating the session still fails. Defaults to `0`. |e.g. `5`|
 |`processArguments`|Process arguments and environment which will be sent to the WebDriverAgent server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
-|`otherApps`|Add the posibility to install multiple apps for testing. Simulators only. | eg. `http://appium.github.io/appium/assets/TestApp9.4.app.zip`| 
+|`otherApps`|Add the posibility to install multiple apps for testing. Simulators only. | eg. * Using string: `"http://appium.github.io/appium/assets/TestApp9.4.app.zip"` * Using JSON Array: `'["http://appium.github.io/appium/assets/TestApp9.4.app.zip", "http://appium.github.io/appium/assets/UICatalog9.4.app.zip"]'` | 
 
 
 ### Simulator control capabilities:
