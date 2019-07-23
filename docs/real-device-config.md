@@ -1,13 +1,5 @@
 ## Setting up iOS Real Devices Tests with XCUITest
 
-### Necessary installed software
-
-Two pieces of software are currently necessary to run iOS tests on real devices:
-
-1. `libimobiledevice` - install using `brew install libimobiledevice --HEAD`
-2. `ios-deploy` - install using `npm install -g ios-deploy`
-
-
 ### Basic (automatic) configuration
 
 The easiest way to get up-and-running with Appium's XCUITest support on iOS
