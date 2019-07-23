@@ -25,7 +25,6 @@ on `libimobiledevice` to do certain things. Install it with [Homebrew](http://br
 
 ```
 brew install libimobiledevice --HEAD  # install from HEAD to get important updates
-brew install ideviceinstaller         # only works for ios 9. for ios 10, see below
 ```
 
 There is also a dependency, made necessary by Facebook's [WebDriverAgent](https://github.com/facebook/WebDriverAgent),
@@ -36,8 +35,6 @@ do not have Carthage on your system, it can also be installed with
 ```
 brew install carthage
 ```
-
-`ideviceinstaller` doesn't work with iOS 10 yet. So we need to install [ios-deploy](https://github.com/phonegap/ios-deploy)
 
 ```
 npm install -g ios-deploy
