@@ -19,6 +19,7 @@ const caps = {
   platformVersion: '10.0',
 };
 
+
 describe('driver commands', function () {
   describe('status', function () {
     let driver;
@@ -135,5 +136,65 @@ describe('driver commands', function () {
       startStub.calledOnce.should.be.true;
       stopStub.calledOnce.should.be.true;
     });
+  });
+});
+
+describe('installOtherApps', function () {
+  let driver = new XCUITestDriver();
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = sinon.createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should skip install other apps on real devices', async function () {
+    sandbox.stub(driver, 'isRealDevice');
+    sandbox.stub(driver.helpers, 'parseCapsArray');
+    driver.isRealDevice.returns(true);
+    await driver.installOtherApps('/path/to/iosApp.app');
+    driver.isRealDevice.calledOnce.should.be.true;
+    driver.helpers.parseCapsArray.notCalled.should.be.true;
+  });
+
+  it('should install multiple apps from otherApps as string on simulators', async function () {
+    const SimulatorManagementModule = require('../../lib/simulator-management');
+    sandbox.stub(SimulatorManagementModule, 'installToSimulator');
+    sandbox.stub(driver, 'isRealDevice');
+    driver.isRealDevice.returns(false);
+    driver.opts.noReset = false;
+    driver.opts.device = 'some-device';
+    await driver.installOtherApps('/path/to/iosApp.app');
+    driver.isRealDevice.calledOnce.should.be.true;
+    SimulatorManagementModule.installToSimulator.calledOnce.should.be.true;
+    SimulatorManagementModule.installToSimulator.calledWith(
+      'some-device',
+      '/path/to/iosApp.app',
+      undefined, false
+    ).should.be.true;
+  });
+
+  it('should install multiple apps from otherApps as JSON array on simulators', async function () {
+    const SimulatorManagementModule = require('../../lib/simulator-management');
+    sandbox.stub(SimulatorManagementModule, 'installToSimulator');
+    sandbox.stub(driver, 'isRealDevice');
+    driver.isRealDevice.returns(false);
+    driver.opts.noReset = false;
+    driver.opts.device = 'some-device';
+    await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
+    driver.isRealDevice.calledOnce.should.be.true;
+    SimulatorManagementModule.installToSimulator.calledWith(
+      'some-device',
+      '/path/to/iosApp1.app',
+      undefined, false
+    ).should.be.true;
+    SimulatorManagementModule.installToSimulator.calledWith(
+      'some-device',
+      '/path/to/iosApp2.app',
+      undefined, false
+    ).should.be.true;
   });
 });
