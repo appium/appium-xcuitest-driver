@@ -1,7 +1,7 @@
 import { getAvailableBundleIds, parseContainerPath } from '../../../lib/commands/file-movement';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as teen_process from 'teen_process';
+import { services } from 'appium-ios-device';
 import { withMocks } from 'appium-test-support';
 import { fs, tempDir } from 'appium-support';
 
@@ -40,34 +40,41 @@ describe('file-movement', function () {
     });
   });
 
-  describe('getAvailableBundleIds', withMocks({teen_process, fs}, (mocks) => {
+  describe('getAvailableBundleIds', withMocks({services, fs}, (mocks) => {
     afterEach(function () {
       mocks.verify();
     });
 
     it('get available bundleIds with items', async function () {
-      mocks.teen_process.expects('exec')
-        .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .returns({stdout: `
-com.apple.Keynote, "6383", "Keynote"
-io.appium.example, "1.0.205581.0.10", "Appium"
-        `, stderr: ''});
+      mocks.services.expects('startInstallationProxyService')
+      .withExactArgs('12345')
+        .returns({
+          listApplications: () => {
+            return {
+              'com.apple.Keynote': {
+                UIFileSharingEnabled: true
+              },
+              'io.appium.example': {
+                UIFileSharingEnabled: true
+              }
+            };
+          },
+          close: () => {}
+        });
       await getAvailableBundleIds('12345').should.eventually.eql([
         'com.apple.Keynote', 'io.appium.example'
       ]);
     });
     it('get available bundleIds without items', async function () {
-      mocks.teen_process.expects('exec')
-        .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .returns({stdout: '', stderr: ''});
+      mocks.services.expects('startInstallationProxyService')
+      .withExactArgs('12345')
+        .returns({
+          listApplications: () => {
+            return {};
+          },
+          close: () => {}
+        });
       await getAvailableBundleIds('12345').should.eventually.eql([]);
-    });
-    it('should nothing happen', async function () {
-      mocks.teen_process.expects('exec')
-        .withExactArgs('ifuse', ['-u', '12345', '--list-apps'])
-        .throws();
-      await getAvailableBundleIds('12345')
-        .should.eventually.be.eql([]);
     });
   }));
 });
