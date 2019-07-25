@@ -103,6 +103,7 @@ describe('safari - execute -', function () {
         nativeWebTap: true,
       }, SAFARI_CAPS);
       driver = await initSession(caps);
+      // await openPage(driver, 'http://appium.io');
     });
     after(async function () {
       await deleteSession();

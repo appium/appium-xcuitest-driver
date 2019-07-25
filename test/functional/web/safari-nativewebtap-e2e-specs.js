@@ -56,6 +56,7 @@ describe('Safari - coordinate conversion -', function () {
     } else {
       // default to a relatively representative set of devices
       devices = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
+      // devices = ['iPhone 6'];
     }
 
     async function loadPage (driver, url) {
