@@ -73,14 +73,20 @@ describe('XCUITestDriver', function () {
     });
 
     it('should start and stop a session with only bundle id', async function () {
-      let localCaps = Object.assign({}, caps, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      let localCaps = Object.assign({}, caps, {
+        bundleId: 'com.example.apple-samplecode.UICatalog',
+        noReset: true,
+      });
       localCaps.app = null;
       await initSession(localCaps).should.not.eventually.be.rejected;
     });
 
     it('should start and stop a session with only bundle id when no sim is running', async function () {
       await killAllSimulators();
-      let localCaps = Object.assign({}, caps, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      let localCaps = Object.assign({}, caps, {
+        bundleId: 'com.example.apple-samplecode.UICatalog',
+        noReset: true,
+      });
       localCaps.app = null;
       await initSession(localCaps).should.not.eventually.be.rejected;
     });
