@@ -5,7 +5,7 @@ import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
-         PHISHING_END_POINT } from './helpers';
+         GUINEA_PIG_SCROLLABLE_PAGE, PHISHING_END_POINT } from './helpers';
 import { util } from 'appium-support';
 import { retryInterval } from 'asyncbox';
 
@@ -314,6 +314,7 @@ describe('Safari - basics -', function () {
       beforeEach(async function () {
         // get the logs to clear anything out
         await driver.log('safariConsole');
+        await driver.get(GUINEA_PIG_SCROLLABLE_PAGE);
       });
 
       // there can be other things logged, so check that the text is there somewhere
