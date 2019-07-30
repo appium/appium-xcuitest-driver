@@ -1,22 +1,16 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
-import { shutdownSimulator } from '../helpers/simulator';
-import { createDevice, deleteDevice } from 'node-simctl';
+import { shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
+import { createDevice } from 'node-simctl';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { TVOS_CAPS } from '../desired';
+
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
 chai.should();
 chai.use(chaiAsPromised);
-
-async function deleteDeviceWithRetry (udid) {
-  try {
-    await retryInterval(10, 1000, deleteDevice, udid);
-  } catch (ign) {}
-}
 
 describe('tvOS', function () {
   this.timeout(MOCHA_TIMEOUT);

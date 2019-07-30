@@ -142,8 +142,6 @@ async function initSession (caps) {
     caps.udid = serverRes[1].udid;
   }
 
-  await driver.setImplicitWaitTimeout(process.env.CI ? 30000 : 5000);
-
   return driver;
 }
 

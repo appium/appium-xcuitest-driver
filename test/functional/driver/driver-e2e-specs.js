@@ -2,8 +2,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
-import { killAllSimulators, shutdownSimulator } from '../helpers/simulator';
-import { getDevices, createDevice, deleteDevice } from 'node-simctl';
+import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
+import { getDevices, createDevice } from 'node-simctl';
 import _ from 'lodash';
 import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
@@ -17,12 +17,6 @@ chai.use(chaiAsPromised);
 
 async function getNumSims () {
   return (await getDevices())[UICATALOG_SIM_CAPS.platformVersion].length;
-}
-
-async function deleteDeviceWithRetry (udid) {
-  try {
-    await retryInterval(10, 1000, deleteDevice, udid);
-  } catch (ign) {}
 }
 
 describe('XCUITestDriver', function () {

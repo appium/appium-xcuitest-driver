@@ -82,6 +82,9 @@ describe('Safari - coordinate conversion -', function () {
               fullReset: true,
               noReset: false,
             }, caps));
+            if (process.env.CI) {
+              await driver.setImplicitWaitTimeout(10000);
+            }
           } catch (err) {
             if (err.message.includes('Invalid device type') || err.message.includes('Incompatible device')) {
               skipped = true;

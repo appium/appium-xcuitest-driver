@@ -182,7 +182,6 @@ describe('XCUITestDriver - find', function () {
         texts.should.include('X Button');
       });
       it.skip('should filter by indices', async function () {
-        await driver.setImplicitWaitTimeout(10000);
         let el = await driver.elementByXPath('//XCUIElementTypeTable[1]//XCUIElementTypeButton[4]');
         (await el.getAttribute('name')).should.equal('X Button');
       });
@@ -290,7 +289,6 @@ describe('XCUITestDriver - find', function () {
         let element = await driver.elementByAccessibilityId('Text Fields');
         await driver.execute('mobile: scroll', {element, toVisible: true});
       } catch (ign) {}
-      await driver.setImplicitWaitTimeout(5000);
     });
     afterEach(async function () {
       await driver.back();
