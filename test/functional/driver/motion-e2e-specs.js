@@ -1,23 +1,17 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { getSimulator } from 'appium-ios-simulator';
-import { shutdownSimulator } from '../helpers/simulator';
-import { createDevice, deleteDevice } from 'node-simctl';
-import { retryInterval } from 'asyncbox';
+import { shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
+import { createDevice } from 'node-simctl';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SETTINGS_CAPS } from '../desired';
+
 
 const SIM_DEVICE_NAME = 'xcuitestDriverMotionTest';
 const PREDICATE_SEARCH = '-ios predicate string';
 
 chai.should();
 chai.use(chaiAsPromised);
-
-const deleteDeviceWithRetry = async function (udid) {
-  try {
-    await retryInterval(10, 1000, deleteDevice, udid);
-  } catch (ign) {}
-};
 
 describe('ReduceMotion', function () {
   this.timeout(MOCHA_TIMEOUT);
