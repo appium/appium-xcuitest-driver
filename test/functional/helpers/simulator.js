@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { getDevices, shutdown } from 'node-simctl';
+import { getDevices, shutdown, deleteDevice } from 'node-simctl';
+import { retryInterval } from 'asyncbox';
 import { resetXCTestProcesses } from '../../../lib/utils';
 import { shutdownSimulator } from '../../../lib/simulator-management';
 import { killAllSimulators as simKill } from 'appium-ios-simulator';
@@ -22,5 +23,11 @@ async function killAllSimulators () {
   await simKill();
 }
 
+async function deleteDeviceWithRetry (udid) {
+  try {
+    await retryInterval(10, 1000, deleteDevice, udid);
+  } catch (ign) {}
+}
 
-export { killAllSimulators, shutdownSimulator };
+
+export { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry };

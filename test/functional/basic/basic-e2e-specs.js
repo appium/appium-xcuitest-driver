@@ -41,8 +41,8 @@ describe('XCUITestDriver - basics -', function () {
       }
 
       await driver.setImplicitWaitTimeout(10000);
-      let findElementPromise = B.resolve(driver.elementById('WrongLocator'));
-      let status = await driver.status();
+      const findElementPromise = driver.elementById('WrongLocator');
+      const status = await driver.status();
       status.wda.should.exist;
       findElementPromise.isPending().should.be.true;
       try {

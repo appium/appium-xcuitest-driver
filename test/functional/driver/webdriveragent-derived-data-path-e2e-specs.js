@@ -1,9 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
-import { shutdownSimulator } from '../helpers/simulator';
-import { createDevice, deleteDevice } from 'node-simctl';
+import { shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
+import { createDevice } from 'node-simctl';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { UICATALOG_SIM_CAPS } from '../desired';
 import path from 'path';
@@ -13,14 +12,8 @@ import fs from 'fs';
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 const TEMP_FOLDER = '/tmp/WebDriverAgent';
 
-const should = chai.should(); // eslint-disable-line no-unused-vars
+chai.should();
 chai.use(chaiAsPromised);
-
-const deleteDeviceWithRetry = async function (udid) {
-  try {
-    await retryInterval(10, 1000, deleteDevice, udid);
-  } catch (ign) {}
-};
 
 describe('XCUITestDriver', function () {
   this.timeout(MOCHA_TIMEOUT);

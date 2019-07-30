@@ -99,7 +99,7 @@ describe('Safari - basics -', function () {
 
     describe('implicit wait', function () {
       it('should set the implicit wait for finding web elements', async function () {
-        await driver.setImplicitWaitTimeout(7 * 1000);
+        await driver.setImplicitWaitTimeout(5000);
 
         let before = new Date().getTime() / 1000;
         let hasThrown = false;
@@ -116,7 +116,7 @@ describe('Safari - basics -', function () {
         }
 
         let after = new Date().getTime() / 1000;
-        ((after - before) > 7).should.be.ok;
+        ((after - before) > 5).should.be.ok;
         await driver.setImplicitWaitTimeout(0);
       });
     });
