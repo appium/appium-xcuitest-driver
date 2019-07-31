@@ -119,24 +119,6 @@ describe('driver commands', function () {
       driver.startLogCapture.called.should.be.false;
     });
   });
-
-  describe('startIWDP()', function () {
-    let driver = new XCUITestDriver();
-
-    it('should start and stop IWDP server', async function () {
-      let startStub = sinon.stub();
-      let stopStub = sinon.stub();
-      iosDriver.IWDP = function () {
-        this.start = startStub;
-        this.stop = stopStub;
-      };
-      await driver.startIWDP();
-      await driver.stopIWDP();
-
-      startStub.calledOnce.should.be.true;
-      stopStub.calledOnce.should.be.true;
-    });
-  });
 });
 
 describe('installOtherApps', function () {
