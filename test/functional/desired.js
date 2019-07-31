@@ -15,6 +15,7 @@ function checkFeatureInEnv (envArg) {
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
+const USE_IDB = process.env.USE_IDB;
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
 const DEVICE_NAME = process.env.DEVICE_NAME
@@ -85,6 +86,7 @@ let GENERIC_CAPS = {
   platformVersion: PLATFORM_VERSION,
   deviceName: DEVICE_NAME,
   automationName: 'XCUITest',
+  useIDB: !!USE_IDB,
   noReset: true,
   maxTypingFrequency: 30,
   clearSystemFiles: true,

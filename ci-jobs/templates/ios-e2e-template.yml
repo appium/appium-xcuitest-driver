@@ -13,6 +13,7 @@ jobs:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
       MOCHA_FILE: '${{ parameters.name }}-tests.xml'
+      USE_IDB: ${{ parameters.useIDB }}
       CI: true
     pool:
       vmImage: 'macOS-10.14'
