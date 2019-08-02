@@ -40,7 +40,7 @@
     "appium-ios-device": "^0.10.1",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.11.0",
-    "appium-remote-debugger": "^5.0.0",
+    "appium-remote-debugger": "appium/appium-remote-debugger#isaac-update-targets",
     "appium-support": "^2.26.1",
     "appium-webdriveragent": "^0",
     "appium-xcode": "^3.8.0",
