@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import http from 'http';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { openPage, GUINEA_PIG_PAGE } from './helpers';
@@ -80,7 +81,9 @@ describe('safari - execute -', function () {
 
     describe('asynchronous', function () {
       before(function () {
-        if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
+        if (process.env.REAL_DEVICE) {
+          return this.skip();
+        }
       });
 
       it('should execute async javascript', async function () {
@@ -109,6 +112,33 @@ describe('safari - execute -', function () {
       await killAllSimulators();
     });
     runTests();
+    describe('cors', function () {
+      let server;
+      const host = '127.0.0.1';
+      const port = 8080;
+      before(function () {
+        if (process.env.REAL_DEVICE) {
+          return this.skip();
+        }
+
+        // create an http server so we can test CORS handling without
+        // going to an external site
+        server = http.createServer(function (req, res) {
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.write('appium-xcuitest-driver async execute tests');
+          res.end();
+        }).listen({host, port});
+      });
+      after(function () {
+        server.close();
+      });
+
+      it('should execute async javascript from a different site', async function () {
+        await driver.get(`http://${host}:${port}`);
+        await driver.setAsyncScriptTimeout(1000);
+        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
+      });
+    });
   });
   describe('https', function () {
     before(async function () {
