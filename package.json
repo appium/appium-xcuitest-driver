@@ -107,7 +107,6 @@
     "pngjs": "^3.3.1",
     "pre-commit": "^1.1.3",
     "sinon": "^7.2.4",
-    "unzip": "^0.1.11",
     "wd": "^1.5.0"
   },
   "greenkeeper": {
