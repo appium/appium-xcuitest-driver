@@ -1,10 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import B from 'bluebird';
-import stream from 'stream';
-import unzip from 'unzip';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
+import { fs, tempDir, zip } from 'appium-support';
+import path from 'path';
 
 
 chai.should();
@@ -67,26 +66,20 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         });
 
         it('should pull all the files in Library/AddressBook', async function () {
-          let entryCount = 0;
-          let remotePath = `Library/AddressBook`;
-          let data = await driver.pullFolder(remotePath);
-          await new B((resolve) => {
-            let zipStream = new stream.Readable();
-            zipStream._read = function noop () {};
-            zipStream
-              .pipe(unzip.Parse())
-              .on('entry', function (entry) {
-                entryCount++;
-                entry.autodrain();
-              })
-              .on('close', function () {
-                entryCount.should.be.above(1);
-                resolve();
-              });
-
-            zipStream.push(data, 'base64');
-            zipStream.push(null);
-          });
+          const remotePath = `Library/AddressBook`;
+          const data = await driver.pullFolder(remotePath);
+          const tmpRoot = await tempDir.openDir();
+          try {
+            const zipPath = path.resolve(tmpRoot, 'data.zip');
+            const extractedDataPath = path.resolve(tmpRoot, 'extracted_data');
+            await fs.writeFile(zipPath, Buffer.from(data, 'base64'));
+            await fs.mkdir(extractedDataPath);
+            await zip.extractAllTo(zipPath, extractedDataPath);
+            const itemsCount = (await fs.readdir(extractedDataPath)).length;
+            itemsCount.should.be.above(1);
+          } finally {
+            await fs.rimraf(tmpRoot);
+          }
         });
       });
     });
