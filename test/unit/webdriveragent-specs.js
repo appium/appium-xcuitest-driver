@@ -255,3 +255,84 @@ describe('setupCaching()', function () {
     wdaStubRemoveApp.notCalled.should.be.true;
   });
 });
+
+describe('quitAndUninstall()', function () {
+  let opts = {};
+  let wda;
+  let wdaStub;
+  let wdaStubRemoveApp;
+  let wdaStubQuit;
+  let wdaDevice;
+
+  beforeEach(function () {
+    opts = {};
+    wdaDevice = { removeApp: () => {} };
+    wda = new WebDriverAgent('1', {device: wdaDevice});
+    wdaStub = sinon.stub(wda, 'getStatus');
+    wdaStubQuit = sinon.stub(wda, 'quit');
+    wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+  });
+
+  afterEach(function () {
+    opts = {};
+    for (const stub of [wdaStub, wdaStubQuit, wdaStubRemoveApp]) {
+      if (stub) {
+        stub.reset();
+      }
+    }
+  });
+
+  it('should uninstall default app since no Running WDA and no updatedWDABundleId', async function () {
+    wdaStub.callsFake(function () {
+      return null;
+    });
+    wdaStubQuit.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
+
+    await wda.quitAndUninstall(opts.updatedWDABundleId);
+    wdaStub.calledOnce.should.be.true;
+    wdaStubQuit.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
+  });
+
+  it('should uninstall updatedWDABundleId with no running WDA', async function () {
+    opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+    wdaStub.callsFake(function () {
+      return null;
+    });
+    wdaStubQuit.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
+
+    await wda.quitAndUninstall(opts.updatedWDABundleId);
+    wdaStub.calledOnce.should.be.true;
+    wdaStubQuit.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.example.WebDriverAgent').calledOnce.should.be.true;
+  });
+
+  it('should uninstall productBundleIdentifier prior than updatedWDABundleId', async function () {
+    opts.updatedWDABundleId = 'com.example.updatedWDABundleId.WebDriverAgent';
+    wdaStub.callsFake(function () {
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.productBundleIdentifier.WebDriverAgent' }};
+    });
+    wdaStubQuit.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
+
+    await wda.quitAndUninstall(opts.updatedWDABundleId);
+    wdaStub.calledOnce.should.be.true;
+    wdaStubQuit.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.example.productBundleIdentifier.WebDriverAgent').calledOnce.should.be.true;
+  });
+
+  it('should uninstall productBundleIdentifier', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.productBundleIdentifier.WebDriverAgent' }};
+    });
+    wdaStubQuit.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
+
+    await wda.quitAndUninstall(opts.updatedWDABundleId);
+    wdaStub.calledOnce.should.be.true;
+    wdaStubQuit.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.example.productBundleIdentifier.WebDriverAgent').calledOnce.should.be.true;
+  });
+});
