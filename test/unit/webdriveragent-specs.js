@@ -110,6 +110,7 @@ describe('get url', function () {
 });
 
 describe('setupCaching()', function () {
+  let opts = {};
   let wda;
   let wdaStub;
   let wdaStubRemoveApp;
@@ -117,6 +118,7 @@ describe('setupCaching()', function () {
   const getTimestampStub = sinon.stub(utils, 'getWDAUpgradeTimestamp');
 
   beforeEach(function () {
+    opts = {};
     wdaDevice = { removeApp: () => {} };
     wda = new WebDriverAgent('1', {device: wdaDevice});
     wdaStub = sinon.stub(wda, 'getStatus');
@@ -124,6 +126,7 @@ describe('setupCaching()', function () {
   });
 
   afterEach(function () {
+    opts = {};
     for (const stub of [wdaStub, wdaStubRemoveApp, getTimestampStub]) {
       if (stub) {
         stub.reset();
@@ -137,7 +140,7 @@ describe('setupCaching()', function () {
     });
     wdaStubRemoveApp.callsFake(_.noop);
 
-    await wda.setupCaching();
+    await wda.setupCaching(opts.updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubRemoveApp.notCalled.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -149,7 +152,7 @@ describe('setupCaching()', function () {
     });
     wdaStubRemoveApp.callsFake(_.noop);
 
-    await wda.setupCaching();
+    await wda.setupCaching(opts.updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubRemoveApp.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
@@ -161,35 +164,35 @@ describe('setupCaching()', function () {
     });
     wdaStubRemoveApp.callsFake(_.noop);
 
-    await wda.setupCaching();
+    await wda.setupCaching(opts.updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubRemoveApp.withArgs('com.example.WebDriverAgent').calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
   it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
-    const updatedWDABundleId = 'com.example.WebDriverAgent';
+    opts.updatedWDABundleId = 'com.example.WebDriverAgent';
     wdaStub.callsFake(function () {
       return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
     });
 
     wdaStubRemoveApp.callsFake(_.noop);
 
-    await wda.setupCaching(updatedWDABundleId);
+    await wda.setupCaching(opts.updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubRemoveApp.withArgs('com.example.different.WebDriverAgent').calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
   it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
-    const updatedWDABundleId = 'com.example.WebDriverAgent';
+    opts.updatedWDABundleId = 'com.example.WebDriverAgent';
     wdaStub.callsFake(function () {
       return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
     });
 
     wdaStubRemoveApp.callsFake(_.noop);
 
-    await wda.setupCaching(updatedWDABundleId);
+    await wda.setupCaching(opts.updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubRemoveApp.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
@@ -203,6 +206,18 @@ describe('setupCaching()', function () {
     wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching('something');
+    wdaStub.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
+  });
+
+  it('should call uninstall default bundle id if current revision differs from the bundled one and running productBundleIdentifier is default value', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { upgradedAt: '1', productBundleIdentifier: 'com.facebook.WebDriverAgentRunner' }};
+    });
+    getTimestampStub.callsFake(() => '2');
+    wdaStubRemoveApp.callsFake(_.noop);
+
+    await wda.setupCaching(opts.updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
     wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
   });
