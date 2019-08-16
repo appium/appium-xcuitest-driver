@@ -112,17 +112,19 @@ describe('get url', function () {
 describe('setupCaching()', function () {
   let wda;
   let wdaStub;
-  let wdaStubUninstall;
+  let wdaStubRemoveApp;
+  let wdaDevice;
   const getTimestampStub = sinon.stub(utils, 'getWDAUpgradeTimestamp');
 
   beforeEach(function () {
-    wda = new WebDriverAgent('1');
+    wdaDevice = { removeApp: () => {} };
+    wda = new WebDriverAgent('1', {device: wdaDevice});
     wdaStub = sinon.stub(wda, 'getStatus');
-    wdaStubUninstall = sinon.stub(wda, 'uninstall');
+    wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
   });
 
   afterEach(function () {
-    for (const stub of [wdaStub, wdaStubUninstall, getTimestampStub]) {
+    for (const stub of [wdaStub, wdaStubRemoveApp, getTimestampStub]) {
       if (stub) {
         stub.reset();
       }
@@ -133,11 +135,11 @@ describe('setupCaching()', function () {
     wdaStub.callsFake(function () {
       return null;
     });
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching();
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.notCalled.should.be.true;
+    wdaStubRemoveApp.notCalled.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
@@ -145,11 +147,11 @@ describe('setupCaching()', function () {
     wdaStub.callsFake(function () {
       return {build: { time: 'Jun 24 2018 17:08:21' }};
     });
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching();
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.notCalled.should.be.true;
+    wdaStubRemoveApp.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
   });
 
@@ -157,11 +159,11 @@ describe('setupCaching()', function () {
     wdaStub.callsFake(function () {
       return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
     });
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching();
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.example.WebDriverAgent').calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
@@ -171,11 +173,11 @@ describe('setupCaching()', function () {
       return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
     });
 
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching(updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.example.different.WebDriverAgent').calledOnce.should.be.true;
     _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
@@ -185,24 +187,36 @@ describe('setupCaching()', function () {
       return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
     });
 
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching(updatedWDABundleId);
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.notCalled.should.be.true;
+    wdaStubRemoveApp.notCalled.should.be.true;
     wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
   });
 
-  it('should call uninstall if current revision differs from the bundled one', async function () {
+  it('should call uninstall default bundle id if current revision differs from the bundled one', async function () {
     wdaStub.callsFake(function () {
       return {build: { upgradedAt: '1' }};
     });
     getTimestampStub.callsFake(() => '2');
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching('something');
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
+  });
+
+  it('should call uninstall running bundle id if current revision differs from the bundled one', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { upgradedAt: '1', productBundleIdentifier: 'com.example.running.WebDriverAgent' }};
+    });
+    getTimestampStub.callsFake(() => '2');
+    wdaStubRemoveApp.callsFake(_.noop);
+
+    await wda.setupCaching('something');
+    wdaStub.calledOnce.should.be.true;
+    wdaStubRemoveApp.withArgs('com.example.running.WebDriverAgent').calledOnce.should.be.true;
   });
 
   it('should not call uninstall if current revision is the same as the bundled one', async function () {
@@ -210,11 +224,11 @@ describe('setupCaching()', function () {
       return {build: { upgradedAt: '1' }};
     });
     getTimestampStub.callsFake(() => '1');
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching('something');
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.notCalled.should.be.true;
+    wdaStubRemoveApp.notCalled.should.be.true;
   });
 
   it('should not call uninstall if current revision cannot be retrieved from WDA status', async function () {
@@ -222,11 +236,11 @@ describe('setupCaching()', function () {
       return {build: {}};
     });
     getTimestampStub.callsFake(() => '1');
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching('something');
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.notCalled.should.be.true;
+    wdaStubRemoveApp.notCalled.should.be.true;
   });
 
   it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
@@ -234,10 +248,10 @@ describe('setupCaching()', function () {
       return {build: { upgradedAt: '1' }};
     });
     getTimestampStub.callsFake(() => null);
-    wdaStubUninstall.callsFake(_.noop);
+    wdaStubRemoveApp.callsFake(_.noop);
 
     await wda.setupCaching('something');
     wdaStub.calledOnce.should.be.true;
-    wdaStubUninstall.notCalled.should.be.true;
+    wdaStubRemoveApp.notCalled.should.be.true;
   });
 });
