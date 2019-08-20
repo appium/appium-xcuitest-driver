@@ -20,13 +20,6 @@
 
 ## External dependencies
 
-In addition to the git submodules mentioned below (see [Development](#development)), this package currently depends
-on `libimobiledevice` to do certain things. Install it with [Homebrew](http://brew.sh/),
-
-```
-brew install libimobiledevice --HEAD  # install from HEAD to get important updates
-```
-
 There is also a dependency, made necessary by Facebook's [WebDriverAgent](https://github.com/facebook/WebDriverAgent),
 for the [Carthage](https://github.com/Carthage/Carthage) dependency manager. If you
 do not have Carthage on your system, it can also be installed with
@@ -34,10 +27,6 @@ do not have Carthage on your system, it can also be installed with
 
 ```
 brew install carthage
-```
-
-```
-npm install -g ios-deploy
 ```
 
 For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
@@ -182,16 +171,6 @@ These can be enabled when running this driver through Appium, via the `--allow-i
 |shutdown_other_sims|Allow any session to use a capability to shutdown any running simulators on the host|
 |perf_record|Allow recording the system performance and other metrics of the simulator|
 
-## Development<a id="development"></a>
-
-This project has git submodules!
-
-Clone with the `git clone --recursive` flag. Or, after cloning normally run `git submodule init` and then `git submodule update`
-
-The `git diff --submodule` flag is useful here. It can also be set as the default `diff` format: `git config --global diff.submodule log`
-
-`git config status.submodulesummary 1` is also useful.
-
 
 ### Watch
 
@@ -217,21 +196,3 @@ the tests locally. These include:
   the root directory of the repo with the extension "xcconfig")
 * `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
   the npm installed one is not built for real device
-
-
-### WebDriverAgent Updating
-
-Updating FaceBook's [WebDriverAgent](https://github.com/facebook/WebDriverAgent)
-is as simple as running updating the submodule and then committing the change:
-
-```
-git checkout -b <update-branch-name>
-git submodule update --remote
-git add WebDriverAgent
-git commit -m "Updating upstream WebDriverAgent changes"
-```
-
-There is a chance that the update changed something critical, which will manifest
-itself as `xcodebuild` throwing errors. The easiest remedy is to delete the
-files, which are somewhere like `/Users/isaac/Library/Developer/Xcode/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll`.
-This is also necessary when switching SDKs (e.g., moving from Xcode 7.3 to 8).
