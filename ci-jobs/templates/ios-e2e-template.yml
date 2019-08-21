@@ -18,7 +18,6 @@ jobs:
       vmImage: 'macOS-10.14'
     steps:
     - checkout: self
-      submodules: true
     - script: ls /Applications/
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
@@ -30,10 +29,6 @@ jobs:
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
-    - script: |
-        sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
-        git submodule update --init --recursive;
-      displayName: Checkout WDA submodule
     - script: npm install
       displayName: Install node dependencies
     - script: npm run build
