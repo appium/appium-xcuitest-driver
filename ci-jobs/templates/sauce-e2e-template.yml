@@ -15,7 +15,6 @@ jobs:
       vmImage: 'macOS-10.14'
     steps:
     - checkout: self
-      submodules: true
     - task: NodeTool@0
       inputs:
         versionSpec: 11.x
