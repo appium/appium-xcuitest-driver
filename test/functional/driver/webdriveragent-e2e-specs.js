@@ -79,7 +79,7 @@ describe('WebDriverAgent', function () {
         let agent = new WebDriverAgent(xcodeVersion, getStartOpts(device));
 
         await agent.launch('sessionId');
-        await request(testUrl);
+        await request(testUrl).should.be.eventually.rejectedWith(/unknown command/);
         await agent.quit();
       });
 
