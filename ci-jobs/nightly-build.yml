@@ -20,10 +20,10 @@ jobs:
         # TODO: Add iOS 13 once it is released on Sauce Labs
         iPhone_XR_12_2:
           CLOUD_PLATFORM_VERSION: 12.2
-          DEVICE_NAME: "iPhone XR Simulator"
+          DEVICE_NAME: "iPhone X Simulator"
         iPhone_XS_Max_12_0:
           CLOUD_PLATFORM_VERSION: 12.0
-          DEVICE_NAME: "iPhone XS Simulator"
+          DEVICE_NAME: "iPhone X Simulator"
         iPhone_7_12_0:
           CLOUD_PLATFORM_VERSION: 11.3
           DEVICE_NAME: "iPhone 7 Simulator"
