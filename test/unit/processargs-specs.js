@@ -5,6 +5,7 @@ import XCUITestDriver from '../..';
 chai.should();
 
 describe('process args', function () {
+  const BUNDLE_ID = 'com.test.app';
   let driver = new XCUITestDriver();
   driver.opts.platformVersion = '10.3';
   let proxySpy = sinon.stub(driver, 'proxyCommand');
@@ -17,15 +18,18 @@ describe('process args', function () {
   let processArgsString = JSON.stringify(PROCESS_ARGS_OBJECT);
 
   let desired = {
-    desiredCapabilities: {
-      bundleId: 'com.test.app',
-      arguments: PROCESS_ARGS_OBJECT.args,
-      environment: PROCESS_ARGS_OBJECT.env,
-      shouldWaitForQuiescence: true,
-      shouldUseTestManagerForVisibilityDetection: false,
-      maxTypingFrequency: 60,
-      shouldUseSingletonTestManager: true,
-      eventloopIdleDelaySec: 0,
+    capabilities: {
+      firstMatch: [{
+        bundleId: BUNDLE_ID,
+        arguments: PROCESS_ARGS_OBJECT.args,
+        environment: PROCESS_ARGS_OBJECT.env,
+        shouldWaitForQuiescence: true,
+        shouldUseTestManagerForVisibilityDetection: false,
+        maxTypingFrequency: 60,
+        shouldUseSingletonTestManager: true,
+        eventloopIdleDelaySec: 0,
+      }],
+      alwaysMatch: {},
     }
   };
 
@@ -40,7 +44,7 @@ describe('process args', function () {
         platformVersion: '10.3',
         deviceName: 'iPhone 6',
         app: 'testapp.app',
-        bundleId: desired.desiredCapabilities.bundleId,
+        bundleId: BUNDLE_ID,
         processArguments: PROCESS_ARGS_OBJECT,
       };
       driver.validateDesiredCaps(desiredWithProArgsObject);
@@ -59,7 +63,7 @@ describe('process args', function () {
         platformVersion: '10.3',
         deviceName: 'iPhone 6',
         app: 'testapp.app',
-        bundleId: desired.desiredCapabilities.bundleId,
+        bundleId: BUNDLE_ID,
         processArguments: processArgsString,
       };
       driver.validateDesiredCaps(desiredWithProArgsString);
