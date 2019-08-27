@@ -439,7 +439,7 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
@@ -453,7 +453,7 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
@@ -467,7 +467,7 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
@@ -480,7 +480,7 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
@@ -513,21 +513,26 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
     });
 
     it('should uninstall updatedWDABundleId with no running WDA', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      // override
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true, updatedWDABundleId: 'com.example.WebDriverAgent'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubQuit = sinon.stub(wda, 'quit');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
       wdaStub.callsFake(function () {
         return null;
       });
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.example.WebDriverAgent.xctrunner').calledOnce.should.be.true;
@@ -541,7 +546,7 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.example.productBundleIdentifier.WebDriverAgent.xctrunner').calledOnce.should.be.true;
@@ -554,7 +559,7 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.example.productBundleIdentifier.WebDriverAgent.xctrunner').calledOnce.should.be.true;
@@ -563,7 +568,6 @@ describe('quitAndUninstall()', function () {
 
   describe('with Xcode 11, simulator', function () {
     beforeEach(function () {
-      opts = {};
       wdaDevice = { removeApp: () => {} };
       wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: false});
       wdaStub = sinon.stub(wda, 'getStatus');
@@ -572,7 +576,6 @@ describe('quitAndUninstall()', function () {
     });
 
     afterEach(function () {
-      opts = {};
       for (const stub of [wdaStub, wdaStubQuit, wdaStubRemoveApp]) {
         if (stub) {
           stub.reset();
@@ -587,21 +590,27 @@ describe('quitAndUninstall()', function () {
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
     });
 
     it('should uninstall updatedWDABundleId with no running WDA', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      // override
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'com.example.WebDriverAgent'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubQuit = sinon.stub(wda, 'quit');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return null;
       });
       wdaStubQuit.callsFake(_.noop);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.quitAndUninstall(opts.updatedWDABundleId);
+      await wda.quitAndUninstall();
       wdaStub.calledOnce.should.be.true;
       wdaStubQuit.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
