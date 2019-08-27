@@ -1,4 +1,5 @@
-import { getXctestrunFilePath, getAdditionalRunContent, getXctestrunFileName } from '../../../lib/wda/utils';
+import { getXctestrunFilePath, getAdditionalRunContent,
+         getXctestrunFileName, getBundleIdFromInfoPlistPath } from '../../../lib/wda/utils';
 import { PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS } from '../../../lib/desired-caps';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -157,6 +158,40 @@ describe('utils', function () {
 
       getXctestrunFileName(deviceInfo, '10.2.0').should.equal(
         'WebDriverAgentRunner_tvOS_appletvsimulator10.2.0-x86_64.xctestrun');
+    });
+  });
+
+  describe('#getBundleIdFromInfoPlistPath', function () {
+    it('should return ios format, real device', function () {
+      const platformName = 'iOs';
+      const deviceInfo = {isRealDevice: true, platformName};
+
+      getBundleIdFromInfoPlistPath(deviceInfo, 'path/to/build/product').endsWith(
+        'path/to/build/product/Debug-iphoneos/WebDriverAgentRunner-Runner.app/Info.plist').should.be.true;
+    });
+
+    it('should return ios format, simulator', function () {
+      const platformName = 'ios';
+      const deviceInfo = {isRealDevice: false, platformName};
+
+      getBundleIdFromInfoPlistPath(deviceInfo, 'path/to/build/product').endsWith(
+        'path/to/build/product/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app/Info.plist').should.be.true;
+    });
+
+    it('should return tvos format, real device', function () {
+      const platformName = 'tVos';
+      const deviceInfo = {isRealDevice: true, platformName};
+
+      getBundleIdFromInfoPlistPath(deviceInfo, 'path/to/build/product').endsWith(
+        'path/to/build/product/Debug-appletvos/WebDriverAgentRunner_tvOS-Runner.app/Info.plist').should.be.true;
+    });
+
+    it('should return tvos format, simulator', function () {
+      const platformName = 'tvOS';
+      const deviceInfo = {isRealDevice: false, platformName};
+
+      getBundleIdFromInfoPlistPath(deviceInfo, 'path/to/build/product').endsWith(
+        'path/to/build/product/Debug-appletvsimulator/WebDriverAgentRunner_tvOS-Runner.app/Info.plist').should.be.true;
     });
   });
 });
