@@ -119,7 +119,6 @@ describe('setupCaching()', function () {
 
   describe('Xcode 10, simulator', function () {
     beforeEach(function () {
-      opts = {};
       wdaDevice = { removeApp: () => {} };
       wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false});
       wdaStub = sinon.stub(wda, 'getStatus');
@@ -127,7 +126,6 @@ describe('setupCaching()', function () {
     });
 
     afterEach(function () {
-      opts = {};
       for (const stub of [wdaStub, wdaStubRemoveApp, getTimestampStub]) {
         if (stub) {
           stub.reset();
@@ -141,7 +139,7 @@ describe('setupCaching()', function () {
       });
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
       _.isUndefined(wda.webDriverAgentUrl).should.be.true;
@@ -153,7 +151,7 @@ describe('setupCaching()', function () {
       });
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
       wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
@@ -165,35 +163,42 @@ describe('setupCaching()', function () {
       });
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
       _.isUndefined(wda.webDriverAgentUrl).should.be.true;
     });
 
     it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'com.example.WebDriverAgent'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
       wdaStub.callsFake(function () {
         return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
       });
 
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
       _.isUndefined(wda.webDriverAgentUrl).should.be.true;
     });
 
     it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'com.example.WebDriverAgent'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
       });
 
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
       wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
@@ -218,43 +223,58 @@ describe('setupCaching()', function () {
       getTimestampStub.callsFake(() => '2');
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
     });
 
     it('should not call uninstall if current revision is the same as the bundled one', async function () {
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'something'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return {build: { upgradedAt: '1' }};
       });
       getTimestampStub.callsFake(() => '1');
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching('something');
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
     });
 
     it('should not call uninstall if current revision cannot be retrieved from WDA status', async function () {
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'something'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return {build: {}};
       });
       getTimestampStub.callsFake(() => '1');
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching('something');
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
     });
 
     it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'something'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return {build: { upgradedAt: '1' }};
       });
       getTimestampStub.callsFake(() => null);
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching('something');
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
     });
@@ -315,28 +335,36 @@ describe('setupCaching()', function () {
     });
 
     it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true, updatedWDABundleId: 'com.example.WebDriverAgent'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
       });
 
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.withArgs('com.example.different.WebDriverAgent.xctrunner').calledOnce.should.be.true;
       _.isUndefined(wda.webDriverAgentUrl).should.be.true;
     });
 
     it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
+      wdaDevice = { removeApp: () => {} };
+      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true, updatedWDABundleId: 'com.example.WebDriverAgent'});
+      wdaStub = sinon.stub(wda, 'getStatus');
+      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+
       wdaStub.callsFake(function () {
         return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
       });
 
       wdaStubRemoveApp.callsFake(_.noop);
 
-      await wda.setupCaching(opts.updatedWDABundleId);
+      await wda.setupCaching();
       wdaStub.calledOnce.should.be.true;
       wdaStubRemoveApp.notCalled.should.be.true;
       wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
