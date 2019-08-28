@@ -2,18 +2,17 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-import apps from './apps';
+import { system } from 'appium-support';
 
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-let DEVICE_NAME = process.env.DEVICE_NAME;
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
-if (!process.env.DEVICE_NAME && !process.env.SAUCE_RDC) {
-  DEVICE_NAME = 'iPhone 6';
-}
+const DEVICE_NAME = process.env.DEVICE_NAME
+  ? process.env.DEVICE_NAME
+  : process.env.SAUCE_RDC ? undefined : 'iPhone 6';
 
-const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG || undefined; // we do not want `false` in Travis, so we get some logging on errors
+const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG || undefined; // we do not want `false` in Travis, otherwise we get some logging on errors
 const REAL_DEVICE = (function () {
   let rd = parseInt(process.env.REAL_DEVICE, 10);
   if (isNaN(rd)) {
@@ -29,6 +28,41 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
   let files = glob.sync('*.xcconfig', { cwd });
   if (files.length) {
     XCCONFIG_FILE = path.resolve(cwd, _.first(files));
+  }
+}
+
+// Had to make these two optional dependencies so the tests
+// can still run in linux
+let testAppPath, uiCatalogPath;
+if (system.isMac() && !process.env.CLOUD) {
+  testAppPath = require('ios-test-app').absolute;
+
+  // iOS 13+ need a slightly different app to be able to get the correct automation
+  uiCatalogPath = parseInt(PLATFORM_VERSION, 10) >= 13
+    ? require('ios-uicatalog').uiKitCatalog.absolute
+    : require('ios-uicatalog').uiCatalog.absolute;
+}
+
+const apps = {};
+
+const CLOUD = process.env.CLOUD;
+
+if (REAL_DEVICE) {
+  if (CLOUD) {
+    apps.testAppId = 1;
+  } else {
+    apps.iosTestApp = testAppPath.iphoneos;
+    apps.uiCatalogApp = uiCatalogPath.iphoneos;
+  }
+} else {
+  if (CLOUD) {
+    apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp9.4.app.zip';
+    apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
+    apps.touchIdApp = null; // TODO: Upload this to appium.io
+  } else {
+    apps.iosTestApp = testAppPath.iphonesimulator;
+    apps.uiCatalogApp = uiCatalogPath.iphonesimulator;
+    apps.touchIdApp = path.resolve('.', 'test', 'assets', 'TouchIDExample.app');
   }
 }
 
@@ -73,7 +107,8 @@ if (!REAL_DEVICE && !process.env.CLOUD) {
   // this happens a single time, at load-time for the test suite,
   // so sync method is not overly problematic
   if (!fs.existsSync(apps.uiCatalogApp)) {
-    apps.uiCatalogApp = path.resolve('.', 'test', 'assets', 'UICatalog-iphonesimulator.app');
+    apps.uiCatalogApp = path.resolve('.', 'test', 'assets',
+      `${parseInt(PLATFORM_VERSION, 10) >= 13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`);
   }
   if (!fs.existsSync(apps.iosTestApp)) {
     apps.iosTestApp = path.resolve('.', 'test', 'assets', 'TestApp-iphonesimulator.app');
