@@ -110,538 +110,136 @@ describe('get url', function () {
 });
 
 describe('setupCaching()', function () {
-  let opts = {};
   let wda;
   let wdaStub;
-  let wdaStubRemoveApp;
-  let wdaDevice;
+  let wdaStubUninstall;
   const getTimestampStub = sinon.stub(utils, 'getWDAUpgradeTimestamp');
 
-  describe('Xcode 10, simulator', function () {
-    beforeEach(function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-    });
-
-    afterEach(function () {
-      for (const stub of [wdaStub, wdaStubRemoveApp, getTimestampStub]) {
-        if (stub) {
-          stub.reset();
-        }
-      }
-    });
-
-    it('should not call uninstall since no Running WDA', async function () {
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-      _.isUndefined(wda.webDriverAgentUrl).should.be.true;
-    });
-
-    it('should not call uninstall since running WDA has only time', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21' }};
-      });
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-      wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
-    });
-
-    it('should call uninstall once since bundle id is not default without updatedWDABundleId capability', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
-      });
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-      _.isUndefined(wda.webDriverAgentUrl).should.be.true;
-    });
-
-    it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'com.example.WebDriverAgent'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
-      });
-
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-      _.isUndefined(wda.webDriverAgentUrl).should.be.true;
-    });
-
-    it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'com.example.WebDriverAgent'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
-      });
-
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-      wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
-    });
-
-    it('should call uninstall default bundle id if current revision differs from the bundled one', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1' }};
-      });
-      getTimestampStub.callsFake(() => '2');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching('something');
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-    });
-
-    it('should call uninstall default bundle id if current revision differs from the bundled one and running productBundleIdentifier is default value', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1', productBundleIdentifier: 'com.facebook.WebDriverAgentRunner' }};
-      });
-      getTimestampStub.callsFake(() => '2');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-    });
-
-    it('should not call uninstall if current revision is the same as the bundled one', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'something'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1' }};
-      });
-      getTimestampStub.callsFake(() => '1');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-    });
-
-    it('should not call uninstall if current revision cannot be retrieved from WDA status', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'something'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-
-      wdaStub.callsFake(function () {
-        return {build: {}};
-      });
-      getTimestampStub.callsFake(() => '1');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-    });
-
-    it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'something'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1' }};
-      });
-      getTimestampStub.callsFake(() => null);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-    });
+  beforeEach(function () {
+    wda = new WebDriverAgent('1');
+    wdaStub = sinon.stub(wda, 'getStatus');
+    wdaStubUninstall = sinon.stub(wda, 'uninstall');
   });
 
-  describe('Xcode 11, real device', function () {
-    beforeEach(function () {
-      opts = {};
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-    });
-
-    afterEach(function () {
-      opts = {};
-      for (const stub of [wdaStub, wdaStubRemoveApp, getTimestampStub]) {
-        if (stub) {
-          stub.reset();
-        }
+  afterEach(function () {
+    for (const stub of [wdaStub, wdaStubUninstall, getTimestampStub]) {
+      if (stub) {
+        stub.reset();
       }
-    });
-
-    it('should not call uninstall since no Running WDA', async function () {
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching(opts.updatedWDABundleId);
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-      _.isUndefined(wda.webDriverAgentUrl).should.be.true;
-    });
-
-    it('should not call uninstall since running WDA has only time', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21' }};
-      });
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching(opts.updatedWDABundleId);
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-      wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
-    });
-
-    it('should call uninstall once since bundle id is not default without updatedWDABundleId capability', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
-      });
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching(opts.updatedWDABundleId);
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
-      _.isUndefined(wda.webDriverAgentUrl).should.be.true;
-    });
-
-    it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true, updatedWDABundleId: 'com.example.WebDriverAgent'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
-      });
-
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.example.different.WebDriverAgent.xctrunner').calledOnce.should.be.true;
-      _.isUndefined(wda.webDriverAgentUrl).should.be.true;
-    });
-
-    it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true, updatedWDABundleId: 'com.example.WebDriverAgent'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
-      });
-
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-      wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
-    });
-
-    it('should call uninstall default bundle id if current revision differs from the bundled one', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1' }};
-      });
-      getTimestampStub.callsFake(() => '2');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching('something');
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
-    });
-
-    it('should call uninstall default bundle id if current revision differs from the bundled one and running productBundleIdentifier is default value', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1', productBundleIdentifier: 'com.facebook.WebDriverAgentRunner' }};
-      });
-      getTimestampStub.callsFake(() => '2');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching(opts.updatedWDABundleId);
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
-    });
-
-    it('should not call uninstall if current revision is the same as the bundled one', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1' }};
-      });
-      getTimestampStub.callsFake(() => '1');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching('something');
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-    });
-
-    it('should not call uninstall if current revision cannot be retrieved from WDA status', async function () {
-      wdaStub.callsFake(function () {
-        return {build: {}};
-      });
-      getTimestampStub.callsFake(() => '1');
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching('something');
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-    });
-
-    it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { upgradedAt: '1' }};
-      });
-      getTimestampStub.callsFake(() => null);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.setupCaching('something');
-      wdaStub.calledOnce.should.be.true;
-      wdaStubRemoveApp.notCalled.should.be.true;
-    });
-  });
-});
-
-describe('quitAndUninstall()', function () {
-  let opts = {};
-  let wda;
-  let wdaStub;
-  let wdaStubRemoveApp;
-  let wdaStubQuit;
-  let wdaDevice;
-
-
-  describe('with Xcode 10, Simulator', function () {
-    beforeEach(function () {
-      opts = {};
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 10}, {device: wdaDevice, realDevice: false});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubQuit = sinon.stub(wda, 'quit');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-    });
-
-    afterEach(function () {
-      opts = {};
-      for (const stub of [wdaStub, wdaStubQuit, wdaStubRemoveApp]) {
-        if (stub) {
-          stub.reset();
-        }
-      }
-    });
-
-    it('should uninstall default app since no Running WDA and no updatedWDABundleId', async function () {
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-    });
-
-    it('should uninstall updatedWDABundleId with no running WDA', async function () {
-      opts.updatedWDABundleId = 'com.example.WebDriverAgent';
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-    });
-
-    it('should uninstall productBundleIdentifier prior than updatedWDABundleId', async function () {
-      opts.updatedWDABundleId = 'com.example.updatedWDABundleId.WebDriverAgent';
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.productBundleIdentifier.WebDriverAgent' }};
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-    });
-
-    it('should uninstall productBundleIdentifier', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.productBundleIdentifier.WebDriverAgent' }};
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.apple.test.WebDriverAgentRunner-Runner').calledOnce.should.be.true;
-    });
+    }
   });
 
-  describe('with Xcode 11, real device', function () {
-    beforeEach(function () {
-      opts = {};
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubQuit = sinon.stub(wda, 'quit');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+  it('should not call uninstall since no Running WDA', async function () {
+    wdaStub.callsFake(function () {
+      return null;
     });
+    wdaStubUninstall.callsFake(_.noop);
 
-    afterEach(function () {
-      opts = {};
-      for (const stub of [wdaStub, wdaStubQuit, wdaStubRemoveApp]) {
-        if (stub) {
-          stub.reset();
-        }
-      }
-    });
-
-    it('should uninstall default app since no Running WDA and no updatedWDABundleId', async function () {
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
-    });
-
-    it('should uninstall updatedWDABundleId with no running WDA', async function () {
-      // override
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: true, updatedWDABundleId: 'com.example.WebDriverAgent'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubQuit = sinon.stub(wda, 'quit');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.example.WebDriverAgent.xctrunner').calledOnce.should.be.true;
-    });
-
-    it('should uninstall productBundleIdentifier prior than updatedWDABundleId', async function () {
-      opts.updatedWDABundleId = 'com.example.updatedWDABundleId.WebDriverAgent';
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.productBundleIdentifier.WebDriverAgent' }};
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.example.productBundleIdentifier.WebDriverAgent.xctrunner').calledOnce.should.be.true;
-    });
-
-    it('should uninstall productBundleIdentifier', async function () {
-      wdaStub.callsFake(function () {
-        return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.productBundleIdentifier.WebDriverAgent' }};
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.example.productBundleIdentifier.WebDriverAgent.xctrunner').calledOnce.should.be.true;
-    });
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.notCalled.should.be.true;
+    _.isUndefined(wda.webDriverAgentUrl).should.be.true;
   });
 
-  describe('with Xcode 11, simulator', function () {
-    beforeEach(function () {
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: false});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubQuit = sinon.stub(wda, 'quit');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+  it('should not call uninstall since running WDA has only time', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { time: 'Jun 24 2018 17:08:21' }};
+    });
+    wdaStubUninstall.callsFake(_.noop);
+
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.notCalled.should.be.true;
+    wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
+  });
+
+  it('should call uninstall once since bundle id is not default without updatedWDABundleId capability', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
+    });
+    wdaStubUninstall.callsFake(_.noop);
+
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.calledOnce.should.be.true;
+    _.isUndefined(wda.webDriverAgentUrl).should.be.true;
+  });
+
+  it('should call uninstall once since bundle id is different with updatedWDABundleId capability', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.different.WebDriverAgent' }};
     });
 
-    afterEach(function () {
-      for (const stub of [wdaStub, wdaStubQuit, wdaStubRemoveApp]) {
-        if (stub) {
-          stub.reset();
-        }
-      }
+    wdaStubUninstall.callsFake(_.noop);
+
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.calledOnce.should.be.true;
+    _.isUndefined(wda.webDriverAgentUrl).should.be.true;
+  });
+
+  it('should not call uninstall since bundle id is equal to updatedWDABundleId capability', async function () {
+    wda = new WebDriverAgent('1', { updatedWDABundleId: 'com.example.WebDriverAgent' });
+    wdaStub = sinon.stub(wda, 'getStatus');
+    wdaStubUninstall = sinon.stub(wda, 'uninstall');
+
+    wdaStub.callsFake(function () {
+      return {build: { time: 'Jun 24 2018 17:08:21', productBundleIdentifier: 'com.example.WebDriverAgent' }};
     });
 
-    it('should uninstall default app since no Running WDA and no updatedWDABundleId', async function () {
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
+    wdaStubUninstall.callsFake(_.noop);
 
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.notCalled.should.be.true;
+    wda.webDriverAgentUrl.should.equal('http://localhost:8100/');
+  });
+
+  it('should call uninstall if current revision differs from the bundled one', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { upgradedAt: '1' }};
     });
+    getTimestampStub.callsFake(() => '2');
+    wdaStubUninstall.callsFake(_.noop);
 
-    it('should uninstall updatedWDABundleId with no running WDA', async function () {
-      // override
-      wdaDevice = { removeApp: () => {} };
-      wda = new WebDriverAgent({major: 11}, {device: wdaDevice, realDevice: false, updatedWDABundleId: 'com.example.WebDriverAgent'});
-      wdaStub = sinon.stub(wda, 'getStatus');
-      wdaStubQuit = sinon.stub(wda, 'quit');
-      wdaStubRemoveApp = sinon.stub(wdaDevice, 'removeApp');
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.calledOnce.should.be.true;
+  });
 
-      wdaStub.callsFake(function () {
-        return null;
-      });
-      wdaStubQuit.callsFake(_.noop);
-      wdaStubRemoveApp.callsFake(_.noop);
-
-      await wda.quitAndUninstall();
-      wdaStub.calledOnce.should.be.true;
-      wdaStubQuit.calledOnce.should.be.true;
-      wdaStubRemoveApp.withArgs('com.facebook.WebDriverAgentRunner.xctrunner').calledOnce.should.be.true;
+  it('should not call uninstall if current revision is the same as the bundled one', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { upgradedAt: '1' }};
     });
+    getTimestampStub.callsFake(() => '1');
+    wdaStubUninstall.callsFake(_.noop);
+
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.notCalled.should.be.true;
+  });
+
+  it('should not call uninstall if current revision cannot be retrieved from WDA status', async function () {
+    wdaStub.callsFake(function () {
+      return {build: {}};
+    });
+    getTimestampStub.callsFake(() => '1');
+    wdaStubUninstall.callsFake(_.noop);
+
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.notCalled.should.be.true;
+  });
+
+  it('should not call uninstall if current revision cannot be retrieved from the file system', async function () {
+    wdaStub.callsFake(function () {
+      return {build: { upgradedAt: '1' }};
+    });
+    getTimestampStub.callsFake(() => null);
+    wdaStubUninstall.callsFake(_.noop);
+
+    await wda.setupCaching();
+    wdaStub.calledOnce.should.be.true;
+    wdaStubUninstall.notCalled.should.be.true;
   });
 });
