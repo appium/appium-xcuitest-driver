@@ -1,5 +1,4 @@
-import { getXctestrunFilePath, getAdditionalRunContent,
-         getXctestrunFileName } from '../../../lib/wda/utils';
+import { getXctestrunFilePath, getAdditionalRunContent, getXctestrunFileName } from '../../../lib/wda/utils';
 import { PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS } from '../../../lib/desired-caps';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
