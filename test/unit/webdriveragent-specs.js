@@ -242,4 +242,59 @@ describe('setupCaching()', function () {
     wdaStub.calledOnce.should.be.true;
     wdaStubUninstall.notCalled.should.be.true;
   });
+
+  describe('uninstall', function () {
+    let device;
+    let wda;
+    let deviceGetBundleIdsStub;
+    let deviceRemoveAppStub;
+
+    beforeEach(function () {
+      device = {
+        getUserInstalledBundleIdsByBundleName: () => {},
+        removeApp: () => {}
+      };
+      wda = new WebDriverAgent('1', {device});
+      deviceGetBundleIdsStub = sinon.stub(device, 'getUserInstalledBundleIdsByBundleName');
+      deviceRemoveAppStub = sinon.stub(device, 'removeApp');
+    });
+
+    afterEach(function () {
+      for (const stub of [deviceGetBundleIdsStub, deviceRemoveAppStub]) {
+        if (stub) {
+          stub.reset();
+        }
+      }
+    });
+
+    it('should not call uninstall', async function () {
+      deviceGetBundleIdsStub.callsFake(() => []);
+
+      await wda.uninstall();
+      deviceGetBundleIdsStub.calledOnce.should.be.true;
+      deviceRemoveAppStub.notCalled.should.be.true;
+    });
+
+    it('should call uninstall once', async function () {
+      const uninstalledBundIds = [];
+      deviceGetBundleIdsStub.callsFake(() => ['com.appium.WDA1']);
+      deviceRemoveAppStub.callsFake((id) => uninstalledBundIds.push(id));
+
+      await wda.uninstall();
+      deviceGetBundleIdsStub.calledOnce.should.be.true;
+      deviceRemoveAppStub.calledOnce.should.be.true;
+      uninstalledBundIds.should.eql(['com.appium.WDA1']);
+    });
+
+    it('should call uninstall twice', async function () {
+      const uninstalledBundIds = [];
+      deviceGetBundleIdsStub.callsFake(() => ['com.appium.WDA1', 'com.appium.WDA2']);
+      deviceRemoveAppStub.callsFake((id) => uninstalledBundIds.push(id));
+
+      await wda.uninstall();
+      deviceGetBundleIdsStub.calledOnce.should.be.true;
+      deviceRemoveAppStub.calledTwice.should.be.true;
+      uninstalledBundIds.should.eql(['com.appium.WDA1', 'com.appium.WDA2']);
+    });
+  });
 });
