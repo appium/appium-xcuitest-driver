@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "2.127.1",
+  "version": "2.128.1",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -35,7 +35,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-base-driver": "^3.21.2",
+    "appium-base-driver": "^4.0.0",
     "appium-idb": "^0",
     "appium-ios-device": "^0.10.2",
     "appium-ios-driver": "^4.0.0",
@@ -98,7 +98,7 @@
     "glob": "^7.1.0",
     "gulp": "^4.0.0",
     "ios-test-app": "^3.0.0",
-    "ios-uicatalog": "^2.0.9",
+    "ios-uicatalog": "^3.0.0",
     "mocha": "^6.0.0",
     "mocha-junit-reporter": "^1.18.0",
     "mocha-multi-reporters": "^1.1.7",
