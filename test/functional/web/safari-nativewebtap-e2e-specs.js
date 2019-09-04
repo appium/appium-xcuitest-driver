@@ -144,7 +144,7 @@ describe('Safari - coordinate conversion -', function () {
           let el = await driver.elementByName('submit');
           await el.click();
 
-          await retryInterval(5, 500, async function () {
+          await retryInterval(15, 500, async function () {
             const src = await driver.source();
             return src.should.include('Your comments: Hello');
           });

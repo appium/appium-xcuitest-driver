@@ -224,6 +224,10 @@ describe('Safari - basics -', function () {
         await retryInterval(10, 1000, async function () {
           (await el.isSelected()).should.be.ok;
         });
+        // let the click occur
+        await B.delay(2000);
+
+        (await el.isSelected()).should.be.ok;
       });
       it('should be able to retrieve css properties', async function () {
         let el = await driver.elementById('fbemail');
