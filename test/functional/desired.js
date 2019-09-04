@@ -43,9 +43,11 @@ if (system.isMac() && !process.env.CLOUD) {
   testAppPath = require('ios-test-app').absolute;
 
   // iOS 13+ need a slightly different app to be able to get the correct automation
-  uiCatalogPath = parseInt(PLATFORM_VERSION, 10) >= 13
+  /*uiCatalogPath = parseInt(PLATFORM_VERSION, 10) >= 13
     ? require('ios-uicatalog').uiKitCatalog.absolute
-    : require('ios-uicatalog').uiCatalog.absolute;
+    : require('ios-uicatalog').uiCatalog.absolute;*/
+
+  uiCatalogPath = require('ios-uicatalog');
 }
 
 const apps = {};
