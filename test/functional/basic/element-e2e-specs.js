@@ -74,8 +74,8 @@ describe('XCUITestDriver - element(s)', function () {
       let el2 = await driver.elementByAccessibilityId('Image View');
       let loc2 = await el2.getLocation();
 
-      loc1.x.should.eql(loc2.x);
-      loc1.y.should.be.below(loc2.y);
+      Math.abs(loc1.x - loc2.x).should.be.below(5); // Confirm that X is the same within margin of error of 5 pixels
+      loc1.y.should.be.below(loc2.y); // Confirm that the 'Image View' button is below 'Buttons
     });
   });
 
@@ -93,8 +93,8 @@ describe('XCUITestDriver - element(s)', function () {
       let el2 = await driver.elementByAccessibilityId('Image View');
       let loc2 = await el2.getLocation();
 
-      loc1.x.should.eql(loc2.x);
-      loc1.y.should.be.below(loc2.y);
+      Math.abs(loc1.x - loc2.x).should.be.below(5); // Confirm that X is the same within margin of error of 5 pixels
+      loc1.y.should.be.below(loc2.y); // Confirm that the 'Image View' button is below 'Buttons
     });
   });
 
