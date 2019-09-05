@@ -4,7 +4,7 @@ parameters:
     name: ios-e2e-test
     dependsOn: ''
     iosVersion: 12.2
-    xcodeVersion: 10.2
+    xcodeVersion: 11
     deviceName: 'iPhone X'
 
 jobs:
