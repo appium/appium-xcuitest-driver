@@ -21,6 +21,18 @@ describe('safari - execute -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  before(async function () {
+    await killAllSimulators();
+    let caps = _.defaults({
+      safariInitialUrl: GUINEA_PIG_PAGE,
+      nativeWebTap: true,
+    }, SAFARI_CAPS);
+    driver = await initSession(caps);
+  });
+  after(async function () {
+    await deleteSession();
+    await killAllSimulators();
+  });
 
   async function runTests (secure = false) { // eslint-disable-line require-await
     describe('mobile: x methods', function () {
@@ -88,29 +100,24 @@ describe('safari - execute -', function () {
 
       it('should execute async javascript', async function () {
         await driver.setAsyncScriptTimeout(1000);
-        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
+        await driver.executeAsync(`arguments[arguments.length - 1](123);`)
+          .should.eventually.equal(123);
+      });
+
+      it('should bubble up errors', async function () {
+        await driver.executeAsync(`arguments[arguments.length - 1]('nan'--);`)
+          .should.eventually.be.rejectedWith(/operator applied to value that is not a reference/);
       });
 
       it('should timeout when callback is not invoked', async function () {
         await driver.setAsyncScriptTimeout(1000);
-        await driver.executeAsync(`return 1 + 2`).should.eventually.be.rejected;
+        await driver.executeAsync(`return 1 + 2`)
+          .should.eventually.be.rejectedWith(/Timed out waiting for/);
       });
     });
   }
 
   describe('http', function () {
-    before(async function () {
-      await killAllSimulators();
-      let caps = _.defaults({
-        safariInitialUrl: GUINEA_PIG_PAGE,
-        nativeWebTap: true,
-      }, SAFARI_CAPS);
-      driver = await initSession(caps);
-    });
-    after(async function () {
-      await deleteSession();
-      await killAllSimulators();
-    });
     runTests();
     describe('cors', function () {
       let server;
@@ -142,18 +149,7 @@ describe('safari - execute -', function () {
   });
   describe('https', function () {
     before(async function () {
-      await killAllSimulators();
-      let caps = _.defaults({
-        safariInitialUrl: GUINEA_PIG_PAGE,
-        nativeWebTap: true,
-        enableAsyncExecuteFromHttps: true,
-      }, SAFARI_CAPS);
-      driver = await initSession(caps);
       await openPage(driver, 'https://google.com');
-    });
-    after(async function () {
-      await deleteSession();
-      await killAllSimulators();
     });
     runTests(true);
   });
