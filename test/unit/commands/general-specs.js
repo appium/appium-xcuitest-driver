@@ -11,7 +11,7 @@ describe('general commands', function () {
   });
 
   describe('background', function () {
-    it('should deactivate app for the given time if seconds if zero or greater', async function () {
+    it('should deactivate app for the given time if seconds is zero or greater', async function () {
       await driver.background(0.5);
       proxyStub.calledOnce.should.be.true;
       proxyStub.firstCall.args[0].should.eql('/wda/deactivateApp');
