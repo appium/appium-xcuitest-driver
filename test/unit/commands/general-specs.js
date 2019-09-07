@@ -11,10 +11,24 @@ describe('general commands', function () {
   });
 
   describe('background', function () {
-    it('should send translated POST request to WDA', async function () {
-      await driver.background();
+    it('should deactivate app for the given time if seconds is zero or greater', async function () {
+      await driver.background(0.5);
       proxyStub.calledOnce.should.be.true;
       proxyStub.firstCall.args[0].should.eql('/wda/deactivateApp');
+      proxyStub.firstCall.args[1].should.eql('POST');
+    });
+
+    it('should switch to home screen if seconds less than zero', async function () {
+      await driver.background(-1);
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/wda/homescreen');
+      proxyStub.firstCall.args[1].should.eql('POST');
+    });
+
+    it('should switch to home screen if seconds is null', async function () {
+      await driver.background(null);
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/wda/homescreen');
       proxyStub.firstCall.args[1].should.eql('POST');
     });
   });
