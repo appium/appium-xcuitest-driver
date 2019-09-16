@@ -66,11 +66,16 @@ describe('utils', function () {
   }));
 
   describe('determineDevice', function () {
+    const ipadDeviceName = 'iPad Simulator';
+    const iphoneDeviceName = 'iPhone Simulator';
+    const outrageouslyHighIosVersion = '999999.999999';
+
     it('should set the correct iPad simulator generic device', function () {
-      const ipadDeviceName = 'iPad Simulator';
       let deviceName = translateDeviceName('10.1.2', ipadDeviceName);
       deviceName.should.equal('iPad Retina');
-      deviceName = translateDeviceName(10.103, ipadDeviceName);
+    });
+    it('should set the correct iPad simulator generic device for iOS >= 10.3', function () {
+      let deviceName = translateDeviceName(10.103, ipadDeviceName);
       deviceName.should.equal('iPad Air');
       deviceName = translateDeviceName('10.3', ipadDeviceName);
       deviceName.should.equal('iPad Air');
@@ -78,8 +83,21 @@ describe('utils', function () {
       deviceName.should.equal('iPad Air');
     });
     it('should set the correct iPhone simulator generic device', function () {
-      let deviceName = translateDeviceName(10.3, 'iPhone Simulator');
-      deviceName.should.equal('iPhone 6');
+      translateDeviceName('0.0', iphoneDeviceName).should.equal('iPhone 6');
+      translateDeviceName('10.3', iphoneDeviceName).should.equal('iPhone 6');
+    });
+    it('should set the correct iPhone simulator generic device for simulators gte iOS 13.0', function () {
+      translateDeviceName('13.0', iphoneDeviceName).should.equal('iPhone X');
+    });
+    it('should set the default iPhone simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
+      // The highest iOS version we define for iPhone in ios-generic-simulators.js is currently iOS 13.0
+      // If this changes, update this test
+      translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName).should.equal('iPhone X');
+    });
+    it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
+      // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
+      // If this changes, update this test
+      translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName).should.equal('iPad Air');
     });
   });
 
