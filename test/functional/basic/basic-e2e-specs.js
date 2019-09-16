@@ -57,15 +57,17 @@ describe('XCUITestDriver - basics -', function () {
     it('should get session details with our caps merged with WDA response', async function () {
       const extraWdaCaps = {
         CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
-        browserName: 'UICatalog',
         device: 'iphone',
       };
       let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
 
       let actual = await driver.sessionCapabilities();
-      actual.udid.should.exist;
+      // `borwserName` can be different
+      ['UICatalog', 'UIKitCatalog'].should.include(actual.browserName);
+      delete actual.browserName;
       // don't really know a priori what the udid should be, so just ensure
       // it's there, and validate the rest
+      actual.udid.should.exist;
       delete actual.udid;
       // if we are getting metrics for this run (such as on Travis) there will
       // be events in the result, but we cannot know what they should be
@@ -153,7 +155,7 @@ describe('XCUITestDriver - basics -', function () {
       screenshot.should.be.a('string');
 
       // make sure WDA didn't crash, by using it again
-      let els = await driver.elementsByAccessibilityId('Action Sheets');
+      let els = await driver.elementsByAccessibilityId('Alert Views');
       els.length.should.eql(1);
     });
 
@@ -293,9 +295,8 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('contexts -', function () {
     before(async function () {
-      let el = await driver.elementByAccessibilityId('Web View');
-      await driver.execute('mobile: scroll', {element: el, toVisible: true});
-      await el.click();
+      await driver.execute('mobile: scroll', {direction: 'down'});
+      await await driver.elementByAccessibilityId('Web View').click();
     });
     after(async function () {
       await driver.back();
@@ -303,11 +304,11 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should start a session, navigate to url, get title', async function () {
-      let contexts;
-      await retryInterval(100, 1000, async function () {
+      const contexts = await retryInterval(100, 1000, async function () {
         // on some systems (like Travis) it takes a while to load the webview
-        contexts = await driver.contexts();
+        const contexts = await driver.contexts();
         contexts.length.should.be.at.least(2);
+        return contexts;
       });
 
       await driver.context(contexts[1]);

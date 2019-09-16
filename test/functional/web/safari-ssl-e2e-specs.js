@@ -9,6 +9,7 @@ import { doesIncludeCookie, doesNotIncludeCookie,
 import { SAFARI_CAPS } from '../desired';
 import https from 'https';
 
+
 const pem = B.promisifyAll(require('pem'));
 
 chai.should();
@@ -20,7 +21,7 @@ const LOCAL_HTTPS_URL = `https://localhost:${HTTPS_PORT}/`;
 
 let caps = _.defaults({
   safariInitialUrl: LOCAL_HTTPS_URL,
-  noReset: false,
+  noReset: true,
 }, SAFARI_CAPS);
 
 let pemCertificate;

@@ -4,6 +4,7 @@ import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
 import _ from 'lodash';
+import { retryInterval } from 'asyncbox';
 
 
 const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
@@ -137,7 +138,22 @@ async function initSession (caps) {
     }, caps);
   }
 
-  let serverRes = await driver.init(caps);
+  let error;
+  const serverRes = await retryInterval(2, 1000, async function () {
+    try {
+      return await driver.init(caps);
+    } catch (err) {
+      if (err.message.includes('failed to finish booting')) {
+        // sometimes the sim doesn't start, usually because of "Data Migration"
+        // so try again?
+        throw err;
+      }
+      error = err;
+    }
+  });
+  if (error) {
+    throw error;
+  }
   if (!caps.udid && !caps.fullReset && serverRes[1].udid) {
     caps.udid = serverRes[1].udid;
   }
