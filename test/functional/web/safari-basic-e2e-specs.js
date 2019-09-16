@@ -217,14 +217,13 @@ describe('Safari - basics -', function () {
         (await el.getAttribute('value')).should.be.equal('');
       });
       it('should say whether an input is selected', async function () {
-        let el = await driver.elementById('unchecked_checkbox');
+        const el = await driver.elementById('unchecked_checkbox');
         (await el.isSelected()).should.not.be.ok;
         await el.click();
 
-        // let the click occur
-        await B.delay(500);
-
-        (await el.isSelected()).should.be.ok;
+        await retryInterval(10, 1000, async function () {
+          (await el.isSelected()).should.be.ok;
+        });
       });
       it('should be able to retrieve css properties', async function () {
         let el = await driver.elementById('fbemail');
