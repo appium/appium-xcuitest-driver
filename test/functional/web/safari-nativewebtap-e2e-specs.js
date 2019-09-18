@@ -84,7 +84,6 @@ describe('Safari - coordinate conversion -', function () {
         let skipped = false;
 
         before(async function () {
-          await B.delay(10000);
           skipped = false;
           try {
             driver = await initSession(localCaps);
