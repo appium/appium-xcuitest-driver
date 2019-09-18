@@ -27,7 +27,7 @@ let caps = _.defaults({
 let pemCertificate;
 
 if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
-  describe.only('Safari SSL', function () {
+  describe('Safari SSL', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let sslServer, driver;
