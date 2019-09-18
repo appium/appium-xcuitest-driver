@@ -16,7 +16,6 @@ function checkFeatureInEnv (envArg) {
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-let DEVICE_NAME = process.env.DEVICE_NAME;
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
 const DEVICE_NAME = process.env.DEVICE_NAME
