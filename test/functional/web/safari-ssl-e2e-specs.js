@@ -27,7 +27,7 @@ let caps = _.defaults({
 let pemCertificate;
 
 if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
-  describe('Safari SSL', function () {
+  describe.only('Safari SSL', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let sslServer, driver;
@@ -53,6 +53,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       }).listen(HTTPS_PORT);
 
       caps.customSSLCert = pemCertificate;
+      driver = await initSession(caps);
     });
     after(async function () {
       await deleteSession();
@@ -61,24 +62,13 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       }
     });
 
-    it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
-      driver = await initSession(caps);
-      await driver.get(LOCAL_HTTPS_URL);
-      let source = await driver.source();
-      source.should.include('Arbitrary text');
-      await driver.quit();
-      await B.delay(1000);
-
-      // Now do another session using the same cert to verify that it still works
-      // (Don't do it on CLOUD. Restarting is too slow)
-      if (!process.env.CLOUD) {
-        await driver.init(caps);
+    describe('https certificate', function () {
+      it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
         await driver.get(LOCAL_HTTPS_URL);
-        source = await driver.source();
+        let source = await driver.source();
         source.should.include('Arbitrary text');
-      }
-
-      await deleteSession();
+        await B.delay(1000);
+      });
     });
 
     describe('cookies', function () {
@@ -86,10 +76,6 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         secure: true,
         name: 'securecookie',
         value: 'this is a secure cookie',
-      });
-
-      before(async function () {
-        driver = await initSession(caps);
       });
 
       beforeEach(async function () {

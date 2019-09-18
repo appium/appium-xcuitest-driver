@@ -17,7 +17,7 @@ function getPort () {
   if (SAUCE_EMUSIM || SAUCE_RDC) {
     return 80;
   }
-  return 4994;
+  return 4994 || process.env.SERVER_PORT;
 }
 
 function getHost () {
