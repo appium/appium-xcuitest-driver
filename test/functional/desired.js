@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-import { system, util } from 'appium-support';
+import { util } from 'appium-support';
 import apps from './apps';
 
 
