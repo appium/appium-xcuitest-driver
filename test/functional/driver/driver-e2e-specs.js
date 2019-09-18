@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
+import request from 'request-promise';
 import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
 import { getDevices, createDevice } from 'node-simctl';
 import _ from 'lodash';
@@ -108,8 +109,7 @@ describe('XCUITestDriver', function () {
         });
         localCaps.wdaLocalPort = null;
         driver = await initSession(localCaps);
-        let logs = await driver.log('syslog');
-        logs.some((line) => line.message.includes(':8100<-')).should.be.true;
+        await request('http://localhost:8100/status').should.not.be.rejected;
       });
       it('should run on port specified', async function () {
         const localCaps = Object.assign({}, baseCaps, {
@@ -118,9 +118,8 @@ describe('XCUITestDriver', function () {
           useNewWDA: true,
         });
         driver = await initSession(localCaps);
-        let logs = await driver.log('syslog');
-        logs.some((line) => line.message.includes(':8100<-')).should.be.false;
-        logs.some((line) => line.message.includes(':6000<-')).should.be.true;
+        await request('http://localhost:8100/status').should.be.rejectedWith(/ECONNREFUSED/);
+        await request('http://localhost:6000/status').should.not.be.rejected;
       });
     });
 
