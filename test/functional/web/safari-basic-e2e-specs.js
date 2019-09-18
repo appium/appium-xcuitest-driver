@@ -19,7 +19,7 @@ let DEFAULT_CAPS = _.defaults({
   nativeWebTap: true,
 }, SAFARI_CAPS);
 
-describe('Safari - basics -', function () {
+describe('Safari - basics (with nativeWebTap) -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
