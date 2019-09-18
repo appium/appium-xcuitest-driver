@@ -9,7 +9,9 @@ chai.use(chaiAsPromised);
 
 // leave the long test to Travis
 const TYPING_TRIES = process.env.CI
-  ? process.env.CLOUD ? 100 : 200
+  ? process.env.CLOUD
+    ? 100
+    : 10
   : 10;
 
 describe('XCUITestDriver - long tests', function () {
