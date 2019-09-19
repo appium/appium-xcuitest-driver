@@ -28,22 +28,22 @@ describe('XCUITestDriver - long tests', function () {
     const text = 'bunchoftext';
     let el;
     before(async function () {
-      let tfEl = await driver.elementByAccessibilityId('Text Fields');
-      await driver.execute('mobile: scroll', {element: tfEl, toVisible: true});
-      await tfEl.click();
+      await driver.execute('mobile: scroll', {direction: 'down'});
+      await driver.elementByAccessibilityId('Text Fields').click();
 
       // get the text field for the subsequent tests
       el = await driver.elementByClassName('XCUIElementTypeTextField');
     });
 
+    afterEach(async function () {
+      await el.clear();
+    });
+
     for (let i = 0; i < TYPING_TRIES; i++) {
       it(`should not fail in typing (try #${i + 1})`, async function () {
-
         await el.type(text);
 
         (await el.text()).should.include(text);
-
-        await el.clear();
       });
     }
   });

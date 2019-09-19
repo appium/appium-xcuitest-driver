@@ -6,7 +6,7 @@
 	<dict>
 		<key>Assets.car</key>
 		<data>
-		HwoaCbRW3GnVzzmoxbO4UJJpBqA=
+		sz1syJ2lVHvV7G9T74Wu2j3YL8I=
 		</data>
 		<key>Base.lproj/ActivityIndicatorViewController.storyboardc/Info.plist</key>
 		<data>
@@ -14,11 +14,11 @@
 		</data>
 		<key>Base.lproj/ActivityIndicatorViewController.storyboardc/UITableViewController-YvC-vN-mSd.nib</key>
 		<data>
-		MncOKRKsE+v2Bysik/GsCGrIAOk=
+		jKQnEegbiTDe6A9aIO99IBhndBc=
 		</data>
 		<key>Base.lproj/ActivityIndicatorViewController.storyboardc/YvC-vN-mSd-view-Udh-X7-hOc.nib</key>
 		<data>
-		y+rLMoODPPc+DQ0bwG+VYdFxREY=
+		zkKmYKmidTGv1TfyJHH+cwVzuMw=
 		</data>
 		<key>Base.lproj/AlertControllerViewController.storyboardc/Info.plist</key>
 		<data>
@@ -26,11 +26,11 @@
 		</data>
 		<key>Base.lproj/AlertControllerViewController.storyboardc/UITableViewController-Va4-Ge-jQn.nib</key>
 		<data>
-		Jt+4AA9wGgsip8Xrq2eGV7UVS6k=
+		ztjKhda1N07D3APPnhjUEBxF7+k=
 		</data>
 		<key>Base.lproj/AlertControllerViewController.storyboardc/Va4-Ge-jQn-view-iro-ev-0xV.nib</key>
 		<data>
-		w5J5QjQ26Bca6fhQPNk7rvnLdzI=
+		vs6kIiqazrTJhkAFtH+zWZ6vNTg=
 		</data>
 		<key>Base.lproj/ButtonViewController.storyboardc/Info.plist</key>
 		<data>
@@ -38,11 +38,11 @@
 		</data>
 		<key>Base.lproj/ButtonViewController.storyboardc/UITableViewController-gl0-hM-EWg.nib</key>
 		<data>
-		LDz+rjOKVBwJGI9E5mDMTXHmysg=
+		DFN0QmReAl3+GOTxcB8r656begg=
 		</data>
 		<key>Base.lproj/ButtonViewController.storyboardc/gl0-hM-EWg-view-gDs-OX-aHt.nib</key>
 		<data>
-		eG5FBzluCkFnVh/OLAt2mqLQDTE=
+		kZj4puMIC/6CARD2BoQH5B3DZNY=
 		</data>
 		<key>Base.lproj/Credits.rtf</key>
 		<data>
@@ -50,7 +50,7 @@
 		</data>
 		<key>Base.lproj/DatePickerController.storyboardc/7Xn-ho-KP8-view-LFl-gd-u3P.nib</key>
 		<data>
-		SnTbsq5q+Fb7TkqnFJMqE10JJDg=
+		+ZZkyPrrsNNhrLp9BV3GQckM93s=
 		</data>
 		<key>Base.lproj/DatePickerController.storyboardc/Info.plist</key>
 		<data>
@@ -58,7 +58,7 @@
 		</data>
 		<key>Base.lproj/DatePickerController.storyboardc/UIViewController-7Xn-ho-KP8.nib</key>
 		<data>
-		P6JWFK78cg8hokhJ3z1cxL+5zgo=
+		oWNHMyLJ515CDIIoO3/a8pY0CBo=
 		</data>
 		<key>Base.lproj/ImageViewController.storyboardc/Info.plist</key>
 		<data>
@@ -66,11 +66,11 @@
 		</data>
 		<key>Base.lproj/ImageViewController.storyboardc/UIViewController-XCI-A9-c2M.nib</key>
 		<data>
-		sNbmnGSVp4eUQSYx496VwK6MIXM=
+		RcjfTOhb0xSOlmvfnP7DKjYz5Rs=
 		</data>
 		<key>Base.lproj/ImageViewController.storyboardc/XCI-A9-c2M-view-InE-1J-uPb.nib</key>
 		<data>
-		Hxar1xkXZXKprdea6KY9eV4myqA=
+		Daa+A/ErqSYGBEg4Y54C86jeZII=
 		</data>
 		<key>Base.lproj/InfoPlist.strings</key>
 		<data>
@@ -78,7 +78,7 @@
 		</data>
 		<key>Base.lproj/LaunchScreen.storyboardc/Axx-hg-9Xm-view-Bd8-dr-7ve.nib</key>
 		<data>
-		OpX1eln3urPAWxV3fJsvvcE0boA=
+		+mFUKCpxUJbebZyYpJT6AOZtxdA=
 		</data>
 		<key>Base.lproj/LaunchScreen.storyboardc/Info.plist</key>
 		<data>
@@ -86,7 +86,7 @@
 		</data>
 		<key>Base.lproj/LaunchScreen.storyboardc/UINavigationController-4yX-ry-qSy.nib</key>
 		<data>
-		i24LXD9HwQ+qedAVp1sFW+dXnpQ=
+		BxMpDmKXPdxO5iTq4Hzdjpnh//4=
 		</data>
 		<key>Base.lproj/Localizable.strings</key>
 		<data>
@@ -94,31 +94,31 @@
 		</data>
 		<key>Base.lproj/Main.storyboardc/GgB-cT-22O-view-aE8-Eb-ul8.nib</key>
 		<data>
-		I5UEACQMQ3/JVhl0hf90rT4QMcw=
+		QWpTspYaldyZ7Ieomuvwhwtukxc=
 		</data>
 		<key>Base.lproj/Main.storyboardc/Info.plist</key>
 		<data>
-		e3wZu7W9jA67gwwdEWkareySMh4=
+		lWkLOzus34RdTou0hQ3wGmz3uMo=
 		</data>
 		<key>Base.lproj/Main.storyboardc/MasterViewController.nib</key>
 		<data>
-		uizMP4f4v2U1LoaAsj1g+H6m4cY=
+		EnS/vEYVp5wc28eFGxf20byDAgQ=
 		</data>
 		<key>Base.lproj/Main.storyboardc/initialDetail.nib</key>
 		<data>
-		lWGkSp+nUJ+FoDyuMRKeEYVlPD0=
+		rfUu7p6zEIBrvEH84UES0/6d+WQ=
 		</data>
 		<key>Base.lproj/Main.storyboardc/ioe-is-9Fo-view-Ie1-Wu-iah.nib</key>
 		<data>
-		Ifk0HYuUtC3BVIbKpTy7wOGn5ds=
+		O0H+3wOHulgeeCEbwcQywu8kuFk=
 		</data>
 		<key>Base.lproj/Main.storyboardc/navInitialDetail.nib</key>
 		<data>
-		gXv3N7x8TDmoU74CDI/tRbCLoFM=
+		CmKkLQbSe/GtpOWI+KQsCUd8EG4=
 		</data>
 		<key>Base.lproj/Main.storyboardc/splitView.nib</key>
 		<data>
-		pQeDptWmTvfOR6N7Z6bziVCKPbc=
+		QugLsVz3TACMo0uVsQDZxhiU/bo=
 		</data>
 		<key>Base.lproj/PageControlViewController.storyboardc/Info.plist</key>
 		<data>
@@ -126,11 +126,11 @@
 		</data>
 		<key>Base.lproj/PageControlViewController.storyboardc/UIViewController-ZSF-lM-gQa.nib</key>
 		<data>
-		BQBngFNqxk4ZKI9MYeefCiM/914=
+		3X4/fPkc7ajNfZNsz4ZDkkjFMdw=
 		</data>
 		<key>Base.lproj/PageControlViewController.storyboardc/ZSF-lM-gQa-view-1Df-6J-Q8v.nib</key>
 		<data>
-		TOPZgSSdObarCODJbDiBt35hlfw=
+		gAQPYGHGYr5s2bDPh//qsp7kt4Y=
 		</data>
 		<key>Base.lproj/PickerViewController.storyboardc/Info.plist</key>
 		<data>
@@ -138,11 +138,11 @@
 		</data>
 		<key>Base.lproj/PickerViewController.storyboardc/UIViewController-hIc-I2-PiV.nib</key>
 		<data>
-		y5PBYbP3VzAckS6DJomFzL6Ger4=
+		/fCvFhbGIdeQRhX6JlxcLK8wg74=
 		</data>
 		<key>Base.lproj/PickerViewController.storyboardc/hIc-I2-PiV-view-EB5-Ny-mbq.nib</key>
 		<data>
-		foVP7WnfvV9WRfY0sThRFj8r5U4=
+		Wi2nZ3EGRxHLJOn3Gl1xKooW55Y=
 		</data>
 		<key>Base.lproj/ProgressViewController.storyboardc/Info.plist</key>
 		<data>
@@ -150,59 +150,59 @@
 		</data>
 		<key>Base.lproj/ProgressViewController.storyboardc/UITableViewController-aY0-FD-8DD.nib</key>
 		<data>
-		D3WylZcVvzjE9BFJpLcklk0GFMo=
+		6CfGlyM4D0yJ8hoDS5NJpapzn9k=
 		</data>
 		<key>Base.lproj/ProgressViewController.storyboardc/aY0-FD-8DD-view-vxe-YC-yBi.nib</key>
 		<data>
-		6HovDQkK3yC9tlhmRLNQsAjDY/E=
+		o/gCbq7Y4YpB7nhzkrdV2PsLOMU=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/CustomSearchBarViewController.nib</key>
 		<data>
-		RERYgqRPnZ+rwPCoby9J2nhWbKk=
+		x0cKyXoji4n4OyqlCseBwira+SY=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/DefaultSearchBarViewController.nib</key>
 		<data>
-		aMdBqvk/UDeufze69tRypJUJ8fk=
+		sfwr85yRrMeume2HpkwAQQZQT3E=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Info.plist</key>
 		<data>
-		mFCu9lq1BXOuqBHW0/hkGELTv44=
+		fDRt6a6DymY5txDSDzvSaJciLSw=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Mhd-Bs-sIn-view-YVy-et-UAQ.nib</key>
 		<data>
-		LSlHqKlLY40a7Yh6aD4vMIgRTXM=
+		k62DSCmUROGL4eQLAJ8ll8ozK30=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Search.nib</key>
 		<data>
-		bNdRdsBkyq4YB/3X193hdOeI6eY=
+		dY1ZyRN5t3KG7LbEqndN3ZAGYRc=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/SearchBarEmbedInNavBarViewController.nib</key>
 		<data>
-		QJzOTYSf6E9uCTo3j8vttX5O6tU=
+		Nk27qmRFJNYE6fAoRYNW48BSahU=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/SearchResultsViewController.nib</key>
 		<data>
-		dFazdR3p2PXhqqra/8AWon2+iBs=
+		xQNusDWShxILOw5TYclLFeh0sYw=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Thx-B6-QkK-view-QvM-3S-GbD.nib</key>
 		<data>
-		/H76VVlFqNq/bsxFd5XuFCRxbXc=
+		Yqf697hUnnpj4Ynb5ixVy3qnSxk=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/aRM-gX-SK9-view-1PE-AW-QJq.nib</key>
 		<data>
-		nvaI65g4P4qV9CvMs2tERFp+kko=
+		yoX/sLm77fOAnpNbI3NqCKCkk5c=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/aTT-8g-UdL-view-VZF-3b-rcm.nib</key>
 		<data>
-		36eKbYmogu7fc9jtjYLIQeurtic=
+		R8QnQULoZ7D58cG8OyT4NrlfyVw=
 		</data>
 		<key>Base.lproj/SearchViewControllers.storyboardc/v21-vF-FLh-view-d2N-kr-XWw.nib</key>
 		<data>
-		fJUH3eqFBTBFPDWtRHZJTP7sPEA=
+		WxdLN+2vjDWfBY4DB6Hd9eriNlY=
 		</data>
 		<key>Base.lproj/SegmentedControlViewController.storyboardc/Eil-ie-nN6-view-fLQ-5f-tUh.nib</key>
 		<data>
-		PL6I63bktw9nXZyghANIoxq527E=
+		7WFDoUhYwh1Szfts2zBxfrga5y4=
 		</data>
 		<key>Base.lproj/SegmentedControlViewController.storyboardc/Info.plist</key>
 		<data>
@@ -210,7 +210,7 @@
 		</data>
 		<key>Base.lproj/SegmentedControlViewController.storyboardc/UITableViewController-Eil-ie-nN6.nib</key>
 		<data>
-		i0r98s8WQ3HAsViGBM3EWW2zOfg=
+		v08X+iSwElN4ol7ezT+fdlGroz4=
 		</data>
 		<key>Base.lproj/SliderViewController.storyboardc/Info.plist</key>
 		<data>
@@ -218,11 +218,11 @@
 		</data>
 		<key>Base.lproj/SliderViewController.storyboardc/UITableViewController-laz-6N-ZhE.nib</key>
 		<data>
-		WfNKgH5X6EU9Une3pGhNGkL9R20=
+		9p5W0QXdNH5bPuQ250Dcoi5EzRs=
 		</data>
 		<key>Base.lproj/SliderViewController.storyboardc/laz-6N-ZhE-view-8xG-xW-Mvc.nib</key>
 		<data>
-		1LNmx77xqh403skFQ6+hZVzp0EU=
+		BABxxmjdeEsNO5YJFz/Kuqod4W4=
 		</data>
 		<key>Base.lproj/StackViewController.storyboardc/Info.plist</key>
 		<data>
@@ -230,11 +230,11 @@
 		</data>
 		<key>Base.lproj/StackViewController.storyboardc/K8w-Uq-R9J-view-Hwb-09-b4P.nib</key>
 		<data>
-		JLQhUjEj5ZK3wPmHevggFxaybGo=
+		waRWCuPme2SJu0eooK16M8oaX/k=
 		</data>
 		<key>Base.lproj/StackViewController.storyboardc/UIViewController-K8w-Uq-R9J.nib</key>
 		<data>
-		OUxqZgBVe+nEO7l7qszRfAW0UF0=
+		PaHFE98szkFk/v4br/gFy0C2BXE=
 		</data>
 		<key>Base.lproj/StepperViewController.storyboardc/Info.plist</key>
 		<data>
@@ -242,11 +242,11 @@
 		</data>
 		<key>Base.lproj/StepperViewController.storyboardc/Ob2-pp-aCj-view-aQ3-9F-Tmi.nib</key>
 		<data>
-		oUSZlKFBb5/kk+r00S9Rz5dwbYI=
+		vICMA35xwjd6AdQTd64aBNhWJiE=
 		</data>
 		<key>Base.lproj/StepperViewController.storyboardc/UITableViewController-Ob2-pp-aCj.nib</key>
 		<data>
-		OsWvIOfoUfeHZdib82cd+qKFaTc=
+		STZazxB0q/ttNEjkXWYy9H3Bkq0=
 		</data>
 		<key>Base.lproj/SwitchViewController.storyboardc/Info.plist</key>
 		<data>
@@ -254,15 +254,15 @@
 		</data>
 		<key>Base.lproj/SwitchViewController.storyboardc/UITableViewController-zcI-oN-J3j.nib</key>
 		<data>
-		HZ/WAkNfl8l+1cKBQ3WFNdJqiWI=
+		ic6/6z3DdF0bkTsKXT+hnrUdh24=
 		</data>
 		<key>Base.lproj/SwitchViewController.storyboardc/zcI-oN-J3j-view-4ER-nG-feZ.nib</key>
 		<data>
-		3b7J4y0HUTPRXKqe/yY2cLxDzSk=
+		Defj/xA/2D3XI2d1iZ3veIP5S9o=
 		</data>
 		<key>Base.lproj/TextFieldViewController.storyboardc/DSJ-7r-oCY-view-dyj-uS-k8j.nib</key>
 		<data>
-		V7dbKqPhcZ4OSdQ40OvwhpeWGfc=
+		XCp//hyeQ6Vpr9z1/RVQ48hdoF8=
 		</data>
 		<key>Base.lproj/TextFieldViewController.storyboardc/Info.plist</key>
 		<data>
@@ -270,7 +270,7 @@
 		</data>
 		<key>Base.lproj/TextFieldViewController.storyboardc/UITableViewController-DSJ-7r-oCY.nib</key>
 		<data>
-		YK4NIihl0NEbzwwYJ+u1RRp1Oho=
+		XQrMgBK1zUvus3c1QHE31e9Oxec=
 		</data>
 		<key>Base.lproj/TextViewController.storyboardc/Info.plist</key>
 		<data>
@@ -278,23 +278,23 @@
 		</data>
 		<key>Base.lproj/TextViewController.storyboardc/UIViewController-pUP-b0-VMf.nib</key>
 		<data>
-		Ov5cnaKuGZXqMlPIW738ZBiWEZc=
+		sBNu/iUZalZUlIyLyL2oU9M4phY=
 		</data>
 		<key>Base.lproj/TextViewController.storyboardc/pUP-b0-VMf-view-eAJ-am-dgQ.nib</key>
 		<data>
-		ePsHq392okk7KlVkYn2OtZdim/g=
+		ZzQp6yxwzsXd2vZ4FxVdPywFaLA=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/CustomToolbarViewController.nib</key>
 		<data>
-		ME7jlYa0ArDmbEf3ltGpu55fvxU=
+		017NaC7kvPf0tQkJXE0HOK5A15c=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/DefaultToolbarViewController.nib</key>
 		<data>
-		TFBFAeR1sjmaGom6aBNvfhw1dVw=
+		M5xwG/oWVzW/beVUCxFsVym+rZQ=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/FY6-YQ-KUW-view-cQQ-vC-cql.nib</key>
 		<data>
-		kxEjEDci3a/7XezEMXX+/ZlIi3U=
+		cpled67Uo91/xCzczLeTMQBicow=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/Info.plist</key>
 		<data>
@@ -302,23 +302,23 @@
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/P5B-ej-GR8-view-lTJ-Dz-yrG.nib</key>
 		<data>
-		rqQpOqbr9QShXsklm3+NsOb/e5g=
+		a+hnGYTBThqg8tuytJ+lKtK7Dtk=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/TintedToolbarViewController.nib</key>
 		<data>
-		h+bM5CejKanPn3n9syuuGVIuclQ=
+		DoCWkN7mq4dqJaeLhDzJmK2Y30w=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/Toolbars.nib</key>
 		<data>
-		w6kXdorKr0+7cxPlxbMRHteMbDU=
+		tFDOHaswNVOAVQdTdVpaWiaIbZs=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/c6p-Xx-oIp-view-LTn-gr-hZ8.nib</key>
 		<data>
-		WaHMQeNzPimWdcpETPr1UWrFfRI=
+		yvdmYZ1gQcb+NIL2iUDQGUENwf8=
 		</data>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/cTo-Y6-RL4-view-YY9-uv-rey.nib</key>
 		<data>
-		rhBdnvxNfrIc6JazcOetFoX1P1o=
+		zwTbo7zJm7TkHRVawyc31ERr4vM=
 		</data>
 		<key>Base.lproj/WebViewController.storyboardc/Info.plist</key>
 		<data>
@@ -326,11 +326,11 @@
 		</data>
 		<key>Base.lproj/WebViewController.storyboardc/UIViewController-i9U-A8-mkf.nib</key>
 		<data>
-		dIKbB3RsTy8+emm6wWPxlaae4rs=
+		7yyuSlexxucZGFNVrCqmi9Incvc=
 		</data>
 		<key>Base.lproj/WebViewController.storyboardc/i9U-A8-mkf-view-cde-Ag-lVB.nib</key>
 		<data>
-		onM312K4KKSrz7KMwrYo4BjXMwk=
+		zvX8kVSMiQlv8lYDQghCMjjm/J8=
 		</data>
 		<key>Base.lproj/content.html</key>
 		<data>
@@ -338,7 +338,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Stcf+UncrQG1v5zfszgCrpvMO90=
+		4JvSb3Mj4aROmI01vDC9a1eGv9s=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -351,7 +351,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			QT1xeBwZF9wWyw+eWPCSeJM82jTgTM4PR1tXV3BQ0tI=
+			Y/fe/BunD28CmwaZ68bntsk5Mx0qUZ5tUMZy4oEReTs=
 			</data>
 		</dict>
 		<key>Base.lproj/ActivityIndicatorViewController.storyboardc/Info.plist</key>
@@ -365,14 +365,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			T9A2C8c0znHEfLNi/qrAH6lXiqEsYZv4fcguJfFpnpo=
+			PpEpoC6sLdTDVVSgjIO16A/YRY4X+lBfUBiv0Ayihw8=
 			</data>
 		</dict>
 		<key>Base.lproj/ActivityIndicatorViewController.storyboardc/YvC-vN-mSd-view-Udh-X7-hOc.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			GnXIe3yqXaEp4L29rtTz2kEtVTXhYylYDHNswZUNt5Q=
+			j5/mFsRUh2cWefR4J/tJ/xZfW0w8UARxI8xXRH2lRL8=
 			</data>
 		</dict>
 		<key>Base.lproj/AlertControllerViewController.storyboardc/Info.plist</key>
@@ -386,14 +386,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			6HlVXrHQ56XUCqOsB6tAJmC4A55fNj+RZr4x4UB61E8=
+			SQHvy5d3GOTtkrTJnTujxNsUJ9wElTlwfrtgzUC2Jgs=
 			</data>
 		</dict>
 		<key>Base.lproj/AlertControllerViewController.storyboardc/Va4-Ge-jQn-view-iro-ev-0xV.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			KpvOxs2/df48j7WQ0qoZe7TvHzuXj4urz3vdHBFl9j0=
+			+X3Zar9CWC4hErKMXzRRDHy7x7nHzf9+G2fGvWtnXIE=
 			</data>
 		</dict>
 		<key>Base.lproj/ButtonViewController.storyboardc/Info.plist</key>
@@ -407,14 +407,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			5Io/lkD8PzttrgOBN0ySU0AmifH9707JJrQnld3WjN4=
+			e9QRCqpKChxj9muM1e+Cj86UZYutIBNYw1/OcjkHqjg=
 			</data>
 		</dict>
 		<key>Base.lproj/ButtonViewController.storyboardc/gl0-hM-EWg-view-gDs-OX-aHt.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hLJldqR31S43COCdrNOUhkMc4ovFQx2pOJqXHlKsh+w=
+			mRh4rvhZoMtFbj7tGSPMLj/6L+azkSPMK8mv3Wik+u8=
 			</data>
 		</dict>
 		<key>Base.lproj/Credits.rtf</key>
@@ -428,7 +428,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			j64DWD7ZFsqt+3+amPceZAdQy0Cbds9GF5B985Q+BF0=
+			cOihcTgt9fjeYgBwe4AuckFFQkzI2HrhtYtzY1eP3Z0=
 			</data>
 		</dict>
 		<key>Base.lproj/DatePickerController.storyboardc/Info.plist</key>
@@ -442,7 +442,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			EnWhlGex98iHip92S9SRp78YwhBoI6Zde2XIU/Bwqj4=
+			ixeayCRVvJ8sGB5RskY5Dcry1iuWDWfelTm86FkiDXE=
 			</data>
 		</dict>
 		<key>Base.lproj/ImageViewController.storyboardc/Info.plist</key>
@@ -456,14 +456,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			pqa8J6oVGDYQu8Q4eJ8UfP17F9AZSvl3rUD22v6cq2Y=
+			ZXUQ/HzG1ShEkSKVqOXdCSCaV5+yBfK12WmRSUrbahg=
 			</data>
 		</dict>
 		<key>Base.lproj/ImageViewController.storyboardc/XCI-A9-c2M-view-InE-1J-uPb.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			qO5XGTJRKwebhUvfPR0s4DtBAldAexDkGyK3LXlQD5w=
+			05/aEkcw9uS3lw+e8uKJzZS67GZlvnPsv1ZAUjrnvcQ=
 			</data>
 		</dict>
 		<key>Base.lproj/InfoPlist.strings</key>
@@ -477,7 +477,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			B9epSVgNPL9+4YbaCf6jQMPbjHCafRt82mdaHsDkkaI=
+			pOKUYABHrGDRgAit7IByCeddL8sktgcgG/665GwLrYc=
 			</data>
 		</dict>
 		<key>Base.lproj/LaunchScreen.storyboardc/Info.plist</key>
@@ -491,7 +491,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			zw+58EdEUSyKdDjGZ8tebXpXOoRx/r5JzwzLQ5fKbCc=
+			Sj1jx64x9ArGdHoTgoKrieLXMAlz2L/AqF+woPEF/NY=
 			</data>
 		</dict>
 		<key>Base.lproj/Localizable.strings</key>
@@ -505,49 +505,49 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			aBZ/Z4zMEXPwaq3fNJzKfWi6y1TebM/y2eMhj77Dzco=
+			e8DtnkEkARy6E2xwZ5wn/CHLewY2VeHR/suVBpMqYus=
 			</data>
 		</dict>
 		<key>Base.lproj/Main.storyboardc/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			XDAcEL7P1J0SpiY5VSn0r4FIn9JrpWKOKmmQ2QmKRvY=
+			dpUQNtz6KvuEkDMWNpvQ6wlF5W3AhYrUUhzBvG/HQsE=
 			</data>
 		</dict>
 		<key>Base.lproj/Main.storyboardc/MasterViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hbQOMGipgH7zajxK4Dd1lA/N5TvKMtM/XxKckze83vo=
+			2HDKVYPJued7EVxkp6kJ+TMLRyklmLq6rFZlZcEZzUw=
 			</data>
 		</dict>
 		<key>Base.lproj/Main.storyboardc/initialDetail.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			0CxH1UAS+68UtFhtD7eXasfprlN0LMxDdtOWCKLIkEw=
+			fHs80ZMdXW9fpuK/BH0ooC4QmFxLtIYabhWlaSpO4QE=
 			</data>
 		</dict>
 		<key>Base.lproj/Main.storyboardc/ioe-is-9Fo-view-Ie1-Wu-iah.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			DqPNAKLppz5vN+P3SEScq9UJLiMOBWzI6aARji2fPCQ=
+			Q0qtGVnvwP4aTIx90TkKnQOKRbh+JG8v/8I63IDPAJI=
 			</data>
 		</dict>
 		<key>Base.lproj/Main.storyboardc/navInitialDetail.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZsChrvyr3sG7BDnbDpGyBqmQeeLNsxsJk4Zl15p+gww=
+			a5IwPawqxjvOM9NQjQVmwhRJGyjs31NY64b6kvp0H1g=
 			</data>
 		</dict>
 		<key>Base.lproj/Main.storyboardc/splitView.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			3n6TUQzh//k8aLwcx6wohEuT2LBU5BOfZdpfV4J9Wq0=
+			jkMSdFFgzd24wlp4LuT77K2QsIJnhKSUOOtwgnJTeCI=
 			</data>
 		</dict>
 		<key>Base.lproj/PageControlViewController.storyboardc/Info.plist</key>
@@ -561,14 +561,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			2G1l4DzomcfWt2MtfiAvJ5pvSVrNbMdGjI3jO9Nlzf0=
+			scesMPCooGBSR93RHOvmKQa8ddYgLs9XVkoK4/GtWok=
 			</data>
 		</dict>
 		<key>Base.lproj/PageControlViewController.storyboardc/ZSF-lM-gQa-view-1Df-6J-Q8v.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			PrLSeQZS1KUtu+VwRvmpPjPu7IXjZKjw04FB3cUT9nE=
+			6NhzhV5cRoDDs0G6sdtY6e0u96XMMVyezHECJaBWp2w=
 			</data>
 		</dict>
 		<key>Base.lproj/PickerViewController.storyboardc/Info.plist</key>
@@ -582,14 +582,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ap1LwfMCXXJGMcMrDzlAwFNgHRmmVp4Ab6JD2mxeeSQ=
+			aOVrtkSKJ08Hio3mZjNplhzETXx6z+2i8LFYC3twAa0=
 			</data>
 		</dict>
 		<key>Base.lproj/PickerViewController.storyboardc/hIc-I2-PiV-view-EB5-Ny-mbq.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			3IyALfjqw+NT+o1LKcBjYTRCfgD6K4J/nEQc9iDsLRc=
+			q+6qN3KK2Pk06b4+KTIKneqkao+b+A0ylGeWM8i0bqE=
 			</data>
 		</dict>
 		<key>Base.lproj/ProgressViewController.storyboardc/Info.plist</key>
@@ -603,98 +603,98 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ytYeK+atrasN+BJ+JMplUvjS7CVQ/5og9LRodI/H/+I=
+			IufX12pXLePTo8HGppIPcW8TLrRRgmKcVRU7IxEUros=
 			</data>
 		</dict>
 		<key>Base.lproj/ProgressViewController.storyboardc/aY0-FD-8DD-view-vxe-YC-yBi.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			/FmokIzPm9eciWdA5c5WdlkZhwW61a3fpZY7ri+9gO0=
+			qLxIZdFsg6MUG+hJkTvKeQklzWcz29pM9SsM0pFZbjc=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/CustomSearchBarViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Muq/L3eFc/6HfsOPgVMYgMDSl0l9xPxnGGORwT0gOig=
+			1CfdlJT4FPLMxK2pc6G/M/tA1pQXjYOSvHjKyBJRqbk=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/DefaultSearchBarViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZOXXQMZDj9oRE+7LZjvC2vAUXgYthX2FoK2h1LJh+BI=
+			lHHGp8gpL3veIhrha6ztA/0BFZFdiig9XJmW3hG8Wtk=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Info.plist</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			MQs99ZGBfUtfwe9+Y9CKQWwmRby7cSoO3JRK1o5H594=
+			UL/+CYpqND8tdqHRWO8j34lNbmqyONq/lEtubRJwAHE=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Mhd-Bs-sIn-view-YVy-et-UAQ.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			dwLI+cJl0D/7dxA4OI/llVw5QkYhIuHjHNNW9O3Yquw=
+			A8qPO2Ym0eH2r6Gk0E8BC/C1Dsgo2eYIy8xERFDKjik=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Search.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			w+cj3jwUq1TdsBwchntWUrwYLo5z3LBtgRgecpOJX2A=
+			AH9ci02sioVEpu5AQR7JSQW9xf9s4ijpVVCkvYc/ruA=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/SearchBarEmbedInNavBarViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ArGpnGVKjTt9DweYEP6QgUfj/cJB2q+6h7tC+HxsgU0=
+			GRFFASWAjVZ5gtllytPaa+wh5XD1z4mmsOgeBJMifro=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/SearchResultsViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			6z6sJZOS+aPHxI2DK4bzsGs2USyo+xxPL5r+sIbLJ50=
+			og1sz+rlxO9Q0dJyrz9O3GxGIY1j+/kv8vbkKQMc4wo=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/Thx-B6-QkK-view-QvM-3S-GbD.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			D2c58J1RWjpq+n3lBk/FlImHpO8q836BGv7VIhJfo/4=
+			j0ExOubBbmyRo2Ivps/55btuAsCspIrnQBFvBoxk1KA=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/aRM-gX-SK9-view-1PE-AW-QJq.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			EXJAk2zgmt2VnMaTaTAaF/LSLc9YWM7F87Qc+PrUXaw=
+			Fux+NdEE8SRSawXvjYjIcSYoNHmk3xop8a2iiWstwlc=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/aTT-8g-UdL-view-VZF-3b-rcm.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			CQBzcbmbHucX1wGrLFpuVxecjUiIGF0mIoYD6klU8k8=
+			z3R30vo0iGCMN1PUP7HhWnRxnQ5WCPk/rNe+TYVOdbE=
 			</data>
 		</dict>
 		<key>Base.lproj/SearchViewControllers.storyboardc/v21-vF-FLh-view-d2N-kr-XWw.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Iot6CUexTIFyDHWGjFtJ6ApYuxlSAlaYhLdSBW4niDM=
+			pagqB/IqFW0XJvteQGwZxFf+AfUtXjg/WK5uVxg7P8g=
 			</data>
 		</dict>
 		<key>Base.lproj/SegmentedControlViewController.storyboardc/Eil-ie-nN6-view-fLQ-5f-tUh.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LDMZMi1lnYUCA1AdRHW0IGEJo6buk64PG9VuqP+s9EU=
+			OmM7qy89sIg2ooJYohp3VchMfK4Vz7WlhfKAE9S41Ho=
 			</data>
 		</dict>
 		<key>Base.lproj/SegmentedControlViewController.storyboardc/Info.plist</key>
@@ -708,7 +708,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			dNso/0cKUaVRbJisN5yM0HfpdvCMbA9aw1oHHoX1VZ4=
+			EsPcyv9ZNA8BnP9Y/I8BkrwU23q8684hObjlkGJl4h8=
 			</data>
 		</dict>
 		<key>Base.lproj/SliderViewController.storyboardc/Info.plist</key>
@@ -722,14 +722,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			sRnEXFwJpIsEvCpET7BAi+NqVJ4o2K/ciOHmYWs3w/k=
+			m4XnaG5SwH/JDnGTHlJQ7B0IV8JNxA4jCUW3QCNKUS0=
 			</data>
 		</dict>
 		<key>Base.lproj/SliderViewController.storyboardc/laz-6N-ZhE-view-8xG-xW-Mvc.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hNKrwKI9pJEluhBzteG4g0leMBEeh1J6FadOPEsFcKk=
+			OugpTORjXgmd7HcymYiElHxv3juF3TDQjxuj0MbGPIA=
 			</data>
 		</dict>
 		<key>Base.lproj/StackViewController.storyboardc/Info.plist</key>
@@ -743,14 +743,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			IwyjH9BmULcJKdh4NJ5+sQ774QPQzXjc9rW2JYW4mvU=
+			mjrP21fI4pAoiuBbuqaqxNrGrGZ8egsZiThnaInV+6w=
 			</data>
 		</dict>
 		<key>Base.lproj/StackViewController.storyboardc/UIViewController-K8w-Uq-R9J.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			3FwlGmc084u+VtdDc9KKABWSa7j/wjQalMc47GKjv1Y=
+			5PH8o+LI+GzdfLVzTfxUi3RZ6Fh0ipiWrmqiPyd78Y4=
 			</data>
 		</dict>
 		<key>Base.lproj/StepperViewController.storyboardc/Info.plist</key>
@@ -764,14 +764,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			J19qqoVE/gSuGFtPIKwc/6LQ9jk+3ORwBZQj0KuOe8Y=
+			+wTvXXI4vktfugCIhhChzuPcfbyOIwJTBZFsGf7Ia5M=
 			</data>
 		</dict>
 		<key>Base.lproj/StepperViewController.storyboardc/UITableViewController-Ob2-pp-aCj.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			1VJyCOeYzuoCwdDsVxhdo6WRbsNu+Fl9iIG5PB6EnI0=
+			f0imh8tia5JjSU9iJbfjc81S9uYDvOeorB1BErk7jOA=
 			</data>
 		</dict>
 		<key>Base.lproj/SwitchViewController.storyboardc/Info.plist</key>
@@ -785,21 +785,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZcRMtF8fhhVZtgZ4Iem2QVkL5Yq1hmLbjaJTZFYRwto=
+			TAVtlAWSd7v6tovVerqmg5au9GfrNK8hbdFFd3ns15c=
 			</data>
 		</dict>
 		<key>Base.lproj/SwitchViewController.storyboardc/zcI-oN-J3j-view-4ER-nG-feZ.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZpnvQhPvFjU1284uFBdclyLxUkn6Dlm5ttO3VifgeH0=
+			H8bnr48vBm8PFXDCLxTSeb1aUwNOLSACk13vfpaHydw=
 			</data>
 		</dict>
 		<key>Base.lproj/TextFieldViewController.storyboardc/DSJ-7r-oCY-view-dyj-uS-k8j.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			avjwtFgpzHquOoq1XA4OCfatjRIrrqHC9On0haFvxiU=
+			VnLx94ulwHWicesEcOFwMjOvwZobBaNWOIuhp/JKDzw=
 			</data>
 		</dict>
 		<key>Base.lproj/TextFieldViewController.storyboardc/Info.plist</key>
@@ -813,7 +813,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Oh+flbuXjfUZJtLnEFt9aGCGZwnsePItUohhCVSswkU=
+			xPfN1qq7qT2WwBUc8Q/HBh6REPGJtoOcpsetHbpdHv0=
 			</data>
 		</dict>
 		<key>Base.lproj/TextViewController.storyboardc/Info.plist</key>
@@ -827,35 +827,35 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			dn5w5cLue5O1XuS/XykJt1htc7mVD3Kh/HgXEdaTENU=
+			B9G61xLkdOnXx3nql8p6rWkRzThYwS8rjDSzeCUnjP8=
 			</data>
 		</dict>
 		<key>Base.lproj/TextViewController.storyboardc/pUP-b0-VMf-view-eAJ-am-dgQ.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			vlzPun58E7fCBUxL7qRjLauuZv/ic543XNAXVDxRSgE=
+			H0AnUvBPUlTbgkUPnm5CzNNzVTUYq/72o+Fi0sJe0UY=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/CustomToolbarViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			vTR8Mw3pU2QZGRZFaYJo47i6WC7fWDuK5cfaGCuswCA=
+			FiQDJ6sykIbL/1knIN5RXyKc4vh39x8eUt8eSgWQvZc=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/DefaultToolbarViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			cXwzYyEFFj+E1S/K3S+XRRiWLFCXI2CihShh+upZMzQ=
+			BvyTm4xaAFWkZK30ImAqHzmqqi19XZLayZU5IlhTiCk=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/FY6-YQ-KUW-view-cQQ-vC-cql.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			NGAzxgzIf3VtgHXW80vLrXrZCHccHxMwU4w6bcnduUQ=
+			T7KYQ7TqOT+B5XNftg0O8ZKsVbFHkT8GxJpnoBuyiCU=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/Info.plist</key>
@@ -869,35 +869,35 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZIMyxHnNmJoWVUl8auQQDoUXV+VEPfiSUz2MGmTHR14=
+			yrTCB59BVRq2JKBKU+f8GScXj+ndlLeVBpj79jSTpfs=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/TintedToolbarViewController.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			7b/wZWHNT46xaV99ufkg8MXhX8OQ3QP/4N4yQmQoidU=
+			iaw596bo+uqESbwCimRCi+bwpUWNA830fOQTwWw4X1I=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/Toolbars.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5jZ90uEVS2XoqIlE3PjhnW5rHSo6MzqVDO0aBfoIuZw=
+			Za4QvKQjQbdFcgNP8GHoEWLeVX6nmcJz43hTHhKjvq0=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/c6p-Xx-oIp-view-LTn-gr-hZ8.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			BKEkfeogGnfQ47ubhgXuBom800WW6fdh4E9S39OxmuY=
+			9xIr/s9u39DEvlidtbwJJN7+pxI/o1pSpb9le+du0Zc=
 			</data>
 		</dict>
 		<key>Base.lproj/ToolbarViewControllers.storyboardc/cTo-Y6-RL4-view-YY9-uv-rey.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			9KpfYE4q0FdFIk50zDdqd+qyDp4PH71MWbCkGEXjEzM=
+			YqAojkB0niX+VyQOAy/j3Wu3Au/6JWLPwRmYk2/TFLI=
 			</data>
 		</dict>
 		<key>Base.lproj/WebViewController.storyboardc/Info.plist</key>
@@ -911,14 +911,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			vE7VFOKlCtndrKV4UlWzXNmh+afJ0Pt/OBmrs+4O4mU=
+			ODdDq3KtC0K/AxHE34m619Jya6kLALhOm1qlnuZJEWk=
 			</data>
 		</dict>
 		<key>Base.lproj/WebViewController.storyboardc/i9U-A8-mkf-view-cde-Ag-lVB.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			gJz4srUOiVDbVt1pi9VNkD45KCt6uakRtv0rEU4jgEk=
+			2VTWUCNT4Cd/LuZu9WogAeZxwP9lJpZxoiIXFuV9sv8=
 			</data>
 		</dict>
 		<key>Base.lproj/content.html</key>

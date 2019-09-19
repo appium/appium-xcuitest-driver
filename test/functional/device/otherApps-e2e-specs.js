@@ -1,13 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { getSimulator } from 'appium-ios-simulator';
-import { shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
-import { createDevice } from 'node-simctl';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { MULTIPLE_APPS } from '../desired';
 
-
-const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -15,23 +10,14 @@ chai.use(chaiAsPromised);
 describe('XCUITestDriver', function () {
   this.timeout(MOCHA_TIMEOUT);
 
-  let baseCaps;
   let caps;
 
   let driver;
-  before(async function () {
-    const udid = await createDevice(SIM_DEVICE_NAME,
-      MULTIPLE_APPS.deviceName, MULTIPLE_APPS.platformVersion);
-    baseCaps = Object.assign({}, MULTIPLE_APPS, {udid});
+  before(function () {
     caps = Object.assign({
       usePrebuiltWDA: true,
       wdaStartupRetries: 0,
-    }, baseCaps);
-  });
-  after(async function () {
-    const sim = await getSimulator(caps.udid);
-    await shutdownSimulator(sim);
-    await deleteDeviceWithRetry(caps.udid);
+    }, MULTIPLE_APPS);
   });
 
   afterEach(async function () {
