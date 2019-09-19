@@ -31,7 +31,7 @@ describe('XCUITestDriver - long tests', function () {
 
       // wait for there to be text fields present
       await retryInterval(5, 500, async function () {
-        await driver.elementByClassName('XCUIElementTypeTextField');
+        await driver.elementByClassName('XCUIElementTypeTextField').clear();
       });
     });
 
