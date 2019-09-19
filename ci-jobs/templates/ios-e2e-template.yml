@@ -3,8 +3,8 @@ parameters:
     script: ''
     name: ios-e2e-test
     dependsOn: ''
-    iosVersion: 12.2
-    xcodeVersion: 10.2
+    iosVersion: 13.0
+    xcodeVersion: 11
     deviceName: 'iPhone X'
 
 jobs:
@@ -28,7 +28,11 @@ jobs:
       displayName: List Installed Simulators
     - task: NodeTool@0
       inputs:
-        versionSpec: 11.x
+        versionSpec: 10.x
+    - script: |
+        sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
+        git submodule update --init --recursive;
+      displayName: Checkout WDA submodule
     - script: npm install
       displayName: Install node dependencies
     - script: npm run build

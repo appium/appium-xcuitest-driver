@@ -37,8 +37,13 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       }
 
       // Create a random pem certificate
-      let privateKey = await pem.createPrivateKeyAsync();
-      let keys = await pem.createCertificateAsync({days: 1, selfSigned: true, serviceKey: privateKey.key});
+      const privateKey = await pem.createPrivateKeyAsync();
+      const keys = await pem.createCertificateAsync({
+        days: 1,
+        selfSigned: true,
+        serviceKey: privateKey.key,
+        altNames: ['localhost'],
+      });
       pemCertificate = keys.certificate;
 
       // Host an SSL server that uses that certificate

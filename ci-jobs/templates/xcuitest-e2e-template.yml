@@ -18,6 +18,15 @@ jobs:
 
   - template: ./ios-e2e-template.yml
     parameters:
+      name: e2e_device_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      script: |
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/device -g @skip-ci -i --exit
+
+  - template: ./ios-e2e-template.yml
+    parameters:
       name: e2e_driver_${{ parameters.name }}
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
