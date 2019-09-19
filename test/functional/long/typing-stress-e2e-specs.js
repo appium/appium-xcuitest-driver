@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession } from '../helpers/session';
+import { retryInterval } from 'asyncbox';
 
 
 chai.should();
@@ -26,21 +27,23 @@ describe('XCUITestDriver - long tests', function () {
 
   describe('typing', function () {
     const text = 'bunchoftext';
-    let el;
     before(async function () {
       await driver.execute('mobile: scroll', {direction: 'down'});
       await driver.elementByAccessibilityId('Text Fields').click();
 
-      // get the text field for the subsequent tests
-      el = await driver.elementByClassName('XCUIElementTypeTextField');
+      // wait for there to be text fields present
+      await retryInterval(5, 500, async function () {
+        await driver.elementByClassName('XCUIElementTypeTextField');
+      });
     });
 
     afterEach(async function () {
-      await el.clear();
+      await driver.elementByClassName('XCUIElementTypeTextField').clear();
     });
 
     for (let i = 0; i < TYPING_TRIES; i++) {
       it(`should not fail in typing (try #${i + 1})`, async function () {
+        const el = await driver.elementByClassName('XCUIElementTypeTextField');
         await el.type(text);
 
         (await el.text()).should.include(text);
