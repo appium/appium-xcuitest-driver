@@ -94,10 +94,20 @@ describe('utils', function () {
       // If this changes, update this test
       translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName).should.equal('iPhone X');
     });
+    it('should set the default iPad simulator to the lowest generic device that is defined in ios-generic-simulators.js for v0.0', function () {
+      // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
+      // If this changes, update this test
+      translateDeviceName('0.0', ipadDeviceName).should.equal('iPad Retina');
+    });
+    it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js for iOS < 13', function () {
+      // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
+      // If this changes, update this test
+      translateDeviceName('12.9', ipadDeviceName).should.equal('iPad Air');
+    });
     it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
       // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
       // If this changes, update this test
-      translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName).should.equal('iPad Air');
+      translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName).should.equal('iPad (5th generation)');
     });
   });
 
