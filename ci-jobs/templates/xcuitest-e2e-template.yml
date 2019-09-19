@@ -18,7 +18,7 @@ jobs:
 
   - template: ./ios-e2e-template.yml
     parameters:
-      name: e2e_driver_${{ parameters.name }}
+      name: e2e_device_${{ parameters.name }}
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
