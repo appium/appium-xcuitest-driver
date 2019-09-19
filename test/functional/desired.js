@@ -2,24 +2,29 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-import { system } from 'appium-support';
+import { system, util } from 'appium-support';
 
+
+// translate integer environment variable to a boolean 0=false, !0=true
+function checkFeatureInEnv (envArg) {
+  let feature = parseInt(process.env[envArg], 10);
+  if (isNaN(feature)) {
+    feature = process.env[envArg];
+  }
+  return !!feature;
+}
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
 const DEVICE_NAME = process.env.DEVICE_NAME
   ? process.env.DEVICE_NAME
-  : process.env.SAUCE_RDC ? undefined : 'iPhone 6';
+  : process.env.SAUCE_RDC
+    ? undefined
+    : util.compareVersions(PLATFORM_VERSION, '>=', '13.0') ? 'iPhone 8' : 'iPhone 6';
 
-const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG || undefined; // we do not want `false` in Travis, otherwise we get some logging on errors
-const REAL_DEVICE = (function () {
-  let rd = parseInt(process.env.REAL_DEVICE, 10);
-  if (isNaN(rd)) {
-    rd = process.env.REAL_DEVICE;
-  }
-  return !!rd;
-})();
+const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
+const REAL_DEVICE = checkFeatureInEnv('REAL_DEVICE');
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
 if (REAL_DEVICE && !XCCONFIG_FILE) {
   // no xcconfig file specified, so try to find in the root directory of the package

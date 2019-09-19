@@ -137,7 +137,7 @@ async function initSession (caps) {
     }, caps);
   }
 
-  let serverRes = await driver.init(caps);
+  const serverRes = await driver.init(caps);
   if (!caps.udid && !caps.fullReset && serverRes[1].udid) {
     caps.udid = serverRes[1].udid;
   }

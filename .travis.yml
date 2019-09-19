@@ -6,6 +6,7 @@ node_js: "10"
 env:
   global:
     - PLATFORM_VERSION=12.2
+    - SHOW_XCODE_LOG=0
     - _FORCE_LOGS=1
     - RECURSIVE=--recursive
     - MAX_PARALLEL=0
@@ -25,8 +26,14 @@ jobs:
       name: Basic functional tests
       if: *noncron
       env:
-        - CI_METRICS=1
+        - DEVICE_NAME="iPhone 8"
         - TEST=functional/basic
+
+    - stage:
+      name: Device functional tests
+      if: *noncron
+      env:
+        - TEST=functional/device
 
     - stage:
       name: Driver functional tests
@@ -38,14 +45,12 @@ jobs:
       name: Web tests
       if: *noncron
       env:
-        - CI_METRICS=1
         - TEST=functional/web
 
     - stage:
       name: Long tests
       if: *noncron
       env:
-        - CI_METRICS=1
         - TEST=functional/long
 
     - stage:
@@ -53,7 +58,6 @@ jobs:
       if: *noncron
       osx_image: xcode10.1
       env:
-        - CI_METRICS=1
         - PLATFORM_VERSION=12.1
         - TEST=functional/web
 
@@ -62,7 +66,6 @@ jobs:
       if: *noncron
       osx_image: xcode9.4
       env:
-        - CI_METRICS=1
         - PLATFORM_VERSION=11.4
         - TEST=functional/web
 
@@ -188,6 +191,8 @@ jobs:
     #   os: linux
     #   env: CLOUD=1 SAUCE_RDC_DEVICE_INDEX=1 TEST=functional/long
 
+before_install:
+  - xcodebuild -version
 install:
   - npm --version
   - node --version
