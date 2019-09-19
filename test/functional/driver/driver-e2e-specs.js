@@ -9,6 +9,7 @@ import _ from 'lodash';
 import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
+import { translateDeviceName } from '../../../lib/utils';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
@@ -29,7 +30,7 @@ describe('XCUITestDriver', function () {
   let driver;
   before(async function () {
     const udid = await createDevice(SIM_DEVICE_NAME,
-      UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+      translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName), UICATALOG_SIM_CAPS.platformVersion);
     baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
     caps = Object.assign({
       usePrebuiltWDA: true,
