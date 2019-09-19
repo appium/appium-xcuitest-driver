@@ -62,7 +62,7 @@ jobs:
     parameters:
       name: iPhone7_11_4
       iosVersion: 11.4
-      xcodeVersion: 9.4
+      xcodeVersion: "9.4.1"
       deviceName: "iPhone 7"
       tvosName: AppleTV_11_4
       tvosDeviceName: "Apple TV"
