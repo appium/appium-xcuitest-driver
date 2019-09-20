@@ -169,7 +169,7 @@ describe('XCUITestDriver', function () {
         simsAfter.should.equal(simsBefore);
       });
 
-      it.only('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
+      it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
         // before
         const udid = await createDevice();
         let sim = await getSimulator(udid);
