@@ -18,8 +18,11 @@ const should = chai.should();
 chai.use(chaiAsPromised);
 
 async function createDevice () {
-  return await createDeviceNodeSimctl(SIM_DEVICE_NAME,
-    translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName), UICATALOG_SIM_CAPS.platformVersion);
+  return await createDeviceNodeSimctl(
+    SIM_DEVICE_NAME,
+    translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName),
+    UICATALOG_SIM_CAPS.platformVersion
+  );
 }
 
 async function getNumSims () {

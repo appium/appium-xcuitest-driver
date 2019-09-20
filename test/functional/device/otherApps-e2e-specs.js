@@ -2,12 +2,12 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { MULTIPLE_APPS } from '../desired';
-
+import { translateDeviceName } from '../../../lib/utils';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver', function () {
+describe('OtherApps', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let caps;
@@ -18,6 +18,7 @@ describe('XCUITestDriver', function () {
       usePrebuiltWDA: true,
       wdaStartupRetries: 0,
     }, MULTIPLE_APPS);
+    caps.deviceName = translateDeviceName(caps.platformVersion, caps.deviceName);
   });
 
   afterEach(async function () {

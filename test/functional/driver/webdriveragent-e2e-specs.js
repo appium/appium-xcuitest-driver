@@ -9,6 +9,7 @@ import { SubProcess } from 'teen_process';
 import { PLATFORM_VERSION, DEVICE_NAME } from '../desired';
 import { MOCHA_TIMEOUT } from '../helpers/session';
 import { retryInterval } from 'asyncbox';
+import { translateDeviceName } from '../../../lib/utils';
 
 let WebDriverAgent;
 if (!process.env.CLOUD) {
@@ -46,10 +47,14 @@ describe('WebDriverAgent', function () {
 
     xcodeVersion = await getVersion(true);
   });
-  describe('with fresh sim', function () {
+  describe.only('with fresh sim', function () {
     let device;
     before(async function () {
-      let simUdid = await createDevice(SIM_DEVICE_NAME, DEVICE_NAME, PLATFORM_VERSION);
+      let simUdid = await createDevice(
+        DEVICE_NAME,
+        translateDeviceName(PLATFORM_VERSION, DEVICE_NAME),
+        PLATFORM_VERSION
+      );
       device = await getSimulator(simUdid);
     });
 
