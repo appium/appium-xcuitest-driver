@@ -47,11 +47,11 @@ describe('WebDriverAgent', function () {
 
     xcodeVersion = await getVersion(true);
   });
-  describe.only('with fresh sim', function () {
+  describe('with fresh sim', function () {
     let device;
     before(async function () {
       let simUdid = await createDevice(
-        DEVICE_NAME,
+        SIM_DEVICE_NAME,
         translateDeviceName(PLATFORM_VERSION, DEVICE_NAME),
         PLATFORM_VERSION
       );
