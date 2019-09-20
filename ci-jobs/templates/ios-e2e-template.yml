@@ -20,7 +20,9 @@ jobs:
     - checkout: self
     - script: |
         echo "Mocha output file: $MOCHA_FILE"
-        echo 
+        echo "Platform Version: $PLATFORM_VERSION"
+        echo "Device Name: $DEVICE_NAME"
+      displayName: Print Environment Variables
     - script: ls /Applications/
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
