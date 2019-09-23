@@ -8,7 +8,6 @@ import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
 import xcode from 'appium-xcode';
-import { util } from 'appium-support';
 
 
 chai.should();
@@ -27,7 +26,10 @@ describe('XCUITestDriver - gestures', function () {
     });
     beforeEach(async function () {
       await driver.back();
-      await driver.execute('mobile: scroll', {direction: 'up'});
+      await retryInterval(5, 500, async function () {
+        const el = await driver.elementByAccessibilityId('Alert Views');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+      });
     });
     after(async function () {
       await deleteSession();
@@ -39,11 +41,9 @@ describe('XCUITestDriver - gestures', function () {
 
     describe('tap, press, longpress', function () {
       beforeEach(async function () {
-        await retryInterval(10, 500, async () => {
-          await driver.elementByAccessibilityId('Alert Views').click();
-          await retryInterval(5, 100, async function () {
-            await driver.elementByAccessibilityId(BTN_OK_CNCL);
-          });
+        await driver.elementByAccessibilityId('Alert Views').click();
+        await retryInterval(5, 100, async function () {
+          await driver.elementByAccessibilityId(BTN_OK_CNCL);
         });
       });
 
@@ -130,11 +130,6 @@ describe('XCUITestDriver - gestures', function () {
       });
     });
     it('should scroll using touch actions', async function () {
-      if (process.env.TRAVIS && util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0')) {
-        // TODO: figure out why this works locally but not on Travis
-        return this.skip();
-      }
-
       let el1 = await driver.elementByAccessibilityId('Activity Indicators');
       let el2 = await driver.elementByAccessibilityId('Progress Views');
 
@@ -148,9 +143,6 @@ describe('XCUITestDriver - gestures', function () {
       await retryInterval(5, 1000, async function () {
         await el3.isDisplayed().should.eventually.be.true;
       });
-
-      // go back
-      await driver.execute('mobile: scroll', {direction: 'up'});
     });
     it('should double tap on an element', async function () {
       // FIXME: Multitouch does not work as expected in Xcode < 9.
@@ -186,8 +178,9 @@ describe('XCUITestDriver - gestures', function () {
     });
     describe('pinch and zoom', function () {
       beforeEach(async function () {
-        await driver.execute('mobile: scroll', {direction: 'down'});
-        await driver.elementByAccessibilityId('Web View').click();
+        const el = await driver.elementByAccessibilityId('Web View');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+        await el.click();
       });
 
       // at this point this test relies on watching it happen, nothing is asserted
