@@ -1,8 +1,6 @@
-import B from 'bluebird';
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { killAllSimulators } from '../helpers/simulator';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { openPage, spinTitleEquals, GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE,
@@ -26,9 +24,6 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
 
   let driver;
   before(async function () {
-    if (!process.env.REAL_DEVICE) {
-      await killAllSimulators();
-    }
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: false,
@@ -52,9 +47,6 @@ describe('safari - windows and frames', function () {
 
   let driver;
   before(async function () {
-    if (!process.env.REAL_DEVICE) {
-      await killAllSimulators();
-    }
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
@@ -77,13 +69,31 @@ describe('safari - windows and frames', function () {
     });
 
     it('should be able to open and close windows', async function () {
-      let el = await driver.elementById('blanklink');
-      await el.click();
+      await driver.elementById('blanklink').click();
       await spinTitleEquals(driver, 'I am another page title');
 
-      await B.delay(2000);
       await driver.close();
-      await B.delay(3000);
+      await spinTitleEquals(driver, 'I am a page title');
+    });
+
+    it('should be able to use window handles', async function () {
+      const initialWindowHandle = await driver.windowHandle();
+
+      await driver.elementById('blanklink').click();
+      await spinTitleEquals(driver, 'I am another page title');
+
+      const newWindowHandle = await driver.windowHandle();
+
+      // should still have the first page
+      await driver.window(initialWindowHandle);
+      await spinTitleEquals(driver, 'I am a page title');
+
+      // should still have the second page
+      await driver.window(newWindowHandle);
+      await spinTitleEquals(driver, 'I am another page title');
+
+      // close and we should have the original page
+      await driver.close();
       await spinTitleEquals(driver, 'I am a page title');
     });
 
