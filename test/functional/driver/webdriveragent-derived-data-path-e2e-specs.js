@@ -7,6 +7,7 @@ import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { UICATALOG_SIM_CAPS } from '../desired';
 import path from 'path';
 import fs from 'fs';
+import { translateDeviceName } from '../../../lib/utils';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
@@ -15,7 +16,7 @@ const TEMP_FOLDER = '/tmp/WebDriverAgent';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver', function () {
+describe('WebDriverAgent Derived Data Path', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let baseCaps;
@@ -23,8 +24,11 @@ describe('XCUITestDriver', function () {
 
   let driver;
   before(async function () {
-    const udid = await createDevice(SIM_DEVICE_NAME,
-      UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+    const udid = await createDevice(
+      SIM_DEVICE_NAME,
+      translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName),
+      UICATALOG_SIM_CAPS.platformVersion
+    );
     baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
     caps = Object.assign({
       usePrebuiltWDA: true,

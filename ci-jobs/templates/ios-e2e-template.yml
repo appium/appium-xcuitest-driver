@@ -12,12 +12,17 @@ jobs:
     variables:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
-      MOCHA_FILE: '$(DEVICE_NAME)-$(PLATFORM_VERSION)-tests.xml'
+      MOCHA_FILE: '${{ parameters.name }}-tests.xml'
       CI: true
     pool:
       vmImage: 'macOS-10.14'
     steps:
     - checkout: self
+    - script: |
+        echo "Mocha output file: $MOCHA_FILE"
+        echo "Platform Version: $PLATFORM_VERSION"
+        echo "Device Name: $DEVICE_NAME"
+      displayName: Print Environment Variables
     - script: ls /Applications/
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
@@ -29,6 +34,7 @@ jobs:
     - task: NodeTool@0
       inputs:
         versionSpec: 10.x
+    # TODO: Toss this
     - script: |
         sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
         git submodule update --init --recursive;

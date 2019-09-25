@@ -55,6 +55,10 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('session -', function () {
     it('should get session details with our caps merged with WDA response', async function () {
+      if (process.env.SAUCE_EMUSIM) {
+        // Sauce adds extraneous caps that are hard to test
+        this.skip();
+      }
       const extraWdaCaps = {
         CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
         device: 'iphone',
