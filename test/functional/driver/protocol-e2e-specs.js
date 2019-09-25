@@ -11,7 +11,7 @@ import { W3C_CAPS } from '../desired';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver', function () {
+describe('Protocol', function () {
   this.timeout(MOCHA_TIMEOUT);
   if (!process.env.REAL_DEVICE) {
     describe('w3c compliance', function () {

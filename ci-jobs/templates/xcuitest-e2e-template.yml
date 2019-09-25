@@ -2,7 +2,7 @@ parameters:
   name: ''
   iosVersion: ''
   xcodeVersion: ''
-  deviceName: ''
+  deviceName: 'iphone simulator'
   tvosName: ''
   tvosDeviceName: ''
 jobs:

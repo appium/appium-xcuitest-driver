@@ -4,17 +4,26 @@ import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
 import request from 'request-promise';
 import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
-import { getDevices, createDevice } from 'node-simctl';
+import { getDevices, createDevice as createDeviceNodeSimctl } from 'node-simctl';
 import _ from 'lodash';
 import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
+import { translateDeviceName } from '../../../lib/utils';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
+
+async function createDevice () {
+  return await createDeviceNodeSimctl(
+    SIM_DEVICE_NAME,
+    translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName),
+    UICATALOG_SIM_CAPS.platformVersion
+  );
+}
 
 async function getNumSims () {
   return (await getDevices())[UICATALOG_SIM_CAPS.platformVersion].length;
@@ -28,8 +37,7 @@ describe('XCUITestDriver', function () {
 
   let driver;
   before(async function () {
-    const udid = await createDevice(SIM_DEVICE_NAME,
-      UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+    const udid = await createDevice();
     baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
     caps = Object.assign({
       usePrebuiltWDA: true,
@@ -166,8 +174,7 @@ describe('XCUITestDriver', function () {
 
       it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
         // before
-        const udid = await createDevice(SIM_DEVICE_NAME,
-          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+        const udid = await createDevice();
         let sim = await getSimulator(udid);
         await sim.run();
 
@@ -196,8 +203,7 @@ describe('XCUITestDriver', function () {
 
       it('with udid booted: uses sim and leaves it afterwards', async function () {
         // before
-        const udid = await createDevice(SIM_DEVICE_NAME,
-          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+        const udid = await createDevice();
         let sim = await getSimulator(udid);
         await sim.run();
 
@@ -246,8 +252,7 @@ describe('XCUITestDriver', function () {
         this.timeout(MOCHA_TIMEOUT);
 
         // before
-        const udid = await createDevice(SIM_DEVICE_NAME,
-          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+        const udid = await createDevice();
         let sim = await getSimulator(udid);
 
         // some systems require a pause before initializing.
