@@ -162,8 +162,9 @@ describe('XCUITestDriver - element(s)', function () {
       let phText = 'Placeholder text';
 
       beforeEach(async function () {
-        await driver.execute('mobile: scroll', {direction: 'down'});
-        await driver.elementByAccessibilityId('Text Fields').click();
+        const el = await driver.elementByAccessibilityId('Text Fields');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+        await el.click();
       });
       afterEach(async function () {
         await driver.back();
