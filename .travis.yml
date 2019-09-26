@@ -60,14 +60,6 @@ jobs:
         - PLATFORM_VERSION=12.1
         - TEST=functional/web
 
-    - stage:
-      name: Smoke tests on xcode 9.4 web
-      if: *noncron
-      osx_image: xcode9.4
-      env:
-        - PLATFORM_VERSION=11.4
-        - TEST=functional/web
-
     - stage: "[CRON] Upload Appium build to Sauce Storage"
       if: &cron type = cron
       os: linux
