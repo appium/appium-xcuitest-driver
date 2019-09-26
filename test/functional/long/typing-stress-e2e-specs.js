@@ -26,8 +26,9 @@ describe('XCUITestDriver - long tests', function () {
   describe('typing', function () {
     const text = 'bunchoftext';
     before(async function () {
-      await driver.execute('mobile: scroll', {direction: 'down'});
-      await driver.elementByAccessibilityId('Text Fields').click();
+      const tfEl = await driver.elementByAccessibilityId('Text Fields');
+      await driver.execute('mobile: scroll', {element: tfEl, toVisible: true});
+      await tfEl.click();
 
       // wait for there to be text fields present
       await retryInterval(5, 500, async function () {

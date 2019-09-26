@@ -26,7 +26,6 @@ jobs:
       name: Basic functional tests
       if: *noncron
       env:
-        - DEVICE_NAME="iPhone 8"
         - TEST=functional/basic
 
     - stage:

@@ -296,7 +296,8 @@ describe('XCUITestDriver - find', function () {
   describe('duplicate text field', function () {
     before(async function () {
       try {
-        await driver.execute('mobile: scroll', {direction: 'down'});
+        const el = await driver.elementByAccessibilityId('Text Fields');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
       } catch (ign) {}
     });
     afterEach(async function () {
@@ -305,7 +306,8 @@ describe('XCUITestDriver - find', function () {
 
     after(async function () {
       // make sure we scroll back so as not to mess up subsequent tests
-      await driver.execute('mobile: scroll', {direction: 'up'});
+      const el = await driver.elementByAccessibilityId('Alert Views');
+      await driver.execute('mobile: scroll', {element: el, toVisible: true});
     });
 
     it('should find only one element per text field', async function () {
