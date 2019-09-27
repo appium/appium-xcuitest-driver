@@ -120,7 +120,7 @@ async function initSession (caps) {
     await initServer();
   }
 
-  if (process.env.CLOUD) {
+  if (CLOUD) {
     // on cloud tests, we want to set the `name` capability
     if (!caps.name) {
       caps.name = process.env.SAUCE_JOB_NAME || process.env.TRAVIS_JOB_NUMBER || 'unnamed';

@@ -74,6 +74,9 @@ describe('driver commands', function () {
               return {state: 'Booted'};
             },
             clearCaches: _.noop,
+            getWebInspectorSocket () {
+              return '/path/to/uds.socket';
+            },
           },
           udid: null,
           realDevice: null
@@ -86,6 +89,7 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'startWda').callsFake(_.noop);
       sandbox.stub(driver, 'setReduceMotion').callsFake(_.noop);
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
+      sandbox.stub(driver, 'connectToRemoteDebugger').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setLocale').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setPreferences').callsFake(_.noop);
       sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0'); // eslint-disable-line require-await
