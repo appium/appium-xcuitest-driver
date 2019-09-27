@@ -5,7 +5,7 @@ parameters:
   deviceName: 'iphone simulator'
   tvosName: ''
   tvosDeviceName: ''
-  useIDB: false
+  launchWithIDB: false
 jobs:
   - template: ./ios-e2e-template.yml
     parameters:
@@ -68,7 +68,7 @@ jobs:
 #      iosVersion: ${{ parameters.iosVersion }}
 #      xcodeVersion: ${{ parameters.xcodeVersion }}
 #      deviceName: ${{ parameters.deviceName }}
-#      useIDB: true
+#      launchWithIDB: true
 #      script: |
 #        brew tap facebook/fb
 #        brew install idb-companion
