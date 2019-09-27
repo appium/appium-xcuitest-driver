@@ -5,6 +5,7 @@ parameters:
   deviceName: 'iphone simulator'
   tvosName: ''
   tvosDeviceName: ''
+  launchWithIDB: false
 jobs:
   - template: ./ios-e2e-template.yml
     parameters:
@@ -60,3 +61,17 @@ jobs:
       deviceName: ${{ parameters.tvosDeviceName }}
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/tv -g @skip-ci -i --exit
+# IDB test is commented out at the moment since it is not working with xcode 11 and azure
+#  - template: ./ios-e2e-template.yml
+#    parameters:
+#      name: e2e_basic_idb_${{ parameters.name }}
+#      iosVersion: ${{ parameters.iosVersion }}
+#      xcodeVersion: ${{ parameters.xcodeVersion }}
+#      deviceName: ${{ parameters.deviceName }}
+#      launchWithIDB: true
+#      script: |
+#        brew tap facebook/fb
+#        brew install idb-companion
+#        pip3.7 install fb-idb
+#        npm install --no-save mjpeg-consumer
+#        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
