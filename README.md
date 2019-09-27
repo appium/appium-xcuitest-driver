@@ -35,8 +35,11 @@ For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) t
 gem install xcpretty
 ```
 
-### Before module version 2.96.0 WebDriverAgent component only supports XCode8 and newer
-### Since module version 2.96.0 WebDriverAgent component only supports XCode9 and newer
+## Xcode dependency
+
+* module versions below `2.96.0` only supports XCode 8 and newer
+* module version `2.96.0` and above only supports XCode 9 and newer
+* module version `3.0.0` and above only supports Xcode 10 and newer
 
 
 ## Sim Resetting
