@@ -35,8 +35,11 @@ For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) t
 gem install xcpretty
 ```
 
-### Before module version 2.96.0 WebDriverAgent component only supports XCode8 and newer
-### Since module version 2.96.0 WebDriverAgent component only supports XCode9 and newer
+## Xcode dependency
+
+* module versions below `2.96.0` only supports XCode 8 and newer
+* module version `2.96.0` and above only supports XCode 9 and newer
+* module version `3.0.0` and above only supports Xcode 10 and newer
 
 
 ## Sim Resetting
@@ -161,8 +164,7 @@ Differences are noted here:
 |`screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc)  Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command. `0` might cause OutOfMemory crash on high-resolution devices like iPad Pro. | e.g. `0`, `1`, `2` |
 |`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`safariGarbageCollect`|Turns on/off Web Inspector garbage collection when executing scripts on Safari. Turning on may improve performance. Defaults to `false`.|`true` or `false`|
-|`includeSafariInWebviews`|Add Safari web contexts to the list of contexts available during a native/webview app test. This is useful if the
-test opens Safari and needs to be able to interact with it. Defaults to `false`.|`true` or `false`|
+|`includeSafariInWebviews`|Add Safari web contexts to the list of contexts available during a native/webview app test. This is useful if the test opens Safari and needs to be able to interact with it. Defaults to `false`.|`true` or `false`|
 
 ## Opt-in Features (With Security Risk)
 
