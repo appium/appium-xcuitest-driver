@@ -45,8 +45,7 @@ describe('Safari - coordinate conversion -', function () {
     await killAllSimulators();
 
     if (process.env.REAL_DEVICE) {
-      // on real device, just test again the current device
-      devices = [caps.deviceName];
+      // skip, by not having any devices in the list
     } else if (process.env.ALL_DEVICES) {
       // get all the iPhone and iPad devices available
       devices = await getDeviceTypes();
