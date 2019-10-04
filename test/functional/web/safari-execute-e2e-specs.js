@@ -26,6 +26,7 @@ describe('safari - execute -', function () {
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       nativeWebTap: true,
+      showSafariConsoleLog: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
@@ -47,7 +48,7 @@ describe('safari - execute -', function () {
       });
 
       it('should eval javascript', async function () {
-        (await driver.execute('return 1')).should.be.equal(1);
+        (await driver.execute('return 1 + 1')).should.be.equal(2);
       });
 
       it('should not be returning hardcoded results', async function () {
@@ -92,12 +93,6 @@ describe('safari - execute -', function () {
     });
 
     describe('asynchronous', function () {
-      before(function () {
-        if (process.env.REAL_DEVICE) {
-          return this.skip();
-        }
-      });
-
       it('should execute async javascript', async function () {
         await driver.setAsyncScriptTimeout(1000);
         await driver.executeAsync(`arguments[arguments.length - 1](123);`)
@@ -137,7 +132,9 @@ describe('safari - execute -', function () {
         }).listen({host, port});
       });
       after(function () {
-        server.close();
+        if (server) {
+          server.close();
+        }
       });
 
       it('should execute async javascript from a different site', async function () {
