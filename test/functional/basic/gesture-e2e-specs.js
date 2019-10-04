@@ -7,6 +7,7 @@ import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
+import { getGenericSimulatorForIosVersion } from '../../../lib/utils';
 import xcode from 'appium-xcode';
 
 
@@ -253,8 +254,20 @@ describe('XCUITestDriver - gestures', function () {
           y0 = location.y;
         } catch (e) {
           // Otherwise, pull down the middle of the top of the Simulator
+          const isIphoneX = await (async () => {
+            if (UICATALOG_CAPS.deviceName.toLowerCase().includes('iphone x')) {
+              return true;
+            }
+            const { platformVersion, deviceName } = await driver.sessionCapabilities();
+            const generic = getGenericSimulatorForIosVersion(platformVersion, deviceName);
+            if (generic.toLowerCase() === 'iphone x') {
+              return true;
+            }
+            return false;
+          })();
+
           x = width / 2;
-          y0 = UICATALOG_CAPS.deviceName.toLowerCase().includes('iphone x')
+          y0 = isIphoneX
             ? 15
             : height - 5;
         }
