@@ -9,3 +9,4 @@ package-lock.json*
 .nyc_output/
 test-results.xml
 .vscode
+.idea/
