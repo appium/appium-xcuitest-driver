@@ -260,7 +260,7 @@ describe('XCUITestDriver - gestures', function () {
             }
             const { platformVersion, deviceName } = await driver.sessionCapabilities();
             const generic = getGenericSimulatorForIosVersion(platformVersion, deviceName);
-            if (_.lowerCase(generic).includes('iphone x')) {
+            if (_.toLower(generic).includes('iphone x')) {
               return true;
             }
             return false;
