@@ -3,6 +3,7 @@ parameters:
   iosVersion: ''
   xcodeVersion: ''
   deviceName: 'iphone simulator'
+  skipTvOs: False
   tvosName: ''
   tvosDeviceName: ''
   launchWithIDB: false
@@ -54,6 +55,7 @@ jobs:
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
+    condition: ne(${{ parameters.skipTvOs }}, True)
     parameters:
       name: e2e_tvos_${{ parameters.tvosName }}
       iosVersion: ${{ parameters.iosVersion }}
