@@ -3,6 +3,7 @@ parameters:
   iosVersion: ''
   xcodeVersion: ''
   deviceName: 'iphone simulator'
+  skipTvOs: False
   tvosName: ''
   tvosDeviceName: ''
   launchWithIDB: false
@@ -57,6 +58,7 @@ jobs:
     parameters:
       name: e2e_tvos_${{ parameters.tvosName }}
       iosVersion: ${{ parameters.iosVersion }}
+      skipTvOs: ${{ parameters.skipTvOs }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.tvosDeviceName }}
       script: |
