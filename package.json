@@ -21,6 +21,14 @@
   "engines": [
     "node"
   ],
+  "appium": {
+    "driverName": "xcuitest",
+    "automationName": "XCUITest",
+    "platformNames": [
+      "iOS"
+    ],
+    "mainClass": "XCUITestDriver"
+  },
   "main": "./build/index.js",
   "bin": {},
   "directories": {
