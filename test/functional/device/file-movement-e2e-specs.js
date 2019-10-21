@@ -11,6 +11,11 @@ chai.use(chaiAsPromised);
 
 const UICAT_CONTAINER = `@com.example.apple-samplecode.UICatalog`;
 
+async function pullFileAsString (driver, remotePath) {
+  let remoteData64 = await driver.pullFile(remotePath);
+  return Buffer.from(remoteData64, 'base64').toString();
+}
+
 if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
   describe('XCUITestDriver - file movement', function () {
     this.timeout(MOCHA_TIMEOUT);
@@ -23,11 +28,6 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       await deleteSession();
     });
 
-    async function pullFileAsString (remotePath) {
-      let remoteData64 = await driver.pullFile(remotePath);
-      return Buffer.from(remoteData64, 'base64').toString();
-    }
-
     describe('sim relative', function () {
       describe('files', function () {
         it('should not be able to fetch a file from the file system at large', async function () {
@@ -35,7 +35,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         });
 
         it('should be able to fetch the Address book', async function () {
-          let stringData = await pullFileAsString(`${UICAT_CONTAINER}/PkgInfo`);
+          let stringData = await pullFileAsString(driver, `${UICAT_CONTAINER}/PkgInfo`);
           stringData.indexOf('APPL').should.not.equal(-1);
         });
 
@@ -45,13 +45,29 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         });
 
         it('should be able to push and pull a file', async function () {
-          let stringData = `random string data ${Math.random()}`;
-          let base64Data = Buffer.from(stringData).toString('base64');
-          let remotePath = `${UICAT_CONTAINER}/remote.txt`;
+          const stringData = `random string data ${Math.random()}`;
+          const base64Data = Buffer.from(stringData).toString('base64');
+          const remotePath = `${UICAT_CONTAINER}/remote.txt`;
 
           await driver.pushFile(remotePath, base64Data);
-          let remoteStringData = await pullFileAsString(remotePath);
+
+          const remoteStringData = await pullFileAsString(driver, remotePath);
           remoteStringData.should.equal(stringData);
+        });
+
+        it('should be able to delete a file', async function () {
+          const stringData = `random string data ${Math.random()}`;
+          const base64Data = Buffer.from(stringData).toString('base64');
+          const remotePath = `${UICAT_CONTAINER}/remote.txt`;
+
+          await driver.pushFile(remotePath, base64Data);
+
+          const remoteStringData = await pullFileAsString(driver, remotePath);
+          remoteStringData.should.equal(stringData);
+
+          await driver.execute('mobile: deleteFile', {remotePath});
+
+          await pullFileAsString(driver, remotePath).should.eventually.be.rejectedWith(/does not exist/);
         });
       });
 
@@ -91,8 +107,23 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         let remotePath = `${UICAT_CONTAINER}/UICatalog.app/somefile.tmp`;
 
         await driver.pushFile(remotePath, base64Data);
-        let remoteStringData = await pullFileAsString(remotePath);
+        let remoteStringData = await pullFileAsString(driver, remotePath);
         remoteStringData.should.equal(stringData);
+      });
+
+      it('should be able to delete a file from the app directory', async function () {
+        const stringData = `random string data ${Math.random()}`;
+        const base64Data = Buffer.from(stringData).toString('base64');
+        const remotePath = `${UICAT_CONTAINER}/UICatalog.app/somefile.tmp`;
+
+        await driver.pushFile(remotePath, base64Data);
+
+        const remoteStringData = await pullFileAsString(driver, remotePath);
+        remoteStringData.should.equal(stringData);
+
+        await driver.execute('mobile: deleteFile', {remotePath});
+
+        await pullFileAsString(driver, remotePath).should.eventually.be.rejectedWith(/does not exist/);
       });
     });
   });
