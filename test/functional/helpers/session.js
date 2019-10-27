@@ -14,6 +14,9 @@ if (CI_METRICS) {
 }
 
 function getPort () {
+  if (process.env.PORT) {
+    return process.env.PORT;
+  }
   if (SAUCE_EMUSIM || SAUCE_RDC) {
     return 80;
   }
@@ -21,6 +24,9 @@ function getPort () {
 }
 
 function getHost () {
+  if (process.env.HOST) {
+    return process.env.HOST;
+  }
   if (SAUCE_RDC) {
     return 'appium.staging.testobject.org';
   } else if (SAUCE_EMUSIM) {

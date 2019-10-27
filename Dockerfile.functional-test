@@ -1,0 +1,8 @@
+FROM node:12
+WORKDIR appium-xcuitest-driver
+COPY package.json ./
+RUN npm install
+RUN npm install mocha@5
+COPY . .
+RUN npm run build
+CMD ["npm", "test"]
