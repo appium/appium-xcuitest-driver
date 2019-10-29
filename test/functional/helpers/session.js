@@ -73,7 +73,7 @@ if (REMOTE) {
 }
 
 async function initDriver () { // eslint-disable-line require-await
-  const appiumUrl = process.env.APPIUM_URL || `http://${HOST}:${PORT}`;
+  const appiumUrl = process.env.APPIUM_URL || `http://${HOST}:${PORT}/wd/hub`;
   testSetupLog.info(`Starting session at '${appiumUrl}'`);
   driver = await wd.promiseChainRemote(appiumUrl);
   driver.name = undefined;

@@ -207,7 +207,7 @@ install:
 before_script: npm outdated || true
 script:
   - if [ -n "$CLOUD" ]; then
-      npx mocha-parallel-tests --max-parallel $MAX_PARALLEL --debug -t 120000 --require build/test/env/env --recursive build/test/$TEST;
+      npx mocha-parallel-tests --max-parallel $MAX_PARALLEL --debug -t 120000 --recursive build/test/$TEST;
     else
       npm run lint && npx mocha -t 0 $RECURSIVE build/test/$TEST -g @skip-ci -i --exit;
     fi

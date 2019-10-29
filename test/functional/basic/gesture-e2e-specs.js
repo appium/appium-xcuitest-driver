@@ -26,7 +26,9 @@ describe('XCUITestDriver - gestures', function () {
       driver = await initSession(UICATALOG_CAPS);
     });
     beforeEach(async function () {
-      await driver.back();
+      try {
+        await driver.back();
+      } catch (ign) { }
       await retryInterval(5, 500, async function () {
         const el = await driver.elementByAccessibilityId('Alert Views');
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
