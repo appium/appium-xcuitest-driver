@@ -26,9 +26,7 @@ describe('XCUITestDriver - gestures', function () {
       driver = await initSession(UICATALOG_CAPS);
     });
     beforeEach(async function () {
-      try {
-        await driver.back();
-      } catch (ign) { }
+      await driver.back();
       await retryInterval(5, 500, async function () {
         const el = await driver.elementByAccessibilityId('Alert Views');
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
@@ -150,7 +148,7 @@ describe('XCUITestDriver - gestures', function () {
     it('should double tap on an element', async function () {
       // FIXME: Multitouch does not work as expected in Xcode < 9.
       // cloud tests are run on Linux, so no Xcode version to check
-      if (!process.env.REMOTE && (await xcode.getVersion(true)).major < 9) {
+      if (process.env.REMOTE || (await xcode.getVersion(true)).major < 9) {
         return this.skip();
       }
 

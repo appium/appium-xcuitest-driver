@@ -32,6 +32,8 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
   }
 }
 
+const abovePlatformVersion13 = parseInt(PLATFORM_VERSION, 10) >= 13;
+
 // Had to make these two optional dependencies so the tests
 // can still run in linux
 let testAppPath, uiCatalogPath;
@@ -39,7 +41,7 @@ if (system.isMac() && !process.env.REMOTE) {
   testAppPath = require('ios-test-app').absolute;
 
   // iOS 13+ need a slightly different app to be able to get the correct automation
-  uiCatalogPath = parseInt(PLATFORM_VERSION, 10) >= 13
+  uiCatalogPath = abovePlatformVersion13
     ? require('ios-uicatalog').uiKitCatalog.absolute
     : require('ios-uicatalog').uiCatalog.absolute;
 }
@@ -58,7 +60,9 @@ if (REAL_DEVICE) {
 } else {
   if (REMOTE) {
     apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp9.4.app.zip';
-    apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
+    apps.uiCatalogApp = abovePlatformVersion13 ?
+      'http://appium.github.io/appium/assets/UICatalog9.4.app.zip' : // TODO: Make this UIKitCatalog
+      'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
     apps.touchIdApp = null; // TODO: Upload this to appium.io
   } else {
     apps.iosTestApp = testAppPath.iphonesimulator;
@@ -89,6 +93,14 @@ let GENERIC_CAPS = {
   webviewConnectTimeout: 30000,
   appiumVersion: process.env.APPIUM_VERSION,
 };
+
+if (process.env.APPIUM_VERSION) {
+  GENERIC_CAPS.appiumVersion = process.env.APPIUM_VERSION;
+}
+
+if (process.env.EXTRA_CAPS) {
+  Object.assign(GENERIC_CAPS, JSON.parse(process.env.EXTRA_CAPS));
+}
 
 if (process.env.SAUCE_BUILD) {
   GENERIC_CAPS.build = process.env.SAUCE_BUILD;
