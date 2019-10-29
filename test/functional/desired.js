@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-import { system, util } from 'appium-support';
+import { system } from 'appium-support';
 
 
 // translate integer environment variable to a boolean 0=false, !0=true
@@ -17,12 +17,7 @@ function checkFeatureInEnv (envArg) {
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
 const LAUNCH_WITH_IDB = process.env.LAUNCH_WITH_IDB;
 
-// If it's real device cloud, don't set a device name. Use dynamic device allocation.
-const DEVICE_NAME = process.env.DEVICE_NAME
-  ? process.env.DEVICE_NAME
-  : process.env.SAUCE_RDC
-    ? undefined
-    : util.compareVersions(PLATFORM_VERSION, '>=', '13.0') ? 'iPhone 8' : 'iPhone 6';
+const DEVICE_NAME = process.env.DEVICE_NAME || 'iPhone Simulator';
 
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const REAL_DEVICE = checkFeatureInEnv('REAL_DEVICE');
@@ -40,7 +35,7 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
 // Had to make these two optional dependencies so the tests
 // can still run in linux
 let testAppPath, uiCatalogPath;
-if (system.isMac() && !process.env.CLOUD) {
+if (system.isMac() && !process.env.REMOTE) {
   testAppPath = require('ios-test-app').absolute;
 
   // iOS 13+ need a slightly different app to be able to get the correct automation
@@ -51,17 +46,17 @@ if (system.isMac() && !process.env.CLOUD) {
 
 const apps = {};
 
-const CLOUD = process.env.CLOUD;
+const REMOTE = process.env.REMOTE;
 
 if (REAL_DEVICE) {
-  if (CLOUD) {
+  if (REMOTE) {
     apps.testAppId = 1;
   } else {
     apps.iosTestApp = testAppPath.iphoneos;
     apps.uiCatalogApp = uiCatalogPath.iphoneos;
   }
 } else {
-  if (CLOUD) {
+  if (REMOTE) {
     apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp9.4.app.zip';
     apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
     apps.touchIdApp = null; // TODO: Upload this to appium.io
@@ -76,9 +71,6 @@ const REAL_DEVICE_CAPS = REAL_DEVICE ? {
   udid: 'auto',
   xcodeConfigFile: XCCONFIG_FILE,
   webkitResponseTimeout: 30000,
-  testobject_app_id: apps.testAppId,
-  testobject_api_key: process.env.SAUCE_RDC_ACCESS_KEY,
-  testobject_remote_appium_url: process.env.APPIUM_STAGING_URL, // TODO: Once RDC starts supporting this again, re-insert this
 } : {};
 
 let GENERIC_CAPS = {
@@ -95,14 +87,13 @@ let GENERIC_CAPS = {
   wdaConnectionTimeout: (60 * 1000 * 8),
   useNewWDA: true,
   webviewConnectTimeout: 30000,
+  appiumVersion: process.env.APPIUM_VERSION,
 };
 
-if (process.env.CLOUD) {
-  GENERIC_CAPS.platformVersion = process.env.CLOUD_PLATFORM_VERSION;
+if (process.env.SAUCE_BUILD) {
   GENERIC_CAPS.build = process.env.SAUCE_BUILD;
   GENERIC_CAPS.showIOSLog = false;
   GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP || 'appium-version'] = {'appium-url': 'sauce-storage:appium.zip'};
-  // TODO: If it's SAUCE_RDC add the appium staging URL
 
   // `name` will be set during session initialization
 }
@@ -111,7 +102,7 @@ if (process.env.CLOUD) {
 // and tests fail, so use static one in assets if necessary,
 // but prefer to have one build locally
 // only do this for sim, since real device one needs to be built with dev creds
-if (!REAL_DEVICE && !process.env.CLOUD) {
+if (!REAL_DEVICE && !process.env.REMOTE) {
   // this happens a single time, at load-time for the test suite,
   // so sync method is not overly problematic
   if (!fs.existsSync(apps.uiCatalogApp)) {

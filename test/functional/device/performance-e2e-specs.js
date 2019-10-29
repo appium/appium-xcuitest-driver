@@ -16,7 +16,7 @@ describe('XCUITestDriver - performance', function () {
   describe('record performance metrics', function () {
     before(async function () {
       // Don't do these tests on Sauce Labs
-      if (process.env.CLOUD || process.env.CI) {
+      if (process.env.REMOTE || process.env.CI) {
         this.skip();
       }
 

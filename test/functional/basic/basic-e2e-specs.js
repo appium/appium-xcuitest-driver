@@ -26,17 +26,16 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('status -', function () {
     it('should get the server status', async function () {
-      let status = await driver.status();
-      if (process.env.SAUCE_EMUSIM) {
-        status.build.version.should.equal('Sauce Labs');
-      } else {
-        status.wda.should.exist;
+      if (process.env.REMOTE) {
+        this.skip();
       }
+      let status = await driver.status();
+      status.wda.should.exist;
     });
 
     it('should return status immediately if another operation is in progress', async function () {
       // Sauce EmuSim/RDC don't seem to support getting status and running an operation concurrently
-      if (process.env.CLOUD) {
+      if (process.env.REMOTE) {
         this.skip();
       }
 
@@ -55,8 +54,8 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('session -', function () {
     it('should get session details with our caps merged with WDA response', async function () {
-      if (process.env.SAUCE_EMUSIM) {
-        // Sauce adds extraneous caps that are hard to test
+      if (process.env.REMOTE) {
+        // Remote endpoints may adds extraneous caps that are hard to test
         this.skip();
       }
       const extraWdaCaps = {
@@ -98,7 +97,7 @@ describe('XCUITestDriver - basics -', function () {
         delete expected.showXcodeLog;
       }
 
-      if (process.env.CLOUD) {
+      if (process.env.REMOTE) {
         delete expected.app;
         delete expected[process.env.APPIUM_BUNDLE_CAP];
 

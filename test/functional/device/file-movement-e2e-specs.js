@@ -16,7 +16,7 @@ async function pullFileAsString (driver, remotePath) {
   return Buffer.from(remoteData64, 'base64').toString();
 }
 
-if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
+if (!process.env.REAL_DEVICE && !process.env.REMOTE) {
   describe('XCUITestDriver - file movement', function () {
     this.timeout(MOCHA_TIMEOUT);
 

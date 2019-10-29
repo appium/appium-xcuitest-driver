@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 const LOCAL_BASE_END_POINT = `http://${process.env.REAL_DEVICE ? util.localIp() : HOST}:${PORT}`;
 const REMOTE_BASE_END_POINT = `http://127.0.0.1:4443`;
-const BASE_END_POINT = process.env.CLOUD ? REMOTE_BASE_END_POINT : LOCAL_BASE_END_POINT;
+const BASE_END_POINT = process.env.REMOTE ? REMOTE_BASE_END_POINT : LOCAL_BASE_END_POINT;
 const TEST_END_POINT = `${BASE_END_POINT}/test`;
 const GUINEA_PIG_PAGE = `${TEST_END_POINT}/guinea-pig`;
 const GUINEA_PIG_SCROLLABLE_PAGE = `${GUINEA_PIG_PAGE}-scrollable`;

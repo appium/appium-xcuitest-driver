@@ -39,7 +39,7 @@ describe('XCUITestDriver - alerts -', function () {
   it('should detect Simple', async function () {
     let el = await driver.elementByAccessibilityId('Simple');
     await el.click();
-    await B.delay(process.env.CLOUD ? 10000 : 2000);
+    await B.delay(process.env.REMOTE ? 10000 : 2000);
 
     (await driver.alertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();

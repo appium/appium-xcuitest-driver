@@ -26,13 +26,13 @@ let caps = _.defaults({
 
 let pemCertificate;
 
-if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
+if (!process.env.REAL_DEVICE && !process.env.REMOTE) {
   describe('Safari SSL', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let sslServer, driver;
     before(async function () {
-      if (!process.env.CLOUD) {
+      if (!process.env.REMOTE) {
         await killAllSimulators();
       }
 
@@ -71,7 +71,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
 
       // Now do another session using the same cert to verify that it still works
       // (Don't do it on CLOUD. Restarting is too slow)
-      if (!process.env.CLOUD) {
+      if (!process.env.REMOTE) {
         await driver.init(caps);
         await driver.get(LOCAL_HTTPS_URL);
         source = await driver.source();

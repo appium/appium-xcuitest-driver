@@ -20,7 +20,7 @@ describe('XCUITestDriver - screenshots - mjpeg server', function () {
 
   before(async function () {
     // Don't do these tests on Sauce Labs
-    if (process.env.CLOUD) {
+    if (process.env.REMOTE) {
       this.skip();
     }
     mjpegServer = mjpeg.initMJpegServer(MJPEG_SERVER_PORT);

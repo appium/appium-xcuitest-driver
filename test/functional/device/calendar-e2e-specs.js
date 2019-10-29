@@ -7,7 +7,7 @@ import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 chai.should();
 chai.use(chaiAsPromised);
 
-if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
+if (!process.env.REAL_DEVICE && !process.env.REMOTE) {
   describe('XCUITestDriver - calendar', function () {
     this.timeout(MOCHA_TIMEOUT);
 

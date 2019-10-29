@@ -7,7 +7,7 @@ import { killAllSimulators as simKill } from 'appium-ios-simulator';
 
 
 async function killAllSimulators () {
-  if (process.env.CLOUD) {
+  if (process.env.REMOTE) {
     return;
   }
 

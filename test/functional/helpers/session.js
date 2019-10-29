@@ -1,50 +1,35 @@
 import wd from 'wd';
 import request from 'request-promise';
 import { startServer } from '../../..';
-import { util } from 'appium-support';
+import { util, logger } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
 import _ from 'lodash';
 
+const testSetupLog = logger.getLogger('TEST_SETUP');
 
-const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
+const {REMOTE, CI_METRICS} = process.env;
 
 // if we are tracking CI metrics, patch the wd framework
 if (CI_METRICS) {
   patchDriverWithEvents();
 }
 
-function getPort () {
-  if (process.env.PORT) {
-    return process.env.PORT;
-  }
-  if (SAUCE_EMUSIM || SAUCE_RDC) {
-    return 80;
-  }
-  return 4994;
-}
-
 function getHost () {
   if (process.env.HOST) {
     return process.env.HOST;
   }
-  if (SAUCE_RDC) {
-    return 'appium.staging.testobject.org';
-  } else if (SAUCE_EMUSIM) {
-    return 'ondemand.saucelabs.com';
-  }
-
   return process.env.REAL_DEVICE ? util.localIp() : 'localhost';
 }
 
 const HOST = getHost();
-const PORT = getPort();
+const PORT = process.env.PORT || 4994;
 // on CI the timeout needs to be long, mostly so WDA can be built the first time
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 0 : 4);
 const WDA_PORT = 8200;
 
 let driver, server;
 
-if (CLOUD) {
+if (REMOTE) {
   before(function () {
     process.env.SAUCE_JOB_NAME = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${this.test.parent.suites[0].title}`;
   });
@@ -88,10 +73,9 @@ if (CLOUD) {
 }
 
 async function initDriver () { // eslint-disable-line require-await
-  const config = {host: HOST, port: PORT};
-  driver = CLOUD
-    ? await wd.promiseChainRemote(config, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY)
-    : await wd.promiseChainRemote(config);
+  const appiumUrl = process.env.APPIUM_URL || `http://${HOST}:${PORT}`;
+  testSetupLog.info(`Starting session at '${appiumUrl}'`);
+  driver = await wd.promiseChainRemote(appiumUrl);
   driver.name = undefined;
   driver.errored = false;
   return driver;
@@ -122,11 +106,9 @@ async function initWDA (caps) {
 }
 
 async function initSession (caps) {
-  if (!CLOUD) {
+  if (!REMOTE) {
     await initServer();
-  }
-
-  if (CLOUD) {
+  } else {
     // on cloud tests, we want to set the `name` capability
     if (!caps.name) {
       caps.name = process.env.SAUCE_JOB_NAME || process.env.TRAVIS_JOB_NUMBER || 'unnamed';
@@ -153,7 +135,7 @@ async function initSession (caps) {
 
 async function deleteSession () {
   try {
-    if (CLOUD) {
+    if (process.env.REMOTE) {
       await driver.sauceJobUpdate({
         name: driver.name,
         passed: !driver.errored,

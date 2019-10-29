@@ -11,7 +11,7 @@ import { util } from 'appium-support';
 chai.should();
 chai.use(chaiAsPromised);
 
-const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 500;
+const TEST_PAUSE_DURATION = process.env.REMOTE ? 5000 : 500;
 
 const PV_ABOVE_13 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0');
 
