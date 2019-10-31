@@ -47,15 +47,15 @@ describe('DeviceConnectionsFactory', function () {
     devConFactory.listConnections(null, 23424).should.eql([]);
   });
 
-  it('should properly release proxied connections', function () {
+  it('should properly release proxied connections', async function () {
     devConFactory._connectionsMapping = {
       'udid:1234': {iproxy: {quit: () => {}}},
       'udid:5678': {},
       'udid4:6545': {iproxy: {quit: () => {}}},
     };
 
-    devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping))
-      .should.eql(['udid:1234', 'udid4:6545']);
+    await devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping))
+      .should.eventually.eql(['udid:1234', 'udid4:6545']);
   });
 
 });
