@@ -166,6 +166,7 @@ Differences are noted here:
 |`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`safariGarbageCollect`|Turns on/off Web Inspector garbage collection when executing scripts on Safari. Turning on may improve performance. Defaults to `false`.|`true` or `false`|
 |`includeSafariInWebviews`|Add Safari web contexts to the list of contexts available during a native/webview app test. This is useful if the test opens Safari and needs to be able to interact with it. Defaults to `false`.|`true` or `false`|
+|`appPushTimeout`| The timeout for application upload in milliseconds. Works for real devices only. The default value is 30000ms | e. g. `60000` |
 
 ## Opt-in Features (With Security Risk)
 
