@@ -3,6 +3,8 @@ os: osx
 osx_image: xcode10.2
 language: node_js
 node_js: "10"
+cache:
+  npm: false
 env:
   global:
     - PLATFORM_VERSION=12.2
@@ -202,6 +204,7 @@ install:
       npm run build;
       npx gulp periodic-output & export LONG_PID=$!;
     fi
+before_script: npm outdated || true
 script:
   - if [ -n "$CLOUD" ]; then
       npx mocha-parallel-tests --max-parallel $MAX_PARALLEL --debug -t 120000 --require build/test/env/env --recursive build/test/$TEST;
