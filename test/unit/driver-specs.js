@@ -160,7 +160,7 @@ describe('installOtherApps', function () {
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp.app',
-      undefined, false
+      undefined, {noReset: false}
     ).should.be.true;
   });
 
@@ -176,12 +176,12 @@ describe('installOtherApps', function () {
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp1.app',
-      undefined, false
+      undefined, {noReset: false}
     ).should.be.true;
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp2.app',
-      undefined, false
+      undefined, {noReset: false}
     ).should.be.true;
   });
 });
