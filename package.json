@@ -45,10 +45,10 @@
     "@babel/runtime": "^7.0.0",
     "appium-base-driver": "^4.0.0",
     "appium-idb": "^0",
-    "appium-ios-device": "^1.1.0",
+    "appium-ios-device": "^1.2.1",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.14.0",
-    "appium-remote-debugger": "^6.5.0",
+    "appium-remote-debugger": "^6.6.0",
     "appium-support": "^2.32.0",
     "appium-webdriveragent": "^2.3.0",
     "appium-xcode": "^3.8.0",
@@ -57,6 +57,7 @@
     "bluebird": "^3.1.1",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
+    "moment": "^2.24.0",
     "node-simctl": "^5.0.1",
     "portscanner": "2.2.0",
     "request": "^2.79.0",
@@ -67,8 +68,7 @@
     "uuid-js": "^0.7.5",
     "ws": "^7.0.0",
     "xmldom": "^0.1.27",
-    "yargs": "^15.0.1",
-    "moment": "^2.24.0"
+    "yargs": "^15.0.1"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",

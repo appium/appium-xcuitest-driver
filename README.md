@@ -169,7 +169,7 @@ Differences are noted here:
 |`appPushTimeout`| The timeout for application upload in milliseconds. Works for real devices only. The default value is 30000ms | e. g. `60000` |
 |`safariLogAllCommunication`|Log all plists sent to and received from the Web Inspector, as plain text. For some operations this can be a lot of data, so it is recommended to be used only when necessary. Defaults to `false`.|`true` or `false`|
 |`safariLogAllCommunicationHexDump`|Log all communication sent to and received from the Web Inspector, as raw hex dump and printable characters. This logging is done _before_ any data manipulation, and so can elucidate some communication issues. Like `safariLogAllCommunication`, this can produce a lot of data in some cases, so it is recommended to be used only when necessary. Defaults to `false`.|`true` or `false`|
-|`safariSocketChunkSize`|The size, in _bytes_, of the data to be sent to the Web Inspector on iOS 11+ real devices. Some devices hang when sending large amounts of data to the Web Inspector, and breaking them into smaller parts can be helpful in those cases. Defaults to `5000`|e.g., `1000`|
+|`safariSocketChunkSize`|The size, in _bytes_, of the data to be sent to the Web Inspector on iOS 11+ real devices. Some devices hang when sending large amounts of data to the Web Inspector, and breaking them into smaller parts can be helpful in those cases. Defaults to `16384` (also the maximum possible)|e.g., `1000`|
 
 ## Opt-in Features (With Security Risk)
 
