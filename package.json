@@ -39,7 +39,8 @@
     "lib",
     "build/index.js",
     "build/lib",
-    "WebDriverAgent"
+    "WebDriverAgent",
+    "!.DS_Store"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
