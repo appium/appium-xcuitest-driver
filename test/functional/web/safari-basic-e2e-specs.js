@@ -388,7 +388,7 @@ describe('Safari - basics -', function () {
 
           await B.delay(1000);
           await retryInterval(10, 500, async function () {
-            await driver.source().should.include('Deceptive Website Warning');
+            await driver.source().should.eventually.include('Deceptive Website Warning');
           });
         } finally {
           await driver.context(ctx);
