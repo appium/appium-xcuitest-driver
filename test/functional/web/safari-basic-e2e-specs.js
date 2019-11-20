@@ -365,15 +365,9 @@ describe('Safari - basics -', function () {
     });
   });
 
-  // TODO: find another way to test this... the google site no longer loads on ios
-  describe.skip('safariIgnoreFraudWarning', function () {
+  describe('safariIgnoreFraudWarning', function () {
     describe('false', function () {
       beforeEach(async function () {
-        // on 12.2 the site never loads, and never gets automatable
-        if (DEFAULT_CAPS.platformVersion === '12.2') {
-          return this.skip();
-        }
-
         driver = await initSession(_.defaults({
           safariIgnoreFraudWarning: false,
         }, DEFAULT_CAPS));
@@ -383,11 +377,22 @@ describe('Safari - basics -', function () {
       });
 
       it('should display a phishing warning', async function () {
-        // on 12.2 the site never loads, and never gets automatable
         await openPage(driver, PHISHING_END_POINT);
-        await retryInterval(60, 1000, async function () {
-          (await driver.source()).toLowerCase().should.include('deceptive');
-        });
+
+        // on iOS 12.2+ the browser never fully loads the page with a phishing
+        // warning, and it never gets into the Web Inspector.
+        // it does, however, get visible in the native context!
+        const ctx = await driver.currentContext();
+        try {
+          await driver.context('NATIVE_APP');
+
+          await B.delay(1000);
+          await retryInterval(10, 500, async function () {
+            await driver.source().should.include('Deceptive Website Warning');
+          });
+        } finally {
+          await driver.context(ctx);
+        }
       });
     });
     describe('true', function () {
@@ -402,7 +407,7 @@ describe('Safari - basics -', function () {
 
       it('should not display a phishing warning', async function () {
         await openPage(driver, PHISHING_END_POINT);
-        (await driver.source()).toLowerCase().should.not.include('deceptive');
+        await driver.title().should.eventually.not.eql('Deceptive Website Warning');
       });
     });
   });
