@@ -32,7 +32,7 @@ async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 50
   await retryInterval(tries, interval, async function () {
     const title = await spinTitle(driver);
     if (title !== expectedTitle) {
-      throw new Error(`Could not find expected title. Found: '${title}'`);
+      throw new Error(`Could not find expected title: '${expectedTitle}'. Found: '${title}'`);
     }
   });
 }
