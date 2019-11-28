@@ -16,7 +16,7 @@ jobs:
       deviceName: ${{ parameters.deviceName }}
       script: |
         npm install --no-save mjpeg-consumer
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -25,7 +25,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/device -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/device -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -34,7 +34,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/driver -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/driver -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -43,7 +43,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/web -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/web -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -52,7 +52,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -62,7 +62,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.tvosDeviceName }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/tv -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/tv -g @skip-ci -i --exit
 # IDB test is commented out at the moment since it is not working with xcode 11 and azure
 #  - template: ./ios-e2e-template.yml
 #    parameters:
@@ -76,4 +76,4 @@ jobs:
 #        brew install idb-companion
 #        pip3.7 install fb-idb
 #        npm install --no-save mjpeg-consumer
-#        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options config-file=./ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
+#        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
