@@ -49,7 +49,7 @@
     "appium-ios-device": "^1.2.1",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.15.0",
-    "appium-remote-debugger": "^7.0.0",
+    "appium-remote-debugger": "^7.3.0",
     "appium-support": "^2.32.0",
     "appium-webdriveragent": "^2.3.2",
     "appium-xcode": "^3.8.0",
