@@ -24,6 +24,9 @@ describe('utils', function () {
           return DERIVED_DATA_ROOT;
         }
       };
+      mocks.fs.expects('walkDir')
+        .once()
+        .returns();
       mocks.fs.expects('exists')
         .once()
         .withExactArgs(`${DERIVED_DATA_ROOT}/Logs`)
@@ -41,6 +44,9 @@ describe('utils', function () {
           return DERIVED_DATA_ROOT;
         }
       };
+      mocks.fs.expects('walkDir')
+        .once()
+        .returns();
       mocks.fs.expects('exists')
         .withExactArgs(`${DERIVED_DATA_ROOT}/Logs`)
         .returns(true);
