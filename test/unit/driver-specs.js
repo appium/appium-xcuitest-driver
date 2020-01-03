@@ -154,13 +154,14 @@ describe('installOtherApps', function () {
     driver.isRealDevice.returns(false);
     driver.opts.noReset = false;
     driver.opts.device = 'some-device';
+    driver.lifecycleData = {createSim: false};
     await driver.installOtherApps('/path/to/iosApp.app');
     driver.isRealDevice.calledOnce.should.be.true;
     SimulatorManagementModule.installToSimulator.calledOnce.should.be.true;
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp.app',
-      undefined, {noReset: false}
+      undefined, {noReset: false, newSimulator: false}
     ).should.be.true;
   });
 
@@ -171,17 +172,18 @@ describe('installOtherApps', function () {
     driver.isRealDevice.returns(false);
     driver.opts.noReset = false;
     driver.opts.device = 'some-device';
+    driver.lifecycleData = {createSim: false};
     await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
     driver.isRealDevice.calledOnce.should.be.true;
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp1.app',
-      undefined, {noReset: false}
+      undefined, {noReset: false, newSimulator: false}
     ).should.be.true;
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp2.app',
-      undefined, {noReset: false}
+      undefined, {noReset: false, newSimulator: false}
     ).should.be.true;
   });
 });
