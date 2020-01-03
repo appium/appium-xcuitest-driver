@@ -27,7 +27,10 @@ describe('tvOS', function () {
     caps = Object.assign({usePrebuiltWDA: true}, baseCaps);
   });
   after(async function () {
-    const sim = await getSimulator(caps.udid);
+    const sim = await getSimulator(caps.udid, {
+      platform: 'tvOS',
+      checkExistence: false,
+    });
     await shutdownSimulator(sim);
     await deleteDeviceWithRetry(caps.udid);
   });

@@ -45,7 +45,10 @@ describe('XCUITestDriver', function () {
     }, baseCaps);
   });
   after(async function () {
-    const sim = await getSimulator(caps.udid);
+    const sim = await getSimulator(caps.udid, {
+      platform: 'iOS',
+      checkExistence: false,
+    });
     await shutdownSimulator(sim);
     await deleteDeviceWithRetry(caps.udid);
   });
@@ -175,7 +178,10 @@ describe('XCUITestDriver', function () {
       it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
         // before
         const udid = await createDevice();
-        let sim = await getSimulator(udid);
+        let sim = await getSimulator(udid, {
+          platform: 'iOS',
+          checkExistence: false,
+        });
         await sim.run();
 
         // test
@@ -204,7 +210,10 @@ describe('XCUITestDriver', function () {
       it('with udid booted: uses sim and leaves it afterwards', async function () {
         // before
         const udid = await createDevice();
-        let sim = await getSimulator(udid);
+        let sim = await getSimulator(udid, {
+          platform: 'iOS',
+          checkExistence: false,
+        });
         await sim.run();
 
         await B.delay(2000);
@@ -253,7 +262,10 @@ describe('XCUITestDriver', function () {
 
         // before
         const udid = await createDevice();
-        let sim = await getSimulator(udid);
+        let sim = await getSimulator(udid, {
+          platform: 'iOS',
+          checkExistence: false,
+        });
 
         // some systems require a pause before initializing.
         await B.delay(2000);
