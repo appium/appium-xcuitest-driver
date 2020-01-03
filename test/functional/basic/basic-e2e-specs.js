@@ -299,9 +299,8 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('contexts -', function () {
     before(async function () {
-      const el = await driver.elementByAccessibilityId('Web View');
-      await driver.execute('mobile: scroll', {element: el, toVisible: true});
-      await el.click();
+      await driver.execute('mobile: scroll', {direction: 'down'});
+      await driver.elementByAccessibilityId('Web View').click();
     });
     after(async function () {
       await driver.back();
@@ -309,12 +308,8 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should start a session, navigate to url, get title', async function () {
-      const contexts = await retryInterval(100, 1000, async function () {
-        // on some systems (like Travis) it takes a while to load the webview
-        const contexts = await driver.contexts();
-        contexts.length.should.be.at.least(2);
-        return contexts;
-      });
+      // on some systems (like Travis) it takes a while to load the webview
+      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 30000});
 
       await driver.context(contexts[1]);
       await driver.get(GUINEA_PIG_PAGE);
