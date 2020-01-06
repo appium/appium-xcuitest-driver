@@ -46,7 +46,7 @@
     "@babel/runtime": "^7.0.0",
     "appium-base-driver": "^5.1.0",
     "appium-idb": "^0",
-    "appium-ios-device": "^1.2.1",
+    "appium-ios-device": "^1.2.3",
     "appium-ios-driver": "^4.0.0",
     "appium-ios-simulator": "^3.15.0",
     "appium-remote-debugger": "^7.3.0",
