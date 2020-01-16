@@ -118,7 +118,14 @@ is updated, and is _not_ recommended):
     /path/where/installed/bin/appium
 ```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
-    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent`.
+    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent` or
+    `/path/where/installed/lib/node_modules/appium/node_modules/<current_driver_module>/node_modules/appium-webdriveragent`.
+    The actual path depends on where NPM decides to put the submodule, although the
+    rule of thumb is to look for it as a subdirectory of the actual driver's node
+    modules (for the majority of cases this would be
+    `appium/node_modules/appium-xcuitest-driver/node_modules`) and, if it is not present there, under `appium/node_modules`.
+    You could also see the full path to WebDriverAgent's folder in Appium server logs
+    after a session has been started.
     Open a terminal and go to that location, then run the following in order to
     set the project up:
 ```
