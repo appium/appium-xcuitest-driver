@@ -209,7 +209,7 @@ describe('element commands', function () {
     describe('failure', function () {
       it('should throw invalid argument exception for null', async function () {
         await driver.setValue(null, elementId)
-          .should.eventually.be.rejectedWith(/supported'/);
+          .should.eventually.be.rejectedWith(/supported/);
       });
       it('should throw invalid argument exception for object', async function () {
         await driver.setValue({hi: 'there'}, elementId)
