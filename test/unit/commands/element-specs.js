@@ -185,12 +185,16 @@ describe('element commands', function () {
       });
 
       it('should proxy string as array of characters', async function () {
-        await driver.setValue('hello', elementId);
-        proxyStub.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o']});
+        await driver.setValue('hello\uE006', elementId);
+        proxyStub.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o', '\n']});
       });
-      it('should proxy integer as array of characters', async function () {
-        await driver.setValue(1234, elementId);
-        proxyStub.firstCall.args[2].should.eql({value: ['1', '2', '3', '4']});
+      it('should proxy string with smileys as array of characters', async function () {
+        await driver.setValue('hello😀😎', elementId);
+        proxyStub.firstCall.args[2].should.eql({value: ['h', 'e', 'l', 'l', 'o', '😀', '😎']});
+      });
+      it('should proxy number as array of characters', async function () {
+        await driver.setValue(1234.56, elementId);
+        proxyStub.firstCall.args[2].should.eql({value: ['1', '2', '3', '4', '.', '5', '6']});
       });
       it('should proxy string array as array of characters', async function () {
         await driver.setValue(['hel', 'lo'], elementId);
@@ -205,11 +209,11 @@ describe('element commands', function () {
     describe('failure', function () {
       it('should throw invalid argument exception for null', async function () {
         await driver.setValue(null, elementId)
-          .should.eventually.be.rejectedWith(/Only strings and arrays of strings are supported as input arguments. Received: 'null'/);
+          .should.eventually.be.rejectedWith(/supported/);
       });
       it('should throw invalid argument exception for object', async function () {
         await driver.setValue({hi: 'there'}, elementId)
-          .should.eventually.be.rejectedWith(/Only strings and arrays of strings are supported as input arguments. Received: '{"hi":"there"}'/);
+          .should.eventually.be.rejectedWith(/supported/);
       });
     });
   });
