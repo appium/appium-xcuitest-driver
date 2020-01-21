@@ -24,12 +24,14 @@ describe('utils', function () {
           return DERIVED_DATA_ROOT;
         }
       };
+      mocks.fs.expects('glob')
+        .once()
+        .returns([]);
       mocks.fs.expects('walkDir')
         .once()
         .returns();
       mocks.fs.expects('exists')
-        .once()
-        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs`)
+        .atLeast(1)
         .returns(true);
       mocks.iosUtils.expects('clearLogs')
         .once()
@@ -44,11 +46,14 @@ describe('utils', function () {
           return DERIVED_DATA_ROOT;
         }
       };
+      mocks.fs.expects('glob')
+        .once()
+        .returns([]);
       mocks.fs.expects('walkDir')
         .once()
         .returns();
       mocks.fs.expects('exists')
-        .withExactArgs(`${DERIVED_DATA_ROOT}/Logs`)
+        .atLeast(1)
         .returns(true);
       mocks.iosUtils.expects('clearLogs')
         .once()
