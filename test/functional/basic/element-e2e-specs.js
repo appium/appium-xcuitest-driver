@@ -5,6 +5,7 @@ import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
+import { util } from 'appium-support';
 
 
 chai.should();
@@ -53,7 +54,7 @@ describe('XCUITestDriver - element(s)', function () {
       displayed.should.be.true;
     });
     it('should get the displayed status for an undisplayed element', async function () {
-      let el = await driver.elementByAccessibilityId('Toolbars');
+      let el = await driver.elementByAccessibilityId('Web View');
       let displayed = await el.isDisplayed();
       displayed.should.be.false;
     });
@@ -67,7 +68,7 @@ describe('XCUITestDriver - element(s)', function () {
       loc.y.should.exist;
     });
     it('should not mix up locations', async function () {
-      let el1 = await driver.elementByAccessibilityId('Buttons');
+      let el1 = await driver.elementByAccessibilityId('Date Picker');
       let loc1 = await el1.getLocation();
 
       let el2 = await driver.elementByAccessibilityId('Image View');
@@ -86,7 +87,7 @@ describe('XCUITestDriver - element(s)', function () {
       loc.y.should.exist;
     });
     it('should not mix up locations', async function () {
-      let el1 = await driver.elementByAccessibilityId('Buttons');
+      let el1 = await driver.elementByAccessibilityId('Date Picker');
       let loc1 = await el1.getLocation();
 
       let el2 = await driver.elementByAccessibilityId('Image View');
@@ -108,6 +109,9 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
+      if (util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0')) {
+        return this.skip();
+      }
       let table = await driver.elementByClassName('XCUIElementTypeTable');
       let contentSize = JSON.parse(await table.getAttribute('contentSize'));
       contentSize.width.should.be.a('number');
@@ -126,7 +130,12 @@ describe('XCUITestDriver - element(s)', function () {
     });
 
     it('should not get the contentSize of other kinds of elements', async function () {
-      let wrongTypeEl = await driver.elementByAccessibilityId('UICatalog');
+      let wrongTypeEl;
+      try {
+        wrongTypeEl = await driver.elementByAccessibilityId('UICatalog');
+      } catch (ign) {
+        wrongTypeEl = await driver.elementByAccessibilityId('UIKitCatalog');
+      }
       await wrongTypeEl.getAttribute('contentSize').should.eventually
         .be.rejectedWith(/Can't get content size for type/);
     });
@@ -153,7 +162,7 @@ describe('XCUITestDriver - element(s)', function () {
       let phText = 'Placeholder text';
 
       beforeEach(async function () {
-        let el = await driver.elementByAccessibilityId('Text Fields');
+        const el = await driver.elementByAccessibilityId('Text Fields');
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
       });

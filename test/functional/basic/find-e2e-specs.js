@@ -5,12 +5,19 @@ import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
+import { util } from 'appium-support';
 
 
 chai.should();
 chai.use(chaiAsPromised);
 
 const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 500;
+
+const PV_ABOVE_13 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0');
+
+// there are some differences in the apps
+const FIRST_ELEMENT = PV_ABOVE_13 ? 'Activity Indicators' : 'Action Sheets';
+const APP_TITLE = PV_ABOVE_13 ? 'UIKitCatalog' : 'UICatalog';
 
 describe('XCUITestDriver - find', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -113,6 +120,7 @@ describe('XCUITestDriver - find', function () {
 
   describe('by xpath', function () {
     describe('individual calls', function () {
+
       before(async function () {
         // before anything, try to go back
         // otherwise the tests will fail erroneously
@@ -150,14 +158,14 @@ describe('XCUITestDriver - find', function () {
       });
       it('should return a single element', async function () {
         let el = await driver.elementByXPath('//XCUIElementTypeButton');
-        (await el.getAttribute('name')).should.equal('UICatalog');
+        (await el.getAttribute('name')).should.equal(APP_TITLE);
       });
       it('should return multiple elements', async function () {
         let els = await driver.elementsByXPath('//XCUIElementTypeButton');
         els.should.have.length.above(4);
       });
       it('should filter by name', async function () {
-        let el = await driver.elementByXPath("//XCUIElementTypeButton[@name='X Button']");
+        let el = await driver.elementByXPath(`//XCUIElementTypeButton[@name='X Button']`);
         (await el.getAttribute('name')).should.equal('X Button');
       });
       it('should know how to restrict root-level elements', async function () {
@@ -179,16 +187,16 @@ describe('XCUITestDriver - find', function () {
         let els = await driver.elementsByXPath('//XCUIElementTypeTable//XCUIElementTypeButton');
         let texts = await B.all(_.map(els, (el) => el.getAttribute('name')));
         texts.should.not.include('UICatalog');
+        texts.should.not.include('UIKitCatalog');
         texts.should.include('X Button');
       });
       it.skip('should filter by indices', async function () {
-        await driver.setImplicitWaitTimeout(10000);
         let el = await driver.elementByXPath('//XCUIElementTypeTable[1]//XCUIElementTypeButton[4]');
         (await el.getAttribute('name')).should.equal('X Button');
       });
 
       it('should filter by partial text', async function () {
-        let el = await driver.elementByXPath("//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X ')]");
+        let el = await driver.elementByXPath(`//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`);
         (await el.getAttribute('name')).should.equal('X Button');
       });
     });
@@ -234,14 +242,14 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find one element', async function () {
-      let el1 = await driver.elementByAccessibilityId('Action Sheets');
+      let el1 = await driver.elementByAccessibilityId('Alert Views');
       await el1.click();
       let el2 = await driver.elementByAccessibilityId('Okay / Cancel');
       (await el2.getAttribute('name')).should.equal('Okay / Cancel');
     });
 
     it.skip('should find several elements', async function () {
-      let el1 = await driver.elementByAccessibilityId('Action Sheets');
+      let el1 = await driver.elementByAccessibilityId('Alert Views');
       await el1.click();
       let els = await driver.elementsByAccessibilityId('Okay / Cancel');
       els.should.have.length(2);
@@ -249,7 +257,7 @@ describe('XCUITestDriver - find', function () {
 
     it('should find an element beneath another element', async function () {
       let el1 = await driver.elementByClassName('XCUIElementTypeTable');
-      let el2 = await el1.elementByAccessibilityId('Action Sheets');
+      let el2 = await el1.elementByAccessibilityId('Alert Views');
       el2.should.exist;
     });
   });
@@ -275,7 +283,8 @@ describe('XCUITestDriver - find', function () {
         if (process.env.CI && UICATALOG_CAPS.platformVersion === '10.3') {
           return this.skip();
         }
-        let el1 = await driver.elementByAccessibilityId('Action Sheets');
+
+        let el1 = await driver.elementByAccessibilityId('Alert Views');
         await el1.click();
         let el2 = await driver.elementByAccessibilityId('Okay / Cancel');
         let els = await el2.elementsByClassName('XCUIElementTypeStaticText');
@@ -287,10 +296,9 @@ describe('XCUITestDriver - find', function () {
   describe('duplicate text field', function () {
     before(async function () {
       try {
-        let element = await driver.elementByAccessibilityId('Text Fields');
-        await driver.execute('mobile: scroll', {element, toVisible: true});
+        const el = await driver.elementByAccessibilityId('Text Fields');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
       } catch (ign) {}
-      await driver.setImplicitWaitTimeout(5000);
     });
     afterEach(async function () {
       await driver.back();
@@ -298,21 +306,19 @@ describe('XCUITestDriver - find', function () {
 
     after(async function () {
       // make sure we scroll back so as not to mess up subsequent tests
-      let element = await driver.elementByAccessibilityId('Action Sheets');
-      await driver.execute('mobile: scroll', {element, toVisible: true});
+      const el = await driver.elementByAccessibilityId('Alert Views');
+      await driver.execute('mobile: scroll', {element: el, toVisible: true});
     });
 
     it('should find only one element per text field', async function () {
-      let el = await driver.elementByAccessibilityId('Text Fields');
-      await el.click();
+      await driver.elementByAccessibilityId('Text Fields').click();
 
       let els = await driver.elementsByClassName('XCUIElementTypeTextField');
-      els.should.have.length(4);
+      els.should.have.length(PV_ABOVE_13 ? 5 : 4);
     });
 
     it('should find only one element per secure text field', async function () {
-      let el = await driver.elementByAccessibilityId('Text Fields');
-      await el.click();
+      await driver.elementByAccessibilityId('Text Fields').click();
 
       let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
       els.should.have.length(1);
@@ -388,7 +394,8 @@ describe('XCUITestDriver - find', function () {
       await child.getAttribute('type').should.eventually.eql('XCUIElementTypeCell');
       // do another call and double-check the different quote/spacing works
       let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
-      await grandchild.getAttribute('name').should.eventually.eql('Action Sheets');
+
+      await grandchild.getAttribute('name').should.eventually.eql(FIRST_ELEMENT);
     });
   });
 

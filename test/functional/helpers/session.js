@@ -44,36 +44,33 @@ if (CLOUD) {
   });
 
   // on Sauce Labs we need to track the status of the job
-  let errored = false;
-  afterEach(async function () {
+  afterEach(function () {
     if (driver) {
-      const passed = this.currentTest.state === 'passed';
+      let fullTitle;
+      if (!driver.name) {
+        // traverse the title tree to get the whole thing
+        let titles = [];
+        const currentTest = this.currentTest;
+        titles.push(currentTest.title);
+        let parent = currentTest.parent;
+        while (parent) {
+          if (parent.title) {
+            titles.push(parent.title);
+          }
+          parent = parent.parent;
+        }
+        fullTitle = titles.reverse().join('/');
 
-      // traverse the title tree to get the whole thing
-      let titles = [];
-      const currentTest = this.currentTest;
-      titles.push(currentTest.title);
-      let parent = currentTest.parent;
-      while (parent) {
-        titles.push(parent.title);
-        parent = parent.parent;
+        // construct the name for the job
+        driver.name = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${_.first(titles)}`;
       }
-      const fullTitle = titles.reverse().join('/');
-      const rootTitle = _.last(titles);
-
-      // construct the name for the job
-      let name = `${process.env.TRAVIS_JOB_NUMBER || 'Suite'}: ${rootTitle}`;
 
       // check for the first failure
-      if (!errored) {
-        if (!passed) {
-          // add the first failed job title to the name of the job
-          name += ` (${fullTitle})`;
-          // and fail the whole job
-          errored = true;
-        }
-        // update the name and status until there is an error, then just leave it
-        await driver.sauceJobUpdate({name, passed: !errored});
+      if (!driver.errored && this.currentTest.state !== 'passed') {
+        // add the first failed job title to the name of the job
+        driver.name += ` (${fullTitle})`;
+        // and fail the whole job
+        driver.errored = true;
       }
     }
 
@@ -89,6 +86,8 @@ async function initDriver () { // eslint-disable-line require-await
   driver = CLOUD
     ? await wd.promiseChainRemote(config, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY)
     : await wd.promiseChainRemote(config);
+  driver.name = undefined;
+  driver.errored = false;
   return driver;
 }
 
@@ -121,7 +120,7 @@ async function initSession (caps) {
     await initServer();
   }
 
-  if (process.env.CLOUD) {
+  if (CLOUD) {
     // on cloud tests, we want to set the `name` capability
     if (!caps.name) {
       caps.name = process.env.SAUCE_JOB_NAME || process.env.TRAVIS_JOB_NUMBER || 'unnamed';
@@ -138,20 +137,31 @@ async function initSession (caps) {
     }, caps);
   }
 
-  let serverRes = await driver.init(caps);
+  const serverRes = await driver.init(caps);
   if (!caps.udid && !caps.fullReset && serverRes[1].udid) {
     caps.udid = serverRes[1].udid;
   }
-
-  await driver.setImplicitWaitTimeout(process.env.CI ? 30000 : 5000);
 
   return driver;
 }
 
 async function deleteSession () {
   try {
-    await driver.quit();
+    if (CLOUD) {
+      await driver.sauceJobUpdate({
+        name: driver.name,
+        passed: !driver.errored,
+      });
+    }
   } catch (ign) {}
+
+  try {
+    await driver.quit();
+  } catch (ign) {
+  } finally {
+    driver = undefined;
+  }
+
   try {
     await server.close();
   } catch (ign) {}

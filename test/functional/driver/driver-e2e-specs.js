@@ -2,12 +2,14 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
-import { killAllSimulators, shutdownSimulator } from '../helpers/simulator';
-import { getDevices, createDevice, deleteDevice } from 'node-simctl';
+import request from 'request-promise';
+import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
+import { getDevices, createDevice as createDeviceNodeSimctl } from 'node-simctl';
 import _ from 'lodash';
 import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
+import { translateDeviceName } from '../../../lib/utils';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
@@ -15,14 +17,16 @@ const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-async function getNumSims () {
-  return (await getDevices())[UICATALOG_SIM_CAPS.platformVersion].length;
+async function createDevice () {
+  return await createDeviceNodeSimctl(
+    SIM_DEVICE_NAME,
+    translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName),
+    UICATALOG_SIM_CAPS.platformVersion
+  );
 }
 
-async function deleteDeviceWithRetry (udid) {
-  try {
-    await retryInterval(10, 1000, deleteDevice, udid);
-  } catch (ign) {}
+async function getNumSims () {
+  return (await getDevices())[UICATALOG_SIM_CAPS.platformVersion].length;
 }
 
 describe('XCUITestDriver', function () {
@@ -33,13 +37,18 @@ describe('XCUITestDriver', function () {
 
   let driver;
   before(async function () {
-    const udid = await createDevice(SIM_DEVICE_NAME,
-      UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
+    const udid = await createDevice();
     baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
-    caps = Object.assign({usePrebuiltWDA: true}, baseCaps);
+    caps = Object.assign({
+      usePrebuiltWDA: true,
+      wdaStartupRetries: 0,
+    }, baseCaps);
   });
   after(async function () {
-    const sim = await getSimulator(caps.udid);
+    const sim = await getSimulator(caps.udid, {
+      platform: 'iOS',
+      checkExistence: false,
+    });
     await shutdownSimulator(sim);
     await deleteDeviceWithRetry(caps.udid);
   });
@@ -70,14 +79,20 @@ describe('XCUITestDriver', function () {
     });
 
     it('should start and stop a session with only bundle id', async function () {
-      let localCaps = Object.assign({}, caps, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      let localCaps = Object.assign({}, caps, {
+        bundleId: 'com.example.apple-samplecode.UICatalog',
+        noReset: true,
+      });
       localCaps.app = null;
       await initSession(localCaps).should.not.eventually.be.rejected;
     });
 
     it('should start and stop a session with only bundle id when no sim is running', async function () {
       await killAllSimulators();
-      let localCaps = Object.assign({}, caps, {bundleId: 'com.example.apple-samplecode.UICatalog'});
+      let localCaps = Object.assign({}, caps, {
+        bundleId: 'com.example.apple-samplecode.UICatalog',
+        noReset: true,
+      });
       localCaps.app = null;
       await initSession(localCaps).should.not.eventually.be.rejected;
     });
@@ -105,8 +120,7 @@ describe('XCUITestDriver', function () {
         });
         localCaps.wdaLocalPort = null;
         driver = await initSession(localCaps);
-        let logs = await driver.log('syslog');
-        logs.some((line) => line.message.includes(':8100<-')).should.be.true;
+        await request('http://localhost:8100/status').should.not.be.rejected;
       });
       it('should run on port specified', async function () {
         const localCaps = Object.assign({}, baseCaps, {
@@ -115,9 +129,8 @@ describe('XCUITestDriver', function () {
           useNewWDA: true,
         });
         driver = await initSession(localCaps);
-        let logs = await driver.log('syslog');
-        logs.some((line) => line.message.includes(':8100<-')).should.be.false;
-        logs.some((line) => line.message.includes(':6000<-')).should.be.true;
+        await request('http://localhost:8100/status').should.be.rejectedWith(/ECONNREFUSED/);
+        await request('http://localhost:6000/status').should.not.be.rejected;
       });
     });
 
@@ -164,9 +177,11 @@ describe('XCUITestDriver', function () {
 
       it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
         // before
-        const udid = await createDevice(SIM_DEVICE_NAME,
-          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
-        let sim = await getSimulator(udid);
+        const udid = await createDevice();
+        let sim = await getSimulator(udid, {
+          platform: 'iOS',
+          checkExistence: false,
+        });
         await sim.run();
 
         // test
@@ -194,9 +209,11 @@ describe('XCUITestDriver', function () {
 
       it('with udid booted: uses sim and leaves it afterwards', async function () {
         // before
-        const udid = await createDevice(SIM_DEVICE_NAME,
-          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
-        let sim = await getSimulator(udid);
+        const udid = await createDevice();
+        let sim = await getSimulator(udid, {
+          platform: 'iOS',
+          checkExistence: false,
+        });
         await sim.run();
 
         await B.delay(2000);
@@ -244,9 +261,11 @@ describe('XCUITestDriver', function () {
         this.timeout(MOCHA_TIMEOUT);
 
         // before
-        const udid = await createDevice(SIM_DEVICE_NAME,
-          UICATALOG_SIM_CAPS.deviceName, UICATALOG_SIM_CAPS.platformVersion);
-        let sim = await getSimulator(udid);
+        const udid = await createDevice();
+        let sim = await getSimulator(udid, {
+          platform: 'iOS',
+          checkExistence: false,
+        });
 
         // some systems require a pause before initializing.
         await B.delay(2000);

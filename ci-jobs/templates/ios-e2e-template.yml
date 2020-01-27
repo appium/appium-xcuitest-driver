@@ -3,22 +3,29 @@ parameters:
     script: ''
     name: ios-e2e-test
     dependsOn: ''
-    iosVersion: 12.2
-    xcodeVersion: 10.2
+    iosVersion: 13.0
+    xcodeVersion: 11
     deviceName: 'iPhone X'
+    skipTvOs: False
 
 jobs:
   - job: ${{ parameters.name }}
+    condition: ne(${{ parameters.skipTvOs }}, True)
     variables:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
       DEVICE_NAME: ${{ parameters.deviceName }}
-      MOCHA_FILE: '$(DEVICE_NAME)-$(PLATFORM_VERSION)-tests.xml'
+      MOCHA_FILE: '${{ parameters.name }}-tests.xml'
+      LAUNCH_WITH_IDB: ${{ parameters.launchWithIDB }}
       CI: true
     pool:
       vmImage: 'macOS-10.14'
     steps:
     - checkout: self
-      submodules: true
+    - script: |
+        echo "Mocha output file: $MOCHA_FILE"
+        echo "Platform Version: $PLATFORM_VERSION"
+        echo "Device Name: $DEVICE_NAME"
+      displayName: Print Environment Variables
     - script: ls /Applications/
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
@@ -29,11 +36,7 @@ jobs:
       displayName: List Installed Simulators
     - task: NodeTool@0
       inputs:
-        versionSpec: 11.x
-    - script: |
-        sed -i '' 's/git@github.com:/https:\/\/github.com\//' /Users/travis/build/appium/appium-xcuitest-driver/.gitmodules;
-        git submodule update --init --recursive;
-      displayName: Checkout WDA submodule
+        versionSpec: 10.x
     - script: npm install
       displayName: Install node dependencies
     - script: npm run build

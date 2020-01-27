@@ -7,24 +7,28 @@ chai.should();
 describe('language and locale', function () {
   const LANGUAGE = 'en';
   const LOCALE = 'en_US';
+  const BUNDLE_ID = 'com.test.app';
 
   describe('send only language and locale', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
 
       const expectedWDACapabilities = {
-        desiredCapabilities: {
-          bundleId: 'com.test.app',
-          arguments: [
-            '-AppleLanguages', `(${LANGUAGE})`,
-            '-NSLanguages', `(${LANGUAGE})`,
-            '-AppleLocale', LOCALE
-          ],
-          environment: {},
-          shouldWaitForQuiescence: true,
-          shouldUseTestManagerForVisibilityDetection: true,
-          maxTypingFrequency: 60,
-          shouldUseSingletonTestManager: true,
-          eventloopIdleDelaySec: 0,
+        capabilities: {
+          firstMatch: [{
+            bundleId: BUNDLE_ID,
+            arguments: [
+              '-AppleLanguages', `(${LANGUAGE})`,
+              '-NSLanguages', `(${LANGUAGE})`,
+              '-AppleLocale', LOCALE
+            ],
+            environment: {},
+            shouldWaitForQuiescence: true,
+            shouldUseTestManagerForVisibilityDetection: true,
+            maxTypingFrequency: 60,
+            shouldUseSingletonTestManager: true,
+            eventloopIdleDelaySec: 0,
+          }],
+          alwaysMatch: {},
         }
       };
       let desiredCapabilities = {
@@ -34,7 +38,7 @@ describe('language and locale', function () {
         app: 'testapp.app',
         language: LANGUAGE,
         locale: LOCALE,
-        bundleId: expectedWDACapabilities.desiredCapabilities.bundleId,
+        bundleId: BUNDLE_ID,
       };
 
       let driver = new XCUITestDriver(desiredCapabilities);
@@ -66,15 +70,18 @@ describe('language and locale', function () {
       };
 
       const expectedWDACapabilities = {
-        desiredCapabilities: {
-          bundleId: 'com.test.app',
-          arguments: augmentedProcessArgumentsWithLanguage.args,
-          environment: processArguments.env,
-          shouldWaitForQuiescence: true,
-          shouldUseTestManagerForVisibilityDetection: true,
-          maxTypingFrequency: 60,
-          shouldUseSingletonTestManager: true,
-          eventloopIdleDelaySec: 0,
+        capabilities: {
+          firstMatch: [{
+            bundleId: BUNDLE_ID,
+            arguments: augmentedProcessArgumentsWithLanguage.args,
+            environment: processArguments.env,
+            shouldWaitForQuiescence: true,
+            shouldUseTestManagerForVisibilityDetection: true,
+            maxTypingFrequency: 60,
+            shouldUseSingletonTestManager: true,
+            eventloopIdleDelaySec: 0,
+          }],
+          alwaysMatch: {},
         }
       };
 
@@ -85,7 +92,7 @@ describe('language and locale', function () {
         app: 'testapp.app',
         language: LANGUAGE,
         locale: LOCALE,
-        bundleId: expectedWDACapabilities.desiredCapabilities.bundleId,
+        bundleId: BUNDLE_ID,
         processArguments
       };
       let driver = new XCUITestDriver(desiredCapabilities);

@@ -9,6 +9,7 @@ import { doesIncludeCookie, doesNotIncludeCookie,
 import { SAFARI_CAPS } from '../desired';
 import https from 'https';
 
+
 const pem = B.promisifyAll(require('pem'));
 
 chai.should();
@@ -20,7 +21,7 @@ const LOCAL_HTTPS_URL = `https://localhost:${HTTPS_PORT}/`;
 
 let caps = _.defaults({
   safariInitialUrl: LOCAL_HTTPS_URL,
-  noReset: false,
+  noReset: true,
 }, SAFARI_CAPS);
 
 let pemCertificate;
@@ -36,8 +37,13 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       }
 
       // Create a random pem certificate
-      let privateKey = await pem.createPrivateKeyAsync();
-      let keys = await pem.createCertificateAsync({days: 1, selfSigned: true, serviceKey: privateKey.key});
+      const privateKey = await pem.createPrivateKeyAsync();
+      const keys = await pem.createCertificateAsync({
+        days: 1,
+        selfSigned: true,
+        serviceKey: privateKey.key,
+        altNames: ['localhost'],
+      });
       pemCertificate = keys.certificate;
 
       // Host an SSL server that uses that certificate

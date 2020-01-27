@@ -1,6 +1,7 @@
 import { retry, retryInterval } from 'asyncbox';
 import { HOST, PORT } from '../helpers/session';
 import { util } from 'appium-support';
+import _ from 'lodash';
 
 
 const LOCAL_BASE_END_POINT = `http://${process.env.REAL_DEVICE ? util.localIp() : HOST}:${PORT}`;
@@ -12,14 +13,16 @@ const GUINEA_PIG_SCROLLABLE_PAGE = `${GUINEA_PIG_PAGE}-scrollable`;
 const GUINEA_PIG_APP_BANNER_PAGE = `${GUINEA_PIG_PAGE}-app-banner`;
 const GUINEA_PIG_FRAME_PAGE = `${TEST_END_POINT}/frameset.html`;
 const GUINEA_PIG_IFRAME_PAGE = `${TEST_END_POINT}/iframes.html`;
-const PHISHING_END_POINT = 'http://malware.testing.google.test/testing/malware/*';
+// if the phishing URL stops working for some reason, see
+// http://testsafebrowsing.appspot.com/ for alternatives
+const PHISHING_END_POINT = 'http://testsafebrowsing.appspot.com/s/phishing.html';
 const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
 
 async function spinTitle (driver) {
   return await retry(10, async function () {
     const title = await driver.title();
-    if (!title) {
-      throw new Error('did not get page title');
+    if (_.isNil(title)) {
+      throw new Error('Did not get a page title');
     }
     return title;
   });
@@ -29,7 +32,7 @@ async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 50
   await retryInterval(tries, interval, async function () {
     const title = await spinTitle(driver);
     if (title !== expectedTitle) {
-      throw new Error(`Could not find expected title. Found: '${title}'`);
+      throw new Error(`Could not find expected title: '${expectedTitle}'. Found: '${title}'`);
     }
   });
 }

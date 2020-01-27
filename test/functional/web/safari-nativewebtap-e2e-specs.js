@@ -9,7 +9,7 @@ import { killAllSimulators } from '../helpers/simulator';
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
 import { getDeviceTypes } from 'node-simctl';
-
+import { util } from 'appium-support';
 
 /**
  * This test suite can be affected by two environment variables:
@@ -37,60 +37,133 @@ const SPIN_RETRIES = 25;
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 
-if (!process.env.REAL_DEVICE) {
-  describe('Safari - coordinate conversion -', function () {
-    this.timeout(MOCHA_TIMEOUT * 2);
+describe('Safari - coordinate conversion -', function () {
+  this.timeout(MOCHA_TIMEOUT * 2);
 
-    let devices = [];
-    before(async function () {
-      await killAllSimulators();
+  let devices = [];
+  before(async function () {
+    await killAllSimulators();
 
-      if (process.env.ALL_DEVICES) {
-        // get all the iPhone and iPad devices available
-        devices = await getDeviceTypes();
-        devices = devices.filter((device) => device.includes('iPhone') || device.includes('iPad'));
-      } else if (process.env.DEVICE_NAME) {
-        devices = [process.env.DEVICE_NAME];
-      } else {
-        // default to a relatively representative set of devices
-        devices = ['iPad Simulator', 'iPhone 6', 'iPhone X'];
+    if (process.env.REAL_DEVICE) {
+      // skip, by not having any devices in the list
+    } else if (process.env.ALL_DEVICES) {
+      // get all the iPhone and iPad devices available
+      devices = await getDeviceTypes();
+      devices = devices.filter((device) => device.includes('iPhone') || device.includes('iPad'));
+    } else if (process.env.DEVICE_NAME) {
+      devices = [process.env.DEVICE_NAME];
+    } else {
+      // default to a relatively representative set of devices
+      devices = ['iPhone 6', 'iPad Simulator'];
+      if (!process.env.TRAVIS || util.compareVersions(caps.platformVersion, '<', '13.0')) {
+        // TODO: see when Travis can launch iPhone X sims
+        devices.push('iPhone X');
       }
+    }
 
-      async function loadPage (driver, url) {
-        await retryInterval(5, 1000, async function () {
-          await openPage(driver, url);
-          const title = await spinTitle(driver);
-          title.should.not.include('Cannot Open Page');
-        });
-      }
+    async function loadPage (driver, url) {
+      await retryInterval(5, 1000, async function () {
+        await openPage(driver, url);
+        const title = await spinTitle(driver);
+        title.should.not.include('Cannot Open Page');
+      });
+    }
 
-      // define the tests, for each device
-      for (const deviceName of devices) {
-        describe(`${deviceName} -`, function () {
-          this.timeout(MOCHA_TIMEOUT * 2);
+    // define the tests, for each device
+    for (const deviceName of devices) {
+      describe(`${deviceName} -`, function () {
+        this.timeout(MOCHA_TIMEOUT * 2);
 
-          let driver;
-          let skipped = false;
+        let driver;
+        const localCaps = _.defaults({
+          deviceName,
+          fullReset: true,
+          noReset: false,
+        }, caps);
+        let skipped = false;
 
-          before(async function () {
-            skipped = false;
-            try {
-              driver = await initSession(_.defaults({
-                deviceName,
-                fullReset: true,
-                noReset: false,
-              }, caps));
-            } catch (err) {
-              if (err.message.includes('Invalid device type') || err.message.includes('Incompatible device')) {
-                skipped = true;
-                return this.skip();
-              }
-              throw err;
+        before(async function () {
+          skipped = false;
+          try {
+            driver = await initSession(localCaps);
+          } catch (err) {
+            if (err.message.includes('Invalid device type') || err.message.includes('Incompatible device')) {
+              skipped = true;
+              return this.skip();
             }
+            throw err;
+          }
+          if (process.env.CI) {
+            await driver.setImplicitWaitTimeout(10000);
+          }
+        });
+        after(async function () {
+          await deleteSession();
+          await killAllSimulators();
+        });
+
+        it('should be able to tap on an element', async function () {
+          await loadPage(driver, GUINEA_PIG_PAGE);
+
+          let el = await driver.elementByLinkText(PAGE_3_LINK);
+          await el.click();
+
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to tap on an element when the app banner is up', async function () {
+          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+
+          let el = await driver.elementByLinkText(PAGE_3_LINK);
+          await el.click();
+
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to tap on an element after scrolling', async function () {
+          await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
+          await driver.execute('mobile: scroll', {direction: 'down'});
+
+          let el = await driver.elementByLinkText(PAGE_3_LINK);
+          await el.click();
+
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to tap on a button', async function () {
+          this.retries(5);
+
+          await loadPage(driver, GUINEA_PIG_PAGE);
+
+          (await driver.source()).should.not.include('Your comments: Hello');
+
+          let textArea = await driver.elementByName('comments');
+          await textArea.type('Hello');
+
+          let el = await driver.elementByName('submit');
+          await el.click();
+
+          await retryInterval(5, 500, async function () {
+            const src = await driver.source();
+            return src.should.include('Your comments: Hello');
           });
-          after(async function () {
-            await deleteSession();
-            await killAllSimulators();
+        });
+
+        describe('with tabs -', function () {
+          before(async function () {
+            if (skipped || !deviceName.toLowerCase().includes('ipad')) {
+              return this.skip();
+            }
+            await loadPage(driver, GUINEA_PIG_PAGE);
+
+            // open a new tab and go to it
+            const el = await driver.elementByLinkText('i am a new window link');
+            await el.click();
+
+            await retryInterval(10, 1000, async function () {
+              const title = await driver.title();
+              title.should.eql('I am another page title');
+            });
           });
 
           it('should be able to tap on an element', async function () {
@@ -100,17 +173,15 @@ if (!process.env.REAL_DEVICE) {
             await el.click();
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
-          });
 
-          it('should be able to tap on an element when the app banner is up', async function () {
-            await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+            await driver.back();
 
-            let el = await driver.elementByLinkText(PAGE_3_LINK);
+            // try again, just to make sure
+            el = await driver.elementByLinkText(PAGE_3_LINK);
             await el.click();
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
-
           it('should be able to tap on an element after scrolling', async function () {
             await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
             await driver.execute('mobile: scroll', {direction: 'down'});
@@ -120,102 +191,41 @@ if (!process.env.REAL_DEVICE) {
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
+          it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
+            await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
+            await driver.execute('mobile: scroll', {direction: 'down'});
 
-          it('should be able to tap on a button', async function () {
-            this.retries(5);
+            // to get the url bar, click on the URL bar
+            const ctx = await driver.currentContext();
+            try {
+              await driver.context('NATIVE_APP');
 
-            await loadPage(driver, GUINEA_PIG_PAGE);
+              // get the reload button, as multi-element find to bypass
+              // the implicit wait
+              if (_.isEmpty(await driver.elementsByAccessibilityId('ReloadButton'))) {
+                // when there is no reload button, the URL bar is minimized
+                // so tap on it to bring it up
+                await driver.elementByAccessibilityId('URL').click();
+              }
 
-            (await driver.source()).should.not.include('Your comments: Hello');
+              // time for things to happen
+              await B.delay(500);
+            } finally {
+              await driver.context(ctx);
+            }
 
-            let textArea = await driver.elementByName('comments');
-            await textArea.type('Hello');
-
-            let el = await driver.elementByName('submit');
+            const el = await driver.elementByLinkText(PAGE_3_LINK);
             await el.click();
 
-            await retryInterval(5, 500, async function () {
-              const src = await driver.source();
-              return src.should.include('Your comments: Hello');
-            });
-          });
-
-          describe('with tabs -', function () {
-            beforeEach(async function () {
-              await loadPage(driver, GUINEA_PIG_PAGE);
-            });
-            before(async function () {
-              if (skipped || !deviceName.toLowerCase().includes('ipad')) {
-                return this.skip();
-              }
-              await loadPage(driver, GUINEA_PIG_PAGE);
-
-              // open a new tab and go to it
-              const el = await driver.elementByLinkText('i am a new window link');
-              await el.click();
-            });
-
-            it('should be able to tap on an element', async function () {
-              await loadPage(driver, GUINEA_PIG_PAGE);
-
-              let el = await driver.elementByLinkText(PAGE_3_LINK);
-              await el.click();
-
-              await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
-
-              await driver.back();
-
-              // try again, just to make sure
-              el = await driver.elementByLinkText(PAGE_3_LINK);
-              await el.click();
-
-              await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
-            });
-            it('should be able to tap on an element after scrolling', async function () {
-              await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
-              await driver.execute('mobile: scroll', {direction: 'down'});
-
-              let el = await driver.elementByLinkText(PAGE_3_LINK);
-              await el.click();
-
-              await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
-            });
-            it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
-              await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
-              await driver.execute('mobile: scroll', {direction: 'down'});
-
-              // to get the url bar, click on the URL bar
-              const ctx = await driver.currentContext();
-              try {
-                await driver.context('NATIVE_APP');
-
-                // get the reload button, as multi-element find to bypass
-                // the implicit wait
-                if (_.isEmpty(await driver.elementsByAccessibilityId('ReloadButton'))) {
-                  // when there is no reload button, the URL bar is minimized
-                  // so tap on it to bring it up
-                  await driver.elementByAccessibilityId('URL').click();
-                }
-
-                // time for things to happen
-                await B.delay(500);
-              } finally {
-                await driver.context(ctx);
-              }
-
-              const el = await driver.elementByLinkText(PAGE_3_LINK);
-              await el.click();
-
-              await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
-            });
+            await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
         });
-      }
-    });
-
-    it.skip('should have devices array set', function () {
-      // this block is just here so that the `before` block is run
-      // it does not, however, need to actually run. Mocha FTW!
-    });
+      });
+    }
   });
-}
+
+  it.skip('should have devices array set', function () {
+    // this block is just here so that the `before` block is run
+    // it does not, however, need to actually run. Mocha FTW!
+  });
+});

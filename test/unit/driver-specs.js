@@ -19,6 +19,7 @@ const caps = {
   platformVersion: '10.0',
 };
 
+
 describe('driver commands', function () {
   describe('status', function () {
     let driver;
@@ -73,6 +74,9 @@ describe('driver commands', function () {
               return {state: 'Booted'};
             },
             clearCaches: _.noop,
+            getWebInspectorSocket () {
+              return '/path/to/uds.socket';
+            },
           },
           udid: null,
           realDevice: null
@@ -83,7 +87,9 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'startSim').callsFake(_.noop);
       sandbox.stub(driver, 'startWdaSession').callsFake(_.noop);
       sandbox.stub(driver, 'startWda').callsFake(_.noop);
+      sandbox.stub(driver, 'setReduceMotion').callsFake(_.noop);
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
+      sandbox.stub(driver, 'connectToRemoteDebugger').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setLocale').callsFake(_.noop);
       sandbox.stub(iosDriver.settings, 'setPreferences').callsFake(_.noop);
       sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0'); // eslint-disable-line require-await
@@ -118,22 +124,66 @@ describe('driver commands', function () {
       driver.startLogCapture.called.should.be.false;
     });
   });
+});
 
-  describe('startIWDP()', function () {
-    let driver = new XCUITestDriver();
+describe('installOtherApps', function () {
+  let driver = new XCUITestDriver();
+  let sandbox;
 
-    it('should start and stop IWDP server', async function () {
-      let startStub = sinon.stub();
-      let stopStub = sinon.stub();
-      iosDriver.IWDP = function () {
-        this.start = startStub;
-        this.stop = stopStub;
-      };
-      await driver.startIWDP();
-      await driver.stopIWDP();
+  beforeEach(function () {
+    sandbox = sinon.createSandbox();
+  });
 
-      startStub.calledOnce.should.be.true;
-      stopStub.calledOnce.should.be.true;
-    });
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should skip install other apps on real devices', async function () {
+    sandbox.stub(driver, 'isRealDevice');
+    sandbox.stub(driver.helpers, 'parseCapsArray');
+    driver.isRealDevice.returns(true);
+    await driver.installOtherApps('/path/to/iosApp.app');
+    driver.isRealDevice.calledOnce.should.be.true;
+    driver.helpers.parseCapsArray.notCalled.should.be.true;
+  });
+
+  it('should install multiple apps from otherApps as string on simulators', async function () {
+    const SimulatorManagementModule = require('../../lib/simulator-management');
+    sandbox.stub(SimulatorManagementModule, 'installToSimulator');
+    sandbox.stub(driver, 'isRealDevice');
+    driver.isRealDevice.returns(false);
+    driver.opts.noReset = false;
+    driver.opts.device = 'some-device';
+    driver.lifecycleData = {createSim: false};
+    await driver.installOtherApps('/path/to/iosApp.app');
+    driver.isRealDevice.calledOnce.should.be.true;
+    SimulatorManagementModule.installToSimulator.calledOnce.should.be.true;
+    SimulatorManagementModule.installToSimulator.calledWith(
+      'some-device',
+      '/path/to/iosApp.app',
+      undefined, {noReset: false, newSimulator: false}
+    ).should.be.true;
+  });
+
+  it('should install multiple apps from otherApps as JSON array on simulators', async function () {
+    const SimulatorManagementModule = require('../../lib/simulator-management');
+    sandbox.stub(SimulatorManagementModule, 'installToSimulator');
+    sandbox.stub(driver, 'isRealDevice');
+    driver.isRealDevice.returns(false);
+    driver.opts.noReset = false;
+    driver.opts.device = 'some-device';
+    driver.lifecycleData = {createSim: false};
+    await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
+    driver.isRealDevice.calledOnce.should.be.true;
+    SimulatorManagementModule.installToSimulator.calledWith(
+      'some-device',
+      '/path/to/iosApp1.app',
+      undefined, {noReset: false, newSimulator: false}
+    ).should.be.true;
+    SimulatorManagementModule.installToSimulator.calledWith(
+      'some-device',
+      '/path/to/iosApp2.app',
+      undefined, {noReset: false, newSimulator: false}
+    ).should.be.true;
   });
 });

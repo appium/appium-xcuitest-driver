@@ -1,13 +1,5 @@
 ## Setting up iOS Real Devices Tests with XCUITest
 
-### Necessary installed software
-
-Two pieces of software are currently necessary to run iOS tests on real devices:
-
-1. `libimobiledevice` - install using `brew install libimobiledevice --HEAD`
-2. `ios-deploy` - install using `npm install -g ios-deploy`
-
-
 ### Basic (automatic) configuration
 
 The easiest way to get up-and-running with Appium's XCUITest support on iOS
@@ -22,7 +14,7 @@ to do this:
     }
 ```
 *   Create a `.xcconfig` file somewhere on your file system and add the following to it:
-```
+```shell
     DEVELOPMENT_TEAM = <Team ID>
     CODE_SIGN_IDENTITY = iPhone Developer
 ```
@@ -113,8 +105,12 @@ configuration](#basic-automatic-configuration).
 ### Full manual configuration
 
 Alternatively, the provisioning profile can be manually associated with the
-project (keep in mind that this will have to be done each time the WebDriverAgent
+project (keep in mind that this will have to be done each time the `WebDriverAgent`
 is updated, and is _not_ recommended):
+
+*   Appium's version of [WebDriverAgent](https://github.com/appium/WebDriverAgent)
+    is distributed through NPM as [appium-webdriveragent](https://www.npmjs.com/package/appium-webdriveragent),
+    and is installed with the Appium server.
 
 *   Find out where your Appium installation is:
 ```
@@ -122,7 +118,14 @@ is updated, and is _not_ recommended):
     /path/where/installed/bin/appium
 ```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
-    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent`.
+    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent` or
+    `/path/where/installed/lib/node_modules/appium/node_modules/<current_driver_module>/node_modules/appium-webdriveragent`.
+    The actual path depends on where NPM decides to put the submodule, although the
+    rule of thumb is to look for it as a subdirectory of the actual driver's node
+    modules (for the majority of cases this would be
+    `appium/node_modules/appium-xcuitest-driver/node_modules`) and, if it is not present there, under `appium/node_modules`.
+    You could also see the full path to WebDriverAgent's folder in Appium server logs
+    after a session has been started.
     Open a terminal and go to that location, then run the following in order to
     set the project up:
 ```
@@ -166,7 +169,7 @@ If this was successful, the output should end with something like:
         t =     0.00s     Start Test at 2017-01-23 15:49:12.588
         t =     0.00s     Set Up
 ```
-*   To completely verify, you can try accessing the WebDriverAgent server status
+*   To completely verify, you can try accessing the `WebDriverAgent` server status
     (**note:** you _must_ be on the same network as the device, and know its IP
     address, from Settings => Wi-Fi => Current Network):
 ```

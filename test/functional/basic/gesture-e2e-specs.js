@@ -7,11 +7,14 @@ import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
+import { getGenericSimulatorForIosVersion } from '../../../lib/utils';
 import xcode from 'appium-xcode';
 
 
 chai.should();
 chai.use(chaiAsPromised);
+
+const BTN_OK_CNCL = 'Okay / Cancel';
 
 describe('XCUITestDriver - gestures', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -24,6 +27,10 @@ describe('XCUITestDriver - gestures', function () {
     });
     beforeEach(async function () {
       await driver.back();
+      await retryInterval(5, 500, async function () {
+        const el = await driver.elementByAccessibilityId('Alert Views');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+      });
     });
     after(async function () {
       await deleteSession();
@@ -35,13 +42,9 @@ describe('XCUITestDriver - gestures', function () {
 
     describe('tap, press, longpress', function () {
       beforeEach(async function () {
-        await retryInterval(10, 500, async () => {
-          let el = await driver.elementByAccessibilityId('Action Sheets');
-          await driver.execute('mobile: scroll', {element: el, toVisible: true});
-          await el.click();
-          // wait a moment to switch views
-          await B.delay(500);
-          await driver.elementByAccessibilityId('Okay / Cancel');
+        await driver.elementByAccessibilityId('Alert Views').click();
+        await retryInterval(5, 100, async function () {
+          await driver.elementByAccessibilityId(BTN_OK_CNCL);
         });
       });
 
@@ -62,7 +65,7 @@ describe('XCUITestDriver - gestures', function () {
           if (process.env.CI && UICATALOG_CAPS.platformVersion === '10.3') {
             return this.skip();
           }
-          let el = await driver.elementByAccessibilityId('Okay / Cancel');
+          let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
           let action = new wd.TouchAction(driver);
           action.tap({el});
           await action.perform();
@@ -70,7 +73,7 @@ describe('XCUITestDriver - gestures', function () {
           await exitModal('OK');
         });
         it('should tap on arbitrary coordinates', async function () {
-          let el = await driver.elementByAccessibilityId('Okay / Cancel');
+          let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
           let loc = await el.getLocation();
           let size = await el.getSize();
 
@@ -87,7 +90,7 @@ describe('XCUITestDriver - gestures', function () {
         });
       });
       it('should long press on an element', async function () {
-        let el = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
         let action = new wd.TouchAction(driver);
         action.longPress({el}).release();
         await action.perform();
@@ -95,7 +98,7 @@ describe('XCUITestDriver - gestures', function () {
         await exitModal('Cancel');
       });
       it('should long press on an element with duration through press-wait-release', async function () {
-        let el = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
         let action = new wd.TouchAction(driver);
         action.press({el}).wait(1200).release();
         await action.perform();
@@ -103,7 +106,7 @@ describe('XCUITestDriver - gestures', function () {
         await exitModal('Cancel');
       });
       it('should long press on an element with duration through pressOpts.duration', async function () {
-        let el = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
         let action = new wd.TouchAction(driver);
         action.longPress({el, duration: 1200}).release();
         await action.perform();
@@ -111,7 +114,7 @@ describe('XCUITestDriver - gestures', function () {
         await exitModal('Cancel');
       });
       it('should long press on arbitrary coordinates', async function () {
-        let el = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
         let loc = await el.getLocation();
         let size = await el.getSize();
 
@@ -128,20 +131,19 @@ describe('XCUITestDriver - gestures', function () {
       });
     });
     it('should scroll using touch actions', async function () {
-      let el1 = await driver.elementByAccessibilityId('Action Sheets');
+      let el1 = await driver.elementByAccessibilityId('Activity Indicators');
       let el2 = await driver.elementByAccessibilityId('Progress Views');
 
-      let el3 = await driver.elementByAccessibilityId('Text Fields');
+      let el3 = await driver.elementByAccessibilityId('Web View');
       await el3.isDisplayed().should.eventually.be.false;
 
       let action = new wd.TouchAction(driver);
       action.press({el: el2}).wait(500).moveTo({el: el1}).release();
       await action.perform();
 
-      await el3.isDisplayed().should.eventually.be.true;
-
-      // go back
-      await driver.execute('mobile: scroll', {element: el1, toVisible: true});
+      await retryInterval(5, 1000, async function () {
+        await el3.isDisplayed().should.eventually.be.true;
+      });
     });
     it('should double tap on an element', async function () {
       // FIXME: Multitouch does not work as expected in Xcode < 9.
@@ -150,9 +152,8 @@ describe('XCUITestDriver - gestures', function () {
         return this.skip();
       }
 
-      let el = await driver.elementByAccessibilityId('Steppers');
-      await driver.execute('mobile: scroll', {element: el, toVisible: true});
-      await el.click();
+      await driver.execute('mobile: scroll', {direction: 'down'});
+      await driver.elementByAccessibilityId('Steppers').click();
 
       let stepper = await driver.elementByAccessibilityId('Increment');
       let action = new wd.TouchAction(driver);
@@ -178,7 +179,7 @@ describe('XCUITestDriver - gestures', function () {
     });
     describe('pinch and zoom', function () {
       beforeEach(async function () {
-        let el = await driver.elementByAccessibilityId('Web View');
+        const el = await driver.elementByAccessibilityId('Web View');
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
       });
@@ -230,9 +231,17 @@ describe('XCUITestDriver - gestures', function () {
       });
     });
     describe('special actions', function () {
-      it('should open the control center by swiping up at the bottom', async function () {
-        await driver.elementByAccessibilityId('ControlCenterView')
-          .should.eventually.be.rejectedWith(/An element could not be located/);
+      it('should open the control center', async function () {
+        let isStatusBarAvailable = false;
+        try {
+          await driver.elementByClassName('XCUIElementTypeStatusBar')
+            .should.eventually.be.rejectedWith(/An element could not be located/);
+        } catch (err) {
+          // if this exists,
+          isStatusBarAvailable = true;
+          await driver.elementByAccessibilityId('ControlCenterView')
+            .should.eventually.be.rejectedWith(/An element could not be located/);
+        }
 
         let x, y0, y1;
         const window = await driver.elementByClassName('XCUIElementTypeApplication');
@@ -245,8 +254,22 @@ describe('XCUITestDriver - gestures', function () {
           y0 = location.y;
         } catch (e) {
           // Otherwise, pull down the middle of the top of the Simulator
+          const isIphoneX = await (async () => {
+            if (UICATALOG_CAPS.deviceName.toLowerCase().includes('iphone x')) {
+              return true;
+            }
+            const { platformVersion, deviceName } = await driver.sessionCapabilities();
+            const generic = getGenericSimulatorForIosVersion(platformVersion, deviceName);
+            if (_.includes(_.toLower(generic), ('iphone x'))) {
+              return true;
+            }
+            return false;
+          })();
+
           x = width / 2;
-          y0 = height - 5;
+          y0 = isIphoneX
+            ? 15
+            : height - 5;
         }
         y1 = height / 2;
 
@@ -255,7 +278,11 @@ describe('XCUITestDriver - gestures', function () {
         await action.perform();
 
         // Control Center ought to be visible now
-        await driver.elementByAccessibilityId('ControlCenterView');
+        if (isStatusBarAvailable) {
+          await driver.elementByAccessibilityId('ControlCenterView');
+        } else {
+          await driver.elementByClassName('XCUIElementTypeStatusBar');
+        }
       });
     });
   });
@@ -271,7 +298,7 @@ describe('XCUITestDriver - gestures', function () {
     });
 
     it('should tap on the element', async function () {
-      let el1 = await driver.elementByAccessibilityId('Action Sheets');
+      let el1 = await driver.elementByAccessibilityId('Alert Views');
       let action = new wd.TouchAction(driver);
       action.tap({el: el1});
       await action.perform();
@@ -279,7 +306,7 @@ describe('XCUITestDriver - gestures', function () {
       // pause a moment so the alert can animate
       await B.delay(500);
 
-      let el2 = await driver.elementByAccessibilityId('Okay / Cancel');
+      let el2 = await driver.elementByAccessibilityId(BTN_OK_CNCL);
       el2.should.exist;
     });
   });

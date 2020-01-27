@@ -2,25 +2,30 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-import apps from './apps';
+import { system, util } from 'appium-support';
 
 
-const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-let DEVICE_NAME = process.env.DEVICE_NAME;
-
-// If it's real device cloud, don't set a device name. Use dynamic device allocation.
-if (!process.env.DEVICE_NAME && !process.env.SAUCE_RDC) {
-  DEVICE_NAME = 'iPhone 6';
+// translate integer environment variable to a boolean 0=false, !0=true
+function checkFeatureInEnv (envArg) {
+  let feature = parseInt(process.env[envArg], 10);
+  if (isNaN(feature)) {
+    feature = process.env[envArg];
+  }
+  return !!feature;
 }
 
-const SHOW_XCODE_LOG = !!process.env.SHOW_XCODE_LOG || undefined; // we do not want `false` in Travis, so we get some logging on errors
-const REAL_DEVICE = (function () {
-  let rd = parseInt(process.env.REAL_DEVICE, 10);
-  if (isNaN(rd)) {
-    rd = process.env.REAL_DEVICE;
-  }
-  return !!rd;
-})();
+const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
+const LAUNCH_WITH_IDB = process.env.LAUNCH_WITH_IDB;
+
+// If it's real device cloud, don't set a device name. Use dynamic device allocation.
+const DEVICE_NAME = process.env.DEVICE_NAME
+  ? process.env.DEVICE_NAME
+  : process.env.SAUCE_RDC
+    ? undefined
+    : util.compareVersions(PLATFORM_VERSION, '>=', '13.0') ? 'iPhone 8' : 'iPhone 6';
+
+const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
+const REAL_DEVICE = checkFeatureInEnv('REAL_DEVICE');
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
 if (REAL_DEVICE && !XCCONFIG_FILE) {
   // no xcconfig file specified, so try to find in the root directory of the package
@@ -29,6 +34,41 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
   let files = glob.sync('*.xcconfig', { cwd });
   if (files.length) {
     XCCONFIG_FILE = path.resolve(cwd, _.first(files));
+  }
+}
+
+// Had to make these two optional dependencies so the tests
+// can still run in linux
+let testAppPath, uiCatalogPath;
+if (system.isMac() && !process.env.CLOUD) {
+  testAppPath = require('ios-test-app').absolute;
+
+  // iOS 13+ need a slightly different app to be able to get the correct automation
+  uiCatalogPath = parseInt(PLATFORM_VERSION, 10) >= 13
+    ? require('ios-uicatalog').uiKitCatalog.absolute
+    : require('ios-uicatalog').uiCatalog.absolute;
+}
+
+const apps = {};
+
+const CLOUD = process.env.CLOUD;
+
+if (REAL_DEVICE) {
+  if (CLOUD) {
+    apps.testAppId = 1;
+  } else {
+    apps.iosTestApp = testAppPath.iphoneos;
+    apps.uiCatalogApp = uiCatalogPath.iphoneos;
+  }
+} else {
+  if (CLOUD) {
+    apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp9.4.app.zip';
+    apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
+    apps.touchIdApp = null; // TODO: Upload this to appium.io
+  } else {
+    apps.iosTestApp = testAppPath.iphonesimulator;
+    apps.uiCatalogApp = uiCatalogPath.iphonesimulator;
+    apps.touchIdApp = path.resolve('.', 'test', 'assets', 'TouchIDExample.app');
   }
 }
 
@@ -46,12 +86,14 @@ let GENERIC_CAPS = {
   platformVersion: PLATFORM_VERSION,
   deviceName: DEVICE_NAME,
   automationName: 'XCUITest',
+  launchWithIDB: !!LAUNCH_WITH_IDB,
   noReset: true,
   maxTypingFrequency: 30,
   clearSystemFiles: true,
   showXcodeLog: SHOW_XCODE_LOG,
   wdaLaunchTimeout: (60 * 1000 * 4),
-  wdaConnectionTimeout: (60 * 1000 * 8)
+  wdaConnectionTimeout: (60 * 1000 * 8),
+  useNewWDA: true,
 };
 
 if (process.env.CLOUD) {
@@ -72,7 +114,8 @@ if (!REAL_DEVICE && !process.env.CLOUD) {
   // this happens a single time, at load-time for the test suite,
   // so sync method is not overly problematic
   if (!fs.existsSync(apps.uiCatalogApp)) {
-    apps.uiCatalogApp = path.resolve('.', 'test', 'assets', 'UICatalog-iphonesimulator.app');
+    apps.uiCatalogApp = path.resolve('.', 'test', 'assets',
+      `${parseInt(PLATFORM_VERSION, 10) >= 13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`);
   }
   if (!fs.existsSync(apps.iosTestApp)) {
     apps.iosTestApp = path.resolve('.', 'test', 'assets', 'TestApp-iphonesimulator.app');
@@ -101,6 +144,11 @@ const TESTAPP_CAPS = _.defaults({
   app: apps.iosTestApp,
 }, GENERIC_CAPS);
 
+const MULTIPLE_APPS = _.defaults({
+  app: apps.uiCatalogApp,
+  otherApps: apps.iosTestApp
+}, GENERIC_CAPS);
+
 const TOUCHIDAPP_CAPS = _.defaults({
   app: apps.touchIdApp,
 }, GENERIC_CAPS);
@@ -112,7 +160,14 @@ const W3C_CAPS = {
   }
 };
 
+let TVOS_CAPS = _.defaults({
+  platformName: 'tvOS',
+  bundleId: 'com.apple.TVSettings',
+  deviceName: 'Apple TV'
+}, GENERIC_CAPS);
+
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
   PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS,
+  TVOS_CAPS, MULTIPLE_APPS
 };

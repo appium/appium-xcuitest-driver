@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import http from 'http';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { openPage, GUINEA_PIG_PAGE } from './helpers';
@@ -20,6 +21,19 @@ describe('safari - execute -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  before(async function () {
+    await killAllSimulators();
+    let caps = _.defaults({
+      safariInitialUrl: GUINEA_PIG_PAGE,
+      nativeWebTap: true,
+      showSafariConsoleLog: true,
+    }, SAFARI_CAPS);
+    driver = await initSession(caps);
+  });
+  after(async function () {
+    await deleteSession();
+    await killAllSimulators();
+  });
 
   async function runTests (secure = false) { // eslint-disable-line require-await
     describe('mobile: x methods', function () {
@@ -34,7 +48,7 @@ describe('safari - execute -', function () {
       });
 
       it('should eval javascript', async function () {
-        (await driver.execute('return 1')).should.be.equal(1);
+        (await driver.execute('return 1 + 1')).should.be.equal(2);
       });
 
       it('should not be returning hardcoded results', async function () {
@@ -79,51 +93,60 @@ describe('safari - execute -', function () {
     });
 
     describe('asynchronous', function () {
-      before(function () {
-        if (process.env.REAL_DEVICE) return this.skip(); // eslint-disable-line curly
-      });
-
       it('should execute async javascript', async function () {
         await driver.setAsyncScriptTimeout(1000);
-        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
+        await driver.executeAsync(`arguments[arguments.length - 1](123);`)
+          .should.eventually.equal(123);
+      });
+
+      it('should bubble up errors', async function () {
+        await driver.executeAsync(`arguments[arguments.length - 1]('nan'--);`)
+          .should.eventually.be.rejectedWith(/operator applied to value that is not a reference/);
       });
 
       it('should timeout when callback is not invoked', async function () {
         await driver.setAsyncScriptTimeout(1000);
-        await driver.executeAsync(`return 1 + 2`).should.eventually.be.rejected;
+        await driver.executeAsync(`return 1 + 2`)
+          .should.eventually.be.rejectedWith(/Timed out waiting for/);
       });
     });
   }
 
   describe('http', function () {
-    before(async function () {
-      await killAllSimulators();
-      let caps = _.defaults({
-        safariInitialUrl: GUINEA_PIG_PAGE,
-        nativeWebTap: true,
-      }, SAFARI_CAPS);
-      driver = await initSession(caps);
-    });
-    after(async function () {
-      await deleteSession();
-      await killAllSimulators();
-    });
     runTests();
+    describe('cors', function () {
+      let server;
+      const host = '127.0.0.1';
+      const port = 8080;
+      before(function () {
+        if (process.env.REAL_DEVICE) {
+          return this.skip();
+        }
+
+        // create an http server so we can test CORS handling without
+        // going to an external site
+        server = http.createServer(function (req, res) {
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.write('appium-xcuitest-driver async execute tests');
+          res.end();
+        }).listen({host, port});
+      });
+      after(function () {
+        if (server) {
+          server.close();
+        }
+      });
+
+      it('should execute async javascript from a different site', async function () {
+        await driver.get(`http://${host}:${port}`);
+        await driver.setAsyncScriptTimeout(1000);
+        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
+      });
+    });
   });
   describe('https', function () {
     before(async function () {
-      await killAllSimulators();
-      let caps = _.defaults({
-        safariInitialUrl: GUINEA_PIG_PAGE,
-        nativeWebTap: true,
-        enableAsyncExecuteFromHttps: true,
-      }, SAFARI_CAPS);
-      driver = await initSession(caps);
       await openPage(driver, 'https://google.com');
-    });
-    after(async function () {
-      await deleteSession();
-      await killAllSimulators();
     });
     runTests(true);
   });
