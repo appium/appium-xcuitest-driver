@@ -109,7 +109,7 @@
     "gulp": "^4.0.0",
     "ios-test-app": "^3.0.0",
     "ios-uicatalog": "^3.5.0",
-    "mocha": "^6.0.0",
+    "mocha": "^7.0.1",
     "mocha-junit-reporter": "^1.23.1",
     "mocha-multi-reporters": "^1.1.7",
     "pem": "^1.8.3",
