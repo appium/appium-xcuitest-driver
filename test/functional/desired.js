@@ -94,6 +94,7 @@ let GENERIC_CAPS = {
   wdaLaunchTimeout: (60 * 1000 * 4),
   wdaConnectionTimeout: (60 * 1000 * 8),
   useNewWDA: true,
+  webviewConnectTimeout: 30000,
 };
 
 if (process.env.CLOUD) {

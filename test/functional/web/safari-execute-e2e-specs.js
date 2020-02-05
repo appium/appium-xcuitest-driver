@@ -119,10 +119,6 @@ describe('safari - execute -', function () {
       const host = '127.0.0.1';
       const port = 8080;
       before(function () {
-        if (process.env.REAL_DEVICE) {
-          return this.skip();
-        }
-
         // create an http server so we can test CORS handling without
         // going to an external site
         server = http.createServer(function (req, res) {
