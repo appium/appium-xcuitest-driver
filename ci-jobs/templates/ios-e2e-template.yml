@@ -1,12 +1,13 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 parameters:
-    script: ''
-    name: ios-e2e-test
-    dependsOn: ''
-    iosVersion: 13.0
-    xcodeVersion: 11
-    deviceName: 'iPhone X'
-    skipTvOs: False
+  script: ''
+  name: ios-e2e-test
+  dependsOn: ''
+  iosVersion: 13.3
+  xcodeVersion: 11.3.1
+  deviceName: 'iPhone X'
+  skipTvOs: False
+  vmImage: 'macOS-10.14'
 
 jobs:
   - job: ${{ parameters.name }}
@@ -18,7 +19,7 @@ jobs:
       LAUNCH_WITH_IDB: ${{ parameters.launchWithIDB }}
       CI: true
     pool:
-      vmImage: 'macOS-10.14'
+      vmImage: ${{ parameters.vmImage }}
     steps:
     - checkout: self
     - script: |
@@ -36,7 +37,7 @@ jobs:
       displayName: List Installed Simulators
     - task: NodeTool@0
       inputs:
-        versionSpec: 10.x
+        versionSpec: 12.x
     - script: npm install
       displayName: Install node dependencies
     - script: npm run build
