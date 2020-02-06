@@ -17,7 +17,7 @@ jobs:
     - checkout: self
     - task: NodeTool@0
       inputs:
-        versionSpec: 10.x
+        versionSpec: 12.x
     - script: |
         npm install
         npm install mocha@5 # Fix until mocha-parallel-tests supports Mocha 6
