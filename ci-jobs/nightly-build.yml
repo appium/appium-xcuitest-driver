@@ -14,8 +14,8 @@ jobs:
   # Run the E2E tests on local simulators across different ios and xcode versions
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iphone_13_2
-      iosVersion: 13.2
+      name: iphone_13_3
+      iosVersion: 13.3
       xcodeVersion: 11.3.1
       # skipTvOs: True
       tvosName: AppleTV_13_1
