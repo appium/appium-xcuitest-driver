@@ -20,13 +20,13 @@ jobs:
       # skipTvOs: True
       tvosName: AppleTV_13_1
       tvosDeviceName: "Apple TV"
-    - template: ./templates/xcuitest-e2e-template.yml
+  - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iphone_13_3
-      iosVersion: 13.3
-      xcodeVersion: 11.3.1
+      name: iphone_13_2
+      iosVersion: 13.2
+      xcodeVersion: 11.2.1
       # skipTvOs: True
-      tvosName: AppleTV_13_1
+      tvosName: AppleTV_13_2
       tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
