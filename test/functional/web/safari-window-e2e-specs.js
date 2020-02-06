@@ -169,18 +169,19 @@ describe('safari - windows and frames', function () {
       (await driver.execute(GET_ELEM_SYNC)).should.be.equal(SUB_FRAME_1_TITLE);
     });
 
-    it.skip('should execute async javascript in frame', async function () {
+    it('should execute async javascript in frame', async function () {
+      await driver.setAsyncScriptTimeout(2000);
       await driver.frame('first');
       (await driver.executeAsync(GET_ELEM_ASYNC)).should.be.equal(SUB_FRAME_1_TITLE);
     });
 
     it('should get source within a frame', async function () {
-      let pageSource = await driver.source();
+      const pageSource = await driver.source();
       pageSource.should.include(FRAMESET_TITLE);
 
       await driver.frame('first');
 
-      let frameSource = await driver.source();
+      const frameSource = await driver.source();
       frameSource.should.include(SUB_FRAME_1_TITLE);
       frameSource.should.not.include(FRAMESET_TITLE);
     });
