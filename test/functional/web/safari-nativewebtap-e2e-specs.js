@@ -3,12 +3,14 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
-import { openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
-         GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE } from './helpers';
+import {
+  openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
+  GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
+} from './helpers';
 import { killAllSimulators } from '../helpers/simulator';
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
-import { getDeviceTypes } from 'node-simctl';
+import Simctl from 'node-simctl';
 import { util } from 'appium-support';
 
 /**
@@ -48,7 +50,7 @@ describe('Safari - coordinate conversion -', function () {
       // skip, by not having any devices in the list
     } else if (process.env.ALL_DEVICES) {
       // get all the iPhone and iPad devices available
-      devices = await getDeviceTypes();
+      devices = await new Simctl().getDeviceTypes();
       devices = devices.filter((device) => device.includes('iPhone') || device.includes('iPad'));
     } else if (process.env.DEVICE_NAME) {
       devices = [process.env.DEVICE_NAME];

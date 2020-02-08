@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
-import * as simctl from 'node-simctl';
+import Simctl from 'node-simctl';
 
 
 describe('pasteboard commands', function () {
@@ -9,8 +9,8 @@ describe('pasteboard commands', function () {
 
   beforeEach(function () {
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
-    setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
-    getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
+    setPasteboardStub = sinon.stub(Simctl.prototype, 'setPasteboard');
+    getPasteboardStub = sinon.stub(Simctl.prototype, 'getPasteboard');
   });
 
   afterEach(function () {

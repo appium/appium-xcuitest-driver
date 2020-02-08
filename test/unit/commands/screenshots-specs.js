@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../..';
+import Simctl from 'node-simctl';
 
-const simctlModule = require('node-simctl');
 
 describe('screenshots commands', function () {
   let driver;
@@ -19,7 +19,7 @@ describe('screenshots commands', function () {
 
   describe('getScreenshot', function () {
     describe('simulator', function () {
-      let simctlStub = sinon.stub(simctlModule, 'getScreenshot');
+      let simctlStub = sinon.stub(Simctl.prototype, 'getScreenshot');
 
       afterEach(function () {
         simctlStub.reset();
