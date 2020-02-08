@@ -20,7 +20,7 @@ chai.use(chaiAsPromised);
 const simctl = new Simctl();
 
 async function createDevice () {
-  return await simctl.createDeviceNodeSimctl(
+  return await simctl.createDevice(
     SIM_DEVICE_NAME,
     translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName),
     UICATALOG_SIM_CAPS.platformVersion
