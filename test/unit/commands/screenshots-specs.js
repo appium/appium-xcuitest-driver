@@ -11,6 +11,11 @@ describe('screenshots commands', function () {
 
   beforeEach(function () {
     driver = new XCUITestDriver();
+    driver.opts = {
+      device: {
+        simctl: new Simctl(),
+      }
+    };
     proxyStub = sinon.stub(driver, 'proxyCommand');
   });
   afterEach(function () {

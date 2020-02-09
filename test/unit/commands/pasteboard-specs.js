@@ -5,6 +5,11 @@ import Simctl from 'node-simctl';
 
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
+  driver.opts = {
+    device: {
+      simctl: new Simctl(),
+    }
+  };
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
   beforeEach(function () {
@@ -52,8 +57,8 @@ describe('pasteboard commands', function () {
       };
       await driver.mobileSetPasteboard(opts);
       setPasteboardStub.calledOnce.should.be.true;
-      setPasteboardStub.firstCall.args[1].should.eql(opts.content);
-      setPasteboardStub.firstCall.args[2].should.eql(opts.encoding);
+      setPasteboardStub.firstCall.args[0].should.eql(opts.content);
+      setPasteboardStub.firstCall.args[1].should.eql(opts.encoding);
     });
 
     it('getPasteboard should invoke correct simctl method', async function () {
