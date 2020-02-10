@@ -1,11 +1,11 @@
 import { createSim, getExistingSim, runSimulatorReset } from '../../lib/simulator-management.js';
 import sinon from 'sinon';
 import chai from 'chai';
+import Simctl from 'node-simctl';
 
 const should = chai.should();
 
 const caps = {platformName: 'iOS', deviceName: 'iPhone 6', platformVersion: '10.1', app: '/foo.app'};
-const simctlModule = require('node-simctl');
 const iOSSimulatorModule = require('appium-ios-simulator');
 
 describe('simulator management', function () {
@@ -15,7 +15,7 @@ describe('simulator management', function () {
   });
 
   describe('createSim', function () {
-    let createDeviceStub = sinon.stub(simctlModule, 'createDevice');
+    let createDeviceStub = sinon.stub(Simctl.prototype, 'createDevice');
 
     afterEach(function () {
       createDeviceStub.reset();
@@ -37,7 +37,7 @@ describe('simulator management', function () {
   });
 
   describe('getExistingSim', function () {
-    let createDeviceStub = sinon.stub(simctlModule, 'getDevices');
+    let createDeviceStub = sinon.stub(Simctl.prototype, 'getDevices');
 
     afterEach(function () {
       createDeviceStub.reset();
