@@ -55,7 +55,7 @@ describe('DeviceConnectionsFactory', function () {
     };
 
     devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping))
-      .should.eventually.eql(['udid:1234', 'udid4:6545']);
+      .should.eql(['udid:1234', 'udid4:6545']);
   });
 
 });
