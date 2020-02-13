@@ -59,7 +59,7 @@
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.24.0",
-    "node-simctl": "^6.0.1",
+    "node-simctl": "^6.1.0",
     "portscanner": "2.2.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
