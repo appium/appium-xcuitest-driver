@@ -150,7 +150,7 @@ Differences are noted here:
 |`reduceMotion`| It allows to turn on/off reduce motion accessibility preference. Setting reduceMotion `on` helps to reduce flakiness during tests. Only on simulators | e.g `true` |
 |`permissions`| Allows to set permissions for the specified application bundle on Simulator only. The capability value is expected to be a valid JSON string with `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}` format. Since Xcode SDK 11.4 Apple provides native APIs to interact with application settings. Check the output of `xcrun simctl privacy booted` command to get the list of available permission names. Use `yes`, `no` and `unset` as values in order to `grant`, `revoke` or `reset` the corresponding permission. Below Xcode SDK 11.4 it is required that `applesimutils` package is installed and available in PATH. The list of available service names and statuses can be found at https://github.com/wix/AppleSimulatorUtils. | e. g. `{"com.apple.mobilecal": {"calendar": "YES"}}` |
 |`iosSimulatorLogsPredicate`|Set the `--predicate` flag in the ios simulator logs|e.g.: `'process != "locationd" AND process != "DTServiceHub"' AND process != "mobileassetd"`|
-
+|`simulatorPasteboardAutomaticSync`| Handle the `-PasteboardAutomaticSync` flag when simulator process launches. It could improve launching simulator performance not to sync pasteboard with the system when this value is `off`. `on` forces the flag enabled. `system` does not provide the flag to the launching command. `on`, `off`, or `system` is available. They are case insensitive. Defaults to `off` | e.g. `system` |
 
 ### General capabilities:
 
