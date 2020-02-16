@@ -7,6 +7,7 @@ parameters:
   tvosName: ''
   tvosDeviceName: ''
   launchWithIDB: false
+  vmImage: 'macOS-10.15'
 jobs:
   - template: ./ios-e2e-template.yml
     parameters:
@@ -14,6 +15,7 @@ jobs:
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
       script: |
         npm install --no-save mjpeg-consumer
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
@@ -24,6 +26,7 @@ jobs:
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/device -g @skip-ci -i --exit
 
@@ -33,6 +36,7 @@ jobs:
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/driver -g @skip-ci -i --exit
 
@@ -42,6 +46,7 @@ jobs:
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/web -g @skip-ci -i --exit
 
@@ -51,6 +56,7 @@ jobs:
       iosVersion: ${{ parameters.iosVersion }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
 
@@ -61,6 +67,7 @@ jobs:
       skipTvOs: ${{ parameters.skipTvOs }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.tvosDeviceName }}
+      vmImage: ${{ parameters.vmImage }}
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/tv -g @skip-ci -i --exit
 # IDB test is commented out at the moment since it is not working with xcode 11 and azure
