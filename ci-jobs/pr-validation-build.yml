@@ -8,3 +8,4 @@ jobs:
       deviceName: "iPhone X"
       tvosName: AppleTV_13_3
       tvosDeviceName: "Apple TV"
+      vmImage: 'macOS-10.15'
