@@ -27,7 +27,7 @@ describe('safari - alerts', function () {
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
-      nativeWebTap: true,
+      nativeWebTap: false,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
