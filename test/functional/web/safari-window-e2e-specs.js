@@ -27,7 +27,6 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: false,
-      nativeWebTap: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
     await driver.setPageLoadTimeout(100);
@@ -47,9 +46,11 @@ describe('safari - windows and frames', function () {
 
   let driver;
   before(async function () {
-    let caps = _.defaults({
+    const caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
+      // using JS atoms to open new window will, even if safari does not disable
+      // popups, open an alert asking if it is ok.
       nativeWebTap: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);

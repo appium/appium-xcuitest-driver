@@ -25,7 +25,6 @@ describe('safari - execute -', function () {
     await killAllSimulators();
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
-      nativeWebTap: true,
       showSafariConsoleLog: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
