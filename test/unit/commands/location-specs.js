@@ -29,7 +29,8 @@ describe('location commands', function () {
     });
 
     it('should fail when location object is wrong', async function () {
-      await driver.setGeoLocation({}).should.be.rejectedWith('Both latitude and longitude should be set');
+      await driver.setGeoLocation({})
+        .should.eventually.be.rejectedWith('Both latitude and longitude should be set');
     });
 
     describe('on real device', function () {

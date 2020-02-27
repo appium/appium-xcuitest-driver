@@ -5,7 +5,7 @@ import B from 'bluebird';
 import { killAllSimulators } from '../helpers/simulator';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { doesIncludeCookie, doesNotIncludeCookie,
-         newCookie, oldCookie1 } from './safari-cookie-e2e-specs';
+         newCookie, oldCookie1 } from './safari-basic-e2e-specs';
 import { SAFARI_CAPS } from '../desired';
 import https from 'https';
 
@@ -19,7 +19,7 @@ const HTTPS_PORT = 9762;
 
 const LOCAL_HTTPS_URL = `https://localhost:${HTTPS_PORT}/`;
 
-let caps = _.defaults({
+const caps = _.defaults({
   safariInitialUrl: LOCAL_HTTPS_URL,
   noReset: true,
 }, SAFARI_CAPS);
@@ -64,8 +64,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
     it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
       driver = await initSession(caps);
       await driver.get(LOCAL_HTTPS_URL);
-      let source = await driver.source();
-      source.should.include('Arbitrary text');
+      await driver.source().should.eventually.include('Arbitrary text');
       await driver.quit();
       await B.delay(1000);
 
@@ -74,8 +73,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       if (!process.env.CLOUD) {
         await driver.init(caps);
         await driver.get(LOCAL_HTTPS_URL);
-        source = await driver.source();
-        source.should.include('Arbitrary text');
+        await driver.source().should.eventually.include('Arbitrary text');
       }
 
       await deleteSession();
