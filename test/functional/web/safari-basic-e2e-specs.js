@@ -16,7 +16,6 @@ let expect = chai.expect;
 
 let DEFAULT_CAPS = _.defaults({
   safariInitialUrl: GUINEA_PIG_PAGE,
-  nativeWebTap: true,
 }, SAFARI_CAPS);
 
 describe('Safari - basics -', function () {

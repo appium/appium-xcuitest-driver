@@ -2,7 +2,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
-import { SAFARI_CAPS, PLATFORM_VERSION } from '../desired';
+import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
 
@@ -15,19 +15,9 @@ describe('safari - alerts', function () {
 
   let driver;
   before(async function () {
-    // TODO: why does this not work for 9.3? Argh.
-    if (PLATFORM_VERSION === '9.3') {
-      return this.skip();
-    }
-    // TODO: why does this fail on Travis? popup happens but button is "send"
-    if (process.env.CI) {
-      return this.skip();
-    }
-
-    let caps = _.defaults({
+    const caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
-      nativeWebTap: false,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });

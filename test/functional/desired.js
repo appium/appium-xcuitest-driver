@@ -138,6 +138,7 @@ const SETTINGS_CAPS = _.defaults({
 
 const SAFARI_CAPS = _.defaults({
   browserName: 'Safari',
+  nativeWebTap: false,
   testobject_api_key: process.env.SAUCE_RDC_WEB_ACCESS_KEY,
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
