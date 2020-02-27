@@ -40,7 +40,6 @@ describe('safari - cookies', function () {
     let caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: true,
-      nativeWebTap: true,
     }, SAFARI_CAPS);
     driver = await initSession(caps);
   });
