@@ -256,7 +256,8 @@ describe('XCUITestDriver - basics -', function () {
       size.height.should.be.a('number');
     });
     it('should not be able to get random window size', async function () {
-      await driver.getWindowSize('something-random').should.be.rejectedWith(/Currently only getting current window size is supported/);
+      await driver.getWindowSize('something-random')
+        .should.eventually.be.rejectedWith(/Currently only getting current window size is supported/);
     });
   });
 

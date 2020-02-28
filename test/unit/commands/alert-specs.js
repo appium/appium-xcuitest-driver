@@ -56,7 +56,7 @@ describe('alert commands', function () {
 
     it('should reject request to WDA if action parameter is not supported', async function () {
       await driver.execute(`mobile: ${commandName}`, {action: 'blabla'})
-        .should.be.rejectedWith(/should be either/);
+        .should.eventually.be.rejectedWith(/should be either/);
     });
 
     it('should send accept alert request to WDA with encoded button label', async function () {
@@ -82,7 +82,7 @@ describe('alert commands', function () {
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
       proxySpy.firstCall.args[1].should.eql('GET');
-      response.value[0].should.be.equal(buttonLabel);
+      response.value[0].should.equal(buttonLabel);
     });
   });
 });

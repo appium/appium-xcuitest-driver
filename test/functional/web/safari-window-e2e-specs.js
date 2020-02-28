@@ -24,7 +24,7 @@ describe('safari - windows and frames - without safariAllowPopups', function () 
 
   let driver;
   before(async function () {
-    let caps = _.defaults({
+    const caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       safariAllowPopups: false,
     }, SAFARI_CAPS);
@@ -66,7 +66,8 @@ describe('safari - windows and frames', function () {
     });
 
     it('should throw nosuchwindow if there is not one', async function () {
-      await driver.window('noexistman').should.eventually.be.rejectedWith(/window could not be found/);
+      await driver.window('noexistman')
+        .should.eventually.be.rejectedWith(/window could not be found/);
     });
 
     it('should be able to open and close windows', async function () {
@@ -99,8 +100,8 @@ describe('safari - windows and frames', function () {
     });
 
     it('should be able to go back and forward', async function () {
-      let link = await driver.elementByLinkText('i am a link');
-      await link.click();
+      await driver.elementByLinkText('i am a link').click();
+
       await driver.elementById('only_on_page_2');
       await driver.back();
       await driver.elementById('i_am_a_textbox');
@@ -111,8 +112,7 @@ describe('safari - windows and frames', function () {
 
     // broken on real devices, see https://github.com/appium/appium/issues/5167
     it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async function () {
-      let link = await driver.elementByLinkText('i am a new window link');
-      await link.click();
+      await driver.elementByLinkText('i am a new window link').click();
       await spinTitleEquals(driver, 'I am another page title', 30);
     });
   });
@@ -124,61 +124,62 @@ describe('safari - windows and frames', function () {
 
     it('should switch to frame by name', async function () {
       await driver.frame('first');
-      (await driver.title()).should.be.equal(FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_1_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_1_TITLE);
     });
 
     it('should switch to frame by index', async function () {
       await driver.frame(1);
-      (await driver.title()).should.be.equal(FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_2_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_2_TITLE);
     });
 
     it('should switch to frame by id', async function () {
       await driver.frame('frame3');
-      (await driver.title()).should.be.equal(FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_3_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_3_TITLE);
     });
 
     it('should switch back to default content from frame', async function () {
       await driver.frame('first');
-      (await driver.title()).should.be.equal(FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_1_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_1_TITLE);
 
       await driver.frame(null);
-      (await driver.elementByTagName('frameset')).should.exist;
+      await driver.elementByTagName('frameset').should.eventually.exist;
     });
 
     it('should switch to child frames', async function () {
       await driver.frame('third');
-      (await driver.title()).should.be.equal(FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(FRAMESET_TITLE);
 
       await driver.frame('childframe');
-      (await driver.elementById('only_on_page_2')).should.exist;
+      await driver.elementById('only_on_page_2').should.eventually.exist;
     });
 
     it('should execute javascript in frame', async function () {
       await driver.frame('first');
-      (await driver.execute(GET_ELEM_SYNC)).should.be.equal(SUB_FRAME_1_TITLE);
+      await driver.execute(GET_ELEM_SYNC)
+        .should.eventually.equal(SUB_FRAME_1_TITLE);
     });
 
     it('should execute async javascript in frame', async function () {
       await driver.setAsyncScriptTimeout(2000);
       await driver.frame('first');
-      (await driver.executeAsync(GET_ELEM_ASYNC)).should.be.equal(SUB_FRAME_1_TITLE);
+      await driver.executeAsync(GET_ELEM_ASYNC)
+        .should.eventually.equal(SUB_FRAME_1_TITLE);
     });
 
     it('should get source within a frame', async function () {
-      const pageSource = await driver.source();
-      pageSource.should.include(FRAMESET_TITLE);
+      await driver.source().should.eventually.include(FRAMESET_TITLE);
 
       await driver.frame('first');
 
@@ -195,60 +196,60 @@ describe('safari - windows and frames', function () {
 
     it('should switch to iframe by name', async function () {
       await driver.frame('iframe1');
-      (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_1_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_1_TITLE);
     });
 
     it('should switch to iframe by index', async function () {
       await driver.frame(1);
-      (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_2_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_2_TITLE);
     });
 
     it('should switch to iframe by id', async function () {
       await driver.frame('id-iframe3');
-      (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_3_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_3_TITLE);
     });
 
     it('should switch to iframe by element', async function () {
-      let frame = await driver.elementById('id-iframe3');
+      const frame = await driver.elementById('id-iframe3');
       await driver.frame(frame);
-      (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_3_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_3_TITLE);
     });
 
     it('should not switch to iframe by element of wrong type', async function () {
-      let h1 = await driver.elementByTagName('h1');
+      const h1 = await driver.elementByTagName('h1');
       await driver.frame(h1).should.eventually.be.rejected;
     });
 
     it('should switch back to default content from iframe', async function () {
       await driver.frame('iframe1');
-      (await driver.title()).should.be.equal(IFRAME_FRAMESET_TITLE);
+      await driver.title().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
-      let h1 = await driver.elementByTagName('h1');
-      (await h1.text()).should.be.equal(SUB_FRAME_1_TITLE);
+      await driver.elementByTagName('h1').text()
+        .should.eventually.equal(SUB_FRAME_1_TITLE);
 
       await driver.frame(null);
-      (await driver.elementsByTagName('iframe')).should.have.length(3);
+      await driver.elementsByTagName('iframe').should.eventually.have.length(3);
     });
 
     it('should get source within an iframe', async function () {
-      let pageSource = await driver.source();
-      pageSource.should.include(IFRAME_FRAMESET_TITLE);
+      await driver.source()
+        .should.eventually.include(IFRAME_FRAMESET_TITLE);
 
       await driver.frame('iframe1');
 
-      let frameSource = await driver.source();
+      const frameSource = await driver.source();
       frameSource.should.include(SUB_FRAME_1_TITLE);
       frameSource.should.not.include(IFRAME_FRAMESET_TITLE);
     });

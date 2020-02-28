@@ -131,8 +131,10 @@ describe('XCUITestDriver', function () {
           useNewWDA: true,
         });
         driver = await initSession(localCaps);
-        await request('http://localhost:8100/status').should.be.rejectedWith(/ECONNREFUSED/);
-        await request('http://localhost:6000/status').should.not.be.rejected;
+        await request('http://localhost:8100/status')
+          .should.eventually.be.rejectedWith(/ECONNREFUSED/);
+        await request('http://localhost:6000/status')
+          .should.eventually.not.be.rejected;
       });
     });
 
@@ -248,7 +250,8 @@ describe('XCUITestDriver', function () {
           udid: 'some-random-udid'
         }, UICATALOG_SIM_CAPS);
 
-        await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
+        await initSession(caps)
+          .should.eventually.be.rejectedWith('Unknown device or simulator UDID');
       });
 
       it('with non-existent udid: throws an error', async function () {
@@ -256,7 +259,8 @@ describe('XCUITestDriver', function () {
         let udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
         let caps = _.defaults({udid}, UICATALOG_SIM_CAPS);
 
-        await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
+        await initSession(caps)
+          .should.eventually.be.rejectedWith('Unknown device or simulator UDID');
       });
 
       it('with noReset set to true: leaves sim booted', async function () {
