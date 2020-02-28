@@ -44,7 +44,7 @@ describe('XCUITestDriver - find', function () {
 
     it('should not find an element not within itself', async function () {
       await B.resolve(el1.elementByClassName('XCUIElementTypeNavigationBar'))
-        .should.be.rejectedWith(/Error response status: 7/);
+        .should.eventually.be.rejectedWith(/Error response status: 7/);
     });
 
     it.skip('should find some elements within itself', async function () {
@@ -169,7 +169,8 @@ describe('XCUITestDriver - find', function () {
         (await el.getAttribute('name')).should.equal('X Button');
       });
       it('should know how to restrict root-level elements', async function () {
-        await driver.elementByXPath('/XCUIElementTypeButton').should.be.rejectedWith(/NoSuchElement/);
+        await driver.elementByXPath('/XCUIElementTypeButton')
+          .should.eventually.be.rejectedWith(/NoSuchElement/);
       });
       it('should search an extended path by child', async function () {
         // pause a moment or the next command gets stuck getting the xpath :(

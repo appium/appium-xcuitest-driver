@@ -41,6 +41,6 @@ describe('XCUITestDriver - screenshots - mjpeg server', function () {
     const base64Image = await driver.takeScreenshot();
 
     const imageMagic = Buffer.from(base64Image, 'base64').toString('hex', 0, PNG_MAGIC_LENGTH);
-    imageMagic.should.be.equal(PNG_MAGIC);
+    imageMagic.should.equal(PNG_MAGIC);
   });
 });

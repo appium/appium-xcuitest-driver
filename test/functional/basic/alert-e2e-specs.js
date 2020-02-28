@@ -106,6 +106,6 @@ describe('XCUITestDriver - alerts -', function () {
 
   it('should throw a NoAlertOpenError when no alert is open', async function () {
     await driver.acceptAlert()
-      .should.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
+      .should.eventually.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
   });
 });

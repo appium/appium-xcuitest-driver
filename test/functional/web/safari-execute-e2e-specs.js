@@ -10,7 +10,7 @@ import { killAllSimulators } from '../helpers/simulator';
 
 chai.should();
 chai.use(chaiAsPromised);
-let expect = chai.expect;
+const expect = chai.expect;
 
 const SCROLL_INTO_VIEW = `return arguments[0].scrollIntoView(true);`;
 const GET_RIGHT_INNERHTML = `return document.body.innerHTML.indexOf('I am some page content') > 0`;
@@ -23,7 +23,7 @@ describe('safari - execute -', function () {
   let driver;
   before(async function () {
     await killAllSimulators();
-    let caps = _.defaults({
+    const caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       showSafariConsoleLog: true,
     }, SAFARI_CAPS);
@@ -47,11 +47,11 @@ describe('safari - execute -', function () {
       });
 
       it('should eval javascript', async function () {
-        (await driver.execute('return 1 + 1')).should.be.equal(2);
+        await driver.execute('return 1 + 1').should.eventually.equal(2);
       });
 
       it('should not be returning hardcoded results', async function () {
-        (await driver.execute('return 1+1')).should.be.equal(2);
+        await driver.execute('return 1+1').should.eventually.equal(2);
       });
 
       it(`should return nothing when you don't explicitly return`, async function () {
@@ -60,34 +60,37 @@ describe('safari - execute -', function () {
 
       if (!secure) {
         it('should execute code inside the web view', async function () {
-          (await driver.execute(GET_RIGHT_INNERHTML)).should.be.ok;
-          (await driver.execute(GET_WRONG_INNERHTML)).should.not.be.ok;
+          await driver.execute(GET_RIGHT_INNERHTML).should.eventually.be.ok;
+          await driver.execute(GET_WRONG_INNERHTML).should.eventually.not.be.ok;
         });
 
         it('should convert selenium element arg to webview element', async function () {
-          let el = await driver.elementById('useragent');
+          const el = await driver.elementById('useragent');
           await driver.execute(SCROLL_INTO_VIEW, [el]);
         });
 
         it('should catch stale or undefined element as arg', async function () {
-          let el = await driver.elementById('useragent');
-          return driver.execute(SCROLL_INTO_VIEW, [{'ELEMENT': (el.value + 1)}]).should.be.rejected;
+          const el = await driver.elementById('useragent');
+          return driver.execute(SCROLL_INTO_VIEW, [{'ELEMENT': (el.value + 1)}])
+            .should.eventually.be.rejectedWith(/Error converting element ID/);
         });
 
         it('should be able to return multiple elements from javascript', async function () {
-          let res = await driver.execute(GET_ELEM_BY_TAGNAME);
-          expect(res).to.have.length.above(0);
+          await driver.execute(GET_ELEM_BY_TAGNAME)
+            .should.eventually.have.length.above(0);
         });
       }
 
       it('should pass along non-element arguments', async function () {
-        let arg = 'non-element-argument';
-        (await driver.execute('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [arg])).should.be.equal(arg);
+        const arg = 'non-element-argument';
+        await driver.execute('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [arg])
+          .should.eventually.equal(arg);
       });
 
       it('should handle return values correctly', async function () {
-        let arg = ['one', 'two', 'three'];
-        (await driver.execute('var args = Array.prototype.slice.call(arguments, 0); return args;', arg)).should.eql(arg);
+        const arg = ['one', 'two', 'three'];
+        await driver.execute('var args = Array.prototype.slice.call(arguments, 0); return args;', arg)
+          .should.eventually.eql(arg);
       });
     });
 
@@ -135,7 +138,8 @@ describe('safari - execute -', function () {
       it('should execute async javascript from a different site', async function () {
         await driver.get(`http://${host}:${port}`);
         await driver.setAsyncScriptTimeout(1000);
-        (await driver.executeAsync(`arguments[arguments.length - 1](123);`)).should.be.equal(123);
+        await driver.executeAsync(`arguments[arguments.length - 1](123);`)
+          .should.eventually.equal(123);
       });
     });
   });
