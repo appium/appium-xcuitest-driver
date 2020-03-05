@@ -68,7 +68,7 @@
     "teen_process": "^1.14.0",
     "uuid-js": "^0.7.5",
     "ws": "^7.0.0",
-    "xmldom": "^0.2.0",
+    "xmldom": "^0.3.0",
     "yargs": "^15.0.1"
   },
   "scripts": {
