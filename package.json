@@ -50,7 +50,7 @@
     "appium-ios-driver": "^4.6.0",
     "appium-ios-simulator": "^3.20.0",
     "appium-remote-debugger": "^8.6.1",
-    "appium-support": "^2.40.0",
+    "appium-support": "^2.41.0",
     "appium-webdriveragent": "^2.7.0",
     "appium-xcode": "^3.8.0",
     "async-lock": "^1.0.0",
@@ -66,7 +66,6 @@
     "semver": "^7.0.0",
     "source-map-support": "^0.5.5",
     "teen_process": "^1.14.0",
-    "uuid-js": "^0.7.5",
     "ws": "^7.0.0",
     "xmldom": "^0.3.0",
     "yargs": "^15.0.1"
