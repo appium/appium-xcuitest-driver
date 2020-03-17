@@ -49,7 +49,7 @@ describe('file-movement', function () {
       mocks.services.expects('startInstallationProxyService')
       .withExactArgs('12345')
         .returns({
-          listApplications: () => {
+          listApplications () {
             return {
               'com.apple.Keynote': {
                 UIFileSharingEnabled: true
@@ -59,7 +59,7 @@ describe('file-movement', function () {
               }
             };
           },
-          close: () => {}
+          close () {},
         });
       await getAvailableBundleIds('12345').should.eventually.eql([
         'com.apple.Keynote', 'io.appium.example'
@@ -69,10 +69,10 @@ describe('file-movement', function () {
       mocks.services.expects('startInstallationProxyService')
       .withExactArgs('12345')
         .returns({
-          listApplications: () => {
+          listApplications () {
             return {};
           },
-          close: () => {}
+          close () {},
         });
       await getAvailableBundleIds('12345').should.eventually.eql([]);
     });
