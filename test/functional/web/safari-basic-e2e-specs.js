@@ -463,6 +463,26 @@ describe('Safari - basics -', function () {
             doesNotIncludeCookie(cookies, oldCookie1);
             doesNotIncludeCookie(cookies, oldCookie2);
           });
+
+          describe('native context', function () {
+            const notImplementedRegExp = /Method is not implemented/;
+            let context;
+            beforeEach(async function () {
+              context = await driver.currentContext();
+              await driver.context('NATIVE_APP');
+            });
+            afterEach(async function () {
+              if (context) {
+                await driver.context(context);
+              }
+            });
+            it('should reject all functions', async function () {
+              await driver.setCookie(newCookie).should.eventually.be.rejectedWith(notImplementedRegExp);
+              await driver.allCookies().should.eventually.be.rejectedWith(notImplementedRegExp);
+              await driver.deleteCookie(newCookie.name).should.eventually.be.rejectedWith(notImplementedRegExp);
+              await driver.deleteAllCookies().should.eventually.be.rejectedWith(notImplementedRegExp);
+            });
+          });
         });
 
         describe('secure', function () {
