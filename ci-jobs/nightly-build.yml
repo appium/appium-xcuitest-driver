@@ -20,7 +20,6 @@ jobs:
       # skipTvOs: True
       tvosName: AppleTV_13_3
       tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-10.14'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_13_2
@@ -29,7 +28,6 @@ jobs:
       # skipTvOs: True
       tvosName: AppleTV_13_2
       tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-10.14'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_13_1
