@@ -65,6 +65,14 @@ describe('safari - windows and frames', function () {
       await driver.setImplicitWaitTimeout(1000);
     });
 
+
+    it('should be able to open js popup windows', async function () {
+      await driver.execute(`window.open('/test/guinea-pig2.html', null)`);
+      await driver.acceptAlert();
+      await spinTitleEquals(driver, 'I am another page title', 5)
+        .should.eventually.not.be.rejected;
+    });
+
     it('should throw nosuchwindow if there is not one', async function () {
       await driver.window('noexistman')
         .should.eventually.be.rejectedWith(/window could not be found/);
