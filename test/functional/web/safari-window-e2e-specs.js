@@ -65,6 +65,10 @@ describe('safari - windows and frames', function () {
       await driver.setImplicitWaitTimeout(1000);
     });
 
+    beforeEach(async function () {
+      await openPage(driver, GUINEA_PIG_PAGE);
+    });
+
 
     it('should be able to open js popup windows', async function () {
       await driver.execute(`window.open('/test/guinea-pig2.html', null)`);
