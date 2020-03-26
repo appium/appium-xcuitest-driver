@@ -7,7 +7,6 @@ import {
   openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
   GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
 } from './helpers';
-import { killAllSimulators } from '../helpers/simulator';
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
 import Simctl from 'node-simctl';
@@ -44,8 +43,6 @@ describe('Safari - coordinate conversion -', function () {
 
   let devices = [];
   before(async function () {
-    await killAllSimulators();
-
     if (process.env.REAL_DEVICE) {
       // skip, by not having any devices in the list
     } else if (process.env.ALL_DEVICES) {
@@ -78,8 +75,8 @@ describe('Safari - coordinate conversion -', function () {
         let driver;
         const localCaps = _.defaults({
           deviceName,
-          fullReset: true,
-          noReset: false,
+          // fullReset: true,
+          // noReset: false,
         }, caps);
         let skipped = false;
 
@@ -100,7 +97,6 @@ describe('Safari - coordinate conversion -', function () {
         });
         after(async function () {
           await deleteSession();
-          await killAllSimulators();
         });
 
         it('should be able to tap on an element', async function () {

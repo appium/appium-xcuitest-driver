@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
-import { killAllSimulators } from '../helpers/simulator';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { doesIncludeCookie, doesNotIncludeCookie,
          newCookie, oldCookie1 } from './safari-basic-e2e-specs';
@@ -32,10 +31,6 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
 
     let sslServer, driver;
     before(async function () {
-      if (!process.env.CLOUD) {
-        await killAllSimulators();
-      }
-
       // Create a random pem certificate
       const privateKey = await pem.createPrivateKeyAsync();
       const keys = await pem.createCertificateAsync({
