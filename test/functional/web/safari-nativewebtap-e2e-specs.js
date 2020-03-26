@@ -75,8 +75,6 @@ describe('Safari - coordinate conversion -', function () {
         let driver;
         const localCaps = _.defaults({
           deviceName,
-          // fullReset: true,
-          // noReset: false,
         }, caps);
         let skipped = false;
 
