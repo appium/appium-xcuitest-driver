@@ -5,7 +5,6 @@ import http from 'http';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { openPage, GUINEA_PIG_PAGE } from './helpers';
-import { killAllSimulators } from '../helpers/simulator';
 
 
 chai.should();
@@ -22,7 +21,6 @@ describe('safari - execute -', function () {
 
   let driver;
   before(async function () {
-    await killAllSimulators();
     const caps = _.defaults({
       safariInitialUrl: GUINEA_PIG_PAGE,
       showSafariConsoleLog: true,
@@ -31,7 +29,6 @@ describe('safari - execute -', function () {
   });
   after(async function () {
     await deleteSession();
-    await killAllSimulators();
   });
 
   async function runTests (secure = false) { // eslint-disable-line require-await
