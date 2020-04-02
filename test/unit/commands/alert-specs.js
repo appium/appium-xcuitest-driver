@@ -29,9 +29,7 @@ describe('alert commands', function () {
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/alert/text');
       proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql({value:
-        ['s', 'o', 'm', 'e', ' ', 't', 'e', 'x', 't'],
-      });
+      proxySpy.firstCall.args[2].should.eql({value: 'some text'});
     });
   });
   describe('postAcceptAlert', function () {
