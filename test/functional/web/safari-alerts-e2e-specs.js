@@ -67,6 +67,6 @@ describe('safari - alerts', function () {
   it('should fail to set text of alert', async function () {
     await driver.elementById('alert1').click();
     await driver.alertKeys('yes I do!')
-      .should.eventually.be.rejectedWith(/Tried to set text of an alert that was not a prompt/);
+      .should.eventually.be.rejectedWith(/no input fields/);
   });
 });
