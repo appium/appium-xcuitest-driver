@@ -21,7 +21,7 @@ jobs:
       vmImage: 'macOS-10.14'
     steps:
     - checkout: self
-    - script: |
+    - bash: |
         echo "Mocha output file: $MOCHA_FILE"
         echo "Platform Version: $PLATFORM_VERSION"
         echo "Device Name: $DEVICE_NAME"
@@ -34,6 +34,12 @@ jobs:
       displayName: Log Xcode Version
     - script: xcrun simctl list
       displayName: List Installed Simulators
+    - bash: |
+        brew tap facebook/fb
+        brew install idb-companion
+        pip3.7 install fb-idb
+      displayName: Install IDB
+      condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
       inputs:
         versionSpec: 10.x
