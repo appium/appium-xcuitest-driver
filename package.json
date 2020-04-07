@@ -99,7 +99,7 @@
   "devDependencies": {
     "ajv": "^6.5.3",
     "appium-event-parser": "^1.0.0",
-    "appium-gulp-plugins": "^5.1.1",
+    "appium-gulp-plugins": "^5.2.0",
     "appium-test-support": "^1.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
