@@ -16,3 +16,10 @@ jobs:
       displayName: Install node dependencies
     - script: npm test
       displayName: npm test
+    - script: npx gulp coverage
+      displayName: Generate coverage
+    - task: PublishCodeCoverageResults@1
+      condition: always()
+      inputs:
+        codeCoverageTool: cobertura
+        summaryFileLocation: coverage/cobertura-coverage.xml
