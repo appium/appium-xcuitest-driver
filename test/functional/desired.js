@@ -15,7 +15,6 @@ function checkFeatureInEnv (envArg) {
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-const LAUNCH_WITH_IDB = process.env.LAUNCH_WITH_IDB;
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
 const DEVICE_NAME = process.env.DEVICE_NAME
@@ -24,6 +23,7 @@ const DEVICE_NAME = process.env.DEVICE_NAME
     ? undefined
     : util.compareVersions(PLATFORM_VERSION, '>=', '13.0') ? 'iPhone 8' : 'iPhone 6';
 
+const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const REAL_DEVICE = checkFeatureInEnv('REAL_DEVICE');
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
@@ -86,7 +86,7 @@ let GENERIC_CAPS = {
   platformVersion: PLATFORM_VERSION,
   deviceName: DEVICE_NAME,
   automationName: 'XCUITest',
-  launchWithIDB: !!LAUNCH_WITH_IDB,
+  launchWithIDB: LAUNCH_WITH_IDB,
   noReset: true,
   maxTypingFrequency: 30,
   clearSystemFiles: true,
