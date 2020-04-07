@@ -45,17 +45,9 @@ jobs:
         versionSpec: 10.x
     - script: npm install
       displayName: Install node dependencies
-    - script: npm run build
-      displayName: Build
     - script: ${{ parameters.script }}
       displayName: Run functional tests
     - task: PublishTestResults@2
       condition: always()
       inputs:
         testResultsFiles: $(MOCHA_FILE)
-    - task: PublishCodeCoverageResults@1
-      condition: always()
-      inputs:
-        codeCoverageTool: cobertura
-        summaryFileLocation: coverage/cobertura-coverage.xml
-        reporterDirectory: coverage/

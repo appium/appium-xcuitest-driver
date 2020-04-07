@@ -1,6 +1,6 @@
 parameters:
-  nodeVersion: 11.x
-  name: UnitTest
+  nodeVersion: 10.x
+  name: UnitTests
 jobs:
   # Run unit tests on different Node versions
   - job: ${{ parameters.name }}
@@ -14,7 +14,12 @@ jobs:
       displayName: Install Node ${{ parameters.nodeVersion }}
     - script: npm install
       displayName: Install node dependencies
-    - script: npm run build
-      displayName: Build
     - script: npm test
       displayName: npm test
+    - script: npx gulp coverage
+      displayName: Generate coverage
+    - task: PublishCodeCoverageResults@1
+      condition: always()
+      inputs:
+        codeCoverageTool: cobertura
+        summaryFileLocation: coverage/cobertura-coverage.xml
