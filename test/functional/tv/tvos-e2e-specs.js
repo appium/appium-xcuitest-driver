@@ -19,22 +19,27 @@ describe('tvOS', function () {
 
   let baseCaps;
   let caps;
-  beforeEach(async function () {
-    const udid = await simctl.createDevice(
+  let udid;
+  before(async function () {
+    udid = await simctl.createDevice(
       SIM_DEVICE_NAME,
       TVOS_CAPS.deviceName,
       TVOS_CAPS.platformVersion,
       { platform: 'tvOS' });
-    baseCaps = Object.assign({}, TVOS_CAPS, {udid});
-    caps = Object.assign({usePrebuiltWDA: true}, baseCaps);
   });
-  afterEach(async function () {
+
+  after(async function () {
     const sim = await getSimulator(caps.udid, {
       platform: 'tvOS',
       checkExistence: false,
     });
     await shutdownSimulator(sim);
     await deleteDeviceWithRetry(caps.udid);
+  });
+
+  beforeEach(function () {
+    baseCaps = Object.assign({}, TVOS_CAPS, {udid});
+    caps = Object.assign({usePrebuiltWDA: true}, baseCaps);
   });
 
   afterEach(async function () {
