@@ -44,17 +44,16 @@ describe('tvOS', function () {
     await deleteSession();
   });
 
-  it('should launch com.apple.TVSetting', async function () {
+  it('should launch com.apple.TVSettings', async function () {
     baseCaps.autoLaunch = true;
     const driver = await initSession(baseCaps);
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
 
-  it('should launch com.apple.TVSetting with autoLaunch false', async function () {
+  it('should launch com.apple.TVSettings with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
-    await driver.setImplicitWaitTimeout(10000); // To wait for find element
-    await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSetting'});
+    await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSettings'});
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
 });
