@@ -19,7 +19,7 @@ describe('tvOS', function () {
 
   let baseCaps;
   let caps;
-  before(async function () {
+  beforeEach(async function () {
     const udid = await simctl.createDevice(
       SIM_DEVICE_NAME,
       TVOS_CAPS.deviceName,
@@ -28,7 +28,7 @@ describe('tvOS', function () {
     baseCaps = Object.assign({}, TVOS_CAPS, {udid});
     caps = Object.assign({usePrebuiltWDA: true}, baseCaps);
   });
-  after(async function () {
+  afterEach(async function () {
     const sim = await getSimulator(caps.udid, {
       platform: 'tvOS',
       checkExistence: false,
@@ -43,6 +43,13 @@ describe('tvOS', function () {
 
   it('should launch com.apple.TVSetting', async function () {
     const driver = await initSession(baseCaps);
+    (await driver.elementByAccessibilityId('General')).should.exist;
+  });
+
+  it('should launch com.apple.TVSetting with autoLaunch false', async function () {
+    baseCaps.autoLaunch = false;
+    const driver = await initSession(baseCaps);
+    await driver.activateApp('com.apple.TVSetting')
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
 });
