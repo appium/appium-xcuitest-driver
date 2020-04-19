@@ -49,7 +49,7 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSetting with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
-    await driver.activateApp('com.apple.TVSetting')
+    await driver.activateApp('com.apple.TVSetting');
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
 });
