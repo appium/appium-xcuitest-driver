@@ -53,6 +53,7 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSetting with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
+    await driver.setImplicitWaitTimeout(10000); // To wait for find element
     await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSetting'});
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
