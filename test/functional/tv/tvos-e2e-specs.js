@@ -24,12 +24,12 @@ describe('tvOS', function () {
       SIM_DEVICE_NAME,
       TVOS_CAPS.deviceName,
       TVOS_CAPS.platformVersion,
-      { platform: 'tvOS' });
+      { platform: TVOS_CAPS.platformName });
   });
 
   after(async function () {
     const sim = await getSimulator(udid, {
-      platform: 'tvOS',
+      platform: TVOS_CAPS.platformName,
       checkExistence: false,
     });
     await shutdownSimulator(sim);
