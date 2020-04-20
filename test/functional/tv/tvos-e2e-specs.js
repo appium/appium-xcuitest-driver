@@ -28,12 +28,14 @@ describe('tvOS', function () {
   });
 
   after(async function () {
-    const sim = await getSimulator(udid, {
-      platform: TVOS_CAPS.platformName,
-      checkExistence: false,
-    });
-    await shutdownSimulator(sim);
-    await deleteDeviceWithRetry(udid);
+    if (udid) {
+      const sim = await getSimulator(udid, {
+        platform: TVOS_CAPS.platformName,
+        checkExistence: false,
+      });
+      await shutdownSimulator(sim);
+      await deleteDeviceWithRetry(udid);
+    }
   });
 
   beforeEach(function () {
