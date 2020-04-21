@@ -1,2 +1,4 @@
 jobs:
   - template: ./templates/node-build-template.yml
+    parameters:
+      name: UnitTests_CI
