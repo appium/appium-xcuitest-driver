@@ -1,6 +1,6 @@
 import wd from 'wd';
 import { logger, fs, mkdirp } from 'appium-support';
-import request from 'request-promise';
+import axios from 'axios';
 import { exec } from 'teen_process';
 import _ from 'lodash';
 import path from 'path';
@@ -19,14 +19,11 @@ async function sendToSumoLogic (events) {
     throw new Error('No SumoLogic endpoint specified in SUMO_LOGIC_ENDPOINT environment variable');
   }
 
-  let opts = {
+  await axios({
+    url: process.env.SUMO_LOGIC_ENDPOINT, // defined in .travis.yml
     method: 'POST',
-    uri: process.env.SUMO_LOGIC_ENDPOINT, // defined in .travis.yml
-    body: events,
-    json: true,
-  };
-
-  return await request(opts);
+    data: events,
+  });
 }
 
 const getGitRev = _.memoize(
