@@ -46,7 +46,7 @@ describe('Protocol', function () {
           url: sessionUrl,
           method: 'POST',
           data: _.omit(W3C_CAPS, ['capabilities.alwaysMatch.platformName']),
-        }).should.eventually.be.rejectedWith(/'platformName' can't be blank/);
+        }).should.eventually.be.rejectedWith(/400/);
       });
       it('should accept the "appium:" prefix', async function () {
         const w3cCaps = _.cloneDeep(W3C_CAPS);
@@ -71,11 +71,11 @@ describe('Protocol', function () {
         });
       });
       it('should receive 404 status code if call findElement on one that does not exist', async function () {
-        const { value } = await axios({
+        const { value } = (await axios({
           url: sessionUrl,
           method: 'POST',
           data: W3C_CAPS,
-        });
+        })).data;
         try {
           await axios({
             url: `${sessionUrl}/${value.sessionId}/element`,
