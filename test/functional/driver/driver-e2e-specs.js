@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
-import request from 'request-promise';
 import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
 import Simctl from 'node-simctl';
 import _ from 'lodash';
@@ -10,6 +9,7 @@ import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
 import { translateDeviceName } from '../../../lib/utils';
+import axios from 'axios';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
@@ -122,7 +122,7 @@ describe('XCUITestDriver', function () {
         });
         localCaps.wdaLocalPort = null;
         driver = await initSession(localCaps);
-        await request('http://localhost:8100/status').should.not.be.rejected;
+        await axios({url: 'http://localhost:8100/status'}).should.not.be.rejected;
       });
       it('should run on port specified', async function () {
         const localCaps = Object.assign({}, baseCaps, {
@@ -131,9 +131,9 @@ describe('XCUITestDriver', function () {
           useNewWDA: true,
         });
         driver = await initSession(localCaps);
-        await request('http://localhost:8100/status')
+        await axios({url: 'http://localhost:8100/status'})
           .should.eventually.be.rejectedWith(/ECONNREFUSED/);
-        await request('http://localhost:6000/status')
+        await axios({url: 'http://localhost:6000/status'})
           .should.eventually.not.be.rejected;
       });
     });

@@ -1,7 +1,7 @@
 import { startServer } from '../../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import request from 'request-promise';
+import axios from 'axios';
 import { killAllSimulators } from '../helpers/simulator';
 import _ from 'lodash';
 import { HOST, PORT, MOCHA_TIMEOUT } from '../helpers/session';
@@ -26,45 +26,72 @@ describe('Protocol', function () {
 
       const sessionUrl = `http://${HOST}:${PORT}/wd/hub/session`;
       it('should accept w3c formatted caps', async function () {
-        const {status, value, sessionId} = await request.post({url: sessionUrl, json: W3C_CAPS});
+        const {status, value, sessionId} = (await axios({
+          url: sessionUrl,
+          method: 'POST',
+          data: W3C_CAPS,
+        })).data;
         should.not.exist(status);
         value.should.exist;
         value.capabilities.should.exist;
         should.not.exist(sessionId);
         should.exist(value.sessionId);
-        await request.delete({url: `${sessionUrl}/${value.sessionId}`});
+        await axios({
+          url: `${sessionUrl}/${value.sessionId}`,
+          method: 'DELETE',
+        });
       });
       it('should not accept w3c caps if missing "platformName" capability', async function () {
-        await request.post({
+        await axios({
           url: sessionUrl,
-          json: _.omit(W3C_CAPS, ['capabilities.alwaysMatch.platformName']),
-        }).should.eventually.be.rejectedWith(/'platformName' can't be blank/);
+          method: 'POST',
+          data: _.omit(W3C_CAPS, ['capabilities.alwaysMatch.platformName']),
+        }).should.eventually.be.rejectedWith(/400/);
       });
       it('should accept the "appium:" prefix', async function () {
         const w3cCaps = _.cloneDeep(W3C_CAPS);
         const alwaysMatch = w3cCaps.capabilities.alwaysMatch;
         const deviceName = alwaysMatch.deviceName;
         delete alwaysMatch.deviceName;
-        await request.post({url: sessionUrl, json: w3cCaps}).should.eventually.be.rejected;
+        await axios({
+          url: sessionUrl,
+          method: 'POST',
+          data: w3cCaps,
+        }).should.eventually.be.rejected;
         alwaysMatch['appium:deviceName'] = deviceName;
-        const { value } = await request.post({url: sessionUrl, json: w3cCaps});
+        const { value } = (await axios({
+          url: sessionUrl,
+          method: 'POST',
+          data: w3cCaps,
+        })).data;
         value.should.exist;
-        await request.delete(`${sessionUrl}/${value.sessionId}`);
+        await axios({
+          url: `${sessionUrl}/${value.sessionId}`,
+          method: 'DELETE',
+        });
       });
       it('should receive 404 status code if call findElement on one that does not exist', async function () {
-        const { value } = await request.post({url: sessionUrl, json: W3C_CAPS});
+        const { value } = (await axios({
+          url: sessionUrl,
+          method: 'POST',
+          data: W3C_CAPS,
+        })).data;
         try {
-          await request.post({
+          await axios({
             url: `${sessionUrl}/${value.sessionId}/element`,
-            json: {
+            method: 'POST',
+            data: {
               using: 'accessibility id',
               value: 'Bad Selector'
             },
           });
         } catch (e) {
-          e.statusCode.should.equal(404);
+          e.response.status.should.equal(404);
         }
-        await request.delete({url: `${sessionUrl}/${value.sessionId}`});
+        await axios({
+          url: `${sessionUrl}/${value.sessionId}`,
+          method: 'DELETE',
+        });
       });
     });
   }
