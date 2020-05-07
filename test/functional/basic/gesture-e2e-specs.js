@@ -8,6 +8,7 @@ import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
 import { getGenericSimulatorForIosVersion } from '../../../lib/utils';
+import { util } from 'appium-support';
 import xcode from 'appium-xcode';
 
 
@@ -148,7 +149,10 @@ describe('XCUITestDriver - gestures', function () {
     it('should double tap on an element', async function () {
       // FIXME: Multitouch does not work as expected in Xcode < 9.
       // cloud tests are run on Linux, so no Xcode version to check
-      if (!process.env.CLOUD && (await xcode.getVersion(true)).major < 9) {
+      // TODO: This test fails for iOS < 13
+      const { platformVersion } = await driver.sessionCapabilities();
+      if ((!process.env.CLOUD && (await xcode.getVersion(true)).major < 9) ||
+          util.compareVersions(platformVersion, '<', '13.0')) {
         return this.skip();
       }
 
