@@ -1,6 +1,5 @@
 parameters:
   nodeVersion: 10.x
-  name: UnitTests
 jobs:
   # Run unit tests on different Node versions
   - job: ${{ parameters.name }}
