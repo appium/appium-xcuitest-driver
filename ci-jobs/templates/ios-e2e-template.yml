@@ -7,7 +7,7 @@ parameters:
   xcodeVersion: 11.3.1
   deviceName: 'iPhone X'
   skipTvOs: False
-  vmImage: 'macOS-10.14'
+  vmImage: 'macOS-10.15'
 
 jobs:
   - job: ${{ parameters.name }}
