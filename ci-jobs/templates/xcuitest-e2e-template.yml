@@ -8,7 +8,6 @@ parameters:
   tvosDeviceName: ''
   launchWithIDB: false
 jobs:
-  - template: ./node-build-template.yml
   - template: ./ios-e2e-template.yml
     parameters:
       name: e2e_basic_${{ parameters.name }}
