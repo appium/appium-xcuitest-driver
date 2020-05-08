@@ -174,6 +174,7 @@ Differences are noted here:
 |`safariSocketChunkSize`|The size, in _bytes_, of the data to be sent to the Web Inspector on iOS 11+ real devices. Some devices hang when sending large amounts of data to the Web Inspector, and breaking them into smaller parts can be helpful in those cases. Defaults to `16384` (also the maximum possible)|e.g., `1000`|
 |`additionalWebviewBundleIds`|Array (or JSON array) of possible bundle identifiers for webviews. This is sometimes necessary if the Web Inspector is found to be returning a modified bundle identifier for the app. Defaults to `[]`|e.g., `['io.appium.modifiedId', 'ABCDEF']`|
 |`webviewConnectTimeout`|The time to wait, in `ms`, for the initial presence of webviews in MobileSafari or hybrid apps. Defaults to `0`|e.g., '5000'|
+|`launchWithIDB`| Launch WebDriverAgentRunner with [idb](https://github.com/facebook/idb) instead of xcodebuild. Defaults to `false` |`true` or `false`|
 
 ## Opt-in Features (With Security Risk)
 
