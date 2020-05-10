@@ -6,7 +6,7 @@ import { GENERIC_CAPS } from '../desired';
 //const APP_UNDER_TEST_PATH = path.join(__dirname, '..', '..', '..', '..', 'test', 'assets', 'XCTesterApp.app');
 const APP_UNDER_TEST_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterApp.app.zip';
 const TEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests-Runner.app.zip';
-const XCTEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/WebDriverAgentRunner.xctest.zip';
+const XCTEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests.xctest.zip';
 
 chai.should();
 chai.use(chaiAsPromised);
