@@ -12,60 +12,58 @@ chai.should();
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-describe('XCTest', function () {
-  this.timeout(MOCHA_TIMEOUT);
+if (process.env.LAUNCH_WITH_IDB) {
+  describe('XCTest', function () {
+    this.timeout(MOCHA_TIMEOUT);
 
-  let driver;
+    let driver;
 
-  if (!process.env.LAUNCH_WITH_IDB) {
-    this.skip();
-  }
+    beforeEach(async function () {
+      driver = await initSession({
+        ...GENERIC_CAPS,
+        app: APP_UNDER_TEST_PATH,
+        launchWithIDB: true,
+      });
+    });
 
-  beforeEach(async function () {
-    driver = await initSession({
-      ...GENERIC_CAPS,
-      app: APP_UNDER_TEST_PATH,
-      launchWithIDB: true,
+    afterEach(async function () {
+      await deleteSession();
+    });
+    it('should install an XC test bundle and then run it', async function () {
+      // Install the test runner app
+      await driver.installApp(TEST_BUNDLE_PATH);
+
+      // Install the xctest bundle
+      await driver.execute('mobile: installXCTestBundle', XCTEST_BUNDLE_PATH);
+
+      // Get list of xctest bundles
+      const xcTestBundleList = await driver.execute('mobile: listXCTestBundles');
+      const bundleTest = 'io.appium.XCTesterAppUITests';
+      xcTestBundleList.should.includes(bundleTest);
+
+      // Get list of xctests within bundle
+      const xcTestsInBundle = await driver.execute('mobile: listXCTestsInTestBundle', bundleTest);
+      xcTestsInBundle.should.eql([
+        'XCTesterAppUITests.XCTesterAppUITests/testExample',
+        'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
+      ]);
+
+      // Now run the tests
+      const bundleApp = 'io.appium.XCTesterApp';
+      await driver.execute('mobile: runXCTest', {
+        testRunnerBundleId: 'io.appium.XCTesterAppUITests.xctrunner',
+        appUnderTestBundleId: bundleApp,
+        xctestBundleId: bundleTest,
+        testType: 'ui',
+      });
+    });
+    it('should fail gracefully if bad params passed in runXCTest', async function () {
+      await expect(driver.execute('mobile: runXCTest', {
+        testRunnerBundleId: 'bad',
+        appUnderTestBundleId: 'bad',
+        xctestBundleId: 'bad',
+        testType: 'ui',
+      })).to.be.rejectedWith(/Could not run XCTest/);
     });
   });
-
-  afterEach(async function () {
-    await deleteSession();
-  });
-  it('should install an XC test bundle and then run it', async function () {
-    // Install the test runner app
-    await driver.installApp(TEST_BUNDLE_PATH);
-
-    // Install the xctest bundle
-    await driver.execute('mobile: installXCTestBundle', XCTEST_BUNDLE_PATH);
-
-    // Get list of xctest bundles
-    const xcTestBundleList = await driver.execute('mobile: listXCTestBundles');
-    const bundleTest = 'io.appium.XCTesterAppUITests';
-    xcTestBundleList.should.includes(bundleTest);
-
-    // Get list of xctests within bundle
-    const xcTestsInBundle = await driver.execute('mobile: listXCTestsInTestBundle', bundleTest);
-    xcTestsInBundle.should.eql([
-      'XCTesterAppUITests.XCTesterAppUITests/testExample',
-      'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
-    ]);
-
-    // Now run the tests
-    const bundleApp = 'io.appium.XCTesterApp';
-    await driver.execute('mobile: runXCTest', {
-      testRunnerBundleId: 'io.appium.XCTesterAppUITests.xctrunner',
-      appUnderTestBundleId: bundleApp,
-      xctestBundleId: bundleTest,
-      testType: 'ui',
-    });
-  });
-  it('should fail gracefully if bad params passed in runXCTest', async function () {
-    await expect(driver.execute('mobile: runXCTest', {
-      testRunnerBundleId: 'bad',
-      appUnderTestBundleId: 'bad',
-      xctestBundleId: 'bad',
-      testType: 'ui',
-    })).to.be.rejectedWith(/Could not run XCTest/);
-  });
-});
+}
