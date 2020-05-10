@@ -2,21 +2,26 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { GENERIC_CAPS } from '../desired';
-import path from 'path';
 
-const APP_UNDER_TEST_PATH = path.join(__dirname, '..', '..', '..', '..', 'test', 'assets', 'XCTesterApp.app');
-const TEST_BUNDLE_PATH = path.join(__dirname, '..', '..', '..', '..', 'test', 'assets', 'XCTesterAppUITests-Runner.app');
-const XCTEST_BUNDLE_PATH = path.join(TEST_BUNDLE_PATH, 'PlugIns', 'XCTesterAppUITests.xctest');
+//const APP_UNDER_TEST_PATH = path.join(__dirname, '..', '..', '..', '..', 'test', 'assets', 'XCTesterApp.app');
+const APP_UNDER_TEST_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterApp.app.zip';
+const TEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests-Runner.app.zip';
+const XCTEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/WebDriverAgentRunner.xctest.zip';
 
 chai.should();
 chai.use(chaiAsPromised);
+const { expect } = chai;
 
 describe('XCTest', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
 
-  before(async function () {
+  if (!process.env.LAUNCH_WITH_IDB) {
+    this.skip();
+  }
+
+  beforeEach(async function () {
     driver = await initSession({
       ...GENERIC_CAPS,
       app: APP_UNDER_TEST_PATH,
@@ -32,12 +37,11 @@ describe('XCTest', function () {
     await driver.installApp(TEST_BUNDLE_PATH);
 
     // Install the xctest bundle
-    const res = await driver.execute('mobile: installXCTestBundle', XCTEST_BUNDLE_PATH);
-    const bundleTest = 'io.appium.XCTesterAppUITests';
-    res.should.eql(bundleTest);
+    await driver.execute('mobile: installXCTestBundle', XCTEST_BUNDLE_PATH);
 
     // Get list of xctest bundles
     const xcTestBundleList = await driver.execute('mobile: listXCTestBundles');
+    const bundleTest = 'io.appium.XCTesterAppUITests';
     xcTestBundleList.should.includes(bundleTest);
 
     // Get list of xctests within bundle
@@ -56,6 +60,12 @@ describe('XCTest', function () {
       testType: 'ui',
     });
   });
-
-  // TODO: Test runXCTest fails gracefully
+  it('should fail gracefully if bad params passed in runXCTest', async function () {
+    await expect(driver.execute('mobile: runXCTest', {
+      testRunnerBundleId: 'bad',
+      appUnderTestBundleId: 'bad',
+      xctestBundleId: 'bad',
+      testType: 'ui',
+    })).to.be.rejectedWith(/Could not run XCTest/);
+  });
 });
