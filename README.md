@@ -183,6 +183,7 @@ These can be enabled when running this driver through Appium, via the `--allow-i
 |------------|-----------|
 |shutdown_other_sims|Allow any session to use a capability to shutdown any running simulators on the host|
 |perf_record|Allow recording the system performance and other metrics of the simulator|
+|audio_record|Allow recording of host audio input(s)|
 
 
 ### Watch
