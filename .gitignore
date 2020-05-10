@@ -10,5 +10,3 @@ package-lock.json*
 test-results.xml
 .vscode
 .idea/
-test/assets/XCTesterAppUITests-Runner.app/
-test/assets/XCTesterApp.app/
