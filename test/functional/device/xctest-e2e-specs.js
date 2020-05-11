@@ -10,7 +10,6 @@ const XCTEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/dow
 
 chai.should();
 chai.use(chaiAsPromised);
-const { expect } = chai;
 
 if (process.env.LAUNCH_WITH_IDB) {
   describe('XCTest', function () {
@@ -50,20 +49,34 @@ if (process.env.LAUNCH_WITH_IDB) {
 
       // Now run the tests
       const bundleApp = 'io.appium.XCTesterApp';
-      await driver.execute('mobile: runXCTest', {
+      const res = await driver.execute('mobile: runXCTest', {
         testRunnerBundleId: 'io.appium.XCTesterAppUITests.xctrunner',
         appUnderTestBundleId: bundleApp,
         xctestBundleId: bundleTest,
         testType: 'ui',
       });
+      res.code.should.equal(0);
+      res.passed.should.be.true;
+      res.results[0].testName.should.eql('XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample');
+      res.results[0].passed.should.be.true;
+      res.results[1].testName.should.eql('XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance');
+      res.results[1].passed.should.be.true;
     });
     it('should fail gracefully if bad params passed in runXCTest', async function () {
-      await expect(driver.execute('mobile: runXCTest', {
-        testRunnerBundleId: 'bad',
-        appUnderTestBundleId: 'bad',
-        xctestBundleId: 'bad',
-        testType: 'ui',
-      })).to.be.rejectedWith(/Could not run XCTest/);
+      try {
+        await driver.execute('mobile: runXCTest', {
+          testRunnerBundleId: 'bad',
+          appUnderTestBundleId: 'bad',
+          xctestBundleId: 'bad',
+          testType: 'ui',
+        });
+      } catch (e) {
+        e.message.should.match(/Couldn't find test with id: bad/);
+        e.status.should.eql(13);
+        return;
+      }
+
+      throw new Error(`An exception should have been thrown`);
     });
   });
 }
