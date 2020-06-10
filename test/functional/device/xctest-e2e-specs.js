@@ -78,5 +78,22 @@ if (process.env.LAUNCH_WITH_IDB) {
 
       throw new Error(`An exception should have been thrown`);
     });
+    it('should fail if timeout', async function () {
+      try {
+        await driver.execute('mobile: runXCTest', {
+          testRunnerBundleId: 'bad',
+          appUnderTestBundleId: 'bad',
+          xctestBundleId: 'bad',
+          testType: 'ui',
+          timeout: 1,
+        });
+      } catch (e) {
+        e.message.should.match(/Timed out after '1s' waiting for XCTest to complete/);
+        e.status.should.eql(13);
+        return;
+      }
+
+      throw new Error(`An exception should have been thrown`);
+    });
   });
 }
