@@ -33,7 +33,7 @@ if (process.env.LAUNCH_WITH_IDB) {
       await driver.installApp(TEST_BUNDLE_PATH);
 
       // Install the xctest bundle
-      await driver.execute('mobile: installXCTestBundle', XCTEST_BUNDLE_PATH);
+      await driver.execute('mobile: installXCTestBundle', {xctestApp: XCTEST_BUNDLE_PATH});
 
       // Get list of xctest bundles
       const xcTestBundleList = await driver.execute('mobile: listXCTestBundles');
@@ -88,7 +88,7 @@ if (process.env.LAUNCH_WITH_IDB) {
           timeout: 1,
         });
       } catch (e) {
-        e.message.should.match(/Timed out after '1s' waiting for XCTest to complete/);
+        e.message.should.match(/Timed out after '1ms' waiting for XCTest to complete/);
         e.status.should.eql(13);
         return;
       }
