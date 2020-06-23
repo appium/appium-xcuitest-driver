@@ -41,7 +41,7 @@ if (process.env.LAUNCH_WITH_IDB) {
       xcTestBundleList.should.includes(bundleTest);
 
       // Get list of xctests within bundle
-      const xcTestsInBundle = await driver.execute('mobile: listXCTestsInTestBundle', bundleTest);
+      const xcTestsInBundle = await driver.execute('mobile: listXCTestsInTestBundle', {bundle: bundleTest});
       xcTestsInBundle.should.eql([
         'XCTesterAppUITests.XCTesterAppUITests/testExample',
         'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
