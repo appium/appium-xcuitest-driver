@@ -4,7 +4,7 @@ jobs:
     parameters:
       name: iPhoneX_14_0
       iosVersion: 14.0
-      xcodeVersion: 11.6
+      xcodeVersion: 12.0
       tvosName: AppleTV_14_0
       tvosDeviceName: "Apple TV"
   #- template: ./templates/xcuitest-e2e-template.yml
