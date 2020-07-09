@@ -100,13 +100,10 @@ describe('utils', function () {
     it('should set the correct iPhone simulator generic device for simulators gte iOS 13.0', function () {
       translateDeviceName('13.0', iphoneDeviceName).should.equal('iPhone X');
     });
-    it('should set the correct iPhone simulator generic device for simulators gte iOS 14.0', function () {
-      translateDeviceName('14.0', iphoneDeviceName).should.equal('iPhone 11 Pro Max');
-    });
     it('should set the default iPhone simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
       // The highest iOS version we define for iPhone in ios-generic-simulators.js is currently iOS 13.0
       // If this changes, update this test
-      translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName).should.equal('iPhone 11 Pro Max');
+      translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName).should.equal('iPhone X');
     });
     it('should set the default iPad simulator to the lowest generic device that is defined in ios-generic-simulators.js for v0.0', function () {
       // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
