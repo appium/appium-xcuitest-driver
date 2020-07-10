@@ -41,7 +41,7 @@ jobs:
     - bash: |
         brew tap facebook/fb
         brew install idb-companion
-        python -m pip install --user fb-idb
+        /usr/local/bin/pip3.7 --user install fb-idb
       displayName: Install IDB
       condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
