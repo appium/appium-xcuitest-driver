@@ -35,7 +35,7 @@ specifying a real device in your `udid` desired capability.
 If this has not worked it will usually manifest itself in the Appium server logs
 as some error followed by `info XCUITest xcodebuild exited with code '65' and
 signal 'null'`. This usually means that the necessary code signing is not set up
-correctly. Go on to the [Basic (manual) configuration](https://github.com/imurchie/appium-xcuitest-driver/blob/isaac-rs/docs/real-device-config.md#basic-manual-configuration)
+correctly. Go on to the [Basic (manual) configuration](https://github.com/imurchie/appium-xcuitest-driver/blob/master/docs/real-device-config.md#basic-manual-configuration)
 to fix.
 
 If the `WebDriverAgentRunner` is successfully installed on the device, but in the
