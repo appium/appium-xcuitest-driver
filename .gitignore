@@ -10,3 +10,4 @@ package-lock.json*
 test-results.xml
 .vscode
 .idea/
+npm-shrinkwrap.json
