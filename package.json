@@ -1,5 +1,5 @@
 {
-  "name": "dpgraham-appium-xcuitest-driver",
+  "name": "appium-xcuitest-driver",
   "description": "Appium driver for iOS using XCUITest for backend",
   "keywords": [
     "appium",
