@@ -40,13 +40,13 @@ jobs:
       name: iphone_12_4
       iosVersion: 12.4
       xcodeVersion: 10.3
-      tvosName: AppleTV_12_2
+      tvosName: AppleTV_12_4
       tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iphone_12_2
+      name: iphone_12_0
       iosVersion: 12.0
       xcodeVersion: 10.1
-      tvosName: AppleTV_12_2
+      tvosName: AppleTV_12_0
       tvosDeviceName: "Apple TV"
       vmImage: 'macOS 10.14'
