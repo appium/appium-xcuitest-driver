@@ -27,7 +27,7 @@ jobs:
         echo "Platform Version: $PLATFORM_VERSION"
         echo "Device Name: $DEVICE_NAME"
       displayName: Print Environment Variables
-    - script: ls /Applications/
+    - script: ls /Applications/ && ls -lah /usr/local/bin/
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
       displayName: Xcode Select ${{ parameters.xcodeVersion }}
@@ -41,7 +41,7 @@ jobs:
     - bash: |
         brew tap facebook/fb
         brew install idb-companion
-        python -m pip install --user fb-idb
+        /usr/local/bin/pip3 install --user fb-idb
       displayName: Install IDB
       condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
