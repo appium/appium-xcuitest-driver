@@ -53,6 +53,7 @@ jobs:
         npm run fetch-prebuilt-wda
         unzip prebuilt-agents/webdriveragent-xcode_$XCODE_VERSION.zip -d prebuilt-agents/webdriveragent-xcode_$XCODE_VERSION
         popd
+      displayName: Download Pre-built WebDriverAgents
     - script: export PATH="${PATH}:$(/usr/local/bin/python3.7 -c 'import site; print(site.USER_BASE)')/bin" && ${{ parameters.script }}
       displayName: Run functional tests
     - task: PublishTestResults@2
