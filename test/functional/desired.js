@@ -98,6 +98,12 @@ let GENERIC_CAPS = {
   simulatorStartupTimeout: (1000 * 60 * 4),
 };
 
+if (process.env.PREBUILT_WDA_PATH) {
+  GENERIC_CAPS.usePrebuiltWDA = true;
+  GENERIC_CAPS.bootstrapPath = process.env.PREBUILT_WDA_PATH;
+  GENERIC_CAPS.derivedDataPath = process.env.PREBUILT_WDA_PATH + '/DerivedData/WebdriverAgent';
+}
+
 if (process.env.CLOUD) {
   GENERIC_CAPS.platformVersion = process.env.CLOUD_PLATFORM_VERSION;
   GENERIC_CAPS.build = process.env.SAUCE_BUILD;

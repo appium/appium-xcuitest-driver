@@ -17,7 +17,9 @@ jobs:
       DEVICE_NAME: ${{ parameters.deviceName }}
       MOCHA_FILE: '${{ parameters.name }}-tests.xml'
       LAUNCH_WITH_IDB: ${{ parameters.launchWithIDB }}
+      XCODE_VERSION: ${{ parameters.xcodeVersion }}
       CI: true
+      PREBUILT_WDA_PATH: ./node_modules/appium-webdriver-agent/prebuilt-agents/webdriveragent-xcode_${{ parameters.xcodeVersion }}
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:
@@ -46,6 +48,11 @@ jobs:
         versionSpec: 12.x
     - script: npm install
       displayName: Install node dependencies
+    - bash: |
+        pushd ./node_modules/appium-webdriveragent
+        npm run fetch-prebuilt-wda
+        unzip prebuilt-agents/webdriveragent-xcode_$XCODE_VERSION.zip -d prebuilt-agents/webdriveragent-xcode_$XCODE_VERSION
+        popd
     - script: export PATH="${PATH}:$(/usr/local/bin/python3.7 -c 'import site; print(site.USER_BASE)')/bin" && ${{ parameters.script }}
       displayName: Run functional tests
     - task: PublishTestResults@2
