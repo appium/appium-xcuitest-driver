@@ -19,7 +19,7 @@ jobs:
       LAUNCH_WITH_IDB: ${{ parameters.launchWithIDB }}
       XCODE_VERSION: ${{ parameters.xcodeVersion }}
       CI: true
-      PREBUILT_WDA_PATH: ./node_modules/appium-webdriver-agent/prebuilt-agents/webdriveragent-xcode_${{ parameters.xcodeVersion }}
+      PREBUILT_WDA_PATH: ./node_modules/appium-webdriveragent/prebuilt-agents/webdriveragent-xcode_${{ parameters.xcodeVersion }}
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:
