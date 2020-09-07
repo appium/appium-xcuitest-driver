@@ -1,11 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Publish
 
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - package.json
 
 jobs:
   build:
@@ -20,8 +22,10 @@ jobs:
     - run: npm test
     - run: rm -rf package-lock.json
     - run: npm prune --production
-    - run: npx semantic-release
     - run: npm shrinkwrap
+    - run: npm install semantic-release --no-save
+    - run: npm install @semantic-release/git --no-save
+    - run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
