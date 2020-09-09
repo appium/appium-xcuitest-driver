@@ -18,14 +18,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - run: npm install
-    - run: npm test
+    - run: npm install --production
+      name: Install prod dependencies
     - run: rm -rf package-lock.json
-    - run: npm prune --production
+      name: Delete package-lock (if it exists)
     - run: npm shrinkwrap
-    - run: npm install semantic-release --no-save
-    - run: npm install @semantic-release/git --no-save
-    - run: npm install @semantic-release/npm --no-save
+      name: Create shrinkwrap
+    - run: npm install --no-package-lock
+      name: Install dev dependencies
+    - run: npm test
+      name: Run NPM Test
     - run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
