@@ -25,6 +25,7 @@ jobs:
     - run: npm shrinkwrap
     - run: npm install semantic-release --no-save
     - run: npm install @semantic-release/git --no-save
+    - run: npm install @semantic-release/npm --no-save
     - run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
