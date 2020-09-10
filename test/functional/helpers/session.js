@@ -165,6 +165,8 @@ async function deleteSession () {
   try {
     await server.close();
   } catch (ign) {}
+
+  await B.delay(5000); // TODO: Make this a constant
 }
 
 export { initDriver, initSession, deleteSession, getServer, HOST, PORT, MOCHA_TIMEOUT };

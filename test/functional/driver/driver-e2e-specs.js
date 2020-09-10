@@ -19,6 +19,8 @@ chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
 
+const waitForSessionToClear = async () => await B.delay(5000);
+
 async function createDevice () {
   return await simctl.createDevice(
     SIM_DEVICE_NAME,
@@ -59,6 +61,7 @@ describe('XCUITestDriver', function () {
     // try to get rid of the driver, so if a test fails the rest of the
     // tests aren't compromised
     await deleteSession();
+    await waitForSessionToClear();
   });
 
   if (!process.env.REAL_DEVICE) {
