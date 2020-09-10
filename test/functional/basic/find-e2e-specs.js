@@ -11,13 +11,13 @@ import { util } from 'appium-support';
 chai.should();
 chai.use(chaiAsPromised);
 
-const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 500;
+const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 1000;
 
-const PV_ABOVE_13 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0');
+const PV_GTE_13 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0');
+const PV_GTE_14 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '14.0');
 
 // there are some differences in the apps
-const FIRST_ELEMENT = PV_ABOVE_13 ? 'Activity Indicators' : 'Action Sheets';
-const APP_TITLE = PV_ABOVE_13 ? 'UIKitCatalog' : 'UICatalog';
+const APP_TITLE = PV_GTE_13 ? 'UIKitCatalog' : 'UICatalog';
 
 describe('XCUITestDriver - find', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -315,7 +315,7 @@ describe('XCUITestDriver - find', function () {
       await driver.elementByAccessibilityId('Text Fields').click();
 
       let els = await driver.elementsByClassName('XCUIElementTypeTextField');
-      els.should.have.length(PV_ABOVE_13 ? 5 : 4);
+      els.should.have.length(PV_GTE_13 ? 5 : 4);
     });
 
     it('should find only one element per secure text field', async function () {
@@ -332,12 +332,12 @@ describe('XCUITestDriver - find', function () {
       await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find visible elements', async function () {
-      let els = await driver.elements('-ios predicate string', 'visible = 1');
+      let els = await driver.waitForElements('-ios predicate string', 'visible = 1');
       els.should.have.length.above(0);
     });
 
     it('should find invisible elements', async function () {
-      let els = await driver.elements('-ios predicate string', 'visible = 0');
+      let els = await driver.waitForElements('-ios predicate string', 'visible = 0');
       els.should.have.length.above(0);
     });
 
@@ -396,7 +396,12 @@ describe('XCUITestDriver - find', function () {
       // do another call and double-check the different quote/spacing works
       let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
 
-      await grandchild.getAttribute('name').should.eventually.eql(FIRST_ELEMENT);
+      if (PV_GTE_14) {
+        await grandchild.getTagName().should.eventually.equal('XCUIElementTypeOther');
+      } else {
+        const expectedName = PV_GTE_13 ? 'Activity Indicators' : 'Action Sheets';
+        await grandchild.getAttribute('name').should.eventually.eql(expectedName);
+      }
     });
   });
 
