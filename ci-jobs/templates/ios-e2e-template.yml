@@ -35,10 +35,13 @@ jobs:
       displayName: Log Xcode Version
     - script: xcrun simctl list
       displayName: List Installed Simulators
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.7'
     - bash: |
         brew tap facebook/fb
         brew install idb-companion
-        /usr/local/bin/pip3.7 install --user fb-idb
+        python -m pip install --user fb-idb
       displayName: Install IDB
       condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
@@ -46,7 +49,7 @@ jobs:
         versionSpec: 12.x
     - script: npm install
       displayName: Install node dependencies
-    - script: export PATH="${PATH}:$(/usr/local/bin/python3.7 -c 'import site; print(site.USER_BASE)')/bin" && ${{ parameters.script }}
+    - script: export PATH="${PATH}:$(python -c 'import site; print(site.USER_BASE)')/bin" && ${{ parameters.script }}
       displayName: Run functional tests
     - task: PublishTestResults@2
       condition: always()
