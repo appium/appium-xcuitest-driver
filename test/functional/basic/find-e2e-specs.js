@@ -11,7 +11,8 @@ import { util } from 'appium-support';
 chai.should();
 chai.use(chaiAsPromised);
 
-const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 1000;
+//const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 1000;
+const TEST_PAUSE_DURATION = 5000;
 
 const PV_GTE_13 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0');
 const PV_GTE_14 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '14.0');
@@ -337,6 +338,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find invisible elements', async function () {
+
       let els = await driver.waitForElements('-ios predicate string', 'visible = 0');
       els.should.have.length.above(0);
     });
