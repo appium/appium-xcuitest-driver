@@ -3,8 +3,8 @@ parameters:
   script: ''
   name: ios-e2e-test
   dependsOn: ''
-  iosVersion: 13.3
-  xcodeVersion: 11.3.1
+  iosVersion: 14.0
+  xcodeVersion: 12.0
   deviceName: 'iPhone X'
   skipTvOs: False
   vmImage: 'macOS-10.15'
@@ -31,6 +31,8 @@ jobs:
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
       displayName: Xcode Select ${{ parameters.xcodeVersion }}
+    - script: xcrun simctl spawn booted log stream --style compact --predicate 'process != "locationd" AND process != "DTServiceHub" AND process != "mobileassetd"' > ios-syslog.txt
+      displayName: 
     - script: xcodebuild -version
       displayName: Log Xcode Version
     - script: xcrun simctl list
@@ -55,3 +57,9 @@ jobs:
       condition: always()
       inputs:
         testResultsFiles: $(MOCHA_FILE)
+    - task: PublishPipelineArtifact@0
+      condition: always()
+      displayName: Publish Logcat to Artifacts
+      inputs:
+        artifactName: ${{ parameters.name }}-ios-syslog
+        targetPath: ios-syslog.txt
