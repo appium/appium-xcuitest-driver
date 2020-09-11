@@ -96,7 +96,6 @@
   ],
   "devDependencies": {
     "@semantic-release/git": "^9.0.0",
-    "ajv": "^6.5.3",
     "appium-event-parser": "^1.0.0",
     "appium-gulp-plugins": "^5.2.0",
     "appium-test-support": "^1.0.0",
