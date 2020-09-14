@@ -4,14 +4,22 @@ jobs:
   # Run node tests on past node versions
   - template: ./templates/node-build-template.yml
     parameters:
-      nodeVersion: 12.x
-      name: Node12_Tests
+      nodeVersion: 14.x
+      name: Node14_Tests
   - template: ./templates/node-build-template.yml
     parameters:
-      nodeVersion: 10.x
-      name: Node10_Tests
+      nodeVersion: 12.x
+      name: Node12_Tests
 
   # Run the E2E tests on local simulators across different ios and xcode versions
+  - template: ./templates/xcuitest-e2e-template.yml
+    parameters:
+      name: iphone_14_0
+      iosVersion: 14.0
+      xcodeVersion: 11.6
+      #skipTvOs: True
+      tvosName: AppleTV_13_4
+      tvosDeviceName: "Apple TV"
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_13_4

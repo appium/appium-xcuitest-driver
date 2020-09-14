@@ -4,7 +4,7 @@ import { startServer } from '../../..';
 import { util } from 'appium-support';
 import patchDriverWithEvents from './ci-metrics';
 import _ from 'lodash';
-
+import B from 'bluebird';
 
 const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
 
@@ -165,6 +165,8 @@ async function deleteSession () {
   try {
     await server.close();
   } catch (ign) {}
+
+  await B.delay(5000); // TODO: Make this a constant and only run in CI.
 }
 
 export { initDriver, initSession, deleteSession, getServer, HOST, PORT, MOCHA_TIMEOUT };
