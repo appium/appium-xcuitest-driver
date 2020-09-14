@@ -31,8 +31,6 @@ jobs:
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
       displayName: Xcode Select ${{ parameters.xcodeVersion }}
-    - script: xcrun simctl spawn booted log stream --style compact --predicate 'process != "locationd" AND process != "DTServiceHub" AND process != "mobileassetd"' > ios-syslog.txt
-      displayName: 
     - script: xcodebuild -version
       displayName: Log Xcode Version
     - script: xcrun simctl list
