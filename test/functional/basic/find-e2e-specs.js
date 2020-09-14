@@ -332,7 +332,7 @@ describe('XCUITestDriver - find', function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(TEST_PAUSE_DURATION);
     });
-    it.only('should find visible elements', async function () {
+    it('should find visible elements', async function () {
       let els = await driver.elements('-ios predicate string', 'visible = 1');
       els.should.have.length.above(0);
     });
