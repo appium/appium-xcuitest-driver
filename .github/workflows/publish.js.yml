@@ -22,8 +22,6 @@ jobs:
       name: Install prod dependencies
     - run: rm -rf package-lock.json
       name: Delete package-lock (if it exists)
-    - run: npm shrinkwrap
-      name: Create shrinkwrap
     - run: npm install --no-package-lock
       name: Install dev dependencies
     - run: npm test
