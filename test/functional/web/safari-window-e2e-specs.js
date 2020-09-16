@@ -70,8 +70,8 @@ describe('safari - windows and frames', function () {
         await openPage(driver, GUINEA_PIG_PAGE);
       });
 
-
-      it('should be able to open js popup windows', async function () {
+      // There is a bug in iOS Simulator on iOS 14 that's causing the popup blocker to not work.
+      it.skip('should be able to open js popup windows', async function () {
         await driver.execute(`window.open('/test/guinea-pig2.html', '_blank');`);
         await driver.acceptAlert();
         await spinTitleEquals(driver, 'I am another page title', 5)
