@@ -33,6 +33,7 @@ For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) t
 gem install xcpretty
 ```
 
+
 ## Xcode dependency
 
 * module versions below `2.96.0` only supports XCode 8 and newer
