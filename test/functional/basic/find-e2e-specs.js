@@ -396,7 +396,12 @@ describe('XCUITestDriver - find', function () {
       // do another call and double-check the different quote/spacing works
       let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
 
-      await grandchild.getAttribute('name').should.eventually.eql(FIRST_ELEMENT);
+      const type = await grandchild.getAttribute('type');
+      if (type === 'XCUIElementTypeStaticText') {
+        await grandchild.getAttribute('name').should.eventually.eql(FIRST_ELEMENT);
+      } else {
+        type.should.equal('XCUIElementTypeOther');
+      }
     });
   });
 
