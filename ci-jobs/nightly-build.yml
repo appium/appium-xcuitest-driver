@@ -8,26 +8,18 @@ jobs:
       name: Node12_Tests
   - template: ./templates/node-build-template.yml
     parameters:
-      nodeVersion: 10.x
+      nodeVersion: 14.x
       name: Node10_Tests
 
   # Run the E2E tests on local simulators across different ios and xcode versions
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iphone_13_4
-      iosVersion: 13.4
-      xcodeVersion: 11.4
-      #skipTvOs: True
+      name: iphone_13_7
+      iosVersion: 13.7
+      xcodeVersion: 11.7
       tvosName: AppleTV_13_4
       tvosDeviceName: "Apple TV"
-  - template: ./templates/xcuitest-e2e-template.yml
-    parameters:
-      name: iphone_13_2
-      iosVersion: 13.2
-      xcodeVersion: 11.2.1
-      # skipTvOs: True
-      tvosName: AppleTV_13_2
-      tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.15'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_13_0
@@ -35,6 +27,7 @@ jobs:
       xcodeVersion: 11
       tvosName: AppleTV_13
       tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.15'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_12_4
@@ -42,6 +35,7 @@ jobs:
       xcodeVersion: 10.3
       tvosName: AppleTV_12_4
       tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.14'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_12_0
