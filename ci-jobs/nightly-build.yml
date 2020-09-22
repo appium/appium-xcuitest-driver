@@ -8,42 +8,18 @@ jobs:
       name: Node12_Tests
   - template: ./templates/node-build-template.yml
     parameters:
-      nodeVersion: 10.x
+      nodeVersion: 14.x
       name: Node10_Tests
 
   # Run the E2E tests on local simulators across different ios and xcode versions
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iphone_13_4
-      iosVersion: 13.4
-      xcodeVersion: 11.4
-      #skipTvOs: True
+      name: iphone_13_7
+      iosVersion: 13.7
+      xcodeVersion: 11.7
       tvosName: AppleTV_13_4
       tvosDeviceName: "Apple TV"
-  - template: ./templates/xcuitest-e2e-template.yml
-    parameters:
-      name: iphone_13_3
-      iosVersion: 13.3
-      xcodeVersion: 11.3
-      #skipTvOs: True
-      tvosName: AppleTV_13_3
-      tvosDeviceName: "Apple TV"
-  - template: ./templates/xcuitest-e2e-template.yml
-    parameters:
-      name: iphone_13_2
-      iosVersion: 13.2
-      xcodeVersion: 11.2.1
-      # skipTvOs: True
-      tvosName: AppleTV_13_2
-      tvosDeviceName: "Apple TV"
-  - template: ./templates/xcuitest-e2e-template.yml
-    parameters:
-      name: iphone_13_1
-      iosVersion: 13.1
-      xcodeVersion: 11.1
-      skipTvOs: True # There is no TvOS 13.1 for Xcode 11.1
-      tvosName: AppleTV_13_1
-      tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.15'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_13_0
@@ -51,24 +27,20 @@ jobs:
       xcodeVersion: 11
       tvosName: AppleTV_13
       tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.15'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iphone_12_2
-      iosVersion: 12.2
-      xcodeVersion: 10.2
-      tvosName: AppleTV_12_2
+      name: iphone_12_4
+      iosVersion: 12.4
+      xcodeVersion: 10.3
+      tvosName: AppleTV_12_4
       tvosDeviceName: "Apple TV"
-  - template: ./templates/xcuitest-e2e-template.yml
-    parameters:
-      name: iphone_12_1
-      iosVersion: 12.1
-      xcodeVersion: 10.1
-      tvosName: AppleTV_12_1
-      tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.14'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iphone_12_0
       iosVersion: 12.0
       xcodeVersion: 10
-      tvosName: AppleTV_12
+      tvosName: AppleTV_12_0
       tvosDeviceName: "Apple TV"
+      vmImage: 'macOS 10.14'

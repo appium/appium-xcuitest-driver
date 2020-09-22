@@ -36,6 +36,7 @@ if (REAL_DEVICE && !XCCONFIG_FILE) {
     XCCONFIG_FILE = path.resolve(cwd, _.first(files));
   }
 }
+const WEBDRIVER_AGENT_URL = process.env.WEBDRIVER_AGENT_URL;
 
 // Had to make these two optional dependencies so the tests
 // can still run in linux
@@ -92,10 +93,11 @@ let GENERIC_CAPS = {
   clearSystemFiles: true,
   showXcodeLog: SHOW_XCODE_LOG,
   wdaLaunchTimeout: (60 * 1000 * 4),
-  wdaConnectionTimeout: (60 * 1000 * 8),
-  useNewWDA: true,
+  wdaConnectionTimeout: (60 * 1000 * 32),
+  useNewWDA: !WEBDRIVER_AGENT_URL,
   webviewConnectTimeout: 30000,
   simulatorStartupTimeout: (1000 * 60 * 4),
+  //webDriverAgentUrl: WEBDRIVER_AGENT_URL,
 };
 
 if (process.env.CLOUD) {

@@ -5,6 +5,7 @@ import { retryInterval } from 'asyncbox';
 import { SAFARI_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
+import B from 'bluebird';
 
 
 chai.should();
@@ -26,10 +27,12 @@ describe('safari - alerts', function () {
   });
 
   async function acceptAlert (driver) {
+    await B.delay(1000);
     await retryInterval(5, 500, driver.acceptAlert.bind(driver));
   }
 
   async function dismissAlert (driver) {
+    await B.delay(1000);
     await retryInterval(5, 500, driver.dismissAlert.bind(driver));
   }
 
