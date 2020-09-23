@@ -1,6 +1,7 @@
 parameters:
   name: ''
   iosVersion: ''
+  tvosVersion: ''
   xcodeVersion: ''
   deviceName: 'iphone simulator'
   skipTvOs: False
@@ -63,7 +64,7 @@ jobs:
   - template: ./ios-e2e-template.yml
     parameters:
       name: e2e_tvos_${{ parameters.tvosName }}
-      iosVersion: ${{ parameters.iosVersion }}
+      iosVersion: ${{ parameters.tvosVersion }}
       skipTvOs: ${{ parameters.skipTvOs }}
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.tvosDeviceName }}
