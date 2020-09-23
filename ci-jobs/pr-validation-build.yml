@@ -1,8 +1,10 @@
 # Pull request validation job
+variables:
+- name: SHOW_XCODE_LOG
+  value: true
+
 jobs:
   - template: ./templates/xcuitest-e2e-template.yml
-    variables:
-      SHOW_XCODE_LOG: true
     parameters:
       name: iPhoneX_13_4
       iosVersion: 13.4
