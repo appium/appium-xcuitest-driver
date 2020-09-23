@@ -7,9 +7,9 @@ jobs:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_13_4
-      iosVersion: 13.4
-      xcodeVersion: 11.4
+      iosVersion: 13.7
+      xcodeVersion: 11.7
       deviceName: "iPhone X"
-      tvosName: AppleTV_13_4
+      tvosName: AppleTV_13_7
       tvosDeviceName: "Apple TV"
       vmImage: 'macOS-10.15'
