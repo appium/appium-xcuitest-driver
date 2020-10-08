@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "3.28.1",
+  "version": "3.30.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -48,7 +48,7 @@
     "appium-idb": "^0.5.0",
     "appium-ios-device": "^1.5.0",
     "appium-ios-driver": "^4.8.0",
-    "appium-ios-simulator": "^3.24.0",
+    "appium-ios-simulator": "^3.25.1",
     "appium-remote-debugger": "^8.13.0",
     "appium-support": "^2.47.1",
     "appium-webdriveragent": "^2.23.1",
@@ -59,8 +59,8 @@
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.24.0",
-    "moment-timezone": "0.5.28",
-    "node-simctl": "^6.1.0",
+    "moment-timezone": "0.5.31",
+    "node-simctl": "^6.4.0",
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
     "source-map-support": "^0.5.5",
