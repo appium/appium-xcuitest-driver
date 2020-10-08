@@ -130,6 +130,7 @@ Differences are noted here:
 |`wdaEventloopIdleDelay`|Delays the invocation of `-[XCUIApplicationProcess setEventLoopHasIdled:]` by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason). This increases the time for session creation because `-[XCUIApplicationProcess setEventLoopHasIdled:]` is called multiple times. If you enable this capability start with at least `3` seconds and try increasing it, if creating the session still fails. Defaults to `0`. |e.g. `5`|
 |`processArguments`|Process arguments and environment which will be sent to the `WebDriverAgent` server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
 |`autoLaunch`|When set to `false`, prevents the application under test from being launched automatically as a part of the new session startup process. The launch become the responsibility of the user. Defaults to `true`.|`true` or `false`|
+|`allowProvisioningDeviceRegistration`|Allow `xcodebuild` to register your destination device on the developer portal if necessary. Requires a developer account to have been added in Xcode's Accounts preference pane. Defaults to `false`.|`true` or `false`|
 
 ### Simulator control capabilities:
 
