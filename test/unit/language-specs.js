@@ -16,6 +16,7 @@ describe('language and locale', function () {
         capabilities: {
           firstMatch: [{
             bundleId: BUNDLE_ID,
+            elementResponseFields: undefined,
             arguments: [
               '-AppleLanguages', `(${LANGUAGE})`,
               '-NSLanguages', `(${LANGUAGE})`,
@@ -23,10 +24,12 @@ describe('language and locale', function () {
             ],
             environment: {},
             shouldWaitForQuiescence: true,
-            shouldUseTestManagerForVisibilityDetection: true,
+            shouldUseTestManagerForVisibilityDetection: false,
             maxTypingFrequency: 60,
+            shouldUseCompactResponses: undefined,
             shouldUseSingletonTestManager: true,
             eventloopIdleDelaySec: 0,
+            waitForIdleTimeout: undefined,
           }],
           alwaysMatch: {},
         }
@@ -73,13 +76,16 @@ describe('language and locale', function () {
         capabilities: {
           firstMatch: [{
             bundleId: BUNDLE_ID,
+            elementResponseFields: undefined,
             arguments: augmentedProcessArgumentsWithLanguage.args,
             environment: processArguments.env,
             shouldWaitForQuiescence: true,
-            shouldUseTestManagerForVisibilityDetection: true,
+            shouldUseTestManagerForVisibilityDetection: false,
             maxTypingFrequency: 60,
+            shouldUseCompactResponses: undefined,
             shouldUseSingletonTestManager: true,
             eventloopIdleDelaySec: 0,
+            waitForIdleTimeout: undefined,
           }],
           alwaysMatch: {},
         }

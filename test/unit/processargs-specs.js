@@ -21,11 +21,14 @@ describe('process args', function () {
     capabilities: {
       firstMatch: [{
         bundleId: BUNDLE_ID,
+        elementResponseFields: undefined,
         arguments: PROCESS_ARGS_OBJECT.args,
         environment: PROCESS_ARGS_OBJECT.env,
         shouldWaitForQuiescence: true,
+        waitForIdleTimeout: undefined,
         shouldUseTestManagerForVisibilityDetection: false,
         maxTypingFrequency: 60,
+        shouldUseCompactResponses: undefined,
         shouldUseSingletonTestManager: true,
         eventloopIdleDelaySec: 0,
       }],
