@@ -9,6 +9,16 @@ describe('process args', function () {
   let driver = new XCUITestDriver();
   driver.opts.platformVersion = '10.3';
   let proxySpy = sinon.stub(driver, 'proxyCommand');
+  const DEFAULT_CAPS = {
+    elementResponseFields: undefined,
+    shouldUseCompactResponses: undefined,
+    waitForIdleTimeout: undefined,
+    shouldWaitForQuiescence: true,
+    shouldUseTestManagerForVisibilityDetection: false,
+    maxTypingFrequency: 60,
+    shouldUseSingletonTestManager: true,
+    eventloopIdleDelaySec: 0,
+  };
 
   const PROCESS_ARGS_OBJECT = {
     args: ['a', 'b', 'c'],
@@ -19,16 +29,11 @@ describe('process args', function () {
 
   let desired = {
     capabilities: {
-      firstMatch: [{
+      firstMatch: [Object.assign({}, DEFAULT_CAPS, {
         bundleId: BUNDLE_ID,
         arguments: PROCESS_ARGS_OBJECT.args,
         environment: PROCESS_ARGS_OBJECT.env,
-        shouldWaitForQuiescence: true,
-        shouldUseTestManagerForVisibilityDetection: false,
-        maxTypingFrequency: 60,
-        shouldUseSingletonTestManager: true,
-        eventloopIdleDelaySec: 0,
-      }],
+      })],
       alwaysMatch: {},
     }
   };
