@@ -8,13 +8,24 @@ describe('language and locale', function () {
   const LANGUAGE = 'en';
   const LOCALE = 'en_US';
   const BUNDLE_ID = 'com.test.app';
+  const DEFAULT_CAPS = {
+    elementResponseFields: undefined,
+    shouldUseCompactResponses: undefined,
+    waitForIdleTimeout: undefined,
+    shouldWaitForQuiescence: true,
+    shouldUseTestManagerForVisibilityDetection: false,
+    maxTypingFrequency: 60,
+    shouldUseSingletonTestManager: true,
+    eventloopIdleDelaySec: 0,
+    environment: {},
+  };
 
   describe('send only language and locale', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
 
       const expectedWDACapabilities = {
         capabilities: {
-          firstMatch: [{
+          firstMatch: [Object.assign({}, DEFAULT_CAPS, {
             bundleId: BUNDLE_ID,
             elementResponseFields: undefined,
             arguments: [
@@ -22,15 +33,7 @@ describe('language and locale', function () {
               '-NSLanguages', `(${LANGUAGE})`,
               '-AppleLocale', LOCALE
             ],
-            environment: {},
-            shouldWaitForQuiescence: true,
-            shouldUseTestManagerForVisibilityDetection: false,
-            maxTypingFrequency: 60,
-            shouldUseCompactResponses: undefined,
-            shouldUseSingletonTestManager: true,
-            eventloopIdleDelaySec: 0,
-            waitForIdleTimeout: undefined,
-          }],
+          })],
           alwaysMatch: {},
         }
       };
@@ -74,19 +77,12 @@ describe('language and locale', function () {
 
       const expectedWDACapabilities = {
         capabilities: {
-          firstMatch: [{
+          firstMatch: [Object.assign({}, DEFAULT_CAPS, {
             bundleId: BUNDLE_ID,
             elementResponseFields: undefined,
             arguments: augmentedProcessArgumentsWithLanguage.args,
             environment: processArguments.env,
-            shouldWaitForQuiescence: true,
-            shouldUseTestManagerForVisibilityDetection: false,
-            maxTypingFrequency: 60,
-            shouldUseCompactResponses: undefined,
-            shouldUseSingletonTestManager: true,
-            eventloopIdleDelaySec: 0,
-            waitForIdleTimeout: undefined,
-          }],
+          })],
           alwaysMatch: {},
         }
       };
