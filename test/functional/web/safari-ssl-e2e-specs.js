@@ -57,21 +57,22 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
     });
 
     it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
-      driver = await initSession(caps);
-      await driver.get(LOCAL_HTTPS_URL);
-      await driver.source().should.eventually.include('Arbitrary text');
-      await driver.quit();
-      await B.delay(1000);
-
-      // Now do another session using the same cert to verify that it still works
-      // (Don't do it on CLOUD. Restarting is too slow)
-      if (!process.env.CLOUD) {
-        await driver.init(caps);
-        await driver.get(LOCAL_HTTPS_URL);
+      try {
+        driver = await initSession(caps);
         await driver.source().should.eventually.include('Arbitrary text');
-      }
+        await driver.quit();
+        await B.delay(1000);
 
-      await deleteSession();
+        // Now do another session using the same cert to verify that it still works
+        // (Don't do it on CLOUD. Restarting is too slow)
+        if (!process.env.CLOUD) {
+          await driver.init(caps);
+          await driver.get(LOCAL_HTTPS_URL);
+          await driver.source().should.eventually.include('Arbitrary text');
+        }
+      } finally {
+        await deleteSession();
+      }
     });
 
     describe('cookies', function () {
