@@ -27,7 +27,6 @@ describe('language and locale', function () {
         capabilities: {
           firstMatch: [Object.assign({}, DEFAULT_CAPS, {
             bundleId: BUNDLE_ID,
-            elementResponseFields: undefined,
             arguments: [
               '-AppleLanguages', `(${LANGUAGE})`,
               '-NSLanguages', `(${LANGUAGE})`,
@@ -79,7 +78,6 @@ describe('language and locale', function () {
         capabilities: {
           firstMatch: [Object.assign({}, DEFAULT_CAPS, {
             bundleId: BUNDLE_ID,
-            elementResponseFields: undefined,
             arguments: augmentedProcessArgumentsWithLanguage.args,
             environment: processArguments.env,
           })],

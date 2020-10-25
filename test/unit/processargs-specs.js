@@ -31,7 +31,6 @@ describe('process args', function () {
     capabilities: {
       firstMatch: [Object.assign({}, DEFAULT_CAPS, {
         bundleId: BUNDLE_ID,
-        elementResponseFields: undefined,
         arguments: PROCESS_ARGS_OBJECT.args,
         environment: PROCESS_ARGS_OBJECT.env,
       })],
