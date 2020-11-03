@@ -132,6 +132,8 @@ Differences are noted here:
 |`processArguments`|Process arguments and environment which will be sent to the `WebDriverAgent` server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
 |`autoLaunch`|When set to `false`, prevents the application under test from being launched automatically as a part of the new session startup process. The launch become the responsibility of the user. Defaults to `true`.|`true` or `false`|
 |`allowProvisioningDeviceRegistration`|Allow `xcodebuild` to register your destination device on the developer portal if necessary. Requires a developer account to have been added in Xcode's Accounts preference pane. Defaults to `false`.|`true` or `false`|
+|`resultBundlePath`| Specify the path to the result bundle path as `xcodebuild` argument for `WebDriverAgent` build under a security flag (Please check _Opt-in Features_ section below). `WebDriverAgent` process must start/stop every time to pick up changed value of this property. Specifying `useNewWDA` to `true` may help there. Please read `man xcodebuild` for more details. | e.g. `/path/to/resultbundle` |
+|`resultBundleVersion`| Specify the version of result bundle as `xcodebuild` argument for `WebDriverAgent` build. The default value depends on your Xcode version. Please read `man xcodebuild` for more details. | e.g. `/path/to/resultbundle` |
 
 ### Simulator control capabilities:
 
@@ -188,6 +190,7 @@ These can be enabled when running this driver through Appium, via the `--allow-i
 |shutdown_other_sims|Allow any session to use a capability to shutdown any running simulators on the host|
 |perf_record|Allow recording the system performance and other metrics of the simulator|
 |audio_record|Allow recording of host audio input(s)|
+|customize_result_bundle_path| Allow customizeing the path to result bundles by `resultBundlePath` capability |
 
 
 ### Watch
