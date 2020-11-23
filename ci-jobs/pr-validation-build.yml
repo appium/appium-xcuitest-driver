@@ -3,17 +3,12 @@ variables:
 - name: SHOW_XCODE_LOG
   value: true
 
-stages:
-- stage: Unit_Tests
-  jobs:
-  - template: ./templates/node-build-template.yml
-- stage: Integration_Tests
-  jobs:
+jobs:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iPhoneX_13_7
-      iosVersion: 13.7
-      xcodeVersion: 11.7
+      name: iPhoneX_13_4
+      iosVersion: 13.4
+      xcodeVersion: 11.4
       deviceName: "iPhone X"
       tvosVersion: 13.4
       tvosName: AppleTV_13_4

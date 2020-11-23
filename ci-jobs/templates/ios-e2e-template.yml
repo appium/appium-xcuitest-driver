@@ -35,6 +35,8 @@ jobs:
       displayName: Log Xcode Version
     - script: xcrun simctl list
       displayName: List Installed Simulators
+    - script: xcrun simctl list runtimes
+      displayName: List Runtimes
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.7'
