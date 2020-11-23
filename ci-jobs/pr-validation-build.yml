@@ -9,7 +9,7 @@ jobs:
       name: iPhoneX_14_2
       iosVersion: 14.2
       xcodeVersion: 12.2
-      deviceName: "iPhone 11 Pro Max"
+      deviceName: "iPhone X"
       tvosVersion: 13.4
       tvosName: AppleTV_13_4
       tvosDeviceName: "Apple TV"
