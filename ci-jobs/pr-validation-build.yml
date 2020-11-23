@@ -13,4 +13,4 @@ jobs:
       tvosVersion: 13.4
       tvosName: AppleTV_13_4
       tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-11.0'
+      vmImage: 'macOS-10.15'
