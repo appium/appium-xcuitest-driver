@@ -12,9 +12,9 @@ stages:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_13_7
-      iosVersion: 13.7
-      xcodeVersion: 11.7
-      deviceName: "iPhone X"
+      iosVersion: 14.2
+      xcodeVersion: 12.2
+      deviceName: "iPhone 11 Pro Max"
       tvosVersion: 13.4
       tvosName: AppleTV_13_4
       tvosDeviceName: "Apple TV"
