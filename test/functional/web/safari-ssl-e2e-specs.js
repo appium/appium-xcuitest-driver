@@ -56,7 +56,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       }
     });
 
-    it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
+    it.only('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
       try {
         driver = await initSession(caps);
         await driver.source().should.eventually.include('Arbitrary text');
