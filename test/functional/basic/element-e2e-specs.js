@@ -143,11 +143,13 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('touch click', function () {
     it('should click an element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
-      await el.tap();
-      (await driver.elementsByClassName('XCUIElementTypeButton')).should.have.length.above(4);
-
-      await driver.back();
+      await retryInterval(10, 500, async function () {
+        let el = await driver.elementByAccessibilityId('Buttons');
+        await el.tap();
+        await B.delay(1000);
+        (await driver.elementsByClassName('XCUIElementTypeButton')).should.have.length.above(4);
+        await driver.back();
+      });
     });
   });
 
@@ -162,7 +164,9 @@ describe('XCUITestDriver - element(s)', function () {
       let phText = 'Placeholder text';
 
       beforeEach(async function () {
-        const el = await driver.elementByAccessibilityId('Text Fields');
+        const el = await retryInterval(10, 500, async function () {
+          return await driver.elementByAccessibilityId('Text Fields');
+        });
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
       });

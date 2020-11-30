@@ -159,11 +159,13 @@ describe('XCUITestDriver - gestures', function () {
       await driver.execute('mobile: scroll', {direction: 'down'});
       await driver.elementByAccessibilityId('Steppers').click();
 
+      await B.delay(1000);
       let stepper = await driver.elementByAccessibilityId('Increment');
       let action = new wd.TouchAction(driver);
       action.tap({el: stepper, count: 2});
       await action.perform();
 
+      await B.delay(1000);
       await driver.elementByAccessibilityId('2')
         .should.not.be.rejected;
     });
