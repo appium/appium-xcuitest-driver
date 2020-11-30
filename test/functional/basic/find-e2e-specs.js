@@ -333,7 +333,7 @@ describe('XCUITestDriver - find', function () {
     });
     it('should find visible elements', async function () {
       // This test is failing on 14.2... skipping it for now
-      if (process.env.PLATFORM_VERSION==='14.2') {
+      if (process.env.PLATFORM_VERSION === '14.2') {
         this.skip();
       }
       let els = await driver.elements('-ios predicate string', 'visible = 1');
