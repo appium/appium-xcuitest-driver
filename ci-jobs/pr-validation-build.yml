@@ -13,7 +13,8 @@ jobs:
       #tvosVersion: 13.4
       #tvosName: AppleTV_13_4
       #tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-11.0'
+      skipTvOs: True
+      vmImage: 'macOS-10.15'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_13_4
@@ -23,4 +24,4 @@ jobs:
       tvosVersion: 13.4
       tvosName: AppleTV_13_4
       tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-11.0'
+      vmImage: 'macOS-10.15'
