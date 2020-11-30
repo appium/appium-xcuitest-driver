@@ -332,17 +332,13 @@ describe('XCUITestDriver - find', function () {
       await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find visible elements', async function () {
-      await retryInterval(10, 500, async () => {
-        let els = await driver.elements('-ios predicate string', 'visible = 1');
-        els.should.have.length.above(0);
-      });
+      let els = await driver.elements('-ios predicate string', 'visible = 1');
+      els.should.have.length.above(0);
     });
 
     it('should find invisible elements', async function () {
-      await retryInterval(10, 500, async () => {
-        let els = await driver.elements('-ios predicate string', 'visible = 0');
-        els.should.have.length.above(0);
-      });
+      let els = await driver.elements('-ios predicate string', 'visible = 0');
+      els.should.have.length.above(0);
     });
 
     it('should find elements with widths above 0', async function () {
