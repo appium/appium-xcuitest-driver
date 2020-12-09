@@ -134,6 +134,7 @@ Differences are noted here:
 |`allowProvisioningDeviceRegistration`|Allow `xcodebuild` to register your destination device on the developer portal if necessary. Requires a developer account to have been added in Xcode's Accounts preference pane. Defaults to `false`.|`true` or `false`|
 |`resultBundlePath`| Specify the path to the result bundle path as `xcodebuild` argument for `WebDriverAgent` build under a security flag (Please check _Opt-in Features_ section below). `WebDriverAgent` process must start/stop every time to pick up changed value of this property. Specifying `useNewWDA` to `true` may help there. Please read `man xcodebuild` for more details. | e.g. `/path/to/resultbundle` |
 |`resultBundleVersion`| Specify the version of result bundle as `xcodebuild` argument for `WebDriverAgent` build. The default value depends on your Xcode version. Please read `man xcodebuild` for more details. | e.g. `/path/to/resultbundle` |
+|`safariIgnoreWebHostnames`|Provides a list of hostnames that the Safari automation tools should ignore. This is to provide a workaround to prevent a webkit bug where the web context is unintentionally changed to a 3rd party website and the test gets stuck. The common culprits are search engines (yahoo, bing, google) and `about:blank` |e.g. `'www.yahoo.com, www.bing.com, www.google.com, about:blank'`|
 
 ### Simulator control capabilities:
 
