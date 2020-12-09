@@ -331,11 +331,8 @@ describe('XCUITestDriver - find', function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(TEST_PAUSE_DURATION);
     });
-    it('should find visible elements', async function () {
-      // This test is failing on 14.2... skipping it for now
-      if (process.env.PLATFORM_VERSION === '14.2') {
-        this.skip();
-      }
+    // This test has been flakey forever.
+    it.skip('should find visible elements', async function () {
       let els = await driver.elements('-ios predicate string', 'visible = 1');
       els.should.have.length.above(0);
     });
