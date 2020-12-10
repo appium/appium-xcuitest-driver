@@ -27,7 +27,7 @@ function config () {
   } while (devicesRemaining);
 
   // Get the device based on a 5-day sliding window
-  const platformIndex = (moment().dayOfYear() * 5) % platforms.length + (parseInt(process.env.SAUCE_EMUSIM_DEVICE_INDEX, 0) || 0);
+  const platformIndex = (moment().dayOfYear() * 5) % platforms.length + (parseInt(process.env.SAUCE_EMUSIM_DEVICE_INDEX, 10) || 0);
   const [CLOUD_PLATFORM_VERSION, CLOUD_DEVICE_NAME] = platforms[platformIndex % platforms.length];
 
   log.info(`Running tests on iOS ${CLOUD_PLATFORM_VERSION}, device "${CLOUD_DEVICE_NAME}"`);

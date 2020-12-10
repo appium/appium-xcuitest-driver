@@ -15,7 +15,7 @@ function config () {
   const configIndex = process.env.SAUCE_RDC_DEVICE_INDEX || 0;
 
   // Get the two platform versions to use based on a sliding window
-  const platformIndex = (moment().dayOfYear() * 2) % platforms.length + (parseInt(configIndex, 0) || 0);
+  const platformIndex = (moment().dayOfYear() * 2) % platforms.length + (parseInt(configIndex, 10) || 0);
 
   const CLOUD_PLATFORM_VERSION = process.env.CLOUD_PLATFORM_VERSION || platforms[platformIndex % platforms.length];
 
