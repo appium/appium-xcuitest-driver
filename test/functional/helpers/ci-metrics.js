@@ -48,7 +48,7 @@ function patchDriverWithEvents () {
       let init = driver.init;
       driver.init = async function (caps) {
         try {
-          gitRev = await getGitRev(); // jshint ignore: line
+          gitRev = await getGitRev(); // eslint-disable-line no-unused-vars
         } catch (err) {
           log.warn(`Unable to parse git rev and branch: ${err.message}`);
           log.warn('Event timing data will be incomplete');

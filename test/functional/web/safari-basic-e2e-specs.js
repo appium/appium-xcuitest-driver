@@ -38,6 +38,9 @@ const oldCookie2 = {
 
 const DEFAULT_CAPS = _.defaults({
   safariInitialUrl: GUINEA_PIG_PAGE,
+  safariLogAllCommunication: true,
+  // adding 'safariIgnoreWebHostnames' to validate that adding blacklist URL's doesn't break anything
+  safariIgnoreWebHostnames: 'www.yahoo.com,www.bing.com,www.google.com,about:blank',
 }, SAFARI_CAPS);
 
 describe('Safari - basics -', function () {
