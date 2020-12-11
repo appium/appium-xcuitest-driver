@@ -59,7 +59,7 @@
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.24.0",
-    "moment-timezone": "0.5.31",
+    "moment-timezone": "0.5.32",
     "node-simctl": "^6.4.0",
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
