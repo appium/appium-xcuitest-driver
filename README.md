@@ -18,14 +18,7 @@
 
 ## External dependencies
 
-There is also a dependency, made necessary by Facebook's [WebDriverAgent](https://github.com/facebook/WebDriverAgent),
-for the [Carthage](https://github.com/Carthage/Carthage) dependency manager. If you
-do not have Carthage on your system, it can also be installed with
-[Homebrew](http://brew.sh/)
-
-```
-brew install carthage
-```
+Since version 3.33.0 of XCUITest driver the Carthage dependency is not needed anymore.
 
 For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
 
@@ -39,6 +32,7 @@ gem install xcpretty
 * module versions below `2.96.0` only supports XCode 8 and newer
 * module version `2.96.0` and above only supports XCode 9 and newer
 * module version `3.0.0` and above only supports Xcode 10 and newer
+* module version `3.32.0` and above only supports Xcode 10.2 and newer
 
 
 ## Sim Resetting
@@ -123,7 +117,6 @@ Differences are noted here:
 |`showXcodeLog`|Whether to display the output of the Xcode command used to run the tests. If this is `true`, there will be **lots** of extra logging at startup. Defaults to `false`|e.g., `true`|
 |`iosInstallPause`|Time in milliseconds to pause between installing the application and starting `WebDriverAgent` on the device. Used particularly for larger applications. Defaults to `0`|e.g., `8000`|
 |`usePrebuiltWDA`|Skips the build phase of running the WDA app. Building is then the responsibility of the user. Only works for Xcode 8+. Defaults to `false`.|e.g., `true`|
-|`useCarthageSsl`|Use SSL to download dependencies for `WebDriverAgent`. Defaults to `true`| `true`, `false` |
 |`shouldUseSingletonTestManager`|Use default proxy for test management within `WebDriverAgent`. Setting this to `false` sometimes helps with socket hangup problems. Defaults to `true`.|e.g., `false`|
 |`waitForIdleTimeout`|The amount of time in float seconds to wait until the application under test is idling. XCTest requires the app's main thread to be idling in order to execute any action on it, so WDA might not even start/freeze if the app under test is constantly hogging the main thread. The default value is `10` (seconds). Setting it to zero disables idling checks completely (not recommended) and has the same effect as setting `waitForQuiescence` to `false`. Available since Appium 1.19.1. |
 |`useXctestrunFile`|Use Xctestrun file to launch WDA. It will search for such file in `bootstrapPath`. Expected name of file is `WebDriverAgentRunner_iphoneos<sdkVersion>-arm64.xctestrun` for real device and `WebDriverAgentRunner_iphonesimulator<sdkVersion>-x86_64.xctestrun` for simulator. One can do `build-for-testing` for `WebDriverAgent` project for simulator and real device and then you will see [Product Folder like this](docs/useXctestrunFile.png) and you need to copy content of this folder at `bootstrapPath` location. Since this capability expects that you have already built `WDA` project, it neither checks whether you have necessary dependencies to build `WDA` nor will it try to build project. Defaults to `false`. _Tips: `Xcodebuild` builds for the target platform version. We'd recommend you to build with minimal OS version which you'd like to run as the original WDA module. e.g. If you build WDA for 12.2, the module cannot run on iOS 11.4 because of loading some module error on simulator. A module built with 11.4 can work on iOS 12.2. (This is xcodebuild's expected behaviour.)_ |e.g., `true`|
