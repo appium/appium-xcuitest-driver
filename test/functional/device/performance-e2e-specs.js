@@ -10,6 +10,7 @@ chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - performance', function () {
   this.timeout(MOCHA_TIMEOUT);
+  const profileName = 'Time Profiler';
 
   let driver;
 
@@ -28,9 +29,13 @@ describe('XCUITestDriver - performance', function () {
     });
 
     it('should return recorded trace file on stop', async function () {
-      await driver.execute('mobile: startPerfRecord', {});
+      await driver.execute('mobile: startPerfRecord', {
+        profileName,
+      });
       await B.delay(5000);
-      (await driver.execute('mobile: stopPerfRecord', {})).should.not.be.empty;
+      (await driver.execute('mobile: stopPerfRecord', {
+        profileName,
+      })).should.not.be.empty;
     });
   });
 });
