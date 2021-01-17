@@ -12,6 +12,30 @@ describe('location commands', function () {
     proxySpy.reset();
   });
 
+  describe('getGeoLocation', function () {
+    it('should be authorizationStatus !== 3', async function () {
+      proxySpy.withArgs(
+        '/wda/device/location',
+        'GET').returns({authorizationStatus: 0, latitude: 0, longitude: 0});
+
+      await driver.getGeoLocation({})
+        .should.eventually.be.rejectedWith('Location service must be');
+    });
+
+    it('should be authorizationStatus === 3', async function () {
+      proxySpy.withArgs(
+        '/wda/device/location',
+        'GET').returns({authorizationStatus: 3, latitude: -100, longitude: 100});
+
+      await driver.getGeoLocation({})
+        .should.eventually.eql({
+          altitude: 0,
+          latitude: -100,
+          longitude: 100
+        });
+    });
+  });
+
   describe('setLocation', function () {
     let startSimulateLocationServiceStub;
     let setLocationStub;
