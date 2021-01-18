@@ -261,6 +261,13 @@ describe('XCUITestDriver - basics -', function () {
     });
   });
 
+  describe('get geo location -', function () {
+    it('should fail because of preference error', async function () {
+      await driver.getGeoLocation()
+        .should.eventually.be.rejectedWith('Location service must be');
+    });
+  });
+
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
       if (process.env.CI || process.env.REAL_DEVICE) {
