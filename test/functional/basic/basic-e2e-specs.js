@@ -263,7 +263,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('get geo location -', function () {
     it('should fail because of preference error', async function () {
-      await driver.getGeoLocation('30.0001', '21.0002')
+      await driver.getGeoLocation()
         .should.eventually.be.rejectedWith('Location service must be');
     });
   });

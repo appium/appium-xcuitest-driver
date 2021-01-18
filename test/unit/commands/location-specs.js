@@ -25,13 +25,19 @@ describe('location commands', function () {
     it('should be authorizationStatus === 3', async function () {
       proxySpy.withArgs(
         '/wda/device/location',
-        'GET').returns({authorizationStatus: 3, latitude: -100, longitude: 100});
+        'GET').returns(
+          {
+            authorizationStatus: 3,
+            latitude: -100.395050048828125,
+            longitude: 100.09922650538002,
+            altitude: 26.267269134521484
+          });
 
       await driver.getGeoLocation({})
         .should.eventually.eql({
-          altitude: 0,
-          latitude: -100,
-          longitude: 100
+          altitude: 26.267269134521484,
+          latitude: -100.395050048828125,
+          longitude: 100.09922650538002
         });
     });
   });
