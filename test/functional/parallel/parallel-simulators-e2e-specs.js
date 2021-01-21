@@ -30,7 +30,7 @@ describe('XCUITestDriver - parallel Simulators @skip-ci', function () {
   const sessionsMapping = new Map();
   const DEFAULT_WDA_PORT = 8100;
   const DEFAULT_SERVER_PORT = PORT;
-  const DEVICES = ['iPhone 6', 'iPhone 6s'];
+  const DEVICES = ['iPhone 12 Pro', 'iPhone 12 Pro Max'];
   const HOST = '127.0.0.1';
 
   after(async function () {
