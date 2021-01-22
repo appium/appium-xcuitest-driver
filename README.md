@@ -191,7 +191,7 @@ label | Element's [label](https://developer.apple.com/documentation/xctest/xcuie
 type | Element's [type](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500614-elementtype?language=objc) name | 'XCUIElementTypeButton'
 visible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'false'
 focused | Whether the element is [focused](https://developer.apple.com/documentation/xctest/xcuielementattributes/1627636-hasfocus?language=objc). *Only available for tvOS* | 'true'
-accessible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'true'
+accessible | Whether the element is accessible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'true'
 enabled | Whether the element is [enabled](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500330-enabled?language=objc). | 'false'
 selected | Whether the element is [selected](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500581-selected?language=objc) | 'false'
 index | Element's index in the hierarchy relatively to its parent. Only available since Appium 1.20.0. Indexing starts from `0`. | '2'
