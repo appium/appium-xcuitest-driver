@@ -29,6 +29,14 @@ On top of standard Appium requirements XCUITest driver also expects the followin
 - Since version 3.33.0 (included into Appium 1.20.0+) of XCUITest driver the [Carthage](https://github.com/Carthage/Carthage) dependency *is not needed anymore*. Prior to that version it was required and could be installed using [brew](https://brew.sh/): `brew install carthage`.
 
 
+## Optional dependencies
+
+- For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This could be installed by `gem install xcpretty`
+- For video recording under test we use [ffmpeg](https://ffmpeg.org/). It could be installed using [brew](https://brew.sh/): `brew install ffmpeg`
+- Facebook's [IDB](https://github.com/facebook/idb) tool could be used to improve some real device/Simulator interactions
+- [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) could be used to improve some Simulator interactions
+
+
 ## Xcode version support
 
 * module versions below `2.96.0` only supports XCode 8 and newer
@@ -228,15 +236,6 @@ In short, this driver tries to leave things as it found them.
 
 You can use the `noReset` capability to adjust this behavior.
 Setting `noReset` to `true` will leave the simulator running at the end of a test session.
-
-
-## Optional dependencies
-
-For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
-
-```
-gem install xcpretty
-```
 
 
 ### Development
