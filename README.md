@@ -7,46 +7,34 @@
 
 [![Build Status](https://api.travis-ci.org/appium/appium-xcuitest-driver.png?branch=master)](https://travis-ci.org/appium/appium-xcuitest-driver)
 
+Appium XCUITest Driver is a combined solution, which allows to perform automated black-box testing of iOS and tvOS native applications and Safari web views.
+The native testing is based on Apple's [XCTest](https://developer.apple.com/documentation/xctest) framework and the fork of Facebook's [WebDriverAgent](https://github.com/appium/WebDriverAgent) server (the [original](https://github.com/facebookarchive/WebDriverAgent) project is not supported anymore).
+Web views communication is done via [Webkit remote debugger protocol](https://github.com/appium/appium-remote-debugger). Real devices communication is ensured by [appium-ios-device library](https://github.com/appium/appium-ios-device).
+Simulators communication is ensured by [appium-ios-simulator](https://github.com/appium/appium-ios-simulator) library.
+
+In the native mode the driver operates in scope of [WebDriver W3C protocol](https://w3c.github.io/webdriver) with several platform-specific extensions. Web views communication only supports the obsolete [JWP protocol](https://webdriver.io/docs/api/jsonwp.html).
+
 *Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 
 
-## Known issues
+## Requirements
 
-* `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
-* Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
+On top of standard Appium requirements XCUITest driver also expects the following prerequisites:
 
-
-## External dependencies
-
-Since version 3.33.0 of XCUITest driver the Carthage dependency is not needed anymore.
-
-For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
-
-```
-gem install xcpretty
-```
+- Only macOS is supported as the host platform
+- Xcode and developer tools must be installed. Note, that usually some time is needed for the Appium team to pick up with the support of the most recent Xcode versions, especially beta ones.
+- Connected real devices must be trusted, added to your developer profile and configured properly along with WebDriverAgent signing. Read [Real devices](#real-devices) section _carefully_ to set them up properly before running your tests.
+- The minimum supported Xcode SDK version for the current driver snapshot is *10.2 (iOS 12.2)*. Consider using earlier releases of the driver (see [Xcode version support](#xcode-version-support) section below) if it is necessary to test older iOS versions on real devices. Also, it is highly recommended to always use the same major version of Xcode SDK, which was used to build the particular iOS/tvOS version on your real device under test (for example Xcode 11 for iOS 13, Xcode 12 for iOS 14, etc).
+- Web views must be debuggable in order to test them. If it is not possible to connect to your web view(s) using [Safari remote debugger](https://appletoolbox.com/use-web-inspector-debug-mobile-safari/) then XCUITest won't be able to connect to them as well.
+- Since version 3.33.0 (included into Appium 1.20.0+) of XCUITest driver the [Carthage](https://github.com/Carthage/Carthage) dependency *is not needed anymore*. Prior to that version it was required and could be installed using [brew](https://brew.sh/): `brew install carthage`.
 
 
-## Xcode dependency
+## Xcode version support
 
 * module versions below `2.96.0` only supports XCode 8 and newer
 * module version `2.96.0` and above only supports XCode 9 and newer
 * module version `3.0.0` and above only supports Xcode 10 and newer
 * module version `3.32.0` and above only supports Xcode 10.2 and newer
-
-
-## Sim Resetting
-
-By default, this driver will create a new iOS simulator and run tests on it, deleting the simulator afterward.
-
-If you specify a specific simulator using the `udid` capability, this driver will boot the specified simulator and shut it down afterwards.
-
-If a udid is provided and the simulator is already running, this driver will leave it running after the test run.
-
-In short, this driver tries to leave things as it found them.
-
-You can use the `noReset` capability to adjust this behavior.
-Setting `noReset` to `true` will leave the simulator running at the end of a test session.
 
 
 ## Real devices
@@ -57,7 +45,7 @@ See [real device configuration documentation](docs/real-device-config.md).
 
 ### Known problems
 
-After many failures on real devices, there can be a state where the device will no longer accept connections. To possibly remedy this reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details. [Getting full control](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/wda-custom-server.md) over WDA server might help to workaround the problem.
+After many failures on real devices, there can be a state where the device will no longer accept connections. To possibly remedy this reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
 
 #### Weird state
 
@@ -73,7 +61,7 @@ dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: E
 
 ### Real device security settings
 
-On some systems there are Accessibility restrictions that make the `WebDriverAgent` system unable to run. This is usually manifest
+On some systems, especially CI ones, where tests are executed by a command line agents, macOS Accessibility restrictions make the `WebDriverAgent` system unable to retrieve the development keys from the system keychain. This is usually manifest
 by `xcodebuild` returning an error code `65`. A workaround for this is to use a private key that is not stored on the system
 keychain. See [this issue](https://github.com/appium/appium/issues/6955) and [this Stack Exchange post](http://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails).
 
@@ -89,13 +77,23 @@ where `MyPrivateKey.p12` is the private development key exported from the system
 The full path to the keychain can then be sent to the Appium system using the `keychainPath` desired capability,
 and the password sent through the `keychainPassword` capability.
 
-## Desired Capabilities
 
-Should be the same for [Appium](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md)
+## Capabilities
 
-Differences are noted here:
+### General
 
-### [WebDriverAgent](https://github.com/appium/WebDriverAgent) build and run capabilities:
+Capability | Description
+--- | ---
+`platformName` | Could be set to `ios`. Appium itself is not strict about this capability value if `automationName` is provided, so feel free to assign it to any supported platform name if this is needed, for example, to make Selenium Grid working.
+appium:automationName | Must always be set to `xcuitest`. Values of `automationName` are compared case-insensitively.
+`appium:deviceName` | The name of the device under test. Consider setting `udid` for real devices and use this one for Simulator selection instead
+`appium:platformVersion` | The platform version of an emulator or a real device. This capability is used for device autodetection if `udid` is not provided
+`appium:udid` | UDID of the device to be tested. Could ve retrieved from Xcode->Window->Devices and Simulators window. Always set this capability if you run parallel tests or use a real device to run your tests.
+`appium:noReset` | Prevents the device to be reset before the session startup if set to `true`. This means that the application under test is not going to be terminated neither its data cleaned. `false` by default
+`appium:fullReset` | Being set to `true` always enforces the application under test to be fully uninstalled before starting a new session. `false` by default
+`appium:printPageSourceOnFindFailure` | Enforces the server to dump the actual XML page source into the log if any error happens. `false` by default.
+
+### WebDriverAgent
 
 |Capability|Description|Values|
 |----------|-----------|------|
@@ -128,8 +126,13 @@ Differences are noted here:
 |`resultBundlePath`| Specify the path to the result bundle path as `xcodebuild` argument for `WebDriverAgent` build under a security flag (Please check _Opt-in Features_ section below). `WebDriverAgent` process must start/stop every time to pick up changed value of this property. Specifying `useNewWDA` to `true` may help there. Please read `man xcodebuild` for more details. | e.g. `/path/to/resultbundle` |
 |`resultBundleVersion`| Specify the version of result bundle as `xcodebuild` argument for `WebDriverAgent` build. The default value depends on your Xcode version. Please read `man xcodebuild` for more details. | e.g. `/path/to/resultbundle` |
 |`safariIgnoreWebHostnames`| Provide a list of hostnames (comma-separated) that the Safari automation tools should ignore. This is to provide a workaround to prevent a webkit bug where the web context is unintentionally changed to a 3rd party website and the test gets stuck. The common culprits are search engines (yahoo, bing, google) and `about:blank` |e.g. `'www.yahoo.com, www.bing.com, www.google.com, about:blank'`|
+|`maxTypingFrequency`|Maximum frequency of keystrokes for typing and clear. If your tests are failing because of typing errors, you may want to adjust this. Defaults to 60 keystrokes per minute.|e.g., `30`|
+|`simpleIsVisibleCheck`|Use native methods for determining visibility of elements. In some cases this takes a long time. Setting this capability to `false` will cause the system to use the position and size of elements to make sure they are visible on the screen. This can, however, lead to false results in some situations. Defaults to `false`, except iOS 9.3, where it defaults to `true`.|e.g., `true`, `false`|
+|`waitForQuiescence`| It allows to turn on/off waiting for application quiescence in `WebDriverAgent`, while performing queries. The default value is `true`. You can avoid [this kind of issues](https://github.com/appium/appium/issues/11132) if you turn it off.
+Consider using `waitForIdleTimeout` capability instead for this purpose since Appium 1.20.0 |e.g `false`|
+|`screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc)  Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command. `0` might cause OutOfMemory crash on high-resolution devices like iPad Pro. | e.g. `0`, `1`, `2` |
 
-### Simulator control capabilities:
+### Simulator
 
 |Capability|Description|Values|
 |----------|-----------|------|
@@ -150,30 +153,51 @@ Differences are noted here:
 |`simulatorPasteboardAutomaticSync`| Handle the `-PasteboardAutomaticSync` flag when simulator process launches. It could improve launching simulator performance not to sync pasteboard with the system when this value is `off`. `on` forces the flag enabled. `system` does not provide the flag to the launching command. `on`, `off`, or `system` is available. They are case insensitive. Defaults to `off` | e.g. `system` |
 |`simulatorDevicesSetPath`| This capability allows to set an alternative path to the simulator devices set in case you have multiple sets deployed on your local system. Such feature could be useful if you, for example, would like to save disk space on the main system volume. | e.g. `/MyVolume/Devices` |
 
-### General capabilities:
+### Web Context
 
 |Capability|Description|Values|
 |----------|-----------|------|
-|`resetOnSessionStartOnly`|Whether to perform reset on test session finish (`false`) or not (`true`). Keeping this variable set to `true` and Simulator running (the default behaviour since version 1.6.4) may significantly shorten the duration of test session initialization.|Either `true` or `false`. Defaults to `true`|
-|`commandTimeouts`|Custom timeout(s) in milliseconds for WDA backend commands execution. This might be useful if WDA backend freezes unexpectedly or requires too much time to fail and blocks automated test execution. The value is expected to be of type string and can either contain max milliseconds to wait for each WDA command to be executed before terminating the session forcefully or a valid JSON string, where keys are internal Appium command names (you can find these in logs, look for "Executing command 'command_name'" records) and values are timeouts in milliseconds. You can also set the 'default' key to assign the timeout for all other commands not explicitly enumerated as JSON keys.|`'120000'`, `'{"findElement": 40000, "findElements": 40000, "setValue": 20000, "default": 120000}'`|
-|`maxTypingFrequency`|Maximum frequency of keystrokes for typing and clear. If your tests are failing because of typing errors, you may want to adjust this. Defaults to 60 keystrokes per minute.|e.g., `30`|
-|`simpleIsVisibleCheck`|Use native methods for determining visibility of elements. In some cases this takes a long time. Setting this capability to `false` will cause the system to use the position and size of elements to make sure they are visible on the screen. This can, however, lead to false results in some situations. Defaults to `false`, except iOS 9.3, where it defaults to `true`.|e.g., `true`, `false`|
 |`absoluteWebLocations`|This capability will direct the `Get Element Location` command, when used within webviews, to return coordinates which are relative to the origin of the page, rather than relative to the current scroll offset. This capability has no effect outside of webviews. Default `false`.|e.g., `true`|
-|`useJSONSource`|Get JSON source from WDA and parse into XML on Appium server. This can be much faster, especially on large devices. Defaults to `false`.|e.g., `true`|
-|`mjpegServerPort`|The port number on which WDA broadcasts screenshots stream encoded into MJPEG format from the device under test. It might be necessary to change this value if the default port is busy because of other tests running in parallel. Default value: `9100`|e.g. `12000`|
-|`waitForQuiescence`| It allows to turn on/off waiting for application quiescence in `WebDriverAgent`, while performing queries. The default value is `true`. You can avoid [this kind of issues](https://github.com/appium/appium/issues/11132) if you turn it off. |e.g `false`|
-|`screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc)  Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command. `0` might cause OutOfMemory crash on high-resolution devices like iPad Pro. | e.g. `0`, `1`, `2` |
-|`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`safariGarbageCollect`|Turns on/off Web Inspector garbage collection when executing scripts on Safari. Turning on may improve performance. Defaults to `false`.|`true` or `false`|
 |`includeSafariInWebviews`|Add Safari web contexts to the list of contexts available during a native/webview app test. This is useful if the test opens Safari and needs to be able to interact with it. Defaults to `false`.|`true` or `false`|
-|`appPushTimeout`| The timeout for application upload in milliseconds. Works for real devices only. The default value is 30000ms | e. g. `60000` |
 |`safariLogAllCommunication`|Log all plists sent to and received from the Web Inspector, as plain text. For some operations this can be a lot of data, so it is recommended to be used only when necessary. Defaults to `false`.|`true` or `false`|
 |`safariLogAllCommunicationHexDump`|Log all communication sent to and received from the Web Inspector, as raw hex dump and printable characters. This logging is done _before_ any data manipulation, and so can elucidate some communication issues. Like `safariLogAllCommunication`, this can produce a lot of data in some cases, so it is recommended to be used only when necessary. Defaults to `false`.|`true` or `false`|
 |`safariSocketChunkSize`|The size, in _bytes_, of the data to be sent to the Web Inspector on iOS 11+ real devices. Some devices hang when sending large amounts of data to the Web Inspector, and breaking them into smaller parts can be helpful in those cases. Defaults to `16384` (also the maximum possible)|e.g., `1000`|
 |`safariWebInspectorMaxFrameLength`| The maximum size in bytes of a single data frame for the Web Inspector. Too high values could introduce slowness and/or memory leaks. Too low values could introduce possible buffer overflow exceptions. Defaults to 20MB (`20*1024*1024`) |e.g. `1024`, `100*1024*1024` |
 |`additionalWebviewBundleIds`|Array (or JSON array) of possible bundle identifiers for webviews. This is sometimes necessary if the Web Inspector is found to be returning a modified bundle identifier for the app. Defaults to `[]`|e.g., `['io.appium.modifiedId', 'ABCDEF']`|
 |`webviewConnectTimeout`|The time to wait, in `ms`, for the initial presence of webviews in MobileSafari or hybrid apps. Defaults to `0`|e.g., '5000'|
+
+### Other
+
+|Capability|Description|Values|
+|----------|-----------|------|
+|`resetOnSessionStartOnly`|Whether to perform reset on test session finish (`false`) or not (`true`). Keeping this variable set to `true` and Simulator running (the default behaviour since version 1.6.4) may significantly shorten the duration of test session initialization.|Either `true` or `false`. Defaults to `true`|
+|`commandTimeouts`|Custom timeout(s) in milliseconds for WDA backend commands execution. This might be useful if WDA backend freezes unexpectedly or requires too much time to fail and blocks automated test execution. The value is expected to be of type string and can either contain max milliseconds to wait for each WDA command to be executed before terminating the session forcefully or a valid JSON string, where keys are internal Appium command names (you can find these in logs, look for "Executing command 'command_name'" records) and values are timeouts in milliseconds. You can also set the 'default' key to assign the timeout for all other commands not explicitly enumerated as JSON keys.|`'120000'`, `'{"findElement": 40000, "findElements": 40000, "setValue": 20000, "default": 120000}'`|
+|`useJSONSource`|Get JSON source from WDA and parse into XML on Appium server. This can be much faster, especially on large devices. Defaults to `false`.|e.g., `true`|
+|`mjpegServerPort`|The port number on which WDA broadcasts screenshots stream encoded into MJPEG format from the device under test. It might be necessary to change this value if the default port is busy because of other tests running in parallel. Default value: `9100`|e.g. `12000`|
+|`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
+|`appPushTimeout`| The timeout for application upload in milliseconds. Works for real devices only. The default value is 30000ms | e. g. `60000` |
 |`launchWithIDB`| Launch WebDriverAgentRunner with [idb](https://github.com/facebook/idb) instead of xcodebuild. This could save a significant amout of time by skiping the xcodebuild process, although the idb might not be very reliable, especially with fresh Xcode SDKs. Check the [idb repository](https://github.com/facebook/idb/issues) for more details on possible compatibility issues. Defaults to `false` |`true` or `false`|
+
+
+## Element Attributes
+
+XCUITest driver supports the following element attributes:
+
+Name | Description | Example
+--- | --- | ---
+name | Could contain either element's [identifier](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500981-identifier?language=objc) or its [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc), depending on which one is available first. Could also be `null` | 'hello'
+label | Element's [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc) value. Could be `null` | 'hello'
+type | Element's [type](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500614-elementtype?language=objc) name | 'XCUIElementTypeButton'
+visible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'false'
+focused | Whether the element is [focused](https://developer.apple.com/documentation/xctest/xcuielementattributes/1627636-hasfocus?language=objc). *Only available for tvOS* | 'true'
+accessible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'true'
+enabled | Whether the element is [enabled](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500330-enabled?language=objc). | 'false'
+selected | Whether the element is [selected](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500581-selected?language=objc) | 'false'
+index | Element's index in the hierarchy relatively to its parent. Only available since Appium 1.20.0. Indexing starts from `0`. | '2'
+rect | Element's rectangle. The actual data of this attribute is based on element's [frame](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500911-frame?language=objc). | {'x': 0, 'y': 0, 'width': 100, 'height': 100}
+value | Element's value. This is a complex attribute, whose calculation algorithm depends on the actual element type. Check [WebDriverAgent sources](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m) to know more about how it is compiled (method `- (NSString *)wdValue`). Could be `null` | 'hello'
+
 
 ## Opt-in Features (With Security Risk)
 
@@ -187,17 +211,53 @@ These can be enabled when running this driver through Appium, via the `--allow-i
 |customize_result_bundle_path| Allow customizeing the path to result bundles by `resultBundlePath` capability |
 
 
-### Watch
+## Known issues
+
+* `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
+
+
+## Sim Resetting
+
+By default, this driver will create a new iOS simulator and run tests on it, deleting the simulator afterward.
+
+If you specify a specific simulator using the `udid` capability, this driver will boot the specified simulator and shut it down afterwards.
+
+If a udid is provided and the simulator is already running, this driver will leave it running after the test run.
+
+In short, this driver tries to leave things as it found them.
+
+You can use the `noReset` capability to adjust this behavior.
+Setting `noReset` to `true` will leave the simulator running at the end of a test session.
+
+
+## Optional dependencies
+
+For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This can be installed by
+
+```
+gem install xcpretty
+```
+
+
+### Development
+
+To install the project check it out from GitHub and run:
+
+```
+npm install
+```
+
+To watch changes during the development:
 
 ```
 npm run watch
 ```
 
-
-### Test
+To run unit/functional tests:
 
 ```
 npm test
+npm e2e-test
 ```
 
 There are also a number of environment variables that can be used when running
