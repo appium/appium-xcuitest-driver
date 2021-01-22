@@ -9,7 +9,7 @@
 
 Appium XCUITest Driver is a combined solution, which allows to perform automated black-box testing of iOS and tvOS native applications and WebKit web views.
 The native testing is based on Apple's [XCTest](https://developer.apple.com/documentation/xctest) framework and the fork of Facebook's [WebDriverAgent](https://github.com/appium/WebDriverAgent) server (the [original](https://github.com/facebookarchive/WebDriverAgent) project is not supported anymore).
-Web views communication is done via [Webkit remote debugger protocol](https://github.com/appium/appium-remote-debugger). Real devices communication is ensured by [appium-ios-device library](https://github.com/appium/appium-ios-device).
+Web views communication is done via [Webkit remote debugger protocol](https://github.com/appium/appium-remote-debugger). Real devices communication is ensured by [appium-ios-device](https://github.com/appium/appium-ios-device) library.
 Simulators communication is ensured by [appium-ios-simulator](https://github.com/appium/appium-ios-simulator) library.
 
 In the native mode the driver operates in scope of [WebDriver W3C protocol](https://w3c.github.io/webdriver) with several platform-specific extensions. Web views communication only supports the obsolete [JWP protocol](https://webdriver.io/docs/api/jsonwp.html).
@@ -32,7 +32,7 @@ On top of standard Appium requirements XCUITest driver also expects the followin
 ## Optional dependencies
 
 - [xcpretty](https://github.com/supermarin/xcpretty) tool could be used to make Xcode output easier to read. It could be installed using `gem install xcpretty` command.
-- For video recording under test we use [ffmpeg](https://ffmpeg.org/). It could be installed using [brew](https://brew.sh/): `brew install ffmpeg`
+- For test video recording we use [ffmpeg](https://ffmpeg.org/). It could be installed using [brew](https://brew.sh/): `brew install ffmpeg`
 - Facebook's [IDB](https://github.com/facebook/idb) tool could be used to improve some real device/Simulator interactions
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) could be used to improve some Simulator interactions
 
@@ -53,7 +53,7 @@ See [real device configuration documentation](docs/real-device-config.md).
 
 ### Known problems
 
-After many failures on real devices, there can be a state where the device will no longer accept connections. To possibly remedy this reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
+After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
 
 #### Weird state
 
@@ -197,9 +197,9 @@ Name | Description | Example
 name | Could contain either element's [identifier](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500981-identifier?language=objc) or its [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc), depending on which one is available first. Could also be `null` | 'hello'
 label | Element's [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc) value. Could be `null` | 'hello'
 type | Element's [type](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500614-elementtype?language=objc) name | 'XCUIElementTypeButton'
-visible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'false'
+visible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from the accessibility layer | 'false'
 focused | Whether the element is [focused](https://developer.apple.com/documentation/xctest/xcuielementattributes/1627636-hasfocus?language=objc). *Only available for tvOS* | 'true'
-accessible | Whether the element is accessible. This value is not available in the "vanilla" XCTest and is read directly from accessibility layer | 'true'
+accessible | Whether the element is accessible. This value is not available in the "vanilla" XCTest and is read directly from the accessibility layer | 'true'
 enabled | Whether the element is [enabled](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500330-enabled?language=objc). | 'false'
 selected | Whether the element is [selected](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500581-selected?language=objc) | 'false'
 index | Element's index in the hierarchy relatively to its parent. Only available since Appium 1.20.0. Indexing starts from `0`. | '2'
