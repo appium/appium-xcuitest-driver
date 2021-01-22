@@ -7,7 +7,7 @@
 
 [![Build Status](https://api.travis-ci.org/appium/appium-xcuitest-driver.png?branch=master)](https://travis-ci.org/appium/appium-xcuitest-driver)
 
-Appium XCUITest Driver is a combined solution, which allows to perform automated black-box testing of iOS and tvOS native applications and Safari web views.
+Appium XCUITest Driver is a combined solution, which allows to perform automated black-box testing of iOS and tvOS native applications and WebKit web views.
 The native testing is based on Apple's [XCTest](https://developer.apple.com/documentation/xctest) framework and the fork of Facebook's [WebDriverAgent](https://github.com/appium/WebDriverAgent) server (the [original](https://github.com/facebookarchive/WebDriverAgent) project is not supported anymore).
 Web views communication is done via [Webkit remote debugger protocol](https://github.com/appium/appium-remote-debugger). Real devices communication is ensured by [appium-ios-device library](https://github.com/appium/appium-ios-device).
 Simulators communication is ensured by [appium-ios-simulator](https://github.com/appium/appium-ios-simulator) library.
