@@ -31,7 +31,7 @@ On top of standard Appium requirements XCUITest driver also expects the followin
 
 ## Optional dependencies
 
-- For real devices we can use [xcpretty](https://github.com/supermarin/xcpretty) to make Xcode output more reasonable. This could be installed by `gem install xcpretty`
+- [xcpretty](https://github.com/supermarin/xcpretty) tool could be used to make Xcode output easier to read. It could be installed using `gem install xcpretty` command.
 - For video recording under test we use [ffmpeg](https://ffmpeg.org/). It could be installed using [brew](https://brew.sh/): `brew install ffmpeg`
 - Facebook's [IDB](https://github.com/facebook/idb) tool could be used to improve some real device/Simulator interactions
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) could be used to improve some Simulator interactions
