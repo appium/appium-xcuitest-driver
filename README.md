@@ -152,6 +152,8 @@ Capability | Description
 Consider using `waitForIdleTimeout` capability instead for this purpose since Appium 1.20.0 |e.g `false`|
 |`appium:mjpegServerPort`|The port number on which WDA broadcasts screenshots stream encoded into MJPEG format from the device under test. It might be necessary to change this value if the default port is busy because of other tests running in parallel. Default value: `9100`|e.g. `12000`|
 |`appium:screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc)  Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command. `0` might cause OutOfMemory crash on high-resolution devices like iPad Pro. | e.g. `0`, `1`, `2` |
+|`appium:autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
+|`appium:autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 
 ### Simulator
 
@@ -211,13 +213,12 @@ Consider using `waitForIdleTimeout` capability instead for this purpose since Ap
 |----------|-----------|------|
 |`appium:resetOnSessionStartOnly`|Whether to perform reset on test session finish (`false`) or not (`true`). Keeping this variable set to `true` and Simulator running (the default behaviour since version 1.6.4) may significantly shorten the duration of test session initialization.|Either `true` or `false`. Defaults to `true`|
 |`appium:commandTimeouts`|Custom timeout(s) in milliseconds for WDA backend commands execution. This might be useful if WDA backend freezes unexpectedly or requires too much time to fail and blocks automated test execution. The value is expected to be of type string and can either contain max milliseconds to wait for each WDA command to be executed before terminating the session forcefully or a valid JSON string, where keys are internal Appium command names (you can find these in logs, look for "Executing command 'command_name'" records) and values are timeouts in milliseconds. You can also set the 'default' key to assign the timeout for all other commands not explicitly enumerated as JSON keys.|`'120000'`, `'{"findElement": 40000, "findElements": 40000, "setValue": 20000, "default": 120000}'`|
-|`appium:useJSONSource`|Get JSON source from WDA and parse into XML on Appium server. This can be much faster, especially on large devices. Defaults to `false`.|e.g., `true`|
+|`appium:useJSONSource`|Get JSON source from WDA and transform it to XML on the Appium server side. Defaults to `false`.|e.g., `true`|
 |`appium:skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`appium:launchWithIDB`| Launch WebDriverAgentRunner with [idb](https://github.com/facebook/idb) instead of xcodebuild. This could save a significant amout of time by skiping the xcodebuild process, although the idb might not be very reliable, especially with fresh Xcode SDKs. Check the [idb repository](https://github.com/facebook/idb/issues) for more details on possible compatibility issues. Defaults to `false` |`true` or `false`|
-|`appium:autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
-|`appium:autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 |`appium:showIOSLog`| Whether to show any logs captured from a device in the appium logs. Default `false`|`true` or `false`|
 |`appium:clearSystemFiles`|Whether to clean temporary XCTest files (for example logs) when a testing session is closed. `false` by default| `true` or `false`
+|`appium:newCommandTimeout`|How long (in seconds) the driver should wait for a new command from the client before assuming the client has stopped sending requests. After the timeout the session is going to be deleted. `60` seconds by default. Setting it to zero disables the timer. |e.g. `100`|
 
 ## Element Attributes
 
@@ -247,7 +248,7 @@ These can be enabled when running this driver through Appium, via the `--allow-i
 |shutdown_other_sims|Allow any session to use a capability to shutdown any running simulators on the host|
 |perf_record|Allow recording the system performance and other metrics of the simulator|
 |audio_record|Allow recording of host audio input(s)|
-|customize_result_bundle_path| Allow customizeing the path to result bundles by `resultBundlePath` capability |
+|customize_result_bundle_path|Allow customization of paths to result bundles by `resultBundlePath` capability|
 
 
 ## Settings API
