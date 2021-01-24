@@ -352,7 +352,7 @@ Allows to retrieve the source tree of the current page in different representati
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 format | string | yes | One of possible page tree source representation formats: `xml` (the default value), `description` and `json`. The `xml` format generates the output similar to what `getPageSource` standard API returns. `description` representation is how XCTest "sees" the page internally and is the same string as [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription?language=objc) API would return for the root application element. This source representation format is useful for debugging purposes and is the fastest one to fetch. `json` representation is similar to `xml`, but the tree hierarchy there is represented as JSON elements tree rather than as XML nodes. | description
-excludedAttributes | string | no | One or more comma-separated attribute names to be excluded from the XML output, thus only makes sense if `format` is set to `xml`. It might be sometimes helpful to exclude, for example, the `visible` attribute, to significantly speed-up page source retrieval. | `visible,accessible`
+excludedAttributes | string | no | One or more comma-separated attribute names to be excluded from the XML output, thus only makes sense if `format` is set to `xml`. It might be sometimes helpful to exclude, for example, the `visible` attribute, to significantly speed-up page source retrieval. | visible,accessible
 
 #### Returned Result
 
@@ -487,7 +487,7 @@ remotePath | string | no | The path to the remote location, where the resulting 
 user | string | no | The name of the user for the remote authentication. Only works if `remotePath` is provided. | myuser
 pass | string | no | The password for the remote authentication. Only works if `remotePath` is provided. | mypassword
 method | string | no | The http multipart upload method name. Only works if `remotePath` is provided. `PUT` by default | POST
-headers | dict | no | Additional headers mapping for multipart http(s) uploads | {'Agent': 'Myserver 1.0'}
+headers | dict | no | Additional headers mapping for multipart http(s) uploads | {'User-Agent': 'Myserver 1.0'}
 fileFieldName | string | no | The name of the form field, where the file content BLOB should be stored for http(s) uploads. `file` by default | payload
 formFields | dict or array | no | Additional form fields for multipart http(s) uploads | {'field2': 'value2'}
 
