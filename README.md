@@ -285,6 +285,257 @@ nativeWebTapStrict | boolean | See the description of the corresponding capabili
 useJSONSource | boolean | See the description of the corresponding capability.
 
 
+## Platform-Specific Extensions
+
+Beside of standard W3C APIs the driver provides the following custom command extensions to execute platform specific scenarios:
+
+### mobile: selectPickerWheelValue
+
+Performs selection of the next or previous picker wheel value. This might
+be useful if these values are populated dynamically, so you don't know which
+one to select or value selection suing `sendKeys` API does not work because of an XCTest bug. The method throws an exception if it fails to change the current picker value.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+element | string | yes | PickerWheel's internal element id (as hexadecimal hash string) to perform value selection on. The element must be of type XCUIElementTypePickerWheel | abcdef12-1111-2222-3333-444444
+order | string | yes | Either `next` to select the value next to the current one from the target picker wheel or `previous` to select the previous one. | next
+offset | number | no | The value in range [0.01, 0.5]. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small offset value may not change the picker wheel value and too high value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range [0.15, 0.3]. `0.2` by default | 0.15
+
+### mobile: alert
+
+Tries to apply the given action to the currently visible alert.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+action | string | yes | The actual action to apply. Could be either: `accept`, `dismiss` or `getButtons` | accept
+buttonLabel | string | no | The name of the button used to perform the chosen alert action. Only makes sense if the action is `accept` or `dismiss` | Accept
+
+#### Returned Result
+
+The list of alert button names if the selected action is `getButtons`
+
+### mobile: setPasteboard
+
+Sets the Simulator's pasteboard content to the given value. Does not work for real devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+content | string | yes | The content to set | hello
+encoding | string | no | The content's encoding. `utf8` by default | ascii
+
+### mobile: getPasteboard
+
+Gets the Simulator's pasteboard content. Does not work for real devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+encoding | string | no | The expected encoding of the returned string. `utf8` by default | ascii
+
+#### Returned Result
+
+The pasteboard content string.
+
+### mobile: source
+
+Allows to retrieve the source tree of the current page in different representation formats.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+format | string | yes | One of possible page tree source representation formats: `xml` (the default value), `description` and `json`. The `xml` format generates the output similar to what `getPageSource` standard API returns. `description` representation is how XCTest "sees" the page internally and is the same string as [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription?language=objc) API would return for the root application element. This source representation format is useful for debugging purposes and is the fastest one to fetch. `json` representation is similar to `xml`, but the tree hierarchy there is represented as JSON elements tree rather than as XML nodes. | description
+excludedAttributes | string | no | One or more comma-separated attribute names to be excluded from the XML output, thus only makes sense if `format` is set to `xml`. It might be sometimes helpful to exclude, for example, the `visible` attribute, to significantly speed-up page source retrieval. | visible,accessible
+
+#### Returned Result
+
+The page source tree formatted according to the given format argument.
+
+### mobile: getContexts
+
+Retrieves the list of available contexts including the extended context information, like urls and page names. This is different from the standard `getContexts` API, because the latter only has web view names without any additional information. In situation where multiple web views are available at once the client code would have to connect to each of them in order to detect the one, which needs to be interacted with. Although, this extra effort is not needed with the information provided by this extension.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+waitForWebviewMs | number | no | Tells Appium for how long (in milliseconds) to wait for web view(s) to appear. `5000`ms by default | 10000
+
+#### Returned Result
+
+The list of available context objects along with their properties:
+
+- id: The identifier of the context. The native context will be 'NATIVE_APP' and the webviews will be 'WEBVIEW_xxx'
+- title: The title associated with the webview content. Could be `null`
+- url: The url associated with the webview content. Could be `null`
+
+### mobile: installApp
+
+Installs the given application to the device under test. Make sure the app is built for a correct architecture and is signed with a proper signature (for real devices) prior to install it.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+app | string | yes | See the description of the `appium:app` capability | /path/to/my.app
+
+### mobile: isAppInstalled
+
+Checks whether the given application is installed on the device under test.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be checked | com.mycompany.myapp
+
+#### Returned Result
+
+Either `true` or `false`
+
+### mobile: removeApp
+
+Removes the given application from the device under test.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be removed | com.mycompany.myapp
+
+#### Returned Result
+
+Either `true` if the app was successfully uninstalled, otherwise `false`
+
+### mobile: launchApp
+
+Executes the given app on the device under test. If the app is already running then it would be activated. If the app is not installed or cannot be launched then an exception is thrown.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be launched | com.mycompany.myapp
+arguments | string|array | no | One or more command line arguments for the app. If the app is already running then this argument is ignored. | ['-s', '-m']
+environment | dict | no | Environment variables mapping for the app. If the app is already running then this argument is ignored. | {'var': 'value'}
+
+### mobile: terminateApp
+
+Terminates the given app on the device under test. If the app is not installed an exception is thrown. If the app is not running then nothing is done.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be terminated | com.mycompany.myapp
+
+#### Returned Result
+
+Either `true` if the app was successfully terminated, otherwise `false`
+
+### mobile: queryAppState
+
+Queries the state of an installed application from the device under test. An exception will be thrown if the app with given identifier is not installed.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be queried | com.mycompany.myapp
+
+#### Returned Result
+
+An integer number is returned, which encodes the application state. Possible values are described in [XCUIApplicationState](https://developer.apple.com/documentation/xctest/xcuiapplicationstate?language=objc) XCTest documentation topic.
+
+### mobile: activateApp
+
+Puts the given application to foreground if it is running in the background. An error is thrown if the app is not installed or is not running. Nothing is done if the app is already running in the foreground.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be activated | com.mycompany.myapp
+
+### mobile: startPerfRecord
+
+Starts performance profiling for the device under test.
+Relaxing security is mandatory for simulators. It can always work for real devices.
+Since XCode 12 the method tries to use `xctrace` tool to record performance stats.
+The `instruments` developer utility is used as a fallback for this purpose if `xctrace` is not available. It is possible to record multiple profiles at the same time. Read [Instruments User Guide](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Recording,Pausing,andStoppingTraces.html) for more details.
+If the recording for the given profile is already running that nothing is done.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+timeout | number | no | The maximum count of milliseconds to record the profiling information. It is recommended to always limit the maximum duration of perf record operation, since the resulting logs are pretty huge and may easily exceed the free space on th local storage volume. `300000`ms by default (5 minutes) | `600000`
+profileName | string | no | The name of existing performance profile to apply. Can also contain the full path to the chosen template on the server file system. Note, that not all profiles are supported on mobile devices. `Activity Monitor` by default. | `Time Profile`
+pid | string or number | no | The ID of the process to measure the performance for. Set it to `current` in order to measure the performance of the process, which belongs to the currently active application. All processes running on the device are measured if pid is unset (the default setting). | current
+
+### mobile: stopPerfRecord
+
+Stops the performance recording operation previosuly started by `mobile: startPerfRecord` call. If the previous call has already been completed due to the timeout then its result is returned immediately. An error is thrown if the performance recording has failed to start and recorded no data.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+profileName | string | no | The name of existing performance profile to stop the recording for. Multiple recorders for different profile names could be executed at the same time. `Activity Monitor` by default. | `Time Profile`
+remotePath | string | no | The path to the remote location, where the resulting zipped .trace file should be uploaded. The following protocols are supported: http/https, ftp Null or empty string value (the default setting) means the content of resulting file should be zipped, encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated file is too big to fit into the available process memory. | https://myserver/upload
+user | string | no | The name of the user for the remote authentication. Only works if `remotePath` is provided. | myuser
+pass | string | no | The password for the remote authentication. Only works if `remotePath` is provided. | mypassword
+method | string | no | The http multipart upload method name. Only works if `remotePath` is provided. `PUT` by default | POST
+headers | dict | no | Additional headers mapping for multipart http(s) uploads | {'User-Agent': 'Myserver 1.0'}
+fileFieldName | string | no | The name of the form field, where the file content BLOB should be stored for http(s) uploads. `file` by default | payload
+formFields | dict or array | no | Additional form fields for multipart http(s) uploads | {'field2': 'value2'}
+
+#### Returned Result
+
+The resulting file in .trace format can be either returned directly as base64-encoded zip archive or uploaded to a remote location (such files could be pretty large), depending on the `remotePath` argument value. Afterwards it is possible to unarchive and open such file with Xcode Developer Tools.
+
+### mobile: installCertificate
+
+Installs a custom certificate onto the device. Since Xcode SDK 11.4 Apple has added a dedicated simctl subcommand to quickly handle certificates on Simulator over CLI.
+On real devices or simulators before Xcode 11.4 SDK Apple provides no official way to do it via the command line. In such case (and also as a fallback if CLI setup fails) this method tries to wrap the certificate into .mobileconfig format and then deploys the wrapped file to the internal HTTP server, so one can open it via mobile Safari. Then the algorithm goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+content | string | yes | Base64-encoded content of the public certificate | a23234...
+commonName | string | no | Common name of the certificate. If this is not set then the script will try to parse it from the given certificate content. | com.myorg
+isRoot | boolean | no | This option defines where the certificate should be installed to: either Trusted Root Store (`true`, the default option) or the Keychain (`false`). On environments other than Xcode 11.4+ Simulator this option is ignored. | false
+
+#### Returned Result
+
+The content of the generated .mobileconfig file as base64-encoded string. This config might be useful for debugging purposes. If the certificate has been successfully set via CLI then nothing is returned.
+
+### Mobile Gesture Commands
+
+XCUITest driver provides several extensions that allow to automate popular mobile gesture shortcuts:
+
+- mobile: tap
+- mobile: scroll
+- mobile: pinch
+- mobile: doubleTap
+- mobile: touchAndHold
+- mobile: twoFingerTap
+- mobile: tap
+- mobile: dragFromToForDuration
+- mobile: tapWithNumberOfTaps
+- mobile: rotateElement
+
+These gestures are documented in the [Automating Mobile Gestures for iOS](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md) tutorial. Refer [W3C Actions API](https://appiumpro.com/editions/29-automating-complex-gestures-with-the-w3c-actions-api) if you need to automate more complicated gestures.
+
+
 ## Known issues
 
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
