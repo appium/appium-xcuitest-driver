@@ -470,7 +470,7 @@ Starts performance profiling for the device under test.
 Relaxing security is mandatory for simulators. It can always work for real devices.
 Since XCode 12 the method tries to use `xctrace` tool to record performance stats.
 The `instruments` developer utility is used as a fallback for this purpose if `xctrace` is not available. It is possible to record multiple profiles at the same time. Read [Instruments User Guide](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Recording,Pausing,andStoppingTraces.html) for more details.
-If the recording for the given profile is already running that nothing is done.
+If the recording for the given profile is already running then nothing is done.
 
 #### Arguments
 
