@@ -518,6 +518,275 @@ isRoot | boolean | no | This option defines where the certificate should be inst
 
 The content of the generated .mobileconfig file as base64-encoded string. This config might be useful for debugging purposes. If the certificate has been successfully set via CLI then nothing is returned.
 
+### mobile: startLogsBroadcast
+
+Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. The method will return immediately if the web socket is already listening.
+Each connected webcoket listener will receive syslog lines as soon as they are visible to Appium.
+Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Appium](https://appiumpro.com/editions/55-using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium) Appium Pro article for more details on this feature.
+
+### mobile: stopLogsBroadcast
+
+Stops the syslog broadcasting wesocket server previously started by `mobile: startLogsBroadcast`. This method will return immediately if no server is running.
+
+### mobile: batteryInfo
+
+Reads the battery information from the device under test. This endpoint only returns reliable result on real devices.
+
+#### Returned Result
+
+The actual battery info map, which consists of the following entries:
+
+- level: Battery level in range [0.0, 1.0], where 1.0 means 100% charge.
+- state: Battery state as an integer number. The following values are possible:
+   *   UIDeviceBatteryStateUnknown = 0
+   *   UIDeviceBatteryStateUnplugged = 1  // on battery, discharging
+   *   UIDeviceBatteryStateCharging = 2   // plugged in, less than 100%
+   *   UIDeviceBatteryStateFull = 3       // plugged in, at 100%
+
+### mobile: deviceInfo
+
+Returns the miscellaneous information about the device under test.
+
+#### Returned Result
+
+Check the `+ (id<FBResponsePayload>)handleGetDeviceInfo:(FBRouteRequest *)request` method in [FBCustomCommands.m](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m) for more details on the available map entries.
+
+### mobile: getDeviceTime
+
+Returns the actual device time.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+format | string | no | The format specifier string. Read [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601 | YYYY-MM-DD HH:mm:ss
+
+#### Returned Result
+
+The retrieved datetime string formatted according to the given format specfier.
+
+### mobile: activeAppInfo
+
+Returns information about the active application.
+
+#### Returned Result
+
+Check the `+ (id<FBResponsePayload>)handleActiveAppInfo:(FBRouteRequest *)request` method in [FBCustomCommands.m](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m) for more details on the available map entries.
+
+### mobile: pressButton
+
+Emulates press action on the given physical device button.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+name | string | yes | The name of the button to be pressed. Supported button names for iOS-based devices are (case-insensitive): `home`, `volumeup`, `volumedown`. For tvOS-based devices (case-insensitive): `home`, `up`, `down`, `left`, `right`, `menu`, `playpause`, `select` | home
+
+### mobile: enrollBiometric
+
+Enrolls biometric authentication on Simulator.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+isEnabled | boolean | no | Whether to enable/disable biometric enrollment. `true` by default. | true
+
+### mobile: sendBiometricMatch
+
+Emulates biometric match/non-match event on Simulator. The biometric feature is expected to be already enrolled before executing that.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+type | string | no | The biometric feature name. Either `touchId` or `faceId`. `touchId` by default. | faceId
+match | boolean | no | Whether to simulate biometric match (`true`, the default value) or non-match (`false`). | true
+
+### mobile: isBiometricEnrolled
+
+Checks whether biometric is currently enrolled or not on a Simulator device.
+
+#### Returned Result
+
+Either `true` or `false`
+
+### mobile: clearKeychains
+
+Clears keychains on Simulator. An exception is thrown for real devices.
+
+### mobile: getPermission
+
+Gets application permission state on Simulator. This method requires [WIX applesimutils](https://github.com/wix/AppleSimulatorUtils) to be installed on the host where Appium server is running.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the destination app. | com.mycompany.myapp
+service | string | yes | One of available service names. The following services are supported: `calendar`, `camera`, `contacts`, `homekit`, `microphone`, `photos`, `reminders`, `medialibrary`, `motion`, `health`, `siri`, `speech`. | true
+
+#### Returned Result
+
+Either 'yes', 'no' or 'unset'.
+
+### mobile: setPermission
+
+Set application permission state on Simulator. This method requires [WIX applesimutils](https://github.com/wix/AppleSimulatorUtils) to be installed on the host where Appium server is running.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the destination app. | com.mycompany.myapp
+access | map | yes | One or more access rules to set. The following keys are supported: `all` (Apply the action to all services), `calendar` (Allow access to calendar), `contacts-limited` (Allow access to basic contact info), `contacts` (Allow access to full contact details), `location` (Allow access to location services when app is in use), `location-always` (Allow access to location services at all times), `photos-add` (Allow adding photos to the photo library), `photos` (Allow full access to the photo library), `media-library` (Allow access to the media library), `microphone` (Allow access to audio input), `motion` (Allow access to motion and fitness data), `reminders` (Allow access to reminders), `siri` (Allow use of the app with Siri.). The following values are supported: `yes` (To grant the permission), `no` (To revoke the permission), `unset` (To reset the permission) | {'all': 'yes'}
+
+### mobile: resetPermission
+
+Resets the given permission for the active application under test. Works for both Simulator and real devices using Xcode SDK 11.4+
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+service | string or int | yes | One of available service names. The supported service names are: `calendar`, `camera`, `contacts`, `health`, `homekit`, `keyboardnet`, `location`, `medialibrary`, `microphone`, `photos`, `reminders`, `systemroot`, `userdesktop`, `userdocuments`, `userdownloads`, `bluetooth`. This could also be an integer protected resource identifier taken from [XCUIProtectedResource](https://developer.apple.com/documentation/xctest/xcuiprotectedresource?language=objc) | photos
+
+### mobile: getAppearance
+
+Get the device's UI appearance style.
+
+#### Returned Result
+
+An object, with the following entries:
+- style: The device's UI appearance value. This could be one of: `light`, `dark`, `unknown`, `unsupported`
+
+### mobile: setAppearance
+
+Set the device's UI appearance style.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+style | string | yes | Either `light` or `dark` | dark
+
+### mobile: siriCommand
+
+Presents the Siri UI, if it is not currently active, and accepts a string which is then processed as if it were recognized speech. Check the documentation on [activateWithVoiceRecognitionText](https://developer.apple.com/documentation/xctest/xcuisiriservice/2852140-activatewithvoicerecognitiontext?language=objc) XCTest method for more details.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+text | string | yes | The actual command that will be passed to Siri service | Hello Siri
+
+### mobile: deleteFile
+
+Deletes the given file from the device under test.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | yes | The path to an existing remote file on the device. This variable can be prefixed with bundle id, so then the file will be downloaded from the corresponding application container instead of the default media folder. Use `@<app_bundle_id>:<optional_container_type>/<path_to_the_file_or_folder_inside_container>` format to delete a file or a folder from an application container of the given type. The only supported container type is 'documents'. If the container type is not set explicitly for a bundle id, then the default application container is going to be mounted (aka --container ifuse argument) e.g. If `@com.myapp.bla:documents/111.png` is provided, `On My iPhone/<app name>` in Files app will be mounted to the host machine. `@com.myapp.bla:documents/` means `On My iPhone/<app name>`. | @com.mycompany.myapp:documents/myfile.txt
+
+### mobile: deleteFolder
+
+Deletes the given folder from the device under test.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | yes | Same value as for `mobile: deleteFile` except of the fact it should be pointing to a folder and should end with a single slash `/` | @com.mycompany.myapp:documents/myfolder/
+
+### mobile: startAudioRecording
+
+Records the given hardware audio input into an .mp4 file. You must allow the `audio_record` security feature in order to use this extension. Also it is required that [FFMpeg](https://ffmpeg.org/) is installed on the machibe where Appium server is running.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+audioInput | string or int | yes | The name of the corresponding audio input device to use for the capture. The full list of capture devices could be shown using `ffmpeg -f avfoundation -list_devices true -i ""` Terminal command. | 1
+audioCodec | string | no | The name of the audio codec. The Advanced Audio Codec (aac) is used by default. | aac
+audioBitrate | string | no | The bitrate of the resulting audio stream. `128k` by default. | 256k
+audioChannels | string or int | no | The count of audio channels in the resulting stream. Setting it to `1` will create a single channel (mono) audio stream. `2` By default | 1
+audioRate | string or int | no | The sampling rate of the resulting audio stream. 44100 by default | 22050
+timeLimit | string or int | no | The maximum recording time, in seconds. The default value is `180`, the maximum value is `43200` (12 hours). | 60
+forceRestart | boolean | no | Whether to restart audio capture process forcefully when startRecordingAudio is called (`true`) or ignore the call until the current audio recording is completed (`false`, the default value). | true
+
+### mobile: stopAudioRecording
+
+Stops recording of the audio input. If no audio recording process is running then the endpoint will try to get the recently recorded file. If no previously recorded file is found and no active audio recording processes are running then the method returns an empty string.
+
+#### Returned Result
+
+Base64-encoded content of the recorded media file or an empty string if no audio recording has been started before.
+
+### mobile: runXCTest
+
+Run a native XCTest script. Launches a subprocess that runs the XC Test and blocks until it is completed. Parses the stdout of the process and returns its result as an array. Facebook's [IDB](https://github.com/facebook/idb) tool is required to run such tests.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+testRunnerBundleId | string | yes | Test app bundle | io.appium.XCTesterAppUITests.xctrunner
+appUnderTestBundleId | string | yes | App-under-test bundle | com.mycompany.myapp
+xcTestBundleID | string | yes | xctest bundle id | io.appium.XCTesterAppUITests
+testType | string | no | Test type. Either `ui` (the default one), `app` or `logic` | app
+env | map | no | Environment variables mapping to be passed to the test | {'myvar': 'myvalue'}
+args | array | no | Launch arguments to start the test with (see https://developer.apple.com/documentation/xctest/xcuiapplication/1500477-launcharguments for reference) | ['-arg1', '--arg2']
+timeout | string or int | no | Timeout if session doesn't complete after given time (in milliseconds). `360000`ms by default | 120000
+
+#### Returned Result
+
+The API calls returns a map with the following entries:
+
+- results: The array of test results. Each item in this array conists of the following entries:
+   * testName: Name of the test (e.g.: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample')
+   * passed: Did the tests pass?
+   * crashed: Did the tests crash?
+   * duration: How long did the tests take (in seconds)
+   * failureMessage: Failure message (if applicable)
+   * location The geolocation of the test (if applicable)
+- code: The exit code of the process. `0` value marks a successful execution.
+- signal: The signal that terminated the process. Could be `null` (e.g.: `SIGTERM`)
+
+### mobile: installXCTestBundle
+
+Installs an XCTest bundle to the device under test. Facebook's [IDB](https://github.com/facebook/idb) tool is required to for this API to work.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+xctestBundle | string | yes | Path to your xctest .app bundle. Could be an URL | /path/to/my/bundle.app
+
+### mobile: listXCTestBundles
+
+List XCTest bundles that are installed on device. Facebook's [IDB](https://github.com/facebook/idb) tool is required to for this API to work.
+
+#### Returned Result
+
+Array of XCTest bundles (e.g.: ["XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance"])
+
+### mobile: listXCTestsInTestBundle
+
+List XCTests in a test bundle. Facebook's [IDB](https://github.com/facebook/idb) tool is required to for this API to work.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundle | string | yes | Bundle ID of the XCTest | 'com.bundle.myapp'
+
+#### Returned Result
+
+Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance' ]`)
+
 ### Mobile Gesture Commands
 
 XCUITest driver provides several extensions that allow to automate popular mobile gesture shortcuts:
