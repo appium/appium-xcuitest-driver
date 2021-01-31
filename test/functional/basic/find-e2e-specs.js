@@ -382,6 +382,31 @@ describe('XCUITestDriver - find', function () {
       els.should.have.length(1);
     });
   });
+  describe('by css selector', function () {
+    before(async function () {
+      // if we don't pause, WDA freaks out sometimes, especially on fast systems
+      await B.delay(TEST_PAUSE_DURATION);
+    });
+    it('should find elements', async function () {
+      let els = await driver.elements('-ios class chain', 'window');
+      els.should.have.length.above(0);
+    });
+
+    it('should find child elements', async function () {
+      let els = await driver.elements('-ios class chain', 'window > *');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with index', async function () {
+      let els = await driver.elements('-ios class chain', 'window[index=1] > *');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with negative index', async function () {
+      let els = await driver.elements('-ios class chain', 'window > *nth-child(-1)');
+      els.should.have.length(1);
+    });
+  });
 
   describe('magic first visible child xpath', function () {
     it('should find the first visible child of an element', async function () {
