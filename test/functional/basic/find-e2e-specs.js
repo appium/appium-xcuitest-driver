@@ -387,6 +387,10 @@ describe('XCUITestDriver - find', function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
       await B.delay(TEST_PAUSE_DURATION);
     });
+    it('should find cell types', async function () {
+      let cellEls = await driver.elementsByCss('cell');
+      cellEls.should.have.length.above(1);
+    });
     it('should find elements', async function () {
       let els = await driver.elementsByCss('window');
       els.should.have.length.above(0);
@@ -405,6 +409,12 @@ describe('XCUITestDriver - find', function () {
     it('should find elements with negative index', async function () {
       let els = await driver.elementsByCss('window > *:nth-child(-1)');
       els.should.have.length(1);
+    });
+
+    it('should work with a nested CSS selector', async function () {
+      let imageViewButtons = await driver.elementsByCss('cell > staticText[value="Image View"]');
+      imageViewButtons.should.have.length(1);
+      await imageViewButtons[0].click();
     });
   });
 
