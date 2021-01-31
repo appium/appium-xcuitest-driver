@@ -388,22 +388,22 @@ describe('XCUITestDriver - find', function () {
       await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find elements', async function () {
-      let els = await driver.elements('-ios class chain', 'window');
+      let els = await driver.elementsByCss('window');
       els.should.have.length.above(0);
     });
 
     it('should find child elements', async function () {
-      let els = await driver.elements('-ios class chain', 'window > *');
+      let els = await driver.elementsByCss('window > *');
       els.should.have.length.above(0);
     });
 
     it('should find elements with index', async function () {
-      let els = await driver.elements('-ios class chain', 'window[index=1] > *');
+      let els = await driver.elementsByCss('window:nth-child(1) > *');
       els.should.have.length.above(0);
     });
 
     it('should find elements with negative index', async function () {
-      let els = await driver.elements('-ios class chain', 'window > *nth-child(-1)');
+      let els = await driver.elementsByCss('window > *:nth-child(-1)');
       els.should.have.length(1);
     });
   });
