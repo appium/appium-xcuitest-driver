@@ -414,7 +414,6 @@ describe('XCUITestDriver - find', function () {
     it('should work with a nested CSS selector', async function () {
       let imageViewButtons = await driver.elementsByCss('cell > staticText[value="Image View"]');
       imageViewButtons.should.have.length(1);
-      await imageViewButtons[0].click();
     });
   });
 
