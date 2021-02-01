@@ -6,9 +6,9 @@ variables:
 jobs:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iPhoneX_14_2
-      iosVersion: 14.2
-      xcodeVersion: 12.2
+      name: iPhoneX_14_4
+      iosVersion: 14.4
+      xcodeVersion: 12.4
       deviceName: "iPhone Simulator"
       #tvosVersion: 13.4
       #tvosName: AppleTV_13_4
