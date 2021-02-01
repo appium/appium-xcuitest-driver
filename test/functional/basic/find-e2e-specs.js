@@ -382,6 +382,40 @@ describe('XCUITestDriver - find', function () {
       els.should.have.length(1);
     });
   });
+  describe('by css selector', function () {
+    before(async function () {
+      // if we don't pause, WDA freaks out sometimes, especially on fast systems
+      await B.delay(TEST_PAUSE_DURATION);
+    });
+    it('should find cell types', async function () {
+      let cellEls = await driver.elementsByCss('cell');
+      cellEls.should.have.length.above(1);
+    });
+    it('should find elements', async function () {
+      let els = await driver.elementsByCss('window');
+      els.should.have.length.above(0);
+    });
+
+    it('should find child elements', async function () {
+      let els = await driver.elementsByCss('window > *');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with index', async function () {
+      let els = await driver.elementsByCss('window:nth-child(1) > *');
+      els.should.have.length.above(0);
+    });
+
+    it('should find elements with negative index', async function () {
+      let els = await driver.elementsByCss('window > *:nth-child(-1)');
+      els.should.have.length(1);
+    });
+
+    it('should work with a nested CSS selector', async function () {
+      let imageViewButtons = await driver.elementsByCss('cell > staticText[value="Image View"]');
+      imageViewButtons.should.have.length(1);
+    });
+  });
 
   describe('magic first visible child xpath', function () {
     it('should find the first visible child of an element', async function () {
