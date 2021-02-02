@@ -126,10 +126,14 @@ is updated, and is _not_ recommended):
     `appium/node_modules/appium-xcuitest-driver/node_modules`) and, if it is not present there, under `appium/node_modules`.
     You could also see the full path to WebDriverAgent's folder in Appium server logs
     after a session has been started.
-    Open a terminal and go to that location, then run the following in order to
+    Open a terminal and go to that location, then run the following to
     set the project up:
 ```
     mkdir -p Resources/WebDriverAgent.bundle
+```
+    If you build an WebDriverAgent with a version before 2.32.0 (e.g. as part of
+    an Appium release before 1.20.0) you also have to run
+```
     ./Scripts/bootstrap.sh -d
 ```
 *   Open `WebDriverAgent.xcodeproj` in Xcode. For **both** the `WebDriverAgentLib`
