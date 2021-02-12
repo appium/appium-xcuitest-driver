@@ -42,6 +42,7 @@ describe('session commands', function () {
         javascript_enabled: true,
         app: 'NOTLOL.app',
       };
+      driver.deviceCaps = undefined;
       let res = await driver.getSession();
       proxySpy.calledOnce.should.be.true;
       res.should.eql({
@@ -53,6 +54,25 @@ describe('session commands', function () {
         statBarHeight: 20,
         viewportRect: {x: 1, y: 2, height: 3, width: 4},
         pixelRatio: 3,
+      });
+    });
+
+    it('should merge caps with WDA response without screen info', async function () {
+      driver.caps = {
+        platformName: 'iOS',
+        javascript_enabled: true,
+        app: 'NOTLOL.app',
+      };
+      driver.deviceCaps = undefined;
+      driver.opts.includeScreenInfoInSession = false;
+      let res = await driver.getSession();
+      proxySpy.calledOnce.should.be.false;
+      res.should.eql({
+        sillyCap: true,
+        app: 'LOL.app',
+        platformName: 'iOS',
+        javascript_enabled: true,
+        udid: 'cecinestpasuneudid'
       });
     });
   });
