@@ -64,7 +64,7 @@ describe('session commands', function () {
         app: 'NOTLOL.app',
       };
       driver.deviceCaps = undefined;
-      driver.opts.includeScreenInfoInSession = false;
+      driver.opts.includeDeviceCapsToSessionInfo = false;
       let res = await driver.getSession();
       proxySpy.calledOnce.should.be.false;
       res.should.eql({

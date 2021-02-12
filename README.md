@@ -101,7 +101,7 @@ appium:automationName | Must always be set to `xcuitest`. Values of `automationN
 `appium:fullReset` | Being set to `true` always enforces the application under test to be fully uninstalled before starting a new session. `false` by default
 `appium:printPageSourceOnFindFailure` | Enforces the server to dump the actual XML page source into the log if any error happens. `false` by default.
 `browserName` | The name of the browser to run the test on. If this capability is provided then the driver will try to start the test in Web context mode (Native mode is applied by default). Read [Automating hybrid apps](https://appium.io/docs/en/writing-running-appium/web/hybrid/) for more details. Usually equals to `safari`.
-`appium:includeScreenInfoInSession` | Whether to include screen information as the result of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/) result. It includes `pixelRatio`, `statBarHeight` and `viewportRect`, but it causes an extra API call to WDA which may increase the response time like [this issue](https://github.com/appium/appium/issues/15101). Defaults to `true`.
+`appium:includeDeviceCapsToSessionInfo` | Whether to include screen information as the result of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/). It includes `pixelRatio`, `statBarHeight` and `viewportRect`, but it causes an extra API call to WDA which may increase the response time like [this issue](https://github.com/appium/appium/issues/15101). Defaults to `true`.
 
 ### App
 
