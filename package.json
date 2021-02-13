@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "3.36.1",
+  "version": "3.37.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -45,7 +45,7 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "appium-base-driver": "^7.0.0",
-    "appium-idb": "^0.5.0",
+    "appium-idb": "^0.x",
     "appium-ios-device": "^1.5.0",
     "appium-ios-driver": "^4.8.0",
     "appium-ios-simulator": "^3.25.1",
@@ -60,14 +60,14 @@
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.24.0",
-    "moment-timezone": "0.5.32",
+    "moment-timezone": "^0.x",
     "node-simctl": "^6.4.0",
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
     "source-map-support": "^0.5.5",
     "teen_process": "^1.14.0",
     "ws": "^7.0.0",
-    "xmldom": "^0.4.0",
+    "xmldom": "^0.x",
     "yargs": "^16.0.3"
   },
   "scripts": {
