@@ -829,6 +829,32 @@ bundle | string | yes | Bundle ID of the XCTest | 'com.bundle.myapp'
 
 Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance' ]`)
 
+### mobile: viewportRect
+
+Retrieves the viwport dimensions.
+The viewport is the device's screen size with status bar size subtracted if the latter is present/visible.
+
+#### Returned Result
+
+The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}`.
+
+`left` and `top` are distance from the `left` of the screen and the `top` of the screen. [iOS Drawing Concepts](https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html) could help about the relationship of coordinate.
+
+`width` and `height` are the screen's width and height.
+
+### mobile: deviceScreenInfo
+
+Get information about screen.
+
+#### Returned Result
+
+The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"scale":2}}`
+
+`statusBarSize` contains status bar dimensions. It is the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars).
+`scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
+
+
+
 ### Mobile Gesture Commands
 
 XCUITest driver provides several extensions that allow to automate popular mobile gesture shortcuts:
