@@ -832,13 +832,13 @@ Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUIT
 ### mobile: viewportRect
 
 Return the rectangle of viewport.
-The viewport is culculated by the size of the device under test screen size and the status bar size.
+The viewport is the device screen size without the status bar.
 
 #### Returned Result
 
 The response is like `{"value":{"left":0,"top":96,"width":828,"height":1696}}`.
 
-`left` and `top` are how far from the `left` of the screen and the `top` of the screen. [iOS Drawing Concepts](https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html) could help about the coordinate.
+`left` and `top` are distance from the `left` of the screen and the `top` of the screen. [iOS Drawing Concepts](https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html) could help about the relationship of coordinate.
 
 `width` and `height` are the screen's width and height.
 
