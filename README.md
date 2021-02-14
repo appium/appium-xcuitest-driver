@@ -831,12 +831,12 @@ Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUIT
 
 ### mobile: viewportRect
 
-Return the rectangle of viewport.
-The viewport is the device screen size without the status bar.
+Retrieves the viwport dimensions.
+The viewport is the device's screen size with status bar size subtracted if the latter is present/visible.
 
 #### Returned Result
 
-The response is like `{"value":{"left":0,"top":96,"width":828,"height":1696}}`.
+The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}`.
 
 `left` and `top` are distance from the `left` of the screen and the `top` of the screen. [iOS Drawing Concepts](https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html) could help about the relationship of coordinate.
 
@@ -848,9 +848,12 @@ Get information about screen.
 
 #### Returned Result
 
-The response is like `{"value":{"statusBarSize":{"width":414,"height":48},"scale":2}}`
+The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"scale":2}}`
 
-`statusBarSize` is width and height of the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars). `scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
+`statusBarSize` contains status bar dimensions. It is the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars).
+`scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
+
+
 
 ### Mobile Gesture Commands
 
