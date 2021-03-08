@@ -203,7 +203,7 @@ Capability | Description
 |`appium:webviewConnectRetries`| Number of times to send connection message to remote debugger, to get webview. Default: `8` |e.g., `12`|
 |`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000`|e.g., `10000`|
 |`appium:enableAsyncExecuteFromHttps`| Capability to allow simulators to execute asynchronous JavaScript on pages using HTTPS. Defaults to `false` | `true` or `false` |
-|`appium:fullContextList` | Returns the detailed information on contexts for the [get available context](/docs/en/commands/context/get-contexts.md) command. If this capability is enabled, then each item in the returned contexts list would additionally include WebView title, full URL and the bundle identifier. Defaults to `false`. | `true` or `false` |
+|`appium:fullContextList` | Returns the detailed information on contexts for the [get available context](https://appium.io/docs/en/commands/context/get-contexts/index.html) command. If this capability is enabled, then each item in the returned contexts list would additionally include WebView title, full URL and the bundle identifier. Defaults to `false`. | `true` or `false` |
 |`appium:enablePerformanceLogging`| Enable Safari's performance logging (default `false`)| `true`, `false`|
 |`appium:autoWebview`| Move directly into Webview context if available. Default `false`|`true`, `false`|
 
