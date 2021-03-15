@@ -226,7 +226,7 @@ XCUITest driver supports the following element attributes:
 
 Name | Description | Example
 --- | --- | ---
-name | Could contain either element's [identifier](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500981-identifier?language=objc) or its [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc), depending on which one is available first. Could also be `null` | 'hello'
+name | Could contain either element's [identifier](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500981-identifier?language=objc) or its [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc),  depending on which one is available first. Could also be `null`. The [`identifier` is UI Automation purpose](https://developer.apple.com/documentation/uikit/uiaccessibilityidentification/1623132-accessibilityidentifier), meanwhile the `label` is used for accessibility features in iOS, so we recommend you to use the identifity first for automation. | 'hello'
 label | Element's [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc) value. Could be `null` | 'hello'
 type | Element's [type](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500614-elementtype?language=objc) name | 'XCUIElementTypeButton'
 visible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from the accessibility layer | 'false'
