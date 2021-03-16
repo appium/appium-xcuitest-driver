@@ -623,6 +623,20 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 name | string | yes | The name of the button to be pressed. Supported button names for iOS-based devices are (case-insensitive): `home`, `volumeup`, `volumedown`. For tvOS-based devices (case-insensitive): `home`, `up`, `down`, `left`, `right`, `menu`, `playpause`, `select` | home
 
+### mobile: pushNotification
+
+Simulates push notification delivery to Simulator.
+Only application remote push notifications are supported. VoIP, Complication, File Provider,
+and other types are not supported. Check the output of `xcrun simctl help push`
+command for more details.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the target application | com.apple.Preferences
+payload | map | yes | Valid Apple Push Notification values. Read the `Create the JSON Payload` topic of the [official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification?language=objc) for more details on the payload creation. | `{"aps": {"alert": "This is a simulated notification!", "badge": 3, "sound": "default"} }`
+
 ### mobile: enrollBiometric
 
 Enrolls biometric authentication on Simulator.
