@@ -637,6 +637,21 @@ Name | Type | Required | Description | Example
 bundleId | string | yes | The bundle identifier of the target application | com.apple.Preferences
 payload | map | yes | Valid Apple Push Notification values. Read the `Create the JSON Payload` topic of the [official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification?language=objc) for more details on the payload creation. | `{"aps": {"alert": "This is a simulated notification!", "badge": 3, "sound": "default"} }`
 
+### mobile: expectNotification
+
+Blocks until the expected notification is delivered.
+It is a thin wrapper over [XCTNSNotificationExpectation](https://developer.apple.com/documentation/xctest/xctnsnotificationexpectation?language=objc) and
+[XCTDarwinNotificationExpectation](https://developer.apple.com/documentation/xctest/xctdarwinnotificationexpectation?language=objc) entities.
+The extension call throws [TimeoutError](https://www.selenium.dev/selenium/docs/api/javascript/module/selenium-webdriver/lib/error_exports_TimeoutError.html) if the expected notification has not been delivered within the given timeout.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+name | string | yes | The name of the notification to expect | com.example.fooAllDone
+type | string | no | Which notification type to expect. Either `plain` (the default value) to wait for a notification from the *default* notification center or `darwin` to wait for a system notification. | darwin
+timeoutSeconds | number | no | For how long to wait until the notification is delivered in float seconds. 60 seconds by default | 5.5
+
 ### mobile: enrollBiometric
 
 Enrolls biometric authentication on Simulator.
