@@ -154,6 +154,7 @@ Capability | Description
 |`appium:screenshotQuality`| Changes the quality of phone display screenshots following [xctest/xctimagequality](https://developer.apple.com/documentation/xctest/xctimagequality?language=objc)  Default value is `1`. `0` is the highest and `2` is the lowest quality. You can also change it via [settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) command. `0` might cause OutOfMemory crash on high-resolution devices like iPad Pro. | e.g. `0`, `1`, `2` |
 |`appium:autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 |`appium:autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
+|`appium:disableAutomaticScreenshots`| Disable automatic screenshots taken by XCTest at every interaction. Default is up to `WebDriverAgent`'s config to decide, which currently defaults to `true`. |`true` or `false`|
 
 ### Simulator
 
