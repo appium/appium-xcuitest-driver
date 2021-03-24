@@ -155,6 +155,7 @@ Capability | Description
 |`appium:autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 |`appium:autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 |`appium:disableAutomaticScreenshots`| Disable automatic screenshots taken by XCTest at every interaction. Default is up to `WebDriverAgent`'s config to decide, which currently defaults to `true`. |`true` or `false`|
+|`appium:shouldTerminateApp`| Specify if the app should be terminated on session end (when `bundleId` is provided). Default is `true`. |`true` or `false`|
 
 ### Simulator
 
