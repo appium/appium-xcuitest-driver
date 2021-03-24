@@ -10,6 +10,7 @@ describe('language and locale', function () {
   const BUNDLE_ID = 'com.test.app';
   const DEFAULT_CAPS = {
     elementResponseFields: undefined,
+    disableAutomaticScreenshots: undefined,
     shouldUseCompactResponses: undefined,
     waitForIdleTimeout: undefined,
     shouldWaitForQuiescence: true,

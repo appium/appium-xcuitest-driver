@@ -11,6 +11,7 @@ describe('process args', function () {
   let proxySpy = sinon.stub(driver, 'proxyCommand');
   const DEFAULT_CAPS = {
     elementResponseFields: undefined,
+    disableAutomaticScreenshots: undefined,
     shouldUseCompactResponses: undefined,
     waitForIdleTimeout: undefined,
     shouldWaitForQuiescence: true,
