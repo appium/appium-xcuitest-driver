@@ -16,6 +16,7 @@ describe('language and locale', function () {
     shouldWaitForQuiescence: true,
     shouldUseTestManagerForVisibilityDetection: false,
     maxTypingFrequency: 60,
+    shouldTerminateApp: true,
     shouldUseSingletonTestManager: true,
     eventloopIdleDelaySec: 0,
     environment: {},
