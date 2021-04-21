@@ -654,6 +654,34 @@ name | string | yes | The name of the notification to expect | com.example.fooAl
 type | string | no | Which notification type to expect. Either `plain` (the default value) to wait for a notification from the *default* notification center or `darwin` to wait for a system notification. | darwin
 timeoutSeconds | number | no | For how long to wait until the notification is delivered in float seconds. 60 seconds by default | 5.5
 
+### mobile: performIoHidEvent
+
+Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
+in [XNU kernel IO HID usage tables](https://unix.superglobalmegacorp.com/xnu/newsrc/iokit/IOKit/hidsystem/IOHIDUsageTables.h.html).
+For example, in order to emulate single press on Home button the extension should be called with the following arguments:
+- page: `0x0C` (`kHIDPage_Consumer`, select the `Customer` page)
+- usage: `0x40` (`kHIDUsage_Csmr_Menu`, the `Csmr` prefix here means this usage is dedicated to the `Customer` page)
+- durationSeconds: `0.005` (The event duration should be 5 milliseconds to be recognized as a single press by iOS)
+
+Some popular constants:
+
+Name | Value | Description
+--- | --- | ---
+kHIDPage_Consumer | 0x0C | The page containing all usages prefixed with `kHIDUsage_Csmr_`
+kHIDUsage_Csmr_VolumeIncrement | 0xE9 | Volume Up
+kHIDUsage_Csmr_VolumeDecrement | 0xEA | Volume Down
+kHIDUsage_Csmr_Menu | 0x40 | Home
+kHIDUsage_Csmr_Power | 0x30 | Power/Lock
+kHIDUsage_Csmr_Snapshot | 0x65 | Power + Home
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+page | int | yes | The event page identifier. Look for constants perfixed with `kHIDPage_` in the table above | 0x0C
+usage | int | yes | The event usage identifier (usages are defined per-page). Look for constants prefixed with `kHIDUsage_` in the table above | 0x40
+durationSeconds | number | yes | The event duration in float seconds. XCTest uses `0.005` for a single press event duration | 2.5
+
 ### mobile: enrollBiometric
 
 Enrolls biometric authentication on Simulator.
