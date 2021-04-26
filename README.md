@@ -637,7 +637,7 @@ command for more details.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 bundleId | string | yes | The bundle identifier of the target application | com.apple.Preferences
-payload | map | yes | Valid Apple Push Notification values. Read the `Create the JSON Payload` topic of the [official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification?language=objc) for more details on the payload creation. | `{"aps": {"alert": "This is a simulated notification!", "badge": 3, "sound": "default"} }`
+payload | map | yes | Valid Apple Push Notification values. Read the `Create the JSON Payload` topic of the [official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification?language=objc) for more details on the payload creation. | `{"aps": {"alert": {"title": "This is a simulated notification!"}, "badge": 3, "sound": "default"} }`
 
 ### mobile: expectNotification
 
