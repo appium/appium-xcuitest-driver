@@ -68,7 +68,7 @@
     "teen_process": "^1.14.0",
     "ws": "^7.0.0",
     "xmldom": "^0.x",
-    "yargs": "^16.0.3"
+    "yargs": "^17.0.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
