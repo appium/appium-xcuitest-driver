@@ -111,8 +111,8 @@ Capability | Description
 `appium:app` | Full path to the application to be tested (the app must be located on the same machine where the server is running). `.ipa` and `.app` application extensions are supported. Zipped `.app` bundles are supported as well. Could also be an URL to a remote location. If neither of the `app` or `bundleId` capabilities are provided then the driver starts from the Home screen and expects the test to know what to do next. Do not provide both `app` and `browserName` capabilities at once.
 `appium:localizableStringsDir` | Where to look for localizable strings in the application bundle. Defaults to `en.lproj`
 `appium:otherApps` | App or list of apps (as a JSON array) to install prior to running tests. Note that it will not work with iOS real devices. Fore example: `["http://appium.github.io/appium/assets/TestApp9.4.app.zip", "/path/to/app-b.app"]`
-`appium:language` | Language to set for iOS, for example `fr`
-`appium:locale` | Locale to set for iOS, for example `fr_CA`
+`appium:language` | Language to set for iOS, for example `fr`. Please read [Language IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) abuot the available ids.
+`appium:locale` | Locale to set for iOS, for example `fr_CA`. Please read [Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html#//apple_ref/doc/uid/10000171i-CH15-SW9) abuot the available ids. 
 `appium:appPushTimeout` | The timeout for application upload in milliseconds. Works for real devices only. The default value is `30000`ms
 
 ### WebDriverAgent
