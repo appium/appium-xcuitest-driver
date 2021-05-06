@@ -8,9 +8,11 @@ parameters:
   deviceName: 'iPhone X'
   skipTvOs: False
   vmImage: 'macOS-10.15'
+  timeoutMin: 60
 
 jobs:
   - job: ${{ parameters.name }}
+    timeoutInMinutes: ${{ parameters.timeoutMin }}
     condition: ne(${{ parameters.skipTvOs }}, True)
     variables:
       PLATFORM_VERSION: ${{ parameters.iosVersion }}
