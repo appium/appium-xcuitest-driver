@@ -58,6 +58,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       vmImage: ${{ parameters.vmImage }}
+      timeoutMin: 120
       script: |
         npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
 
