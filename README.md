@@ -623,6 +623,7 @@ Emulates press action on the given physical device button.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 name | string | yes | The name of the button to be pressed. Supported button names for iOS-based devices are (case-insensitive): `home`, `volumeup`, `volumedown`. For tvOS-based devices (case-insensitive): `home`, `up`, `down`, `left`, `right`, `menu`, `playpause`, `select` | home
+duration | number | no | Duration in seconds for tvOS-based devices since Appium 1.22.0 | 10
 
 ### mobile: pushNotification
 
