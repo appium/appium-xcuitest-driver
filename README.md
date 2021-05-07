@@ -800,6 +800,28 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 remotePath | string | yes | Same value as for `mobile: deleteFile` except of the fact it should be pointing to a folder and should end with a single slash `/` | @com.mycompany.myapp:documents/myfolder/
 
+### mobile: configureLocalization
+
+Change localization settings on the currently booted Simulator.
+The changed settings are only applied for the *newly started* applications/activities.
+Currently running applications will stay unchanged. This means, for example, that the keyboard
+should be hidden and shown again in order to observe the changed layout, and curresponding
+apps must be restarted in order to observe their interface using the newly set locale/language.
+Be careful while setting the actual arguments since their actual values are not strictly checked.
+This could lead to an unexpected behavior if an incorrect/unsupported language or locale abbreviation is provided.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+keyboard | map | no | On-screen keyboard properties. The `name` key is required and should be set to a valid locale abbreviation. The `layout` key is also required. The `hardware` key is optional and could be omitted or set to `Automated`. You could switch the keyboard layout in system preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleKeyboards` to see possible combinations. | `{"name": "de_CH", "layout": "QWERTZ", "hardware": "Automated"}`
+language | map | no | System language properties. The `name` key is required and should be set to a valid language abbreviation. You could switch the system language in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLanguages` to see possible combinations. | `{"name": "zh-Hant-CN"}`
+locale | map | no | System locale properties. The `name` key is required and should be set to a valid language abbreviation. The `calendar`key is optonal and could be set to a valid calendar format name. You could switch the system locale/calendar format in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLocale` to see possible combinations. | `{"name": "uk_UA", "calendar": "gregorian"}`
+
+#### Returned Result
+
+`true` if any of settings has been successfully changed.
+
 ### mobile: startAudioRecording
 
 Records the given hardware audio input into an .mp4 file. You must allow the `audio_record` security feature in order to use this extension. Also it is required that [FFMpeg](https://ffmpeg.org/) is installed on the machibe where Appium server is running.
