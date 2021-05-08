@@ -3,7 +3,15 @@ variables:
 - name: SHOW_XCODE_LOG
   value: true
 
-jobs:
+stages:
+- stage: Unit_Tests_And_Linters
+  jobs:
+  - template: ./templates/node-build-template.yml
+    parameters:
+      name: UnitTests_CI
+
+- stage: Integration_Tests
+  jobs:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_14_4

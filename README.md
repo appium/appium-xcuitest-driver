@@ -111,8 +111,8 @@ Capability | Description
 `appium:app` | Full path to the application to be tested (the app must be located on the same machine where the server is running). `.ipa` and `.app` application extensions are supported. Zipped `.app` bundles are supported as well. Could also be an URL to a remote location. If neither of the `app` or `bundleId` capabilities are provided then the driver starts from the Home screen and expects the test to know what to do next. Do not provide both `app` and `browserName` capabilities at once.
 `appium:localizableStringsDir` | Where to look for localizable strings in the application bundle. Defaults to `en.lproj`
 `appium:otherApps` | App or list of apps (as a JSON array) to install prior to running tests. Note that it will not work with iOS real devices. Fore example: `["http://appium.github.io/appium/assets/TestApp9.4.app.zip", "/path/to/app-b.app"]`
-`appium:language` | Language to set for iOS, for example `fr`
-`appium:locale` | Locale to set for iOS, for example `fr_CA`
+`appium:language` | Language to set for iOS, for example `fr`. Please read [Language IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) to get more details abuot available values for this capability.
+`appium:locale` | Locale to set for iOS, for example `fr_CA`. Please read [Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html#//apple_ref/doc/uid/10000171i-CH15-SW9) to get more details abuot available values for this capability.
 `appium:appPushTimeout` | The timeout for application upload in milliseconds. Works for real devices only. The default value is `30000`ms
 
 ### WebDriverAgent
@@ -155,6 +155,7 @@ Capability | Description
 |`appium:autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 |`appium:autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is `false`. |`true` or `false`|
 |`appium:disableAutomaticScreenshots`| Disable automatic screenshots taken by XCTest at every interaction. Default is up to `WebDriverAgent`'s config to decide, which currently defaults to `true`. |`true` or `false`|
+|`appium:shouldTerminateApp`| Specify if the app should be terminated on session end. This capability only has an effect if an application identifier has been passed to the test session (either explicitly, by setting bundleId, or implicitly, by providing app). Default is `true`. |`true` or `false`|
 
 ### Simulator
 
@@ -637,7 +638,7 @@ command for more details.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 bundleId | string | yes | The bundle identifier of the target application | com.apple.Preferences
-payload | map | yes | Valid Apple Push Notification values. Read the `Create the JSON Payload` topic of the [official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification?language=objc) for more details on the payload creation. | `{"aps": {"alert": "This is a simulated notification!", "badge": 3, "sound": "default"} }`
+payload | map | yes | Valid Apple Push Notification values. Read the `Create the JSON Payload` topic of the [official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification?language=objc) for more details on the payload creation. | `{"aps": {"alert": {"title": "This is a simulated notification!"}, "badge": 3, "sound": "default"} }`
 
 ### mobile: expectNotification
 
@@ -653,6 +654,34 @@ Name | Type | Required | Description | Example
 name | string | yes | The name of the notification to expect | com.example.fooAllDone
 type | string | no | Which notification type to expect. Either `plain` (the default value) to wait for a notification from the *default* notification center or `darwin` to wait for a system notification. | darwin
 timeoutSeconds | number | no | For how long to wait until the notification is delivered in float seconds. 60 seconds by default | 5.5
+
+### mobile: performIoHidEvent
+
+Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
+in [XNU kernel IO HID usage tables](https://unix.superglobalmegacorp.com/xnu/newsrc/iokit/IOKit/hidsystem/IOHIDUsageTables.h.html).
+For example, in order to emulate single press on Home button the extension should be called with the following arguments:
+- page: `0x0C` (`kHIDPage_Consumer`, select the `Customer` page)
+- usage: `0x40` (`kHIDUsage_Csmr_Menu`, the `Csmr` prefix here means this usage is dedicated to the `Customer` page)
+- durationSeconds: `0.005` (The event duration should be 5 milliseconds to be recognized as a single press by iOS)
+
+Some popular constants:
+
+Name | Value | Description
+--- | --- | ---
+kHIDPage_Consumer | 0x0C | The page containing all usages prefixed with `kHIDUsage_Csmr_`
+kHIDUsage_Csmr_VolumeIncrement | 0xE9 | Volume Up
+kHIDUsage_Csmr_VolumeDecrement | 0xEA | Volume Down
+kHIDUsage_Csmr_Menu | 0x40 | Home
+kHIDUsage_Csmr_Power | 0x30 | Power/Lock
+kHIDUsage_Csmr_Snapshot | 0x65 | Power + Home
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+page | int | yes | The event page identifier. Look for constants perfixed with `kHIDPage_` in the table above | 0x0C
+usage | int | yes | The event usage identifier (usages are defined per-page). Look for constants prefixed with `kHIDUsage_` in the table above | 0x40
+durationSeconds | number | yes | The event duration in float seconds. XCTest uses `0.005` for a single press event duration | 2.5
 
 ### mobile: enrollBiometric
 
@@ -771,6 +800,28 @@ Deletes the given folder from the device under test.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 remotePath | string | yes | Same value as for `mobile: deleteFile` except of the fact it should be pointing to a folder and should end with a single slash `/` | @com.mycompany.myapp:documents/myfolder/
+
+### mobile: configureLocalization
+
+Change localization settings on the currently booted Simulator.
+The changed settings are only applied for the *newly started* applications/activities.
+Currently running applications will stay unchanged. This means, for example, that the keyboard
+should be hidden and shown again in order to observe the changed layout, and curresponding
+apps must be restarted in order to observe their interface using the newly set locale/language.
+Be careful while setting the actual arguments since their actual values are not strictly checked.
+This could lead to an unexpected behavior if an incorrect/unsupported language or locale abbreviation is provided.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+keyboard | map | no | On-screen keyboard properties. The `name` key is required and should be set to a valid locale abbreviation. The `layout` key is also required. The `hardware` key is optional and could be omitted or set to `Automated`. You could switch the keyboard layout in system preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleKeyboards` to see possible combinations. | `{"name": "de_CH", "layout": "QWERTZ", "hardware": "Automated"}`
+language | map | no | System language properties. The `name` key is required and should be set to a valid language abbreviation. You could switch the system language in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLanguages` to see possible combinations. | `{"name": "zh-Hant-CN"}`
+locale | map | no | System locale properties. The `name` key is required and should be set to a valid language abbreviation. The `calendar`key is optonal and could be set to a valid calendar format name. You could switch the system locale/calendar format in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLocale` to see possible combinations. | `{"name": "uk_UA", "calendar": "gregorian"}`
+
+#### Returned Result
+
+`true` if any of settings has been successfully changed.
 
 ### mobile: startAudioRecording
 

@@ -1,11 +1,12 @@
 import {
   clearSystemFiles, translateDeviceName,
-  markSystemFilesForCleanup, isLocalHost } from '../../lib/utils';
+  markSystemFilesForCleanup, isLocalHost
+} from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
-import { utils as iosUtils } from 'appium-ios-driver';
 import { fs } from 'appium-support';
+import * as iosUtils from '../../lib/utils';
 
 
 chai.should();
