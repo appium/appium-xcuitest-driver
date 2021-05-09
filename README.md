@@ -617,13 +617,15 @@ Check the `+ (id<FBResponsePayload>)handleActiveAppInfo:(FBRouteRequest *)reques
 
 ### mobile: pressButton
 
-Emulates press action on the given physical device button.
+Emulates press action on the given physical device button. iOS is [pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton), tvOS is [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton) or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
+[mobile: performIoHidEvent](#mobile-performiohidevent) calls a more universal API to perform press with duration on any supported device.
 
 #### Arguments
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 name | string | yes | The name of the button to be pressed. Supported button names for iOS-based devices are (case-insensitive): `home`, `volumeup`, `volumedown`. For tvOS-based devices (case-insensitive): `home`, `up`, `down`, `left`, `right`, `menu`, `playpause`, `select` | home
+durationSeconds | number | no | Duration in float seconds for tvOS-based devices since Appium 1.22.0 | 10
 
 ### mobile: pushNotification
 
