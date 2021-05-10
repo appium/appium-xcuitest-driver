@@ -29,7 +29,7 @@
     ],
     "mainClass": "XCUITestDriver",
     "scripts": {
-      "build-wda": "./node_modules/appium-webdriveragent/ci-jobs/scripts/build-webdriveragent.js"
+      "build-wda": "./node_modules/appium-webdriveragent/Scripts/build-webdriveragent.js"
     }
   },
   "main": "./build/index.js",
