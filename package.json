@@ -27,7 +27,10 @@
     "platformNames": [
       "iOS"
     ],
-    "mainClass": "XCUITestDriver"
+    "mainClass": "XCUITestDriver",
+    "scripts": {
+      "build-wda": "./node_modules/appium-webdriveragent/Scripts/build-webdriveragent.js"
+    }
   },
   "main": "./build/index.js",
   "bin": {},
