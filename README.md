@@ -341,7 +341,7 @@ one to select or value selection suing `sendKeys` API does not work because of a
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-element | string | yes | PickerWheel's internal element id (as hexadecimal hash string) to perform value selection on. The element must be of type XCUIElementTypePickerWheel | abcdef12-1111-2222-3333-444444
+elementId (`element` before version 1.22) | string | yes | PickerWheel's internal element id (as hexadecimal hash string) to perform value selection on. The element must be of type XCUIElementTypePickerWheel | abcdef12-1111-2222-3333-444444
 order | string | yes | Either `next` to select the value next to the current one from the target picker wheel or `previous` to select the previous one. | next
 offset | number | no | The value in range [0.01, 0.5]. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small offset value may not change the picker wheel value and too high value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range [0.15, 0.3]. `0.2` by default | 0.15
 
