@@ -1078,6 +1078,8 @@ Performs two finger tap gesture on the given element or on the application eleme
 
 #### Arguments
 
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. Application element will be used instead if this parameter is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
 
 #### Examples
@@ -1099,6 +1101,8 @@ Performs tap gesture by coordinates on the given element or on the screen.
 
 #### Arguments
 
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. _x_ and _y_ tap coordinates will be calulated relatively to the current element position on the screen if this argument is provided. Otherwise they should be calculated relatively to the active application element. | fe50b60b-916d-420b-8728-ee2072ec53eb
 x | number | yes | Screen x tap coordinate of type float. | 100
 y | number | yes | Screen y tap coordinate of type float. | 100
@@ -1110,6 +1114,8 @@ on the screen
 
 #### Arguments
 
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to perform drag on. All the coordinates will be calculated relatively this this element position on the screen. Absolute screen coordinates are expected if this argument is not set | fe50b60b-916d-420b-8728-ee2072ec53eb
 duration | number | yes | Float number of seconds in range [0.5, 60]. How long the tap gesture at starting drag point should be before to start dragging | 5.3
 fromX | number | yes | The x coordinate of starting drag point | 100
@@ -1144,6 +1150,8 @@ one to select or value selection does not work because of XCTest bug.
 
 #### Arguments
 
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | yes | PickerWheel's internal element id (as hexadecimal hash string) to perform value selection on. The element must be of type XCUIElementTypePickerWheel | fe50b60b-916d-420b-8728-ee2072ec53eb
 order | string | yes | Either _next_ to select the value next to the current one from the target picker wheel or _previous_ to select the previous one | next
 offset | number | no | The value in range [0.01, 0.5]. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small offset value may not change the picker wheel value and too high value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range [0.15, 0.3]. _0.2_ by default | 0.3
@@ -1166,6 +1174,8 @@ Performs [rotate](https://developer.apple.com/documentation/xctest/xcuielement/1
 
 #### Arguments
 
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | yes | Internal element id (as hexadecimal hash string) to perform rotation on | fe50b60b-916d-420b-8728-ee2072ec53eb
 rotation | number | yes | The rotation of the gesture in radians | Math.PI
 velocity | number | yes | The velocity of the rotation gesture in radians per second | Math.PI / 4
@@ -1194,6 +1204,8 @@ Sends one or more taps with one or more touch points since Appium 1.17.1.
 
 #### Arguments
 
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | yes | The internal element identifier (as hexadecimal hash string) to perform one or more taps. | fe50b60b-916d-420b-8728-ee2072ec53eb
 numberOfTaps | number | yes | The number of taps | 2
 numberOfTouches | number | yes | The number of touch points | 2
