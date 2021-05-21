@@ -934,24 +934,281 @@ The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"sc
 `statusBarSize` contains status bar dimensions. It is the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars).
 `scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
 
+### mobile: swipe
 
+This gesture performs a simple "swipe" gesture on the particular screen element or
+on the application element, which is usually the whole screen. This method does not
+accept coordinates and simply emulates single swipe with one finger. It might be
+useful for such cases like album pagination, switching views, etc. More advanced
+cases may require to call [mobile: dragFromToForDuration](#mobile-dragfromtoforduration),
+where one can supply coordinates and duration.
 
-### Mobile Gesture Commands
+#### Arguments
 
-XCUITest driver provides several extensions that allow to automate popular mobile gesture shortcuts:
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to swipe on. Application element will be used instead if this argument is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
+direction | Either 'up', 'down', 'left' or 'right' | yes | The direction in which to swipe | up
+velocity | number | no | This argument is optional and is only supported since Appium server version 1.19 and Xcode SDK version 11.4+. The value is measured in pixels per second and same values could behave differently on different devices depending on their display density. Higher values make swipe gesture faster (which usually scrolls larger areas if we apply it to a list) and lower values slow it down. Only values greater than zero have effect. | 250
 
-- mobile: tap
-- mobile: scroll
-- mobile: pinch
-- mobile: doubleTap
-- mobile: touchAndHold
-- mobile: twoFingerTap
-- mobile: tap
-- mobile: dragFromToForDuration
-- mobile: tapWithNumberOfTaps
-- mobile: rotateElement
+#### Examples
 
-These gestures are documented in the [Automating Mobile Gestures for iOS](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md) tutorial. Refer [W3C Actions API](https://appiumpro.com/editions/29-automating-complex-gestures-with-the-w3c-actions-api) if you need to automate more complicated gestures.
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+Map<String, Object> params = new HashMap<>();
+params.put("direction", "down");
+params.put("velocity", 2500);
+params.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: swipe", params);
+```
+
+#### References
+
+- [swipeDown](https://developer.apple.com/documentation/xctest/xcuielement/1618664-swipedown?language=objc)
+- [swipeDownWithVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/3551694-swipedownwithvelocity?language=objc)
+- [swipeUp](https://developer.apple.com/documentation/xctest/xcuielement/1618667-swipeup?language=objc)
+- [swipeUpWithVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/3551697-swipeupwithvelocity?language=objc)
+- [swipeLeft](https://developer.apple.com/documentation/xctest/xcuielement/1618668-swipeleft?language=objc)
+- [swipeLeftWithVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/3551695-swipeleftwithvelocity?language=objc)
+- [swipeRight](https://developer.apple.com/documentation/xctest/xcuielement/1618674-swiperight?language=objc)
+- [swipeRightWithVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/3551696-swiperightwithvelocity?language=objc)
+
+### mobile: scroll
+
+Scrolls the element or the whole screen. Different scrolling strategies are supported.
+Arguments define the choosen strategy: either 'name', 'direction', 'predicateString' or
+'toVisible' in that order. All strategies are exclusive and only one strategy
+can be applied at a single moment of time. Use "mobile: scroll" to emulate precise
+scrolling in tables or collection views, where it is already known to which element
+the scrolling should be performed. Although, there is one known limitation there: in case
+it is necessary to perform too many scroll gestures on parent container to reach the
+necessary child element (tens of them) then the method call may fail.
+_Important_: The implemntation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might *not* always work as expected.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). Application element will be used if this argument is not set | fe50b60b-916d-420b-8728-ee2072ec53eb
+name | string | no | The accessibility id of the child element, to which scrolling is performed. The same result can be achieved by setting _predicateString_ argument to 'name == accessibilityId'. Has no effect if _elementId_ is not a container | cell12
+direction | Either 'up', 'down', 'left' or 'right' | yes | The main difference from [swipe](#mobile-swipe) call with the same argument is that _scroll_ will try to move the current viewport exactly to the next/previous page (the term "page" means the content, which fits into a single device screen) | down
+predicateString | string | no | The NSPredicate locator of the child element, to which the scrolling should be performed. Has no effect if _elementId_ is not a container | label == "foo"
+toVisible | boolean | no | If set to _true_ then asks to scroll to the first visible _elementId_ in the parent container. Has no effect if _elementId_ is not set | true
+
+#### Examples
+
+```python
+# Python
+driver.execute_script('mobile: scroll', {'direction': 'down'});
+```
+
+### mobile: pinch
+
+Performs pinch gesture on the given element or on the application element.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to pinch on. Application element will be used instead if this parameter is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
+scale | number | yes | Pinch scale of type float. Use a scale between 0 and 1 to "pinch close" or zoom out and a scale greater than 1 to "pinch open" or zoom in. | 0.5
+velocity | number | yes | The velocity of the pinch in scale factor per second (float value) | 2.2
+
+#### Examples
+
+```ruby
+# Ruby
+execute_script 'mobile: pinch', scale: 0.5, velocity: 1.1, element: element.ref
+```
+
+#### Reference
+
+[pinchWithScale:velocity:](https://developer.apple.com/documentation/xctest/xcuielement/1618669-pinchwithscale?language=objc)
+
+### mobile: doubleTap
+
+Performs double tap gesture on the given element or on the screen.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId ("element" prior to Appium v 1.22) | string | no if x and y are set | The internal element identifier (as hexadecimal hash string) to double tap on | fe50b60b-916d-420b-8728-ee2072ec53eb
+x | number | no if elementId is set | Screen x tap coordinate of type float. | 100
+y | number | no if elementId is set | Screen y tap coordinate of type float. | 100
+
+#### Examples
+
+```javascript
+// javascript
+driver.execute('mobile: doubleTap', {element: element.value.ELEMENT});
+```
+
+### mobile: touchAndHold
+
+Performs long press gesture on the given element or on the screen.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId ("element" prior to Appium v 1.22) | string | no if x and y are set | The internal element identifier (as hexadecimal hash string) to long tap on | fe50b60b-916d-420b-8728-ee2072ec53eb
+duration | number | yes | The float duration of press action in seconds | 1.5
+x | number | no if elementId is set | Screen x tap coordinate of type float. | 100
+y | number | no if elementId is set | Screen y tap coordinate of type float. | 100
+
+#### Examples
+
+```csharp
+// c#
+Dictionary<string, object> tfLongTap = new Dictionary<string, object>();
+tfLongTap.Add("element", element.Id);
+tfLongTap.Add("duration", 2.0);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap);
+```
+
+#### Reference
+
+[pressForDuration:](https://developer.apple.com/documentation/xctest/xcuielement/1618663-pressforduration?language=objc)
+
+### mobile: twoFingerTap
+
+Performs two finger tap gesture on the given element or on the application element.
+
+#### Arguments
+
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. Application element will be used instead if this parameter is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
+
+#### Examples
+
+```csharp
+// c#
+Dictionary<string, object> tfTap = new Dictionary<string, object>();
+tfTap.Add("element", element.Id);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap);
+```
+
+#### Reference
+
+[twoFingerTap](https://developer.apple.com/documentation/xctest/xcuielement/1618675-twofingertap?language=objc)
+
+### mobile: tap
+
+Performs tap gesture by coordinates on the given element or on the screen.
+
+#### Arguments
+
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. _x_ and _y_ tap coordinates will be calulated relatively to the current element position on the screen if this argument is provided. Otherwise they should be calculated relatively to the active application element. | fe50b60b-916d-420b-8728-ee2072ec53eb
+x | number | yes | Screen x tap coordinate of type float. | 100
+y | number | yes | Screen y tap coordinate of type float. | 100
+
+### mobile: dragFromToForDuration
+
+Performs drag and drop gesture by coordinates. This can be done either on an element or
+on the screen
+
+#### Arguments
+
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to perform drag on. All the coordinates will be calculated relatively this this element position on the screen. Absolute screen coordinates are expected if this argument is not set | fe50b60b-916d-420b-8728-ee2072ec53eb
+duration | number | yes | Float number of seconds in range [0.5, 60]. How long the tap gesture at starting drag point should be before to start dragging | 5.3
+fromX | number | yes | The x coordinate of starting drag point | 100
+fromY | number | yes | The y coordinate of starting drag point | 100
+toX | number | yes | The x coordinate of ending drag point | 200
+toY | number | yes | The y coordinate of ending drag point | 200
+
+#### Examples
+
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+Map<String, Object> params = new HashMap<>();
+params.put("duration", 1.0);
+params.put("fromX", 100);
+params.put("fromY", 100);
+params.put("toX", 200);
+params.put("toY", 200);
+params.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: dragFromToForDuration", params);
+```
+
+#### Reference
+
+[clickForDuration:thenDragToElement:](https://developer.apple.com/documentation/xctest/xcuielement/1500989-clickforduration?language=objc)
+
+### mobile: selectPickerWheelValue
+
+Performs selection of the next or previous picker wheel value. This might
+be useful if these values are populated dynamically, so you don't know which
+one to select or value selection does not work because of XCTest bug.
+
+#### Arguments
+
+elementId ("element" prior to Appium v 1.22) | string | yes | PickerWheel's internal element id (as hexadecimal hash string) to perform value selection on. The element must be of type XCUIElementTypePickerWheel | fe50b60b-916d-420b-8728-ee2072ec53eb
+order | string | yes | Either _next_ to select the value next to the current one from the target picker wheel or _previous_ to select the previous one | next
+offset | number | no | The value in range [0.01, 0.5]. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small offset value may not change the picker wheel value and too high value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range [0.15, 0.3]. _0.2_ by default | 0.3
+
+#### Examples
+
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+Map<String, Object> params = new HashMap<>();
+params.put("order", "next");
+params.put("offset", 0.15);
+params.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: selectPickerWheelValue", params);
+```
+
+### mobile: rotateElement
+
+Performs [rotate](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate?language=objc) gesture on the given element.
+
+#### Arguments
+
+elementId ("element" prior to Appium v 1.22) | string | yes | Internal element id (as hexadecimal hash string) to perform rotation on | fe50b60b-916d-420b-8728-ee2072ec53eb
+rotation | number | yes | The rotation of the gesture in radians | Math.PI
+velocity | number | yes | The velocity of the rotation gesture in radians per second | Math.PI / 4
+
+#### Examples
+
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("mobile: rotateElement", ImmutableMap.of(
+    // rotate clockwise, 90 degrees
+    "rotation", -Math.PI / 2,
+    // in approximately two seconds
+    "velocity", Math.PI / 4,
+    "element", ((RemoteWebElement) element).getId()
+));
+```
+
+#### Reference
+
+[rotate:withVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate?language=objc)
+
+### mobile: tapWithNumberOfTaps
+
+Sends one or more taps with one or more touch points since Appium 1.17.1.
+
+#### Arguments
+
+elementId ("element" prior to Appium v 1.22) | string | yes | The internal element identifier (as hexadecimal hash string) to perform one or more taps. | fe50b60b-916d-420b-8728-ee2072ec53eb
+numberOfTaps | number | yes | The number of taps | 2
+numberOfTouches | number | yes | The number of touch points | 2
+
+#### Examples
+
+```ruby
+# Ruby
+e = @driver.find_element :id, 'target element'
+# Taps the element with a single touch point twice
+@driver.execute_script 'mobile: tapWithNumberOfTaps', {element: e.ref, numberOfTaps: 2, numberOfTouches: 1}
+```
+
+#### Reference
+[tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)
 
 
 ## Known issues
