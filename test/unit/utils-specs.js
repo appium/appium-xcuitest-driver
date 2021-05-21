@@ -1,12 +1,13 @@
 import {
   clearSystemFiles, translateDeviceName,
-  markSystemFilesForCleanup, isLocalHost
+  markSystemFilesForCleanup, isLocalHost, parseWebkitDebugProxyPort, parseWdaLocalPort
 } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
 import * as iosUtils from '../../lib/utils';
+import { WEBKIT_DEBUG_PROXY_PORT, WEBDRIVERAGENT_PORT } from '../../lib/driver';
 
 
 chai.should();
@@ -156,6 +157,36 @@ describe('utils', function () {
     });
     it('should be false with ipv6 2001:db8:85a3:8d3:1319:8a2e:370:7348', function () {
       isLocalHost('http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]').should.be.false;
+    });
+  });
+
+  describe('parseWebkitDebugProxyPort()', function () {
+    it('should return default port if driverArgs is empty', function () {
+      parseWebkitDebugProxyPort({}).should.equal(WEBKIT_DEBUG_PROXY_PORT);
+    });
+    it('should throw error if value of port is not an int', function () {
+      (() => parseWebkitDebugProxyPort({'webkit-debug-proxy-port': 'foo'})).should.throw();
+    });
+    it(`should return default if 'webkit-debug-proxy-port' key doesnt exist`, function () {
+      parseWebkitDebugProxyPort({'foo': 'bar'}).should.equal(WEBKIT_DEBUG_PROXY_PORT);
+    });
+    it('should return port when passed in as driver arg', function () {
+      parseWebkitDebugProxyPort({'webkit-debug-proxy-port': 55555}).should.equal(55555);
+    });
+  });
+
+  describe('parseWdaLocalPort', function () {
+    it('should return default port if driverArgs is empty', function () {
+      parseWdaLocalPort({}).should.equal(WEBDRIVERAGENT_PORT);
+    });
+    it('should throw error if value of port is not an int', function () {
+      (() => parseWdaLocalPort({'webdriveragent-port': 'foo'})).should.throw();
+    });
+    it(`should return default if 'webdriveragent-port' key doesnt exist`, function () {
+      parseWdaLocalPort({'foo': 'bar'}).should.equal(WEBDRIVERAGENT_PORT);
+    });
+    it('should return port when passed in as driver arg', function () {
+      parseWdaLocalPort({'webdriveragent-port': 5555}).should.equal(5555);
     });
   });
 });

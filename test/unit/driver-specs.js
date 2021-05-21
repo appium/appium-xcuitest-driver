@@ -8,6 +8,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
+import { WEBKIT_DEBUG_PROXY_PORT, WEBDRIVERAGENT_PORT } from '../../lib/driver';
 
 
 chai.should();
@@ -185,5 +186,40 @@ describe('installOtherApps', function () {
       '/path/to/iosApp2.app',
       undefined, {noReset: false, newSimulator: false}
     ).should.be.true;
+  });
+});
+
+describe('driver specific args', function () {
+  describe('no args passed in', function () {
+    let driver;
+    before(function () {
+      driver = new XCUITestDriver();
+    });
+
+    it('should use a default WEBKIT_DEBUG_PROXY_PORT', function () {
+      driver.opts.webkitDebugProxyPort.should.eql(WEBKIT_DEBUG_PROXY_PORT);
+    });
+
+    it('should use a default WEBDRIVERAGENT_PORT', function () {
+      driver.opts.wdaLocalPort.should.eql(WEBDRIVERAGENT_PORT);
+    });
+  });
+
+  describe('args passed in', function () {
+    let driver;
+    const proxyPort = 25555;
+    const wdaPort = 8500;
+    const driverArgs = {'webkit-debug-proxy-port': proxyPort, 'webdriveragent-port': wdaPort};
+    before(function () {
+      driver = new XCUITestDriver({}, true, driverArgs);
+    });
+
+    it('should use passed in WEBKIT_DEBUG_PROXY_PORT', function () {
+      driver.opts.webkitDebugProxyPort.should.eql(proxyPort);
+    });
+
+    it('should use passed in WEBDRIVERAGENT_PORT', function () {
+      driver.opts.wdaLocalPort.should.eql(wdaPort);
+    });
   });
 });
