@@ -1,6 +1,6 @@
 import {
   clearSystemFiles, translateDeviceName,
-  markSystemFilesForCleanup, isLocalHost, parseArgs, SERVER_ARGS
+  markSystemFilesForCleanup, isLocalHost, parseArgs, DEFAULT_SERVER_ARGS
 } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -178,8 +178,8 @@ describe('utils', function () {
     });
     it('should return default args if none passed in', function () {
       const defaultArgs = {};
-      _.keys(SERVER_ARGS).forEach((key) => {
-        defaultArgs[key] = SERVER_ARGS[key].default;
+      _.keys(DEFAULT_SERVER_ARGS).forEach((key) => {
+        defaultArgs[key] = DEFAULT_SERVER_ARGS[key];
       });
       parseArgs({}, {}, ['wdaLocalPort', 'webkitDebugProxyPort']).should.eql(defaultArgs);
     });
@@ -190,7 +190,7 @@ describe('utils', function () {
       it(`should throw error if value of 'wdaLocalPort' is not an int`, function () {
         (() => parseArgs({}, {'wdaLocalPort': 'foo'}, ['wdaLocalPort'])).should.throw();
       });
-      it(`should return throw if unreconized key is passed`, function () {
+      it(`should throw if unreconized key is passed`, function () {
         (() => parseArgs({}, {'foo': 'bar'}, ['wdaLocalPort'])).should.throw();
       });
       it('should return passed in driver arg value', function () {
