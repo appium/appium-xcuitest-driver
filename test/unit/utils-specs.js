@@ -1,13 +1,13 @@
 import {
   clearSystemFiles, translateDeviceName,
-  markSystemFilesForCleanup, isLocalHost, parseWebkitDebugProxyPort, parseWdaLocalPort
+  markSystemFilesForCleanup, isLocalHost, parseArgs, SERVER_ARGS
 } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
 import * as iosUtils from '../../lib/utils';
-import { WEBKIT_DEBUG_PROXY_PORT, WEBDRIVERAGENT_PORT } from '../../lib/driver';
+import _ from 'lodash';
 
 
 chai.should();
@@ -160,33 +160,42 @@ describe('utils', function () {
     });
   });
 
-  describe('parseWebkitDebugProxyPort()', function () {
-    it('should return default port if driverArgs is empty', function () {
-      parseWebkitDebugProxyPort({}).should.equal(WEBKIT_DEBUG_PROXY_PORT);
-    });
-    it('should throw error if value of port is not an int', function () {
-      (() => parseWebkitDebugProxyPort({'webkit-debug-proxy-port': 'foo'})).should.throw();
-    });
-    it(`should return default if 'webkit-debug-proxy-port' key doesnt exist`, function () {
-      parseWebkitDebugProxyPort({'foo': 'bar'}).should.equal(WEBKIT_DEBUG_PROXY_PORT);
-    });
-    it('should return port when passed in as driver arg', function () {
-      parseWebkitDebugProxyPort({'webkit-debug-proxy-port': 55555}).should.equal(55555);
-    });
-  });
+  describe('parseArgs', function () {
+    const webkitDebugProxyPort = 22222;
+    const wdaLocalPort = 8000;
+    const driverArgs = { wdaLocalPort, webkitDebugProxyPort };
+    const opts = {'foo': 'bar', 'foobar': 'foobar'};
 
-  describe('parseWdaLocalPort', function () {
-    it('should return default port if driverArgs is empty', function () {
-      parseWdaLocalPort({}).should.equal(WEBDRIVERAGENT_PORT);
+    it('should return driver args if passed in', function () {
+      parseArgs({}, driverArgs, ['wdaLocalPort', 'webkitDebugProxyPort']).should.eql(driverArgs);
     });
-    it('should throw error if value of port is not an int', function () {
-      (() => parseWdaLocalPort({'webdriveragent-port': 'foo'})).should.throw();
+    it('should assign driver args to opts if passed in', function () {
+      parseArgs(opts, driverArgs, ['wdaLocalPort', 'webkitDebugProxyPort']).should.eql(_.assign(opts, driverArgs));
     });
-    it(`should return default if 'webdriveragent-port' key doesnt exist`, function () {
-      parseWdaLocalPort({'foo': 'bar'}).should.equal(WEBDRIVERAGENT_PORT);
+    it('should use opts args if driver args not passed in', function () {
+      parseArgs(_.assign(opts, driverArgs), {}, ['wdaLocalPort',
+        'webkitDebugProxyPort']).should.eql(_.assign(opts, driverArgs));
     });
-    it('should return port when passed in as driver arg', function () {
-      parseWdaLocalPort({'webdriveragent-port': 5555}).should.equal(5555);
+    it('should return default args if none passed in', function () {
+      const defaultArgs = {};
+      _.keys(SERVER_ARGS).forEach((key) => {
+        defaultArgs[key] = SERVER_ARGS[key].default;
+      });
+      parseArgs({}, {}, ['wdaLocalPort', 'webkitDebugProxyPort']).should.eql(defaultArgs);
+    });
+    describe('wdaLocalPort arg', function () {
+      it('should return default if driverArgs is empty', function () {
+        parseArgs({}, {}, ['wdaLocalPort']).wdaLocalPort.should.equal(8100);
+      });
+      it(`should throw error if value of 'wdaLocalPort' is not an int`, function () {
+        (() => parseArgs({}, {'wdaLocalPort': 'foo'}, ['wdaLocalPort'])).should.throw();
+      });
+      it(`should return throw if unreconized key is passed`, function () {
+        (() => parseArgs({}, {'foo': 'bar'}, ['wdaLocalPort'])).should.throw();
+      });
+      it('should return passed in driver arg value', function () {
+        parseArgs({}, {wdaLocalPort}, ['wdaLocalPort']).wdaLocalPort.should.equal(wdaLocalPort);
+      });
     });
   });
 });
