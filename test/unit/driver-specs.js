@@ -225,9 +225,9 @@ describe('driverArgs', function () {
       driver = new XCUITestDriver({}, true);
     });
 
-    it('should set default driver args to opts', function () {
-      driver.opts.webkitDebugProxyPort.should.eql(27753);
-      driver.opts.wdaLocalPort.should.eql(8100);
+    it('driver args should not exist if none passed in', function () {
+      expect(typeof driver.opts.webkitDebugProxyPort === 'undefined').to.be.true;
+      expect(typeof driver.opts.wdaLocalPort === 'undefined').to.be.true;
     });
   });
 });

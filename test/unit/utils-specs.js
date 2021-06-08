@@ -1,6 +1,6 @@
 import {
   clearSystemFiles, translateDeviceName,
-  markSystemFilesForCleanup, isLocalHost, parseArgs, DEFAULT_SERVER_ARGS
+  markSystemFilesForCleanup, isLocalHost, parseArgs
 } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -176,16 +176,12 @@ describe('utils', function () {
       parseArgs(_.assign(opts, driverArgs), {}, ['wdaLocalPort',
         'webkitDebugProxyPort']).should.eql(_.assign(opts, driverArgs));
     });
-    it('should return default args if none passed in', function () {
-      const defaultArgs = {};
-      _.keys(DEFAULT_SERVER_ARGS).forEach((key) => {
-        defaultArgs[key] = DEFAULT_SERVER_ARGS[key];
-      });
-      parseArgs({}, {}, ['wdaLocalPort', 'webkitDebugProxyPort']).should.eql(defaultArgs);
+    it('should return empty object if no args were passed in', function () {
+      parseArgs({}, {}, ['wdaLocalPort', 'webkitDebugProxyPort']).should.eql({});
     });
     describe('wdaLocalPort arg', function () {
-      it('should return default if driverArgs is empty', function () {
-        parseArgs({}, {}, ['wdaLocalPort']).wdaLocalPort.should.equal(8100);
+      it('should return empty obj if driverArgs is empty', function () {
+        parseArgs({}, {}, ['wdaLocalPort']).should.eql({});
       });
       it(`should throw error if value of 'wdaLocalPort' is not an int`, function () {
         (() => parseArgs({}, {'wdaLocalPort': 'foo'}, ['wdaLocalPort'])).should.throw();
