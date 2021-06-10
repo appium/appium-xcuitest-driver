@@ -70,7 +70,7 @@ describe('element commands', function () {
 
   describe('getProperty', function () {
     const elementId = 2;
-    const attribute = 'enabled';
+    const property = 'enabled';
 
     afterEach(function () {
       proxyStub.calledOnce.should.be.true;
@@ -78,32 +78,32 @@ describe('element commands', function () {
 
     it('should properly parse boolean true attribute presented as integer', async function () {
       proxyStub.returns(1);
-      (await driver.getProperty(attribute, elementId)).should.eql('true');
+      (await driver.getProperty(property, elementId)).should.eql('true');
     });
 
     it('should properly parse boolean false attribute presented as integer', async function () {
       proxyStub.returns(0);
-      (await driver.getProperty(attribute, elementId)).should.eql('false');
+      (await driver.getProperty(property, elementId)).should.eql('false');
     });
 
     it('should properly parse integer attribute presented as string', async function () {
       proxyStub.returns('0');
-      (await driver.getProperty(attribute, elementId)).should.eql('0');
+      (await driver.getProperty(property, elementId)).should.eql('0');
     });
 
     it('should properly parse boolean attribute presented as bool', async function () {
       proxyStub.returns(false);
-      (await driver.getProperty(attribute, elementId)).should.eql('false');
+      (await driver.getProperty(property, elementId)).should.eql('false');
     });
 
     it('should properly parse null attribute', async function () {
       proxyStub.returns(null);
-      _.isNull(await driver.getProperty(attribute, elementId)).should.be.true;
+      _.isNull(await driver.getProperty(property, elementId)).should.be.true;
     });
 
     it('should properly parse string attribute', async function () {
       proxyStub.returns('value');
-      (await driver.getProperty(attribute, elementId)).should.eql('value');
+      (await driver.getProperty(property, elementId)).should.eql('value');
     });
   });
 
