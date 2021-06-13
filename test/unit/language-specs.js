@@ -17,6 +17,7 @@ describe('language and locale', function () {
     shouldUseTestManagerForVisibilityDetection: false,
     maxTypingFrequency: 60,
     shouldTerminateApp: true,
+    forceAppLaunch: true,
     shouldUseSingletonTestManager: true,
     eventloopIdleDelaySec: 0,
     environment: {},
