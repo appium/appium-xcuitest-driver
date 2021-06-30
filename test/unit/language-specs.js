@@ -18,6 +18,7 @@ describe('language and locale', function () {
     maxTypingFrequency: 60,
     shouldTerminateApp: true,
     forceAppLaunch: true,
+    useNativeCachingStrategy: true,
     shouldUseSingletonTestManager: true,
     eventloopIdleDelaySec: 0,
     environment: {},
