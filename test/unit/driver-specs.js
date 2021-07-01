@@ -6,6 +6,7 @@ import * as appUtils from '../../lib/app-utils';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
 import chai from 'chai';
+import B from 'bluebird';
 import * as utils from '../../lib/utils';
 import { MOCHA_LONG_TIMEOUT } from './helpers';
 
@@ -152,11 +153,14 @@ describe('installOtherApps', function () {
     sandbox.stub(SimulatorManagementModule, 'installToSimulator');
     sandbox.stub(driver, 'isRealDevice');
     driver.isRealDevice.returns(false);
+    sandbox.stub(driver.helpers, 'configureApp');
+    driver.helpers.configureApp.returns(B.resolve('/path/to/iosApp.app'));
     driver.opts.noReset = false;
     driver.opts.device = 'some-device';
     driver.lifecycleData = {createSim: false};
     await driver.installOtherApps('/path/to/iosApp.app');
     driver.isRealDevice.calledOnce.should.be.true;
+    driver.helpers.configureApp.calledOnce.should.be.true;
     SimulatorManagementModule.installToSimulator.calledOnce.should.be.true;
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
@@ -170,11 +174,15 @@ describe('installOtherApps', function () {
     sandbox.stub(SimulatorManagementModule, 'installToSimulator');
     sandbox.stub(driver, 'isRealDevice');
     driver.isRealDevice.returns(false);
+    sandbox.stub(driver.helpers, 'configureApp');
+    driver.helpers.configureApp.onCall(0).returns(B.resolve('/path/to/iosApp1.app'));
+    driver.helpers.configureApp.onCall(1).returns(B.resolve('/path/to/iosApp2.app'));
     driver.opts.noReset = false;
     driver.opts.device = 'some-device';
     driver.lifecycleData = {createSim: false};
     await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
     driver.isRealDevice.calledOnce.should.be.true;
+    driver.helpers.configureApp.calledTwice.should.be.true;
     SimulatorManagementModule.installToSimulator.calledWith(
       'some-device',
       '/path/to/iosApp1.app',
