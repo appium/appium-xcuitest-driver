@@ -8,7 +8,6 @@ import { withMocks } from 'appium-test-support';
 import { fs } from 'appium-support';
 import * as iosUtils from '../../lib/utils';
 
-
 chai.should();
 chai.use(chaiAsPromised);
 

@@ -195,3 +195,47 @@ describe('installOtherApps', function () {
     ).should.be.true;
   });
 });
+
+describe('driverArgs', function () {
+  const webkitDebugProxyPort = 22222;
+  const wdaLocalPort = 8000;
+  const driverArgs = { wdaLocalPort, webkitDebugProxyPort };
+
+  describe('driver args passed in', function () {
+    let driver;
+    before(function () {
+      driver = new XCUITestDriver({}, true, driverArgs);
+    });
+
+    it('should set passed in driver args to opts', function () {
+      driver.opts.webkitDebugProxyPort.should.eql(webkitDebugProxyPort);
+      driver.opts.wdaLocalPort.should.eql(wdaLocalPort);
+    });
+  });
+  describe('driver args with opts', function () {
+    let driver;
+    const opts = _.assign({'foo': 'bar', 'foobar': 'foobar'}, driverArgs);
+
+    before(function () {
+      driver = new XCUITestDriver(opts, true, {});
+    });
+
+    it('should set passed in driver args in opts to opts', function () {
+      driver.opts.foo.should.eql('bar');
+      driver.opts.foobar.should.eql('foobar');
+      driver.opts.webkitDebugProxyPort.should.eql(webkitDebugProxyPort);
+      driver.opts.wdaLocalPort.should.eql(wdaLocalPort);
+    });
+  });
+  describe('no driver args passed in', function () {
+    let driver;
+    before(function () {
+      driver = new XCUITestDriver({}, true);
+    });
+
+    it('driver args should not exist if none passed in', function () {
+      expect(typeof driver.opts.webkitDebugProxyPort === 'undefined').to.be.true;
+      expect(typeof driver.opts.wdaLocalPort === 'undefined').to.be.true;
+    });
+  });
+});
