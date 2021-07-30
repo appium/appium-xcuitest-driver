@@ -68,7 +68,7 @@
     "semver": "^7.0.0",
     "source-map-support": "^0.5.5",
     "teen_process": "^1.14.0",
-    "ws": "^7.0.0",
+    "ws": "^8.0.0",
     "xmldom": "^0.x"
   },
   "scripts": {
