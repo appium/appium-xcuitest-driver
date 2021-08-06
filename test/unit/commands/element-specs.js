@@ -269,7 +269,7 @@ describe('element commands', function () {
 
     before(function () {
       executeStub = sinon.stub(driver, 'execute').returns([fixtureXOffset, fixtureYOffset]);
-      atomsElStub = sinon.stub(driver, 'useAtomsElement').callsFake((el) => el);
+      atomsElStub = sinon.stub(driver, 'getAtomsElement').callsFake((el) => el);
       atomStub = sinon.stub(driver, 'executeAtom').returns({x: 0, y: 0});
       proxyStub = sinon.stub(driver, 'proxyCommand');
     });
