@@ -18,7 +18,7 @@ describe('process args', function () {
     shouldUseTestManagerForVisibilityDetection: false,
     maxTypingFrequency: 60,
     forceAppLaunch: true,
-    forceTurnOnSoftwareKeyboard: true,
+    forceTurnOnSoftwareKeyboardSimulator: true,
     useNativeCachingStrategy: true,
     shouldTerminateApp: true,
     shouldUseSingletonTestManager: true,

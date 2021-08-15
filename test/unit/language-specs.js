@@ -18,7 +18,7 @@ describe('language and locale', function () {
     maxTypingFrequency: 60,
     shouldTerminateApp: true,
     forceAppLaunch: true,
-    forceTurnOnSoftwareKeyboard: true,
+    forceTurnOnSoftwareKeyboardSimulator: true,
     useNativeCachingStrategy: true,
     shouldUseSingletonTestManager: true,
     eventloopIdleDelaySec: 0,
