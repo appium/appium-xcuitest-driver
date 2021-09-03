@@ -93,7 +93,7 @@ and the password sent through the `keychainPassword` capability.
 Capability | Description
 --- | ---
 `platformName` | Could be set to `ios`. Appium itself is not strict about this capability value if `automationName` is provided, so feel free to assign it to any supported platform name if this is needed, for example, to make Selenium Grid working.
-appium:automationName | Must always be set to `xcuitest`. Values of `automationName` are compared case-insensitively.
+`appium:automationName` | Must always be set to `xcuitest`. Values of `automationName` are compared case-insensitively.
 `appium:deviceName` | The name of the device under test. Consider setting `udid` for real devices and use this one for Simulator selection instead
 `appium:platformVersion` | The platform version of an emulator or a real device. This capability is used for device autodetection if `udid` is not provided
 `appium:udid` | UDID of the device to be tested. Could ve retrieved from Xcode->Window->Devices and Simulators window. Always set this capability if you run parallel tests or use a real device to run your tests.
