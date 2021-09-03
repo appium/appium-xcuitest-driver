@@ -85,6 +85,18 @@ where `MyPrivateKey.p12` is the private development key exported from the system
 The full path to the keychain can then be sent to the Appium system using the `keychainPath` desired capability,
 and the password sent through the `keychainPassword` capability.
 
+## Appium 2.x Server Arguments
+
+These arguments are set when you launch the Appium server, with this driver installed. They are for system administrators.
+
+Usage: `appium --driver-args='{"xcuitest": {[argName]: [argValue]}}'`
+
+<expand_table>
+
+|Argument|Default|Description|Example|
+|----|-------|-----------|-------|
+|`"webkitDebugProxyPort"`|27753|Local port used for communication with ios-webkit-debug-proxy|`--driver-args='{"xcuitest": {"webkitDebugProxyPort": 27753}}'`|
+|`"wdaLocalPort"`|8100| Local port used for communication with ios-web-driver-agent|`--driver-args='{"xcuitest": {"wdaLocalPort": 8100}}'`|
 
 ## Capabilities
 
