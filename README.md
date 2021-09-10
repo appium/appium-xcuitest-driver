@@ -1237,6 +1237,10 @@ e = @driver.find_element :id, 'target element'
 #### Reference
 [tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)
 
+### mobile: resetLocationService
+
+Reset the location service on real device since Appium 1.22.0.
+It raises an error if the device is simulator or an error occurred during the reset.
 
 ## Known issues
 
