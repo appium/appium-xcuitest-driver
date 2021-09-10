@@ -114,6 +114,7 @@ Capability | Description
 `appium:printPageSourceOnFindFailure` | Enforces the server to dump the actual XML page source into the log if any error happens. `false` by default.
 `browserName` | The name of the browser to run the test on. If this capability is provided then the driver will try to start the test in Web context mode (Native mode is applied by default). Read [Automating hybrid apps](https://appium.io/docs/en/writing-running-appium/web/hybrid/) for more details. Usually equals to `safari`.
 `appium:includeDeviceCapsToSessionInfo` | Whether to include screen information as the result of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/). It includes `pixelRatio`, `statBarHeight` and `viewportRect`, but it causes an extra API call to WDA which may increase the response time like [this issue](https://github.com/appium/appium/issues/15101). Defaults to `true`.
+`appium:resetLocationService` | Whether reset the location service in the session deletion on real device. Defaults to `false`.
 
 ### App
 
@@ -1236,6 +1237,11 @@ e = @driver.find_element :id, 'target element'
 #### Reference
 [tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)
 
+### mobile: resetLocationService
+
+Reset the location service on real device since Appium 1.22.0.
+It could delay a few seconds to reflect the location by the system.
+It raises an error if the device is simulator or an error occurred during the reset.
 
 ## Known issues
 
