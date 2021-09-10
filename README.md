@@ -1240,6 +1240,7 @@ e = @driver.find_element :id, 'target element'
 ### mobile: resetLocationService
 
 Reset the location service on real device since Appium 1.22.0.
+It could delay a few seconds to reflect the lcoation by system.
 It raises an error if the device is simulator or an error occurred during the reset.
 
 ## Known issues
