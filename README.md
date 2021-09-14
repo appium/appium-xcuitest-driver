@@ -195,8 +195,8 @@ Capability | Description
 |`appium:iosSimulatorLogsPredicate`|Set the `--predicate` flag in the ios simulator logs|e.g.: `'process != "locationd" AND process != "DTServiceHub"' AND process != "mobileassetd"`|
 |`appium:simulatorPasteboardAutomaticSync`| Handle the `-PasteboardAutomaticSync` flag when simulator process launches. It could improve launching simulator performance not to sync pasteboard with the system when this value is `off`. `on` forces the flag enabled. `system` does not provide the flag to the launching command. `on`, `off`, or `system` is available. They are case insensitive. Defaults to `off` | e.g. `system` |
 |`appium:simulatorDevicesSetPath`| This capability allows to set an alternative path to the simulator devices set in case you have multiple sets deployed on your local system. Such feature could be useful if you, for example, would like to save disk space on the main system volume. | e.g. `/MyVolume/Devices` |
-|`appium:customSSLCert`| Adds a root SSL certificate to IOS Simulator. | e.g. ```-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...-----END CERTIFICATE-----```|
-|`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000`|e.g., `10000`|
+|`appium:customSSLCert`| Adds a root SSL certificate to IOS Simulator. The certificate content must be provided in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format | e.g. ```-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...-----END CERTIFICATE-----```|
+|`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000` | e.g., `10000`|
 
 ### Web Context
 
@@ -567,7 +567,7 @@ On real devices or simulators before Xcode 11.4 SDK Apple provides no official w
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-content | string | yes | Base64-encoded content of the public certificate | a23234...
+content | string | yes | Base64-encoded content of the public certificate in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format | a23234...
 commonName | string | no | Common name of the certificate. If this is not set then the script will try to parse it from the given certificate content. | com.myorg
 isRoot | boolean | no | This option defines where the certificate should be installed to: either Trusted Root Store (`true`, the default option) or the Keychain (`false`). On environments other than Xcode 11.4+ Simulator this option is ignored. | false
 
