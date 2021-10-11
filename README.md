@@ -127,6 +127,7 @@ Capability | Description
 `appium:language` | Language to set for iOS, for example `fr`. Please read [Language IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) to get more details abuot available values for this capability.
 `appium:locale` | Locale to set for iOS, for example `fr_CA`. Please read [Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html#//apple_ref/doc/uid/10000171i-CH15-SW9) to get more details abuot available values for this capability.
 `appium:appPushTimeout` | The timeout for application upload in milliseconds. Works for real devices only. The default value is `30000`ms
+`appium:appInstallStrategy` | Select application installation strategy for real devices. The following strategies are supported: `serial` (default) - pushes app files to the device in a sequential order; this is the least performant strategy, although the most reliable; `parallel` - pushes app files simultaneously; this is usually the the most performant strategy, but sometimes could not be very stable; `ios-deploy` - tells the driver to use a third-party tool [ios-deploy](https://www.npmjs.com/package/ios-deploy) to install the app; obviously the tool must be installed separately first and must be present in PATH before it could be used. | parallel
 
 ### WebDriverAgent
 
