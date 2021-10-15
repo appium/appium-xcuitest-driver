@@ -1,9 +1,7 @@
-import { getAvailableBundleIds, parseContainerPath } from '../../../lib/commands/file-movement';
+import { parseContainerPath } from '../../../lib/commands/file-movement';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { services } from 'appium-ios-device';
-import { withMocks } from 'appium-test-support';
-import { fs, tempDir } from 'appium-support';
+import { tempDir } from 'appium-support';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
@@ -40,41 +38,4 @@ describe('file-movement', function () {
     });
   });
 
-  describe('getAvailableBundleIds', withMocks({services, fs}, (mocks) => {
-    afterEach(function () {
-      mocks.verify();
-    });
-
-    it('get available bundleIds with items', async function () {
-      mocks.services.expects('startInstallationProxyService')
-      .withExactArgs('12345')
-        .returns({
-          listApplications () {
-            return {
-              'com.apple.Keynote': {
-                UIFileSharingEnabled: true
-              },
-              'io.appium.example': {
-                UIFileSharingEnabled: true
-              }
-            };
-          },
-          close () {},
-        });
-      await getAvailableBundleIds('12345').should.eventually.eql([
-        'com.apple.Keynote', 'io.appium.example'
-      ]);
-    });
-    it('get available bundleIds without items', async function () {
-      mocks.services.expects('startInstallationProxyService')
-      .withExactArgs('12345')
-        .returns({
-          listApplications () {
-            return {};
-          },
-          close () {},
-        });
-      await getAvailableBundleIds('12345').should.eventually.eql([]);
-    });
-  }));
 });
