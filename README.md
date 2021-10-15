@@ -436,13 +436,16 @@ The list of available context objects along with their properties:
 
 ### mobile: installApp
 
-Installs the given application to the device under test. Make sure the app is built for a correct architecture and is signed with a proper signature (for real devices) prior to install it.
+Installs the given application to the device under test. Make sure the app is built for a correct architecture and is signed with a proper developer signature (for real devices) prior to install it.
 
 #### Arguments
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 app | string | yes | See the description of the `appium:app` capability | /path/to/my.app
+timeoutMs | number | no | The maximum time to wait until app install is finished in milliseconds.
+If not provided then the value of `appium:appPushTimeout` capability is used. If the capability is not provided then equals to 240000ms | 500000
+strategy | string | no | One of possible app installation strategies on real devices. This argument is ignored on simulators. If not provided then the value of `appium:appInstallStrategy` is used. If the latter is also not provided then `serial` is used. See the description of `appium:appInstallStrategy` capability for more details on available values. | parallel
 
 ### mobile: isAppInstalled
 
