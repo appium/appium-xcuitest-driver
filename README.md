@@ -525,6 +525,21 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 bundleId | string | yes | The bundle identifier of the application to be activated | com.mycompany.myapp
 
+### mobile: listApps
+
+List applications installed on the real device under test. This extension throws an error if called
+for a Simulator device.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+applicationType | string | no | The type of applications to list. Either `System` or `User` (the default one) | System
+
+#### Returned Result
+
+A list of apps, where each item is a map where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports files upload and download into its `documents` container. Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
+
 ### mobile: startPerfRecord
 
 Starts performance profiling for the device under test.
