@@ -300,8 +300,8 @@ keyboardAutocorrection | boolean | Changes the 'Auto-Correction' preference in _
 keyboardPrediction | boolean | Changes the 'Predictive' preference in _Keyboards_ setting. Defaults to `false`.
 nativeWebTap | boolean | See the description of the corresponding capability.
 nativeWebTapStrict | boolean | See the description of the corresponding capability.
-nativeWebTapTabBarVisible | nullable boolean | Bypass finding whether the existence of the _**tab bar**_ before tapping on the element. It could make native web tap faster. If it's `true`, tab bar offset will be added without checking the existence of the tab bar. It's `false`, the tab bar offset will be `zero`. If you want to leave Appium to check and measure the tab bar offset, don't set or set `null`. Only applicable if `nativeWebTap` and `nativeWebTapStrict` are enabled. `null` by default.
-nativeWebTapSmartAppBannerVisible | nullable boolean | The same as `nativeWebTapTabBarVisible`, this keyword will bypass finding whether the existence of the _**smart app banner**_.
+nativeWebTapTabBarVisibility | enum | Bypass finding whether the existence of the _**tab bar**_ before tapping on the element. It could make native web tap faster. If it's `visible`, tab bar offset will be added without checking the existence of the tab bar. It's `invisible`, the tab bar offset will be `zero`. If you want to leave Appium to check and measure the tab bar offset, unset or set `detect`. Only applicable if `nativeWebTap` and `nativeWebTapStrict` are enabled. Unset by default.
+nativeWebTapSmartAppBannerVisibility | enum | The same as `nativeWebTapTabBarVisibility`, this keyword will bypass finding whether the existence of the _**smart app banner**_.
 useJSONSource | boolean | See the description of the corresponding capability.
 
 ## Element Location

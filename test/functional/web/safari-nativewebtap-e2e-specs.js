@@ -127,7 +127,7 @@ describe('Safari - coordinate conversion -', function () {
           const durationWithoutIgnore = end1 - start1;
 
           const start2 = performance.now();
-          await driver.updateSettings({ nativeWebTapSmartAppBannerVisible: false });
+          await driver.updateSettings({ nativeWebTapSmartAppBannerVisibility: 'invisible' });
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
           await driver.elementByLinkText(PAGE_3_LINK).click();
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
@@ -211,7 +211,7 @@ describe('Safari - coordinate conversion -', function () {
             const end1 = performance.now();
             const durationWithoutControlled = end1 - start1;
 
-            await driver.updateSettings({ nativeWebTapTabBarVisible: true });
+            await driver.updateSettings({ nativeWebTapTabBarVisibility: 'visible' });
             const start2 = performance.now();
             await loadPage(driver, GUINEA_PIG_PAGE);
             await driver.elementByLinkText(PAGE_3_LINK).click();
