@@ -214,7 +214,7 @@ Capability | Description
 |`appium:webviewConnectTimeout`|The time to wait, in `ms`, for the initial presence of webviews in MobileSafari or hybrid apps. Defaults to `0`|e.g., '5000'|
 |`appium:safariIgnoreWebHostnames`| Provide a list of hostnames (comma-separated) that the Safari automation tools should ignore. This is to provide a workaround to prevent a webkit bug where the web context is unintentionally changed to a 3rd party website and the test gets stuck. The common culprits are search engines (yahoo, bing, google) and `about:blank` |e.g. `'www.yahoo.com, www.bing.com, www.google.com, about:blank'`|
 |`appium:nativeWebTap` | Enable native, non-javascript-based taps being in web context mode. Defaults to `false`. Warning: sometimes the preciseness of native taps could be broken, because there is no reliable way to map web element coordinates to native ones. | `true` |
-|`appium:nativeWebTapStrict` | Enforce native taps to be done by XCUITest driver rather than WebDriverAgent. Only applicable if `nativeWebTap` are enabled. `false` by default | `false` |
+|`appium:nativeWebTapStrict` | Enforce native taps to be done by XCUITest driver rather than WebDriverAgent. Only applicable if `nativeWebTap` is enabled. `false` by default | `false` |
 |`appium:safariInitialUrl`| Initial safari url, default is a local welcome page | e.g. `https://www.github.com` |
 |`appium:safariAllowPopups`| Allow javascript to open new windows in Safari. Default keeps current sim setting|`true` or `false`|
 |`appium:safariIgnoreFraudWarning`| Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.|`true` or `false`|
@@ -300,7 +300,7 @@ keyboardAutocorrection | boolean | Changes the 'Auto-Correction' preference in _
 keyboardPrediction | boolean | Changes the 'Predictive' preference in _Keyboards_ setting. Defaults to `false`.
 nativeWebTap | boolean | See the description of the corresponding capability.
 nativeWebTapStrict | boolean | See the description of the corresponding capability.
-nativeWebTapTabBarVisible | nullable boolean | Bypass finding whether the existence of the _**tab bar**_ before tapping on the element. It could make native web tap faster. If it's `true`, tab bar offset will be added without checking the existence of the tab bar. It's `false`, the tab bar offset will be `zero`. If you want to leave Appium to check and measure the tab bar offset, don't set or set `null`. Only applicable if `nativeWebTap` and `nativeWebTapStrict` is enabled. `null` by default.
+nativeWebTapTabBarVisible | nullable boolean | Bypass finding whether the existence of the _**tab bar**_ before tapping on the element. It could make native web tap faster. If it's `true`, tab bar offset will be added without checking the existence of the tab bar. It's `false`, the tab bar offset will be `zero`. If you want to leave Appium to check and measure the tab bar offset, don't set or set `null`. Only applicable if `nativeWebTap` and `nativeWebTapStrict` are enabled. `null` by default.
 nativeWebTapSmartAppBannerVisible | nullable boolean | The same as `nativeWebTapTabBarVisible`, this keyword will bypass finding whether the existence of the _**smart app banner**_.
 useJSONSource | boolean | See the description of the corresponding capability.
 
