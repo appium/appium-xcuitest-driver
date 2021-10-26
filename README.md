@@ -300,7 +300,9 @@ keyboardAutocorrection | boolean | Changes the 'Auto-Correction' preference in _
 keyboardPrediction | boolean | Changes the 'Predictive' preference in _Keyboards_ setting. Defaults to `false`.
 nativeWebTap | boolean | See the description of the corresponding capability.
 nativeWebTapStrict | boolean | See the description of the corresponding capability.
-useJSONSource | boolean | See the description of the corresponding capability.
+nativeWebTapTabBarVisible | nullable boolean | Bypass finding whether the existence of the _**tab bar**_ before tapping on the element. It could make native web tap faster. If it's `true`, tab bar offset will be added without checking the existence of the tab bar. It's `false`, the tab bar offset will be `zero`. If you want to leave Appium to check and measure the tab bar offset, don't set or set `null`. Only applicable if `nativeWebTap` and `nativeWebTapStrict` is enabled. `null` by default.
+nativeWebTapSmartAppBannerVisible | nullable boolean | The same as `nativeWebTapTabBarVisible`, this keyword will bypass finding whether the existence of the _**smart app banner**_.
+_useJSONSource | boolean | See the description of the corresponding capability.
 
 ## Element Location
 

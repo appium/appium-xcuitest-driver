@@ -11,6 +11,7 @@ import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
 import Simctl from 'node-simctl';
 import { util } from 'appium-support';
+import { performance } from 'perf_hooks';
 
 /**
  * This test suite can be affected by two environment variables:
@@ -113,6 +114,28 @@ describe('Safari - coordinate conversion -', function () {
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
 
+        it('should be able to bypass measuring the offset of banner', async function () {
+          await driver.updateSettings({
+            nativeWebTapStrict: true,
+          });
+
+          const start1 = performance.now();
+          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+          const end1 = performance.now();
+          const durationWithoutIgnore = end1 - start1;
+
+          const start2 = performance.now();
+          await driver.updateSettings({ nativeWebTapSmartAppBannerVisible: false });
+          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+          const end2 = performance.now();
+          const durationWithIgnore = end2 - start2;
+          durationWithIgnore.should.be.below(durationWithoutIgnore);
+        });
+
         it('should be able to tap on an element after scrolling', async function () {
           await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
           await driver.execute('mobile: scroll', {direction: 'down'});
@@ -176,6 +199,27 @@ describe('Safari - coordinate conversion -', function () {
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
+
+          it('should be able to bypass measuring the offset', async function () {
+            await driver.updateSettings({
+              nativeWebTapStrict: true,
+            });
+
+            const start1 = performance.now();
+            await loadPage(driver, GUINEA_PIG_PAGE);
+            await driver.elementByLinkText(PAGE_3_LINK).click();
+            const end1 = performance.now();
+            const durationWithoutControlled = end1 - start1;
+
+            await driver.updateSettings({ nativeWebTapTabBarVisible: true });
+            const start2 = performance.now();
+            await loadPage(driver, GUINEA_PIG_PAGE);
+            await driver.elementByLinkText(PAGE_3_LINK).click();
+            const end2 = performance.now();
+            const durationWithControlled = end2 - start2;
+            durationWithControlled.should.be.below(durationWithoutControlled);
+          });
+
           it('should be able to tap on an element after scrolling', async function () {
             await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
             await driver.execute('mobile: scroll', {direction: 'down'});
@@ -184,6 +228,7 @@ describe('Safari - coordinate conversion -', function () {
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
+
           it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
             await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
             await driver.execute('mobile: scroll', {direction: 'down'});
