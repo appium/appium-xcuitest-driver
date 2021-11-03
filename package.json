@@ -70,7 +70,7 @@
     "source-map-support": "^0.x",
     "teen_process": "^1.14.0",
     "ws": "^8.0.0",
-    "xmldom": "@xmldom/xmldom^0.x"
+    "xmldom": "@xmldom/xmldom@^0.x"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
