@@ -47,7 +47,6 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "@xmldom/xmldom": "^0.x",
     "appium-base-driver": "^7.0.0",
     "appium-idb": "^0.x",
     "appium-ios-device": "^1.8.0",
@@ -70,7 +69,8 @@
     "semver": "^7.0.0",
     "source-map-support": "^0.x",
     "teen_process": "^1.14.0",
-    "ws": "^8.0.0"
+    "ws": "^8.0.0",
+    "xmldom": "@xmldom/xmldom^0.x"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
