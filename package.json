@@ -47,6 +47,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
+    "@xmldom/xmldom": "^0.x",
     "appium-base-driver": "^7.0.0",
     "appium-idb": "^0.x",
     "appium-ios-device": "^1.8.0",
@@ -59,7 +60,7 @@
     "asyncbox": "^2.3.1",
     "bluebird": "^3.5.1",
     "css-selector-parser": "^1.4.1",
-    "js2xmlparser2": "^0.2.0",
+    "js2xmlparser2": "^0.x",
     "lodash": "^4.17.10",
     "lru-cache": "^6.0.0",
     "moment": "^2.24.0",
@@ -67,10 +68,9 @@
     "node-simctl": "^6.4.0",
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
-    "source-map-support": "^0.5.5",
+    "source-map-support": "^0.x",
     "teen_process": "^1.14.0",
-    "ws": "^8.0.0",
-    "xmldom": "^0.x"
+    "ws": "^8.0.0"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
