@@ -20,7 +20,7 @@ describe('source commands', function () {
     it('should send translated GET request to WDA', async function () {
       await driver.getPageSource();
       proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/source');
+      proxyStub.firstCall.args[0].should.eql('/source?scope=AppiumAUT');
       proxyStub.firstCall.args[1].should.eql('GET');
     });
     it('should insert received xml into AppiumAUT tags', async function () {
