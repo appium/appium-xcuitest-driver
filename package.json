@@ -30,6 +30,31 @@
     "mainClass": "XCUITestDriver",
     "scripts": {
       "build-wda": "./build/lib/build-wda.js"
+    },
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema",
+      "type": "object",
+      "properties": {
+        "webdriveragent-port": {
+          "appiumCliDest": "wdaLocalPort",
+          "default": 8100,
+          "description": "Local port used for communication with WebDriverAgent",
+          "maximum": 65535,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "webkit-debug-proxy-port": {
+          "appiumCliDest": "webkitDebugProxyPort",
+          "default": 27753,
+          "description": "(Real device only) Port to which `ios-webkit-debug-proxy` is connected",
+          "maximum": 65535,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "title": "XCUITest Driver Configuration",
+      "description": "Appium configuration schema for the XCUITest driver."
     }
   },
   "main": "./build/index.js",
