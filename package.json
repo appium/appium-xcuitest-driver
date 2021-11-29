@@ -25,7 +25,7 @@
     "driverName": "xcuitest",
     "automationName": "XCUITest",
     "platformNames": [
-      "iOS"
+      "iOS", "tvOS"
     ],
     "mainClass": "XCUITestDriver",
     "scripts": {
