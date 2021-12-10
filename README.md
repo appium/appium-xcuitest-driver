@@ -108,7 +108,7 @@ Capability | Description
 `appium:automationName` | Must always be set to `xcuitest`. Values of `automationName` are compared case-insensitively.
 `appium:deviceName` | The name of the device under test. Consider setting `udid` for real devices and use this one for Simulator selection instead
 `appium:platformVersion` | The platform version of an emulator or a real device. This capability is used for device autodetection if `udid` is not provided
-`appium:udid` | UDID of the device to be tested. Could ve retrieved from Xcode->Window->Devices and Simulators window. Always set this capability if you run parallel tests or use a real device to run your tests.
+`appium:udid` | UDID of the device to be tested. Could be retrieved from Xcode->Window->Devices and Simulators window. Always set this capability if you run parallel tests or use a real device to run your tests.
 `appium:noReset` | Prevents the device to be reset before the session startup if set to `true`. This means that the application under test is not going to be terminated neither its data cleaned. `false` by default
 `appium:fullReset` | Being set to `true` always enforces the application under test to be fully uninstalled before starting a new session. `false` by default
 `appium:printPageSourceOnFindFailure` | Enforces the server to dump the actual XML page source into the log if any error happens. `false` by default.
