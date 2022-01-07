@@ -28,12 +28,11 @@ On top of standard Appium requirements XCUITest driver also expects the followin
 - Web views must be debuggable in order to test them. If it is not possible to connect to your web view(s) using [Safari remote debugger](https://appletoolbox.com/use-web-inspector-debug-mobile-safari/) then XCUITest won't be able to connect to them as well.
 - Since version 3.33.0 (included into Appium 1.20.0+) of XCUITest driver the [Carthage](https://github.com/Carthage/Carthage) dependency *is not needed anymore*. Prior to that version it was required and could be installed using [brew](https://brew.sh/): `brew install carthage`.
 
-
 ## Optional dependencies
 
 - [xcpretty](https://github.com/supermarin/xcpretty) tool could be used to make Xcode output easier to read. It could be installed using `gem install xcpretty` command.
 - For test video recording we use [ffmpeg](https://ffmpeg.org/). It could be installed using [brew](https://brew.sh/): `brew install ffmpeg`
-- Facebook's [IDB](https://github.com/facebook/idb) tool could be used to improve some real device/Simulator interactions
+- [IDB](https://github.com/facebook/idb), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) could be used to improve some real device/Simulator interactions
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) could be used to improve some Simulator interactions
 
 
@@ -53,7 +52,9 @@ See [real device configuration documentation](docs/real-device-config.md).
 
 ### Known problems
 
-After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
+- After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
+- iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. It is limitation by XCTest framework. It should not affect taking screenshot API in Appium/WebDriverAgent.
+- iPhone/iPad real devices [requires passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. No passcode/touch id preference can avoid the behavior.
 
 #### Weird state
 
