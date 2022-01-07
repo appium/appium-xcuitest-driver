@@ -53,8 +53,8 @@ See [real device configuration documentation](docs/real-device-config.md).
 ### Known problems
 
 - After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
-- iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. It is limitation by XCTest framework. It should not affect taking screenshot API in Appium/WebDriverAgent.
-- iPhone/iPad real devices [requires passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. No passcode/touch id preference can avoid the behavior.
+- iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. This is a known limitation of XCTest framework. This limitation does not affect screenshooting APIs though (e.g. the overlay is not visible on taken screenshots).
+- iPhone/iPad real devices [require passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. Disabling passcode/touch id in the device preference allows to workaround the behaviour above.
 
 #### Weird state
 
