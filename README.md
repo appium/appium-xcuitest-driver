@@ -886,6 +886,26 @@ Stops recording of the audio input. If no audio recording process is running the
 
 Base64-encoded content of the recorded media file or an empty string if no audio recording has been started before.
 
+### mobile: startPcap
+
+Start mobile device network traffic capture. This extension only works if [py-ios-device](https://github.com/YueChen-C/py-ios-device) utility is installed on the server machine and only supports
+real iOS devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+timeLimitSec | string or int | no | The maximum recording time, in seconds. The default value is `180`, the maximum value is `43200` (12 hours). | 60
+forceRestart | boolean | no | Whether to restart traffic capture process forcefully when startPcap is called (`true`) or ignore the call until the current traffic capture is completed (`false`, the default value). | true
+
+### mobile: stopPcap
+
+Stops network traffic capture. If no traffic capture process is running then the endpoint will try to get the recently recorded file. If no previously recorded file is found and no active traffic capture processes are running then the method returns an empty string.
+
+#### Returned Result
+
+Base64-encoded content of the traffic capture file (.pcap) or an empty string if no traffic capture has been started before. Netowrk capture files could be opened in [Wireshark](https://www.wireshark.org/) application.
+
 ### mobile: runXCTest
 
 Run a native XCTest script. Launches a subprocess that runs the XC Test and blocks until it is completed. Parses the stdout of the process and returns its result as an array. Facebook's [IDB](https://github.com/facebook/idb) tool is required to run such tests.
