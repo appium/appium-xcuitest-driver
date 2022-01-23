@@ -22,7 +22,7 @@ stages:
       #tvosName: AppleTV_13_4
       #tvosDeviceName: "Apple TV"
       skipTvOs: True
-      vmImage: 'macOS-11.3'
+      vmImage: 'macOS-11'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
       name: iPhoneX_14_5
@@ -32,4 +32,4 @@ stages:
       tvosVersion: 14.5
       tvosName: AppleTV_14_5
       tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-11.3'
+      vmImage: 'macOS-11'
