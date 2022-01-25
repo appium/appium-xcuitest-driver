@@ -14,22 +14,22 @@ stages:
   jobs:
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iPhoneX_14_4
-      iosVersion: 14.4
-      xcodeVersion: 12.4
+      name: iPhoneX_15_2
+      iosVersion: 15.2
+      xcodeVersion: 13.2
       deviceName: "iPhone Simulator"
       #tvosVersion: 13.4
       #tvosName: AppleTV_13_4
       #tvosDeviceName: "Apple TV"
       skipTvOs: True
-      vmImage: 'macOS-10.15'
+      vmImage: 'macOS-11'
   - template: ./templates/xcuitest-e2e-template.yml
     parameters:
-      name: iPhoneX_13_4
-      iosVersion: 13.4
-      xcodeVersion: 11.4
+      name: iPhoneX_14_5
+      iosVersion: 14.5
+      xcodeVersion: 12.5
       deviceName: "iPhone Simulator"
-      tvosVersion: 13.4
-      tvosName: AppleTV_13_4
+      tvosVersion: 14.5
+      tvosName: AppleTV_14_5
       tvosDeviceName: "Apple TV"
-      vmImage: 'macOS-10.15'
+      vmImage: 'macOS-11'
