@@ -77,7 +77,7 @@
     "appium-base-driver": "^7.0.0",
     "appium-idb": "^0.x",
     "appium-ios-device": "^1.8.0",
-    "appium-ios-simulator": "^3.28.0",
+    "appium-ios-simulator": "^4.0.0",
     "appium-remote-debugger": "^8.13.2",
     "appium-support": "^2.47.1",
     "appium-webdriveragent": "^3.16.0",
