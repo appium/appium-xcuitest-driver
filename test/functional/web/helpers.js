@@ -1,6 +1,6 @@
 import { retry, retryInterval } from 'asyncbox';
 import { HOST, PORT } from '../helpers/session';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import _ from 'lodash';
 
 

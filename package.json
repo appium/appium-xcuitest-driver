@@ -72,16 +72,16 @@
     "!.DS_Store"
   ],
   "dependencies": {
+    "@appium/base-driver": "^8.0.0",
+    "@appium/support": "^2.55.3",
     "@babel/runtime": "^7.0.0",
     "@xmldom/xmldom": "^0.x",
-    "appium-base-driver": "^7.0.0",
-    "appium-idb": "^0.x",
-    "appium-ios-device": "^1.8.0",
-    "appium-ios-simulator": "^3.28.0",
-    "appium-remote-debugger": "^8.13.2",
-    "appium-support": "^2.47.1",
-    "appium-webdriveragent": "^3.16.0",
-    "appium-xcode": "^3.8.0",
+    "appium-idb": "^1.0.0",
+    "appium-ios-device": "^2.0.0",
+    "appium-ios-simulator": "^4.0.0",
+    "appium-remote-debugger": "^9.0.0",
+    "appium-webdriveragent": "^4.0.0",
+    "appium-xcode": "^4.0.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
     "bluebird": "^3.5.1",
@@ -91,7 +91,7 @@
     "lru-cache": "^6.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.x",
-    "node-simctl": "^6.4.0",
+    "node-simctl": "^7.0.0",
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
     "source-map-support": "^0.x",
@@ -124,15 +124,14 @@
     "precommit-test"
   ],
   "devDependencies": {
+    "@appium/gulp-plugins": "^6.0.0",
+    "@appium/eslint-config-appium": "^5.0.0",
+    "@appium/test-support": "^1.0.0",
     "@semantic-release/git": "^9.0.0",
-    "appium-event-parser": "^1.0.0",
-    "appium-gulp-plugins": "^5.4.0",
-    "appium-test-support": "^1.0.0",
     "axios": "^0.x",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
-    "eslint-config-appium": "^4.5.0",
     "glob": "^7.1.0",
     "gulp": "^4.0.0",
     "ios-test-app": "^3.0.0",
@@ -145,6 +144,6 @@
     "pre-commit": "^1.1.3",
     "semantic-release": "^17.1.2",
     "sinon": "^12.0.0",
-    "wd": "^1.5.0"
+    "webdriverio": "^7.0.0"
   }
 }

@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import XCUITestDriver from '../../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { withMocks, withSandbox } from 'appium-test-support';
+import { withMocks, withSandbox } from '@appium/test-support';
 import _ from 'lodash';
 
 
