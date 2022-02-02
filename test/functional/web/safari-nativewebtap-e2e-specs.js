@@ -10,7 +10,7 @@ import {
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
 import Simctl from 'node-simctl';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { performance } from 'perf_hooks';
 
 /**

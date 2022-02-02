@@ -1,17 +1,11 @@
-import wd from 'wd';
+import { remote } from 'webdriverio';
 import axios from 'axios';
 import { startServer } from '../../..';
-import { util } from 'appium-support';
-import patchDriverWithEvents from './ci-metrics';
+import { util } from '@appium/support';
 import _ from 'lodash';
 
 
-const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD, CI_METRICS} = process.env;
-
-// if we are tracking CI metrics, patch the wd framework
-if (CI_METRICS) {
-  patchDriverWithEvents();
-}
+const {SAUCE_RDC, SAUCE_EMUSIM, CLOUD} = process.env;
 
 function getPort () {
   if (SAUCE_EMUSIM || SAUCE_RDC) {
@@ -82,10 +76,7 @@ if (CLOUD) {
 }
 
 async function initDriver () { // eslint-disable-line require-await
-  const config = {host: HOST, port: PORT};
-  driver = CLOUD
-    ? await wd.promiseChainRemote(config, process.env.SAUCE_USERNAME, process.env.SAUCE_ACCESS_KEY)
-    : await wd.promiseChainRemote(config);
+  driver = await remote();
   driver.name = undefined;
   driver.errored = false;
   return driver;

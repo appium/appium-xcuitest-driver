@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import _ from 'lodash';
 import XCUITestDriver from '../../..';
 
 
@@ -121,7 +122,14 @@ describe('general commands', function () {
   describe('nativeWebTap as a setting', function () {
     // create new driver with no opts
     let driver, startStub;
-    const baseCaps = {platformName: 'iOS', deviceName: 'bar', app: '/fake'};
+    const baseCaps = {
+      firstMatch: [{}],
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'bar',
+        'appium:app': '/fake'
+      }
+    };
 
     beforeEach(function () {
       driver = new XCUITestDriver();
@@ -139,7 +147,11 @@ describe('general commands', function () {
 
     it('should default to value sent in caps after session starts', async function () {
       (await driver.getSettings()).nativeWebTap.should.eql(false);
-      await driver.createSession(Object.assign({nativeWebTap: true}, baseCaps));
+      await driver.createSession(null, null, _.merge({}, baseCaps, {
+        alwaysMatch: {
+          'appium:nativeWebTap': true,
+        }
+      }));
       (await driver.getSettings()).nativeWebTap.should.eql(true);
     });
 
