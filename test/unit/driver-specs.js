@@ -22,6 +22,33 @@ const caps = {
 };
 
 
+describe('getDefaultUrl', function () {
+  let driver;
+
+  beforeEach(function () {
+    driver = new XCUITestDriver();
+  });
+
+  it('simulator', function () {
+    driver.opts.realDevice = true;
+    expect(driver.getDefaultUrl()).eq('http://appium.io');
+  });
+
+  it('real devicce with ipv4', function () {
+    driver.opts.realDevice = false;
+    driver.opts.address = '127.0.0.1';
+    driver.opts.port = '8080';
+    expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8080/welcome');
+  });
+
+  it('real devicce with ipv6', function () {
+    driver.opts.realDevice = false;
+    driver.opts.address = '::1';
+    driver.opts.port = '8080';
+    expect(driver.getDefaultUrl()).eq('http://[::1]:8080/welcome');
+  });
+});
+
 describe('driver commands', function () {
   describe('status', function () {
     let driver;
