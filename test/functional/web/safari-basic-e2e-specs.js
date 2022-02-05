@@ -6,7 +6,7 @@ import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SAFARI_CAPS } from '../desired';
 import { spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
          GUINEA_PIG_SCROLLABLE_PAGE, PHISHING_END_POINT, GUINEA_PIG_IFRAME_PAGE } from './helpers';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { retryInterval } from 'asyncbox';
 
 

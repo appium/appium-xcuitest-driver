@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { JWProxy } from 'appium-base-driver';
+import { JWProxy } from '@appium/base-driver';
 import XCUITestDriver from '../..';
 import * as simSettings from '../../lib/simulator-management';
 import * as appUtils from '../../lib/app-utils';
@@ -15,10 +15,13 @@ chai.should();
 const expect = chai.expect;
 
 const caps = {
-  platformName: 'iOS',
-  deviceName: 'iPhone 6',
-  app: '/foo.app',
-  platformVersion: '10.0',
+  fistMatch: [{}],
+  alwaysMatch: {
+    platformName: 'iOS',
+    'appium:deviceName': 'iPhone 6',
+    'appium:app': '/foo.app',
+    'appium:platformVersion': '10.0',
+  }
 };
 
 
@@ -131,23 +134,27 @@ describe('driver commands', function () {
 
     it('should include server capabilities', async function () {
       this.timeout(MOCHA_LONG_TIMEOUT);
-      const resCaps = await driver.createSession(caps);
+      const resCaps = await driver.createSession(null, null, _.cloneDeep(caps));
       resCaps[1].javascriptEnabled.should.be.true;
     });
 
     it('should call startLogCapture', async function () {
-      const c = { ... caps };
-      Object.assign(c, {skipLogCapture: false});
       this.timeout(MOCHA_LONG_TIMEOUT);
-      const resCaps = await driver.createSession(c);
+      const resCaps = await driver.createSession(null, null, _.merge({}, caps, {
+        alwaysMatch: {
+          'appium:skipLogCapture': false,
+        }
+      }));
       resCaps[1].javascriptEnabled.should.be.true;
       driver.startLogCapture.called.should.be.true;
     });
     it('should not call startLogCapture', async function () {
-      const c = { ... caps };
-      Object.assign(c, {skipLogCapture: true});
       this.timeout(MOCHA_LONG_TIMEOUT);
-      const resCaps = await driver.createSession(c);
+      const resCaps = await driver.createSession(null, null, _.merge({}, caps, {
+        alwaysMatch: {
+          'appium:skipLogCapture': true,
+        }
+      }));
       resCaps[1].javascriptEnabled.should.be.true;
       driver.startLogCapture.called.should.be.false;
     });

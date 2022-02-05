@@ -197,7 +197,7 @@ Capability | Description
 |`appium:iosSimulatorLogsPredicate`|Set the `--predicate` flag in the ios simulator logs|e.g.: `'process != "locationd" AND process != "DTServiceHub"' AND process != "mobileassetd"`|
 |`appium:simulatorPasteboardAutomaticSync`| Handle the `-PasteboardAutomaticSync` flag when simulator process launches. It could improve launching simulator performance not to sync pasteboard with the system when this value is `off`. `on` forces the flag enabled. `system` does not provide the flag to the launching command. `on`, `off`, or `system` is available. They are case insensitive. Defaults to `off` | e.g. `system` |
 |`appium:simulatorDevicesSetPath`| This capability allows to set an alternative path to the simulator devices set in case you have multiple sets deployed on your local system. Such feature could be useful if you, for example, would like to save disk space on the main system volume. | e.g. `/MyVolume/Devices` |
-|`appium:customSSLCert`| Adds a root SSL certificate to IOS Simulator. The certificate content must be provided in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format | e.g. ```-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...-----END CERTIFICATE-----```|
+|`appium:customSSLCert`| Adds a root SSL certificate to IOS Simulators and real devices. Real devices only work if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine. The certificate content must be provided in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format | e.g. ```-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...-----END CERTIFICATE-----```|
 |`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000` | e.g., `10000`|
 
 ### Web Context
@@ -584,7 +584,8 @@ The resulting file in .trace format can be either returned directly as base64-en
 ### mobile: installCertificate
 
 Installs a custom certificate onto the device. Since Xcode SDK 11.4 Apple has added a dedicated simctl subcommand to quickly handle certificates on Simulator over CLI.
-On real devices or simulators before Xcode 11.4 SDK Apple provides no official way to do it via the command line. In such case (and also as a fallback if CLI setup fails) this method tries to wrap the certificate into .mobileconfig format and then deploys the wrapped file to the internal HTTP server, so one can open it via mobile Safari. Then the algorithm goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
+On real devices the certificate could be installed via CLI if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine.
+On simulators before Xcode 11.4 SDK Apple provides no official way to do it via the command line. In such case (and also as a fallback if CLI setup fails) this method tries to wrap the certificate into .mobileconfig format and then deploys the wrapped file to the internal HTTP server, so one can open it via mobile Safari. Then the algorithm goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
 
 #### Arguments
 
