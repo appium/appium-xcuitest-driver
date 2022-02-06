@@ -627,6 +627,7 @@ The actual battery info map, which consists of the following entries:
 ### mobile: deviceInfo
 
 Returns the miscellaneous information about the device under test.
+It includes device information via lockdown in a real device since XCUITest driver 4.2.0.
 
 #### Returned Result
 
