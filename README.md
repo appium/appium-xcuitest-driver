@@ -493,7 +493,7 @@ environment | dict | no | Environment variables mapping for the app. If the app 
 
 ### mobile: terminateApp
 
-Terminates the given app on the device under test. If the app is not installed an exception is thrown. If the app is not running then nothing is done.
+Terminates the given app on the device under test via [XCTest's terminate](https://developer.apple.com/documentation/xctest/xcuiapplication/1500637-terminate) API. If the app is not installed an exception is thrown. If the app is not running then nothing is done.
 
 #### Arguments
 
@@ -504,6 +504,21 @@ bundleId | string | yes | The bundle identifier of the application to be termina
 #### Returned Result
 
 Either `true` if the app was successfully terminated, otherwise `false`
+
+### mobile: killApp
+
+Kill the given app on the real device under test by instruments service via [py-ios-device](https://github.com/YueChen-C/py-ios-device) if it is installed on the server machine.
+If the app is not running or failed to kill, then nothing is done.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be terminated | com.mycompany.myapp
+
+#### Returned Result
+
+Either `true` if the app was successfully killed, otherwise `false`
 
 ### mobile: queryAppState
 
