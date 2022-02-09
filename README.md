@@ -507,7 +507,7 @@ Either `true` if the app was successfully terminated, otherwise `false`
 
 ### mobile: killApp
 
-Kill the given app on the real device under test by instruments service via [py-ios-device](https://github.com/YueChen-C/py-ios-device) if it is installed on the server machine.
+Kill the given app on the real device under test by instruments service via [py-ios-device](https://github.com/YueChen-C/py-ios-device) if it is installed on the server machine since XCUITest driver 4.3.0.
 If the app is not running or failed to kill, then nothing is done.
 Note that this method takes a few more time than `mobile:terminateApp` for now since it calls the instruments service via external command, `py-ios-device`.
 
