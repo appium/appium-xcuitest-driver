@@ -53,6 +53,9 @@ See [real device configuration documentation](docs/real-device-config.md).
 - After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
 - iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. This is a known limitation of XCTest framework. This limitation does not affect screenshooting APIs though (e.g. the overlay is not visible on taken screenshots).
 - iPhone/iPad real devices [require passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. Disabling passcode/touch id in the device preference allows to workaround the behaviour above.
+- OpenSSL v3 breaks secured communication with real devices. It leads [Failed to receive any data within the timeout](https://github.com/appium/appium/issues/16399) error in [appium-ios-device](https://github.com/appium/appium-ios-device). Please read [this issue](https://github.com/appium/appium-ios-device/pull/88#discussion_r825315862) for more details.
+    - Please make sure your envvironment has Open SSL v1 for NodeJS environment, or prepare OpenSSL by pathing `OPENSSL_TLS_SECURITY_LEVEL` is `1`.
+    - Such lower TLS version may still need for lower iOS versions such as iOS 13
 
 #### Weird state
 
