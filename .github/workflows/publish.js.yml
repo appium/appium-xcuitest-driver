@@ -6,8 +6,6 @@ name: Release
 on:
   push:
     branches: [ master ]
-    paths-ignore:
-      - package.json
 
 jobs:
   build:
