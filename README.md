@@ -54,7 +54,7 @@ See [real device configuration documentation](docs/real-device-config.md).
 - iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. This is a known limitation of XCTest framework. This limitation does not affect screenshooting APIs though (e.g. the overlay is not visible on taken screenshots).
 - iPhone/iPad real devices [require passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. Disabling passcode/touch id in the device preference allows to workaround the behaviour above.
 - OpenSSL v3 breaks secured communication with real devices. It can cause a [Failed to receive any data within the timeout](https://github.com/appium/appium/issues/16399) error in [appium-ios-device](https://github.com/appium/appium-ios-device). Please read [this issue](https://github.com/appium/appium-ios-device/pull/88#discussion_r825315862) for more details.
-    - Please make sure your environment has Open SSL v1 for NodeJS environment, or prepare an OpenSSL v3 build by patching `OPENSSL_TLS_SECURITY_LEVEL=1`.
+    - Please make sure your environment has Open SSL v1 for NodeJS environment, or prepare an OpenSSL v3 build by patching `OPENSSL_TLS_SECURITY_LEVEL=1`. (e.g. [an article](https://www.feistyduck.com/library/openssl-cookbook/online/ch-openssl.html))
     - This configuration is only necessary for XCUITest driver v4.3.0 or lower.
 
 #### Weird state
