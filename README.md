@@ -1194,7 +1194,7 @@ on the screen
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to perform drag on. All the coordinates will be calculated relatively this this element position on the screen. Absolute screen coordinates are expected if this argument is not set | fe50b60b-916d-420b-8728-ee2072ec53eb
-duration | number | yes | Float number of seconds in range [0.5, 60]. How long the tap gesture at starting drag point should be before to start dragging | 5.3
+duration | number | yes | Float number of seconds in range [0.1, 60]. How long the tap gesture at starting drag point should be before to start dragging | 5.3
 fromX | number | yes | The x coordinate of starting drag point | 100
 fromY | number | yes | The y coordinate of starting drag point | 100
 toX | number | yes | The x coordinate of ending drag point | 200
