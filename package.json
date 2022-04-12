@@ -132,7 +132,7 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
-    "glob": "^7.1.0",
+    "glob": "^8.0.1",
     "gulp": "^4.0.0",
     "ios-test-app": "^3.0.0",
     "ios-uicatalog": "^3.5.0",
