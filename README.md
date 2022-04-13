@@ -510,7 +510,7 @@ Either `true` if the app was successfully terminated, otherwise `false`
 Kill the given app on the real device under test by instruments service.
 If the app is not running or failed to kill, then nothing is done.
 
-XCUITest driver 4.4 and higher does not require external library.
+XCUITest driver 4.4 and higher does not require [py-ios-device](https://github.com/YueChen-C/py-ios-device).
 XCUITest driver 4.3 requires [py-ios-device](https://github.com/YueChen-C/py-ios-device).
 
 #### Arguments
