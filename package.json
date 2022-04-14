@@ -77,7 +77,7 @@
     "@babel/runtime": "^7.0.0",
     "@xmldom/xmldom": "^0.x",
     "appium-idb": "^1.0.0",
-    "appium-ios-device": "^2.3.1",
+    "appium-ios-device": "^2.4.0",
     "appium-ios-simulator": "^4.0.0",
     "appium-remote-debugger": "^9.0.0",
     "appium-webdriveragent": "^4.4.0",
