@@ -507,9 +507,11 @@ Either `true` if the app was successfully terminated, otherwise `false`
 
 ### mobile: killApp
 
-Kill the given app on the real device under test by instruments service via [py-ios-device](https://github.com/YueChen-C/py-ios-device) if it is installed on the server machine since XCUITest driver 4.3.0.
+Kill the given app on the real device under test by instruments service.
 If the app is not running or failed to kill, then nothing is done.
-Note that this method takes a few more time than `mobile:terminateApp` for now since it calls the instruments service via external command, `py-ios-device`.
+
+XCUITest driver 4.4 and higher does not require [py-ios-device](https://github.com/YueChen-C/py-ios-device).
+XCUITest driver 4.3 requires [py-ios-device](https://github.com/YueChen-C/py-ios-device).
 
 #### Arguments
 
@@ -1355,5 +1357,5 @@ the tests locally. These include:
   the root directory of the repo with the extension "xcconfig")
 * `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
   the npm installed one is not built for real device
-  
-  
+
+
