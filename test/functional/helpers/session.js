@@ -98,7 +98,6 @@ async function initWDA (caps) {
     // easiest way to initialize WDA is to go through a test startup
     // otherwise every change to the system would require a change here
     const desiredCaps = Object.assign({
-      autoLaunch: false,
       wdaLocalPort: WDA_PORT,
     }, caps);
     await driver.init(desiredCaps);
