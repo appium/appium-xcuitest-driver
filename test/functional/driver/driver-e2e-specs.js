@@ -4,17 +4,16 @@ import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
 import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
 import Simctl from 'node-simctl';
-import _ from 'lodash';
 import B from 'bluebird';
-import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
-import { UICATALOG_CAPS, UICATALOG_SIM_CAPS } from '../desired';
+import { MOCHA_TIMEOUT, initSession, deleteSession, HOST } from '../helpers/session';
+import { UICATALOG_SIM_CAPS, amendCapabilities } from '../desired';
 import { translateDeviceName } from '../../../lib/utils';
 import axios from 'axios';
 
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
-const should = chai.should();
+chai.should();
 chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
@@ -40,19 +39,19 @@ describe('XCUITestDriver', function () {
   let driver;
   before(async function () {
     const udid = await createDevice();
-    baseCaps = Object.assign({}, UICATALOG_SIM_CAPS, {udid});
-    caps = Object.assign({
-      usePrebuiltWDA: true,
-      wdaStartupRetries: 0,
-    }, baseCaps);
+    baseCaps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
+    caps = amendCapabilities(baseCaps, {
+      'appium:usePrebuiltWDA': true,
+      'appium:wdaStartupRetries': 0,
+    });
   });
   after(async function () {
-    const sim = await getSimulator(caps.udid, {
+    const sim = await getSimulator(caps['appium:udid'], {
       platform: 'iOS',
       checkExistence: false,
     });
     await shutdownSimulator(sim);
-    await deleteDeviceWithRetry(caps.udid);
+    await deleteDeviceWithRetry(caps['appium:udid']);
   });
 
   afterEach(async function () {
@@ -61,266 +60,244 @@ describe('XCUITestDriver', function () {
     await deleteSession();
   });
 
-  if (!process.env.REAL_DEVICE) {
-    it('should start and stop a session', async function () {
-      driver = await initSession(baseCaps);
-      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
-      els.length.should.be.at.least(1);
+  it('should start and stop a session', async function () {
+    driver = await initSession(baseCaps);
+    const els = await driver.$$('XCUIElementTypeWindow');
+    els.length.should.be.at.least(1);
+  });
+
+  it('should start and stop a session doing pre-build', async function () {
+    driver = await initSession(amendCapabilities(baseCaps, {'appium:prebuildWDA': true}));
+    const els = await driver.$$('XCUIElementTypeWindow');
+    els.length.should.be.at.least(1);
+  });
+
+  it('should start and stop a session doing simple build-test', async function () {
+    driver = await initSession(amendCapabilities(baseCaps, {'appium:useSimpleBuildTest': true}));
+    const els = await driver.$$('XCUIElementTypeWindow');
+    els.length.should.be.at.least(1);
+  });
+
+  it('should start and stop a session with only bundle id', async function () {
+    const localCaps = amendCapabilities(caps, {
+      'appium:bundleId': 'com.example.apple-samplecode.UICatalog',
+      'appium:noReset': true,
+      'appium:app': undefined,
     });
+    await initSession(localCaps).should.not.eventually.be.rejected;
+  });
 
-    it('should start and stop a session doing pre-build', async function () {
-      driver = await initSession(Object.assign({prebuildWDA: true}, baseCaps));
-      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
-      els.length.should.be.at.least(1);
+  it('should start and stop a session with only bundle id when no sim is running', async function () {
+    await killAllSimulators();
+    const localCaps = amendCapabilities(caps, {
+      'appium:bundleId': 'com.example.apple-samplecode.UICatalog',
+      'appium:noReset': true,
+      'appium:app': undefined,
     });
+    await initSession(localCaps).should.not.eventually.be.rejected;
+  });
 
-    it('should start and stop a session doing simple build-test', async function () {
-      driver = await initSession(Object.assign({useSimpleBuildTest: true}, baseCaps));
-      let els = await driver.elementsByClassName('XCUIElementTypeWindow');
-      els.length.should.be.at.least(1);
+  it('should fail to start and stop a session if unknown bundle id used', async function () {
+    const localCaps = amendCapabilities(caps, {
+      'appium:bundleId': 'io.blahblahblah.blah',
+      'appium:app': undefined,
     });
+    await initSession(localCaps).should.eventually.be.rejected;
+  });
 
-    it('should start and stop a session with only bundle id', async function () {
-      let localCaps = Object.assign({}, caps, {
-        bundleId: 'com.example.apple-samplecode.UICatalog',
-        noReset: true,
-      });
-      localCaps.app = null;
-      await initSession(localCaps).should.not.eventually.be.rejected;
+  it('should fail to start and stop a session if unknown bundle id used when no sim is running', async function () {
+    await killAllSimulators();
+    const localCaps = amendCapabilities(caps, {
+      'appium:bundleId': 'io.blahblahblah.blah',
+      'appium:app': undefined,
     });
+    await initSession(localCaps).should.eventually.be.rejected;
+  });
 
-    it('should start and stop a session with only bundle id when no sim is running', async function () {
-      await killAllSimulators();
-      let localCaps = Object.assign({}, caps, {
-        bundleId: 'com.example.apple-samplecode.UICatalog',
-        noReset: true,
+  describe('WebdriverAgent port', function () {
+    this.retries(3);
+
+    it('should run on default port if no other specified', async function () {
+      const localCaps = amendCapabilities(baseCaps, {
+        'appium:fullReset': true,
+        'appium:useNewWDA': true,
+        'appium:wdaLocalPort': undefined,
       });
-      localCaps.app = null;
-      await initSession(localCaps).should.not.eventually.be.rejected;
+      driver = await initSession(localCaps);
+      await axios({url: `http://${HOST}:8100/status`}).should.not.be.rejected;
     });
-
-    it('should fail to start and stop a session if unknown bundle id used', async function () {
-      let localCaps = Object.assign({}, caps, {bundleId: 'io.blahblahblah.blah'});
-      localCaps.app = null;
-      await initSession(localCaps).should.eventually.be.rejected;
+    it('should run on port specified', async function () {
+      const localCaps = amendCapabilities(baseCaps, {
+        'appium:fullReset': true,
+        'appium:useNewWDA': true,
+        'appium:wdaLocalPort': 6000,
+      });
+      driver = await initSession(localCaps);
+      await axios({url: `http://${HOST}:8100/status`})
+        .should.eventually.be.rejectedWith(/ECONNREFUSED/);
+      await axios({url: `http://${HOST}:8100/status`})
+        .should.eventually.not.be.rejected;
     });
+  });
 
-    it('should fail to start and stop a session if unknown bundle id used when no sim is running', async function () {
-      await killAllSimulators();
-      let localCaps = Object.assign({}, caps, {bundleId: 'io.blahblahblah.blah'});
-      localCaps.app = null;
-      await initSession(localCaps).should.eventually.be.rejected;
-    });
-
-    describe('WebdriverAgent port', function () {
-      this.retries(3);
-
-      it('should run on default port if no other specified', async function () {
-        let localCaps = Object.assign({}, baseCaps, {
-          fullReset: true,
-          useNewWDA: true,
-        });
-        localCaps.wdaLocalPort = null;
-        driver = await initSession(localCaps);
-        await axios({url: 'http://localhost:8100/status'}).should.not.be.rejected;
+  describe('initial orientation', function () {
+    async function runOrientationTest (initialOrientation) {
+      const localCaps = amendCapabilities(caps, {
+        'appium:orientation': initialOrientation
       });
-      it('should run on port specified', async function () {
-        const localCaps = Object.assign({}, baseCaps, {
-          fullReset: true,
-          wdaLocalPort: 6000,
-          useNewWDA: true,
-        });
-        driver = await initSession(localCaps);
-        await axios({url: 'http://localhost:8100/status'})
-          .should.eventually.be.rejectedWith(/ECONNREFUSED/);
-        await axios({url: 'http://localhost:6000/status'})
-          .should.eventually.not.be.rejected;
-      });
-    });
+      driver = await initSession(localCaps);
 
-    describe('initial orientation', function () {
-      async function runOrientationTest (initialOrientation) {
-        let localCaps = _.defaults({
-          orientation: initialOrientation
-        }, caps);
-        driver = await initSession(localCaps);
+      await driver.getOrientation().should.eventually.eql(initialOrientation);
+    }
 
-        let orientation = await driver.getOrientation();
-        orientation.should.eql(initialOrientation);
-      }
-
-      for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
-        it(`should be able to start in a ${orientation} mode`, async function () {
-          this.timeout(MOCHA_TIMEOUT);
-          await runOrientationTest(orientation);
-        });
-      }
-    });
-
-    describe('reset', function () {
-      beforeEach(async function () {
-        await retryInterval(5, 1000, async () => {
-          await killAllSimulators();
-        });
-      });
-
-      it('default: creates sim and deletes it afterwards', async function () {
-        const caps = Object.assign({}, UICATALOG_SIM_CAPS, {enforceFreshSimulatorCreation: true});
-
-        const simsBefore = await getNumSims();
-        await initSession(caps);
-
-        const simsDuring = await getNumSims();
-
-        await deleteSession();
-        const simsAfter = await getNumSims();
-
-        simsDuring.should.equal(simsBefore + 1);
-        simsAfter.should.equal(simsBefore);
-      });
-
-      it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
-        // before
-        const udid = await createDevice();
-        let sim = await getSimulator(udid, {
-          platform: 'iOS',
-          checkExistence: false,
-        });
-        await sim.run();
-
-        // test
-        let caps = _.defaults({
-          udid,
-          fullReset: true,
-          resetOnSessionStartOnly: false
-        }, UICATALOG_SIM_CAPS);
-
-        (await sim.isRunning()).should.be.true;
-        let simsBefore = await getNumSims();
-        await initSession(caps);
-        let simsDuring = await getNumSims();
-        await deleteSession();
-        let simsAfter = await getNumSims();
-        (await sim.isRunning()).should.be.false;
-
-        // make sure no new simulators were created during the test
-        simsDuring.should.equal(simsBefore);
-        simsAfter.should.equal(simsBefore);
-
-        // cleanup
-        await deleteDeviceWithRetry(udid);
-      });
-
-      it('with udid booted: uses sim and leaves it afterwards', async function () {
-        // before
-        const udid = await createDevice();
-        let sim = await getSimulator(udid, {
-          platform: 'iOS',
-          checkExistence: false,
-        });
-        await sim.run();
-
-        await B.delay(2000);
-
-        // test
-        let caps = _.defaults({
-          udid,
-          noReset: true
-        }, UICATALOG_SIM_CAPS);
-
-        (await sim.isRunning()).should.be.true;
-        let simsBefore = await getNumSims();
-        await initSession(caps);
-        let simsDuring = await getNumSims();
-        await deleteSession();
-        let simsAfter = await getNumSims();
-        (await sim.isRunning()).should.be.true;
-
-        simsDuring.should.equal(simsBefore);
-        simsAfter.should.equal(simsBefore);
-
-        // cleanup
-        await shutdownSimulator(sim);
-        await deleteDeviceWithRetry(udid);
-      });
-
-      it('with invalid udid: throws an error', async function () {
-        // test
-        let caps = _.defaults({
-          udid: 'some-random-udid'
-        }, UICATALOG_SIM_CAPS);
-
-        await initSession(caps)
-          .should.eventually.be.rejectedWith('Unknown device or simulator UDID');
-      });
-
-      it('with non-existent udid: throws an error', async function () {
-        // test
-        let udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
-        let caps = _.defaults({udid}, UICATALOG_SIM_CAPS);
-
-        await initSession(caps)
-          .should.eventually.be.rejectedWith('Unknown device or simulator UDID');
-      });
-
-      it('with noReset set to true: leaves sim booted', async function () {
+    for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
+      it(`should be able to start in a ${orientation} mode`, async function () {
         this.timeout(MOCHA_TIMEOUT);
+        await runOrientationTest(orientation);
+      });
+    }
+  });
 
-        // before
-        const udid = await createDevice();
-        let sim = await getSimulator(udid, {
-          platform: 'iOS',
-          checkExistence: false,
-        });
-
-        // some systems require a pause before initializing.
-        await B.delay(2000);
-
-        // test
-        let caps = _.defaults({
-          udid,
-          noReset: true
-        }, UICATALOG_SIM_CAPS);
-
-        let simsBefore = await getNumSims();
-        await initSession(caps);
-        let simsDuring = await getNumSims();
-        await deleteSession();
-        let simsAfter = await getNumSims();
-        (await sim.isRunning()).should.be.true;
-
-        simsDuring.should.equal(simsBefore);
-        simsAfter.should.equal(simsBefore);
-
-        // cleanup
-        await shutdownSimulator(sim);
-        await deleteDeviceWithRetry(udid);
+  describe('reset', function () {
+    beforeEach(async function () {
+      await retryInterval(5, 1000, async () => {
+        await killAllSimulators();
       });
     });
 
-    describe('event timings', function () {
-      it('should include event timings if cap is used', async function () {
-        let newCaps = Object.assign({}, caps, {eventTimings: true});
-        driver = await initSession(newCaps);
-        let res = await driver.sessionCapabilities();
-        should.exist(res.events);
-        should.exist(res.events.newSessionStarted);
-        res.events.newSessionStarted[0].should.be.above(res.events.newSessionRequested[0]);
+    it('default: creates sim and deletes it afterwards', async function () {
+      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        'appium:enforceFreshSimulatorCreation': true
       });
+
+      const simsBefore = await getNumSims();
+      await initSession(caps);
+
+      const simsDuring = await getNumSims();
+
+      await deleteSession();
+      const simsAfter = await getNumSims();
+
+      simsDuring.should.equal(simsBefore + 1);
+      simsAfter.should.equal(simsBefore);
     });
-  } else {
-    // real device tests
-    describe('handle multiple back-to-back sessions', function () {
-      it('should not fail when the new session is initiated', async function () {
-        await initSession(UICATALOG_CAPS);
-        await deleteSession();
 
-        await initSession(UICATALOG_CAPS);
-        await deleteSession();
-
-        await initSession(UICATALOG_CAPS);
-        await deleteSession();
+    it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
+      // before
+      const udid = await createDevice();
+      let sim = await getSimulator(udid, {
+        platform: 'iOS',
+        checkExistence: false,
       });
+      await sim.run();
+
+      // test
+      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        'appium:udid': udid,
+        'appium:fullReset': true,
+        'appium:resetOnSessionStartOnly': false,
+      });
+
+      (await sim.isRunning()).should.be.true;
+      const simsBefore = await getNumSims();
+      await initSession(caps);
+      const simsDuring = await getNumSims();
+      await deleteSession();
+      const simsAfter = await getNumSims();
+      (await sim.isRunning()).should.be.false;
+
+      // make sure no new simulators were created during the test
+      simsDuring.should.equal(simsBefore);
+      simsAfter.should.equal(simsBefore);
+
+      // cleanup
+      await deleteDeviceWithRetry(udid);
     });
-  }
+
+    it('with udid booted: uses sim and leaves it afterwards', async function () {
+      // before
+      const udid = await createDevice();
+      let sim = await getSimulator(udid, {
+        platform: 'iOS',
+        checkExistence: false,
+      });
+      await sim.run();
+
+      await B.delay(2000);
+
+      // test
+      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        'appium:udid': udid,
+        'appium:noReset': true,
+      });
+
+      (await sim.isRunning()).should.be.true;
+      const simsBefore = await getNumSims();
+      await initSession(caps);
+      const simsDuring = await getNumSims();
+      await deleteSession();
+      const simsAfter = await getNumSims();
+      (await sim.isRunning()).should.be.true;
+
+      simsDuring.should.equal(simsBefore);
+      simsAfter.should.equal(simsBefore);
+
+      // cleanup
+      await shutdownSimulator(sim);
+      await deleteDeviceWithRetry(udid);
+    });
+
+    it('with invalid udid: throws an error', async function () {
+      // test
+      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        'appium:udid': 'some-random-udid'
+      });
+
+      await initSession(caps)
+        .should.eventually.be.rejectedWith('Unknown device or simulator UDID');
+    });
+
+    it('with non-existent udid: throws an error', async function () {
+      // test
+      const udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
+      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
+
+      await initSession(caps)
+        .should.eventually.be.rejectedWith('Unknown device or simulator UDID');
+    });
+
+    it('with noReset set to true: leaves sim booted', async function () {
+      this.timeout(MOCHA_TIMEOUT);
+
+      // before
+      const udid = await createDevice();
+      const sim = await getSimulator(udid, {
+        platform: 'iOS',
+        checkExistence: false,
+      });
+
+      // some systems require a pause before initializing.
+      await B.delay(2000);
+
+      // test
+      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        'appium:udid': udid,
+        'appium:noReset': true
+      });
+
+      const simsBefore = await getNumSims();
+      await initSession(caps);
+      const simsDuring = await getNumSims();
+      await deleteSession();
+      const simsAfter = await getNumSims();
+      (await sim.isRunning()).should.be.true;
+
+      simsDuring.should.equal(simsBefore);
+      simsAfter.should.equal(simsBefore);
+
+      // cleanup
+      await shutdownSimulator(sim);
+      await deleteDeviceWithRetry(udid);
+    });
+  });
 });
