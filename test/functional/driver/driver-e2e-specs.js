@@ -42,8 +42,8 @@ describe('XCUITestDriver', function () {
 
   let baseCaps;
   let caps;
-
   let driver;
+
   before(async function () {
     const udid = await createDevice();
     baseCaps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
@@ -51,6 +51,17 @@ describe('XCUITestDriver', function () {
       'appium:usePrebuiltWDA': true,
       'appium:wdaStartupRetries': 0,
     });
+
+    // Preboot the simulator to avoid session creation timeouts
+    const prevUdid = simctl.udid;
+    simctl.udid = udid;
+    try {
+      await simctl.startBootMonitor({
+        shouldPreboot: true,
+      });
+    } finally {
+      simctl.udid = prevUdid;
+    }
   });
   after(async function () {
     const sim = await getSimulator(extractCapabilityValue(caps, 'appium:udid'), {
