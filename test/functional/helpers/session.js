@@ -19,6 +19,7 @@ async function initSession (caps) {
     hostname: HOST,
     port: PORT,
     capabilities: caps,
+    connectionRetryTimeout: MOCHA_TIMEOUT,
   });
   driver.name = undefined;
   driver.errored = false;
