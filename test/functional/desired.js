@@ -108,20 +108,23 @@ if (!REAL_DEVICE && !process.env.CLOUD) {
 }
 
 const GENERIC_CAPS = deepFreeze({
-  platformName: 'iOS',
-  'appium:platformVersion': PLATFORM_VERSION,
-  'appium:deviceName': DEVICE_NAME,
-  'appium:automationName': 'XCUITest',
-  'appium:launchWithIDB': LAUNCH_WITH_IDB,
-  'appium:noReset': true,
-  'appium:maxTypingFrequency': 30,
-  'appium:clearSystemFiles': true,
-  'appium:showXcodeLog': SHOW_XCODE_LOG,
-  'appium:wdaLaunchTimeout': (60 * 1000 * 4),
-  'appium:wdaConnectionTimeout': (60 * 1000 * 8),
-  'appium:useNewWDA': true,
-  'appium:webviewConnectTimeout': 30000,
-  'appium:simulatorStartupTimeout': (1000 * 60 * 4),
+  alwaysMatch: {
+    platformName: 'iOS',
+    'appium:platformVersion': PLATFORM_VERSION,
+    'appium:deviceName': DEVICE_NAME,
+    'appium:automationName': 'XCUITest',
+    'appium:launchWithIDB': LAUNCH_WITH_IDB,
+    'appium:noReset': true,
+    'appium:maxTypingFrequency': 30,
+    'appium:clearSystemFiles': true,
+    'appium:showXcodeLog': SHOW_XCODE_LOG,
+    'appium:wdaLaunchTimeout': (60 * 1000 * 4),
+    'appium:wdaConnectionTimeout': (60 * 1000 * 8),
+    'appium:useNewWDA': true,
+    'appium:webviewConnectTimeout': 30000,
+    'appium:simulatorStartupTimeout': (1000 * 60 * 4),
+  },
+  firstMatch: [{}],
 });
 
 const UICATALOG_CAPS = amendCapabilities(GENERIC_CAPS, {
