@@ -6,7 +6,7 @@ import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../
 import Simctl from 'node-simctl';
 import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession, HOST } from '../helpers/session';
-import { UICATALOG_SIM_CAPS, amendCapabilities } from '../desired';
+import { UICATALOG_SIM_CAPS, amendCapabilities, extractCapabilityValue } from '../desired';
 import { translateDeviceName } from '../../../lib/utils';
 import axios from 'axios';
 
@@ -17,17 +17,20 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
+const PLATFORM_VERSION = extractCapabilityValue(UICATALOG_SIM_CAPS, 'platformVersion');
 
 async function createDevice () {
   return await simctl.createDevice(
     SIM_DEVICE_NAME,
-    translateDeviceName(UICATALOG_SIM_CAPS.platformVersion, UICATALOG_SIM_CAPS.deviceName),
-    UICATALOG_SIM_CAPS.platformVersion
+    translateDeviceName(
+      PLATFORM_VERSION, extractCapabilityValue(UICATALOG_SIM_CAPS, 'appium:deviceName')
+    ),
+    PLATFORM_VERSION
   );
 }
 
 async function getNumSims () {
-  return (await simctl.getDevices())[UICATALOG_SIM_CAPS.platformVersion].length;
+  return (await simctl.getDevices())[PLATFORM_VERSION].length;
 }
 
 describe('XCUITestDriver', function () {
@@ -46,12 +49,12 @@ describe('XCUITestDriver', function () {
     });
   });
   after(async function () {
-    const sim = await getSimulator(caps['appium:udid'], {
+    const sim = await getSimulator(extractCapabilityValue(caps, 'appium:udid'), {
       platform: 'iOS',
       checkExistence: false,
     });
     await shutdownSimulator(sim);
-    await deleteDeviceWithRetry(caps['appium:udid']);
+    await deleteDeviceWithRetry(extractCapabilityValue(caps, 'appium:udid'));
   });
 
   afterEach(async function () {

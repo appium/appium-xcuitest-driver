@@ -32,6 +32,10 @@ function amendCapabilities (baseCaps, ...newCaps) {
   });
 }
 
+function extractCapabilityValue (caps, capName) {
+  return caps.alwaysMatch[capName];
+}
+
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
@@ -160,5 +164,5 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
   PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
-  TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities,
+  TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
 };
