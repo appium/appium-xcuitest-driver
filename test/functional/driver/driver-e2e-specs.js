@@ -2,11 +2,18 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
 import { getSimulator } from 'appium-ios-simulator';
-import { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry } from '../helpers/simulator';
+import {
+  killAllSimulators, shutdownSimulator, deleteDeviceWithRetry
+} from '../helpers/simulator';
 import Simctl from 'node-simctl';
 import B from 'bluebird';
-import { MOCHA_TIMEOUT, initSession, deleteSession, HOST } from '../helpers/session';
-import { UICATALOG_SIM_CAPS, amendCapabilities, extractCapabilityValue } from '../desired';
+import {
+  MOCHA_TIMEOUT, initSession, deleteSession, HOST
+} from '../helpers/session';
+import {
+  UICATALOG_SIM_CAPS, amendCapabilities, extractCapabilityValue,
+  PLATFORM_VERSION, DEVICE_NAME,
+} from '../desired';
 import { translateDeviceName } from '../../../lib/utils';
 import axios from 'axios';
 
@@ -17,14 +24,11 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
-const PLATFORM_VERSION = extractCapabilityValue(UICATALOG_SIM_CAPS, 'platformVersion');
 
 async function createDevice () {
   return await simctl.createDevice(
     SIM_DEVICE_NAME,
-    translateDeviceName(
-      PLATFORM_VERSION, extractCapabilityValue(UICATALOG_SIM_CAPS, 'appium:deviceName')
-    ),
+    translateDeviceName(PLATFORM_VERSION, DEVICE_NAME),
     PLATFORM_VERSION
   );
 }

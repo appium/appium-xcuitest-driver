@@ -33,7 +33,7 @@ function amendCapabilities (baseCaps, ...newCaps) {
 }
 
 function extractCapabilityValue (caps, capName) {
-  return caps.alwaysMatch[capName];
+  return caps?.alwaysMatch?.[capName];
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
