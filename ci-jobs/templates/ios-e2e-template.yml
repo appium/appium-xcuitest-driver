@@ -19,7 +19,6 @@ jobs:
       DEVICE_NAME: ${{ parameters.deviceName }}
       MOCHA_FILE: '${{ parameters.name }}-tests.xml'
       LAUNCH_WITH_IDB: ${{ parameters.launchWithIDB }}
-      CI: true
     pool:
       vmImage: ${{ parameters.vmImage }}
     steps:

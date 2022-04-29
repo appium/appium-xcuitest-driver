@@ -167,6 +167,8 @@ describe('XCUITestDriver', function () {
 
   describe('reset', function () {
     beforeEach(async function () {
+      await deleteSession();
+
       await retryInterval(5, 1000, async () => {
         await killAllSimulators();
       });
@@ -179,9 +181,7 @@ describe('XCUITestDriver', function () {
 
       const simsBefore = await getNumSims();
       await initSession(caps);
-
       const simsDuring = await getNumSims();
-
       await deleteSession();
       const simsAfter = await getNumSims();
 
@@ -198,60 +198,65 @@ describe('XCUITestDriver', function () {
       });
       await sim.run();
 
-      // test
-      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
-        'appium:udid': udid,
-        'appium:fullReset': true,
-        'appium:resetOnSessionStartOnly': false,
-      });
+      try {
+        // test
+        const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+          'appium:udid': udid,
+          'appium:fullReset': true,
+          'appium:resetOnSessionStartOnly': false,
+        });
 
-      (await sim.isRunning()).should.be.true;
-      const simsBefore = await getNumSims();
-      await initSession(caps);
-      const simsDuring = await getNumSims();
-      await deleteSession();
-      const simsAfter = await getNumSims();
-      (await sim.isRunning()).should.be.false;
+        (await sim.isRunning()).should.be.true;
+        const simsBefore = await getNumSims();
+        await initSession(caps);
+        const simsDuring = await getNumSims();
+        await deleteSession();
+        const simsAfter = await getNumSims();
+        (await sim.isRunning()).should.be.false;
 
-      // make sure no new simulators were created during the test
-      simsDuring.should.equal(simsBefore);
-      simsAfter.should.equal(simsBefore);
-
-      // cleanup
-      await deleteDeviceWithRetry(udid);
+        // make sure no new simulators were created during the test
+        simsDuring.should.equal(simsBefore);
+        simsAfter.should.equal(simsBefore);
+      } finally {
+        // cleanup
+        await deleteDeviceWithRetry(udid);
+      }
     });
 
     it('with udid booted: uses sim and leaves it afterwards', async function () {
       // before
       const udid = await createDevice();
-      let sim = await getSimulator(udid, {
+      const sim = await getSimulator(udid, {
         platform: 'iOS',
         checkExistence: false,
       });
       await sim.run();
 
-      await B.delay(2000);
+      try {
+        await B.delay(2000);
 
-      // test
-      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
-        'appium:udid': udid,
-        'appium:noReset': true,
-      });
+        // test
+        const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+          'appium:udid': udid,
+          'appium:noReset': true,
+        });
 
-      (await sim.isRunning()).should.be.true;
-      const simsBefore = await getNumSims();
-      await initSession(caps);
-      const simsDuring = await getNumSims();
-      await deleteSession();
-      const simsAfter = await getNumSims();
-      (await sim.isRunning()).should.be.true;
+        (await sim.isRunning()).should.be.true;
+        const simsBefore = await getNumSims();
+        await initSession(caps);
+        const simsDuring = await getNumSims();
+        await deleteSession();
+        const simsAfter = await getNumSims();
+        (await sim.isRunning()).should.be.true;
 
-      simsDuring.should.equal(simsBefore);
-      simsAfter.should.equal(simsBefore);
+        simsDuring.should.equal(simsBefore);
+        simsAfter.should.equal(simsBefore);
 
-      // cleanup
-      await shutdownSimulator(sim);
-      await deleteDeviceWithRetry(udid);
+      } finally {
+        // cleanup
+        await shutdownSimulator(sim);
+        await deleteDeviceWithRetry(udid);
+      }
     });
 
     it('with invalid udid: throws an error', async function () {
@@ -283,28 +288,30 @@ describe('XCUITestDriver', function () {
         checkExistence: false,
       });
 
-      // some systems require a pause before initializing.
-      await B.delay(2000);
+      try {
+        // some systems require a pause before initializing.
+        await B.delay(2000);
 
-      // test
-      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
-        'appium:udid': udid,
-        'appium:noReset': true
-      });
+        // test
+        const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+          'appium:udid': udid,
+          'appium:noReset': true
+        });
 
-      const simsBefore = await getNumSims();
-      await initSession(caps);
-      const simsDuring = await getNumSims();
-      await deleteSession();
-      const simsAfter = await getNumSims();
-      (await sim.isRunning()).should.be.true;
+        const simsBefore = await getNumSims();
+        await initSession(caps);
+        const simsDuring = await getNumSims();
+        await deleteSession();
+        const simsAfter = await getNumSims();
+        (await sim.isRunning()).should.be.true;
 
-      simsDuring.should.equal(simsBefore);
-      simsAfter.should.equal(simsBefore);
-
-      // cleanup
-      await shutdownSimulator(sim);
-      await deleteDeviceWithRetry(udid);
+        simsDuring.should.equal(simsBefore);
+        simsAfter.should.equal(simsBefore);
+      } finally {
+        // cleanup
+        await shutdownSimulator(sim);
+        await deleteDeviceWithRetry(udid);
+      }
     });
   });
 });

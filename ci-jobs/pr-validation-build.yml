@@ -2,6 +2,8 @@
 variables:
 - name: SHOW_XCODE_LOG
   value: true
+- name: CI
+  value: true
 
 stages:
 - stage: Unit_Tests_And_Linters

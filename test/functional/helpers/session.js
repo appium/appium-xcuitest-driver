@@ -35,7 +35,10 @@ async function deleteSession () {
 
   try {
     await server.close();
-  } catch (ign) {}
+  } catch (ign) {
+  } finally {
+    server = undefined;
+  }
 }
 
 export { initSession, deleteSession, getServer, HOST, PORT, MOCHA_TIMEOUT };
