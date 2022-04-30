@@ -4,7 +4,7 @@ import { startServer } from '../../..';
 const HOST = '127.0.0.1';
 const PORT = 4994;
 // on CI the timeout needs to be long, mostly so WDA can be built the first time
-const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 0 : 4);
+const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 4 : 2);
 
 let driver, server;
 
@@ -20,6 +20,7 @@ async function initSession (caps) {
     port: PORT,
     capabilities: caps,
     connectionRetryTimeout: MOCHA_TIMEOUT,
+    connectionRetryCount: 1,
   });
   driver.name = undefined;
   driver.errored = false;
