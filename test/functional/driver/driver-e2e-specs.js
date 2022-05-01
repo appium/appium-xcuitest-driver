@@ -5,7 +5,6 @@ import { getSimulator } from 'appium-ios-simulator';
 import {
   killAllSimulators, shutdownSimulator, deleteDeviceWithRetry
 } from '../helpers/simulator';
-import { exec } from 'teen_process';
 import Simctl from 'node-simctl';
 import B from 'bluebird';
 import {
@@ -53,14 +52,10 @@ describe('XCUITestDriver', function () {
       'appium:wdaStartupRetries': 0,
     });
     // Prebuild WDA
-    await exec('/usr/bin/xcodebuild', [
-      '-project', 'node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj',
-      '-scheme', 'WebDriverAgentLib',
-      '-sdk', `iphonesimulator${PLATFORM_VERSION}`,
-      'CODE_SIGN_IDENTITY=""',
-      'CODE_SIGNING_REQUIRED="NO"',
-      'GCC_TREAT_WARNINGS_AS_ERRORS=0',
-    ]);
+    try {
+      await initSession(baseCaps);
+      await deleteSession();
+    } catch (ign) {}
   });
   after(async function () {
     const sim = await getSimulator(extractCapabilityValue(caps, 'appium:udid'), {
