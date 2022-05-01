@@ -51,11 +51,6 @@ describe('XCUITestDriver', function () {
       'appium:usePrebuiltWDA': true,
       'appium:wdaStartupRetries': 0,
     });
-    // Prebuild WDA
-    try {
-      await initSession(baseCaps);
-      await deleteSession();
-    } catch (ign) {}
   });
   after(async function () {
     const sim = await getSimulator(extractCapabilityValue(caps, 'appium:udid'), {
@@ -73,6 +68,10 @@ describe('XCUITestDriver', function () {
   });
 
   it('should start and stop a session', async function () {
+    if (process.env.CI) {
+      // The first test takes a lot of time because of the initial WDA compilation
+      this.timeout(MOCHA_TIMEOUT * 2);
+    }
     driver = await initSession(baseCaps);
     const els = await driver.$$('XCUIElementTypeWindow');
     els.length.should.be.at.least(1);
