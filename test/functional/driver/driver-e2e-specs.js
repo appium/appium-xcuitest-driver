@@ -55,8 +55,8 @@ describe('XCUITestDriver', function () {
     // Prebuild WDA
     await exec('/usr/bin/xcodebuild', [
       '-project', 'node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj',
-      '-scheme', 'WebDriverAgentRunner',
-      '-sdk', 'iphonesimulator',
+      '-scheme', 'WebDriverAgentLib',
+      '-sdk', `iphonesimulator${PLATFORM_VERSION}`,
       'CODE_SIGN_IDENTITY=""',
       'CODE_SIGNING_REQUIRED="NO"',
       'GCC_TREAT_WARNINGS_AS_ERRORS=0',
