@@ -68,10 +68,7 @@ describe('XCUITestDriver', function () {
   });
 
   it('should start and stop a session', async function () {
-    // The first test takes a lot of time because of the initial WDA compilation
-    const testTimeout = MOCHA_TIMEOUT * (process.env.CI ? 2 : 1);
-    this.timeout(testTimeout);
-    driver = await initSession(baseCaps, {connectionRetryTimeout: testTimeout});
+    driver = await initSession(baseCaps, {connectionRetryTimeout: MOCHA_TIMEOUT});
     const els = await driver.$$('XCUIElementTypeWindow');
     els.length.should.be.at.least(1);
   });
@@ -162,7 +159,6 @@ describe('XCUITestDriver', function () {
 
     for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
       it(`should be able to start in a ${orientation} mode`, async function () {
-        this.timeout(MOCHA_TIMEOUT);
         await runOrientationTest(orientation);
       });
     }
@@ -193,8 +189,6 @@ describe('XCUITestDriver', function () {
     });
 
     it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
-      this.timeout(MOCHA_TIMEOUT * (process.env.CI ? 2 : 1));
-
       // before
       const udid = await createDevice();
       let sim = await getSimulator(udid, {
@@ -284,8 +278,6 @@ describe('XCUITestDriver', function () {
     });
 
     it('with noReset set to true: leaves sim booted', async function () {
-      this.timeout(MOCHA_TIMEOUT);
-
       // before
       const udid = await createDevice();
       const sim = await getSimulator(udid, {
