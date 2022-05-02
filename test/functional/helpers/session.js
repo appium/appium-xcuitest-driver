@@ -12,7 +12,7 @@ function getServer () {
   return server;
 }
 
-async function initSession (caps) {
+async function initSession (caps, remoteOpts = {}) {
   server = await startServer(PORT, HOST);
 
   driver = await remote({
@@ -21,6 +21,7 @@ async function initSession (caps) {
     capabilities: caps,
     connectionRetryTimeout: MOCHA_TIMEOUT,
     connectionRetryCount: 1,
+    ...remoteOpts,
   });
   driver.name = undefined;
   driver.errored = false;

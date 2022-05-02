@@ -107,6 +107,7 @@ if (!REAL_DEVICE && !process.env.CLOUD) {
   }
 }
 
+const initTimeout = 60 * 1000 * (process.env.CI ? 8 : 4);
 const GENERIC_CAPS = deepFreeze({
   alwaysMatch: {
     platformName: 'iOS',
@@ -118,11 +119,11 @@ const GENERIC_CAPS = deepFreeze({
     'appium:maxTypingFrequency': 30,
     'appium:clearSystemFiles': true,
     'appium:showXcodeLog': SHOW_XCODE_LOG,
-    'appium:wdaLaunchTimeout': (60 * 1000 * 4),
-    'appium:wdaConnectionTimeout': (60 * 1000 * 8),
+    'appium:wdaLaunchTimeout': initTimeout,
+    'appium:wdaConnectionTimeout': initTimeout,
     'appium:useNewWDA': true,
     'appium:webviewConnectTimeout': 30000,
-    'appium:simulatorStartupTimeout': (1000 * 60 * 4),
+    'appium:simulatorStartupTimeout': initTimeout,
   },
   firstMatch: [{}],
 });

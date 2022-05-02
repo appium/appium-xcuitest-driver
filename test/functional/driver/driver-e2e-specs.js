@@ -68,11 +68,10 @@ describe('XCUITestDriver', function () {
   });
 
   it('should start and stop a session', async function () {
-    if (process.env.CI) {
-      // The first test takes a lot of time because of the initial WDA compilation
-      this.timeout(MOCHA_TIMEOUT * 2);
-    }
-    driver = await initSession(baseCaps);
+    // The first test takes a lot of time because of the initial WDA compilation
+    const testTimeout = MOCHA_TIMEOUT * (process.env.CI ? 2 : 1);
+    this.timeout(testTimeout);
+    driver = await initSession(baseCaps, {connectionRetryTimeout: testTimeout});
     const els = await driver.$$('XCUIElementTypeWindow');
     els.length.should.be.at.least(1);
   });
