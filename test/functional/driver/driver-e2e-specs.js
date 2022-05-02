@@ -193,6 +193,8 @@ describe('XCUITestDriver', function () {
     });
 
     it('with udid: uses sim and resets afterwards if resetOnSessionStartOnly is false', async function () {
+      this.timeout(MOCHA_TIMEOUT * (process.env.CI ? 2 : 1));
+
       // before
       const udid = await createDevice();
       let sim = await getSimulator(udid, {
