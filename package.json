@@ -73,7 +73,7 @@
   ],
   "dependencies": {
     "@appium/base-driver": "^8.5.2",
-    "@appium/support": "^2.55.3",
+    "@appium/support": "^2.58.0",
     "@babel/runtime": "^7.0.0",
     "@xmldom/xmldom": "^0.x",
     "appium-idb": "^1.0.0",
