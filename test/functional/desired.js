@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import glob from 'glob';
 import fs from 'fs';
-import { system, util } from '@appium/support';
+import { system, util, node } from '@appium/support';
 
 
 // translate integer environment variable to a boolean 0=false, !0=true
@@ -12,6 +12,17 @@ function checkFeatureInEnv (envArg) {
     feature = process.env[envArg];
   }
   return !!feature;
+}
+
+function amendCapabilities (baseCaps, ...newCaps) {
+  return node.deepFreeze({
+    alwaysMatch: _.cloneDeep(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
+    firstMatch: [{}],
+  });
+}
+
+function extractCapabilityValue (caps, capName) {
+  return caps?.alwaysMatch?.[capName];
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
@@ -50,9 +61,7 @@ if (system.isMac() && !process.env.CLOUD) {
 }
 
 const apps = {};
-
 const CLOUD = process.env.CLOUD;
-
 if (REAL_DEVICE) {
   if (CLOUD) {
     apps.testAppId = 1;
@@ -71,43 +80,6 @@ if (REAL_DEVICE) {
     apps.touchIdApp = path.resolve('.', 'test', 'assets', 'TouchIDExample.app');
   }
 }
-
-const REAL_DEVICE_CAPS = REAL_DEVICE ? {
-  udid: 'auto',
-  xcodeConfigFile: XCCONFIG_FILE,
-  webkitResponseTimeout: 30000,
-  testobject_app_id: apps.testAppId,
-  testobject_api_key: process.env.SAUCE_RDC_ACCESS_KEY,
-  testobject_remote_appium_url: process.env.APPIUM_STAGING_URL, // TODO: Once RDC starts supporting this again, re-insert this
-} : {};
-
-let GENERIC_CAPS = {
-  platformName: 'iOS',
-  platformVersion: PLATFORM_VERSION,
-  deviceName: DEVICE_NAME,
-  automationName: 'XCUITest',
-  launchWithIDB: LAUNCH_WITH_IDB,
-  noReset: true,
-  maxTypingFrequency: 30,
-  clearSystemFiles: true,
-  showXcodeLog: SHOW_XCODE_LOG,
-  wdaLaunchTimeout: (60 * 1000 * 4),
-  wdaConnectionTimeout: (60 * 1000 * 8),
-  useNewWDA: true,
-  webviewConnectTimeout: 30000,
-  simulatorStartupTimeout: (1000 * 60 * 4),
-};
-
-if (process.env.CLOUD) {
-  GENERIC_CAPS.platformVersion = process.env.CLOUD_PLATFORM_VERSION;
-  GENERIC_CAPS.build = process.env.SAUCE_BUILD;
-  GENERIC_CAPS.showIOSLog = false;
-  GENERIC_CAPS[process.env.APPIUM_BUNDLE_CAP || 'appium-version'] = {'appium-url': 'sauce-storage:appium.zip'};
-  // TODO: If it's SAUCE_RDC add the appium staging URL
-
-  // `name` will be set during session initialization
-}
-
 // on Travis, when load is high, the app often fails to build,
 // and tests fail, so use static one in assets if necessary,
 // but prefer to have one build locally
@@ -124,53 +96,66 @@ if (!REAL_DEVICE && !process.env.CLOUD) {
   }
 }
 
-const UICATALOG_CAPS = _.defaults({
-  app: apps.uiCatalogApp,
-}, GENERIC_CAPS, REAL_DEVICE_CAPS);
+const initTimeout = 60 * 1000 * (process.env.CI ? 8 : 4);
+const GENERIC_CAPS = node.deepFreeze({
+  alwaysMatch: {
+    platformName: 'iOS',
+    'appium:platformVersion': PLATFORM_VERSION,
+    'appium:deviceName': DEVICE_NAME,
+    'appium:automationName': 'XCUITest',
+    'appium:launchWithIDB': LAUNCH_WITH_IDB,
+    'appium:noReset': true,
+    'appium:maxTypingFrequency': 30,
+    'appium:clearSystemFiles': true,
+    'appium:showXcodeLog': SHOW_XCODE_LOG,
+    'appium:wdaLaunchTimeout': initTimeout,
+    'appium:wdaConnectionTimeout': initTimeout,
+    'appium:useNewWDA': true,
+    'appium:webviewConnectTimeout': 30000,
+    'appium:simulatorStartupTimeout': initTimeout,
+  },
+  firstMatch: [{}],
+});
 
-const UICATALOG_SIM_CAPS = _.defaults({
-  app: apps.uiCatalogApp,
-}, GENERIC_CAPS);
-delete UICATALOG_SIM_CAPS.noReset; // do not want to have no reset on the tests that use this
+const UICATALOG_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': apps.uiCatalogApp,
+});
 
-const SETTINGS_CAPS = _.defaults({
-  bundleId: 'com.apple.Preferences'
-}, GENERIC_CAPS);
+const UICATALOG_SIM_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': apps.uiCatalogApp,
+  'appium:noReset': false,
+}); // do not want to have no reset on the tests that use this
 
-const SAFARI_CAPS = _.defaults({
-  browserName: 'Safari',
-  nativeWebTap: false,
-  testobject_api_key: process.env.SAUCE_RDC_WEB_ACCESS_KEY,
-}, GENERIC_CAPS, REAL_DEVICE_CAPS);
+const SETTINGS_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:bundleId': 'com.apple.Preferences'
+});
 
-const TESTAPP_CAPS = _.defaults({
-  app: apps.iosTestApp,
-}, GENERIC_CAPS);
+const SAFARI_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:browserName': 'Safari',
+  'appium:nativeWebTap': false,
+});
 
-const MULTIPLE_APPS = _.defaults({
-  app: apps.uiCatalogApp,
-  otherApps: apps.iosTestApp
-}, GENERIC_CAPS);
+const TESTAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': apps.iosTestApp,
+});
 
-const TOUCHIDAPP_CAPS = _.defaults({
-  app: apps.touchIdApp,
-}, GENERIC_CAPS);
+const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': apps.uiCatalogApp,
+  'appium:otherApps': apps.iosTestApp,
+});
 
-const W3C_CAPS = {
-  capabilities: {
-    alwaysMatch: UICATALOG_CAPS,
-    firstMatch: [{}],
-  }
-};
+const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': apps.touchIdApp,
+});
 
-let TVOS_CAPS = _.defaults({
+const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   platformName: 'tvOS',
-  bundleId: 'com.apple.TVSettings',
-  deviceName: 'Apple TV'
-}, GENERIC_CAPS);
+  'appium:bundleId': 'com.apple.TVSettings',
+  'appium:deviceName': 'Apple TV',
+});
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS,
-  TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
+  TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
 };
