@@ -43,14 +43,6 @@
           "maximum": 65535,
           "minimum": 1,
           "type": "integer"
-        },
-        "webkit-debug-proxy-port": {
-          "appiumCliDest": "webkitDebugProxyPort",
-          "default": 27753,
-          "description": "(Real device only) Port to which `ios-webkit-debug-proxy` is connected",
-          "maximum": 65535,
-          "minimum": 1,
-          "type": "integer"
         }
       },
       "additionalProperties": false,

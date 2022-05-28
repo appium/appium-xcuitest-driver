@@ -97,7 +97,6 @@ Usage: `appium --driver-args='{"xcuitest": {[argName]: [argValue]}}'`
 
 |Argument|Default|Description|Example|
 |----|-------|-----------|-------|
-|`"webkitDebugProxyPort"`|27753|Local port used for communication with ios-webkit-debug-proxy|`--driver-args='{"xcuitest": {"webkitDebugProxyPort": 27753}}'`|
 |`"wdaLocalPort"`|8100| Local port used for communication with ios-web-driver-agent|`--driver-args='{"xcuitest": {"wdaLocalPort": 8100}}'`|
 
 ## Capabilities
