@@ -20,7 +20,7 @@ const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
 
 async function spinTitle (driver) {
   return await retry(10, async function () {
-    const title = await driver.title();
+    const title = await driver.getTitle();
     if (_.isNil(title)) {
       throw new Error('Did not get a page title');
     }
@@ -53,11 +53,13 @@ async function spinWait (fn, waitMs = 10000, intMs = 500) {
 
 async function openPage (driver, url, tries = 10, interval = 500) {
   await retryInterval(tries, interval, async function () {
-    await driver.get(url);
+    await driver.navigateTo(url);
     await spinTitleNotEquals(driver, 'cannot open page');
   });
 }
 
-export { spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
+export {
+  spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
   GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE, PHISHING_END_POINT,
-  APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE };
+  APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
+};
