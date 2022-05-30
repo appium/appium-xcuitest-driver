@@ -17,6 +17,27 @@ const GUINEA_PIG_IFRAME_PAGE = `${TEST_END_POINT}/iframes.html`;
 // http://testsafebrowsing.appspot.com/ for alternatives
 const PHISHING_END_POINT = 'http://testsafebrowsing.appspot.com/s/phishing.html';
 const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
+const newCookie = {
+  name: 'newcookie',
+  value: 'i am new here'
+};
+const oldCookie1 = {
+  name: 'guineacookie1',
+  value: 'i am a cookie value'
+};
+const oldCookie2 = {
+  name: 'guineacookie2',
+  value: 'cookié2'
+};
+
+function doesIncludeCookie (cookies, cookie) {
+  cookies.map((c) => c.name).should.include(cookie.name);
+  cookies.map((c) => c.value).should.include(cookie.value);
+}
+function doesNotIncludeCookie (cookies, cookie) {
+  cookies.map((c) => c.name).should.not.include(cookie.name);
+  cookies.map((c) => c.value).should.not.include(cookie.value);
+}
 
 async function spinTitle (driver) {
   return await retry(10, async function () {
@@ -61,5 +82,6 @@ async function openPage (driver, url, tries = 10, interval = 500) {
 export {
   spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
   GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE, PHISHING_END_POINT,
-  APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
+  APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE,
+  doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2,
 };
