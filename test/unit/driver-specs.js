@@ -33,7 +33,7 @@ describe('getDefaultUrl', function () {
 
   it('real device', function () {
     driver.opts.realDevice = true;
-    expect(driver.getDefaultUrl()).eq('http://appium.io');
+    expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
   });
 
   it('simulator with ipv4', function () {
