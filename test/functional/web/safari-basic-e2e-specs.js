@@ -89,7 +89,7 @@ describe('Safari - basics -', function () {
     describe.skip('page load timeouts', function () {
       describe('small timeout, slow page load', function () {
         it('should go to the requested page', async function () {
-          await driver.setTimeouts(undefined, 3000);
+          await driver.setTimeout({pageLoad: 3000});
           await openPage(driver, `${GUINEA_PIG_PAGE}?delay=30000`);
 
           // the page should not have time to load
@@ -101,7 +101,7 @@ describe('Safari - basics -', function () {
 
         it('should go to the requested page', async function () {
           // await driver.setCommandTimeout(12000);
-          await driver.setTimeouts(undefined, 0);
+          await driver.setTimeout({pageLoad: 0});
           await openPage(driver, `${GUINEA_PIG_PAGE}?delay=3000`);
 
           // the page should load after 70000
@@ -125,10 +125,10 @@ describe('Safari - basics -', function () {
 
     describe('implicit wait', function () {
       after(async function () {
-        await driver.setTimeouts(0);
+        await driver.setTimeout({implicit: 0});
       });
       it('should set the implicit wait for finding web elements', async function () {
-        await driver.setTimeouts(5000);
+        await driver.setTimeout({implicit: 5000});
 
         const before = new Date().getTime() / 1000;
         let hasThrown = false;
@@ -161,17 +161,17 @@ describe('Safari - basics -', function () {
       });
 
       it('should find a web element in the web view', async function () {
-        await driver.$('#i_am_an_id').should.eventually.exist;
+        (await driver.$('#i_am_an_id')).should.exist;
       });
       it('should find multiple web elements in the web view', async function () {
-        await driver.$$('<a />').should.eventually.have.length.at.least(5);
+        (await driver.$$('<a />')).should.have.length.at.least(5);
       });
       it('should fail gracefully to find multiple missing web elements in the web view', async function () {
-        await driver.$$('<blar />').should.eventually.have.length(0);
+        (await driver.$$('<blar />')).should.have.length(0);
       });
       it('should find element from another element', async function () {
         const el = await driver.$('.border');
-        await el.$('./form').should.eventually.exist;
+        (await el.$('./form')).should.exist;
       });
       it('should be able to click links', async function () {
         const el = await driver.$('=i am a link');
@@ -255,8 +255,8 @@ describe('Safari - basics -', function () {
       });
       it('should be able to retrieve css properties', async function () {
         const el = await driver.$('#fbemail');
-        await el.getCSSProperty('background-color')
-          .should.eventually.equal('rgba(255, 255, 255, 1)');
+        (await el.getCSSProperty('background-color')).value
+          .should.equal('rgba(255, 255, 255, 1)');
       });
       it('should retrieve an element size', async function () {
         const el = await driver.$('#i_am_an_id');
@@ -305,7 +305,7 @@ describe('Safari - basics -', function () {
         await el.isDisplayed().should.eventually.be.ok;
       });
       it('should return false when the element is not displayed', async function () {
-        const el = await driver.elementById('#invisible div');
+        const el = await driver.$('#invisible div');
         await el.isDisplayed().should.eventually.not.be.ok;
       });
       it('should return true when the element is enabled', async function () {
@@ -321,7 +321,8 @@ describe('Safari - basics -', function () {
         const testText = 'hi there';
         const el = await driver.$('#i_am_a_textbox');
         await el.setValue(testText);
-        const activeEl = await driver.getActiveElement();
+        const activeElId = await driver.getActiveElement();
+        const activeEl = await driver.$(activeElId);
         await activeEl.getAttribute('value').should.eventually.equal(testText);
       });
       it('should properly navigate to anchor', async function () {
