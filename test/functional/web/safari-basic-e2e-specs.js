@@ -40,7 +40,7 @@ const oldCookie2 = {
 
 const DEFAULT_CAPS = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-  'appium:safariLogAllCommunication': true,
+  // 'appium:safariLogAllCommunication': true,
   // adding 'safariIgnoreWebHostnames' to validate that adding blacklist URL's doesn't break anything
   'appium:safariIgnoreWebHostnames': 'www.yahoo.com,www.bing.com,www.google.com,about:blank',
 });
