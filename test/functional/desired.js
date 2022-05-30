@@ -131,7 +131,7 @@ const SETTINGS_CAPS = amendCapabilities(GENERIC_CAPS, {
 });
 
 const SAFARI_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:browserName': 'Safari',
+  'browserName': 'Safari',
   'appium:nativeWebTap': false,
 });
 

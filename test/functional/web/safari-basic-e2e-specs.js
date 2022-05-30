@@ -130,22 +130,10 @@ describe('Safari - basics -', function () {
       it('should set the implicit wait for finding web elements', async function () {
         await driver.setTimeout({implicit: 5000});
 
-        const before = new Date().getTime() / 1000;
-        let hasThrown = false;
-
-        /**
-         * we have to use try catch to actually halt the process here
-         */
-        try {
-          await driver.$('<notgonnabethere />');
-        } catch (e) {
-          hasThrown = true;
-        } finally {
-          hasThrown.should.be.ok;
-        }
-
-        const after = new Date().getTime() / 1000;
-        ((after - before) > 5).should.be.ok;
+        const before = new Date().getTime();
+        (await driver.$('<dsfsdfsdfdsfsd />')).error.error.should.eql('no such element');
+        const after = new Date().getTime();
+        ((after - before) >= 5 * 1000).should.be.ok;
       });
     });
 
@@ -256,7 +244,7 @@ describe('Safari - basics -', function () {
       it('should be able to retrieve css properties', async function () {
         const el = await driver.$('#fbemail');
         (await el.getCSSProperty('background-color')).value
-          .should.equal('rgba(255, 255, 255, 1)');
+          .should.equal('rgba(255,255,255,1)');
       });
       it('should retrieve an element size', async function () {
         const el = await driver.$('#i_am_an_id');
