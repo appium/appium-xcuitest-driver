@@ -216,7 +216,7 @@ Capability | Description
 |`appium:safariIgnoreWebHostnames`| Provide a list of hostnames (comma-separated) that the Safari automation tools should ignore. This is to provide a workaround to prevent a webkit bug where the web context is unintentionally changed to a 3rd party website and the test gets stuck. The common culprits are search engines (yahoo, bing, google) and `about:blank` |e.g. `'www.yahoo.com, www.bing.com, www.google.com, about:blank'`|
 |`appium:nativeWebTap` | Enable native, non-javascript-based taps being in web context mode. Defaults to `false`. Warning: sometimes the preciseness of native taps could be broken, because there is no reliable way to map web element coordinates to native ones. | `true` |
 |`appium:nativeWebTapStrict` | Enforce native taps to be done by XCUITest driver rather than WebDriverAgent. Only applicable if `nativeWebTap` is enabled. `false` by default | `false` |
-|`appium:safariInitialUrl`| Initial safari url, default is a local welcome page. Setting it to an empty string will skip the initial navigation. This capability is ignored if `noReset` one is enabled. | e.g. `https://www.github.com` |
+|`appium:safariInitialUrl`| Initial safari url, default is a local welcome page. Setting it to an empty string will skip the initial navigation. | e.g. `https://www.github.com` |
 |`appium:safariAllowPopups`| Allow javascript to open new windows in Safari. Default keeps current sim setting|`true` or `false`|
 |`appium:safariIgnoreFraudWarning`| Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.|`true` or `false`|
 |`appium:safariOpenLinksInBackground`| Whether Safari should allow links to open in new windows. Default keeps current sim setting.|`true` or `false`|
