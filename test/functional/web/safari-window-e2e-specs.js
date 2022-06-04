@@ -64,7 +64,7 @@ describe('safari - windows and frames', function () {
     describe('windows', function () {
       before(async function () {
         // minimize waiting if something goes wrong
-        await driver.setTimeout({implicitWait: 1000});
+        await driver.setTimeout({implicit: 1000});
       });
 
       beforeEach(async function () {
