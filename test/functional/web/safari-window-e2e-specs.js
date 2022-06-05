@@ -141,15 +141,6 @@ describe('safari - windows and frames', function () {
         await openPage(driver, GUINEA_PIG_FRAME_PAGE);
       });
 
-      it('should switch to frame by name', async function () {
-        await driver.switchToFrame('first');
-        await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
-
-        const h1 = await driver.$('<h1 />');
-        await h1.text()
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
-      });
-
       it('should switch to frame by index', async function () {
         await driver.switchToFrame(1);
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
@@ -159,8 +150,8 @@ describe('safari - windows and frames', function () {
           .should.eventually.equal(SUB_FRAME_2_TITLE);
       });
 
-      it('should switch to frame by id', async function () {
-        await driver.switchToFrame('frame3');
+      it('should switch to frame by element', async function () {
+        await driver.switchToFrame(await driver.$('#frame3'));
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -169,7 +160,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch back to default content from frame', async function () {
-        await driver.switchToFrame('first');
+        await driver.switchToFrame(await driver.$('[name="first"]'));
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -181,15 +172,15 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch to child frames', async function () {
-        await driver.switchToFrame('third');
+        await driver.switchToFrame(await driver.$('[name="third"]'));
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
-        await driver.switchToFrame('childframe');
+        await driver.switchToFrame(await driver.$('[name="childframe"]'));
         await driver.$$('#only_on_page_2').should.eventually.have.length.at.least(1);
       });
 
       it('should execute javascript in frame', async function () {
-        await driver.switchToFrame('first');
+        await driver.switchToFrame(1);
         await driver.executeScript(GET_ELEM_SYNC, [])
           .should.eventually.equal(SUB_FRAME_1_TITLE);
       });
@@ -197,7 +188,7 @@ describe('safari - windows and frames', function () {
       // TODO: Update for WdIO compatibility
       it.skip('should execute async javascript in frame', async function () {
         await driver.setAsyncScriptTimeout(2000);
-        await driver.switchToFrame('first');
+        await driver.switchToFrame(1);
         await driver.executeAsync(GET_ELEM_ASYNC)
           .should.eventually.equal(SUB_FRAME_1_TITLE);
       });
@@ -205,7 +196,7 @@ describe('safari - windows and frames', function () {
       it('should get source within a frame', async function () {
         await driver.getPageSource().should.eventually.include(FRAMESET_TITLE);
 
-        await driver.switchToFrame('first');
+        await driver.switchToFrame(1);
 
         const frameSource = await driver.getPageSource();
         frameSource.should.include(SUB_FRAME_1_TITLE);
@@ -218,15 +209,6 @@ describe('safari - windows and frames', function () {
         await openPage(driver, GUINEA_PIG_IFRAME_PAGE);
       });
 
-      it('should switch to iframe by name', async function () {
-        await driver.switchToFrame('iframe1');
-        await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
-
-        const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
-      });
-
       it('should switch to iframe by index', async function () {
         await driver.switchToFrame(1);
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
@@ -236,18 +218,8 @@ describe('safari - windows and frames', function () {
           .should.eventually.equal(SUB_FRAME_2_TITLE);
       });
 
-      it('should switch to iframe by id', async function () {
-        await driver.switchToFrame('id-iframe3');
-        await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
-
-        const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_3_TITLE);
-      });
-
       it('should switch to iframe by element', async function () {
-        const frame = await driver.findElement('id', 'id-iframe3');
-        await driver.switchToFrame(frame);
+        await driver.switchToFrame(await driver.$('#id-iframe3'));
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -261,7 +233,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch back to default content from iframe', async function () {
-        await driver.switchToFrame('iframe1');
+        await driver.switchToFrame(await driver.$('#iframe1'));
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -276,7 +248,7 @@ describe('safari - windows and frames', function () {
         await driver.getPageSource()
           .should.eventually.include(IFRAME_FRAMESET_TITLE);
 
-        await driver.switchToFrame('iframe1');
+          await driver.switchToFrame(await driver.$('#iframe1'));
 
         const frameSource = await driver.getPageSource();
         frameSource.should.include(SUB_FRAME_1_TITLE);

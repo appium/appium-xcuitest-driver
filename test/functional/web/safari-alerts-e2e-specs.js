@@ -32,34 +32,36 @@ describe('safari - alerts', function () {
     await retryInterval(5, 500, driver.dismissAlert.bind(driver));
   }
 
-  it('should accept alert', async function () {
+  // All tests below are skipped until https://github.com/appium/appium/issues/17013 is resolved
+
+  it.skip('should accept alert', async function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     await acceptAlert(driver);
     (await driver.getTitle()).should.include('I am a page title');
   });
 
-  it('should dismiss alert', async function () {
+  it.skip('should dismiss alert', async function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     await dismissAlert(driver);
     (await driver.getTitle()).should.include('I am a page title');
   });
 
-  it('should get text of alert', async function () {
+  it.skip('should get text of alert', async function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     (await driver.getAlertText()).should.include('I am an alert');
     await dismissAlert(driver);
   });
-  it('should not get text of alert that closed', async function () {
+  it.skip('should not get text of alert that closed', async function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     await acceptAlert(driver);
     await driver.getAlertText()
       .should.eventually.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
   });
-  it('should set text of prompt', async function () {
+  it.skip('should set text of prompt', async function () {
     const alert = await driver.$('#prompt1');
     await alert.click();
     await driver.sendAlertText('of course!');
@@ -68,7 +70,7 @@ describe('safari - alerts', function () {
     const el = await driver.$('#promptVal');
     (await el.getAttribute('value')).should.eql('of course!');
   });
-  it('should fail to set text of alert', async function () {
+  it.skip('should fail to set text of alert', async function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     await driver.sendAlertText('yes I do!')
