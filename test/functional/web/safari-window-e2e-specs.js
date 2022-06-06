@@ -138,11 +138,11 @@ describe('safari - windows and frames', function () {
           }
         };
 
-        await waitUntilNotExist('#only_on_page_2');
-        await driver.back();
         await waitUntilNotExist('#i_am_a_textbox');
-        await driver.forward();
+        await driver.back();
         await waitUntilNotExist('#only_on_page_2');
+        await driver.forward();
+        await waitUntilNotExist('#i_am_a_textbox');
         await driver.back();
       });
 
