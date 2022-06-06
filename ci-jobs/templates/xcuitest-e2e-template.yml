@@ -50,7 +50,7 @@ jobs:
       deviceName: ${{ parameters.deviceName }}
       vmImage: ${{ parameters.vmImage }}
       script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json build/test/functional/web/safari-basic-e2e-specs.js -g @skip-ci -i --exit
+        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/web -g @skip-ci -i --exit
 
   # - template: ./ios-e2e-template.yml
   #   parameters:

@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { retryInterval } from 'asyncbox';
-import { SAFARI_CAPS } from '../desired';
+import { SAFARI_CAPS, amendCapabilities } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from './helpers';
 
@@ -15,10 +14,10 @@ describe('safari - alerts', function () {
 
   let driver;
   before(async function () {
-    const caps = _.defaults({
-      safariInitialUrl: GUINEA_PIG_PAGE,
-      safariAllowPopups: true,
-    }, SAFARI_CAPS);
+    const caps = amendCapabilities(SAFARI_CAPS, {
+      'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+      'appium:safariAllowPopups': true,
+    });
     driver = await initSession(caps);
   });
   after(async function () {
@@ -33,40 +32,48 @@ describe('safari - alerts', function () {
     await retryInterval(5, 500, driver.dismissAlert.bind(driver));
   }
 
-  it('should accept alert', async function () {
-    await driver.elementById('alert1').click();
+  // All tests below are skipped until https://github.com/appium/appium/issues/17013 is resolved
+
+  it.skip('should accept alert', async function () {
+    const alert = await driver.$('#alert1');
+    await alert.click();
     await acceptAlert(driver);
-    (await driver.title()).should.include('I am a page title');
+    (await driver.getTitle()).should.include('I am a page title');
   });
 
-  it('should dismiss alert', async function () {
-    await driver.elementById('alert1').click();
+  it.skip('should dismiss alert', async function () {
+    const alert = await driver.$('#alert1');
+    await alert.click();
     await dismissAlert(driver);
-    (await driver.title()).should.include('I am a page title');
+    (await driver.getTitle()).should.include('I am a page title');
   });
 
-  it('should get text of alert', async function () {
-    await driver.elementById('alert1').click();
-    (await driver.alertText()).should.include('I am an alert');
+  it.skip('should get text of alert', async function () {
+    const alert = await driver.$('#alert1');
+    await alert.click();
+    (await driver.getAlertText()).should.include('I am an alert');
     await dismissAlert(driver);
   });
-  it('should not get text of alert that closed', async function () {
-    await driver.elementById('alert1').click();
+  it.skip('should not get text of alert that closed', async function () {
+    const alert = await driver.$('#alert1');
+    await alert.click();
     await acceptAlert(driver);
-    await driver.alertText()
+    await driver.getAlertText()
       .should.eventually.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
   });
-  it('should set text of prompt', async function () {
-    await driver.elementById('prompt1').click();
-    await driver.alertKeys('of course!');
+  it.skip('should set text of prompt', async function () {
+    const alert = await driver.$('#prompt1');
+    await alert.click();
+    await driver.sendAlertText('of course!');
     await acceptAlert(driver);
 
-    const el = await driver.elementById('promptVal');
+    const el = await driver.$('#promptVal');
     (await el.getAttribute('value')).should.eql('of course!');
   });
-  it('should fail to set text of alert', async function () {
-    await driver.elementById('alert1').click();
-    await driver.alertKeys('yes I do!')
+  it.skip('should fail to set text of alert', async function () {
+    const alert = await driver.$('#alert1');
+    await alert.click();
+    await driver.sendAlertText('yes I do!')
       .should.eventually.be.rejectedWith(/no input fields/);
   });
 });

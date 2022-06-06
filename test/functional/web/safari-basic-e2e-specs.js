@@ -6,7 +6,8 @@ import { SAFARI_CAPS, amendCapabilities } from '../desired';
 import {
   spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
   // GUINEA_PIG_SCROLLABLE_PAGE,
-  PHISHING_END_POINT, GUINEA_PIG_IFRAME_PAGE
+  PHISHING_END_POINT, GUINEA_PIG_IFRAME_PAGE,
+  doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2
 } from './helpers';
 import { util } from '@appium/support';
 import { retryInterval } from 'asyncbox';
@@ -15,28 +16,6 @@ import { retryInterval } from 'asyncbox';
 chai.should();
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-
-function doesIncludeCookie (cookies, cookie) {
-  cookies.map((c) => c.name).should.include(cookie.name);
-  cookies.map((c) => c.value).should.include(cookie.value);
-}
-function doesNotIncludeCookie (cookies, cookie) {
-  cookies.map((c) => c.name).should.not.include(cookie.name);
-  cookies.map((c) => c.value).should.not.include(cookie.value);
-}
-
-const newCookie = {
-  name: 'newcookie',
-  value: 'i am new here'
-};
-const oldCookie1 = {
-  name: 'guineacookie1',
-  value: 'i am a cookie value'
-};
-const oldCookie2 = {
-  name: 'guineacookie2',
-  value: 'cookié2'
-};
 
 const DEFAULT_CAPS = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
@@ -547,5 +526,3 @@ describe('Safari - basics -', function () {
     });
   });
 });
-
-export { doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2 };
