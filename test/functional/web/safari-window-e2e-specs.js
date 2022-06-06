@@ -7,6 +7,7 @@ import {
   openPage, spinTitleEquals,
   GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE
 } from './helpers';
+import { waitForCondition } from 'asyncbox';
 
 
 chai.should();
@@ -20,6 +21,7 @@ const IFRAME_FRAMESET_TITLE = 'Iframe guinea pig';
 const SUB_FRAME_1_TITLE = 'Sub frame 1';
 const SUB_FRAME_2_TITLE = 'Sub frame 2';
 const SUB_FRAME_3_TITLE = 'Sub frame 3';
+const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 
 describe('safari - windows and frames', function () {
   describe('without safariAllowPopups', function () {
@@ -64,8 +66,7 @@ describe('safari - windows and frames', function () {
 
     describe('windows', function () {
       before(async function () {
-        // minimize waiting if something goes wrong
-        await driver.setTimeout({implicit: 1000});
+        await driver.setTimeout({implicit: DEFAULT_IMPLICIT_TIMEOUT_MS});
       });
 
       beforeEach(async function () {
@@ -121,11 +122,27 @@ describe('safari - windows and frames', function () {
         const link = await driver.$('=i am a link');
         await link.click();
 
-        _.isEmpty(await driver.$$('#only_on_page_2')).should.be.false;
+        const waitUntilNotExist = async (locator, timeout = 5000) => {
+          await driver.setTimeout({implicit: 0});
+          try {
+            await waitForCondition(
+              async () => _.isEmpty(await driver.$$(locator)), {
+                waitMs: timeout,
+                intervalMs: 300,
+              }
+            );
+          } catch (e) {
+            throw new Error(`Element located by '${locator}' still exists after ${timeout}ms timeout`);
+          } finally {
+            await driver.setTimeout({implicit: DEFAULT_IMPLICIT_TIMEOUT_MS});
+          }
+        };
+
+        await waitUntilNotExist('#only_on_page_2');
         await driver.back();
-        _.isEmpty(await driver.$$('#i_am_a_textbox')).should.be.false;
+        await waitUntilNotExist('#i_am_a_textbox');
         await driver.forward();
-        _.isEmpty(await driver.$$('#only_on_page_2')).should.be.false;
+        await waitUntilNotExist('#only_on_page_2');
         await driver.back();
       });
 
