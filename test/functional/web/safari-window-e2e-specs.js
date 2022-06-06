@@ -234,7 +234,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should switch back to default content from iframe', async function () {
-        await driver.switchToFrame(await driver.$('#iframe1'));
+        await driver.switchToFrame(await driver.$('[name="iframe1"]'));
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
@@ -249,7 +249,7 @@ describe('safari - windows and frames', function () {
         await driver.getPageSource()
           .should.eventually.include(IFRAME_FRAMESET_TITLE);
 
-          await driver.switchToFrame(await driver.$('#iframe1'));
+          await driver.switchToFrame(await driver.$('[name="iframe1"]'));
 
         const frameSource = await driver.getPageSource();
         frameSource.should.include(SUB_FRAME_1_TITLE);
