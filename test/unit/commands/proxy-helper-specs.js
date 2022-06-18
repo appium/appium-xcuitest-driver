@@ -1,4 +1,4 @@
-import { errors } from '@appium/base-driver';
+import { errors } from 'appium/driver';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

@@ -6,7 +6,7 @@
 // import chaiAsPromised from 'chai-as-promised';
 // import { PORT, MOCHA_TIMEOUT } from '../helpers/session';
 // import { UICATALOG_CAPS } from '../desired';
-// import { startServer } from '../../..';
+// import { startServer } from '../../server';
 
 // chai.should();
 // chai.use(chaiAsPromised);

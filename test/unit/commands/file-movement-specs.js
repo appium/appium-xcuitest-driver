@@ -1,7 +1,7 @@
 import { parseContainerPath } from '../../../lib/commands/file-movement';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { tempDir } from '@appium/support';
+import { tempDir } from 'appium/support';
 
 const should = chai.should();
 chai.use(chaiAsPromised);

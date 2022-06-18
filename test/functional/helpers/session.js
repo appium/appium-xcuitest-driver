@@ -1,5 +1,5 @@
 import { remote } from 'webdriverio';
-import { startServer } from '../../..';
+import { startServer } from '../../server';
 
 const HOST = '127.0.0.1';
 const PORT = 4994;

@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
-import { util } from '@appium/support';
+import { util } from 'appium/support';
 
 
 chai.should();

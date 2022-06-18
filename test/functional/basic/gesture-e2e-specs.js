@@ -10,7 +10,7 @@
 // import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 // import { APPIUM_IMAGE } from '../web/helpers';
 // import { translateDeviceName } from '../../../lib/utils';
-// import { util } from '@appium/support';
+// import { util } from 'appium/support';
 // import xcode from 'appium-xcode';
 
 
