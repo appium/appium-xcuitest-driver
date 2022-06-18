@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { JWProxy } from '@appium/base-driver';
+import { JWProxy } from 'appium/driver';
 import XCUITestDriver from '../..';
 import * as simSettings from '../../lib/simulator-management';
 import * as appUtils from '../../lib/app-utils';

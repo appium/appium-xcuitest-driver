@@ -1,11 +1,11 @@
 parameters:
-  nodeVersion: 12.x
+  nodeVersion: 16.x
   name: UnitTests
 jobs:
   # Run unit tests on different Node versions
   - job: ${{ parameters.name }}
     pool:
-      vmImage: 'macOS-10.15'
+      vmImage: 'macOS-12'
     steps:
     - checkout: self
     - task: NodeTool@0

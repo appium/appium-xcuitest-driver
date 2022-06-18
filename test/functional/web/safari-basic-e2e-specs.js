@@ -9,7 +9,7 @@ import {
   PHISHING_END_POINT, GUINEA_PIG_IFRAME_PAGE,
   doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2
 } from './helpers';
-import { util } from '@appium/support';
+import { util } from 'appium/support';
 import { retryInterval } from 'asyncbox';
 
 
