@@ -1300,6 +1300,21 @@ e = @driver.find_element :id, 'target element'
 #### Reference
 [tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)
 
+### mobile: forcePress
+
+Emulates force press on the given element/coordinates.
+An error is thrown if the target device does not support force press gesture.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to perform one or more taps. It is expected that both x and y are provided if this argument is ommitted. If the element identifier is provided without coordinates then the actual element's touch point will be calculated automatically by WebDriverAgent. | fe50b60b-916d-420b-8728-ee2072ec53eb
+x | number | no | x coordinate of the gesture. It is calculated relatively to the given element (if provided). Otherwise the gesture destination point is calculated relatively to the active application. | 100
+y | number | no | y coordinate of the gesture. It is calculated relatively to the given element (if provided). Otherwise the gesture destination point is calculated relatively to the active application | 100
+duration | number | no | The float number of seconds the force press action would take. If duration is provided then it is also expected that a custom pressure value is provided as well. `0.5` by default. | 2.5
+pressure | number | no | The float number defining how much pressure to apply. If pressure is provided then it is also expected that a custom duration value is provided as well. `1.0` by default | 1.5
+
 ### mobile: resetLocationService
 
 Reset the location service on real device since Appium 1.22.0.
