@@ -1,20 +1,13 @@
 import { remote } from 'webdriverio';
-import { startServer } from '../../server';
 
-const HOST = '127.0.0.1';
-const PORT = 4994;
+const HOST = process.env.APPIUM_TEST_SERVER_HOST || '127.0.0.1';
+const PORT = parseInt(process.env.APPIUM_TEST_SERVER_PORT, 10) || 4567;
 // on CI the timeout needs to be long, mostly so WDA can be built the first time
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 8 : 4);
 
-let driver, server;
-
-function getServer () {
-  return server;
-}
+let driver;
 
 async function initSession (caps, remoteOpts = {}) {
-  server = await startServer(PORT, HOST);
-
   driver = await remote({
     hostname: HOST,
     port: PORT,
@@ -35,13 +28,6 @@ async function deleteSession () {
   } finally {
     driver = undefined;
   }
-
-  try {
-    await server.close();
-  } catch (ign) {
-  } finally {
-    server = undefined;
-  }
 }
 
-export { initSession, deleteSession, getServer, HOST, PORT, MOCHA_TIMEOUT };
+export { initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT };
