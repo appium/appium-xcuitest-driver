@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, getServer, MOCHA_TIMEOUT } from '../helpers/session';
+import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
 chai.should();
@@ -22,7 +22,6 @@ describe('XCUITestDriver - performance', function () {
       }
 
       driver = await initSession(UICATALOG_CAPS);
-      getServer().driver.relaxedSecurityEnabled = true;
     });
     after(async function () {
       await deleteSession();
