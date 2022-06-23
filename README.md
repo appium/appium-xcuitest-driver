@@ -1325,7 +1325,7 @@ implicitly performed by a vanilla `click` API if the destination element is out 
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId | string | yes | The internal element identifier (as hexadecimal hash string) to scroll to. The destination element must be located in of a scrollable container and must be hittable. If the element is already present in the current viewport then no action is performed. | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId | string | yes | The internal element identifier (as hexadecimal hash string) to scroll to. The destination element must be located in a scrollable container and must be hittable. If the element is already present in the current viewport then no action is performed. | fe50b60b-916d-420b-8728-ee2072ec53eb
 
 ### mobile: resetLocationService
 
