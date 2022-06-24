@@ -1320,6 +1320,7 @@ pressure | number | no | The float number defining how much pressure to apply. I
 Scrolls the current viewport to the given element. It is expected the destination element is inside a scrollable container and is hittable. The scroll direction is detected automatically.
 This API uses native XCTest calls, so it performs scrolling pretty fast. The same native call is
 implicitly performed by a vanilla `click` API if the destination element is out of the current viewport. An exception is thrown if the scrolling action cannot be performed.
+This extension is available since the driver version 4.7.0.
 
 #### Arguments
 
