@@ -21,6 +21,7 @@ jobs:
     - run: npm install
       name: Install dependencies
     - run: rm -rf package-lock.json
+    - run: rm -rf node_modules/appium
     - run: npm shrinkwrap
       name: Create shrinkwrap
     - run: npm test
