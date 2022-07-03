@@ -29,6 +29,8 @@ jobs:
       name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
       name: Create shrinkwrap
+    - run: npm install --only=dev
+      name: Install dev decepdencies for the release
     - run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
