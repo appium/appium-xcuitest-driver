@@ -26,7 +26,7 @@ jobs:
         rm -rf package-lock.json
         npm prune --production
         rm -rf node_modules/appium
-      name: Remove deps dependencies and appium peerDependencies
+      name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
       name: Create shrinkwrap
     - run: npx semantic-release
