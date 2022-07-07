@@ -16,8 +16,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 16.x
-    - name: install newer npm
-      run: npm install -g npm
     - run: npm install
       name: Install dependencies
     - run: npm test
