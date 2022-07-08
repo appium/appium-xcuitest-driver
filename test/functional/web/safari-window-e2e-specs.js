@@ -203,9 +203,8 @@ describe('safari - windows and frames', function () {
           .should.eventually.equal(SUB_FRAME_2_TITLE);
       });
 
-      // TODO: Update for WdIO compatibility
-      it.skip('should execute async javascript in frame', async function () {
-        await driver.setAsyncScriptTimeout(2000);
+      it('should execute async javascript in frame', async function () {
+        await driver.setTimeout({ script: 2000 });
         await driver.switchToFrame(0);
         await driver.executeAsync(GET_ELEM_ASYNC)
           .should.eventually.equal(SUB_FRAME_1_TITLE);
