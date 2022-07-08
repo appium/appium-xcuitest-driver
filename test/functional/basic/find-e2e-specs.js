@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { util } from 'appium/support';
 
@@ -13,7 +13,7 @@ chai.use(chaiAsPromised);
 
 const TEST_PAUSE_DURATION = process.env.CLOUD ? 5000 : 500;
 
-const PV_ABOVE_13 = util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0');
+const PV_ABOVE_13 = util.compareVersions(PLATFORM_VERSION, '>=', '13.0');
 
 // there are some differences in the apps
 const FIRST_ELEMENT = PV_ABOVE_13 ? 'Activity Indicators' : 'Action Sheets';
