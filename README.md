@@ -488,7 +488,7 @@ Executes the given app on the device under test. If the app is already running t
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 bundleId | string | yes | The bundle identifier of the application to be launched | com.mycompany.myapp
-arguments | string|array | no | One or more command line arguments for the app. If the app is already running then this argument is ignored. | ['-s', '-m']
+arguments | string&#124;array | no | One or more command line arguments for the app. If the app is already running then this argument is ignored. | ['-s', '-m']
 environment | dict | no | Environment variables mapping for the app. If the app is already running then this argument is ignored. | {'var': 'value'}
 
 ### mobile: terminateApp
@@ -1385,5 +1385,3 @@ the tests locally. These include:
   the root directory of the repo with the extension "xcconfig")
 * `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
   the npm installed one is not built for real device
-
-
