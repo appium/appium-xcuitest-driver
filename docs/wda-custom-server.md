@@ -17,31 +17,17 @@ Important points:
 
 ### WDA Setup
 
-WebDriverAgent source is automatically downloaded with Appium. The usual folder location
-in case Appium is installed via npm tool (`npm install -g appium`) is
-`/usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent`
+WebDriverAgent source is automatically downloaded as part of XCUITest driver package.
+`appium driver install xcuitest` installes the module in `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
+`APPIUM_HOME` is `~/.appium` by default.
 
-```bash
-cd /usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent
-./Scripts/bootstrap.sh -d
-```
-
-Also, it might be necessary to create an empty folder for WDA resources:
-
-```bash
-mkdir -p /usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent/Resources/WebDriverAgent.bundle
-```
-
-No further configuration steps are needed if you're going to execute your automated tests on
-iOS Simulator.
-
-Real device, however, requires some more work to be done. Follow
+Real device requires some more work to be done. Follow
 [real device configuration documentation](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/real-device-config.md)
 to setup code signing.
 
 In order to make sure that WDA source is configured properly:
 
-* Open `/usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj`
+* Open `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj`
 in Xcode
 * Select _WebDriverAgentRunner_ project
 * Select your real phone/Simulator you'd like to run automated tests on as build target
@@ -83,7 +69,7 @@ public class WDAServer {
     private static final File IPROXY_EXECUTABLE = new File("/usr/local/bin/iproxy");
     private static final File XCODEBUILD_EXECUTABLE = new File("/usr/bin/xcodebuild");
     private static final File WDA_PROJECT =
-            new File("/usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent" +
+            new File("~/.appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent" +
                     "/WebDriverAgent.xcodeproj");
     private static final String WDA_SCHEME = "WebDriverAgentRunner";
     private static final String WDA_CONFIGURATION = "Debug";
