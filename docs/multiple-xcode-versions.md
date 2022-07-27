@@ -6,10 +6,10 @@ should use with one of two ways:
 ### xcode-select tool
 Only available with sudo privileges, affects the whole system.
 
-Assuming you want to choose `/Applications/Xcode7.app`:
+Assuming you want to choose `/Applications/Xcode13.app`:
 1. Set default Xcode.
   ```
-  sudo xcode-select -s /Applications/Xcode7.app/Contents/Developer
+  sudo xcode-select -s /Applications/Xcode13.app/Contents/Developer
   ```
 2. Run Appium (from command line or with GUI).
   ```
@@ -20,10 +20,10 @@ Assuming you want to choose `/Applications/Xcode7.app`:
 No privileges needed, affects only the current shell, so Appium should be started
 within that shell.
 
-Assuming you want to choose `/Applications/Xcode9.app`:
+Assuming you want to choose `/Applications/Xcode12.app`:
 1. Set `DEVELOPER_DIR` environment variable.
   ```
-  export DEVELOPER_DIR=/Applications/Xcode9.app/Contents/Developer
+  export DEVELOPER_DIR=/Applications/Xcode12.app/Contents/Developer
   ```
 2. Run Appium *from the same shell.*
   ```
