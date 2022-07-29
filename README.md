@@ -1338,22 +1338,22 @@ It raises an error if the device is simulator or an error occurred during the re
 
 Important: Device conditions are available for real devices running iOS 13.0 and later.
 
-You can create a device condition on a connected device to test your app under adverse conditions, such as poor network connectivity or thermal constraints.
+You can create a condition on a connected device to test your app under adverse conditions, such as poor network connectivity or thermal constraints.
 
 When you start a device condition, the operating system on the device behaves as if its environment has changed. The device condition remains active until you stop the device condition or disconnect the device. For example, you can start a device condition, run your app, monitor your app’s energy usage, and then stop the condition.
 
 Reference: [Test under adverse device conditions (iOS)](https://help.apple.com/xcode/mac/current/#/dev308429d42)
 
-Name | Type | Required | Description                                                                                                                                                                                                                                        | Example
---- | --- | --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ---
-conditionID | string | yes | Get the conditionID parameter through the command `mobile: availableConditionInducer`| SlowNetworkCondition
-profileID | string | yes | Get the profileID parameter through the command `mobile: availableConditionInducer`  | SlowNetwork100PctLoss
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+conditionID | string | yes | Get the conditionID parameter through the command `mobile: availableConditionInducer`   | SlowNetworkCondition
+profileID | string | yes | Get the profileID parameter through the command `mobile: availableConditionInducer`     | SlowNetwork100PctLoss
 
 #### Returned Result
 
-Either `true` or `false`
+Either `true` or `false`, `true` enable the ConditionInducer succeeded
 
-### mobile: availableConditionInducer
+### mobile: listConditionInducerProfiles
 
 Get all ConditionInducer configuration profile
 
@@ -1388,11 +1388,15 @@ The response looks like
 
 ### mobile: disableConditionInducer
 
-Disable device ConditionInducer
+Disable device ConditionInducer. 
+
+Usually a persistent connection is maintained after enable the ConditionInducer, and this method is only valid for this connection.
+
+If the connection is disconnected, ConditionInducer will be automatically disabled
 
 #### Returned Result
 
-Either `true` or `false`
+Either `true` or `false`, `true` disable the ConditionInducer succeeded
 
 ## Known issues
 
