@@ -1334,6 +1334,66 @@ Reset the location service on real device since Appium 1.22.0.
 It could delay a few seconds to reflect the location by the system.
 It raises an error if the device is simulator or an error occurred during the reset.
 
+### mobile: enableConditionInducer
+
+Important: Device conditions are available for real devices running iOS 13.0 and later.
+
+You can create a device condition on a connected device to test your app under adverse conditions, such as poor network connectivity or thermal constraints.
+
+When you start a device condition, the operating system on the device behaves as if its environment has changed. The device condition remains active until you stop the device condition or disconnect the device. For example, you can start a device condition, run your app, monitor your app’s energy usage, and then stop the condition.
+
+Reference: [Test under adverse device conditions (iOS)](https://help.apple.com/xcode/mac/current/#/dev308429d42)
+
+Name | Type | Required | Description                                                                                                                                                                                                                                        | Example
+--- | --- | --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ---
+conditionID | string | yes | Get the conditionID parameter through the command `mobile: availableConditionInducer`| SlowNetworkCondition
+profileID | string | yes | Get the profileID parameter through the command `mobile: availableConditionInducer`  | SlowNetwork100PctLoss
+
+#### Returned Result
+
+Either `true` or `false`
+
+### mobile: availableConditionInducer
+
+Get all ConditionInducer configuration profile
+
+#### Returned Result
+
+The response looks like 
+
+```
+[{
+    "profiles": [
+        {
+            "name": "100% packet loss",
+            "identifier": "SlowNetwork100PctLoss",   // enableConditionInducer profileID
+            "description": "Name: 100% Loss Scenario
+                            Downlink Bandwidth: 0 Mbps
+                            Downlink Latency: 0 ms
+                            Downlink Packet Loss Ratio: 100%
+                            Uplink Bandwidth: 0 Mbps
+                            Uplink Latency: 0 ms
+                            Uplink Packet Loss Ratio: 100%"
+        },
+    ],
+    "profilesSorted": true,
+    "identifier": "SlowNetworkCondition",   // enableConditionInducer conditionID
+    "isDestructive": false,
+    "isInternal": false,
+    "activeProfile": "",
+    "name": "Network Link",
+    "isActive": false
+}]
+```
+
+### mobile: disableConditionInducer
+
+Disable device ConditionInducer
+
+#### Returned Result
+
+Either `true` or `false`
+
 ## Known issues
 
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
