@@ -1338,6 +1338,8 @@ It raises an error if the device is simulator or an error occurred during the re
 
 Important: Device conditions are available for real devices running iOS 13.0 and later.
 
+Please mention this method will throw an error if you try to start an inducer without disabling the previous one
+
 ```
 mobile: enableConditionInducer
 mobile: disableConditionInducer
@@ -1363,7 +1365,7 @@ Either `true` or `false`, where `true` means enabling of the condition inducer h
 
 ### mobile: listConditionInducers
 
-Get all condition inducer configuration profile
+Get all condition inducer configuration profiles
 
 #### Returned Result
 
