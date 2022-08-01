@@ -1338,6 +1338,14 @@ It raises an error if the device is simulator or an error occurred during the re
 
 Important: Device conditions are available for real devices running iOS 13.0 and later.
 
+```
+mobile: enableConditionInducer
+mobile: disableConditionInducer
+mobile: listConditionInducers
+```
+
+The above three extensions are available since the driver version 4.8.0.
+
 You can create a condition on a connected device to test your app under adverse conditions, such as poor network connectivity or thermal constraints.
 
 When you start a device condition, the operating system on the device behaves as if its environment has changed. The device condition remains active until you stop the device condition or disconnect the device. For example, you can start a device condition, run your app, monitor your app’s energy usage, and then stop the condition.
@@ -1351,11 +1359,11 @@ profileID | string | yes | Get the profileID parameter through the command `mobi
 
 #### Returned Result
 
-Either `true` or `false`, `true` enable the ConditionInducer succeeded
+Either `true` or `false`, where `true` means enabling of the condition inducer has been successful
 
-### mobile: listConditionInducerProfiles
+### mobile: listConditionInducers
 
-Get all ConditionInducer configuration profile
+Get all condition inducer configuration profile
 
 #### Returned Result
 
@@ -1388,15 +1396,15 @@ The response looks like
 
 ### mobile: disableConditionInducer
 
-Disable device ConditionInducer. 
+Disable device condition inducer. 
 
-Usually a persistent connection is maintained after enable the ConditionInducer, and this method is only valid for this connection.
+Usually a persistent connection is maintained after enable the condition inducer, and this method is only valid for this connection.
 
-If the connection is disconnected, ConditionInducer will be automatically disabled
+If the connection is disconnected, condition inducer will be automatically disabled
 
 #### Returned Result
 
-Either `true` or `false`, `true` disable the ConditionInducer succeeded
+Either `true` or `false`, where `true` means disabling of the condition inducer has been successful
 
 ## Known issues
 
