@@ -1338,7 +1338,7 @@ It raises an error if the device is simulator or an error occurred during the re
 
 Important: Device conditions are available for real devices running iOS 13.0 and later.
 
-Please mention this method will throw an error if you try to start an inducer without disabling the previous one
+This API is going to throw an error if it is called while another condition inducer has been already enabled and is not explicitly disabled.
 
 ```
 mobile: enableConditionInducer
@@ -1346,7 +1346,7 @@ mobile: disableConditionInducer
 mobile: listConditionInducers
 ```
 
-The above three extensions are available since the driver version 4.8.0.
+The above three extensions are available since the driver version 4.9.0.
 
 You can create a condition on a connected device to test your app under adverse conditions, such as poor network connectivity or thermal constraints.
 
