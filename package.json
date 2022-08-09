@@ -85,7 +85,7 @@
     "portscanner": "2.2.0",
     "semver": "^7.0.0",
     "source-map-support": "^0.x",
-    "teen_process": "^1.14.0",
+    "teen_process": "^2.0.0",
     "ws": "^8.0.0"
   },
   "scripts": {
