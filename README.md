@@ -617,6 +617,14 @@ isRoot | boolean | no | This option defines where the certificate should be inst
 
 The content of the generated .mobileconfig file as base64-encoded string. This config might be useful for debugging purposes. If the certificate has been successfully set via CLI then nothing is returned.
 
+### mobile: listCertificates
+
+On real devices the installed certificates are listed if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine.
+
+#### Returned Result
+
+Returns map of certificates installed on the real device.
+
 ### mobile: startLogsBroadcast
 
 Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. The method will return immediately if the web socket is already listening.
