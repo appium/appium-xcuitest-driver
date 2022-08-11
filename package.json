@@ -90,6 +90,8 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
+    "install-driver": "appium driver install --source=local $(pwd)",
+    "reinstall-driver": "(appium driver uninstall xcuitest || exit 0) && appium driver install --source=local $(pwd)",
     "build": "gulp transpile",
     "mocha": "mocha",
     "prepare": "gulp prepublish",
