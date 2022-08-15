@@ -619,11 +619,33 @@ The content of the generated .mobileconfig file as base64-encoded string. This c
 
 ### mobile: listCertificates
 
-On real devices the installed certificates are listed if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine.
+Lists installed certificates for real devices only if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine since driver version 4.10.0.
 
 #### Returned Result
 
-Returns map of certificates installed on the real device.
+Returns map of certificates installed on the real device. The response looks like:
+
+```
+{
+    'OrderedIdentifiers': ['com.orgname.profile.mdmprofile'],
+    'ProfileManifest': {
+        'com.orgname.profile.mdmprofile': {
+            'Description': 'MDM Profile',
+            'IsActive': True
+        }
+    },
+    'ProfileMetadata': {
+        'com.orgname.profile.mdmprofile': {
+            'PayloadDescription': 'MDM Profile for testing,
+            'PayloadDisplayName': 'MDM Profile',
+            'PayloadOrganization': 'My Org, Inc.',
+            'PayloadRemovalDisallowed': False,
+            'PayloadUUID': '9ab3fa27-cc45-4c23-a94a-714686397a86',
+            'PayloadVersion': 1
+        }
+    },
+    'Status': 'Acknowledged'}
+```
 
 ### mobile: startLogsBroadcast
 
