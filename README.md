@@ -625,7 +625,7 @@ Lists installed certificates for real devices only if [py-ios-device](https://gi
 
 Returns map of certificates installed on the real device. The response looks like:
 
-```
+```json
 {
     'OrderedIdentifiers': ['com.orgname.profile.mdmprofile'],
     'ProfileManifest': {
@@ -644,7 +644,8 @@ Returns map of certificates installed on the real device. The response looks lik
             'PayloadVersion': 1
         }
     },
-    'Status': 'Acknowledged'}
+    'Status': 'Acknowledged'
+}
 ```
 
 ### mobile: startLogsBroadcast
