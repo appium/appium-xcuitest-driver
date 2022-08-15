@@ -617,6 +617,37 @@ isRoot | boolean | no | This option defines where the certificate should be inst
 
 The content of the generated .mobileconfig file as base64-encoded string. This config might be useful for debugging purposes. If the certificate has been successfully set via CLI then nothing is returned.
 
+### mobile: listCertificates
+
+Lists installed certificates for real devices only if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine since driver version 4.10.0.
+
+#### Returned Result
+
+Returns map of certificates installed on the real device. The response looks like:
+
+```json
+{
+    'OrderedIdentifiers': ['com.orgname.profile.mdmprofile'],
+    'ProfileManifest': {
+        'com.orgname.profile.mdmprofile': {
+            'Description': 'MDM Profile',
+            'IsActive': True
+        }
+    },
+    'ProfileMetadata': {
+        'com.orgname.profile.mdmprofile': {
+            'PayloadDescription': 'MDM Profile for testing,
+            'PayloadDisplayName': 'MDM Profile',
+            'PayloadOrganization': 'My Org, Inc.',
+            'PayloadRemovalDisallowed': False,
+            'PayloadUUID': '9ab3fa27-cc45-4c23-a94a-714686397a86',
+            'PayloadVersion': 1
+        }
+    },
+    'Status': 'Acknowledged'
+}
+```
+
 ### mobile: startLogsBroadcast
 
 Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. The method will return immediately if the web socket is already listening.
