@@ -14,12 +14,10 @@ jobs:
       displayName: Install Node ${{ parameters.nodeVersion }}
     - script: npm install
       displayName: Install node dependencies
-    - script: npm test
-      displayName: npm test
-    - script: npx gulp coverage
-      displayName: Generate coverage
-    - task: PublishCodeCoverageResults@1
-      condition: always()
-      inputs:
-        codeCoverageTool: cobertura
-        summaryFileLocation: coverage/cobertura-coverage.xml
+    - script: npm run build
+      displayName: Build
+    - script: npm run lint
+      displayName: Lint
+    - script: npm run test
+      displayName: Unit Test
+

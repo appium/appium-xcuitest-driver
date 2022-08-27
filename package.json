@@ -61,7 +61,6 @@
     "lib",
     "build/index.js",
     "build/lib",
-    "WebDriverAgent",
     "!.DS_Store"
   ],
   "dependencies": {
