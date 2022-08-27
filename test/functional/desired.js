@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import path from 'path';
-import glob from 'glob';
-import fs from 'fs';
-import { system, util, node } from 'appium/support';
+import { util, node } from 'appium/support';
 
 
 // translate integer environment variable to a boolean 0=false, !0=true
@@ -26,75 +24,18 @@ function extractCapabilityValue (caps, capName) {
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-
-// If it's real device cloud, don't set a device name. Use dynamic device allocation.
+const IS_ABOVE_IOS13 = util.compareVersions(PLATFORM_VERSION, '>=', '13.0');
 const DEVICE_NAME = process.env.DEVICE_NAME
   ? process.env.DEVICE_NAME
-  : process.env.SAUCE_RDC
-    ? undefined
-    : util.compareVersions(PLATFORM_VERSION, '>=', '13.0') ? 'iPhone 8' : 'iPhone 6';
-
+  : (IS_ABOVE_IOS13 ? 'iPhone 8' : 'iPhone 6');
 const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
-const REAL_DEVICE = checkFeatureInEnv('REAL_DEVICE');
-let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
-if (REAL_DEVICE && !XCCONFIG_FILE) {
-  // no xcconfig file specified, so try to find in the root directory of the package
-  // this happens once, at the start of a test run, so using sync method is ok
-  let cwd = path.resolve(__dirname, '..', '..', '..');
-  let files = glob.sync('*.xcconfig', { cwd });
-  if (files.length) {
-    XCCONFIG_FILE = path.resolve(cwd, _.first(files));
-  }
-}
+const APPS = {
+  uiCatalogApp: path.resolve(__dirname, '..', 'assets',
+    `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`),
+  iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app')
+};
 
-// Had to make these two optional dependencies so the tests
-// can still run in linux
-let testAppPath, uiCatalogPath;
-if (system.isMac() && !process.env.CLOUD) {
-  testAppPath = require('ios-test-app').absolute;
-
-  // iOS 13+ need a slightly different app to be able to get the correct automation
-  uiCatalogPath = parseInt(PLATFORM_VERSION, 10) >= 13
-    ? require('ios-uicatalog').uiKitCatalog.absolute
-    : require('ios-uicatalog').uiCatalog.absolute;
-}
-
-const apps = {};
-const CLOUD = process.env.CLOUD;
-if (REAL_DEVICE) {
-  if (CLOUD) {
-    apps.testAppId = 1;
-  } else {
-    apps.iosTestApp = testAppPath.iphoneos;
-    apps.uiCatalogApp = uiCatalogPath.iphoneos;
-  }
-} else {
-  if (CLOUD) {
-    apps.iosTestApp = 'http://appium.github.io/appium/assets/TestApp9.4.app.zip';
-    apps.uiCatalogApp = 'http://appium.github.io/appium/assets/UICatalog9.4.app.zip';
-    apps.touchIdApp = null; // TODO: Upload this to appium.io
-  } else {
-    apps.iosTestApp = testAppPath.iphonesimulator;
-    apps.uiCatalogApp = uiCatalogPath.iphonesimulator;
-    apps.touchIdApp = path.resolve('.', 'test', 'assets', 'TouchIDExample.app');
-  }
-}
-// on Travis, when load is high, the app often fails to build,
-// and tests fail, so use static one in assets if necessary,
-// but prefer to have one build locally
-// only do this for sim, since real device one needs to be built with dev creds
-if (!REAL_DEVICE && !process.env.CLOUD) {
-  // this happens a single time, at load-time for the test suite,
-  // so sync method is not overly problematic
-  if (!fs.existsSync(apps.uiCatalogApp)) {
-    apps.uiCatalogApp = path.resolve('.', 'test', 'assets',
-      `${parseInt(PLATFORM_VERSION, 10) >= 13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`);
-  }
-  if (!fs.existsSync(apps.iosTestApp)) {
-    apps.iosTestApp = path.resolve('.', 'test', 'assets', 'TestApp-iphonesimulator.app');
-  }
-}
 
 const initTimeout = 60 * 1000 * (process.env.CI ? 8 : 4);
 const GENERIC_CAPS = node.deepFreeze({
@@ -118,11 +59,11 @@ const GENERIC_CAPS = node.deepFreeze({
 });
 
 const UICATALOG_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': apps.uiCatalogApp,
+  'appium:app': APPS.uiCatalogApp,
 });
 
 const UICATALOG_SIM_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': apps.uiCatalogApp,
+  'appium:app': APPS.uiCatalogApp,
   'appium:noReset': false,
 }); // do not want to have no reset on the tests that use this
 
@@ -136,16 +77,16 @@ const SAFARI_CAPS = amendCapabilities(GENERIC_CAPS, {
 });
 
 const TESTAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': apps.iosTestApp,
+  'appium:app': APPS.iosTestApp,
 });
 
 const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': apps.uiCatalogApp,
-  'appium:otherApps': apps.iosTestApp,
+  'appium:app': APPS.uiCatalogApp,
+  'appium:otherApps': APPS.iosTestApp,
 });
 
 const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': apps.touchIdApp,
+  'appium:app': APPS.touchIdApp,
 });
 
 const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {

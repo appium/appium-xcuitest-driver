@@ -8,7 +8,7 @@ parameters:
   tvosName: ''
   tvosDeviceName: ''
   launchWithIDB: false
-  vmImage: 'macOS-10.15'
+  vmImage: 'macOS-11'
 jobs:
   # - template: ./ios-e2e-template.yml
   #   parameters:
@@ -19,8 +19,7 @@ jobs:
   #     vmImage: ${{ parameters.vmImage }}
   #     script: |
   #       npm install --no-save mjpeg-consumer
-  #       npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
-
+  #       npm run e2e-test:basic
   # - template: ./ios-e2e-template.yml
   #   parameters:
   #     name: e2e_device_${{ parameters.name }}
@@ -29,7 +28,7 @@ jobs:
   #     deviceName: ${{ parameters.deviceName }}
   #     vmImage: ${{ parameters.vmImage }}
   #     script: |
-  #       npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/device -g @skip-ci -i --exit
+  #       npm run e2e-test:device
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -39,8 +38,7 @@ jobs:
       deviceName: ${{ parameters.deviceName }}
       vmImage: ${{ parameters.vmImage }}
       timeoutMin: 90
-      script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/driver -g @skip-ci -i --exit
+      script: npm run e2e-test:driver
 
   - template: ./ios-e2e-template.yml
     parameters:
@@ -49,8 +47,7 @@ jobs:
       xcodeVersion: ${{ parameters.xcodeVersion }}
       deviceName: ${{ parameters.deviceName }}
       vmImage: ${{ parameters.vmImage }}
-      script: |
-        npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/web -g @skip-ci -i --exit
+      script: npm run e2e-test:web
 
   # - template: ./ios-e2e-template.yml
   #   parameters:
@@ -61,7 +58,7 @@ jobs:
   #     vmImage: ${{ parameters.vmImage }}
   #     timeoutMin: 120
   #     script: |
-  #       npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/long -g @skip-ci -i --exit
+  #       npm run e2e-test:long
 
   # - template: ./ios-e2e-template.yml
   #   parameters:
@@ -72,7 +69,7 @@ jobs:
   #     deviceName: ${{ parameters.tvosDeviceName }}
   #     vmImage: ${{ parameters.vmImage }}
   #     script: |
-  #       npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/tv -g @skip-ci -i --exit
+  #       npm run e2e-test:parallel
 
   # FIXME: these tests always fail with a timeout
   # - template: ./ios-e2e-template.yml
@@ -84,4 +81,4 @@ jobs:
   #     launchWithIDB: true
   #     script: |
   #       npm install --no-save mjpeg-consumer
-  #       npx mocha --timeout 480000 --reporter mocha-multi-reporters --reporter-options configFile=$(Build.SourcesDirectory)/ci-jobs/mocha-config.json --recursive build/test/functional/basic -g @skip-ci -i --exit
+  #       npm run e2e-test:native-web-tap

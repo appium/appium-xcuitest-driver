@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import chai from 'chai';
-import XCUITestDriver from '../..';
+import XCUITestDriver from '../../lib/driver';
 
 chai.should();
 

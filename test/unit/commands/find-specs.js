@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import XCUITestDriver from '../../..';
+import XCUITestDriver from '../../../lib/driver';
 
 
 describe('general commands', function () {

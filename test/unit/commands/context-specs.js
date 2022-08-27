@@ -1,4 +1,4 @@
-import XCUITestDriver from '../../..';
+import XCUITestDriver from '../../../lib/driver';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
