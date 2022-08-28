@@ -53,6 +53,7 @@ jobs:
     - script: |
         npm install -g appium@next
         npm install
+        npm run build
       displayName: Install node dependencies
     - script: |
         export APPIUM_TEST_SERVER_PORT=4567
