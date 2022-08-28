@@ -95,6 +95,7 @@
     "lint:fix": "npm run lint -- --fix",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-lint": "lint-staged",
+    "prepare": "npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
     "e2e-test": "mocha --exit --timeout 10m \"./test/functional/**/*-specs.js\"",
     "e2e-test:basic": "mocha \"./test/functional/basic\" --exit --timeout 10m",
