@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import XCUITestDriver from '../../..';
+import XCUITestDriver from '../../../lib/driver';
 
 
 describe('general commands', function () {

@@ -7,7 +7,7 @@ parameters:
   xcodeVersion: 11.3.1
   deviceName: 'iPhone X'
   skipTvOs: False
-  vmImage: 'macOS-10.15'
+  vmImage: 'macOS-11'
   timeoutMin: 60
 
 jobs:
@@ -53,6 +53,7 @@ jobs:
     - script: |
         npm install -g appium@next
         npm install
+        npm run build
       displayName: Install node dependencies
     - script: |
         export APPIUM_TEST_SERVER_PORT=4567
@@ -79,7 +80,3 @@ jobs:
 
         export PATH="${PATH}:$(python -c 'import site; print(site.USER_BASE)')/bin" && ${{ parameters.script }}
       displayName: Run functional tests
-    - task: PublishTestResults@2
-      condition: always()
-      inputs:
-        testResultsFiles: $(MOCHA_FILE)

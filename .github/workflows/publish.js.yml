@@ -18,8 +18,10 @@ jobs:
         node-version: 16.x
     - run: npm install
       name: Install dependencies
-    - run: npm test
-      name: Run NPM Test
+    - run: npm run build
+      name: Run build
+    - run: npm run test
+      name: Run test
     - run: |
         rm -rf package-lock.json
         npm prune --production
