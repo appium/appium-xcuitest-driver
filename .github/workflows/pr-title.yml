@@ -1,21 +1,13 @@
-name: Check PR title
+name: Conventional Commits
 on:
   pull_request:
-    types:
-      - opened
-      - reopened
-      - edited
-      - synchronize
+
 
 jobs:
   lint:
+    name: Conventional Commits
     runs-on: ubuntu-latest
     steps:
-      - uses: aslafy-z/conventional-pr-title-action@v2
-        with:
-          success-state: PR title follows the conventional commits specification.
-          failure-state: PR title does not follow the conventional commits specification.
-          context-name: conventional-pr-title
-          preset: conventional-changelog-angular@latest
+      - uses: beemojs/conventional-pr-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
