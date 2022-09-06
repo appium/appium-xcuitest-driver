@@ -887,7 +887,7 @@ Base64-encoded string, which represents the content of the remote file.
 
 ### mobile: pushFile
 
-Pshes a local file to the device.
+Pushes a local file to the device.
 
 #### Arguments
 
