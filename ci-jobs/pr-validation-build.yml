@@ -6,12 +6,6 @@ variables:
   value: true
 
 stages:
-- stage: Unit_Tests_And_Linters
-  jobs:
-  - template: ./templates/node-build-template.yml
-    parameters:
-      name: UnitTests_CI
-
 # TODO: Update e2e tests to comply with W3C
 - stage: Integration_Tests
   jobs:
