@@ -871,6 +871,45 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 text | string | yes | The actual command that will be passed to Siri service | Hello Siri
 
+### mobile: pullFile
+
+Pulls a remote file from the device.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | yes | The path to an existing remote file on the device. This variable can be prefixed with bundle id, so then the file will be pulled from the corresponding application container instead of the default media folder. Use `@<app_bundle_id>:<optional_container_type>/<path_to_the_file_or_folder_inside_container>` format to pull a file from an application container of the given type. The only supported container type for real devices is `documents`. You could use [listApps](#mobile-listapps) extension to check whether this container is available for the particluar app. Containers available for Simulators: `app`, `data`, `groups`, `<A specific App Group container>`. Eventually the whole Simulator file system is [available](https://stackoverflow.com/questions/6480607/is-there-any-way-to-see-the-file-system-on-the-ios-simulator) directly from Finder, so you may pull any file from there by providing a path to it relatively to Simulator's file system root. If the file with the given name does not exist an exception will be thrown. | @com.mycompany.myapp:documents/myfile.txt
+
+#### Returned Result
+
+Base64-encoded string, which represents the content of the remote file.
+
+### mobile: pushFile
+
+Pushes a local file to the device.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | yes | The path on the device to where the payload should be written. The value format is similar to the one used in [pullFile](#mobile-pullfile) extension. If the file with the same name already exists then it will be silently overridden. | @com.mycompany.myapp:documents/myfile.txt
+payload | string | yes | Base64-encoded content of the file to be pushed. | QXBwaXVt
+
+### mobile: pullFolder
+
+Pulls a remote folder from the device.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | yes | Same as for [pullFile](#mobile-pullfile) extension, but should be pointing to a remote folder | @com.mycompany.myapp:documents/myfolder/
+
+#### Returned Result
+
+Base64-encoded string, which represents the zipped content of the remote folder.
+
 ### mobile: deleteFile
 
 Deletes the given file from the device under test.
@@ -879,7 +918,7 @@ Deletes the given file from the device under test.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-remotePath | string | yes | The path to an existing remote file on the device. This variable can be prefixed with bundle id, so then the file will be deleted from the corresponding application container instead of the default media folder. Use `@<app_bundle_id>:<optional_container_type>/<path_to_the_file_or_folder_inside_container>` format to delete a file or a folder from an application container of the given type. The only supported container type is 'documents'. If the container type is not set explicitly for a bundle id, then the default application container is going to be mounted (aka --container ifuse argument) e.g. If `@com.myapp.bla:documents/111.png` is provided, `On My iPhone/<app name>` in Files app will be mounted to the host machine. `@com.myapp.bla:documents/` means `On My iPhone/<app name>`. | @com.mycompany.myapp:documents/myfile.txt
+remotePath | string | yes | Same as for [pullFile](#mobile-pullfile) extension | @com.mycompany.myapp:documents/myfile.txt
 
 ### mobile: deleteFolder
 
@@ -1400,7 +1439,7 @@ Get all condition inducer configuration profiles
 
 #### Returned Result
 
-The response looks like 
+The response looks like
 
 ```
 [{
@@ -1429,7 +1468,7 @@ The response looks like
 
 ### mobile: disableConditionInducer
 
-Disable device condition inducer. 
+Disable device condition inducer.
 
 Usually a persistent connection is maintained after enable the condition inducer, and this method is only valid for this connection.
 
