@@ -1308,7 +1308,7 @@ fromY | number | no | The y coordinate of starting drag point. Must be provided 
 toX | number | no | The x coordinate of ending drag point. Must be provided if `elementId` is not defined | 200
 toY | number | no | The y coordinate of ending drag point. Must be provided if `elementId` is not defined | 200
 
-#### Reference
+#### References
 
 [pressForDuration:thenDragToElement:withVelocity:thenHoldForDuration:](https://developer.apple.com/documentation/xctest/xcuielement/3551693-pressforduration?language=objc)
 [pressForDuration:thenDragToCoordinate:withVelocity:thenHoldForDuration:](https://developer.apple.com/documentation/xctest/xcuicoordinate/3551692-pressforduration?language=objc)
