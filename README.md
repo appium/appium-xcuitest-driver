@@ -1290,6 +1290,29 @@ js.executeScript("mobile: dragFromToForDuration", params);
 
 [clickForDuration:thenDragToElement:](https://developer.apple.com/documentation/xctest/xcuielement/1500989-clickforduration?language=objc)
 
+### mobile: dragFromToWithVelocity
+
+Initiates a press-and-hold gesture, drags to another coordinate or an element with a velocity you specify, and holds for a duration you specify.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+fromElementId | string | no | The internal element identifier (as hexadecimal hash string) to start the drag gesture from. Absolute screen coordinates are expected if this argument is not set | fe50b60b-916d-420b-8728-ee2072ec53eb
+toElementId | string | no | The internal element identifier (as hexadecimal hash string) to end the drag gesture on. This parameter is mandatory if `fromElementId` is provided | fe50b60b-916d-420b-8728-ee2072ec53eb
+pressDuration | number | yes | Float number of seconds in range [0, 60]. How long the tap gesture at starting drag point should be before to start dragging | 0.5
+holdDuration | number | yes | Float number of seconds in range [0, 60]. The duration for which to hold over the other coordinate or the given element after dragging | 0.1
+velocity | number | yes | The speed at which to move from the initial press position to the other element or coordinate, expressed in pixels per second | 400
+fromX | number | no | The x coordinate of starting drag point. Must be provided if `fromElementId` is not defined | 100
+fromY | number | no | The y coordinate of starting drag point. Must be provided if `fromElementId` is not defined | 100
+toX | number | no | The x coordinate of ending drag point. Must be provided if `fromElementId` is not defined | 200
+toY | number | no | The y coordinate of ending drag point. Must be provided if `fromElementId` is not defined | 200
+
+#### References
+
+[pressForDuration:thenDragToElement:withVelocity:thenHoldForDuration:](https://developer.apple.com/documentation/xctest/xcuielement/3551693-pressforduration?language=objc)
+[pressForDuration:thenDragToCoordinate:withVelocity:thenHoldForDuration:](https://developer.apple.com/documentation/xctest/xcuicoordinate/3551692-pressforduration?language=objc)
+
 ### mobile: selectPickerWheelValue
 
 Performs selection of the next or previous picker wheel value. This might
