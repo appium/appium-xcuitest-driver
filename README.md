@@ -5,14 +5,17 @@
 
 [![Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml/badge.svg)](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml)
 
-Appium XCUITest Driver is a combined solution, which allows to perform automated black-box testing of iOS and tvOS native applications and WebKit web views.
+Appium XCUITest Driver is a combined solution, which allows performing automated black-box testing of iOS and tvOS native applications and WebKit web views.
 The native testing is based on Apple's [XCTest](https://developer.apple.com/documentation/xctest) framework and the fork of Facebook's [WebDriverAgent](https://github.com/appium/WebDriverAgent) server (the [original](https://github.com/facebookarchive/WebDriverAgent) project is not supported anymore).
 Web views communication is done via [Webkit remote debugger protocol](https://github.com/appium/appium-remote-debugger). Real devices communication is ensured by [appium-ios-device](https://github.com/appium/appium-ios-device) library.
 Simulators communication is ensured by [appium-ios-simulator](https://github.com/appium/appium-ios-simulator) library.
 
 In the native mode the driver operates in scope of [WebDriver W3C protocol](https://w3c.github.io/webdriver) with several platform-specific extensions. Web views communication only supports the obsolete [JWP protocol](https://webdriver.io/docs/api/jsonwp.html).
 
-*Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
+> **Note**
+>
+> Since version 4.0.0 XCUITest driver has dropped the support of Appium 1, and is only compatible to Appium 2.
+> Use the `appium driver install xcuitest` command to add it to your Appium 2 dist.
 
 
 ## Requirements
@@ -20,12 +23,13 @@ In the native mode the driver operates in scope of [WebDriver W3C protocol](http
 On top of standard Appium requirements XCUITest driver also expects the following prerequisites:
 
 - Only macOS is supported as the host platform
-- Xcode and developer tools must be installed. Note, that usually some time is needed for the Appium team to pick up with the support of the most recent Xcode versions, especially beta ones.
+- Xcode and developer tools must be installed. Note, that usually some time is needed for the Appium team to pick up with the support of the most recent Xcode versions, especially beta ones (check [Xcode version support](#xcode-version-support) section below).
 - Connected real devices must be trusted, added to your developer profile and configured properly along with WebDriverAgent signing. Read [Real devices](#real-devices) section _carefully_ to set them up properly before running your tests.
     - Starting from iOS/iPadOS version iOS/iPadOS 16 real devices require enabling of _Developer Mode_ option in _Settings -> Privacy & Security_
-- The minimum supported Xcode SDK version for the current driver snapshot is *10.2 (iOS 12.2)*. Consider using earlier releases of the driver (see [Xcode version support](#xcode-version-support) section below) if it is necessary to test older iOS versions on real devices. Also, it is highly recommended to always use the same major version of Xcode SDK, which was used to build the particular iOS/tvOS version on your real device under test (for example Xcode 11 for iOS 13, Xcode 12 for iOS 14, etc).
+- Consider using earlier releases of the driver (check [Xcode version support](#xcode-version-support) section below) if it is necessary to test iOS versions older than the current iOS major version minus one on real devices. Also, it is highly recommended to always use the same major version of Xcode SDK, which was used to build the particular iOS/tvOS version on your real device under test (for example Xcode 11 for iOS 13, Xcode 12 for iOS 14, etc).
 - Web views must be debuggable in order to test them. If it is not possible to connect to your web view(s) using [Safari remote debugger](https://appletoolbox.com/use-web-inspector-debug-mobile-safari/) then XCUITest won't be able to connect to them as well.
 - Since version 3.33.0 (included into Appium 1.20.0+) of XCUITest driver the [Carthage](https://github.com/Carthage/Carthage) dependency *is not needed anymore*. Prior to that version it was required and could be installed using [brew](https://brew.sh/): `brew install carthage`.
+
 
 ## Optional dependencies
 
@@ -71,7 +75,7 @@ See [real device configuration documentation](docs/real-device-config.md).
 - After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
 - iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. This is a known limitation of XCTest framework. This limitation does not affect screenshooting APIs though (e.g. the overlay is not visible on taken screenshots).
 - iPhone/iPad real devices [require passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. Disabling passcode/touch id in the device preference allows to workaround the behaviour above.
-- OpenSSL v3 breaks secured communication with real devices. It can cause a [Failed to receive any data within the timeout](https://github.com/appium/appium/issues/16399) error in [appium-ios-device](https://github.com/appium/appium-ios-device). Please read [this issue](https://github.com/appium/appium-ios-device/pull/88#discussion_r825315862) for more details.
+- OpenSSL v3 breaks secure communication with real devices. It can cause a [Failed to receive any data within the timeout](https://github.com/appium/appium/issues/16399) error in [appium-ios-device](https://github.com/appium/appium-ios-device). Please read [this issue](https://github.com/appium/appium-ios-device/pull/88#discussion_r825315862) for more details.
     - Please make sure your environment has Open SSL v1 for NodeJS environment, or prepare an OpenSSL v3 build by patching `OPENSSL_TLS_SECURITY_LEVEL=1`. (e.g. [an article](https://www.feistyduck.com/library/openssl-cookbook/online/ch-openssl.html))
     - This configuration is only necessary for XCUITest driver v4.3.0 or lower.
 
@@ -115,7 +119,7 @@ Usage: `appium --driver-args='{"xcuitest": {[argName]: [argValue]}}'`
 
 |Argument|Default|Description|Example|
 |----|-------|-----------|-------|
-|`"wdaLocalPort"`|8100| Local port used for communication with ios-web-driver-agent|`--driver-args='{"xcuitest": {"wdaLocalPort": 8100}}'`|
+| wdaLocalPort | 8100 | Local port used for communication with ios-web-driver-agent | `--driver-args='{"xcuitest": {"wdaLocalPort": 8100}}'` |
 
 ## Capabilities
 
