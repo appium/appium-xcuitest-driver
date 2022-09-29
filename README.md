@@ -33,14 +33,31 @@ On top of standard Appium requirements XCUITest driver also expects the followin
 - For test video recording we use [ffmpeg](https://ffmpeg.org/). It could be installed using [brew](https://brew.sh/): `brew install ffmpeg`
 - [IDB](https://github.com/facebook/idb), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) could be used to improve some real device/Simulator interactions
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) could be used to improve some Simulator interactions
+- [py-ios-device](https://github.com/YueChen-C/py-ios-device) is required in several `mobile:` extensions and to improve the general testing experience for _real_ iOS devices
 
 
 ## Xcode version support
 
-* module versions below `2.96.0` only supports XCode 8 and newer
-* module version `2.96.0` and above only supports XCode 9 and newer
-* module version `3.0.0` and above only supports Xcode 10 and newer
-* module version `3.32.0` and above only supports Xcode 10.2 and newer
+Apple constantly works on various updates/improvements to XCTest framework. Thus, some major and even minor iOS releases might partially break the backward compatibility, so we need to implement multiple branches to support the legacy and the current implementations in [WebDriverAgent](https://github.com/appium/WebDriverAgent). Eventually we just drop the support of legacy XCTest implementations in order to simplify the client code and to have access to the recent platform features. The general aim is to support the _current major_ platform version and the _previous major_ one.
+
+Minimum XCUITest driver version | Minimum required Xcode version
+--- | ---
+2.96.0 | Xcode 9
+3.0.0 | Xcode 10
+3.32.0 | Xcode 10.2
+3.56.0 | Xcode 11
+4.2.0 | Xcode 12
+
+It could be that after a new Xcode SDK is released we figure out a part or even the whole functionality that [WebDriverAgent](https://github.com/appium/WebDriverAgent) currently provides does not work anymore and needs to be updated. The below table contains the driver versions mapping for the cases where we had known compatibility issues with newly released SDKs and addressed them. Basically, version numbers in this table mean that all XCUITest driver versions _below_ the one in the first column _won't support_ Xcode SDK equal or above the version in the second column and the only way to make your test working after Xcode update would be to also *bump the driver version*.
+
+Minimum XCUITest driver version | Tested for compatibility with Xcode version
+--- | ---
+4.7.4 | Xcode 14-beta.3
+
+
+## tvOS Support
+
+Read the [tvOS support](docs/ios/ios-tvos.md) article to get more details on how to automate testing for this platform.
 
 
 ## Real devices
