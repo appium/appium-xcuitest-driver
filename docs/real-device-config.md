@@ -206,7 +206,7 @@ The resulting output will contain the full path to WDA's source folder.
 
 #### Appium 2.x
 
-In Appium 2.x the server and drivers are separated, so you won't find WDA sources in the same package where the server is installed anymore. WDA only gets fetched installed as soon as XCUITest is installed using the server CLI, e.g. `appium driver install xcuitest`. Appium server CLI by default installs the driver package using NPM and uses APPIUM_HOME folder as root. By default, APPIUM_HOME points to `$HOME/.appium`. It could also be customized by providing the corresponding CLI argument. As soon as the driver installation is completed and default values were used the WDA path could be found in one of `APPIUM_HOME` subfolders:
+In Appium 2.x the server and drivers are separated, so you won't find WDA sources in the same package where the server is installed. WDA sources only get fetched as soon as XCUITest driver is installed using the server CLI, e.g. `appium driver install xcuitest`. Appium server CLI by default installs the driver package using NPM and uses APPIUM_HOME folder as the root. By default, APPIUM_HOME points to `$HOME/.appium`. It could also be customized by providing the corresponding CLI argument. As soon as the driver installation is completed and default values were used the WDA path could be found in one of `APPIUM_HOME` subfolders:
 
 ```bash
 appium driver install xcuitest
