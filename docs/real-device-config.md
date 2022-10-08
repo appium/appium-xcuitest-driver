@@ -200,7 +200,7 @@ $ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedD
 Then, `WebDriverAgentRunner-Runner.app` will be in `appium_wda/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app` with the proper codesign by xcodebuild. Please make sure the `WebDriverAgent.xcodeproj` has proper condiguratin as this page to do sign properly.
 The `WebDriverAgentRunner-Runner.app` can be installed to any real devices allowed by the provisiong profile.
 
-You can install the package with 3rd party tools such as listed in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
+You can install the package with 3rd party tools and manage it separately like explained in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
 If the codesign is not correct, the installation will fail because of the package verification error by iOS.
 
 As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) by yourself.
