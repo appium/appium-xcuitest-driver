@@ -159,7 +159,7 @@ public class WDAServer {
     private List<String> generateXcodebuildCmdline() {
         final List<String> result = new ArrayList<>();
         result.add(XCODEBUILD_EXECUTABLE.getAbsolutePath());
-        result.add("clean build test");
+        result.add("clean build-for-testing test-without-building");
         result.add(String.format("-project %s", WDA_PROJECT.getAbsolutePath()));
         result.add(String.format("-scheme %s", WDA_SCHEME));
         result.add(String.format("-destination id=%s", deviceId));

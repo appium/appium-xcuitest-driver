@@ -6,7 +6,7 @@ The easiest way to get up-and-running with Appium's XCUITest support on iOS
 real devices is to use the automatic configuration strategy. There are two ways
 to do this:
 
-*   Use the `xcodeOrgId` and `xcodeSigningId` desired capabilities:
+*   Use the `xcodeOrgId` and `xcodeSigningId` [capabilities](../README.md#webdriveragent):
 ```json
     {
       "xcodeOrgId": "<Team ID>",
@@ -117,8 +117,8 @@ is updated, and is _not_ recommended):
 ```bash
     mkdir -p Resources/WebDriverAgent.bundle
 ```
-    If you build an WebDriverAgent with a version before 2.32.0 (e.g. as part of
-    an Appium release before 1.20.0) you also have to run
+If you build an WebDriverAgent with a version before 2.32.0 (e.g. as part of
+an Appium release before 1.20.0) you also have to run
 ```bash
     ./Scripts/bootstrap.sh -d
 ```
@@ -127,7 +127,6 @@ is updated, and is _not_ recommended):
     in the "General" tab, and then select your `Development Team`. This
     should also auto select `Signing Ceritificate`. The outcome should look as
     shown below:
-
     ![WebDriverAgent in Xcode project](xcode-config.png)
 
     * Xcode may fail to create a provisioning profile for the `WebDriverAgentRunner`
@@ -148,7 +147,7 @@ is updated, and is _not_ recommended):
 
 *   Finally, you can verify that everything works. Build the project:
 ```bash
-    xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' test
+    xcodebuild build-for-testing test-without-building -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>'
 ```
 If this was successful, the output should end with something like:
 ```
@@ -167,7 +166,7 @@ If this was successful, the output should end with something like:
     export JSON_HEADER='-H "Content-Type: application/json;charset=UTF-8, accept: application/json"'
     curl -X GET $JSON_HEADER $DEVICE_URL/status
 ```
-    You ought to get back output something like this:
+You ought to get back output something like this:
 ```json
     {
       "value" : {
@@ -188,6 +187,19 @@ If this was successful, the output should end with something like:
       "status" : 0
     }
 ```
+
+#### Build for general devicces, run it by manual
+
+As another way, you can build `WebDriverAgentRunner` for a general iOS device, and install the generated `.app` package to a real device.
+
+```bash
+$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda -scheme WebDriverAgentRunner -target WebDriverAgentRunner -destination generic/platform=iOS CODE_SIGNING_ALLOWED=YES
+```
+(tvOS should be `WebDriverAgentRunner_tvOS` instead of `WebDriverAgentRunner` in the above scheme and target.)
+
+Then, `WebDriverAgentRunner-Runner.app` will be in `appium_wda/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app` with the proper codesign by xcodebuild. Please make sure the `xcodeproj` has the proper condiguratin as the above to do sign properly.
+The `WebDriverAgentRunner-Runner.app` can be installed to real devices allowed by the codesign. You can install the app file with 3rd party tools such as listed in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
+As a more advanced method, you can generate the app package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) by yourself.
 
 ### Finding WebDriverAgent project root on the local file system
 
