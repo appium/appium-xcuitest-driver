@@ -195,14 +195,16 @@ As another way, you can build `WebDriverAgentRunner` for a general iOS device, a
 ```bash
 $ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda -scheme WebDriverAgentRunner -target WebDriverAgentRunner -destination generic/platform=iOS CODE_SIGNING_ALLOWED=YES
 ```
-(tvOS should be `WebDriverAgentRunner_tvOS` instead of `WebDriverAgentRunner` in the above scheme and target.)
+(tvOS should be `WebDriverAgentRunner_tvOS` instead of `WebDriverAgentRunner`  in the above scheme and target, and `generic/platform=tvOS`instead of `generic/platform=iOS` for the destination.)
 
-Then, `WebDriverAgentRunner-Runner.app` will be in `appium_wda/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app` with the proper codesign by xcodebuild. Please make sure the `WebDriverAgent.xcodeproj` has the proper condiguratin as this page to do sign properly.
-The `WebDriverAgentRunner-Runner.app` can be installed to real devices allowed by the codesign. You can install the app file with 3rd party tools such as listed in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
-If the codesign is not correct, the installation will fail because of the application verification error by iOS.
+Then, `WebDriverAgentRunner-Runner.app` will be in `appium_wda/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app` with the proper codesign by xcodebuild. Please make sure the `WebDriverAgent.xcodeproj` has proper condiguratin as this page to do sign properly.
+The `WebDriverAgentRunner-Runner.app` can be installed to any real devices allowed by the provisiong profile.
 
-As a more advanced method, you can generate the app package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) by yourself.
-This way allows you to manage devices more flexible, but you may need knowledge about the codesign.
+You can install the package with 3rd party tools such as listed in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
+If the codesign is not correct, the installation will fail because of the package verification error by iOS.
+
+As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) by yourself.
+This way bring you to manage devices more flexible, but you may need knowledge about the codesign.
 
 ### Finding WebDriverAgent project root on the local file system
 
