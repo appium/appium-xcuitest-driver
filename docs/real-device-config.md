@@ -14,7 +14,7 @@ to do this:
     }
 ```
 *   Create a `.xcconfig` file somewhere on your file system and add the following to it:
-```shell
+```ini
     DEVELOPMENT_TEAM = <Team ID>
     CODE_SIGN_IDENTITY = iPhone Developer
 ```
@@ -35,7 +35,7 @@ specifying a real device in your `udid` desired capability.
 If this has not worked it will usually manifest itself in the Appium server logs
 as some error followed by `info XCUITest xcodebuild exited with code '65' and
 signal 'null'`. This usually means that the necessary code signing is not set up
-correctly. Go on to the [Basic (manual) configuration](https://github.com/imurchie/appium-xcuitest-driver/blob/master/docs/real-device-config.md#basic-manual-configuration)
+correctly. Go on to the [Basic (manual) configuration](#basic-manual-configuration)
 to fix.
 
 If the `WebDriverAgentRunner` is successfully installed on the device, but in the
@@ -108,32 +108,18 @@ Alternatively, the provisioning profile can be manually associated with the
 project (keep in mind that this will have to be done each time the `WebDriverAgent`
 is updated, and is _not_ recommended):
 
-*   Appium's version of [WebDriverAgent](https://github.com/appium/WebDriverAgent)
-    is distributed through NPM as [appium-webdriveragent](https://www.npmjs.com/package/appium-webdriveragent),
-    and is installed with the Appium server.
-
-*   Find out where your Appium installation is:
-```
-    $ which appium
-    /path/where/installed/bin/appium
-```
-*   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
-    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent` or
-    `/path/where/installed/lib/node_modules/appium/node_modules/<current_driver_module>/node_modules/appium-webdriveragent`.
-    The actual path depends on where NPM decides to put the submodule, although the
-    rule of thumb is to look for it as a subdirectory of the actual driver's node
-    modules (for the majority of cases this would be
-    `appium/node_modules/appium-xcuitest-driver/node_modules`) and, if it is not present there, under `appium/node_modules`.
+*   Read [Finding WebDriverAgent project root on the local file system](#finding-webdriveragent-project-root-on-the-local-file-system) to locate where WebDriverAgent
+    is installed.
     You could also see the full path to WebDriverAgent's folder in Appium server logs
     after a session has been started.
     Open a terminal and go to that location, then run the following to
     set the project up:
-```
+```bash
     mkdir -p Resources/WebDriverAgent.bundle
 ```
     If you build an WebDriverAgent with a version before 2.32.0 (e.g. as part of
     an Appium release before 1.20.0) you also have to run
-```
+```bash
     ./Scripts/bootstrap.sh -d
 ```
 *   Open `WebDriverAgent.xcodeproj` in Xcode. For **both** the `WebDriverAgentLib`
@@ -161,7 +147,7 @@ is updated, and is _not_ recommended):
       ![Xcode provisioning profile](xcode-facebook-succeed.png)
 
 *   Finally, you can verify that everything works. Build the project:
-```
+```bash
     xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' test
 ```
 If this was successful, the output should end with something like:
@@ -182,7 +168,7 @@ If this was successful, the output should end with something like:
     curl -X GET $JSON_HEADER $DEVICE_URL/status
 ```
     You ought to get back output something like this:
-```
+```json
     {
       "value" : {
         "state" : "success",
@@ -202,3 +188,29 @@ If this was successful, the output should end with something like:
       "status" : 0
     }
 ```
+
+### Finding WebDriverAgent project root on the local file system
+
+WebDriverAgent Xcode project is bundled with [appium-webdriveragent](https://www.npmjs.com/package/appium-webdriveragent) NPM module. This means as soon as you could find WDA location on the local file system as soon as you know where this npm module has been installed. The module is a direct dependency of [appium-xcuitest-driver](https://www.npmjs.com/package/appium-xcuitest-driver). The actual location of the module on the file system depends on major Appium version and on the way used to install Appium or XCUITest itself. All the below tutorials assume that you use *NPM* (Node Package Manager) to install Appium. We do not officially support other package managers, like yarn or brew, so the actual behavior might be different if you still use them.
+
+#### Appium 1.x
+
+XCUITest driver is the default dependency of Appium 1.x package, so WDA must be located under Appium's installation root. Depending on whether Appium has been installed globally or locally, the package could be find either in a local or a global `node_modules` root. Check [Where does npm install packages? Find the install path](https://sebhastian.com/where-does-npm-install-packages/) article for more details. As soon as you find where `appium` package is located then simply run the lookup for `WebDriverAgent.xcodeproj` in it. For example, if Appium has been installed globally, then the following commands could be used:
+
+```bash
+npm i -g appium@1.22.3
+echo "$(dirname "$(find "$(npm root -g)/appium/node_modules" -name WebDriverAgent.xcodeproj)")"
+```
+
+The resulting output will contain the full path to WDA's source folder.
+
+#### Appium 2.x
+
+In Appium 2.x the server and drivers are separated, so you won't find WDA sources in the same package where the server is installed. WDA sources only get fetched as soon as XCUITest driver is installed using the server CLI, e.g. `appium driver install xcuitest`. Appium server CLI by default installs the driver package using NPM and uses APPIUM_HOME folder as the root. By default, APPIUM_HOME points to `$HOME/.appium`. It could also be customized by providing the corresponding CLI argument. As soon as the driver installation is completed and default values were used the WDA path could be found in one of `APPIUM_HOME` subfolders:
+
+```bash
+appium driver install xcuitest
+echo "$(dirname "$(find "$HOME/.appium" -name WebDriverAgent.xcodeproj)")"
+```
+
+The resulting output will contain the full path to WDA's source folder.
