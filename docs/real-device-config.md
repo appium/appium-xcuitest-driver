@@ -190,24 +190,28 @@ You ought to get back output something like this:
 
 #### Build for Generic iOS/tvOS devices, run manually
 
-As another way, you can build `WebDriverAgentRunner` for a generic iOS/tvOS device, and install the generated `.app` package to a real device.
-The generic one means for any iOS/tvOS devices similar to creating a release iOS/tvOS package.
+Alternatively, you can build `WebDriverAgentRunner` for a generic iOS/tvOS device, and install the generated `.app` package to a real device.
+Building for a generic device means the package could be installed on any iOS or tvOS device depending on the chosen platform.
 
 ```bash
 # iOS
-$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda -scheme WebDriverAgentRunner -destination generic/platform=iOS CODE_SIGNING_ALLOWED=YES
+$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda_ios -scheme WebDriverAgentRunner -destination generic/platform=iOS CODE_SIGNING_ALLOWED=YES
 
 # tvOS
-$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda -scheme WebDriverAgentRunner_tvOS -destination generic/platform=tvOS CODE_SIGNING_ALLOWED=YES
+$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda_tvos -scheme WebDriverAgentRunner_tvOS -destination generic/platform=tvOS CODE_SIGNING_ALLOWED=YES
 ```
 
-Then, `WebDriverAgentRunner-Runner.app` will be in `appium_wda/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app` with the proper codesign by xcodebuild. Please make sure the `WebDriverAgent.xcodeproj` has proper condiguratin as this page to do sign properly.
+On successful completion the resulting package `WebDriverAgentRunner-Runner.app` should be located in `Build/Products/Debug-iphoneos/` subfolder under WebDriverAgent sources root, or in the path provided as `derivedDataPath` argument.
+
+> **Note**
+> Please make sure the `WebDriverAgent.xcodeproj` has codesigning properties configured properly according to the above description if the build action fails.
+
 The `WebDriverAgentRunner-Runner.app` can be installed to any real device allowed by the provisiong profile.
 
 You can install the package with 3rd party tools and manage it separately as explained in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
 If the codesign is not correct, the installation will fail because of the package verification error by iOS.
 
-As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) by yourself.
+As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) separately by yourself.
 This would make the device management more flexible, but you'd need to know about advanced codesign usage scenarios.
 
 ### Finding WebDriverAgent project root on the local file system
