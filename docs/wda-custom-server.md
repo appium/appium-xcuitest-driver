@@ -47,7 +47,7 @@ address for Simulator and for real device.
 
 You can use [appium-ios-device](https://github.com/appium/appium-ios-device) to connect to
 a remote device requiring the module from your JavaScript code as same as Appium.
-Alternatively, you can also use [iproxy](https://github.com/libimobiledevice/libusbmuxd#iproxy), [go-ios](https://github.com/danielpaulus/go-ios) or [tidevice](https://github.com/alibaba/taobao-iphone-device) to handle WebDriverAgent process outside Appium. For instance, `iproxy` could be installed using npm: `npm install -g iproxy`.
+Alternatively, you can also use [iproxy](https://github.com/libimobiledevice/libusbmuxd#iproxy), [go-ios](https://github.com/danielpaulus/go-ios) or [tidevice](https://github.com/alibaba/taobao-iphone-device) to handle WebDriverAgent process outside Appium by installing and launching the WebDriverAgent package. For instance, `iproxy` could be installed using npm: `npm install -g iproxy`.
 
 This helper class written in Java illustrates the main implementation details
 wit _iproxy_:
@@ -159,7 +159,7 @@ public class WDAServer {
     private List<String> generateXcodebuildCmdline() {
         final List<String> result = new ArrayList<>();
         result.add(XCODEBUILD_EXECUTABLE.getAbsolutePath());
-        result.add("clean build test");
+        result.add("clean build-for-testing test-without-building");
         result.add(String.format("-project %s", WDA_PROJECT.getAbsolutePath()));
         result.add(String.format("-scheme %s", WDA_SCHEME));
         result.add(String.format("-destination id=%s", deviceId));

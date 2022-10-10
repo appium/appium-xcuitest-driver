@@ -6,7 +6,7 @@ The easiest way to get up-and-running with Appium's XCUITest support on iOS
 real devices is to use the automatic configuration strategy. There are two ways
 to do this:
 
-*   Use the `xcodeOrgId` and `xcodeSigningId` desired capabilities:
+*   Use the `xcodeOrgId` and `xcodeSigningId` [capabilities](../README.md#webdriveragent):
 ```json
     {
       "xcodeOrgId": "<Team ID>",
@@ -117,8 +117,8 @@ is updated, and is _not_ recommended):
 ```bash
     mkdir -p Resources/WebDriverAgent.bundle
 ```
-    If you build an WebDriverAgent with a version before 2.32.0 (e.g. as part of
-    an Appium release before 1.20.0) you also have to run
+If you build WebDriverAgent with a version before 2.32.0 (e.g. as part of
+an Appium release before 1.20.0) you also have to run
 ```bash
     ./Scripts/bootstrap.sh -d
 ```
@@ -127,7 +127,6 @@ is updated, and is _not_ recommended):
     in the "General" tab, and then select your `Development Team`. This
     should also auto select `Signing Ceritificate`. The outcome should look as
     shown below:
-
     ![WebDriverAgent in Xcode project](xcode-config.png)
 
     * Xcode may fail to create a provisioning profile for the `WebDriverAgentRunner`
@@ -148,7 +147,7 @@ is updated, and is _not_ recommended):
 
 *   Finally, you can verify that everything works. Build the project:
 ```bash
-    xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' test
+    xcodebuild build-for-testing test-without-building -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>'
 ```
 If this was successful, the output should end with something like:
 ```
@@ -167,7 +166,7 @@ If this was successful, the output should end with something like:
     export JSON_HEADER='-H "Content-Type: application/json;charset=UTF-8, accept: application/json"'
     curl -X GET $JSON_HEADER $DEVICE_URL/status
 ```
-    You ought to get back output something like this:
+You ought to get back output something like this:
 ```json
     {
       "value" : {
@@ -188,6 +187,32 @@ If this was successful, the output should end with something like:
       "status" : 0
     }
 ```
+
+#### Build for Generic iOS/tvOS devices, run manually
+
+Alternatively, you can build `WebDriverAgentRunner` for a generic iOS/tvOS device, and install the generated `.app` package to a real device.
+Building for a generic device means the package could be installed on any iOS or tvOS device depending on the chosen platform.
+
+```bash
+# iOS
+$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda_ios -scheme WebDriverAgentRunner -destination generic/platform=iOS CODE_SIGNING_ALLOWED=YES
+
+# tvOS
+$ xcodebuild clean build-for-testing -project WebDriverAgent.xcodeproj -derivedDataPath appium_wda_tvos -scheme WebDriverAgentRunner_tvOS -destination generic/platform=tvOS CODE_SIGNING_ALLOWED=YES
+```
+
+On successful completion the resulting package `WebDriverAgentRunner-Runner.app` should be located in `Build/Products/Debug-iphoneos/` subfolder under WebDriverAgent sources root, or in the path provided as `derivedDataPath` argument.
+
+> **Note**
+> Please make sure the `WebDriverAgent.xcodeproj` has codesigning properties configured properly according to the above description if the build action fails.
+
+The `WebDriverAgentRunner-Runner.app` can be installed to any real device allowed by the provisiong profile.
+
+You can install the package with 3rd party tools and manage it separately as explained in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
+If the codesign is not correct, the installation will fail because of the package verification error by iOS.
+
+As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) separately by yourself.
+This would make the device management more flexible, but you'd need to know about advanced codesign usage scenarios.
 
 ### Finding WebDriverAgent project root on the local file system
 
