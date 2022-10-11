@@ -205,17 +205,19 @@ On successful completion the resulting package `WebDriverAgentRunner-Runner.app`
 
 > **Note**
 > Please make sure the `WebDriverAgent.xcodeproj` has codesigning properties configured properly according to the above description if the build action fails.
+> For example, you may need to configure the bundle id for the provisioning profile properly.
 
-> **Note**
-> Generic builds are available for each version tag at https://github.com/appium/WebDriverAgent/releases
-
-The `WebDriverAgentRunner-Runner.app` can be installed to any real device allowed by the provisiong profile.
+The `WebDriverAgentRunner-Runner.app` can be installed to any real device allowed by the provisioning profile.
 
 You can install the package with 3rd party tools and manage it separately as explained in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
 If the codesign is not correct, the installation will fail because of the package verification error by iOS.
 
 As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) separately by yourself.
 This would make the device management more flexible, but you'd need to know about advanced codesign usage scenarios.
+
+> **Note**
+> Generic builds with `CODE_SIGNING_ALLOWED=NO` are available for each version tag at https://github.com/appium/WebDriverAgent/releases.
+> The packages are able to be sigined with a wildcard (`*`) provisioning profile to make it work. The wildcard requires a paied account.
 
 ### Finding WebDriverAgent project root on the local file system
 
