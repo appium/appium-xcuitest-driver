@@ -206,6 +206,9 @@ On successful completion the resulting package `WebDriverAgentRunner-Runner.app`
 > **Note**
 > Please make sure the `WebDriverAgent.xcodeproj` has codesigning properties configured properly according to the above description if the build action fails.
 
+> **Note**
+> Generic builds are available for each version tag at https://github.com/appium/WebDriverAgent/releases
+
 The `WebDriverAgentRunner-Runner.app` can be installed to any real device allowed by the provisiong profile.
 
 You can install the package with 3rd party tools and manage it separately as explained in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
