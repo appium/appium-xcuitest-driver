@@ -217,7 +217,7 @@ This would make the device management more flexible, but you'd need to know abou
 
 > **Note**
 > Generic builds with `CODE_SIGNING_ALLOWED=NO` are available for each version tag at https://github.com/appium/WebDriverAgent/releases.
-> The packages are able to be sigined with a wildcard (`*`) provisioning profile to make it work. The wildcard requires a paied account.
+> It is recommended to sign packages with a wildcard (`*`) provisioning profile. Such profiles require a paid Apple Developer account. In a free account case, you may need to update bundle id properly.
 
 ### Finding WebDriverAgent project root on the local file system
 
