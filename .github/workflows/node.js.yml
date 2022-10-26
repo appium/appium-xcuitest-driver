@@ -11,10 +11,13 @@ jobs:
     - name: Generate Node.js versions matrix
       id: generate-matrix
       run: |
-        current_lts=$(curl -s https://nodejs.org/en/ | grep -E -o 'Download [0-9.]+ LTS' | grep -E -o '([0-9]+)' | head -n 1)
-        previous_lts=$(( current_lts - 2 ))
-        next_lts=$(( current_lts + 2 ))
-        VERSIONS="[$previous_lts, $current_lts, $next_lts]"
+        sudo apt-get install -y lynx
+        lynx -dump https://endoflife.date/nodejs | grep -E -o '[0-9]+ \(LTS\)' | grep -E -o '([0-9]+)' > eol.list
+        cat eol.list
+        lts1=$(cat eol.list | head -1)
+        lts2=$(cat eol.list | head -2 | tail -1)
+        lts3=$(cat eol.list | head -3 | tail -1)
+        VERSIONS="[$lts1, $lts2, $lts3]"
         echo ::set-output name=versions::${VERSIONS}
 
   build:
