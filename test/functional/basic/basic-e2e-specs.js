@@ -40,7 +40,7 @@ describe('XCUITestDriver - basics -', function () {
         this.skip();
       }
 
-      await driver.setImplicitWaitTimeout(10000);
+      await driver.setImplicitTimeout(10000);
       const findElementPromise = driver.elementById('WrongLocator');
       const status = await driver.status();
       status.build.version.should.exist;
