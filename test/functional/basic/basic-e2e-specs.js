@@ -320,7 +320,7 @@ describe('XCUITestDriver - basics -', function () {
       // on some systems (like Travis) it takes a while to load the webview
       const contexts = await driver.contexts();
 
-      await driver.context(contexts[1]);
+      await driver.getContexts(contexts[1]);
       await driver.url(GUINEA_PIG_PAGE);
 
       await retryInterval(100, 1000, async function () {
@@ -328,7 +328,7 @@ describe('XCUITestDriver - basics -', function () {
         title.should.equal('I am a page title');
       });
 
-      await driver.context(contexts[0]);
+      await driver.getContexts(contexts[0]);
     });
   });
 });
