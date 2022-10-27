@@ -287,7 +287,7 @@ describe('XCUITestDriver - basics -', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.shakeDevice().should.not.be.rejected;
+      await driver.shake().should.not.be.rejected;
     });
   });
 
