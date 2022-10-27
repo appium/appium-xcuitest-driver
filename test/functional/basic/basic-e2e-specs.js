@@ -211,13 +211,13 @@ describe('XCUITestDriver - basics -', function () {
 
     describe('retrieval -', function () {
       it('should throw an error when an invalid type is given', async function () {
-        await driver.log('something-random').should.eventually.be.rejected;
+        await driver.getLogs('something-random').should.eventually.be.rejected; // TODO: check if it works as expected since it is mjwp
       });
       it('should get system logs', async function () {
-        (await driver.log('syslog')).should.be.an('array');
+        (await driver.getLogs('syslog')).should.be.an('array'); // TODO: check if it works as expected since it is mjwp
       });
       it('should get crash logs', async function () {
-        (await driver.log('crashlog')).should.be.an('array');
+        (await driver.getLogs('crashlog')).should.be.an('array'); // TODO: check if it works as expected since it is mjwp
       });
     });
   });
