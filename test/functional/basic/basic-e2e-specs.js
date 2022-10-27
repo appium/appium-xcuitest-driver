@@ -30,7 +30,7 @@ describe('XCUITestDriver - basics -', function () {
       if (process.env.SAUCE_EMUSIM) {
         status.build.version.should.equal('Sauce Labs');
       } else {
-        status.wda.should.exist;
+        status.build.version.should.exist;
       }
     });
 
@@ -43,7 +43,7 @@ describe('XCUITestDriver - basics -', function () {
       await driver.setImplicitWaitTimeout(10000);
       const findElementPromise = driver.elementById('WrongLocator');
       const status = await driver.status();
-      status.wda.should.exist;
+      status.build.version.should.exist;
       findElementPromise.isPending().should.be.true;
       try {
         await findElementPromise;
