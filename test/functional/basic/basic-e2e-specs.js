@@ -66,7 +66,7 @@ describe('XCUITestDriver - basics -', function () {
       };
       let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
 
-      let actual = await driver.sessionCapabilities();
+      let actual = await driver.capabilities;
       // `borwserName` can be different
       ['UICatalog', 'UIKitCatalog'].should.include(actual.browserName);
       delete actual.browserName;
@@ -183,7 +183,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
-      const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
+      const {statBarHeight, pixelRatio, viewportRect} = await driver.capabilities;
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute('mobile: viewportScreenshot');
       const fullB64 = Buffer.from(fullScreen, 'base64');
