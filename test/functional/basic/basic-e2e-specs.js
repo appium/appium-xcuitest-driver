@@ -125,7 +125,7 @@ describe('XCUITestDriver - basics -', function () {
     }
     describe('plain -', function () {
       it('should get the source for the page', async function () {
-        let src = await driver.source();
+        let src = await driver.getPageSource();
         (typeof src).should.eql('string');
         checkSource(src);
       });
@@ -133,7 +133,7 @@ describe('XCUITestDriver - basics -', function () {
     describe('json parsed -', function () {
       it('should get source with useJSONSource', async function () {
         await driver.updateSettings({useJSONSource: true});
-        let src = await driver.source();
+        let src = await driver.getPageSource();
         checkSource(src);
       });
     });
@@ -144,7 +144,7 @@ describe('XCUITestDriver - basics -', function () {
       let before = Date.now();
       await driver.backgroundApp(4);
       (Date.now() - before).should.be.above(4000);
-      (await driver.source()).indexOf('<AppiumAUT>').should.not.eql(-1);
+      (await driver.getPageSource()).indexOf('<AppiumAUT>').should.not.eql(-1);
     });
   });
 
