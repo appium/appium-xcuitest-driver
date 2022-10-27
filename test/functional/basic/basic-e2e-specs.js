@@ -204,7 +204,7 @@ describe('XCUITestDriver - basics -', function () {
         const expectedTypes = [
           'syslog', 'crashlog', 'performance', 'server', 'safariConsole',
         ];
-        const actualTypes = await driver.logTypes();
+        const actualTypes = await driver.getLogTypes(); // TODO: check if it works as expected since it is mjwp
         actualTypes.should.containSubset(expectedTypes);
       });
     });
