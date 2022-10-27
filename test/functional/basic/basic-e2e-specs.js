@@ -142,7 +142,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('deactivate app -', function () {
     it('should background the app for the specified time', async function () {
       let before = Date.now();
-      await driver.backgroundApp(4);
+      await driver.background(4); // TODO: should not pass a number since it is deprecated? https://appium.io/docs/en/commands/device/app/background-app/
       (Date.now() - before).should.be.above(4000);
       (await driver.getPageSource()).indexOf('<AppiumAUT>').should.not.eql(-1);
     });
