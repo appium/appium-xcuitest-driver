@@ -321,7 +321,7 @@ describe('XCUITestDriver - basics -', function () {
       const contexts = await driver.contexts();
 
       await driver.context(contexts[1]);
-      await driver.get(GUINEA_PIG_PAGE);
+      await driver.url(GUINEA_PIG_PAGE);
 
       await retryInterval(100, 1000, async function () {
         let title = await driver.title();
