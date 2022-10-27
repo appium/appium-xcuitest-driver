@@ -160,7 +160,7 @@ describe('XCUITestDriver - basics -', function () {
       screenshot.should.be.a('string');
 
       // make sure WDA didn't crash, by using it again
-      let els = await driver.elementsByAccessibilityId('Alert Views');
+      let els = await driver.$('~Alert Views');
       els.length.should.eql(1);
     });
 
