@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import B from 'bluebird';
+import util from 'util';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
@@ -41,10 +42,10 @@ describe('XCUITestDriver - basics -', function () {
       }
 
       await driver.setImplicitTimeout(10000);
-      const findElementPromise = driver.elementById('WrongLocator');
+      const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
       status.build.version.should.exist;
-      findElementPromise.isPending().should.be.true;
+      util.inspect(findElementPromise).includes('pending').should.be.true;
       try {
         await findElementPromise;
       } catch (err) {
