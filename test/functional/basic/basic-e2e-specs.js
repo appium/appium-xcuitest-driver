@@ -310,7 +310,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('contexts -', function () {
     before(async function () {
       await driver.execute('mobile: scroll', {direction: 'down'});
-      await driver.$('#Web View').click();
+      await driver.$('~Web View').click();
     });
     after(async function () {
       await driver.back();
@@ -319,17 +319,17 @@ describe('XCUITestDriver - basics -', function () {
 
     it('should start a session, navigate to url, get title', async function () {
       // on some systems (like Travis) it takes a while to load the webview
-      const contexts = await driver.contexts();
+      const contexts = await driver.getContexts();
 
-      await driver.getContexts(contexts[1]);
-      await driver.url(GUINEA_PIG_PAGE);
+      await driver.switchContext(contexts[1]);
+      await driver.navigateTo(GUINEA_PIG_PAGE);
 
       await retryInterval(100, 1000, async function () {
-        let title = await driver.title();
+        let title = await driver.getTitle();
         title.should.equal('I am a page title');
       });
 
-      await driver.getContexts(contexts[0]);
+      await driver.switchContext(contexts[0]);
     });
   });
 });
