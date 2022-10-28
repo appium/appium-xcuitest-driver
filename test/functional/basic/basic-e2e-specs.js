@@ -241,10 +241,10 @@ describe('XCUITestDriver - basics -', function () {
     it('should be able to interact with an element in LANDSCAPE', async function () {
       await driver.setOrientation('LANDSCAPE');
 
-      let el = await driver.$('#Buttons');
+      let el = await driver.findElement('css selector', '#Button');
       await el.click();
 
-      await driver.$('#Button').should.not.be.rejected;
+      await driver.findElement('css selector', '#Button').should.not.be.rejected;
 
       await driver.back();
     });
