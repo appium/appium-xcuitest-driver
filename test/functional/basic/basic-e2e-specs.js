@@ -183,7 +183,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
-      const {statBarHeight, pixelRatio, viewportRect} = driver.capabilities;
+      const {statBarHeight, pixelRatio, viewportRect} = await driver.getSession();
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute('mobile: viewportScreenshot');
       const fullB64 = Buffer.from(fullScreen, 'base64');
