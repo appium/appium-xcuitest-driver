@@ -147,7 +147,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('deactivate app -', function () {
     it('should background the app for the specified time', async function () {
       let before = Date.now();
-      await driver.background(4); // TODO: should not pass a number since it is deprecated? https://appium.io/docs/en/commands/device/app/background-app/
+      await driver.background(4);
       (Date.now() - before).should.be.above(4000);
       (await driver.getPageSource()).indexOf('<AppiumAUT>').should.not.eql(-1);
     });
@@ -209,20 +209,20 @@ describe('XCUITestDriver - basics -', function () {
         const expectedTypes = [
           'syslog', 'crashlog', 'performance', 'server', 'safariConsole',
         ];
-        const actualTypes = await driver.getLogTypes(); // TODO: check if it works as expected since it is mjwp
+        const actualTypes = await driver.getLogTypes();
         actualTypes.should.containSubset(expectedTypes);
       });
     });
 
     describe('retrieval -', function () {
       it('should throw an error when an invalid type is given', async function () {
-        await driver.getLogs('something-random').should.eventually.be.rejected; // TODO: check if it works as expected since it is mjwp
+        await driver.getLogs('something-random').should.eventually.be.rejected;
       });
       it('should get system logs', async function () {
-        (await driver.getLogs('syslog')).should.be.an('array'); // TODO: check if it works as expected since it is mjwp
+        (await driver.getLogs('syslog')).should.be.an('array');
       });
       it('should get crash logs', async function () {
-        (await driver.getLogs('crashlog')).should.be.an('array'); // TODO: check if it works as expected since it is mjwp
+        (await driver.getLogs('crashlog')).should.be.an('array');
       });
     });
   });
