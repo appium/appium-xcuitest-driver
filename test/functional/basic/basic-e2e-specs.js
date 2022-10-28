@@ -55,18 +55,13 @@ describe('XCUITestDriver - basics -', function () {
   });
 
   describe('session -', function () {
-    it('should get session details with our caps merged with WDA response', function () {
+    it('should get session details with our caps merged with WDA response', async function () {
       if (process.env.SAUCE_EMUSIM) {
         // Sauce adds extraneous caps that are hard to test
         this.skip();
       }
-      const extraWdaCaps = {
-        CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
-        device: 'iphone',
-      };
-      let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
 
-      let actual = driver.capabilities;
+      let actual = await driver.getSession();
       // `borwserName` can be different
       ['UICatalog', 'UIKitCatalog'].should.include(actual.browserName);
       delete actual.browserName;
@@ -78,7 +73,7 @@ describe('XCUITestDriver - basics -', function () {
       // be events in the result, but we cannot know what they should be
       delete actual.events;
       // sdk version can be a longer version
-      actual.sdkVersion.indexOf(UICATALOG_CAPS.platformVersion).should.eql(0);
+      actual.sdkVersion.indexOf(UICATALOG_CAPS.alwaysMatch['appium:platformVersion']).should.eql(0);
       delete actual.sdkVersion;
       // there might have been added wdaLocalPort and webDriverAgentUrl
       delete actual.wdaLocalPort;
@@ -93,6 +88,16 @@ describe('XCUITestDriver - basics -', function () {
       actual.viewportRect.width.should.be.a('number');
       delete actual.viewportRect;
 
+      let mjswpCaps = {};
+      Object.keys(UICATALOG_CAPS.alwaysMatch).forEach((key) => {
+        const actualKey = key.startsWith('appium:') ? key.replace('appium:', '') : key;
+        mjswpCaps[actualKey] = UICATALOG_CAPS.alwaysMatch[key];
+      });
+      const extraWdaCaps = {
+        CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
+        device: 'iphone',
+      };
+      let expected = Object.assign({}, mjswpCaps, extraWdaCaps);
       delete expected.udid; // for real device tests
 
       if (expected.showXcodeLog === undefined) {
