@@ -10,16 +10,16 @@ parameters:
   launchWithIDB: false
   vmImage: 'macOS-11'
 jobs:
-  # - template: ./ios-e2e-template.yml
-  #   parameters:
-  #     name: e2e_basic_${{ parameters.name }}
-  #     iosVersion: ${{ parameters.iosVersion }}
-  #     xcodeVersion: ${{ parameters.xcodeVersion }}
-  #     deviceName: ${{ parameters.deviceName }}
-  #     vmImage: ${{ parameters.vmImage }}
-  #     script: |
-  #       npm install --no-save mjpeg-consumer
-  #       npm run e2e-test:basic
+  - template: ./ios-e2e-template.yml
+    parameters:
+      name: e2e_basic_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
+      script: |
+        npm install --no-save mjpeg-consumer
+        npm run e2e-test:basic
   # - template: ./ios-e2e-template.yml
   #   parameters:
   #     name: e2e_device_${{ parameters.name }}
