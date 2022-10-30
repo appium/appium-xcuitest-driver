@@ -19,7 +19,7 @@ jobs:
       vmImage: ${{ parameters.vmImage }}
       script: |
         npm install --no-save mjpeg-consumer
-        npm run e2e-test:basic
+        npm run e2e-test:basic -- --grep "XCUITestDriver - basics -"
   # - template: ./ios-e2e-template.yml
   #   parameters:
   #     name: e2e_device_${{ parameters.name }}
