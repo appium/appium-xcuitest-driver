@@ -88,10 +88,11 @@ describe('XCUITestDriver - basics -', function () {
       actual.viewportRect.width.should.be.a('number');
       delete actual.viewportRect;
 
+      // convert w3c caps into mjswp caps
       let mjswpCaps = {};
       Object.keys(UICATALOG_CAPS.alwaysMatch).forEach((key) => {
-        const actualKey = key.startsWith('appium:') ? key.replace('appium:', '') : key;
-        mjswpCaps[actualKey] = UICATALOG_CAPS.alwaysMatch[key];
+        const mjswpCapsKey = key.startsWith('appium:') ? key.replace('appium:', '') : key;
+        mjswpCaps[mjswpCapsKey] = UICATALOG_CAPS.alwaysMatch[key];
       });
       const extraWdaCaps = {
         CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
