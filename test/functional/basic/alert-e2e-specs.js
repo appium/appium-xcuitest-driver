@@ -92,14 +92,14 @@ describe('XCUITestDriver - alerts -', function () {
         // small pause for alert to open
         await B.delay(1000);
 
-        await driver.alertKeys(test.text);
+        await driver.sendAlertText(test.text);
 
-        let textField = await driver.$(`.${test.field}`);
-        let text = await textField.text();
+        let textField = await driver.$(test.field);
+        let text = await textField.getText();
         text.should.equal(test.expectedText);
 
         // on some devices the keyboard obscurs the buttons so no dismiss is possible
-        await textField.type('\n');
+        await driver.elementSendKeys(textField.elementId, '\n');
       });
     }
   });
