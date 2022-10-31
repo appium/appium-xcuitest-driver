@@ -41,7 +41,7 @@ describe('XCUITestDriver - alerts -', function () {
     await el.click();
     await B.delay(process.env.CLOUD ? 10000 : 2000);
 
-    (await driver.alertText()).should.include('A Short Title Is Best');
+    (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();
   });
 
@@ -52,7 +52,7 @@ describe('XCUITestDriver - alerts -', function () {
     // small pause for alert to open
     await B.delay(1000);
 
-    (await driver.alertText()).should.include('A Short Title Is Best');
+    (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.acceptAlert();
   });
 
@@ -63,7 +63,7 @@ describe('XCUITestDriver - alerts -', function () {
     // small pause for alert to open
     await B.delay(1000);
 
-    (await driver.alertText()).should.include('A Short Title Is Best');
+    (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();
   });
 
