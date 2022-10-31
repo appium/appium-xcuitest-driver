@@ -94,7 +94,7 @@ describe('XCUITestDriver - alerts -', function () {
 
         await driver.alertKeys(test.text);
 
-        let textField = await driver.elementByClassName(test.field);
+        let textField = await driver.$(`.${test.field}`);
         let text = await textField.text();
         text.should.equal(test.expectedText);
 
