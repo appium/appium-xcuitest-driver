@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import B from 'bluebird';
+import util from 'util';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
@@ -30,7 +31,7 @@ describe('XCUITestDriver - basics -', function () {
       if (process.env.SAUCE_EMUSIM) {
         status.build.version.should.equal('Sauce Labs');
       } else {
-        status.wda.should.exist;
+        status.build.version.should.exist;
       }
     });
 
@@ -40,11 +41,11 @@ describe('XCUITestDriver - basics -', function () {
         this.skip();
       }
 
-      await driver.setImplicitWaitTimeout(10000);
-      const findElementPromise = driver.elementById('WrongLocator');
+      await driver.setImplicitTimeout(10000);
+      const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
-      status.wda.should.exist;
-      findElementPromise.isPending().should.be.true;
+      status.build.version.should.exist;
+      util.inspect(findElementPromise).includes('pending').should.be.true;
       try {
         await findElementPromise;
       } catch (err) {
@@ -59,13 +60,8 @@ describe('XCUITestDriver - basics -', function () {
         // Sauce adds extraneous caps that are hard to test
         this.skip();
       }
-      const extraWdaCaps = {
-        CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
-        device: 'iphone',
-      };
-      let expected = Object.assign({}, UICATALOG_CAPS, extraWdaCaps);
 
-      let actual = await driver.sessionCapabilities();
+      let actual = await driver.getSession();
       // `borwserName` can be different
       ['UICatalog', 'UIKitCatalog'].should.include(actual.browserName);
       delete actual.browserName;
@@ -77,7 +73,7 @@ describe('XCUITestDriver - basics -', function () {
       // be events in the result, but we cannot know what they should be
       delete actual.events;
       // sdk version can be a longer version
-      actual.sdkVersion.indexOf(UICATALOG_CAPS.platformVersion).should.eql(0);
+      actual.sdkVersion.indexOf(UICATALOG_CAPS.alwaysMatch['appium:platformVersion']).should.eql(0);
       delete actual.sdkVersion;
       // there might have been added wdaLocalPort and webDriverAgentUrl
       delete actual.wdaLocalPort;
@@ -92,6 +88,17 @@ describe('XCUITestDriver - basics -', function () {
       actual.viewportRect.width.should.be.a('number');
       delete actual.viewportRect;
 
+      // convert w3c caps into mjswp caps
+      let mjswpCaps = {};
+      Object.keys(UICATALOG_CAPS.alwaysMatch).forEach((key) => {
+        const mjswpCapsKey = key.startsWith('appium:') ? key.replace('appium:', '') : key;
+        mjswpCaps[mjswpCapsKey] = UICATALOG_CAPS.alwaysMatch[key];
+      });
+      const extraWdaCaps = {
+        CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
+        device: 'iphone',
+      };
+      let expected = Object.assign({}, mjswpCaps, extraWdaCaps);
       delete expected.udid; // for real device tests
 
       if (expected.showXcodeLog === undefined) {
@@ -124,7 +131,7 @@ describe('XCUITestDriver - basics -', function () {
     }
     describe('plain -', function () {
       it('should get the source for the page', async function () {
-        let src = await driver.source();
+        let src = await driver.getPageSource();
         (typeof src).should.eql('string');
         checkSource(src);
       });
@@ -132,7 +139,7 @@ describe('XCUITestDriver - basics -', function () {
     describe('json parsed -', function () {
       it('should get source with useJSONSource', async function () {
         await driver.updateSettings({useJSONSource: true});
-        let src = await driver.source();
+        let src = await driver.getPageSource();
         checkSource(src);
       });
     });
@@ -141,9 +148,9 @@ describe('XCUITestDriver - basics -', function () {
   describe('deactivate app -', function () {
     it('should background the app for the specified time', async function () {
       let before = Date.now();
-      await driver.backgroundApp(4);
+      await driver.background(4);
       (Date.now() - before).should.be.above(4000);
-      (await driver.source()).indexOf('<AppiumAUT>').should.not.eql(-1);
+      (await driver.getPageSource()).indexOf('<AppiumAUT>').should.not.eql(-1);
     });
   });
 
@@ -159,7 +166,7 @@ describe('XCUITestDriver - basics -', function () {
       screenshot.should.be.a('string');
 
       // make sure WDA didn't crash, by using it again
-      let els = await driver.elementsByAccessibilityId('Alert Views');
+      let els = await driver.$$('~Alert Views');
       els.length.should.eql(1);
     });
 
@@ -182,7 +189,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
-      const {statBarHeight, pixelRatio, viewportRect} = await driver.sessionCapabilities();
+      const {statBarHeight, pixelRatio, viewportRect} = await driver.getSession();
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute('mobile: viewportScreenshot');
       const fullB64 = Buffer.from(fullScreen, 'base64');
@@ -203,20 +210,20 @@ describe('XCUITestDriver - basics -', function () {
         const expectedTypes = [
           'syslog', 'crashlog', 'performance', 'server', 'safariConsole',
         ];
-        const actualTypes = await driver.logTypes();
+        const actualTypes = await driver.getLogTypes();
         actualTypes.should.containSubset(expectedTypes);
       });
     });
 
     describe('retrieval -', function () {
       it('should throw an error when an invalid type is given', async function () {
-        await driver.log('something-random').should.eventually.be.rejected;
+        await driver.getLogs('something-random').should.eventually.be.rejected;
       });
       it('should get system logs', async function () {
-        (await driver.log('syslog')).should.be.an('array');
+        (await driver.getLogs('syslog')).should.be.an('array');
       });
       it('should get crash logs', async function () {
-        (await driver.log('crashlog')).should.be.an('array');
+        (await driver.getLogs('crashlog')).should.be.an('array');
       });
     });
   });
@@ -240,10 +247,10 @@ describe('XCUITestDriver - basics -', function () {
     it('should be able to interact with an element in LANDSCAPE', async function () {
       await driver.setOrientation('LANDSCAPE');
 
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('#Buttons');
       await el.click();
 
-      await driver.elementByAccessibilityId('Button').should.not.be.rejected;
+      await driver.findElement('css selector', '#Button').should.not.be.rejected;
 
       await driver.back();
     });
@@ -251,13 +258,9 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('window size -', function () {
     it('should be able to get the current window size', async function () {
-      let size = await driver.getWindowSize('current');
+      let size = await driver.getWindowSize();
       size.width.should.be.a('number');
       size.height.should.be.a('number');
-    });
-    it('should not be able to get random window size', async function () {
-      await driver.getWindowSize('something-random')
-        .should.eventually.be.rejectedWith(/Currently only getting current window size is supported/);
     });
   });
 
@@ -275,7 +278,7 @@ describe('XCUITestDriver - basics -', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.setGeoLocation('30.0001', '21.0002').should.not.be.rejected;
+      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be.rejected;
     });
   });
 
@@ -286,7 +289,7 @@ describe('XCUITestDriver - basics -', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.shakeDevice().should.not.be.rejected;
+      await driver.shake().should.not.be.rejected;
     });
   });
 
@@ -308,7 +311,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('contexts -', function () {
     before(async function () {
       await driver.execute('mobile: scroll', {direction: 'down'});
-      await driver.elementByAccessibilityId('Web View').click();
+      await driver.$('~Web View').click();
     });
     after(async function () {
       await driver.back();
@@ -317,17 +320,17 @@ describe('XCUITestDriver - basics -', function () {
 
     it('should start a session, navigate to url, get title', async function () {
       // on some systems (like Travis) it takes a while to load the webview
-      const contexts = await driver.contexts();
+      const contexts = await driver.getContexts();
 
-      await driver.context(contexts[1]);
-      await driver.get(GUINEA_PIG_PAGE);
+      await driver.switchContext(contexts[1]);
+      await driver.navigateTo(GUINEA_PIG_PAGE);
 
       await retryInterval(100, 1000, async function () {
-        let title = await driver.title();
+        let title = await driver.getTitle();
         title.should.equal('I am a page title');
       });
 
-      await driver.context(contexts[0]);
+      await driver.switchContext(contexts[0]);
     });
   });
 });
