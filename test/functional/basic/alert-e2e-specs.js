@@ -99,7 +99,7 @@ describe('XCUITestDriver - alerts -', function () {
         text.should.equal(test.expectedText);
 
         // on some devices the keyboard obscurs the buttons so no dismiss is possible
-        await driver.elementSendKeys(textField.elementId, '\n');
+        await textField.setValue('\n');
       });
     }
   });
