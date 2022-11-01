@@ -23,10 +23,10 @@ describe('XCUITestDriver - alerts -', function () {
 
   beforeEach(async function () {
     await retryInterval(5, 500, async () => {
-      let el = await driver.elementByAccessibilityId('Alert Views');
+      let el = await driver.$('~Alert Views');
       await el.click();
 
-      (await driver.elementsByAccessibilityId('Simple')).should.have.length(1);
+      (await driver.$$('~Simple')).should.have.length(1);
     });
   });
   afterEach(async function () {
@@ -37,33 +37,33 @@ describe('XCUITestDriver - alerts -', function () {
   });
 
   it('should detect Simple', async function () {
-    let el = await driver.elementByAccessibilityId('Simple');
+    let el = await driver.$('~Simple');
     await el.click();
     await B.delay(process.env.CLOUD ? 10000 : 2000);
 
-    (await driver.alertText()).should.include('A Short Title Is Best');
+    (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();
   });
 
   it('should detect Okay', async function () {
-    let el = await driver.elementByAccessibilityId('Okay / Cancel');
+    let el = await driver.$('~Okay / Cancel');
     await el.click();
 
     // small pause for alert to open
     await B.delay(1000);
 
-    (await driver.alertText()).should.include('A Short Title Is Best');
+    (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.acceptAlert();
   });
 
   it('should detect Other', async function () {
-    let el = await driver.elementByAccessibilityId('Other');
+    let el = await driver.$('~Other');
     await el.click();
 
     // small pause for alert to open
     await B.delay(1000);
 
-    (await driver.alertText()).should.include('A Short Title Is Best');
+    (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();
   });
 
@@ -86,20 +86,20 @@ describe('XCUITestDriver - alerts -', function () {
     ];
     for (const test of testData) {
       it(`should be able to interact with a prompt with a ${test.name}`, async function () {
-        let el = await driver.elementByAccessibilityId(test.alert);
+        let el = await driver.$(`~${test.alert}`);
         await el.click();
 
         // small pause for alert to open
         await B.delay(1000);
 
-        await driver.alertKeys(test.text);
+        await driver.sendAlertText(test.text);
 
-        let textField = await driver.elementByClassName(test.field);
-        let text = await textField.text();
+        let textField = await driver.$(test.field);
+        let text = await textField.getText();
         text.should.equal(test.expectedText);
 
         // on some devices the keyboard obscurs the buttons so no dismiss is possible
-        await textField.type('\n');
+        await textField.setValue('\n');
       });
     }
   });
