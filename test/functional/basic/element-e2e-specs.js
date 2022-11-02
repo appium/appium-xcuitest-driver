@@ -112,7 +112,7 @@ describe('XCUITestDriver - element(s)', function () {
       if (util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0')) {
         return this.skip();
       }
-      let table = await driver.elementByClassName('XCUIElementTypeTable');
+      let table = await driver.$('XCUIElementTypeTable');
       let contentSize = JSON.parse(await table.getAttribute('contentSize'));
       contentSize.width.should.be.a('number');
       contentSize.height.should.be.a('number');
@@ -176,14 +176,14 @@ describe('XCUITestDriver - element(s)', function () {
 
       describe('set value', function () {
         it('should type in the text field', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           await el.type(text1);
 
           let text = await el.text();
           text.should.eql(text1);
         });
         it('should type in the text field even before the keyboard is up', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           await el.type(text1);
 
           let text = await el.text();
@@ -193,7 +193,7 @@ describe('XCUITestDriver - element(s)', function () {
           // in Travis this sometimes gets the wrong text
           let retries = process.env.CI ? 5 : 1;
           await retryInterval(retries, 100, async () => {
-            let el = await driver.elementByClassName('XCUIElementTypeTextField');
+            let el = await driver.$('XCUIElementTypeTextField');
             await el.clear();
             await el.type(text3);
 
@@ -225,7 +225,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(secureText);
         });
         it('should type a backspace', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
 
           await driver.type(el, ['0123456789\uE003']);
 
@@ -233,7 +233,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql('012345678');
         });
         it('should type a delete', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
 
           await driver.type(el, ['0123456789\ue017']);
 
@@ -241,7 +241,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql('012345678');
         });
         it('should type a newline', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
 
           await driver.type(el, ['0123456789\uE006']);
 
@@ -253,7 +253,7 @@ describe('XCUITestDriver - element(s)', function () {
       describe('clear', function () {
         it('should clear a text field', async function () {
           let text1 = '0123456789abcdefghijklmnopqrstuvwxyz';
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           await el.type(text1);
 
           let text = await el.text();
@@ -291,7 +291,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(phText);
         });
         it('should clear a secure text field', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeSecureTextField');
+          let el = await driver.$('XCUIElementTypeSecureTextField');
           await el.type(text1);
 
           let text = await el.text();
@@ -304,14 +304,14 @@ describe('XCUITestDriver - element(s)', function () {
       });
       describe('keys', function () {
         it('should be able to send text to the active element', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
           await driver.keys('this is a test');
         });
         it('should type a backspace', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
@@ -321,7 +321,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql('012345678');
         });
         it('should type a delete', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
@@ -331,7 +331,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql('012345678');
         });
         it('should type a newline', async function () {
-          let el = await driver.elementByClassName('XCUIElementTypeTextField');
+          let el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
