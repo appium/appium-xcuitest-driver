@@ -165,7 +165,7 @@ describe('XCUITestDriver - element(s)', function () {
         const el = await retryInterval(10, 500, async function () {
           return await driver.$('~Text Fields');
         });
-        await driver.execute('mobile: scroll', {element: el.id, toVisible: true});
+        await driver.execute('mobile: scroll', {element: el.elementId, toVisible: true});
         await el.click();
       });
       afterEach(async function () {
@@ -225,7 +225,7 @@ describe('XCUITestDriver - element(s)', function () {
         it('should type a backspace', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.type(el, ['0123456789\uE003']);
+          await driver.elementSendKeys(el.elementId, '0123456789\uE003');
 
           let text = await el.getText();
           text.should.eql('012345678');
@@ -233,7 +233,7 @@ describe('XCUITestDriver - element(s)', function () {
         it('should type a delete', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.type(el, ['0123456789\ue017']);
+          await driver.elementSendKeys(el.elementId, '0123456789\ue017');
 
           let text = await el.getText();
           text.should.eql('012345678');
@@ -241,7 +241,7 @@ describe('XCUITestDriver - element(s)', function () {
         it('should type a newline', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.type(el, ['0123456789\uE006']);
+          await driver.elementSendKeys(el.elementId, '0123456789\uE006');
 
           let text = await el.getText();
           text.should.eql('0123456789');
