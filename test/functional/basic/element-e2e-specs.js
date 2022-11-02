@@ -11,7 +11,7 @@ import { util } from 'appium/support';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver - element(s)', function () {
+describe('XCUITestDriver - elements -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
