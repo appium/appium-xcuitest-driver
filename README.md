@@ -262,6 +262,12 @@ Capability | Description
 |`appium:clearSystemFiles`|Whether to clean temporary XCTest files (for example logs) when a testing session is closed. `false` by default| `true` or `false`
 |`appium:newCommandTimeout`|How long (in seconds) the driver should wait for a new command from the client before assuming the client has stopped sending requests. After the timeout the session is going to be deleted. `60` seconds by default. Setting it to zero disables the timer. |e.g. `100`|
 
+### Settings
+
+|Capability|Description|Values|
+|----------|-----------|------|
+| `appium:settings[settingsKey]` | Update [Settings](#settings-api) on session creation. They `settingsKey` is the settings key name. | e.g., `'appium:settings[snapshotMaxDepth]': 10`
+
 ## Element Attributes
 
 XCUITest driver supports the following element attributes:
