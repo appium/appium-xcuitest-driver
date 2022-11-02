@@ -147,7 +147,7 @@ describe('XCUITestDriver - element(s)', function () {
         let el = await driver.$('~Buttons');
         await el.tap();
         await B.delay(1000);
-        (await driver.elementsByClassName('XCUIElementTypeButton')).should.have.length.above(4);
+        (await driver.$$('XCUIElementTypeButton')).should.have.length.above(4);
         await driver.back();
       });
     });
@@ -202,7 +202,7 @@ describe('XCUITestDriver - element(s)', function () {
           });
         });
         it('should be able to type into two text fields', async function () {
-          let els = await driver.elementsByClassName('XCUIElementTypeTextField');
+          let els = await driver.$$('XCUIElementTypeTextField');
           await els[0].type(text1);
 
           await driver.hideKeyboard();
@@ -216,7 +216,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(text2);
         });
         it('should type in a secure text field', async function () {
-          let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
+          let els = await driver.$$('XCUIElementTypeSecureTextField');
           await els[0].type(text1);
 
           let text = await els[0].text();
@@ -265,7 +265,7 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(phText);
         });
         it('should be able to clear two text fields', async function () {
-          let els = await driver.elementsByClassName('XCUIElementTypeTextField');
+          let els = await driver.$$('XCUIElementTypeTextField');
           await els[0].type(text1);
 
           let text = await els[0].text();
@@ -352,7 +352,7 @@ describe('XCUITestDriver - element(s)', function () {
         let el = await driver.$('~Picker View');
         await el.click();
 
-        let wheels = await driver.elementsByClassName('XCUIElementTypePickerWheel');
+        let wheels = await driver.$$('XCUIElementTypePickerWheel');
 
         let values = [65, 205, 120];
         for (let i = 0; i < 3; i++) {
