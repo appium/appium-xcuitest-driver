@@ -24,16 +24,16 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('text', function () {
     it('should get the text of an element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('~Buttons');
       let text = await el.text();
       text.should.eql('Buttons');
     });
     it('should not mix up elements', async function () {
-      let el1 = await driver.elementByAccessibilityId('Buttons');
+      let el1 = await driver.$('~Buttons');
       let text1 = await el1.text();
       text1.should.eql('Buttons');
 
-      let el2 = await driver.elementByAccessibilityId('Image View');
+      let el2 = await driver.$('~Image View');
       let text2 = await el2.text();
       text2.should.eql('Image View');
     });
@@ -41,7 +41,7 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('name', function () {
     it('should get the name of an element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('~Buttons');
       let name = await el.getTagName();
       name.should.eql('XCUIElementTypeStaticText');
     });
@@ -49,12 +49,12 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('displayed', function () {
     it('should get the displayed status for a displayed element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('~Buttons');
       let displayed = await el.isDisplayed();
       displayed.should.be.true;
     });
     it('should get the displayed status for an undisplayed element', async function () {
-      let el = await driver.elementByAccessibilityId('Web View');
+      let el = await driver.$('~Web View');
       let displayed = await el.isDisplayed();
       displayed.should.be.false;
     });
@@ -62,16 +62,16 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('location', function () {
     it('should get the location of an element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('~Buttons');
       let loc = await el.getLocation();
       loc.x.should.exist;
       loc.y.should.exist;
     });
     it('should not mix up locations', async function () {
-      let el1 = await driver.elementByAccessibilityId('Date Picker');
+      let el1 = await driver.$('~Date Picker');
       let loc1 = await el1.getLocation();
 
-      let el2 = await driver.elementByAccessibilityId('Image View');
+      let el2 = await driver.$('~Image View');
       let loc2 = await el2.getLocation();
 
       loc1.x.should.eql(loc2.x);
@@ -81,16 +81,16 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('location_in_view', function () {
     it('should get the location of an element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('~Buttons');
       let loc = await el.getLocation();
       loc.x.should.exist;
       loc.y.should.exist;
     });
     it('should not mix up locations', async function () {
-      let el1 = await driver.elementByAccessibilityId('Date Picker');
+      let el1 = await driver.$('~Date Picker');
       let loc1 = await el1.getLocation();
 
-      let el2 = await driver.elementByAccessibilityId('Image View');
+      let el2 = await driver.$('~Image View');
       let loc2 = await el2.getLocation();
 
       loc1.x.should.eql(loc2.x);
@@ -100,7 +100,7 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('size', function () {
     it('should get the size of the element', async function () {
-      let el = await driver.elementByAccessibilityId('Buttons');
+      let el = await driver.$('~Buttons');
       let size = await el.getSize();
       size.width.should.exist;
       size.height.should.exist;
@@ -132,9 +132,9 @@ describe('XCUITestDriver - element(s)', function () {
     it('should not get the contentSize of other kinds of elements', async function () {
       let wrongTypeEl;
       try {
-        wrongTypeEl = await driver.elementByAccessibilityId('UICatalog');
+        wrongTypeEl = await driver.$('~UICatalog');
       } catch (ign) {
-        wrongTypeEl = await driver.elementByAccessibilityId('UIKitCatalog');
+        wrongTypeEl = await driver.$('~UIKitCatalog');
       }
       await wrongTypeEl.getAttribute('contentSize').should.eventually
         .be.rejectedWith(/Can't get content size for type/);
@@ -144,7 +144,7 @@ describe('XCUITestDriver - element(s)', function () {
   describe('touch click', function () {
     it('should click an element', async function () {
       await retryInterval(10, 500, async function () {
-        let el = await driver.elementByAccessibilityId('Buttons');
+        let el = await driver.$('~Buttons');
         await el.tap();
         await B.delay(1000);
         (await driver.elementsByClassName('XCUIElementTypeButton')).should.have.length.above(4);
@@ -165,7 +165,7 @@ describe('XCUITestDriver - element(s)', function () {
 
       beforeEach(async function () {
         const el = await retryInterval(10, 500, async function () {
-          return await driver.elementByAccessibilityId('Text Fields');
+          return await driver.$('~Text Fields');
         });
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
         await el.click();
@@ -349,7 +349,7 @@ describe('XCUITestDriver - element(s)', function () {
     });
     describe('picker wheel', function () {
       it('should be able to set the value', async function () {
-        let el = await driver.elementByAccessibilityId('Picker View');
+        let el = await driver.$('~Picker View');
         await el.click();
 
         let wheels = await driver.elementsByClassName('XCUIElementTypePickerWheel');
