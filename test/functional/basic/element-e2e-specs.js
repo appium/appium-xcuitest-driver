@@ -130,11 +130,9 @@ describe('XCUITestDriver - element(s)', function () {
     });
 
     it('should not get the contentSize of other kinds of elements', async function () {
-      let wrongTypeEl;
-      try {
+      let wrongTypeEl = await driver.$('~UIKitCatalog');
+      if (wrongTypeEl.error) {
         wrongTypeEl = await driver.$('~UICatalog');
-      } catch (ign) {
-        wrongTypeEl = await driver.$('~UIKitCatalog');
       }
       await wrongTypeEl.getAttribute('contentSize').should.eventually
         .be.rejectedWith(/Can't get content size for type/);
