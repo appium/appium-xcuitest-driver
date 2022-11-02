@@ -300,45 +300,6 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(phText);
         });
       });
-      describe('sendKeys', function () {
-        it('should be able to send text to the active element', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
-          // make sure the keyboard is up
-          await el.click();
-
-          await driver.sendKeys(['this is a test']); // TODO: should use w3c API
-        });
-        it('should type a backspace', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
-          // make sure the keyboard is up
-          await el.click();
-
-          await driver.sendKeys(['0123456789\uE003']); // TODO: should use w3c API
-
-          let text = await el.getText();
-          text.should.eql('012345678');
-        });
-        it('should type a delete', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
-          // make sure the keyboard is up
-          await el.click();
-
-          await driver.sendKeys(['0123456789\ue017']); // TODO: should use w3c API
-
-          let text = await el.getText();
-          text.should.eql('012345678');
-        });
-        it('should type a newline', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
-          // make sure the keyboard is up
-          await el.click();
-
-          await driver.sendKeys(['0123456789\uE006']); // TODO: should use w3c API
-
-          let text = await el.getText();
-          text.should.eql('0123456789');
-        });
-      });
       describe('hide keyboard', function () {
         it('should pass if the keyboard is already hidden', async function () {
           await driver.hideKeyboard().should.eventually.be.fulfilled;
