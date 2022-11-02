@@ -109,7 +109,7 @@ describe('XCUITestDriver - element(s)', function () {
 
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
-      if (util.compareVersions(UICATALOG_CAPS.platformVersion, '>=', '13.0')) {
+      if (util.compareVersions(UICATALOG_CAPS.alwaysMatch['appium:platformVersion'], '>=', '13.0')) {
         return this.skip();
       }
       let table = await driver.$('XCUIElementTypeTable');
