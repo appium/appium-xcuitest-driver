@@ -177,14 +177,14 @@ describe('XCUITestDriver - element(s)', function () {
       describe('set value', function () {
         it('should type in the text field', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
-          await el.type(text1);
+          await el.setValue(text1);
 
           let text = await el.getText();
           text.should.eql(text1);
         });
         it('should type in the text field even before the keyboard is up', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
-          await el.type(text1);
+          await el.setValue(text1);
 
           let text = await el.getText();
           text.should.eql(text1);
@@ -195,7 +195,7 @@ describe('XCUITestDriver - element(s)', function () {
           await retryInterval(retries, 100, async () => {
             let el = await driver.$('XCUIElementTypeTextField');
             await el.clear();
-            await el.type(text3);
+            await el.setValue(text3);
 
             let text = await el.getText();
             text.should.eql(text3);
@@ -203,11 +203,11 @@ describe('XCUITestDriver - element(s)', function () {
         });
         it('should be able to type into two text fields', async function () {
           let els = await driver.$$('XCUIElementTypeTextField');
-          await els[0].type(text1);
+          await els[0].setValue(text1);
 
           await driver.hideKeyboard();
 
-          await els[1].type(text2);
+          await els[1].setValue(text2);
 
           let text = await els[0].getText();
           text.should.eql(text1);
@@ -217,7 +217,7 @@ describe('XCUITestDriver - element(s)', function () {
         });
         it('should type in a secure text field', async function () {
           let els = await driver.$$('XCUIElementTypeSecureTextField');
-          await els[0].type(text1);
+          await els[0].setValue(text1);
 
           let text = await els[0].getText();
           text.should.not.eql(text1);
@@ -254,7 +254,7 @@ describe('XCUITestDriver - element(s)', function () {
         it('should clear a text field', async function () {
           let text1 = '0123456789abcdefghijklmnopqrstuvwxyz';
           let el = await driver.$('XCUIElementTypeTextField');
-          await el.type(text1);
+          await el.setValue(text1);
 
           let text = await el.getText();
           text.should.eql(text1);
@@ -266,14 +266,14 @@ describe('XCUITestDriver - element(s)', function () {
         });
         it('should be able to clear two text fields', async function () {
           let els = await driver.$$('XCUIElementTypeTextField');
-          await els[0].type(text1);
+          await els[0].setValue(text1);
 
           let text = await els[0].getText();
           text.should.eql(text1);
 
           await driver.hideKeyboard();
 
-          await els[1].type(text2);
+          await els[1].setValue(text2);
 
           text = await els[1].getText();
           text.should.eql(text2);
@@ -292,7 +292,7 @@ describe('XCUITestDriver - element(s)', function () {
         });
         it('should clear a secure text field', async function () {
           let el = await driver.$('XCUIElementTypeSecureTextField');
-          await el.type(text1);
+          await el.setValue(text1);
 
           let text = await el.getText();
           text.should.eql(secureText);
@@ -361,7 +361,7 @@ describe('XCUITestDriver - element(s)', function () {
           let value = await wheel.getAttribute('value');
           parseInt(value, 10).should.eql(values[i]);
 
-          await wheel.type(150);
+          await wheel.setValue(150);
 
           value = await wheel.getAttribute('value');
           parseInt(value, 10).should.eql(150);
