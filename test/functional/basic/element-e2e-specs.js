@@ -165,7 +165,7 @@ describe('XCUITestDriver - element(s)', function () {
         const el = await retryInterval(10, 500, async function () {
           return await driver.$('~Text Fields');
         });
-        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+        await driver.execute('mobile: scroll', {element: el.id, toVisible: true});
         await el.click();
       });
       afterEach(async function () {
