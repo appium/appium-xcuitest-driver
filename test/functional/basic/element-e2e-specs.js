@@ -300,20 +300,20 @@ describe('XCUITestDriver - element(s)', function () {
           text.should.eql(phText);
         });
       });
-      describe('keys', function () {
+      describe('sendKeys', function () {
         it('should be able to send text to the active element', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
-          await driver.keys('this is a test');
+          await driver.sendKeys(['this is a test']); // TODO: should use w3c API
         });
         it('should type a backspace', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
-          await driver.keys('0123456789\uE003');
+          await driver.sendKeys(['0123456789\uE003']); // TODO: should use w3c API
 
           let text = await el.getText();
           text.should.eql('012345678');
@@ -323,7 +323,7 @@ describe('XCUITestDriver - element(s)', function () {
           // make sure the keyboard is up
           await el.click();
 
-          await driver.keys('0123456789\ue017');
+          await driver.sendKeys(['0123456789\ue017']); // TODO: should use w3c API
 
           let text = await el.getText();
           text.should.eql('012345678');
@@ -333,7 +333,7 @@ describe('XCUITestDriver - element(s)', function () {
           // make sure the keyboard is up
           await el.click();
 
-          await driver.keys('0123456789\uE006');
+          await driver.sendKeys(['0123456789\uE006']); // TODO: should use w3c API
 
           let text = await el.getText();
           text.should.eql('0123456789');
