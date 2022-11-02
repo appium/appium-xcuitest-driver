@@ -194,7 +194,7 @@ describe('XCUITestDriver - element(s)', function () {
           let retries = process.env.CI ? 5 : 1;
           await retryInterval(retries, 100, async () => {
             let el = await driver.$('XCUIElementTypeTextField');
-            await el.clear();
+            await el.clearValue();
             await el.setValue(text3);
 
             let text = await el.getText();
@@ -259,7 +259,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.getText();
           text.should.eql(text1);
 
-          await el.clear();
+          await el.clearValue();
 
           text = await el.getText();
           text.should.eql(phText);
@@ -278,14 +278,14 @@ describe('XCUITestDriver - element(s)', function () {
           text = await els[1].getText();
           text.should.eql(text2);
 
-          await els[0].clear();
+          await els[0].clearValue();
 
           text = await els[0].getText();
           text.should.eql(phText);
 
           await driver.hideKeyboard();
 
-          await els[1].clear();
+          await els[1].clearValue();
 
           text = await els[1].getText();
           text.should.eql(phText);
@@ -297,7 +297,7 @@ describe('XCUITestDriver - element(s)', function () {
           let text = await el.getText();
           text.should.eql(secureText);
 
-          await el.clear();
+          await el.clearValue();
           text = await el.getText();
           text.should.eql(phText);
         });
