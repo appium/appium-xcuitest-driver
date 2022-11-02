@@ -145,7 +145,7 @@ describe('XCUITestDriver - element(s)', function () {
     it('should click an element', async function () {
       await retryInterval(10, 500, async function () {
         let el = await driver.$('~Buttons');
-        await el.tap();
+        await el.click();
         await B.delay(1000);
         (await driver.$$('XCUIElementTypeButton')).should.have.length.above(4);
         await driver.back();
