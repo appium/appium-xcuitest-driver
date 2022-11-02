@@ -25,16 +25,16 @@ describe('XCUITestDriver - element(s)', function () {
   describe('text', function () {
     it('should get the text of an element', async function () {
       let el = await driver.$('~Buttons');
-      let text = await el.text();
+      let text = await el.getText();
       text.should.eql('Buttons');
     });
     it('should not mix up elements', async function () {
       let el1 = await driver.$('~Buttons');
-      let text1 = await el1.text();
+      let text1 = await el1.getText();
       text1.should.eql('Buttons');
 
       let el2 = await driver.$('~Image View');
-      let text2 = await el2.text();
+      let text2 = await el2.getText();
       text2.should.eql('Image View');
     });
   });
@@ -179,14 +179,14 @@ describe('XCUITestDriver - element(s)', function () {
           let el = await driver.$('XCUIElementTypeTextField');
           await el.type(text1);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql(text1);
         });
         it('should type in the text field even before the keyboard is up', async function () {
           let el = await driver.$('XCUIElementTypeTextField');
           await el.type(text1);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql(text1);
         });
         it('should type a url in the text field', async function () {
@@ -197,7 +197,7 @@ describe('XCUITestDriver - element(s)', function () {
             await el.clear();
             await el.type(text3);
 
-            let text = await el.text();
+            let text = await el.getText();
             text.should.eql(text3);
           });
         });
@@ -209,17 +209,17 @@ describe('XCUITestDriver - element(s)', function () {
 
           await els[1].type(text2);
 
-          let text = await els[0].text();
+          let text = await els[0].getText();
           text.should.eql(text1);
 
-          text = await els[1].text();
+          text = await els[1].getText();
           text.should.eql(text2);
         });
         it('should type in a secure text field', async function () {
           let els = await driver.$$('XCUIElementTypeSecureTextField');
           await els[0].type(text1);
 
-          let text = await els[0].text();
+          let text = await els[0].getText();
           text.should.not.eql(text1);
           text.length.should.eql(text1.length);
           text.should.eql(secureText);
@@ -229,7 +229,7 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.type(el, ['0123456789\uE003']);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql('012345678');
         });
         it('should type a delete', async function () {
@@ -237,7 +237,7 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.type(el, ['0123456789\ue017']);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql('012345678');
         });
         it('should type a newline', async function () {
@@ -245,7 +245,7 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.type(el, ['0123456789\uE006']);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql('0123456789');
         });
       });
@@ -256,49 +256,49 @@ describe('XCUITestDriver - element(s)', function () {
           let el = await driver.$('XCUIElementTypeTextField');
           await el.type(text1);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql(text1);
 
           await el.clear();
 
-          text = await el.text();
+          text = await el.getText();
           text.should.eql(phText);
         });
         it('should be able to clear two text fields', async function () {
           let els = await driver.$$('XCUIElementTypeTextField');
           await els[0].type(text1);
 
-          let text = await els[0].text();
+          let text = await els[0].getText();
           text.should.eql(text1);
 
           await driver.hideKeyboard();
 
           await els[1].type(text2);
 
-          text = await els[1].text();
+          text = await els[1].getText();
           text.should.eql(text2);
 
           await els[0].clear();
 
-          text = await els[0].text();
+          text = await els[0].getText();
           text.should.eql(phText);
 
           await driver.hideKeyboard();
 
           await els[1].clear();
 
-          text = await els[1].text();
+          text = await els[1].getText();
           text.should.eql(phText);
         });
         it('should clear a secure text field', async function () {
           let el = await driver.$('XCUIElementTypeSecureTextField');
           await el.type(text1);
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql(secureText);
 
           await el.clear();
-          text = await el.text();
+          text = await el.getText();
           text.should.eql(phText);
         });
       });
@@ -317,7 +317,7 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.keys('0123456789\uE003');
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql('012345678');
         });
         it('should type a delete', async function () {
@@ -327,7 +327,7 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.keys('0123456789\ue017');
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql('012345678');
         });
         it('should type a newline', async function () {
@@ -337,7 +337,7 @@ describe('XCUITestDriver - element(s)', function () {
 
           await driver.keys('0123456789\uE006');
 
-          let text = await el.text();
+          let text = await el.getText();
           text.should.eql('0123456789');
         });
       });
