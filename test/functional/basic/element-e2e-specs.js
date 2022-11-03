@@ -300,6 +300,30 @@ describe('XCUITestDriver - elements -', function () {
           text.should.eql(phText);
         });
       });
+      describe('key', function () {
+        it('should be able to send text to the active element', async function () {
+          let el = await driver.$('XCUIElementTypeTextField');
+          // make sure the keyboard is up
+          await el.click();
+
+          const actions = [{
+            type: 'key',
+            id: 'keyboard',
+            actions: [
+              {type: 'keyDown', value: 'h'},
+              {type: 'keyUp', value: 'h'},
+              {type: 'keyDown', value: 'i'},
+              {type: 'keyUp', value: 'i'},
+              {type: 'keyDown', value: 'あ'},
+              {type: 'keyUp', value: 'あ'}
+            ]
+          }];
+          await driver.performActions(actions);
+
+          let text = await el.getText();
+          text.should.eql('hiあ');
+        });
+      });
       describe('hide keyboard', function () {
         it('should pass if the keyboard is already hidden', async function () {
           await driver.hideKeyboard().should.eventually.be.fulfilled;
