@@ -137,7 +137,7 @@ describe('XCUITestDriver - find', function () {
           let el = await driver.$('~Buttons');
           await el.click();
 
-          (await driver.elementsByAccessibilityId('Button')).should.have.length.at.least(1);
+          (await driver.$$('~Button')).should.have.length.at.least(1);
         });
       });
       afterEach(async function () {
@@ -252,7 +252,7 @@ describe('XCUITestDriver - find', function () {
     it.skip('should find several elements', async function () {
       let el1 = await driver.$('~Alert Views');
       await el1.click();
-      let els = await driver.elementsByAccessibilityId('Okay / Cancel');
+      let els = await driver.$$('~Okay / Cancel');
       els.should.have.length(2);
     });
 
