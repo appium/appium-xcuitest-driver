@@ -48,12 +48,12 @@ describe('XCUITestDriver - find', function () {
     });
 
     it.skip('should find some elements within itself', async function () {
-      let els = await el1.elementsByClassName('XCUIElementTypeStaticText');
+      let els = await el1.$$('XCUIElementTypeStaticText');
       els.should.have.length(2);
     });
 
     it('should not find elements not within itself', async function () {
-      let els = await el1.elementsByClassName('XCUIElementTypeNavigationBar');
+      let els = await el1.$$('XCUIElementTypeNavigationBar');
       els.should.have.length(0);
     });
   });
@@ -271,7 +271,7 @@ describe('XCUITestDriver - find', function () {
       let el = await driver.elementByAccessibilityId('Image View');
       await el.click();
 
-      let els = await driver.elementsByClassName('XCUIElementTypeImage');
+      let els = await driver.$$('XCUIElementTypeImage');
       els.length.should.be.above(0);
       for (const el of els) {
         el.should.exist;
@@ -288,7 +288,7 @@ describe('XCUITestDriver - find', function () {
         let el1 = await driver.elementByAccessibilityId('Alert Views');
         await el1.click();
         let el2 = await driver.elementByAccessibilityId('Okay / Cancel');
-        let els = await el2.elementsByClassName('XCUIElementTypeStaticText');
+        let els = await el2.$$('XCUIElementTypeStaticText');
         els.should.have.length(1);
       });
     });
@@ -314,14 +314,14 @@ describe('XCUITestDriver - find', function () {
     it('should find only one element per text field', async function () {
       await driver.elementByAccessibilityId('Text Fields').click();
 
-      let els = await driver.elementsByClassName('XCUIElementTypeTextField');
+      let els = await driver.$$('XCUIElementTypeTextField');
       els.should.have.length(PV_ABOVE_13 ? 5 : 4);
     });
 
     it('should find only one element per secure text field', async function () {
       await driver.elementByAccessibilityId('Text Fields').click();
 
-      let els = await driver.elementsByClassName('XCUIElementTypeSecureTextField');
+      let els = await driver.$$('XCUIElementTypeSecureTextField');
       els.should.have.length(1);
     });
   });
