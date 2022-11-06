@@ -332,27 +332,32 @@ describe('XCUITestDriver - find', function () {
       await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find invisible elements', async function () {
-      let els = await driver.elements('-ios predicate string', 'visible = 0');
+      const selector = 'visible = 0';
+      let els = await driver.$$(`-ios predicate string:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with widths above 0', async function () {
-      let els = await driver.elements('-ios predicate string', 'wdRect.width >= 0');
+      const selector = 'wdRect.width >= 0';
+      let els = await driver.$$(`-ios predicate string:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with widths between 100 and 200', async function () {
-      let els = await driver.elements('-ios predicate string', 'wdRect.width BETWEEN {100,200}');
+      const selector = 'wdRect.width BETWEEN {100,200}';
+      let els = await driver.$$(`-ios predicate string:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements that end in the word "View" in the name', async function () {
-      let els = await driver.elements('-ios predicate string', "wdName LIKE '* View'");
+      const selector = "wdName LIKE '* View'";
+      let els = await driver.$$(`-ios predicate string:${selector}`);
       els.should.have.length.above(1);
     });
 
     it('should find elements that have x and y coordinates greater than 0', async function () {
-      let els = await driver.elements('-ios predicate string', 'wdRect.x >= 0 AND wdRect.y >= 0');
+      const selector = 'wdRect.x >= 0 AND wdRect.y >= 0';
+      let els = await driver.$$(`-ios predicate string:${selector}`);
       els.should.have.length.above(1);
     });
   });
@@ -363,22 +368,26 @@ describe('XCUITestDriver - find', function () {
       await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find elements', async function () {
-      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow');
+      const selector = 'XCUIElementTypeWindow';
+      let els = await driver.$$(`-ios class chain:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find child elements', async function () {
-      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*');
+      const selector = 'XCUIElementTypeWindow/*';
+      let els = await driver.$$(`-ios class chain:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with index', async function () {
-      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow[1]/*');
+      const selector = 'XCUIElementTypeWindow[1]/*';
+      let els = await driver.$$(`-ios class chain:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with negative index', async function () {
-      let els = await driver.elements('-ios class chain', 'XCUIElementTypeWindow/*[-1]');
+      const selector = 'XCUIElementTypeWindow/*[-1]';
+      let els = await driver.$$(`-ios class chain:${selector}`);
       els.should.have.length(1);
     });
   });
