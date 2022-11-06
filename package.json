@@ -61,7 +61,8 @@
     "lib",
     "build/index.js",
     "build/lib",
-    "!.DS_Store"
+    "!.DS_Store",
+    "CHANGELOG.md"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
