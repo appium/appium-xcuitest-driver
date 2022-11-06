@@ -34,7 +34,7 @@ describe('XCUITestDriver - find', function () {
   describe('basics', function () {
     let el1;
     before(async function () {
-      el1 = await driver.elementByAccessibilityId('Buttons');
+      el1 = await driver.$('~Buttons');
       el1.should.exist;
     });
     it('should find an element within descendants', async function () {
@@ -134,7 +134,7 @@ describe('XCUITestDriver - find', function () {
       beforeEach(async function () {
         // go into the right page
         await retryInterval(10, 500, async () => {
-          let el = await driver.elementByAccessibilityId('Buttons');
+          let el = await driver.$('~Buttons');
           await el.click();
 
           (await driver.elementsByAccessibilityId('Button')).should.have.length.at.least(1);
@@ -207,7 +207,7 @@ describe('XCUITestDriver - find', function () {
 
       before(async function () {
         // go into the right page
-        let el = await driver.elementByAccessibilityId('Buttons');
+        let el = await driver.$('~Buttons');
         await el.click();
       });
       after(async function () {
@@ -243,14 +243,14 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find one element', async function () {
-      let el1 = await driver.elementByAccessibilityId('Alert Views');
+      let el1 = await driver.$('~Alert Views');
       await el1.click();
-      let el2 = await driver.elementByAccessibilityId('Okay / Cancel');
+      let el2 = await driver.$('~Okay / Cancel');
       (await el2.getAttribute('name')).should.equal('Okay / Cancel');
     });
 
     it.skip('should find several elements', async function () {
-      let el1 = await driver.elementByAccessibilityId('Alert Views');
+      let el1 = await driver.$('~Alert Views');
       await el1.click();
       let els = await driver.elementsByAccessibilityId('Okay / Cancel');
       els.should.have.length(2);
@@ -258,7 +258,7 @@ describe('XCUITestDriver - find', function () {
 
     it('should find an element beneath another element', async function () {
       let el1 = await driver.$('XCUIElementTypeTable');
-      let el2 = await el1.elementByAccessibilityId('Alert Views');
+      let el2 = await el1.$('~Alert Views');
       el2.should.exist;
     });
   });
@@ -268,7 +268,7 @@ describe('XCUITestDriver - find', function () {
       await driver.back();
     });
     it('should return all image elements with internally generated ids', async function () {
-      let el = await driver.elementByAccessibilityId('Image View');
+      let el = await driver.$('~Image View');
       await el.click();
 
       let els = await driver.$$('XCUIElementTypeImage');
@@ -285,9 +285,9 @@ describe('XCUITestDriver - find', function () {
           return this.skip();
         }
 
-        let el1 = await driver.elementByAccessibilityId('Alert Views');
+        let el1 = await driver.$('~Alert Views');
         await el1.click();
-        let el2 = await driver.elementByAccessibilityId('Okay / Cancel');
+        let el2 = await driver.$('~Okay / Cancel');
         let els = await el2.$$('XCUIElementTypeStaticText');
         els.should.have.length(1);
       });
@@ -297,7 +297,7 @@ describe('XCUITestDriver - find', function () {
   describe('duplicate text field', function () {
     before(async function () {
       try {
-        const el = await driver.elementByAccessibilityId('Text Fields');
+        const el = await driver.$('~Text Fields');
         await driver.execute('mobile: scroll', {element: el, toVisible: true});
       } catch (ign) {}
     });
@@ -307,19 +307,19 @@ describe('XCUITestDriver - find', function () {
 
     after(async function () {
       // make sure we scroll back so as not to mess up subsequent tests
-      const el = await driver.elementByAccessibilityId('Alert Views');
+      const el = await driver.$('~Alert Views');
       await driver.execute('mobile: scroll', {element: el, toVisible: true});
     });
 
     it('should find only one element per text field', async function () {
-      await driver.elementByAccessibilityId('Text Fields').click();
+      await driver.$('~Text Fields').click();
 
       let els = await driver.$$('XCUIElementTypeTextField');
       els.should.have.length(PV_ABOVE_13 ? 5 : 4);
     });
 
     it('should find only one element per secure text field', async function () {
-      await driver.elementByAccessibilityId('Text Fields').click();
+      await driver.$('~Text Fields').click();
 
       let els = await driver.$$('XCUIElementTypeSecureTextField');
       els.should.have.length(1);
