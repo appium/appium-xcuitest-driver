@@ -148,8 +148,8 @@ describe('XCUITestDriver - find -', function () {
         await driver.setImplicitTimeout(5000);
 
         let begin = Date.now();
-        const response = await driver.$('//something_not_there');
-        response.error.error.should.equal('no such element');
+        const el = await driver.$('//something_not_there');
+        el.error.error.should.equal('no such element');
         (Date.now() - begin).should.be.above(5000);
       });
       it.skip('should return the last button', async function () {
@@ -169,8 +169,8 @@ describe('XCUITestDriver - find -', function () {
         (await el.getAttribute('name')).should.equal('X Button');
       });
       it('should know how to restrict root-level elements', async function () {
-        const response = await driver.$('/XCUIElementTypeButton');
-        response.error.error.should.equal('no such element');
+        const el = await driver.$('/XCUIElementTypeButton');
+        el.error.error.should.equal('no such element');
       });
       it('should search an extended path by child', async function () {
         // pause a moment or the next command gets stuck getting the xpath :(
