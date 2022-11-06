@@ -148,16 +148,16 @@ describe('XCUITestDriver - find', function () {
         await driver.setImplicitWaitTimeout(5000);
 
         let begin = Date.now();
-        await driver.elementByXPath('//something_not_there')
+        await driver.$('//something_not_there')
           .should.eventually.be.rejected;
         (Date.now() - begin).should.be.above(5000);
       });
       it.skip('should return the last button', async function () {
-        let el = await driver.elementByXPath('//XCUIElementTypeButton[last()]');
+        let el = await driver.$('//XCUIElementTypeButton[last()]');
         (await el.getAttribute('name')).should.equal('Button'); // this is the name of the last button
       });
       it('should return a single element', async function () {
-        let el = await driver.elementByXPath('//XCUIElementTypeButton');
+        let el = await driver.$('//XCUIElementTypeButton');
         (await el.getAttribute('name')).should.equal(APP_TITLE);
       });
       it('should return multiple elements', async function () {
@@ -165,11 +165,11 @@ describe('XCUITestDriver - find', function () {
         els.should.have.length.above(4);
       });
       it('should filter by name', async function () {
-        let el = await driver.elementByXPath(`//XCUIElementTypeButton[@name='X Button']`);
+        let el = await driver.$(`//XCUIElementTypeButton[@name='X Button']`);
         (await el.getAttribute('name')).should.equal('X Button');
       });
       it('should know how to restrict root-level elements', async function () {
-        await driver.elementByXPath('/XCUIElementTypeButton')
+        await driver.$('/XCUIElementTypeButton')
           .should.eventually.be.rejectedWith(/NoSuchElement/);
       });
       it('should search an extended path by child', async function () {
@@ -178,9 +178,9 @@ describe('XCUITestDriver - find', function () {
 
         let el;
         try {
-          el = await driver.elementByXPath('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
+          el = await driver.$('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
         } catch (err) {
-          el = await driver.elementByXPath('//XCUIElementTypeNavigationBar/XCUIElementTypeOther');
+          el = await driver.$('//XCUIElementTypeNavigationBar/XCUIElementTypeOther');
         }
         (await el.getAttribute('name')).should.equal('Buttons');
       });
@@ -192,12 +192,12 @@ describe('XCUITestDriver - find', function () {
         texts.should.include('X Button');
       });
       it.skip('should filter by indices', async function () {
-        let el = await driver.elementByXPath('//XCUIElementTypeTable[1]//XCUIElementTypeButton[4]');
+        let el = await driver.$('//XCUIElementTypeTable[1]//XCUIElementTypeButton[4]');
         (await el.getAttribute('name')).should.equal('X Button');
       });
 
       it('should filter by partial text', async function () {
-        let el = await driver.elementByXPath(`//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`);
+        let el = await driver.$(`//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`);
         (await el.getAttribute('name')).should.equal('X Button');
       });
     });
@@ -420,10 +420,10 @@ describe('XCUITestDriver - find', function () {
   describe('magic first visible child xpath', function () {
     it('should find the first visible child of an element', async function () {
       let el = await driver.$('XCUIElementTypeTable');
-      let child = await el.elementByXPath('/*[@firstVisible="true"]');
+      let child = await el.$('/*[@firstVisible="true"]');
       await child.getAttribute('type').should.eventually.eql('XCUIElementTypeCell');
       // do another call and double-check the different quote/spacing works
-      let grandchild = await child.elementByXPath("/*[@firstVisible = 'true']");
+      let grandchild = await child.$("/*[@firstVisible = 'true']");
 
       const type = await grandchild.getAttribute('type');
       if (type === 'XCUIElementTypeStaticText') {
