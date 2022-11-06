@@ -45,7 +45,6 @@ const GENERIC_CAPS = node.deepFreeze({
     'appium:deviceName': DEVICE_NAME,
     'appium:automationName': 'XCUITest',
     'appium:launchWithIDB': LAUNCH_WITH_IDB,
-    'appium:noReset': true,
     'appium:maxTypingFrequency': 30,
     'appium:clearSystemFiles': true,
     'appium:showXcodeLog': SHOW_XCODE_LOG,
