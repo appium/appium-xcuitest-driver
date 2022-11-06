@@ -281,7 +281,7 @@ describe('XCUITestDriver - find', function () {
     describe('textfield case', function () {
       it('should find only one textfield', async function () {
         // TODO: this works locally but fails in CI.
-        if (process.env.CI && UICATALOG_CAPS.platformVersion === '10.3') {
+        if (process.env.CI && UICATALOG_CAPS.alwaysMatch['appium:platformVersion'] === '10.3') {
           return this.skip();
         }
 
