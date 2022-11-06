@@ -298,7 +298,7 @@ describe('XCUITestDriver - find', function () {
     before(async function () {
       try {
         const el = await driver.$('~Text Fields');
-        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+        await driver.execute('mobile: scroll', {element: el.elementId, toVisible: true});
       } catch (ign) {}
     });
     afterEach(async function () {
@@ -308,7 +308,7 @@ describe('XCUITestDriver - find', function () {
     after(async function () {
       // make sure we scroll back so as not to mess up subsequent tests
       const el = await driver.$('~Alert Views');
-      await driver.execute('mobile: scroll', {element: el, toVisible: true});
+      await driver.execute('mobile: scroll', {element: el.elementId, toVisible: true});
     });
 
     it('should find only one element per text field', async function () {
