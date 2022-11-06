@@ -61,7 +61,8 @@
     "lib",
     "build/index.js",
     "build/lib",
-    "!.DS_Store"
+    "!.DS_Store",
+    "CHANGELOG.md"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
@@ -132,6 +133,7 @@
     "@babel/plugin-transform-runtime": "^7.18.10",
     "@babel/preset-env": "^7.18.10",
     "@babel/register": "^7.18.9",
+    "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "axios": "^1.x",
     "babel-plugin-source-map-support": "^2.2.0",
