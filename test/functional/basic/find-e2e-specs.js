@@ -161,7 +161,7 @@ describe('XCUITestDriver - find', function () {
         (await el.getAttribute('name')).should.equal(APP_TITLE);
       });
       it('should return multiple elements', async function () {
-        let els = await driver.elementsByXPath('//XCUIElementTypeButton');
+        let els = await driver.$$('//XCUIElementTypeButton');
         els.should.have.length.above(4);
       });
       it('should filter by name', async function () {
@@ -185,7 +185,7 @@ describe('XCUITestDriver - find', function () {
         (await el.getAttribute('name')).should.equal('Buttons');
       });
       it('should search an extended path by descendant', async function () {
-        let els = await driver.elementsByXPath('//XCUIElementTypeTable//XCUIElementTypeButton');
+        let els = await driver.$$('//XCUIElementTypeTable//XCUIElementTypeButton');
         let texts = await B.all(_.map(els, (el) => el.getAttribute('name')));
         texts.should.not.include('UICatalog');
         texts.should.not.include('UIKitCatalog');
@@ -217,7 +217,7 @@ describe('XCUITestDriver - find', function () {
       let test = function (path, minLength) {
         return function () {
           it('should not crash', async function () {
-            let els = await driver.elementsByXPath(path);
+            let els = await driver.$$(path);
             els.should.have.length.above(minLength);
           });
         };
@@ -436,7 +436,7 @@ describe('XCUITestDriver - find', function () {
 
   describe('magic scrollable descendents xpath', function () {
     it('should find any scrollable elements', async function () {
-      let els = await driver.elementsByXPath('//*[@scrollable="true"]');
+      let els = await driver.$$('//*[@scrollable="true"]');
       els.should.have.length(1);
       await els[0].getAttribute('type').should.eventually.eql('XCUIElementTypeTable');
     });
