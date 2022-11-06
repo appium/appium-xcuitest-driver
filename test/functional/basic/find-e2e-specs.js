@@ -43,8 +43,8 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should not find an element not within itself', async function () {
-      await B.resolve(el1.$('XCUIElementTypeNavigationBar'))
-        .should.eventually.be.rejectedWith(/Error response status: 7/);
+      const el2 = await el1.$('class name', 'XCUIElementTypeNavigationBar');
+      el2.error.error.should.equal('no such element');
     });
 
     it.skip('should find some elements within itself', async function () {
@@ -148,8 +148,8 @@ describe('XCUITestDriver - find', function () {
         await driver.setImplicitTimeout(5000);
 
         let begin = Date.now();
-        await driver.$('//something_not_there')
-          .should.eventually.be.rejected;
+        const response = await driver.$('//something_not_there');
+        response.error.error.should.equal('no such element');
         (Date.now() - begin).should.be.above(5000);
       });
       it.skip('should return the last button', async function () {
@@ -169,8 +169,8 @@ describe('XCUITestDriver - find', function () {
         (await el.getAttribute('name')).should.equal('X Button');
       });
       it('should know how to restrict root-level elements', async function () {
-        await driver.$('/XCUIElementTypeButton')
-          .should.eventually.be.rejectedWith(/NoSuchElement/);
+        const response = await driver.$('/XCUIElementTypeButton');
+        response.error.error.should.equal('no such element');
       });
       it('should search an extended path by child', async function () {
         // pause a moment or the next command gets stuck getting the xpath :(
