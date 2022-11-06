@@ -88,7 +88,7 @@ describe('XCUITestDriver - find', function () {
 
   describe('by id', function () {
     it('should find a single element by id', async function () {
-      let el = await driver.elementById('Alert Views');
+      let el = await driver.$('#Alert Views');
       el.should.exist;
     });
 
@@ -98,17 +98,17 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should first attempt to match accessibility id', async function () {
-      let el = await driver.elementById('Alert Views');
+      let el = await driver.$('#Alert Views');
       (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
     it('should attempt to match by string if no accessibility id matches', async function () {
-      let el = await driver.elementById('Alert Views');
+      let el = await driver.$('#Alert Views');
       (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
     it.skip('should use a localized string if the id is a localization key', async function () {
-      let el = await driver.elementById('main.button.computeSum');
+      let el = await driver.$('#main.button.computeSum');
       (await el.getAttribute('label')).should.equal('Compute Sum');
     });
 
