@@ -397,31 +397,31 @@ describe('XCUITestDriver - find', function () {
       await B.delay(TEST_PAUSE_DURATION);
     });
     it('should find cell types', async function () {
-      let cellEls = await driver.$('cell');
+      let cellEls = await driver.$$('cell');
       cellEls.should.have.length.above(1);
     });
     it('should find elements', async function () {
-      let els = await driver.$('window');
+      let els = await driver.$$('window');
       els.should.have.length.above(0);
     });
 
     it('should find child elements', async function () {
-      let els = await driver.$('window > *');
+      let els = await driver.$$('window > *');
       els.should.have.length.above(0);
     });
 
     it('should find elements with index', async function () {
-      let els = await driver.$('window:nth-child(1) > *');
+      let els = await driver.$$('window:nth-child(1) > *');
       els.should.have.length.above(0);
     });
 
     it('should find elements with negative index', async function () {
-      let els = await driver.$('window > *:nth-child(-1)');
+      let els = await driver.$$('window > *:nth-child(-1)');
       els.should.have.length(1);
     });
 
     it('should work with a nested CSS selector', async function () {
-      let imageViewButtons = await driver.$('cell > staticText[value="Image View"]');
+      let imageViewButtons = await driver.$$('cell > staticText[value="Image View"]');
       imageViewButtons.should.have.length(1);
     });
   });
