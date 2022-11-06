@@ -22,6 +22,7 @@ jobs:
         npm run e2e-test:basic -- --grep "XCUITestDriver - basics -"
         npm run e2e-test:basic -- --grep "XCUITestDriver - alerts -"
         npm run e2e-test:basic -- --grep "XCUITestDriver - elements -"
+        npm run e2e-test:basic -- --grep "XCUITestDriver - find -"
   # - template: ./ios-e2e-template.yml
   #   parameters:
   #     name: e2e_device_${{ parameters.name }}
