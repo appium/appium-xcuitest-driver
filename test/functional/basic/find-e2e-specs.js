@@ -88,22 +88,22 @@ describe('XCUITestDriver - find', function () {
 
   describe('by id', function () {
     it('should find a single element by id', async function () {
-      let el = await driver.$('#Alert Views');
-      el.should.exist;
+      let el = await driver.$('~Alert Views');
+      el.elementId.should.exist;
     });
 
     it('should find a single element by id wrapped in array for multi', async function () {
-      let els = await driver.$$('#Alert Views');
+      let els = await driver.$$('~Alert Views');
       els.should.have.length(1);
     });
 
     it('should first attempt to match accessibility id', async function () {
-      let el = await driver.$('#Alert Views');
+      let el = await driver.$('~Alert Views');
       (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
     it('should attempt to match by string if no accessibility id matches', async function () {
-      let el = await driver.$('#Alert Views');
+      let el = await driver.$('~Alert Views');
       (await el.getAttribute('label')).should.equal('Alert Views');
     });
 
