@@ -35,7 +35,7 @@ describe('XCUITestDriver - find', function () {
     let el1;
     before(async function () {
       el1 = await driver.$('~Buttons');
-      el1.should.exist;
+      el1.elementId.should.exist;
     });
     it('should find an element within descendants', async function () {
       let el2 = await el1.$('XCUIElementTypeStaticText');
