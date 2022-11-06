@@ -93,7 +93,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find a single element by id wrapped in array for multi', async function () {
-      let els = await driver.elementsById('Alert Views');
+      let els = await driver.$$('#Alert Views');
       els.should.have.length(1);
     });
 
@@ -113,7 +113,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it.skip('should be able to return multiple matches', async function () {
-      let els = await driver.elementsById('Cell');
+      let els = await driver.$$('#Cell');
       els.length.should.be.greaterThan(1);
     });
   });
