@@ -259,7 +259,7 @@ describe('XCUITestDriver - find', function () {
     it('should find an element beneath another element', async function () {
       let el1 = await driver.$('XCUIElementTypeTable');
       let el2 = await el1.$('~Alert Views');
-      el2.should.exist;
+      el2.elementId.should.exist;
     });
   });
 
@@ -274,7 +274,7 @@ describe('XCUITestDriver - find', function () {
       let els = await driver.$$('XCUIElementTypeImage');
       els.length.should.be.above(0);
       for (const el of els) {
-        el.should.exist;
+        el.elementId.should.exist;
       }
     });
 
