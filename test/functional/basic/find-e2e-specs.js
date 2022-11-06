@@ -38,12 +38,12 @@ describe('XCUITestDriver - find', function () {
       el1.should.exist;
     });
     it('should find an element within descendants', async function () {
-      let el2 = await el1.elementByClassName('XCUIElementTypeStaticText');
+      let el2 = await el1.$('XCUIElementTypeStaticText');
       (await el2.getAttribute('name')).should.contain('Buttons');
     });
 
     it('should not find an element not within itself', async function () {
-      await B.resolve(el1.elementByClassName('XCUIElementTypeNavigationBar'))
+      await B.resolve(el1.$('XCUIElementTypeNavigationBar'))
         .should.eventually.be.rejectedWith(/Error response status: 7/);
     });
 
@@ -65,8 +65,8 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should not allow found elements to be mixed up', async function () {
-      let table = await driver.elementByClassName('XCUIElementTypeTable');
-      let el1 = await table.elementByClassName('XCUIElementTypeStaticText');
+      let table = await driver.$('XCUIElementTypeTable');
+      let el1 = await table.$('XCUIElementTypeStaticText');
       let el1Name = await el1.getAttribute('name');
       await el1.click();
 
@@ -75,8 +75,8 @@ describe('XCUITestDriver - find', function () {
       await B.delay(1000);
 
       await driver.setImplicitWaitTimeout(5000);
-      table = await driver.elementByClassName('XCUIElementTypeTable');
-      let el2 = await driver.elementByClassName('XCUIElementTypeStaticText');
+      table = await driver.$('XCUIElementTypeTable');
+      let el2 = await driver.$('XCUIElementTypeStaticText');
       let el2Name = await el2.getAttribute('name');
       el1.should.not.equal(el2);
       el1Name.should.not.equal(el2Name);
@@ -257,7 +257,7 @@ describe('XCUITestDriver - find', function () {
     });
 
     it('should find an element beneath another element', async function () {
-      let el1 = await driver.elementByClassName('XCUIElementTypeTable');
+      let el1 = await driver.$('XCUIElementTypeTable');
       let el2 = await el1.elementByAccessibilityId('Alert Views');
       el2.should.exist;
     });
@@ -419,7 +419,7 @@ describe('XCUITestDriver - find', function () {
 
   describe('magic first visible child xpath', function () {
     it('should find the first visible child of an element', async function () {
-      let el = await driver.elementByClassName('XCUIElementTypeTable');
+      let el = await driver.$('XCUIElementTypeTable');
       let child = await el.elementByXPath('/*[@firstVisible="true"]');
       await child.getAttribute('type').should.eventually.eql('XCUIElementTypeCell');
       // do another call and double-check the different quote/spacing works
