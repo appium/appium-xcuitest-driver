@@ -54,34 +54,34 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
 
       it('should not support touchID if not enrolled', async function () {
         if (await doEnrollment(false)) {
-          let authenticateButton = await driver.$("[name=' Authenticate with Touch ID']");
+          let authenticateButton = await driver.$('~ Authenticate with Touch ID');
           await authenticateButton.click();
-          await driver.findElement('css selector', "[name='TouchID not supported']").should.eventually.exist;
+          await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
         }
       });
 
       it('should accept matching fingerprint if touchID is enrolled or it should not be supported if phone does not support touchID', async function () {
         if (await doEnrollment()) {
-          let authenticateButton = await driver.$("[name=' Authenticate with Touch ID']");
+          let authenticateButton = await driver.$('~ Authenticate with Touch ID');
           await authenticateButton.click();
           await driver.touchId(true);
           try {
-            await driver.findElement('css selector', "[name='Authenticated Successfully']").should.eventually.exist;
+            await driver.findElement('accessibility id', '~Authenticated Successfully').should.eventually.exist;
           } catch (ign) {
-            await driver.findElement('css selector', "[name='TouchID not supported']").should.eventually.exist;
+            await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
           }
         }
       });
 
       it('should reject not matching fingerprint if touchID is enrolled or it should not be supported if phone does not support touchID', async function () {
         if (await doEnrollment()) {
-          let authenticateButton = await driver.$("[name=' Authenticate with Touch ID']");
+          let authenticateButton = await driver.$('~ Authenticate with Touch ID');
           await authenticateButton.click();
           await driver.touchId(false);
           try {
-            await driver.findElement('css selector', "[name='Try Again']").should.eventually.exist;
+            await driver.findElement('accessibility id', '~Try Again').should.eventually.exist;
           } catch (ign) {
-            await driver.findElement('css selector', "[name='TouchID not supported']").should.eventually.exist;
+            await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
           }
         }
       });
@@ -91,9 +91,9 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         if (!await doEnrollment(false)) {
           return;
         }
-        let authenticateButton = await driver.$("[name=' Authenticate with Touch ID']");
+        let authenticateButton = await driver.$('~ Authenticate with Touch ID');
         await authenticateButton.click();
-        await driver.findElement('css selector', "[name='TouchID not supported']").should.eventually.exist;
+        await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
         let okButton = await driver.$("[name='OK']");
         await okButton.click();
         await B.delay(1000);
@@ -103,9 +103,9 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         await authenticateButton.click();
         await driver.touchId(true);
         try {
-          await driver.findElement('css selector', "[name='Authenticated Successfully']").should.eventually.exist;
+          await driver.findElement('accessibility id', '~Authenticated Successfully').should.eventually.exist;
         } catch (ign) {
-          return await driver.findElement('css selector', "[name='TouchID not supported']").should.eventually.exist;
+          return await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
         }
         okButton = await driver.$("[name='OK']");
         await okButton.click();
@@ -113,9 +113,9 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
 
         // Unenroll again
         await doEnrollment(false);
-        authenticateButton = await driver.$("[name=' Authenticate with Touch ID']");
+        authenticateButton = await driver.$('~ Authenticate with Touch ID');
         await authenticateButton.click();
-        await driver.findElement('css selector', "[name='TouchID not supported']").should.eventually.exist;
+        await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
       });
     });
   });
