@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
+import { extractCapabilityValue, UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { util } from 'appium/support';
 
@@ -281,7 +281,7 @@ describe('XCUITestDriver - find -', function () {
     describe('textfield case', function () {
       it('should find only one textfield', async function () {
         // TODO: this works locally but fails in CI.
-        if (process.env.CI && UICATALOG_CAPS.alwaysMatch['appium:platformVersion'] === '10.3') {
+        if (process.env.CI && extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion') === '10.3') {
           return this.skip();
         }
 
