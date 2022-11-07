@@ -330,11 +330,18 @@ describe('XCUITestDriver - elements -', function () {
         });
       });
     });
+
     describe('picker wheel', function () {
-      it('should be able to set the value', async function () {
+      beforeEach(async function () {
         let el = await driver.$('~Picker View');
         await el.click();
+      });
 
+      afterEach(async function () {
+        await driver.back();
+      });
+
+      it('should be able to set the value', async function () {
         let wheels = await driver.$$('XCUIElementTypePickerWheel');
 
         let values = [65, 205, 120];
