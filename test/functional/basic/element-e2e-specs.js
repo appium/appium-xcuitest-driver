@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { extractCapabilityValue, UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { util } from 'appium/support';
 
@@ -109,7 +109,7 @@ describe('XCUITestDriver - elements -', function () {
 
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
-      if (util.compareVersions(UICATALOG_CAPS.alwaysMatch['appium:platformVersion'], '>=', '13.0')) {
+      if (util.compareVersions(extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion'), '>=', '13.0')) {
         return this.skip();
       }
       let table = await driver.$('XCUIElementTypeTable');
@@ -330,11 +330,18 @@ describe('XCUITestDriver - elements -', function () {
         });
       });
     });
+
     describe('picker wheel', function () {
-      it('should be able to set the value', async function () {
+      beforeEach(async function () {
         let el = await driver.$('~Picker View');
         await el.click();
+      });
 
+      afterEach(async function () {
+        await driver.back();
+      });
+
+      it('should be able to set the value', async function () {
         let wheels = await driver.$$('XCUIElementTypePickerWheel');
 
         let values = [65, 205, 120];

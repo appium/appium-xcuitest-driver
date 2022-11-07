@@ -4,7 +4,7 @@ import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
 import { retryInterval } from 'asyncbox';
-import { UICATALOG_CAPS } from '../desired';
+import { extractCapabilityValue, UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
 import { PNG } from 'pngjs';
@@ -73,7 +73,7 @@ describe('XCUITestDriver - basics -', function () {
       // be events in the result, but we cannot know what they should be
       delete actual.events;
       // sdk version can be a longer version
-      actual.sdkVersion.indexOf(UICATALOG_CAPS.alwaysMatch['appium:platformVersion']).should.eql(0);
+      actual.sdkVersion.indexOf(extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion')).should.eql(0);
       delete actual.sdkVersion;
       // there might have been added wdaLocalPort and webDriverAgentUrl
       delete actual.wdaLocalPort;
