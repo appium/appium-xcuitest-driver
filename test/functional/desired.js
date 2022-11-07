@@ -33,7 +33,8 @@ const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const APPS = {
   uiCatalogApp: path.resolve(__dirname, '..', 'assets',
     `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`),
-  iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app')
+  iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app'),
+  touchIdApp: path.resolve(__dirname, '..', 'assets', 'TouchIDExample.app')
 };
 
 
