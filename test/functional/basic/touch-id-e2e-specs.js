@@ -94,7 +94,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         let authenticateButton = await driver.$('~ Authenticate with Touch ID');
         await authenticateButton.click();
         await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
-        let okButton = await driver.$("[name='OK']");
+        let okButton = await driver.$('~OK');
         await okButton.click();
         await B.delay(1000);
 
@@ -107,7 +107,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         } catch (ign) {
           return await driver.findElement('accessibility id', '~TouchID not supported').should.eventually.exist;
         }
-        okButton = await driver.$("[name='OK']");
+        okButton = await driver.$('~OK');
         await okButton.click();
         await B.delay(1000);
 
