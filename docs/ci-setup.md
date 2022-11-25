@@ -2,7 +2,7 @@
 
 Setting up appium in an automated environment brings a few challenges with it.
 Any scenario where user interaction is required must be automated or avoided all together.
-For real device set up you should first follow the steps in [this guide](https://github.com/PowerOfCreation/appium-xcuitest-driver/blob/master/docs/real-device-config.md).
+For real device set up you should first follow the steps in [this guide](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/real-device-config.md).
 
 ### Keychains
 
@@ -29,8 +29,8 @@ Make sure to start XCode at least once and do the initial set up and install the
 ### Linking Apple Account
 
 This only applies for real device set up.
-Make sure to link your 'Apple Developer Account' in the machine's system wide "Account Panel" when using the "Basic (automatic) configuration" described [here](https://github.com/PowerOfCreation/appium-xcuitest-driver/blob/master/docs/real-device-config.md#basic-automatic-configuration).
+Make sure to link your 'Apple Developer Account' in the machine's system wide "Account Panel" when using the "Basic (automatic) configuration" described [here](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/real-device-config.md#basic-automatic-configuration).
 
 ### Troubleshooting
 
-Enable the `appium:showXcodeLog` [capability](https://github.com/PowerOfCreation/appium-xcuitest-driver#webdriveragent) and check the appium server output.
+Enable the `appium:showXcodeLog` [capability](https://github.com/appium/appium-xcuitest-driver#webdriveragent) and check the appium server output.
