@@ -2,7 +2,7 @@
 
 Setting up XCUItest driver in an automated environment brings a few challenges with it.
 Any scenario where user interaction is required must be automated or avoided all together.
-For real device set up you should first follow the steps in [this guide](real-device-config.md).
+For real device set up you should first follow the steps in [Real Device Configuration tutorial](real-device-config.md).
 
 ### Keychains
 
@@ -13,7 +13,7 @@ There are multiple possible solutions for this:
 2. [It is possible to create a second keychain](../README.md#real-device-security-settings), which just stores the required certificate to sign the WebDriverAgent.
 The issue with this approach is, that Codesign wants to unlock all listed keychains regardless of the specified keychain, thus leading to a password prompt.
 This can be avoided by setting the default keychain and basically hiding the login keychain at the start of building.
-[This](https://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails) shows how to utelize this approach.
+[Stackoverflow article](https://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails) shows how to utelize this approach.
 Impractical when running other build jobs simultaneously.
 3. Stick with the existing keychains as in approach number one, but explicitly call unlock keychain before **each** build. This can be done using [fastlane unlock_keychain](https://docs.fastlane.tools/actions/unlock_keychain/) or by using [security unlock-keychain](https://www.unix.com/man-page/osx/1/security/) directly.
 The password can be saved as a CI variable/secret or on the machine itself.
