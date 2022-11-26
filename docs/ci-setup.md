@@ -16,7 +16,7 @@ This can be avoided by setting the default keychain and basically hiding the log
 [This](https://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails) shows how to utelize this approach.
 Impractical when running other build jobs simultaneously.
 3. Stick with the existing keychains as in approach number one, but explicitly call unlock keychain before **each** build. This can be done using [fastlane unlock_keychain](https://docs.fastlane.tools/actions/unlock_keychain/) or by using [security unlock-keychain](https://www.unix.com/man-page/osx/1/security/) directly.
-The password can be saved as a CI variable/secret, but this doesn't work for multiple machines with different keychain passwords. Setting the keychain password in each machine's .bashrc as an environment variable does the trick.
+The password can be saved as a CI variable/secret or on the machine itself.
 
 It is recommended to go with the second or third option.
 The third one is the easiest and most reliable one to set up at the cost of having to set the keychain password as an environment variable.
