@@ -111,7 +111,7 @@ and the password sent through the `keychainPassword` capability.
 
 ### CI
 
-[This document](docs/ci-setup.md) covers steps to take in order to use the XCUItest driver in a CI environment.
+[Continuous Integration Setup document](docs/ci-setup.md) covers steps to take in order to use the XCUItest driver in a CI environment.
 
 ## Appium 2.x Server Arguments
 
