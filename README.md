@@ -109,6 +109,10 @@ where `MyPrivateKey.p12` is the private development key exported from the system
 The full path to the keychain can then be sent to the Appium system using the `keychainPath` desired capability,
 and the password sent through the `keychainPassword` capability.
 
+### CI
+
+[This document](docs/ci-setup.md) covers steps to take in order to use the XCUItest driver in a CI environment.
+
 ## Appium 2.x Server Arguments
 
 These arguments are set when you launch the Appium server, with this driver installed. They are for system administrators.
