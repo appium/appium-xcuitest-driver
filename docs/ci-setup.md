@@ -1,4 +1,4 @@
-## CI Setup
+## Continuous Integration Setup
 
 Setting up XCUItest driver in an automated environment brings a few challenges with it.
 Any scenario where user interaction is required must be automated or avoided all together.
