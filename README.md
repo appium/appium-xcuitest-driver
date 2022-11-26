@@ -109,7 +109,7 @@ where `MyPrivateKey.p12` is the private development key exported from the system
 The full path to the keychain can then be sent to the Appium system using the `keychainPath` desired capability,
 and the password sent through the `keychainPassword` capability.
 
-### CI
+### Continuous Integration
 
 [Continuous Integration Setup document](docs/ci-setup.md) covers steps to take in order to use the XCUItest driver in a CI environment.
 
