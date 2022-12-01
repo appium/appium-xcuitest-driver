@@ -1,3 +1,10 @@
+## [4.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.0...v4.13.1) (2022-12-01)
+
+
+### Miscellaneous Chores
+
+* update releaserc ([#1458](https://github.com/appium/appium-xcuitest-driver/issues/1458)) ([c818934](https://github.com/appium/appium-xcuitest-driver/commit/c81893450bdf48be8cb9406e06a3a99b6f826ba3))
+
 # [4.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.12.4...v4.13.0) (2022-12-01)
 
 
