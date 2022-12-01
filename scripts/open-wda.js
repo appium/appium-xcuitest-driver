@@ -13,9 +13,7 @@ async function getXcodeprojPath () {
     try {
       await fs.access(currentPath, fs.constants.R_OK);
       return currentPath;
-    } catch (ign) {
-      continue;
-    }
+    } catch (ign) {}
   }
   throw new Error(`Cannot find '${XCODEPROJ_NAME}' under '${WDA_INDEX_PATH}' hierarchy`);
 }
