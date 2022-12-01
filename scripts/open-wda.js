@@ -7,7 +7,7 @@ const XCODEPROJ_NAME = 'WebDriverAgent.xcodeproj';
 
 async function openWda () {
   const dstPath = path.resolve(BOOTSTRAP_PATH, XCODEPROJ_NAME);
-  log.info(`Opening '${dstPath}' in Xcode`);
+  log.info(`Opening '${dstPath}'`);
   await exec('open', [dstPath]);
 }
 
