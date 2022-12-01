@@ -244,3 +244,5 @@ echo "$(dirname "$(find "$HOME/.appium" -name WebDriverAgent.xcodeproj)")"
 ```
 
 The resulting output will contain the full path to WDA's source folder.
+
+Since XCUITest driver v4.13.0 there is a possibility to open `WebDriverAgent.xcodeproj` in Xcode by simply executing `appium driver run xcuitest open-wda` command.
