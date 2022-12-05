@@ -1,3 +1,10 @@
+## [4.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.1...v4.13.2) (2022-12-05)
+
+
+### Miscellaneous Chores
+
+* Bump webdriverio from 7.27.0 to 8.0.5 ([#1460](https://github.com/appium/appium-xcuitest-driver/issues/1460)) ([7f1c079](https://github.com/appium/appium-xcuitest-driver/commit/7f1c0793b83b6c41a71c848472e93de04eb1cb04))
+
 ## [4.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.0...v4.13.1) (2022-12-01)
 
 
