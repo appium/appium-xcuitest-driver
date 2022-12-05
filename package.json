@@ -159,6 +159,6 @@
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.2",
     "sinon": "^15.0.0",
-    "webdriverio": "^7.0.0"
+    "webdriverio": "^8.0.5"
   }
 }
