@@ -78,6 +78,7 @@ const SAFARI_CAPS = amendCapabilities(GENERIC_CAPS, {
 
 const TESTAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:app': APPS.iosTestApp,
+  'appium:noReset': false,
 });
 
 const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
