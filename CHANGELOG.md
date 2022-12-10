@@ -1,3 +1,10 @@
+## [4.13.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.3...v4.13.4) (2022-12-10)
+
+
+### Miscellaneous Chores
+
+* Only call appropriate setters if their capabilities are defined ([#1462](https://github.com/appium/appium-xcuitest-driver/issues/1462)) ([f633a51](https://github.com/appium/appium-xcuitest-driver/commit/f633a51981aab8d03c3a3cb173bea90b6f9178a1))
+
 ## [4.13.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.2...v4.13.3) (2022-12-08)
 
 
