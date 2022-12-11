@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { MULTIPLE_APPS, amendCapabilities } from '../desired';
-import { translateDeviceName } from '../../../lib/utils';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -17,9 +16,6 @@ describe('OtherApps', function() {
     caps = amendCapabilities(MULTIPLE_APPS, {
       'appium:usePrebuiltWDA': true,
       'appium:wdaStartupRetries': 0,
-      'appium:deviceName': translateDeviceName(
-        MULTIPLE_APPS.alwaysMatch['appuim:platformVersion'],
-        MULTIPLE_APPS.alwaysMatch['appium:deviceName']),
     });
   });
 
