@@ -29,11 +29,9 @@ describe('OtherApps', function() {
     await deleteSession();
   });
 
-  if (!process.env.REAL_DEVICE) {
-    it('should start and stop a session', async function() {
-      driver = await initSession(caps);
-      await driver.isAppInstalled('io.appium.TestApp').should.eventually.be.equal(true);
-      await driver.isAppInstalled('com.example.apple-samplecode.UICatalog').should.eventually.be.equal(true);
-    });
-  }
+  it('should start and stop a session', async function() {
+    driver = await initSession(caps);
+    await driver.isAppInstalled('io.appium.TestApp').should.eventually.be.equal(true);
+    await driver.isAppInstalled('com.example.apple-samplecode.UICatalog').should.eventually.be.equal(true);
+  });
 });
