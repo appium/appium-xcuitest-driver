@@ -24,18 +24,18 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
     it('should authorize calendar access if calendarAccessAuthorized == true', async function() {
       caps = amendCapabilities(caps, { 'appium:calendarAccessAuthorized': true });
       driver = await initSession(caps);
-      let checkCalendarButton = await driver.$(`//XCUIElementTypeButton[@name='Check calendar authorized']`);
+      let checkCalendarButton = await driver.$("-ios predicate string:name='Check calendar authorized'");
       await checkCalendarButton.click();
-      const statusText = await driver.$(`//XCUIElementTypeStaticText[@name='authorized']`);
+      const statusText = await driver.$("-ios predicate string:name='authorized'");
       statusText.elementId.should.exist;
     });
 
     it('should disable calendar access if calendarAccessAuthorized == false', async function() {
       caps = amendCapabilities(caps, { 'appium:calendarAccessAuthorized': false });
       driver = await initSession(caps);
-      let checkCalendarButton = await driver.$(`//XCUIElementTypeButton[@name='Check calendar authorized']`);
+      let checkCalendarButton = await driver.$("-ios predicate string:name='Check calendar authorized'");
       await checkCalendarButton.click();
-      const statusText = await driver.$(`//XCUIElementTypeStaticText[@name='not authorized']`);
+      const statusText = await driver.$("-ios predicate string:name='Check calendar authorized'");
       statusText.elementId.should.exist;
     });
   });
