@@ -18,6 +18,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
     });
 
     afterEach(async function() {
+      await driver.terminateApp('io.appium.TestApp');
       await deleteSession();
     });
 
