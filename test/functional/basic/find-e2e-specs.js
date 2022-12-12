@@ -4,6 +4,7 @@ import B from 'bluebird';
 import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { extractCapabilityValue, UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
+import { PREDICATE_SEARCH, CLASS_CHAIN_SEARCH } from '../helpers/element';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { util } from 'appium/support';
 
@@ -333,31 +334,31 @@ describe('XCUITestDriver - find -', function () {
     });
     it('should find invisible elements', async function () {
       const selector = 'visible = 0';
-      let els = await driver.$$(`-ios predicate string:${selector}`);
+      let els = await driver.$$(`${PREDICATE_SEARCH}:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with widths above 0', async function () {
       const selector = 'wdRect.width >= 0';
-      let els = await driver.$$(`-ios predicate string:${selector}`);
+      let els = await driver.$$(`${PREDICATE_SEARCH}:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with widths between 100 and 200', async function () {
       const selector = 'wdRect.width BETWEEN {100,200}';
-      let els = await driver.$$(`-ios predicate string:${selector}`);
+      let els = await driver.$$(`${PREDICATE_SEARCH}:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements that end in the word "View" in the name', async function () {
       const selector = "wdName LIKE '* View'";
-      let els = await driver.$$(`-ios predicate string:${selector}`);
+      let els = await driver.$$(`${PREDICATE_SEARCH}:${selector}`);
       els.should.have.length.above(1);
     });
 
     it('should find elements that have x and y coordinates greater than 0', async function () {
       const selector = 'wdRect.x >= 0 AND wdRect.y >= 0';
-      let els = await driver.$$(`-ios predicate string:${selector}`);
+      let els = await driver.$$(`${PREDICATE_SEARCH}:${selector}`);
       els.should.have.length.above(1);
     });
   });
@@ -369,25 +370,25 @@ describe('XCUITestDriver - find -', function () {
     });
     it('should find elements', async function () {
       const selector = 'XCUIElementTypeWindow';
-      let els = await driver.$$(`-ios class chain:${selector}`);
+      let els = await driver.$$(`${CLASS_CHAIN_SEARCH}:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find child elements', async function () {
       const selector = 'XCUIElementTypeWindow/*';
-      let els = await driver.$$(`-ios class chain:${selector}`);
+      let els = await driver.$$(`${CLASS_CHAIN_SEARCH}:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with index', async function () {
       const selector = 'XCUIElementTypeWindow[1]/*';
-      let els = await driver.$$(`-ios class chain:${selector}`);
+      let els = await driver.$$(`${CLASS_CHAIN_SEARCH}:${selector}`);
       els.should.have.length.above(0);
     });
 
     it('should find elements with negative index', async function () {
       const selector = 'XCUIElementTypeWindow/*[-1]';
-      let els = await driver.$$(`-ios class chain:${selector}`);
+      let els = await driver.$$(`${CLASS_CHAIN_SEARCH}:${selector}`);
       els.should.have.length(1);
     });
   });

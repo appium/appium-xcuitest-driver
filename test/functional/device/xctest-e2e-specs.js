@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
-import { GENERIC_CAPS } from '../desired';
+import { GENERIC_CAPS, amendCapabilities } from '../desired';
 
 const APP_UNDER_TEST_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterApp.app.zip';
 const TEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests-Runner.app.zip';
@@ -17,11 +17,11 @@ if (process.env.LAUNCH_WITH_IDB) {
     let driver;
 
     beforeEach(async function () {
-      driver = await initSession({
-        ...GENERIC_CAPS,
-        app: APP_UNDER_TEST_PATH,
-        launchWithIDB: true,
+      const caps = amendCapabilities(GENERIC_CAPS, {
+        'appium:app': APP_UNDER_TEST_PATH,
+        'appium:launchWithIDB': true,
       });
+      driver = await initSession(caps);
     });
 
     afterEach(async function () {
