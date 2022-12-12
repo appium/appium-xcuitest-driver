@@ -1,10 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { PREDICATE_SEARCH } from '../helpers/element';
 import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
 import { SETTINGS_CAPS, amendCapabilities } from '../desired';
-
-
-const PREDICATE_SEARCH = '-ios predicate string';
 
 chai.should();
 chai.use(chaiAsPromised);

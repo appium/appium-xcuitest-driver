@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { TESTAPP_CAPS, amendCapabilities } from '../desired';
+import { PREDICATE_SEARCH } from '../helpers/element';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 
 
@@ -22,18 +23,18 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
     it('should authorize calendar access if calendarAccessAuthorized == true', async function() {
       caps = amendCapabilities(caps, { 'appium:calendarAccessAuthorized': true });
       driver = await initSession(caps);
-      let checkCalendarButton = await driver.$("-ios predicate string:name='Check calendar authorized'");
+      let checkCalendarButton = await driver.$(`${PREDICATE_SEARCH}:name='Check calendar authorized'`);
       await checkCalendarButton.click();
-      const statusText = await driver.$("-ios predicate string:name='authorized'");
+      const statusText = await driver.$(`${PREDICATE_SEARCH}:name='authorized'`);
       statusText.elementId.should.exist;
     });
 
     it('should disable calendar access if calendarAccessAuthorized == false', async function() {
       caps = amendCapabilities(caps, { 'appium:calendarAccessAuthorized': false });
       driver = await initSession(caps);
-      let checkCalendarButton = await driver.$("-ios predicate string:name='Check calendar authorized'");
+      let checkCalendarButton = await driver.$(`${PREDICATE_SEARCH}:name='Check calendar authorized'`);
       await checkCalendarButton.click();
-      const statusText = await driver.$("-ios predicate string:name='Check calendar authorized'");
+      const statusText = await driver.$(`${PREDICATE_SEARCH}:name='Check calendar authorized'`);
       statusText.elementId.should.exist;
     });
   });
