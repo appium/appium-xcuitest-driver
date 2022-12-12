@@ -227,7 +227,7 @@ If a test is executed on a Simulator then UI locale is changed as well. You can 
 |`appium:simulatorDevicesSetPath`| This capability allows to set an alternative path to the simulator devices set in case you have multiple sets deployed on your local system. Such feature could be useful if you, for example, would like to save disk space on the main system volume. | e.g. `/MyVolume/Devices` |
 |`appium:customSSLCert`| Adds a root SSL certificate to IOS Simulators and real devices. Real devices only work if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine. The certificate content must be provided in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format | e.g. ```-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...-----END CERTIFICATE-----```|
 |`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000` | e.g., `10000`|
-|`appium:safariGlobalPreferences`| (Simulator only) Allows changing of Mobile Safari's preferences at the session startup. Check the documentation on arguments of [mobile: updateSafariPreferences](#mobile-udatesafaripreferences) extension to get more details on the value type requirements. | { ShowTabBar: 0, WarnAboutFraudulentWebsites: 0 } |
+|`appium:safariGlobalPreferences`| (Simulator only) Allows changing of Mobile Safari's preferences at the session startup. Check the documentation on arguments of [mobile: updateSafariPreferences](#mobile-updatesafaripreferences) extension to get more details on the value type requirements. | { ShowTabBar: 0, WarnAboutFraudulentWebsites: 0 } |
 
 ### Web Context
 
@@ -1529,7 +1529,7 @@ If the connection is disconnected, condition inducer will be automatically disab
 
 Either `true` or `false`, where `true` means disabling of the condition inducer has been successful
 
-### mobile: udateSafariPreferences
+### mobile: uddateSafariPreferences
 
 Updates preferences of Mobile Safari on Simulator
 
