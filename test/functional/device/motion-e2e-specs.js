@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 describe('ReduceMotion', function() {
   this.timeout(MOCHA_TIMEOUT);
 
-  let caps = Object.assign({ usePrebuiltWDA: true }, SETTINGS_CAPS);
+  let caps = amendCapabilities(SETTINGS_CAPS, { 'appium:usePrebuiltWDA': true });
 
   let driver;
 
