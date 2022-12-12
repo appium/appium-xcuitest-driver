@@ -10,9 +10,11 @@ chai.use(chaiAsPromised);
 describe('ReduceMotion', function() {
   this.timeout(MOCHA_TIMEOUT);
 
-  let caps = amendCapabilities(SETTINGS_CAPS, { 'appium:usePrebuiltWDA': true });
+  let driver, caps;
 
-  let driver;
+  beforeEach(function() {
+    caps = amendCapabilities(SETTINGS_CAPS, { 'appium:usePrebuiltWDA': true });
+  });
 
   afterEach(async function() {
     await driver.terminateApp('com.apple.Preferences');

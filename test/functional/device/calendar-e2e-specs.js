@@ -11,8 +11,11 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
   describe('XCUITestDriver - calendar', function() {
     this.timeout(MOCHA_TIMEOUT);
 
-    let driver;
-    let caps = TESTAPP_CAPS;
+    let driver, caps;
+
+    beforeEach(function() {
+      caps = TESTAPP_CAPS;
+    });
 
     afterEach(async function() {
       await driver.terminateApp('io.appium.TestApp');
