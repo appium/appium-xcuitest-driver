@@ -1529,7 +1529,7 @@ If the connection is disconnected, condition inducer will be automatically disab
 
 Either `true` or `false`, where `true` means disabling of the condition inducer has been successful
 
-### mobile: uddateSafariPreferences
+### mobile: updateSafariPreferences
 
 Updates preferences of Mobile Safari on Simulator
 
