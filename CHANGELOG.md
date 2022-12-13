@@ -1,3 +1,10 @@
+## [4.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.14.0...v4.15.0) (2022-12-13)
+
+
+### Features
+
+* add reduceTransparency ([#1464](https://github.com/appium/appium-xcuitest-driver/issues/1464)) ([82e7c23](https://github.com/appium/appium-xcuitest-driver/commit/82e7c237dcf8dcd5ee23c2bd57c2f831f4083a03))
+
 ## [4.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.4...v4.14.0) (2022-12-13)
 
 
