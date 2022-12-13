@@ -4,8 +4,8 @@ import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
 import { retryInterval } from 'asyncbox';
-import { extractCapabilityValue, UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
+import { extractCapabilityValue, amendCapabilities, UICATALOG_CAPS } from '../desired';
+import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
 import { PNG } from 'pngjs';
 
@@ -19,7 +19,10 @@ describe('XCUITestDriver - basics -', function () {
 
   let driver;
   before(async function () {
-    driver = await initSession(UICATALOG_CAPS);
+    const caps = amendCapabilities(UICATALOG_CAPS, {
+      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+    });
+    driver = await initSession(caps);
   });
   after(async function () {
     await deleteSession();
