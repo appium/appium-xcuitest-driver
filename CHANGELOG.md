@@ -1,3 +1,10 @@
+## [4.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.15.0...v4.15.1) (2022-12-13)
+
+
+### Miscellaneous Chores
+
+* Deprecate calendarAccessAuthorized capability ([#1465](https://github.com/appium/appium-xcuitest-driver/issues/1465)) ([2c63d9a](https://github.com/appium/appium-xcuitest-driver/commit/2c63d9a97ae4c420942e66f2a3bc1413535c7905))
+
 ## [4.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.14.0...v4.15.0) (2022-12-13)
 
 
