@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
+import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { SAFARI_CAPS, amendCapabilities } from '../desired';
 import {
   spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
@@ -39,14 +39,17 @@ describe('Safari - basics -', function () {
         ? ''
         : 'Appium/welcome';
       driver = await initSession(amendCapabilities(SAFARI_CAPS, {
-        'appium:noReset': false
+        'appium:noReset': false,
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       }));
       const title = await spinTitle(driver);
       title.should.equal(expectedTitle);
     });
 
     it('should start a session with custom init', async function () {
-      driver = await initSession(DEFAULT_CAPS);
+      driver = await initSession(amendCapabilities(DEFAULT_CAPS, {
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+      }));
       const title = await spinTitle(driver);
       const expectedTitle = 'I am a page title';
       title.should.equal(expectedTitle);
@@ -58,6 +61,7 @@ describe('Safari - basics -', function () {
       const caps = amendCapabilities(DEFAULT_CAPS, {
         'appium:safariIgnoreFraudWarning': false,
         'appium:showSafariConsoleLog': true,
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
       driver = await initSession(caps);
     });
@@ -484,6 +488,7 @@ describe('Safari - basics -', function () {
       beforeEach(async function () {
         driver = await initSession(amendCapabilities(DEFAULT_CAPS, {
           'appium:safariIgnoreFraudWarning': false,
+          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
         }));
       });
       afterEach(async function () {
@@ -513,6 +518,7 @@ describe('Safari - basics -', function () {
       beforeEach(async function () {
         driver = await initSession(amendCapabilities(DEFAULT_CAPS, {
           'appium:safariIgnoreFraudWarning': true,
+          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
         }));
       });
       afterEach(async function () {
