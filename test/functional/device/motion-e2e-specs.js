@@ -52,12 +52,12 @@ describe('ReduceMotion', function() {
     it('should enable reduce motion', async function() {
       caps = amendCapabilities(caps, { 'appium:reduceMotion': true });
       driver = await initSession(caps);
-      getReduceMotion(driver).should.eventually.be.eql('1');
+      await getReduceMotion(driver).should.eventually.be.eql('1');
     });
     it('should disable reduce motion', async function() {
       caps = amendCapabilities(caps, { 'appium:reduceMotion': false });
       driver = await initSession(caps);
-      getReduceMotion(driver).should.eventually.be.eql('0');
+      await getReduceMotion(driver).should.eventually.be.eql('0');
     });
   }
 });
