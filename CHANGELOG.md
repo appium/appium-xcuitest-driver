@@ -1,3 +1,10 @@
+## [4.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.4...v4.14.0) (2022-12-13)
+
+
+### Features
+
+* Streamline changing of Simulator preferences ([#1463](https://github.com/appium/appium-xcuitest-driver/issues/1463)) ([79c2e36](https://github.com/appium/appium-xcuitest-driver/commit/79c2e3626d550a2d04ace00d840d7b8e4d14614b))
+
 ## [4.13.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.13.3...v4.13.4) (2022-12-10)
 
 
