@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { PREDICATE_SEARCH } from '../helpers/element';
-import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
+import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { SETTINGS_CAPS, amendCapabilities } from '../desired';
 
 chai.should();
@@ -13,7 +13,9 @@ describe('Accessibility', function() {
   let driver, caps;
 
   beforeEach(function() {
-    caps = amendCapabilities(SETTINGS_CAPS);
+    caps = amendCapabilities(SETTINGS_CAPS, {
+      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+    });
   });
 
   afterEach(async function() {

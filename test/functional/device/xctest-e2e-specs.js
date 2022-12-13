@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
+import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { GENERIC_CAPS, amendCapabilities } from '../desired';
 
 const APP_UNDER_TEST_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterApp.app.zip';
@@ -20,6 +20,7 @@ if (process.env.LAUNCH_WITH_IDB) {
       const caps = amendCapabilities(GENERIC_CAPS, {
         'appium:app': APP_UNDER_TEST_PATH,
         'appium:launchWithIDB': true,
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
       driver = await initSession(caps);
     });

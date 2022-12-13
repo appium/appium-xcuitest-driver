@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
+import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { MULTIPLE_APPS, amendCapabilities } from '../desired';
 
 chai.should();
@@ -14,7 +14,7 @@ describe('OtherApps', function() {
   let driver;
   before(function() {
     caps = amendCapabilities(MULTIPLE_APPS, {
-      'appium:usePrebuiltWDA': true,
+      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       'appium:wdaStartupRetries': 0,
     });
   });

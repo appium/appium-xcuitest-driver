@@ -6,6 +6,7 @@ const PORT = parseInt(process.env.APPIUM_TEST_SERVER_PORT, 10) || 4567;
 const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 8 : 4);
 
 let driver;
+let builtDefaultWDA = false;
 
 async function initSession (caps, remoteOpts = {}) {
   driver = await remote({
@@ -18,6 +19,11 @@ async function initSession (caps, remoteOpts = {}) {
   });
   driver.name = undefined;
   driver.errored = false;
+
+  if (!caps.alwaysMatch['appium:usePrebuiltWDA'] && !caps.alwaysMatch['appium:derivedDataPath']) {
+    builtDefaultWDA = true;
+  }
+
   return driver;
 }
 
@@ -30,4 +36,8 @@ async function deleteSession () {
   }
 }
 
-export { initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT };
+function hasDefaultPrebuiltWDA() {
+  return builtDefaultWDA;
+}
+
+export { initSession, deleteSession, hasDefaultPrebuiltWDA, HOST, PORT, MOCHA_TIMEOUT };

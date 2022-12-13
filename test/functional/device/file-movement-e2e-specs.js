@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
+import { amendCapabilities, UICATALOG_CAPS } from '../desired';
+import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'path';
 
@@ -22,7 +22,10 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
 
     let driver;
     before(async function() {
-      driver = await initSession(UICATALOG_CAPS);
+      const caps = amendCapabilities(UICATALOG_CAPS, {
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+      });
+      driver = await initSession(caps);
     });
     after(async function() {
       await deleteSession();
