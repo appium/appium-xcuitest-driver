@@ -1,4 +1,5 @@
 import { remote } from 'webdriverio';
+import { extractCapabilityValue } from '../desired';
 
 const HOST = process.env.APPIUM_TEST_SERVER_HOST || '127.0.0.1';
 const PORT = parseInt(process.env.APPIUM_TEST_SERVER_PORT, 10) || 4567;
@@ -20,7 +21,7 @@ async function initSession (caps, remoteOpts = {}) {
   driver.name = undefined;
   driver.errored = false;
 
-  if (!caps.alwaysMatch['appium:usePrebuiltWDA'] && !caps.alwaysMatch['appium:derivedDataPath']) {
+  if (!extractCapabilityValue(caps, 'appium:usePrebuiltWDA') && !extractCapabilityValue(caps, 'appium:derivedDataPath')) {
     builtDefaultWDA = true;
   }
 
