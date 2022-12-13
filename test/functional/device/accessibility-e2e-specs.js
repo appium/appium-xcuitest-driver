@@ -13,7 +13,7 @@ describe('Accessibility', function() {
   let driver, caps;
 
   beforeEach(function() {
-    caps = amendCapabilities(SETTINGS_CAPS, { 'appium:usePrebuiltWDA': true });
+    caps = amendCapabilities(SETTINGS_CAPS);
   });
 
   afterEach(async function() {
