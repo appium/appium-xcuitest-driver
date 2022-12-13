@@ -32,7 +32,7 @@ describe('safari - windows and frames', function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
         'appium:safariInitialUrl': GUINEA_PIG_PAGE,
         'appium:safariAllowPopups': false,
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
       driver = await initSession(caps);
       await driver.setTimeout({pageLoad: 100});
