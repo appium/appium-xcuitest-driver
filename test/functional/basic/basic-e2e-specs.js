@@ -90,6 +90,7 @@ describe('XCUITestDriver - basics -', function () {
       actual.viewportRect.height.should.be.a('number');
       actual.viewportRect.width.should.be.a('number');
       delete actual.viewportRect;
+      delete actual.usePrebuiltWDA;
 
       // convert w3c caps into mjswp caps
       let mjswpCaps = {};
@@ -103,6 +104,7 @@ describe('XCUITestDriver - basics -', function () {
       };
       let expected = Object.assign({}, mjswpCaps, extraWdaCaps);
       delete expected.udid; // for real device tests
+      delete expected.usePrebuiltWDA;
 
       if (expected.showXcodeLog === undefined) {
         delete expected.showXcodeLog;
