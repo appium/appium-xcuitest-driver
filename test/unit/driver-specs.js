@@ -89,27 +89,31 @@ describe('driver commands', function () {
   describe('createSession', function () {
     let driver;
     let sandbox;
+    let device;
+    let realDevice;
 
     beforeEach(function () {
       driver = new XCUITestDriver();
       sandbox = sinon.createSandbox();
-      sandbox.stub(driver, 'determineDevice').callsFake(async function () { // eslint-disable-line require-await
+      device = {
+        shutdown: _.noop,
+        isRunning() {
+          return true;
+        },
+        stat() {
+          return { state: 'Booted' };
+        },
+        clearCaches: _.noop,
+        getWebInspectorSocket() {
+          return '/path/to/uds.socket';
+        },
+        setReduceTransparency: _.noop,
+      };
+      realDevice = null;
+      sandbox.stub(driver, 'determineDevice').callsFake(async function() { // eslint-disable-line require-await
         return {
-          device: {
-            shutdown: _.noop,
-            isRunning () {
-              return true;
-            },
-            stat () {
-              return {state: 'Booted'};
-            },
-            clearCaches: _.noop,
-            getWebInspectorSocket () {
-              return '/path/to/uds.socket';
-            },
-          },
-          udid: null,
-          realDevice: null
+          device,
+          realDevice,
         };
       });
       sandbox.stub(driver, 'configureApp').callsFake(_.noop);
@@ -154,6 +158,26 @@ describe('driver commands', function () {
       }));
       resCaps[1].javascriptEnabled.should.be.true;
       driver.startLogCapture.called.should.be.false;
+    });
+    it('should call setReduceTransparency for a simulator', async function() {
+      this.timeout(MOCHA_LONG_TIMEOUT);
+      realDevice = false;
+      const spy = sinon.stub(device, 'setReduceTransparency');
+      await driver.createSession(null, null, _.merge({}, caps, {
+        alwaysMatch: { 'appium:reduceTransparency': true }
+      }));
+      spy.calledOnce.should.be.true;
+      spy.firstCall.args[0].should.eql(true);
+    });
+
+    it('should not call setReduceTransparency for a real device', async function() {
+      this.timeout(MOCHA_LONG_TIMEOUT);
+      realDevice = true;
+      const spy = sinon.stub(device, 'setReduceTransparency');
+      await driver.createSession(null, null, _.merge({}, caps, {
+        alwaysMatch: { 'appium:reduceTransparency': true }
+      }));
+      spy.notCalled.should.be.true;
     });
   });
 });
