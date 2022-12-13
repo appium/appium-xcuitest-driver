@@ -151,8 +151,10 @@ Capability | Description
 `appium:app` | Full path to the application to be tested (the app must be located on the same machine where the server is running). `.ipa` and `.app` application extensions are supported. Zipped `.app` bundles are supported as well. Could also be an URL to a remote location. If neither of the `app` or `bundleId` capabilities are provided then the driver starts from the Home screen and expects the test to know what to do next. Do not provide both `app` and `browserName` capabilities at once.
 `appium:localizableStringsDir` | Where to look for localizable strings in the application bundle. Defaults to `en.lproj`
 `appium:otherApps` | App or list of apps (as a JSON array) to install prior to running tests. Note that it will not work with iOS real devices. Fore example: `["http://appium.github.io/appium/assets/TestApp9.4.app.zip", "/path/to/app-b.app"]`
-`appium:language` | Language to set for iOS, for example `fr`. Please read [Language IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) to get more details abuot available values for this capability.
-`appium:locale` | Locale to set for iOS, for example `fr_CA`. Please read [Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html#//apple_ref/doc/uid/10000171i-CH15-SW9) to get more details abuot available values for this capability.
+`appium:language` | Language to set for iOS app, for example `fr`. Please read [Language IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) to get more details about available values for this capability. If a test is executed on a Simulator then UI language is changed as well. You can also change Simulator language in runtime using [mobile: configureLocalization](#mobile-configurelocalization) extension.
+`appium:locale` | Locale to set for iOS app, for example `fr_CA`. Please read [Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html#//apple_ref/doc/uid/10000171i-CH15-SW9) to get more details about available values for this capability.
+If a test is executed on a Simulator then UI locale is changed as well. You can also change Simulator locale in runtime using [mobile: configureLocalization](#mobile-configurelocalization) extension.
+`appium:calendarFormat` | Calendar format to set for iOS Simulator, for example `gregorian` or `persian`. Can only be set in conjunction with `appium:locale`.
 `appium:appPushTimeout` | The timeout for application upload in milliseconds. Works for real devices only. The default value is `30000`ms
 `appium:appInstallStrategy` | Select application installation strategy for real devices. The following strategies are supported: `serial` (default) - pushes app files to the device in a sequential order; this is the least performant strategy, although the most reliable; `parallel` - pushes app files simultaneously; this is usually the the most performant strategy, but sometimes could not be very stable; `ios-deploy` - tells the driver to use a third-party tool [ios-deploy](https://www.npmjs.com/package/ios-deploy) to install the app; obviously the tool must be installed separately first and must be present in PATH before it could be used. | parallel
 
@@ -225,6 +227,7 @@ Capability | Description
 |`appium:simulatorDevicesSetPath`| This capability allows to set an alternative path to the simulator devices set in case you have multiple sets deployed on your local system. Such feature could be useful if you, for example, would like to save disk space on the main system volume. | e.g. `/MyVolume/Devices` |
 |`appium:customSSLCert`| Adds a root SSL certificate to IOS Simulators and real devices. Real devices only work if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine. The certificate content must be provided in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format | e.g. ```-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...-----END CERTIFICATE-----```|
 |`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000` | e.g., `10000`|
+|`appium:safariGlobalPreferences`| (Simulator only) Allows changing of Mobile Safari's preferences at the session startup. Check the documentation on arguments of [mobile: updateSafariPreferences](#mobile-updatesafaripreferences) extension to get more details on the value type requirements. | { ShowTabBar: 0, WarnAboutFraudulentWebsites: 0 } |
 
 ### Web Context
 
@@ -240,12 +243,12 @@ Capability | Description
 |`appium:additionalWebviewBundleIds`|Array (or JSON array) of possible bundle identifiers for webviews. This is sometimes necessary if the Web Inspector is found to be returning a modified bundle identifier for the app. Defaults to `[]`|e.g., `['io.appium.modifiedId', 'ABCDEF']`|
 |`appium:webviewConnectTimeout`|The time to wait, in `ms`, for the initial presence of webviews in MobileSafari or hybrid apps. Defaults to `0`|e.g., '5000'|
 |`appium:safariIgnoreWebHostnames`| Provide a list of hostnames (comma-separated) that the Safari automation tools should ignore. This is to provide a workaround to prevent a webkit bug where the web context is unintentionally changed to a 3rd party website and the test gets stuck. The common culprits are search engines (yahoo, bing, google) and `about:blank` |e.g. `'www.yahoo.com, www.bing.com, www.google.com, about:blank'`|
-|`appium:nativeWebTap` | Enable native, non-javascript-based taps being in web context mode. Defaults to `false`. Warning: sometimes the preciseness of native taps could be broken, because there is no reliable way to map web element coordinates to native ones. | `true` |
-|`appium:nativeWebTapStrict` | Enforce native taps to be done by XCUITest driver rather than WebDriverAgent. Only applicable if `nativeWebTap` is enabled. `false` by default | `false` |
+|`appium:nativeWebTap`| Enable native, non-javascript-based taps being in web context mode. Defaults to `false`. Warning: sometimes the preciseness of native taps could be broken, because there is no reliable way to map web element coordinates to native ones. | `true` |
+|`appium:nativeWebTapStrict`| Enforce native taps to be done by XCUITest driver rather than WebDriverAgent. Only applicable if `nativeWebTap` is enabled. `false` by default | `false` |
 |`appium:safariInitialUrl`| Initial safari url, default is a local welcome page. Setting it to an empty string will skip the initial navigation. | e.g. `https://www.github.com` |
-|`appium:safariAllowPopups`| Allow javascript to open new windows in Safari. Default keeps current sim setting|`true` or `false`|
-|`appium:safariIgnoreFraudWarning`| Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.|`true` or `false`|
-|`appium:safariOpenLinksInBackground`| Whether Safari should allow links to open in new windows. Default keeps current sim setting.|`true` or `false`|
+|`appium:safariAllowPopups`| (Simulator only) Allow javascript to open new windows in Safari. Default keeps current sim setting. |`true` or `false`|
+|`appium:safariIgnoreFraudWarning`| (Simulator only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting. |`true` or `false`|
+|`appium:safariOpenLinksInBackground`| (Simulator only) Whether Safari should allow links to open in new windows. Default keeps current sim setting. |`true` or `false`|
 |`appium:webviewConnectRetries`| Number of times to send connection message to remote debugger, to get webview. Default: `8` |e.g., `12`|
 |`appium:webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000`|e.g., `10000`|
 |`appium:enableAsyncExecuteFromHttps`| Capability to allow simulators to execute asynchronous JavaScript on pages using HTTPS. Defaults to `false` | `true` or `false` |
@@ -1525,6 +1528,16 @@ If the connection is disconnected, condition inducer will be automatically disab
 #### Returned Result
 
 Either `true` or `false`, where `true` means disabling of the condition inducer has been successful
+
+### mobile: updateSafariPreferences
+
+Updates preferences of Mobile Safari on Simulator
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+preferences | map | yes | An object containing Mobile Safari preferences to be updated. The list of available setting names and their values could be retrieved by changing the corresponding Safari settings under Preferences-&gt;Safari and then inspecting `Library/Preferences/com.apple.mobilesafari.plist` file inside of `com.apple.mobilesafari` app container. The full path to the Mobile Safari's container could be retrieved from `xcrun simctl get_app_container <sim_udid> com.apple.mobilesafari data` command output. Use the `xcrun simctl spawn <sim_udid> defaults read <path_to_plist>` command to print the actual .plist content to the Terminal. | { ShowTabBar: 0, WarnAboutFraudulentWebsites: 0 }
 
 ## Known issues
 

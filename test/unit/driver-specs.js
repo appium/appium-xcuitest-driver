@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import { JWProxy } from 'appium/driver';
 import XCUITestDriver from '../../lib/driver';
-import * as simSettings from '../../lib/simulator-management';
 import * as appUtils from '../../lib/app-utils';
 import xcode from 'appium-xcode';
 import _ from 'lodash';
@@ -121,7 +120,6 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'setReduceMotion').callsFake(_.noop);
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
       sandbox.stub(driver, 'connectToRemoteDebugger').callsFake(_.noop);
-      sandbox.stub(simSettings, 'setLocaleAndPreferences').callsFake(_.noop);
       sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0'); // eslint-disable-line require-await
       sandbox.stub(utils, 'checkAppPresent').callsFake(_.noop);
       sandbox.stub(appUtils, 'extractBundleId').callsFake(_.noop);
