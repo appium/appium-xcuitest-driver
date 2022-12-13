@@ -121,7 +121,6 @@ describe('driver commands', function () {
       sandbox.stub(driver, 'startSim').callsFake(_.noop);
       sandbox.stub(driver, 'startWdaSession').callsFake(_.noop);
       sandbox.stub(driver, 'startWda').callsFake(_.noop);
-      sandbox.stub(driver, 'setReduceMotion').callsFake(_.noop);
       sandbox.stub(driver, 'installAUT').callsFake(_.noop);
       sandbox.stub(driver, 'connectToRemoteDebugger').callsFake(_.noop);
       sandbox.stub(xcode, 'getMaxIOSSDK').callsFake(async () => '10.0'); // eslint-disable-line require-await
