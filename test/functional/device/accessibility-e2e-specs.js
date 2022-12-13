@@ -45,9 +45,10 @@ describe('Accessibility', function() {
 
   describe('ReduceMotion', function() {
     async function getReduceMotion(driver) {
-      const motionButtonCalledReduceMotion = await showAccessibilityTab(driver);
+      const hasGeneralTab = await showAccessibilityTab(driver);
+      const motionCellName = hasGeneralTab ? 'Reduce Motion' : 'Motion';
       await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == '${motionButtonCalledReduceMotion ? 'Reduce Motion' : 'Motion'}'`)
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == '${motionCellName}'`)
         .click();
       return await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'`)
