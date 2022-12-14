@@ -1,3 +1,10 @@
+## [4.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.15.1...v4.15.2) (2022-12-14)
+
+
+### Miscellaneous Chores
+
+* Bump @appium/test-support from 2.0.2 to 3.0.0 ([#1467](https://github.com/appium/appium-xcuitest-driver/issues/1467)) ([3149a15](https://github.com/appium/appium-xcuitest-driver/commit/3149a15240b4529085cbee8e015b8cedbf054179))
+
 ## [4.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.15.0...v4.15.1) (2022-12-13)
 
 
