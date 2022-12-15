@@ -103,7 +103,6 @@ describe('driver commands', function () {
         stat() {
           return { state: 'Booted' };
         },
-        clearCaches: _.noop,
         getWebInspectorSocket() {
           return '/path/to/uds.socket';
         },

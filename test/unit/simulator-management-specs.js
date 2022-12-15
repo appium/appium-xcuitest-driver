@@ -90,8 +90,8 @@ describe('simulator management', function () {
     let result;
     const stoppedDeviceDummy = {
       isRunning: () => false,
-      scrubCustomApp: (path, bundleId) => {
-        result = {path, bundleId};
+      scrubApp: (bundleId) => {
+        result = {bundleId};
       },
       clean: () => {
         result = 'cleaned';
@@ -103,14 +103,13 @@ describe('simulator management', function () {
       result = undefined;
     });
 
-    it('should call scrubCustomApp with fastReset', async function () {
+    it('should call scrubApp with fastReset', async function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
         noReset: false, fullReset: false
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
-      result.path.should.eql('');
       result.bundleId.should.eql('io.appium.example');
     });
     it('should return immediately with noReset', async function () {
@@ -131,7 +130,7 @@ describe('simulator management', function () {
       await runSimulatorReset(stoppedDeviceDummy, opts);
       result.should.eql('cleaned');
     });
-    it('should call scrubCustomApp with fastReset and app', async function () {
+    it('should not call scrubApp with fastReset and app', async function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
@@ -161,7 +160,7 @@ describe('simulator management', function () {
       await runSimulatorReset(stoppedDeviceDummy, opts);
       result.should.eql('cleaned');
     });
-    it('should not call scrubCustomApp with fastReset, but no bundleid and app', async function () {
+    it('should not call scrubApp with fastReset, but no bundleid and app', async function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         noReset: false, fullReset: false
