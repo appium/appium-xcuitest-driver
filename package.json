@@ -70,7 +70,7 @@
     "@xmldom/xmldom": "^0.x",
     "appium-idb": "^1.0.0",
     "appium-ios-device": "^2.4.0",
-    "appium-ios-simulator": "^4.2.1",
+    "appium-ios-simulator": "^5.0.1",
     "appium-remote-debugger": "^9.1.1",
     "appium-webdriveragent": "^4.10.12",
     "appium-xcode": "^4.0.0",
