@@ -1,3 +1,10 @@
+## [4.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.15.2...v4.16.0) (2022-12-16)
+
+
+### Features
+
+* Bump the major version of appium-ios-simulator ([#1468](https://github.com/appium/appium-xcuitest-driver/issues/1468)) ([c9fc1dc](https://github.com/appium/appium-xcuitest-driver/commit/c9fc1dc7d70a2050435a651d77bc6e37253965cd))
+
 ## [4.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.15.1...v4.15.2) (2022-12-14)
 
 
