@@ -1,11 +1,12 @@
 import chai from 'chai';
+import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { GENERIC_CAPS, amendCapabilities } from '../desired';
 
-const APP_UNDER_TEST_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterApp.app.zip';
-const TEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests-Runner.app.zip';
-const XCTEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests.xctest.zip';
+const APP_UNDER_TEST_PATH = path.resolve(__dirname, '..', '..', 'assets', 'XCTesterApp.app');
+const TEST_BUNDLE_PATH = path.resolve(__dirname, '..', '..', 'assets', 'XCTesterAppUITests-Runner.app');
+const XCTEST_BUNDLE_PATH = path.join(TEST_BUNDLE_PATH, 'PlugIns', 'XCTesterAppUITests.xctest');
 
 chai.should();
 chai.use(chaiAsPromised);
