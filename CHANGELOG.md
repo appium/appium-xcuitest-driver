@@ -1,3 +1,10 @@
+## [4.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.0...v4.16.1) (2022-12-17)
+
+
+### Bug Fixes
+
+* /wda/device/appearance as withoutSession ([#1472](https://github.com/appium/appium-xcuitest-driver/issues/1472)) ([00eba1d](https://github.com/appium/appium-xcuitest-driver/commit/00eba1d9eb42c998ffe93d978cb9fb4c5f761b35))
+
 ## [4.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.15.2...v4.16.0) (2022-12-16)
 
 
