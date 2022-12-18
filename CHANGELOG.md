@@ -1,3 +1,10 @@
+## [4.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.1...v4.16.2) (2022-12-18)
+
+
+### Bug Fixes
+
+* XCTest command ([#1471](https://github.com/appium/appium-xcuitest-driver/issues/1471)) ([d176f45](https://github.com/appium/appium-xcuitest-driver/commit/d176f455c23b4c6b59ff72be36d3050c60bcf470))
+
 ## [4.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.0...v4.16.1) (2022-12-17)
 
 
