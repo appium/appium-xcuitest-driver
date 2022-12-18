@@ -1048,6 +1048,7 @@ The API calls returns a map with the following entries:
    * testName: Name of the test (e.g.: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample')
    * passed: Did the tests pass?
    * crashed: Did the tests crash?
+   * status: Test result status (e.g.: 'passed', 'failed', 'crashed')
    * duration: How long did the tests take (in seconds)
    * failureMessage: Failure message (if applicable)
    * location The geolocation of the test (if applicable)

@@ -1,11 +1,12 @@
 import chai from 'chai';
+import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { GENERIC_CAPS, amendCapabilities } from '../desired';
 
-const APP_UNDER_TEST_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterApp.app.zip';
-const TEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests-Runner.app.zip';
-const XCTEST_BUNDLE_PATH = 'https://github.com/dpgraham/xctesterapp/releases/download/0.1/XCTesterAppUITests.xctest.zip';
+const APP_UNDER_TEST_PATH = path.resolve(__dirname, '..', '..', 'assets', 'XCTesterApp.app');
+const TEST_BUNDLE_PATH = path.resolve(__dirname, '..', '..', 'assets', 'XCTesterAppUITests-Runner.app');
+const XCTEST_BUNDLE_PATH = path.join(TEST_BUNDLE_PATH, 'PlugIns', 'XCTesterAppUITests.xctest');
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -16,7 +17,7 @@ if (process.env.LAUNCH_WITH_IDB) {
 
     let driver;
 
-    beforeEach(async function () {
+    before(async function () {
       const caps = amendCapabilities(GENERIC_CAPS, {
         'appium:app': APP_UNDER_TEST_PATH,
         'appium:launchWithIDB': true,
@@ -25,7 +26,7 @@ if (process.env.LAUNCH_WITH_IDB) {
       driver = await initSession(caps);
     });
 
-    afterEach(async function () {
+    after(async function () {
       await deleteSession();
     });
     it('should install an XC test bundle and then run it', async function () {
@@ -72,7 +73,6 @@ if (process.env.LAUNCH_WITH_IDB) {
         });
       } catch (e) {
         e.message.should.match(/Couldn't find test with id: bad/);
-        e.status.should.eql(13);
         return;
       }
 
@@ -89,7 +89,6 @@ if (process.env.LAUNCH_WITH_IDB) {
         });
       } catch (e) {
         e.message.should.match(/Timed out after '1ms' waiting for XCTest to complete/);
-        e.status.should.eql(13);
         return;
       }
 

@@ -29,8 +29,7 @@ jobs:
       deviceName: ${{ parameters.deviceName }}
       vmImage: ${{ parameters.vmImage }}
       script: |
-        # TODO: Fix problem with IDB not working properly
-        npm run e2e-test:device -- --invert --grep "XCTest"
+        npm run e2e-test:device
 
   - template: ./ios-e2e-template.yml
     parameters:
