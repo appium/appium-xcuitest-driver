@@ -1,3 +1,10 @@
+## [4.16.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.2...v4.16.3) (2022-12-19)
+
+
+### Bug Fixes
+
+* set permissions for simulator ([#1473](https://github.com/appium/appium-xcuitest-driver/issues/1473)) ([a885628](https://github.com/appium/appium-xcuitest-driver/commit/a8856286ea7304a9c2ec3ed8c46a5c66526bc102))
+
 ## [4.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.1...v4.16.2) (2022-12-18)
 
 
