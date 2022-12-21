@@ -1,4 +1,6 @@
-## Pushing/Pulling files
+---
+title: Pushing/Pulling Files
+---
 
 Appium provides [Pull Folder](http://appium.io/docs/en/commands/device/files/pull-folder/), [Pull File](http://appium.io/docs/en/commands/device/files/pull-file/) and [Push File](http://appium.io/docs/en/commands/device/files/push-file/) to move files.
 This documentation aims to help to understand how they work for iOS.

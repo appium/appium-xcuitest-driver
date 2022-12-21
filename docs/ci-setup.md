@@ -1,4 +1,6 @@
-## Continuous Integration Setup
+---
+title: CI Setup
+---
 
 Setting up XCUItest driver in an automated environment brings a few challenges with it.
 Any scenario where user interaction is required must be automated or avoided all together.
@@ -10,7 +12,7 @@ One common such scenario is a prompt asking for a keychain to be unlocked in ord
 There are multiple possible solutions for this:
 
 1. Keychains can be set to have no timeout and be unlocked manually once. This can be done using the keychain access application. Sometimes keychains still lock themselves though and this approach is not recommended.
-2. [It is possible to create a second keychain](../README.md#real-device-security-settings), which just stores the required certificate to sign the WebDriverAgent.
+2. [It is possible to create a second keychain](troubleshooting.md#real-device-security-settings), which just stores the required certificate to sign the WebDriverAgent.
 The issue with this approach is, that Codesign wants to unlock all listed keychains regardless of the specified keychain, thus leading to a password prompt.
 This can be avoided by setting the default keychain and basically hiding the login keychain at the start of building.
 [Stackoverflow article](https://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails) shows how to utelize this approach.
@@ -33,4 +35,4 @@ Make sure to link your 'Apple Developer Account' in the machine's system wide "A
 
 ### Troubleshooting
 
-Enable the `appium:showXcodeLog` [capability](../README.md#webdriveragent) and check the appium server output.
+Enable the `appium:showXcodeLog` [capability](capabilities.md#webdriveragent) and check the appium server output.

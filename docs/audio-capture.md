@@ -1,4 +1,6 @@
-## Audio Capture From iOS Simulators and Real Devices
+---
+title: Audio Capture
+---
 
 
 ### Client Side API

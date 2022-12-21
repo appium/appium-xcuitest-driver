@@ -3,11 +3,11 @@
 With a little bit of configuration, the E2E tests can be run on SauceLabs Real Device Cloud and on Simulators.
 
 ## Environment Variables
-* Running tests on Sauce Real Device Cloud (RDC) or Sauce OnDemand Simulators requires a SauceLabs username and access key. 
+* Running tests on Sauce Real Device Cloud (RDC) or Sauce OnDemand Simulators requires a SauceLabs username and access key.
 
 ### Real Device Cloud
 * Refer to [real env file](/test/env/env-ios-real.js) to see which environment variables need to be set to access the RDC Cloud
-* To run tests locally, must set two environment variables   
+* To run tests locally, must set two environment variables
   * `CLOUD_PLATFORM_VERSION` A supported [iOS version](https://saucelabs.com/devices). No need to set PLATFORM_VERSION. A device will be dynamically allocated
   * `SAUCE_RDC` Needs to be set to `true`
 

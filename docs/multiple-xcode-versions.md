@@ -1,4 +1,6 @@
-## Running Appium with multiple Xcode versions installed
+---
+title: Managing Multiple Xcodes
+---
 
 If you have multiple Xcode installations you may choose which toolset Appium
 should use with one of two ways:

@@ -1,4 +1,6 @@
-## Touch ID
+---
+title: Touch ID
+---
 
 Appium has the capability to simulate [Touch ID](https://support.apple.com/en-ca/HT201371) on iOS Simulators.
 

@@ -1,4 +1,6 @@
-## Setting up iOS Real Devices Tests with XCUITest
+---
+title: Real Device Configuration
+---
 
 ### Basic (automatic) configuration
 
@@ -6,7 +8,7 @@ The easiest way to get up-and-running with Appium's XCUITest support on iOS
 real devices is to use the automatic configuration strategy. There are two ways
 to do this:
 
-*   Use the `xcodeOrgId` and `xcodeSigningId` [capabilities](../README.md#webdriveragent):
+*   Use the `xcodeOrgId` and `xcodeSigningId` [capabilities](capabilities.md):
 ```json
     {
       "xcodeOrgId": "<Team ID>",

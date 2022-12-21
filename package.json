@@ -94,6 +94,8 @@
   "scripts": {
     "build": "rm -rf build && babel --out-dir=build/lib lib && babel --out-dir=build index.js",
     "dev": "npm run build -- --watch",
+    "dev:docs": "mkdocs serve -f mkdocs.yml",
+    "publish:docs": "APPIUM_DOCS_PUBLISH=1 node scripts/build-docs.js",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
@@ -127,6 +129,7 @@
     "appium": "^2.0.0-beta.40"
   },
   "devDependencies": {
+    "@appium/docutils": "^0.1.1",
     "@appium/eslint-config-appium": "^6.0.0",
     "@appium/test-support": "^3.0.0",
     "@babel/cli": "^7.18.10",
