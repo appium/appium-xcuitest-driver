@@ -1,4 +1,6 @@
-## How To Set Up And Customize WebDriverAgent Server
+---
+title: WebDriverAgent
+---
 
 Appium for iOS uses [WebDriverAgent](https://github.com/appium/WebDriverAgent)
 as the automation backend. This backend is based on Apple's XCTest framework and shares all the

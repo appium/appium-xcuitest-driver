@@ -1,4 +1,6 @@
-## iOS Predicate
+---
+title: iOS Predicates
+---
 
 *NOTE*: iOS predicates are usable in iOS 9.3 and below using the `-ios uiautomation` locator strategy and they are usable in iOS 10 and above using the `-ios predicate string` locator strategy
 

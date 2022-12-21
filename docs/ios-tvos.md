@@ -1,4 +1,6 @@
-## tvOS support
+---
+title: tvOS Support
+---
 
 tvOS is supported since XCUITest driver bundled with Appium 1.13.0+
 
