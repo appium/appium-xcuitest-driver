@@ -50,16 +50,16 @@ jobs:
       vmImage: ${{ parameters.vmImage }}
       script: npm run e2e-test:web
 
-  # - template: ./ios-e2e-template.yml
-  #   parameters:
-  #     name: e2e_long_${{ parameters.name }}
-  #     iosVersion: ${{ parameters.iosVersion }}
-  #     xcodeVersion: ${{ parameters.xcodeVersion }}
-  #     deviceName: ${{ parameters.deviceName }}
-  #     vmImage: ${{ parameters.vmImage }}
-  #     timeoutMin: 120
-  #     script: |
-  #       npm run e2e-test:long
+  - template: ./ios-e2e-template.yml
+    parameters:
+      name: e2e_long_${{ parameters.name }}
+      iosVersion: ${{ parameters.iosVersion }}
+      xcodeVersion: ${{ parameters.xcodeVersion }}
+      deviceName: ${{ parameters.deviceName }}
+      vmImage: ${{ parameters.vmImage }}
+      timeoutMin: 120
+      script: |
+        npm run e2e-test:long
 
   # - template: ./ios-e2e-template.yml
   #   parameters:
