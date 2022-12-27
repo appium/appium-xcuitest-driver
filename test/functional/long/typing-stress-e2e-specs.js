@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { UICATALOG_CAPS } from '../desired';
+import { UICATALOG_CAPS, amendCapabilities } from '../desired';
+import { PREDICATE_SEARCH } from '../helpers/element';
 import { initSession, deleteSession } from '../helpers/session';
 import { retryInterval } from 'asyncbox';
 
@@ -16,7 +17,7 @@ describe('XCUITestDriver - long tests', function () {
 
   let driver;
   before(async function () {
-    const caps = Object.assign({}, UICATALOG_CAPS, {maxTypingFrequency: 20});
+    const caps = amendCapabilities(UICATALOG_CAPS, { 'appium:maxTypingFrequency': 20 });
     driver = await initSession(caps);
   });
   after(async function () {
@@ -26,26 +27,27 @@ describe('XCUITestDriver - long tests', function () {
   describe('typing', function () {
     const text = 'bunchoftext';
     before(async function () {
-      const tfEl = await driver.elementByAccessibilityId('Text Fields');
+      const tfEl = await driver.$('~Text Fields');
       await driver.execute('mobile: scroll', {element: tfEl, toVisible: true});
       await tfEl.click();
 
       // wait for there to be text fields present
       await retryInterval(5, 500, async function () {
-        await driver.elementByClassName('XCUIElementTypeTextField').clear();
+        const el = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeTextField'`);
+        await el.clearValue();
       });
     });
 
     afterEach(async function () {
-      await driver.elementByClassName('XCUIElementTypeTextField').clear();
+      const el = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeTextField'`);
+      await el.clearValue();
     });
 
     for (let i = 0; i < TYPING_TRIES; i++) {
       it(`should not fail in typing (try #${i + 1})`, async function () {
-        const el = await driver.elementByClassName('XCUIElementTypeTextField');
-        await el.type(text);
-
-        (await el.text()).should.include(text);
+        const el = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeTextField'`);
+        await el.setValue(text);
+        await el.getValue().should.eventually.include(text);
       });
     }
   });
