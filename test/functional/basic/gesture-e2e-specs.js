@@ -232,7 +232,6 @@ describe('XCUITestDriver - gestures', function () {
       // at this point this test relies on watching it happen, nothing is asserted
       // in automation, this just checks that errors aren't thrown
       it('should be able to pinch', async function () {
-        // const ctxs = await driver.execute('mobile: getContexts', {waitForWebviewMs: 30000});
         const ctxs = await driver.getContexts();
         await driver.switchContext(ctxs[1]);
 
