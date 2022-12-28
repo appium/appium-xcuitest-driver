@@ -68,7 +68,7 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "@xmldom/xmldom": "^0.x",
-    "appium-idb": "^1.6.6",
+    "appium-idb": "^1.6.9",
     "appium-ios-device": "^2.4.0",
     "appium-ios-simulator": "^5.0.2",
     "appium-remote-debugger": "^9.1.1",
