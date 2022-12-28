@@ -1,3 +1,10 @@
+## [4.16.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.3...v4.16.4) (2022-12-28)
+
+
+### Bug Fixes
+
+* releaseActions fails due to unhandled endpoint ([#1477](https://github.com/appium/appium-xcuitest-driver/issues/1477)) ([ff53b98](https://github.com/appium/appium-xcuitest-driver/commit/ff53b9890a04c4501762325d195815f52ce8a916))
+
 ## [4.16.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.2...v4.16.3) (2022-12-19)
 
 
