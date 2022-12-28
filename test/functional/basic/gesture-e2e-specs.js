@@ -1,310 +1,280 @@
-// TODO: Update tests to use WebDriverIO
-
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
-// import B from 'bluebird';
-// import { remote } from 'webdriverio';
-// import _ from 'lodash';
-// import { retryInterval } from 'asyncbox';
-// import { UICATALOG_CAPS } from '../desired';
-// import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
-// import { APPIUM_IMAGE } from '../web/helpers';
-// import { translateDeviceName } from '../../../lib/utils';
-// import { util } from 'appium/support';
-// import xcode from 'appium-xcode';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import B from 'bluebird';
+import { retryInterval } from 'asyncbox';
+import { UICATALOG_CAPS, amendCapabilities } from '../desired';
+import { PREDICATE_SEARCH } from '../helpers/element';
+import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
+import { APPIUM_IMAGE } from '../web/helpers';
 
 
-// chai.should();
-// chai.use(chaiAsPromised);
+chai.should();
+chai.use(chaiAsPromised);
 
-// const BTN_OK_CNCL = 'Okay / Cancel';
+const BTN_OK_CNCL = 'Okay / Cancel';
 
-// describe('XCUITestDriver - gestures', function () {
-//   this.timeout(MOCHA_TIMEOUT);
+describe('XCUITestDriver - gestures', function () {
+  this.timeout(MOCHA_TIMEOUT);
 
-//   let driver;
+  let driver;
 
-//   describe('dynamic gestures', function () {
-//     before(async function () {
-//       driver = await initSession(UICATALOG_CAPS);
-//     });
-//     beforeEach(async function () {
-//       await driver.back();
-//       await retryInterval(5, 500, async function () {
-//         const el = await driver.elementByAccessibilityId('Alert Views');
-//         await driver.execute('mobile: scroll', {element: el, toVisible: true});
-//       });
-//     });
-//     after(async function () {
-//       await deleteSession();
-//     });
-//     afterEach(async function () {
-//       // wait a moment to allow anything to happen
-//       await B.delay(500);
-//     });
+  describe('dynamic gestures', function () {
+    before(async function () {
+      const caps = amendCapabilities(UICATALOG_CAPS, {
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+      });
+      driver = await initSession(caps);
+    });
+    beforeEach(async function () {
+      await driver.back();
+      await retryInterval(5, 500, async function () {
+        const el = await driver.$('~Alert Views');
+        await driver.execute('mobile: scroll', {element: el, toVisible: true});
+      });
+    });
+    after(async function () {
+      await deleteSession();
+    });
+    afterEach(async function () {
+      // wait a moment to allow anything to happen
+      await B.delay(500);
+    });
 
-//     describe('tap, press, longpress', function () {
-//       beforeEach(async function () {
-//         await driver.elementByAccessibilityId('Alert Views').click();
-//         await retryInterval(5, 100, async function () {
-//           await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//         });
-//       });
+    describe('tap, press, longpress', function () {
+      beforeEach(async function () {
+        const el = await driver.$('~Alert Views');
+        await el.click();
+        const btn = await driver.$(`~${BTN_OK_CNCL}`);
+        await btn.waitForExist({ timeout: 500 });
+      });
 
-//       async function exitModal (name) {
-//         // should exist, will throw error if it doesn't
-//         let els = await driver.elementsByAccessibilityId(name);
-//         els.should.have.length(1);
+      async function exitModal (name) {
+        // should exist, will throw error if it doesn't
+        const els = await driver.$(`~${name}`);
+        await els.isExisting().should.eventually.be.equal(true);
 
-//         await retryInterval(5, 100, async () => {
-//           let els = await driver.elementsByAccessibilityId(name);
-//           if (els.length === 0) return; // eslint-disable-line curly
-//           await els[0].click();
-//         });
-//       }
-//       describe('tap', function () {
-//         it('should tap on the element', async function () {
-//           // TODO: this works locally but fails in CI.
-//           if (process.env.CI && UICATALOG_CAPS.platformVersion === '10.3') {
-//             return this.skip();
-//           }
-//           let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//           let action = new wd.TouchAction(driver);
-//           action.tap({el});
-//           await action.perform();
+        await retryInterval(5, 100, async () => {
+          const el = await driver.$(`~${name}`);
+          await el.click();
+        });
+      }
 
-//           await exitModal('OK');
-//         });
-//         it('should tap on arbitrary coordinates', async function () {
-//           let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//           let loc = await el.getLocation();
-//           let size = await el.getSize();
+      describe('using action', function () {
+        it('should tap on the element with action', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          await driver.action('pointer')
+            .move({ origin: el })
+            .down()
+            .pause(100)
+            .up()
+            .perform();
+          await exitModal('OK');
+        });
+        it('should tap on arbitrary coordinates with action', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          const loc = await el.getLocation();
+          const size = await el.getSize();
 
-//           loc = {
-//             x: loc.x + size.width / 2,
-//             y: loc.y + size.height / 2,
-//           };
+          await driver.action('pointer')
+            .move(loc.x + size.width / 2, loc.y + size.height / 2)
+            .down()
+            .pause(100)
+            .up()
+            .perform();
 
-//           let action = new wd.TouchAction(driver);
-//           action.tap(loc);
-//           await action.perform();
+          await exitModal('OK');
+        });
+      });
 
-//           await exitModal('OK');
-//         });
-//       });
-//       it('should long press on an element', async function () {
-//         let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//         let action = new wd.TouchAction(driver);
-//         action.longPress({el}).release();
-//         await action.perform();
+      describe('using touchAction', function () {
+        it('should tap on the element with touchAction', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          await driver.touchAction({
+            action: 'tap',
+            element: el,
+          });
+          await exitModal('OK');
+        });
+        it('should tap on arbitrary coordinates with action', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          const loc = await el.getLocation();
+          const size = await el.getSize();
 
-//         await exitModal('Cancel');
-//       });
-//       it('should long press on an element with duration through press-wait-release', async function () {
-//         let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//         let action = new wd.TouchAction(driver);
-//         action.press({el}).wait(1200).release();
-//         await action.perform();
+          await driver.touchAction({
+            action: 'tap',
+            x: loc.x + size.width / 2,
+            y: loc.y + size.height / 2,
+          });
 
-//         await exitModal('Cancel');
-//       });
-//       it('should long press on an element with duration through pressOpts.duration', async function () {
-//         let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//         let action = new wd.TouchAction(driver);
-//         action.longPress({el, duration: 1200}).release();
-//         await action.perform();
+          await exitModal('OK');
+        });
 
-//         await exitModal('Cancel');
-//       });
-//       it('should long press on arbitrary coordinates', async function () {
-//         let el = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//         let loc = await el.getLocation();
-//         let size = await el.getSize();
+        it('should long press on an element', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          await driver.touchAction([
+            { action: 'longPress', element: el },
+            'release',
+          ]);
 
-//         loc = {
-//           x: loc.x + size.width / 2,
-//           y: loc.y + size.height / 2,
-//         };
+          await exitModal('Cancel');
+        });
+        it('should long press on an element with duration through press-wait-release', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          await driver.touchAction([
+            { action: 'press', element: el },
+            { action: 'wait', ms: 1200 },
+            'release',
+          ]);
 
-//         let action = new wd.TouchAction(driver);
-//         action.press(loc).wait(500).release();
-//         await action.perform();
+          await exitModal('Cancel');
+        });
+        it('should long press on an element with duration through longPress-wait-release', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          await driver.touchAction([
+            { action: 'longPress', element: el },
+            { action: 'wait', ms: 1200 },
+            'release',
+          ]);
 
-//         await exitModal('OK');
-//       });
-//     });
-//     it('should scroll using touch actions', async function () {
-//       let el1 = await driver.elementByAccessibilityId('Activity Indicators');
-//       let el2 = await driver.elementByAccessibilityId('Progress Views');
+          await exitModal('Cancel');
+        });
+        it('should long press on arbitrary coordinates', async function () {
+          const el = await driver.$(`~${BTN_OK_CNCL}`);
+          const loc = await el.getLocation();
+          const size = await el.getSize();
 
-//       let el3 = await driver.elementByAccessibilityId('Web View');
-//       await el3.isDisplayed().should.eventually.be.false;
+          await driver.touchAction([
+            {
+              action: 'longPress',
+              x: loc.x + size.width / 2,
+              y: loc.y + size.height / 2,
+            },
+            { action: 'wait', ms: 500 },
+            'release',
+          ]);
 
-//       let action = new wd.TouchAction(driver);
-//       action.press({el: el2}).wait(500).moveTo({el: el1}).release();
-//       await action.perform();
+          await exitModal('OK');
+        });
+      });
+    });
+    // TODO: Need a scrollable screen.
+    it.skip('should scroll using actions', async function () {
+      const el1 = await driver.$('~Activity Indicators');
+      const loc1 = await el1.getLocation();
+      const size1 = await el1.getSize();
+      const el2 = await driver.$('~Progress Views');
+      const loc2 = await el2.getLocation();
+      const size2 = await el2.getSize();
 
-//       await retryInterval(5, 1000, async function () {
-//         await el3.isDisplayed().should.eventually.be.true;
-//       });
-//     });
-//     it('should double tap on an element', async function () {
-//       // FIXME: Multitouch does not work as expected in Xcode < 9.
-//       // cloud tests are run on Linux, so no Xcode version to check
-//       // TODO: This test fails for iOS < 13
-//       const { platformVersion } = await driver.sessionCapabilities();
-//       if ((!process.env.CLOUD && (await xcode.getVersion(true)).major < 9) ||
-//           util.compareVersions(platformVersion, '<', '13.0')) {
-//         return this.skip();
-//       }
+      const el3 = await driver.$('~Web View');
+      await el3.isDisplayed().should.eventually.be.false;
 
-//       await driver.execute('mobile: scroll', {direction: 'down'});
-//       await driver.elementByAccessibilityId('Steppers').click();
+      await driver.action('pointer')
+        .move(loc1.x + size1.width / 2, loc1.y + size1.height / 2)
+        .down()
+        .pause(500)
+        .move(loc2.x + size2.width / 2, loc2.y + size2.height / 2)
+        .up()
+        .perform();
 
-//       await B.delay(1000);
-//       let stepper = await driver.elementByAccessibilityId('Increment');
-//       let action = new wd.TouchAction(driver);
-//       action.tap({el: stepper, count: 2});
-//       await action.perform();
+      await retryInterval(5, 1000, async function () {
+        await el3.isDisplayed().should.eventually.be.equal(true);
+      });
+    });
+    it('should double tap on an element', async function () {
+      await driver.execute('mobile: scroll', {direction: 'down'});
+      const steppers = await driver.$('~Steppers');
+      await steppers.click();
 
-//       await B.delay(1000);
-//       await driver.elementByAccessibilityId('2')
-//         .should.not.be.rejected;
-//     });
-//     it(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
-//       let winEl = await driver.elementByClassName('XCUIElementTypeWindow');
+      await B.delay(1000);
+      const stepper = await driver.$('~Increment');
+      await driver.action('pointer')
+        .move({ origin: stepper })
+        .down()
+        .pause(500)
+        .up()
+        .perform();
+      await driver.action('pointer')
+        .move({ origin: stepper })
+        .down()
+        .pause(500)
+        .up()
+        .perform();
 
-//       let pickerEl = await driver.elementByAccessibilityId('Picker View');
-//       let yInit = (await pickerEl.getLocation()).y;
+      await B.delay(1000);
+      const num = await driver.$('~2');
+      await num.isExisting().should.eventually.be.true;
+    });
+    // TODO: Need a scrollable screen.
+    it.skip(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
+      const winEl = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeWindow'`);
 
-//       await driver.execute('mobile: swipe', {element: winEl, direction: 'up'}).should.not.be.rejected;
-//       let yMiddle = (await pickerEl.getLocation()).y;
-//       yMiddle.should.be.below(yInit);
+      const pickerEl = await driver.$('~Picker View');
+      const loc = await pickerEl.getLocation();
 
-//       await driver.execute('mobile: swipe', {element: winEl, direction: 'down'}).should.not.be.rejected;
-//       let yFinal = (await pickerEl.getLocation()).y;
-//       yFinal.should.be.above(yMiddle);
-//     });
-//     describe('pinch and zoom', function () {
-//       beforeEach(async function () {
-//         await driver.execute('mobile: scroll', {direction: 'down'});
-//         await driver.elementByAccessibilityId('Web View').click();
-//       });
+      await driver.execute('mobile: swipe', {element: winEl, direction: 'up'}).should.not.be.rejected;
+      const locMiddle = await pickerEl.getLocation();
+      locMiddle.y.should.be.below(loc.y);
 
-//       // at this point this test relies on watching it happen, nothing is asserted
-//       // in automation, this just checks that errors aren't thrown
-//       it('should be able to pinch', async function () {
-//         const ctxs = await driver.execute('mobile: getContexts', {waitForWebviewMs: 30000});
-//         await driver.context(ctxs[1]);
+      await driver.execute('mobile: swipe', {element: winEl, direction: 'down'}).should.not.be.rejected;
+      const locFinal = await pickerEl.getLocation();
+      locFinal.y.should.be.above(locMiddle.y);
+    });
+    describe('pinch and zoom', function () {
+      beforeEach(async function () {
+        await driver.execute('mobile: scroll', {direction: 'down'});
+        const el = await driver.$('~Web View');
+        await el.click();
+      });
 
-//         await driver.get(APPIUM_IMAGE);
+      // at this point this test relies on watching it happen, nothing is asserted
+      // in automation, this just checks that errors aren't thrown
+      it('should be able to pinch', async function () {
+        const ctxs = await driver.getContexts();
+        await driver.switchContext(ctxs[1]);
 
-//         await driver.context(ctxs[0]);
+        await driver.url(APPIUM_IMAGE);
 
-//         async function doZoom () {
-//           let el = await driver.elementByClassName('XCUIElementTypeApplication');
-//           let thumb = new wd.TouchAction(driver);
-//           thumb.press({el, x: 100, y: 0}).moveTo({el, x: 50, y: 0}).release();
+        await driver.switchContext(ctxs[0]);
 
-//           let foreFinger = new wd.TouchAction(driver);
-//           foreFinger.press({el, x: 100, y: 0}).moveTo({el, x: 105, y: 0}).release();
+        async function doZoom () {
+          const el = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeApplication'`);
+          const thumb = driver.action('pointer')
+            .move({ origin: el, x: 100, y: 0 })
+            .down()
+            .pause(100)
+            .move({ origin: el, x: 50, y: 0 })
+            .up();
+          const foreFinger = driver.action('pointer')
+            .move({ origin: el, x: 100, y: 0 })
+            .down()
+            .pause(100)
+            .move({ origin: el, x: 105, y: 0 })
+            .up();
 
-//           let zoom = new wd.MultiAction(driver);
-//           zoom.add(thumb, foreFinger);
-//           await zoom.perform();
-//         }
-//         await doZoom();
+          await driver.actions([thumb, foreFinger]);
+        }
+        await doZoom();
 
-//         async function doPinch () {
-//           let el = await driver.elementByClassName('XCUIElementTypeApplication');
-//           let thumb = new wd.TouchAction(driver);
-//           thumb.press({el, x: 50, y: 0}).moveTo({el, x: 100, y: 0}).release();
+        async function doPinch () {
+          const el = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeApplication'`);
+          const thumb = driver.action('pointer')
+            .move({ origin: el, x: 50, y: 0 })
+            .down()
+            .pause(100)
+            .move({ origin: el, x: 100, y: 0 })
+            .up();
+          const foreFinger = driver.action('pointer')
+            .move({ origin: el, x: 100, y: 0 })
+            .down()
+            .pause(100)
+            .move({ origin: el, x: 50, y: 0 })
+            .up();
 
-//           let foreFinger = new wd.TouchAction(driver);
-//           foreFinger.press({el, x: 100, y: 0}).moveTo({el, x: 50, y: 0}).release();
-
-//           let pinch = new wd.MultiAction(driver);
-//           pinch.add(thumb, foreFinger);
-//           await pinch.perform();
-//         }
-//         await doPinch();
-//       });
-//     });
-//     describe('special actions', function () {
-//       it('should open the control center', async function () {
-//         let isStatusBarAvailable = false;
-//         try {
-//           await driver.elementByClassName('XCUIElementTypeStatusBar')
-//             .should.eventually.be.rejectedWith(/An element could not be located/);
-//         } catch (err) {
-//           // if this exists,
-//           isStatusBarAvailable = true;
-//           await driver.elementByAccessibilityId('ControlCenterView')
-//             .should.eventually.be.rejectedWith(/An element could not be located/);
-//         }
-
-//         let x, y0, y1;
-//         const window = await driver.elementByClassName('XCUIElementTypeApplication');
-//         const {width, height} = await window.getSize();
-//         try {
-//           // Try locating the 'Cellular' element (which can be pulled down)
-//           const cellularEl = await driver.elementByAccessibilityId('Cellular');
-//           const location = await cellularEl.getLocation();
-//           x = location.x;
-//           y0 = location.y;
-//         } catch (e) {
-//           // Otherwise, pull down the middle of the top of the Simulator
-//           const isIphoneX = await (async () => {
-//             if (UICATALOG_CAPS.deviceName.toLowerCase().includes('iphone x')) {
-//               return true;
-//             }
-//             const { platformVersion, deviceName } = await driver.sessionCapabilities();
-//             const translatedDeviceName = translateDeviceName(platformVersion, deviceName).toLowerCase();
-//             return _.includes(translatedDeviceName, 'iphone x');
-//           })();
-
-//           x = width / 2;
-//           y0 = isIphoneX
-//             ? 15
-//             : height - 5;
-//         }
-//         y1 = height / 2;
-
-//         let action = new wd.TouchAction(driver);
-//         action.press({x, y: y0}).wait(500).moveTo({x, y: y1});
-//         await action.perform();
-
-//         // Control Center ought to be visible now
-//         if (isStatusBarAvailable) {
-//           await driver.elementByAccessibilityId('ControlCenterView');
-//         } else {
-//           await driver.elementByClassName('XCUIElementTypeStatusBar');
-//         }
-//       });
-//     });
-//   });
-//   describe('tap with tapWithShortPressDuration cap', function () {
-//     // needs a special cap, so has to be in its own session
-//     before(async function () {
-//       driver = await initSession(_.defaults({
-//         tapWithShortPressDuration: 0.01
-//       }, UICATALOG_CAPS));
-//     });
-//     after(async function () {
-//       await deleteSession();
-//     });
-
-//     it('should tap on the element', async function () {
-//       let el1 = await driver.elementByAccessibilityId('Alert Views');
-//       let action = new wd.TouchAction(driver);
-//       action.tap({el: el1});
-//       await action.perform();
-
-//       // pause a moment so the alert can animate
-//       await B.delay(500);
-
-//       let el2 = await driver.elementByAccessibilityId(BTN_OK_CNCL);
-//       el2.should.exist;
-//     });
-//   });
-// });
+          await driver.actions([thumb, foreFinger]);
+        }
+        await doPinch();
+      });
+    });
+  });
+});
