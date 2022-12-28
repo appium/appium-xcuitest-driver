@@ -1,3 +1,10 @@
+## [4.16.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.4...v4.16.5) (2022-12-28)
+
+
+### Miscellaneous Chores
+
+* remove tapWithShortPressDuration cap ([#1481](https://github.com/appium/appium-xcuitest-driver/issues/1481)) ([5d64e3a](https://github.com/appium/appium-xcuitest-driver/commit/5d64e3aa32ef4eaaaadaeb1c799670622680b579))
+
 ## [4.16.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.3...v4.16.4) (2022-12-28)
 
 
