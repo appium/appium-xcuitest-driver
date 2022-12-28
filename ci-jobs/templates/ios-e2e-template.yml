@@ -43,7 +43,11 @@ jobs:
         versionSpec: '3.7'
     - bash: |
         brew tap facebook/fb
+        # use 1.1.7 because xctest doesn't seem to work with 1.1.8 https://github.com/facebook/idb/issues/811
+        pushd /usr/local/Homebrew/Library/Taps/facebook/homebrew-fb
+        git checkout f660049bdec9965934973052e6331119a4985096
         brew install idb-companion
+        popd
         python -m pip install --user fb-idb
       displayName: Install IDB
       condition: eq('${{ parameters.launchWithIDB }}', true)
