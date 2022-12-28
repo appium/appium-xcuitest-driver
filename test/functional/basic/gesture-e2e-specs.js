@@ -1,13 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import _ from 'lodash';
 import { retryInterval } from 'asyncbox';
 import { UICATALOG_CAPS, amendCapabilities } from '../desired';
 import { PREDICATE_SEARCH } from '../helpers/element';
 import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
-import { translateDeviceName } from '../../../lib/utils';
 
 
 chai.should();
@@ -277,86 +275,6 @@ describe('XCUITestDriver - gestures', function () {
         }
         await doPinch();
       });
-    });
-    describe('special actions', function () {
-      // TODO: Neither ControlCenterView or ControlCenterView is available on recent iOS.
-      it.skip('should open the control center', async function () {
-        let isStatusBarAvailable = false;
-        try {
-          await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeStatusBar'`)
-            .should.eventually.be.rejectedWith(/An element could not be located/);
-        } catch (err) {
-          // if this exists,
-          isStatusBarAvailable = true;
-          await driver.$('~ControlCenterView')
-            .should.eventually.be.rejectedWith(/An element could not be located/);
-        }
-
-        let x, y0, y1;
-        const window = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeApplication'`);
-        const {width, height} = await window.getSize();
-        try {
-          // Try locating the 'Cellular' element (which can be pulled down)
-          const cellularEl = await driver.$('~Cellular');
-          const location = await cellularEl.getLocation();
-          x = location.x;
-          y0 = location.y;
-        } catch (e) {
-          // Otherwise, pull down the middle of the top of the Simulator
-          const isIphoneX = await (async () => {
-            if (UICATALOG_CAPS.deviceName.toLowerCase().includes('iphone x')) {
-              return true;
-            }
-            const { platformVersion, deviceName } = await driver.sessionCapabilities();
-            const translatedDeviceName = translateDeviceName(platformVersion, deviceName).toLowerCase();
-            return _.includes(translatedDeviceName, 'iphone x');
-          })();
-
-          x = width / 2;
-          y0 = isIphoneX
-            ? 15
-            : height - 5;
-        }
-        y1 = height / 2;
-
-        await driver.touchAction([
-          { action: 'press', x, y: y0 },
-          { action: 'moveTo', x, y: y1 },
-        ]);
-
-        // Control Center ought to be visible now
-        if (isStatusBarAvailable) {
-          await driver.$('~ControlCenterView');
-        } else {
-          await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeStatusBar'`);
-        }
-      });
-    });
-  });
-  describe('tap with tapWithShortPressDuration cap', function () {
-    // needs a special cap, so has to be in its own session
-    before(async function () {
-      const caps = amendCapabilities(UICATALOG_CAPS, {
-        'appium:tapWithShortPressDuration': 0.01,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
-      driver = await initSession(caps);
-    });
-    after(async function () {
-      await deleteSession();
-    });
-
-    it.skip('should tap on the element', async function () {
-      let el1 = await driver.$('~Alert Views');
-      await driver.touchAction({
-        action: 'tap',
-        element: el1,
-      });
-
-      // pause a moment so the alert can animate
-      await B.delay(500);
-
-      await driver.$(`~${BTN_OK_CNCL}`).should.eventually.exist;
     });
   });
 });
