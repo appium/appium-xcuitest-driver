@@ -88,6 +88,7 @@ const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
 
 const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:app': APPS.touchIdApp,
+  'appium:deviceName': 'iPhone 8'
 });
 
 const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
