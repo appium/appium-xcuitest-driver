@@ -92,6 +92,11 @@ const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:deviceName': DEVICE_NAME_FOR_TOUCH_ID
 });
 
+const FACEIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': APPS.touchIdApp,
+  'appium:deviceName': 'iPhone X'
+});
+
 const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   platformName: 'tvOS',
   'appium:bundleId': 'com.apple.TVSettings',
@@ -100,6 +105,6 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, FACEIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
   TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
 };
