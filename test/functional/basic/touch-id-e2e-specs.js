@@ -36,7 +36,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
 
     async function doEnrollment (toggle = true) {
       try {
-        await driver.toggleEnrollTouchId(toggle);
+        await driver.execute('mobile: enrollBiometric', {isEnabled: toggle});
       } catch (e) {
         e.message.should.match(/not supported/);
         return false;
@@ -65,7 +65,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         if (await doEnrollment()) {
           const authenticateButton = await driver.$('~Authenticate with Touch ID');
           await authenticateButton.click();
-          await driver.touchId(true);
+          await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: true});
           expect(await driver.$('~Succeeded').elementId).to.exist;
         }
       });
@@ -74,7 +74,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         if (await doEnrollment()) {
           const authenticateButton = await driver.$('~Authenticate with Touch ID');
           await authenticateButton.click();
-          await driver.touchId(false);
+          await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: false});
           expect(await driver.$('~Try Again').elementId).to.exist;
         }
       });
@@ -94,7 +94,7 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         // Re-enroll
         await doEnrollment();
         await authenticateButton.click();
-        await driver.touchId(true);
+        await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: true});
         expect(await driver.$('~Succeeded').elementId).to.exist;
         okButton = await driver.$('~OK');
         await okButton.click();
