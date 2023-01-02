@@ -15,8 +15,10 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
-const FACE_ID_SELECTOR = '**/XCUIElementTypeStaticText[`label == "Do you want to allow “biometric” to use Face ID?"`]';
+const FACE_ID_SELECTOR = '**/XCUIElementTypeStaticText[`label == "Face ID"`]';
 const FACE_ID_LOCATOR = `${CLASS_CHAIN_SEARCH}:${FACE_ID_SELECTOR}`;
+const ALLOW_SELECTOR = '**/XCUIElementTypeStaticText[`label == "Do you want to allow “biometric” to use Face ID?"`]';
+const ALLOW_LOCATOR = `${CLASS_CHAIN_SEARCH}:${ALLOW_SELECTOR}`;
 
 const MOCHA_RETRIES = process.env.CI ? 3 : 1;
 
@@ -86,7 +88,14 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         expect(await doEnrollment()).to.be.true;
         const authenticateButton = await driver.$('~Authenticate with Face ID');
         await authenticateButton.click();
+
+        // This is necessary only for the first time
+        if (await driver.$(ALLOW_LOCATOR).elementId) {
+          const okButton = await driver.$('~OK');
+          await okButton.click();
+        }
         await waitUntilExist(FACE_ID_LOCATOR);
+
         await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
         expect(await driver.$('~Succeeded').elementId).to.exist;
       });
@@ -95,7 +104,14 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         expect(await doEnrollment()).to.be.true;
         const authenticateButton = await driver.$('~Authenticate with Face ID');
         await authenticateButton.click();
+
+        // This is necessary only for the first time
+        if (await driver.$(ALLOW_LOCATOR).elementId) {
+          const okButton = await driver.$('~OK');
+          await okButton.click();
+        }
         await waitUntilExist(FACE_ID_LOCATOR);
+
         await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: false});
         expect(await driver.$('~Try Again').elementId).to.exist;
       });
@@ -113,7 +129,14 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
         // Re-enroll
         await doEnrollment();
         await authenticateButton.click();
+
+        // This is necessary only for the first time
+        if (await driver.$(ALLOW_LOCATOR).elementId) {
+          const okButton = await driver.$('~OK');
+          await okButton.click();
+        }
         await waitUntilExist(FACE_ID_LOCATOR);
+
         await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
         expect(await driver.$('~Succeeded').elementId).to.exist;
         okButton = await driver.$('~OK');
