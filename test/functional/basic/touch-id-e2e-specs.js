@@ -76,38 +76,33 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
       });
 
       it('should not support touchID if not enrolled', async function () {
-        if (await doEnrollment(false)) {
-          const authenticateButton = await driver.$('~Authenticate with Touch ID');
-          await authenticateButton.click();
-          expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
-        }
+        expect(await doEnrollment(false)).to.be.true;
+        const authenticateButton = await driver.$('~Authenticate with Touch ID');
+        await authenticateButton.click();
+        expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
       });
 
       it('should accept matching fingerprint if touchID is enrolled', async function () {
-        if (await doEnrollment()) {
-          const authenticateButton = await driver.$('~Authenticate with Touch ID');
-          await authenticateButton.click();
-          await waitUntilExist(TOUCH_ID_LOCATOR);
-          await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: true});
-          expect(await driver.$('~Succeeded').elementId).to.exist;
-        }
+        expect(await doEnrollment()).to.be.true;
+        const authenticateButton = await driver.$('~Authenticate with Touch ID');
+        await authenticateButton.click();
+        await waitUntilExist(TOUCH_ID_LOCATOR);
+        await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: true});
+        expect(await driver.$('~Succeeded').elementId).to.exist;
       });
 
       it('should reject not matching fingerprint if touchID is enrolled', async function () {
-        if (await doEnrollment()) {
-          const authenticateButton = await driver.$('~Authenticate with Touch ID');
-          await authenticateButton.click();
-          await waitUntilExist(TOUCH_ID_LOCATOR);
-          await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: false});
-          expect(await driver.$('~Try Again').elementId).to.exist;
-        }
+        expect(await doEnrollment()).to.be.true;
+        const authenticateButton = await driver.$('~Authenticate with Touch ID');
+        await authenticateButton.click();
+        await waitUntilExist(TOUCH_ID_LOCATOR);
+        await driver.execute('mobile: sendBiometricMatch', {type: 'touchId', match: false});
+        expect(await driver.$('~Try Again').elementId).to.exist;
       });
 
       it('should enroll touchID and accept matching fingerprints then unenroll touchID and not be supported', async function () {
         // Unenroll
-        if (!await doEnrollment(false)) {
-          return;
-        }
+        expect(await doEnrollment(false)).to.be.true;
         let authenticateButton = await driver.$('~Authenticate with Touch ID');
         await authenticateButton.click();
         expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
