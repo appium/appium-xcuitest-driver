@@ -76,38 +76,33 @@ if (!process.env.REAL_DEVICE && !process.env.CI && !process.env.CLOUD) {
       });
 
       it('should not support faceID if not enrolled', async function () {
-        if (await doEnrollment(false)) {
-          const authenticateButton = await driver.$('~Authenticate with Face ID');
-          await authenticateButton.click();
-          expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
-        }
+        expect(await doEnrollment(false)).to.be.true;
+        const authenticateButton = await driver.$('~Authenticate with Face ID');
+        await authenticateButton.click();
+        expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
       });
 
       it('should accept matching fingerprint if faceID is enrolled', async function () {
-        if (await doEnrollment()) {
-          const authenticateButton = await driver.$('~Authenticate with Face ID');
-          await authenticateButton.click();
-          await waitUntilExist(FACE_ID_LOCATOR);
-          await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
-          expect(await driver.$('~Succeeded').elementId).to.exist;
-        }
+        expect(await doEnrollment()).to.be.true;
+        const authenticateButton = await driver.$('~Authenticate with Face ID');
+        await authenticateButton.click();
+        await waitUntilExist(FACE_ID_LOCATOR);
+        await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
+        expect(await driver.$('~Succeeded').elementId).to.exist;
       });
 
       it('should reject not matching fingerprint if faceID is enrolled', async function () {
-        if (await doEnrollment()) {
-          const authenticateButton = await driver.$('~Authenticate with Face ID');
-          await authenticateButton.click();
-          await waitUntilExist(FACE_ID_LOCATOR);
-          await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: false});
-          expect(await driver.$('~Try Again').elementId).to.exist;
-        }
+        expect(await doEnrollment()).to.be.true;
+        const authenticateButton = await driver.$('~Authenticate with Face ID');
+        await authenticateButton.click();
+        await waitUntilExist(FACE_ID_LOCATOR);
+        await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: false});
+        expect(await driver.$('~Try Again').elementId).to.exist;
       });
 
       it('should enroll faceID and accept matching fingerprints then unenroll faceID and not be supported', async function () {
         // Unenroll
-        if (!await doEnrollment(false)) {
-          return;
-        }
+        expect(await doEnrollment(false)).to.be.true;
         let authenticateButton = await driver.$('~Authenticate with Face ID');
         await authenticateButton.click();
         expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
