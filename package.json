@@ -60,6 +60,7 @@
   "files": [
     "index.js",
     "lib",
+    "scripts",
     "build/index.js",
     "build/lib",
     "!.DS_Store",
