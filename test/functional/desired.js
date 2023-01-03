@@ -28,12 +28,14 @@ const IS_ABOVE_IOS13 = util.compareVersions(PLATFORM_VERSION, '>=', '13.0');
 const DEVICE_NAME = process.env.DEVICE_NAME
   ? process.env.DEVICE_NAME
   : (IS_ABOVE_IOS13 ? 'iPhone 8' : 'iPhone 6');
+const DEVICE_NAME_FOR_TOUCH_ID = process.env.DEVICE_NAME_FOR_TOUCH_ID ? process.env.DEVICE_NAME_FOR_TOUCH_ID : 'iPhone 8';
 const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const APPS = {
   uiCatalogApp: path.resolve(__dirname, '..', 'assets',
-    `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`),
-  iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app')
+    `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`), // https://github.com/appium/ios-uicatalog
+  iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app'), // https://github.com/appium/ios-test-app
+  touchIdApp: path.resolve(__dirname, '..', 'assets', 'biometric.app') // https://github.com/mwakizaka/LocalAuthentication
 };
 
 
@@ -87,6 +89,7 @@ const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
 
 const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:app': APPS.touchIdApp,
+  'appium:deviceName': DEVICE_NAME_FOR_TOUCH_ID
 });
 
 const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
