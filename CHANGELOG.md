@@ -1,3 +1,10 @@
+## [4.16.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.5...v4.16.6) (2023-01-03)
+
+
+### Bug Fixes
+
+* Include scripts into the package ([f747865](https://github.com/appium/appium-xcuitest-driver/commit/f747865ca970c5480fb3602f8f3a35ecb2fa1a25))
+
 ## [4.16.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.4...v4.16.5) (2022-12-28)
 
 
