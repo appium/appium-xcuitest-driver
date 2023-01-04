@@ -1,0 +1,17 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "cleanOutputDir": true,
+  "entryPointStrategy": "packages",
+  "theme": "appium",
+  "entryPoints": ["."],
+  "name": "appium-xcuitest-driver",
+  "out": "docs/reference",
+  "packageTitles": [
+    {
+      "name": "appium-xcuitest-driver",
+      "title": "Command Reference"
+    }
+  ],
+  "readme": "none"
+}
+

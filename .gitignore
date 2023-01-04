@@ -12,3 +12,5 @@ test-results.xml
 .idea/
 npm-shrinkwrap.json
 site
+typedoc-docs
+docs/reference

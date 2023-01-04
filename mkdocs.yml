@@ -6,17 +6,15 @@ copyright: Copyright &copy; 2012 OpenJS Foundation
 site_url: https://appium.github.io/appium-xcuitest-driver
 edit_uri: edit/master/docs
 site_description: Documentation for the Appium XCUITest driver for iOS automation
-
 docs_dir: docs
 site_dir: site
-
 theme:
-  language: en
-  logo: images/appium-logo-white.png
-  favicon: images/appium-logo.png
+  logo: assets/images/appium-logo-white.png
+  favicon: assets/images/appium-logo.png
   features:
     - navigation.sections
-
+extra_css:
+  - assets/stylesheets/extra.css
 extra:
   homepage: /appium-xcuitest-driver
   version:
@@ -24,30 +22,30 @@ extra:
   social:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/AppiumDevs
-
 nav:
   - index.md
   - setup.md
   - device-preparation.md
   - Reference:
-    - server-args.md
-    - capabilities.md
-    - element-attributes.md
-    - security-flags.md
-    - settings.md
-    - locator-strategies.md
-    - ios-predicate.md
-    - parallel-tests.md
-    - execute-methods.md
-    - touch-id.md
-    - troubleshooting.md
+      - server-args.md
+      - capabilities.md
+      - element-attributes.md
+      - security-flags.md
+      - settings.md
+      - locator-strategies.md
+      - ios-predicate.md
+      - parallel-tests.md
+      - execute-methods.md
+      - touch-id.md
+      - troubleshooting.md
+      - reference/commands/appium-xcuitest-driver.md
   - Guides:
-    - real-device-config.md
-    - ci-setup.md
-    - multiple-xcode-versions.md
-    - wda-custom-server.md
-    - ios-tvos.md
-    - actions.md
-    - audio-capture.md
-    - ios-xctest-file-movement.md
-    - ios-xctest-install-certificate.md
+      - real-device-config.md
+      - ci-setup.md
+      - multiple-xcode-versions.md
+      - wda-custom-server.md
+      - ios-tvos.md
+      - actions.md
+      - audio-capture.md
+      - ios-xctest-file-movement.md
+      - ios-xctest-install-certificate.md
