@@ -39,7 +39,7 @@ const APPS = {
 };
 
 
-const initTimeout = 60 * 1000 * (process.env.CI ? 8 : 4);
+const initTimeout = 60 * 1000 * (process.env.CI ? 16 : 4);
 const GENERIC_CAPS = node.deepFreeze({
   alwaysMatch: {
     platformName: 'iOS',
