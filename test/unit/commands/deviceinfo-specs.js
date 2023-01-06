@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import XCUITestDriver from '../../../';
+import XCUITestDriver from '../../../lib/driver';
 
 chai.should();
 chai.use(chaiAsPromised);

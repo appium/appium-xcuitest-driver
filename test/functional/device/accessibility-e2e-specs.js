@@ -19,11 +19,21 @@ describe('Accessibility', function() {
   });
 
   afterEach(async function() {
-    await driver.terminateApp('com.apple.Preferences');
+    try {
+      await driver.terminateApp('com.apple.Preferences');
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
 
     // try to get rid of the driver, so if a test fails the rest of the
     // tests aren't compromised
-    await deleteSession();
+    try {
+      await deleteSession();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
   });
 
   async function showAccessibilityTab(driver) {
