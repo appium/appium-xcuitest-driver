@@ -35,7 +35,7 @@ const APPS = {
   uiCatalogApp: path.resolve(__dirname, '..', 'assets',
     `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`), // https://github.com/appium/ios-uicatalog
   iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app'), // https://github.com/appium/ios-test-app
-  touchIdApp: path.resolve(__dirname, '..', 'assets', 'biometric.app') // https://github.com/mwakizaka/LocalAuthentication
+  biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app') // https://github.com/mwakizaka/LocalAuthentication
 };
 
 
@@ -88,8 +88,12 @@ const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
 });
 
 const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.touchIdApp,
+  'appium:app': APPS.biometricApp,
   'appium:deviceName': DEVICE_NAME_FOR_TOUCH_ID
+});
+
+const FACEIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
+  'appium:app': APPS.biometricApp,
 });
 
 const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
@@ -100,6 +104,6 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, FACEIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
   TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
 };
