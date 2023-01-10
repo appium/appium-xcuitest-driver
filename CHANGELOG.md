@@ -1,3 +1,10 @@
+## [4.16.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.6...v4.16.7) (2023-01-10)
+
+
+### Bug Fixes
+
+* mobile:getPermission for iOS 14+ ([#1486](https://github.com/appium/appium-xcuitest-driver/issues/1486)) ([803390c](https://github.com/appium/appium-xcuitest-driver/commit/803390cb3e5f0d3fc24d5278dd8c9af89e3f70e5))
+
 ## [4.16.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.5...v4.16.6) (2023-01-03)
 
 
