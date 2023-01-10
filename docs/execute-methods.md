@@ -471,7 +471,7 @@ service | string | yes | One of available service names. The following services 
 
 #### Returned Result
 
-Either 'yes', 'no' or 'unset'.
+Either 'yes', 'no', 'unset' or 'limited'
 
 ### mobile: setPermission
 
