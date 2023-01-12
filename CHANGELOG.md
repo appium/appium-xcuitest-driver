@@ -1,3 +1,10 @@
+## [4.16.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.7...v4.16.8) (2023-01-12)
+
+
+### Bug Fixes
+
+* specify supported non-standard commands in newMethodMap ([503bd60](https://github.com/appium/appium-xcuitest-driver/commit/503bd60398155bf7e1d95346dad6258d120f0fb2))
+
 ## [4.16.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.6...v4.16.7) (2023-01-10)
 
 
