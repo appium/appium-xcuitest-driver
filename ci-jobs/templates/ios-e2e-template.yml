@@ -73,6 +73,7 @@ jobs:
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
+          --keep-alive-timeout 1200 \
           &
         popd
         secondsStarted=$(date +%s)
