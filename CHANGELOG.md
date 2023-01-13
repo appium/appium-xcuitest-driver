@@ -1,3 +1,10 @@
+## [4.16.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.8...v4.16.9) (2023-01-13)
+
+
+### Miscellaneous Chores
+
+* Bump appium-xcode from 4.0.5 to 5.0.0 ([#1488](https://github.com/appium/appium-xcuitest-driver/issues/1488)) ([e759033](https://github.com/appium/appium-xcuitest-driver/commit/e759033fdac8b05f4410fd77028c0f85cf22918d))
+
 ## [4.16.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.7...v4.16.8) (2023-01-12)
 
 
