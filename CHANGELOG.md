@@ -1,3 +1,24 @@
+## [4.16.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.8...v4.16.9) (2023-01-13)
+
+
+### Miscellaneous Chores
+
+* Bump appium-xcode from 4.0.5 to 5.0.0 ([#1488](https://github.com/appium/appium-xcuitest-driver/issues/1488)) ([e759033](https://github.com/appium/appium-xcuitest-driver/commit/e759033fdac8b05f4410fd77028c0f85cf22918d))
+
+## [4.16.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.7...v4.16.8) (2023-01-12)
+
+
+### Bug Fixes
+
+* specify supported non-standard commands in newMethodMap ([503bd60](https://github.com/appium/appium-xcuitest-driver/commit/503bd60398155bf7e1d95346dad6258d120f0fb2))
+
+## [4.16.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.6...v4.16.7) (2023-01-10)
+
+
+### Bug Fixes
+
+* mobile:getPermission for iOS 14+ ([#1486](https://github.com/appium/appium-xcuitest-driver/issues/1486)) ([803390c](https://github.com/appium/appium-xcuitest-driver/commit/803390cb3e5f0d3fc24d5278dd8c9af89e3f70e5))
+
 ## [4.16.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.5...v4.16.6) (2023-01-03)
 
 
