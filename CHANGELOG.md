@@ -1,3 +1,10 @@
+## [4.16.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.9...v4.16.10) (2023-01-17)
+
+
+### Miscellaneous Chores
+
+* Bump semantic-release from 19.0.5 to 20.0.2 ([#1485](https://github.com/appium/appium-xcuitest-driver/issues/1485)) ([bbe7366](https://github.com/appium/appium-xcuitest-driver/commit/bbe73661336671b2c189fd3a1af6ecf5873001e3))
+
 ## [4.16.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.8...v4.16.9) (2023-01-13)
 
 
