@@ -203,9 +203,10 @@ describe('XCUITestDriver - basics -', function () {
       await B.promisify(fullImg.parse, {context: fullImg})(fullB64);
       const viewImg = new PNG({filterType: 4});
       await B.promisify(viewImg.parse, {context: viewImg})(viewB64);
-      fullImg.height.should.eql(viewImg.height + Math.round(pixelRatio * statBarHeight));
+      // Viewport size can be smaller than the full image size + status bar on some devices.
+      fullImg.height.should.be.gte(viewImg.height + Math.round(pixelRatio * statBarHeight));
       viewImg.height.should.eql(viewportRect.height);
-      fullImg.width.should.eql(viewImg.width);
+      fullImg.width.should.be.gte(viewImg.width);
     });
   });
 

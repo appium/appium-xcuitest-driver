@@ -48,7 +48,8 @@ jobs:
         git checkout f660049bdec9965934973052e6331119a4985096
         brew install idb-companion
         popd
-        python -m pip install --user fb-idb
+        # install idb client
+        pip3 install --user fb-idb
       displayName: Install IDB
       condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
@@ -60,6 +61,7 @@ jobs:
         npm run build
       displayName: Install node dependencies
     - script: |
+        export PATH="${PATH}:$(python3 -c 'import site; print(site.USER_BASE)')/bin" || true
         export APPIUM_TEST_SERVER_PORT=4567
         export APPIUM_TEST_SERVER_HOST=127.0.0.1
         export cwd=$(pwd)
@@ -70,6 +72,7 @@ jobs:
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
+          --keep-alive-timeout 1200 \
           &
         popd
         secondsStarted=$(date +%s)
@@ -82,5 +85,5 @@ jobs:
           fi
         done
 
-        export PATH="${PATH}:$(python -c 'import site; print(site.USER_BASE)')/bin" && ${{ parameters.script }}
+        ${{ parameters.script }}
       displayName: Run functional tests
