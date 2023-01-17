@@ -49,8 +49,7 @@ jobs:
         brew install idb-companion
         popd
         # install idb client
-        brew install python@3.7
-        /usr/local/opt/python@3.7/bin/python3.7 -m pip install --user fb-idb
+        pip3 install --user fb-idb
       displayName: Install IDB
       condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
@@ -62,7 +61,7 @@ jobs:
         npm run build
       displayName: Install node dependencies
     - script: |
-        export PATH="${PATH}:$(/usr/local/opt/python@3.7/bin/python3.7 -c 'import site; print(site.USER_BASE)')/bin" || true
+        export PATH="${PATH}:$(python3 -c 'import site; print(site.USER_BASE)')/bin" || true
         export APPIUM_TEST_SERVER_PORT=4567
         export APPIUM_TEST_SERVER_HOST=127.0.0.1
         export cwd=$(pwd)
