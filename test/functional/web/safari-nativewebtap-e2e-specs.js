@@ -167,7 +167,7 @@ describe('Safari - coordinate conversion -', function () {
         it('should be able to handle an alert', async function () {
           await loadPage(driver, GUINEA_PIG_PAGE);
 
-          await driver.elementById('alert1').click();
+          await driver.$('#alert1').click();
           await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
           await driver.title().should.eventually.include('I am a page title');
         });
