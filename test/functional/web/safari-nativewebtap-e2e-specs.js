@@ -236,9 +236,9 @@ describe('Safari - coordinate conversion -', function () {
             await driver.execute('mobile: scroll', {direction: 'down'});
 
             // to get the url bar, click on the URL bar
-            const ctx = await driver.currentContext();
+            const ctx = await driver.getContext();
             try {
-              await driver.context('NATIVE_APP');
+              await driver.switchContext('NATIVE_APP');
 
               // get the reload button, as multi-element find to bypass
               // the implicit wait
@@ -251,7 +251,7 @@ describe('Safari - coordinate conversion -', function () {
               // time for things to happen
               await B.delay(500);
             } finally {
-              await driver.context(ctx);
+              await driver.switchContext(ctx);
             }
 
             await driver.$(`=${PAGE_3_LINK}`).click();
