@@ -148,7 +148,8 @@ describe('Safari - coordinate conversion -', function () {
 
           (await driver.getPageSource()).should.not.include('Your comments: Hello');
 
-          await driver.$('[name="comments"]').type('Hello');
+          const comments = await driver.$('[name="comments"]');
+          await driver.elementSendKeys(comments.elementId, 'Hello');
 
           await driver.$('[name="submit"]').click();
 
