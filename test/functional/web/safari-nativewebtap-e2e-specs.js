@@ -152,14 +152,14 @@ describe('Safari - coordinate conversion -', function () {
 
           await loadPage(driver, GUINEA_PIG_PAGE);
 
-          (await driver.source()).should.not.include('Your comments: Hello');
+          (await driver.getPageSource()).should.not.include('Your comments: Hello');
 
           await driver.$('[name="comments"]').type('Hello');
 
           await driver.$('[name="submit"]').click();
 
           await retryInterval(5, 500, async function () {
-            const src = await driver.source();
+            const src = await driver.getPageSource();
             return src.should.include('Your comments: Hello');
           });
         });
