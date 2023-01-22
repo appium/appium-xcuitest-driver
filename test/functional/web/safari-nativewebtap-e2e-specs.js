@@ -4,7 +4,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-import { amendCapabilities, SAFARI_CAPS } from '../desired';
+import { amendCapabilities, SAFARI_CAPS, DEVICE_NAME } from '../desired';
 import {
   openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
   GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
@@ -12,7 +12,6 @@ import {
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
 import Simctl from 'node-simctl';
-import { util } from 'appium/support';
 import { performance } from 'perf_hooks';
 
 /**
@@ -57,11 +56,7 @@ describe('Safari - coordinate conversion -', function () {
       devices = [process.env.DEVICE_NAME];
     } else {
       // default to a relatively representative set of devices
-      devices = ['iPhone 6', 'iPad Simulator'];
-      if (!process.env.TRAVIS || util.compareVersions(caps.platformVersion, '<', '13.0')) {
-        // TODO: see when Travis can launch iPhone X sims
-        devices.push('iPhone X');
-      }
+      devices = [DEVICE_NAME, 'iPad Simulator'];
     }
 
     async function loadPage (driver, url) {
