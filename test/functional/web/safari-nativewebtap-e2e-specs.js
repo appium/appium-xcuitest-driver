@@ -1,5 +1,3 @@
-// TODO: Update tests for WdIO compatibility
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
@@ -245,7 +243,7 @@ describe('Safari - coordinate conversion -', function () {
               if (_.isEmpty(await driver.$$('~ReloadButton'))) {
                 // when there is no reload button, the URL bar is minimized
                 // so tap on it to bring it up
-                await driver.$('~URL').click();
+                await driver.$('~Address Bar').click();
               }
 
               // time for things to happen
