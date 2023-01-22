@@ -93,7 +93,7 @@ describe('Safari - coordinate conversion -', function () {
             throw err;
           }
           if (process.env.CI) {
-            await driver.setImplicitWaitTimeout(10000);
+            await driver.setTimeouts(10000);
           }
         });
         after(async function () {
