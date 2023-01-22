@@ -154,9 +154,9 @@ describe('Safari - coordinate conversion -', function () {
 
           (await driver.source()).should.not.include('Your comments: Hello');
 
-          await driver.elementByName('comments').type('Hello');
+          await driver.$('[name="comments"]').type('Hello');
 
-          await driver.elementByName('submit').click();
+          await driver.$('[name="submit"]').click();
 
           await retryInterval(5, 500, async function () {
             const src = await driver.source();
