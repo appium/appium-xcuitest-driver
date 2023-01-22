@@ -103,7 +103,7 @@ describe('Safari - coordinate conversion -', function () {
         it('should be able to tap on an element', async function () {
           await loadPage(driver, GUINEA_PIG_PAGE);
 
-          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await driver.$(`=${PAGE_3_LINK}`).click();
 
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
@@ -111,7 +111,7 @@ describe('Safari - coordinate conversion -', function () {
         it('should be able to tap on an element when the app banner is up', async function () {
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
 
-          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await driver.$(`=${PAGE_3_LINK}`).click();
 
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
@@ -123,7 +123,7 @@ describe('Safari - coordinate conversion -', function () {
 
           const start1 = performance.now();
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
-          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await driver.$(`=${PAGE_3_LINK}`).click();
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           const end1 = performance.now();
           const durationWithoutIgnore = end1 - start1;
@@ -131,7 +131,7 @@ describe('Safari - coordinate conversion -', function () {
           const start2 = performance.now();
           await driver.updateSettings({ nativeWebTapSmartAppBannerVisibility: 'invisible' });
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
-          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await driver.$(`=${PAGE_3_LINK}`).click();
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           const end2 = performance.now();
           const durationWithIgnore = end2 - start2;
@@ -142,7 +142,7 @@ describe('Safari - coordinate conversion -', function () {
           await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
           await driver.execute('mobile: scroll', {direction: 'down'});
 
-          await driver.elementByLinkText(PAGE_3_LINK).click();
+          await driver.$(`=${PAGE_3_LINK}`).click();
 
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
@@ -180,7 +180,7 @@ describe('Safari - coordinate conversion -', function () {
             await loadPage(driver, GUINEA_PIG_PAGE);
 
             // open a new tab and go to it
-            await driver.elementByLinkText('i am a new window link').click();
+            await driver.$(`=i am a new window link`).click();
 
             await retryInterval(10, 1000, async function () {
               await driver.title().should.eventually.eql('I am another page title');
@@ -190,14 +190,14 @@ describe('Safari - coordinate conversion -', function () {
           it('should be able to tap on an element', async function () {
             await loadPage(driver, GUINEA_PIG_PAGE);
 
-            await driver.elementByLinkText(PAGE_3_LINK).click();
+            await driver.$(`=${PAGE_3_LINK}`).click();
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
 
             await driver.back();
 
             // try again, just to make sure
-            await driver.elementByLinkText(PAGE_3_LINK).click();
+            await driver.$(`=${PAGE_3_LINK}`).click();
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
@@ -209,14 +209,14 @@ describe('Safari - coordinate conversion -', function () {
 
             const start1 = performance.now();
             await loadPage(driver, GUINEA_PIG_PAGE);
-            await driver.elementByLinkText(PAGE_3_LINK).click();
+            await driver.$(`=${PAGE_3_LINK}`).click();
             const end1 = performance.now();
             const durationWithoutControlled = end1 - start1;
 
             await driver.updateSettings({ nativeWebTapTabBarVisibility: 'visible' });
             const start2 = performance.now();
             await loadPage(driver, GUINEA_PIG_PAGE);
-            await driver.elementByLinkText(PAGE_3_LINK).click();
+            await driver.$(`=${PAGE_3_LINK}`).click();
             const end2 = performance.now();
             const durationWithControlled = end2 - start2;
             durationWithControlled.should.be.below(durationWithoutControlled);
@@ -226,7 +226,7 @@ describe('Safari - coordinate conversion -', function () {
             await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
             await driver.execute('mobile: scroll', {direction: 'down'});
 
-            await driver.elementByLinkText(PAGE_3_LINK).click();
+            await driver.$(`=${PAGE_3_LINK}`).click();
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
@@ -254,7 +254,7 @@ describe('Safari - coordinate conversion -', function () {
               await driver.context(ctx);
             }
 
-            await driver.elementByLinkText(PAGE_3_LINK).click();
+            await driver.$(`=${PAGE_3_LINK}`).click();
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
