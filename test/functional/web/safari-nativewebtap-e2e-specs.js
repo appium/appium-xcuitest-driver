@@ -169,7 +169,7 @@ describe('Safari - coordinate conversion -', function () {
 
           await driver.$('#alert1').click();
           await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
-          await driver.title().should.eventually.include('I am a page title');
+          await driver.getTitle().should.eventually.include('I am a page title');
         });
 
         describe('with tabs -', function () {
@@ -183,7 +183,7 @@ describe('Safari - coordinate conversion -', function () {
             await driver.$(`=i am a new window link`).click();
 
             await retryInterval(10, 1000, async function () {
-              await driver.title().should.eventually.eql('I am another page title');
+              await driver.getTitle().should.eventually.eql('I am another page title');
             });
           });
 
