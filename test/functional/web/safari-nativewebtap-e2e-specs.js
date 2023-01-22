@@ -93,6 +93,11 @@ describe('Safari - coordinate conversion -', function () {
         after(async function () {
           await deleteSession();
         });
+        beforeEach(async function () {
+          await driver.updateSettings({
+            nativeWebTapStrict: false,
+          });
+        });
 
         it('should be able to tap on an element', async function () {
           await loadPage(driver, GUINEA_PIG_PAGE);
