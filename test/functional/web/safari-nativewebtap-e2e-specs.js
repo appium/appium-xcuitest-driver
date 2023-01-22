@@ -3,8 +3,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
-import { SAFARI_CAPS } from '../desired';
+import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
+import { amendCapabilities, SAFARI_CAPS } from '../desired';
 import {
   openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
   GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
@@ -31,10 +31,11 @@ import { performance } from 'perf_hooks';
 chai.should();
 chai.use(chaiAsPromised);
 
-const caps = _.defaults({
-  safariInitialUrl: GUINEA_PIG_PAGE,
-  nativeWebTap: true,
-}, SAFARI_CAPS);
+const caps = amendCapabilities(SAFARI_CAPS, {
+  'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+  'appium:nativeWebTap': true,
+  'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+});
 
 const SPIN_RETRIES = 25;
 
@@ -76,9 +77,7 @@ describe('Safari - coordinate conversion -', function () {
         this.timeout(MOCHA_TIMEOUT * 2);
 
         let driver;
-        const localCaps = _.defaults({
-          deviceName,
-        }, caps);
+        const localCaps = amendCapabilities(caps, {'appium:deviceName': deviceName});
         let skipped = false;
 
         before(async function () {
