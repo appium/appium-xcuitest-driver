@@ -64,7 +64,3 @@ Testing on iOS generates files that can sometimes get large. These include logs,
 $HOME/Library/Logs/CoreSimulator/*
 $HOME/Library/Developer/Xcode/DerivedData/*
 ```
-
-## Wrong coordinate
-
-Please make sure the zoom preference in accessibility is turned off. It could cause wrong element coordinate.
