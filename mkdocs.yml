@@ -28,7 +28,8 @@ extra:
 nav:
   - index.md
   - setup.md
-  - Reference:
+  - device-preparation.md
+  - Reference
     - server-args.md
     - capabilities.md
     - element-attributes.md
@@ -50,4 +51,3 @@ nav:
     - audio-capture.md
     - ios-xctest-file-movement.md
     - ios-xctest-install-certificate.md
-
