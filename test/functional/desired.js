@@ -23,12 +23,10 @@ function extractCapabilityValue (caps, capName) {
   return caps?.alwaysMatch?.[capName];
 }
 
-const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
+const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '11.3';
 const IS_ABOVE_IOS13 = util.compareVersions(PLATFORM_VERSION, '>=', '13.0');
-const DEVICE_NAME = process.env.DEVICE_NAME
-  ? process.env.DEVICE_NAME
-  : (IS_ABOVE_IOS13 ? 'iPhone 8' : 'iPhone 6');
-const DEVICE_NAME_FOR_TOUCH_ID = process.env.DEVICE_NAME_FOR_TOUCH_ID ? process.env.DEVICE_NAME_FOR_TOUCH_ID : 'iPhone 8';
+const DEVICE_NAME = process.env.DEVICE_NAME || (IS_ABOVE_IOS13 ? 'iPhone 8' : 'iPhone 6');
+const DEVICE_NAME_FOR_TOUCH_ID = process.env.DEVICE_NAME_FOR_TOUCH_ID || 'iPhone 8';
 const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
 const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
