@@ -2,27 +2,13 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-import { amendCapabilities, SAFARI_CAPS, DEVICE_NAME } from '../desired';
+import { amendCapabilities, SAFARI_CAPS, DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD } from '../desired';
 import {
   openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
   GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
 } from './helpers';
 import { retryInterval } from 'asyncbox';
 import B from 'bluebird';
-import Simctl from 'node-simctl';
-
-/**
- * This test suite can be affected by two environment variables:
- *   1. ALL_DEVICES - will use simctl to get _all_ the iPhone and iPad device
- *                    types available on the current Xcode installation, and
- *                    runs the tests for each one. This is a long process.
- *   2. DEVICE_NAME - the name of a particular device. The tests will be run
- *                    against that device only
- * If neither of these are provided, the tests will be run against a subset
- * of devices that are available (one iPad, on regular iPhone, and the bigger
- * new iPhones that have proven problematic in the past)
- */
-
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -42,18 +28,11 @@ describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
 
   let devices = [];
-  before(async function () {
+  before(function () {
     if (process.env.REAL_DEVICE) {
       // skip, by not having any devices in the list
-    } else if (process.env.ALL_DEVICES) {
-      // get all the iPhone and iPad devices available
-      devices = await new Simctl().getDeviceTypes();
-      devices = devices.filter((device) => device.includes('iPhone') || device.includes('iPad'));
-    } else if (process.env.DEVICE_NAME) {
-      devices = [process.env.DEVICE_NAME];
     } else {
-      // default to a relatively representative set of devices
-      devices = [DEVICE_NAME, 'iPad Simulator'];
+      devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
     }
 
     async function loadPage (driver, url) {
