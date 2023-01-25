@@ -10,7 +10,7 @@ Some of them are also configurable via Appium capabilities and the Settings API.
 ### Keyboards configuration
 
 Appium configures keyboard preferences by default to make test runs more stable.
-You can change some of them via settings API.
+You can change some of them via the Settings API.
 
 - Turn `Auto-Correction` in Keyboards off
 - Turn `Predictive` in Keyboards off
