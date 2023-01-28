@@ -16,6 +16,8 @@ chai.use(chaiAsPromised);
 const caps = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
   'appium:nativeWebTap': true,
+  'appium:fullReset': true,
+  'appium:noReset': false,
   'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
 });
 
