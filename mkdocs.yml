@@ -29,7 +29,7 @@ nav:
   - index.md
   - setup.md
   - device-preparation.md
-  - Reference
+  - Reference:
     - server-args.md
     - capabilities.md
     - element-attributes.md
