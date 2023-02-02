@@ -10,18 +10,20 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/4.16/ios-xctest-install-certificate/">
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/4.16/device-preparation/">
       
       
-        <link rel="prev" href="../ios-xctest-file-movement/">
+        <link rel="prev" href="../setup/">
       
+      
+        <link rel="next" href="../real-device-config/">
       
       <link rel="icon" href="../images/appium-logo.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.9">
     
     
       
-        <title>Self-Signed Certificates - Appium XCUITest Driver</title>
+        <title>Device Preparation - Appium XCUITest Driver</title>
       
     
     
@@ -113,6 +115,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#automatic-device-preference-update" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -145,7 +152,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Self-Signed Certificates
+              Device Preparation
             
           </span>
         </div>
@@ -290,11 +297,95 @@
 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../device-preparation/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Device Preparation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Device Preparation
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-device-preference-update" class="md-nav__link">
+    Automatic device preference update
+  </a>
+  
+    <nav class="md-nav" aria-label="Automatic device preference update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keyboards-configuration" class="md-nav__link">
+    Keyboards configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manual-setup-for-fine-tuning" class="md-nav__link">
+    Manual setup for fine tuning
+  </a>
+  
+    <nav class="md-nav" aria-label="Manual setup for fine tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-web-testing-availability" class="md-nav__link">
+    Enable Web testing availability
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avoid-possible-wrong-coordinate" class="md-nav__link">
+    Avoid possible wrong coordinate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expose-more-elements-if-needed" class="md-nav__link">
+    Expose more elements if needed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -320,18 +411,16 @@
 
   
   
-    
-  
   
     
       
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
       
       
       
@@ -340,7 +429,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           Guides
@@ -463,19 +552,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ios-xctest-install-certificate/" class="md-nav__link">
         Self-Signed Certificates
       </a>
-      
     </li>
   
 
@@ -505,6 +586,68 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-device-preference-update" class="md-nav__link">
+    Automatic device preference update
+  </a>
+  
+    <nav class="md-nav" aria-label="Automatic device preference update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keyboards-configuration" class="md-nav__link">
+    Keyboards configuration
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manual-setup-for-fine-tuning" class="md-nav__link">
+    Manual setup for fine tuning
+  </a>
+  
+    <nav class="md-nav" aria-label="Manual setup for fine tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-web-testing-availability" class="md-nav__link">
+    Enable Web testing availability
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avoid-possible-wrong-coordinate" class="md-nav__link">
+    Avoid possible wrong coordinate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expose-more-elements-if-needed" class="md-nav__link">
+    Expose more elements if needed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -522,10 +665,33 @@
 
 
 
-<p>Unfortunately, Apple does not provide any command line options which can help to install self-signed certificate on a real device or Simulator. However, there is <a href="https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/Introduction/Introduction.html">over-the-air</a> enrollment technology, which allows the deployment of several entity types, including such certificates, by simply downloading specially prepared configuration files with the built-in web browser. After the configuration is downloaded it can be installed and trusted by going through several simple wizard steps.</p>
+  <h1>Device Preparation</h1>
+
+<h2 id="automatic-device-preference-update">Automatic device preference update</h2>
+<p>Appium XCUITest prepares preferences of the device under test automatically.
+Some of them are also configurable via Appium capabilities and the Settings API.</p>
+<h3 id="keyboards-configuration">Keyboards configuration</h3>
+<p>Appium configures keyboard preferences by default to make test runs more stable.
+You can change some of them via the Settings API.</p>
 <ul>
-<li><a href="https://github.com/appium/appium-xcuitest-driver#mobile-installcertificate">mobile: installCertificate</a></li>
+<li>Turn <code>Auto-Correction</code> in Keyboards off</li>
+<li>Turn <code>Predictive</code> in Keyboards off</li>
+<li>Mark keyboard tutorial as complete</li>
+<li>(Only for Simulator) Toggle software keyboard on</li>
 </ul>
+<h2 id="manual-setup-for-fine-tuning">Manual setup for fine tuning</h2>
+<p>Automatic configuration availability is limited on iOS, especially for a real device. You may need to manually change the device configuration.</p>
+<h3 id="enable-web-testing-availability">Enable Web testing availability</h3>
+<p>Please turn on <em>Web Inspector</em> on iOS device via <em>Settings</em> -&gt; <em>Safari</em> -&gt; <em>Advanced</em></p>
+<h3 id="avoid-possible-wrong-coordinate">Avoid possible wrong coordinate</h3>
+<p>Please make sure the zoom preference in accessibility is turned off via <em>Settings</em> -&gt; <em>Accessibility</em> -&gt; <em>Zoom</em>. It could cause element coordinates miscalculation.</p>
+<h3 id="expose-more-elements-if-needed">Expose more elements if needed</h3>
+<p>In some cases, enabling of the below preferences helps to make some view elements accessible. Appium does not modify these settings automatically, since they could affect the way your application under test performs. Please change them manually if needed.</p>
+<ul>
+<li>Turn <code>Spoken Content</code> in <em>Settings</em> -&gt; <em>Accessibility</em> on</li>
+<li>Turn <code>Speak Selection</code> in <em>Settings</em> -&gt; <em>Accessibility</em> on</li>
+</ul>
+<p>Note that the available accessibility content depends on the OS version.</p>
 
 
 
