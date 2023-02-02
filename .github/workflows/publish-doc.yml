@@ -18,9 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Setup Python
       uses: actions/setup-python@v4.5.0
     - run: pip install mkdocs==1.4.2 mkdocs-material==9.0.9 mkdocs-material-extensions==1.1.1 mike==1.1.2
