@@ -515,8 +515,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#appium-predicate-helpers" class="md-nav__link">
-    Appium predicate helpers
+  <a href="#available-attributes" class="md-nav__link">
+    Available Attributes
   </a>
   
 </li>
@@ -836,8 +836,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#appium-predicate-helpers" class="md-nav__link">
-    Appium predicate helpers
+  <a href="#available-attributes" class="md-nav__link">
+    Available Attributes
   </a>
   
 </li>
@@ -863,30 +863,27 @@
 
   <h1>iOS Predicates</h1>
 
-<p><em>NOTE</em>: iOS predicates are usable in iOS 9.3 and below using the <code>-ios uiautomation</code> locator strategy and they are usable in iOS 10 and above using the <code>-ios predicate string</code> locator strategy</p>
-<p>It is worth looking at <em>'-ios uiautomation'</em> search strategy with <strong>Predicates</strong>.
-<a href="https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/">UIAutomation JavaScript API</a> which has the following useful methods:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>(UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>(UIAElementArray) UIAElementArray.withPredicate(PredicateString predicateString)
-</code></pre></div>
-<p>Native JS search strategy (powered by Apple) provides much more flexibility and is like Xpath.
-<strong><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html">Predicates</a></strong> can be used to restrict an elements set to select only those ones for which some condition is true.</p>
-<p>'-ios uiautomation' example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// java</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElementsByIosUIAutomation</span><span class="p">(</span><span class="s">&quot;collectionViews()[0].cells().withPredicate(\&quot;ANY staticTexts.isVisible == TRUE\&quot;)&quot;</span><span class="p">);</span>
-</code></pre></div>
+<p><em>NOTE</em>: iOS predicates are usable via <code>-ios predicate string</code> and <code>-ios class chain</code> locator strategies</p>
+<p><em>NOTE</em>: It is worth looking at <a href="https://academy.realm.io/posts/nspredicate-cheatsheet/">NSPredicate Cheat Sheet</a>.</p>
+<p>Native predicate search strategy (powered by Apple XCTest) provides much flexibility and is much faster than XPath. <strong><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html">Predicates</a></strong> can be used to restrict a set of elements to select only those for which some condition evaluates to true.</p>
 <p>'-ios predicate string' example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// java</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElementsByIosNsPredicate</span><span class="p">(</span><span class="s">&quot;isWDVisible == 1&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// java</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;isVisible == 1&quot;</span><span class="p">));</span>
 </code></pre></div>
-<p>-  will select only those  <code>UIACollectionCell</code> elements that have visible <code>UIAStaticText</code> child elements, and themselves are childs of 1st <code>UIACollectionView</code> element that should be located under the main app window.  Here <code>staticTexts()</code> and <code>isVisible()</code> are methods available in <code>UIAElementArray</code> and <code>UIAElement</code> classes respectively. <strong>Note that <code>UIAElementArray</code> numbering begins with <code>0</code> unlike Xpath where indexes counting starts from <code>1</code></strong></p>
-<p>Here's a list of available Predicates (mostly taken from <a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html">Predicates Programming Guide</a>)</p>
+<p>'-ios class chain' example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// java</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSClassChain</span><span class="p">(</span><span class="s">&quot;**/XCUIElementTypeWindow[`label LIKE &#39;*yolo*&#39;`]&quot;</span><span class="p">));</span>
+</code></pre></div>
+<p>The first example would select all visible elements on the page and the second one, - all elements of type <code>XCUIElementTypeWindow</code> whose label contains <code>yolo</code>. Class chain queries allow to create much more
+complicated search expressions and may contain multiple predicates. Read <a href="https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules">Class Chain Queries Construction Rules</a> for more details on how to build such queries.</p>
 <h3 id="basic-comparisons">Basic Comparisons</h3>
 <p>= , ==
 - The left-hand expression is equal to the right-hand expression:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>tableViews()[1].cells().firstWithPredicate(&quot;label == &#39;Olivia&#39; &quot;)
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>same in Xpath: /UIATableView[2]/UIATableCell[@label = &#39;Olivia&#39;][1]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// java</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;label == &#39;Olivia&#39;&quot;</span><span class="p">));</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">// same in Xpath:</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//*[@label = &#39;Olivia&#39;]&quot;</span><span class="p">));</span>
 </code></pre></div></p>
 <p>>= , =>
 - The left-hand expression is greater than or equal to the right-hand expression.</p>
@@ -901,10 +898,9 @@
 <p>BETWEEN
 - The left-hand expression is between, or equal to either of, the values specified in the right-hand side. The right-hand side is a two value array (an array is required to specify order) giving upper and lower bounds. For example, <code>1 BETWEEN { 0 , 33 }</code>, or <code>$INPUT BETWEEN { $LOWER, $UPPER }</code>.
 In Objective-C, you could create a BETWEEN predicate as shown in the following example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>NSPredicate *betweenPredicate =
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    [NSPredicate predicateWithFormat: @&quot;attributeName BETWEEN %@&quot;, @[@1, @10]];
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;rect.x BETWEEN { 1, 100 }&quot;</span><span class="p">));</span>
 </code></pre></div>
-<p>This creates a predicate that matches <code>( ( 1 &lt;= attributeValue ) &amp;&amp; ( attributeValue &lt;= 10 ) )</code></p>
+<p>This creates a predicate that matches all elements whole left top coordinate is in range between 1 and 100.</p>
 <h3 id="boolean-value-predicates">Boolean Value Predicates</h3>
 <p>TRUEPREDICATE
 - A predicate that always evaluates to <code>TRUE</code> .</p>
@@ -918,57 +914,38 @@ In Objective-C, you could create a BETWEEN predicate as shown in the following e
 <p>NOT , !
 - Logical NOT.</p>
 <h3 id="string-comparisons">String Comparisons</h3>
-<p>String comparisons are by default case and diacritic sensitive. You can modify an operator using the key characters <code>c</code> and <code>d</code> within square braces to specify case and diacritic insensitivity respectively, for example <code>firstName BEGINSWITH[cd] $FIRST_NAME</code></p>
+<p>String comparisons are by default case and diacritic sensitive. You can modify an operator using the key characters <code>c</code> and <code>d</code> within square braces to specify case and diacritic insensitivity respectively, for example <code>`value BEGINSWITH[cd] 'bar'</code></p>
 <p>BEGINSWITH
 - The left-hand expression begins with the right-hand expression.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>scrollViews()[3].buttons().firstWithPredicate(&quot;name BEGINSWITH &#39;results toggle&#39; &quot;)
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>same in Xpath: /UIAScrollView[4]/UIAButton[starts-with(@name, &#39;results toggle&#39;)][1]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;type == &#39;XCUIElementTypeButton&#39; AND name BEGINSWITH &#39;results toggle&#39;&quot;</span><span class="p">));</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// same in Xpath:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//XCUIElementTypeButton[starts-with(@name, &#39;results toggle&#39;)]&quot;</span><span class="p">));</span>
 </code></pre></div>
 <p>CONTAINS
 - The left-hand expression contains the right-hand expression.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>tableViews()[1].cells().withPredicate(&quot;ANY collectionViews[0].buttons.name CONTAINS &#39;opera&#39;&quot;)
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>same in Xpath: /UIATableView[2]/UIATableCell[UIACollectionView[1]/UIAButton[contains(@name, &#39;opera&#39;)]]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;type == &#39;XCUIElementCollectionView&#39; AND name CONTAINS &#39;opera&#39;&quot;</span><span class="p">));</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">// same in Xpath:</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//XCUIElementCollectionView[contains(@name, &#39;opera&#39;)]&quot;</span><span class="p">));</span>
 </code></pre></div>
 <p>ENDSWITH
 - The left-hand expression ends with the right-hand expression.</p>
 <p>LIKE
 - The left hand expression equals the right-hand expression: ? and * are allowed as wildcard characters, where ? matches 1 character and * matches 0 or more characters. In Mac OS X v10.4, wildcard characters do not match newline characters.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>tableViews()[0].cells().firstWithPredicate(&quot;name LIKE &#39;*Total: $*&#39; &quot;)
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>same in Xpath: /UIATableView[1]/UIATableCell[matches(@name, &#39;.*Total: \$.*&#39;)][1]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;name LIKE &#39;*Total: $*&#39;&quot;</span><span class="p">));</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">// XPath1 does not have an alternative to the above expression</span>
 </code></pre></div>
 <p>MATCHES
 - The left hand expression equals the right hand expression using a regex -style comparison according to ICU v3 (for more details see the ICU User Guide for <a href="http://userguide.icu-project.org/strings/regexp">Regular Expressions</a>).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>tableViews().firstWithPredicate(&quot;value MATCHES &#39;.*of 7&#39; &quot;)
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>same in Xpath: /UIATableView[matches(@value, &#39;.*of 7&#39;)][1]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">appiumDriver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">iOSNsPredicateString</span><span class="p">(</span><span class="s">&quot;value MATCHES &#39;.*of [1-9]&#39;&quot;</span><span class="p">));</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1">// XPath1 does not have an alternative to the above expression</span>
 </code></pre></div>
 <h3 id="aggregate-operations">Aggregate Operations</h3>
-<p>ANY , SOME
-- Specifies any of the elements in the following expression. For example <code>ANY children.age &lt; 18</code> .</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>tableViews()[0].cells().firstWithPredicate(&quot;SOME staticTexts.name = &#39;red&#39;&quot;).staticTexts().withName(&#39;red&#39;)
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>same in Xpath: /UIATableView[1]/UIATableCell[UIAStaticText/@name = &#39;red&#39;][1]/UIAStaticText[@name = &#39;red&#39;]
-</code></pre></div>
-<p>ALL
-- Specifies all of the elements in the following expression. For example <code>ALL children.age &lt; 18</code> .</p>
-<p>NONE
-- Specifies none of the elements in the following expression. For example, <code>NONE children.age &lt; 18</code> . This is logically equivalent to <code>NOT (ANY ...)</code> .</p>
 <p>IN
 - Equivalent to an SQL IN operation, the left-hand side must appear in the collection specified by the right-hand side. For example, <code>name IN { 'Ben', 'Melissa', 'Matthew' }</code> . The collection may be an array, a set, or a dictionary—in the case of a dictionary, its values are used.</p>
-<p>array[index]
-- Specifies the element at the specified index in the array.</p>
-<p>array[FIRST]
-- Specifies the first element in the array.</p>
-<p>array[LAST]
-- Specifies the last element in the array.</p>
-<p>array[SIZE]
-- Specifies the size of the array
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>elements()[0].tableViews()[0].cells().withPredicate(&quot;staticTexts[SIZE] &gt; 2&quot;)
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>same in Xpath: /*[1]/UIATableView[1]/UIATableCell[count(UIAStaticText) &gt; 2]
-</code></pre></div></p>
 <h3 id="identifiers">Identifiers</h3>
 <p><strong>C style identifier</strong>
 - Any C style identifier that is not a reserved word.</p>
@@ -1009,22 +986,9 @@ In Objective-C, you could create a BETWEEN predicate as shown in the following e
 <h3 id="reserved-words">Reserved Words</h3>
 <p>The following words are reserved:</p>
 <p><code>AND, OR, IN, NOT, ALL, ANY, SOME, NONE, LIKE, CASEINSENSITIVE, CI, MATCHES, CONTAINS, BEGINSWITH, ENDSWITH, BETWEEN, NULL, NIL, SELF, TRUE, YES, FALSE, NO, FIRST, LAST, SIZE, ANYKEY, SUBQUERY, CAST, TRUEPREDICATE, FALSEPREDICATE</code></p>
-<h3 id="appium-predicate-helpers">Appium predicate helpers</h3>
-<p>Appium has <a href="https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68">helpers for predicate search</a> in app.js:</p>
-<ul>
-<li><code>getFirstWithPredicate</code></li>
-<li><code>getFirstWithPredicateWeighted</code></li>
-<li><code>getAllWithPredicate</code></li>
-<li><code>getNameContains</code></li>
-</ul>
-<p>Here's a Ruby example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Ruby example</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Various uses&#39;</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">predicate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;name contains[c] &#39;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2">&#39; || label contains[c] &#39;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2">&#39; || value contains[c] &#39;</span><span class="si">#{</span><span class="n">text</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">execute_script</span><span class="p">(</span><span class="sx">%Q(au.mainApp().getFirstWithPredicate(&quot;</span><span class="si">#{</span><span class="n">predicate</span><span class="si">}</span><span class="sx">&quot;);)</span><span class="p">)</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="nb">puts</span><span class="w"> </span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="c1"># Buttons, Various uses of UIButton</span>
-</code></pre></div>
+<h3 id="available-attributes">Available Attributes</h3>
+<p>Check the <a href="../element-attributes/">Element Attributes</a> document to know all element attribute
+names and types that are available for usage in predicate locators.</p>
 
 
 
