@@ -1,3 +1,10 @@
+## [4.16.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.10...v4.16.11) (2023-02-05)
+
+
+### Bug Fixes
+
+* update WDA to include snapshots/maxDepth fixes ([#1495](https://github.com/appium/appium-xcuitest-driver/issues/1495)) ([ccc30f8](https://github.com/appium/appium-xcuitest-driver/commit/ccc30f81329e149a6dc60c1c4b824052cdfb998d))
+
 ## [4.16.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.9...v4.16.10) (2023-01-17)
 
 
