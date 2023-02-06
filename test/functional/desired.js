@@ -23,12 +23,11 @@ function extractCapabilityValue (caps, capName) {
   return caps?.alwaysMatch?.[capName];
 }
 
-const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
+const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '11.3';
 const IS_ABOVE_IOS13 = util.compareVersions(PLATFORM_VERSION, '>=', '13.0');
-const DEVICE_NAME = process.env.DEVICE_NAME
-  ? process.env.DEVICE_NAME
-  : (IS_ABOVE_IOS13 ? 'iPhone 8' : 'iPhone 6');
-const DEVICE_NAME_FOR_TOUCH_ID = process.env.DEVICE_NAME_FOR_TOUCH_ID ? process.env.DEVICE_NAME_FOR_TOUCH_ID : 'iPhone 8';
+const DEVICE_NAME = process.env.DEVICE_NAME || (IS_ABOVE_IOS13 ? 'iPhone 8' : 'iPhone 6');
+const DEVICE_NAME_FOR_TOUCH_ID = process.env.DEVICE_NAME_FOR_TOUCH_ID || 'iPhone 8';
+const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
 const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const APPS = {
@@ -104,6 +103,6 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
 
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, FACEIDAPP_CAPS, DEVICE_NAME, SETTINGS_CAPS,
-  TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
+  PLATFORM_VERSION, TOUCHIDAPP_CAPS, FACEIDAPP_CAPS, DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD,
+  SETTINGS_CAPS, TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
 };
