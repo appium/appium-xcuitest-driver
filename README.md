@@ -49,3 +49,5 @@ the tests locally. These include:
   the root directory of the repo with the extension "xcconfig")
 * `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
   the npm installed one is not built for real device
+  
+  
