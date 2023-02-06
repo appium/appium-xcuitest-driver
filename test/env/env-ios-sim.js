@@ -27,16 +27,13 @@ function config () {
   } while (devicesRemaining);
 
   // Get the device based on a 5-day sliding window
-  const platformIndex = (moment().dayOfYear() * 5) % platforms.length + (parseInt(process.env.SAUCE_EMUSIM_DEVICE_INDEX, 10) || 0);
+  const platformIndex = (moment().dayOfYear() * 5) % platforms.length;
   const [CLOUD_PLATFORM_VERSION, CLOUD_DEVICE_NAME] = platforms[platformIndex % platforms.length];
 
   log.info(`Running tests on iOS ${CLOUD_PLATFORM_VERSION}, device "${CLOUD_DEVICE_NAME}"`);
 
   return {
     ...envBase,
-    SAUCE_EMUSIM: true,
-    SAUCE_USERNAME: process.env.SAUCE_USERNAME,
-    SAUCE_ACCESS_KEY: process.env.SAUCE_ACCESS_KEY,
     CLOUD_PLATFORM_VERSION: process.env.CLOUD_PLATFORM_VERSION || CLOUD_PLATFORM_VERSION,
     CLOUD_DEVICE_NAME: process.env.CLOUD_DEVICE_NAME || CLOUD_DEVICE_NAME,
   };

@@ -31,11 +31,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('status -', function () {
     it('should get the server status', async function () {
       let status = await driver.status();
-      if (process.env.SAUCE_EMUSIM) {
-        status.build.version.should.equal('Sauce Labs');
-      } else {
-        status.build.version.should.exist;
-      }
+      status.build.version.should.exist;
     });
 
     it('should return status immediately if another operation is in progress', async function () {
@@ -59,11 +55,6 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('session -', function () {
     it('should get session details with our caps merged with WDA response', async function () {
-      if (process.env.SAUCE_EMUSIM) {
-        // Sauce adds extraneous caps that are hard to test
-        this.skip();
-      }
-
       let actual = await driver.getSession(); // TODO: use a w3c compatible API
       // `borwserName` can be different
       ['UICatalog', 'UIKitCatalog'].should.include(actual.browserName);
