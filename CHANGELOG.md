@@ -1,3 +1,10 @@
+## [4.16.12](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.11...v4.16.12) (2023-02-06)
+
+
+### Bug Fixes
+
+* Update NOTCHED_DEVICE_SIZES for nativeWebTapStrict (part of [#1490](https://github.com/appium/appium-xcuitest-driver/issues/1490)) ([#1497](https://github.com/appium/appium-xcuitest-driver/issues/1497)) ([e2bbd94](https://github.com/appium/appium-xcuitest-driver/commit/e2bbd94e27d402776de235ff53abd714b7ae6ef0))
+
 ## [4.16.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.10...v4.16.11) (2023-02-05)
 
 
