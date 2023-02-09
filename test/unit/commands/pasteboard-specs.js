@@ -30,12 +30,12 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should not be called', async function () {
-      await driver.mobileSetPasteboard({content: 'bla'}).should.eventually.be.rejectedWith(/not supported/);
+      await driver.mobileSetPasteboard({content: 'bla'}).should.be.rejectedWith(/not supported/);
       setPasteboardStub.notCalled.should.be.true;
     });
 
     it('getPasteboard should not be called', async function () {
-      await driver.mobileGetPasteboard().should.eventually.be.rejectedWith(/not supported/);
+      await driver.mobileGetPasteboard().should.be.rejectedWith(/not supported/);
       getPasteboardStub.notCalled.should.be.true;
     });
   });
@@ -46,7 +46,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
-      await driver.mobileSetPasteboard().should.eventually.be.rejectedWith(/mandatory to set/);
+      await driver.mobileSetPasteboard().should.be.rejectedWith(/mandatory to set/);
       setPasteboardStub.notCalled.should.be.true;
     });
 

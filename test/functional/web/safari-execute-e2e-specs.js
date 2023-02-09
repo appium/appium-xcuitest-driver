@@ -41,7 +41,7 @@ describe('safari - execute -', function () {
 
     describe('synchronous', function () {
       it('should bubble up javascript errors', async function () {
-        await driver.executeScript(`'nan'--`, []).should.eventually.be.rejected;
+        await driver.executeScript(`'nan'--`, []).should.be.rejected;
       });
 
       it('should eval javascript', async function () {
@@ -70,7 +70,7 @@ describe('safari - execute -', function () {
         it('should catch stale or undefined element as arg', async function () {
           const el = await driver.findElement('id', 'useragent');
           return driver.executeScript(SCROLL_INTO_VIEW, [{'ELEMENT': (el.value + 1)}])
-            .should.eventually.be.rejected;
+            .should.be.rejected;
         });
 
         it('should be able to return multiple elements from javascript', async function () {
@@ -102,13 +102,13 @@ describe('safari - execute -', function () {
 
     //   it('should bubble up errors', async function () {
     //     await driver.executeAsync(`arguments[arguments.length - 1]('nan'--);`)
-    //       .should.eventually.be.rejectedWith(/operator applied to value that is not a reference/);
+    //       .should.be.rejectedWith(/operator applied to value that is not a reference/);
     //   });
 
     //   it('should timeout when callback is not invoked', async function () {
     //     await driver.setAsyncScriptTimeout(1000);
     //     await driver.executeAsync(`return 1 + 2`)
-    //       .should.eventually.be.rejectedWith(/Timed out waiting for/);
+    //       .should.be.rejectedWith(/Timed out waiting for/);
     //   });
     // });
   }

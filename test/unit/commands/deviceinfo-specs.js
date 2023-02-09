@@ -33,6 +33,6 @@ describe('get deviceinfo commands', function () {
 
   it('get device info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    await driver.mobileGetDeviceInfo().should.eventually.be.rejected;
+    await driver.mobileGetDeviceInfo().should.be.rejected;
   });
 });

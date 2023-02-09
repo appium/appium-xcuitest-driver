@@ -31,11 +31,11 @@ describe('proxy commands', function () {
       proxyStub.firstCall.args[2].some.should.eql('stuff');
     });
     it('should throw an error if no endpoint is given', async function () {
-      await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.eventually.be.rejectedWith(/endpoint/);
+      await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.be.rejectedWith(/endpoint/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if no method is given', async function () {
-      await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.eventually.be.rejectedWith(/GET, POST/);
+      await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {

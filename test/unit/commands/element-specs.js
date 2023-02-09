@@ -138,13 +138,13 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-        await driver.getContentSize(el).should.eventually.be.rejectedWith(/not yet implemented/);
+        await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
       });
     });
 
     it('should throw if trying to get contentSize of something other than table or collection', async function () {
       getAttrStub.returns('XCUIElementTypeStatusBar');
-      await driver.getContentSize(el).should.eventually.be.rejectedWith(/Can't get content size for type/);
+      await driver.getContentSize(el).should.be.rejectedWith(/Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
@@ -248,11 +248,11 @@ describe('element commands', function () {
     describe('failure', function () {
       it('should throw invalid argument exception for null', async function () {
         await driver.setValue(null, elementId)
-          .should.eventually.be.rejectedWith(/supported/);
+          .should.be.rejectedWith(/supported/);
       });
       it('should throw invalid argument exception for object', async function () {
         await driver.setValue({hi: 'there'}, elementId)
-          .should.eventually.be.rejectedWith(/supported/);
+          .should.be.rejectedWith(/supported/);
       });
     });
   });

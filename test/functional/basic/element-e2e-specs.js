@@ -329,7 +329,7 @@ describe('XCUITestDriver - elements -', function () {
       });
       describe('hide keyboard', function () {
         it('should pass if the keyboard is already hidden', async function () {
-          await driver.hideKeyboard().should.eventually.be.fulfilled;
+          await driver.hideKeyboard().should.be.fulfilled;
         });
       });
     });

@@ -464,10 +464,10 @@ describe('Safari - basics -', function () {
               }
             });
             it('should reject all functions', async function () {
-              await driver.addCookie(newCookie).should.eventually.be.rejectedWith(notImplementedRegExp);
-              await driver.getAllCookies().should.eventually.be.rejectedWith(notImplementedRegExp);
-              await driver.deleteCookie(newCookie.name).should.eventually.be.rejectedWith(notImplementedRegExp);
-              await driver.deleteAllCookies().should.eventually.be.rejectedWith(notImplementedRegExp);
+              await driver.addCookie(newCookie).should.be.rejectedWith(notImplementedRegExp);
+              await driver.getAllCookies().should.be.rejectedWith(notImplementedRegExp);
+              await driver.deleteCookie(newCookie.name).should.be.rejectedWith(notImplementedRegExp);
+              await driver.deleteAllCookies().should.be.rejectedWith(notImplementedRegExp);
             });
           });
         });

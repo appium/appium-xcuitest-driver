@@ -70,12 +70,12 @@ describe('Accessibility', function() {
     it('should enable reduce motion', async function() {
       caps = amendCapabilities(caps, { 'appium:reduceMotion': true });
       driver = await initSession(caps);
-      await getReduceMotion(driver).should.eventually.be.eql('1');
+      await getReduceMotion(driver).should.eventually.eql('1');
     });
     it('should disable reduce motion', async function() {
       caps = amendCapabilities(caps, { 'appium:reduceMotion': false });
       driver = await initSession(caps);
-      await getReduceMotion(driver).should.eventually.be.eql('0');
+      await getReduceMotion(driver).should.eventually.eql('0');
     });
   });
 
@@ -93,12 +93,12 @@ describe('Accessibility', function() {
     it('should enable reduce transparency', async function() {
       caps = amendCapabilities(caps, { 'appium:reduceTransparency': true });
       driver = await initSession(caps);
-      await getReduceTransparency(driver).should.eventually.be.eql('1');
+      await getReduceTransparency(driver).should.eventually.eql('1');
     });
     it('should disable reduce transparency', async function() {
       caps = amendCapabilities(caps, { 'appium:reduceTransparency': false });
       driver = await initSession(caps);
-      await getReduceTransparency(driver).should.eventually.be.eql('0');
+      await getReduceTransparency(driver).should.eventually.eql('0');
     });
   });
 });

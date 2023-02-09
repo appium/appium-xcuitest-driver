@@ -43,7 +43,7 @@ describe('safari - windows and frames', function () {
 
     it('should not be able to open js popup windows', async function () {
       await driver.executeScript("window.open('/test/guinea-pig2.html', null)", []);
-      await spinTitleEquals(driver, 'I am another page title', 5).should.eventually.be.rejected;
+      await spinTitleEquals(driver, 'I am another page title', 5).should.be.rejected;
     });
   });
 
@@ -86,7 +86,7 @@ describe('safari - windows and frames', function () {
 
       it('should throw nosuchwindow if there is not one', async function () {
         await driver.switchToWindow('noexistman')
-          .should.eventually.be.rejectedWith(/window could not be found/);
+          .should.be.rejectedWith(/window could not be found/);
       });
 
       it('should be able to open and close windows', async function () {
@@ -248,7 +248,7 @@ describe('safari - windows and frames', function () {
 
       it('should not switch to iframe by element of wrong type', async function () {
         const h1 = await driver.findElement('tag name', 'h1');
-        await driver.switchToFrame(h1).should.eventually.be.rejected;
+        await driver.switchToFrame(h1).should.be.rejected;
       });
 
       it('should switch back to default content from iframe', async function () {

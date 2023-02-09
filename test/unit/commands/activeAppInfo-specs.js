@@ -39,6 +39,6 @@ describe('get activeapp commands', function () {
 
   it('get active app info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    await driver.mobileGetActiveAppInfo().should.eventually.be.rejected;
+    await driver.mobileGetActiveAppInfo().should.be.rejected;
   });
 });

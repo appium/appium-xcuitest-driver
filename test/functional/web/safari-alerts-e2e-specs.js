@@ -60,7 +60,7 @@ describe('safari - alerts', function () {
     await alert.click();
     await acceptAlert(driver);
     await driver.getAlertText()
-      .should.eventually.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
+      .should.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
   });
   it.skip('should set text of prompt', async function () {
     const alert = await driver.$('#prompt1');
@@ -75,6 +75,6 @@ describe('safari - alerts', function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     await driver.sendAlertText('yes I do!')
-      .should.eventually.be.rejectedWith(/no input fields/);
+      .should.be.rejectedWith(/no input fields/);
   });
 });
