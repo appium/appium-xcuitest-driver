@@ -33,7 +33,7 @@ describe('XCUITestDriver - file movement', function() {
   describe('sim relative', function() {
     describe('files', function() {
       it('should not be able to fetch a file from the file system at large', async function() {
-        await driver.pullFile(__filename).should.eventually.be.rejected;
+          await driver.pullFile(__filename).should.be.rejected;
       });
 
       it('should be able to fetch the Address book', async function() {
@@ -43,7 +43,7 @@ describe('XCUITestDriver - file movement', function() {
 
       it('should not be able to fetch something that does not exist', async function() {
         await driver.pullFile('Library/AddressBook/nothere.txt')
-          .should.eventually.be.rejectedWith(/does not exist/);
+            .should.be.rejectedWith(/does not exist/);
       });
 
       it('should be able to push and pull a file', async function() {
@@ -69,18 +69,18 @@ describe('XCUITestDriver - file movement', function() {
 
         await driver.execute('mobile: deleteFile', { remotePath });
 
-        await pullFileAsString(driver, remotePath).should.eventually.be.rejectedWith(/does not exist/);
+          await pullFileAsString(driver, remotePath).should.be.rejectedWith(/does not exist/);
       });
     });
 
     describe('folders', function() {
       it('should not pull folders from file system', async function() {
-        await driver.pullFolder(__dirname).should.eventually.be.rejected;
+          await driver.pullFolder(__dirname).should.be.rejected;
       });
 
       it('should not be able to fetch a folder that does not exist', async function() {
         await driver.pullFolder('Library/Rollodex')
-          .should.eventually.be.rejectedWith(/does not exist/);
+            .should.be.rejectedWith(/does not exist/);
       });
 
       it('should pull all the files in Library/AddressBook', async function() {
@@ -125,7 +125,7 @@ describe('XCUITestDriver - file movement', function() {
 
       await driver.execute('mobile: deleteFile', { remotePath });
 
-      await pullFileAsString(driver, remotePath).should.eventually.be.rejectedWith(/does not exist/);
+        await pullFileAsString(driver, remotePath).should.be.rejectedWith(/does not exist/);
     });
   });
 });

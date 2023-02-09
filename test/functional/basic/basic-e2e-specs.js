@@ -198,7 +198,7 @@ describe('XCUITestDriver - basics -', function () {
 
     describe('retrieval -', function () {
       it('should throw an error when an invalid type is given', async function () {
-        await driver.getLogs('something-random').should.eventually.be.rejected;
+        await driver.getLogs('something-random').should.be.rejected;
       });
       it('should get system logs', async function () {
         (await driver.getLogs('syslog')).should.be.an('array');
@@ -248,7 +248,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('get geo location -', function () {
     it('should fail because of preference error', async function () {
       await driver.getGeoLocation()
-        .should.eventually.be.rejectedWith('Location service must be');
+        .should.be.rejectedWith('Location service must be');
     });
   });
 

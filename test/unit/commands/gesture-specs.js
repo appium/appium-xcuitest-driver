@@ -67,14 +67,14 @@ describe('gesture commands', function () {
   describe('mobile methods', function () {
     describe('anything other than scroll', function () {
       it('should throw an error', async function () {
-        await driver.execute('mobile: somesuch').should.eventually.be.rejected;
+        await driver.execute('mobile: somesuch').should.be.rejected;
       });
     });
 
     describe('scroll', function () {
       it('should throw an error if no scroll type is specified', async function () {
         await driver.execute('mobile: scroll', {element: 4})
-          .should.eventually.be.rejectedWith(/Mobile scroll supports the following strategies/);
+          .should.be.rejectedWith(/Mobile scroll supports the following strategies/);
       });
       it('should pass through bare element', async function () {
         await driver.execute('mobile: scroll', {element: 4, direction: 'down'});
@@ -116,12 +116,12 @@ describe('gesture commands', function () {
 
       it('should throw an error if no direction is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4})
-          .should.eventually.be.rejected;
+          .should.be.rejected;
       });
 
       it('should throw an error if invalid direction', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'})
-          .should.eventually.be.rejected;
+          .should.be.rejected;
       });
 
       it('should proxy a swipe up request through to WDA', async function () {
@@ -138,16 +138,16 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4, scale: '', velocity: 1})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {element: 4, scale: 0, velocity: null})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a pinch request through to WDA', async function () {
@@ -164,16 +164,16 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {x: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {y: 200})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver.execute(`mobile: ${commandName}`, {x: '', y: 1})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {x: 1, y: null})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a doubleTap request for an element through to WDA', async function () {
@@ -208,20 +208,20 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {duration: 100, x: 1})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, y: 200})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {x: 100, y: 200})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver.execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {duration: 1, x: '', y: 1})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {duration: 1, x: 1, y: null})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a touchAndHold request for an element through to WDA', async function () {
@@ -246,18 +246,18 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {x: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {y: 200})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver.execute(`mobile: ${commandName}`, {x: '', y: 1})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {x: 1, y: null})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a tap request for an element through to WDA', async function () {
@@ -282,21 +282,21 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {})
-          .should.eventually.be.rejectedWith(/Element id is expected to be set/);
+          .should.be.rejectedWith(/Element id is expected to be set/);
         await driver.execute(`mobile: ${commandName}`, {element: 4})
-          .should.eventually.be.rejectedWith(/is expected to be equal/);
+          .should.be.rejectedWith(/is expected to be equal/);
         await driver.execute(`mobile: ${commandName}`, {order: 'next'})
-          .should.eventually.be.rejectedWith(/Element id is expected to be set/);
+          .should.be.rejectedWith(/Element id is expected to be set/);
       });
 
       it('should throw an error if offset value cannot be parsed', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'next', offset: 'bla'})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver.execute(`mobile: ${commandName}`, {element: 4, order: 'bla'})
-          .should.eventually.be.rejectedWith(/is expected to be equal/);
+          .should.be.rejectedWith(/is expected to be equal/);
       });
 
       it('should proxy a selectPickerWheel request for an element through to WDA', async function () {
@@ -314,28 +314,28 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromY: 1, toX: 100, toY: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, toX: 100, toY: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toY: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toX: 100})
-          .should.eventually.be.rejectedWith(/parameter is mandatory/);
+          .should.be.rejectedWith(/parameter is mandatory/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver.execute(`mobile: ${commandName}`, {duration: '', fromX: 1, fromY: 1, toX: 100, toY: 100})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: '', fromY: 1, toX: 100, toY: 100})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: null, toX: 100, toY: 100})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toX: 'blabla', toY: 100})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
         await driver.execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toX: 100, toY: NaN})
-          .should.eventually.be.rejectedWith(/should be a valid number/);
+          .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a dragFromToForDuration request for an element through to WDA', async function () {

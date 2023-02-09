@@ -63,13 +63,13 @@ describe('general commands', function () {
     it('should reject request for first visible child with no context', async function () {
       await driver.findNativeElementOrElements(
         'xpath', '/*[@firstVisible="true"]', false)
-        .should.eventually.be.rejectedWith(/without a context element/);
+        .should.be.rejectedWith(/without a context element/);
     });
 
     it('should reject request for multiple first visible children', async function () {
       await driver.findNativeElementOrElements(
         'xpath', '/*[@firstVisible="true"]', true)
-        .should.eventually.be.rejectedWith(/Cannot get multiple/);
+        .should.be.rejectedWith(/Cannot get multiple/);
     });
 
     it('should convert magic first visible child xpath to class chain', async function () {

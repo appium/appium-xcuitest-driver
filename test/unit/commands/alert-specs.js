@@ -54,7 +54,7 @@ describe('alert commands', function () {
 
     it('should reject request to WDA if action parameter is not supported', async function () {
       await driver.execute(`mobile: ${commandName}`, {action: 'blabla'})
-        .should.eventually.be.rejectedWith(/should be either/);
+        .should.be.rejectedWith(/should be either/);
     });
 
     it('should send accept alert request to WDA with encoded button label', async function () {

@@ -68,7 +68,7 @@ describe('general commands', function () {
 
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
-      await driver.touchId().should.eventually.be.rejected;
+      await driver.touchId().should.be.rejected;
       sendBiometricMatchSpy.notCalled.should.be.true;
     });
   });
@@ -101,7 +101,7 @@ describe('general commands', function () {
     it('should not be called on a real device', async function () {
       deviceStub.object.realDevice = true;
       deviceStub.object.allowTouchIdEnroll = true;
-      await driver.toggleEnrollTouchId().should.eventually.be.rejected;
+      await driver.toggleEnrollTouchId().should.be.rejected;
       enrollBiometricSpy.notCalled.should.be.true;
     });
   });

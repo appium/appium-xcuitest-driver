@@ -19,7 +19,7 @@ describe('location commands', function () {
         'GET').returns({authorizationStatus: 0, latitude: 0, longitude: 0});
 
       await driver.getGeoLocation({})
-        .should.eventually.be.rejectedWith('Location service must be');
+        .should.be.rejectedWith('Location service must be');
     });
 
     it('should be authorizationStatus === 3', async function () {
@@ -60,7 +60,7 @@ describe('location commands', function () {
 
     it('should fail when location object is wrong', async function () {
       await driver.setGeoLocation({})
-        .should.eventually.be.rejectedWith('Both latitude and longitude should be set');
+        .should.be.rejectedWith('Both latitude and longitude should be set');
     });
 
     describe('on real device', function () {
