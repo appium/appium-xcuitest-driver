@@ -1189,8 +1189,8 @@ This API returns a map with the following entries:
 
 Name | Type | Description | Example
 --- | --- | --- | ---
-latitude | number | Measurement of distance north or south of the Equator. | 50.08546
-longitude | number | Measurement of distance east or west of the prime meridian. | -20.12345
+latitude | number | Measurement of distance north or south of the Equator. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation). | 50.08546
+longitude | number | Measurement of distance east or west of the prime meridian. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation).  | -20.12345
 
 ### mobile: setSimulatedLocation
 
