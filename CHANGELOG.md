@@ -1,3 +1,10 @@
+## [4.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.17.1...v4.18.0) (2023-02-20)
+
+
+### Features
+
+* Add simulated geolocation extensions ([#1503](https://github.com/appium/appium-xcuitest-driver/issues/1503)) ([cfb149b](https://github.com/appium/appium-xcuitest-driver/commit/cfb149be26b6dfc55771e6b5159b14c127f88268))
+
 ## [4.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.17.0...v4.17.1) (2023-02-20)
 
 
