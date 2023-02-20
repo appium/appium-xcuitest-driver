@@ -1,3 +1,10 @@
+## [4.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.17.0...v4.17.1) (2023-02-20)
+
+
+### Miscellaneous Chores
+
+* Bump pngjs from 6.0.0 to 7.0.0 ([#1504](https://github.com/appium/appium-xcuitest-driver/issues/1504)) ([e0bdc0b](https://github.com/appium/appium-xcuitest-driver/commit/e0bdc0b0ae18f6681ce9ca7f5328ec318061c724))
+
 ## [4.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.13...v4.17.0) (2023-02-20)
 
 
