@@ -1207,7 +1207,7 @@ longitude | number | yes | Measurement of distance east or west of the prime mer
 
 ### mobile: resetSimulatedLocation
 
-REsets the previously set simulated geolocation value.
+Resets the previously set simulated geolocation value.
 This functionality is only available since xcuitest driver version 4.18.
 Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
