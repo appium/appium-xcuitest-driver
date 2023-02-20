@@ -1176,3 +1176,41 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 url | string | yes | The URL to be opened. This parameter is manadatory. | https://apple.com, myscheme:yolo
 bundleId | string | no | The bundle identifier of an application to open the given url with. If not provided then the default application for the given url scheme is going to be used. | com.myapp.yolo
+
+### mobile: getSimulatedLocation
+
+Retrieves simulated geolocation value.
+This functionality is only available since xcuitest driver version 4.18.
+Xcode must be at version 14.3+ and iOS must be at version 16.4+.
+
+#### Returned Result
+
+This API returns a map with the following entries:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+latitude | number | Measurement of distance north or south of the Equator. | 50.08546
+longitude | number | Measurement of distance east or west of the prime meridian. | -20.12345
+
+### mobile: setSimulatedLocation
+
+Sets simulated geolocation value.
+This functionality is only available since xcuitest driver version 4.18.
+Xcode must be at version 14.3+ and iOS must be at version 16.4+.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+latitude | number | yes | Measurement of distance north or south of the Equator. | 50.08546
+longitude | number | yes | Measurement of distance east or west of the prime meridian. | -20.12345
+
+### mobile: resetSimulatedLocation
+
+REsets the previously set simulated geolocation value.
+This functionality is only available since xcuitest driver version 4.18.
+Xcode must be at version 14.3+ and iOS must be at version 16.4+.
+
+> **Warning**
+> Do not forget to reset the simulated geolocation value after your automated test is finished.
+> If the value is not reset explcitly then the simulated one will remain until the next device restart.
