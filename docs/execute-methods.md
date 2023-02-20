@@ -1163,3 +1163,16 @@ Updates preferences of Mobile Safari on Simulator
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 preferences | map | yes | An object containing Mobile Safari preferences to be updated. The list of available setting names and their values could be retrieved by changing the corresponding Safari settings under Preferences-&gt;Safari and then inspecting `Library/Preferences/com.apple.mobilesafari.plist` file inside of `com.apple.mobilesafari` app container. The full path to the Mobile Safari's container could be retrieved from `xcrun simctl get_app_container <sim_udid> com.apple.mobilesafari data` command output. Use the `xcrun simctl spawn <sim_udid> defaults read <path_to_plist>` command to print the actual .plist content to the Terminal. | { ShowTabBar: 0, WarnAboutFraudulentWebsites: 0 }
+
+### mobile: deepLink
+
+Opens the given URL with the default or the given application.
+This functionality is only available since xcuitest driver version 4.17.
+Xcode must be at version 14.3+ and iOS must be at version 16.4+.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+url | string | yes | The URL to be opened. This parameter is manadatory. | https://apple.com, myscheme:yolo
+bundleId | string | no | The bundle identifier of an application to open the given url with. If not provided then the default application for the given url scheme is going to be used. | com.myapp.yolo
