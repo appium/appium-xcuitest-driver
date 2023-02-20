@@ -1,3 +1,10 @@
+## [4.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.13...v4.17.0) (2023-02-20)
+
+
+### Features
+
+* Add deepLink extension ([#1502](https://github.com/appium/appium-xcuitest-driver/issues/1502)) ([067179b](https://github.com/appium/appium-xcuitest-driver/commit/067179beda19ca478d2d08b59ffb864ba6c9bbdb))
+
 ## [4.16.13](https://github.com/appium/appium-xcuitest-driver/compare/v4.16.12...v4.16.13) (2023-02-17)
 
 
