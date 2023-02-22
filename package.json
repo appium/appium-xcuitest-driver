@@ -31,7 +31,7 @@
     ],
     "mainClass": "XCUITestDriver",
     "scripts": {
-      "build-wda": "./build/lib/build-wda.js",
+      "build-wda": "./scripts/build-wda.js",
       "open-wda": "./scripts/open-wda.js"
     },
     "schema": {
