@@ -93,11 +93,11 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       });
 
       it('should be able to set a secure cookie', async function () {
-        let cookies = await driver.allCookies();
+        let cookies = await driver.getCookies();
         doesNotIncludeCookie(cookies, secureCookie);
 
         await driver.setCookie([secureCookie]);
-        cookies = await driver.allCookies();
+        cookies = await driver.getCookies();
 
         doesIncludeCookie(cookies, secureCookie);
 
@@ -106,7 +106,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       });
       it('should be able to set a secure cookie', async function () {
         await driver.setCookie([secureCookie]);
-        let cookies = await driver.allCookies();
+        let cookies = await driver.getCookies();
 
         doesIncludeCookie(cookies, secureCookie);
 
@@ -115,7 +115,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
 
         await driver.deleteCookie(secureCookie.name);
 
-        cookies = await driver.allCookies();
+        cookies = await driver.getCookies();
         doesNotIncludeCookie(cookies, secureCookie);
       });
     });
