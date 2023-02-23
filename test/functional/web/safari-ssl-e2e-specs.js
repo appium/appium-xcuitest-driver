@@ -60,13 +60,13 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       try {
         driver = await initSession(caps);
         await driver.getPageSource().should.eventually.include('Arbitrary text');
-        await driver.quit();
+        await deleteSession();
         await B.delay(1000);
 
         // Now do another session using the same cert to verify that it still works
         // (Don't do it on CLOUD. Restarting is too slow)
         if (!process.env.CLOUD) {
-          await driver.init(caps);
+          driver = await initSession(caps);
           await driver.url(LOCAL_HTTPS_URL);
           await driver.getPageSource().should.eventually.include('Arbitrary text');
         }
