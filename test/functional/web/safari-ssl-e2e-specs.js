@@ -67,7 +67,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         // (Don't do it on CLOUD. Restarting is too slow)
         if (!process.env.CLOUD) {
           await driver.init(caps);
-          await driver.get(LOCAL_HTTPS_URL);
+          await driver.url(LOCAL_HTTPS_URL);
           await driver.getPageSource().should.eventually.include('Arbitrary text');
         }
       } finally {
@@ -87,7 +87,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
       });
 
       beforeEach(async function () {
-        await driver.get(LOCAL_HTTPS_URL);
+        await driver.url(LOCAL_HTTPS_URL);
         await driver.setCookie(oldCookie1);
         await driver.deleteCookie(secureCookie.name);
       });
