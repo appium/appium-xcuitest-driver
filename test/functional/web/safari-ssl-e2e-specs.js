@@ -59,7 +59,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
     it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
       try {
         driver = await initSession(caps);
-        await driver.source().should.eventually.include('Arbitrary text');
+        await driver.getPageSource().should.eventually.include('Arbitrary text');
         await driver.quit();
         await B.delay(1000);
 
@@ -68,7 +68,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         if (!process.env.CLOUD) {
           await driver.init(caps);
           await driver.get(LOCAL_HTTPS_URL);
-          await driver.source().should.eventually.include('Arbitrary text');
+          await driver.getPageSource().should.eventually.include('Arbitrary text');
         }
       } finally {
         await deleteSession();
