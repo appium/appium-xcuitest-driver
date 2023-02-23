@@ -1,3 +1,10 @@
+## [4.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.0...v4.18.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* Update WDA build scipt ([#1506](https://github.com/appium/appium-xcuitest-driver/issues/1506)) ([ad84172](https://github.com/appium/appium-xcuitest-driver/commit/ad841721549513ebcb1accc7840667d6898e023f))
+
 ## [4.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.17.1...v4.18.0) (2023-02-20)
 
 
