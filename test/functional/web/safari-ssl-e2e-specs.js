@@ -1,12 +1,13 @@
 import chai from 'chai';
+import os from 'os';
+import https from 'https';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { MOCHA_TIMEOUT, initSession, deleteSession } from '../helpers/session';
+import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import {
   doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1
 } from './helpers';
 import { SAFARI_CAPS, amendCapabilities } from '../desired';
-import https from 'https';
 
 
 const pem = B.promisifyAll(require('pem'));
@@ -18,15 +19,11 @@ const HTTPS_PORT = 9762;
 
 const LOCAL_HTTPS_URL = `https://localhost:${HTTPS_PORT}/`;
 
-const caps = amendCapabilities(SAFARI_CAPS, {
-  'appium:safariInitialUrl': LOCAL_HTTPS_URL,
-  'appium:noReset': true,
-});
-
+let caps;
 let pemCertificate;
 
 if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
-  describe.skip('Safari SSL', function () {
+  describe('Safari SSL', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let sslServer, driver;
@@ -47,7 +44,12 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         res.end('Arbitrary text');
       }).listen(HTTPS_PORT);
 
-      caps.customSSLCert = pemCertificate;
+      caps = amendCapabilities(SAFARI_CAPS, {
+        'appium:safariInitialUrl': LOCAL_HTTPS_URL,
+        'appium:noReset': true,
+        'appium:customSSLCert': pemCertificate + os.EOL,
+        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+      });
     });
     after(async function () {
       await deleteSession();
