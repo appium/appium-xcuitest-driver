@@ -88,7 +88,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
 
       beforeEach(async function () {
         await driver.url(LOCAL_HTTPS_URL);
-        await driver.setCookie([oldCookie1]);
+        await driver.setCookies([oldCookie1]);
         await driver.deleteCookie(secureCookie.name);
       });
 
@@ -96,7 +96,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         let cookies = await driver.getCookies();
         doesNotIncludeCookie(cookies, secureCookie);
 
-        await driver.setCookie([secureCookie]);
+        await driver.setCookies([secureCookie]);
         cookies = await driver.getCookies();
 
         doesIncludeCookie(cookies, secureCookie);
@@ -105,7 +105,7 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         doesIncludeCookie(cookies, oldCookie1);
       });
       it('should be able to set a secure cookie', async function () {
-        await driver.setCookie([secureCookie]);
+        await driver.setCookies([secureCookie]);
         let cookies = await driver.getCookies();
 
         doesIncludeCookie(cookies, secureCookie);
