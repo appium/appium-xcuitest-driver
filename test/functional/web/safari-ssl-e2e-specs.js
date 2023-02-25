@@ -99,26 +99,41 @@ if (!process.env.REAL_DEVICE && !process.env.CLOUD) {
         doesNotIncludeCookie(cookies, secureCookie);
 
         await driver.setCookies([secureCookie]);
+
         cookies = await driver.getCookies();
-
         doesIncludeCookie(cookies, secureCookie);
+      });
 
-        // should not clobber old cookie
+      it('should not delete an old cookie after setting a secure cookie', async function () {
+        let cookies = await driver.getCookies();
+        doesIncludeCookie(cookies, oldCookie1);
+
+        await driver.setCookies([secureCookie]);
+
+        cookies = await driver.getCookies();
         doesIncludeCookie(cookies, oldCookie1);
       });
-      it('should be able to set a secure cookie', async function () {
+
+      it('should be able to delete a secure cookie', async function () {
         await driver.setCookies([secureCookie]);
         let cookies = await driver.getCookies();
-
         doesIncludeCookie(cookies, secureCookie);
-
-        // should not clobber old cookie
-        doesIncludeCookie(cookies, oldCookie1);
 
         await driver.deleteCookie(secureCookie.name);
 
         cookies = await driver.getCookies();
         doesNotIncludeCookie(cookies, secureCookie);
+      });
+
+      it('should not delete a cookie after deleting a secure cookie', async function () {
+        await driver.setCookies([secureCookie]);
+        let cookies = await driver.getCookies();
+        doesIncludeCookie(cookies, oldCookie1);
+
+        await driver.deleteCookie(secureCookie.name);
+
+        cookies = await driver.getCookies();
+        doesIncludeCookie(cookies, oldCookie1);
       });
     });
   });
