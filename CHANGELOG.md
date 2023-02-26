@@ -1,3 +1,10 @@
+## [4.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.1...v4.18.2) (2023-02-26)
+
+
+### Miscellaneous Chores
+
+* remove unused cookies code ([#1508](https://github.com/appium/appium-xcuitest-driver/issues/1508)) ([1f5e2c4](https://github.com/appium/appium-xcuitest-driver/commit/1f5e2c4ef17b2698a4f8a156fcccac7f3406b659))
+
 ## [4.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.0...v4.18.1) (2023-02-23)
 
 
