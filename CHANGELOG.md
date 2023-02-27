@@ -1,3 +1,10 @@
+## [4.18.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.2...v4.18.3) (2023-02-27)
+
+
+### Miscellaneous Chores
+
+* Bump @appium/docutils from 0.1.6 to 0.2.2 ([#1509](https://github.com/appium/appium-xcuitest-driver/issues/1509)) ([5e7c927](https://github.com/appium/appium-xcuitest-driver/commit/5e7c927353e38b096d0e7e82f52163e0e022e6bd))
+
 ## [4.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.1...v4.18.2) (2023-02-26)
 
 
