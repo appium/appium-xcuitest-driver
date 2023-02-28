@@ -1,3 +1,10 @@
+## [4.18.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.3...v4.18.4) (2023-02-28)
+
+
+### Miscellaneous Chores
+
+* Short circuit if the app under test crashes while checking for alerts ([#1510](https://github.com/appium/appium-xcuitest-driver/issues/1510)) ([5684cdf](https://github.com/appium/appium-xcuitest-driver/commit/5684cdf8c55a2d6a59d51e56c94bf0cec01f79a4))
+
 ## [4.18.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.2...v4.18.3) (2023-02-27)
 
 
