@@ -65,12 +65,9 @@ describe('Safari SSL', function () {
        await B.delay(1000);
 
        // Now do another session using the same cert to verify that it still works
-       // (Don't do it on CLOUD. Restarting is too slow)
-       if (!process.env.CLOUD) {
-         driver = await initSession(caps);
-         await driver.url(LOCAL_HTTPS_URL);
-         await driver.getPageSource().should.eventually.include('Arbitrary text');
-       }
+       driver = await initSession(caps);
+       await driver.url(LOCAL_HTTPS_URL);
+       await driver.getPageSource().should.eventually.include('Arbitrary text');
      } finally {
        await deleteSession();
      }
