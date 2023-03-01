@@ -254,7 +254,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI || process.env.REAL_DEVICE) {
+      if (process.env.CI) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
         return this.skip();
@@ -265,7 +265,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI || process.env.REAL_DEVICE) {
+      if (process.env.CI) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
         return this.skip();
@@ -276,9 +276,6 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('lock -', function () {
     it('should properly lock and unlock the device', async function () {
-      if (process.env.REAL_DEVICE) {
-        return this.skip();
-      }
       try {
         await driver.lock();
         (await driver.isLocked()).should.be.true;
