@@ -7,10 +7,6 @@ import { killAllSimulators as simKill } from 'appium-ios-simulator';
 
 
 async function killAllSimulators () {
-  if (process.env.CLOUD) {
-    return;
-  }
-
   const simctl = new Simctl();
   const allDevices = _.flatMap(_.values(await simctl.getDevices()));
   const bootedDevices = allDevices.filter((device) => device.state === 'Booted');

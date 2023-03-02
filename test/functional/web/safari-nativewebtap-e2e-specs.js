@@ -29,14 +29,8 @@ const PAGE_3_TITLE = 'Another Page: page 3';
 describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
 
-  let devices = [];
+  const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
   before(function () {
-    if (process.env.REAL_DEVICE) {
-      // skip, by not having any devices in the list
-    } else {
-      devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
-    }
-
     async function loadPage (driver, url) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);

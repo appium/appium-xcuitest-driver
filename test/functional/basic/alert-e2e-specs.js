@@ -42,7 +42,7 @@ describe('XCUITestDriver - alerts -', function () {
   it('should detect Simple', async function () {
     let el = await driver.$('~Simple');
     await el.click();
-    await B.delay(process.env.CLOUD ? 10000 : 2000);
+    await B.delay(2000);
 
     (await driver.getAlertText()).should.include('A Short Title Is Best');
     await driver.dismissAlert();

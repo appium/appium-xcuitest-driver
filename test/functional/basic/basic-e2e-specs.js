@@ -35,11 +35,6 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should return status immediately if another operation is in progress', async function () {
-      // Sauce EmuSim/RDC don't seem to support getting status and running an operation concurrently
-      if (process.env.CLOUD) {
-        this.skip();
-      }
-
       await driver.setImplicitTimeout(10000);
       const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
@@ -101,18 +96,7 @@ describe('XCUITestDriver - basics -', function () {
         delete expected.showXcodeLog;
       }
 
-      if (process.env.CLOUD) {
-        delete expected.app;
-        delete expected[process.env.APPIUM_BUNDLE_CAP];
-
-        delete expected.name;
-        delete expected.build;
-
-        // Cloud has several extraneous keys. Check if the caps contain expected subset only.
-        actual.should.containSubset(expected);
-      } else {
-        actual.should.eql(expected);
-      }
+      actual.should.eql(expected);
     });
   });
 
@@ -270,7 +254,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI || process.env.REAL_DEVICE) {
+      if (process.env.CI) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
         return this.skip();
@@ -281,7 +265,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI || process.env.REAL_DEVICE) {
+      if (process.env.CI) {
         // skip on Travis, since Appium process should have access to system accessibility
         // in order to run this method successfully
         return this.skip();
@@ -292,9 +276,6 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('lock -', function () {
     it('should properly lock and unlock the device', async function () {
-      if (process.env.REAL_DEVICE) {
-        return this.skip();
-      }
       try {
         await driver.lock();
         (await driver.isLocked()).should.be.true;

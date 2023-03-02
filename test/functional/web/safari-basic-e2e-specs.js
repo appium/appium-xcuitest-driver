@@ -35,9 +35,7 @@ describe('Safari - basics -', function () {
     });
 
     it('should start a session with default init', async function () {
-      const expectedTitle = process.env.REAL_DEVICE
-        ? ''
-        : 'Appium/welcome';
+      const expectedTitle = 'Appium/welcome';
       driver = await initSession(amendCapabilities(SAFARI_CAPS, {
         'appium:noReset': false,
         'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
