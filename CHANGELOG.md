@@ -1,3 +1,15 @@
+## [4.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.4...v4.19.0) (2023-03-03)
+
+
+### Features
+
+* Allow to skip app install if a newer/same app version is already installed ([#1514](https://github.com/appium/appium-xcuitest-driver/issues/1514)) ([a79cc4e](https://github.com/appium/appium-xcuitest-driver/commit/a79cc4e9f6e1c4e83cc2224a70381427ecc48329))
+
+
+### Code Refactoring
+
+* cleanup process.env.CLOUD and process.env.REAL_DEVICE ([#1513](https://github.com/appium/appium-xcuitest-driver/issues/1513)) ([579b1ee](https://github.com/appium/appium-xcuitest-driver/commit/579b1ee62288876d569cb6ae2c222a2658eb4c59))
+
 ## [4.18.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.3...v4.18.4) (2023-02-28)
 
 
