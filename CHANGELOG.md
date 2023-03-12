@@ -1,3 +1,11 @@
+## [4.19.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.19.0...v4.19.1) (2023-03-12)
+
+
+### Bug Fixes
+
+* Make sure the app is not reinstalled if noReset is requested ([4e8ccba](https://github.com/appium/appium-xcuitest-driver/commit/4e8ccba99d5e7b491ecdca0d5e17188e76165223))
+* Tune app install condition ([d64805b](https://github.com/appium/appium-xcuitest-driver/commit/d64805b80fb1f1ab4a13fa1ebcdbb8915548d883))
+
 ## [4.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.18.4...v4.19.0) (2023-03-03)
 
 
