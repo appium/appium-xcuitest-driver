@@ -1,6 +1,6 @@
 # appium-xcuitest-driver
 
-[![NPM version](http://img.shields.io/npm/v/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
+[![npm version](http://img.shields.io/npm/v/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
 [![Downloads](http://img.shields.io/npm/dm/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
 
 [![Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml/badge.svg)](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml)
@@ -19,23 +19,23 @@ The [Documentation](https://appium.github.io/appium-xcuitest-driver) is hosted s
 
 ## Contributing & Development
 
-To install the project check it out from GitHub and run:
+Clone this project from GitHub and run:
 
-```
+```bash
 npm install
 ```
 
 To watch changes during the development:
 
-```
+```bash
 npm run watch
 ```
 
 To run unit/functional tests:
 
-```
-npm test
-npm e2e-test
+```bash
+npm test # unit 
+npm run e2e-test # functional
 ```
 
 There are also a number of environment variables that can be used when running
@@ -49,5 +49,3 @@ the tests locally. These include:
   the root directory of the repo with the extension "xcconfig")
 * `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
   the npm installed one is not built for real device
-  
-  
