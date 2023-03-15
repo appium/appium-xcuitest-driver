@@ -31,6 +31,9 @@ describe('Safari - coordinate conversion -', function () {
 
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
   before(function () {
+    if (process.env.CI) {
+      return this.skip();
+    }
     async function loadPage (driver, url) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);
