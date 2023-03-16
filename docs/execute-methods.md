@@ -400,7 +400,7 @@ timeoutSeconds | number | no | For how long to wait until the notification is de
 ### mobile: performIoHidEvent
 
 Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
-in [XNU kernel IO HID usage tables](https://unix.superglobalmegacorp.com/xnu/newsrc/iokit/IOKit/hidsystem/IOHIDUsageTables.h.html).
+in [HID Usage Tables](https://developer.apple.com/documentation/hiddriverkit/hid_usage_tables).
 For example, in order to emulate single press on Home button the extension should be called with the following arguments:
 - page: `0x0C` (`kHIDPage_Consumer`, select the `Customer` page)
 - usage: `0x40` (`kHIDUsage_Csmr_Menu`, the `Csmr` prefix here means this usage is dedicated to the `Customer` page)
