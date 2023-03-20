@@ -82,7 +82,7 @@
     "fancy-log": "^2.0.0",
     "js2xmlparser2": "^0.x",
     "lodash": "^4.17.10",
-    "lru-cache": "^7.0.1",
+    "lru-cache": "^8.0.4",
     "moment": "^2.24.0",
     "moment-timezone": "^0.x",
     "node-simctl": "^7.1.12",
