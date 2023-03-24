@@ -221,6 +221,11 @@ This would make the device management more flexible, but you'd need to know abou
 > Generic builds with `CODE_SIGNING_ALLOWED=NO` are available for each version tag at https://github.com/appium/WebDriverAgent/releases.
 > It is recommended to sign packages with a wildcard (`*`) provisioning profile. Such profiles require a paid Apple Developer account. In case of a free account, you may need to update bundle id properly before building the WebDriverAgent package.
 
+
+#### Create an Offline Provisioning Profile
+
+Apple requires a device to have a live internet connection to trust the code sign properly since iOS 16. An offline enabled provisiong profile allows you to avoid the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) about the detail steps.
+
 ### Finding WebDriverAgent project root on the local file system
 
 WebDriverAgent Xcode project is bundled with [appium-webdriveragent](https://www.npmjs.com/package/appium-webdriveragent) NPM module. This means as soon as you could find WDA location on the local file system as soon as you know where this npm module has been installed. The module is a direct dependency of [appium-xcuitest-driver](https://www.npmjs.com/package/appium-xcuitest-driver). The actual location of the module on the file system depends on major Appium version and on the way used to install Appium or XCUITest itself. All the below tutorials assume that you use *NPM* (Node Package Manager) to install Appium. We do not officially support other package managers, like yarn or brew, so the actual behavior might be different if you still use them.
