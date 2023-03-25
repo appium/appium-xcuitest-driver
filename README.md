@@ -28,7 +28,7 @@ npm install
 To watch changes during the development:
 
 ```
-npm run watch
+npm run dev
 ```
 
 To run unit/functional tests:
