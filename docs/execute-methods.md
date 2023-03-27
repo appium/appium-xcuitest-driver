@@ -281,7 +281,7 @@ name | string | yes | Name of the profile  | com.orgname.profile.mdmprofile
 
 #### Returned Result
 
-The content of the generated .mobileconfig file as base64-encoded string. This config might be useful for debugging purposes. If the certificate has been successfully set via CLI then nothing is returned.
+Returns status acknowledgment `{'Status': 'Acknowledged'}` if successfully removed certificate or `None` if unable to remove certificate.
 
 ### mobile: listCertificates
 
