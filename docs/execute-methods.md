@@ -269,6 +269,20 @@ isRoot | boolean | no | This option defines where the certificate should be inst
 
 The content of the generated .mobileconfig file as base64-encoded string. This config might be useful for debugging purposes. If the certificate has been successfully set via CLI then nothing is returned.
 
+### mobile: removeCertificate
+
+Removes installed certificate for real devices only if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine since driver version 4.19.2.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+---  | --- | --- | --- | ---
+name | string | yes | Name of the profile  | com.orgname.profile.mdmprofile
+
+#### Returned Result
+
+Returns status acknowledgment `{'Status': 'Acknowledged'}` if successfully removed certificate or `None` if unable to remove certificate.
+
 ### mobile: listCertificates
 
 Lists installed certificates for real devices only if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine since driver version 4.10.0.
