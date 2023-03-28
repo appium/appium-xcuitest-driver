@@ -224,7 +224,7 @@ This would make the device management more flexible, but you'd need to know abou
 
 #### Create an Offline Provisioning Profile
 
-Apple requires a device to have a live internet connection to trust the code sign properly since iOS 16. An offline enabled provisiong profile allows you to avoid the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) about the detail steps.
+Apple requires a device to have a live internet connection to trust the code sign properly since iOS 16. An offline enabled provisiong profile allows you to avoid the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) regarding detailed configuration steps.
 
 ### Finding WebDriverAgent project root on the local file system
 
