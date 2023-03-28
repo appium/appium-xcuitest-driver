@@ -1,3 +1,10 @@
+## [4.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.19.1...v4.20.0) (2023-03-28)
+
+
+### Features
+
+* Add command for mobileRemoveCertificate for real devices ([#1529](https://github.com/appium/appium-xcuitest-driver/issues/1529)) ([2255f31](https://github.com/appium/appium-xcuitest-driver/commit/2255f3129d952c804dde3c1328aaacceb1e7df79))
+
 ## [4.19.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.19.0...v4.19.1) (2023-03-12)
 
 
