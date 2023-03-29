@@ -1,3 +1,28 @@
+## [4.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.20.1...v4.21.0) (2023-03-29)
+
+
+### Features
+
+* build docs with typedoc ([ab354a5](https://github.com/appium/appium-xcuitest-driver/commit/ab354a57d8677b639949959f8a7112cb11cd9848))
+* refactor to support automatic command docs ([9b9e6fa](https://github.com/appium/appium-xcuitest-driver/commit/9b9e6fa860425f3ed2a9130d088889c05e3e10a9))
+
+
+### Bug Fixes
+
+* **driver:** use correct method name ([45330bb](https://github.com/appium/appium-xcuitest-driver/commit/45330bbbdc8b1d28a3dd43ba8628e80a9f278160))
+* **execute:** better validation of "mobile commands" ([0b9b9cb](https://github.com/appium/appium-xcuitest-driver/commit/0b9b9cb697d3c18e1d65a122ac5029ad6452c916))
+
+
+### Miscellaneous Chores
+
+* add wallaby config ([1915292](https://github.com/appium/appium-xcuitest-driver/commit/1915292b830d8f60a98af1b211f83d3982bfba7b))
+* fixup ([4fb1e8a](https://github.com/appium/appium-xcuitest-driver/commit/4fb1e8a1d31f807c92550f0677bf4e36fefd9076))
+* rename method installXCTestBundle => mobileInstallXCTestBundle for consistency ([11349cb](https://github.com/appium/appium-xcuitest-driver/commit/11349cb52bea66ee4b2d7f48aa81d8891e69641d))
+* rename runXCTest => mobileRunXCTest ([621ef8c](https://github.com/appium/appium-xcuitest-driver/commit/621ef8c6020c67bbc95bb7a44bbdf8a32a1a61e2))
+* try to skip problem tests ([3cfea5d](https://github.com/appium/appium-xcuitest-driver/commit/3cfea5d72984035c6ee84a06b019c4151017e34f))
+* upgrade appium ([fb6ed96](https://github.com/appium/appium-xcuitest-driver/commit/fb6ed9664246e63b8a49c35f2ab8a3231627bfd9))
+* use random port for phony https server ([382d296](https://github.com/appium/appium-xcuitest-driver/commit/382d2966d5043fe93e3646f88e7b0416f6e4d6f3))
+
 ## [4.20.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.20.0...v4.20.1) (2023-03-29)
 
 
