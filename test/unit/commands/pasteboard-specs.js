@@ -51,14 +51,12 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should invoke correct simctl method', async function () {
-      const opts = {
-        content: 'bla',
-        encoding: 'latin1',
-      };
-      await driver.mobileSetPasteboard(opts);
+      const content = 'bla';
+      const encoding = 'latin1';
+      await driver.mobileSetPasteboard(content, encoding);
       setPasteboardStub.calledOnce.should.be.true;
-      setPasteboardStub.firstCall.args[0].should.eql(opts.content);
-      setPasteboardStub.firstCall.args[1].should.eql(opts.encoding);
+      setPasteboardStub.firstCall.args[0].should.eql(content);
+      setPasteboardStub.firstCall.args[1].should.eql(encoding);
     });
 
     it('getPasteboard should invoke correct simctl method', async function () {
