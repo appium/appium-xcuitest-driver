@@ -1,3 +1,10 @@
+## [4.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.0...v4.21.1) (2023-03-29)
+
+
+### Miscellaneous Chores
+
+* **test:** fix a bunch of assertions ([a733d71](https://github.com/appium/appium-xcuitest-driver/commit/a733d7139050aca887766da81b5bba93f3f07f4c))
+
 ## [4.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.20.1...v4.21.0) (2023-03-29)
 
 
