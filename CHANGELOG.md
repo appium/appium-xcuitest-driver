@@ -1,3 +1,10 @@
+## [4.20.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.20.0...v4.20.1) (2023-03-29)
+
+
+### Bug Fixes
+
+* Add missing --name option to removeProfile ([#1530](https://github.com/appium/appium-xcuitest-driver/issues/1530)) ([a930762](https://github.com/appium/appium-xcuitest-driver/commit/a930762933a7008caab4fe1549e64e4d340b6ede))
+
 ## [4.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.19.1...v4.20.0) (2023-03-28)
 
 
