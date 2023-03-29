@@ -16,21 +16,20 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
-    - run: npm install
+    - run: npm ci
       name: Install dependencies
     - run: npm run build
       name: Run build
     - run: npm run test
       name: Run test
     - run: |
-        rm -rf package-lock.json
         npm prune --production
         rm -rf node_modules/appium
       name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
       name: Create shrinkwrap
-    - run: npm install --only=dev
-      name: Install dev decepdencies for the release
+    - run: npm ci --only=dev
+      name: Install dev dependencies for the release
     - run: npx semantic-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
