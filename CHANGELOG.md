@@ -1,3 +1,10 @@
+## [4.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.1...v4.21.2) (2023-03-31)
+
+
+### Bug Fixes
+
+* launchApp regression ([#1540](https://github.com/appium/appium-xcuitest-driver/issues/1540)) ([a66cb47](https://github.com/appium/appium-xcuitest-driver/commit/a66cb47f83ea9dd1ec70f227281957cd932cd037))
+
 ## [4.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.0...v4.21.1) (2023-03-29)
 
 
