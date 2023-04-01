@@ -1,3 +1,10 @@
+## [4.21.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.2...v4.21.3) (2023-04-01)
+
+
+### Bug Fixes
+
+* cookies regression: send Page commands for cookies handling ([#1534](https://github.com/appium/appium-xcuitest-driver/issues/1534)) ([908ed1a](https://github.com/appium/appium-xcuitest-driver/commit/908ed1a6d64e4522d95502e125bde32032a3e686))
+
 ## [4.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.1...v4.21.2) (2023-03-31)
 
 
