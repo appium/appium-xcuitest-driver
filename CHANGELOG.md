@@ -1,3 +1,11 @@
+## [4.21.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.3...v4.21.4) (2023-04-01)
+
+
+### Miscellaneous Chores
+
+* Bump get-port from 5.1.1 to 6.1.2 ([#1535](https://github.com/appium/appium-xcuitest-driver/issues/1535)) ([ff96d7c](https://github.com/appium/appium-xcuitest-driver/commit/ff96d7cfa209783f58fc053602b7e37889c6241f))
+* Bump rimraf from 3.0.2 to 4.4.1 ([#1536](https://github.com/appium/appium-xcuitest-driver/issues/1536)) ([8dd4515](https://github.com/appium/appium-xcuitest-driver/commit/8dd4515a3f10a090cd49881217fb98903339a786))
+
 ## [4.21.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.2...v4.21.3) (2023-04-01)
 
 
