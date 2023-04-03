@@ -6,6 +6,7 @@ import Simctl from 'node-simctl';
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
   driver.opts = {
+    // @ts-expect-error do not put random stuff on opts object
     device: {
       simctl: new Simctl(),
     }
@@ -30,6 +31,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should not be called', async function () {
+      // @ts-expect-error incorrect usage
       await driver.mobileSetPasteboard({content: 'bla'}).should.be.rejectedWith(/not supported/);
       setPasteboardStub.notCalled.should.be.true;
     });
@@ -46,6 +48,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
+      // @ts-expect-error incorrect usage
       await driver.mobileSetPasteboard().should.be.rejectedWith(/mandatory to set/);
       setPasteboardStub.notCalled.should.be.true;
     });

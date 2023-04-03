@@ -49,6 +49,7 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSettings', async function () {
     baseCaps.autoLaunch = true;
     const driver = await initSession(baseCaps);
+    // @ts-expect-error does this exist? I guess it does?
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
 
@@ -56,6 +57,7 @@ describe('tvOS', function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
     await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSettings'});
+    // @ts-expect-error does this exist? I guess it does?
     (await driver.elementByAccessibilityId('General')).should.exist;
   });
 });

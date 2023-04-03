@@ -38,8 +38,8 @@ describe('element commands', function () {
     });
 
     it('should call setValue', async function () {
-      await driver.setValueImmediate('hello', 2);
-      driver.setValue.should.have.been.calledOnceWithExactly('hello', 2);
+      await driver.setValueImmediate('hello', '2');
+      driver.setValue.should.have.been.calledOnceWithExactly('hello', '2');
       driver.setValue.should.have.returned(undefined);
     });
   });
@@ -295,7 +295,7 @@ describe('element commands', function () {
     /** @type {XCUITestDriver} */
     let driver;
 
-    const webEl = {ELEMENT: '5000'};
+    const webEl = {ELEMENT: '5000', 'element-6066-11e4-a52e-4f735466cecf': '5000'};
     const fixtureXOffset = 100;
     const fixtureYOffset = 200;
 

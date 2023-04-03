@@ -12,6 +12,14 @@ describe('general commands', function () {
 
   describe('findNativeElementOrElements', function () {
 
+    /**
+     *
+     * @param {string} strategy
+     * @param {string} selector
+     * @param {string} modSelector
+     * @param {string|null} modStrategy
+     * @param {boolean} mult
+     */
     async function verifyFind (strategy, selector, modSelector, modStrategy = null, mult = false) {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
@@ -84,14 +92,14 @@ describe('general commands', function () {
           '/element/ctx/element',
           'POST',
           {using: 'class chain', value: '*[1]'}
-        ).returns({ELEMENT: 1});
+        ).resolves({ELEMENT: 1});
         proxySpy.withArgs(
           '/element/ctx/element',
           'POST',
           {using: 'class chain', value: '*[2]'}
-        ).returns({ELEMENT: 2});
-        attribSpy.withArgs('visible', {ELEMENT: 1}).returns('false');
-        attribSpy.withArgs('visible', {ELEMENT: 2}).returns('true');
+        ).resolves({ELEMENT: 2});
+        attribSpy.withArgs('visible', {ELEMENT: 1}).resolves('false');
+        attribSpy.withArgs('visible', {ELEMENT: 2}).resolves('true');
         let el = await driver.findNativeElementOrElements('xpath',
           variant, false, {ELEMENT: 'ctx'});
         proxySpy.calledTwice.should.be.true;

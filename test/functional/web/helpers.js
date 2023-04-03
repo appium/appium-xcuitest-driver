@@ -65,7 +65,7 @@ async function spinTitleNotEquals (driver, wrongTitle, tries = 10, interval = 50
 }
 
 async function spinWait (fn, waitMs = 10000, intMs = 500) {
-  const tries = parseInt(waitMs / intMs, 10);
+  const tries = parseInt(String(waitMs / intMs), 10);
   await retryInterval(tries, intMs, fn);
 }
 

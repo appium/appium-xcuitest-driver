@@ -12,6 +12,7 @@ describe('screenshots commands', function () {
   beforeEach(function () {
     driver = new XCUITestDriver();
     driver.opts = {
+      // @ts-expect-error do not put random stuff on opts object
       device: {
         simctl: new Simctl(),
       }

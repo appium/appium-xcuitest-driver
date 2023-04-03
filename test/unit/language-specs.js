@@ -41,7 +41,7 @@ describe('language and locale', function () {
           alwaysMatch: {},
         }
       };
-      let desiredCapabilities = {
+      let desiredCapabilities = /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */({
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
@@ -49,7 +49,7 @@ describe('language and locale', function () {
         language: LANGUAGE,
         locale: LOCALE,
         bundleId: BUNDLE_ID,
-      };
+      });
 
       let driver = new XCUITestDriver(desiredCapabilities);
       let proxySpy = sinon.stub(driver, 'proxyCommand');
@@ -90,7 +90,7 @@ describe('language and locale', function () {
         }
       };
 
-      const desiredCapabilities = {
+      const desiredCapabilities = /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */({
         platformName: 'iOS',
         platformVersion: '9.3',
         deviceName: 'iPhone 6',
@@ -99,7 +99,7 @@ describe('language and locale', function () {
         locale: LOCALE,
         bundleId: BUNDLE_ID,
         processArguments
-      };
+      });
       let driver = new XCUITestDriver(desiredCapabilities);
       let proxySpy = sinon.stub(driver, 'proxyCommand');
       driver.validateDesiredCaps(desiredCapabilities);
