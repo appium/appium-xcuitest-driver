@@ -14,7 +14,7 @@ describe('file-movement', function () {
 
       bundleId.should.eql('io.appium.example');
       pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
-      containerType.should.eql('app');
+      /** @type {string} */(containerType).should.eql('app');
     });
     it('should parse with container root', async function () {
       const mntRoot = await tempDir.openDir();
@@ -22,7 +22,7 @@ describe('file-movement', function () {
 
       bundleId.should.eql('io.appium.example');
       pathInContainer.should.eql(mntRoot);
-      containerType.should.eql('documents');
+      /** @type {string} */(containerType).should.eql('documents');
     });
     it('should parse without container', async function () {
       const mntRoot = await tempDir.openDir();

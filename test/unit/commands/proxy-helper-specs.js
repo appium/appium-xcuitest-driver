@@ -31,10 +31,12 @@ describe('proxy commands', function () {
       proxyStub.firstCall.args[2].some.should.eql('stuff');
     });
     it('should throw an error if no endpoint is given', async function () {
+      // @ts-expect-error incorrect usage
       await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.be.rejectedWith(/endpoint/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if no method is given', async function () {
+      // @ts-expect-error incorrect usage
       await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });

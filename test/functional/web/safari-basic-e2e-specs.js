@@ -406,7 +406,7 @@ describe('Safari - basics -', function () {
 
           it('should be able to set a cookie with expiry', async function () {
             const expiredCookie = Object.assign({}, newCookie, {
-              expiry: parseInt(Date.now() / 1000, 10) - 1000, // set cookie in past
+              expiry: parseInt(String(Date.now() / 1000), 10) - 1000, // set cookie in past
               name: 'expiredcookie',
             });
 

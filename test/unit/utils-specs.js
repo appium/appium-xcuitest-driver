@@ -25,15 +25,19 @@ describe('utils', function () {
           return DERIVED_DATA_ROOT;
         }
       };
+      // @ts-ignore withMocks is wonky
       mocks.fs.expects('glob')
         .once()
         .returns([]);
+      // @ts-ignore withMocks is wonky
       mocks.fs.expects('walkDir')
         .once()
         .returns();
+        // @ts-ignore withMocks is wonky
       mocks.fs.expects('exists')
         .atLeast(1)
         .returns(true);
+      // @ts-ignore withMocks is wonky
       mocks.iosUtils.expects('clearLogs')
         .once()
         .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
@@ -47,15 +51,19 @@ describe('utils', function () {
           return DERIVED_DATA_ROOT;
         }
       };
+      // @ts-ignore withMocks is wonky
       mocks.fs.expects('glob')
         .once()
         .returns([]);
+      // @ts-ignore withMocks is wonky
       mocks.fs.expects('walkDir')
         .once()
         .returns();
+      // @ts-ignore withMocks is wonky
       mocks.fs.expects('exists')
         .atLeast(1)
         .returns(true);
+      // @ts-ignore withMocks is wonky
       mocks.iosUtils.expects('clearLogs')
         .once()
         .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
@@ -71,6 +79,7 @@ describe('utils', function () {
           return null;
         }
       };
+      // @ts-ignore withMocks is wonky
       mocks.iosUtils.expects('clearLogs')
         .never();
       await clearSystemFiles(wda);
@@ -125,6 +134,7 @@ describe('utils', function () {
 
   describe('isLocalHost', function () {
     it('should be false with invalid input, undefined', function () {
+      // @ts-expect-error invalid input
       isLocalHost(undefined).should.be.false;
     });
     it('should be false with invalid input, empty', function () {
