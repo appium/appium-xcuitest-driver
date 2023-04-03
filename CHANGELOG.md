@@ -1,3 +1,10 @@
+## [4.21.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.4...v4.21.5) (2023-04-03)
+
+
+### Bug Fixes
+
+* revert "chore: Bump get-port from 5.1.1 to 6.1.2 ([#1535](https://github.com/appium/appium-xcuitest-driver/issues/1535))" ([4d6303e](https://github.com/appium/appium-xcuitest-driver/commit/4d6303ef7f9173485d0a8d3bb8ede1f18b625331))
+
 ## [4.21.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.3...v4.21.4) (2023-04-01)
 
 
