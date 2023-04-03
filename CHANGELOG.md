@@ -1,3 +1,10 @@
+## [4.21.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.5...v4.21.6) (2023-04-03)
+
+
+### Miscellaneous Chores
+
+* **test:** clean up unit test ([794e09a](https://github.com/appium/appium-xcuitest-driver/commit/794e09ac6d25b486d1d2954ab2403192ee94c816))
+
 ## [4.21.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.4...v4.21.5) (2023-04-03)
 
 
