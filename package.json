@@ -115,8 +115,9 @@
     "e2e-test:native-web-tap": "mocha \"./test/functional/web/safari-nativewebtap-e2e-specs.js\" --exit --timeout 10m"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix"
+    "*.(js|ts)": [
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "prettier": {
