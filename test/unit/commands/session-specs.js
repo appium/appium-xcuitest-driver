@@ -8,16 +8,17 @@ describe('session commands', function () {
   let driver = new XCUITestDriver();
   driver.opts.udid = 'cecinestpasuneudid';
   let proxySpy = sinon.stub(driver, 'proxyCommand').callsFake(async (endpoint, method) => {
-    // eslint-disable-line require-await
     if (endpoint === '/' && method === 'GET') {
-      return {
+      // XXX this is synchronous
+      return await {
         capabilities: {
           sillyCap: true,
           app: 'LOL.app',
         },
       };
     }
-    return {};
+    // XXX this is synchronous
+    return await {};
   });
   let otherStubs = [
     sinon.stub(driver, 'getStatusBarHeight').resolves(20),
