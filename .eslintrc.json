@@ -15,5 +15,8 @@
         "@typescript-eslint/no-var-requires": "off"
       }
     }
-  ]
+  ],
+  "rules": {
+    "require-await": "error"
+  }
 }
