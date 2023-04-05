@@ -1,7 +1,7 @@
 import {Element, HTTPHeaders} from '@appium/types';
 import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
-import {EmptyObject, SetOptional} from 'type-fest';
+import {SetOptional} from 'type-fest';
 import {Page} from '../types';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';

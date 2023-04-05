@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import XCUITestDriver from '../../../lib/driver';
+import chai from 'chai';
 import sinonChai from 'sinon-chai';
 
 chai.use(sinonChai);
-
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
@@ -48,7 +48,7 @@ describe('general commands', function () {
       sandbox = sinon.createSandbox();
       // @ts-expect-error random stuff on opts again
       driver.opts.device = device = {
-        sendBiometricMatch: sandbox.stub()
+        sendBiometricMatch: sandbox.stub(),
       };
       // @ts-expect-error random stuff on opts again
       driver.opts.realDevice = false;
@@ -79,17 +79,17 @@ describe('general commands', function () {
   });
 
   describe('toggleEnrollTouchID', function () {
-      /** @type {import('sinon').SinonSandbox} */
-      let sandbox;
+    /** @type {import('sinon').SinonSandbox} */
+    let sandbox;
 
-      /** @type { {enrollBiometric: import('sinon').SinonStub} } */
-      let device;
+    /** @type { {enrollBiometric: import('sinon').SinonStub} } */
+    let device;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
       // @ts-expect-error random stuff on opts again
       driver.opts.device = device = {
-        enrollBiometric: sandbox.stub()
+        enrollBiometric: sandbox.stub(),
       };
       // @ts-expect-error random stuff on opts again
       driver.opts.realDevice = false;
@@ -120,9 +120,7 @@ describe('general commands', function () {
 
   describe('window size', function () {
     it('should be able to get the current window size with Rect', async function () {
-      proxyStub
-        .withArgs('/window/size', 'GET')
-        .resolves({width: 100, height: 20});
+      proxyStub.withArgs('/window/size', 'GET').resolves({width: 100, height: 20});
 
       await driver.getWindowRect();
       proxyStub.calledOnce.should.be.true;
@@ -139,8 +137,8 @@ describe('general commands', function () {
       alwaysMatch: {
         platformName: 'iOS',
         'appium:deviceName': 'bar',
-        'appium:app': '/fake'
-      }
+        'appium:app': '/fake',
+      },
     };
 
     beforeEach(function () {
@@ -159,11 +157,15 @@ describe('general commands', function () {
 
     it('should default to value sent in caps after session starts', async function () {
       (await driver.getSettings()).nativeWebTap.should.eql(false);
-      await driver.createSession(null, null, _.merge({}, baseCaps, {
-        alwaysMatch: {
-          'appium:nativeWebTap': true,
-        }
-      }));
+      await driver.createSession(
+        null,
+        null,
+        _.merge({}, baseCaps, {
+          alwaysMatch: {
+            'appium:nativeWebTap': true,
+          },
+        })
+      );
       (await driver.getSettings()).nativeWebTap.should.eql(true);
     });
 
@@ -180,15 +182,13 @@ describe('general commands', function () {
 
   describe('getDevicePixelRatio and getStatusBarHeight', function () {
     beforeEach(function () {
-      proxyStub
-        .withArgs('/wda/screen', 'GET')
-        .resolves({
-          statusBarSize: {
-            width: 100,
-            height: 20,
-          },
-          scale: 3,
-        });
+      proxyStub.withArgs('/wda/screen', 'GET').resolves({
+        statusBarSize: {
+          width: 100,
+          height: 20,
+        },
+        scale: 3,
+      });
     });
 
     it('should get the pixel ratio from WDA', async function () {

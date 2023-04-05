@@ -40,7 +40,7 @@ describe('session commands', function () {
 
   describe('getSession', function () {
     it('should merge caps with WDA response', async function () {
-      driver.caps = { ...driver.caps, platformName: 'iOS', app: 'NOTLOL.app' };
+      driver.caps = {...driver.caps, platformName: 'iOS', app: 'NOTLOL.app'};
       driver.deviceCaps = undefined;
       let res = await driver.getSession();
       proxySpy.calledOnce.should.be.true;
@@ -50,7 +50,7 @@ describe('session commands', function () {
         platformName: 'iOS',
         udid: 'cecinestpasuneudid',
         statBarHeight: 20,
-        viewportRect: {x: 1, y: 2, height: 3, width: 4},
+        viewportRect: {x: 1, y: 2, height: 3, width: 4, left: 0, top: 0},
         pixelRatio: 3,
       });
     });
