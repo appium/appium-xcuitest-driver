@@ -342,8 +342,8 @@ export const executeMethodMap = {
   'mobile: runXCTest': {
     command: 'mobileRunXCTest',
     params: {
-      required: ['testRunnerBundleId', 'appUnderTestBundleId', 'xcTestBundleId', 'args'],
-      optional: ['testType', 'env', 'timeout'],
+      required: ['testRunnerBundleId', 'appUnderTestBundleId', 'xctestBundleId'],
+      optional: ['args', 'testType', 'env', 'timeout'],
     },
   },
   'mobile: installXCTestBundle': {
