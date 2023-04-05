@@ -1,0 +1,59 @@
+name: Build Docs
+
+on:
+  push:
+    # this list of paths could potentially impact doc generation.
+    paths:
+      - 'typedoc.json'
+      - 'tsconfig.json'
+      - 'scripts/build-docs.js'
+      - 'package*.json'
+      - 'lib/**/*.ts'
+      - 'lib/**/*.js'
+      - 'docs/**'
+      - '.github/workflows/docs.yml' # this file
+      - '!ci-jobs/**'
+      - '!**/test/**'
+
+  pull_request:
+    paths:
+      - 'typedoc.json'
+      - 'tsconfig.json'
+      - 'scripts/build-docs.js'
+      - 'package*.json'
+      - 'lib/**/*.ts'
+      - 'lib/**/*.js'
+      - 'docs/**'
+      - '.github/workflows/docs.yml' # this file
+      - '!ci-jobs/**'
+      - '!**/test/**'
+
+    branches: [master]
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies (Node.js)
+        uses: bahmutov/npm-install@v1
+        with:
+          useRollingCache: true
+          install-command: npm ci
+      - name: Install dependencies (Python)
+        run: npm run install-docs-deps
+      - name: Configure Git User
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      - name: Build Docs
+        run: npm run build:docs
+      - name: Deploy Preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: site
+          preview-branch: docs-site
+          custom-url: 'appium.github.io/appium-xcuitest-driver'
