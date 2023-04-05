@@ -1,3 +1,14 @@
+## [4.21.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.7...v4.21.8) (2023-04-05)
+
+
+### Miscellaneous Chores
+
+* add wallaby config ([0e42a45](https://github.com/appium/appium-xcuitest-driver/commit/0e42a45c623d33024f212d0437431e4cf77c48b7))
+* pin all deps ([f0a54e5](https://github.com/appium/appium-xcuitest-driver/commit/f0a54e5a3f1e151084d23ae2f1bf2f3ac00f0f99))
+* update GHA workflows to use "npm ci" ([b9083fc](https://github.com/appium/appium-xcuitest-driver/commit/b9083fc34dc3d45176ec67dc5c590b9dc6996046))
+* update lint-staged config ([bb1af17](https://github.com/appium/appium-xcuitest-driver/commit/bb1af1793d7aa8400c67ca708e636b6c619abcf0))
+* **utils:** lint ([039c3c0](https://github.com/appium/appium-xcuitest-driver/commit/039c3c083cdcb68d99b80585c2bb77836711fa0d))
+
 ## [4.21.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.6...v4.21.7) (2023-04-04)
 
 
