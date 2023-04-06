@@ -1,3 +1,10 @@
+## [4.21.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.8...v4.21.9) (2023-04-06)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency appium to v2.0.0-beta.61 ([9eb21a0](https://github.com/appium/appium-xcuitest-driver/commit/9eb21a06d2d9add933392947060c0868cc580d8d))
+
 ## [4.21.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.7...v4.21.8) (2023-04-05)
 
 
