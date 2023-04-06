@@ -1,3 +1,10 @@
+## [4.21.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.9...v4.21.10) (2023-04-06)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency axios to v1.3.5 ([38c1b04](https://github.com/appium/appium-xcuitest-driver/commit/38c1b0479426bb14f95022e1c43c98c4a9ed8629))
+
 ## [4.21.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.8...v4.21.9) (2023-04-06)
 
 
