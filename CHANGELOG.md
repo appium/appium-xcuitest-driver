@@ -1,3 +1,10 @@
+## [4.21.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.10...v4.21.11) (2023-04-06)
+
+
+### Miscellaneous Chores
+
+* **ci:** attempt to get docs preview working ([8b0f34f](https://github.com/appium/appium-xcuitest-driver/commit/8b0f34fb8d2ae810db22fea7741935cee0d69c29))
+
 ## [4.21.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.9...v4.21.10) (2023-04-06)
 
 
