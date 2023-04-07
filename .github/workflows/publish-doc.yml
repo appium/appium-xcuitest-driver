@@ -17,18 +17,18 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3
       with:
         fetch-depth: 0
     - run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
     - name: Setup Python
-      uses: actions/setup-python@v4.5.0
+      uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435 # v4.5.0
     # Update the below pip stuff after a release of appium/docutils
     - run: pip install mkdocs==1.4.2 mkdocs-material==9.0.9 mkdocs-material-extensions==1.1.1 mike==1.1.2
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
