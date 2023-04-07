@@ -1,3 +1,10 @@
+## [4.21.12](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.11...v4.21.12) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **deps:** update appium-related packages ([108cd56](https://github.com/appium/appium-xcuitest-driver/commit/108cd569a502f868c550748bb5db91188fb17e65))
+
 ## [4.21.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.10...v4.21.11) (2023-04-06)
 
 
