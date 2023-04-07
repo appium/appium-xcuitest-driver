@@ -172,7 +172,7 @@
     "mocha-junit-reporter": "2.2.0",
     "mocha-multi-reporters": "1.5.1",
     "nyc": "15.1.0",
-    "pem": "1.14.6",
+    "pem": "1.14.7",
     "pngjs": "7.0.0",
     "prettier": "2.8.7",
     "rimraf": "4.4.1",
