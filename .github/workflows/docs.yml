@@ -1,21 +1,7 @@
 name: Build Docs
 
 on:
-  push:
-    # this list of paths could potentially impact doc generation.
-    paths:
-      - 'typedoc.json'
-      - 'tsconfig.json'
-      - 'scripts/build-docs.js'
-      - 'package*.json'
-      - 'lib/**/*.ts'
-      - 'lib/**/*.js'
-      - 'docs/**'
-      - '.github/workflows/docs.yml' # this file
-      - '!ci-jobs/**'
-      - '!**/test/**'
-
-  pull_request:
+  pull_request_target:
     paths:
       - 'typedoc.json'
       - 'tsconfig.json'
