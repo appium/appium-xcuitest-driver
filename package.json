@@ -84,7 +84,7 @@
     "lodash": "4.17.21",
     "lru-cache": "7.14.1",
     "moment": "2.29.4",
-    "moment-timezone": "0.5.42",
+    "moment-timezone": "0.5.43",
     "node-simctl": "7.1.12",
     "portscanner": "2.2.0",
     "semver": "7.3.8",
