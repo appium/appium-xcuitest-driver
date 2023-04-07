@@ -1,3 +1,10 @@
+## [4.21.13](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.12...v4.21.13) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency glob to v9.3.4 ([6da88cb](https://github.com/appium/appium-xcuitest-driver/commit/6da88cb519abe986f0bca09babdc3ca6f7645243))
+
 ## [4.21.12](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.11...v4.21.12) (2023-04-07)
 
 
