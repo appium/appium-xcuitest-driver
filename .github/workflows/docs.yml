@@ -23,7 +23,7 @@ jobs:
     name: Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3
       - name: Install dependencies (Node.js)
         uses: bahmutov/npm-install@v1
         with:
@@ -38,7 +38,7 @@ jobs:
       - name: Build Docs
         run: npm run build:docs
       - name: Deploy Preview
-        uses: rossjrw/pr-preview-action@v1
+        uses: rossjrw/pr-preview-action@2a652922e9b9c53e7e5ea62fa38da744de09043c # v1
         with:
           source-dir: site
           preview-branch: docs-site
