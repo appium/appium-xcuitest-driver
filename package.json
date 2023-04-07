@@ -131,7 +131,7 @@
   },
   "devDependencies": {
     "@appium/docutils": "0.3.4",
-    "@appium/eslint-config-appium": "8.0.2",
+    "@appium/eslint-config-appium": "8.0.3",
     "@appium/eslint-config-appium-ts": "0.3.1",
     "@appium/test-support": "3.0.11",
     "@appium/tsconfig": "0.2.4",
