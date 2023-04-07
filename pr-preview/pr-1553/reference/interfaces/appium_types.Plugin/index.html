@@ -15,7 +15,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.4">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.240905d7.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7a7fce14.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -844,7 +844,7 @@
 <p>node_modules/@appium/types/lib/plugin.ts:75</p>
 <hr />
 <h3 id="handle">handle</h3>
-<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, [cmdName: string, ...args: any[]], <code>void</code>, <code>unknown</code>></p>
+<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>>, [cmdName: string, ...args: any[]], <code>void</code>, <code>unknown</code>></p>
 <p>Handle an Appium command, optionally running and using or throwing away the value of the
 original Appium behavior (or the behavior of the next plugin in a plugin chain).</p>
 <h4 id="defined-in_1">Defined in</h4>
@@ -863,7 +863,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <p>node_modules/@appium/types/lib/plugin.ts:67</p>
 <hr />
 <h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
-<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>driver</code>, <code>cause</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.</p>
@@ -878,7 +878,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>></td>
+<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>></td>
 </tr>
 <tr>
 <td align="left"><code>cause</code></td>
@@ -944,7 +944,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
     <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.19047be9.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.407015b8.min.js"></script>
       
     
   </body>
