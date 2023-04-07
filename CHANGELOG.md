@@ -1,3 +1,13 @@
+## [4.21.14](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.13...v4.21.14) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **ci:** fix docs workflow ([102cd39](https://github.com/appium/appium-xcuitest-driver/commit/102cd39cf03bda25522e3e6a83104b71f8466a37))
+* **ci:** remove dependabot config ([7c81e33](https://github.com/appium/appium-xcuitest-driver/commit/7c81e33d6c44b4edffe6494fc504d0a68c536ed8))
+* update .gitattributes ([c71c043](https://github.com/appium/appium-xcuitest-driver/commit/c71c0432fbed74140102e0d97f5a321fae766acc))
+* **workflows:** pin dependencies ([9d82149](https://github.com/appium/appium-xcuitest-driver/commit/9d8214962b5bb5469bc0f0ebd971b4bd9fa59189))
+
 ## [4.21.13](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.12...v4.21.13) (2023-04-07)
 
 
