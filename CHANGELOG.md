@@ -1,3 +1,10 @@
+## [4.21.16](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.15...v4.21.16) (2023-04-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency lint-staged to v13.2.1 ([d93296a](https://github.com/appium/appium-xcuitest-driver/commit/d93296a53d59eefe7397ab39893fe1f40b506b4b))
+
 ## [4.21.15](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.14...v4.21.15) (2023-04-08)
 
 
