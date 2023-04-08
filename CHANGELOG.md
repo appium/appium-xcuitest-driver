@@ -1,3 +1,10 @@
+## [4.21.17](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.16...v4.21.17) (2023-04-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency semantic-release to v20.1.3 ([ef8056a](https://github.com/appium/appium-xcuitest-driver/commit/ef8056ada3da522c6b4f1e93b69e527a1fe4143d))
+
 ## [4.21.16](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.15...v4.21.16) (2023-04-08)
 
 
