@@ -1,3 +1,10 @@
+## [4.21.15](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.14...v4.21.15) (2023-04-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency pem to v1.14.7 ([30618c9](https://github.com/appium/appium-xcuitest-driver/commit/30618c9ef5f61e3fd75bac88c31c7862e251f86c))
+
 ## [4.21.14](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.13...v4.21.14) (2023-04-07)
 
 
