@@ -1,3 +1,10 @@
+## [4.21.21](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.20...v4.21.21) (2023-04-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency moment-timezone to v0.5.43 ([a9d57da](https://github.com/appium/appium-xcuitest-driver/commit/a9d57da88e8a45e9236ef35cc3e5f31e8016064b))
+
 ## [4.21.20](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.19...v4.21.20) (2023-04-09)
 
 
