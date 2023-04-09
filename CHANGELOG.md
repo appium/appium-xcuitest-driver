@@ -1,3 +1,10 @@
+## [4.21.18](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.17...v4.21.18) (2023-04-09)
+
+
+### Miscellaneous Chores
+
+* **deps:** update eslint-related packages ([9e60d30](https://github.com/appium/appium-xcuitest-driver/commit/9e60d30489edf9bf2eda0ea180c77edfec3d2ed3))
+
 ## [4.21.17](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.16...v4.21.17) (2023-04-08)
 
 
