@@ -68,7 +68,7 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
-    "@xmldom/xmldom": "0.8.6",
+    "@xmldom/xmldom": "0.8.7",
     "appium-idb": "1.6.10",
     "appium-ios-device": "2.4.11",
     "appium-ios-simulator": "5.0.7",
