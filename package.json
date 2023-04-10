@@ -165,7 +165,7 @@
     "eslint-plugin-mocha": "10.1.0",
     "eslint-plugin-promise": "6.1.1",
     "get-port": "5.1.1",
-    "glob": "9.3.4",
+    "glob": "9.3.5",
     "husky": "8.0.3",
     "lint-staged": "13.2.1",
     "mocha": "10.2.0",
