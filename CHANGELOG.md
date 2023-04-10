@@ -1,3 +1,10 @@
+## [4.21.23](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.22...v4.21.23) (2023-04-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency type-fest to v3.8.0 ([6327db2](https://github.com/appium/appium-xcuitest-driver/commit/6327db2bbb1550119896598427d85487086b7c0a))
+
 ## [4.21.22](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.21...v4.21.22) (2023-04-10)
 
 
