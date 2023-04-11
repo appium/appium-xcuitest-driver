@@ -1,3 +1,15 @@
+## [4.21.25](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.24...v4.21.25) (2023-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v7.18.3 ([d6a2c3c](https://github.com/appium/appium-xcuitest-driver/commit/d6a2c3ca04bdccf6cf3308543fdd0f5316848066))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency webdriverio to v8.7.0 ([dfc7b01](https://github.com/appium/appium-xcuitest-driver/commit/dfc7b01ad55384680d23172d3b741c0a80b63b29))
+
 ## [4.21.24](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.23...v4.21.24) (2023-04-10)
 
 
