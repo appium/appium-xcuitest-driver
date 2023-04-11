@@ -1,3 +1,20 @@
+## [4.21.27](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.26...v4.21.27) (2023-04-11)
+
+
+### Bug Fixes
+
+* add correct types for context objects ([928ffcc](https://github.com/appium/appium-xcuitest-driver/commit/928ffccfaca376fe875a0be5a5cb6e2f6b1cff87))
+* lint, test fixes ([47a8174](https://github.com/appium/appium-xcuitest-driver/commit/47a81743a69de33922f58df2399736c2fbb9c2bb))
+* **types:** fix mostly test types ([f1ec6d5](https://github.com/appium/appium-xcuitest-driver/commit/f1ec6d5e0b66fd41e6e9b93e9e409d725207424a))
+* **web:** do not return `true` from deleteCookie() ([5dd66d5](https://github.com/appium/appium-xcuitest-driver/commit/5dd66d54e346dbf671e5c72a4bb84c4d03243eed))
+* **xctest:** mobileRunXCTest param "args" is optional ([438671f](https://github.com/appium/appium-xcuitest-driver/commit/438671ff1a3501fb6265308c83344dcd9d3545e7))
+
+
+### Miscellaneous Chores
+
+* re-enable require-await rule ([1b8b533](https://github.com/appium/appium-xcuitest-driver/commit/1b8b533387e0acf9a4881871cd0be3411841a6f4))
+* use execute methods & types ([f6f77d2](https://github.com/appium/appium-xcuitest-driver/commit/f6f77d2bd518c5ce625dd833748817e53f37b854))
+
 ## [4.21.26](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.25...v4.21.26) (2023-04-11)
 
 
