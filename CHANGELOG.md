@@ -1,3 +1,10 @@
+## [4.21.29](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.28...v4.21.29) (2023-04-12)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency webdriverio to v8.8.1 ([827ff21](https://github.com/appium/appium-xcuitest-driver/commit/827ff21f75f14c50121edc72b80e83022611be82))
+
 ## [4.21.28](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.27...v4.21.28) (2023-04-12)
 
 
