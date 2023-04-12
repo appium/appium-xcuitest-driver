@@ -135,7 +135,7 @@
     "@appium/eslint-config-appium": "8.0.3",
     "@appium/eslint-config-appium-ts": "0.3.1",
     "@appium/test-support": "3.0.12",
-    "@appium/tsconfig": "0.2.4",
+    "@appium/tsconfig": "0.3.0",
     "@appium/types": "0.10.4",
     "@commitlint/cli": "17.5.1",
     "@commitlint/config-conventional": "17.4.4",
