@@ -1,3 +1,10 @@
+## [4.21.28](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.27...v4.21.28) (2023-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-xcode to v5.1.0 ([6f05ef2](https://github.com/appium/appium-xcuitest-driver/commit/6f05ef259a917bcb3c7653af733d1f28ebf13bdc))
+
 ## [4.21.27](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.26...v4.21.27) (2023-04-11)
 
 
