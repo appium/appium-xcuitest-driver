@@ -1,3 +1,10 @@
+## [4.21.30](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.29...v4.21.30) (2023-04-13)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @appium/tsconfig to v0.3.0 ([ef1d08b](https://github.com/appium/appium-xcuitest-driver/commit/ef1d08be2b05c55691ac91600ab233da12bef22c))
+
 ## [4.21.29](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.28...v4.21.29) (2023-04-12)
 
 
