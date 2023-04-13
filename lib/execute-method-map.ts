@@ -438,4 +438,21 @@ export const executeMethodMap = {
   'mobile: shake': {
     command: 'mobileShake',
   },
+  'mobile: startAudioRecording': {
+    command: 'startAudioRecording',
+    params: {
+      required: ['audioInput'],
+      optional: [
+        'timeLimit',
+        'audioCodec',
+        'audioBitrate',
+        'audioChannels',
+        'audioRate',
+        'forceRestart',
+      ],
+    },
+  },
+  'mobile: stopAudioRecording': {
+    command: 'stopAudioRecording',
+  },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
