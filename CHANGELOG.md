@@ -1,3 +1,10 @@
+## [4.21.31](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.30...v4.21.31) (2023-04-13)
+
+
+### Miscellaneous Chores
+
+* **workflows:** update actions/checkout digest to 83b7061 ([5212653](https://github.com/appium/appium-xcuitest-driver/commit/5212653638ce2ccfb6cbb82fb1f8094551a56e09))
+
 ## [4.21.30](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.29...v4.21.30) (2023-04-13)
 
 
