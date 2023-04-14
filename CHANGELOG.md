@@ -1,3 +1,11 @@
+## [4.21.32](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.31...v4.21.32) (2023-04-14)
+
+
+### Bug Fixes
+
+* **commands:** fix "mobile: startPcap" execute method ([a761365](https://github.com/appium/appium-xcuitest-driver/commit/a761365a66506d9e15f6977ee41cf161f987cc04))
+* **commands:** fix startAudioRecording and stopAudioRecording execute methods ([990547a](https://github.com/appium/appium-xcuitest-driver/commit/990547a9b671243b298c6318af1327f2e15315fa))
+
 ## [4.21.31](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.30...v4.21.31) (2023-04-13)
 
 
