@@ -1,3 +1,10 @@
+## [4.21.33](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.32...v4.21.33) (2023-04-14)
+
+
+### Bug Fixes
+
+* Fix the return type of mobile: removeCertificate extension ([10cfce1](https://github.com/appium/appium-xcuitest-driver/commit/10cfce1308a22e47e823bbbe6affc116a743817b))
+
 ## [4.21.32](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.31...v4.21.32) (2023-04-14)
 
 
