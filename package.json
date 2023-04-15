@@ -183,7 +183,7 @@
     "ts-node": "10.9.1",
     "type-fest": "3.8.0",
     "typescript": "4.9.5",
-    "webdriverio": "8.8.1"
+    "webdriverio": "8.8.2"
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
