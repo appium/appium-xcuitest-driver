@@ -144,7 +144,7 @@
     "@types/bluebird": "3.5.38",
     "@types/chai": "4.3.4",
     "@types/chai-as-promised": "7.1.5",
-    "@types/lodash": "4.14.192",
+    "@types/lodash": "4.14.194",
     "@types/mocha": "10.0.1",
     "@types/node": "18.15.11",
     "@types/portscanner": "2.1.1",
