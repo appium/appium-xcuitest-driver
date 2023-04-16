@@ -1,3 +1,10 @@
+## [4.21.34](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.33...v4.21.34) (2023-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.4.0 ([cdecf15](https://github.com/appium/appium-xcuitest-driver/commit/cdecf150a8a33f5c741936d3bc042b52a9405b70))
+
 ## [4.21.33](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.32...v4.21.33) (2023-04-14)
 
 
