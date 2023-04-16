@@ -1,3 +1,10 @@
+## [4.21.35](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.34...v4.21.35) (2023-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-device to v2.5.0 ([b208ce3](https://github.com/appium/appium-xcuitest-driver/commit/b208ce3d8ca26c13247c7a2a090ebf596615b296))
+
 ## [4.21.34](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.33...v4.21.34) (2023-04-16)
 
 
