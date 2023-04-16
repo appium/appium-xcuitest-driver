@@ -58,6 +58,7 @@ It could be that after a new Xcode SDK is released we figure out a part or even 
 Minimum XCUITest driver version | Tested for compatibility with Xcode version
 --- | ---
 4.7.4 | Xcode 14-beta.3
+4.21.7 | Xcode 14.3
 
 
 ## tvOS Support

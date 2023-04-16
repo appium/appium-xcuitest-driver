@@ -37,7 +37,8 @@ describe('context', function () {
       let driver = new XCUITestDriver();
       driver.curContext = '5191.5';
       driver.contexts = ['5191.5', '5191.3', '5191.4'];
-      let selectPageArgs = null;
+      /** @type {undefined|(string|number)[]} */
+      let selectPageArgs;
       const remoteMock = {
         isConnected: true,
         selectPage: (...args) => {
@@ -48,7 +49,7 @@ describe('context', function () {
       driver.remote = remoteMock;
       driver.opts.safariIgnoreWebHostnames = 'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
-      selectPageArgs.should.eql(['5191', 1]);
+      /** @type {(string|number)[]} */(selectPageArgs).should.eql(['5191', 1]);
     });
     it('should not call selectPage if a new page is introduced and that page is blacklisted', async function () {
       let driver = new XCUITestDriver();

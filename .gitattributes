@@ -1,1 +1,6 @@
+* text=auto eol=lf
+
 test/assets/*.app/** merge=binary
+
+# Handle as a text file but merge as binary.
+package-lock.json merge=binary

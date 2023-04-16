@@ -75,8 +75,8 @@ describe('alert commands', function () {
 
     it('should send get alert buttons request to WDA', async function () {
       const buttonLabel = 'OK';
-      proxySpy.returns({value: [buttonLabel], sessionId: '05869B62-C559-43AD-A343-BAACAAE00CBB', status: 0});
-      const response = await driver.execute(`mobile: ${commandName}`, {action: 'getButtons'});
+      proxySpy.resolves({value: [buttonLabel], sessionId: '05869B62-C559-43AD-A343-BAACAAE00CBB', status: 0});
+      const response = /** @type { {value: string[]} } */(await driver.execute(`mobile: ${commandName}`, {action: 'getButtons'}));
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
       proxySpy.firstCall.args[1].should.eql('GET');

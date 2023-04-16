@@ -5,9 +5,10 @@ import { util, node } from 'appium/support';
 
 // translate integer environment variable to a boolean 0=false, !0=true
 function checkFeatureInEnv (envArg) {
-  let feature = parseInt(process.env[envArg], 10);
+  /** @type {string|number} */
+  let feature = parseInt(String(process.env[envArg]), 10);
   if (isNaN(feature)) {
-    feature = process.env[envArg];
+    feature = String(process.env[envArg]);
   }
   return !!feature;
 }

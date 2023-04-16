@@ -45,13 +45,13 @@ describe('css-converter.js', function () {
     }
   });
   describe('unsupported css', function () {
-    const testCases = [
+    const testCases = /** @type {const} */([
       ['*[visible="ItS ViSiBlE"]', /'visible' must be true, false or empty. Found 'ItS ViSiBlE'/],
       ['*[foo="bar"]', /'foo' is not a valid attribute. Supported attributes are */],
       ['*:visible("isvisible")', /'visible' must be true, false or empty. Found 'isvisible'/],
       [`This isn't valid[ css`, /Invalid CSS selector/],
       ['p ~ a', /'~' is not a supported combinator. /],
-    ];
+    ]);
     for (const [cssSelector, error] of testCases) {
       it(`should reject '${cssSelector}' with '${error}'`, function () {
         (() => CssConverter.toIosClassChainSelector(cssSelector)).should.throw(error);

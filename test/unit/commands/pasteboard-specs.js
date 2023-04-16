@@ -6,6 +6,7 @@ import Simctl from 'node-simctl';
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
   driver.opts = {
+    // @ts-expect-error do not put random stuff on opts object
     device: {
       simctl: new Simctl(),
     }
@@ -30,6 +31,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should not be called', async function () {
+      // @ts-expect-error incorrect usage
       await driver.mobileSetPasteboard({content: 'bla'}).should.be.rejectedWith(/not supported/);
       setPasteboardStub.notCalled.should.be.true;
     });
@@ -46,19 +48,18 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
+      // @ts-expect-error incorrect usage
       await driver.mobileSetPasteboard().should.be.rejectedWith(/mandatory to set/);
       setPasteboardStub.notCalled.should.be.true;
     });
 
     it('setPasteboard should invoke correct simctl method', async function () {
-      const opts = {
-        content: 'bla',
-        encoding: 'latin1',
-      };
-      await driver.mobileSetPasteboard(opts);
+      const content = 'bla';
+      const encoding = 'latin1';
+      await driver.mobileSetPasteboard(content, encoding);
       setPasteboardStub.calledOnce.should.be.true;
-      setPasteboardStub.firstCall.args[0].should.eql(opts.content);
-      setPasteboardStub.firstCall.args[1].should.eql(opts.encoding);
+      setPasteboardStub.firstCall.args[0].should.eql(content);
+      setPasteboardStub.firstCall.args[1].should.eql(encoding);
     });
 
     it('getPasteboard should invoke correct simctl method', async function () {

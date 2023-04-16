@@ -1,3 +1,216 @@
+## [4.21.33](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.32...v4.21.33) (2023-04-14)
+
+
+### Bug Fixes
+
+* Fix the return type of mobile: removeCertificate extension ([10cfce1](https://github.com/appium/appium-xcuitest-driver/commit/10cfce1308a22e47e823bbbe6affc116a743817b))
+
+## [4.21.32](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.31...v4.21.32) (2023-04-14)
+
+
+### Bug Fixes
+
+* **commands:** fix "mobile: startPcap" execute method ([a761365](https://github.com/appium/appium-xcuitest-driver/commit/a761365a66506d9e15f6977ee41cf161f987cc04))
+* **commands:** fix startAudioRecording and stopAudioRecording execute methods ([990547a](https://github.com/appium/appium-xcuitest-driver/commit/990547a9b671243b298c6318af1327f2e15315fa))
+
+## [4.21.31](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.30...v4.21.31) (2023-04-13)
+
+
+### Miscellaneous Chores
+
+* **workflows:** update actions/checkout digest to 83b7061 ([5212653](https://github.com/appium/appium-xcuitest-driver/commit/5212653638ce2ccfb6cbb82fb1f8094551a56e09))
+
+## [4.21.30](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.29...v4.21.30) (2023-04-13)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency @appium/tsconfig to v0.3.0 ([ef1d08b](https://github.com/appium/appium-xcuitest-driver/commit/ef1d08be2b05c55691ac91600ab233da12bef22c))
+
+## [4.21.29](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.28...v4.21.29) (2023-04-12)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency webdriverio to v8.8.1 ([827ff21](https://github.com/appium/appium-xcuitest-driver/commit/827ff21f75f14c50121edc72b80e83022611be82))
+
+## [4.21.28](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.27...v4.21.28) (2023-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-xcode to v5.1.0 ([6f05ef2](https://github.com/appium/appium-xcuitest-driver/commit/6f05ef259a917bcb3c7653af733d1f28ebf13bdc))
+
+## [4.21.27](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.26...v4.21.27) (2023-04-11)
+
+
+### Bug Fixes
+
+* add correct types for context objects ([928ffcc](https://github.com/appium/appium-xcuitest-driver/commit/928ffccfaca376fe875a0be5a5cb6e2f6b1cff87))
+* lint, test fixes ([47a8174](https://github.com/appium/appium-xcuitest-driver/commit/47a81743a69de33922f58df2399736c2fbb9c2bb))
+* **types:** fix mostly test types ([f1ec6d5](https://github.com/appium/appium-xcuitest-driver/commit/f1ec6d5e0b66fd41e6e9b93e9e409d725207424a))
+* **web:** do not return `true` from deleteCookie() ([5dd66d5](https://github.com/appium/appium-xcuitest-driver/commit/5dd66d54e346dbf671e5c72a4bb84c4d03243eed))
+* **xctest:** mobileRunXCTest param "args" is optional ([438671f](https://github.com/appium/appium-xcuitest-driver/commit/438671ff1a3501fb6265308c83344dcd9d3545e7))
+
+
+### Miscellaneous Chores
+
+* re-enable require-await rule ([1b8b533](https://github.com/appium/appium-xcuitest-driver/commit/1b8b533387e0acf9a4881871cd0be3411841a6f4))
+* use execute methods & types ([f6f77d2](https://github.com/appium/appium-xcuitest-driver/commit/f6f77d2bd518c5ce625dd833748817e53f37b854))
+
+## [4.21.26](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.25...v4.21.26) (2023-04-11)
+
+
+### Miscellaneous Chores
+
+* **deps:** update appium-related packages ([70b85b2](https://github.com/appium/appium-xcuitest-driver/commit/70b85b24135a7aa585818f5bb4b795ea9322d93e))
+* **deps:** update dependency appium to v2.0.0-beta.62 ([ed37de3](https://github.com/appium/appium-xcuitest-driver/commit/ed37de3c74ed144656aa000ffbec783321f38c6a))
+
+## [4.21.25](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.24...v4.21.25) (2023-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v7.18.3 ([d6a2c3c](https://github.com/appium/appium-xcuitest-driver/commit/d6a2c3ca04bdccf6cf3308543fdd0f5316848066))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency webdriverio to v8.7.0 ([dfc7b01](https://github.com/appium/appium-xcuitest-driver/commit/dfc7b01ad55384680d23172d3b741c0a80b63b29))
+
+## [4.21.24](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.23...v4.21.24) (2023-04-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency glob to v9.3.5 ([4105b6d](https://github.com/appium/appium-xcuitest-driver/commit/4105b6dfb597cb9fec7e3ed43f007f2e42acfa0d))
+
+## [4.21.23](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.22...v4.21.23) (2023-04-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency type-fest to v3.8.0 ([6327db2](https://github.com/appium/appium-xcuitest-driver/commit/6327db2bbb1550119896598427d85487086b7c0a))
+
+## [4.21.22](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.21...v4.21.22) (2023-04-10)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency eslint to v8.38.0 ([39ebc7d](https://github.com/appium/appium-xcuitest-driver/commit/39ebc7d2fe939f36facb37ad87fa9bc194d146c3))
+
+## [4.21.21](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.20...v4.21.21) (2023-04-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency moment-timezone to v0.5.43 ([a9d57da](https://github.com/appium/appium-xcuitest-driver/commit/a9d57da88e8a45e9236ef35cc3e5f31e8016064b))
+
+## [4.21.20](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.19...v4.21.20) (2023-04-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-device to v2.4.12 ([ddd20d8](https://github.com/appium/appium-xcuitest-driver/commit/ddd20d8ce7995b851e7526baeb16b5a94ac262bb))
+
+## [4.21.19](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.18...v4.21.19) (2023-04-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @xmldom/xmldom to v0.8.7 ([0c94161](https://github.com/appium/appium-xcuitest-driver/commit/0c94161368d177112d30e910e725c8cd30716742))
+
+## [4.21.18](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.17...v4.21.18) (2023-04-09)
+
+
+### Miscellaneous Chores
+
+* **deps:** update eslint-related packages ([9e60d30](https://github.com/appium/appium-xcuitest-driver/commit/9e60d30489edf9bf2eda0ea180c77edfec3d2ed3))
+
+## [4.21.17](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.16...v4.21.17) (2023-04-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency semantic-release to v20.1.3 ([ef8056a](https://github.com/appium/appium-xcuitest-driver/commit/ef8056ada3da522c6b4f1e93b69e527a1fe4143d))
+
+## [4.21.16](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.15...v4.21.16) (2023-04-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency lint-staged to v13.2.1 ([d93296a](https://github.com/appium/appium-xcuitest-driver/commit/d93296a53d59eefe7397ab39893fe1f40b506b4b))
+
+## [4.21.15](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.14...v4.21.15) (2023-04-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency pem to v1.14.7 ([30618c9](https://github.com/appium/appium-xcuitest-driver/commit/30618c9ef5f61e3fd75bac88c31c7862e251f86c))
+
+## [4.21.14](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.13...v4.21.14) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **ci:** fix docs workflow ([102cd39](https://github.com/appium/appium-xcuitest-driver/commit/102cd39cf03bda25522e3e6a83104b71f8466a37))
+* **ci:** remove dependabot config ([7c81e33](https://github.com/appium/appium-xcuitest-driver/commit/7c81e33d6c44b4edffe6494fc504d0a68c536ed8))
+* update .gitattributes ([c71c043](https://github.com/appium/appium-xcuitest-driver/commit/c71c0432fbed74140102e0d97f5a321fae766acc))
+* **workflows:** pin dependencies ([9d82149](https://github.com/appium/appium-xcuitest-driver/commit/9d8214962b5bb5469bc0f0ebd971b4bd9fa59189))
+
+## [4.21.13](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.12...v4.21.13) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency glob to v9.3.4 ([6da88cb](https://github.com/appium/appium-xcuitest-driver/commit/6da88cb519abe986f0bca09babdc3ca6f7645243))
+
+## [4.21.12](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.11...v4.21.12) (2023-04-07)
+
+
+### Miscellaneous Chores
+
+* **deps:** update appium-related packages ([108cd56](https://github.com/appium/appium-xcuitest-driver/commit/108cd569a502f868c550748bb5db91188fb17e65))
+
+## [4.21.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.10...v4.21.11) (2023-04-06)
+
+
+### Miscellaneous Chores
+
+* **ci:** attempt to get docs preview working ([8b0f34f](https://github.com/appium/appium-xcuitest-driver/commit/8b0f34fb8d2ae810db22fea7741935cee0d69c29))
+
+## [4.21.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.9...v4.21.10) (2023-04-06)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency axios to v1.3.5 ([38c1b04](https://github.com/appium/appium-xcuitest-driver/commit/38c1b0479426bb14f95022e1c43c98c4a9ed8629))
+
+## [4.21.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.8...v4.21.9) (2023-04-06)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency appium to v2.0.0-beta.61 ([9eb21a0](https://github.com/appium/appium-xcuitest-driver/commit/9eb21a06d2d9add933392947060c0868cc580d8d))
+
+## [4.21.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.7...v4.21.8) (2023-04-05)
+
+
+### Miscellaneous Chores
+
+* add wallaby config ([0e42a45](https://github.com/appium/appium-xcuitest-driver/commit/0e42a45c623d33024f212d0437431e4cf77c48b7))
+* pin all deps ([f0a54e5](https://github.com/appium/appium-xcuitest-driver/commit/f0a54e5a3f1e151084d23ae2f1bf2f3ac00f0f99))
+* update GHA workflows to use "npm ci" ([b9083fc](https://github.com/appium/appium-xcuitest-driver/commit/b9083fc34dc3d45176ec67dc5c590b9dc6996046))
+* update lint-staged config ([bb1af17](https://github.com/appium/appium-xcuitest-driver/commit/bb1af1793d7aa8400c67ca708e636b6c619abcf0))
+* **utils:** lint ([039c3c0](https://github.com/appium/appium-xcuitest-driver/commit/039c3c083cdcb68d99b80585c2bb77836711fa0d))
+
+## [4.21.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.6...v4.21.7) (2023-04-04)
+
+
+### Miscellaneous Chores
+
+* Bump WDA ([4c1b22d](https://github.com/appium/appium-xcuitest-driver/commit/4c1b22db30b154eddef889f59aa13a339a091149))
+
 ## [4.21.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.5...v4.21.6) (2023-04-03)
 
 

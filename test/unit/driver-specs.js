@@ -8,8 +8,9 @@ import _ from 'lodash';
 import chai from 'chai';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
-
+import sinonChai from 'sinon-chai';
 chai.should();
+chai.use(sinonChai);
 const expect = chai.expect;
 
 const caps = {
@@ -64,7 +65,7 @@ describe('XCUITestDriver', function () {
     describe('status', function () {
       /** @type {XCUITestDriver} */
       let driver;
-      /** @type {sinon.SinonStubStatic<JWProxy, 'command'>} */
+      /** @type {import('sinon').SinonStubbedMember<typeof JWProxy.prototype.command>} */
       let jwproxyCommandSpy;
 
       beforeEach(function () {
@@ -114,7 +115,7 @@ describe('XCUITestDriver', function () {
         };
         realDevice = null;
         // eslint-disable-next-line require-await
-        sandbox.stub(driver, 'determineDevice').callsFake(async () => ({device, realDevice}));
+        sandbox.stub(driver, 'determineDevice').callsFake(async () => ({device, realDevice, udid: 'stuff'}));
         sandbox.stub(driver, 'configureApp');
         sandbox.stub(driver, 'startLogCapture');
         sandbox.stub(driver, 'startSim');
@@ -193,65 +194,67 @@ describe('XCUITestDriver', function () {
   });
 
   describe('installOtherApps', function () {
-    let driver = new XCUITestDriver();
+    /** @type {XCUITestDriver} */
+    let driver;
+
+    beforeEach(function() {
+      driver = new XCUITestDriver();
+    });
 
     it('should skip install other apps on real devices', async function () {
-      sandbox.stub(driver, 'isRealDevice');
+      sandbox.stub(driver, 'isRealDevice').returns(true);
       sandbox.stub(driver.helpers, 'parseCapsArray');
-      driver.isRealDevice.returns(true);
       await driver.installOtherApps('/path/to/iosApp.app');
-      driver.isRealDevice.calledOnce.should.be.true;
-      driver.helpers.parseCapsArray.notCalled.should.be.true;
+      expect(driver.isRealDevice).to.have.been.calledOnce;
+      expect(driver.helpers.parseCapsArray).not.to.have.been.called;
     });
 
     it('should install multiple apps from otherApps as string on simulators', async function () {
       const SimulatorManagementModule = require('../../lib/simulator-management');
       sandbox.stub(SimulatorManagementModule, 'installToSimulator');
-      sandbox.stub(driver, 'isRealDevice');
-      driver.isRealDevice.returns(false);
-      sandbox.stub(driver.helpers, 'configureApp');
-      driver.helpers.configureApp.resolves('/path/to/iosApp.app');
+      sandbox.stub(driver, 'isRealDevice').returns(false);
+      sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
       driver.opts.noReset = false;
+      // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      driver.isRealDevice.calledOnce.should.be.true;
-      driver.helpers.configureApp.calledOnce.should.be.true;
-      SimulatorManagementModule.installToSimulator.calledOnce.should.be.true;
-      SimulatorManagementModule.installToSimulator.calledWith(
+      expect(driver.isRealDevice).to.have.been.calledOnce;
+      expect(driver.helpers.configureApp).to.have.been.calledOnce;
+      expect(SimulatorManagementModule.installToSimulator).to.have.been.calledOnceWith(
         'some-device',
         '/path/to/iosApp.app',
         undefined,
         {newSimulator: false}
-      ).should.be.true;
+      );
     });
 
     it('should install multiple apps from otherApps as JSON array on simulators', async function () {
       const SimulatorManagementModule = require('../../lib/simulator-management');
       sandbox.stub(SimulatorManagementModule, 'installToSimulator');
-      sandbox.stub(driver, 'isRealDevice');
-      driver.isRealDevice.returns(false);
-      sandbox.stub(driver.helpers, 'configureApp');
-      driver.helpers.configureApp.onCall(0).resolves('/path/to/iosApp1.app');
-      driver.helpers.configureApp.onCall(1).resolves('/path/to/iosApp2.app');
+      sandbox.stub(driver, 'isRealDevice').returns(false);
+      const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
+      configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
+      configureAppStub.onCall(1).resolves('/path/to/iosApp2.app');
       driver.opts.noReset = false;
+      // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      driver.isRealDevice.calledOnce.should.be.true;
-      driver.helpers.configureApp.calledTwice.should.be.true;
-      SimulatorManagementModule.installToSimulator.calledWith(
+      expect(driver.isRealDevice).to.have.been.calledOnce;
+      expect(driver.helpers.configureApp).to.have.been.calledTwice;
+      expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp1.app',
         undefined,
         {newSimulator: false}
-      ).should.be.true;
-      SimulatorManagementModule.installToSimulator.calledWith(
+      );
+      expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
         undefined,
         {newSimulator: false}
-      ).should.be.true;
+      );
     });
   });
 
