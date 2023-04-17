@@ -128,6 +128,12 @@ export const executeMethodMap = {
       optional: ['format', 'excludedAttributes'],
     },
   },
+  'mobile: getAppStrings': {
+    command: 'getStrings',
+    params: {
+      optional: ['language', 'stringFile'],
+    },
+  },
   'mobile: getContexts': {
     command: 'mobileGetContexts',
     params: {

@@ -1228,3 +1228,19 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 > **Warning**
 > Do not forget to reset the simulated geolocation value after your automated test is finished.
 > If the value is not reset explcitly then the simulated one will remain until the next device restart.
+
+### mobile: getAppStrings
+
+Retrieves string resources for the given app language. An error is thrown if strings cannot be fetched or no strings exist
+for the given language abbreviation
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+language | string | no | The language abbreviation to fetch app strings mapping for. If no language is provided then strings for the 'en language would be returned | fr
+stringFile | string | no | Relative path to the corresponding .strings file starting from the corresponding .lproj folder | base/main.strings
+
+#### Returned Result
+
+App strings map, where keys are resource identifiers.
