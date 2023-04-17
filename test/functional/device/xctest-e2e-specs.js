@@ -1,12 +1,18 @@
 import chai from 'chai';
 import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
-import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
-import { GENERIC_CAPS, amendCapabilities } from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {GENERIC_CAPS, amendCapabilities} from '../desired';
 import xcode from 'appium-xcode';
 
 const APP_UNDER_TEST_PATH = path.resolve(__dirname, '..', '..', 'assets', 'XCTesterApp.app');
-const TEST_BUNDLE_PATH = path.resolve(__dirname, '..', '..', 'assets', 'XCTesterAppUITests-Runner.app');
+const TEST_BUNDLE_PATH = path.resolve(
+  __dirname,
+  '..',
+  '..',
+  'assets',
+  'XCTesterAppUITests-Runner.app'
+);
 const XCTEST_BUNDLE_PATH = path.join(TEST_BUNDLE_PATH, 'PlugIns', 'XCTesterAppUITests.xctest');
 
 chai.should();
@@ -19,7 +25,9 @@ if (process.env.LAUNCH_WITH_IDB) {
     let driver;
     before(async function () {
       // idb_companion doesn't work with xcode 13 or lower due to concurrency lib issue.
-      if ((await xcode.getVersion(true)).major < 14) {
+      if (
+        /** @type {import('appium-xcode').XcodeVersion} */ (await xcode.getVersion(true)).major < 14
+      ) {
         this.skip();
       }
       const caps = amendCapabilities(GENERIC_CAPS, {
@@ -46,7 +54,9 @@ if (process.env.LAUNCH_WITH_IDB) {
       xcTestBundleList.should.includes(bundleTest);
 
       // Get list of xctests within bundle
-      const xcTestsInBundle = await driver.execute('mobile: listXCTestsInTestBundle', {bundle: bundleTest});
+      const xcTestsInBundle = await driver.execute('mobile: listXCTestsInTestBundle', {
+        bundle: bundleTest,
+      });
       xcTestsInBundle.should.eql([
         'XCTesterAppUITests.XCTesterAppUITests/testExample',
         'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
@@ -62,9 +72,13 @@ if (process.env.LAUNCH_WITH_IDB) {
       });
       res.code.should.equal(0);
       res.passed.should.be.true;
-      res.results[0].testName.should.eql('XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample');
+      res.results[0].testName.should.eql(
+        'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample'
+      );
       res.results[0].passed.should.be.true;
-      res.results[1].testName.should.eql('XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance');
+      res.results[1].testName.should.eql(
+        'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance'
+      );
       res.results[1].passed.should.be.true;
     });
     it('should fail gracefully if bad params passed in runXCTest', async function () {

@@ -3,7 +3,6 @@ import XCUITestDriver from '../../../lib/driver';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-
 chai.should();
 chai.use(chaiAsPromised);
 
@@ -26,10 +25,7 @@ describe('alert commands', function () {
   describe('setAlertText', function () {
     it('should send translated POST request to WDA', async function () {
       await driver.setAlertText('some text');
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/alert/text');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql({value: 'some text'});
+      proxySpy.should.have.been.calledOnceWith('/alert/text', 'POST', {value: 'some text'});
     });
   });
   describe('postAcceptAlert', function () {
@@ -53,17 +49,15 @@ describe('alert commands', function () {
     const commandName = 'alert';
 
     it('should reject request to WDA if action parameter is not supported', async function () {
-      await driver.execute(`mobile: ${commandName}`, {action: 'blabla'})
+      await driver
+        .execute(`mobile: ${commandName}`, {action: 'blabla'})
         .should.be.rejectedWith(/should be either/);
     });
 
     it('should send accept alert request to WDA with encoded button label', async function () {
       const buttonLabel = 'some label';
       await driver.execute(`mobile: ${commandName}`, {action: 'accept', buttonLabel});
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/alert/accept');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.have.property('name', buttonLabel);
+      proxySpy.should.have.been.calledOnceWith('/alert/accept', 'POST', {name: buttonLabel});
     });
 
     it('should send dimsiss alert request to WDA if button label is not provided', async function () {
@@ -75,8 +69,14 @@ describe('alert commands', function () {
 
     it('should send get alert buttons request to WDA', async function () {
       const buttonLabel = 'OK';
-      proxySpy.resolves({value: [buttonLabel], sessionId: '05869B62-C559-43AD-A343-BAACAAE00CBB', status: 0});
-      const response = /** @type { {value: string[]} } */(await driver.execute(`mobile: ${commandName}`, {action: 'getButtons'}));
+      proxySpy.resolves({
+        value: [buttonLabel],
+        sessionId: '05869B62-C559-43AD-A343-BAACAAE00CBB',
+        status: 0,
+      });
+      const response = /** @type { {value: string[]} } */ (
+        await driver.execute(`mobile: ${commandName}`, {action: 'getButtons'})
+      );
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
       proxySpy.firstCall.args[1].should.eql('GET');

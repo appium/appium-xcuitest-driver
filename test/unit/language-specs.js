@@ -27,38 +27,43 @@ describe('language and locale', function () {
 
   describe('send only language and locale', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
-
       const expectedWDACapabilities = {
         capabilities: {
-          firstMatch: [Object.assign({}, DEFAULT_CAPS, {
-            bundleId: BUNDLE_ID,
-            arguments: [
-              '-AppleLanguages', `(${LANGUAGE})`,
-              '-NSLanguages', `(${LANGUAGE})`,
-              '-AppleLocale', LOCALE
-            ],
-          })],
+          firstMatch: [
+            Object.assign({}, DEFAULT_CAPS, {
+              bundleId: BUNDLE_ID,
+              arguments: [
+                '-AppleLanguages',
+                `(${LANGUAGE})`,
+                '-NSLanguages',
+                `(${LANGUAGE})`,
+                '-AppleLocale',
+                LOCALE,
+              ],
+            }),
+          ],
           alwaysMatch: {},
-        }
+        },
       };
-      let desiredCapabilities = /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */({
-        platformName: 'iOS',
-        platformVersion: '9.3',
-        deviceName: 'iPhone 6',
-        app: 'testapp.app',
-        language: LANGUAGE,
-        locale: LOCALE,
-        bundleId: BUNDLE_ID,
-      });
+      let desiredCapabilities =
+        /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */ ({
+          platformName: 'iOS',
+          platformVersion: '9.3',
+          deviceName: 'iPhone 6',
+          app: 'testapp.app',
+          language: LANGUAGE,
+          locale: LOCALE,
+          bundleId: BUNDLE_ID,
+        });
 
       let driver = new XCUITestDriver(desiredCapabilities);
       let proxySpy = sinon.stub(driver, 'proxyCommand');
       driver.validateDesiredCaps(desiredCapabilities);
-      await driver.startWdaSession(desiredCapabilities.bundleId, desiredCapabilities.processArguments);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/session');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql(expectedWDACapabilities);
+      await driver.startWdaSession(
+        desiredCapabilities.bundleId,
+        desiredCapabilities.processArguments
+      );
+      proxySpy.should.have.been.calledOnceWith('/session', 'POST', expectedWDACapabilities);
     });
   });
 
@@ -66,48 +71,57 @@ describe('language and locale', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
       const processArguments = {
         args: ['a', 'b', 'c'],
-        env: { 'a': 'b', 'c': 'd' }
+        env: {a: 'b', c: 'd'},
       };
 
       const augmentedProcessArgumentsWithLanguage = {
         args: [
           ...processArguments.args,
-          '-AppleLanguages', `(${LANGUAGE})`,
-          '-NSLanguages', `(${LANGUAGE})`,
-          '-AppleLocale', LOCALE,
+          '-AppleLanguages',
+          `(${LANGUAGE})`,
+          '-NSLanguages',
+          `(${LANGUAGE})`,
+          '-AppleLocale',
+          LOCALE,
         ],
-        env: processArguments.env
+        env: processArguments.env,
       };
 
       const expectedWDACapabilities = {
         capabilities: {
-          firstMatch: [Object.assign({}, DEFAULT_CAPS, {
-            bundleId: BUNDLE_ID,
-            arguments: augmentedProcessArgumentsWithLanguage.args,
-            environment: processArguments.env,
-          })],
+          firstMatch: [
+            Object.assign({}, DEFAULT_CAPS, {
+              bundleId: BUNDLE_ID,
+              arguments: augmentedProcessArgumentsWithLanguage.args,
+              environment: processArguments.env,
+            }),
+          ],
           alwaysMatch: {},
-        }
+        },
       };
 
-      const desiredCapabilities = /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */({
-        platformName: 'iOS',
-        platformVersion: '9.3',
-        deviceName: 'iPhone 6',
-        app: 'testapp.app',
-        language: LANGUAGE,
-        locale: LOCALE,
-        bundleId: BUNDLE_ID,
-        processArguments
-      });
+      const desiredCapabilities =
+        /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */ ({
+          platformName: 'iOS',
+          platformVersion: '9.3',
+          deviceName: 'iPhone 6',
+          app: 'testapp.app',
+          language: LANGUAGE,
+          locale: LOCALE,
+          bundleId: BUNDLE_ID,
+          processArguments,
+        });
       let driver = new XCUITestDriver(desiredCapabilities);
       let proxySpy = sinon.stub(driver, 'proxyCommand');
       driver.validateDesiredCaps(desiredCapabilities);
-      await driver.startWdaSession(desiredCapabilities.bundleId, desiredCapabilities.processArguments);
+      await driver.startWdaSession(
+        desiredCapabilities.bundleId,
+        desiredCapabilities.processArguments
+      );
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql(expectedWDACapabilities);
+      /** @type {any} */ (proxySpy.firstCall.args[2]).should.eql(expectedWDACapabilities);
     });
   });
 });

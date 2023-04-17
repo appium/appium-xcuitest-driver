@@ -1,47 +1,16 @@
-import {Element, HTTPHeaders} from '@appium/types';
+import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
 import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
-import {SetOptional} from 'type-fest';
-import {Page} from '../types';
+import type {LiteralUnion, SetOptional, SetRequired} from 'type-fest';
+import type {Page} from '../types';
+import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-export enum AppState {
-  /**
-   * The application’s current state is not known.
-   */
-  XCUIApplicationStateUnknown = 0,
-  /**
-   * The application is not running
-   */
-  XCUIApplicationStateNotRunning = 1,
-  /**
-   * The application is running in the background, but is suspended.
-   */
-  XCUIApplicationStateRunningBackgroundSuspended = 2,
-  /**
-   * The application is running in the background.
-   */
-  XCUIApplicationStateRunningBackground = 3,
-  /**
-   * The application is running in the foreground.
-   */
-  XCUIApplicationStateRunningForeground = 4,
-}
+export type LocationWithAltitude = SetRequired<Location, 'altitude'>;
 
 /**
- * Battery state
- * @see {@linkcode BatteryInfo}
- */
-export enum BatteryState {
-  UIDeviceBatteryStateUnknown = 0,
-  UIDeviceBatteryStateUnplugged = 1, // on battery, discharging
-  UIDeviceBatteryStateCharging = 2, // plugged in, less than 100%
-  UIDeviceBatteryStateFull = 3, // plugged in, at 100%
-}
-
-/**
- * Battery information. Returned by `mobileGetBatteryInfo` command
+ * Battery information. Returned by the `mobile: getBatteryInfo` execute method.
  */
 export interface BatteryInfo {
   /**
@@ -213,7 +182,7 @@ export interface Context {
    */
   id: string;
   /**
-   * The title associated witht he webview content
+   * The title associated with the webview content
    */
   title?: string;
   /**
@@ -237,4 +206,347 @@ export interface View {
   title?: string;
   url?: string;
   bundleId?: string;
+}
+
+/**
+ *  Page tree source representation formats.
+ *
+ *  - `xml`: Generates the output similar to what the `getPageSource` standard API returns.
+ *  - `description`: This is how XCTest "sees" the page internally and is the same string as the [`debugDescription`](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription?language=objc) API would return for the root application element.
+ *     This source representation format is useful for debugging purposes and is the fastest
+ *     one to fetch.
+ * - `json`: Similar to `xml`, but the tree hierarchy is represented as JSON elements.
+ */
+export type SourceFormat = 'xml' | 'json' | 'description';
+
+export type AppInstallStrategy = 'serial' | 'parallel' | 'ios-deploy';
+
+export interface ProfileManifest {
+  Description: string;
+  IsActive: boolean;
+}
+
+export interface ProfileMetadata {
+  PayloadDescription: string;
+  PayloadDisplayName: string;
+  PayloadOrganization: string;
+  PayloadRemovalDisallowed: boolean;
+  PayloadUUID: string;
+  PayloadVersion: number;
+}
+
+export interface CertificateList {
+  OrderedIdentifiers: string[];
+  ProfileManifest: Record<string, ProfileManifest>;
+  ProfileMetadata: Record<string, ProfileMetadata>;
+  Status: 'Acknowledged';
+}
+
+/**
+ * Returned by `mobile: deviceInfo` command.
+ */
+export interface DeviceInfo {
+  currentLocale: string;
+  timeZone: string;
+  name: string;
+  model: string;
+  uuid: LiteralUnion<'unknown', string>;
+  userInterfaceIdiom: string;
+  userInterfaceStyle: string;
+  isSimulator: boolean;
+  thermalState?: ThermalState;
+}
+
+/**
+ * Returned within response from `mobile: deviceInfo` command on real devices.
+ * @group Real Device Only
+ * @author Ionic Team <hi@ionicframework.com> (https://ionicframework.com)
+ * @privateRemarks Copied from https://github.com/ionic-team/native-run/blob/2e431d373a3adc75ab402b2bf6a2235360efa0d2/src/ios/lib/client/lockdownd.ts#L12-L41
+ */
+
+export interface LockdownInfo {
+  BasebandCertId: number;
+  BasebandKeyHashInformation: {
+    AKeyStatus: number;
+    SKeyHash: Buffer;
+    SKeyStatus: number;
+  };
+  BasebandSerialNumber: Buffer;
+  BasebandVersion: string;
+  BoardId: number;
+  BuildVersion: string;
+  ChipID: number;
+  DeviceClass: string;
+  DeviceColor: string;
+  DeviceName: string;
+  DieID: number;
+  HardwareModel: string;
+  HasSiDP: boolean;
+  PartitionType: string;
+  ProductName: string;
+  ProductType: string;
+  ProductVersion: string;
+  ProductionSOC: boolean;
+  ProtocolVersion: string;
+  TelephonyCapability: boolean;
+  UniqueChipID: number;
+  UniqueDeviceID: string;
+  WiFiAddress: string;
+  [key: string]: any;
+}
+
+/**
+ * Response of the `mobile: activeAppInfo` command.
+ * @remarks Derived from https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m
+ */
+export interface ActiveAppInfo {
+  pid: number;
+  bundleId: string;
+  name: string;
+  processArguments: ProcessArguments;
+}
+
+/**
+ * Returned within an {@linkcode ActiveAppInfo} object.
+ * @remarks Derived from https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m
+ */
+export interface ProcessArguments {
+  env: StringRecord<string>;
+  args: string[];
+}
+
+/**
+ * Pressable button names; used by the {@linkcode XCUITest.mobilePressButton mobile: pressButton} command.
+ */
+export type ButtonName = AnyCase<
+  | 'home'
+  | 'volumeup'
+  | 'volumedown'
+  | 'up'
+  | 'down'
+  | 'left'
+  | 'right'
+  | 'menu'
+  | 'playpause'
+  | 'select'
+>;
+
+/**
+ * Returned in the {@linkcode XCUITest.mobileGetAppearance mobile: getAppearance} command response.
+ */
+export type Style = 'dark' | 'light' | 'unsupported' | 'unknown';
+
+export interface ScreenInfo {
+  /**
+   * Status bar dimensions
+   *
+   * @see https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars
+   */
+  statusBarSize: Size;
+  /**
+   * Scale of the screen
+   *
+   * @see https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale
+   */
+  scale: number;
+}
+
+export interface WDALocationInfo extends LocationWithAltitude {
+  authorizationStatus: AuthorizationStatus;
+}
+
+/**
+ * Payload for {@linkcode XCUITestDriver.mobilePushNotification}.
+ *
+ * Check the output of `xcrun simctl help push` command for more details.
+ */
+export interface PushPayload {
+  /**
+   * The `aps` dictionary.
+   *
+   * Read the [Setting up a Remote Notification Server documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943359) under "Create a JSON Payload" for more details.
+   *
+   * @privateRemarks The keys of `aps` [are documented](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943360) and we should add them.
+   */
+  aps: StringRecord;
+}
+
+/**
+ * Either `plain` to wait for a notification from the default notification center or `darwin` to wait for a system notification.
+ */
+export type NotificationType = 'plain' | 'darwin';
+
+export type BiometricFeature = 'touchId' | 'faceId';
+
+/**
+ * Permission state
+ *
+ * Details:
+ *
+ * - `yes`: To grant the permission
+ * - `no`: To revoke the permission
+ * - `unset`: To reset the permission
+ * - `limited`: To grant the permission as limited access (Only for photos)
+ */
+export type PermissionState = 'yes' | 'no' | 'unset' | 'limited';
+
+/**
+ * Access rules for the `mobile: setPermission` execute method.
+ *
+ * Details:
+ *
+ * - `all`: Apply the action to all services.
+ * - `calendar`: Allow access to calendar.
+ * - `contacts-limited`: Allow access to basic contact info.
+ * - `contacts`: Allow access to full contact details.
+ * - `location`: Allow access to location services when app is in use.
+ * - `location-always`: Allow access to location services at all times.
+ * - `photos-add`: Allow adding photos to the photo library.
+ * - `photos`: Allow full access to the photo library.
+ * - `media-library`: Allow access to the media library.
+ * - `microphone`: Allow access to audio input.
+ * - `motion`: Allow access to motion and fitness data.
+ * - `reminders`: Allow access to reminders.
+ * - `siri`: Allow use of the app with Siri.
+ *
+ * @remarks This is similar to--but not exactly the same as--{@linkcode PermissionService}.
+ */
+export type AccessRule =
+  | 'all'
+  | 'calendar'
+  | 'contacts-limited'
+  | 'contacts'
+  | 'location'
+  | 'location-always'
+  | 'photos-add'
+  | 'photos'
+  | 'media-library'
+  | 'microphone'
+  | 'motion'
+  | 'reminders'
+  | 'siri';
+
+/**
+ * On-screen keyboard properties.
+ *
+ * To see possible combinations, execute `xcrun simctl spawn booted defaults read .GlobalPreferences.plist AppleKeyboards`
+ */
+export interface KeyboardOptions {
+  /**
+   * The name of the keyboard locale, for example `en_US` or `de_CH`
+   */
+  name: string;
+  /**
+   * The keyboard layout, for example `QUERTY` or `Ukrainian`
+   */
+  layout: string;
+  hardware?: 'Automatic';
+}
+
+/**
+ * System language properties
+ *
+ * To see possible combinations, execute `xcrun simctl spawn booted defaults read .GlobalPreferences.plist AppleLanguages`.
+ */
+export interface LanguageOptions {
+  /**
+   * The name of the language, for example `de` or `zh-Hant-CN`
+   */
+  name: string;
+}
+
+/**
+ * System locale properties.
+ *
+ * To see possible combinations, execute `xcrun simctl spawn booted defaults read .GlobalPreferences.plist AppleLocale`.
+ */
+export interface LocaleOptions {
+  /**
+   * The name of the system locale, for example `de_CH` or `zh_CN`
+   */
+  name: string;
+  /**
+   * Optional calendar format, for example `gregorian` or `persian`
+   */
+  calendar?: string;
+}
+
+/**
+ * The result of an XCTest run.
+ */
+export interface XCTestResult {
+  /**
+   * Name of the test (e.g.: `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample`)
+   */
+  testName: string;
+  /**
+   * Did the test pass?
+   */
+  passed: boolean;
+  /**
+   * Did the test crash?
+   */
+  crashed: boolean;
+  /**
+   * Test result status (e.g.: 'passed', 'failed', 'crashed')
+   * @privateRemarks This should be a union of string literals. Fix it
+   */
+  status: string;
+  /**
+   * How long the test took to run (in seconds)
+   */
+  duration: number;
+  /**
+   * The failure message (if applicable)
+   */
+  failureMessage?: string;
+  /**
+   * The geolocation of the test (if applicable)
+   * @privateRemarks Document the type
+   */
+  location?: string;
+}
+
+export interface RunXCTestResult {
+  /**
+   * The results of each test run
+   */
+  results: XCTestResult[];
+  /**
+   * Exit code of the process. `0` means success
+   */
+  code: number;
+  /**
+   * The signal that terminated the process (or null) (e.g.: `SIGTERM`)
+   * @privateRemarks This should be a union of string literals. Fix it
+   */
+  signal: string | null;
+  /**
+   * If all tests passed
+   */
+  passed: boolean;
+}
+
+/**
+ * Representation of a viewport.
+ *
+ * @see https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html
+ */
+export interface Viewport {
+  /**
+   * Distance from left of screen
+   */
+  left: 0;
+  /**
+   * Distance from top of screen
+   */
+  top: number;
+  /**
+   * Screen width
+   */
+  width: number;
+  /**
+   * Screen height
+   */
+  height: number;
 }

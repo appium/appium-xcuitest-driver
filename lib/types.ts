@@ -1,3 +1,5 @@
+import {StringRecord} from '@appium/types';
+
 export interface Page {
   id: number | string;
   isKey?: boolean;
@@ -17,8 +19,10 @@ export interface LifecycleData {
  * All of these options are manually added to the `opts` property of the driver, which is strongly discouraged.
  *
  * Future versions of this driver should move these properties somewhere else.
+ *
+ * @todo If anyone knows anything about the types of these values, please fill them in.
  */
-export type CustomOpts = {
+export interface CustomOpts {
   device: any;
   realDevice: any;
   SimulatorWindowCenter: any;
@@ -28,5 +32,36 @@ export type CustomOpts = {
   safari: any;
   sessionId: string | null;
   elementResponseAttributes: any;
-};
+}
 
+export interface WDASettings {
+  elementResponseAttributes: string;
+  shouldUseCompactResponses: boolean;
+  mjpegServerScreenshotQuality?: number;
+  mjpegServerFramerate?: number;
+  screenshotQuality?: number;
+}
+
+/**
+ * @todo This should likely be shipped by `appium-webdriveragent` instead.
+ */
+export interface WDACapabilities {
+  bundleId?: string;
+  arguments: string[];
+  environment: Record<string, string>;
+  eventloopIdleDelaySec: number;
+  shouldWaitForQuiescence: boolean;
+  shouldUseTestManagerForVisibilityDetection: boolean;
+  maxTypingFrequency: number;
+  shouldUseSingletonTestManager: boolean;
+  waitForIdleTimeout?: number;
+  shouldUseCompactResponses?: number;
+  elementResponseFields?: unknown;
+  disableAutomaticScreenshots?: boolean;
+  shouldTerminateApp: boolean;
+  forceAppLaunch: boolean;
+  useNativeCachingStrategy: boolean;
+  forceSimulatorSoftwareKeyboardPresence: boolean;
+  defaultAlertAction: 'accept' | 'dismiss';
+  capabilities?: StringRecord<any>;
+}
