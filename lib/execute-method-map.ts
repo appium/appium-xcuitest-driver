@@ -285,7 +285,7 @@ export const executeMethodMap = {
   'mobile: getPermission': {
     command: 'mobileGetPermission',
     params: {
-      required: ['service', 'bundleId'],
+      required: ['bundleId', 'service'],
     },
   },
   'mobile: setPermission': {
