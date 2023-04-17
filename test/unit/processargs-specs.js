@@ -27,20 +27,22 @@ describe('process args', function () {
 
   const PROCESS_ARGS_OBJECT = {
     args: ['a', 'b', 'c'],
-    env: { 'a': 'b', 'c': 'd' }
+    env: {a: 'b', c: 'd'},
   };
 
   let processArgsString = JSON.stringify(PROCESS_ARGS_OBJECT);
 
   let desired = {
     capabilities: {
-      firstMatch: [Object.assign({}, DEFAULT_CAPS, {
-        bundleId: BUNDLE_ID,
-        arguments: PROCESS_ARGS_OBJECT.args,
-        environment: PROCESS_ARGS_OBJECT.env,
-      })],
+      firstMatch: [
+        Object.assign({}, DEFAULT_CAPS, {
+          bundleId: BUNDLE_ID,
+          arguments: PROCESS_ARGS_OBJECT.args,
+          environment: PROCESS_ARGS_OBJECT.env,
+        }),
+      ],
       alwaysMatch: {},
-    }
+    },
   };
 
   afterEach(function () {
@@ -58,11 +60,11 @@ describe('process args', function () {
         processArguments: PROCESS_ARGS_OBJECT,
       };
       driver.validateDesiredCaps(desiredWithProArgsObject);
-      await driver.startWdaSession(desiredWithProArgsObject.bundleId, desiredWithProArgsObject.processArguments);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/session');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql(desired);
+      await driver.startWdaSession(
+        desiredWithProArgsObject.bundleId,
+        desiredWithProArgsObject.processArguments
+      );
+      proxySpy.should.have.been.calledOnceWith('/session', 'POST', desired);
     });
   });
 
@@ -77,11 +79,11 @@ describe('process args', function () {
         processArguments: processArgsString,
       };
       driver.validateDesiredCaps(desiredWithProArgsString);
-      await driver.startWdaSession(desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/session');
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql(desired);
+      await driver.startWdaSession(
+        desiredWithProArgsString.bundleId,
+        desiredWithProArgsString.processArguments
+      );
+      proxySpy.should.have.been.calledOnceWith('/session', 'POST', desired);
     });
   });
 });

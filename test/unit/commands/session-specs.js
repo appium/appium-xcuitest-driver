@@ -22,9 +22,7 @@ describe('session commands', function () {
   });
   let otherStubs = [
     sinon.stub(driver, 'getStatusBarHeight').resolves(20),
-    sinon
-      .stub(driver, 'getViewportRect')
-      .resolves({x: 1, y: 2, height: 3, width: 4, left: 0, top: 0}),
+    sinon.stub(driver, 'getViewportRect').resolves({height: 3, width: 4, left: 0, top: 0}),
     sinon.stub(driver, 'getScreenInfo').resolves({
       statusBarSize: {width: 400, height: 20},
       scale: 3,
@@ -51,7 +49,7 @@ describe('session commands', function () {
         platformName: 'iOS',
         udid: 'cecinestpasuneudid',
         statBarHeight: 20,
-        viewportRect: {x: 1, y: 2, height: 3, width: 4, left: 0, top: 0},
+        viewportRect: {height: 3, width: 4, left: 0, top: 0},
         pixelRatio: 3,
       });
     });

@@ -21,14 +21,13 @@ describe('get deviceinfo commands', function () {
   });
 
   it('get device info', async function () {
-    proxyStub.returns({
+    const opts = {
       timeZone: 'America/New_York',
-      locale: 'ja_EN',
-    });
+      currentLocale: 'ja_EN',
+    };
+    proxyStub.returns(opts);
 
-    const out = await driver.mobileGetDeviceInfo();
-    out.locale.should.eq('ja_EN');
-    out.timeZone.should.eq('America/New_York');
+    await driver.mobileGetDeviceInfo().should.eventually.eql(opts);
   });
 
   it('get device info raise an error if the endpoint raises error', async function () {
