@@ -2218,6 +2218,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#mobile-getappstrings" class="md-nav__link">
+    mobile: getAppStrings
+  </a>
+  
+    <nav class="md-nav" aria-label="mobile: getAppStrings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments_59" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returned-result_35" class="md-nav__link">
+    Returned Result
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4238,6 +4265,33 @@
   <a href="#mobile-resetsimulatedlocation" class="md-nav__link">
     mobile: resetSimulatedLocation
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mobile-getappstrings" class="md-nav__link">
+    mobile: getAppStrings
+  </a>
+  
+    <nav class="md-nav" aria-label="mobile: getAppStrings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arguments_59" class="md-nav__link">
+    Arguments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returned-result_35" class="md-nav__link">
+    Returned Result
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -6670,6 +6724,39 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.</p>
 Do not forget to reset the simulated geolocation value after your automated test is finished.
 If the value is not reset explcitly then the simulated one will remain until the next device restart.</p>
 </blockquote>
+<h3 id="mobile-getappstrings">mobile: getAppStrings</h3>
+<p>Retrieves string resources for the given app language. An error is thrown if strings cannot be fetched or no strings exist
+for the given language abbreviation</p>
+<h4 id="arguments_59">Arguments</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>language</td>
+<td>string</td>
+<td>no</td>
+<td>The language abbreviation to fetch app strings mapping for. If no language is provided then strings for the 'en language would be returned</td>
+<td>fr</td>
+</tr>
+<tr>
+<td>stringFile</td>
+<td>string</td>
+<td>no</td>
+<td>Relative path to the corresponding .strings file starting from the corresponding .lproj folder</td>
+<td>base/main.strings</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returned-result_35">Returned Result</h4>
+<p>App strings map, where keys are resource identifiers.</p>
 
 
 
