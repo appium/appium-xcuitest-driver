@@ -1,3 +1,10 @@
+## [4.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.35...v4.22.0) (2023-04-17)
+
+
+### Features
+
+* Add `mobile: getAppStrings` extension ([#1608](https://github.com/appium/appium-xcuitest-driver/issues/1608)) ([5445ebb](https://github.com/appium/appium-xcuitest-driver/commit/5445ebbab95da3874eb6f27e974c8a8a6828f914))
+
 ## [4.21.35](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.34...v4.21.35) (2023-04-16)
 
 
