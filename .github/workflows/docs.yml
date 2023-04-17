@@ -1,7 +1,7 @@
 name: Build Docs
 
 on:
-  pull_request_target:
+  pull_request:
     paths:
       - 'typedoc.json'
       - 'tsconfig.json'
@@ -13,10 +13,18 @@ on:
       - '.github/workflows/docs.yml' # this file
       - '!ci-jobs/**'
       - '!**/test/**'
-
-    branches: [master]
-
-concurrency: preview-${{ github.ref }}
+  push:
+    paths:
+      - 'typedoc.json'
+      - 'tsconfig.json'
+      - 'scripts/build-docs.js'
+      - 'package*.json'
+      - 'lib/**/*.ts'
+      - 'lib/**/*.js'
+      - 'docs/**'
+      - '.github/workflows/docs.yml' # this file
+      - '!ci-jobs/**'
+      - '!**/test/**'
 
 jobs:
   docs:
@@ -31,15 +39,5 @@ jobs:
           install-command: npm ci
       - name: Install dependencies (Python)
         run: npm run install-docs-deps
-      - name: Configure Git User
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
       - name: Build Docs
         run: npm run build:docs
-      - name: Deploy Preview
-        uses: rossjrw/pr-preview-action@2a652922e9b9c53e7e5ea62fa38da744de09043c # v1
-        with:
-          source-dir: site
-          preview-branch: docs-site
-          custom-url: 'appium.github.io/appium-xcuitest-driver'
