@@ -461,11 +461,20 @@ export const executeMethodMap = {
   'mobile: stopAudioRecording': {
     command: 'stopAudioRecording',
   },
+  'mobile: hideKeyboard': {
+    command: 'mobileHideKeyboard',
+    params: {
+      optional: ['keys'],
+    }
+  },
+  'mobile: isKeyboardShown': {
+    command: 'isKeyboardShown',
+  },
   'mobile: webInspector': {
     command: 'mobileWebInspector',
     params: {
       required: ['method'],
       optional: ['args']
     }
-  }
+  },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
