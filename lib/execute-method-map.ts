@@ -128,6 +128,12 @@ export const executeMethodMap = {
       optional: ['format', 'excludedAttributes'],
     },
   },
+  'mobile: getAppStrings': {
+    command: 'getStrings',
+    params: {
+      optional: ['language', 'stringFile'],
+    },
+  },
   'mobile: getContexts': {
     command: 'mobileGetContexts',
     params: {
@@ -454,5 +460,14 @@ export const executeMethodMap = {
   },
   'mobile: stopAudioRecording': {
     command: 'stopAudioRecording',
+  },
+  'mobile: hideKeyboard': {
+    command: 'mobileHideKeyboard',
+    params: {
+      optional: ['keys'],
+    }
+  },
+  'mobile: isKeyboardShown': {
+    command: 'isKeyboardShown',
   },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;

@@ -1228,3 +1228,37 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 > **Warning**
 > Do not forget to reset the simulated geolocation value after your automated test is finished.
 > If the value is not reset explcitly then the simulated one will remain until the next device restart.
+
+### mobile: getAppStrings
+
+Retrieves string resources for the given app language. An error is thrown if strings cannot be fetched or no strings exist
+for the given language abbreviation
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+language | string | no | The language abbreviation to fetch app strings mapping for. If no language is provided then strings for the 'en language would be returned | fr
+stringFile | string | no | Relative path to the corresponding .strings file starting from the corresponding .lproj folder | base/main.strings
+
+#### Returned Result
+
+App strings map, where keys are resource identifiers.
+
+### mobile: hideKeyboard
+
+Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot be hidden. On non-tablet devices the keyboard might not have an explicit button to hide it. In such case this API won't work and the only way to close the keyboard would be to simulate the same action an app user would do to close it. For example, swipe from top to bottom or tap the screen somewhere at the area not covered by the keyboard.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+keys | string[] | no | One or more keyboard key names used to close/hide it. On tablet's such button is usually called 'done'.
+
+### mobile: isKeyboardShown
+
+Checks if the system on-screen keyboard is visible.
+
+#### Returned Result
+
+`true` if the keyboard is visible
