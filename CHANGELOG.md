@@ -1,3 +1,15 @@
+## [4.23.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.23.0...v4.23.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* **command:** flip args for mobile: getPermission ([de44162](https://github.com/appium/appium-xcuitest-driver/commit/de44162820d28531faf631758916e9a704becf6b))
+
+
+### Code Refactoring
+
+* getCookies and deleteCookies ([#1538](https://github.com/appium/appium-xcuitest-driver/issues/1538)) ([14e70b7](https://github.com/appium/appium-xcuitest-driver/commit/14e70b716775207804b4e40bd5b5c82dba6eacca))
+
 ## [4.23.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.22.0...v4.23.0) (2023-04-18)
 
 
