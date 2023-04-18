@@ -1244,3 +1244,21 @@ stringFile | string | no | Relative path to the corresponding .strings file star
 #### Returned Result
 
 App strings map, where keys are resource identifiers.
+
+### mobile: hideKeyboard
+
+Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot be hidden. On non-tablet devices the keyboard might not have an explicit button to hide it. In such case this API won't work and the only way to close the keyboard would be to simulate the same action an app user would do to close it. For example, swipe from top to bottom or tap the screen somewhere at the area not covered by the keyboard.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+keys | string[] | no | One or more keyboard key names used to close/hide it. On tablet's such button is usually called 'done'.
+
+### mobile: isKeyboardShown
+
+Checks if the system on-screen keyboard is visible.
+
+#### Returned Result
+
+`true` if the keyboard is visible
