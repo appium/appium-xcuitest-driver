@@ -1,3 +1,10 @@
+## [4.23.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.22.0...v4.23.0) (2023-04-18)
+
+
+### Features
+
+* Add 'mobile: hideKeyboard' and 'mobile: isKeyboardShown' extensions ([#1618](https://github.com/appium/appium-xcuitest-driver/issues/1618)) ([0050e5f](https://github.com/appium/appium-xcuitest-driver/commit/0050e5f66abc0558e0294ecc0267a279af6f5b8d))
+
 ## [4.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.21.35...v4.22.0) (2023-04-17)
 
 
