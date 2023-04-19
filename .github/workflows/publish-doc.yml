@@ -23,13 +23,12 @@ jobs:
     - run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-    - name: Setup Python
-      uses: actions/setup-python@d27e3f3d7c64b4bbf8e4abfb9b63b83e846e0435 # v4.5.0
-    # Update the below pip stuff after a release of appium/docutils
     - run: pip install mkdocs==1.4.2 mkdocs-material==9.0.9 mkdocs-material-extensions==1.1.1 mike==1.1.2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Install dependencies (Python)
+      run: npm run install-docs-deps
     - run: npm ci
     - run: npm run publish:docs
