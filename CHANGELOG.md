@@ -1,3 +1,10 @@
+## [4.24.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.23.2...v4.24.0) (2023-04-19)
+
+
+### Features
+
+* Add mobile wrappers to lock/unlock the device ([#1624](https://github.com/appium/appium-xcuitest-driver/issues/1624)) ([eca9530](https://github.com/appium/appium-xcuitest-driver/commit/eca9530fb6f3aac049bf407a8433b71ed8664e76))
+
 ## [4.23.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.23.1...v4.23.2) (2023-04-19)
 
 
