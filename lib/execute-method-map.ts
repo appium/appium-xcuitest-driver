@@ -470,4 +470,11 @@ export const executeMethodMap = {
   'mobile: isKeyboardShown': {
     command: 'isKeyboardShown',
   },
+  'mobile: webInspector': {
+    command: 'mobileWebInspector',
+    params: {
+      required: ['method'],
+      optional: ['args']
+    }
+  },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
