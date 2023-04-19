@@ -1,3 +1,10 @@
+## [4.23.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.23.1...v4.23.2) (2023-04-19)
+
+
+### Bug Fixes
+
+* apply correct params to enableConditionInducer ([09c97b2](https://github.com/appium/appium-xcuitest-driver/commit/09c97b237b381398a7505bd094fb329ee847ea9a))
+
 ## [4.23.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.23.0...v4.23.1) (2023-04-18)
 
 
