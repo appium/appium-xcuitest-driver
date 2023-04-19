@@ -1262,3 +1262,25 @@ Checks if the system on-screen keyboard is visible.
 #### Returned Result
 
 `true` if the keyboard is visible
+
+### mobile: lock
+
+Lock the device (and optionally unlock it after a certain amount of time). Only simple (e.g. without a password) locks are supported.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+seconds | number|string | no | The number of seconds after which to unlock the device. Set to `0` or leave it empty to require manual unlock (e.g. do not block and automatically unlock afterwards). | 5
+
+### mobile: unlock
+
+Unlocks the previously locked device. Only simple (e.g. without a password) locks are supported.
+
+### mobile: isLocked
+
+Determine whether the device is locked.
+
+#### Returned Result
+
+Either `true` or `false`

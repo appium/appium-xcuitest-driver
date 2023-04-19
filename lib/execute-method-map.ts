@@ -470,4 +470,16 @@ export const executeMethodMap = {
   'mobile: isKeyboardShown': {
     command: 'isKeyboardShown',
   },
+  'mobile: lock': {
+    command: 'lock',
+    params: {
+      optional: ['seconds'],
+    }
+  },
+  'mobile: unlock': {
+    command: 'unlock'
+  },
+  'mobile: isLocked': {
+    command: 'isLocked'
+  },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
