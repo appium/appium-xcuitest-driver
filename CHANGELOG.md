@@ -1,3 +1,10 @@
+## [4.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.24.0...v4.24.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* Add missing return to removeApp API ([#1623](https://github.com/appium/appium-xcuitest-driver/issues/1623)) ([af2db2e](https://github.com/appium/appium-xcuitest-driver/commit/af2db2e8a7694887f9f16da34d4d66c4f96ec8a5))
+
 ## [4.24.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.23.2...v4.24.0) (2023-04-19)
 
 
