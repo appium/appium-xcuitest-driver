@@ -9,8 +9,10 @@ import chai from 'chai';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import sinonChai from 'sinon-chai';
+import chaiAsPromised from 'chai-as-promised';
 chai.should();
-chai.use(sinonChai);
+chai.use(sinonChai).use(chaiAsPromised);
+
 const expect = chai.expect;
 
 const caps = {
@@ -114,8 +116,10 @@ describe('XCUITestDriver', function () {
           setReduceTransparency: _.noop,
         };
         realDevice = null;
-        // eslint-disable-next-line require-await
-        sandbox.stub(driver, 'determineDevice').callsFake(async () => ({device, realDevice, udid: 'stuff'}));
+        sandbox
+          .stub(driver, 'determineDevice')
+          // eslint-disable-next-line require-await
+          .callsFake(async () => ({device, realDevice, udid: 'stuff'}));
         sandbox.stub(driver, 'configureApp');
         sandbox.stub(driver, 'startLogCapture');
         sandbox.stub(driver, 'startSim');
@@ -191,13 +195,42 @@ describe('XCUITestDriver', function () {
         spy.notCalled.should.be.true;
       });
     });
+
+    describe('execute', function () {
+      /** @type {XCUITestDriver} */
+      let driver;
+      const deviceInfoResponse = {some: 'thing'};
+
+      beforeEach(function () {
+        driver = new XCUITestDriver();
+        const jwproxy = new JWProxy();
+        sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
+        driver.wda = {
+          jwproxy,
+        };
+      });
+
+      it('should allow execute methods without whitespace', async function () {
+        await expect(driver.execute('mobile:deviceInfo')).to.eventually.eql(deviceInfoResponse);
+      });
+
+      it('should allow execute methods with hella whitespace', async function () {
+        await expect(driver.execute('mobile:           deviceInfo')).to.eventually.eql(
+          deviceInfoResponse
+        );
+      });
+
+      it('should allow execute methods with leading/trailing whitespace', async function () {
+        await expect(driver.execute(' mobile: deviceInfo ')).to.eventually.eql(deviceInfoResponse);
+      });
+    });
   });
 
   describe('installOtherApps', function () {
     /** @type {XCUITestDriver} */
     let driver;
 
-    beforeEach(function() {
+    beforeEach(function () {
       driver = new XCUITestDriver();
     });
 
