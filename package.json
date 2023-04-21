@@ -87,7 +87,7 @@
     "moment-timezone": "0.5.43",
     "node-simctl": "7.1.12",
     "portscanner": "2.2.0",
-    "semver": "7.4.0",
+    "semver": "7.5.0",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2",
     "ws": "8.13.0"
