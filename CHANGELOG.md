@@ -1,3 +1,10 @@
+## [4.24.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.24.1...v4.24.2) (2023-04-21)
+
+
+### Bug Fixes
+
+* make whitespace in execute methods insignificant ([#1628](https://github.com/appium/appium-xcuitest-driver/issues/1628)) ([1dc7777](https://github.com/appium/appium-xcuitest-driver/commit/1dc7777cc6c3cd23f75085967d193562b63e6562))
+
 ## [4.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.24.0...v4.24.1) (2023-04-20)
 
 
