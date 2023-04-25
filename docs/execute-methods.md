@@ -1284,3 +1284,14 @@ Determine whether the device is locked.
 #### Returned Result
 
 Either `true` or `false`
+
+### mobile: backgroundApp
+
+Puts the app to the background and waits the given number of seconds. Then restores the app
+if necessary. The call is blocking.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+seconds | number | no | The amount of seconds to wait between putting the app to background and restoring it. Any negative value means to not restore the app after putting it to background (the default behavior). | 5
