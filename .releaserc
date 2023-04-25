@@ -26,7 +26,7 @@
     }],
     "@semantic-release/npm",
     ["@semantic-release/git", {
-      "assets": ["docs", "package.json", "CHANGELOG.md", "package-lock.json"],
+      "assets": ["docs", "package.json", "CHANGELOG.md"],
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }],
     "@semantic-release/github"
