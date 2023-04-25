@@ -26,7 +26,7 @@ jobs:
         npm prune --production
         rm -rf node_modules/appium
       name: Remove dev dependencies and appium peer dependencies
-    - run: npm shrinkwrap
+    - run: npm shrinkwrap # this command removes package-lock.json...
       name: Create shrinkwrap
     - run: npm ci --only=dev
       name: Install dev dependencies for the release
