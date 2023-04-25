@@ -345,49 +345,4 @@ describe('XCUITestDriver', function () {
       });
     }
   });
-
-  describe('xctestWDA', function () {
-    let driver;
-
-    beforeEach(function () {
-      driver = new XCUITestDriver();
-      sandbox.stub(driver, 'mobileKillApp');
-    });
-
-    it('starts and stops', async function () {
-      let startedXctestWDA = false;
-      let stoppedXctestWDA = false;
-      driver.xctestWDA = {
-        start() {
-          // eslint-disable-next-line require-await
-          startedXctestWDA = true;
-        },
-        stop() {
-          stoppedXctestWDA = true;
-        },
-      };
-      driver.wda = {
-        setupProxies() {},
-        getStatus() {
-          return {value: 'status'};
-        },
-      };
-      driver.wda.fullyStarted = false;
-
-      startedXctestWDA.should.eql(false);
-      stoppedXctestWDA.should.eql(false);
-      driver.wda.fullyStarted.should.eql(false);
-
-      await driver.startXctestWda('dummySessonId').should.eventually.eql({value: 'status'});
-      startedXctestWDA.should.eql(true);
-      stoppedXctestWDA.should.eql(false);
-      driver.wda.fullyStarted.should.eql(true);
-
-      driver.stopXctestWda();
-      startedXctestWDA.should.eql(true);
-      stoppedXctestWDA.should.eql(true);
-      driver.wda.fullyStarted.should.eql(false);
-      expect(driver.xctestWDA).eql(null);
-    });
-  });
 });
