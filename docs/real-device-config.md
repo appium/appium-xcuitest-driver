@@ -235,7 +235,7 @@ Example capabilities are below:
   "platformName": "ios",
   "appium:automationName": "xcuitest",
   "appium:usePreinstalledWDA": "true",
-  "appium:updatedWDABundleId": "com.your.account.WebDriverAgentRunner.xctrunner"
+  "appium:preInstalledWDABundleId": "com.your.account.WebDriverAgentRunner.xctrunner"
 }
 ```
 
