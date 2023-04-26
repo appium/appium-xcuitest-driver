@@ -1,3 +1,10 @@
+## [4.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.24.3...v4.25.0) (2023-04-26)
+
+
+### Features
+
+* Add mobile wrapper for backgroundApp ([#1637](https://github.com/appium/appium-xcuitest-driver/issues/1637)) ([04397cf](https://github.com/appium/appium-xcuitest-driver/commit/04397cf5df6f40a9f32f3c5dab7f278f3fc1d9f0))
+
 ## [4.24.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.24.2...v4.24.3) (2023-04-22)
 
 
