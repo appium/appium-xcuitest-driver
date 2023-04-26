@@ -482,4 +482,8 @@ export const executeMethodMap = {
   'mobile: isLocked': {
     command: 'isLocked'
   },
+  'mobile: backgroundApp': {
+    command: 'background',
+    params: { optional: ['seconds'] },
+  },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
