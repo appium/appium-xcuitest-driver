@@ -4,7 +4,7 @@ title: Overview
 
 
 <div style="text-align: center">
-  <img src="images/appium-plus-xctest.png" style="max-width: 500px;" />
+  <img src="assets/images/appium-plus-xctest.png" style="max-width: 500px;" />
 </div>
 
 
