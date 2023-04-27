@@ -168,7 +168,7 @@
     "get-port": "5.1.1",
     "glob": "9.3.5",
     "husky": "8.0.3",
-    "lint-staged": "13.2.1",
+    "lint-staged": "13.2.2",
     "mocha": "10.2.0",
     "mocha-junit-reporter": "2.2.0",
     "mocha-multi-reporters": "1.5.1",
