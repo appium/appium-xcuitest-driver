@@ -30,6 +30,6 @@ jobs:
     - run: npm install
     - name: create pull request
       run: |
-        gh pr create --title "chore: bump the driver version in package-lock.json" --body "Update the driver version after a release"
+        gh pr create -H update-package-lock -B master --title "chore: bump the driver version in package-lock.json" --body "Update the driver version after a release"
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
