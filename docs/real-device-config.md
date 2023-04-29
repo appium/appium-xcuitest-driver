@@ -224,20 +224,23 @@ This would make the device management more flexible, but you'd need to know abou
 
 ### Runs preinstalled WebDriverAgent
 
-`usePreinstalledWDA` capability allows the session to use the pre installed WebDriverRunner package to run the WebDriverAgentRunner process on the device.
-It avoid using `xcodebuild` to start the process. The preinstalled WebDriverAgent can be sighned with non-paied account, althought the provisiong profile will expire soon.
+`appium:usePreinstalledWDA` capability allows Appium to start a preinstalled WebDriverAgentRunner process without `xcodebuild`.
+The preinstalled WebDriverAgent can be signed with non-paid account.
 
-Example capabilities are below:
+Example capabilities set is below:
 
 ```json
 {
-  "appium:udid": "<udid>",
   "platformName": "ios",
   "appium:automationName": "xcuitest",
-  "appium:usePreinstalledWDA": "true",
-  "appium:preInstalledWDABundleId": "com.your.account.WebDriverAgentRunner.xctrunner"
+  "appium:udid": "<udid>",
+  "appium:usePreinstalledWDA": true,
+  "appium:preInstalledWDABundleId": "io.appium.WebDriverAgentRunner.xctrunner"
 }
 ```
+
+Then, if the `<udid>` device has `io.appium.WebDriverAgentRunner.xctrunner` bundle id's WebDriverAgentRunner package, the session will launch the process and use the WebDriverAgentRunner process.
+It will improve the test preparation speed significantly as same as `appium:webDriverAgentUrl`.
 
 #### Create an Offline Provisioning Profile
 
