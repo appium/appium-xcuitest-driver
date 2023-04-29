@@ -2,18 +2,20 @@
 title: Run Preinstalled WebDriverAgentRunner
 ---
 
-Appium XCUITest driver can launch preinstalled WebDriverAgent directly. It allows you to run `xcodebuild` command entirely.
+Appium XCUITest driver can launch preinstalled WebDriverAgent directly. It allows you to start an Appium session without `xcodebuild` command.
+The benefit to not use `xcodebuild` every time is it could make the new session request faster.
 
 > **Note**
 > This method is for real devices.
 
 ## Capabilities
 
-1. `appium:usePreinstalledWDA` + `appium:preInstalledWDABundleId`
-2. `appium:webDriverAgentUrl` + manage WDA process by yourselves
+- Required
+  - `appium:usePreinstalledWDA`
+- Optional
+  - `appium:preInstalledWDABundleId`
 
-
-## `appium:usePreinstalledWDA` + `appium:preInstalledWDABundleId`
+### Example
 
 ```json
 {
@@ -25,9 +27,14 @@ Appium XCUITest driver can launch preinstalled WebDriverAgent directly. It allow
 }
 ```
 
-Then, if the `<udid>` device has `io.appium.WebDriverAgentRunner.xctrunner` bundle id's WebDriverAgentRunner package, the session will launch the process and use the WebDriverAgentRunner process.
-It will improve the test preparation speed significantly as same as `appium:webDriverAgentUrl`.
+Then, if the `<udid>` device has `io.appium.WebDriverAgentRunner.xctrunner` bundle id's WebDriverAgentRunner package, the session will launch the WebDriverAgentRunner process and use it.
+Usually the session
 
 > **Note**
 > Please make sure the bundle id is launchable before starting an Appium session.
 > For example if the provisioning profile is trusted by the system.
+
+## Install WEbDriverAgent from Xcode
+
+
+## Install via 3rd party tools
