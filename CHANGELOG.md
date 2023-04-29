@@ -1,3 +1,10 @@
+## [4.25.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.0...v4.25.1) (2023-04-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v4.13.2 ([531c8f4](https://github.com/appium/appium-xcuitest-driver/commit/531c8f43c9522372a86db23b20d29e5476020f3e))
+
 ## [4.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.24.3...v4.25.0) (2023-04-26)
 
 
