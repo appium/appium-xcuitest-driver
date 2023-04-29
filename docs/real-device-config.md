@@ -221,31 +221,6 @@ This would make the device management more flexible, but you'd need to know abou
 > Generic builds with `CODE_SIGNING_ALLOWED=NO` are available for each version tag at https://github.com/appium/WebDriverAgent/releases.
 > It is recommended to sign packages with a wildcard (`*`) provisioning profile. Such profiles require a paid Apple Developer account. In case of a free account, you may need to update bundle id properly before building the WebDriverAgent package.
 
-
-### Runs preinstalled WebDriverAgent
-
-`appium:usePreinstalledWDA` capability allows Appium to start a preinstalled WebDriverAgentRunner process without `xcodebuild`.
-The preinstalled WebDriverAgent can be signed with non-paid account.
-
-Example capabilities set is below:
-
-```json
-{
-  "platformName": "ios",
-  "appium:automationName": "xcuitest",
-  "appium:udid": "<udid>",
-  "appium:usePreinstalledWDA": true,
-  "appium:preInstalledWDABundleId": "io.appium.WebDriverAgentRunner.xctrunner"
-}
-```
-
-Then, if the `<udid>` device has `io.appium.WebDriverAgentRunner.xctrunner` bundle id's WebDriverAgentRunner package, the session will launch the process and use the WebDriverAgentRunner process.
-It will improve the test preparation speed significantly as same as `appium:webDriverAgentUrl`.
-
-> **Note**
-> Please make sure the bundle id is launchable before starting an Appium session.
-> For example if the provisioning profile is trusted by the system.
-
 #### Create an Offline Provisioning Profile
 
 Apple requires a device to have a live internet connection to trust the code sign properly since iOS 16. An offline enabled provisiong profile allows you to avoid the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) regarding detailed configuration steps.

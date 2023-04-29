@@ -41,6 +41,7 @@ nav:
       - reference/commands/appium-xcuitest-driver.md
   - Guides:
       - real-device-config.md
+      - run-preinstalled-wda.md
       - ci-setup.md
       - multiple-xcode-versions.md
       - wda-custom-server.md
