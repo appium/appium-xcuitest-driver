@@ -242,6 +242,10 @@ Example capabilities set is below:
 Then, if the `<udid>` device has `io.appium.WebDriverAgentRunner.xctrunner` bundle id's WebDriverAgentRunner package, the session will launch the process and use the WebDriverAgentRunner process.
 It will improve the test preparation speed significantly as same as `appium:webDriverAgentUrl`.
 
+> **Note**
+> Please make sure the bundle id is launchable before starting an Appium session.
+> For example if the provisioning profile is trusted by the system.
+
 #### Create an Offline Provisioning Profile
 
 Apple requires a device to have a live internet connection to trust the code sign properly since iOS 16. An offline enabled provisiong profile allows you to avoid the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) regarding detailed configuration steps.
