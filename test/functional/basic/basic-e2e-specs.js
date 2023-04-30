@@ -7,7 +7,7 @@ import { retryInterval } from 'asyncbox';
 import { extractCapabilityValue, amendCapabilities, UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
 import { GUINEA_PIG_PAGE } from '../web/helpers';
-import { PNG } from 'pngjs';
+import sharp from 'sharp';
 
 
 chai.should();
@@ -172,16 +172,18 @@ describe('XCUITestDriver - basics -', function () {
       const {statBarHeight, pixelRatio, viewportRect} = await driver.getSession(); // TODO: use a w3c compatible API
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute('mobile: viewportScreenshot');
-      const fullB64 = Buffer.from(fullScreen, 'base64');
-      const viewB64 = Buffer.from(viewScreen, 'base64');
-      const fullImg = new PNG({filterType: 4});
-      await B.promisify(fullImg.parse, {context: fullImg})(fullB64);
-      const viewImg = new PNG({filterType: 4});
-      await B.promisify(viewImg.parse, {context: viewImg})(viewB64);
+      const fullImg = sharp(Buffer.from(fullScreen, 'base64'));
+      const {width: fullImgWidth, height: fullImgHeight} = await fullImg.metadata();
+      const viewImg = sharp(Buffer.from(viewScreen, 'base64'));
+      const {width: viewImgWidth, height: viewImgHeight} = await viewImg.metadata();
+      if (fullImgWidth === undefined || fullImgHeight === undefined
+          || viewImgWidth === undefined || viewImgHeight === undefined) {
+        throw new Error('Image dimensions must not be undefined');
+      }
       // Viewport size can be smaller than the full image size + status bar on some devices.
-      fullImg.height.should.be.gte(viewImg.height + Math.round(pixelRatio * statBarHeight));
-      viewImg.height.should.eql(viewportRect.height);
-      fullImg.width.should.be.gte(viewImg.width);
+      fullImgHeight.should.be.gte(viewImgHeight + Math.round(pixelRatio * statBarHeight));
+      viewImgHeight.should.eql(viewportRect.height);
+      fullImgWidth.should.be.gte(viewImgWidth);
     });
   });
 
