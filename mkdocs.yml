@@ -40,8 +40,9 @@ nav:
       - troubleshooting.md
       - reference/commands/appium-xcuitest-driver.md
   - Guides:
+      - Improve Setup performance:
+        - run-preinstalled-wda.md
       - real-device-config.md
-      - run-preinstalled-wda.md
       - ci-setup.md
       - multiple-xcode-versions.md
       - wda-custom-server.md

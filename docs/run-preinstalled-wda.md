@@ -2,8 +2,8 @@
 title: Run Preinstalled WebDriverAgentRunner
 ---
 
-XCUITest driver can launch preinstalled WebDriverAgent directly against a real device. It lets you start an Appium session without the `xcodebuild` command execution.
-The benefit of not using `xcodebuild` every time is that it could make the new session request faster.
+XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
+It lets you start an Appium session without the `xcodebuild` command execution to improve the session start performance.
 
 `appium:webDriverAgentUrl` let you manage everything related to the WebDriverAgent, but this functionality let Appium to manage instead.
 
