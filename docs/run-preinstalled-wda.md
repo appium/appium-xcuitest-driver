@@ -7,7 +7,9 @@ The benefit of not using `xcodebuild` every time is that it could make the new s
 
 `appium:webDriverAgentUrl` let you manage everything related to the WebDriverAgent, but this functionality let Appium to manage instead.
 
-## Capabilities
+## For Real Device
+
+### Capabilities
 
 - Required
   - `appium:usePreinstalledWDA` to start a WebDriverAgent process without xcodebuild
@@ -39,7 +41,9 @@ If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAg
 > Please ensure that the bundle id is launchable before starting an Appium session.
 > For example, whether the provisioning profile is trusted by the system.
 
-## Install WEbDriverAgent from Xcode
+### Install WebDriverAgent
+
+#### With Xcode
 
 Running test of [WebDriveragent](https://github.com/appium/WebDriverAgent) package with Xcode is the easiest way to prepare the device environment.
 Please read [Real Device Configuration tutorial](real-device-config.md) to configure the WebDriverAgent package for a real device.
@@ -54,7 +58,7 @@ The `preInstalledWDABundleId` needs to be the `com.appium.WebDriverAegnt.xctrunn
 > Please make sure if the installed WebDriverAgent is valid if the session start continued failing with a correct WebDriverAgent bundle id.
 > For example, non-paid account has limited period to keep the provisiong profile valid. Sometimes it requires to be uninstalled once, or restart the device.
 
-## Install via 3rd party tools
+#### With 3rd party tools
 
 Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) can install the built WebDriverAgent package.
 
