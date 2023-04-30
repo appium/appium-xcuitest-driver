@@ -50,6 +50,10 @@ Then, the WebDriverAgent bumdle id could be `com.appium.WebDriverAgentRunner` fo
 The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
 The `preInstalledWDABundleId` needs to be the `com.appium.WebDriverAegnt.xctrunner`.
 
+> **Note**
+> Please make sure if the installed WebDriverAgent is valid if the session start continued failing with a correct WebDriverAgent bundle id.
+> For example, non-paid account has limited period to keep the provisiong profile valid. Sometimes it requires to be uninstalled once, or restart the device.
+
 ## Install via 3rd party tools
 
 Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) can install the built WebDriverAgent package.
