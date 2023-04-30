@@ -14,10 +14,10 @@ The benefit of not using `xcodebuild` every time is that it could make the new s
 - Optional
   - `appium:preInstalledWDABundleId` to customize the WebDriverAgent bundle id Appium launches
 
-### Example steps
+### Example steps with Xcode
 
-1. Run test WebDriverAgent with Xcode
-2. Stop the Xcode
+1. Run WebDriverAgent with Xcode as test
+2. Stop the Xcode session
 3. Start an Appium session with the capabilities below:
 
 ```ruby
