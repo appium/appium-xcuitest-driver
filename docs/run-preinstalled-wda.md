@@ -2,39 +2,55 @@
 title: Run Preinstalled WebDriverAgentRunner
 ---
 
-Appium XCUITest driver can launch preinstalled WebDriverAgent directly. It allows you to start an Appium session without `xcodebuild` command.
-The benefit to not use `xcodebuild` every time is it could make the new session request faster.
-
-> **Note**
-> This method is for real devices.
+XCUITest driver can launch preinstalled WebDriverAgent directly against a real device. It lets you start an Appium session without the `xcodebuild` command execution.
+The benefit of not using `xcodebuild` every time is that it could make the new session request faster.
 
 ## Capabilities
 
 - Required
-  - `appium:usePreinstalledWDA`
+  - `appium:usePreinstalledWDA` to start a WebDriverAgent process without xcodebuild
 - Optional
-  - `appium:preInstalledWDABundleId`
+  - `appium:preInstalledWDABundleId` to customize the WebDriverAgent bundle id Appium launches
 
-### Example
+### Example steps
 
-```json
-{
+1. Run test WebDriverAgent with Xcode
+2. Stop the Xcode
+3. Start an Appium session with the capabilities below:
+
+```ruby
+# Ruby
+capabilities: {
   "platformName": "ios",
   "appium:automationName": "xcuitest",
   "appium:udid": "<udid>",
   "appium:usePreinstalledWDA": true,
-  "appium:preInstalledWDABundleId": "io.appium.WebDriverAgentRunner.xctrunner"
+  "appium:preInstalledWDABundleId": "com.appium.WebDriverAgentRunner.xctrunner"
 }
+@core = Appium::Core.for capabilities: capabilities
+@core.start_driver
 ```
 
-Then, if the `<udid>` device has `io.appium.WebDriverAgentRunner.xctrunner` bundle id's WebDriverAgentRunner package, the session will launch the WebDriverAgentRunner process and use it.
-Usually the session
+If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAgentRunner.xctrunner` bundle id, the session will launch the WebDriverAgent process without xcodebuild.
 
 > **Note**
-> Please make sure the bundle id is launchable before starting an Appium session.
-> For example if the provisioning profile is trusted by the system.
+> Please ensure that the bundle id is launchable before starting an Appium session.
+> For example, whether the provisioning profile is trusted by the system.
 
 ## Install WEbDriverAgent from Xcode
 
+Running test of [WebDriveragent](https://github.com/appium/WebDriverAgent) package with Xcode is the easiest way to prepare the device environment.
+Please read [Real Device Configuration tutorial](real-device-config.md) to configure the WebDriverAgent package for a real device.
+
+The `preInstalledWDABundleId` is usually `<bundle id>.xctrunner`. The `<bundle id>` could depend on your provisioning profile environment.
+If it is a non-paid account by `appium` user name, the bundle id would have `com.appium` prefix.
+Then, the WebDriverAgent bumdle id could be `com.appium.WebDriverAgentRunner` for example.
+The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
+The `preInstalledWDABundleId` needs to be the `com.appium.WebDriverAegnt.xctrunner`.
 
 ## Install via 3rd party tools
+
+Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) can install the built WebDriverAgent package.
+
+`WebDriverAgentRunner-Runner.app` package may exist in a `derivedDataPath` directory explained in [Real Device Configuration tutorial](real-device-config.md).
+The `WebDriverAgentRunner-Runner.app` can be installed without xcodebuild with the 3rd party tools.
