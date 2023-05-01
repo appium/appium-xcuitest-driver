@@ -221,6 +221,7 @@ This would make the device management more flexible, but you'd need to know abou
 > Generic builds with `CODE_SIGNING_ALLOWED=NO` are available for each version tag at https://github.com/appium/WebDriverAgent/releases.
 > It is recommended to sign packages with a wildcard (`*`) provisioning profile. Such profiles require a paid Apple Developer account. In case of a free account, you may need to update bundle id properly before building the WebDriverAgent package.
 
+
 #### Create an Offline Provisioning Profile
 
 Apple requires a device to have a live internet connection to trust the code sign properly since iOS 16. An offline enabled provisiong profile allows you to avoid the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) regarding detailed configuration steps.
