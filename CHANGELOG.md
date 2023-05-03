@@ -1,3 +1,15 @@
+## [4.25.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.1...v4.25.2) (2023-05-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v4.14.0 ([bbca5a7](https://github.com/appium/appium-xcuitest-driver/commit/bbca5a731f353263bf1c2450ab6ce9319b9284f8))
+
+
+### Code Refactoring
+
+* Replace pngjs with sharp ([#1653](https://github.com/appium/appium-xcuitest-driver/issues/1653)) ([73c2654](https://github.com/appium/appium-xcuitest-driver/commit/73c26546a0735f6a8da6da763efbed02d5490488))
+
 ## [4.25.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.0...v4.25.1) (2023-04-29)
 
 
