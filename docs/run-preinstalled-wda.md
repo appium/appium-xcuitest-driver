@@ -5,9 +5,6 @@ title: Run Preinstalled WebDriverAgentRunner
 XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
 It lets you start an XCUITest driver session without the `xcodebuild` command execution to improve the session start performance.
 
-`appium:webDriverAgentUrl` helps to improve the session start performance as well, but the capability requires you to manage the WebDriverAgent-Runner on a device by yourself.
-For exampel you should start the runner outside XCUITest driver before starting the a new session procedure.
-
 ## For Real Devices
 
 ### Capabilities
