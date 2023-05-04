@@ -10,7 +10,7 @@ name | Could contain either element's [identifier](https://developer.apple.com/d
 label | Element's [label](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500692-label?language=objc) value. Could be `null`. Since XCUITest driver 4.7.3 (WebDriverAgent 4.8.0), the behavior of this value was better aligned with XCTest, so it could include line breaks (`\n`). Before this version, line breaks were replaced by spaces. | 'hello', 'hello\nworld'
 type | Element's [type](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500614-elementtype?language=objc) name | 'XCUIElementTypeButton'
 visible | Whether the element is visible. This value is not available in the "vanilla" XCTest and is read directly from the accessibility layer | 'false'
-focused | Whether the element is [focused](https://developer.apple.com/documentation/xctest/xcuielementattributes/1627636-hasfocus?language=objc). *Only available for tvOS prior to driver version 4.25.3* | 'true'
+focused | Whether the element is [focused](https://developer.apple.com/documentation/xctest/xcuielementattributes/1627636-hasfocus?language=objc). *Only available for tvOS prior to driver version 4.25.4* | 'true'
 accessible | Whether the element is accessible. This value is not available in the "vanilla" XCTest and is read directly from the accessibility layer | 'true'
 enabled | Whether the element is [enabled](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500330-enabled?language=objc). | 'false'
 selected | Whether the element is [selected](https://developer.apple.com/documentation/xctest/xcuielementattributes/1500581-selected?language=objc) | 'false'
