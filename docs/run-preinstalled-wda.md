@@ -3,7 +3,7 @@ title: Run Preinstalled WebDriverAgentRunner
 ---
 
 XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
-It lets you start an XCUITest driver session without the `xcodebuild` command execution to improve the session start performance.
+It lets you start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
 
 ## For Real Devices
 
@@ -16,9 +16,15 @@ It lets you start an XCUITest driver session without the `xcodebuild` command ex
 
 ### Example steps with Xcode
 
+Open WebDriverAgent in Xcode
+Select WebDriverAgentRunner project
+Choose the target device
+Select Product->Test from the main menu bar
+
 1. Run WebDriverAgent with Xcode as test
-2. Stop the Xcode session
-3. Start a XCUITest driver session with the capabilities below:
+    - Please read [Install WebDriverAgent With Xcode](#with-xcode) below
+3. Stop the Xcode session
+4. Start a XCUITest driver session with the capabilities below:
 
 ```ruby
 # Ruby
@@ -44,7 +50,15 @@ If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAg
 #### With Xcode
 
 Running test of [WebDriveragent](https://github.com/appium/WebDriverAgent) package with Xcode is the easiest way to prepare the device environment.
-Please read [Real Device Configuration tutorial](real-device-config.md) to configure the WebDriverAgent package for a real device.
+The step is:
+
+1. Open WebDriverAgent project in Xcode
+    - `appium driver run xcuitest open-wda` command after installing XCUITest driver may help
+2. Select `WebDriverAgentRunner` scheme
+3. Chose the target device
+4. Run test via `Product` -> `Test` from the menu bar
+
+Please read [Real Device Configuration tutorial](real-device-config.md) to configure the WebDriverAgent package for a real device before the step 4.
 
 If it is a non-paid account by `appium` user name, the bundle id would have `com.appium` prefix.
 Then, the WebDriverAgent-Runner's bumdle id could be `com.appium.WebDriverAgentRunner` for example.
@@ -52,7 +66,7 @@ Then, the WebDriverAgent-Runner's bumdle id could be `com.appium.WebDriverAgentR
 The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
 
 > **Note**
-> Older than Xcode 11 has different naming convension. This feature does not work for a package which is built by Xcode 11 and lower versions.
+> Older than Xcode 11 has different naming convention. This feature does not work for a package which is built by Xcode 11 and lower versions.
 
 > **Note**
 > Please make sure that the installed `WebDriverAgentRunner-Runner` application is still launchable if the XCUITest driver session startup continued still fails by providing a correct WebDriverAgent bundle identifier.
