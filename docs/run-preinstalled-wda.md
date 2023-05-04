@@ -55,8 +55,9 @@ The step is:
 1. Open WebDriverAgent project in Xcode
     - `appium driver run xcuitest open-wda` command after installing XCUITest driver may help
 2. Select `WebDriverAgentRunner` scheme
-3. Chose the target device
-4. Run test via `Product` -> `Test` from the menu bar
+    - `WebDriverAgentRunner_tvOS` for tvOS
+4. Chose the target device
+5. Run test via `Product` -> `Test` from the menu bar
 
 Please read [Real Device Configuration tutorial](real-device-config.md) to configure the WebDriverAgent package for a real device before the step 4.
 
