@@ -1,5 +1,7 @@
 ---
 title: Overview
+hide:
+  - navigation
 ---
 
 

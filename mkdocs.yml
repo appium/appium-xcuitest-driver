@@ -12,7 +12,7 @@ theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
   features:
-    - navigation.sections
+    - navigation.tabs
 extra_css:
   - assets/stylesheets/extra.css
 extra:
