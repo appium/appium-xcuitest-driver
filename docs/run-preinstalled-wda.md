@@ -3,28 +3,27 @@ title: Run Preinstalled WebDriverAgentRunner
 ---
 
 XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
-It lets you start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
+It lets you to start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
 
 ## For Real Devices
 
 ### Capabilities
 
 - Required
-  - `appium:usePreinstalledWDA` to start a WebDriverAgent Runner-process without xcodebuild
+  - [`appium:usePreinstalledWDA`](capabilities.md#webdriveragent)
 - Optional
-  - `appium:updatedWDABundleId` to customize the WebDriverAgent bundle id XCUITest driver launches
+  - [`appium:updatedWDABundleId`](capabilities.md#webdriveragent)
 
 ### Example steps with Xcode
 
-Open WebDriverAgent in Xcode
-Select WebDriverAgentRunner project
-Choose the target device
-Select Product->Test from the main menu bar
-
-1. Run WebDriverAgent with Xcode as test
+1. Run `WebDriverAgentRunner` scheme with Xcode as Test and stop it
     - Please read [Install WebDriverAgent With Xcode](#with-xcode) below
-3. Stop the Xcode session
-4. Start a XCUITest driver session with the capabilities below:
+2. Start an Appium server process
+3. Start a XCUITest driver session with the capabilities below:
+
+```
+appium
+```
 
 ```ruby
 # Ruby
@@ -36,7 +35,9 @@ capabilities: {
   "appium:updatedWDABundleId": "com.appium.WebDriverAgentRunner"
 }
 @core = Appium::Core.for capabilities: capabilities
-@core.start_driver
+driver = @core.start_driver
+# do something
+driver.quit
 ```
 
 If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAgentRunner.xctrunner` bundle id, the session will launch the WebDriverAgent process without xcodebuild.
@@ -50,7 +51,7 @@ If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAg
 #### With Xcode
 
 Running test of [WebDriveragent](https://github.com/appium/WebDriverAgent) package with Xcode is the easiest way to prepare the device environment.
-The step is:
+The steps are:
 
 1. Open WebDriverAgent project in Xcode
     - `appium driver run xcuitest open-wda` command after installing XCUITest driver may help
