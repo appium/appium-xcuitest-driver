@@ -1,5 +1,7 @@
 ---
 title: Setup & Requirements
+hide:
+  - navigation
 ---
 
 ## Installation
