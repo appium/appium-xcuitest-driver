@@ -1,5 +1,5 @@
 ---
-title: WebDriverAgent
+title: Manage WebDriverAgent by yourself
 ---
 
 Appium for iOS uses [WebDriverAgent](https://github.com/appium/WebDriverAgent)
