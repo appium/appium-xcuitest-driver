@@ -40,7 +40,7 @@ nav:
       - troubleshooting.md
       - reference/commands/appium-xcuitest-driver.md
   - Guides:
-      - Improve Setup performance:
+      - Improve session startup performance:
         - run-preinstalled-wda.md
       - real-device-config.md
       - ci-setup.md

@@ -68,10 +68,10 @@ Then, the WebDriverAgent-Runner's bumdle id could be `com.appium.WebDriverAgentR
 The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
 
 > **Note**
-> Older than Xcode 11 has different naming convention. This feature does not work for a package which is built by Xcode 11 and lower versions.
+> Older than Xcode 11 has different naming convention. This feature does not work for a package which is built by Xcode versions below 12 have different naming conventions.
 
 > **Note**
-> Please make sure that the installed `WebDriverAgentRunner-Runner` application is still launchable if the XCUITest driver session startup continued still fails by providing a correct WebDriverAgent bundle identifier.
+> Please make sure that the installed `WebDriverAgentRunner-Runner` application is still launchable if the XCUITest driver session startup still fails by providing a correct WebDriverAgent bundle identifier.
 > For example, non-paid account has limited period to keep the provisiong profile valid. Sometimes it is necessary to reinstall WebDriverAgentRunner-Runner once, or to restart the device.
 
 #### With 3rd party tools
