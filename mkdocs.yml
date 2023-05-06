@@ -41,7 +41,7 @@ nav:
       - reference/commands/appium-xcuitest-driver.md
   - Guides:
       - Improve session startup performance:
-        - run-preinstalled-wda.md
+          - run-preinstalled-wda.md
       - real-device-config.md
       - ci-setup.md
       - multiple-xcode-versions.md

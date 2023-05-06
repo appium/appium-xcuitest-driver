@@ -10,9 +10,9 @@ It lets you to start a XCUITest driver session without the `xcodebuild` command 
 ### Capabilities
 
 - Required
-  - [`appium:usePreinstalledWDA`](capabilities.md#webdriveragent)
+    - [`appium:usePreinstalledWDA`](capabilities.md#webdriveragent)
 - Optional
-  - [`appium:updatedWDABundleId`](capabilities.md#webdriveragent)
+    - [`appium:updatedWDABundleId`](capabilities.md#webdriveragent)
 
 ### Example steps with Xcode
 
