@@ -2988,7 +2988,7 @@ listeners. The values in the array are strings or <code>Symbol</code>s.</p>
 <h4 id="inherited-from_5">Inherited from</h4>
 <p>EventEmitter.eventNames</p>
 <h4 id="defined-in_16">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:669</p>
+<p>node_modules/@types/node/events.d.ts:673</p>
 <hr />
 <h3 id="getmaxlisteners">getMaxListeners</h3>
 <p>▸ <strong>getMaxListeners</strong>(): <code>number</code></p>
@@ -3038,8 +3038,10 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 <p>node_modules/@types/ws/index.d.ts:349</p>
 <hr />
 <h3 id="listenercount">listenerCount</h3>
-<p>▸ <strong>listenerCount</strong>(<code>eventName</code>): <code>number</code></p>
+<p>▸ <strong>listenerCount</strong>(<code>eventName</code>, <code>listener?</code>): <code>number</code></p>
 <p>Returns the number of listeners listening to the event named <code>eventName</code>.</p>
+<p>If <code>listener</code> is provided, it will return how many times the listener
+is found in the list of the listeners of the event.</p>
 <p><strong><code>Since</code></strong></p>
 <p>v3.2.0</p>
 <h4 id="parameters_9">Parameters</h4>
@@ -3057,6 +3059,11 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 <td align="left"><code>string</code> | <code>symbol</code></td>
 <td align="left">The name of the event being listened for</td>
 </tr>
+<tr>
+<td align="left"><code>listener?</code></td>
+<td align="left"><code>Function</code></td>
+<td align="left">The event handler function</td>
+</tr>
 </tbody>
 </table>
 <h4 id="returns_11">Returns</h4>
@@ -3064,7 +3071,7 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 <h4 id="inherited-from_7">Inherited from</h4>
 <p>EventEmitter.listenerCount</p>
 <h4 id="defined-in_19">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:616</p>
+<p>node_modules/@types/node/events.d.ts:620</p>
 <hr />
 <h3 id="listeners">listeners</h3>
 <p>▸ <strong>listeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>
@@ -3535,7 +3542,7 @@ times.</p>
 <h4 id="inherited-from_9">Inherited from</h4>
 <p>EventEmitter.prependListener</p>
 <h4 id="defined-in_36">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:634</p>
+<p>node_modules/@types/node/events.d.ts:638</p>
 <hr />
 <h3 id="prependoncelistener">prependOnceListener</h3>
 <p>▸ <strong>prependOnceListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
@@ -3575,7 +3582,7 @@ listener is removed, and then invoked.</p>
 <h4 id="inherited-from_10">Inherited from</h4>
 <p>EventEmitter.prependOnceListener</p>
 <h4 id="defined-in_37">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:650</p>
+<p>node_modules/@types/node/events.d.ts:654</p>
 <hr />
 <h3 id="rawlisteners">rawListeners</h3>
 <p>▸ <strong>rawListeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>

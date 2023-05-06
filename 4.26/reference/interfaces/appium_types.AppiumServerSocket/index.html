@@ -6003,7 +6003,7 @@ the socket is destroyed (for example, if the client disconnected).</p>
 <h4 id="returns">Returns</h4>
 <p><code>AsyncIterableIterator</code>&lt;<code>any</code>></p>
 <h4 id="inherited-from_34">Inherited from</h4>
-<p>Socket.__@asyncIterator@29132</p>
+<p>Socket.__@asyncIterator@29333</p>
 <h4 id="defined-in_35">Defined in</h4>
 <p>node_modules/@types/node/stream.d.ts:503</p>
 <hr />
@@ -6983,7 +6983,7 @@ listeners. The values in the array are strings or <code>Symbol</code>s.</p>
 <h4 id="inherited-from_71">Inherited from</h4>
 <p>Socket.eventNames</p>
 <h4 id="defined-in_72">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:669</p>
+<p>node_modules/@types/node/events.d.ts:673</p>
 <hr />
 <h3 id="getmaxlisteners">getMaxListeners</h3>
 <p>▸ <strong>getMaxListeners</strong>(): <code>number</code></p>
@@ -7021,8 +7021,10 @@ use this method directly.</p>
 <p>node_modules/@types/node/stream.d.ts:302</p>
 <hr />
 <h3 id="listenercount">listenerCount</h3>
-<p>▸ <strong>listenerCount</strong>(<code>eventName</code>): <code>number</code></p>
+<p>▸ <strong>listenerCount</strong>(<code>eventName</code>, <code>listener?</code>): <code>number</code></p>
 <p>Returns the number of listeners listening to the event named <code>eventName</code>.</p>
+<p>If <code>listener</code> is provided, it will return how many times the listener
+is found in the list of the listeners of the event.</p>
 <p><strong><code>Since</code></strong></p>
 <p>v3.2.0</p>
 <h4 id="parameters_34">Parameters</h4>
@@ -7040,6 +7042,11 @@ use this method directly.</p>
 <td align="left"><code>string</code> | <code>symbol</code></td>
 <td align="left">The name of the event being listened for</td>
 </tr>
+<tr>
+<td align="left"><code>listener?</code></td>
+<td align="left"><code>Function</code></td>
+<td align="left">The event handler function</td>
+</tr>
 </tbody>
 </table>
 <h4 id="returns_40">Returns</h4>
@@ -7047,7 +7054,7 @@ use this method directly.</p>
 <h4 id="inherited-from_74">Inherited from</h4>
 <p>Socket.listenerCount</p>
 <h4 id="defined-in_75">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:616</p>
+<p>node_modules/@types/node/events.d.ts:620</p>
 <hr />
 <h3 id="listeners">listeners</h3>
 <p>▸ <strong>listeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>
