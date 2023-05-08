@@ -1,3 +1,24 @@
+## [4.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.4...v4.26.0) (2023-05-06)
+
+
+### Features
+
+* launch preinstalled WDA process without xcodebuild for a real device with usePreinstalledWDA ([#1609](https://github.com/appium/appium-xcuitest-driver/issues/1609)) ([3c72b58](https://github.com/appium/appium-xcuitest-driver/commit/3c72b58e12eea6d331b3b4e86cd3546954f5111f))
+
+## [4.25.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.3...v4.25.4) (2023-05-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v4.15.1 ([#1667](https://github.com/appium/appium-xcuitest-driver/issues/1667)) ([008d7ef](https://github.com/appium/appium-xcuitest-driver/commit/008d7efda992be1b5dcc42391cf6b3c07b6f68ae))
+
+## [4.25.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.2...v4.25.3) (2023-05-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency node-simctl to v7.1.15 ([41ce19a](https://github.com/appium/appium-xcuitest-driver/commit/41ce19aca7c80c14285da6d4e6a053488fe295bf))
+
 ## [4.25.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.1...v4.25.2) (2023-05-02)
 
 
