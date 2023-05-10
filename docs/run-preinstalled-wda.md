@@ -13,6 +13,7 @@ It lets you to start a XCUITest driver session without the `xcodebuild` command 
     - [`appium:usePreinstalledWDA`](capabilities.md#webdriveragent)
 - Optional
     - [`appium:updatedWDABundleId`](capabilities.md#webdriveragent)
+    - [`appium:prebuiltWDAPath`](capabilities.md#webdriveragent)
 
 ### Example steps with Xcode
 
@@ -80,3 +81,15 @@ Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-dep
 
 `WebDriverAgentRunner-Runner.app` package may exist in a `derivedDataPath` directory as explained in [Real Device Configuration tutorial](./real-device-config.md).
 The `WebDriverAgentRunner-Runner.app` can be installed without xcodebuild with the 3rd party tools.
+
+
+### Set `appium:prebuiltWDAPath`
+
+If `appium:prebuiltWDAPath` is provided with properly signed `WebDriverAgentRunner-Runner.app` test bundle (please check [Real Device Configuration tutorial](real-device-config.md)), XCUITest driver will install the application and launch it every session.
+The test bundle cannot set the versioning as `CFBundleVersion`, thus the installation occurs every session.
+
+The `.app` test bundle is generally generated as below if you built with Xcode.
+
+```
+~/Library/Developer/Xcode/DerivedData/WebDriverAgent-<random string>/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app
+```
