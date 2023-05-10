@@ -93,3 +93,20 @@ The `.app` test bundle is generally generated as below if you built with Xcode.
 ```
 ~/Library/Developer/Xcode/DerivedData/WebDriverAgent-<random string>/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app
 ```
+
+Then, the capabilities will be:
+
+```ruby
+# Ruby
+capabilities: {
+  "platformName": "ios",
+  "appium:automationName": "xcuitest",
+  "appium:udid": "<udid>",
+  "appium:usePreinstalledWDA": true,
+  "appium:prebuiltWDAPath": "/path/to/Library/Developer/Xcode/DerivedData/WebDriverAgent-<random string>/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app"
+}
+@core = Appium::Core.for capabilities: capabilities
+driver = @core.start_driver
+# do something
+driver.quit
+```
