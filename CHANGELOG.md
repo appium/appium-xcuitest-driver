@@ -1,3 +1,10 @@
+## [4.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.26.0...v4.27.0) (2023-05-11)
+
+
+### Features
+
+* install prebuilt WDA as prebuiltWDAPath capability ([#1672](https://github.com/appium/appium-xcuitest-driver/issues/1672)) ([2226123](https://github.com/appium/appium-xcuitest-driver/commit/22261233114788663750713c1cbea65d25d2b525))
+
 ## [4.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.25.4...v4.26.0) (2023-05-06)
 
 
