@@ -1,3 +1,10 @@
+## [4.27.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.0...v4.27.1) (2023-05-12)
+
+
+### Bug Fixes
+
+* Update package lock ([4836490](https://github.com/appium/appium-xcuitest-driver/commit/4836490a84a05a127040bf882c37f87fc75118ca))
+
 ## [4.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.26.0...v4.27.0) (2023-05-11)
 
 
