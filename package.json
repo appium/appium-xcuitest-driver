@@ -146,7 +146,7 @@
     "@types/chai-as-promised": "7.1.5",
     "@types/lodash": "4.14.194",
     "@types/mocha": "10.0.1",
-    "@types/node": "18.16.7",
+    "@types/node": "18.16.8",
     "@types/portscanner": "2.1.1",
     "@types/sinon": "10.0.14",
     "@types/sinon-chai": "3.2.9",
