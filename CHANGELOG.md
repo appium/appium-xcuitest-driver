@@ -1,3 +1,10 @@
+## [4.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.2...v4.28.0) (2023-05-14)
+
+
+### Features
+
+* Bump WDA ([#1680](https://github.com/appium/appium-xcuitest-driver/issues/1680)) ([2c07021](https://github.com/appium/appium-xcuitest-driver/commit/2c07021753b6c9b3c62639c79bcd769b17329c5c))
+
 ## [4.27.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.1...v4.27.2) (2023-05-13)
 
 
