@@ -1,3 +1,16 @@
+## [4.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.28.0...v4.29.0) (2023-05-15)
+
+
+### Features
+
+* update docs and args for more execute methods ([5c4bd32](https://github.com/appium/appium-xcuitest-driver/commit/5c4bd3272701f191d5f1abd104deab31ed6b3595))
+
+
+### Bug Fixes
+
+* **deps:** appium upgrades ([70c13dc](https://github.com/appium/appium-xcuitest-driver/commit/70c13dc779c2423c3d726aa1dbf7fcedd496ca82))
+* **execute-methods:** begin migration of docstrings to sources ([316c012](https://github.com/appium/appium-xcuitest-driver/commit/316c012fad7d9b3306cbbe767195b351f60aa26d))
+
 ## [4.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.2...v4.28.0) (2023-05-14)
 
 
