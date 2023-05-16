@@ -1,3 +1,10 @@
+## [4.29.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.0...v4.29.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* Make terminateApp to return a boolean ([2481656](https://github.com/appium/appium-xcuitest-driver/commit/24816564af418843ed9f23f59c6128be86cee4a7))
+
 ## [4.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.28.0...v4.29.0) (2023-05-15)
 
 
