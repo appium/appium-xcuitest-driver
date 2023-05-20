@@ -1,3 +1,51 @@
+## [4.29.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.1...v4.29.2) (2023-05-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.1.4 ([#1682](https://github.com/appium/appium-xcuitest-driver/issues/1682)) ([28026cf](https://github.com/appium/appium-xcuitest-driver/commit/28026cf6ec29e64c79c0efc75f5f0be603e70693))
+
+## [4.29.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.0...v4.29.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* Make terminateApp to return a boolean ([2481656](https://github.com/appium/appium-xcuitest-driver/commit/24816564af418843ed9f23f59c6128be86cee4a7))
+
+## [4.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.28.0...v4.29.0) (2023-05-15)
+
+
+### Features
+
+* update docs and args for more execute methods ([5c4bd32](https://github.com/appium/appium-xcuitest-driver/commit/5c4bd3272701f191d5f1abd104deab31ed6b3595))
+
+
+### Bug Fixes
+
+* **deps:** appium upgrades ([70c13dc](https://github.com/appium/appium-xcuitest-driver/commit/70c13dc779c2423c3d726aa1dbf7fcedd496ca82))
+* **execute-methods:** begin migration of docstrings to sources ([316c012](https://github.com/appium/appium-xcuitest-driver/commit/316c012fad7d9b3306cbbe767195b351f60aa26d))
+
+## [4.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.2...v4.28.0) (2023-05-14)
+
+
+### Features
+
+* Bump WDA ([#1680](https://github.com/appium/appium-xcuitest-driver/issues/1680)) ([2c07021](https://github.com/appium/appium-xcuitest-driver/commit/2c07021753b6c9b3c62639c79bcd769b17329c5c))
+
+## [4.27.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.1...v4.27.2) (2023-05-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.5.1 ([27a0a0e](https://github.com/appium/appium-xcuitest-driver/commit/27a0a0e2eb86e272eddf6c385a950a3e44b95d02))
+
+## [4.27.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.27.0...v4.27.1) (2023-05-12)
+
+
+### Bug Fixes
+
+* Update package lock ([4836490](https://github.com/appium/appium-xcuitest-driver/commit/4836490a84a05a127040bf882c37f87fc75118ca))
+
 ## [4.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.26.0...v4.27.0) (2023-05-11)
 
 

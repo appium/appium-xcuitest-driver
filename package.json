@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "4.27.0",
+  "version": "4.29.2",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -70,10 +70,10 @@
   "dependencies": {
     "@xmldom/xmldom": "0.8.7",
     "appium-idb": "1.6.10",
-    "appium-ios-device": "2.5.0",
+    "appium-ios-device": "2.5.1",
     "appium-ios-simulator": "5.0.7",
     "appium-remote-debugger": "9.1.14",
-    "appium-webdriveragent": "4.15.1",
+    "appium-webdriveragent": "5.1.4",
     "appium-xcode": "5.1.0",
     "async-lock": "1.4.0",
     "asyncbox": "2.9.4",
@@ -87,7 +87,7 @@
     "moment-timezone": "0.5.43",
     "node-simctl": "7.1.15",
     "portscanner": "2.2.0",
-    "semver": "7.5.0",
+    "semver": "7.5.1",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2",
     "ws": "8.13.0"
@@ -128,17 +128,17 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.58"
+    "appium": "^2.0.0-beta.64"
   },
   "devDependencies": {
-    "@appium/docutils": "0.3.7",
+    "@appium/docutils": "0.3.9",
     "@appium/eslint-config-appium": "8.0.3",
     "@appium/eslint-config-appium-ts": "0.3.1",
     "@appium/test-support": "3.0.13",
     "@appium/tsconfig": "0.3.0",
-    "@appium/types": "0.10.4",
     "@commitlint/cli": "17.6.3",
     "@commitlint/config-conventional": "17.6.3",
+    "@appium/types": "0.11.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/git": "10.0.1",
     "@types/bluebird": "3.5.38",
@@ -146,15 +146,15 @@
     "@types/chai-as-promised": "7.1.5",
     "@types/lodash": "4.14.194",
     "@types/mocha": "10.0.1",
-    "@types/node": "18.16.7",
+    "@types/node": "18.16.9",
     "@types/portscanner": "2.1.1",
-    "@types/sinon": "10.0.14",
+    "@types/sinon": "10.0.15",
     "@types/sinon-chai": "3.2.9",
     "@types/teen_process": "2.0.0",
     "@typescript-eslint/eslint-plugin": "5.59.5",
     "@typescript-eslint/parser": "5.59.5",
-    "appium": "2.0.0-beta.62",
     "axios": "1.4.0",
+    "appium": "2.0.0-beta.66",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
@@ -187,5 +187,8 @@
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
+  },
+  "typedoc": {
+    "entryPoint": "index.js"
   }
 }

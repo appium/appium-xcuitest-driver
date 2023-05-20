@@ -1,5 +1,7 @@
 ---
 title: Device Preparation
+hide:
+  - navigation
 ---
 
 ## Automatic device preference update

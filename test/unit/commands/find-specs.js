@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 
-
 describe('general commands', function () {
   const driver = new XCUITestDriver();
   const proxySpy = sinon.stub(driver, 'proxyCommand');
@@ -11,7 +10,6 @@ describe('general commands', function () {
   });
 
   describe('findNativeElementOrElements', function () {
-
     /**
      *
      * @param {string} strategy
@@ -20,16 +18,13 @@ describe('general commands', function () {
      * @param {string|null} modStrategy
      * @param {boolean} mult
      */
-    async function verifyFind (strategy, selector, modSelector, modStrategy = null, mult = false) {
+    async function verifyFind(strategy, selector, modSelector, modStrategy = null, mult = false) {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
       } catch (ign) {}
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql(`/element${mult ? 's' : ''}`);
-      proxySpy.firstCall.args[1].should.eql('POST');
-      proxySpy.firstCall.args[2].should.eql({
+      proxySpy.should.have.been.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
         using: modStrategy || strategy,
-        value: modSelector
+        value: modSelector,
       });
       proxySpy.reset();
     }
@@ -45,38 +40,44 @@ describe('general commands', function () {
 
     it('should convert xpaths from UIA to XCUI', async function () {
       await verifyFind('xpath', '//UIAButton', '//XCUIElementTypeButton');
-      await verifyFind('xpath',
-                       '//UIAButton/UIATextField',
-                       '//XCUIElementTypeButton/XCUIElementTypeTextField');
-      await verifyFind('xpath',
-                       'UIAButton//UIATextField',
-                       'XCUIElementTypeButton//XCUIElementTypeTextField');
-      await verifyFind('xpath',
-                       '//UIAButton[@name="foo"]',
-                       '//XCUIElementTypeButton[@name="foo"]');
-      await verifyFind('xpath',
-                       '//UIAButton/Weird',
-                       '//XCUIElementTypeButton/Weird');
-      await verifyFind('xpath',
-                        '//UIAMapView/UIAScrollView',
-                        '//XCUIElementTypeMap/XCUIElementTypeScrollView');
-      await verifyFind('xpath',
-                        '//UIAMapView/UIAScrollView[@name="UIADummyData"]',
-                        '//XCUIElementTypeMap/XCUIElementTypeScrollView[@name="UIADummyData"]');
-      await verifyFind('xpath',
-                        '//XCUIElementTypeMap[@name="UIADummyData"]',
-                        '//XCUIElementTypeMap[@name="UIADummyData"]');
+      await verifyFind(
+        'xpath',
+        '//UIAButton/UIATextField',
+        '//XCUIElementTypeButton/XCUIElementTypeTextField'
+      );
+      await verifyFind(
+        'xpath',
+        'UIAButton//UIATextField',
+        'XCUIElementTypeButton//XCUIElementTypeTextField'
+      );
+      await verifyFind('xpath', '//UIAButton[@name="foo"]', '//XCUIElementTypeButton[@name="foo"]');
+      await verifyFind('xpath', '//UIAButton/Weird', '//XCUIElementTypeButton/Weird');
+      await verifyFind(
+        'xpath',
+        '//UIAMapView/UIAScrollView',
+        '//XCUIElementTypeMap/XCUIElementTypeScrollView'
+      );
+      await verifyFind(
+        'xpath',
+        '//UIAMapView/UIAScrollView[@name="UIADummyData"]',
+        '//XCUIElementTypeMap/XCUIElementTypeScrollView[@name="UIADummyData"]'
+      );
+      await verifyFind(
+        'xpath',
+        '//XCUIElementTypeMap[@name="UIADummyData"]',
+        '//XCUIElementTypeMap[@name="UIADummyData"]'
+      );
     });
 
     it('should reject request for first visible child with no context', async function () {
-      await driver.findNativeElementOrElements(
-        'xpath', '/*[@firstVisible="true"]', false)
+      await driver
+        .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)
         .should.be.rejectedWith(/without a context element/);
     });
 
     it('should reject request for multiple first visible children', async function () {
-      await driver.findNativeElementOrElements(
-        'xpath', '/*[@firstVisible="true"]', true)
+      await driver
+        .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)
         .should.be.rejectedWith(/Cannot get multiple/);
     });
 
@@ -84,34 +85,31 @@ describe('general commands', function () {
       const variants = [
         '/*[@firstVisible="true"]',
         "/*[@firstVisible='true']",
-        "/*[@firstVisible = 'true']"
+        "/*[@firstVisible = 'true']",
       ];
       let attribSpy = sinon.stub(driver, 'getAttribute');
       for (const variant of variants) {
-        proxySpy.withArgs(
-          '/element/ctx/element',
-          'POST',
-          {using: 'class chain', value: '*[1]'}
-        ).resolves({ELEMENT: 1});
-        proxySpy.withArgs(
-          '/element/ctx/element',
-          'POST',
-          {using: 'class chain', value: '*[2]'}
-        ).resolves({ELEMENT: 2});
+        proxySpy
+          .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[1]'})
+          .resolves({ELEMENT: 1});
+        proxySpy
+          .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[2]'})
+          .resolves({ELEMENT: 2});
         attribSpy.withArgs('visible', {ELEMENT: 1}).resolves('false');
         attribSpy.withArgs('visible', {ELEMENT: 2}).resolves('true');
-        let el = await driver.findNativeElementOrElements('xpath',
-          variant, false, {ELEMENT: 'ctx'});
-        proxySpy.calledTwice.should.be.true;
-        proxySpy.firstCall.args[2].should.eql({
+        let el = await driver.findNativeElementOrElements('xpath', variant, false, {
+          ELEMENT: 'ctx',
+        });
+        proxySpy.should.have.been.calledTwice;
+        proxySpy.should.have.been.calledWith('/element/ctx/element', 'POST', {
           using: 'class chain',
           value: '*[1]',
         });
-        proxySpy.secondCall.args[2].should.eql({
+        proxySpy.should.have.been.calledWith('/element/ctx/element', 'POST', {
           using: 'class chain',
           value: '*[2]',
         });
-        attribSpy.calledTwice.should.be.true;
+        attribSpy.should.have.been.calledTwice;
         el.should.eql({ELEMENT: 2});
         proxySpy.reset();
         attribSpy.reset();
@@ -119,28 +117,16 @@ describe('general commands', function () {
     });
 
     it('should convert magic is scrollable xpath to class chain', async function () {
-      const multSel = '**/*[`type == "XCUIElementTypeScrollView" OR ' +
+      const multSel =
+        '**/*[`type == "XCUIElementTypeScrollView" OR ' +
         'type == "XCUIElementTypeTable" OR ' +
         'type == "XCUIElementTypeCollectionView" OR ' +
         'type == "XCUIElementTypeWebView"`]';
       const singleSel = `${multSel}[1]`;
-      await verifyFind('xpath',
-                       '//*[@scrollable="true"]',
-                       singleSel,
-                       'class chain');
-      await verifyFind('xpath',
-                       `//*[@scrollable='true']`,
-                       singleSel,
-                       'class chain');
-      await verifyFind('xpath',
-                       `//*[@scrollable = 'true']`,
-                       singleSel,
-                       'class chain');
-      await verifyFind('xpath',
-                       '//*[@scrollable="true"]',
-                       multSel,
-                       'class chain',
-                       true);
+      await verifyFind('xpath', '//*[@scrollable="true"]', singleSel, 'class chain');
+      await verifyFind('xpath', `//*[@scrollable='true']`, singleSel, 'class chain');
+      await verifyFind('xpath', `//*[@scrollable = 'true']`, singleSel, 'class chain');
+      await verifyFind('xpath', '//*[@scrollable="true"]', multSel, 'class chain', true);
     });
   });
 });
