@@ -31,13 +31,14 @@ xcodebuild build-for-testing \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-Then, the command generates `.app` package and `.xctestrun` file:
+Then, the command generates `.app` package and `.xctestrun` file as below:
 
 ```
 wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
                         /WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
 ```
 
+The `.xctestrun`name depends on the `-destination`.
 `test-without-building` command use them to start for testing.
 
 ```
