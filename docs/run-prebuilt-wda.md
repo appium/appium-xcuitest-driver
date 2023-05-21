@@ -60,7 +60,6 @@ We would recommend [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wd
 ## `appium:useXctestrunFile` and `appium:bootstrapPath`
 
 
-This way has existed long time.
 
 ```
 {
@@ -68,7 +67,7 @@ This way has existed long time.
   "platformName": "ios",
   "appium:platformVersion": "15.5",
   "appium:useXctestrunFile": "true",
-  "appium:bootstrapPath": "/Users/kazuaki/Downloads/artifact/Build/Products",
+  "appium:bootstrapPath": "/path/to/wda_build/Build/Products",
   "appium:deviceName": "iPhone 12"
 }
 ```
