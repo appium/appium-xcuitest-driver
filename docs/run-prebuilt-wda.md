@@ -3,46 +3,58 @@ title: Run Prebuilt WebDriverAgentRunner
 ---
 
 
-`xcodebuild` has arguments, `build-for-testing` and `test-without-building`.
+`xcodebuild` has commands; `build-for-testing` and `test-without-building`.
+`build-for-testing` builds a test bundle package. `test-without-building` is to run it.
 Usually XCUITest driver runs both arguments in a new session creation to build the WebDriverAgentRunner application for testing, install it to a device and run it.
 
-`build-for-testing` builds a test bundle package. `test-without-building` is to run it.
+For example:
 
-They can use separately as below:
+```
+xcodebuild build-for-testing test-without-building \
+  -project WebDriverAgent.xcodeproj \
+  -derivedDataPath wda_build \
+  -scheme WebDriverAgentRunner \
+  -destination "platform=iOS Simulator,name=iPhone 14 Pro" \
+  CODE_SIGNING_ALLOWED=NO
+```
+
+Then, the `xcodebuild` command builds the `WebDriverAgent.xcodeproj` and start the built package for testing.
+
+The command can separate as below.
 
 ```
 xcodebuild build-for-testing \
   -project WebDriverAgent.xcodeproj \
-  -derivedDataPath ~/wda_build \
+  -derivedDataPath wda_build \
   -scheme WebDriverAgentRunner \
   -destination "platform=iOS Simulator,name=iPhone 14 Pro" \
-  CODE_SIGNING_ALLOWED=NO ARCHS=arm64
+  CODE_SIGNING_ALLOWED=NO
 ```
 
-Then, the command generates files like below:
+Then, the command generates `.app` package and `.xctestrun` file:
 
 ```
-~/wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
-                          /WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
+wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
+                        /WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
 ```
 
-The file can be uses as below:
+`test-without-building` command use them to start for testing.
 
-// todo: double check the command
 ```
 xcodebuild test-without-building \
-  -xctestrun ~/wda_build/Build/Products/
-  -destination "platform=iOS Simulator,name=iPhone 14 Pro" \
+  -xctestrun wda_build/Build/Products/WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun \
+  -destination "platform=iOS Simulator,name=iPhone 14 Pro"
 ```
 
-Then, the `xcodebuild` command reuses the prebuilt `~/wda_build/Build/Products/` against the destination device without new building.
+Then, the `xcodebuild` command reuses the prebuilt `wda_build/Build/Products/` against the destination device without new building.
 `http://localhost:8100` will be accessible during the command running.
 
-XCUITest driver provides `useXctestrunFile` and `bootstrapPath` capabilities to achieve the `test-without-building` method.
+XCUITest driver provides `useXctestrunFile` and `bootstrapPath` capabilities to conduct the `test-without-building` command only.
 It will improve WebDriverAgentRunner application setup performance.
 
 This method can use both real devices and simulators, but the real device requires proper signing.
-We would recommend [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md) for real devices.
+
+We would recommend [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md) for real devices since the `useXctestrunFile` needs to install the WebDriverAgentRunnerv package every session creation but the preinstalled WebDriverAgentRunner way does not.
 
 ## `appium:useXctestrunFile` and `appium:bootstrapPath`
 
