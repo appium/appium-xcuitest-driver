@@ -36,7 +36,7 @@ jobs:
       run: |
         git checkout -b update-package-lock
         git commit package-lock.json -m 'chore: bump the driver version in package-lock.json [skip ci]'
-        git push origin update-package-lock
+        git push --force origin update-package-lock
         gh pr create --title "chore: bump the driver version in package-lock.json" --body "Update the driver version after a release"
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
