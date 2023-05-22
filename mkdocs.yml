@@ -44,7 +44,7 @@ nav:
       - Improve session startup performance:
           - run-preinstalled-wda.md
           - run-prebuilt-wda.md
-          - run-running-wda.md
+          - attach-to-running-wda.md
       - real-device-config.md
       - ci-setup.md
       - multiple-xcode-versions.md
