@@ -7,7 +7,7 @@ title: Run Prebuilt WebDriverAgentRunner
 `build-for-testing` builds a test bundle package. `test-without-building` is to run it.
 Usually XCUITest driver runs both arguments in a new session creation to build the WebDriverAgentRunner application for testing, install it to a device and run it.
 
-For example:
+For instance, XCUITEst driver issues a `xcodebuild` command like below:
 
 ```
 xcodebuild build-for-testing test-without-building \
@@ -18,9 +18,9 @@ xcodebuild build-for-testing test-without-building \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-Then, the `xcodebuild` command builds the `WebDriverAgent.xcodeproj` and start the built package for testing.
+Then, the `xcodebuild` command builds the `WebDriverAgent.xcodeproj` and starts the built package for testing.
 
-The command can separate as below.
+The command can split for `build-for-testing` part and `test-without-building` part as below:
 
 ```
 xcodebuild build-for-testing \
@@ -31,48 +31,48 @@ xcodebuild build-for-testing \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-Then, the command generates `.app` package and `.xctestrun` file as below:
-
-```
-wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
-                        /WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
-```
-
-The `.xctestrun`name depends on the `-destination`.
-`test-without-building` command use them to start for testing.
-
 ```
 xcodebuild test-without-building \
   -xctestrun wda_build/Build/Products/WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun \
   -destination "platform=iOS Simulator,name=iPhone 14 Pro"
 ```
 
-Then, the `xcodebuild` command reuses the prebuilt `wda_build/Build/Products/` against the destination device without new building.
-`http://localhost:8100` will be accessible during the command running.
-
-XCUITest driver provides `useXctestrunFile` and `bootstrapPath` capabilities to conduct the `test-without-building` command only.
-It will improve WebDriverAgentRunner application setup performance.
-
-This method can use both real devices and simulators, but the real device requires proper signing.
-
-We would recommend [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md) for real devices since the `useXctestrunFile` needs to install the WebDriverAgentRunnerv package every session creation but the preinstalled WebDriverAgentRunner way does not.
-
-## `appium:useXctestrunFile` and `appium:bootstrapPath`
-
-
+In the `build-for-testing` part, it generates `.app` package and `.xctestrun` file as below:
 
 ```
+wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
+                        /WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
+```
+
+The `.xctestrun` file name depends on the `-destination` preference. The file has metadata about the package.
+
+In the `test-without-building` part, it starts the WebDriverAgentRunner application for testing by referencing the given `.xctestrun`.
+The file has ``DependentProductPaths` key to manage dependencies for `WebDriverAgentRunner-Runner.app` built by the `build-for-testing` for example.
+
+After succeeding in starting the WebDriverAgentRunner application for testing, `http://localhost:8100` will be accessible during the command running for _iPhone 14 Pro_ simulator.
+
+XCUITest driver provides `useXctestrunFile` and `bootstrapPath` capabilities to conduct the `test-without-building` command only.
+It will improve WebDriverAgentRunner application setup performance by skipping the `build-for-testing`.
+
+This method can use both real devices and simulators, but the real device requires proper signing as [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md).
+
+We would recommend to use `useXctestrunFile` for real devices since the above `test-without-building` needs to install the WebDriverAgentRunnerv package every session creation but the `useXctestrunFile` does not.
+
+## How to use `appium:useXctestrunFile` and `appium:bootstrapPath` capabilities
+
+Based on the above case, the usage of `useXctestrunFile` and `bootstrapPath` will be:
+
+```json
 {
-  "appium:automationName": "xcuitest",
   "platformName": "ios",
+  "appium:automationName": "xcuitest",
   "appium:platformVersion": "15.5",
+  "appium:deviceName": "iPhone 12",
   "appium:useXctestrunFile": "true",
-  "appium:bootstrapPath": "/path/to/wda_build/Build/Products",
-  "appium:deviceName": "iPhone 12"
+  "appium:bootstrapPath": "/path/to/wda_build/Build/Products"
 }
 ```
 
+We haven't tested all possible combinations, but probably the target device could be anything.
 
-## Prebuilt packages for simulators
-
-You can find prebuilt packages in https://github.com/appium/WebDriverAgent/releases
+The same thing could achieve with `derivedDataPath` and `usePrebuiltWDA` capabilities, but it may fail if the `xcodebuild` cannot find the `.xctestrun` properly. Some Xcode versions might fail.
