@@ -71,7 +71,7 @@
     "@xmldom/xmldom": "0.8.7",
     "appium-idb": "1.6.11",
     "appium-ios-device": "2.5.2",
-    "appium-ios-simulator": "5.0.7",
+    "appium-ios-simulator": "5.0.8",
     "appium-remote-debugger": "9.1.14",
     "appium-webdriveragent": "5.1.4",
     "appium-xcode": "5.1.0",
