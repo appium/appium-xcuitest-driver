@@ -1,3 +1,10 @@
+## [4.29.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.3...v4.29.4) (2023-05-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-idb to v1.6.11 ([#1691](https://github.com/appium/appium-xcuitest-driver/issues/1691)) ([3c5b125](https://github.com/appium/appium-xcuitest-driver/commit/3c5b125504f822f1fe7af2b06c90a98230216f0e))
+
 ## [4.29.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.2...v4.29.3) (2023-05-22)
 
 
