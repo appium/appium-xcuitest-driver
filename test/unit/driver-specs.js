@@ -238,8 +238,8 @@ describe('XCUITestDriver', function () {
       const RealDeviceManagementModule = require('../../lib/real-device-management');
       sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
       sandbox.stub(driver, 'isRealDevice').returns(true);
-      // sandbox.stub(driver.helpers, 'parseCapsArray');
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
+      // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
@@ -257,10 +257,10 @@ describe('XCUITestDriver', function () {
       const RealDeviceManagementModule = require('../../lib/real-device-management');
       sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
       sandbox.stub(driver, 'isRealDevice').returns(true);
-      // sandbox.stub(driver.helpers, 'parseCapsArray');
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
       configureAppStub.onCall(1).resolves('/path/to/iosApp2.app');
+      // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
