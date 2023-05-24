@@ -249,7 +249,7 @@ describe('XCUITestDriver', function () {
         'some-device',
         '/path/to/iosApp.app',
         undefined,
-        {skipUninstall: false, timeout: undefined, strategy: undefined}
+        {skipUninstall: true, timeout: undefined, strategy: undefined}
       );
     });
 
@@ -270,13 +270,13 @@ describe('XCUITestDriver', function () {
         'some-device',
         '/path/to/iosApp1.app',
         undefined,
-        {skipUninstall: false, timeout: undefined, strategy: undefined}
+        {skipUninstall: true, timeout: undefined, strategy: undefined}
       );
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
         undefined,
-        {skipUninstall: false, timeout: undefined, strategy: undefined}
+        {skipUninstall: true, timeout: undefined, strategy: undefined}
       );
     });
 
