@@ -1,3 +1,10 @@
+## [4.29.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.5...v4.29.6) (2023-05-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-remote-debugger to v9.1.15 ([f8d8213](https://github.com/appium/appium-xcuitest-driver/commit/f8d82132106442df25a513f2b1d133ce58e22e67))
+
 ## [4.29.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.4...v4.29.5) (2023-05-24)
 
 
