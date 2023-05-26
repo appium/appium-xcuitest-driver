@@ -1,3 +1,10 @@
+## [4.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.6...v4.30.0) (2023-05-26)
+
+
+### Features
+
+* otherApps for real devices ([#1700](https://github.com/appium/appium-xcuitest-driver/issues/1700)) ([ad2db26](https://github.com/appium/appium-xcuitest-driver/commit/ad2db267dbbefa4dadede302930360f375c0bd88))
+
 ## [4.29.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.5...v4.29.6) (2023-05-25)
 
 
