@@ -1,3 +1,10 @@
+## [4.30.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.0...v4.30.1) (2023-05-26)
+
+
+### Bug Fixes
+
+* tune usePreinstalledWDA to behave as similar to webDriverAgentUrl ([#1709](https://github.com/appium/appium-xcuitest-driver/issues/1709)) ([cb84925](https://github.com/appium/appium-xcuitest-driver/commit/cb8492538867374f9da5afc50f854d4624c1347a))
+
 ## [4.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.29.6...v4.30.0) (2023-05-26)
 
 
