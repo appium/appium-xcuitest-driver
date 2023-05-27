@@ -181,7 +181,7 @@
     "sinon": "15.0.4",
     "sinon-chai": "3.7.0",
     "ts-node": "10.9.1",
-    "type-fest": "3.10.0",
+    "type-fest": "3.11.0",
     "typescript": "4.9.5",
     "webdriverio": "8.10.5"
   },
