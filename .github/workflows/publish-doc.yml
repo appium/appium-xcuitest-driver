@@ -30,4 +30,13 @@ jobs:
     - run: npm ci
     - name: Install dependencies (Python)
       run: npm run install-docs-deps
-    - run: npm run publish:docs
+    # - run: npm run publish:docs
+    - name: build package
+      run: |
+        build_v=$(python -c 'import json;import subprocess;v = subprocess.check_output(["npm", "version","--json"]);print(json.loads(v)["appium-xcuitest-driver"])')
+        doc_v=$(python -c 'import json;import subprocess;v = subprocess.check_output(["npm", "version","--json"]);p_v=json.loads(v)["appium-xcuitest-driver"].split(".");print(f"{p_v[0]}.{p_v[1]}")')
+        mike deploy --config-file mkdocs.yml --remote origin --branch docs-site --message 'docs: auto-build docs for appium-xcuitest-driver@$build_v' --rebase --update-aliases $doc_v latest
+
+        git checkout docs-site
+        ls -all
+        cat versions.json
