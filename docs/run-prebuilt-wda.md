@@ -47,7 +47,7 @@ wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
 The `.xctestrun` file name depends on the `-destination` preference. The file has metadata about the package.
 
 In the `test-without-building` part, it starts the WebDriverAgentRunner application for testing by referencing the given `.xctestrun`.
-The file has ``DependentProductPaths` key to manage dependencies for `WebDriverAgentRunner-Runner.app` built by the `build-for-testing` for example.
+The file has `DependentProductPaths` key to manage dependencies for `WebDriverAgentRunner-Runner.app` built by the `build-for-testing` for example.
 
 After succeeding in starting the WebDriverAgentRunner application for testing, `http://localhost:8100` will be accessible during the command running for _iPhone 14 Pro_ simulator.
 
@@ -56,7 +56,7 @@ It will improve WebDriverAgentRunner application setup performance by skipping t
 
 This method can use both real devices and simulators, but the real device requires proper signing as [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md).
 
-We would recommend to use `useXctestrunFile` for real devices since the above `test-without-building` needs to install the WebDriverAgentRunnerv package every session creation but the `useXctestrunFile` does not.
+We would recommend to use `useXctestrunFile` for real devices since the above `test-without-building` needs to install the WebDriverAgentRunner package every session creation but the `useXctestrunFile` does not.
 
 ## How to use `appium:useXctestrunFile` and `appium:bootstrapPath` capabilities
 
@@ -75,4 +75,5 @@ Based on the above case, the usage of `useXctestrunFile` and `bootstrapPath` wil
 
 We haven't tested all possible combinations, but probably the target device could be anything.
 
-The same thing could achieve with `derivedDataPath` and `usePrebuiltWDA` capabilities, but it may fail if the `xcodebuild` cannot find the `.xctestrun` properly. Some Xcode versions might fail.
+The same thing could achieve with `derivedDataPath` and `usePrebuiltWDA` capabilities, but it may fail if the `xcodebuild` cannot find or handle the `.xctestrun` properly.
+The stability depends on Xcode.
