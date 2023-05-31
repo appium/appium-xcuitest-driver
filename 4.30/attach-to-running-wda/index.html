@@ -10,20 +10,20 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/4.30/locator-strategies/">
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/4.30/attach-to-running-wda/">
       
       
-        <link rel="prev" href="../settings/">
+        <link rel="prev" href="../run-prebuilt-wda/">
       
       
-        <link rel="next" href="../ios-predicate/">
+        <link rel="next" href="../real-device-config/">
       
       <link rel="icon" href="../assets/images/appium-logo.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.9">
     
     
       
-        <title>Locator Strategies - Appium XCUITest Driver</title>
+        <title>Attach to a running WebDriverAgent application - Appium XCUITest Driver</title>
       
     
     
@@ -117,6 +117,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#how-to-use-appiumwebdriveragenturl-capability" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -149,7 +154,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Locator Strategies
+              Attach to a running WebDriverAgent application
             
           </span>
         </div>
@@ -269,15 +274,13 @@
         
   
   
-    
-  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../server-args/" class="md-tabs__link md-tabs__link--active">
+      <a href="../server-args/" class="md-tabs__link">
         Reference
       </a>
     </li>
@@ -287,6 +290,8 @@
         
   
   
+    
+  
 
 
   
@@ -298,7 +303,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../run-preinstalled-wda/" class="md-tabs__link">
+      <a href="../run-preinstalled-wda/" class="md-tabs__link md-tabs__link--active">
         Guides
       </a>
     </li>
@@ -401,16 +406,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
       
       
       
@@ -419,7 +422,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           Reference
@@ -500,19 +503,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../locator-strategies/" class="md-nav__link">
         Locator Strategies
       </a>
-      
     </li>
   
 
@@ -614,14 +609,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
       
       
       
@@ -630,7 +627,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           Guides
@@ -641,14 +638,16 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
       
       
       
@@ -657,7 +656,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
           Improve session startup performance
@@ -696,11 +695,76 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../attach-to-running-wda/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Attach to a running WebDriverAgent application
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Attach to a running WebDriverAgent application
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#how-to-use-appiumwebdriveragenturl-capability" class="md-nav__link">
+    How to use appium:webDriverAgentUrl capability
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -863,6 +927,49 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#how-to-use-appiumwebdriveragenturl-capability" class="md-nav__link">
+    How to use appium:webDriverAgentUrl capability
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -879,46 +986,30 @@
   
 
 
-  <h1>Locator Strategies</h1>
+  <h1>Attach to a running WebDriverAgent application</h1>
 
-<p>XCUITest driver supports the following location strategies in the native context:</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>id, name, accessibility id</td>
-<td>All these locator types are synonyms and internally get transformed into search by element's <code>name</code> <a href="#element-attributes">attribute</a>.</td>
-<td><code>my name</code></td>
-</tr>
-<tr>
-<td>className</td>
-<td>Performs search by element's <code>type</code> <a href="#element-attributes">attribute</a>. The full list of supported XCUIElement type names could be found in the official XCTest <a href="https://developer.apple.com/documentation/xctest/xcuielementtype">documentation on XCUIElementType</a></td>
-<td><code>XCUIElementTypeButton</code></td>
-</tr>
-<tr>
-<td>-ios predicate string</td>
-<td>This strategy is mapped to the native XCTest predicate locator. Check the <a href="https://academy.realm.io/posts/nspredicate-cheatsheet/">NSPredicate cheat sheet</a> for more details on how to build effective predicate expressions. All the supported element <a href="#element-attributes">attributes</a> could be used in these expressions.</td>
-<td><code>(name == 'done' OR value == 'done') AND type IN {'XCUIElementTypeButton', 'XCUIElementTypeKey'}</code></td>
-</tr>
-<tr>
-<td>-ios class chain</td>
-<td>This strategy is mapped to the native XCTest predicate locator, but with respect to the actual element tree hierarchy. Such locators are basically a supertype of <code>-ios predicate string</code>. Read <a href="https://github.com/facebookarchive/WebDriverAgent/wiki/Class-Chain-Queries-Construction-Rules">Class Chain Queries Construction Rules</a> for more details on how to build such locators.</td>
-<td><code>**/XCUIElementTypeCell[$name == 'done' OR value == 'done'$]/XCUIElementTypeButton[-1]</code></td>
-</tr>
-<tr>
-<td>xpath</td>
-<td>For elements lookup using the Xpath strategy the driver uses the same XML tree that is generated by the page source API. This means such locators are the slowest (sometimes up to 10x slower) in comparison to the ones above, which all depend on native XCTest primitives, but are the most flexible. Use Xpath locators only if there is no other way to locate the given element. Only Xpath 1.0 is supported.</td>
-<td><code>//XCUIElementTypeButton[@value=\"Regular\"]/parent::*</code></td>
-</tr>
-</tbody>
-</table>
-<p>Also, consider checking the <a href="https://github.com/facebookarchive/WebDriverAgent/wiki/How-To-Achieve-The-Best-Lookup-Performance">How To Achieve The Best Lookup Performance</a> article.</p>
+<p>XCUITest driver provides <code>appium:webDriverAgentUrl</code> capability to attach to a running WebDriverAgent application.
+This works for real devices and simulators, but primary usage is for real devices.</p>
+<h2 id="how-to-use-appiumwebdriveragenturl-capability">How to use <code>appium:webDriverAgentUrl</code> capability</h2>
+<ol>
+<li>Start a WebDriverAgent application on a device</li>
+<li>Start an XCUITest driver session with <code>appium:webDriverAgentUrl</code> capability</li>
+</ol>
+<p>Please read <a href="../wda-custom-server/">Manage WebDriverAgent by yourself</a> and <a href="../real-device-config/">Real Device Configuration</a> about how to prepare a WebDriverAgent application for real devices and start it.</p>
+<p>The <code>appium:webDriverAgentUrl</code> should be <code>http://&lt;reachable ip address for the device&gt;:8100</code>.
+If the environment had port-forward to the connected device, it can be <code>http://localhost:8100</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ios&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;xcuitest&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15.5&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;the device&#39;s udid&gt;&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">&quot;appium:webDriverAgentUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://&lt;reachable ip address for the device&gt;:8100&quot;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+</code></pre></div>
+<p>This method allows you to manage the WebDriverAgent application process by yourself.
+XCUITest driver simply attaches to the WebDriverAgent application process.
+It may improve the application performance.</p>
 
 
 
