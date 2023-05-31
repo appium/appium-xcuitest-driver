@@ -24,7 +24,7 @@ WebDriverAgent source is automatically downloaded as part of XCUITest driver pac
 `APPIUM_HOME` is `~/.appium` by default.
 
 Real device requires some more work to be done. Follow
-[real device configuration documentation](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/real-device-config.md)
+[Real Device Configuration](./real-device-config.md)
 to setup code signing.
 
 In order to make sure that WDA source is configured properly:
