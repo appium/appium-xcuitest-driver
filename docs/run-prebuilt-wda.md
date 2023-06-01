@@ -7,7 +7,7 @@ title: Run Prebuilt WebDriverAgentRunner
 `build-for-testing` builds a test bundle package. `test-without-building` is to run it.
 Usually XCUITest driver runs both arguments in a new session creation to build the WebDriverAgentRunner application for testing, install it to a device and run it.
 
-For instance, XCUITEst driver issues a `xcodebuild` command like below:
+For instance, XCUITest driver issues a `xcodebuild` command like below:
 
 ```
 xcodebuild build-for-testing test-without-building \
@@ -68,7 +68,7 @@ Based on the above case, the usage of `useXctestrunFile` and `bootstrapPath` wil
   "appium:automationName": "xcuitest",
   "appium:platformVersion": "15.5",
   "appium:deviceName": "iPhone 12",
-  "appium:useXctestrunFile": "true",
+  "appium:useXctestrunFile": true,
   "appium:bootstrapPath": "/path/to/wda_build/Build/Products"
 }
 ```
@@ -77,3 +77,9 @@ We haven't tested all possible combinations, but probably the target device coul
 
 The same thing could achieve with `derivedDataPath` and `usePrebuiltWDA` capabilities, but it may fail if the `xcodebuild` cannot find or handle the `.xctestrun` properly.
 The stability depends on Xcode.
+
+## Download prebuilt WebDriverAgent from GitHub appium/WebDriverAgent repository
+
+Still preparing GitHub Actions to upload these prebuilt WebDriverAgent packages for simulators to GitHub releases, but currently you can find these packages in [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml) workflow.
+
+Please find proper packages by checking each task.
