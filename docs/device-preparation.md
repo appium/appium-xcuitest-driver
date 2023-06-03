@@ -28,8 +28,8 @@ Automatic configuration availability is limited on iOS, especially for a real de
 Please turn on _Web Inspector_ on iOS device via _Settings_ -> _Safari_ -> _Advanced_
 
 > **Note**
-> Please make sure the target `WKWebViews` and `JSContexts` components have [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable) to make them inspectable via WebView context.
-> Please read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/) about the properly.
+> Please make sure the target `WKWebViews` and `JSContexts` components have [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable) to make them inspectable (set `true`) via WebView context for SDK 16.4+ built app.
+> Please read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/) about the property.
 
 ### Avoid possible wrong coordinate
 
