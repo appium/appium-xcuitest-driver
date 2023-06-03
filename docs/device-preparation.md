@@ -27,6 +27,10 @@ Automatic configuration availability is limited on iOS, especially for a real de
 
 Please turn on _Web Inspector_ on iOS device via _Settings_ -> _Safari_ -> _Advanced_
 
+> **Note**
+> Please make sure the target `WKWebViews` and `JSContexts` components have [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable) to make them inspectable via WebView context.
+> Please read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/) about the properly.
+
 ### Avoid possible wrong coordinate
 
 Please make sure the zoom preference in accessibility is turned off via _Settings_ -> _Accessibility_ -> _Zoom_. It could cause element coordinates miscalculation.
