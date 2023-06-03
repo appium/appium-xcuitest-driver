@@ -1,3 +1,10 @@
+## [4.30.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.2...v4.30.3) (2023-06-03)
+
+
+### Bug Fixes
+
+* Align initial atom wait timeout with alerts check interval ([#1720](https://github.com/appium/appium-xcuitest-driver/issues/1720)) ([8177e4b](https://github.com/appium/appium-xcuitest-driver/commit/8177e4b06b36261eac551e1174f13859d66cf2c3))
+
 ## [4.30.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.1...v4.30.2) (2023-05-31)
 
 
