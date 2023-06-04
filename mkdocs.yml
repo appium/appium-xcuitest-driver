@@ -37,6 +37,7 @@ nav:
       - ios-predicate.md
       - parallel-tests.md
       - execute-methods.md
+      - clipboard.md
       - touch-id.md
       - troubleshooting.md
       - reference/commands/appium-xcuitest-driver.md
