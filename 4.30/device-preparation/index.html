@@ -1378,6 +1378,9 @@ You can change some of them via the Settings API.</p>
 <p>Automatic configuration availability is limited on iOS, especially for a real device. You may need to manually change the device configuration.</p>
 <h3 id="enable-web-testing-availability">Enable Web testing availability</h3>
 <p>Please turn on <em>Web Inspector</em> on iOS device via <em>Settings</em> -&gt; <em>Safari</em> -&gt; <em>Advanced</em></p>
+<h4 id="if-iosipados-version-is-164-or-above">If iOS/iPadOS version is 16.4 or above</h4>
+<p>Make sure the destination <code>WKWebView</code> and/or <code>JSContext</code> component have <a href="https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable"><code>isInspectable</code></a> property set to <code>true</code>.
+Read <a href="https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/">Enabling the Inspection of Web Content in Apps</a> for more details on this property.</p>
 <h3 id="avoid-possible-wrong-coordinate">Avoid possible wrong coordinate</h3>
 <p>Please make sure the zoom preference in accessibility is turned off via <em>Settings</em> -&gt; <em>Accessibility</em> -&gt; <em>Zoom</em>. It could cause element coordinates miscalculation.</p>
 <h3 id="expose-more-elements-if-needed">Expose more elements if needed</h3>
