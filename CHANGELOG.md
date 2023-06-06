@@ -1,3 +1,10 @@
+## [4.30.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.4...v4.30.5) (2023-06-06)
+
+
+### Bug Fixes
+
+* Support network devices with py-ios-device + add missing method map ([#1727](https://github.com/appium/appium-xcuitest-driver/issues/1727)) ([c81c606](https://github.com/appium/appium-xcuitest-driver/commit/c81c606a95274494dba4f27b9895f7192ddce3cc))
+
 ## [4.30.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.3...v4.30.4) (2023-06-06)
 
 
