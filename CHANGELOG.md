@@ -1,3 +1,10 @@
+## [4.30.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.3...v4.30.4) (2023-06-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.3.1 for Xcode 15 build ([#1729](https://github.com/appium/appium-xcuitest-driver/issues/1729)) ([629b971](https://github.com/appium/appium-xcuitest-driver/commit/629b9710d6e0d4fff86e4452630d80742911e7e5))
+
 ## [4.30.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.2...v4.30.3) (2023-06-03)
 
 
