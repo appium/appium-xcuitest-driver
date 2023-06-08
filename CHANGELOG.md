@@ -1,3 +1,12 @@
+## [4.30.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.6...v4.30.7) (2023-06-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-idb to v1.6.12 ([#1733](https://github.com/appium/appium-xcuitest-driver/issues/1733)) ([aa50371](https://github.com/appium/appium-xcuitest-driver/commit/aa50371fc17636e1b1cf0091fd13ebc74e88abb9))
+* **deps:** update dependency appium-remote-debugger to v9.1.16 ([#1736](https://github.com/appium/appium-xcuitest-driver/issues/1736)) ([2657995](https://github.com/appium/appium-xcuitest-driver/commit/265799597fbe538e265f35e2729e1334c20f778b))
+* **deps:** update dependency appium-xcode to v5.1.2 ([#1738](https://github.com/appium/appium-xcuitest-driver/issues/1738)) ([e315219](https://github.com/appium/appium-xcuitest-driver/commit/e315219cf29838fe8d8855d22ce4ba4a4449c3ba))
+
 ## [4.30.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.5...v4.30.6) (2023-06-08)
 
 
