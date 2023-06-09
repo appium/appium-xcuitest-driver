@@ -1,3 +1,10 @@
+## [4.30.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.7...v4.30.8) (2023-06-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-simulator to v5.0.9 ([#1735](https://github.com/appium/appium-xcuitest-driver/issues/1735)) ([d6960ba](https://github.com/appium/appium-xcuitest-driver/commit/d6960ba5c3f0ce91aca4168abb59a03db990ba6a))
+
 ## [4.30.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.6...v4.30.7) (2023-06-08)
 
 
