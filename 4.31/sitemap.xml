@@ -31,6 +31,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://appium.github.io/appium-xcuitest-driver/4.31/clipboard/</loc>
+         <lastmod>2023-06-10</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/4.31/device-preparation/</loc>
          <lastmod>2023-06-10</lastmod>
          <changefreq>daily</changefreq>
