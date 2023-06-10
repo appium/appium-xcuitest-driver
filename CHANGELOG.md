@@ -1,3 +1,61 @@
+## [4.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.9...v4.31.0) (2023-06-10)
+
+
+### Features
+
+* bump WDA for Xcode 15 ([#1747](https://github.com/appium/appium-xcuitest-driver/issues/1747)) ([cc4ccdd](https://github.com/appium/appium-xcuitest-driver/commit/cc4ccdd606dcf758d770c424a174e3545ef1170e))
+
+## [4.30.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.8...v4.30.9) (2023-06-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.3.2 ([#1737](https://github.com/appium/appium-xcuitest-driver/issues/1737)) ([77b61c6](https://github.com/appium/appium-xcuitest-driver/commit/77b61c60fbc1987abfaf61d170c8182a1396279a))
+
+## [4.30.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.7...v4.30.8) (2023-06-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-simulator to v5.0.9 ([#1735](https://github.com/appium/appium-xcuitest-driver/issues/1735)) ([d6960ba](https://github.com/appium/appium-xcuitest-driver/commit/d6960ba5c3f0ce91aca4168abb59a03db990ba6a))
+
+## [4.30.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.6...v4.30.7) (2023-06-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-idb to v1.6.12 ([#1733](https://github.com/appium/appium-xcuitest-driver/issues/1733)) ([aa50371](https://github.com/appium/appium-xcuitest-driver/commit/aa50371fc17636e1b1cf0091fd13ebc74e88abb9))
+* **deps:** update dependency appium-remote-debugger to v9.1.16 ([#1736](https://github.com/appium/appium-xcuitest-driver/issues/1736)) ([2657995](https://github.com/appium/appium-xcuitest-driver/commit/265799597fbe538e265f35e2729e1334c20f778b))
+* **deps:** update dependency appium-xcode to v5.1.2 ([#1738](https://github.com/appium/appium-xcuitest-driver/issues/1738)) ([e315219](https://github.com/appium/appium-xcuitest-driver/commit/e315219cf29838fe8d8855d22ce4ba4a4449c3ba))
+
+## [4.30.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.5...v4.30.6) (2023-06-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-device to v2.5.3 ([2ea3183](https://github.com/appium/appium-xcuitest-driver/commit/2ea31830fa7afca3f7d3f2953702f5d3f92946ca))
+
+## [4.30.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.4...v4.30.5) (2023-06-06)
+
+
+### Bug Fixes
+
+* Support network devices with py-ios-device + add missing method map ([#1727](https://github.com/appium/appium-xcuitest-driver/issues/1727)) ([c81c606](https://github.com/appium/appium-xcuitest-driver/commit/c81c606a95274494dba4f27b9895f7192ddce3cc))
+
+## [4.30.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.3...v4.30.4) (2023-06-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.3.1 for Xcode 15 build ([#1729](https://github.com/appium/appium-xcuitest-driver/issues/1729)) ([629b971](https://github.com/appium/appium-xcuitest-driver/commit/629b9710d6e0d4fff86e4452630d80742911e7e5))
+
+## [4.30.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.2...v4.30.3) (2023-06-03)
+
+
+### Bug Fixes
+
+* Align initial atom wait timeout with alerts check interval ([#1720](https://github.com/appium/appium-xcuitest-driver/issues/1720)) ([8177e4b](https://github.com/appium/appium-xcuitest-driver/commit/8177e4b06b36261eac551e1174f13859d66cf2c3))
+
 ## [4.30.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.1...v4.30.2) (2023-05-31)
 
 
