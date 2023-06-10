@@ -1,3 +1,10 @@
+## [4.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.9...v4.31.0) (2023-06-10)
+
+
+### Features
+
+* bump WDA for Xcode 15 ([#1747](https://github.com/appium/appium-xcuitest-driver/issues/1747)) ([cc4ccdd](https://github.com/appium/appium-xcuitest-driver/commit/cc4ccdd606dcf758d770c424a174e3545ef1170e))
+
 ## [4.30.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.8...v4.30.9) (2023-06-09)
 
 
