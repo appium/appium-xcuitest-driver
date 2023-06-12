@@ -3,12 +3,11 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
-import { retryInterval } from 'asyncbox';
-import { extractCapabilityValue, amendCapabilities, UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-import { GUINEA_PIG_PAGE } from '../web/helpers';
+import {retryInterval} from 'asyncbox';
+import {extractCapabilityValue, amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
-
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -62,7 +61,9 @@ describe('XCUITestDriver - basics -', function () {
       // be events in the result, but we cannot know what they should be
       delete actual.events;
       // sdk version can be a longer version
-      actual.sdkVersion.indexOf(extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion')).should.eql(0);
+      actual.sdkVersion
+        .indexOf(extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion'))
+        .should.eql(0);
       delete actual.sdkVersion;
       // there might have been added wdaLocalPort and webDriverAgentUrl
       delete actual.wdaLocalPort;
@@ -101,7 +102,7 @@ describe('XCUITestDriver - basics -', function () {
   });
 
   describe('source -', function () {
-    function checkSource (src) {
+    function checkSource(src) {
       // should have full elements
       src.should.include('<AppiumAUT>');
       src.should.include('<XCUIElementTypeApplication');
@@ -151,7 +152,7 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should get an app screenshot in landscape mode', async function () {
-      let screenshot1 = (await driver.takeScreenshot());
+      let screenshot1 = await driver.takeScreenshot();
       screenshot1.should.exist;
 
       try {
@@ -176,8 +177,12 @@ describe('XCUITestDriver - basics -', function () {
       const {width: fullImgWidth, height: fullImgHeight} = await fullImg.metadata();
       const viewImg = sharp(Buffer.from(viewScreen, 'base64'));
       const {width: viewImgWidth, height: viewImgHeight} = await viewImg.metadata();
-      if (fullImgWidth === undefined || fullImgHeight === undefined
-          || viewImgWidth === undefined || viewImgHeight === undefined) {
+      if (
+        fullImgWidth === undefined ||
+        fullImgHeight === undefined ||
+        viewImgWidth === undefined ||
+        viewImgHeight === undefined
+      ) {
         throw new Error('Image dimensions must not be undefined');
       }
       // Viewport size can be smaller than the full image size + status bar on some devices.
@@ -190,9 +195,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('logging -', function () {
     describe('types -', function () {
       it('should get the list of available logs', async function () {
-        const expectedTypes = [
-          'syslog', 'crashlog', 'performance', 'server', 'safariConsole',
-        ];
+        const expectedTypes = ['syslog', 'crashlog', 'performance', 'server', 'safariConsole'];
         const actualTypes = await driver.getLogTypes();
         actualTypes.should.containSubset(expectedTypes);
       });
@@ -249,8 +252,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('get geo location -', function () {
     it('should fail because of preference error', async function () {
-      await driver.getGeoLocation()
-        .should.be.rejectedWith('Location service must be');
+      await driver.getGeoLocation().should.be.rejectedWith('Location service must be');
     });
   });
 
@@ -261,7 +263,8 @@ describe('XCUITestDriver - basics -', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be.rejected;
+      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be
+        .rejected;
     });
   });
 
@@ -300,9 +303,9 @@ describe('XCUITestDriver - basics -', function () {
 
     it('should start a session, navigate to url, get title', async function () {
       // on some systems (like Travis) it takes a while to load the webview
-      const contexts = await driver.getContexts();
+      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 1000});
 
-      await driver.switchContext(contexts[1]);
+      await driver.switchContext(contexts[1].id);
       await driver.navigateTo(GUINEA_PIG_PAGE);
 
       await retryInterval(100, 1000, async function () {
@@ -310,7 +313,7 @@ describe('XCUITestDriver - basics -', function () {
         title.should.equal('I am a page title');
       });
 
-      await driver.switchContext(contexts[0]);
+      await driver.switchContext(contexts[0].id);
     });
   });
 });
