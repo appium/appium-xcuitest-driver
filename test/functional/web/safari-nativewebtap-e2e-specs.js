@@ -1,14 +1,25 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { util } from 'appium/support';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-import { extractCapabilityValue, amendCapabilities, SETTINGS_CAPS, SAFARI_CAPS, DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD } from '../desired';
+import {util} from 'appium/support';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
-  openPage, spinTitleEquals, spinTitle, GUINEA_PIG_PAGE,
-  GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE
+  extractCapabilityValue,
+  amendCapabilities,
+  SETTINGS_CAPS,
+  SAFARI_CAPS,
+  DEVICE_NAME,
+  DEVICE_NAME_FOR_SAFARI_IPAD,
+} from '../desired';
+import {
+  openPage,
+  spinTitleEquals,
+  spinTitle,
+  GUINEA_PIG_PAGE,
+  GUINEA_PIG_SCROLLABLE_PAGE,
+  GUINEA_PIG_APP_BANNER_PAGE,
 } from './helpers';
-import { retryInterval } from 'asyncbox';
+import {retryInterval} from 'asyncbox';
 import B from 'bluebird';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 
@@ -34,7 +45,7 @@ describe('Safari - coordinate conversion -', function () {
     if (process.env.CI) {
       return this.skip();
     }
-    async function loadPage (driver, url) {
+    async function loadPage(driver, url) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);
         await spinTitle(driver).should.eventually.not.include('Cannot Open Page');
@@ -44,22 +55,47 @@ describe('Safari - coordinate conversion -', function () {
     // Close all tabs in Safari before running tests because left over tabs can affect the test results.
     // If possible, it's probably better to kick com.apple.mobilesafari.settings.DeleteAllDataAndCachesTask
     // task in com.apple.Preferences app or something equivalent rather than closing tabs via GUI.
-    async function closeAllTabsViaSettingsApp (deviceName) {
+    async function closeAllTabsViaSettingsApp(deviceName) {
       const newCaps = {
         'appium:deviceName': deviceName,
         'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       };
       const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
       const driver = await initSession(localSettingsCaps);
-      await driver.$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]').click();
+      await driver
+        .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')
+        .click();
       await driver.$('~CLEAR_HISTORY_AND_DATA').click();
-      if (await driver.$$('~Clear').length > 0) { // for iPad
-        await driver.$('~Clear').click();
-      } else { // for iPhone
-        await driver.$('~Clear History and Data').click();
-      }
-      if (util.compareVersions(extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'), '>=', '16.0')) {
-        await driver.$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]').click();
+
+      if (
+        util.compareVersions(
+          extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
+          '>=',
+          '17.0'
+        )
+      ) {
+        // TODO: please clear all tabs as well if needed.
+        // For both iPhone and iPad
+        await driver.$$('~Clear History')[1].click();
+      } else {
+        if ((await driver.$$('~Clear').length) > 0) {
+          // for iPad
+          await driver.$('~Clear').click();
+        } else {
+          // for iPhone
+          await driver.$('~Clear History and Data').click();
+        }
+        if (
+          util.compareVersions(
+            extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
+            '>=',
+            '16.0'
+          )
+        ) {
+          await driver
+            .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]')
+            .click();
+        }
       }
       await deleteSession();
     }
@@ -79,7 +115,10 @@ describe('Safari - coordinate conversion -', function () {
             await closeAllTabsViaSettingsApp(deviceName);
             driver = await initSession(localCaps);
           } catch (err) {
-            if (err.message.includes('Invalid device type') || err.message.includes('Incompatible device')) {
+            if (
+              err.message.includes('Invalid device type') ||
+              err.message.includes('Incompatible device')
+            ) {
               skipped = true;
               return this.skip();
             }
@@ -123,7 +162,7 @@ describe('Safari - coordinate conversion -', function () {
           await driver.$(`=${PAGE_3_LINK}`).click();
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
 
-          await driver.updateSettings({ nativeWebTapSmartAppBannerVisibility: 'invisible' });
+          await driver.updateSettings({nativeWebTapSmartAppBannerVisibility: 'invisible'});
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
           await driver.$(`=${PAGE_3_LINK}`).click();
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
@@ -202,7 +241,7 @@ describe('Safari - coordinate conversion -', function () {
             await loadPage(driver, GUINEA_PIG_PAGE);
             await driver.$(`=${PAGE_3_LINK}`).click();
 
-            await driver.updateSettings({ nativeWebTapTabBarVisibility: 'visible' });
+            await driver.updateSettings({nativeWebTapTabBarVisibility: 'visible'});
             await loadPage(driver, GUINEA_PIG_PAGE);
             await driver.$(`=${PAGE_3_LINK}`).click();
           });
