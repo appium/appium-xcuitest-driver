@@ -248,6 +248,12 @@ export const executeMethodMap = {
   'mobile: batteryInfo': {
     command: 'mobileGetBatteryInfo',
   },
+  'mobile: performAccessibilityAudit': {
+    command: 'mobilePerformAccessibilityAudit',
+    params: {
+      optional: ['auditTypes'],
+    },
+  },
   'mobile: deviceInfo': {
     command: 'mobileGetDeviceInfo',
   },
