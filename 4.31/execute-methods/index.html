@@ -3588,6 +3588,41 @@
   
 </li>
       
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#mobile-performaccessibilityaudit" class="md-nav__link">
+    mobile: performAccessibilityAudit
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -6930,6 +6965,41 @@
   
 </li>
       
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#mobile-performaccessibilityaudit" class="md-nav__link">
+    mobile: performAccessibilityAudit
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -9483,6 +9553,69 @@ if necessary. The call is blocking.</p>
 <td>no</td>
 <td>The amount of seconds to wait between putting the app to background and restoring it. Any negative value means to not restore the app after putting it to background (the default behavior).</td>
 <td>5</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mobile-performaccessibilityaudit">mobile: performAccessibilityAudit</h3>
+<p>Performs accessbility audit of the current application according to the given type or multiple types.
+Wraps the XCTest's <a href="https://developer.apple.com/documentation/xctest/xcuiapplication/4190847-performaccessibilityauditwithaud?language=objc">performAccessibilityAuditWithAuditTypes</a> API.
+Only available since Xcode 15/iOS 17.</p>
+<h4 id="arguments_63">Arguments</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>auditTypes</td>
+<td>string[]</td>
+<td>no</td>
+<td>One or more type names to perform the audit for. The full list of available names could be found in the official <a href="https://developer.apple.com/documentation/xctest/xcuiaccessibilityaudittype?language=objc">XCTest API documentation</a>. If no type if provided explicitly then <code>XCUIAccessibilityAuditTypeAll</code> is assumed.</td>
+<td>['XCUIAccessibilityAuditTypeContrast', 'XCUIAccessibilityAuditTypeElementDetection']</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returned-result_38">Returned Result</h4>
+<p>List of found issues or an empty list. Each list item is a map consisting of the following items:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>detailedDescription</td>
+<td>string</td>
+<td>The detailed description of the found accessbility issue.</td>
+<td>Some longer issue description</td>
+</tr>
+<tr>
+<td>compactDescription</td>
+<td>string</td>
+<td>The compact description of the found accessbility issue.</td>
+<td>Some compact issue description</td>
+</tr>
+<tr>
+<td>auditType</td>
+<td>string or number</td>
+<td>The name of the audit type this issue belongs to. Could be a number if the type name is unknown.</td>
+<td>'XCUIAccessibilityAuditTypeContrast'</td>
+</tr>
+<tr>
+<td>element</td>
+<td>string</td>
+<td>The description of the element this issue was found for.</td>
+<td>'Yes' button</td>
 </tr>
 </tbody>
 </table>
