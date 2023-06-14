@@ -103,7 +103,7 @@
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
-    "install-docs-deps": "appium-docs init --no-mkdocs",
+    "install-docs-deps": "appium-docs init --no-mkdocs -e index.js",
     "prepare": "husky install; rimraf build && npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
     "e2e-test": "mocha --exit --timeout 10m \"./test/functional/**/*-specs.js\"",
