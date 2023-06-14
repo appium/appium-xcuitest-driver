@@ -1,3 +1,10 @@
+## [4.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.0...v4.32.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency teen_process to v2.0.4 ([#1758](https://github.com/appium/appium-xcuitest-driver/issues/1758)) ([a95e08a](https://github.com/appium/appium-xcuitest-driver/commit/a95e08a40a2d8653b4bc2162102a681396f25eb5))
+
 ## [4.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.31.0...v4.32.0) (2023-06-13)
 
 
