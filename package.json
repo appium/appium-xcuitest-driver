@@ -85,7 +85,7 @@
     "lru-cache": "7.18.3",
     "moment": "2.29.4",
     "moment-timezone": "0.5.43",
-    "node-simctl": "7.1.15",
+    "node-simctl": "7.1.16",
     "portscanner": "2.2.0",
     "semver": "7.5.1",
     "source-map-support": "0.5.21",
