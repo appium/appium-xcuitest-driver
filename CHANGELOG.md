@@ -1,3 +1,22 @@
+## [4.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.0...v4.32.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency teen_process to v2.0.4 ([#1758](https://github.com/appium/appium-xcuitest-driver/issues/1758)) ([a95e08a](https://github.com/appium/appium-xcuitest-driver/commit/a95e08a40a2d8653b4bc2162102a681396f25eb5))
+
+## [4.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.31.0...v4.32.0) (2023-06-13)
+
+
+### Features
+
+* Add 'mobile: performAccessibilityAudit' extension ([#1754](https://github.com/appium/appium-xcuitest-driver/issues/1754)) ([cf2bb1b](https://github.com/appium/appium-xcuitest-driver/commit/cf2bb1b70e11a23438526b62018c892c29123cc8))
+
+
+### Bug Fixes
+
+* Only request chosen application attributes ([#1753](https://github.com/appium/appium-xcuitest-driver/issues/1753)) ([a8caa79](https://github.com/appium/appium-xcuitest-driver/commit/a8caa79269dc525a80c70cdc58f21789f39e8eba))
+
 ## [4.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.9...v4.31.0) (2023-06-10)
 
 

@@ -1297,3 +1297,26 @@ if necessary. The call is blocking.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 seconds | number | no | The amount of seconds to wait between putting the app to background and restoring it. Any negative value means to not restore the app after putting it to background (the default behavior). | 5
+
+### mobile: performAccessibilityAudit
+
+Performs accessbility audit of the current application according to the given type or multiple types.
+Wraps the XCTest's [performAccessibilityAuditWithAuditTypes](https://developer.apple.com/documentation/xctest/xcuiapplication/4190847-performaccessibilityauditwithaud?language=objc) API.
+Only available since Xcode 15/iOS 17.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+auditTypes | string[] | no | One or more type names to perform the audit for. The full list of available names could be found in the official [XCTest API documentation](https://developer.apple.com/documentation/xctest/xcuiaccessibilityaudittype?language=objc). If no type if provided explicitly then `XCUIAccessibilityAuditTypeAll` is assumed. | ['XCUIAccessibilityAuditTypeContrast', 'XCUIAccessibilityAuditTypeElementDetection']
+
+#### Returned Result
+
+List of found issues or an empty list. Each list item is a map consisting of the following items:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+detailedDescription | string | The detailed description of the found accessbility issue. | Some longer issue description
+compactDescription | string | The compact description of the found accessbility issue. | Some compact issue description
+auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
+element | string | The description of the element this issue was found for. | 'Yes' button
