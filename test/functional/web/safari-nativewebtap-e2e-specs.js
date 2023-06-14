@@ -74,7 +74,7 @@ describe('Safari - coordinate conversion -', function () {
           '17.0'
         )
       ) {
-        await driver.$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`);
+        await driver.$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`).click();
         await driver.$$('~Clear History')[1].click();
       } else {
         if ((await driver.$$('~Clear').length) > 0) {
