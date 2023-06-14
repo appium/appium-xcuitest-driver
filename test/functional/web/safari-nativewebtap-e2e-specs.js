@@ -74,8 +74,7 @@ describe('Safari - coordinate conversion -', function () {
           '17.0'
         )
       ) {
-        // TODO: please clear all tabs as well if needed.
-        // For both iPhone and iPad
+        await driver.$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`);
         await driver.$$('~Clear History')[1].click();
       } else {
         if ((await driver.$$('~Clear').length) > 0) {
