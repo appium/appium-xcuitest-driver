@@ -88,5 +88,7 @@ jobs:
             exit 1
         fi
 
+        export DEVICE_NAME="${{ matrix.deviceName }}"
+        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
         ${{ matrix.script }}
       name: Run functional tests
