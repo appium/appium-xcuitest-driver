@@ -79,8 +79,11 @@ jobs:
           &
         popd
 
-        target_sim_id=$(xcrun simctl list devices available | grep "${{ matrix.deviceName }} (" | cut -d "(" -f2 | cut -d ")" -f1)
-        open -Fn "/Applications/Xcode_${{ matrix.deviceName }}.app/Contents/Developer/Applications/Simulator.app"
+        export DEVICE_NAME="${{ matrix.deviceName }}"
+        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
+
+        target_sim_id=$(xcrun simctl list devices available | grep "$DEVICE_NAME (" | cut -d "(" -f2 | cut -d ")" -f1)
+        open -Fn "/Applications/Xcode_${PLATFORM_VERSION}.app/Contents/Developer/Applications/Simulator.app"
         xcrun simctl bootstatus $target_sim_id -b
 
         if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
@@ -88,7 +91,5 @@ jobs:
             exit 1
         fi
 
-        export DEVICE_NAME="${{ matrix.deviceName }}"
-        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
         ${{ matrix.script }}
       name: Run functional tests
