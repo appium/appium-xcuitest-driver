@@ -1,15 +1,16 @@
-import cmds from '../../lib/commands';
-import {createSandbox} from 'sinon';
-import {JWProxy} from 'appium/driver';
-import XCUITestDriver from '../../lib/driver';
-import * as appUtils from '../../lib/app-utils';
 import xcode from 'appium-xcode';
-import _ from 'lodash';
+import {JWProxy} from 'appium/driver';
+import {system} from 'appium/support';
 import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
+import {createSandbox} from 'sinon';
+import sinonChai from 'sinon-chai';
+import * as appUtils from '../../lib/app-utils';
+import cmds from '../../lib/commands';
+import XCUITestDriver from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
-import sinonChai from 'sinon-chai';
-import chaiAsPromised from 'chai-as-promised';
 chai.should();
 chai.use(sinonChai).use(chaiAsPromised);
 
@@ -99,6 +100,12 @@ describe('XCUITestDriver', function () {
       let driver;
       let device;
       let realDevice;
+
+      before(function () {
+        if (!system.isMac()) {
+          return this.skip();
+        }
+      });
 
       beforeEach(function () {
         driver = new XCUITestDriver();
