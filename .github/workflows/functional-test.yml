@@ -1,0 +1,92 @@
+name: Functional Tests
+
+on:
+  push:
+    branches:
+    - master
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+env:
+  CI: true
+  SHOW_XCODE_LOG: true
+  APPIUM_TEST_SERVER_PORT: '4567'
+  APPIUM_TEST_SERVER_HOST: '127.0.0.1'
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        script:
+        - npm run e2e-test:basic -- --grep "XCUITestDriver"
+        - npm run e2e-test:device
+        - npm run e2e-test:driver
+        - npm run e2e-test:web
+        - npm run e2e-test:long
+        include:
+        - iosVersion: '15.5'
+          xcodeVersion: '13.4'
+          deviceName: 'iPhone 12'
+          tvosVersion: '15.4'
+          tvosDeviceName: 'Apple TV'
+          platform: macos-12
+        - iosVersion: '16.2'
+          deviceName: 'iPhone 13'
+          xcodeVersion: '14.2'
+          skipTvOs: true
+          platform: macos-12
+
+    runs-on: ${{ matrix.platform }}
+
+    name: e2e
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: "${{ matrix.xcodeVersion }}"
+
+    - run: xcrun simctl list devices available
+      name: List Installed Simulators
+    - run: |
+        xcrun simctl list runtimes
+        xcrun --sdk iphonesimulator --show-sdk-version
+      name: List Runtimes
+
+    - run: npm install --no-save mjpeg-consumer
+      name: Install node dependencies
+
+    - run: |
+        export cwd=$(pwd)
+        pushd "$cwd"
+        cd ~
+        npm install -g appium@next
+        appium driver install --source=local "$cwd"
+        appium driver run xcuitest build-wda
+        appium server \
+          --port=$APPIUM_TEST_SERVER_PORT \
+          --address=$APPIUM_TEST_SERVER_HOST \
+          --relaxed-security \
+          --keep-alive-timeout 1200 \
+          &
+        popd
+
+        target_sim_id=$(xcrun simctl list devices available | grep "${{ matrix.deviceName }} (" | cut -d "(" -f2 | cut -d ")" -f1)
+        open -Fn "/Applications/Xcode_${{ matrix.deviceName }}.app/Contents/Developer/Applications/Simulator.app"
+        xcrun simctl bootstatus $target_sim_id -b
+
+        if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+            echo "Appium server was unable to start"
+            exit 1
+        fi
+
+        ${{ matrix.script }}
+      name: Run functional tests
