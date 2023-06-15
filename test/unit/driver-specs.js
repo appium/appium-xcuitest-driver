@@ -1,6 +1,5 @@
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
-import {system} from 'appium/support';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
@@ -100,12 +99,6 @@ describe('XCUITestDriver', function () {
       let driver;
       let device;
       let realDevice;
-
-      before(function () {
-        if (!system.isMac()) {
-          return this.skip();
-        }
-      });
 
       beforeEach(function () {
         driver = new XCUITestDriver();
