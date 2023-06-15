@@ -32,11 +32,11 @@ jobs:
       displayName: List Installed Applications
     - script: sudo xcode-select -s /Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer
       displayName: Xcode Select ${{ parameters.xcodeVersion }}
-    - script: xcodebuild -version
-      displayName: Log Xcode Version
-    - script: xcrun simctl list
+    - script: xcrun simctl list devices available
       displayName: List Installed Simulators
-    - script: xcrun simctl list runtimes
+    - script: |
+        xcrun simctl list runtimes
+        xcrun --sdk iphonesimulator --show-sdk-version
       displayName: List Runtimes
     - task: UsePythonVersion@0
       inputs:
@@ -54,7 +54,7 @@ jobs:
       condition: eq('${{ parameters.launchWithIDB }}', true)
     - task: NodeTool@0
       inputs:
-        versionSpec: 16.x
+        versionSpec: 18.x
     - script: |
         npm install -g appium@next
         npm install
@@ -68,6 +68,7 @@ jobs:
         pushd "$cwd"
         cd ~
         appium driver install --source=local "$cwd"
+        appium driver run xcuitest build-wda
         appium server \
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
@@ -75,15 +76,15 @@ jobs:
           --keep-alive-timeout 1200 \
           &
         popd
-        secondsStarted=$(date +%s)
-        while ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; do
-          sleep 0.1
-          secondsElapsed=$(( $(date +%s) - secondsStarted ))
-          if [[ $secondsElapsed -gt 30 ]]; then
-            echo "Appium server was unable to start within 30 seconds timeout"
+
+        target_sim_id=$(xcrun simctl list devices available | grep "$DEVICE_NAME (" | cut -d "(" -f2 | cut -d ")" -f1)
+        open -Fn "/Applications/Xcode_${{ parameters.xcodeVersion }}.app/Contents/Developer/Applications/Simulator.app"
+        xcrun simctl bootstatus $target_sim_id -b
+
+        if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+            echo "Appium server was unable to start"
             exit 1
-          fi
-        done
+        fi
 
         ${{ parameters.script }}
       displayName: Run functional tests
