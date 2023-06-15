@@ -1,12 +1,12 @@
 name: Functional Tests
 
 on:
-  push:
+  pull_request:
     branches:
     - master
     paths-ignore:
-      - 'docs/**'
-      - '*.md'
+    - 'docs/**'
+    - '*.md'
 
 env:
   CI: true
