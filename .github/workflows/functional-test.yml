@@ -20,12 +20,12 @@ jobs:
 
     strategy:
       matrix:
-        script:
-        - npm run e2e-test:basic -- --grep "XCUITestDriver"
-        - npm run e2e-test:device
-        - npm run e2e-test:driver
-        - npm run e2e-test:web
-        - npm run e2e-test:long
+        e2eRoot:
+        - basic
+        - device
+        - driver
+        - web
+        - long
         xcodeVersion: ['13.4', '14.2']
         include:
         - xcodeVersion: '13.4'
@@ -65,16 +65,14 @@ jobs:
         xcrun --sdk iphonesimulator --show-sdk-version
       name: List Runtimes
 
-    - run: npm install --no-save mjpeg-consumer
-      name: Install node dependencies
-
     - run: |
+        npm install --no-save mjpeg-consumer
         export cwd=$(pwd)
         pushd "$cwd"
         cd ~
         npm install -g appium@next
         appium driver install --source=local "$cwd"
-        appium driver run xcuitest build-wda
+        appium driver run xcuitest build-wda >/dev/null 2>&1
         appium server \
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
@@ -95,6 +93,10 @@ jobs:
             exit 1
         fi
 
-        ${{ matrix.script }} --reporter json
+        if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
+          mocha "./test/functional/${{ matrix.e2eRoot }}" --grep "XCUITestDriver" --exit --timeout 10m --reporter json
+        else
+          mocha "./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter json
+        fi
         cat "$MOCHA_FILE"
       name: Run functional tests
