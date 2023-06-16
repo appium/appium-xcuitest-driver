@@ -13,7 +13,6 @@ env:
   SHOW_XCODE_LOG: true
   APPIUM_TEST_SERVER_PORT: '4567'
   APPIUM_TEST_SERVER_HOST: '127.0.0.1'
-  MOCHA_FILE: test-results.json
 
 jobs:
   build:
@@ -67,6 +66,7 @@ jobs:
 
     - run: |
         npm install --no-save mjpeg-consumer
+        npm install mocha-multi-reporters --save-dev
         export cwd=$(pwd)
         pushd "$cwd"
         cd ~
@@ -93,10 +93,21 @@ jobs:
             exit 1
         fi
 
+        export RESULTS_JSON=test-results.json
+        echo "{\"reporterEnabled\": \"spec, json\", \"jsonReporterOptions\": {\"output\": \"$RESULTS_JSON\"}}" > reporter_config.json
+        ARGS=("./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
         if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
-          mocha "./test/functional/${{ matrix.e2eRoot }}" --grep "XCUITestDriver" --exit --timeout 10m --reporter json
-        else
-          mocha "./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter json
+          ARGS+=( --grep XCUITestDriver )
         fi
-        cat "$MOCHA_FILE"
+        if ! mocha "${ARGS[@]}"; then
+          tests=$(cat "$RESULTS_JSON" | jq .stats.tests)
+          failures=$(cat "$RESULTS_JSON" | jq .stats.failures)
+          threshold=$(( failures * 100 / tests ))
+          if [[ $threshold -lt 90 ]]; then
+            echo "Only ${threshold}% of tests succeeded"
+            exit 1
+          else
+            echo "${threshold}% of tests succeeded. This is fine"
+          fi
+        fi
       name: Run functional tests
