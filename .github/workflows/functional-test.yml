@@ -63,7 +63,7 @@ jobs:
     - run: xcrun simctl list devices available
       name: List Installed Simulators
     - run: |
-        jq --version
+        brew install xq
         xcrun simctl list runtimes
         xcrun --sdk iphonesimulator --show-sdk-version
       name: List Runtimes
@@ -97,15 +97,15 @@ jobs:
             exit 1
         fi
 
-        export RESULTS_JSON=test-results.json
-        echo "{\"reporterEnabled\": \"spec, json\", \"jsonReporterOptions\": {\"output\": \"$RESULTS_JSON\"}}" > reporter_config.json
+        export RESULTS_XML=test-results.xml
+        echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
         ARGS=("./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
         if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
           ARGS+=(--grep XCUITestDriver)
         fi
         if ! npx mocha "${ARGS[@]}"; then
-          tests=$(cat "$RESULTS_JSON" | jq .stats.tests)
-          failures=$(cat "$RESULTS_JSON" | jq .stats.failures)
+          tests=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@tests')
+          failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
           threshold=$(( failures * 100 / tests ))
           if [[ $threshold -gt 10 ]]; then
             echo "${threshold}% of tests failed"
