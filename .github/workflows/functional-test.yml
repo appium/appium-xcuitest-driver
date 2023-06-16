@@ -101,9 +101,9 @@ jobs:
         echo "{\"reporterEnabled\": \"spec, json\", \"jsonReporterOptions\": {\"output\": \"$RESULTS_JSON\"}}" > reporter_config.json
         ARGS=("./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
         if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
-          ARGS+=( --grep XCUITestDriver )
+          ARGS+=(--grep XCUITestDriver)
         fi
-        if ! mocha "${ARGS[@]}"; then
+        if ! npx mocha "${ARGS[@]}"; then
           tests=$(cat "$RESULTS_JSON" | jq .stats.tests)
           failures=$(cat "$RESULTS_JSON" | jq .stats.failures)
           threshold=$(( failures * 100 / tests ))
@@ -111,7 +111,7 @@ jobs:
             echo "${threshold}% of tests failed"
             exit 1
           else
-            echo "${threshold}% of tests failed. This is fine"
+            echo "${threshold}% of tests failed. This is (probably) fine"
           fi
         fi
       name: Run functional tests
