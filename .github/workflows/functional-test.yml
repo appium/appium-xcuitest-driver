@@ -103,11 +103,11 @@ jobs:
           tests=$(cat "$RESULTS_JSON" | jq .stats.tests)
           failures=$(cat "$RESULTS_JSON" | jq .stats.failures)
           threshold=$(( failures * 100 / tests ))
-          if [[ $threshold -lt 90 ]]; then
-            echo "Only ${threshold}% of tests succeeded"
+          if [[ $threshold -gt 10 ]]; then
+            echo "${threshold}% of tests failed"
             exit 1
           else
-            echo "${threshold}% of tests succeeded. This is fine"
+            echo "${threshold}% of tests failed. This is fine"
           fi
         fi
       name: Run functional tests
