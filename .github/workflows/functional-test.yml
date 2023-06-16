@@ -1,0 +1,120 @@
+name: Functional Tests
+
+on:
+  pull_request:
+    branches:
+    - master
+    paths-ignore:
+    - 'docs/**'
+    - '*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  SHOW_XCODE_LOG: true
+  APPIUM_TEST_SERVER_PORT: '4567'
+  APPIUM_TEST_SERVER_HOST: '127.0.0.1'
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        e2eRoot:
+        - basic
+        - device
+        - driver
+        - web
+        - long
+        xcodeVersion: ['13.4', '14.2']
+        include:
+        - xcodeVersion: '13.4'
+          iosVersion: '15.5'
+          deviceName: 'iPhone 12'
+          tvosVersion: '15.4'
+          tvosDeviceName: 'Apple TV'
+          platform: macos-12
+        - xcodeVersion: '14.2'
+          iosVersion: '16.2'
+          deviceName: 'iPhone 13'
+          skipTvOs: true
+          platform: macos-12
+      fail-fast: false
+
+    runs-on: ${{ matrix.platform }}
+
+    name: e2e
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+
+    - name: Select Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: "${{ matrix.xcodeVersion }}"
+
+    - run: xcrun simctl list devices available
+      name: List Installed Simulators
+    - run: |
+        brew install xq
+        xcrun simctl list runtimes
+        xcrun --sdk iphonesimulator --show-sdk-version
+      name: List Runtimes
+
+    - run: |
+        npm install --no-save mjpeg-consumer
+        npm install mocha-multi-reporters --save-dev
+        export cwd=$(pwd)
+        pushd "$cwd"
+        cd ~
+        npm install -g appium@next
+        appium driver install --source=local "$cwd"
+        appium driver run xcuitest build-wda >/dev/null 2>&1
+        appium server \
+          --port=$APPIUM_TEST_SERVER_PORT \
+          --address=$APPIUM_TEST_SERVER_HOST \
+          --relaxed-security \
+          --keep-alive-timeout 1200 \
+          &
+        popd
+
+        export DEVICE_NAME="${{ matrix.deviceName }}"
+        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
+
+        target_sim_id=$(xcrun simctl list devices available | grep "$DEVICE_NAME (" | cut -d "(" -f2 | cut -d ")" -f1)
+        open -Fn "$(xcode-select -p)/Applications/Simulator.app"
+        xcrun simctl bootstatus $target_sim_id -b
+
+        if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+            echo "Appium server was unable to start"
+            exit 1
+        fi
+
+        export RESULTS_XML=test-results.xml
+        echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
+        ARGS=("./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
+        if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
+          ARGS+=(--grep XCUITestDriver)
+        fi
+        if ! npx mocha "${ARGS[@]}"; then
+          tests=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@tests')
+          errors=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@errors')
+          skipped=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@skipped')
+          failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
+          threshold=$(( (failures + errors) * 100 / (tests - skipped) ))
+          cat "$RESULTS_XML"
+          if [[ $threshold -gt 10 ]]; then
+            echo "${threshold}% of tests failed"
+            exit 1
+          else
+            echo "${threshold}% of tests failed. This is (probably) fine"
+          fi
+        fi
+      name: Run functional tests

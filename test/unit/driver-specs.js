@@ -130,6 +130,13 @@ describe('XCUITestDriver', function () {
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
         sandbox.stub(utils, 'checkAppPresent');
         sandbox.stub(appUtils, 'extractBundleId');
+        sandbox.stub(utils, 'getAndCheckXcodeVersion').resolves({
+          versionString: '20.0',
+          versionFloat: 20.0,
+          major: 20,
+          minor: 0,
+          toString() { return '20.0'; },
+        });
       });
 
       it('should include server capabilities', async function () {

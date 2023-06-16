@@ -21,7 +21,7 @@ jobs:
         echo "versions=${VERSIONS}" >> $GITHUB_OUTPUT
 
   test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs:
     - prepare_matrix
     strategy:
