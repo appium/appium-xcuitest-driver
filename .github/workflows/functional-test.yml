@@ -105,10 +105,10 @@ jobs:
         fi
         if ! npx mocha "${ARGS[@]}"; then
           tests=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@tests')
+          errors=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@errors')
+          skipped=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@skipped')
           failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
-          threshold=$(( failures * 100 / tests ))
-          echo "tests: $tests"
-          echo "failures: $failures"
+          threshold=$(( (failures + errors) * 100 / (tests - skipped) ))
           cat "$RESULTS_XML"
           if [[ $threshold -gt 10 ]]; then
             echo "${threshold}% of tests failed"
