@@ -128,7 +128,7 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "2.0.0-rc.2"
+    "appium": "^2.0.0-rc.2"
   },
   "devDependencies": {
     "@appium/docutils": "0.4.1",
