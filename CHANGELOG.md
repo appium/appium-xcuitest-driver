@@ -1,3 +1,10 @@
+## [4.32.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.7...v4.32.8) (2023-06-23)
+
+
+### Bug Fixes
+
+* Copypaste in mobile method names ([#1783](https://github.com/appium/appium-xcuitest-driver/issues/1783)) ([710d246](https://github.com/appium/appium-xcuitest-driver/commit/710d24631b052f9499573e65ca24b34e238b7c02))
+
 ## [4.32.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.6...v4.32.7) (2023-06-23)
 
 
