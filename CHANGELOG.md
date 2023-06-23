@@ -1,3 +1,10 @@
+## [4.32.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.5...v4.32.6) (2023-06-23)
+
+
+### Bug Fixes
+
+* trigger release based on package.json update ([b40c8f4](https://github.com/appium/appium-xcuitest-driver/commit/b40c8f45e4aa9ca4cc0da8ace0fc83f1c79b691a))
+
 ## [4.32.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.4...v4.32.5) (2023-06-17)
 
 
