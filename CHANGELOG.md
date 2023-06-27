@@ -1,3 +1,10 @@
+## [4.32.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.9...v4.32.10) (2023-06-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency css-selector-parser to v2.3.2 ([77dbcee](https://github.com/appium/appium-xcuitest-driver/commit/77dbceefbc10f44ab5bc0e9a50f5aa3c781064d4))
+
 ## [4.32.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.8...v4.32.9) (2023-06-24)
 
 
