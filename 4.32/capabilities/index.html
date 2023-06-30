@@ -1642,8 +1642,8 @@
 </tr>
 <tr>
 <td><code>appium:screenshotQuality</code></td>
-<td>Changes the quality of phone display screenshots following <a href="https://developer.apple.com/documentation/xctest/xctimagequality?language=objc">xctest/xctimagequality</a>  Default value is <code>1</code>. <code>0</code> is the highest and <code>2</code> is the lowest quality. You can also change it via <a href="https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md">settings</a> command. <code>0</code> might cause OutOfMemory crash on high-resolution devices like iPad Pro.</td>
-<td>e.g. <code>0</code>, <code>1</code>, <code>2</code></td>
+<td>Changes the initial quality of display screenshots. This capability affects the screenshoting speed and the actual quality of resulting screenshots. Before version 5.4.0 of WebDriverAgent possible values were: <code>0</code>, <code>1</code> (default), <code>2</code>, where <code>0</code> abbreviates lossless PNG, <code>1</code> is a high-quality JPEG and <code>2</code> is a low-quality JPEG. In the version 5.4.0 one more mode has been added (<code>3</code>), which is now the default one. It abbreviates lossless HEIC with fallback to PNG if the device does not support hardware-accelerated HEIC encoding. You can also change the value of screenshotQuality in <a href="../settings/">settings</a>.</td>
+<td><code>2</code></td>
 </tr>
 <tr>
 <td><code>appium:autoAcceptAlerts</code></td>
