@@ -1,3 +1,15 @@
+## [4.32.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.10...v4.32.11) (2023-07-01)
+
+
+### Reverts
+
+* Revert "chore(workflows): pin dependencies (#1773)" (#1794) ([abb6de9](https://github.com/appium/appium-xcuitest-driver/commit/abb6de9e135cdc66878f61665ff9d2290e070666)), closes [#1773](https://github.com/appium/appium-xcuitest-driver/issues/1773) [#1794](https://github.com/appium/appium-xcuitest-driver/issues/1794)
+
+
+### Code Refactoring
+
+* Tune temporary simulator creation logic ([#1790](https://github.com/appium/appium-xcuitest-driver/issues/1790)) ([9ac2f6a](https://github.com/appium/appium-xcuitest-driver/commit/9ac2f6a52348230f7d4c425722a4ef07c8ac4043))
+
 ## [4.32.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.9...v4.32.10) (2023-06-27)
 
 
