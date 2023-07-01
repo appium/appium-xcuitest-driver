@@ -48,15 +48,15 @@ jobs:
 
     name: e2e
     steps:
-    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
+    - uses: actions/checkout@v3
 
     - name: Install Node.js
-      uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
+      uses: actions/setup-node@v3
       with:
         node-version: 'lts/*'
 
     - name: Select Xcode
-      uses: maxim-lobanov/setup-xcode@9a697e2b393340c3cacd97468baa318e4c883d98 # v1
+      uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: "${{ matrix.xcodeVersion }}"
 
