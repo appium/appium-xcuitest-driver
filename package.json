@@ -69,7 +69,7 @@
   "types": "./build/index.d.ts",
   "dependencies": {
     "@xmldom/xmldom": "0.8.8",
-    "appium-idb": "1.6.12",
+    "appium-idb": "1.6.13",
     "appium-ios-device": "2.5.3",
     "appium-ios-simulator": "5.1.0",
     "appium-remote-debugger": "9.1.16",
