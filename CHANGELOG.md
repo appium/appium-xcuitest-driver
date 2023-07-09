@@ -1,3 +1,10 @@
+## [4.32.18](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.17...v4.32.18) (2023-07-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency node-simctl to v7.1.17 ([6d52868](https://github.com/appium/appium-xcuitest-driver/commit/6d52868be4d449a610a5ec86f3972a5736714d42))
+
 ## [4.32.17](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.16...v4.32.17) (2023-07-08)
 
 
