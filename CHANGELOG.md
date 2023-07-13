@@ -1,3 +1,10 @@
+## [4.32.20](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.19...v4.32.20) (2023-07-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @xmldom/xmldom to v0.8.9 ([a5312c6](https://github.com/appium/appium-xcuitest-driver/commit/a5312c6bf1fd4fe2a2f5722e776b4ac7f17248a8))
+
 ## [4.32.19](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.18...v4.32.19) (2023-07-09)
 
 
