@@ -1,3 +1,10 @@
+## [4.32.21](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.20...v4.32.21) (2023-07-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.6.0 for waitForQuiescence in in /wda/apps/launch ([#1817](https://github.com/appium/appium-xcuitest-driver/issues/1817)) ([9e4ded1](https://github.com/appium/appium-xcuitest-driver/commit/9e4ded1fe475d7aa83c638b1d2ca3e79936e7fc5))
+
 ## [4.32.20](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.19...v4.32.20) (2023-07-13)
 
 
