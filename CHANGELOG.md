@@ -1,3 +1,10 @@
+## [4.32.23](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.22...v4.32.23) (2023-07-21)
+
+
+### Bug Fixes
+
+* isAppInstalled in Xcode 15 env for simulator ([#1822](https://github.com/appium/appium-xcuitest-driver/issues/1822)) ([78f2ef2](https://github.com/appium/appium-xcuitest-driver/commit/78f2ef2fe2b7ace3d6ddadb3157f338a0f6c4cb3))
+
 ## [4.32.22](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.21...v4.32.22) (2023-07-20)
 
 
