@@ -6,8 +6,8 @@ XCUITest driver can launch preinstalled WebDriverAgent directly against a real d
 It lets you start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
 
 > **Note**
-> This method does not work for iOS 17/tvOS 17 environment for now as the platform changes.
-> Please use the `xcodebuild` way.
+> This method does not work for iOS 17/tvOS 17 environment for now due to platform changes.
+> Please use the `xcodebuild` method.
 
 ## For Real Devices
 
@@ -73,7 +73,7 @@ Then, the WebDriverAgent-Runner's bundle id could be `com.appium.WebDriverAgentR
 The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
 
 > **Note**
-> Older than Xcode 11 has a different naming convention. This feature does not work for a package which is built by Xcode versions below 12 have different naming conventions.
+> Versions of Xcode older than 11 have a different naming convention. This feature does not work for a package which is built by Xcode versions below 12.
 
 > **Note**
 > Please make sure that the installed `WebDriverAgentRunner-Runner` application is still launchable if the XCUITest driver session startup still fails by providing a correct WebDriverAgent bundle identifier.
