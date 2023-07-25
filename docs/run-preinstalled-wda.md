@@ -3,7 +3,11 @@ title: Run Preinstalled WebDriverAgentRunner
 ---
 
 XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
-It lets you to start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
+It lets you start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
+
+> **Note**
+> This method does not work for iOS 17/tvOS 17 environment for now due to platform changes.
+> Please use the `xcodebuild` method.
 
 ## For Real Devices
 
@@ -64,12 +68,12 @@ The steps are:
 Please read [Real Device Configuration tutorial](real-device-config.md) to configure the WebDriverAgent package for a real device before the step 4.
 
 If it is a non-paid account by `appium` user name, the bundle id would have `com.appium` prefix.
-Then, the WebDriverAgent-Runner's bumdle id could be `com.appium.WebDriverAgentRunner` for example.
+Then, the WebDriverAgent-Runner's bundle id could be `com.appium.WebDriverAgentRunner` for example.
 `appium:updatedWDABundleId` value should be `com.appium.WebDriverAgentRunner` then.
 The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
 
 > **Note**
-> Older than Xcode 11 has different naming convention. This feature does not work for a package which is built by Xcode versions below 12 have different naming conventions.
+> Versions of Xcode older than 11 have a different naming convention. This feature does not work for a package which is built by Xcode versions below 12.
 
 > **Note**
 > Please make sure that the installed `WebDriverAgentRunner-Runner` application is still launchable if the XCUITest driver session startup still fails by providing a correct WebDriverAgent bundle identifier.
@@ -85,7 +89,7 @@ The `WebDriverAgentRunner-Runner.app` can be installed without xcodebuild with t
 
 ### Set `appium:prebuiltWDAPath`
 
-If `appium:prebuiltWDAPath` is provided with properly signed `WebDriverAgentRunner-Runner.app` test bundle (please check [Real Device Configuration tutorial](real-device-config.md)), XCUITest driver will install the application and launch it every test session.
+If `appium:prebuiltWDAPath` is provided with a properly signed `WebDriverAgentRunner-Runner.app` test bundle (please check [Real Device Configuration tutorial](real-device-config.md)), XCUITest driver will install the application and launch it every test session.
 Test bundles cannot be versioned using `CFBundleVersion` as vanilla applications do. That is why it is necessary to (re)install them for every test session.
 
 Usually you can find the actual WebDriverAgentRunner application bundle at the below location if you use Xcode to build it.

@@ -7,7 +7,7 @@ title: Run Prebuilt WebDriverAgentRunner
 `build-for-testing` builds a test bundle package. `test-without-building` is to run it.
 Usually XCUITest driver runs both arguments in a new session creation to build the WebDriverAgentRunner application for testing, install it to a device and run it.
 
-For instance, XCUITEst driver issues a `xcodebuild` command like below:
+For instance, XCUITest driver issues a `xcodebuild` command like below:
 
 ```
 xcodebuild build-for-testing test-without-building \
