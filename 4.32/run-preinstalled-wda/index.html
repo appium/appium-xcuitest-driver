@@ -1295,7 +1295,12 @@
   <h1>Run Preinstalled WebDriverAgentRunner</h1>
 
 <p>XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
-It lets you to start a XCUITest driver session without the <code>xcodebuild</code> command execution to improve the session startup performance.</p>
+It lets you start a XCUITest driver session without the <code>xcodebuild</code> command execution to improve the session startup performance.</p>
+<blockquote>
+<p><strong>Note</strong>
+This method does not work for iOS 17/tvOS 17 environment for now due to platform changes.
+Please use the <code>xcodebuild</code> method.</p>
+</blockquote>
 <h2 id="for-real-devices">For Real Devices</h2>
 <h3 id="capabilities">Capabilities</h3>
 <ul>
@@ -1357,12 +1362,12 @@ The steps are:</p>
 </ol>
 <p>Please read <a href="../real-device-config/">Real Device Configuration tutorial</a> to configure the WebDriverAgent package for a real device before the step 4.</p>
 <p>If it is a non-paid account by <code>appium</code> user name, the bundle id would have <code>com.appium</code> prefix.
-Then, the WebDriverAgent-Runner's bumdle id could be <code>com.appium.WebDriverAgentRunner</code> for example.
+Then, the WebDriverAgent-Runner's bundle id could be <code>com.appium.WebDriverAgentRunner</code> for example.
 <code>appium:updatedWDABundleId</code> value should be <code>com.appium.WebDriverAgentRunner</code> then.
 The test bundle by Xcode will be <code>com.appium.WebDriverAegnt.xctrunner</code>.</p>
 <blockquote>
 <p><strong>Note</strong>
-Older than Xcode 11 has different naming convention. This feature does not work for a package which is built by Xcode versions below 12 have different naming conventions.</p>
+Versions of Xcode older than 11 have a different naming convention. This feature does not work for a package which is built by Xcode versions below 12.</p>
 <p><strong>Note</strong>
 Please make sure that the installed <code>WebDriverAgentRunner-Runner</code> application is still launchable if the XCUITest driver session startup still fails by providing a correct WebDriverAgent bundle identifier.
 For example, non-paid account has limited period to keep the provisiong profile valid. Sometimes it is necessary to reinstall WebDriverAgentRunner-Runner once, or to restart the device.</p>
@@ -1372,7 +1377,7 @@ For example, non-paid account has limited period to keep the provisiong profile 
 <p><code>WebDriverAgentRunner-Runner.app</code> package may exist in a <code>derivedDataPath</code> directory as explained in <a href="../real-device-config/">Real Device Configuration tutorial</a>.
 The <code>WebDriverAgentRunner-Runner.app</code> can be installed without xcodebuild with the 3rd party tools.</p>
 <h3 id="set-appiumprebuiltwdapath">Set <code>appium:prebuiltWDAPath</code></h3>
-<p>If <code>appium:prebuiltWDAPath</code> is provided with properly signed <code>WebDriverAgentRunner-Runner.app</code> test bundle (please check <a href="../real-device-config/">Real Device Configuration tutorial</a>), XCUITest driver will install the application and launch it every test session.
+<p>If <code>appium:prebuiltWDAPath</code> is provided with a properly signed <code>WebDriverAgentRunner-Runner.app</code> test bundle (please check <a href="../real-device-config/">Real Device Configuration tutorial</a>), XCUITest driver will install the application and launch it every test session.
 Test bundles cannot be versioned using <code>CFBundleVersion</code> as vanilla applications do. That is why it is necessary to (re)install them for every test session.</p>
 <p>Usually you can find the actual WebDriverAgentRunner application bundle at the below location if you use Xcode to build it.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>~/Library/Developer/Xcode/DerivedData/WebDriverAgent-&lt;random string&gt;/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app
