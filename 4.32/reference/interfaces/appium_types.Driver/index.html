@@ -4552,7 +4552,7 @@ external drivers are expected to implement <a href="../appium_types.ExternalDriv
 <p>node_modules/@appium/types/lib/driver.ts:332</p>
 <hr />
 <h3 id="updatesettings">updateSettings</h3>
-<p>• <strong>updateSettings</strong>: (<code>settings</code>: <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <strong>updateSettings</strong>: (<code>settings</code>: <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>settings</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Update the session's settings dictionary with a new settings object</p>
@@ -4568,7 +4568,7 @@ external drivers are expected to implement <a href="../appium_types.ExternalDriv
 <tbody>
 <tr>
 <td align="left"><code>settings</code></td>
-<td align="left"><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>></td>
+<td align="left"><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
 <td align="left">A key-value map of setting names to values. Settings not named in the map will not have their value adjusted.</td>
 </tr>
 </tbody>
@@ -4600,7 +4600,7 @@ external drivers are expected to implement <a href="../appium_types.ExternalDriv
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>></td>
+<td align="left"><a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></td>
 </tr>
 </tbody>
 </table>
@@ -4789,7 +4789,7 @@ where the server is Running</p>
 <p>node_modules/@appium/types/lib/driver.ts:442</p>
 <hr />
 <h3 id="driverforsession">driverForSession</h3>
-<p>▸ <strong>driverForSession</strong>(<code>sessionId</code>): <code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>></p>
+<p>▸ <strong>driverForSession</strong>(<code>sessionId</code>): <code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></p>
 <h4 id="parameters_7">Parameters</h4>
 <table>
 <thead>
@@ -4806,7 +4806,7 @@ where the server is Running</p>
 </tbody>
 </table>
 <h4 id="returns_8">Returns</h4>
-<p><code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>></p>
+<p><code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></p>
 <h4 id="inherited-from_28">Inherited from</h4>
 <p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#driverforsession">driverForSession</a></p>
 <h4 id="defined-in_37">Defined in</h4>
@@ -5321,9 +5321,9 @@ look for elements among the set of descendants of a given element</p>
 <p>node_modules/@appium/types/lib/driver.ts:337</p>
 <hr />
 <h3 id="getmanageddrivers">getManagedDrivers</h3>
-<p>▸ <strong>getManagedDrivers</strong>(): <a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>>[]</p>
+<p>▸ <strong>getManagedDrivers</strong>(): <a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
 <h4 id="returns_22">Returns</h4>
-<p><a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>>[]</p>
+<p><a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
 <h4 id="inherited-from_41">Inherited from</h4>
 <p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#getmanageddrivers">getManagedDrivers</a></p>
 <h4 id="defined-in_51">Defined in</h4>

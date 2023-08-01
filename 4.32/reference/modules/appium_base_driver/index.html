@@ -5286,7 +5286,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts</code></td>
-<td align="left">{ <code>GET</code>: { <code>command</code>: <code>"getTimeouts"</code> = 'getTimeouts' } ; <code>POST</code>: { <code>command</code>: <code>"timeouts"</code> = 'timeouts'; <code>payloadParams</code>: { <code>optional</code>: readonly [<code>"type"</code>, <code>"ms"</code>, <code>"script"</code>, <code>"pageLoad"</code>, <code>"implicit"</code>] ; <code>validate</code>: (<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>any</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code>  }  }  }</td>
+<td align="left">{ <code>GET</code>: { <code>command</code>: <code>"getTimeouts"</code> = 'getTimeouts' } ; <code>POST</code>: { <code>command</code>: <code>"timeouts"</code> = 'timeouts'; <code>payloadParams</code>: { <code>optional</code>: readonly [<code>"type"</code>, <code>"ms"</code>, <code>"script"</code>, <code>"pageLoad"</code>, <code>"implicit"</code>] ; <code>validate</code>: (<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>string</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code>  }  }  }</td>
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts.GET</code></td>
@@ -5298,7 +5298,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts.POST</code></td>
-<td align="left">{ <code>command</code>: <code>"timeouts"</code> = 'timeouts'; <code>payloadParams</code>: { <code>optional</code>: readonly [<code>"type"</code>, <code>"ms"</code>, <code>"script"</code>, <code>"pageLoad"</code>, <code>"implicit"</code>] ; <code>validate</code>: (<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>any</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code>  }  }</td>
+<td align="left">{ <code>command</code>: <code>"timeouts"</code> = 'timeouts'; <code>payloadParams</code>: { <code>optional</code>: readonly [<code>"type"</code>, <code>"ms"</code>, <code>"script"</code>, <code>"pageLoad"</code>, <code>"implicit"</code>] ; <code>validate</code>: (<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>string</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code>  }  }</td>
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts.POST.command</code></td>
@@ -5306,7 +5306,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts.POST.payloadParams</code></td>
-<td align="left">{ <code>optional</code>: readonly [<code>"type"</code>, <code>"ms"</code>, <code>"script"</code>, <code>"pageLoad"</code>, <code>"implicit"</code>] ; <code>validate</code>: (<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>any</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code>  }</td>
+<td align="left">{ <code>optional</code>: readonly [<code>"type"</code>, <code>"ms"</code>, <code>"script"</code>, <code>"pageLoad"</code>, <code>"implicit"</code>] ; <code>validate</code>: (<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>string</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code>  }</td>
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts.POST.payloadParams.optional</code></td>
@@ -5314,7 +5314,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts.POST.payloadParams.validate</code></td>
-<td align="left">(<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>any</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code></td>
+<td align="left">(<code>jsonObj</code>: <code>any</code>, <code>protocolName</code>: <code>string</code>) =&gt; <code>undefined</code> | <code>"W3C protocol expects any of script, pageLoad or implicit to be set"</code> | <code>"MJSONWP protocol requires type and ms"</code></td>
 </tr>
 <tr>
 <td align="left"><code>/session/:sessionId/timeouts/async_script</code></td>
@@ -6857,7 +6857,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 <tr>
 <td align="left"><code>W3CCaps</code></td>
-<td align="left">extends <a href="../../interfaces/appium_types.W3CCapabilities/"><code>W3CCapabilities</code></a>&lt;<code>C</code>, <code>W3CCaps</code>></td>
+<td align="left">extends <a href="../../interfaces/appium_types.W3CCapabilities/"><code>W3CCapabilities</code></a>&lt;<code>C</code>></td>
 </tr>
 </tbody>
 </table>
@@ -6986,7 +6986,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<code>any</code>, <a href="../appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>></td>
+<td align="left"><a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<code>any</code>, <a href="../appium_types/#stringrecord"><code>StringRecord</code></a>></td>
 </tr>
 </tbody>
 </table>
