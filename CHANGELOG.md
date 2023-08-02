@@ -1,3 +1,10 @@
+## [4.32.25](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.24...v4.32.25) (2023-08-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v10 ([#1776](https://github.com/appium/appium-xcuitest-driver/issues/1776)) ([2079a56](https://github.com/appium/appium-xcuitest-driver/commit/2079a56578fbdd5a09220caff1c1f1e7f8ec4254))
+
 ## [4.32.24](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.23...v4.32.24) (2023-08-01)
 
 
