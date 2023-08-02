@@ -17,7 +17,6 @@ const TYPING_TRIES = process.env.CI ? 100 : 10;
 describe('XCUITestDriver - long tests', function () {
   this.timeout(0);
 
-  /** @type {import('webdriverio').Browser} */
   let driver;
   before(async function () {
     const caps = amendCapabilities(UICATALOG_CAPS, { 'appium:maxTypingFrequency': 20 });
