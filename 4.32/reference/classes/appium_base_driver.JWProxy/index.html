@@ -2390,7 +2390,7 @@
 <p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:110</p>
 <hr />
 <h3 id="command">command</h3>
-<p>▸ <strong>command</strong>(<code>url</code>, <code>method</code>, <code>body?</code>): <code>Promise</code>&lt;<code>any</code>></p>
+<p>▸ <strong>command</strong>(<code>url</code>, <code>method</code>, <code>body?</code>): <code>Promise</code>&lt;<code>unknown</code>></p>
 <h4 id="parameters_2">Parameters</h4>
 <table>
 <thead>
@@ -2403,25 +2403,25 @@
 <tbody>
 <tr>
 <td align="left"><code>url</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>string</code></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
 <td align="left"><code>method</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><a href="../../modules/appium_types/#httpmethod"><code>HTTPMethod</code></a></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
 <td align="left"><code>body</code></td>
-<td align="left"><code>null</code></td>
+<td align="left"><code>any</code></td>
 <td align="left"><code>null</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_4">Returns</h4>
-<p><code>Promise</code>&lt;<code>any</code>></p>
+<p><code>Promise</code>&lt;<code>unknown</code>></p>
 <h4 id="defined-in_18">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:333</p>
+<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:346</p>
 <hr />
 <h3 id="endpointrequiressessionid">endpointRequiresSessionId</h3>
 <p>▸ <strong>endpointRequiresSessionId</strong>(<code>endpoint</code>): <code>boolean</code></p>
@@ -2453,7 +2453,7 @@
 <p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:106</p>
 <hr />
 <h3 id="getprotocolfromresbody">getProtocolFromResBody</h3>
-<p>▸ <strong>getProtocolFromResBody</strong>(<code>resObj</code>): <code>undefined</code> | <code>string</code></p>
+<p>▸ <strong>getProtocolFromResBody</strong>(<code>resObj</code>): <code>undefined</code> | <code>"MJSONWP"</code> | <code>"W3C"</code></p>
 <h4 id="parameters_4">Parameters</h4>
 <table>
 <thead>
@@ -2470,7 +2470,7 @@
 </tbody>
 </table>
 <h4 id="returns_7">Returns</h4>
-<p><code>undefined</code> | <code>string</code></p>
+<p><code>undefined</code> | <code>"MJSONWP"</code> | <code>"W3C"</code></p>
 <h4 id="defined-in_21">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:284</p>
 <hr />
@@ -2494,7 +2494,7 @@
 <h4 id="returns_8">Returns</h4>
 <p><code>any</code></p>
 <h4 id="defined-in_22">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:385</p>
+<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:398</p>
 <hr />
 <h3 id="geturlforproxy">getUrlForProxy</h3>
 <p>▸ <strong>getUrlForProxy</strong>(<code>url</code>): <code>string</code></p>
@@ -2566,17 +2566,17 @@
 <tbody>
 <tr>
 <td align="left"><code>url</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><code>string</code></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
 <td align="left"><code>method</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><a href="../../modules/appium_types/#httpmethod"><code>HTTPMethod</code></a></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
 <td align="left"><code>body</code></td>
-<td align="left"><code>null</code></td>
+<td align="left"><code>any</code></td>
 <td align="left"><code>null</code></td>
 </tr>
 </tbody>
@@ -2584,7 +2584,7 @@
 <h4 id="returns_11">Returns</h4>
 <p><code>Promise</code>&lt;<code>any</code>></p>
 <h4 id="defined-in_25">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:323</p>
+<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:329</p>
 <hr />
 <h3 id="proxyreqres">proxyReqRes</h3>
 <p>▸ <strong>proxyReqRes</strong>(<code>req</code>, <code>res</code>): <code>Promise</code>&lt;<code>void</code>></p>
@@ -2610,7 +2610,7 @@
 <h4 id="returns_12">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in_26">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:390</p>
+<p>node_modules/@appium/base-driver/lib/jsonwp-proxy/proxy.js:403</p>
 <hr />
 <h3 id="request">request</h3>
 <p>▸ <code>Private</code> <strong>request</strong>(<code>requestConfig</code>): <code>Promise</code>&lt;<code>AxiosResponse</code>&lt;<code>any</code>, <code>any</code>>></p>

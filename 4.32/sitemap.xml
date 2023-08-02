@@ -241,11 +241,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium-xcuitest-driver/4.32/reference/interfaces/appium_types.Constraints/</loc>
-         <lastmod>2023-08-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/4.32/reference/interfaces/appium_types.Cookie/</loc>
          <lastmod>2023-08-02</lastmod>
          <changefreq>daily</changefreq>
@@ -467,16 +462,6 @@
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/4.32/reference/interfaces/appium_types.StandardCapabilities/</loc>
-         <lastmod>2023-08-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://appium.github.io/appium-xcuitest-driver/4.32/reference/interfaces/appium_types.StartScreenRecordOptions/</loc>
-         <lastmod>2023-08-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://appium.github.io/appium-xcuitest-driver/4.32/reference/interfaces/appium_types.StopScreenRecordOptions/</loc>
          <lastmod>2023-08-02</lastmod>
          <changefreq>daily</changefreq>
     </url>

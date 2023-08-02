@@ -1238,7 +1238,7 @@
 <tbody>
 <tr>
 <td align="left"><code>T</code></td>
-<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+<td align="left">extends <code>object</code> = <code>object</code></td>
 </tr>
 </tbody>
 </table>
@@ -1258,7 +1258,7 @@
 </ul>
 <h2 id="properties_1">Properties</h2>
 <h3 id="updatesettings">updateSettings</h3>
-<p>• <strong>updateSettings</strong>: (<code>settings</code>: <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <strong>updateSettings</strong>: (<code>settings</code>: <code>T</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>settings</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Update the session's settings dictionary with a new settings object</p>
@@ -1274,7 +1274,7 @@
 <tbody>
 <tr>
 <td align="left"><code>settings</code></td>
-<td align="left"><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+<td align="left"><code>T</code></td>
 <td align="left">A key-value map of setting names to values. Settings not named in the map will not have their value adjusted.</td>
 </tr>
 </tbody>
@@ -1282,7 +1282,7 @@
 <h5 id="returns">Returns</h5>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:379</p>
+<p>node_modules/@appium/types/lib/driver.ts:381</p>
 <h2 id="methods_1">Methods</h2>
 <h3 id="getsettings">getSettings</h3>
 <p>▸ <strong>getSettings</strong>(): <code>Promise</code>&lt;<code>T</code>></p>
@@ -1291,7 +1291,7 @@
 <p><code>Promise</code>&lt;<code>T</code>></p>
 <p>The settings object</p>
 <h4 id="defined-in_1">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:386</p>
+<p>node_modules/@appium/types/lib/driver.ts:388</p>
 
 
 

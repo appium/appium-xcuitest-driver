@@ -1312,7 +1312,7 @@
 </ul>
 <h2 id="properties_1">Properties</h2>
 <h3 id="websocketsmapping">webSocketsMapping</h3>
-<p>• <strong>webSocketsMapping</strong>: <code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>>></p>
+<p>• <strong>webSocketsMapping</strong>: <code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;typeof <code>WebSocket</code>, typeof <code>IncomingMessage</code>>></p>
 <h4 id="defined-in">Defined in</h4>
 <p>node_modules/@appium/types/lib/server.ts:47</p>
 <h2 id="methods_1">Methods</h2>
@@ -1341,7 +1341,7 @@
 </tr>
 <tr>
 <td align="left"><code>handlerServer</code></td>
-<td align="left"><a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>></td>
+<td align="left"><a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;typeof <code>WebSocket</code>, typeof <code>IncomingMessage</code>></td>
 <td align="left">WebSocket server instance. See https://github.com/websockets/ws/pull/885 for more details on how to configure the handler properly.</td>
 </tr>
 </tbody>
@@ -1359,7 +1359,7 @@
 <p>node_modules/@appium/types/lib/server.ts:13</p>
 <hr />
 <h3 id="getwebsockethandlers">getWebSocketHandlers</h3>
-<p>▸ <strong>getWebSocketHandlers</strong>(<code>this</code>, <code>keysFilter?</code>): <code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>>>></p>
+<p>▸ <strong>getWebSocketHandlers</strong>(<code>this</code>, <code>keysFilter?</code>): <code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;typeof <code>WebSocket</code>, typeof <code>IncomingMessage</code>>>></p>
 <p>Returns web socket handlers registered for the given server
 instance.</p>
 <h4 id="parameters_1">Parameters</h4>
@@ -1385,7 +1385,7 @@ instance.</p>
 </tbody>
 </table>
 <h4 id="returns_2">Returns</h4>
-<p><code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>>>></p>
+<p><code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;typeof <code>WebSocket</code>, typeof <code>IncomingMessage</code>>>></p>
 <p>Pathnames to WS server instances mapping matching the search criteria, if any found.</p>
 <h4 id="defined-in_3">Defined in</h4>
 <p>node_modules/@appium/types/lib/server.ts:43</p>

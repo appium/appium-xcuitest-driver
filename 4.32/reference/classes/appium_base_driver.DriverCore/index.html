@@ -971,6 +971,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#implements" class="md-nav__link">
+    Implements
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#table-of-contents" class="md-nav__link">
     Table of contents
   </a>
@@ -2989,7 +3024,8 @@
 
 <h1 id="class-drivercorec-settings">Class: DriverCore&lt;C, Settings></h1>
 <p><a href="../../modules/appium_base_driver/">@appium/base-driver</a>.DriverCore</p>
-<p><strong><code>Implements</code></strong></p>
+<p>Methods and properties which both <code>AppiumDriver</code> and <code>BaseDriver</code> inherit.</p>
+<p>This should not be used directly by external code.</p>
 <h2 id="type-parameters">Type parameters</h2>
 <table>
 <thead>
@@ -3001,11 +3037,11 @@
 <tbody>
 <tr>
 <td align="left"><code>C</code></td>
-<td align="left"><code>C</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#constraints"><code>Constraints</code></a></td>
 </tr>
 <tr>
 <td align="left"><code>Settings</code></td>
-<td align="left"><code>StringRecord</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
 </tr>
 </tbody>
 </table>
@@ -3014,6 +3050,10 @@
 <li><strong><code>DriverCore</code></strong></li>
 </ul>
 <p>↳ <a href="../appium_base_driver.BaseDriver/"><code>BaseDriver</code></a></p>
+<h2 id="implements">Implements</h2>
+<ul>
+<li><a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <code>Settings</code>></li>
+</ul>
 <h2 id="table-of-contents">Table of contents</h2>
 <h3 id="constructors">Constructors</h3>
 <ul>
@@ -3089,11 +3129,11 @@
 <tbody>
 <tr>
 <td align="left"><code>C</code></td>
-<td align="left">extends <a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a></td>
+<td align="left">extends <a href="../../modules/appium_types/#constraints"><code>Constraints</code></a></td>
 </tr>
 <tr>
 <td align="left"><code>Settings</code></td>
-<td align="left">extends <code>StringRecord</code> = <code>StringRecord</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
 </tr>
 </tbody>
 </table>
@@ -3109,33 +3149,195 @@
 <tbody>
 <tr>
 <td align="left"><code>opts</code></td>
-<td align="left"><code>DriverOpts</code>&lt;<code>C</code>></td>
+<td align="left"><code>Object</code></td>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
-<td align="left"><code>shouldValidateCaps?</code></td>
+<td align="left"><code>opts.address</code></td>
+<td align="left"><code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.allowCors</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.allowInsecure</code></td>
+<td align="left"><a href="../../modules/appium_types/#allowinsecureconfig"><code>AllowInsecureConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.basePath</code></td>
+<td align="left"><code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.callbackAddress</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.callbackPort</code></td>
+<td align="left"><code>number</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.debugLogSpacing</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.defaultCapabilities</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.DefaultCapabilitiesConfig/"><code>DefaultCapabilitiesConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.denyInsecure</code></td>
+<td align="left"><a href="../../modules/appium_types/#denyinsecureconfig"><code>DenyInsecureConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.driver</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.DriverConfig/"><code>DriverConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.fastReset?</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.keepAliveTimeout</code></td>
+<td align="left"><code>number</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.localTimezone</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.logFile</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.logFilters</code></td>
+<td align="left"><code>undefined</code> | <a href="../../modules/appium_types/#logfiltersconfig"><code>LogFiltersConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.logNoColors</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.logTimestamp</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.loglevel</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <a href="../../modules/appium_types/#loglevelconfig"><code>LogLevelConfig</code></a>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.longStacktrace</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.noPermsCheck</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.nodeconfig</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.NodeconfigConfig/"><code>NodeconfigConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.plugin</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.PluginConfig/"><code>PluginConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.port</code></td>
+<td align="left"><code>number</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.relaxedSecurityEnabled</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.sessionOverride</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.skipUninstall?</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.strictCaps</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.tmpDir</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.traceDir</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.useDrivers</code></td>
+<td align="left"><a href="../../modules/appium_types/#usedriversconfig"><code>UseDriversConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.usePlugins</code></td>
+<td align="left"><a href="../../modules/appium_types/#usepluginsconfig"><code>UsePluginsConfig</code></a></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>opts.webhook</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left"><code>undefined</code></td>
+</tr>
+<tr>
+<td align="left"><code>shouldValidateCaps</code></td>
 <td align="left"><code>boolean</code></td>
 <td align="left"><code>true</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="defined-in">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:127</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:102</p>
 <h2 id="properties_1">Properties</h2>
 <h3 id="_eventhistory">_eventHistory</h3>
-<p>• <strong>_eventHistory</strong>: <a href="../../interfaces/appium_types.EventHistory/"><code>EventHistory</code></a></p>
+<p>• <code>Protected</code> <strong>_eventHistory</strong>: <a href="../../interfaces/appium_types.EventHistory/"><code>EventHistory</code></a></p>
 <h4 id="defined-in_1">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:87</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:76</p>
 <hr />
 <h3 id="_log">_log</h3>
-<p>• <strong>_log</strong>: <a href="../../interfaces/appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
+<p>• <code>Protected</code> <strong>_log</strong>: <a href="../../interfaces/appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:96</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:84</p>
 <hr />
 <h3 id="allowinsecure">allowInsecure</h3>
 <p>• <strong>allowInsecure</strong>: <code>string</code>[]</p>
+<h4 id="implementation-of">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#allowinsecure">allowInsecure</a></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:63</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:60</p>
 <hr />
 <h3 id="basepath">basePath</h3>
 <p>• <strong>basePath</strong>: <code>string</code></p>
@@ -3145,79 +3347,241 @@ of any incoming request might look like. We set it to the default
 initially but it is automatically updated during any actual program
 execution by the routeConfiguringFunction, which is necessarily run as
 the entrypoint for any Appium server</p>
+<h4 id="implementation-of_1">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#basepath">basePath</a></p>
 <h4 id="defined-in_4">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:57</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:56</p>
 <hr />
 <h3 id="commandsqueueguard">commandsQueueGuard</h3>
 <p>• <code>Protected</code> <strong>commandsQueueGuard</strong>: <code>AsyncLock</code></p>
 <h4 id="defined-in_5">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:112</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:90</p>
 <hr />
 <h3 id="denyinsecure">denyInsecure</h3>
 <p>• <strong>denyInsecure</strong>: <code>string</code>[]</p>
+<h4 id="implementation-of_2">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#denyinsecure">denyInsecure</a></p>
 <h4 id="defined-in_6">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:66</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:62</p>
 <hr />
 <h3 id="eventemitter">eventEmitter</h3>
 <p>• <strong>eventEmitter</strong>: <code>EventEmitter</code></p>
+<h4 id="implementation-of_3">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#eventemitter">eventEmitter</a></p>
 <h4 id="defined-in_7">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:91</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:79</p>
 <hr />
 <h3 id="helpers">helpers</h3>
 <p>• <strong>helpers</strong>: <a href="../../interfaces/appium_types.DriverHelpers/"><code>DriverHelpers</code></a></p>
+<h4 id="implementation-of_4">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#helpers">helpers</a></p>
 <h4 id="defined-in_8">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:46</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:46</p>
 <hr />
 <h3 id="implicitwaitms">implicitWaitMs</h3>
 <p>• <strong>implicitWaitMs</strong>: <code>number</code></p>
+<h4 id="implementation-of_5">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#implicitwaitms">implicitWaitMs</a></p>
 <h4 id="defined-in_9">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:72</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:66</p>
 <hr />
 <h3 id="initialopts">initialOpts</h3>
-<p>• <strong>initialOpts</strong>: <a href="../../modules/appium_types/#driveropts"><code>DriverOpts</code></a>&lt;<code>C</code>></p>
+<p>• <strong>initialOpts</strong>: <code>Object</code></p>
+<h4 id="type-declaration">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>address</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>allowCors</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>allowInsecure</code></td>
+<td align="left"><a href="../../modules/appium_types/#allowinsecureconfig"><code>AllowInsecureConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>basePath</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>callbackAddress</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>callbackPort</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>debugLogSpacing</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>defaultCapabilities</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.DefaultCapabilitiesConfig/"><code>DefaultCapabilitiesConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>denyInsecure</code></td>
+<td align="left"><a href="../../modules/appium_types/#denyinsecureconfig"><code>DenyInsecureConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>driver</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.DriverConfig/"><code>DriverConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>fastReset?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+<tr>
+<td align="left"><code>keepAliveTimeout</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>localTimezone</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>logFile</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>logFilters</code></td>
+<td align="left"><code>undefined</code> | <a href="../../modules/appium_types/#logfiltersconfig"><code>LogFiltersConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>logNoColors</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>logTimestamp</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>loglevel</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <a href="../../modules/appium_types/#loglevelconfig"><code>LogLevelConfig</code></a>></td>
+</tr>
+<tr>
+<td align="left"><code>longStacktrace</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>noPermsCheck</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>nodeconfig</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.NodeconfigConfig/"><code>NodeconfigConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>plugin</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.PluginConfig/"><code>PluginConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>port</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>relaxedSecurityEnabled</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>sessionOverride</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>skipUninstall?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+<tr>
+<td align="left"><code>strictCaps</code></td>
+<td align="left"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+</tr>
+<tr>
+<td align="left"><code>tmpDir</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>traceDir</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>useDrivers</code></td>
+<td align="left"><a href="../../modules/appium_types/#usedriversconfig"><code>UseDriversConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>usePlugins</code></td>
+<td align="left"><a href="../../modules/appium_types/#usepluginsconfig"><code>UsePluginsConfig</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>webhook</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="implementation-of_6">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#initialopts">initialOpts</a></p>
 <h4 id="defined-in_10">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:43</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:44</p>
 <hr />
 <h3 id="locatorstrategies">locatorStrategies</h3>
 <p>• <strong>locatorStrategies</strong>: <code>string</code>[]</p>
+<h4 id="implementation-of_7">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#locatorstrategies">locatorStrategies</a></p>
 <h4 id="defined-in_11">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:75</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:68</p>
 <hr />
 <h3 id="manageddrivers">managedDrivers</h3>
-<p>• <strong>managedDrivers</strong>: <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
+<p>• <strong>managedDrivers</strong>: <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
 <h4 id="defined-in_12">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:81</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:72</p>
 <hr />
 <h3 id="newcommandtimeoutms">newCommandTimeoutMs</h3>
 <p>• <strong>newCommandTimeoutMs</strong>: <code>number</code></p>
+<h4 id="implementation-of_8">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#newcommandtimeoutms">newCommandTimeoutMs</a></p>
 <h4 id="defined-in_13">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:69</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:64</p>
 <hr />
 <h3 id="nocommandtimer">noCommandTimer</h3>
 <p>• <strong>noCommandTimer</strong>: <code>null</code> | <code>Timeout</code></p>
 <h4 id="defined-in_14">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:84</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:74</p>
 <hr />
 <h3 id="opts">opts</h3>
 <p>• <strong>opts</strong>: <a href="../../modules/appium_types/#driveropts"><code>DriverOpts</code></a>&lt;<code>C</code>></p>
+<h4 id="implementation-of_9">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#opts">opts</a></p>
 <h4 id="defined-in_15">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:38</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:42</p>
 <hr />
 <h3 id="protocol">protocol</h3>
-<p>• <strong>protocol</strong>: <code>undefined</code> | <code>string</code></p>
+<p>• <code>Optional</code> <strong>protocol</strong>: <a href="../../modules/appium_types/#protocol"><code>Protocol</code></a></p>
+<h4 id="implementation-of_10">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#protocol">protocol</a></p>
 <h4 id="defined-in_16">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:270</p>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:274</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:100</p>
 <hr />
 <h3 id="relaxedsecurityenabled">relaxedSecurityEnabled</h3>
 <p>• <strong>relaxedSecurityEnabled</strong>: <code>boolean</code></p>
+<h4 id="implementation-of_11">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#relaxedsecurityenabled">relaxedSecurityEnabled</a></p>
 <h4 id="defined-in_17">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:60</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:58</p>
 <hr />
 <h3 id="sessionid">sessionId</h3>
 <p>• <strong>sessionId</strong>: <code>null</code> | <code>string</code></p>
+<h4 id="implementation-of_12">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#sessionid">sessionId</a></p>
 <h4 id="defined-in_18">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:33</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:40</p>
 <hr />
 <h3 id="settings">settings</h3>
 <p>• <strong>settings</strong>: <a href="../appium_base_driver.DeviceSettings/"><code>DeviceSettings</code></a>&lt;<code>Settings</code>></p>
@@ -3225,48 +3589,58 @@ the entrypoint for any Appium server</p>
 we set it to an empty DeviceSettings instance here to make sure that the
 default settings are applied even if an extending driver doesn't utilize
 the settings functionality itself</p>
+<h4 id="implementation-of_13">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#settings">settings</a></p>
 <h4 id="defined-in_19">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:121</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:98</p>
 <hr />
 <h3 id="shouldvalidatecaps">shouldValidateCaps</h3>
 <p>• <strong>shouldValidateCaps</strong>: <code>boolean</code></p>
+<h4 id="implementation-of_14">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#shouldvalidatecaps">shouldValidateCaps</a></p>
 <h4 id="defined-in_20">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:106</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:88</p>
 <hr />
 <h3 id="shutdownunexpectedly">shutdownUnexpectedly</h3>
 <p>• <strong>shutdownUnexpectedly</strong>: <code>boolean</code></p>
 <h4 id="defined-in_21">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:101</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:86</p>
 <hr />
 <h3 id="weblocatorstrategies">webLocatorStrategies</h3>
 <p>• <strong>webLocatorStrategies</strong>: <code>string</code>[]</p>
+<h4 id="implementation-of_15">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#weblocatorstrategies">webLocatorStrategies</a></p>
 <h4 id="defined-in_22">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:78</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:70</p>
 <hr />
 <h3 id="baseversion">baseVersion</h3>
 <p>▪ <code>Static</code> <strong>baseVersion</strong>: <code>string</code> = <code>BASEDRIVER_VER</code></p>
 <p>Make the basedriver version available so for any driver which inherits from this package, we
 know which version of basedriver it inherited from</p>
 <h4 id="defined-in_23">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:28</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:38</p>
 <h2 id="accessors_1">Accessors</h2>
 <h3 id="driverdata">driverData</h3>
-<p>• <code>get</code> <strong>driverData</strong>(): <a href="../../modules/appium_types/#driverdata"><code>DriverData</code></a></p>
+<p>• <code>get</code> <strong>driverData</strong>(): <code>Object</code></p>
 <p>This property is used by AppiumDriver to store the data of the
 specific driver sessions. This data can be later used to adjust
 properties for driver instances running in parallel.
 Override it in inherited driver classes if necessary.</p>
 <h4 id="returns">Returns</h4>
-<p><a href="../../modules/appium_types/#driverdata"><code>DriverData</code></a></p>
+<p><code>Object</code></p>
+<h4 id="implementation-of_16">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#driverdata">driverData</a></p>
 <h4 id="defined-in_24">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:185</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:160</p>
 <hr />
 <h3 id="eventhistory">eventHistory</h3>
 <p>• <code>get</code> <strong>eventHistory</strong>(): <a href="../../interfaces/appium_types.EventHistory/"><code>EventHistory</code></a></p>
 <h4 id="returns_1">Returns</h4>
 <p><a href="../../interfaces/appium_types.EventHistory/"><code>EventHistory</code></a></p>
+<h4 id="implementation-of_17">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#eventhistory">eventHistory</a></p>
 <h4 id="defined-in_25">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:208</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:183</p>
 <hr />
 <h3 id="iscommandsqueueenabled">isCommandsQueueEnabled</h3>
 <p>• <code>get</code> <strong>isCommandsQueueEnabled</strong>(): <code>boolean</code></p>
@@ -3280,15 +3654,19 @@ Override it for inherited classes only in special cases.</p>
   so each following command will not be executed until the previous command
   execution is completed. False value disables that queue, so each driver command
   is executed independently and does not wait for anything.</p>
+<h4 id="implementation-of_18">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#iscommandsqueueenabled">isCommandsQueueEnabled</a></p>
 <h4 id="defined-in_26">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:200</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:175</p>
 <hr />
 <h3 id="log">log</h3>
 <p>• <code>get</code> <strong>log</strong>(): <a href="../../interfaces/appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
 <h4 id="returns_3">Returns</h4>
 <p><a href="../../interfaces/appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
+<h4 id="implementation-of_19">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#log">log</a></p>
 <h4 id="defined-in_27">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:162</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:137</p>
 <h2 id="methods_1">Methods</h2>
 <h3 id="addmanageddriver">addManagedDriver</h3>
 <p>▸ <strong>addManagedDriver</strong>(<code>driver</code>): <code>void</code></p>
@@ -3303,14 +3681,16 @@ Override it for inherited classes only in special cases.</p>
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></td>
+<td align="left"><a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_4">Returns</h4>
 <p><code>void</code></p>
+<h4 id="implementation-of_20">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#addmanageddriver">addManagedDriver</a></p>
 <h4 id="defined-in_28">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:418</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:366</p>
 <hr />
 <h3 id="assertfeatureenabled">assertFeatureEnabled</h3>
 <p>▸ <strong>assertFeatureEnabled</strong>(<code>name</code>): <code>void</code></p>
@@ -3335,11 +3715,13 @@ not</p>
 </table>
 <h4 id="returns_5">Returns</h4>
 <p><code>void</code></p>
+<h4 id="implementation-of_21">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#assertfeatureenabled">assertFeatureEnabled</a></p>
 <h4 id="defined-in_29">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:322</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:290</p>
 <hr />
 <h3 id="canproxy">canProxy</h3>
-<p>▸ <strong>canProxy</strong>(<code>sessionId?</code>): <code>boolean</code></p>
+<p>▸ <strong>canProxy</strong>(<code>sessionId</code>): <code>boolean</code></p>
 <h4 id="parameters_3">Parameters</h4>
 <table>
 <thead>
@@ -3350,25 +3732,29 @@ not</p>
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>sessionId</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_6">Returns</h4>
 <p><code>boolean</code></p>
+<h4 id="implementation-of_22">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#canproxy">canProxy</a></p>
 <h4 id="defined-in_30">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:377</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:325</p>
 <hr />
 <h3 id="clearnewcommandtimeout">clearNewCommandTimeout</h3>
 <p>▸ <strong>clearNewCommandTimeout</strong>(): <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="returns_7">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="implementation-of_23">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#clearnewcommandtimeout">clearNewCommandTimeout</a></p>
 <h4 id="defined-in_31">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:426</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:374</p>
 <hr />
 <h3 id="driverforsession">driverForSession</h3>
-<p>▸ <strong>driverForSession</strong>(<code>sessionId</code>): <code>null</code> | <a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <code>StringRecord</code>></p>
+<p>▸ <strong>driverForSession</strong>(<code>sessionId</code>): <code>null</code> | <a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></p>
 <p>method required by MJSONWP in order to determine if the command should
 be proxied directly to the driver</p>
 <h4 id="parameters_4">Parameters</h4>
@@ -3387,9 +3773,11 @@ be proxied directly to the driver</p>
 </tbody>
 </table>
 <h4 id="returns_8">Returns</h4>
-<p><code>null</code> | <a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <code>StringRecord</code>></p>
+<p><code>null</code> | <a href="../../interfaces/appium_types.Core/"><code>Core</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></p>
+<h4 id="implementation-of_24">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#driverforsession">driverForSession</a></p>
 <h4 id="defined-in_32">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:257</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:227</p>
 <hr />
 <h3 id="ensurefeatureenabled">ensureFeatureEnabled</h3>
 <p>▸ <strong>ensureFeatureEnabled</strong>(<code>name</code>): <code>void</code></p>
@@ -3416,14 +3804,16 @@ not</p>
 <h4 id="returns_9">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_33">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:312</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:280</p>
 <hr />
 <h3 id="getmanageddrivers">getManagedDrivers</h3>
-<p>▸ <strong>getManagedDrivers</strong>(): <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
+<p>▸ <strong>getManagedDrivers</strong>(): <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
 <h4 id="returns_10">Returns</h4>
-<p><a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
+<p><a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>[]</p>
+<h4 id="implementation-of_25">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#getmanageddrivers">getManagedDrivers</a></p>
 <h4 id="defined-in_34">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:422</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:370</p>
 <hr />
 <h3 id="getproxyavoidlist">getProxyAvoidList</h3>
 <p>▸ <strong>getProxyAvoidList</strong>(<code>sessionId</code>): <a href="../../modules/appium_types/#routematcher"><code>RouteMatcher</code></a>[]</p>
@@ -3444,15 +3834,19 @@ not</p>
 </table>
 <h4 id="returns_11">Returns</h4>
 <p><a href="../../modules/appium_types/#routematcher"><code>RouteMatcher</code></a>[]</p>
+<h4 id="implementation-of_26">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#getproxyavoidlist">getProxyAvoidList</a></p>
 <h4 id="defined-in_35">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:368</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:321</p>
 <hr />
 <h3 id="getstatus">getStatus</h3>
 <p>▸ <strong>getStatus</strong>(): <code>Promise</code>&lt;{}></p>
 <h4 id="returns_12">Returns</h4>
 <p><code>Promise</code>&lt;{}></p>
+<h4 id="implementation-of_27">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#getstatus">getStatus</a></p>
 <h4 id="defined-in_36">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:236</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:210</p>
 <hr />
 <h3 id="isfeatureenabled">isFeatureEnabled</h3>
 <p>▸ <strong>isFeatureEnabled</strong>(<code>name</code>): <code>boolean</code></p>
@@ -3476,22 +3870,28 @@ not</p>
 </table>
 <h4 id="returns_13">Returns</h4>
 <p><code>boolean</code></p>
+<h4 id="implementation-of_28">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#isfeatureenabled">isFeatureEnabled</a></p>
 <h4 id="defined-in_37">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:284</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:252</p>
 <hr />
 <h3 id="ismjsonwpprotocol">isMjsonwpProtocol</h3>
 <p>▸ <strong>isMjsonwpProtocol</strong>(): <code>boolean</code></p>
 <h4 id="returns_14">Returns</h4>
 <p><code>boolean</code></p>
+<h4 id="implementation-of_29">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#ismjsonwpprotocol">isMjsonwpProtocol</a></p>
 <h4 id="defined-in_38">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:261</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:231</p>
 <hr />
 <h3 id="isw3cprotocol">isW3CProtocol</h3>
 <p>▸ <strong>isW3CProtocol</strong>(): <code>boolean</code></p>
 <h4 id="returns_15">Returns</h4>
 <p><code>boolean</code></p>
+<h4 id="implementation-of_30">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#isw3cprotocol">isW3CProtocol</a></p>
 <h4 id="defined-in_39">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:265</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:235</p>
 <hr />
 <h3 id="logevent">logEvent</h3>
 <p>▸ <strong>logEvent</strong>(<code>eventName</code>): <code>void</code></p>
@@ -3513,8 +3913,10 @@ not</p>
 </table>
 <h4 id="returns_16">Returns</h4>
 <p><code>void</code></p>
+<h4 id="implementation-of_31">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#logevent">logEvent</a></p>
 <h4 id="defined-in_40">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:216</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:190</p>
 <hr />
 <h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
 <p>▸ <strong>onUnexpectedShutdown</strong>(<code>handler</code>): <code>void</code></p>
@@ -3540,11 +3942,13 @@ will cause the handler to be executed mutiple times</p>
 </table>
 <h4 id="returns_17">Returns</h4>
 <p><code>void</code></p>
+<h4 id="implementation-of_32">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#onunexpectedshutdown">onUnexpectedShutdown</a></p>
 <h4 id="defined-in_41">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:175</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:150</p>
 <hr />
 <h3 id="proxyactive">proxyActive</h3>
-<p>▸ <strong>proxyActive</strong>(<code>sessionId?</code>): <code>boolean</code></p>
+<p>▸ <strong>proxyActive</strong>(<code>sessionId</code>): <code>boolean</code></p>
 <h4 id="parameters_10">Parameters</h4>
 <table>
 <thead>
@@ -3555,15 +3959,17 @@ will cause the handler to be executed mutiple times</p>
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>sessionId</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_18">Returns</h4>
 <p><code>boolean</code></p>
+<h4 id="implementation-of_33">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#proxyactive">proxyActive</a></p>
 <h4 id="defined-in_42">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:359</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:317</p>
 <hr />
 <h3 id="proxyrouteisavoided">proxyRouteIsAvoided</h3>
 <p>▸ <strong>proxyRouteIsAvoided</strong>(<code>sessionId</code>, <code>method</code>, <code>url</code>, <code>body?</code>): <code>boolean</code></p>
@@ -3603,14 +4009,14 @@ proxied according to this driver</p>
 </table>
 <h4 id="returns_19">Returns</h4>
 <p><code>boolean</code></p>
-<ul>
-<li>whether the route should be avoided</li>
-</ul>
+<p>whether the route should be avoided</p>
+<h4 id="implementation-of_34">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#proxyrouteisavoided">proxyRouteIsAvoided</a></p>
 <h4 id="defined-in_43">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:394</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:342</p>
 <hr />
 <h3 id="sessionexists">sessionExists</h3>
-<p>▸ <strong>sessionExists</strong>(<code>sessionId?</code>): <code>boolean</code></p>
+<p>▸ <strong>sessionExists</strong>(<code>sessionId</code>): <code>boolean</code></p>
 <p>method required by MJSONWP in order to determine whether it should
 respond with an invalid session response</p>
 <h4 id="parameters_12">Parameters</h4>
@@ -3623,29 +4029,31 @@ respond with an invalid session response</p>
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>sessionId</code></td>
 <td align="left"><code>string</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_20">Returns</h4>
 <p><code>boolean</code></p>
+<h4 id="implementation-of_35">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#sessionexists">sessionExists</a></p>
 <h4 id="defined-in_44">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:246</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:218</p>
 <hr />
 <h3 id="setprotocolmjsonwp">setProtocolMJSONWP</h3>
 <p>▸ <strong>setProtocolMJSONWP</strong>(): <code>void</code></p>
 <h4 id="returns_21">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_45">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:269</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:239</p>
 <hr />
 <h3 id="setprotocolw3c">setProtocolW3C</h3>
 <p>▸ <strong>setProtocolW3C</strong>(): <code>void</code></p>
 <h4 id="returns_22">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_46">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:273</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:243</p>
 <hr />
 <h3 id="validatelocatorstrategy">validateLocatorStrategy</h3>
 <p>▸ <strong>validateLocatorStrategy</strong>(<code>strategy</code>, <code>webContext?</code>): <code>void</code></p>
@@ -3665,7 +4073,7 @@ respond with an invalid session response</p>
 <td align="left"><code>undefined</code></td>
 </tr>
 <tr>
-<td align="left"><code>webContext?</code></td>
+<td align="left"><code>webContext</code></td>
 <td align="left"><code>boolean</code></td>
 <td align="left"><code>false</code></td>
 </tr>
@@ -3673,8 +4081,10 @@ respond with an invalid session response</p>
 </table>
 <h4 id="returns_23">Returns</h4>
 <p><code>void</code></p>
+<h4 id="implementation-of_36">Implementation of</h4>
+<p><a href="../../interfaces/appium_types.Core/">Core</a>.<a href="../../interfaces/appium_types.Core/#validatelocatorstrategy">validateLocatorStrategy</a></p>
 <h4 id="defined-in_47">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/basedriver/core.js:339</p>
+<p>node_modules/@appium/base-driver/lib/basedriver/core.ts:302</p>
 
 
 

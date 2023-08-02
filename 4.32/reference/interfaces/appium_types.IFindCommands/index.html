@@ -1381,27 +1381,8 @@
 </ul>
 <h2 id="methods_1">Methods</h2>
 <h3 id="findelorels">findElOrEls</h3>
-<p>▸ <strong>findElOrEls</strong>&lt;<code>Mult</code>, <code>Ctx</code>>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>▸ <strong>findElOrEls</strong>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
 <p>A helper method that returns one or more UI elements based on the search criteria</p>
-<h4 id="type-parameters">Type parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left"><code>Mult</code></td>
-<td align="left">extends <code>boolean</code></td>
-</tr>
-<tr>
-<td align="left"><code>Ctx</code></td>
-<td align="left"><code>any</code></td>
-</tr>
-</tbody>
-</table>
 <h4 id="parameters">Parameters</h4>
 <table>
 <thead>
@@ -1424,27 +1405,23 @@
 </tr>
 <tr>
 <td align="left"><code>mult</code></td>
-<td align="left"><code>Mult</code></td>
+<td align="left"><code>true</code></td>
 <td align="left">whether or not we want to find multiple elements</td>
 </tr>
 <tr>
 <td align="left"><code>context?</code></td>
-<td align="left"><code>Ctx</code></td>
+<td align="left"><code>any</code></td>
 <td align="left">the element to use as the search context basis if desiredCapabilities</td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns">Returns</h4>
-<p><code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
 <p>A single element or list of elements</p>
 <h4 id="defined-in">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:294</p>
-<hr />
-<h3 id="findelorelswithprocessing">findElOrElsWithProcessing</h3>
-<p>▸ <strong>findElOrElsWithProcessing</strong>&lt;<code>Mult</code>, <code>Ctx</code>>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
-<p>This is a wrapper for <a href="./#findelorels"><code>findElOrEls</code></a> that validates locator strategies
-and implements the <code>appium:printPageSourceOnFindFailure</code> capability</p>
-<h4 id="type-parameters_1">Type parameters</h4>
+<p>▸ <strong>findElOrEls</strong>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<h4 id="parameters_1">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -1454,16 +1431,33 @@ and implements the <code>appium:printPageSourceOnFindFailure</code> capability</
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>Mult</code></td>
-<td align="left">extends <code>boolean</code></td>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
 </tr>
 <tr>
-<td align="left"><code>Ctx</code></td>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>mult</code></td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
 <td align="left"><code>any</code></td>
 </tr>
 </tbody>
 </table>
-<h4 id="parameters_1">Parameters</h4>
+<h4 id="returns_1">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<h4 id="defined-in_1">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:295</p>
+<hr />
+<h3 id="findelorelswithprocessing">findElOrElsWithProcessing</h3>
+<p>▸ <strong>findElOrElsWithProcessing</strong>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>This is a wrapper for <a href="./#findelorels"><code>findElOrEls</code></a> that validates locator strategies
+and implements the <code>appium:printPageSourceOnFindFailure</code> capability</p>
+<h4 id="parameters_2">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -1485,28 +1479,60 @@ and implements the <code>appium:printPageSourceOnFindFailure</code> capability</
 </tr>
 <tr>
 <td align="left"><code>mult</code></td>
-<td align="left"><code>Mult</code></td>
+<td align="left"><code>true</code></td>
 <td align="left">whether or not we want to find multiple elements</td>
 </tr>
 <tr>
 <td align="left"><code>context?</code></td>
-<td align="left"><code>Ctx</code></td>
+<td align="left"><code>any</code></td>
 <td align="left">the element to use as the search context basis if desiredCapabilities</td>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_1">Returns</h4>
-<p><code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<h4 id="returns_2">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
 <p>A single element or list of elements</p>
-<h4 id="defined-in_1">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:312</p>
+<h4 id="defined-in_2">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:308</p>
+<p>▸ <strong>findElOrElsWithProcessing</strong>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>mult</code></td>
+<td align="left"><code>false</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_3">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<h4 id="defined-in_3">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:314</p>
 <hr />
 <h3 id="findelement">findElement</h3>
 <p>▸ <strong>findElement</strong>(<code>strategy</code>, <code>selector</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
 <p>Find a UI element given a locator strategy and a selector, erroring if it can't be found</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#find-element">https://w3c.github.io/webdriver/#find-element</a></p>
-<h4 id="parameters_2">Parameters</h4>
+<h4 id="parameters_4">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -1528,11 +1554,11 @@ and implements the <code>appium:printPageSourceOnFindFailure</code> capability</
 </tr>
 </tbody>
 </table>
-<h4 id="returns_2">Returns</h4>
+<h4 id="returns_4">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
 <p>The element object encoding the element id which can be used in element-related
 commands</p>
-<h4 id="defined-in_2">Defined in</h4>
+<h4 id="defined-in_4">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:210</p>
 <hr />
 <h3 id="findelementfromelement">findElementFromElement</h3>
@@ -1541,7 +1567,7 @@ commands</p>
 look for elements among the set of descendants of a given element</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#find-element-from-element">https://w3c.github.io/webdriver/#find-element-from-element</a></p>
-<h4 id="parameters_3">Parameters</h4>
+<h4 id="parameters_5">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -1568,11 +1594,11 @@ look for elements among the set of descendants of a given element</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_3">Returns</h4>
+<h4 id="returns_5">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
 <p>The element object encoding the element id which can be used in element-related
 commands</p>
-<h4 id="defined-in_3">Defined in</h4>
+<h4 id="defined-in_5">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:235</p>
 <hr />
 <h3 id="findelementfromshadowroot">findElementFromShadowRoot</h3>
@@ -1580,78 +1606,6 @@ commands</p>
 <p>Find an element from a shadow root</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#find-element-from-shadow-root">https://w3c.github.io/webdriver/#find-element-from-shadow-root</a></p>
-<h4 id="parameters_4">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left"><code>strategy</code></td>
-<td align="left"><code>string</code></td>
-<td align="left">the locator strategy</td>
-</tr>
-<tr>
-<td align="left"><code>selector</code></td>
-<td align="left"><code>string</code></td>
-<td align="left">the selector to combine with the strategy to find the specific elements</td>
-</tr>
-<tr>
-<td align="left"><code>shadowId</code></td>
-<td align="left"><code>string</code></td>
-<td align="left">the id of the element to use as the search basis</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_4">Returns</h4>
-<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
-<p>The element inside the shadow root matching the selector</p>
-<h4 id="defined-in_4">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:263</p>
-<hr />
-<h3 id="findelements">findElements</h3>
-<p>▸ <strong>findElements</strong>(<code>strategy</code>, <code>selector</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
-<p>Find a a list of all UI elements matching a given a locator strategy and a selector</p>
-<p><strong><code>See</code></strong></p>
-<p><a href="https://w3c.github.io/webdriver/#find-elements">https://w3c.github.io/webdriver/#find-elements</a></p>
-<h4 id="parameters_5">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th align="left">Name</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left"><code>strategy</code></td>
-<td align="left"><code>string</code></td>
-<td align="left">the locator strategy</td>
-</tr>
-<tr>
-<td align="left"><code>selector</code></td>
-<td align="left"><code>string</code></td>
-<td align="left">the selector to combine with the strategy to find the specific elements</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_5">Returns</h4>
-<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
-<p>A possibly-empty list of element objects</p>
-<h4 id="defined-in_5">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:221</p>
-<hr />
-<h3 id="findelementsfromelement">findElementsFromElement</h3>
-<p>▸ <strong>findElementsFromElement</strong>(<code>strategy</code>, <code>selector</code>, <code>elementId</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
-<p>Find a a list of all UI elements matching a given a locator strategy and a selector. Only
-look for elements among the set of descendants of a given element</p>
-<p><strong><code>See</code></strong></p>
-<p><a href="https://w3c.github.io/webdriver/#find-elements-from-element">https://w3c.github.io/webdriver/#find-elements-from-element</a></p>
 <h4 id="parameters_6">Parameters</h4>
 <table>
 <thead>
@@ -1673,16 +1627,88 @@ look for elements among the set of descendants of a given element</p>
 <td align="left">the selector to combine with the strategy to find the specific elements</td>
 </tr>
 <tr>
-<td align="left"><code>elementId</code></td>
+<td align="left"><code>shadowId</code></td>
 <td align="left"><code>string</code></td>
 <td align="left">the id of the element to use as the search basis</td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_6">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>The element inside the shadow root matching the selector</p>
+<h4 id="defined-in_6">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:263</p>
+<hr />
+<h3 id="findelements">findElements</h3>
+<p>▸ <strong>findElements</strong>(<code>strategy</code>, <code>selector</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>Find a a list of all UI elements matching a given a locator strategy and a selector</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-elements">https://w3c.github.io/webdriver/#find-elements</a></p>
+<h4 id="parameters_7">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific elements</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_7">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
 <p>A possibly-empty list of element objects</p>
-<h4 id="defined-in_6">Defined in</h4>
+<h4 id="defined-in_7">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:221</p>
+<hr />
+<h3 id="findelementsfromelement">findElementsFromElement</h3>
+<p>▸ <strong>findElementsFromElement</strong>(<code>strategy</code>, <code>selector</code>, <code>elementId</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>Find a a list of all UI elements matching a given a locator strategy and a selector. Only
+look for elements among the set of descendants of a given element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-elements-from-element">https://w3c.github.io/webdriver/#find-elements-from-element</a></p>
+<h4 id="parameters_8">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific elements</td>
+</tr>
+<tr>
+<td align="left"><code>elementId</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the id of the element to use as the search basis</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>A possibly-empty list of element objects</p>
+<h4 id="defined-in_8">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:248</p>
 <hr />
 <h3 id="findelementsfromshadowroot">findElementsFromShadowRoot</h3>
@@ -1690,7 +1716,7 @@ look for elements among the set of descendants of a given element</p>
 <p>Find elements from a shadow root</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#find-element-from-shadow-root">https://w3c.github.io/webdriver/#find-element-from-shadow-root</a></p>
-<h4 id="parameters_7">Parameters</h4>
+<h4 id="parameters_9">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -1717,10 +1743,10 @@ look for elements among the set of descendants of a given element</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_7">Returns</h4>
+<h4 id="returns_9">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
 <p>A possibly empty list of elements inside the shadow root matching the selector</p>
-<h4 id="defined-in_7">Defined in</h4>
+<h4 id="defined-in_9">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:278</p>
 <hr />
 <h3 id="getpagesource">getPageSource</h3>
@@ -1728,11 +1754,11 @@ look for elements among the set of descendants of a given element</p>
 <p>Get the current page/app source as HTML/XML</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#get-page-source">https://w3c.github.io/webdriver/#get-page-source</a></p>
-<h4 id="returns_8">Returns</h4>
+<h4 id="returns_10">Returns</h4>
 <p><code>Promise</code>&lt;<code>string</code>></p>
 <p>The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)</p>
-<h4 id="defined-in_8">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:325</p>
+<h4 id="defined-in_10">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:327</p>
 
 
 

@@ -114,7 +114,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#class-wsservert" class="md-skip">
+        <a href="#class-wsservert-u" class="md-skip">
           Skip to content
         </a>
       
@@ -150,7 +150,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Class: WSServer<T\>
+              Class: WSServer<T, U\>
             
           </span>
         </div>
@@ -2386,7 +2386,7 @@
   
 
 
-<h1 id="class-wsservert">Class: WSServer&lt;T></h1>
+<h1 id="class-wsservert-u">Class: WSServer&lt;T, U></h1>
 <p><a href="../../modules/appium_types/">@appium/types</a>.WSServer</p>
 <h2 id="type-parameters">Type parameters</h2>
 <table>
@@ -2399,7 +2399,11 @@
 <tbody>
 <tr>
 <td align="left"><code>T</code></td>
-<td align="left">extends <code>WebSocket</code> = <code>WebSocket</code></td>
+<td align="left">extends typeof <code>WebSocket.WebSocket</code> = typeof <code>WebSocket.WebSocket</code></td>
+</tr>
+<tr>
+<td align="left"><code>U</code></td>
+<td align="left">extends typeof <code>IncomingMessage</code> = typeof <code>IncomingMessage</code></td>
 </tr>
 </tbody>
 </table>
@@ -2453,7 +2457,7 @@
 </ul>
 <h2 id="constructors_1">Constructors</h2>
 <h3 id="constructor">constructor</h3>
-<p>• <strong>new WSServer</strong>&lt;<code>T</code>>(<code>options?</code>, <code>callback?</code>)</p>
+<p>• <strong>new WSServer</strong>&lt;<code>T</code>, <code>U</code>>(<code>options?</code>, <code>callback?</code>)</p>
 <h4 id="type-parameters_1">Type parameters</h4>
 <table>
 <thead>
@@ -2465,7 +2469,11 @@
 <tbody>
 <tr>
 <td align="left"><code>T</code></td>
-<td align="left">extends <code>WebSocket</code> = <code>WebSocket</code></td>
+<td align="left">extends typeof <code>WebSocket</code> = typeof <code>WebSocket</code></td>
+</tr>
+<tr>
+<td align="left"><code>U</code></td>
+<td align="left">extends typeof <code>IncomingMessage</code> = typeof <code>IncomingMessage</code></td>
 </tr>
 </tbody>
 </table>
@@ -2480,7 +2488,7 @@
 <tbody>
 <tr>
 <td align="left"><code>options?</code></td>
-<td align="left"><code>ServerOptions</code></td>
+<td align="left"><code>ServerOptions</code>&lt;<code>T</code>, <code>U</code>></td>
 </tr>
 <tr>
 <td align="left"><code>callback?</code></td>
@@ -2491,22 +2499,22 @@
 <h4 id="overrides">Overrides</h4>
 <p>EventEmitter.constructor</p>
 <h4 id="defined-in">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:345</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:358</p>
 <h2 id="properties_1">Properties</h2>
 <h3 id="clients">clients</h3>
-<p>• <strong>clients</strong>: <code>Set</code>&lt;<code>T</code>></p>
+<p>• <strong>clients</strong>: <code>Set</code>&lt;<code>InstanceType</code>&lt;<code>T</code>>></p>
 <h4 id="defined-in_1">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:343</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:356</p>
 <hr />
 <h3 id="options">options</h3>
-<p>• <strong>options</strong>: <code>ServerOptions</code></p>
+<p>• <strong>options</strong>: <code>ServerOptions</code>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:341</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:354</p>
 <hr />
 <h3 id="path">path</h3>
 <p>• <strong>path</strong>: <code>string</code></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:342</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:355</p>
 <hr />
 <h3 id="capturerejectionsymbol">captureRejectionSymbol</h3>
 <p>▪ <code>Static</code> <code>Readonly</code> <strong>captureRejectionSymbol</strong>: typeof <a href="./#capturerejectionsymbol"><code>captureRejectionSymbol</code></a></p>
@@ -2544,7 +2552,7 @@ regular <code>'error'</code> listener is installed.</p>
 <p>node_modules/@types/node/events.d.ts:356</p>
 <h2 id="methods_1">Methods</h2>
 <h3 id="addlistener">addListener</h3>
-<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_1">Parameters</h4>
 <table>
 <thead>
@@ -2560,17 +2568,17 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>client</code>: <code>T</code>, <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>client</code>: <code>InstanceType</code>&lt;<code>T</code>>, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_1">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_8">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:376</p>
-<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:389</p>
+<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_2">Parameters</h4>
 <table>
 <thead>
@@ -2591,12 +2599,12 @@ regular <code>'error'</code> listener is installed.</p>
 </tbody>
 </table>
 <h4 id="returns_1">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_2">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_9">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:377</p>
-<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:390</p>
+<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_3">Parameters</h4>
 <table>
 <thead>
@@ -2612,17 +2620,17 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>headers</code>: <code>string</code>[], <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_2">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_3">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_10">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:378</p>
-<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:391</p>
+<p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_4">Parameters</h4>
 <table>
 <thead>
@@ -2643,12 +2651,12 @@ regular <code>'error'</code> listener is installed.</p>
 </tbody>
 </table>
 <h4 id="returns_3">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_4">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_11">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:379</p>
-<p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:392</p>
+<p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_5">Parameters</h4>
 <table>
 <thead>
@@ -2669,18 +2677,18 @@ regular <code>'error'</code> listener is installed.</p>
 </tbody>
 </table>
 <h4 id="returns_4">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_5">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_12">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:380</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:393</p>
 <hr />
 <h3 id="address">address</h3>
 <p>▸ <strong>address</strong>(): <code>string</code> | <code>AddressInfo</code></p>
 <h4 id="returns_5">Returns</h4>
 <p><code>string</code> | <code>AddressInfo</code></p>
 <h4 id="defined-in_13">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:347</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:360</p>
 <hr />
 <h3 id="close">close</h3>
 <p>▸ <strong>close</strong>(<code>cb?</code>): <code>void</code></p>
@@ -2702,7 +2710,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="returns_6">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_14">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:348</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:361</p>
 <hr />
 <h3 id="emit">emit</h3>
 <p>▸ <strong>emit</strong>(<code>eventName</code>, <code>...args</code>): <code>boolean</code></p>
@@ -2818,7 +2826,7 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 <tbody>
 <tr>
 <td align="left"><code>request</code></td>
-<td align="left"><code>IncomingMessage</code></td>
+<td align="left"><code>InstanceType</code>&lt;<code>U</code>></td>
 </tr>
 <tr>
 <td align="left"><code>socket</code></td>
@@ -2830,14 +2838,14 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 </tr>
 <tr>
 <td align="left"><code>callback</code></td>
-<td align="left">(<code>client</code>: <code>T</code>, <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>client</code>: <code>InstanceType</code>&lt;<code>T</code>>, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_10">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_18">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:349</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:362</p>
 <hr />
 <h3 id="listenercount">listenerCount</h3>
 <p>▸ <strong>listenerCount</strong>(<code>eventName</code>, <code>listener?</code>): <code>number</code></p>
@@ -2909,7 +2917,7 @@ is found in the list of the listeners of the event.</p>
 <p>node_modules/@types/node/events.d.ts:568</p>
 <hr />
 <h3 id="off">off</h3>
-<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_11">Parameters</h4>
 <table>
 <thead>
@@ -2925,17 +2933,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>socket</code>: <code>T</code>, <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>>, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_13">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_6">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_21">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:370</p>
-<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:383</p>
+<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_12">Parameters</h4>
 <table>
 <thead>
@@ -2951,17 +2959,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_14">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_7">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_22">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:371</p>
-<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:384</p>
+<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_13">Parameters</h4>
 <table>
 <thead>
@@ -2977,17 +2985,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_15">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_8">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_23">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:372</p>
-<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:385</p>
+<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_14">Parameters</h4>
 <table>
 <thead>
@@ -3003,17 +3011,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_16">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_9">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_24">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:373</p>
-<p>▸ <strong>off</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:386</p>
+<p>▸ <strong>off</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_15">Parameters</h4>
 <table>
 <thead>
@@ -3029,19 +3037,19 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>listener</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, ...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, ...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_17">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_10">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_25">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:374</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:387</p>
 <hr />
 <h3 id="on">on</h3>
-<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_16">Parameters</h4>
 <table>
 <thead>
@@ -3057,17 +3065,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>socket</code>: <code>T</code>, <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>>, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_18">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_11">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_26">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:358</p>
-<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:371</p>
+<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_17">Parameters</h4>
 <table>
 <thead>
@@ -3083,17 +3091,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_19">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_12">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_27">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:359</p>
-<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:372</p>
+<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_18">Parameters</h4>
 <table>
 <thead>
@@ -3109,17 +3117,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_20">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_13">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_28">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:360</p>
-<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:373</p>
+<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_19">Parameters</h4>
 <table>
 <thead>
@@ -3135,17 +3143,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_21">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_14">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_29">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:361</p>
-<p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:374</p>
+<p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_20">Parameters</h4>
 <table>
 <thead>
@@ -3161,19 +3169,19 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>listener</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, ...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, ...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_22">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_15">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_30">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:362</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:375</p>
 <hr />
 <h3 id="once">once</h3>
-<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_21">Parameters</h4>
 <table>
 <thead>
@@ -3189,17 +3197,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>socket</code>: <code>T</code>, <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>>, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_23">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_16">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_31">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:364</p>
-<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:377</p>
+<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_22">Parameters</h4>
 <table>
 <thead>
@@ -3215,17 +3223,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_24">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_17">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_32">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:365</p>
-<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:378</p>
+<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_23">Parameters</h4>
 <table>
 <thead>
@@ -3241,17 +3249,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_25">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_18">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_33">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:366</p>
-<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:379</p>
+<p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_24">Parameters</h4>
 <table>
 <thead>
@@ -3267,17 +3275,17 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_26">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_19">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_34">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:367</p>
-<p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:380</p>
+<p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_25">Parameters</h4>
 <table>
 <thead>
@@ -3293,19 +3301,19 @@ is found in the list of the listeners of the event.</p>
 </tr>
 <tr>
 <td align="left"><code>listener</code></td>
-<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>>, ...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
+<td align="left">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>>, ...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_27">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_20">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_35">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:368</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:381</p>
 <hr />
 <h3 id="prependlistener">prependListener</h3>
-<p>▸ <strong>prependListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>prependListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <p>Adds the <code>listener</code> function to the <em>beginning</em> of the listeners array for the
 event named <code>eventName</code>. No checks are made to see if the <code>listener</code> has
 already been added. Multiple calls passing the same combination of <code>eventName</code>and <code>listener</code> will result in the <code>listener</code> being added, and called, multiple
@@ -3340,14 +3348,14 @@ times.</p>
 </tbody>
 </table>
 <h4 id="returns_28">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="inherited-from_9">Inherited from</h4>
 <p>EventEmitter.prependListener</p>
 <h4 id="defined-in_36">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:667</p>
 <hr />
 <h3 id="prependoncelistener">prependOnceListener</h3>
-<p>▸ <strong>prependOnceListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>prependOnceListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <p>Adds a <strong>one-time</strong><code>listener</code> function for the event named <code>eventName</code> to the <em>beginning</em> of the listeners array. The next time <code>eventName</code> is triggered, this
 listener is removed, and then invoked.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">server</span><span class="p">.</span><span class="nx">prependOnceListener</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
@@ -3380,7 +3388,7 @@ listener is removed, and then invoked.</p>
 </tbody>
 </table>
 <h4 id="returns_29">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="inherited-from_10">Inherited from</h4>
 <p>EventEmitter.prependOnceListener</p>
 <h4 id="defined-in_37">Defined in</h4>
@@ -3437,7 +3445,7 @@ including any wrappers (such as those created by <code>.once()</code>).</p>
 <p>node_modules/@types/node/events.d.ts:598</p>
 <hr />
 <h3 id="removealllisteners">removeAllListeners</h3>
-<p>▸ <strong>removeAllListeners</strong>(<code>event?</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>removeAllListeners</strong>(<code>event?</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <p>Removes all listeners, or those of the specified <code>eventName</code>.</p>
 <p>It is bad practice to remove listeners added elsewhere in the code,
 particularly when the <code>EventEmitter</code> instance was created by some other
@@ -3461,14 +3469,14 @@ component or module (e.g. sockets or file streams).</p>
 </tbody>
 </table>
 <h4 id="returns_31">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="inherited-from_12">Inherited from</h4>
 <p>EventEmitter.removeAllListeners</p>
 <h4 id="defined-in_39">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:539</p>
 <hr />
 <h3 id="removelistener">removeListener</h3>
-<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_30">Parameters</h4>
 <table>
 <thead>
@@ -3484,17 +3492,17 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>client</code>: <code>T</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>client</code>: <code>InstanceType</code>&lt;<code>T</code>>, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_32">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_21">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_40">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:382</p>
-<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:395</p>
+<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_31">Parameters</h4>
 <table>
 <thead>
@@ -3515,12 +3523,12 @@ component or module (e.g. sockets or file streams).</p>
 </tbody>
 </table>
 <h4 id="returns_33">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_22">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_41">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:383</p>
-<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:396</p>
+<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_32">Parameters</h4>
 <table>
 <thead>
@@ -3536,17 +3544,17 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 <tr>
 <td align="left"><code>cb</code></td>
-<td align="left">(<code>headers</code>: <code>string</code>[], <code>request</code>: <code>IncomingMessage</code>) =&gt; <code>void</code></td>
+<td align="left">(<code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_34">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_23">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_42">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:384</p>
-<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:397</p>
+<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_33">Parameters</h4>
 <table>
 <thead>
@@ -3567,12 +3575,12 @@ component or module (e.g. sockets or file streams).</p>
 </tbody>
 </table>
 <h4 id="returns_35">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_24">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_43">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:385</p>
-<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:398</p>
+<p>▸ <strong>removeListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_34">Parameters</h4>
 <table>
 <thead>
@@ -3593,14 +3601,14 @@ component or module (e.g. sockets or file streams).</p>
 </tbody>
 </table>
 <h4 id="returns_36">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="overrides_25">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_44">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:386</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:399</p>
 <hr />
 <h3 id="setmaxlisteners">setMaxListeners</h3>
-<p>▸ <strong>setMaxListeners</strong>(<code>n</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p>▸ <strong>setMaxListeners</strong>(<code>n</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <p>By default <code>EventEmitter</code>s will print a warning if more than <code>10</code> listeners are
 added for a particular event. This is a useful default that helps finding
 memory leaks. The <code>emitter.setMaxListeners()</code> method allows the limit to be
@@ -3624,7 +3632,7 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 </tbody>
 </table>
 <h4 id="returns_37">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>></p>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="inherited-from_13">Inherited from</h4>
 <p>EventEmitter.setMaxListeners</p>
 <h4 id="defined-in_45">Defined in</h4>
@@ -3643,14 +3651,14 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 <tbody>
 <tr>
 <td align="left"><code>request</code></td>
-<td align="left"><code>IncomingMessage</code></td>
+<td align="left"><code>InstanceType</code>&lt;<code>U</code>></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_38">Returns</h4>
 <p><code>boolean</code> | <code>Promise</code>&lt;<code>boolean</code>></p>
 <h4 id="defined-in_46">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:355</p>
+<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:368</p>
 <hr />
 <h3 id="geteventlisteners">getEventListeners</h3>
 <p>▸ <code>Static</code> <strong>getEventListeners</strong>(<code>emitter</code>, <code>name</code>): <code>Function</code>[]</p>

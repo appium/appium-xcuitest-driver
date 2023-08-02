@@ -1684,6 +1684,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#w3c_element_key" class="md-nav__link">
+    W3C_ELEMENT_KEY
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#errors" class="md-nav__link">
     errors
   </a>
@@ -2453,6 +2488,7 @@
 <li><a href="./#protocols">PROTOCOLS</a></li>
 <li><a href="./#standard_caps">STANDARD_CAPS</a></li>
 <li><a href="./#static_dir">STATIC_DIR</a></li>
+<li><a href="./#w3c_element_key">W3C_ELEMENT_KEY</a></li>
 <li><a href="./#errors">errors</a></li>
 <li><a href="./#statuscodes">statusCodes</a></li>
 </ul>
@@ -2497,7 +2533,7 @@
 <h3 id="default_base_path">DEFAULT_BASE_PATH</h3>
 <p>• <code>Const</code> <strong>DEFAULT_BASE_PATH</strong>: <code>""</code></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/constants.js:18</p>
+<p>node_modules/@appium/base-driver/lib/constants.ts:19</p>
 <hr />
 <h3 id="default_ws_pathname_prefix">DEFAULT_WS_PATHNAME_PREFIX</h3>
 <p>• <code>Const</code> <strong>DEFAULT_WS_PATHNAME_PREFIX</strong>: <code>"/ws"</code></p>
@@ -6036,16 +6072,16 @@ any parameters that are expected in a request parameters can be <code>required</
 <tbody>
 <tr>
 <td align="left"><code>MJSONWP</code></td>
-<td align="left"><code>string</code></td>
+<td align="left"><code>"MJSONWP"</code></td>
 </tr>
 <tr>
 <td align="left"><code>W3C</code></td>
-<td align="left"><code>string</code></td>
+<td align="left"><code>"W3C"</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="defined-in_9">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/constants.js:12</p>
+<p>node_modules/@appium/base-driver/lib/constants.ts:13</p>
 <hr />
 <h3 id="standard_caps">STANDARD_CAPS</h3>
 <p>• <code>Const</code> <strong>STANDARD_CAPS</strong>: <code>Readonly</code>&lt;<code>Set</code>&lt;keyof <a href="../../interfaces/appium_types.StandardCapabilities/"><code>StandardCapabilities</code></a>>></p>
@@ -6059,6 +6095,11 @@ any parameters that are expected in a request parameters can be <code>required</
 <p>• <strong>STATIC_DIR</strong>: <code>string</code></p>
 <h4 id="defined-in_11">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/express/static.js:7</p>
+<hr />
+<h3 id="w3c_element_key">W3C_ELEMENT_KEY</h3>
+<p>• <code>Const</code> <strong>W3C_ELEMENT_KEY</strong>: <code>"element-6066-11e4-a52e-4f735466cecf"</code></p>
+<h4 id="defined-in_12">Defined in</h4>
+<p>node_modules/@appium/base-driver/lib/constants.ts:12</p>
 <hr />
 <h3 id="errors">errors</h3>
 <p>• <code>Const</code> <strong>errors</strong>: <code>Object</code></p>
@@ -6233,7 +6274,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 </tbody>
 </table>
-<h4 id="defined-in_12">Defined in</h4>
+<h4 id="defined-in_13">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/errors.js:919</p>
 <hr />
 <h3 id="statuscodes">statusCodes</h3>
@@ -6561,7 +6602,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 </tbody>
 </table>
-<h4 id="defined-in_13">Defined in</h4>
+<h4 id="defined-in_14">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/jsonwp-status/status.js:3</p>
 <h2 id="functions_1">Functions</h2>
 <h3 id="checkparams">checkParams</h3>
@@ -6591,11 +6632,11 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns">Returns</h4>
 <p><code>void</code></p>
-<h4 id="defined-in_14">Defined in</h4>
+<h4 id="defined-in_15">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/protocol.js:101</p>
 <hr />
 <h3 id="determineprotocol">determineProtocol</h3>
-<p>▸ <strong>determineProtocol</strong>(<code>createSessionArgs</code>): <code>string</code></p>
+<p>▸ <strong>determineProtocol</strong>(<code>createSessionArgs</code>): <code>"MJSONWP"</code> | <code>"W3C"</code></p>
 <h4 id="parameters_1">Parameters</h4>
 <table>
 <thead>
@@ -6612,8 +6653,8 @@ any parameters that are expected in a request parameters can be <code>required</
 </tbody>
 </table>
 <h4 id="returns_1">Returns</h4>
-<p><code>string</code></p>
-<h4 id="defined-in_15">Defined in</h4>
+<p><code>"MJSONWP"</code> | <code>"W3C"</code></p>
+<h4 id="defined-in_16">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/protocol.js:25</p>
 <hr />
 <h3 id="errorfromcode">errorFromCode</h3>
@@ -6647,8 +6688,8 @@ any parameters that are expected in a request parameters can be <code>required</
 <h4 id="returns_2">Returns</h4>
 <p><code>ProtocolError</code></p>
 <p>The error that is associated with provided JSONWP status code</p>
-<h4 id="defined-in_16">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1012</p>
+<h4 id="defined-in_17">Defined in</h4>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1018</p>
 <hr />
 <h3 id="errorfromw3cjsoncode">errorFromW3CJsonCode</h3>
 <p>▸ <strong>errorFromW3CJsonCode</strong>(<code>code</code>, <code>message</code>, <code>stacktrace?</code>): <code>ProtocolError</code></p>
@@ -6687,8 +6728,8 @@ any parameters that are expected in a request parameters can be <code>required</
 <h4 id="returns_3">Returns</h4>
 <p><code>ProtocolError</code></p>
 <p>The error that is associated with the W3C error string</p>
-<h4 id="defined-in_17">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1031</p>
+<h4 id="defined-in_18">Defined in</h4>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1037</p>
 <hr />
 <h3 id="getsummarybycode">getSummaryByCode</h3>
 <p>▸ <strong>getSummaryByCode</strong>(<code>code</code>): <code>string</code></p>
@@ -6709,11 +6750,27 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns_4">Returns</h4>
 <p><code>string</code></p>
-<h4 id="defined-in_18">Defined in</h4>
+<h4 id="defined-in_19">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/jsonwp-status/status.js:117</p>
 <hr />
 <h3 id="iserrortype">isErrorType</h3>
-<p>▸ <strong>isErrorType</strong>(<code>err</code>, <code>type</code>): <code>boolean</code></p>
+<p>▸ <strong>isErrorType</strong>&lt;<code>T</code>>(<code>err</code>, <code>type</code>): err is T</p>
+<p>Type guard to check if an Error is of a specific type</p>
+<h4 id="type-parameters">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <code>Error</code></td>
+</tr>
+</tbody>
+</table>
 <h4 id="parameters_5">Parameters</h4>
 <table>
 <thead>
@@ -6729,14 +6786,14 @@ any parameters that are expected in a request parameters can be <code>required</
 </tr>
 <tr>
 <td align="left"><code>type</code></td>
-<td align="left"><code>any</code></td>
+<td align="left"><a href="../appium_types/#class"><code>Class</code></a>&lt;<code>T</code>, <code>object</code>, <code>any</code>[]></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_5">Returns</h4>
-<p><code>boolean</code></p>
-<h4 id="defined-in_19">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:986</p>
+<p>err is T</p>
+<h4 id="defined-in_20">Defined in</h4>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:992</p>
 <hr />
 <h3 id="issessioncommand">isSessionCommand</h3>
 <p>▸ <strong>isSessionCommand</strong>(<code>command</code>): <code>boolean</code></p>
@@ -6757,7 +6814,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns_6">Returns</h4>
 <p><code>boolean</code></p>
-<h4 id="defined-in_20">Defined in</h4>
+<h4 id="defined-in_21">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/protocol.js:44</p>
 <hr />
 <h3 id="isstandardcap">isStandardCap</h3>
@@ -6779,7 +6836,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns_7">Returns</h4>
 <p><code>boolean</code></p>
-<h4 id="defined-in_21">Defined in</h4>
+<h4 id="defined-in_22">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/basedriver/capabilities.js:123</p>
 <hr />
 <h3 id="makeargs">makeArgs</h3>
@@ -6813,7 +6870,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns_8">Returns</h4>
 <p><code>any</code></p>
-<h4 id="defined-in_22">Defined in</h4>
+<h4 id="defined-in_23">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/protocol.js:169</p>
 <hr />
 <h3 id="normalizebasepath">normalizeBasePath</h3>
@@ -6836,13 +6893,13 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns_9">Returns</h4>
 <p><code>string</code></p>
-<h4 id="defined-in_23">Defined in</h4>
+<h4 id="defined-in_24">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/express/server.js:250</p>
 <hr />
 <h3 id="processcapabilities">processCapabilities</h3>
 <p>▸ <strong>processCapabilities</strong>&lt;<code>C</code>, <code>W3CCaps</code>>(<code>w3cCaps</code>, <code>constraints?</code>, <code>shouldValidateCaps?</code>): <a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>></p>
 <p>Calls parseCaps and just returns the matchedCaps variable</p>
-<h4 id="type-parameters">Type parameters</h4>
+<h4 id="type-parameters_1">Type parameters</h4>
 <table>
 <thead>
 <tr>
@@ -6853,7 +6910,7 @@ any parameters that are expected in a request parameters can be <code>required</
 <tbody>
 <tr>
 <td align="left"><code>C</code></td>
-<td align="left">extends <a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a></td>
+<td align="left">extends <a href="../appium_types/#constraints"><code>Constraints</code></a></td>
 </tr>
 <tr>
 <td align="left"><code>W3CCaps</code></td>
@@ -6890,14 +6947,14 @@ any parameters that are expected in a request parameters can be <code>required</
 </table>
 <h4 id="returns_10">Returns</h4>
 <p><a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>></p>
-<h4 id="defined-in_24">Defined in</h4>
+<h4 id="defined-in_25">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/basedriver/capabilities.js:327</p>
 <hr />
 <h3 id="promoteappiumoptions">promoteAppiumOptions</h3>
 <p>▸ <strong>promoteAppiumOptions</strong>&lt;<code>C</code>>(<code>originalCaps</code>): <a href="../../interfaces/appium_types.W3CCapabilities/"><code>W3CCapabilities</code></a>&lt;<code>C</code>></p>
 <p>Return a copy of a capabilities object which has taken everything within the 'options'
 capability and promoted it to the top level.</p>
-<h4 id="type-parameters_1">Type parameters</h4>
+<h4 id="type-parameters_2">Type parameters</h4>
 <table>
 <thead>
 <tr>
@@ -6908,7 +6965,7 @@ capability and promoted it to the top level.</p>
 <tbody>
 <tr>
 <td align="left"><code>C</code></td>
-<td align="left">extends <a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a></td>
+<td align="left">extends <a href="../appium_types/#constraints"><code>Constraints</code></a></td>
 </tr>
 </tbody>
 </table>
@@ -6930,14 +6987,14 @@ capability and promoted it to the top level.</p>
 <h4 id="returns_11">Returns</h4>
 <p><a href="../../interfaces/appium_types.W3CCapabilities/"><code>W3CCapabilities</code></a>&lt;<code>C</code>></p>
 <p>the capabilities with 'options' promoted if necessary</p>
-<h4 id="defined-in_25">Defined in</h4>
+<h4 id="defined-in_26">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/basedriver/capabilities.js:422</p>
 <hr />
 <h3 id="promoteappiumoptionsforobject">promoteAppiumOptionsForObject</h3>
 <p>▸ <strong>promoteAppiumOptionsForObject</strong>&lt;<code>C</code>>(<code>obj</code>): <code>Partial</code>&lt;<a href="../appium_types/#capstonscaps"><code>CapsToNSCaps</code></a>&lt;<a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>>, <code>"appium"</code>>></p>
 <p>Return a copy of a "bare" (single-level, non-W3C) capabilities object which has taken everything
 within the 'appium:options' capability and promoted it to the top level.</p>
-<h4 id="type-parameters_2">Type parameters</h4>
+<h4 id="type-parameters_3">Type parameters</h4>
 <table>
 <thead>
 <tr>
@@ -6948,7 +7005,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 <tbody>
 <tr>
 <td align="left"><code>C</code></td>
-<td align="left">extends <a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a></td>
+<td align="left">extends <a href="../appium_types/#constraints"><code>Constraints</code></a></td>
 </tr>
 </tbody>
 </table>
@@ -6970,7 +7027,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 <h4 id="returns_12">Returns</h4>
 <p><code>Partial</code>&lt;<a href="../appium_types/#capstonscaps"><code>CapsToNSCaps</code></a>&lt;<a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>>, <code>"appium"</code>>></p>
 <p>the capabilities with 'options' promoted if necessary</p>
-<h4 id="defined-in_26">Defined in</h4>
+<h4 id="defined-in_27">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/basedriver/capabilities.js:360</p>
 <hr />
 <h3 id="routeconfiguringfunction">routeConfiguringFunction</h3>
@@ -6992,7 +7049,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 </table>
 <h4 id="returns_13">Returns</h4>
 <p><code>RouteConfiguringFunction</code></p>
-<h4 id="defined-in_27">Defined in</h4>
+<h4 id="defined-in_28">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/protocol.js:257</p>
 <hr />
 <h3 id="routetocommandname">routeToCommandName</h3>
@@ -7026,7 +7083,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 </table>
 <h4 id="returns_14">Returns</h4>
 <p><code>undefined</code> | <code>string</code></p>
-<h4 id="defined-in_28">Defined in</h4>
+<h4 id="defined-in_29">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/routes.js:978</p>
 <hr />
 <h3 id="server">server</h3>
@@ -7048,13 +7105,13 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 </table>
 <h4 id="returns_15">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types/#appiumserver"><code>AppiumServer</code></a>></p>
-<h4 id="defined-in_29">Defined in</h4>
+<h4 id="defined-in_30">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/express/server.js:38</p>
 <hr />
 <h3 id="validatecaps">validateCaps</h3>
 <p>▸ <strong>validateCaps</strong>&lt;<code>C</code>>(<code>caps</code>, <code>constraints?</code>, <code>opts?</code>): <a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>></p>
 <p>Validates caps against a set of constraints</p>
-<h4 id="type-parameters_3">Type parameters</h4>
+<h4 id="type-parameters_4">Type parameters</h4>
 <table>
 <thead>
 <tr>
@@ -7065,7 +7122,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 <tbody>
 <tr>
 <td align="left"><code>C</code></td>
-<td align="left">extends <a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a></td>
+<td align="left">extends <a href="../appium_types/#constraints"><code>Constraints</code></a></td>
 </tr>
 </tbody>
 </table>
@@ -7094,7 +7151,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 </table>
 <h4 id="returns_16">Returns</h4>
 <p><a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>></p>
-<h4 id="defined-in_30">Defined in</h4>
+<h4 id="defined-in_31">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/basedriver/capabilities.js:54</p>
 <hr />
 <h3 id="validateexecutemethodparams">validateExecuteMethodParams</h3>
@@ -7120,7 +7177,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 </table>
 <h4 id="returns_17">Returns</h4>
 <p><code>any</code></p>
-<h4 id="defined-in_31">Defined in</h4>
+<h4 id="defined-in_32">Defined in</h4>
 <p>node_modules/@appium/base-driver/lib/protocol/protocol.js:219</p>
 
 

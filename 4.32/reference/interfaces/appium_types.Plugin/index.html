@@ -1205,7 +1205,7 @@
 <p>node_modules/@appium/types/lib/plugin.ts:75</p>
 <hr />
 <h3 id="handle">handle</h3>
-<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>>, [cmdName: string, ...args: any[]], <code>void</code>, <code>unknown</code>></p>
+<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <code>string</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>, [cmdName: string, ...args: any[]], <code>void</code>, <code>unknown</code>></p>
 <p>Handle an Appium command, optionally running and using or throwing away the value of the
 original Appium behavior (or the behavior of the next plugin in a plugin chain).</p>
 <h4 id="defined-in_1">Defined in</h4>
@@ -1224,7 +1224,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <p>node_modules/@appium/types/lib/plugin.ts:67</p>
 <hr />
 <h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
-<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <code>string</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>driver</code>, <code>cause</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.</p>
@@ -1239,7 +1239,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>></td>
+<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <code>string</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>>, <code>void</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></td>
 </tr>
 <tr>
 <td align="left"><code>cause</code></td>
