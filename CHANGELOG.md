@@ -1,3 +1,10 @@
+## [4.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.25...v4.33.0) (2023-08-02)
+
+
+### Features
+
+* Lock only major package versions ([#1835](https://github.com/appium/appium-xcuitest-driver/issues/1835)) ([d640d77](https://github.com/appium/appium-xcuitest-driver/commit/d640d770ac5d9899b22ce6f6a62222bff1d10111))
+
 ## [4.32.25](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.24...v4.32.25) (2023-08-02)
 
 
