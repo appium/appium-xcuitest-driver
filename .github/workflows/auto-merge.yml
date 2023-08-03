@@ -1,13 +1,12 @@
 name: auto-merge
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 16 * * *'
+  pull_request_target:
 
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
     steps:
       - uses: actions/checkout@v3
       - uses: ahmadnassri/action-dependabot-auto-merge@v2
