@@ -22,7 +22,6 @@ describe('Safari SSL', function () {
 
   /** @type {import('node:https').Server} */
   let sslServer;
-  /** @type {import('webdriverio').Browser} */
   let driver;
   /** @type {string} */
   let localHttpsUrl;
