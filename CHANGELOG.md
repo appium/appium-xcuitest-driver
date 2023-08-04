@@ -1,3 +1,10 @@
+## [4.33.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.1...v4.33.2) (2023-08-04)
+
+
+### Bug Fixes
+
+* Args sequence for mobileTapWithNumberOfTaps ([4cb7430](https://github.com/appium/appium-xcuitest-driver/commit/4cb7430afae40307601711907fee89afb459ee48))
+
 ## [4.33.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.0...v4.33.1) (2023-08-04)
 
 
