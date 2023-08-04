@@ -9,7 +9,7 @@ export async function getFreePort() {
   return await new Promise((resolve, reject) => {
     const srv = net.createServer();
     srv.listen(0, () => {
-      const address = srv.address;
+      const address = srv.address();
       let port;
       if (_.has(address, 'port')) {
         // @ts-ignore
