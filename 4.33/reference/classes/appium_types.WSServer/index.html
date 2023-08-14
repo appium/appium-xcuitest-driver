@@ -2180,6 +2180,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#addabortlistener" class="md-nav__link">
+    addAbortListener
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#geteventlisteners" class="md-nav__link">
     getEventListeners
   </a>
@@ -2448,6 +2483,7 @@
 <li><a href="./#removelistener">removeListener</a></li>
 <li><a href="./#setmaxlisteners">setMaxListeners</a></li>
 <li><a href="./#shouldhandle">shouldHandle</a></li>
+<li><a href="./#addabortlistener">addAbortListener</a></li>
 <li><a href="./#geteventlisteners">getEventListeners</a></li>
 <li><a href="./#getmaxlisteners-1">getMaxListeners</a></li>
 <li><a href="./#listenercount-1">listenerCount</a></li>
@@ -2499,22 +2535,22 @@
 <h4 id="overrides">Overrides</h4>
 <p>EventEmitter.constructor</p>
 <h4 id="defined-in">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:358</p>
+<p>node_modules/@types/ws/index.d.ts:358</p>
 <h2 id="properties_1">Properties</h2>
 <h3 id="clients">clients</h3>
 <p>• <strong>clients</strong>: <code>Set</code>&lt;<code>InstanceType</code>&lt;<code>T</code>>></p>
 <h4 id="defined-in_1">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:356</p>
+<p>node_modules/@types/ws/index.d.ts:356</p>
 <hr />
 <h3 id="options">options</h3>
 <p>• <strong>options</strong>: <code>ServerOptions</code>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:354</p>
+<p>node_modules/@types/ws/index.d.ts:354</p>
 <hr />
 <h3 id="path">path</h3>
 <p>• <strong>path</strong>: <code>string</code></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:355</p>
+<p>node_modules/@types/ws/index.d.ts:355</p>
 <hr />
 <h3 id="capturerejectionsymbol">captureRejectionSymbol</h3>
 <p>▪ <code>Static</code> <code>Readonly</code> <strong>captureRejectionSymbol</strong>: typeof <a href="./#capturerejectionsymbol"><code>captureRejectionSymbol</code></a></p>
@@ -2525,7 +2561,7 @@
 <h4 id="inherited-from">Inherited from</h4>
 <p>EventEmitter.captureRejectionSymbol</p>
 <h4 id="defined-in_4">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:355</p>
+<p>node_modules/@types/node/events.d.ts:390</p>
 <hr />
 <h3 id="capturerejections">captureRejections</h3>
 <p>▪ <code>Static</code> <strong>captureRejections</strong>: <code>boolean</code></p>
@@ -2536,7 +2572,7 @@
 <h4 id="inherited-from_1">Inherited from</h4>
 <p>EventEmitter.captureRejections</p>
 <h4 id="defined-in_5">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:362</p>
+<p>node_modules/@types/node/events.d.ts:397</p>
 <hr />
 <h3 id="defaultmaxlisteners">defaultMaxListeners</h3>
 <p>▪ <code>Static</code> <strong>defaultMaxListeners</strong>: <code>number</code></p>
@@ -2572,7 +2608,7 @@ Its <code>name</code> property is set to <code>'MaxListenersExceededWarning'</co
 <h4 id="inherited-from_2">Inherited from</h4>
 <p>EventEmitter.defaultMaxListeners</p>
 <h4 id="defined-in_6">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:399</p>
+<p>node_modules/@types/node/events.d.ts:434</p>
 <hr />
 <h3 id="errormonitor">errorMonitor</h3>
 <p>▪ <code>Static</code> <code>Readonly</code> <strong>errorMonitor</strong>: typeof <a href="./#errormonitor"><code>errorMonitor</code></a></p>
@@ -2584,7 +2620,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="inherited-from_3">Inherited from</h4>
 <p>EventEmitter.errorMonitor</p>
 <h4 id="defined-in_7">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:348</p>
+<p>node_modules/@types/node/events.d.ts:383</p>
 <h2 id="methods_1">Methods</h2>
 <h3 id="addlistener">addListener</h3>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -2612,7 +2648,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="overrides_1">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_8">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:389</p>
+<p>node_modules/@types/ws/index.d.ts:389</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_2">Parameters</h4>
 <table>
@@ -2638,7 +2674,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="overrides_2">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_9">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:390</p>
+<p>node_modules/@types/ws/index.d.ts:390</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_3">Parameters</h4>
 <table>
@@ -2664,7 +2700,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="overrides_3">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_10">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:391</p>
+<p>node_modules/@types/ws/index.d.ts:391</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_4">Parameters</h4>
 <table>
@@ -2690,7 +2726,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="overrides_4">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_11">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:392</p>
+<p>node_modules/@types/ws/index.d.ts:392</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_5">Parameters</h4>
 <table>
@@ -2716,14 +2752,14 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="overrides_5">Overrides</h4>
 <p>EventEmitter.addListener</p>
 <h4 id="defined-in_12">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:393</p>
+<p>node_modules/@types/ws/index.d.ts:393</p>
 <hr />
 <h3 id="address">address</h3>
 <p>▸ <strong>address</strong>(): <code>string</code> | <code>AddressInfo</code></p>
 <h4 id="returns_5">Returns</h4>
 <p><code>string</code> | <code>AddressInfo</code></p>
 <h4 id="defined-in_13">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:360</p>
+<p>node_modules/@types/ws/index.d.ts:360</p>
 <hr />
 <h3 id="close">close</h3>
 <p>▸ <strong>close</strong>(<code>cb?</code>): <code>void</code></p>
@@ -2745,7 +2781,7 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="returns_6">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_14">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:361</p>
+<p>node_modules/@types/ws/index.d.ts:361</p>
 <hr />
 <h3 id="emit">emit</h3>
 <p>▸ <strong>emit</strong>(<code>eventName</code>, <code>...args</code>): <code>boolean</code></p>
@@ -2809,7 +2845,7 @@ to each.</p>
 <h4 id="inherited-from_4">Inherited from</h4>
 <p>EventEmitter.emit</p>
 <h4 id="defined-in_15">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:681</p>
+<p>node_modules/@types/node/events.d.ts:716</p>
 <hr />
 <h3 id="eventnames">eventNames</h3>
 <p>▸ <strong>eventNames</strong>(): (<code>string</code> | <code>symbol</code>)[]</p>
@@ -2834,7 +2870,7 @@ listeners. The values in the array are strings or <code>Symbol</code>s.</p>
 <h4 id="inherited-from_5">Inherited from</h4>
 <p>EventEmitter.eventNames</p>
 <h4 id="defined-in_16">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:744</p>
+<p>node_modules/@types/node/events.d.ts:779</p>
 <hr />
 <h3 id="getmaxlisteners">getMaxListeners</h3>
 <p>▸ <strong>getMaxListeners</strong>(): <code>number</code></p>
@@ -2847,7 +2883,7 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 <h4 id="inherited-from_6">Inherited from</h4>
 <p>EventEmitter.getMaxListeners</p>
 <h4 id="defined-in_17">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:596</p>
+<p>node_modules/@types/node/events.d.ts:631</p>
 <hr />
 <h3 id="handleupgrade">handleUpgrade</h3>
 <p>▸ <strong>handleUpgrade</strong>(<code>request</code>, <code>socket</code>, <code>upgradeHead</code>, <code>callback</code>): <code>void</code></p>
@@ -2881,7 +2917,7 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 <h4 id="returns_10">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_18">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:362</p>
+<p>node_modules/@types/ws/index.d.ts:362</p>
 <hr />
 <h3 id="listenercount">listenerCount</h3>
 <p>▸ <strong>listenerCount</strong>(<code>eventName</code>, <code>listener?</code>): <code>number</code></p>
@@ -2917,7 +2953,7 @@ in the list of the listeners of the event.</p>
 <h4 id="inherited-from_7">Inherited from</h4>
 <p>EventEmitter.listenerCount</p>
 <h4 id="defined-in_19">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:690</p>
+<p>node_modules/@types/node/events.d.ts:725</p>
 <hr />
 <h3 id="listeners">listeners</h3>
 <p>▸ <strong>listeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>
@@ -2950,7 +2986,7 @@ in the list of the listeners of the event.</p>
 <h4 id="inherited-from_8">Inherited from</h4>
 <p>EventEmitter.listeners</p>
 <h4 id="defined-in_20">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:609</p>
+<p>node_modules/@types/node/events.d.ts:644</p>
 <hr />
 <h3 id="off">off</h3>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -2978,7 +3014,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_6">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_21">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:383</p>
+<p>node_modules/@types/ws/index.d.ts:383</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_12">Parameters</h4>
 <table>
@@ -3004,7 +3040,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_7">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_22">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:384</p>
+<p>node_modules/@types/ws/index.d.ts:384</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_13">Parameters</h4>
 <table>
@@ -3030,7 +3066,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_8">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_23">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:385</p>
+<p>node_modules/@types/ws/index.d.ts:385</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_14">Parameters</h4>
 <table>
@@ -3056,7 +3092,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_9">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_24">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:386</p>
+<p>node_modules/@types/ws/index.d.ts:386</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_15">Parameters</h4>
 <table>
@@ -3082,7 +3118,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_10">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_25">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:387</p>
+<p>node_modules/@types/ws/index.d.ts:387</p>
 <hr />
 <h3 id="on">on</h3>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3110,7 +3146,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_11">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_26">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:371</p>
+<p>node_modules/@types/ws/index.d.ts:371</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_17">Parameters</h4>
 <table>
@@ -3136,7 +3172,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_12">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_27">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:372</p>
+<p>node_modules/@types/ws/index.d.ts:372</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_18">Parameters</h4>
 <table>
@@ -3162,7 +3198,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_13">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_28">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:373</p>
+<p>node_modules/@types/ws/index.d.ts:373</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_19">Parameters</h4>
 <table>
@@ -3188,7 +3224,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_14">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_29">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:374</p>
+<p>node_modules/@types/ws/index.d.ts:374</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_20">Parameters</h4>
 <table>
@@ -3214,7 +3250,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_15">Overrides</h4>
 <p>EventEmitter.on</p>
 <h4 id="defined-in_30">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:375</p>
+<p>node_modules/@types/ws/index.d.ts:375</p>
 <hr />
 <h3 id="once">once</h3>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3242,7 +3278,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_16">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_31">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:377</p>
+<p>node_modules/@types/ws/index.d.ts:377</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_22">Parameters</h4>
 <table>
@@ -3268,7 +3304,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_17">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_32">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:378</p>
+<p>node_modules/@types/ws/index.d.ts:378</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_23">Parameters</h4>
 <table>
@@ -3294,7 +3330,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_18">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_33">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:379</p>
+<p>node_modules/@types/ws/index.d.ts:379</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_24">Parameters</h4>
 <table>
@@ -3320,7 +3356,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_19">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_34">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:380</p>
+<p>node_modules/@types/ws/index.d.ts:380</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_25">Parameters</h4>
 <table>
@@ -3346,7 +3382,7 @@ in the list of the listeners of the event.</p>
 <h4 id="overrides_20">Overrides</h4>
 <p>EventEmitter.once</p>
 <h4 id="defined-in_35">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:381</p>
+<p>node_modules/@types/ws/index.d.ts:381</p>
 <hr />
 <h3 id="prependlistener">prependListener</h3>
 <p>▸ <strong>prependListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3388,7 +3424,7 @@ times.</p>
 <h4 id="inherited-from_9">Inherited from</h4>
 <p>EventEmitter.prependListener</p>
 <h4 id="defined-in_36">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:708</p>
+<p>node_modules/@types/node/events.d.ts:743</p>
 <hr />
 <h3 id="prependoncelistener">prependOnceListener</h3>
 <p>▸ <strong>prependOnceListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3428,7 +3464,7 @@ listener is removed, and then invoked.</p>
 <h4 id="inherited-from_10">Inherited from</h4>
 <p>EventEmitter.prependOnceListener</p>
 <h4 id="defined-in_37">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:724</p>
+<p>node_modules/@types/node/events.d.ts:759</p>
 <hr />
 <h3 id="rawlisteners">rawListeners</h3>
 <p>▸ <strong>rawListeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>
@@ -3479,7 +3515,7 @@ including any wrappers (such as those created by <code>.once()</code>).</p>
 <h4 id="inherited-from_11">Inherited from</h4>
 <p>EventEmitter.rawListeners</p>
 <h4 id="defined-in_38">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:640</p>
+<p>node_modules/@types/node/events.d.ts:675</p>
 <hr />
 <h3 id="removealllisteners">removeAllListeners</h3>
 <p>▸ <strong>removeAllListeners</strong>(<code>event?</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3510,7 +3546,7 @@ component or module (e.g. sockets or file streams).</p>
 <h4 id="inherited-from_12">Inherited from</h4>
 <p>EventEmitter.removeAllListeners</p>
 <h4 id="defined-in_39">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:580</p>
+<p>node_modules/@types/node/events.d.ts:615</p>
 <hr />
 <h3 id="removelistener">removeListener</h3>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3538,7 +3574,7 @@ component or module (e.g. sockets or file streams).</p>
 <h4 id="overrides_21">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_40">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:395</p>
+<p>node_modules/@types/ws/index.d.ts:395</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_31">Parameters</h4>
 <table>
@@ -3564,7 +3600,7 @@ component or module (e.g. sockets or file streams).</p>
 <h4 id="overrides_22">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_41">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:396</p>
+<p>node_modules/@types/ws/index.d.ts:396</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_32">Parameters</h4>
 <table>
@@ -3590,7 +3626,7 @@ component or module (e.g. sockets or file streams).</p>
 <h4 id="overrides_23">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_42">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:397</p>
+<p>node_modules/@types/ws/index.d.ts:397</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_33">Parameters</h4>
 <table>
@@ -3616,7 +3652,7 @@ component or module (e.g. sockets or file streams).</p>
 <h4 id="overrides_24">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_43">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:398</p>
+<p>node_modules/@types/ws/index.d.ts:398</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
 <h4 id="parameters_34">Parameters</h4>
 <table>
@@ -3642,7 +3678,7 @@ component or module (e.g. sockets or file streams).</p>
 <h4 id="overrides_25">Overrides</h4>
 <p>EventEmitter.removeListener</p>
 <h4 id="defined-in_44">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:399</p>
+<p>node_modules/@types/ws/index.d.ts:399</p>
 <hr />
 <h3 id="setmaxlisteners">setMaxListeners</h3>
 <p>▸ <strong>setMaxListeners</strong>(<code>n</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>></p>
@@ -3673,7 +3709,7 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 <h4 id="inherited-from_13">Inherited from</h4>
 <p>EventEmitter.setMaxListeners</p>
 <h4 id="defined-in_45">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:590</p>
+<p>node_modules/@types/node/events.d.ts:625</p>
 <hr />
 <h3 id="shouldhandle">shouldHandle</h3>
 <p>▸ <strong>shouldHandle</strong>(<code>request</code>): <code>boolean</code> | <code>Promise</code>&lt;<code>boolean</code>></p>
@@ -3695,7 +3731,62 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 <h4 id="returns_38">Returns</h4>
 <p><code>boolean</code> | <code>Promise</code>&lt;<code>boolean</code>></p>
 <h4 id="defined-in_46">Defined in</h4>
-<p>node_modules/@appium/types/node_modules/@types/ws/index.d.ts:368</p>
+<p>node_modules/@types/ws/index.d.ts:368</p>
+<hr />
+<h3 id="addabortlistener">addAbortListener</h3>
+<p>▸ <code>Static</code> <strong>addAbortListener</strong>(<code>signal</code>, <code>resource</code>): <code>Disposable</code></p>
+<p>Listens once to the <code>abort</code> event on the provided <code>signal</code>.</p>
+<p>Listening to the <code>abort</code> event on abort signals is unsafe and may
+lead to resource leaks since another third party with the signal can
+call <code>e.stopImmediatePropagation()</code>. Unfortunately Node.js cannot change
+this since it would violate the web standard. Additionally, the original
+API makes it easy to forget to remove listeners.</p>
+<p>This API allows safely using <code>AbortSignal</code>s in Node.js APIs by solving these
+two issues by listening to the event such that <code>stopImmediatePropagation</code> does
+not prevent the listener from running.</p>
+<p>Returns a disposable so that it may be unsubscribed from more easily.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">addAbortListener</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kd">function</span><span class="w"> </span><span class="nx">example</span><span class="p">(</span><span class="nx">signal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">disposable</span><span class="p">;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nx">signal</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;abort&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span><span class="p">());</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nx">disposable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">addAbortListener</span><span class="p">(</span><span class="nx">signal</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">      </span><span class="c1">// Do something when signal is aborted.</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="nx">disposable</span><span class="o">?</span><span class="p">.[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">dispose</span><span class="p">]();</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="p">}</span>
+</code></pre></div>
+<p><strong><code>Since</code></strong></p>
+<p>v20.5.0</p>
+<h4 id="parameters_37">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>signal</code></td>
+<td align="left"><code>AbortSignal</code></td>
+</tr>
+<tr>
+<td align="left"><code>resource</code></td>
+<td align="left">(<code>event</code>: <code>Event</code>) =&gt; <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_39">Returns</h4>
+<p><code>Disposable</code></p>
+<p>that removes the <code>abort</code> listener.</p>
+<h4 id="inherited-from_14">Inherited from</h4>
+<p>EventEmitter.addAbortListener</p>
+<h4 id="defined-in_47">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:375</p>
 <hr />
 <h3 id="geteventlisteners">getEventListeners</h3>
 <p>▸ <code>Static</code> <strong>getEventListeners</strong>(<code>emitter</code>, <code>name</code>): <code>Function</code>[]</p>
@@ -3704,24 +3795,24 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 the emitter.</p>
 <p>For <code>EventTarget</code>s this is the only way to get the event listeners for the
 event target. This is useful for debugging and diagnostic purposes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getEventListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Events are fun&#39;</span><span class="p">);</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">listener</span><span class="p">);</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getEventListeners</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">));</span><span class="w"> </span><span class="c1">// [ [Function: listener] ]</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">}</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">{</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">et</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventTarget</span><span class="p">();</span>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Events are fun&#39;</span><span class="p">);</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="nx">et</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">listener</span><span class="p">);</span>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getEventListeners</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">));</span><span class="w"> </span><span class="c1">// [ [Function: listener] ]</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getEventListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Events are fun&#39;</span><span class="p">);</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">listener</span><span class="p">);</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getEventListeners</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">));</span><span class="w"> </span><span class="c1">// [ [Function: listener] ]</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">{</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">et</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventTarget</span><span class="p">();</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">listener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Events are fun&#39;</span><span class="p">);</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="nx">et</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">listener</span><span class="p">);</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getEventListeners</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">));</span><span class="w"> </span><span class="c1">// [ [Function: listener] ]</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="p">}</span>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v15.2.0, v14.17.0</p>
-<h4 id="parameters_37">Parameters</h4>
+<h4 id="parameters_38">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3740,11 +3831,11 @@ event target. This is useful for debugging and diagnostic purposes.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_39">Returns</h4>
+<h4 id="returns_40">Returns</h4>
 <p><code>Function</code>[]</p>
-<h4 id="inherited-from_14">Inherited from</h4>
+<h4 id="inherited-from_15">Inherited from</h4>
 <p>EventEmitter.getEventListeners</p>
-<h4 id="defined-in_47">Defined in</h4>
+<h4 id="defined-in_48">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:296</p>
 <hr />
 <h3 id="getmaxlisteners_1">getMaxListeners</h3>
@@ -3755,24 +3846,24 @@ the emitter.</p>
 <p>For <code>EventTarget</code>s this is the only way to get the max event listeners for the
 event target. If the number of event handlers on a single EventTarget exceeds
 the max set, the EventTarget will print a warning.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getMaxListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">setMaxListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">ee</span><span class="p">));</span><span class="w"> </span><span class="c1">// 10</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="nx">setMaxListeners</span><span class="p">(</span><span class="mf">11</span><span class="p">,</span><span class="w"> </span><span class="nx">ee</span><span class="p">);</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">ee</span><span class="p">));</span><span class="w"> </span><span class="c1">// 11</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">{</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">et</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventTarget</span><span class="p">();</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">et</span><span class="p">));</span><span class="w"> </span><span class="c1">// 10</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="nx">setMaxListeners</span><span class="p">(</span><span class="mf">11</span><span class="p">,</span><span class="w"> </span><span class="nx">et</span><span class="p">);</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">et</span><span class="p">));</span><span class="w"> </span><span class="c1">// 11</span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">getMaxListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">setMaxListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="p">{</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">ee</span><span class="p">));</span><span class="w"> </span><span class="c1">// 10</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="nx">setMaxListeners</span><span class="p">(</span><span class="mf">11</span><span class="p">,</span><span class="w"> </span><span class="nx">ee</span><span class="p">);</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">ee</span><span class="p">));</span><span class="w"> </span><span class="c1">// 11</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="p">}</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="p">{</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">et</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventTarget</span><span class="p">();</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">et</span><span class="p">));</span><span class="w"> </span><span class="c1">// 10</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="nx">setMaxListeners</span><span class="p">(</span><span class="mf">11</span><span class="p">,</span><span class="w"> </span><span class="nx">et</span><span class="p">);</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">getMaxListeners</span><span class="p">(</span><span class="nx">et</span><span class="p">));</span><span class="w"> </span><span class="c1">// 11</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="p">}</span>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v19.9.0</p>
-<h4 id="parameters_38">Parameters</h4>
+<h4 id="parameters_39">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3787,29 +3878,29 @@ the max set, the EventTarget will print a warning.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_40">Returns</h4>
+<h4 id="returns_41">Returns</h4>
 <p><code>number</code></p>
-<h4 id="inherited-from_15">Inherited from</h4>
+<h4 id="inherited-from_16">Inherited from</h4>
 <p>EventEmitter.getMaxListeners</p>
-<h4 id="defined-in_48">Defined in</h4>
+<h4 id="defined-in_49">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:325</p>
 <hr />
 <h3 id="listenercount_1">listenerCount</h3>
 <p>▸ <code>Static</code> <strong>listenerCount</strong>(<code>emitter</code>, <code>eventName</code>): <code>number</code></p>
 <p>A class method that returns the number of listeners for the given <code>eventName</code>registered on the given <code>emitter</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">,</span><span class="w"> </span><span class="nx">listenerCount</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">myEmitter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="nx">myEmitter</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{});</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="nx">myEmitter</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{});</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">listenerCount</span><span class="p">(</span><span class="nx">myEmitter</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;event&#39;</span><span class="p">));</span>
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1">// Prints: 2</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">,</span><span class="w"> </span><span class="nx">listenerCount</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">myEmitter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="nx">myEmitter</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{});</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="nx">myEmitter</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{});</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">listenerCount</span><span class="p">(</span><span class="nx">myEmitter</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;event&#39;</span><span class="p">));</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1">// Prints: 2</span>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v0.9.12</p>
 <p><strong><code>Deprecated</code></strong></p>
 <p>Since v3.2.0 - Use <code>listenerCount</code> instead.</p>
-<h4 id="parameters_39">Parameters</h4>
+<h4 id="parameters_40">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3831,67 +3922,67 @@ the max set, the EventTarget will print a warning.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_41">Returns</h4>
+<h4 id="returns_42">Returns</h4>
 <p><code>number</code></p>
-<h4 id="inherited-from_16">Inherited from</h4>
+<h4 id="inherited-from_17">Inherited from</h4>
 <p>EventEmitter.listenerCount</p>
-<h4 id="defined-in_49">Defined in</h4>
+<h4 id="defined-in_50">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:268</p>
 <hr />
 <h3 id="on_1">on</h3>
 <p>▸ <code>Static</code> <strong>on</strong>(<code>emitter</code>, <code>eventName</code>, <code>options?</code>): <code>AsyncIterableIterator</code>&lt;<code>any</code>></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">on</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:process&#39;</span><span class="p">;</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1">// Emit later on</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="mf">42</span><span class="p">);</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">});</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">on</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">  </span><span class="c1">// The execution of this inner block is synchronous and it</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">  </span><span class="c1">// processes one event at a time (even with await). Do not use</span>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">  </span><span class="c1">// if concurrent execution is required.</span>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span><span class="w"> </span><span class="c1">// prints [&#39;bar&#39;] [42]</span>
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="p">}</span>
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="c1">// Unreachable here</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">on</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:process&#39;</span><span class="p">;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1">// Emit later on</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="mf">42</span><span class="p">);</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="p">});</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">on</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">  </span><span class="c1">// The execution of this inner block is synchronous and it</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">  </span><span class="c1">// processes one event at a time (even with await). Do not use</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">  </span><span class="c1">// if concurrent execution is required.</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span><span class="w"> </span><span class="c1">// prints [&#39;bar&#39;] [42]</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="p">}</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="c1">// Unreachable here</span>
 </code></pre></div>
 <p>Returns an <code>AsyncIterator</code> that iterates <code>eventName</code> events. It will throw
 if the <code>EventEmitter</code> emits <code>'error'</code>. It removes all listeners when
 exiting the loop. The <code>value</code> returned by each iteration is an array
 composed of the emitted event arguments.</p>
 <p>An <code>AbortSignal</code> can be used to cancel waiting on events:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">on</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:process&#39;</span><span class="p">;</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">  </span><span class="c1">// Emit later on</span>
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">  </span><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="mf">42</span><span class="p">);</span>
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">  </span><span class="p">});</span>
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">on</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="o">:</span><span class="w"> </span><span class="nx">ac</span><span class="p">.</span><span class="nx">signal</span><span class="w"> </span><span class="p">}))</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">    </span><span class="c1">// The execution of this inner block is synchronous and it</span>
-<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="w">    </span><span class="c1">// processes one event at a time (even with await). Do not use</span>
-<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">    </span><span class="c1">// if concurrent execution is required.</span>
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span><span class="w"> </span><span class="c1">// prints [&#39;bar&#39;] [42]</span>
-<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="w">  </span><span class="c1">// Unreachable here</span>
-<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="p">})();</span>
-<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>
-<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ac</span><span class="p">.</span><span class="nx">abort</span><span class="p">());</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">on</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:process&#39;</span><span class="p">;</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">  </span><span class="c1">// Emit later on</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">  </span><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">    </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="mf">42</span><span class="p">);</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">  </span><span class="p">});</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">on</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="o">:</span><span class="w"> </span><span class="nx">ac</span><span class="p">.</span><span class="nx">signal</span><span class="w"> </span><span class="p">}))</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">    </span><span class="c1">// The execution of this inner block is synchronous and it</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">    </span><span class="c1">// processes one event at a time (even with await). Do not use</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="w">    </span><span class="c1">// if concurrent execution is required.</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span><span class="w"> </span><span class="c1">// prints [&#39;bar&#39;] [42]</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="w">  </span><span class="c1">// Unreachable here</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="p">})();</span>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ac</span><span class="p">.</span><span class="nx">abort</span><span class="p">());</span>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v13.6.0, v12.16.0</p>
-<h4 id="parameters_40">Parameters</h4>
+<h4 id="parameters_41">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3918,12 +4009,12 @@ composed of the emitted event arguments.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_42">Returns</h4>
+<h4 id="returns_43">Returns</h4>
 <p><code>AsyncIterableIterator</code>&lt;<code>any</code>></p>
 <p>that iterates <code>eventName</code> events emitted by the <code>emitter</code></p>
-<h4 id="inherited-from_17">Inherited from</h4>
+<h4 id="inherited-from_18">Inherited from</h4>
 <p>EventEmitter.on</p>
-<h4 id="defined-in_50">Defined in</h4>
+<h4 id="defined-in_51">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:250</p>
 <hr />
 <h3 id="once_1">once</h3>
@@ -3934,70 +4025,70 @@ The <code>Promise</code> will resolve with an array of all the arguments emitted
 given event.</p>
 <p>This method is intentionally generic and works with the web platform <a href="https://dom.spec.whatwg.org/#interface-eventtarget">EventTarget</a> interface, which has no special<code>'error'</code> event
 semantics and does not listen to the <code>'error'</code> event.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">once</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:process&#39;</span><span class="p">;</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;myevent&#39;</span><span class="p">,</span><span class="w"> </span><span class="mf">42</span><span class="p">);</span>
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">});</span>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">value</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">once</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;myevent&#39;</span><span class="p">);</span>
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
-<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
-<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="kd">const</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">&#39;kaboom&#39;</span><span class="p">);</span>
-<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">);</span>
-<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="p">});</span>
-<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>
-<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">once</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;myevent&#39;</span><span class="p">);</span>
-<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;error happened&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">);</span>
-<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">once</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">process</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:process&#39;</span><span class="p">;</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;myevent&#39;</span><span class="p">,</span><span class="w"> </span><span class="mf">42</span><span class="p">);</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="p">});</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">value</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">once</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;myevent&#39;</span><span class="p">);</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="kd">const</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">&#39;kaboom&#39;</span><span class="p">);</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="nx">process</span><span class="p">.</span><span class="nx">nextTick</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">  </span><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">);</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="p">});</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">once</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;myevent&#39;</span><span class="p">);</span>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;error happened&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">);</span>
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="p">}</span>
 </code></pre></div>
 <p>The special handling of the <code>'error'</code> event is only used when <code>events.once()</code>is used to wait for another event. If <code>events.once()</code> is used to wait for the
 '<code>error'</code> event itself, then it is treated as any other kind of event without
 special handling:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">,</span><span class="w"> </span><span class="nx">once</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="nx">once</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(([</span><span class="nx">err</span><span class="p">])</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">))</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span><span class="p">.</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">));</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">&#39;boom&#39;</span><span class="p">));</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="c1">// Prints: ok boom</span>
-</code></pre></div>
-<p>An <code>AbortSignal</code> can be used to cancel waiting for the event:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">,</span><span class="w"> </span><span class="nx">once</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">emitter</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">once</span><span class="p">(</span><span class="nx">emitter</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="w"> </span><span class="p">});</span>
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;event emitted!&#39;</span><span class="p">);</span>
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;AbortError&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Waiting for the event was canceled!&#39;</span><span class="p">);</span>
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;There was an error&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="p">}</span>
-<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>
-<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="nx">foo</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ac</span><span class="p">.</span><span class="nx">signal</span><span class="p">);</span>
-<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="nx">ac</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span><span class="w"> </span><span class="c1">// Abort waiting for the event</span>
-<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// Prints: Waiting for the event was canceled!</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="nx">once</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="p">.</span><span class="nx">then</span><span class="p">(([</span><span class="nx">err</span><span class="p">])</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">))</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">  </span><span class="p">.</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">));</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">&#39;boom&#39;</span><span class="p">));</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="c1">// Prints: ok boom</span>
+</code></pre></div>
+<p>An <code>AbortSignal</code> can be used to cancel waiting for the event:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">,</span><span class="w"> </span><span class="nx">once</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ee</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AbortController</span><span class="p">();</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">foo</span><span class="p">(</span><span class="nx">emitter</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">once</span><span class="p">(</span><span class="nx">emitter</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal</span><span class="w"> </span><span class="p">});</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;event emitted!&#39;</span><span class="p">);</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;AbortError&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Waiting for the event was canceled!&#39;</span><span class="p">);</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;There was an error&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="p">}</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="nx">foo</span><span class="p">(</span><span class="nx">ee</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">ac</span><span class="p">.</span><span class="nx">signal</span><span class="p">);</span>
+<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="nx">ac</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span><span class="w"> </span><span class="c1">// Abort waiting for the event</span>
+<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="nx">ee</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span><span class="w"> </span><span class="c1">// Prints: Waiting for the event was canceled!</span>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v11.13.0, v10.16.0</p>
-<h4 id="parameters_41">Parameters</h4>
+<h4 id="parameters_42">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4020,14 +4111,14 @@ special handling:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_43">Returns</h4>
+<h4 id="returns_44">Returns</h4>
 <p><code>Promise</code>&lt;<code>any</code>[]></p>
-<h4 id="inherited-from_18">Inherited from</h4>
+<h4 id="inherited-from_19">Inherited from</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_51">Defined in</h4>
+<h4 id="defined-in_52">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:189</p>
 <p>▸ <code>Static</code> <strong>once</strong>(<code>emitter</code>, <code>eventName</code>, <code>options?</code>): <code>Promise</code>&lt;<code>any</code>[]></p>
-<h4 id="parameters_42">Parameters</h4>
+<h4 id="parameters_43">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4050,25 +4141,25 @@ special handling:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_44">Returns</h4>
+<h4 id="returns_45">Returns</h4>
 <p><code>Promise</code>&lt;<code>any</code>[]></p>
-<h4 id="inherited-from_19">Inherited from</h4>
+<h4 id="inherited-from_20">Inherited from</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_52">Defined in</h4>
+<h4 id="defined-in_53">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:190</p>
 <hr />
 <h3 id="setmaxlisteners_1">setMaxListeners</h3>
 <p>▸ <code>Static</code> <strong>setMaxListeners</strong>(<code>n?</code>, <code>...eventTargets</code>): <code>void</code></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">setMaxListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventTarget</span><span class="p">();</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">emitter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nx">setMaxListeners</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">,</span><span class="w"> </span><span class="nx">emitter</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">setMaxListeners</span><span class="p">,</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:events&#39;</span><span class="p">;</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventTarget</span><span class="p">();</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">emitter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventEmitter</span><span class="p">();</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="nx">setMaxListeners</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="nx">target</span><span class="p">,</span><span class="w"> </span><span class="nx">emitter</span><span class="p">);</span>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v15.4.0</p>
-<h4 id="parameters_43">Parameters</h4>
+<h4 id="parameters_44">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4090,11 +4181,11 @@ special handling:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_45">Returns</h4>
+<h4 id="returns_46">Returns</h4>
 <p><code>void</code></p>
-<h4 id="inherited-from_20">Inherited from</h4>
+<h4 id="inherited-from_21">Inherited from</h4>
 <p>EventEmitter.setMaxListeners</p>
-<h4 id="defined-in_53">Defined in</h4>
+<h4 id="defined-in_54">Defined in</h4>
 <p>node_modules/@types/node/events.d.ts:340</p>
 
 
