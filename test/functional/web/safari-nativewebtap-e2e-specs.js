@@ -36,6 +36,7 @@ const SPIN_RETRIES = 25;
 
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
+const SCROLL_AMT = 1400;
 
 describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
@@ -71,10 +72,12 @@ describe('Safari - coordinate conversion -', function () {
         util.compareVersions(
           extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
           '>=',
-          '17.0'
+          '17.0',
         )
       ) {
-        await driver.$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`).click();
+        await driver
+          .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`)
+          .click();
         await driver.$$('~Clear History')[1].click();
       } else {
         if ((await driver.$$('~Clear').length) > 0) {
@@ -88,7 +91,7 @@ describe('Safari - coordinate conversion -', function () {
           util.compareVersions(
             extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
             '>=',
-            '16.0'
+            '16.0',
           )
         ) {
           await driver
@@ -169,7 +172,10 @@ describe('Safari - coordinate conversion -', function () {
 
         it('should be able to tap on an element after scrolling', async function () {
           await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
-          await driver.execute('mobile: scroll', {direction: 'down'});
+          // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
+          // for now we'll just use JS to scroll
+          //await driver.execute('mobile: scroll', {direction: 'down'});
+          await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
           await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -247,7 +253,10 @@ describe('Safari - coordinate conversion -', function () {
 
           it('should be able to tap on an element after scrolling', async function () {
             await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
-            await driver.execute('mobile: scroll', {direction: 'down'});
+            // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
+            // for now we'll just use JS to scroll
+            //await driver.execute('mobile: scroll', {direction: 'down'});
+            await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
             await driver.$(`=${PAGE_3_LINK}`).click();
 
@@ -256,7 +265,10 @@ describe('Safari - coordinate conversion -', function () {
 
           it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
             await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
-            await driver.execute('mobile: scroll', {direction: 'down'});
+            // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
+            // for now we'll just use JS to scroll
+            //await driver.execute('mobile: scroll', {direction: 'down'});
+            await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
             // to get the url bar, click on the URL bar
             const ctx = await driver.getContext();
