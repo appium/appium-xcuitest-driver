@@ -1,3 +1,10 @@
+## [4.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.2...v4.34.0) (2023-08-16)
+
+
+### Features
+
+* use new selenium atoms from remote debugger ([2707c01](https://github.com/appium/appium-xcuitest-driver/commit/2707c015a8990f0d666b35fefcfe15b368f9c605))
+
 ## [4.33.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.1...v4.33.2) (2023-08-04)
 
 
