@@ -1,3 +1,10 @@
+## [4.34.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.34.0...v4.34.1) (2023-08-21)
+
+
+### Bug Fixes
+
+* Update glob options ([4a7a963](https://github.com/appium/appium-xcuitest-driver/commit/4a7a96319c653350b21f1836cba8afce0290a983))
+
 ## [4.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.2...v4.34.0) (2023-08-16)
 
 
