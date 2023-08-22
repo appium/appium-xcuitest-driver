@@ -17,6 +17,7 @@ env:
   SHOW_XCODE_LOG: true
   APPIUM_TEST_SERVER_PORT: '4567'
   APPIUM_TEST_SERVER_HOST: '127.0.0.1'
+  APPIUM_TEST_SERVER_STARTUP_TIMEOUT_SEC: 15
 
 jobs:
   build:
@@ -76,30 +77,30 @@ jobs:
         cd ~
         npm install -g appium@next
         appium driver install --source=local "$cwd"
-        appium driver run xcuitest build-wda >/dev/null 2>&1
-        popd
-
-        export DEVICE_NAME="${{ matrix.deviceName }}"
-        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
-
-        target_sim_id=$(xcrun simctl list devices available | grep "$DEVICE_NAME (" | cut -d "(" -f2 | cut -d ")" -f1)
-        open -Fn "$(xcode-select -p)/Applications/Simulator.app"
-        xcrun simctl bootstatus $target_sim_id -b
-
-        pushd "$cwd"
-        cd ~
+        appium driver run xcuitest build-wda
         echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
-        appium server \
+        nohup appium server \
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
-          --keep-alive-timeout 1200 \
-          2>&1 &
-        if ! timeout 15 sh -c 'until nc -z $0 $1; do sleep 1; done' $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
-            echo "Appium server is still not listening at $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
-            exit 1
-        fi
+          --keep-alive-timeout 1200 < /dev/null & > "$cwd/appium.log" &
         popd
+      name: Prepare the server
+
+    - run: |
+        target_sim_id=$(xcrun simctl list devices available | grep "${{ matrix.deviceName }} (" | cut -d "(" -f2 | cut -d ")" -f1)
+        open -Fn "$(xcode-select -p)/Applications/Simulator.app"
+        xcrun simctl bootstatus $target_sim_id -b
+      name: Preboot ${{ matrix.deviceName }}
+
+    - run: |
+        if ! timeout $APPIUM_TEST_SERVER_STARTUP_TIMEOUT_SEC sh -c 'until nc -z $0 $1; do sleep 1; done' $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+          echo "Appium server is still not listening at $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT after $APPIUM_TEST_SERVER_STARTUP_TIMEOUT_SEC seconds timeout"
+          exit 1
+        fi
+
+        export DEVICE_NAME="${{ matrix.deviceName }}"
+        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
 
         export RESULTS_XML=test-results.xml
         echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
@@ -122,3 +123,10 @@ jobs:
           fi
         fi
       name: Run functional tests
+
+    - name: Save server output
+      if: ${{ always() }}
+      uses: actions/upload-artifact@master
+      with:
+        name: appium.log
+        path: appium.log
