@@ -95,7 +95,7 @@ jobs:
     - run: |
         if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
           echo "Appium server is still not listening at $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
-          cat "$cwd/appium.log"
+          cat appium.log
           exit 1
         fi
 
