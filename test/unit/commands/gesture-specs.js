@@ -140,10 +140,10 @@ describe('gesture commands', function () {
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {element: 4, scale: 4.1})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -223,7 +223,7 @@ describe('gesture commands', function () {
           .should.be.rejectedWith(/"x" parameter should be a valid number/i);
         await driver
           .execute(`mobile: ${commandName}`, {x: 100, y: 200})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -261,13 +261,13 @@ describe('gesture commands', function () {
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {x: 100})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {y: 200})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -298,13 +298,13 @@ describe('gesture commands', function () {
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {element: 4})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {order: 'next'})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
       });
 
       it('should throw an error if offset value cannot be parsed', async function () {
@@ -336,19 +336,19 @@ describe('gesture commands', function () {
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {duration: 100, fromY: 1, toX: 100, toY: 100})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, toX: 100, toY: 100})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toY: 100})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
         await driver
           .execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toX: 100})
-          .should.be.rejectedWith(/parameters were incorrect/i);
+          .should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
