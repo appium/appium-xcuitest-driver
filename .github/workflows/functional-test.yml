@@ -82,7 +82,7 @@ jobs:
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
           --keep-alive-timeout 1200 \
-          &
+          2>&1 > ~/appium.log &
         popd
 
         export DEVICE_NAME="${{ matrix.deviceName }}"
@@ -93,7 +93,8 @@ jobs:
         xcrun simctl bootstatus $target_sim_id -b
 
         if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
-            echo "Appium server was unable to start"
+            echo "Appium server is still not listening at $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
+            cat ~/appium.log
             exit 1
         fi
 
