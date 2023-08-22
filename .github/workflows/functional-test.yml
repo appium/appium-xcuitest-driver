@@ -82,7 +82,7 @@ jobs:
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
-          --keep-alive-timeout 1200 > "$cwd/appium.log" &
+          --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
         popd
       name: Prepare the server
 
