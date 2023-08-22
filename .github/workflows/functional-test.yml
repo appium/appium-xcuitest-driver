@@ -77,12 +77,6 @@ jobs:
         npm install -g appium@next
         appium driver install --source=local "$cwd"
         appium driver run xcuitest build-wda >/dev/null 2>&1
-        appium server \
-          --port=$APPIUM_TEST_SERVER_PORT \
-          --address=$APPIUM_TEST_SERVER_HOST \
-          --relaxed-security \
-          --keep-alive-timeout 1200 \
-          2>&1 > ~/appium.log &
         popd
 
         export DEVICE_NAME="${{ matrix.deviceName }}"
@@ -92,11 +86,20 @@ jobs:
         open -Fn "$(xcode-select -p)/Applications/Simulator.app"
         xcrun simctl bootstatus $target_sim_id -b
 
-        if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+        pushd "$cwd"
+        cd ~
+        echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
+        appium server \
+          --port=$APPIUM_TEST_SERVER_PORT \
+          --address=$APPIUM_TEST_SERVER_HOST \
+          --relaxed-security \
+          --keep-alive-timeout 1200 \
+          2>&1 &
+        if ! timeout 15 sh -c 'until nc -z $0 $1; do sleep 1; done' $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
             echo "Appium server is still not listening at $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
-            cat ~/appium.log
             exit 1
         fi
+        popd
 
         export RESULTS_XML=test-results.xml
         echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
