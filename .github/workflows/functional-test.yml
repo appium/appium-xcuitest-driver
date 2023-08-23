@@ -83,6 +83,7 @@ jobs:
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
           --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
+        sleep 5
         popd
       name: Prepare the server
 
@@ -128,5 +129,5 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@master
       with:
-        name: appium.log
+        name: appium_xCodev${{ matrix.xcodeVersion }}_iOSv${{ matrix.iosVersion }}.log
         path: appium.log
