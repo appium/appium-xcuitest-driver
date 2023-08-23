@@ -85,6 +85,7 @@ jobs:
           --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
         sleep 5
         popd
+        cat appium.log
       name: Prepare the server
 
     - run: |
