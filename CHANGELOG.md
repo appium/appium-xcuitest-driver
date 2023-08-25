@@ -1,3 +1,10 @@
+## [4.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.34.1...v4.35.0) (2023-08-25)
+
+
+### Features
+
+* Include 'hittable' attribute ([#1918](https://github.com/appium/appium-xcuitest-driver/issues/1918)) ([b56a3d4](https://github.com/appium/appium-xcuitest-driver/commit/b56a3d4e06e3a345cdcfee9c8d8b174e6063e3ca))
+
 ## [4.34.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.34.0...v4.34.1) (2023-08-21)
 
 
