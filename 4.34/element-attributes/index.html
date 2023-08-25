@@ -1173,6 +1173,11 @@
 <td>Element's value. This is a complex attribute, whose calculation algorithm depends on the actual element type. Check <a href="https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m">WebDriverAgent sources</a> to know more about how it is compiled (method <code>- (NSString *)wdValue</code>). Could be <code>null</code></td>
 <td>'hello'</td>
 </tr>
+<tr>
+<td>hittable</td>
+<td>Whether the element is <a href="https://developer.apple.com/documentation/xctest/xcuielement/1500561-hittable">hittable</a>. This attribute is not included into the XML page source due to performance reasons, although you can use it in element locators or fetch its value using <a href="https://www.w3.org/TR/webdriver2/#get-element-attribute">getAttribute</a> API. <em>Only available since driver version 4.35</em>.</td>
+<td>'true'</td>
+</tr>
 </tbody>
 </table>
 
