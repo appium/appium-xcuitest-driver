@@ -36,36 +36,4 @@ describe('session commands', function () {
       stub.reset();
     }
   });
-
-  describe('getSession', function () {
-    it('should merge caps with WDA response', async function () {
-      driver.caps = {...driver.caps, platformName: 'iOS', app: 'NOTLOL.app'};
-      driver.deviceCaps = undefined;
-      let res = await driver.getSession();
-      proxySpy.calledOnce.should.be.true;
-      res.should.eql({
-        sillyCap: true,
-        app: 'LOL.app',
-        platformName: 'iOS',
-        udid: 'cecinestpasuneudid',
-        statBarHeight: 20,
-        viewportRect: {height: 3, width: 4, left: 0, top: 0},
-        pixelRatio: 3,
-      });
-    });
-
-    it('should merge caps with WDA response without screen info', async function () {
-      driver.caps = {...driver.caps, platformName: 'iOS', app: 'NOTLOL.app'};
-      driver.deviceCaps = undefined;
-      driver.opts.includeDeviceCapsToSessionInfo = false;
-      let res = await driver.getSession();
-      proxySpy.calledOnce.should.be.false;
-      res.should.eql({
-        sillyCap: true,
-        app: 'LOL.app',
-        platformName: 'iOS',
-        udid: 'cecinestpasuneudid',
-      });
-    });
-  });
 });

@@ -4,7 +4,7 @@ import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
 import {retryInterval} from 'asyncbox';
-import {extractCapabilityValue, amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {amendCapabilities, UICATALOG_CAPS} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
@@ -44,60 +44,6 @@ describe('XCUITestDriver - basics -', function () {
       } catch (err) {
         err.status.should.eql(7);
       }
-    });
-  });
-
-  describe('session -', function () {
-    it('should get session details with our caps merged with WDA response', async function () {
-      let actual = await driver.getSession(); // TODO: use a w3c compatible API
-      // `borwserName` can be different
-      ['UICatalog', 'UIKitCatalog'].should.include(actual.browserName);
-      delete actual.browserName;
-      // don't really know a priori what the udid should be, so just ensure
-      // it's there, and validate the rest
-      actual.udid.should.exist;
-      delete actual.udid;
-      // if we are getting metrics for this run (such as on Travis) there will
-      // be events in the result, but we cannot know what they should be
-      delete actual.events;
-      // sdk version can be a longer version
-      actual.sdkVersion
-        .indexOf(extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion'))
-        .should.eql(0);
-      delete actual.sdkVersion;
-      // there might have been added wdaLocalPort and webDriverAgentUrl
-      delete actual.wdaLocalPort;
-      delete actual.webDriverAgentUrl;
-      // now test for the visual and dimension data
-      actual.statBarHeight.should.be.a('number');
-      delete actual.statBarHeight;
-      actual.pixelRatio.should.be.a('number');
-      delete actual.pixelRatio;
-      actual.viewportRect.should.exist;
-      actual.viewportRect.height.should.be.a('number');
-      actual.viewportRect.width.should.be.a('number');
-      delete actual.viewportRect;
-      delete actual.usePrebuiltWDA;
-
-      // convert w3c caps into mjswp caps
-      let mjswpCaps = {};
-      Object.keys(UICATALOG_CAPS.alwaysMatch).forEach((key) => {
-        const mjswpCapsKey = key.startsWith('appium:') ? key.replace('appium:', '') : key;
-        mjswpCaps[mjswpCapsKey] = UICATALOG_CAPS.alwaysMatch[key];
-      });
-      const extraWdaCaps = {
-        CFBundleIdentifier: 'com.example.apple-samplecode.UICatalog',
-        device: 'iphone',
-      };
-      let expected = Object.assign({}, mjswpCaps, extraWdaCaps);
-      delete expected.udid; // for real device tests
-      delete expected.usePrebuiltWDA;
-
-      if (expected.showXcodeLog === undefined) {
-        delete expected.showXcodeLog;
-      }
-
-      actual.should.eql(expected);
     });
   });
 
@@ -170,7 +116,8 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
-      const {statBarHeight, pixelRatio, viewportRect} = await driver.getSession(); // TODO: use a w3c compatible API
+      const {statusBarSize, scale} = await driver.execute('mobile: deviceScreenInfo');
+      const {viewportRect} = await driver.execute('mobile: viewportRect');
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute('mobile: viewportScreenshot');
       const fullImg = sharp(Buffer.from(fullScreen, 'base64'));
@@ -186,7 +133,7 @@ describe('XCUITestDriver - basics -', function () {
         throw new Error('Image dimensions must not be undefined');
       }
       // Viewport size can be smaller than the full image size + status bar on some devices.
-      fullImgHeight.should.be.gte(viewImgHeight + Math.round(pixelRatio * statBarHeight));
+      fullImgHeight.should.be.gte(viewImgHeight + Math.round(scale * statusBarSize.height));
       viewImgHeight.should.eql(viewportRect.height);
       fullImgWidth.should.be.gte(viewImgWidth);
     });
