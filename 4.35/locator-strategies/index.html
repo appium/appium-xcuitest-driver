@@ -1120,17 +1120,17 @@
 <tbody>
 <tr>
 <td>id, name, accessibility id</td>
-<td>All these locator types are synonyms and internally get transformed into search by element's <code>name</code> <a href="element-attributes">attribute</a>.</td>
+<td>All these locator types are synonyms and internally get transformed into search by element's <code>name</code> <a href="../element-attributes/">attribute</a>.</td>
 <td><code>my name</code></td>
 </tr>
 <tr>
 <td>className</td>
-<td>Performs search by element's <code>type</code> <a href="element-attributes">attribute</a>. The full list of supported XCUIElement type names could be found in the official XCTest <a href="https://developer.apple.com/documentation/xctest/xcuielementtype">documentation on XCUIElementType</a></td>
+<td>Performs search by element's <code>type</code> <a href="../element-attributes/">attribute</a>. The full list of supported XCUIElement type names could be found in the official XCTest <a href="https://developer.apple.com/documentation/xctest/xcuielementtype">documentation on XCUIElementType</a></td>
 <td><code>XCUIElementTypeButton</code></td>
 </tr>
 <tr>
 <td>-ios predicate string</td>
-<td>This strategy is mapped to the native XCTest predicate locator. Check the <a href="https://academy.realm.io/posts/nspredicate-cheatsheet/">NSPredicate cheat sheet</a> for more details on how to build effective predicate expressions. All the supported element <a href="element-attributes">attributes</a> could be used in these expressions.</td>
+<td>This strategy is mapped to the native XCTest predicate locator. Check the <a href="https://academy.realm.io/posts/nspredicate-cheatsheet/">NSPredicate cheat sheet</a> for more details on how to build effective predicate expressions. All the supported element <a href="../element-attributes/">attributes</a> could be used in these expressions.</td>
 <td><code>(name == 'done' OR value == 'done') AND type IN {'XCUIElementTypeButton', 'XCUIElementTypeKey'}</code></td>
 </tr>
 <tr>
