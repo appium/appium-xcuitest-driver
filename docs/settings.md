@@ -2,7 +2,7 @@
 title: Settings
 ---
 
-XCUITest driver supports Appium [Settings API](https://appium.io/docs/en/advanced-concepts/settings/).
+XCUITest driver supports Appium [Settings API](https://appium.io/docs/en/latest/guides/settings/).
 Along with the common settings the following driver-specific settings are currently available:
 
 Name | Type | Description
