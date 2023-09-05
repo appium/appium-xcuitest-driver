@@ -19,7 +19,7 @@
     "url": "https://github.com/appium/appium-xcuitest-driver/issues"
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=16",
     "npm": ">=8"
   },
   "appium": {
