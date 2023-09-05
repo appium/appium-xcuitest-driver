@@ -1616,7 +1616,7 @@
 </tr>
 <tr>
 <td><code>appium:includeDeviceCapsToSessionInfo</code></td>
-<td>Whether to include screen information as the result of <a href="http://appium.io/docs/en/commands/session/get/">Get Session Capabilities</a>. It includes <code>pixelRatio</code>, <code>statBarHeight</code> and <code>viewportRect</code>, but it causes an extra API call to WDA which may increase the response time like <a href="https://github.com/appium/appium/issues/15101">this issue</a>. Defaults to <code>true</code>.</td>
+<td>Whether to include screen information as the result of <a href="http://appium.io/docs/en/commands/session/get/">Get Session Capabilities</a>. It includes <code>pixelRatio</code>, <code>statBarHeight</code> and <code>viewportRect</code>, but it causes an extra API call to WDA which may increase the response time like <a href="https://github.com/appium/appium/issues/15101">this issue</a>. Defaults to <code>true</code>. <strong>This capability has no effect since driver version 5</strong></td>
 </tr>
 <tr>
 <td><code>appium:resetLocationService</code></td>
@@ -1846,7 +1846,7 @@
 </tr>
 <tr>
 <td><code>appium:simpleIsVisibleCheck</code></td>
-<td>Use native methods for determining visibility of elements. In some cases this takes a long time. Setting this capability to <code>false</code> will cause the system to use the position and size of elements to make sure they are visible on the screen. This can, however, lead to false results in some situations. Defaults to <code>false</code>, except iOS 9.3, where it defaults to <code>true</code>.</td>
+<td>Use native methods for determining visibility of elements. In some cases this takes a long time. Setting this capability to <code>false</code> will cause the system to use the position and size of elements to make sure they are visible on the screen. This can, however, lead to false results in some situations. Defaults to <code>false</code>.</td>
 <td>e.g., <code>true</code>, <code>false</code></td>
 </tr>
 <tr>
