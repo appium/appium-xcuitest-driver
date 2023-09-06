@@ -1,3 +1,12 @@
+## [5.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.35.0...v5.0.0) (2023-09-05)
+
+### Code Refactoring
+
+* Deprecate obsolete endpoints ([#1955](https://github.com/appium/appium-xcuitest-driver/issues/1955))
+    * The includeDeviceCapsToSessionInfo capability has no effect now
+    * The obsolete getSession API does not return any extra driver-specific data anymore (e.g. statBarHeight, pixelRatio, viewportRect)
+    * Obsolete reset, launchApp and closeApp APIs now throw errors on invocation
+
 ## [4.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.34.1...v4.35.0) (2023-08-25)
 
 
