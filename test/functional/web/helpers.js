@@ -46,6 +46,16 @@ async function spinTitle (driver) {
   });
 }
 
+async function spinBodyIncludes (driver, expected) {
+  return await retry(10, async function () {
+    const el = await driver.$('//body');
+    const body = await el.getHTML();
+    if (!_.includes(body, expected)) {
+      throw new Error(`Could not find '${expected}' in the page body. Found: '${body}'`);
+    }
+  });
+}
+
 async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 500) {
   await retryInterval(tries, interval, async function () {
     const title = await spinTitle(driver);
@@ -81,4 +91,5 @@ export {
   GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE, PHISHING_END_POINT,
   APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE,
   doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2,
+  spinBodyIncludes,
 };

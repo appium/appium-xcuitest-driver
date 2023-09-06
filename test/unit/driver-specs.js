@@ -50,16 +50,14 @@ describe('XCUITestDriver', function () {
 
     it('simulator with ipv4', function () {
       driver.opts.realDevice = false;
-      driver.opts.address = '127.0.0.1';
-      driver.opts.port = '8080';
-      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8080/welcome');
+      driver.opts.wdaLocalPort = 8111;
+      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8111/health');
     });
 
     it('simulator with ipv6', function () {
       driver.opts.realDevice = false;
       driver.opts.address = '::1';
-      driver.opts.port = '8080';
-      expect(driver.getDefaultUrl()).eq('http://[::1]:8080/welcome');
+      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
     });
   });
 
