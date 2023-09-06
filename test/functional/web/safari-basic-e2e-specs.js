@@ -4,7 +4,7 @@ import B from 'bluebird';
 import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
 import { SAFARI_CAPS, amendCapabilities } from '../desired';
 import {
-  spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
+  spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE, spinBodyIncludes,
   // GUINEA_PIG_SCROLLABLE_PAGE,
   PHISHING_END_POINT, GUINEA_PIG_IFRAME_PAGE,
   doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2
@@ -35,13 +35,11 @@ describe('Safari - basics -', function () {
     });
 
     it('should start a session with default init', async function () {
-      const expectedTitle = 'Appium/welcome';
       driver = await initSession(amendCapabilities(SAFARI_CAPS, {
         'appium:noReset': false,
         'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       }));
-      const title = await spinTitle(driver);
-      title.should.equal(expectedTitle);
+      await spinBodyIncludes(driver, 'I-AM-ALIVE');
     });
 
     it('should start a session with custom init', async function () {
