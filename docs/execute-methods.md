@@ -1320,3 +1320,25 @@ detailedDescription | string | The detailed description of the found accessbilit
 compactDescription | string | The compact description of the found accessbility issue. | Some compact issue description
 auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
 element | string | The description of the element this issue was found for. | 'Yes' button
+
+### mobile: stopIdbVideoRecording
+
+Stops the video recording initiated by the `idbVideo` capability and either returns the resulting file as base64-encoded string or uploads it to a remote server. The resulting video file is encoded by [h264](https://en.wikipedia.org/wiki/Advanced_Video_Coding) codec and has .mp4 extension.
+An exception is thrown if the above capability has not been provided or there was a failure while recording/storing the video.
+Multiple calls to this method in scope of a single session will return the same video that the very first call has returned.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | no | The path to the remote location, where the resulting video should be uploaded. The following protocols are supported: `http`, `https`, `ftp`. Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated media file is too big to fit into the available process memory. | http://my.server.com/upload
+user | string | no | The name of the user for the remote authentication. Only works if `remotePath` is provided. | admin
+pass | string | no | The password for the remote authentication. Only works if `remotePath` is provided. | pas$$w0rd
+headers | map | no | Additional headers mapping for multipart http(s) uploads | {'X-Yolo': 'yolo'}
+fileFieldName | string | no | The name of the form field where the file content BLOB should be stored for http(s) uploads | payload
+formFields | map or array of pairs | no | Additional form fields for multipart http(s) uploads | {'Field': 'value'}
+method | 'PUT' \| 'POST' \| 'PATCH' | no | The http multipart upload method name. Only works if `remotePath` is provided. 'PUT' by default. | POST
+
+#### Returned Result
+
+Base64-encoded content of the recorded media file if `remotePath` parameter is empty or an empty string.

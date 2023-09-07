@@ -133,6 +133,15 @@ Capability | Description
 |`appium:enablePerformanceLogging`| Enable Safari's performance logging (default `false`)| `true`, `false`|
 |`appium:autoWebview`| Move directly into Webview context if available. Default `false`|`true`, `false`|
 
+### iOS Device Bridge (IDB)
+
+Providing these capabilities assumes you have the most recent version of [Facebook IDB](https://fbidb.io/) installed on the same machine where Appium server is running and the `idb` executable is available in PATH.
+
+|Capability|Description|Values|
+|----------|-----------|------|
+|`appium:launchWithIDB`| Launch WebDriverAgentRunner with [idb](https://github.com/facebook/idb) instead of xcodebuild. This could save a significant amout of time by skiping the xcodebuild process, although the idb might not be very reliable, especially with fresh Xcode SDKs. Check the [idb repository](https://github.com/facebook/idb/issues) for more details on possible compatibility issues. Defaults to `false` |`true` or `false`|
+|`appium:idbVideo`| Starts background screen recording of the device under test using [IDB video-stream](https://fbidb.io/docs/video/) feature. The recording continues until either the session is stopped or the [mobile: stopIdbVideoRecording](./execute-methods.md#mobile-stopidbvideorecording) extension is invoked. The capability value must be a valid map with the following entries: `fps` - desirable FPS count. The value should be in range [1, 60]. It is highly recommended to explicitly provide this value to avoid unexpected video artifacts; `startupTimeoutMs` - for how long to wait until the video recording starts. 30000ms by default; `compressionQuality` - 1.0 represents the quality level used for encoded frames, this is a value between 0.0 and 1.0. 1.0 by default; `scaleFactor` - The scale factor for the source video (between 0 and 1.0) for the stream. 1.0 by default. |{fps: 15, compressionQuality: 0.75, scaleFactor: 0.5}|
+
 ### Other
 
 |Capability|Description|Values|
@@ -141,7 +150,6 @@ Capability | Description
 |`appium:commandTimeouts`|Custom timeout(s) in milliseconds for WDA backend commands execution. This might be useful if WDA backend freezes unexpectedly or requires too much time to fail and blocks automated test execution. The value is expected to be of type string and can either contain max milliseconds to wait for each WDA command to be executed before terminating the session forcefully or a valid JSON string, where keys are internal Appium command names (you can find these in logs, look for "Executing command 'command_name'" records) and values are timeouts in milliseconds. You can also set the 'default' key to assign the timeout for all other commands not explicitly enumerated as JSON keys.|`'120000'`, `'{"findElement": 40000, "findElements": 40000, "setValue": 20000, "default": 120000}'`|
 |`appium:useJSONSource`|Get JSON source from WDA and transform it to XML on the Appium server side. Defaults to `false`.|e.g., `true`|
 |`appium:skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
-|`appium:launchWithIDB`| Launch WebDriverAgentRunner with [idb](https://github.com/facebook/idb) instead of xcodebuild. This could save a significant amout of time by skiping the xcodebuild process, although the idb might not be very reliable, especially with fresh Xcode SDKs. Check the [idb repository](https://github.com/facebook/idb/issues) for more details on possible compatibility issues. Defaults to `false` |`true` or `false`|
 |`appium:showIOSLog`| Whether to show any logs captured from a device in the appium logs. Default `false`|`true` or `false`|
 |`appium:clearSystemFiles`|Whether to clean temporary XCTest files (for example logs) when a testing session is closed. `false` by default| `true` or `false`
 |`appium:newCommandTimeout`|How long (in seconds) the driver should wait for a new command from the client before assuming the client has stopped sending requests. After the timeout the session is going to be deleted. `60` seconds by default. Setting it to zero disables the timer. |e.g. `100`|

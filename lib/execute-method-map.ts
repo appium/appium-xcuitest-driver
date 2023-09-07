@@ -320,6 +320,12 @@ export const executeMethodMap = {
       required: ['style'],
     },
   },
+  'mobile: stopIdbVideoRecording': {
+    command: 'mobileStopIdbVideoRecording',
+    params: {
+      optional: ['remotePath', 'user', 'pass', 'headers', 'fileFieldName', 'formFields', 'method'],
+    },
+  },
   'mobile: siriCommand': {
     command: 'mobileSiriCommand',
     params: {
