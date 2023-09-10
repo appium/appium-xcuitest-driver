@@ -1,22 +1,20 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { retryInterval } from 'asyncbox';
-import { getSimulator } from 'appium-ios-simulator';
-import {
-  killAllSimulators, shutdownSimulator, deleteDeviceWithRetry
-} from '../helpers/simulator';
+import {retryInterval} from 'asyncbox';
+import {getSimulator} from 'appium-ios-simulator';
+import {killAllSimulators, shutdownSimulator, deleteDeviceWithRetry} from '../helpers/simulator';
 import Simctl from 'node-simctl';
 import B from 'bluebird';
+import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
 import {
-  MOCHA_TIMEOUT, initSession, deleteSession, HOST
-} from '../helpers/session';
-import {
-  UICATALOG_SIM_CAPS, amendCapabilities, extractCapabilityValue,
-  PLATFORM_VERSION, DEVICE_NAME,
+  UICATALOG_SIM_CAPS,
+  amendCapabilities,
+  extractCapabilityValue,
+  PLATFORM_VERSION,
+  DEVICE_NAME,
 } from '../desired';
-import { translateDeviceName } from '../../../lib/utils';
+import {translateDeviceName} from '../../../lib/utils';
 import axios from 'axios';
-
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
@@ -25,15 +23,15 @@ chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
 
-async function createDevice () {
+async function createDevice() {
   return await simctl.createDevice(
     SIM_DEVICE_NAME,
     translateDeviceName(PLATFORM_VERSION, DEVICE_NAME),
-    PLATFORM_VERSION
+    PLATFORM_VERSION,
   );
 }
 
-async function getNumSims () {
+async function getNumSims() {
   return (await simctl.getDevices())[PLATFORM_VERSION].length;
 }
 
@@ -140,17 +138,15 @@ describe('XCUITestDriver', function () {
         'appium:wdaLocalPort': 6000,
       });
       driver = await initSession(localCaps);
-      await axios({url: `http://${HOST}:8100/status`})
-        .should.be.rejectedWith(/ECONNREFUSED/);
-      await axios({url: `http://${HOST}:8100/status`})
-        .should.eventually.not.be.rejected;
+      await axios({url: `http://${HOST}:8100/status`}).should.be.rejectedWith(/ECONNREFUSED/);
+      await axios({url: `http://${HOST}:8100/status`}).should.eventually.not.be.rejected;
     });
   });
 
   describe('initial orientation', function () {
-    async function runOrientationTest (initialOrientation) {
+    async function runOrientationTest(initialOrientation) {
       const localCaps = amendCapabilities(caps, {
-        'appium:orientation': initialOrientation
+        'appium:orientation': initialOrientation,
       });
       driver = await initSession(localCaps);
 
@@ -175,7 +171,7 @@ describe('XCUITestDriver', function () {
 
     it('default: creates sim and deletes it afterwards', async function () {
       const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
-        'appium:enforceFreshSimulatorCreation': true
+        'appium:enforceFreshSimulatorCreation': true,
       });
 
       const simsBefore = await getNumSims();
@@ -250,7 +246,6 @@ describe('XCUITestDriver', function () {
 
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
-
       } finally {
         // cleanup
         await shutdownSimulator(sim);
@@ -261,11 +256,10 @@ describe('XCUITestDriver', function () {
     it('with invalid udid: throws an error', async function () {
       // test
       const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
-        'appium:udid': 'some-random-udid'
+        'appium:udid': 'some-random-udid',
       });
 
-      await initSession(caps)
-        .should.be.rejectedWith('Unknown device or simulator UDID');
+      await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
     });
 
     it('with non-existent udid: throws an error', async function () {
@@ -273,8 +267,7 @@ describe('XCUITestDriver', function () {
       const udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
       const caps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
 
-      await initSession(caps)
-        .should.be.rejectedWith('Unknown device or simulator UDID');
+      await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
     });
 
     it('with noReset set to true: leaves sim booted', async function () {
@@ -292,7 +285,7 @@ describe('XCUITestDriver', function () {
         // test
         const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
           'appium:udid': udid,
-          'appium:noReset': true
+          'appium:noReset': true,
         });
 
         const simsBefore = await getNumSims();

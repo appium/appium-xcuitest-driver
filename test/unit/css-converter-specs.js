@@ -23,7 +23,7 @@ describe('css-converter.js', function () {
       ['*:visible', '**/*[`visible == 1`]'],
       [
         'XCUIElementTypeWindow > XCUIElementTypeText',
-        '**/XCUIElementTypeWindow/XCUIElementTypeText'
+        '**/XCUIElementTypeWindow/XCUIElementTypeText',
       ],
       [
         'XCUIElementTypeWindow XCUIElementTypeText',
@@ -31,7 +31,10 @@ describe('css-converter.js', function () {
       ],
       ['XCUIElementTypeWindow#hello', '**/XCUIElementTypeWindow[`name == "hello"`]'],
       ['#foobar', '**/*[`name == "foobar"`]'],
-      ['XCUIElementTypeText#foo > #bar', '**/XCUIElementTypeText[`name == "foo"`]/*[`name == "bar"`]'],
+      [
+        'XCUIElementTypeText#foo > #bar',
+        '**/XCUIElementTypeText[`name == "foo"`]/*[`name == "bar"`]',
+      ],
       [
         'window#foo[visible=true][value^=foo] > text#bar other:nth-child(3)',
         '**/XCUIElementTypeWindow[`name == "foo" AND visible == 1 AND value BEGINSWITH "foo"`]/XCUIElementTypeText[`name == "bar"`]/**/XCUIElementTypeOther[3]',
@@ -45,7 +48,7 @@ describe('css-converter.js', function () {
     }
   });
   describe('unsupported css', function () {
-    const testCases = /** @type {const} */([
+    const testCases = /** @type {const} */ ([
       '*[visible="ItS ViSiBlE"]',
       '*[foo="bar"]',
       `This isn't valid[ css`,

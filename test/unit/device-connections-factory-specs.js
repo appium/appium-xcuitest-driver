@@ -1,8 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { DeviceConnectionsFactory } from '../../lib/device-connections-factory';
-
+import {DeviceConnectionsFactory} from '../../lib/device-connections-factory';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -54,8 +53,8 @@ describe('DeviceConnectionsFactory', function () {
       'udid4:6545': {iproxy: {stop: () => {}}},
     };
 
-    devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping))
+    devConFactory
+      ._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping))
       .should.eql(['udid:1234', 'udid4:6545']);
   });
-
 });

@@ -145,7 +145,7 @@ export interface PageChangeNotification {
  */
 export type ContainerRootSupplier = (
   bundleId: string,
-  containerType: string | null
+  containerType: string | null,
 ) => string | Promise<string>;
 
 export interface WaitingAtoms {

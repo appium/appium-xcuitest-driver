@@ -133,7 +133,9 @@ describe('XCUITestDriver', function () {
           versionFloat: 20.0,
           major: 20,
           minor: 0,
-          toString() { return '20.0'; },
+          toString() {
+            return '20.0';
+          },
         });
       });
 
@@ -152,7 +154,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {
               'appium:skipLogCapture': false,
             },
-          })
+          }),
         );
         resCaps[1].javascriptEnabled.should.be.true;
         driver.startLogCapture.called.should.be.true;
@@ -166,7 +168,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {
               'appium:skipLogCapture': true,
             },
-          })
+          }),
         );
         resCaps[1].javascriptEnabled.should.be.true;
         driver.startLogCapture.called.should.be.false;
@@ -180,7 +182,7 @@ describe('XCUITestDriver', function () {
           null,
           _.merge({}, caps, {
             alwaysMatch: {'appium:reduceTransparency': true},
-          })
+          }),
         );
         spy.calledOnce.should.be.true;
         spy.firstCall.args[0].should.eql(true);
@@ -195,7 +197,7 @@ describe('XCUITestDriver', function () {
           null,
           _.merge({}, caps, {
             alwaysMatch: {'appium:reduceTransparency': true},
-          })
+          }),
         );
         spy.notCalled.should.be.true;
       });
@@ -221,7 +223,7 @@ describe('XCUITestDriver', function () {
 
       it('should allow execute methods with hella whitespace', async function () {
         await expect(driver.execute('mobile:           deviceInfo')).to.eventually.eql(
-          deviceInfoResponse
+          deviceInfoResponse,
         );
       });
 
@@ -254,7 +256,7 @@ describe('XCUITestDriver', function () {
         'some-device',
         '/path/to/iosApp.app',
         undefined,
-        {skipUninstall: true, timeout: undefined, strategy: undefined}
+        {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
     });
 
@@ -275,13 +277,13 @@ describe('XCUITestDriver', function () {
         'some-device',
         '/path/to/iosApp1.app',
         undefined,
-        {skipUninstall: true, timeout: undefined, strategy: undefined}
+        {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
         undefined,
-        {skipUninstall: true, timeout: undefined, strategy: undefined}
+        {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
     });
 
@@ -301,7 +303,7 @@ describe('XCUITestDriver', function () {
         'some-device',
         '/path/to/iosApp.app',
         undefined,
-        {newSimulator: false}
+        {newSimulator: false},
       );
     });
 
@@ -323,13 +325,13 @@ describe('XCUITestDriver', function () {
         'some-device',
         '/path/to/iosApp1.app',
         undefined,
-        {newSimulator: false}
+        {newSimulator: false},
       );
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
         undefined,
-        {newSimulator: false}
+        {newSimulator: false},
       );
     });
   });
@@ -358,7 +360,7 @@ describe('XCUITestDriver', function () {
       Object.getOwnPropertyNames(XCUITestDriver.prototype).map((propName) => [
         propName,
         XCUITestDriver.prototype[propName],
-      ])
+      ]),
     );
 
     for (const [mixinName, mixin] of Object.entries(cmds)) {
@@ -371,13 +373,13 @@ describe('XCUITestDriver', function () {
         });
 
         for (const propName of Object.getOwnPropertyNames(mixin).filter(
-          (propName) => !memoizedMethods.get(mixinName)?.has(propName)
+          (propName) => !memoizedMethods.get(mixinName)?.has(propName),
         )) {
           it(`${propName} should be mixed in`, function () {
             try {
               expect(
                 foundProps.has(propName),
-                `"${propName}" overwrites a member from the driver prototype or another mixin`
+                `"${propName}" overwrites a member from the driver prototype or another mixin`,
               ).to.be.false;
               expect(driver).to.have.property(propName, mixin[propName]);
             } finally {

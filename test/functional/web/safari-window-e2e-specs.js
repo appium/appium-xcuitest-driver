@@ -1,14 +1,16 @@
 import chai from 'chai';
 import _ from 'lodash';
 import chaiAsPromised from 'chai-as-promised';
-import { SAFARI_CAPS, amendCapabilities } from '../desired';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
+import {SAFARI_CAPS, amendCapabilities} from '../desired';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
-  openPage, spinTitleEquals,
-  GUINEA_PIG_PAGE, GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE
+  openPage,
+  spinTitleEquals,
+  GUINEA_PIG_PAGE,
+  GUINEA_PIG_FRAME_PAGE,
+  GUINEA_PIG_IFRAME_PAGE,
 } from './helpers';
-import { waitForCondition } from 'asyncbox';
-
+import {waitForCondition} from 'asyncbox';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -79,13 +81,14 @@ describe('safari - windows and frames', function () {
       it.skip('should be able to open js popup windows', async function () {
         await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
         await driver.acceptAlert();
-        await spinTitleEquals(driver, 'I am another page title', 5)
-          .should.eventually.not.be.rejected;
+        await spinTitleEquals(driver, 'I am another page title', 5).should.eventually.not.be
+          .rejected;
         await driver.closeWindow();
       });
 
       it('should throw nosuchwindow if there is not one', async function () {
-        await driver.switchToWindow('noexistman')
+        await driver
+          .switchToWindow('noexistman')
           .should.be.rejectedWith(/window could not be found/);
       });
 
@@ -127,14 +130,14 @@ describe('safari - windows and frames', function () {
         const waitUntilNotExist = async (locator, timeout = 5000) => {
           await driver.setTimeout({implicit: 0});
           try {
-            await waitForCondition(
-              async () => _.isEmpty(await driver.$$(locator)), {
-                waitMs: timeout,
-                intervalMs: 300,
-              }
-            );
+            await waitForCondition(async () => _.isEmpty(await driver.$$(locator)), {
+              waitMs: timeout,
+              intervalMs: 300,
+            });
           } catch (e) {
-            throw new Error(`Element located by '${locator}' still exists after ${timeout}ms timeout`);
+            throw new Error(
+              `Element located by '${locator}' still exists after ${timeout}ms timeout`,
+            );
           } finally {
             await driver.setTimeout({implicit: DEFAULT_IMPLICIT_TIMEOUT_MS});
           }
@@ -166,8 +169,7 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
+        await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
       });
 
       it('should switch to frame by element', async function () {
@@ -175,8 +177,7 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_3_TITLE);
+        await h1.getText().should.eventually.equal(SUB_FRAME_3_TITLE);
       });
 
       it('should switch back to default content from frame', async function () {
@@ -184,8 +185,7 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
+        await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
         _.isEmpty(await driver.$$('<frameset />')).should.be.false;
@@ -201,15 +201,13 @@ describe('safari - windows and frames', function () {
 
       it('should execute javascript in frame', async function () {
         await driver.switchToFrame(1);
-        await driver.executeScript(GET_ELEM_SYNC, [])
-          .should.eventually.equal(SUB_FRAME_2_TITLE);
+        await driver.executeScript(GET_ELEM_SYNC, []).should.eventually.equal(SUB_FRAME_2_TITLE);
       });
 
       it('should execute async javascript in frame', async function () {
-        await driver.setTimeout({ script: 2000 });
+        await driver.setTimeout({script: 2000});
         await driver.switchToFrame(0);
-        await driver.executeAsync(GET_ELEM_ASYNC)
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
+        await driver.executeAsync(GET_ELEM_ASYNC).should.eventually.equal(SUB_FRAME_1_TITLE);
       });
 
       it('should get source within a frame', async function () {
@@ -233,8 +231,7 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
+        await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
       });
 
       it('should switch to iframe by element', async function () {
@@ -242,8 +239,7 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_3_TITLE);
+        await h1.getText().should.eventually.equal(SUB_FRAME_3_TITLE);
       });
 
       it('should not switch to iframe by element of wrong type', async function () {
@@ -256,18 +252,16 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await h1.getText()
-          .should.eventually.equal(SUB_FRAME_1_TITLE);
+        await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
         _.size(await driver.$$('<iframe />')).should.eql(3);
       });
 
       it('should get source within an iframe', async function () {
-        await driver.getPageSource()
-          .should.eventually.include(IFRAME_FRAMESET_TITLE);
+        await driver.getPageSource().should.eventually.include(IFRAME_FRAMESET_TITLE);
 
-          await driver.switchToFrame(await driver.$('[name="iframe1"]'));
+        await driver.switchToFrame(await driver.$('[name="iframe1"]'));
 
         const frameSource = await driver.getPageSource();
         frameSource.should.include(SUB_FRAME_1_TITLE);

@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import path from 'path';
-import { util, node } from 'appium/support';
-
+import {util, node} from 'appium/support';
 
 // translate integer environment variable to a boolean 0=false, !0=true
-function checkFeatureInEnv (envArg) {
+function checkFeatureInEnv(envArg) {
   /** @type {string|number} */
   let feature = parseInt(String(process.env[envArg]), 10);
   if (isNaN(feature)) {
@@ -13,14 +12,14 @@ function checkFeatureInEnv (envArg) {
   return !!feature;
 }
 
-function amendCapabilities (baseCaps, ...newCaps) {
+function amendCapabilities(baseCaps, ...newCaps) {
   return node.deepFreeze({
     alwaysMatch: _.cloneDeep(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
     firstMatch: [{}],
   });
 }
 
-function extractCapabilityValue (caps, capName) {
+function extractCapabilityValue(caps, capName) {
   return caps?.alwaysMatch?.[capName];
 }
 
@@ -32,12 +31,15 @@ const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || '
 const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const APPS = {
-  uiCatalogApp: path.resolve(__dirname, '..', 'assets',
-    `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`), // https://github.com/appium/ios-uicatalog
+  uiCatalogApp: path.resolve(
+    __dirname,
+    '..',
+    'assets',
+    `${IS_ABOVE_IOS13 ? 'UIKitCatalog' : 'UICatalog'}-iphonesimulator.app`,
+  ), // https://github.com/appium/ios-uicatalog
   iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app'), // https://github.com/appium/ios-test-app
-  biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app') // https://github.com/mwakizaka/LocalAuthentication
+  biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app'), // https://github.com/mwakizaka/LocalAuthentication
 };
-
 
 const initTimeout = 60 * 1000 * (process.env.CI ? 16 : 4);
 const GENERIC_CAPS = node.deepFreeze({
@@ -70,11 +72,11 @@ const UICATALOG_SIM_CAPS = amendCapabilities(GENERIC_CAPS, {
 }); // do not want to have no reset on the tests that use this
 
 const SETTINGS_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:bundleId': 'com.apple.Preferences'
+  'appium:bundleId': 'com.apple.Preferences',
 });
 
 const SAFARI_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'browserName': 'Safari',
+  browserName: 'Safari',
   'appium:nativeWebTap': false,
 });
 
@@ -89,7 +91,7 @@ const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
 
 const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:app': APPS.biometricApp,
-  'appium:deviceName': DEVICE_NAME_FOR_TOUCH_ID
+  'appium:deviceName': DEVICE_NAME_FOR_TOUCH_ID,
 });
 
 const FACEIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
@@ -103,7 +105,19 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
 });
 
 export {
-  UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
-  PLATFORM_VERSION, TOUCHIDAPP_CAPS, FACEIDAPP_CAPS, DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD,
-  SETTINGS_CAPS, TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS, amendCapabilities, extractCapabilityValue,
+  UICATALOG_CAPS,
+  UICATALOG_SIM_CAPS,
+  SAFARI_CAPS,
+  TESTAPP_CAPS,
+  PLATFORM_VERSION,
+  TOUCHIDAPP_CAPS,
+  FACEIDAPP_CAPS,
+  DEVICE_NAME,
+  DEVICE_NAME_FOR_SAFARI_IPAD,
+  SETTINGS_CAPS,
+  TVOS_CAPS,
+  MULTIPLE_APPS,
+  GENERIC_CAPS,
+  amendCapabilities,
+  extractCapabilityValue,
 };

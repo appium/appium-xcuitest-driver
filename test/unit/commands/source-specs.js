@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 
-
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
 const xmlBody = '<some-xml/>';
 const srcTree = `${xmlHeader}${xmlBody}`;

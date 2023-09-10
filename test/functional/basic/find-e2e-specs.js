@@ -2,12 +2,16 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
-import { retryInterval } from 'asyncbox';
-import { extractCapabilityValue, amendCapabilities, UICATALOG_CAPS, PLATFORM_VERSION } from '../desired';
-import { PREDICATE_SEARCH, CLASS_CHAIN_SEARCH } from '../helpers/element';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-import { util } from 'appium/support';
-
+import {retryInterval} from 'asyncbox';
+import {
+  extractCapabilityValue,
+  amendCapabilities,
+  UICATALOG_CAPS,
+  PLATFORM_VERSION,
+} from '../desired';
+import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {util} from 'appium/support';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -124,7 +128,6 @@ describe('XCUITestDriver - find -', function () {
 
   describe('by xpath', function () {
     describe('individual calls', function () {
-
       before(async function () {
         // before anything, try to go back
         // otherwise the tests will fail erroneously
@@ -201,7 +204,9 @@ describe('XCUITestDriver - find -', function () {
       });
 
       it('should filter by partial text', async function () {
-        let el = await driver.$(`//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`);
+        let el = await driver.$(
+          `//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`,
+        );
         (await el.getAttribute('name')).should.equal('X Button');
       });
     });
@@ -229,7 +234,10 @@ describe('XCUITestDriver - find -', function () {
 
       describe.skip('finding specific path', function () {
         for (let n = 0; n < runs; n++) {
-          describe(`test ${n + 1}`, test('//XCUIElementTypeApplication[0]/XCUIElementTypeWindow[0]', 17));
+          describe(
+            `test ${n + 1}`,
+            test('//XCUIElementTypeApplication[0]/XCUIElementTypeWindow[0]', 17),
+          );
         }
       });
 
@@ -285,7 +293,10 @@ describe('XCUITestDriver - find -', function () {
     describe('textfield case', function () {
       it('should find only one textfield', async function () {
         // TODO: this works locally but fails in CI.
-        if (process.env.CI && extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion') === '10.3') {
+        if (
+          process.env.CI &&
+          extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion') === '10.3'
+        ) {
           return this.skip();
         }
 

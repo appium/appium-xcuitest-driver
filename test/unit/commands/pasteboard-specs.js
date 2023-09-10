@@ -2,14 +2,13 @@ import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 import Simctl from 'node-simctl';
 
-
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
   driver.opts = {
     // @ts-expect-error do not put random stuff on opts object
     device: {
       simctl: new Simctl(),
-    }
+    },
   };
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 

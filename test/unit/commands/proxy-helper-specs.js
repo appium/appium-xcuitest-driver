@@ -1,9 +1,8 @@
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import XCUITestDriver from '../../../lib/driver';
-
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -36,8 +35,10 @@ describe('proxy commands', function () {
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if no method is given', async function () {
-      // @ts-expect-error incorrect usage
-      await driver.proxyCommand('/some/endpoint', null, {some: 'stuff'}).should.be.rejectedWith(/GET, POST/);
+      await driver
+        // @ts-expect-error incorrect usage
+        .proxyCommand('/some/endpoint', null, {some: 'stuff'})
+        .should.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {
