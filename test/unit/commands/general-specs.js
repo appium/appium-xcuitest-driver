@@ -164,7 +164,7 @@ describe('general commands', function () {
           alwaysMatch: {
             'appium:nativeWebTap': true,
           },
-        })
+        }),
       );
       (await driver.getSettings()).nativeWebTap.should.eql(true);
     });

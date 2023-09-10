@@ -1,13 +1,11 @@
-
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { amendCapabilities, TOUCHIDAPP_CAPS } from '../desired';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
+import {amendCapabilities, TOUCHIDAPP_CAPS} from '../desired';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import B from 'bluebird';
-import { killAllSimulators } from '../helpers/simulator';
-import { CLASS_CHAIN_SEARCH } from '../helpers/element';
-import { waitForCondition } from 'asyncbox';
-
+import {killAllSimulators} from '../helpers/simulator';
+import {CLASS_CHAIN_SEARCH} from '../helpers/element';
+import {waitForCondition} from 'asyncbox';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -52,14 +50,14 @@ if (!process.env.CI) {
     async function waitUntilExist(locator, timeout = 5000) {
       await driver.setTimeout({implicit: 0});
       try {
-        await waitForCondition(
-          async () => (await driver.$$(locator)).length > 0, {
-            waitMs: timeout,
-            intervalMs: 300,
-          }
-        );
+        await waitForCondition(async () => (await driver.$$(locator)).length > 0, {
+          waitMs: timeout,
+          intervalMs: 300,
+        });
       } catch (e) {
-        throw new Error(`Element located by '${locator}' done not exist after ${timeout}ms timeout`);
+        throw new Error(
+          `Element located by '${locator}' done not exist after ${timeout}ms timeout`,
+        );
       } finally {
         await driver.setTimeout({implicit: DEFAULT_IMPLICIT_TIMEOUT_MS});
       }

@@ -1,16 +1,19 @@
 import chai from 'chai';
-import { parseXCTestStdout } from '../../../lib/commands/xctest';
+import {parseXCTestStdout} from '../../../lib/commands/xctest';
 
 chai.should();
 
 describe('session commands', function () {
-  const xctestLogs1Success = `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Passed: True | Crashed: False | Duration: 1.485 | Failure message:  | Location :0
+  const xctestLogs1Success =
+    `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Passed: True | Crashed: False | Duration: 1.485 | Failure message:  | Location :0
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Passed: True | Crashed: False | Duration: 14.297 | Failure message:  | Location :0  
   `.trim();
-  const xctestLogs2Success = ` XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Status: passed | Duration: 2.2897069454193115
+  const xctestLogs2Success =
+    ` XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Status: passed | Duration: 2.2897069454193115
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Status: passed | Duration: 17.47773802280426
   `.trim();
-  const xctestLogs2Failure = `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Status: passed | Duration: 1.9255789518356323
+  const xctestLogs2Failure =
+    `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Status: passed | Duration: 1.9255789518356323
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Status: failed | Duration: 0.033468008041381836 | Failure message: XCTAssertTrue failed - error message here | Location /path/to/XCTesterAppUITests/XCTesterAppUITests.swift:36
   `.trim();
 
@@ -28,7 +31,8 @@ describe('session commands', function () {
         location: ':0',
       });
       results[1].should.eql({
-        testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
+        testName:
+          'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: true,
         status: 'passed',
         crashed: false,
@@ -49,7 +53,8 @@ describe('session commands', function () {
         duration: 2.2897069454193115,
       });
       results[1].should.eql({
-        testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
+        testName:
+          'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: true,
         status: 'passed',
         crashed: false,
@@ -68,7 +73,8 @@ describe('session commands', function () {
         duration: 1.9255789518356323,
       });
       results[1].should.eql({
-        testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
+        testName:
+          'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: false,
         status: 'failed',
         crashed: false,

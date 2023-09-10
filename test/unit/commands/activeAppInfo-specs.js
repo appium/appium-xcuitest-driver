@@ -25,7 +25,7 @@ describe('get activeapp commands', function () {
       pid: 15438,
       name: '',
       bundleId: 'com.apple.DocumentsApp',
-      processArguments: { env: { HAPPY: 'testing' }, args: ['happy', 'testing'] }
+      processArguments: {env: {HAPPY: 'testing'}, args: ['happy', 'testing']},
     });
 
     const out = await driver.mobileGetActiveAppInfo();

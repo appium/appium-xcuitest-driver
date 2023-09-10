@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import Simctl from 'node-simctl';
-import { retryInterval } from 'asyncbox';
-import { resetTestProcesses } from 'appium-webdriveragent';
-import { shutdownSimulator } from '../../../lib/simulator-management';
-import { killAllSimulators as simKill } from 'appium-ios-simulator';
+import {retryInterval} from 'asyncbox';
+import {resetTestProcesses} from 'appium-webdriveragent';
+import {shutdownSimulator} from '../../../lib/simulator-management';
+import {killAllSimulators as simKill} from 'appium-ios-simulator';
 
-
-async function killAllSimulators () {
+async function killAllSimulators() {
   const simctl = new Simctl();
   const allDevices = _.flatMap(_.values(await simctl.getDevices()));
   const bootedDevices = allDevices.filter((device) => device.state === 'Booted');
@@ -21,12 +20,11 @@ async function killAllSimulators () {
   await simKill();
 }
 
-async function deleteDeviceWithRetry (udid) {
+async function deleteDeviceWithRetry(udid) {
   const simctl = new Simctl({udid});
   try {
     await retryInterval(10, 1000, simctl.deleteDevice.bind(simctl));
   } catch (ign) {}
 }
 
-
-export { killAllSimulators, shutdownSimulator, deleteDeviceWithRetry };
+export {killAllSimulators, shutdownSimulator, deleteDeviceWithRetry};

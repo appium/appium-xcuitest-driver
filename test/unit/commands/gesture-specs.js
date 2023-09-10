@@ -30,13 +30,13 @@ describe('gesture commands', function () {
     it('should properly transform complex chain with custom keys', function () {
       gesturesChainToString(
         [{action: 'press', x: 1, options: {count: 1}}, {action: 'release'}],
-        ['x']
+        ['x'],
       ).should.equal('press(x=1)-release');
     });
 
     it('should properly transform complex chain with all keys', function () {
       gesturesChainToString([{action: 'press', x: 1}, {action: 'release'}], null).should.equal(
-        'press(x=1)-release'
+        'press(x=1)-release',
       );
     });
   });
@@ -138,12 +138,9 @@ describe('gesture commands', function () {
       const commandName = 'pinch';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4, scale: 4.1})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5})
-          .should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1}).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5}).should.be
+          .rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -221,9 +218,7 @@ describe('gesture commands', function () {
         await driver
           .execute(`mobile: ${commandName}`, {duration: 100, y: 200})
           .should.be.rejectedWith(/"x" parameter should be a valid number/i);
-        await driver
-          .execute(`mobile: ${commandName}`, {x: 100, y: 200})
-          .should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {x: 100, y: 200}).should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -244,7 +239,7 @@ describe('gesture commands', function () {
         proxySpy.should.have.been.calledOnceWith(
           '/wda/element/4/touchAndHold',
           'POST',
-          _.omit(opts, 'elementId') // note elementId here, not element
+          _.omit(opts, 'elementId'), // note elementId here, not element
         );
       });
 
@@ -259,15 +254,9 @@ describe('gesture commands', function () {
       const commandName = 'tap';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {x: 100})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {y: 200})
-          .should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {}).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {x: 100}).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {y: 200}).should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -296,15 +285,9 @@ describe('gesture commands', function () {
       const commandName = 'selectPickerWheelValue';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {order: 'next'})
-          .should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {}).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {element: 4}).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {order: 'next'}).should.be.rejected;
       });
 
       it('should throw an error if offset value cannot be parsed', async function () {
@@ -325,7 +308,7 @@ describe('gesture commands', function () {
         proxySpy.should.have.been.calledOnceWith(
           '/wda/pickerwheel/4/select',
           'POST',
-          _.omit(opts, 'elementId')
+          _.omit(opts, 'elementId'),
         );
       });
     });
@@ -334,21 +317,32 @@ describe('gesture commands', function () {
       const commandName = 'dragFromToForDuration';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})
+        await driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})
           .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 100, fromY: 1, toX: 100, toY: 100})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, toX: 100, toY: 100})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toY: 100})
-          .should.be.rejected;
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 100, fromX: 1, fromY: 1, toX: 100})
-          .should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {
+          duration: 100,
+          fromY: 1,
+          toX: 100,
+          toY: 100,
+        }).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {
+          duration: 100,
+          fromX: 1,
+          toX: 100,
+          toY: 100,
+        }).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {
+          duration: 100,
+          fromX: 1,
+          fromY: 1,
+          toY: 100,
+        }).should.be.rejected;
+        await driver.execute(`mobile: ${commandName}`, {
+          duration: 100,
+          fromX: 1,
+          fromY: 1,
+          toX: 100,
+        }).should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
@@ -406,7 +400,7 @@ describe('gesture commands', function () {
         proxySpy.should.have.been.calledOnceWith(
           '/wda/element/4/dragfromtoforduration',
           'POST',
-          _.omit(opts, 'element')
+          _.omit(opts, 'element'),
         );
       });
 

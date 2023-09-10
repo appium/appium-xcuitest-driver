@@ -1,11 +1,12 @@
 import chai from 'chai';
-import { parseCommonName } from '../../../lib/commands/certificate';
+import {parseCommonName} from '../../../lib/commands/certificate';
 
 chai.should();
 
 describe('ssl certificate parser command', function () {
   const sslOutputLibreSSL = 'subject= /C=US/ST=California/L=San Francisco/O=BadSSL/CN=*.badssl.com';
-  const sslOutputOpenSSL = 'subject=C = US, ST = California, L = San Francisco, O = BadSSL, CN = *.badssl.com';
+  const sslOutputOpenSSL =
+    'subject=C = US, ST = California, L = San Francisco, O = BadSSL, CN = *.badssl.com';
   const expectedString = '*.badssl.com';
 
   it('try to parse LibreSSL command output', function () {

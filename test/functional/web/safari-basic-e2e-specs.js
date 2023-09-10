@@ -1,17 +1,26 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA } from '../helpers/session';
-import { SAFARI_CAPS, amendCapabilities } from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
-  spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE, spinBodyIncludes,
+  spinTitle,
+  spinTitleEquals,
+  spinWait,
+  openPage,
+  GUINEA_PIG_PAGE,
+  spinBodyIncludes,
   // GUINEA_PIG_SCROLLABLE_PAGE,
-  PHISHING_END_POINT, GUINEA_PIG_IFRAME_PAGE,
-  doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2
+  PHISHING_END_POINT,
+  GUINEA_PIG_IFRAME_PAGE,
+  doesIncludeCookie,
+  doesNotIncludeCookie,
+  newCookie,
+  oldCookie1,
+  oldCookie2,
 } from './helpers';
-import { util } from 'appium/support';
-import { retryInterval } from 'asyncbox';
-
+import {util} from 'appium/support';
+import {retryInterval} from 'asyncbox';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -35,17 +44,21 @@ describe('Safari - basics -', function () {
     });
 
     it('should start a session with default init', async function () {
-      driver = await initSession(amendCapabilities(SAFARI_CAPS, {
-        'appium:noReset': false,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      }));
+      driver = await initSession(
+        amendCapabilities(SAFARI_CAPS, {
+          'appium:noReset': false,
+          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+        }),
+      );
       await spinBodyIncludes(driver, 'I-AM-ALIVE');
     });
 
     it('should start a session with custom init', async function () {
-      driver = await initSession(amendCapabilities(DEFAULT_CAPS, {
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      }));
+      driver = await initSession(
+        amendCapabilities(DEFAULT_CAPS, {
+          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+        }),
+      );
       const title = await spinTitle(driver);
       const expectedTitle = 'I am a page title';
       title.should.equal(expectedTitle);
@@ -64,7 +77,6 @@ describe('Safari - basics -', function () {
     after(async function () {
       await deleteSession();
     });
-
 
     // TODO: in appium-remote-debugger, figure out how to check if a page is loaded
     describe.skip('page load timeouts', function () {
@@ -114,7 +126,7 @@ describe('Safari - basics -', function () {
         const before = new Date().getTime();
         (await driver.$('<dsfsdfsdfdsfsd />')).error.error.should.eql('no such element');
         const after = new Date().getTime();
-        ((after - before) >= 5 * 1000).should.be.ok;
+        (after - before >= 5 * 1000).should.be.ok;
       });
     });
 
@@ -224,8 +236,7 @@ describe('Safari - basics -', function () {
       });
       it('should be able to retrieve css properties', async function () {
         const el = await driver.$('#fbemail');
-        (await el.getCSSProperty('background-color')).value
-          .should.equal('rgba(255,255,255,1)');
+        (await el.getCSSProperty('background-color')).value.should.equal('rgba(255,255,255,1)');
       });
       it('should retrieve an element size', async function () {
         const el = await driver.$('#i_am_an_id');
@@ -265,8 +276,7 @@ describe('Safari - basics -', function () {
         await form.submit();
         await spinWait(async function () {
           const comments = await driver.$('#your_comments');
-          await comments.getText()
-            .should.eventually.equal('Your comments: This is a comment');
+          await comments.getText().should.eventually.equal('Your comments: This is a comment');
         });
       });
       it('should return true when the element is displayed', async function () {
@@ -464,7 +474,9 @@ describe('Safari - basics -', function () {
             it('should reject all functions', async function () {
               await driver.addCookie(newCookie).should.be.rejectedWith(notImplementedRegExp);
               await driver.getAllCookies().should.be.rejectedWith(notImplementedRegExp);
-              await driver.deleteCookie(newCookie.name).should.be.rejectedWith(notImplementedRegExp);
+              await driver
+                .deleteCookie(newCookie.name)
+                .should.be.rejectedWith(notImplementedRegExp);
               await driver.deleteAllCookies().should.be.rejectedWith(notImplementedRegExp);
             });
           });
@@ -482,10 +494,12 @@ describe('Safari - basics -', function () {
   describe('safariIgnoreFraudWarning', function () {
     describe('false', function () {
       beforeEach(async function () {
-        driver = await initSession(amendCapabilities(DEFAULT_CAPS, {
-          'appium:safariIgnoreFraudWarning': false,
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }));
+        driver = await initSession(
+          amendCapabilities(DEFAULT_CAPS, {
+            'appium:safariIgnoreFraudWarning': false,
+            'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+          }),
+        );
       });
       afterEach(async function () {
         await deleteSession();
@@ -512,10 +526,12 @@ describe('Safari - basics -', function () {
     });
     describe('true', function () {
       beforeEach(async function () {
-        driver = await initSession(amendCapabilities(DEFAULT_CAPS, {
-          'appium:safariIgnoreFraudWarning': true,
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }));
+        driver = await initSession(
+          amendCapabilities(DEFAULT_CAPS, {
+            'appium:safariIgnoreFraudWarning': true,
+            'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
+          }),
+        );
       });
       afterEach(async function () {
         await deleteSession();

@@ -2,11 +2,10 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
-import { retryInterval } from 'asyncbox';
-import { extractCapabilityValue, amendCapabilities, UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-import { util } from 'appium/support';
-
+import {retryInterval} from 'asyncbox';
+import {extractCapabilityValue, amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {util} from 'appium/support';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -112,7 +111,13 @@ describe('XCUITestDriver - elements -', function () {
 
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
-      if (util.compareVersions(extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion'), '>=', '13.0')) {
+      if (
+        util.compareVersions(
+          extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion'),
+          '>=',
+          '13.0',
+        )
+      ) {
         return this.skip();
       }
       let table = await driver.$('XCUIElementTypeTable');
@@ -137,8 +142,9 @@ describe('XCUITestDriver - elements -', function () {
       if (wrongTypeEl.error) {
         wrongTypeEl = await driver.$('~UICatalog');
       }
-      await wrongTypeEl.getAttribute('contentSize').should.eventually
-        .be.rejectedWith(/Can't get content size for type/);
+      await wrongTypeEl
+        .getAttribute('contentSize')
+        .should.eventually.be.rejectedWith(/Can't get content size for type/);
     });
   });
 
@@ -309,18 +315,20 @@ describe('XCUITestDriver - elements -', function () {
           // make sure the keyboard is up
           await el.click();
 
-          const actions = [{
-            type: 'key',
-            id: 'keyboard',
-            actions: [
-              {type: 'keyDown', value: 'h'},
-              {type: 'keyUp', value: 'h'},
-              {type: 'keyDown', value: 'i'},
-              {type: 'keyUp', value: 'i'},
-              {type: 'keyDown', value: 'あ'},
-              {type: 'keyUp', value: 'あ'}
-            ]
-          }];
+          const actions = [
+            {
+              type: 'key',
+              id: 'keyboard',
+              actions: [
+                {type: 'keyDown', value: 'h'},
+                {type: 'keyUp', value: 'h'},
+                {type: 'keyDown', value: 'i'},
+                {type: 'keyUp', value: 'i'},
+                {type: 'keyDown', value: 'あ'},
+                {type: 'keyUp', value: 'あ'},
+              ],
+            },
+          ];
           await driver.performActions(actions);
 
           let text = await el.getText();

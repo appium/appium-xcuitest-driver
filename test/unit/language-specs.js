@@ -61,7 +61,7 @@ describe('language and locale', function () {
       driver.validateDesiredCaps(desiredCapabilities);
       await driver.startWdaSession(
         desiredCapabilities.bundleId,
-        desiredCapabilities.processArguments
+        desiredCapabilities.processArguments,
       );
       proxySpy.should.have.been.calledOnceWith('/session', 'POST', expectedWDACapabilities);
     });
@@ -116,7 +116,7 @@ describe('language and locale', function () {
       driver.validateDesiredCaps(desiredCapabilities);
       await driver.startWdaSession(
         desiredCapabilities.bundleId,
-        desiredCapabilities.processArguments
+        desiredCapabilities.processArguments,
       );
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');

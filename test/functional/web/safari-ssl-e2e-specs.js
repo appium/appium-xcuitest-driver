@@ -2,7 +2,7 @@ import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import https from 'https';
-import { getFreePort } from '../helpers/ports';
+import {getFreePort} from '../helpers/ports';
 import os from 'os';
 import _pem from 'pem';
 import {amendCapabilities, SAFARI_CAPS} from '../desired';

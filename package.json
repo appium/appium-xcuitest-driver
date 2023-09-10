@@ -103,6 +103,7 @@
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
+    "format": "prettier --check './**/*.(js|ts)'",
     "install-docs-deps": "appium-docs init --no-mkdocs -e index.js",
     "prepare": "husky install; npm run rebuild",
     "rebuild": "npm run clean; npm run build",

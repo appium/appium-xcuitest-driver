@@ -1,9 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { amendCapabilities, UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-
+import {amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -35,9 +34,11 @@ describe('XCUITestDriver - performance', function () {
         profileName,
       });
       await B.delay(5000);
-      (await driver.execute('mobile: stopPerfRecord', {
-        profileName,
-      })).should.not.be.empty;
+      (
+        await driver.execute('mobile: stopPerfRecord', {
+          profileName,
+        })
+      ).should.not.be.empty;
     });
   });
 });

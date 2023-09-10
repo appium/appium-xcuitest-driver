@@ -2,12 +2,12 @@ import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 import Simctl from 'node-simctl';
 
-
 describe('screenshots commands', function () {
   let driver;
   let proxyStub;
 
-  const base64PortraitResponse = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  const base64PortraitResponse =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
   beforeEach(function () {
     driver = new XCUITestDriver();
@@ -15,7 +15,7 @@ describe('screenshots commands', function () {
       // @ts-expect-error do not put random stuff on opts object
       device: {
         simctl: new Simctl(),
-      }
+      },
     };
     proxyStub = sinon.stub(driver, 'proxyCommand');
   });
@@ -50,7 +50,7 @@ describe('screenshots commands', function () {
 
         driver.opts.realDevice = false;
         driver.xcodeVersion = {
-          versionFloat: 8.3
+          versionFloat: 8.3,
         };
         const result = await driver.getScreenshot();
         result.should.equal(base64PortraitResponse);

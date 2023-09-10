@@ -4,10 +4,9 @@ import envBase from './env-base';
 import platformDefinition from './ios-sim-platforms';
 import log from './logger';
 
-
 const platforms = [];
 
-function config () {
+function config() {
   let deviceNameIndex = 0;
   let devicesRemaining;
 
@@ -39,5 +38,5 @@ function config () {
   };
 }
 
-export { config };
+export {config};
 export default config;
