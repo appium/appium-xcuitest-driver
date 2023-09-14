@@ -1,3 +1,11 @@
+## [5.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.0.0...v5.1.0) (2023-09-14)
+
+
+### Features
+
+* add autoFillPasswords capability ([#1972](https://github.com/appium/appium-xcuitest-driver/issues/1972)) ([85aaa7f](https://github.com/appium/appium-xcuitest-driver/commit/85aaa7f62a5f882ebcaabe1c2c2272d5c9217481))
+* dummy feat commit to run the auto release ([#1983](https://github.com/appium/appium-xcuitest-driver/issues/1983)) ([5916712](https://github.com/appium/appium-xcuitest-driver/commit/59167127f618dc350c9bdcf414c23c008d17169f))
+
 ## [5.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.35.0...v5.0.0) (2023-09-05)
 
 ### Code Refactoring
