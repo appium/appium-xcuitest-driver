@@ -1982,6 +1982,11 @@
 <td>e.g <code>true</code></td>
 </tr>
 <tr>
+<td><code>appium:autoFillPasswords</code></td>
+<td>It allows you to turn on/off autofill passwords function when text field is foccused. Works only with iOS16.4+ simulators</td>
+<td>e.g <code>true</code></td>
+</tr>
+<tr>
 <td><code>appium:permissions</code></td>
 <td>Allows to set permissions for the specified application bundle on Simulator only. The capability value is expected to be a valid JSON string with <code>{"&lt;bundleId1&gt;": {"&lt;serviceName1&gt;": "&lt;serviceStatus1&gt;", ...}, ...}</code> format. Since Xcode SDK 11.4 Apple provides native APIs to interact with application settings. Check the output of <code>xcrun simctl privacy booted</code> command to get the list of available permission names. Use <code>yes</code>, <code>no</code> and <code>unset</code> as values in order to <code>grant</code>, <code>revoke</code> or <code>reset</code> the corresponding permission. Below Xcode SDK 11.4 it is required that <code>applesimutils</code> package is installed and available in PATH. The list of available service names and statuses can be found at https://github.com/wix/AppleSimulatorUtils.</td>
 <td>e. g. <code>{"com.apple.mobilecal": {"calendar": "YES"}}</code></td>
