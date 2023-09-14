@@ -112,6 +112,7 @@ describe('XCUITestDriver', function () {
             return '/path/to/uds.socket';
           },
           setReduceTransparency: _.noop,
+          setAutoFillPasswords: _.noop,
         };
         realDevice = null;
         sandbox
@@ -197,6 +198,34 @@ describe('XCUITestDriver', function () {
           null,
           _.merge({}, caps, {
             alwaysMatch: {'appium:reduceTransparency': true},
+          }),
+        );
+        spy.notCalled.should.be.true;
+      });
+
+      it('should call setAutoFillPasswords for a simulator', async function () {
+        this.timeout(MOCHA_LONG_TIMEOUT);
+        realDevice = false;
+        const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
+        await driver.createSession(
+          null,
+          null,
+          _.merge({}, caps, {
+            alwaysMatch: {'appium:autoFillPasswords': true},
+          }),
+        );
+        spy.calledOnce.should.be.true;
+        spy.firstCall.args[0].should.eql(true);
+      });
+      it('should not call setAutoFillPasswords for a real device', async function () {
+        this.timeout(MOCHA_LONG_TIMEOUT);
+        realDevice = true;
+        const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
+        await driver.createSession(
+          null,
+          null,
+          _.merge({}, caps, {
+            alwaysMatch: {'appium:setAutoFillPasswords': true},
           }),
         );
         spy.notCalled.should.be.true;
