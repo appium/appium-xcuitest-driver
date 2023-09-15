@@ -4,8 +4,6 @@ import XCUITestDriver from '../../../lib/driver';
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
 const xmlBody = '<some-xml/>';
 const srcTree = `${xmlHeader}${xmlBody}`;
-const appiumHeadTag = '<AppiumAUT>';
-const appiumFootTag = '</AppiumAUT>';
 
 describe('source commands', function () {
   let driver = new XCUITestDriver();
