@@ -20,5 +20,37 @@ describe('source commands', function () {
       proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT');
       proxyStub.firstCall.args[1].should.eql('GET');
     });
+
+    it('should send translated GET request with null excludedAttributes to WDA', async function () {
+      await driver.settings.update({'pageSourceExcludedAttributes': null});
+      await driver.getPageSource();
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT');
+      proxyStub.firstCall.args[1].should.eql('GET');
+    });
+
+    it('should send translated GET request with empty excludedAttributes to WDA', async function () {
+      await driver.settings.update({'pageSourceExcludedAttributes': ''});
+      await driver.getPageSource();
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT');
+      proxyStub.firstCall.args[1].should.eql('GET');
+    });
+
+    it('should send translated GET request with single excludedAttributes to WDA', async function () {
+      await driver.settings.update({'pageSourceExcludedAttributes': 'visible'});
+      await driver.getPageSource();
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
+      proxyStub.firstCall.args[1].should.eql('GET');
+    });
+
+    it('should send translated GET request with multiple excludedAttributes to WDA', async function () {
+      await driver.settings.update({'pageSourceExcludedAttributes': 'visible,accessible'});
+      await driver.getPageSource();
+      proxyStub.calledOnce.should.be.true;
+      proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible%2Caccessible');
+      proxyStub.firstCall.args[1].should.eql('GET');
+    });
   });
 });
