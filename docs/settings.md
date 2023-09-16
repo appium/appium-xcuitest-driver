@@ -34,4 +34,4 @@ nativeWebTapTabBarVisibility | enum | Bypass finding whether the existence of th
 nativeWebTapSmartAppBannerVisibility | enum | The same as `nativeWebTapTabBarVisibility`, this keyword will bypass finding whether the existence of the _**smart app banner**_.
 safariTabBarPosition | string | Handle offset of Safari tab bar in `nativeWebTap` enabled interactions. If `platformVersion` was greater than or equal to 15 and iPhone device, the value is `bottom` by default. Otherwise `top`. When the value is `top`, Appium considers offset as the bar length. iOS 15+ environment can customize the bar position in the settings app, so please adjust the offset with this. Acceptable values: `bottom`, `top`
 useJSONSource | boolean | See the description of the corresponding capability.
-
+pageSourceExcludedAttributes | string | One or more comma-separated attribute names to be excluded from the XML output. It might be sometimes helpful to exclude, for example, the `visible` attribute, to significantly speed-up page source retrieval. This does not affect the XML output when `useJSONSource` is enabled. Defaults to an empty string. Example: `"visible,accessible"`
