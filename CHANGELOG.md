@@ -1,3 +1,10 @@
+## [5.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.1.0...v5.2.0) (2023-09-16)
+
+
+### Features
+
+* support pageSourceExcludedAttributes ([#1996](https://github.com/appium/appium-xcuitest-driver/issues/1996)) ([4bcea84](https://github.com/appium/appium-xcuitest-driver/commit/4bcea840148aa126579603d8417f77e3437db312))
+
 ## [5.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.0.0...v5.1.0) (2023-09-14)
 
 
