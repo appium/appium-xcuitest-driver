@@ -22,7 +22,7 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with null excludedAttributes to WDA', async function () {
-      await driver.settings.update({'pageSourceExcludedAttributes': null});
+      await driver.updateSettings({'pageSourceExcludedAttributes': null});
       await driver.getPageSource();
       proxyStub.calledOnce.should.be.true;
       proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT');
@@ -30,7 +30,7 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with empty excludedAttributes to WDA', async function () {
-      await driver.settings.update({'pageSourceExcludedAttributes': ''});
+      await driver.updateSettings({'pageSourceExcludedAttributes': ''});
       await driver.getPageSource();
       proxyStub.calledOnce.should.be.true;
       proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT');
@@ -38,7 +38,7 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with single excludedAttributes to WDA', async function () {
-      await driver.settings.update({'pageSourceExcludedAttributes': 'visible'});
+      await driver.updateSettings({'pageSourceExcludedAttributes': 'visible'});
       await driver.getPageSource();
       proxyStub.calledOnce.should.be.true;
       proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
@@ -46,7 +46,7 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with multiple excludedAttributes to WDA', async function () {
-      await driver.settings.update({'pageSourceExcludedAttributes': 'visible,accessible'});
+      await driver.updateSettings({'pageSourceExcludedAttributes': 'visible,accessible'});
       await driver.getPageSource();
       proxyStub.calledOnce.should.be.true;
       proxyStub.firstCall.args[0].should.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible%2Caccessible');
