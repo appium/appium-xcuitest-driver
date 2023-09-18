@@ -133,6 +133,7 @@ Capability | Description
 |`appium:fullContextList` | Returns the detailed information on contexts for the [get available context](https://appium.io/docs/en/commands/context/get-contexts/index.html) command. If this capability is enabled, then each item in the returned contexts list would additionally include WebView title, full URL and the bundle identifier. Defaults to `false`. | `true` or `false` |
 |`appium:enablePerformanceLogging`| Enable Safari's performance logging (default `false`)| `true`, `false`|
 |`appium:autoWebview`| Move directly into Webview context if available. Default `false`|`true`, `false`|
+|`appium:skipTriggerInputEventAfterSendkeys`| If this capability is set to `true`, then whenever you call the Send Keys method in a web context, the driver will not fire an additional `input` event on the input field used for the call. This event, turned on by default, helps in situations where JS frameworks (like React) do not respond to the input events that occur by default when the underlying Selenium atom is executed. Default `false`|`true`, `false`|
 
 ### Other
 
