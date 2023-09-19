@@ -32,6 +32,12 @@ Please turn on _Web Inspector_ on iOS device via _Settings_ -> _Safari_ -> _Adva
 Make sure the destination `WKWebView` and/or `JSContext` component have [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable) property set to `true`.
 Read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/) for more details on this property.
 
+#### Chrome v115+ and iOS 16.4+ support Web testing availability on Chrome
+
+Please turn on _Web Inspector_ on iOS device via Chrome app -> _Settings_ -> _Content Settings_ -> _Web Inspector_ -> Turn _Web Inspector_ on -> Kill the Chrome app process
+
+Please read [Debugging websites in Chrome on iOS 16.4+](https://developer.chrome.com/blog/debugging-chrome-on-ios/) for more details.
+
 ### Avoid possible wrong coordinate
 
 Please make sure the zoom preference in accessibility is turned off via _Settings_ -> _Accessibility_ -> _Zoom_. It could cause element coordinates miscalculation.
