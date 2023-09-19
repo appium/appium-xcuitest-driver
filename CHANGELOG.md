@@ -1,3 +1,10 @@
+## [5.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.2.0...v5.2.1) (2023-09-19)
+
+
+### Bug Fixes
+
+* terminateApp with devicectl for iOS 17 ([#1997](https://github.com/appium/appium-xcuitest-driver/issues/1997)) ([16c7319](https://github.com/appium/appium-xcuitest-driver/commit/16c73198397495f235cc49f6fb978050a9e2f49d))
+
 ## [5.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.1.0...v5.2.0) (2023-09-16)
 
 
