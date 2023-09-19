@@ -36,7 +36,7 @@ Read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13
 
 As `isInspectable` is available, Chrome started providing the availability in the release package.
 
-Please turn on _Web Inspector_ on iOS device via Chrome app -> _Settings_ -> _Content Settings_ -> _Web Inspector_ -> Turn _Web Inspector_ on -> Kill the Chrome app process
+Please turn on _Web Inspector_ on iOS device via Chrome app -> _Settings_ -> _Content Settings_ -> _Web Inspector_ -> Turn _Web Inspector_ on, then kill the Chrome app process
 
 Please read [Debugging websites in Chrome on iOS 16.4+](https://developer.chrome.com/blog/debugging-chrome-on-ios/) for more details.
 
