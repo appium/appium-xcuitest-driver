@@ -32,9 +32,9 @@ Please turn on _Web Inspector_ on iOS device via _Settings_ -> _Safari_ -> _Adva
 Make sure the destination `WKWebView` and/or `JSContext` component have [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable) property set to `true`.
 Read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/) for more details on this property.
 
-#### Chrome v115+ and iOS 16.4+ support Web testing availability on Chrome
+#### Chrome v115+ and iOS 16.4+ support Web testing availability
 
-As `isInspectable` is available, Chrome started providing the availability in the release package.
+Chrome browser for iOS now provides a remote debugging feature for release versions of the app after the `isInspectable` property has been introduced by Apple.
 
 Please turn on _Web Inspector_ on iOS device via Chrome app -> _Settings_ -> _Content Settings_ -> _Web Inspector_ -> Turn _Web Inspector_ on, then kill the Chrome app process
 
