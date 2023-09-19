@@ -1614,6 +1614,10 @@ You can change some of them via the Settings API.</p>
 <h4 id="if-iosipados-version-is-164-or-above">If iOS/iPadOS version is 16.4 or above</h4>
 <p>Make sure the destination <code>WKWebView</code> and/or <code>JSContext</code> component have <a href="https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable"><code>isInspectable</code></a> property set to <code>true</code>.
 Read <a href="https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/">Enabling the Inspection of Web Content in Apps</a> for more details on this property.</p>
+<h4 id="chrome-v115-and-ios-164-support-web-testing-availability">Chrome v115+ and iOS 16.4+ support Web testing availability</h4>
+<p>Chrome browser for iOS now provides a remote debugging feature for release versions of the app after the <code>isInspectable</code> property has been introduced by Apple.</p>
+<p>Please turn on <em>Web Inspector</em> on iOS device via Chrome app -&gt; <em>Settings</em> -&gt; <em>Content Settings</em> -&gt; <em>Web Inspector</em> -&gt; Turn <em>Web Inspector</em> on, then kill the Chrome app process</p>
+<p>Please read <a href="https://developer.chrome.com/blog/debugging-chrome-on-ios/">Debugging websites in Chrome on iOS 16.4+</a> for more details.</p>
 <h3 id="avoid-possible-wrong-coordinate">Avoid possible wrong coordinate</h3>
 <p>Please make sure the zoom preference in accessibility is turned off via <em>Settings</em> -&gt; <em>Accessibility</em> -&gt; <em>Zoom</em>. It could cause element coordinates miscalculation.</p>
 <h3 id="expose-more-elements-if-needed">Expose more elements if needed</h3>
