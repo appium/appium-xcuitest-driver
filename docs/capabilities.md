@@ -39,7 +39,7 @@ Capability | Description
 |Capability|Description|Values|
 |----------|-----------|------|
 |`appium:xcodeOrgId`|Apple developer team identifier string. Must be used in conjunction with `xcodeSigningId` to take effect.|e.g., `JWL241K123`|
-|`appium:xcodeSigningId`|String representing a signing certificate. Must be used in conjunction with `xcodeOrgId`. This is usually just `iPhone Developer`, so the default (if not included) is `iPhone Developer`|e.g., `iPhone Developer`|
+|`appium:xcodeSigningId`|String representing a signing certificate. Must be used in conjunction with `xcodeOrgId`. This is usually just `Apple Development` or `iPhone Developer`, so the default (if not included) is `iPhone Developer`|e.g., `Apple Developer` `iPhone Developer`|
 |`appium:xcodeConfigFile`|Full path to an optional Xcode configuration file that specifies the code signing identity and team for running the `WebDriverAgent` on the real device.|e.g., `/path/to/myconfig.xcconfig`|
 |`appium:updatedWDABundleId`|Bundle id to update WDA to before building and launching on real devices. This bundle id _must_ be associated with a valid provisioning profile.|e.g., `io.appium.WebDriverAgentRunner`|
 |`appium:keychainPath`|Full path to the private development key exported from the system keychain. Used in conjunction with `keychainPassword` when testing on real devices.|e.g., `/path/to/MyPrivateKey.p12`|
