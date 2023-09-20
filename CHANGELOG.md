@@ -1,3 +1,10 @@
+## [5.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.2.1...v5.3.0) (2023-09-20)
+
+
+### Features
+
+* add capability to run special input event triggering after send keys ([d559803](https://github.com/appium/appium-xcuitest-driver/commit/d5598039b52dc6c475b2cbb3c5c5049cc673a866)), closes [appium/appium#19052](https://github.com/appium/appium/issues/19052)
+
 ## [5.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.2.0...v5.2.1) (2023-09-19)
 
 
