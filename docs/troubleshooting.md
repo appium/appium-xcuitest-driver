@@ -14,6 +14,7 @@ title: Troubleshooting
 
 ## Weird state
 
+### stop responding
 **Note:** Running `WebDriverAgent` tests on a real device is particularly flakey. If things stop responding, the only recourse is, most often, to restart the device. Logs in the form of the following _may_ start to occur:
 
 ```shell
@@ -23,6 +24,14 @@ dbug WebDriverAgent Device: Jul 26 13:21:42 iamPhone XCTRunner[240] <Warning>: E
 dbug WebDriverAgent Device: Jul 26 13:21:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - Failed to get screenshot within 15s <unknown> 0 1
 dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - App state of (null) is still unknown <unknown> 0 1
 ```
+
+### Get a response after 60+ seconds after a session starts frequently
+
+Did you experience an additional 60 seconds of slow command response that is usually should not take such a long time?
+
+`testmanagerd` could continue crashing against a target application. Then, WebDriverAgent gets an API result by XCTest framework after 60 seconds timeout. It could cause such a 60 seconds "hang" behavior.
+This can be fixed by terminating the target application process. For example, if this behavior occurs in `mobile: queryAppState` command call, you could terminate the application once, or restart the device entirely.
+Then, such a slow behavior might be fixed after the process restart. Please check [WebDriverAgent#774](https://github.com/appium/WebDriverAgent/pull/774) as an example case.
 
 ## Real device security settings
 
