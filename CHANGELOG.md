@@ -1,3 +1,10 @@
+## [5.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.0...v5.3.1) (2023-09-23)
+
+
+### Bug Fixes
+
+* bump wda (5.9.0, 5.9.1) and simulator(5.3.2) ([#2021](https://github.com/appium/appium-xcuitest-driver/issues/2021)) ([f6f78f5](https://github.com/appium/appium-xcuitest-driver/commit/f6f78f579da4bf439a9a2011ab02c1f9a105a1f3))
+
 ## [5.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.2.1...v5.3.0) (2023-09-20)
 
 
