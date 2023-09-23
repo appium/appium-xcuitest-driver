@@ -5,17 +5,17 @@ import Simctl from 'node-simctl';
 describe('screenshots commands', function () {
   let driver;
   let proxyStub;
+  let simctl;
 
   const base64PortraitResponse =
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
   beforeEach(function () {
     driver = new XCUITestDriver();
+    simctl = new Simctl();
     driver.opts = {
       // @ts-expect-error do not put random stuff on opts object
-      device: {
-        simctl: new Simctl(),
-      },
+      device: { simctl },
     };
     proxyStub = sinon.stub(driver, 'proxyCommand');
   });
@@ -25,10 +25,14 @@ describe('screenshots commands', function () {
 
   describe('getScreenshot', function () {
     describe('simulator', function () {
-      let simctlStub = sinon.stub(Simctl.prototype, 'getScreenshot');
+      let getScreenshotStub;
+
+      beforeEach(function () {
+        getScreenshotStub = sinon.stub(simctl, 'getScreenshot');
+      });
 
       afterEach(function () {
-        simctlStub.reset();
+        getScreenshotStub.reset();
       });
 
       it('should get a screenshot from WDA if no errors are detected', async function () {
@@ -41,12 +45,12 @@ describe('screenshots commands', function () {
         proxyStub.firstCall.args[0].should.eql('/screenshot');
         proxyStub.firstCall.args[1].should.eql('GET');
 
-        simctlStub.notCalled.should.be.true;
+        getScreenshotStub.notCalled.should.be.true;
       });
 
       it('should get a screenshot from simctl if WDA call fails and Xcode version >= 8.1', async function () {
         proxyStub.returns(null);
-        simctlStub.returns(base64PortraitResponse);
+        getScreenshotStub.returns(base64PortraitResponse);
 
         driver.opts.realDevice = false;
         driver.xcodeVersion = {
@@ -56,7 +60,7 @@ describe('screenshots commands', function () {
         result.should.equal(base64PortraitResponse);
 
         proxyStub.calledOnce.should.be.true;
-        simctlStub.calledOnce.should.be.true;
+        getScreenshotStub.calledOnce.should.be.true;
       });
     });
 
