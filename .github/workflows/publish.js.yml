@@ -30,7 +30,7 @@ jobs:
       name: Create shrinkwrap
     - run: npm ci --only=dev
       name: Install dev dependencies for the release
-    - run: npx semantic-release
+    - run: npx semantic-release --dry-run
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
