@@ -64,7 +64,8 @@
     "build/index.js",
     "build/lib",
     "!.DS_Store",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "npm-shrinkwrap.json"
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
