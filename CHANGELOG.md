@@ -1,3 +1,10 @@
+## [5.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.2...v5.3.3) (2023-09-24)
+
+
+### Bug Fixes
+
+* try fix release to include npm-shrinkwrap.json ([#2023](https://github.com/appium/appium-xcuitest-driver/issues/2023)) ([57fc5b8](https://github.com/appium/appium-xcuitest-driver/commit/57fc5b8dca469887cd196aee95d4230c2e21e889)), closes [#2022](https://github.com/appium/appium-xcuitest-driver/issues/2022)
+
 ## [5.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.0...v5.3.1) (2023-09-23)
 
 
