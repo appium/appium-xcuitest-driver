@@ -1,3 +1,10 @@
+## [5.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.3...v5.4.0) (2023-09-26)
+
+
+### Features
+
+* Add clearApp extension ([#2031](https://github.com/appium/appium-xcuitest-driver/issues/2031)) ([ae0afdc](https://github.com/appium/appium-xcuitest-driver/commit/ae0afdcafabbb8164b3996627c7c3fc0f788eaf3))
+
 ## [5.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.2...v5.3.3) (2023-09-24)
 
 
