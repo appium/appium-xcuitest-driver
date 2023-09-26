@@ -195,6 +195,12 @@ export const executeMethodMap = {
       optional: ['applicationType'],
     },
   },
+  'mobile: clearApp': {
+    command: 'mobileClearApp',
+    params: {
+      required: ['bundleId'],
+    },
+  },
   'mobile: viewportScreenshot': {
     command: 'getViewportScreenshot',
   },

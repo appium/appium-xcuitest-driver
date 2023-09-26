@@ -216,6 +216,32 @@ applicationType | string | no | The type of applications to list. Either `System
 
 A list of apps, where each item is a map where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports files upload and download into its `documents` container. Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
 
+### mobile: clearApp
+
+Deletes data files from the data container of an installed app,
+so it could start from the clean state next time it is launched.
+The destination app will be terminated if it is running when this API is invoked.
+Sometimes it might also be necessary to invoke the following APIs
+to fully reset the state of an installed app (make sure the app is not running while
+calling them):
+- [mobile: clearKeychains](#mobile-clearkeychains)
+- [mobile: resetPermission](#mobile-resetpermission)
+
+This API might not be 100% reliable for some apps. The only reliable method to fully
+reset an existing app that Apple supports is to [uninstall](#mobile-removeapp) it and then perform a fresh [install](#mobile-installapp) of the same app.
+
+This API only works on simulators. An exception is thrown if executed with real devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be cleared | com.mycompany.myapp
+
+#### Returned Result
+
+`true` if at least one item has been successfully deleted from the app data container.
+
 ### mobile: startPerfRecord
 
 Starts performance profiling for the device under test.
