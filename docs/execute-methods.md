@@ -108,7 +108,7 @@ strategy | string | no | One of possible app installation strategies on real dev
 ### mobile: isAppInstalled
 
 Checks whether the given application is installed on the device under test.
-Offload app could be handled as not installed.
+An offload application could be handled as not installed.
 
 #### Arguments
 
@@ -123,7 +123,7 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
-Offload app also can be removed.
+An offload application also can be removed.
 
 #### Arguments
 
@@ -207,6 +207,7 @@ bundleId | string | yes | The bundle identifier of the application to be activat
 
 List applications installed on the real device under test. This extension throws an error if called
 for a Simulator device.
+Offload applications will not be in the result.
 
 #### Arguments
 
