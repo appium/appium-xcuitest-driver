@@ -108,6 +108,7 @@ strategy | string | no | One of possible app installation strategies on real dev
 ### mobile: isAppInstalled
 
 Checks whether the given application is installed on the device under test.
+Offload app could be handled as not installed.
 
 #### Arguments
 
@@ -122,6 +123,7 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
+Offload app also can be removed.
 
 #### Arguments
 
