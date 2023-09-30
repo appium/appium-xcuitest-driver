@@ -25,6 +25,26 @@ describe('installToRealDevice', function () {
     sandbox.restore();
   });
 
+  it('nothing happen without app', async function () {
+    const iosDeploy = new IOSDeploy(udid);
+    sandbox.stub(iosDeploy, 'remove').resolves();
+    sandbox.stub(iosDeploy, 'install').resolves();
+
+    await installToRealDevice(iosDeploy, undefined, bundleId, {});
+    expect(iosDeploy.remove).to.not.have.been.called;
+    expect(iosDeploy.install).to.not.have.been.called;
+  });
+
+  it('nothing happen without bundle id', async function () {
+    const iosDeploy = new IOSDeploy(udid);
+    sandbox.stub(iosDeploy, 'remove').resolves();
+    sandbox.stub(iosDeploy, 'install').resolves();
+
+    await installToRealDevice(iosDeploy, app, undefined, {});
+    expect(iosDeploy.remove).to.not.have.been.called;
+    expect(iosDeploy.install).to.not.have.been.called;
+  });
+
   it('should install without remove', async function () {
     const opts = {
       skipUninstall: true
