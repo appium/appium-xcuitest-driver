@@ -123,13 +123,9 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
-An [offload application]((https://discussions.apple.com/thread/254887240)) also can be removed.
 
-Note that `appium:fullReset` or `appium:enforceAppInstall` capability may not uninstall such offload application state in a new session request.
-If the application under test could be offload state like previously failed to install the application or configured as offload,
-please start a new session without `appium:app` and `appium:bundleId`, then uninstall the bundle id explicitly with this [`mobile: removeApp`](#mobile-removeapp)
-before installing a new application with [`mobile: installApp`](#mobile-installapp).
-Such offline application state would keep the local data without explicit uninstallation by [`mobile: removeApp`](#mobile-removeapp).
+An [offload application]((https://discussions.apple.com/thread/254887240)) also can be removed.
+Please check [Clear the application local data explicitly for real devices](troubleshooting.md#clear-the-application-local-data-explicitly-for-real-devices) to ensure how to clear the application local data for sure.
 
 #### Arguments
 

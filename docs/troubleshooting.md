@@ -12,6 +12,21 @@ title: Troubleshooting
     - This configuration is only necessary for XCUITest driver v4.3.0 or lower.
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
 
+
+## Clear the application local data explicitly for real devices
+
+iOS real device could have a situation that has application data locally but the application package is not on the device. It can occur an [offload application]((https://discussions.apple.com/thread/254887240)) state, cached application state or when an application installation fails.
+
+Under the situation, the application will not listed in the result of [mobile: listApps](execute-methods.md#mobile-listapps) and installed application check such as [mobile: isAppInstalled](execute-methods.md#mobile-isappinstalled).
+
+`appium:fullReset` or `appium:enforceAppInstall` capability may also not uninstall such offload application state in a new session request.
+It indicates if the device under test already has such a application's local data, the local data will remain.
+
+To clear the application local data completely even in such an offload application state, you should explicitly uninstall the application with [`mobile: removeApp`](execute-methods.md#mobile-removeapp).
+
+For example, a session need to start without `appium:app` and `appium:bundleId`, then uninstall the bundle id explicitly with [`mobile: removeApp`](execute-methods.md#mobile-removeapp)
+before installing a new application with [`mobile: installApp`](execute-methods.md#mobile-installapp).
+
 ## Weird state
 
 ### stop responding
