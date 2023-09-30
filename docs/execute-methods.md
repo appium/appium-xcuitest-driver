@@ -108,7 +108,7 @@ strategy | string | no | One of possible app installation strategies on real dev
 ### mobile: isAppInstalled
 
 Checks whether the given application is installed on the device under test.
-An offload application could be handled as not installed.
+An [offload application]((https://discussions.apple.com/thread/254887240)) could be handled as not installed.
 
 #### Arguments
 
@@ -123,7 +123,10 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
-An offload application also can be removed.
+An [offload application]((https://discussions.apple.com/thread/254887240)) also can be removed.
+
+Note that `appium:fullReset` or `appium:enforceAppInstall` capability may not uninstall such offload application in the new session request.
+If the application under test could be offload state, please start a new session without `app` nor `bundleId`, then uninstall the bundle id explicitly with this `removeApp` command before installing new application with [`mobile: installApp`](#mobile-installapp). Such offline application would keep te local data without explicit uninstallation.
 
 #### Arguments
 
