@@ -15,7 +15,7 @@ title: Troubleshooting
 
 ## Clear the application local data explicitly for real devices
 
-iOS real device could have a situation that has application data locally but the application package is not on the device. It can occur an [offload application]((https://discussions.apple.com/thread/254887240)) state, cached application state or when an application installation fails.
+iOS real device could have a situation that has application data locally but the application package is not on the device. It can occur an [offload application](https://discussions.apple.com/thread/254887240) state, cached application state or when an application installation fails. An example of the installation failure is `ApplicationVerificationFailed` by invalid provisioning profile.
 
 Under the situation, the application will not listed in the result of [mobile: listApps](execute-methods.md#mobile-listapps) and installed application check such as [mobile: isAppInstalled](execute-methods.md#mobile-isappinstalled).
 
