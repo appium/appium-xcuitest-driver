@@ -284,7 +284,7 @@ describe('XCUITestDriver', function () {
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledOnceWith(
         'some-device',
         '/path/to/iosApp.app',
-        'bundle-id',
+        undefined,
         {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
     });
@@ -305,13 +305,13 @@ describe('XCUITestDriver', function () {
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp1.app',
-        'bundle-id',
+        undefined,
         {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
-        'bundle-id2',
+        undefined,
         {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
     });
@@ -331,7 +331,7 @@ describe('XCUITestDriver', function () {
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledOnceWith(
         'some-device',
         '/path/to/iosApp.app',
-        'bundle-id',
+        undefined,
         {newSimulator: false},
       );
     });
@@ -353,13 +353,13 @@ describe('XCUITestDriver', function () {
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp1.app',
-        'bundle-id',
+        undefined,
         {newSimulator: false},
       );
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
-        'bundle-id2',
+        undefined,
         {newSimulator: false},
       );
     });
