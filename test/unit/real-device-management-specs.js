@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import sinonChai from 'sinon-chai';
 import { installToRealDevice } from '../../lib/real-device-management';
