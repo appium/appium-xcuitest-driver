@@ -67,27 +67,11 @@ describe('installToRealDevice', function () {
     expect(iosDeploy.install).to.have.been.calledOnce;
   });
 
-  it('should raise an error in the install MismatchedApplicationIdentifierEntitlement error because it does not require enforce uninstallation', async function () {
-    const opts = {
-      skipUninstall: true,
-      shouldEnforceUninstall: false
-    };
-    const err_msg = `{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`;
-    const iosDeploy = new IOSDeploy(udid);
-    sandbox.stub(iosDeploy, 'remove').resolves();
-    sandbox.stub(iosDeploy, 'install').throws(err_msg);
-
-    await installToRealDevice(iosDeploy, app, bundleId, opts).should.be.rejectedWith('MismatchedApplicationIdentifierEntitlement');
-    expect(iosDeploy.remove).to.not.have.been.called;
-    expect(iosDeploy.install).to.have.been.calledOnce;
-  });
-
   it('should install after removal once because of MismatchedApplicationIdentifierEntitlement error', async function () {
     // This situation could happen when the app exists as offload, or cached state
     // with different application identifier
     const opts = {
-      skipUninstall: true,
-      shouldEnforceUninstall: true
+      skipUninstall: true
     };
     const iosDeploy = new IOSDeploy(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
@@ -103,8 +87,7 @@ describe('installToRealDevice', function () {
 
   it('should raise an error in the install ApplicationVerificationFailed error because it is not recoverable', async function () {
     const opts = {
-      skipUninstall: true,
-      shouldEnforceUninstall: true
+      skipUninstall: true
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
     const iosDeploy = new IOSDeploy(udid);
