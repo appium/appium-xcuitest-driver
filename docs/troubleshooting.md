@@ -15,17 +15,22 @@ title: Troubleshooting
 
 ## Clear the application local data explicitly for real devices
 
-iOS real device could have a situation that has application data locally but the application package is not on the device. It can occur an [offload application](https://discussions.apple.com/thread/254887240) state, cached application state or when an application installation fails. An example of the installation failure is `ApplicationVerificationFailed` by invalid provisioning profile.
+There might be a situation where application data is present on the real device although application itself is not installed. This could happen if:
+- The app is in [offload state](https://discussions.apple.com/thread/254887240)
+- The application state is cached
+- There was an unexpected failure while installing the app. An example of such failure is the `ApplicationVerificationFailed` which happens while installing an app signed with an invalid provisioning profile.
 
-Under the situation, the application will not listed in the result of [mobile: listApps](execute-methods.md#mobile-listapps) and installed application check such as [mobile: isAppInstalled](execute-methods.md#mobile-isappinstalled).
+Under the circumstances above the application identifier won't be listed in the [`mobile: listApps`](execute-methods.md#mobile-listapps) output neither deleted by [`mobile: isAppInstalled`](execute-methods.md#mobile-isappinstalled) command. Setting `appium:fullReset` or `appium:enforceAppInstall` capabilities to `true` won't help to clear this data too.
 
-`appium:fullReset` or `appium:enforceAppInstall` capability may also not uninstall such offload application state in a new session request.
-It indicates if the device under test already has such a application's local data, the local data will remain.
+The only way to completely get rid of the cached application data is to call the [`mobile: removeApp`](execute-methods.md#mobile-removeapp) command with the appropriate bundle identifier.
 
-To clear the application local data completely even in such an offload application state, you should explicitly uninstall the application with [`mobile: removeApp`](execute-methods.md#mobile-removeapp).
+The driver automatically tries to resolve application installs that failed because of `MismatchedApplicationIdentifierEntitlement`, although, if you explicitly ask it to not perform the application uninstall then consider calling [`mobile: removeApp`](execute-methods.md#mobile-removeapp) beforehand `MismatchedApplicationIdentifierEntitlement` error occurs only when the previously installed application's provisioning profile is different from what currently the driver is trying to install.
 
-For example, a session need to start without `appium:app` and `appium:bundleId`, then uninstall the bundle id explicitly with [`mobile: removeApp`](execute-methods.md#mobile-removeapp)
-before installing a new application with [`mobile: installApp`](execute-methods.md#mobile-installapp).
+An example to start a session with explicit application uninstallation to clear the local data.
+1. Start a session without `appium:app` nor `appium:bundleId`
+2. Call [`mobile: removeApp`](execute-methods.md#mobile-removeapp) for the target application's bundle id
+3. Install the test target with [`mobile: installApp`](execute-methods.md#mobile-installapp)
+4. Launch the application with [`mobile: launchApp`](execute-methods.md#mobile-launchapp) or [`mobile: activateApp`](execute-methods.md#mobile-activateapp)
 
 ## Weird state
 
