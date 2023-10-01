@@ -27,7 +27,7 @@ The only way to completely get rid of the cached application data is to call the
 The driver automatically tries to resolve application installs that failed because of `MismatchedApplicationIdentifierEntitlement`, although, if you explicitly ask it to not perform the application uninstall then consider calling [`mobile: removeApp`](execute-methods.md#mobile-removeapp) beforehand `MismatchedApplicationIdentifierEntitlement` error occurs only when the previously installed application's provisioning profile is different from what currently the driver is trying to install.
 
 An example to start a session with explicit application uninstallation to clear the local data.
-1. Start a session without `appium:app` nor `appium:bundleId`
+1. Start a session without `appium:app` and `appium:bundleId`
 2. Call [`mobile: removeApp`](execute-methods.md#mobile-removeapp) for the target application's bundle id
 3. Install the test target with [`mobile: installApp`](execute-methods.md#mobile-installapp)
 4. Launch the application with [`mobile: launchApp`](execute-methods.md#mobile-launchapp) or [`mobile: activateApp`](execute-methods.md#mobile-activateapp)
