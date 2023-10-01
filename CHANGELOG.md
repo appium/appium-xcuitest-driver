@@ -1,3 +1,10 @@
+## [5.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.4.0...v5.4.1) (2023-10-01)
+
+
+### Bug Fixes
+
+* get bundleId for other apps before calling installation ([#2054](https://github.com/appium/appium-xcuitest-driver/issues/2054)) ([4feaf33](https://github.com/appium/appium-xcuitest-driver/commit/4feaf336dae242605543fb84d5c7b40aa5103470))
+
 ## [5.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.3...v5.4.0) (2023-09-26)
 
 
