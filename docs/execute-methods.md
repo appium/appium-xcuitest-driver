@@ -1240,6 +1240,8 @@ Sets simulated geolocation value.
 This functionality is only available since xcuitest driver version 4.18.
 Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
+iOS 17+ requires this command to simulate the location.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1255,7 +1257,7 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
 > **Warning**
 > Do not forget to reset the simulated geolocation value after your automated test is finished.
-> If the value is not reset explcitly then the simulated one will remain until the next device restart.
+> If the value is not reset explicitly then the simulated one will remain until the next device restart.
 
 ### mobile: getAppStrings
 
