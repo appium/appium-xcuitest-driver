@@ -1240,7 +1240,7 @@ Sets simulated geolocation value.
 This functionality is only available since xcuitest driver version 4.18.
 Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
-iOS 17+ requires this command to simulate the location.
+It is recommended for iOS 17+ real devices to simulate the device location.
 
 #### Arguments
 
