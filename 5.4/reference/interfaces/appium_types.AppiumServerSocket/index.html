@@ -4865,10 +4865,12 @@ emitted.</p>
 and it is an array of the addresses that have been attempted.</p>
 <p>Each address is a string in the form of <code>$IP:$PORT</code>.
 If the connection was successful, then the last address is the one that the socket is currently connected to.</p>
+<p><strong><code>Since</code></strong></p>
+<p>v19.4.0</p>
 <h4 id="inherited-from_1">Inherited from</h4>
 <p>Socket.autoSelectFamilyAttemptedAddresses</p>
 <h4 id="defined-in_2">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:244</p>
+<p>node_modules/@types/node/net.d.ts:245</p>
 <hr />
 <h3 id="buffersize">bufferSize</h3>
 <p>• <code>Readonly</code> <strong>bufferSize</strong>: <code>number</code></p>
@@ -4890,7 +4892,7 @@ Users who experience large or growing <code>bufferSize</code> should attempt to
 <h4 id="inherited-from_2">Inherited from</h4>
 <p>Socket.bufferSize</p>
 <h4 id="defined-in_3">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:262</p>
+<p>node_modules/@types/node/net.d.ts:263</p>
 <hr />
 <h3 id="bytesread">bytesRead</h3>
 <p>• <code>Readonly</code> <strong>bytesRead</strong>: <code>number</code></p>
@@ -4900,7 +4902,7 @@ Users who experience large or growing <code>bufferSize</code> should attempt to
 <h4 id="inherited-from_3">Inherited from</h4>
 <p>Socket.bytesRead</p>
 <h4 id="defined-in_4">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:267</p>
+<p>node_modules/@types/node/net.d.ts:268</p>
 <hr />
 <h3 id="byteswritten">bytesWritten</h3>
 <p>• <code>Readonly</code> <strong>bytesWritten</strong>: <code>number</code></p>
@@ -4910,7 +4912,7 @@ Users who experience large or growing <code>bufferSize</code> should attempt to
 <h4 id="inherited-from_4">Inherited from</h4>
 <p>Socket.bytesWritten</p>
 <h4 id="defined-in_5">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:272</p>
+<p>node_modules/@types/node/net.d.ts:273</p>
 <hr />
 <h3 id="closed">closed</h3>
 <p>• <code>Readonly</code> <strong>closed</strong>: <code>boolean</code></p>
@@ -4930,7 +4932,7 @@ that the <code>socket.connect(options[, connectListener])</code> callback is a l
 <h4 id="inherited-from_6">Inherited from</h4>
 <p>Socket.connecting</p>
 <h4 id="defined-in_7">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:280</p>
+<p>node_modules/@types/node/net.d.ts:281</p>
 <hr />
 <h3 id="destroyed">destroyed</h3>
 <p>• <code>Readonly</code> <strong>destroyed</strong>: <code>boolean</code></p>
@@ -4938,7 +4940,7 @@ that the <code>socket.connect(options[, connectListener])</code> callback is a l
 <h4 id="inherited-from_7">Inherited from</h4>
 <p>Socket.destroyed</p>
 <h4 id="defined-in_8">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:290</p>
+<p>node_modules/@types/node/net.d.ts:291</p>
 <hr />
 <h3 id="errored">errored</h3>
 <p>• <code>Readonly</code> <strong>errored</strong>: <code>null</code> | <code>Error</code></p>
@@ -4957,7 +4959,7 @@ connects on <code>'192.168.1.1'</code>, the value of <code>socket.localAddress</
 <h4 id="inherited-from_9">Inherited from</h4>
 <p>Socket.localAddress</p>
 <h4 id="defined-in_10">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:297</p>
+<p>node_modules/@types/node/net.d.ts:298</p>
 <hr />
 <h3 id="localfamily">localFamily</h3>
 <p>• <code>Optional</code> <code>Readonly</code> <strong>localFamily</strong>: <code>string</code></p>
@@ -4967,7 +4969,7 @@ connects on <code>'192.168.1.1'</code>, the value of <code>socket.localAddress</
 <h4 id="inherited-from_10">Inherited from</h4>
 <p>Socket.localFamily</p>
 <h4 id="defined-in_11">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:307</p>
+<p>node_modules/@types/node/net.d.ts:308</p>
 <hr />
 <h3 id="localport">localPort</h3>
 <p>• <code>Optional</code> <code>Readonly</code> <strong>localPort</strong>: <code>number</code></p>
@@ -4977,7 +4979,7 @@ connects on <code>'192.168.1.1'</code>, the value of <code>socket.localAddress</
 <h4 id="inherited-from_11">Inherited from</h4>
 <p>Socket.localPort</p>
 <h4 id="defined-in_12">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:302</p>
+<p>node_modules/@types/node/net.d.ts:303</p>
 <hr />
 <h3 id="pending">pending</h3>
 <p>• <code>Readonly</code> <strong>pending</strong>: <code>boolean</code></p>
@@ -4988,7 +4990,7 @@ connects on <code>'192.168.1.1'</code>, the value of <code>socket.localAddress</
 <h4 id="inherited-from_12">Inherited from</h4>
 <p>Socket.pending</p>
 <h4 id="defined-in_13">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:286</p>
+<p>node_modules/@types/node/net.d.ts:287</p>
 <hr />
 <h3 id="readable">readable</h3>
 <p>• <strong>readable</strong>: <code>boolean</code></p>
@@ -5098,7 +5100,7 @@ the status of the <code>highWaterMark</code>.</p>
 <h4 id="inherited-from_22">Inherited from</h4>
 <p>Socket.readyState</p>
 <h4 id="defined-in_23">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:317</p>
+<p>node_modules/@types/node/net.d.ts:318</p>
 <hr />
 <h3 id="remoteaddress">remoteAddress</h3>
 <p>• <code>Optional</code> <code>Readonly</code> <strong>remoteAddress</strong>: <code>string</code></p>
@@ -5109,7 +5111,7 @@ the socket is destroyed (for example, if the client disconnected).</p>
 <h4 id="inherited-from_23">Inherited from</h4>
 <p>Socket.remoteAddress</p>
 <h4 id="defined-in_24">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:323</p>
+<p>node_modules/@types/node/net.d.ts:324</p>
 <hr />
 <h3 id="remotefamily">remoteFamily</h3>
 <p>• <code>Optional</code> <code>Readonly</code> <strong>remoteFamily</strong>: <code>string</code></p>
@@ -5120,7 +5122,7 @@ the socket is destroyed (for example, if the client disconnected).</p>
 <h4 id="inherited-from_24">Inherited from</h4>
 <p>Socket.remoteFamily</p>
 <h4 id="defined-in_25">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:329</p>
+<p>node_modules/@types/node/net.d.ts:330</p>
 <hr />
 <h3 id="remoteport">remotePort</h3>
 <p>• <code>Optional</code> <code>Readonly</code> <strong>remotePort</strong>: <code>number</code></p>
@@ -5131,7 +5133,7 @@ the socket is destroyed (for example, if the client disconnected).</p>
 <h4 id="inherited-from_25">Inherited from</h4>
 <p>Socket.remotePort</p>
 <h4 id="defined-in_26">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:335</p>
+<p>node_modules/@types/node/net.d.ts:336</p>
 <hr />
 <h3 id="timeout">timeout</h3>
 <p>• <code>Optional</code> <code>Readonly</code> <strong>timeout</strong>: <code>number</code></p>
@@ -5142,7 +5144,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_26">Inherited from</h4>
 <p>Socket.timeout</p>
 <h4 id="defined-in_27">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:341</p>
+<p>node_modules/@types/node/net.d.ts:342</p>
 <hr />
 <h3 id="writable">writable</h3>
 <p>• <code>Readonly</code> <strong>writable</strong>: <code>boolean</code></p>
@@ -5208,7 +5210,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="returns">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_35">Inherited from</h4>
-<p>Socket.__@asyncDispose@34995</p>
+<p>Socket.__@asyncDispose@35174</p>
 <h4 id="defined-in_36">Defined in</h4>
 <p>node_modules/@types/node/stream.d.ts:651</p>
 <hr />
@@ -5217,7 +5219,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="returns_1">Returns</h4>
 <p><code>AsyncIterableIterator</code>&lt;<code>any</code>&gt;</p>
 <h4 id="inherited-from_36">Inherited from</h4>
-<p>Socket.__@asyncIterator@35073</p>
+<p>Socket.__@asyncIterator@35252</p>
 <h4 id="defined-in_37">Defined in</h4>
 <p>node_modules/@types/node/stream.d.ts:646</p>
 <hr />
@@ -5417,7 +5419,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_43">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_44">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:367</p>
+<p>node_modules/@types/node/net.d.ts:368</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_7">Parameters</h4>
 <table>
@@ -5443,7 +5445,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_44">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_45">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:368</p>
+<p>node_modules/@types/node/net.d.ts:369</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_8">Parameters</h4>
 <table>
@@ -5469,7 +5471,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_45">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_46">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:369</p>
+<p>node_modules/@types/node/net.d.ts:370</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_9">Parameters</h4>
 <table>
@@ -5495,7 +5497,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_46">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_47">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:370</p>
+<p>node_modules/@types/node/net.d.ts:371</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_10">Parameters</h4>
 <table>
@@ -5521,7 +5523,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_47">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_48">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:371</p>
+<p>node_modules/@types/node/net.d.ts:372</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_11">Parameters</h4>
 <table>
@@ -5547,7 +5549,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_48">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_49">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:372</p>
+<p>node_modules/@types/node/net.d.ts:373</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_12">Parameters</h4>
 <table>
@@ -5573,7 +5575,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_49">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_50">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:373</p>
+<p>node_modules/@types/node/net.d.ts:374</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_13">Parameters</h4>
 <table>
@@ -5599,7 +5601,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_50">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_51">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:374</p>
+<p>node_modules/@types/node/net.d.ts:375</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_14">Parameters</h4>
 <table>
@@ -5625,7 +5627,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_51">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_52">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:378</p>
+<p>node_modules/@types/node/net.d.ts:379</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_15">Parameters</h4>
 <table>
@@ -5651,7 +5653,7 @@ It is <code>undefined</code> if a timeout has not been set.</p>
 <h4 id="inherited-from_52">Inherited from</h4>
 <p>Socket.addListener</p>
 <h4 id="defined-in_53">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:379</p>
+<p>node_modules/@types/node/net.d.ts:380</p>
 <hr />
 <h3 id="address">address</h3>
 <p>▸ <strong>address</strong>(): {} | <code>AddressInfo</code></p>
@@ -5970,7 +5972,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_63">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_64">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:380</p>
+<p>node_modules/@types/node/net.d.ts:381</p>
 <p>▸ <strong>emit</strong>(<code>event</code>, <code>hadError</code>): <code>boolean</code></p>
 <h4 id="parameters_25">Parameters</h4>
 <table>
@@ -5996,7 +5998,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_64">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_65">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:381</p>
+<p>node_modules/@types/node/net.d.ts:382</p>
 <p>▸ <strong>emit</strong>(<code>event</code>): <code>boolean</code></p>
 <h4 id="parameters_26">Parameters</h4>
 <table>
@@ -6018,7 +6020,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_65">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_66">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:382</p>
+<p>node_modules/@types/node/net.d.ts:383</p>
 <p>▸ <strong>emit</strong>(<code>event</code>, <code>data</code>): <code>boolean</code></p>
 <h4 id="parameters_27">Parameters</h4>
 <table>
@@ -6044,7 +6046,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_66">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_67">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:383</p>
+<p>node_modules/@types/node/net.d.ts:384</p>
 <p>▸ <strong>emit</strong>(<code>event</code>): <code>boolean</code></p>
 <h4 id="parameters_28">Parameters</h4>
 <table>
@@ -6066,7 +6068,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_67">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_68">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:384</p>
+<p>node_modules/@types/node/net.d.ts:385</p>
 <p>▸ <strong>emit</strong>(<code>event</code>): <code>boolean</code></p>
 <h4 id="parameters_29">Parameters</h4>
 <table>
@@ -6088,7 +6090,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_68">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_69">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:385</p>
+<p>node_modules/@types/node/net.d.ts:386</p>
 <p>▸ <strong>emit</strong>(<code>event</code>, <code>err</code>): <code>boolean</code></p>
 <h4 id="parameters_30">Parameters</h4>
 <table>
@@ -6114,7 +6116,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_69">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_70">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:386</p>
+<p>node_modules/@types/node/net.d.ts:387</p>
 <p>▸ <strong>emit</strong>(<code>event</code>, <code>err</code>, <code>address</code>, <code>family</code>, <code>host</code>): <code>boolean</code></p>
 <h4 id="parameters_31">Parameters</h4>
 <table>
@@ -6152,7 +6154,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_70">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_71">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:387</p>
+<p>node_modules/@types/node/net.d.ts:388</p>
 <p>▸ <strong>emit</strong>(<code>event</code>): <code>boolean</code></p>
 <h4 id="parameters_32">Parameters</h4>
 <table>
@@ -6174,7 +6176,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_71">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_72">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:388</p>
+<p>node_modules/@types/node/net.d.ts:389</p>
 <p>▸ <strong>emit</strong>(<code>event</code>): <code>boolean</code></p>
 <h4 id="parameters_33">Parameters</h4>
 <table>
@@ -6196,7 +6198,7 @@ further errors except from <code>_destroy()</code> may be emitted as <code>'erro
 <h4 id="inherited-from_72">Inherited from</h4>
 <p>Socket.emit</p>
 <h4 id="defined-in_73">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:389</p>
+<p>node_modules/@types/node/net.d.ts:390</p>
 <hr />
 <h3 id="end">end</h3>
 <p>▸ <strong>end</strong>(<code>callback?</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
@@ -6228,7 +6230,7 @@ server will still send some data.</p>
 <h4 id="inherited-from_73">Inherited from</h4>
 <p>Socket.end</p>
 <h4 id="defined-in_74">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:352</p>
+<p>node_modules/@types/node/net.d.ts:353</p>
 <p>▸ <strong>end</strong>(<code>buffer</code>, <code>callback?</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_35">Parameters</h4>
 <table>
@@ -6254,7 +6256,7 @@ server will still send some data.</p>
 <h4 id="inherited-from_74">Inherited from</h4>
 <p>Socket.end</p>
 <h4 id="defined-in_75">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:353</p>
+<p>node_modules/@types/node/net.d.ts:354</p>
 <p>▸ <strong>end</strong>(<code>str</code>, <code>encoding?</code>, <code>callback?</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_36">Parameters</h4>
 <table>
@@ -6284,7 +6286,7 @@ server will still send some data.</p>
 <h4 id="inherited-from_75">Inherited from</h4>
 <p>Socket.end</p>
 <h4 id="defined-in_76">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:354</p>
+<p>node_modules/@types/node/net.d.ts:355</p>
 <hr />
 <h3 id="eventnames">eventNames</h3>
 <p>▸ <strong>eventNames</strong>(): (<code>string</code> | <code>symbol</code>)[]</p>
@@ -6777,7 +6779,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_90">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_91">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:390</p>
+<p>node_modules/@types/node/net.d.ts:391</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_49">Parameters</h4>
 <table>
@@ -6803,7 +6805,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_91">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_92">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:391</p>
+<p>node_modules/@types/node/net.d.ts:392</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_50">Parameters</h4>
 <table>
@@ -6829,7 +6831,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_92">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_93">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:392</p>
+<p>node_modules/@types/node/net.d.ts:393</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_51">Parameters</h4>
 <table>
@@ -6855,7 +6857,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_93">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_94">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:393</p>
+<p>node_modules/@types/node/net.d.ts:394</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_52">Parameters</h4>
 <table>
@@ -6881,7 +6883,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_94">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_95">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:394</p>
+<p>node_modules/@types/node/net.d.ts:395</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_53">Parameters</h4>
 <table>
@@ -6907,7 +6909,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_95">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_96">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:395</p>
+<p>node_modules/@types/node/net.d.ts:396</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_54">Parameters</h4>
 <table>
@@ -6933,7 +6935,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_96">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_97">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:396</p>
+<p>node_modules/@types/node/net.d.ts:397</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_55">Parameters</h4>
 <table>
@@ -6959,7 +6961,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_97">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_98">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:397</p>
+<p>node_modules/@types/node/net.d.ts:398</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_56">Parameters</h4>
 <table>
@@ -6985,7 +6987,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_98">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_99">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:401</p>
+<p>node_modules/@types/node/net.d.ts:402</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_57">Parameters</h4>
 <table>
@@ -7011,7 +7013,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_99">Inherited from</h4>
 <p>Socket.on</p>
 <h4 id="defined-in_100">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:402</p>
+<p>node_modules/@types/node/net.d.ts:403</p>
 <hr />
 <h3 id="once">once</h3>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
@@ -7039,7 +7041,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_100">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_101">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:403</p>
+<p>node_modules/@types/node/net.d.ts:404</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_59">Parameters</h4>
 <table>
@@ -7065,7 +7067,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_101">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_102">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:404</p>
+<p>node_modules/@types/node/net.d.ts:405</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_60">Parameters</h4>
 <table>
@@ -7091,7 +7093,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_102">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_103">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:405</p>
+<p>node_modules/@types/node/net.d.ts:406</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_61">Parameters</h4>
 <table>
@@ -7117,7 +7119,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_103">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_104">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:406</p>
+<p>node_modules/@types/node/net.d.ts:407</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_62">Parameters</h4>
 <table>
@@ -7143,7 +7145,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_104">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_105">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:407</p>
+<p>node_modules/@types/node/net.d.ts:408</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_63">Parameters</h4>
 <table>
@@ -7169,7 +7171,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_105">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_106">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:408</p>
+<p>node_modules/@types/node/net.d.ts:409</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_64">Parameters</h4>
 <table>
@@ -7195,7 +7197,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_106">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_107">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:409</p>
+<p>node_modules/@types/node/net.d.ts:410</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_65">Parameters</h4>
 <table>
@@ -7221,7 +7223,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_107">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_108">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:410</p>
+<p>node_modules/@types/node/net.d.ts:411</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_66">Parameters</h4>
 <table>
@@ -7247,7 +7249,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_108">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_109">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:414</p>
+<p>node_modules/@types/node/net.d.ts:415</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_67">Parameters</h4>
 <table>
@@ -7273,7 +7275,7 @@ If the <em>fn</em> function returns a promise - that promise will be <code>await
 <h4 id="inherited-from_109">Inherited from</h4>
 <p>Socket.once</p>
 <h4 id="defined-in_110">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:415</p>
+<p>node_modules/@types/node/net.d.ts:416</p>
 <hr />
 <h3 id="pause">pause</h3>
 <p>▸ <strong>pause</strong>(): <a href="./"><code>AppiumServerSocket</code></a></p>
@@ -7360,7 +7362,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_112">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_113">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:416</p>
+<p>node_modules/@types/node/net.d.ts:417</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_70">Parameters</h4>
 <table>
@@ -7386,7 +7388,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_113">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_114">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:417</p>
+<p>node_modules/@types/node/net.d.ts:418</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_71">Parameters</h4>
 <table>
@@ -7412,7 +7414,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_114">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_115">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:418</p>
+<p>node_modules/@types/node/net.d.ts:419</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_72">Parameters</h4>
 <table>
@@ -7438,7 +7440,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_115">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_116">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:419</p>
+<p>node_modules/@types/node/net.d.ts:420</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_73">Parameters</h4>
 <table>
@@ -7464,7 +7466,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_116">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_117">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:420</p>
+<p>node_modules/@types/node/net.d.ts:421</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_74">Parameters</h4>
 <table>
@@ -7490,7 +7492,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_117">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_118">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:421</p>
+<p>node_modules/@types/node/net.d.ts:422</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_75">Parameters</h4>
 <table>
@@ -7516,7 +7518,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_118">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_119">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:422</p>
+<p>node_modules/@types/node/net.d.ts:423</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_76">Parameters</h4>
 <table>
@@ -7542,7 +7544,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_119">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_120">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:423</p>
+<p>node_modules/@types/node/net.d.ts:424</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_77">Parameters</h4>
 <table>
@@ -7568,7 +7570,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_120">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_121">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:427</p>
+<p>node_modules/@types/node/net.d.ts:428</p>
 <p>▸ <strong>prependListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_78">Parameters</h4>
 <table>
@@ -7594,7 +7596,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_121">Inherited from</h4>
 <p>Socket.prependListener</p>
 <h4 id="defined-in_122">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:428</p>
+<p>node_modules/@types/node/net.d.ts:429</p>
 <hr />
 <h3 id="prependoncelistener">prependOnceListener</h3>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
@@ -7622,7 +7624,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_122">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_123">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:429</p>
+<p>node_modules/@types/node/net.d.ts:430</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_80">Parameters</h4>
 <table>
@@ -7648,7 +7650,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_123">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_124">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:430</p>
+<p>node_modules/@types/node/net.d.ts:431</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_81">Parameters</h4>
 <table>
@@ -7674,7 +7676,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_124">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_125">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:431</p>
+<p>node_modules/@types/node/net.d.ts:432</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_82">Parameters</h4>
 <table>
@@ -7700,7 +7702,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_125">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_126">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:432</p>
+<p>node_modules/@types/node/net.d.ts:433</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_83">Parameters</h4>
 <table>
@@ -7726,7 +7728,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_126">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_127">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:433</p>
+<p>node_modules/@types/node/net.d.ts:434</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_84">Parameters</h4>
 <table>
@@ -7752,7 +7754,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_127">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_128">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:434</p>
+<p>node_modules/@types/node/net.d.ts:435</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_85">Parameters</h4>
 <table>
@@ -7778,7 +7780,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_128">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_129">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:435</p>
+<p>node_modules/@types/node/net.d.ts:436</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_86">Parameters</h4>
 <table>
@@ -7804,7 +7806,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_129">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_130">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:436</p>
+<p>node_modules/@types/node/net.d.ts:437</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_87">Parameters</h4>
 <table>
@@ -7830,7 +7832,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_130">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_131">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:440</p>
+<p>node_modules/@types/node/net.d.ts:441</p>
 <p>▸ <strong>prependOnceListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>AppiumServerSocket</code></a></p>
 <h4 id="parameters_88">Parameters</h4>
 <table>
@@ -7856,7 +7858,7 @@ Useful to throttle back an upload.</p>
 <h4 id="inherited-from_131">Inherited from</h4>
 <p>Socket.prependOnceListener</p>
 <h4 id="defined-in_132">Defined in</h4>
-<p>node_modules/@types/node/net.d.ts:441</p>
+<p>node_modules/@types/node/net.d.ts:442</p>
 <hr />
 <h3 id="push">push</h3>
 <p>▸ <strong>push</strong>(<code>chunk</code>, <code>encoding?</code>): <code>boolean</code></p>
