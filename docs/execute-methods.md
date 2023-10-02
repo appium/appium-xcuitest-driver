@@ -108,6 +108,7 @@ strategy | string | no | One of possible app installation strategies on real dev
 ### mobile: isAppInstalled
 
 Checks whether the given application is installed on the device under test.
+An [offload application]((https://discussions.apple.com/thread/254887240)) could be handled as not installed.
 
 #### Arguments
 
@@ -122,6 +123,9 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
+
+An [offload application]((https://discussions.apple.com/thread/254887240)) also can be removed.
+Please check [Clear the application local data explicitly for real devices](troubleshooting.md#clear-the-application-local-data-explicitly-for-real-devices) to ensure the application local data cleanup.
 
 #### Arguments
 
@@ -205,6 +209,7 @@ bundleId | string | yes | The bundle identifier of the application to be activat
 
 List applications installed on the real device under test. This extension throws an error if called
 for a Simulator device.
+Offload applications will not be in the result.
 
 #### Arguments
 
