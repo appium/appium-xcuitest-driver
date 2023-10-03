@@ -1728,6 +1728,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#capturerejectionsymbol_1" class="md-nav__link">
+    [captureRejectionSymbol]
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#addlistener" class="md-nav__link">
     addListener
   </a>
@@ -2677,6 +2712,7 @@
 </ul>
 <h3 id="methods">Methods</h3>
 <ul>
+<li><a href="./#[capturerejectionsymbol]">[captureRejectionSymbol]</a></li>
 <li><a href="./#addlistener">addListener</a></li>
 <li><a href="./#address">address</a></li>
 <li><a href="./#close">close</a></li>
@@ -2774,7 +2810,7 @@
 <h4 id="inherited-from">Inherited from</h4>
 <p>EventEmitter.captureRejectionSymbol</p>
 <h4 id="defined-in_4">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:398</p>
+<p>node_modules/@types/node/events.d.ts:402</p>
 <hr />
 <h3 id="capturerejections">captureRejections</h3>
 <p>▪ <code>Static</code> <strong>captureRejections</strong>: <code>boolean</code></p>
@@ -2785,7 +2821,7 @@
 <h4 id="inherited-from_1">Inherited from</h4>
 <p>EventEmitter.captureRejections</p>
 <h4 id="defined-in_5">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:405</p>
+<p>node_modules/@types/node/events.d.ts:409</p>
 <hr />
 <h3 id="defaultmaxlisteners">defaultMaxListeners</h3>
 <p>▪ <code>Static</code> <strong>defaultMaxListeners</strong>: <code>number</code></p>
@@ -2821,7 +2857,7 @@ Its <code>name</code> property is set to <code>'MaxListenersExceededWarning'</co
 <h4 id="inherited-from_2">Inherited from</h4>
 <p>EventEmitter.defaultMaxListeners</p>
 <h4 id="defined-in_6">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:442</p>
+<p>node_modules/@types/node/events.d.ts:446</p>
 <hr />
 <h3 id="errormonitor">errorMonitor</h3>
 <p>▪ <code>Static</code> <code>Readonly</code> <strong>errorMonitor</strong>: typeof <a href="./#errormonitor"><code>errorMonitor</code></a></p>
@@ -2833,11 +2869,43 @@ regular <code>'error'</code> listener is installed.</p>
 <h4 id="inherited-from_3">Inherited from</h4>
 <p>EventEmitter.errorMonitor</p>
 <h4 id="defined-in_7">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:391</p>
+<p>node_modules/@types/node/events.d.ts:395</p>
 <h2 id="methods_1">Methods</h2>
+<h3 id="capturerejectionsymbol_1">[captureRejectionSymbol]</h3>
+<p>▸ <code>Optional</code> <strong>[captureRejectionSymbol]</strong>(<code>error</code>, <code>event</code>, <code>...args</code>): <code>void</code></p>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>error</code></td>
+<td style="text-align: left;"><code>Error</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>event</code></td>
+<td style="text-align: left;"><code>string</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>...args</code></td>
+<td style="text-align: left;"><code>any</code>[]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_4">Inherited from</h4>
+<p>EventEmitter.__@captureRejectionSymbol@34862</p>
+<h4 id="defined-in_8">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:112</p>
+<hr />
 <h3 id="addlistener">addListener</h3>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_1">Parameters</h4>
+<h4 id="parameters_2">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2856,14 +2924,14 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns">Returns</h4>
+<h4 id="returns_1">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_1">Overrides</h4>
 <p>EventEmitter.addListener</p>
-<h4 id="defined-in_8">Defined in</h4>
+<h4 id="defined-in_9">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:389</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_2">Parameters</h4>
+<h4 id="parameters_3">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2882,14 +2950,14 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_1">Returns</h4>
+<h4 id="returns_2">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_2">Overrides</h4>
 <p>EventEmitter.addListener</p>
-<h4 id="defined-in_9">Defined in</h4>
+<h4 id="defined-in_10">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:390</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_3">Parameters</h4>
+<h4 id="parameters_4">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2908,14 +2976,14 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_2">Returns</h4>
+<h4 id="returns_3">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_3">Overrides</h4>
 <p>EventEmitter.addListener</p>
-<h4 id="defined-in_10">Defined in</h4>
+<h4 id="defined-in_11">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:391</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_4">Parameters</h4>
+<h4 id="parameters_5">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2934,14 +3002,14 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_3">Returns</h4>
+<h4 id="returns_4">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_4">Overrides</h4>
 <p>EventEmitter.addListener</p>
-<h4 id="defined-in_11">Defined in</h4>
+<h4 id="defined-in_12">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:392</p>
 <p>▸ <strong>addListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_5">Parameters</h4>
+<h4 id="parameters_6">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2960,23 +3028,23 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_4">Returns</h4>
+<h4 id="returns_5">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_5">Overrides</h4>
 <p>EventEmitter.addListener</p>
-<h4 id="defined-in_12">Defined in</h4>
+<h4 id="defined-in_13">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:393</p>
 <hr />
 <h3 id="address">address</h3>
 <p>▸ <strong>address</strong>(): <code>string</code> | <code>AddressInfo</code></p>
-<h4 id="returns_5">Returns</h4>
+<h4 id="returns_6">Returns</h4>
 <p><code>string</code> | <code>AddressInfo</code></p>
-<h4 id="defined-in_13">Defined in</h4>
+<h4 id="defined-in_14">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:360</p>
 <hr />
 <h3 id="close">close</h3>
 <p>▸ <strong>close</strong>(<code>cb?</code>): <code>void</code></p>
-<h4 id="parameters_6">Parameters</h4>
+<h4 id="parameters_7">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -2991,9 +3059,9 @@ regular <code>'error'</code> listener is installed.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_6">Returns</h4>
+<h4 id="returns_7">Returns</h4>
 <p><code>void</code></p>
-<h4 id="defined-in_14">Defined in</h4>
+<h4 id="defined-in_15">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:361</p>
 <hr />
 <h3 id="emit">emit</h3>
@@ -3034,7 +3102,7 @@ to each.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v0.1.26</p>
-<h4 id="parameters_7">Parameters</h4>
+<h4 id="parameters_8">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3053,12 +3121,12 @@ to each.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_7">Returns</h4>
+<h4 id="returns_8">Returns</h4>
 <p><code>boolean</code></p>
-<h4 id="inherited-from_4">Inherited from</h4>
+<h4 id="inherited-from_5">Inherited from</h4>
 <p>EventEmitter.emit</p>
-<h4 id="defined-in_15">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:724</p>
+<h4 id="defined-in_16">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:773</p>
 <hr />
 <h3 id="eventnames">eventNames</h3>
 <p>▸ <strong>eventNames</strong>(): (<code>string</code> | <code>symbol</code>)[]</p>
@@ -3078,12 +3146,12 @@ listeners. The values in the array are strings or <code>Symbol</code>s.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v6.0.0</p>
-<h4 id="returns_8">Returns</h4>
+<h4 id="returns_9">Returns</h4>
 <p>(<code>string</code> | <code>symbol</code>)[]</p>
-<h4 id="inherited-from_5">Inherited from</h4>
+<h4 id="inherited-from_6">Inherited from</h4>
 <p>EventEmitter.eventNames</p>
-<h4 id="defined-in_16">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:787</p>
+<h4 id="defined-in_17">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:836</p>
 <hr />
 <h3 id="getmaxlisteners">getMaxListeners</h3>
 <p>▸ <strong>getMaxListeners</strong>(): <code>number</code></p>
@@ -3091,16 +3159,16 @@ listeners. The values in the array are strings or <code>Symbol</code>s.</p>
 set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaultmaxlisteners">defaultMaxListeners</a>.</p>
 <p><strong><code>Since</code></strong></p>
 <p>v1.0.0</p>
-<h4 id="returns_9">Returns</h4>
+<h4 id="returns_10">Returns</h4>
 <p><code>number</code></p>
-<h4 id="inherited-from_6">Inherited from</h4>
+<h4 id="inherited-from_7">Inherited from</h4>
 <p>EventEmitter.getMaxListeners</p>
-<h4 id="defined-in_17">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:639</p>
+<h4 id="defined-in_18">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:688</p>
 <hr />
 <h3 id="handleupgrade">handleUpgrade</h3>
 <p>▸ <strong>handleUpgrade</strong>(<code>request</code>, <code>socket</code>, <code>upgradeHead</code>, <code>callback</code>): <code>void</code></p>
-<h4 id="parameters_8">Parameters</h4>
+<h4 id="parameters_9">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3127,9 +3195,9 @@ set by <code>emitter.setMaxListeners(n)</code> or defaults to <a href="./#defaul
 </tr>
 </tbody>
 </table>
-<h4 id="returns_10">Returns</h4>
+<h4 id="returns_11">Returns</h4>
 <p><code>void</code></p>
-<h4 id="defined-in_18">Defined in</h4>
+<h4 id="defined-in_19">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:362</p>
 <hr />
 <h3 id="listenercount">listenerCount</h3>
@@ -3139,7 +3207,7 @@ If <code>listener</code> is provided, it will return how many times the listener
 in the list of the listeners of the event.</p>
 <p><strong><code>Since</code></strong></p>
 <p>v3.2.0</p>
-<h4 id="parameters_9">Parameters</h4>
+<h4 id="parameters_10">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3161,12 +3229,12 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_11">Returns</h4>
+<h4 id="returns_12">Returns</h4>
 <p><code>number</code></p>
-<h4 id="inherited-from_7">Inherited from</h4>
+<h4 id="inherited-from_8">Inherited from</h4>
 <p>EventEmitter.listenerCount</p>
-<h4 id="defined-in_19">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:733</p>
+<h4 id="defined-in_20">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:782</p>
 <hr />
 <h3 id="listeners">listeners</h3>
 <p>▸ <strong>listeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>
@@ -3179,7 +3247,7 @@ in the list of the listeners of the event.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v0.1.26</p>
-<h4 id="parameters_10">Parameters</h4>
+<h4 id="parameters_11">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3194,40 +3262,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_12">Returns</h4>
+<h4 id="returns_13">Returns</h4>
 <p><code>Function</code>[]</p>
-<h4 id="inherited-from_8">Inherited from</h4>
+<h4 id="inherited-from_9">Inherited from</h4>
 <p>EventEmitter.listeners</p>
-<h4 id="defined-in_20">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:652</p>
+<h4 id="defined-in_21">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:701</p>
 <hr />
 <h3 id="off">off</h3>
-<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_11">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>event</code></td>
-<td style="text-align: left;"><code>"connection"</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>cb</code></td>
-<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>&gt;, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>&gt;) =&gt; <code>void</code></td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_13">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="overrides_6">Overrides</h4>
-<p>EventEmitter.off</p>
-<h4 id="defined-in_21">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:383</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="parameters_12">Parameters</h4>
 <table>
@@ -3240,20 +3282,20 @@ in the list of the listeners of the event.</p>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>event</code></td>
-<td style="text-align: left;"><code>"error"</code></td>
+<td style="text-align: left;"><code>"connection"</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>cb</code></td>
-<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
+<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>&gt;, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>&gt;) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_14">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="overrides_7">Overrides</h4>
+<h4 id="overrides_6">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_22">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:384</p>
+<p>node_modules/@types/ws/index.d.ts:383</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="parameters_13">Parameters</h4>
 <table>
@@ -3266,20 +3308,20 @@ in the list of the listeners of the event.</p>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>event</code></td>
-<td style="text-align: left;"><code>"headers"</code></td>
+<td style="text-align: left;"><code>"error"</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>cb</code></td>
-<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>&gt;) =&gt; <code>void</code></td>
+<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>error</code>: <code>Error</code>) =&gt; <code>void</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_15">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="overrides_8">Overrides</h4>
+<h4 id="overrides_7">Overrides</h4>
 <p>EventEmitter.off</p>
 <h4 id="defined-in_23">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:385</p>
+<p>node_modules/@types/ws/index.d.ts:384</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="parameters_14">Parameters</h4>
 <table>
@@ -3292,6 +3334,32 @@ in the list of the listeners of the event.</p>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>event</code></td>
+<td style="text-align: left;"><code>"headers"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>cb</code></td>
+<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>headers</code>: <code>string</code>[], <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>&gt;) =&gt; <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_16">Returns</h4>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
+<h4 id="overrides_8">Overrides</h4>
+<p>EventEmitter.off</p>
+<h4 id="defined-in_24">Defined in</h4>
+<p>node_modules/@types/ws/index.d.ts:385</p>
+<p>▸ <strong>off</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
+<h4 id="parameters_15">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>event</code></td>
 <td style="text-align: left;"><code>"close"</code> | <code>"listening"</code></td>
 </tr>
 <tr>
@@ -3300,14 +3368,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_16">Returns</h4>
+<h4 id="returns_17">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_9">Overrides</h4>
 <p>EventEmitter.off</p>
-<h4 id="defined-in_24">Defined in</h4>
+<h4 id="defined-in_25">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:386</p>
 <p>▸ <strong>off</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_15">Parameters</h4>
+<h4 id="parameters_16">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3326,40 +3394,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_17">Returns</h4>
+<h4 id="returns_18">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_10">Overrides</h4>
 <p>EventEmitter.off</p>
-<h4 id="defined-in_25">Defined in</h4>
+<h4 id="defined-in_26">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:387</p>
 <hr />
 <h3 id="on">on</h3>
-<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_16">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>event</code></td>
-<td style="text-align: left;"><code>"connection"</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>cb</code></td>
-<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>&gt;, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>&gt;) =&gt; <code>void</code></td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_18">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="overrides_11">Overrides</h4>
-<p>EventEmitter.on</p>
-<h4 id="defined-in_26">Defined in</h4>
-<p>node_modules/@types/ws/index.d.ts:371</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="parameters_17">Parameters</h4>
 <table>
@@ -3372,6 +3414,32 @@ in the list of the listeners of the event.</p>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>event</code></td>
+<td style="text-align: left;"><code>"connection"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>cb</code></td>
+<td style="text-align: left;">(<code>this</code>: <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, typeof <code>IncomingMessage</code>&gt;, <code>socket</code>: <code>InstanceType</code>&lt;<code>T</code>&gt;, <code>request</code>: <code>InstanceType</code>&lt;<code>U</code>&gt;) =&gt; <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_19">Returns</h4>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
+<h4 id="overrides_11">Overrides</h4>
+<p>EventEmitter.on</p>
+<h4 id="defined-in_27">Defined in</h4>
+<p>node_modules/@types/ws/index.d.ts:371</p>
+<p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
+<h4 id="parameters_18">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>event</code></td>
 <td style="text-align: left;"><code>"error"</code></td>
 </tr>
 <tr>
@@ -3380,14 +3448,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_19">Returns</h4>
+<h4 id="returns_20">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_12">Overrides</h4>
 <p>EventEmitter.on</p>
-<h4 id="defined-in_27">Defined in</h4>
+<h4 id="defined-in_28">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:372</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_18">Parameters</h4>
+<h4 id="parameters_19">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3406,14 +3474,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_20">Returns</h4>
+<h4 id="returns_21">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_13">Overrides</h4>
 <p>EventEmitter.on</p>
-<h4 id="defined-in_28">Defined in</h4>
+<h4 id="defined-in_29">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:373</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_19">Parameters</h4>
+<h4 id="parameters_20">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3432,14 +3500,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_21">Returns</h4>
+<h4 id="returns_22">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_14">Overrides</h4>
 <p>EventEmitter.on</p>
-<h4 id="defined-in_29">Defined in</h4>
+<h4 id="defined-in_30">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:374</p>
 <p>▸ <strong>on</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_20">Parameters</h4>
+<h4 id="parameters_21">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3458,16 +3526,16 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_22">Returns</h4>
+<h4 id="returns_23">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_15">Overrides</h4>
 <p>EventEmitter.on</p>
-<h4 id="defined-in_30">Defined in</h4>
+<h4 id="defined-in_31">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:375</p>
 <hr />
 <h3 id="once">once</h3>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_21">Parameters</h4>
+<h4 id="parameters_22">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3486,14 +3554,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_23">Returns</h4>
+<h4 id="returns_24">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_16">Overrides</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_31">Defined in</h4>
+<h4 id="defined-in_32">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:377</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_22">Parameters</h4>
+<h4 id="parameters_23">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3512,14 +3580,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_24">Returns</h4>
+<h4 id="returns_25">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_17">Overrides</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_32">Defined in</h4>
+<h4 id="defined-in_33">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:378</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_23">Parameters</h4>
+<h4 id="parameters_24">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3538,14 +3606,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_25">Returns</h4>
+<h4 id="returns_26">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_18">Overrides</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_33">Defined in</h4>
+<h4 id="defined-in_34">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:379</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_24">Parameters</h4>
+<h4 id="parameters_25">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3564,14 +3632,14 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_26">Returns</h4>
+<h4 id="returns_27">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_19">Overrides</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_34">Defined in</h4>
+<h4 id="defined-in_35">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:380</p>
 <p>▸ <strong>once</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_25">Parameters</h4>
+<h4 id="parameters_26">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3590,11 +3658,11 @@ in the list of the listeners of the event.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_27">Returns</h4>
+<h4 id="returns_28">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_20">Overrides</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_35">Defined in</h4>
+<h4 id="defined-in_36">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:381</p>
 <hr />
 <h3 id="prependlistener">prependListener</h3>
@@ -3606,46 +3674,6 @@ times.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nx">server</span><span class="p">.</span><span class="nx">prependListener</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;someone connected!&#39;</span><span class="p">);</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">});</span>
-</code></pre></div>
-<p>Returns a reference to the <code>EventEmitter</code>, so that calls can be chained.</p>
-<p><strong><code>Since</code></strong></p>
-<p>v6.0.0</p>
-<h4 id="parameters_26">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>eventName</code></td>
-<td style="text-align: left;"><code>string</code> | <code>symbol</code></td>
-<td style="text-align: left;">The name of the event.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>listener</code></td>
-<td style="text-align: left;">(...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
-<td style="text-align: left;">The callback function</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_28">Returns</h4>
-<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="inherited-from_9">Inherited from</h4>
-<p>EventEmitter.prependListener</p>
-<h4 id="defined-in_36">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:751</p>
-<hr />
-<h3 id="prependoncelistener">prependOnceListener</h3>
-<p>▸ <strong>prependOnceListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<p>Adds a <strong>one-time</strong><code>listener</code> function for the event named <code>eventName</code> to the <em>beginning</em> of the listeners array. The next time <code>eventName</code> is triggered, this
-listener is removed, and then invoked.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nx">server</span><span class="p">.</span><span class="nx">prependOnceListener</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ah, we have our first user!&#39;</span><span class="p">);</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">});</span>
 </code></pre></div>
 <p>Returns a reference to the <code>EventEmitter</code>, so that calls can be chained.</p>
 <p><strong><code>Since</code></strong></p>
@@ -3675,9 +3703,49 @@ listener is removed, and then invoked.</p>
 <h4 id="returns_29">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="inherited-from_10">Inherited from</h4>
-<p>EventEmitter.prependOnceListener</p>
+<p>EventEmitter.prependListener</p>
 <h4 id="defined-in_37">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:767</p>
+<p>node_modules/@types/node/events.d.ts:800</p>
+<hr />
+<h3 id="prependoncelistener">prependOnceListener</h3>
+<p>▸ <strong>prependOnceListener</strong>(<code>eventName</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
+<p>Adds a <strong>one-time</strong><code>listener</code> function for the event named <code>eventName</code> to the <em>beginning</em> of the listeners array. The next time <code>eventName</code> is triggered, this
+listener is removed, and then invoked.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nx">server</span><span class="p">.</span><span class="nx">prependOnceListener</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ah, we have our first user!&#39;</span><span class="p">);</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">});</span>
+</code></pre></div>
+<p>Returns a reference to the <code>EventEmitter</code>, so that calls can be chained.</p>
+<p><strong><code>Since</code></strong></p>
+<p>v6.0.0</p>
+<h4 id="parameters_28">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>eventName</code></td>
+<td style="text-align: left;"><code>string</code> | <code>symbol</code></td>
+<td style="text-align: left;">The name of the event.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>listener</code></td>
+<td style="text-align: left;">(...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
+<td style="text-align: left;">The callback function</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_30">Returns</h4>
+<p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
+<h4 id="inherited-from_11">Inherited from</h4>
+<p>EventEmitter.prependOnceListener</p>
+<h4 id="defined-in_38">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:816</p>
 <hr />
 <h3 id="rawlisteners">rawListeners</h3>
 <p>▸ <strong>rawListeners</strong>(<code>eventName</code>): <code>Function</code>[]</p>
@@ -3708,7 +3776,7 @@ including any wrappers (such as those created by <code>.once()</code>).</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v9.4.0</p>
-<h4 id="parameters_28">Parameters</h4>
+<h4 id="parameters_29">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3723,12 +3791,12 @@ including any wrappers (such as those created by <code>.once()</code>).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_30">Returns</h4>
+<h4 id="returns_31">Returns</h4>
 <p><code>Function</code>[]</p>
-<h4 id="inherited-from_11">Inherited from</h4>
+<h4 id="inherited-from_12">Inherited from</h4>
 <p>EventEmitter.rawListeners</p>
-<h4 id="defined-in_38">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:683</p>
+<h4 id="defined-in_39">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:732</p>
 <hr />
 <h3 id="removealllisteners">removeAllListeners</h3>
 <p>▸ <strong>removeAllListeners</strong>(<code>event?</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
@@ -3739,7 +3807,7 @@ component or module (e.g. sockets or file streams).</p>
 <p>Returns a reference to the <code>EventEmitter</code>, so that calls can be chained.</p>
 <p><strong><code>Since</code></strong></p>
 <p>v0.1.26</p>
-<h4 id="parameters_29">Parameters</h4>
+<h4 id="parameters_30">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3754,16 +3822,16 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_31">Returns</h4>
+<h4 id="returns_32">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="inherited-from_12">Inherited from</h4>
+<h4 id="inherited-from_13">Inherited from</h4>
 <p>EventEmitter.removeAllListeners</p>
-<h4 id="defined-in_39">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:623</p>
+<h4 id="defined-in_40">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:672</p>
 <hr />
 <h3 id="removelistener">removeListener</h3>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_30">Parameters</h4>
+<h4 id="parameters_31">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3782,14 +3850,14 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_32">Returns</h4>
+<h4 id="returns_33">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_21">Overrides</h4>
 <p>EventEmitter.removeListener</p>
-<h4 id="defined-in_40">Defined in</h4>
+<h4 id="defined-in_41">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:395</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_31">Parameters</h4>
+<h4 id="parameters_32">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3808,14 +3876,14 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_33">Returns</h4>
+<h4 id="returns_34">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_22">Overrides</h4>
 <p>EventEmitter.removeListener</p>
-<h4 id="defined-in_41">Defined in</h4>
+<h4 id="defined-in_42">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:396</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_32">Parameters</h4>
+<h4 id="parameters_33">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3834,14 +3902,14 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_34">Returns</h4>
+<h4 id="returns_35">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_23">Overrides</h4>
 <p>EventEmitter.removeListener</p>
-<h4 id="defined-in_42">Defined in</h4>
+<h4 id="defined-in_43">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:397</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>cb</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_33">Parameters</h4>
+<h4 id="parameters_34">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3860,14 +3928,14 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_35">Returns</h4>
+<h4 id="returns_36">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_24">Overrides</h4>
 <p>EventEmitter.removeListener</p>
-<h4 id="defined-in_43">Defined in</h4>
+<h4 id="defined-in_44">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:398</p>
 <p>▸ <strong>removeListener</strong>(<code>event</code>, <code>listener</code>): <a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="parameters_34">Parameters</h4>
+<h4 id="parameters_35">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3886,11 +3954,11 @@ component or module (e.g. sockets or file streams).</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_36">Returns</h4>
+<h4 id="returns_37">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
 <h4 id="overrides_25">Overrides</h4>
 <p>EventEmitter.removeListener</p>
-<h4 id="defined-in_44">Defined in</h4>
+<h4 id="defined-in_45">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:399</p>
 <hr />
 <h3 id="setmaxlisteners">setMaxListeners</h3>
@@ -3902,7 +3970,7 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 <p>Returns a reference to the <code>EventEmitter</code>, so that calls can be chained.</p>
 <p><strong><code>Since</code></strong></p>
 <p>v0.3.5</p>
-<h4 id="parameters_35">Parameters</h4>
+<h4 id="parameters_36">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3917,16 +3985,16 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 </tr>
 </tbody>
 </table>
-<h4 id="returns_37">Returns</h4>
+<h4 id="returns_38">Returns</h4>
 <p><a href="./"><code>WSServer</code></a>&lt;<code>T</code>, <code>U</code>&gt;</p>
-<h4 id="inherited-from_13">Inherited from</h4>
+<h4 id="inherited-from_14">Inherited from</h4>
 <p>EventEmitter.setMaxListeners</p>
-<h4 id="defined-in_45">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:633</p>
+<h4 id="defined-in_46">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:682</p>
 <hr />
 <h3 id="shouldhandle">shouldHandle</h3>
 <p>▸ <strong>shouldHandle</strong>(<code>request</code>): <code>boolean</code> | <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
-<h4 id="parameters_36">Parameters</h4>
+<h4 id="parameters_37">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3941,9 +4009,9 @@ modified for this specific <code>EventEmitter</code> instance. The value can be 
 </tr>
 </tbody>
 </table>
-<h4 id="returns_38">Returns</h4>
+<h4 id="returns_39">Returns</h4>
 <p><code>boolean</code> | <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
-<h4 id="defined-in_46">Defined in</h4>
+<h4 id="defined-in_47">Defined in</h4>
 <p>node_modules/@types/ws/index.d.ts:368</p>
 <hr />
 <h3 id="addabortlistener">addAbortListener</h3>
@@ -3974,7 +4042,7 @@ not prevent the listener from running.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v20.5.0</p>
-<h4 id="parameters_37">Parameters</h4>
+<h4 id="parameters_38">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -3993,13 +4061,13 @@ not prevent the listener from running.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_39">Returns</h4>
+<h4 id="returns_40">Returns</h4>
 <p><code>Disposable</code></p>
 <p>Disposable that removes the <code>abort</code> listener.</p>
-<h4 id="inherited-from_14">Inherited from</h4>
+<h4 id="inherited-from_15">Inherited from</h4>
 <p>EventEmitter.addAbortListener</p>
-<h4 id="defined-in_47">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:383</p>
+<h4 id="defined-in_48">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:387</p>
 <hr />
 <h3 id="geteventlisteners">getEventListeners</h3>
 <p>▸ <code>Static</code> <strong>getEventListeners</strong>(<code>emitter</code>, <code>name</code>): <code>Function</code>[]</p>
@@ -4025,7 +4093,7 @@ event target. This is useful for debugging and diagnostic purposes.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v15.2.0, v14.17.0</p>
-<h4 id="parameters_38">Parameters</h4>
+<h4 id="parameters_39">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4044,12 +4112,12 @@ event target. This is useful for debugging and diagnostic purposes.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_40">Returns</h4>
+<h4 id="returns_41">Returns</h4>
 <p><code>Function</code>[]</p>
-<h4 id="inherited-from_15">Inherited from</h4>
+<h4 id="inherited-from_16">Inherited from</h4>
 <p>EventEmitter.getEventListeners</p>
-<h4 id="defined-in_48">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:304</p>
+<h4 id="defined-in_49">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:308</p>
 <hr />
 <h3 id="getmaxlisteners_1">getMaxListeners</h3>
 <p>▸ <code>Static</code> <strong>getMaxListeners</strong>(<code>emitter</code>): <code>number</code></p>
@@ -4076,7 +4144,7 @@ the max set, the EventTarget will print a warning.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v19.9.0</p>
-<h4 id="parameters_39">Parameters</h4>
+<h4 id="parameters_40">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4091,12 +4159,12 @@ the max set, the EventTarget will print a warning.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_41">Returns</h4>
+<h4 id="returns_42">Returns</h4>
 <p><code>number</code></p>
-<h4 id="inherited-from_16">Inherited from</h4>
+<h4 id="inherited-from_17">Inherited from</h4>
 <p>EventEmitter.getMaxListeners</p>
-<h4 id="defined-in_49">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:333</p>
+<h4 id="defined-in_50">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:337</p>
 <hr />
 <h3 id="listenercount_1">listenerCount</h3>
 <p>▸ <code>Static</code> <strong>listenerCount</strong>(<code>emitter</code>, <code>eventName</code>): <code>number</code></p>
@@ -4113,7 +4181,7 @@ the max set, the EventTarget will print a warning.</p>
 <p>v0.9.12</p>
 <p><strong><code>Deprecated</code></strong></p>
 <p>Since v3.2.0 - Use <code>listenerCount</code> instead.</p>
-<h4 id="parameters_40">Parameters</h4>
+<h4 id="parameters_41">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4135,12 +4203,12 @@ the max set, the EventTarget will print a warning.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_42">Returns</h4>
+<h4 id="returns_43">Returns</h4>
 <p><code>number</code></p>
-<h4 id="inherited-from_17">Inherited from</h4>
+<h4 id="inherited-from_18">Inherited from</h4>
 <p>EventEmitter.listenerCount</p>
-<h4 id="defined-in_50">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:276</p>
+<h4 id="defined-in_51">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:280</p>
 <hr />
 <h3 id="on_1">on</h3>
 <p>▸ <code>Static</code> <strong>on</strong>(<code>emitter</code>, <code>eventName</code>, <code>options?</code>): <code>AsyncIterableIterator</code>&lt;<code>any</code>&gt;</p>
@@ -4195,7 +4263,7 @@ composed of the emitted event arguments.</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v13.6.0, v12.16.0</p>
-<h4 id="parameters_41">Parameters</h4>
+<h4 id="parameters_42">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4222,13 +4290,13 @@ composed of the emitted event arguments.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_43">Returns</h4>
+<h4 id="returns_44">Returns</h4>
 <p><code>AsyncIterableIterator</code>&lt;<code>any</code>&gt;</p>
 <p>that iterates <code>eventName</code> events emitted by the <code>emitter</code></p>
-<h4 id="inherited-from_18">Inherited from</h4>
+<h4 id="inherited-from_19">Inherited from</h4>
 <p>EventEmitter.on</p>
-<h4 id="defined-in_51">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:254</p>
+<h4 id="defined-in_52">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:258</p>
 <hr />
 <h3 id="once_1">once</h3>
 <p>▸ <code>Static</code> <strong>once</strong>(<code>emitter</code>, <code>eventName</code>, <code>options?</code>): <code>Promise</code>&lt;<code>any</code>[]&gt;</p>
@@ -4301,7 +4369,7 @@ special handling:</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v11.13.0, v10.16.0</p>
-<h4 id="parameters_42">Parameters</h4>
+<h4 id="parameters_43">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4324,14 +4392,14 @@ special handling:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_44">Returns</h4>
+<h4 id="returns_45">Returns</h4>
 <p><code>Promise</code>&lt;<code>any</code>[]&gt;</p>
-<h4 id="inherited-from_19">Inherited from</h4>
+<h4 id="inherited-from_20">Inherited from</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_52">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:189</p>
+<h4 id="defined-in_53">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:193</p>
 <p>▸ <code>Static</code> <strong>once</strong>(<code>emitter</code>, <code>eventName</code>, <code>options?</code>): <code>Promise</code>&lt;<code>any</code>[]&gt;</p>
-<h4 id="parameters_43">Parameters</h4>
+<h4 id="parameters_44">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4354,12 +4422,12 @@ special handling:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_45">Returns</h4>
+<h4 id="returns_46">Returns</h4>
 <p><code>Promise</code>&lt;<code>any</code>[]&gt;</p>
-<h4 id="inherited-from_20">Inherited from</h4>
+<h4 id="inherited-from_21">Inherited from</h4>
 <p>EventEmitter.once</p>
-<h4 id="defined-in_53">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:194</p>
+<h4 id="defined-in_54">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:198</p>
 <hr />
 <h3 id="setmaxlisteners_1">setMaxListeners</h3>
 <p>▸ <code>Static</code> <strong>setMaxListeners</strong>(<code>n?</code>, <code>...eventTargets</code>): <code>void</code></p>
@@ -4372,7 +4440,7 @@ special handling:</p>
 </code></pre></div>
 <p><strong><code>Since</code></strong></p>
 <p>v15.4.0</p>
-<h4 id="parameters_44">Parameters</h4>
+<h4 id="parameters_45">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -4394,12 +4462,12 @@ special handling:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_46">Returns</h4>
+<h4 id="returns_47">Returns</h4>
 <p><code>void</code></p>
-<h4 id="inherited-from_21">Inherited from</h4>
+<h4 id="inherited-from_22">Inherited from</h4>
 <p>EventEmitter.setMaxListeners</p>
-<h4 id="defined-in_54">Defined in</h4>
-<p>node_modules/@types/node/events.d.ts:348</p>
+<h4 id="defined-in_55">Defined in</h4>
+<p>node_modules/@types/node/events.d.ts:352</p>
 
 
 
