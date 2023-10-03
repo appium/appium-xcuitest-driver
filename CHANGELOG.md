@@ -1,3 +1,10 @@
+## [5.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.4.1...v5.5.0) (2023-10-02)
+
+
+### Features
+
+* uninstall the test app once and install that again when MismatchedApplicationIdentifierEntitlement installation error occurs ([#2050](https://github.com/appium/appium-xcuitest-driver/issues/2050)) ([0c561f5](https://github.com/appium/appium-xcuitest-driver/commit/0c561f514822965166e6f87ee9725ad28542f185))
+
 ## [5.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.4.0...v5.4.1) (2023-10-01)
 
 
