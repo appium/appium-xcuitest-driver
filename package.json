@@ -78,7 +78,7 @@
     "async-lock": "^1.4.0",
     "asyncbox": "^2.9.4",
     "bluebird": "^3.7.2",
-    "css-selector-parser": "^2.3.2",
+    "css-selector-parser": "^3.0.0",
     "fancy-log": "^2.0.0",
     "js2xmlparser2": "^0.2.0",
     "lodash": "^4.17.21",
