@@ -75,7 +75,6 @@ describe('location commands', function () {
     describe('on real device', function () {
       beforeEach(function () {
         driver.opts.udid = udid;
-        // @ts-expect-error do not put random stuff on opts
         driver.opts.realDevice = true;
       });
 
@@ -140,11 +139,9 @@ describe('location commands', function () {
     describe('on simulator', function () {
       let deviceSetLocationSpy;
       beforeEach(function () {
-        // @ts-expect-error do not put random stuff on opts
         driver.opts.realDevice = false;
 
         deviceSetLocationSpy = sinon.spy();
-        // @ts-expect-error do not put random stuff on opts
         driver.opts.device = {
           setGeolocation: deviceSetLocationSpy,
         };
@@ -153,7 +150,6 @@ describe('location commands', function () {
         deviceSetLocationSpy.resetHistory();
       });
       it('should set string coordinates', async function () {
-        // @ts-expect-error this API accepts strings, but this is undocumented
         await driver.setGeoLocation({latitude: '1.234', longitude: '2.789'});
         deviceSetLocationSpy.firstCall.args[0].should.eql('1.234');
         deviceSetLocationSpy.firstCall.args[1].should.eql('2.789');
