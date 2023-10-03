@@ -71,7 +71,7 @@
   "dependencies": {
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.5.4",
-    "appium-ios-simulator": "^5.3.2",
+    "appium-ios-simulator": "^5.3.3",
     "appium-remote-debugger": "^10.0.0",
     "appium-webdriveragent": "^5.9.1",
     "appium-xcode": "^5.1.4",
