@@ -1,3 +1,10 @@
+## [5.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.5.0...v5.6.0) (2023-10-03)
+
+
+### Features
+
+* use mobile:setSimulatedLocation in setGeoLocation for ios 17 ([#2062](https://github.com/appium/appium-xcuitest-driver/issues/2062)) ([69dfab9](https://github.com/appium/appium-xcuitest-driver/commit/69dfab95dc7ba1506e2c1fe2a59e4e4be6f7b113))
+
 ## [5.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.4.1...v5.5.0) (2023-10-02)
 
 
