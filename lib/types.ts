@@ -65,3 +65,14 @@ export interface WDACapabilities {
   defaultAlertAction: 'accept' | 'dismiss';
   capabilities?: StringRecord<any>;
 }
+
+export interface Delta {
+  /**
+   * x offset
+   */
+  dx: number;
+  /**
+   * y offset
+   */
+  dy: number;
+}

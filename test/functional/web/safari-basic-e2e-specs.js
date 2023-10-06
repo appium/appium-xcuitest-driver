@@ -262,12 +262,6 @@ describe('Safari - basics -', function () {
         size.height.should.be.above(0);
         size.width.should.be.above(0);
       });
-      it.skip('should move to an arbitrary x-y element and click on it', async function () {
-        const el = await driver.$('=i am a link');
-        await driver.moveTo(el, 5, 15);
-        await el.click();
-        await spinTitleEquals(driver, 'I am another page title');
-      });
       // TODO: Update for WdIO compatibility
       it.skip('should submit a form', async function () {
         const el = await driver.$('#comments');

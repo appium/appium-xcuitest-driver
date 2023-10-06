@@ -65,7 +65,6 @@
 | POST   | /alert_text                              | text | |
 | POST   | /accept_alert                            | none | |
 | POST   | /dismiss_alert                           | none | |
-| POST   | /moveto                                  | | element, xoffset, yoffset |
 | POST   | /click                                   | | button |
 | POST   | /touch/click                             | element | |
 | POST   | /touch/flick                             | | element, xspeed, yspeed, xoffset, yoffset, speed |

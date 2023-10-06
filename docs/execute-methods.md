@@ -1201,6 +1201,25 @@ If the connection is disconnected, condition inducer will be automatically disab
 
 Either `true` or `false`, where `true` means disabling of the condition inducer has been successful
 
+### mobile: calibrateWebToRealCoordinatesTranslation
+
+Calibrates web to real coordinates translation.
+This API can only be called from Safari web context.
+It must load a custom page to the browser, and then restore
+the original one, so don't call it if you can potentially
+lose the current web app state.
+The outcome of this API is then used in `nativeWebTap` mode.
+The returned value could also be used to manually transform web coordinates
+to real devices ones in client scripts.
+
+It is adviced to call this API at least once before changing the device orientation
+or device screen layout as the recetly received value is cached for the session lifetime
+and may become obsolete.
+
+#### Returned Result
+
+An object with a single `offset` property. The property has two subproperties: `dx` and `dy` used to properly shift Safari web element coordinates into native context.
+
 ### mobile: updateSafariPreferences
 
 Updates preferences of Mobile Safari on Simulator
