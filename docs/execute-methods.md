@@ -1218,7 +1218,14 @@ and may become obsolete.
 
 #### Returned Result
 
-An object with a single `offset` property. The property has two subproperties: `dx` and `dy` used to properly shift Safari web element coordinates into native context.
+An object with three properties used to properly shift Safari web element coordinates into native context:
+- `offsetX`: Webview X offset in real coorrdinates
+- `offsetY`: Webview Y offset in real coorrdinates
+- `pixelRatio`: Webview pixel ratio
+
+The following formulas are used for coordinates translation:
+`RealX = offsetX + webviewX / pixelRatio`
+`RealY = offsetY + webviewY / pixelRatio`
 
 ### mobile: updateSafariPreferences
 

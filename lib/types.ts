@@ -66,13 +66,17 @@ export interface WDACapabilities {
   capabilities?: StringRecord<any>;
 }
 
-export interface Delta {
+export interface CalibrationData {
   /**
-   * x offset
+   * webview x offset in real coordinates
    */
-  dx: number;
+  offsetX: number;
   /**
-   * y offset
+   * webview y offset in real coordinates
    */
-  dy: number;
+  offsetY: number;
+  /**
+   * pixel ratio inside of the web view
+   */
+  pixelRatio: number;
 }
