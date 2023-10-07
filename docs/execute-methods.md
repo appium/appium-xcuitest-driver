@@ -1219,8 +1219,8 @@ and may become obsolete.
 #### Returned Result
 
 An object with three properties used to properly shift Safari web element coordinates into native context:
-- `offsetX`: Webview X offset in real coorrdinates
-- `offsetY`: Webview Y offset in real coorrdinates
+- `offsetX`: Webview X offset in real coordinates
+- `offsetY`: Webview Y offset in real coordinates
 - `pixelRatio`: Webview pixel ratio
 
 The following formulas are used for coordinates translation:
