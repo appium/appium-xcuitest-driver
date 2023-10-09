@@ -76,7 +76,11 @@ export interface CalibrationData {
    */
   offsetY: number;
   /**
-   * pixel ratio inside of the web view
+   * pixel ratio x inside of the web view
    */
-  pixelRatio: number;
+  pixelRatioX: number;
+  /**
+   * pixel ratio y inside of the web view
+   */
+  pixelRatioY: number;
 }
