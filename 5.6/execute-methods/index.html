@@ -3338,6 +3338,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#mobile-calibratewebtorealcoordinatestranslation" class="md-nav__link">
+    mobile: calibrateWebToRealCoordinatesTranslation
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#mobile-updatesafaripreferences" class="md-nav__link">
     mobile: updateSafariPreferences
   </a>
@@ -6861,6 +6896,41 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#mobile-calibratewebtorealcoordinatestranslation" class="md-nav__link">
+    mobile: calibrateWebToRealCoordinatesTranslation
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#mobile-updatesafaripreferences" class="md-nav__link">
     mobile: updateSafariPreferences
   </a>
@@ -9645,6 +9715,29 @@ It raises an error if the device is simulator or an error occurred during the re
 <p>If the connection is disconnected, condition inducer will be automatically disabled</p>
 <h4 id="returned-result_34">Returned Result</h4>
 <p>Either <code>true</code> or <code>false</code>, where <code>true</code> means disabling of the condition inducer has been successful</p>
+<h3 id="mobile-calibratewebtorealcoordinatestranslation">mobile: calibrateWebToRealCoordinatesTranslation</h3>
+<p>Calibrates web to real coordinates translation.
+This API can only be called from Safari web context.
+It must load a custom page to the browser, and then restore
+the original one, so don't call it if you can potentially
+lose the current web app state.
+The outcome of this API is then used if <code>nativeWebTap</code> capability/setting is enabled.
+The returned value could also be used to manually transform web coordinates
+to real device ones in client scripts.</p>
+<p>It is adviced to call this API at least once before changing the device orientation
+or device screen layout as the recetly received value is cached for the session lifetime
+and may become obsolete.</p>
+<p>It is advised to enable <code>nativeWebTapStrict</code> capability/setting to speed up dynamic coordinates
+transformation if you use this extension.</p>
+<h4 id="returned-result_35">Returned Result</h4>
+<p>An object with three properties used to properly shift Safari web element coordinates into native context:
+- <code>offsetX</code>: Webview X offset in real coordinates
+- <code>offsetY</code>: Webview Y offset in real coordinates
+- <code>pixelRatioX</code>: Webview X pixel ratio
+- <code>pixelRatioY</code>: Webview Y pixel ratio</p>
+<p>The following formulas are used for coordinates translation:
+<code>RealX = offsetX + webviewX * pixelRatioX</code>
+<code>RealY = offsetY + webviewY * pixelRatioY</code></p>
 <h3 id="mobile-updatesafaripreferences">mobile: updateSafariPreferences</h3>
 <p>Updates preferences of Mobile Safari on Simulator</p>
 <h4 id="arguments_57">Arguments</h4>
@@ -9704,7 +9797,7 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.</p>
 <p>Retrieves simulated geolocation value.
 This functionality is only available since xcuitest driver version 4.18.
 Xcode must be at version 14.3+ and iOS must be at version 16.4+.</p>
-<h4 id="returned-result_35">Returned Result</h4>
+<h4 id="returned-result_36">Returned Result</h4>
 <p>This API returns a map with the following entries:</p>
 <table>
 <thead>
@@ -9803,7 +9896,7 @@ for the given language abbreviation</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returned-result_36">Returned Result</h4>
+<h4 id="returned-result_37">Returned Result</h4>
 <p>App strings map, where keys are resource identifiers.</p>
 <h3 id="mobile-hidekeyboard">mobile: hideKeyboard</h3>
 <p>Tries to hide the on-screen keyboard. Throws an exception if the keyboard cannot be hidden. On non-tablet devices the keyboard might not have an explicit button to hide it. In such case this API won't work and the only way to close the keyboard would be to simulate the same action an app user would do to close it. For example, swipe from top to bottom or tap the screen somewhere at the area not covered by the keyboard.</p>
@@ -9830,7 +9923,7 @@ for the given language abbreviation</p>
 </table>
 <h3 id="mobile-iskeyboardshown">mobile: isKeyboardShown</h3>
 <p>Checks if the system on-screen keyboard is visible.</p>
-<h4 id="returned-result_37">Returned Result</h4>
+<h4 id="returned-result_38">Returned Result</h4>
 <p><code>true</code> if the keyboard is visible</p>
 <h3 id="mobile-lock">mobile: lock</h3>
 <p>Lock the device (and optionally unlock it after a certain amount of time). Only simple (e.g. without a password) locks are supported.</p>
@@ -9859,7 +9952,7 @@ for the given language abbreviation</p>
 <p>Unlocks the previously locked device. Only simple (e.g. without a password) locks are supported.</p>
 <h3 id="mobile-islocked">mobile: isLocked</h3>
 <p>Determine whether the device is locked.</p>
-<h4 id="returned-result_38">Returned Result</h4>
+<h4 id="returned-result_39">Returned Result</h4>
 <p>Either <code>true</code> or <code>false</code></p>
 <h3 id="mobile-backgroundapp">mobile: backgroundApp</h3>
 <p>Puts the app to the background and waits the given number of seconds. Then restores the app
@@ -9910,7 +10003,7 @@ Only available since Xcode 15/iOS 17.</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returned-result_39">Returned Result</h4>
+<h4 id="returned-result_40">Returned Result</h4>
 <p>List of found issues or an empty list. Each list item is a map consisting of the following items:</p>
 <table>
 <thead>

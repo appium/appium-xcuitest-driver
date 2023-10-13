@@ -1245,6 +1245,10 @@ If the environment had port-forward to the connected device, it can be <code>htt
 <p>This method allows you to manage the WebDriverAgent application process by yourself.
 XCUITest driver simply attaches to the WebDriverAgent application process.
 It may improve the application performance.</p>
+<p>Some xcuitest driver APIs (for example the <a href="../execute-methods/#mobile-calibratewebtorealcoordinatestranslation">mobile: calibrateWebToRealCoordinatesTranslation</a> one) might still require to know
+the port number of the remote device if it is a real device. Providing
+<code>webDriverAgentUrl</code> capability might not be sufficient to recognize the remote port number in case it is different from the local one. Consider settings the <code>appium:wdaRemotePort</code> capability value
+in such case to supply the driver with the appropriate data.</p>
 
 
 

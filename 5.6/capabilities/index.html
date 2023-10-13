@@ -1760,6 +1760,11 @@
 <td>e.g., <code>8100</code></td>
 </tr>
 <tr>
+<td><code>appium:wdaRemotePort</code></td>
+<td>This value if specified, will be used as the port number to start WDA HTTP server on the remote device. This is only relevant for real devices, because Simulator shares ports with its host. If <code>webDriverAgentUrl</code> is provided then it might be used to provide a hint for the remote port number if it differs from the default one. Default value is 8100.</td>
+<td>e.g., <code>8100</code></td>
+</tr>
+<tr>
 <td><code>appium:wdaBaseUrl</code></td>
 <td>This value if specified, will be used as a prefix to build a custom <code>WebDriverAgent</code> url. It is different from <code>webDriverAgentUrl</code>, because if the latter is set then it expects <code>WebDriverAgent</code> to be already listening and skips the building phase. Defaults to <code>http://localhost</code></td>
 <td>e.g., <code>http://192.168.1.100</code></td>
@@ -2085,8 +2090,8 @@
 </tr>
 <tr>
 <td><code>appium:nativeWebTapStrict</code></td>
-<td>Enforce native taps to be done by XCUITest driver rather than WebDriverAgent. Only applicable if <code>nativeWebTap</code> is enabled. <code>false</code> by default</td>
-<td><code>false</code></td>
+<td>Enabling this capability would skip the additional logic that tries to match web view elements to native ones by using their textual descriptions. Depending on the actual web view content this algorithm might sometimes be not very reliable and will slow down each click as we anyway fallback to the usual coordinates transformation flow if it fails. It is advised to enable strict tap if you use <a href="../execute-methods/#mobile-calibratewebtorealcoordinatestranslation">mobile: calibrateWebToRealCoordinatesTranslation extension</a>. Only applicable if <code>nativeWebTap</code> is enabled. <code>false</code> by default</td>
+<td><code>true</code></td>
 </tr>
 <tr>
 <td><code>appium:safariInitialUrl</code></td>
