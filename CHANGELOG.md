@@ -1,3 +1,10 @@
+## [5.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.6.0...v5.7.0) (2023-10-13)
+
+
+### Features
+
+* Add 'mobile: calibrateWebToRealCoordinatesTranslation' API ([#2071](https://github.com/appium/appium-xcuitest-driver/issues/2071)) ([b3fa78d](https://github.com/appium/appium-xcuitest-driver/commit/b3fa78d69bdaec03435e02a7e4ffb0b80a9bbde3))
+
 ## [5.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.5.0...v5.6.0) (2023-10-03)
 
 
