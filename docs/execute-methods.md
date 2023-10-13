@@ -1208,13 +1208,16 @@ This API can only be called from Safari web context.
 It must load a custom page to the browser, and then restore
 the original one, so don't call it if you can potentially
 lose the current web app state.
-The outcome of this API is then used in `nativeWebTap` mode.
+The outcome of this API is then used if `nativeWebTap` capability/setting is enabled.
 The returned value could also be used to manually transform web coordinates
-to real devices ones in client scripts.
+to real device ones in client scripts.
 
 It is adviced to call this API at least once before changing the device orientation
 or device screen layout as the recetly received value is cached for the session lifetime
 and may become obsolete.
+
+It is advised to enable `nativeWebTapStrict` capability/setting to speed up dynamic coordinates
+transformation if you use this extension.
 
 #### Returned Result
 
