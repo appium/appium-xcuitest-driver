@@ -439,6 +439,9 @@ export const executeMethodMap = {
       required: ['preferences'],
     },
   },
+  'mobile: calibrateWebToRealCoordinatesTranslation': {
+    command: 'mobileCalibrateWebToRealCoordinatesTranslation',
+  },
   'mobile: deepLink': {
     command: 'mobileDeepLink',
     params: {
