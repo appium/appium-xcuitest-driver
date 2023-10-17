@@ -6,7 +6,7 @@
 [![Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml/badge.svg)](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml)
 
 This is an [Appium](https://appium.github.io/appium) driver for automating iOS applications on iOS,
-iPadOS, and tvOS. You can add it to your Appium 2+ server install:
+iPadOS, and tvOS. You can add it to your Appium 2+ server install: (Only macOS is supported as the host platform, as it requires Xcode and developer tools.)
 
 ```bash
 appium driver install xcuitest
