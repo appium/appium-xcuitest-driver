@@ -1,4 +1,3 @@
-import {remote} from 'webdriverio';
 import {extractCapabilityValue} from '../desired';
 
 const HOST = process.env.APPIUM_TEST_SERVER_HOST || '127.0.0.1';
@@ -11,6 +10,7 @@ let didBuildWda = false;
 
 async function initSession(caps, remoteOpts = {}) {
   try {
+    const {remote} = await import('webdriverio');
     driver = await remote({
       hostname: HOST,
       port: PORT,
