@@ -1437,8 +1437,8 @@ export enum HIDUsageBCSEvent {
   kHIDUsage_BCS_CheckDigitDisable = 0xd7 /* SEL - Check Digit Disable */,
   kHIDUsage_BCS_CheckDigitEnableInterleaved2of5OPCC = 0xd8 /* SEL - Check Digit Enable Interleaved 2 of 5 OPCC */,
   kHIDUsage_BCS_CheckDigitEnableInterleaved2of5USS = 0xd9 /* SEL - Check Digit Enable Interleaved 2 of 5 USS */,
-  kHIDUsage_BCS_CheckDigitEnableStandard2of5OPCC = 0xd8 /* SEL - Check Digit Enable Standard 2 of 5 OPCC */,
-  kHIDUsage_BCS_CheckDigitEnableStandard2of5USS = 0xd9 /* SEL - Check Digit Enable Standard 2 of 5 USS */,
+  kHIDUsage_BCS_CheckDigitEnableStandard2of5OPCC = kHIDUsage_BCS_CheckDigitEnableInterleaved2of5OPCC /* SEL - Check Digit Enable Standard 2 of 5 OPCC */,
+  kHIDUsage_BCS_CheckDigitEnableStandard2of5USS = kHIDUsage_BCS_CheckDigitEnableInterleaved2of5USS /* SEL - Check Digit Enable Standard 2 of 5 USS */,
   kHIDUsage_BCS_CheckDigitEnableOneMSIPlessey = 0xdc /* SEL - Check Digit Enable One MSI Plessey */,
   kHIDUsage_BCS_CheckDigitEnableTwoMSIPlessey = 0xdd /* SEL - Check Digit Enable Two MSI Plessey */,
   kHIDUsage_BCS_CheckDigitCodabarEnable = 0xde /* SEL - Check Digit Codabar Enable */,
@@ -1457,7 +1457,7 @@ export enum HIDUsageBCSEvent {
   kHIDUsage_BCS_ScannerDataAccuracy = 0x101 /* DV - Scanner Data Accuracy */,
   kHIDUsage_BCS_RawDataPolarity = 0x102 /* NArry - Raw Data Polarity */,
   kHIDUsage_BCS_PolarityInvertedBarCode = 0x103 /* SEL - Polarity Inverted Bar Code */,
-  kHIDUsage_BCS_PolarityNormalBarCode = 0x103 /* SEL - Polarity Normal Bar Code */,
+  kHIDUsage_BCS_PolarityNormalBarCode = kHIDUsage_BCS_PolarityInvertedBarCode /* SEL - Polarity Normal Bar Code */,
   /* Reserved 0x105 */
   kHIDUsage_BCS_MinimumLengthToDecode = 0x106 /* DV - Minimum Length to Decode */,
   kHIDUsage_BCS_MaximumLengthToDecode = 0x107 /* DV - Maximum Length to Decode */,
@@ -1596,7 +1596,7 @@ export enum HIDPageEvent {
   /* Reserved 0x88 - 0x8B */
   kHIDPage_BarCodeScanner = 0x8c /* (Point of Sale) USB Device Class Definition for Bar Code Scanner Devices */,
   kHIDPage_WeighingDevice = 0x8d /* (Point of Sale) USB Device Class Definition for Weighing Devices */,
-  kHIDPage_Scale = 0x8d /* (Point of Sale) USB Device Class Definition for Scale Devices */,
+  kHIDPage_Scale = kHIDPage_WeighingDevice /* (Point of Sale) USB Device Class Definition for Scale Devices */,
   kHIDPage_MagneticStripeReader = 0x8e,
   /* ReservedPointofSalepages 0x8F */
   kHIDPage_CameraControl = 0x90 /* USB Device Class Definition for Image Class Devices */,
