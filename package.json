@@ -139,7 +139,7 @@
     "@appium/tsconfig": "^0.x",
     "@appium/types": "^0.x",
     "@commitlint/cli": "^18.0.0",
-    "@commitlint/config-conventional": "^17.6.7",
+    "@commitlint/config-conventional": "^18.0.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",
