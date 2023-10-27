@@ -2,7 +2,7 @@
 title: Execute Methods
 ---
 
-Beside of standard W3C APIs the driver provides the below custom command extensions to execute platform specific scenarios. Use the following source code example snippets order to invoke them from your client code:
+Beside of standard W3C APIs the driver provides the below custom command extensions to execute platform specific scenarios. Use the following source code examples in order to invoke them from your client code:
 
 ```java
 // Java 11+
