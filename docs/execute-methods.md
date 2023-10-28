@@ -1333,6 +1333,7 @@ Checks if the system on-screen keyboard is visible.
 Send keys to the given element or to the application under test.
 This API is only supported since Xcode 15/iOS 17.
 It is not supported on tvOS.
+The API only works on iPad. On iOS calling it has no effect.
 
 #### Arguments
 
