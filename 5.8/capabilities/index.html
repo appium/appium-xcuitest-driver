@@ -1,0 +1,2276 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Appium XCUITest driver for iOS automation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/5.8/capabilities/">
+      
+      
+        <link rel="prev" href="../server-args/">
+      
+      
+        <link rel="next" href="../element-attributes/">
+      
+      
+      <link rel="icon" href="../assets/images/appium-logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+    
+    
+      
+        <title>Capabilities - Appium XCUITest Driver</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
+      
+      
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13.274 9.537v-.001l-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074ZM4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75Z"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.484 4.484 0 0 1-.563-1.191 3.835 3.835 0 0 1-.05-2.063 4.647 4.647 0 0 1-2.025-.293.75.75 0 0 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.747.747 0 0 1 1.06 0 .748.748 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.425 2.425 0 0 1-.507-.441 3.075 3.075 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19a.884.884 0 0 1 .01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7 5.527c-.814-.68-1.75-1.462-2.692-2.619a3.737 3.737 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353V.75Z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.488 3.488 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.036 5.036 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.677 1.677 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06Zm.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.172.172 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173Z"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#general" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="/appium-xcuitest-driver" title="Appium XCUITest Driver" class="md-header__button md-logo" aria-label="Appium XCUITest Driver" data-md-component="logo">
+      
+  <img src="../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium XCUITest Driver
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Capabilities
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium-xcuitest-driver" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium-xcuitest-driver
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../setup/" class="md-tabs__link">
+        
+  
+    
+  
+  Setup & Requirements
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../device-preparation/" class="md-tabs__link">
+        
+  
+    
+  
+  Device Preparation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../server-args/" class="md-tabs__link">
+          
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../run-preinstalled-wda/" class="md-tabs__link">
+          
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/appium-xcuitest-driver" title="Appium XCUITest Driver" class="md-nav__button md-logo" aria-label="Appium XCUITest Driver" data-md-component="logo">
+      
+  <img src="../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    Appium XCUITest Driver
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium-xcuitest-driver" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium-xcuitest-driver
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setup & Requirements
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../device-preparation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Device Preparation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../server-args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appium Server Arguments
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Capabilities
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Capabilities
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#general" class="md-nav__link">
+    General
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#app" class="md-nav__link">
+    App
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#webdriveragent" class="md-nav__link">
+    WebDriverAgent
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#simulator" class="md-nav__link">
+    Simulator
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#web-context" class="md-nav__link">
+    Web Context
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#other" class="md-nav__link">
+    Other
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../element-attributes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Element Attributes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Security Feature Flags
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../settings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../locator-strategies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Locator Strategies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ios-predicate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    iOS Predicates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parallel-tests/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing in Parallel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execute-methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Execute Methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clipboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get/Set Clipboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../touch-id/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Touch ID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/commands/appium-xcuitest-driver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Command Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Guides
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Improve session startup performance
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Improve session startup performance
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-preinstalled-wda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Run Preinstalled WebDriverAgentRunner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-prebuilt-wda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Run Prebuilt WebDriverAgentRunner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../attach-to-running-wda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Attach to a running WebDriverAgent application
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../real-device-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real Device Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ci-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CI Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiple-xcode-versions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Managing Multiple Xcodes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wda-custom-server/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage WebDriverAgent by yourself
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ios-tvos/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tvOS Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About iOS Input Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../audio-capture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Audio Capture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ios-xctest-file-movement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pushing/Pulling Files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ios-xctest-install-certificate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Self-Signed Certificates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#general" class="md-nav__link">
+    General
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#app" class="md-nav__link">
+    App
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#webdriveragent" class="md-nav__link">
+    WebDriverAgent
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#simulator" class="md-nav__link">
+    Simulator
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#web-context" class="md-nav__link">
+    Web Context
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#other" class="md-nav__link">
+    Other
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Capabilities</h1>
+
+<h3 id="general">General</h3>
+<table>
+<thead>
+<tr>
+<th>Capability&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platformName</code></td>
+<td>Could be set to <code>ios</code>. Appium itself is not strict about this capability value if <code>automationName</code> is provided, so feel free to assign it to any supported platform name if this is needed, for example, to make Selenium Grid working.</td>
+</tr>
+<tr>
+<td><code>appium:automationName</code></td>
+<td>Must always be set to <code>xcuitest</code>. Values of <code>automationName</code> are compared case-insensitively.</td>
+</tr>
+<tr>
+<td><code>appium:deviceName</code></td>
+<td>The name of the device under test. Consider setting <code>udid</code> for real devices and use this one for Simulator selection instead</td>
+</tr>
+<tr>
+<td><code>appium:platformVersion</code></td>
+<td>The platform version of an emulator or a real device. This capability is used for device autodetection if <code>udid</code> is not provided</td>
+</tr>
+<tr>
+<td><code>appium:udid</code></td>
+<td>UDID of the device to be tested. Could be retrieved from Xcode-&gt;Window-&gt;Devices and Simulators window. Always set this capability if you run parallel tests or use a real device to run your tests.</td>
+</tr>
+<tr>
+<td><code>appium:noReset</code></td>
+<td>Prevents the device to be reset before the session startup if set to <code>true</code>. This means that the application under test is not going to be terminated neither its data cleaned. <code>false</code> by default</td>
+</tr>
+<tr>
+<td><code>appium:fullReset</code></td>
+<td>Being set to <code>true</code> always enforces the application under test to be fully uninstalled before starting a new session. The application data might be cached on real devices under particular circumstances. Please check <a href="../troubleshooting/#clear-the-application-local-data-explicitly-for-real-devices">troubleshooting</a> for more details regarding obsolete application data cleanup on real devices. <code>false</code> by default</td>
+</tr>
+<tr>
+<td><code>appium:printPageSourceOnFindFailure</code></td>
+<td>Enforces the server to dump the actual XML page source into the log if any error happens. <code>false</code> by default.</td>
+</tr>
+<tr>
+<td><code>browserName</code></td>
+<td>The name of the browser to run the test on. If this capability is provided then the driver will try to start the test in Web context mode (Native mode is applied by default). Read <a href="https://appium.io/docs/en/writing-running-appium/web/hybrid/">Automating hybrid apps</a> for more details. Usually equals to <code>safari</code>.</td>
+</tr>
+<tr>
+<td><code>appium:includeDeviceCapsToSessionInfo</code></td>
+<td>Whether to include screen information as the result of <a href="http://appium.io/docs/en/commands/session/get/">Get Session Capabilities</a>. It includes <code>pixelRatio</code>, <code>statBarHeight</code> and <code>viewportRect</code>, but it causes an extra API call to WDA which may increase the response time like <a href="https://github.com/appium/appium/issues/15101">this issue</a>. Defaults to <code>true</code>. <strong>This capability has no effect since driver version 5</strong></td>
+</tr>
+<tr>
+<td><code>appium:resetLocationService</code></td>
+<td>Whether reset the location service in the session deletion on real device. Defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>appium:customSSLCert</code></td>
+<td>Adds a root SSL certificate to IOS Simulators and real devices. Real devices only work if <a href="https://github.com/YueChen-C/py-ios-device">py-ios-device</a> tool is available on the server machine. The certificate content must be provided in <a href="https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html">PEM</a> format</td>
+</tr>
+</tbody>
+</table>
+<h3 id="app">App</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appium:bundleId</code></td>
+<td>Bundle identifier of the app under test, for example <code>com.mycompany.myapp</code>. The capability value is calculated automatically if <code>app</code> is provided. If neither <code>app</code> or <code>bundleId</code> capability is provided then XCUITest driver starts from the Home screen.</td>
+</tr>
+<tr>
+<td><code>appium:app</code></td>
+<td>Full path to the application to be tested (the app must be located on the same machine where the server is running). <code>.ipa</code> and <code>.app</code> application extensions are supported. Zipped <code>.app</code> bundles are supported as well. Could also be an URL to a remote location. If neither of the <code>app</code> or <code>bundleId</code> capabilities are provided then the driver starts from the Home screen and expects the test to know what to do next. Do not provide both <code>app</code> and <code>browserName</code> capabilities at once.</td>
+</tr>
+<tr>
+<td><code>appium:enforceAppInstall</code></td>
+<td>If set to <code>false</code> it will make xcuitest driver to verify whether the app version currently installed on the device under test is older than the one, which is provided as <code>appium:app</code> value. No app reinstall is going to happen if the candidate app has the same or older version number than the already installed copy of it. The version number used for comparison must be provided as <a href="https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleversion">CFBundleVersion</a> <a href="https://semver.org/">Semantic Versioning</a>-compatible value in the application's Info.plist. No validation is performed by default, e.g. the provided app is always (re)installed, which could potentially slow down your test suites. The application data might be cached on real devices under particular circumstances when <code>appium:enforceAppInstall</code> is <code>true</code> if the application under test remained on the device under a certain situation. Please check <a href="../troubleshooting/#clear-the-application-local-data-explicitly-for-real-devices">troubleshooting</a> for more details regarding obsolete application data cleanup on real devices. Available since XCUITest driver 4.19.0.</td>
+</tr>
+<tr>
+<td><code>appium:localizableStringsDir</code></td>
+<td>Where to look for localizable strings in the application bundle. Defaults to <code>en.lproj</code></td>
+</tr>
+<tr>
+<td><code>appium:otherApps</code></td>
+<td>App or list of apps (as a JSON array) to install prior to running tests. For example: <code>["http://appium.github.io/appium/assets/TestApp9.4.app.zip", "/path/to/app-b.app"]</code></td>
+</tr>
+<tr>
+<td><code>appium:language</code></td>
+<td>Language to set for iOS app, for example <code>fr</code>. Please read <a href="https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html">Language IDs</a> to get more details about available values for this capability. If a test is executed on a Simulator then UI language is changed as well. You can also change Simulator language in runtime using <a href="#mobile-configurelocalization">mobile: configureLocalization</a> extension.</td>
+</tr>
+<tr>
+<td><code>appium:locale</code></td>
+<td>Locale to set for iOS app, for example <code>fr_CA</code>. Please read <a href="https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html#//apple_ref/doc/uid/10000171i-CH15-SW9">Locale IDs</a> to get more details about available values for this capability. If a test is executed on a Simulator then UI locale is changed as well. You can also change Simulator locale in runtime using <a href="#mobile-configurelocalization">mobile: configureLocalization</a> extension.</td>
+</tr>
+<tr>
+<td><code>appium:calendarFormat</code></td>
+<td>Calendar format to set for iOS Simulator, for example <code>gregorian</code> or <code>persian</code>. Can only be set in conjunction with <code>appium:locale</code>.</td>
+</tr>
+<tr>
+<td><code>appium:appPushTimeout</code></td>
+<td>The timeout for application upload in milliseconds. Works for real devices only. The default value is <code>30000</code>ms</td>
+</tr>
+<tr>
+<td><code>appium:appInstallStrategy</code></td>
+<td>Select application installation strategy for real devices. The following strategies are supported: <code>serial</code> (default) - pushes app files to the device in a sequential order; this is the least performant strategy, although the most reliable; <code>parallel</code> - pushes app files simultaneously; this is usually the the most performant strategy, but sometimes could not be very stable; <code>ios-deploy</code> - tells the driver to use a third-party tool <a href="https://www.npmjs.com/package/ios-deploy">ios-deploy</a> to install the app; obviously the tool must be installed separately first and must be present in PATH before it could be used.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="webdriveragent">WebDriverAgent</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appium:xcodeOrgId</code></td>
+<td>Apple developer team identifier string. Must be used in conjunction with <code>xcodeSigningId</code> to take effect.</td>
+<td>e.g., <code>JWL241K123</code></td>
+</tr>
+<tr>
+<td><code>appium:xcodeSigningId</code></td>
+<td>String representing a signing certificate. Must be used in conjunction with <code>xcodeOrgId</code>. This is usually just <code>Apple Development</code> or <code>iPhone Developer</code>, so the default (if not included) is <code>iPhone Developer</code></td>
+<td>e.g., <code>Apple Developer</code> <code>iPhone Developer</code></td>
+</tr>
+<tr>
+<td><code>appium:xcodeConfigFile</code></td>
+<td>Full path to an optional Xcode configuration file that specifies the code signing identity and team for running the <code>WebDriverAgent</code> on the real device.</td>
+<td>e.g., <code>/path/to/myconfig.xcconfig</code></td>
+</tr>
+<tr>
+<td><code>appium:updatedWDABundleId</code></td>
+<td>Bundle id to update WDA to before building and launching on real devices. This bundle id <em>must</em> be associated with a valid provisioning profile.</td>
+<td>e.g., <code>io.appium.WebDriverAgentRunner</code></td>
+</tr>
+<tr>
+<td><code>appium:keychainPath</code></td>
+<td>Full path to the private development key exported from the system keychain. Used in conjunction with <code>keychainPassword</code> when testing on real devices.</td>
+<td>e.g., <code>/path/to/MyPrivateKey.p12</code></td>
+</tr>
+<tr>
+<td><code>appium:keychainPassword</code></td>
+<td>Password for unlocking keychain specified in <code>keychainPath</code>.</td>
+<td>e.g., <code>super awesome password</code></td>
+</tr>
+<tr>
+<td><code>appium:derivedDataPath</code></td>
+<td>Use along with <em>usePrebuiltWDA</em> capability and choose where to search for the existing WDA app. If the capability is not set then Xcode will store the derived data in the default root taken from preferences.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>appium:webDriverAgentUrl</code></td>
+<td>If provided, Appium will connect to an existing <code>WebDriverAgent</code> instance at this URL instead of starting a new one.</td>
+<td>e.g., <code>http://localhost:8100</code></td>
+</tr>
+<tr>
+<td><code>appium:useNewWDA</code></td>
+<td>If <code>true</code>, forces uninstall of any existing <code>WebDriverAgent</code> app on device. Set it to <code>true</code> if you want to apply different startup options for <code>WebDriverAgent</code> for each session. Although, it is only guaranteed to work stable on Simulator. Real devices require <code>WebDriverAgent</code> client to run for as long as possible without reinstall/restart to avoid issues like https://github.com/facebook/WebDriverAgent/issues/507. The <code>false</code> value (the default behaviour since driver version 2.35.0) will try to detect currently running WDA listener executed by previous testing session(s) and reuse it if possible, which is highly recommended for real device testing and to speed up suites of multiple tests in general. A new WDA session will be triggered at the default URL (http://localhost:8100) if WDA is not listening and <code>webDriverAgentUrl</code> capability is not set. The negative/unset value of <code>useNewWDA</code> capability has no effect prior to xcuitest driver version 2.35.0.</td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaLaunchTimeout</code></td>
+<td>Time, in ms, to wait for <code>WebDriverAgent</code> to be pingable. Defaults to 60000ms.</td>
+<td>e.g., <code>30000</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaConnectionTimeout</code></td>
+<td>Timeout, in ms, for waiting for a response from <code>WebDriverAgent</code>. Defaults to 240000ms.</td>
+<td>e.g., <code>1000</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaStartupRetries</code></td>
+<td>Number of times to try to build and launch <code>WebDriverAgent</code> onto the device. Defaults to 2.</td>
+<td>e.g., <code>4</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaStartupRetryInterval</code></td>
+<td>Time, in ms, to wait between tries to build and launch <code>WebDriverAgent</code>. Defaults to 10000ms.</td>
+<td>e.g., <code>20000</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaLocalPort</code></td>
+<td>This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.</td>
+<td>e.g., <code>8100</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaRemotePort</code></td>
+<td>This value if specified, will be used as the port number to start WDA HTTP server on the remote device. This is only relevant for real devices, because Simulator shares ports with its host. If <code>webDriverAgentUrl</code> is provided then it might be used to provide a hint for the remote port number if it differs from the default one. Default value is 8100.</td>
+<td>e.g., <code>8100</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaBaseUrl</code></td>
+<td>This value if specified, will be used as a prefix to build a custom <code>WebDriverAgent</code> url. It is different from <code>webDriverAgentUrl</code>, because if the latter is set then it expects <code>WebDriverAgent</code> to be already listening and skips the building phase. Defaults to <code>http://localhost</code></td>
+<td>e.g., <code>http://192.168.1.100</code></td>
+</tr>
+<tr>
+<td><code>appium:showXcodeLog</code></td>
+<td>Whether to display the output of the Xcode command used to run the tests. If this is <code>true</code>, there will be <strong>lots</strong> of extra logging at startup. Defaults to <code>false</code></td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:iosInstallPause</code></td>
+<td>Time in milliseconds to pause between installing the application and starting <code>WebDriverAgent</code> on the device. Used particularly for larger applications. Defaults to <code>0</code></td>
+<td>e.g., <code>8000</code></td>
+</tr>
+<tr>
+<td><code>appium:usePrebuiltWDA</code></td>
+<td>Skips the build phase of running the WDA app. Building is then the responsibility of the user. Only works for Xcode 8+. Defaults to <code>false</code>.</td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:prebuiltWDAPath</code></td>
+<td>The path to a WebDriverAgentRunner application package to be installed with <code>appium:usePreinstalledWDA</code> capability for real devices. The package's bundle id will be used over <code>appium:updatedWDABundleId</code>.</td>
+<td>e.g., <code>/path/to/WebDriverAgentRunner-Runner.app</code></td>
+</tr>
+<tr>
+<td><code>appium:usePreinstalledWDA</code></td>
+<td>Whether to launch a preinstalled WebDriverAgentRunner application using a custom XCTest API client (via <code>com.apple.instruments</code> service) instead of running <code>xcodebuild</code> for real devices. If <code>appium:prebuiltWDAPath</code>  is provided, XCUITest driver will install it before launching the application. The preinstalled WebDriverAgent package must have been built by Xcode 12+. The default target bundle identifier is <code>com.facebook.WebDriverAgentRunner.xctrunner</code>. If <code>appium:updatedWDABundleId</code> is provided, <code>&lt;appium:updatedWDABundleId&gt;.xctrunner</code> will be launched. Please read <a href="../run-preinstalled-wda/">Run Preinstalled WebDriverAgentRunner</a> for more details. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:shouldUseSingletonTestManager</code></td>
+<td>Use default proxy for test management within <code>WebDriverAgent</code>. Setting this to <code>false</code> sometimes helps with socket hangup problems. Defaults to <code>true</code>.</td>
+<td>e.g., <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:waitForIdleTimeout</code></td>
+<td>The amount of time in float seconds to wait until the application under test is idling. XCTest requires the app's main thread to be idling in order to execute any action on it, so WDA might not even start/freeze if the app under test is constantly hogging the main thread. The default value is <code>10</code> (seconds). Setting it to zero disables idling checks completely (not recommended) and has the same effect as setting <code>waitForQuiescence</code> to <code>false</code>. Available since Appium 1.20.0.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>appium:useXctestrunFile</code></td>
+<td>Use Xctestrun file to launch WDA. It will search for such file in <code>bootstrapPath</code>. Expected name of file is <code>WebDriverAgentRunner_iphoneos&lt;sdkVersion&gt;-arm64.xctestrun</code> for real device and <code>WebDriverAgentRunner_iphonesimulator&lt;sdkVersion&gt;-x86_64.xctestrun</code> for simulator. One can do <code>build-for-testing</code> for <code>WebDriverAgent</code> project for simulator and real device and then you will see <a href="../useXctestrunFile.png">Product Folder like this</a> and you need to copy content of this folder at <code>bootstrapPath</code> location. Since this capability expects that you have already built <code>WDA</code> project, it neither checks whether you have necessary dependencies to build <code>WDA</code> nor will it try to build project. Defaults to <code>false</code>. <em>Tips: <code>Xcodebuild</code> builds for the target platform version. We'd recommend you to build with minimal OS version which you'd like to run as the original WDA module. e.g. If you build WDA for 12.2, the module cannot run on iOS 11.4 because of loading some module error on simulator. A module built with 11.4 can work on iOS 12.2. (This is xcodebuild's expected behaviour.)</em></td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:useSimpleBuildTest</code></td>
+<td>Build with <code>build</code> and run test with <code>test</code> in xcodebuild for all Xcode version if this is <code>true</code>, or build with <code>build-for-testing</code> and run tests with <code>test-without-building</code> for over Xcode 8 if this is <code>false</code>. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:wdaEventloopIdleDelay</code></td>
+<td>Delays the invocation of <code>-[XCUIApplicationProcess setEventLoopHasIdled:]</code> by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason). This increases the time for session creation because <code>-[XCUIApplicationProcess setEventLoopHasIdled:]</code> is called multiple times. If you enable this capability start with at least <code>3</code> seconds and try increasing it, if creating the session still fails. Defaults to <code>0</code>.</td>
+<td>e.g. <code>5</code></td>
+</tr>
+<tr>
+<td><code>appium:processArguments</code></td>
+<td>Process arguments and environment which will be sent to the <code>WebDriverAgent</code> server in a new session request. Please use <a href="https://github.com/appium/appium-xcuitest-driver#mobile-launchapp">mobile:launchApp</a> to launch an application with process arguments in the middle of a session.</td>
+<td><code>{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }</code> or <code>'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'</code></td>
+</tr>
+<tr>
+<td><code>appium:autoLaunch</code></td>
+<td>When set to <code>false</code>, prevents the application under test from being launched automatically as a part of the new session startup process. The launch become the responsibility of the user. Defaults to <code>true</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:allowProvisioningDeviceRegistration</code></td>
+<td>Allow <code>xcodebuild</code> to register your destination device on the developer portal if necessary. Requires a developer account to have been added in Xcode's Accounts preference pane. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:resultBundlePath</code></td>
+<td>Specify the path to the result bundle path as <code>xcodebuild</code> argument for <code>WebDriverAgent</code> build under a security flag (Please check <em>Opt-in Features</em> section below). <code>WebDriverAgent</code> process must start/stop every time to pick up changed value of this property. Specifying <code>useNewWDA</code> to <code>true</code> may help there. Please read <code>man xcodebuild</code> for more details.</td>
+<td>e.g. <code>/path/to/resultbundle</code></td>
+</tr>
+<tr>
+<td><code>appium:resultBundleVersion</code></td>
+<td>Specify the version of result bundle as <code>xcodebuild</code> argument for <code>WebDriverAgent</code> build. The default value depends on your Xcode version. Please read <code>man xcodebuild</code> for more details.</td>
+<td>e.g. <code>/path/to/resultbundle</code></td>
+</tr>
+<tr>
+<td><code>appium:maxTypingFrequency</code></td>
+<td>Maximum frequency of keystrokes for typing and clear. If your tests are failing because of typing errors, you may want to adjust this. Defaults to 60 keystrokes per minute.</td>
+<td>e.g., <code>30</code></td>
+</tr>
+<tr>
+<td><code>appium:simpleIsVisibleCheck</code></td>
+<td>Use native methods for determining visibility of elements. In some cases this takes a long time. Setting this capability to <code>false</code> will cause the system to use the position and size of elements to make sure they are visible on the screen. This can, however, lead to false results in some situations. Defaults to <code>false</code>.</td>
+<td>e.g., <code>true</code>, <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:waitForQuiescence</code></td>
+<td>It allows to turn on/off waiting for application quiescence in <code>WebDriverAgent</code>, while performing queries. The default value is <code>true</code>. You can avoid <a href="https://github.com/appium/appium/issues/11132">this kind of issues</a> if you turn it off. Consider using <code>waitForIdleTimeout</code> capability instead for this purpose since Appium 1.20.0</td>
+<td>e.g <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:mjpegServerPort</code></td>
+<td>The port number on which WDA broadcasts screenshots stream encoded into MJPEG format from the device under test. It might be necessary to change this value if the default port is busy because of other tests running in parallel. Default value: <code>9100</code></td>
+<td>e.g. <code>12000</code></td>
+</tr>
+<tr>
+<td><code>appium:screenshotQuality</code></td>
+<td>Changes the initial quality of display screenshots. This capability affects the screenshoting speed and the actual quality of resulting screenshots. Before version 5.4.0 of WebDriverAgent possible values were: <code>0</code>, <code>1</code> (default), <code>2</code>, where <code>0</code> abbreviates lossless PNG, <code>1</code> is a high-quality JPEG and <code>2</code> is a low-quality JPEG. In the version 5.4.0 one more mode has been added (<code>3</code>), which is now the default one. It abbreviates lossless HEIC with fallback to PNG if the device does not support hardware-accelerated HEIC encoding. You can also change the value of screenshotQuality in <a href="../settings/">settings</a>.</td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><code>appium:autoAcceptAlerts</code></td>
+<td>Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:autoDismissAlerts</code></td>
+<td>Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:disableAutomaticScreenshots</code></td>
+<td>Disable automatic screenshots taken by XCTest at every interaction. Default is up to <code>WebDriverAgent</code>'s config to decide, which currently defaults to <code>true</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:shouldTerminateApp</code></td>
+<td>Specify if the app should be terminated on session end. This capability only has an effect if an application identifier has been passed to the test session (either explicitly, by setting bundleId, or implicitly, by providing app). Default is <code>true</code> unless <code>noReset</code> capability is set to <code>true</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:forceAppLaunch</code></td>
+<td>Specify if the app should be forcefully restarted if it is already running on session startup. This capability only has an effect if an application identifier has been passed to the test session (either explicitly, by setting bundleId, or implicitly, by providing app). Default is <code>true</code> unless <code>noReset</code> capability is set to <code>true</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:useNativeCachingStrategy</code></td>
+<td>Set this capability to <code>false</code> in order to use the custom elements caching strategy. This might help to avoid stale element exception on property change. By default the native XCTest cache resolution is used (<code>true</code>) for all native locators (e.g. all, but xpath). Check the corresponding <a href="https://github.com/appium/WebDriverAgent/pull/516">WebDriverAgent pull request</a> for more details.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="simulator">Simulator</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appium:orientation</code></td>
+<td>Start a test session in a certain orientation. Note, that Simulator may ignore this capability if the simulated device itself does not support orientation change in its current state. For example, iPhones only allow orientation change to landscape if an app that declares landscape support in its manifest is running. Thus changing the orientation from portrait to something else being on home screen won't have any effect.</td>
+<td><code>LANDSCAPE</code> or <code>PORTRAIT</code></td>
+</tr>
+<tr>
+<td><code>appium:scaleFactor</code></td>
+<td>Simulator scale factor. This is useful to have if the default resolution of simulated device is greater than the actual display resolution. So you can scale the simulator to see the whole device screen without scrolling.</td>
+<td>Acceptable values for simulators running Xcode SDK 8 and older are: <code>'1.0', '0.75', '0.5', '0.33' and '0.25'</code>, where '1.0' means 100% scale. For simulators running Xcode SDK 9 and above the value could be any valid positive float number. The capability must be of a string type.</td>
+</tr>
+<tr>
+<td><code>appium:connectHardwareKeyboard</code></td>
+<td>Set this option to <code>true</code> in order to enable hardware keyboard in Simulator. The preference works only when XCUITest driver launches a simulator instance with this value. It is set to <code>false</code> by default, because this helps to workaround some XCTest bugs. <code>connectHardwareKeyboard: true</code> makes <code>forceSimulatorSoftwareKeyboardPresence: false</code> if no explicit value is set for <code>forceSimulatorSoftwareKeyboardPresence</code> capability since Appium 1.22.0.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:forceSimulatorSoftwareKeyboardPresence</code></td>
+<td>Set this option to <code>true</code> in order to turn software keyboard on and turn hardware keyboard off in Simulator since Appium 1.22.0. This option helps to avoid <code>Keyboard is not present</code> error. It is set to <code>true</code> by default. XCUITest driver respects preset simulator software/hardware keyboard preference when this value is <code>false</code>, so <code>connectHardwareKeyboard: false</code> and <code>forceSimulatorSoftwareKeyboardPresence: false</code> means for XCUITest driver to keep the current Simulator keyboard preferences. This option has priority over <code>connectHardwareKeyboard</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><strong>Deprecated</strong> <code>appium:calendarAccessAuthorized</code></td>
+<td>This capability is obsolete. Please use <code>appium:permissions</code> one instead with the <code>calendar</code> key.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:isHeadless</code></td>
+<td>Set this capability to <code>true</code> if automated tests are running on Simulator and the device display is not needed to be visible. This only has an effect since Xcode9 and only for simulators. All running instances of Simulator UI are going to be automatically terminated if headless test is started. <code>false</code> is the default value.</td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:simulatorWindowCenter</code></td>
+<td>Allows to explicitly set the coordinates of Simulator window center for Xcode9+ SDK. This capability only has an effect if Simulator window has not been opened yet for the current session before it started.</td>
+<td>e.g. <code>{-100.0,100.0}</code> or <code>{500,500}</code>, spaces are not allowed</td>
+</tr>
+<tr>
+<td><code>appium:simulatorStartupTimeout</code></td>
+<td>Allows to change the default timeout for Simulator startup. By default this value is set to 120000ms (2 minutes), although the startup could take longer on a weak hardware or if other concurrent processes use much system resources during the boot up procedure.</td>
+<td>e.g. <code>300000</code></td>
+</tr>
+<tr>
+<td><code>appium:simulatorTracePointer</code></td>
+<td>Whether to highlight pointer moves in the Simulator window. The Simulator UI client must be shut down before the session startup in order for this capability to be applied properly. <code>false</code> by default.</td>
+<td>e.g. <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:shutdownOtherSimulators</code></td>
+<td>If this capability set to <code>true</code> and the current device under test is an iOS Simulator then Appium will try to shutdown all the other running Simulators before to start a new session. This might be useful while executing webview tests on different devices, since only one device can be debugged remotely at once due to an Apple bug. The capability only has an effect if <code>--relaxed-security</code> command line argument is provided to the server. Defaults to <code>false</code>.</td>
+<td>e.g. <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:enforceFreshSimulatorCreation</code></td>
+<td>Creates a new simulator in session creation and deletes it in session deletion. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:keepKeyChains</code></td>
+<td>Set the capability to <code>true</code> in order to preserve Simulator keychains folder after full reset. This feature has no effect on real devices. Defaults to <code>false</code></td>
+<td>e.g. <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:keychainsExcludePatterns</code></td>
+<td>This capability accepts comma-separated path patterns, which are going to be excluded from keychains restore while full reset is being performed on Simulator. It might be useful if you want to exclude only particular keychain types from being restored, like the applications keychain. This feature has no effect on real devices.</td>
+<td>e.g. <code>*keychain*.db*</code> to exclude applications keychain from being restored</td>
+</tr>
+<tr>
+<td><code>appium:reduceMotion</code></td>
+<td>It allows to turn on/off reduce motion accessibility preference. Setting reduceMotion <code>on</code> helps to reduce flakiness during tests. Only on simulators</td>
+<td>e.g <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:reduceTransparency</code></td>
+<td>It allows you to turn on/off reduce transparency accessibility preference. Setting reduceTransparency <code>on</code> helps to reduce screenshot image distortion during tests. Only on simulators</td>
+<td>e.g <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:autoFillPasswords</code></td>
+<td>It allows you to turn on/off autofill passwords function when text field is foccused. Works only with iOS16.4+ simulators</td>
+<td>e.g <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:permissions</code></td>
+<td>Allows to set permissions for the specified application bundle on Simulator only. The capability value is expected to be a valid JSON string with <code>{"&lt;bundleId1&gt;": {"&lt;serviceName1&gt;": "&lt;serviceStatus1&gt;", ...}, ...}</code> format. Since Xcode SDK 11.4 Apple provides native APIs to interact with application settings. Check the output of <code>xcrun simctl privacy booted</code> command to get the list of available permission names. Use <code>yes</code>, <code>no</code> and <code>unset</code> as values in order to <code>grant</code>, <code>revoke</code> or <code>reset</code> the corresponding permission. Below Xcode SDK 11.4 it is required that <code>applesimutils</code> package is installed and available in PATH. The list of available service names and statuses can be found at https://github.com/wix/AppleSimulatorUtils.</td>
+<td>e. g. <code>{"com.apple.mobilecal": {"calendar": "YES"}}</code></td>
+</tr>
+<tr>
+<td><code>appium:iosSimulatorLogsPredicate</code></td>
+<td>Set the <code>--predicate</code> flag in the ios simulator logs</td>
+<td>e.g.: <code>'process != "locationd" AND process != "DTServiceHub"' AND process != "mobileassetd"</code></td>
+</tr>
+<tr>
+<td><code>appium:simulatorPasteboardAutomaticSync</code></td>
+<td>Handle the <code>-PasteboardAutomaticSync</code> flag when simulator process launches. It could improve launching simulator performance not to sync pasteboard with the system when this value is <code>off</code>. <code>on</code> forces the flag enabled. <code>system</code> does not provide the flag to the launching command. <code>on</code>, <code>off</code>, or <code>system</code> is available. They are case insensitive. Defaults to <code>off</code></td>
+<td>e.g. <code>system</code></td>
+</tr>
+<tr>
+<td><code>appium:simulatorDevicesSetPath</code></td>
+<td>This capability allows to set an alternative path to the simulator devices set in case you have multiple sets deployed on your local system. Such feature could be useful if you, for example, would like to save disk space on the main system volume.</td>
+<td>e.g. <code>/MyVolume/Devices</code></td>
+</tr>
+<tr>
+<td><code>appium:webkitResponseTimeout</code></td>
+<td>(Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to <code>5000</code></td>
+<td>e.g., <code>10000</code></td>
+</tr>
+<tr>
+<td><code>appium:safariGlobalPreferences</code></td>
+<td>Allows changing of Mobile Safari's preferences at the session startup. Check the documentation on arguments of <a href="#mobile-updatesafaripreferences">mobile: updateSafariPreferences</a> extension to get more details on the value type requirements.</td>
+<td>{ ShowTabBar: 0, WarnAboutFraudulentWebsites: 0 }</td>
+</tr>
+</tbody>
+</table>
+<h3 id="web-context">Web Context</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appium:absoluteWebLocations</code></td>
+<td>This capability will direct the <code>Get Element Location</code> command, when used within webviews, to return coordinates which are relative to the origin of the page, rather than relative to the current scroll offset. This capability has no effect outside of webviews. Default <code>false</code>.</td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:safariGarbageCollect</code></td>
+<td>Turns on/off Web Inspector garbage collection when executing scripts on Safari. Turning on may improve performance. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:includeSafariInWebviews</code></td>
+<td>Add Safari web contexts to the list of contexts available during a native/webview app test. This is useful if the test opens Safari and needs to be able to interact with it. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:safariLogAllCommunication</code></td>
+<td>Log all plists sent to and received from the Web Inspector, as plain text. For some operations this can be a lot of data, so it is recommended to be used only when necessary. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:safariLogAllCommunicationHexDump</code></td>
+<td>Log all communication sent to and received from the Web Inspector, as raw hex dump and printable characters. This logging is done <em>before</em> any data manipulation, and so can elucidate some communication issues. Like <code>appium:safariLogAllCommunication</code>, this can produce a lot of data in some cases, so it is recommended to be used only when necessary. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:safariSocketChunkSize</code></td>
+<td>The size, in <em>bytes</em>, of the data to be sent to the Web Inspector on iOS 11+ real devices. Some devices hang when sending large amounts of data to the Web Inspector, and breaking them into smaller parts can be helpful in those cases. Defaults to <code>16384</code> (also the maximum possible)</td>
+<td>e.g., <code>1000</code></td>
+</tr>
+<tr>
+<td><code>appium:safariWebInspectorMaxFrameLength</code></td>
+<td>The maximum size in bytes of a single data frame for the Web Inspector. Too high values could introduce slowness and/or memory leaks. Too low values could introduce possible buffer overflow exceptions. Defaults to 20MB (<code>20*1024*1024</code>)</td>
+<td>e.g. <code>1024</code>, <code>100*1024*1024</code></td>
+</tr>
+<tr>
+<td><code>appium:additionalWebviewBundleIds</code></td>
+<td>Array (or JSON array) of possible bundle identifiers for webviews. This is sometimes necessary if the Web Inspector is found to be returning a modified bundle identifier for the app. Defaults to <code>[]</code></td>
+<td>e.g., <code>['io.appium.modifiedId', 'ABCDEF']</code></td>
+</tr>
+<tr>
+<td><code>appium:webviewConnectTimeout</code></td>
+<td>The time to wait, in <code>ms</code>, for the initial presence of webviews in MobileSafari or hybrid apps. Defaults to <code>0</code></td>
+<td>e.g., '5000'</td>
+</tr>
+<tr>
+<td><code>appium:safariIgnoreWebHostnames</code></td>
+<td>Provide a list of hostnames (comma-separated) that the Safari automation tools should ignore. This is to provide a workaround to prevent a webkit bug where the web context is unintentionally changed to a 3rd party website and the test gets stuck. The common culprits are search engines (yahoo, bing, google) and <code>about:blank</code></td>
+<td>e.g. <code>'www.yahoo.com, www.bing.com, www.google.com, about:blank'</code></td>
+</tr>
+<tr>
+<td><code>appium:nativeWebTap</code></td>
+<td>Enable native, non-javascript-based taps being in web context mode. Defaults to <code>false</code>. Warning: sometimes the preciseness of native taps could be broken, because there is no reliable way to map web element coordinates to native ones.</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:nativeWebTapStrict</code></td>
+<td>Enabling this capability would skip the additional logic that tries to match web view elements to native ones by using their textual descriptions. Depending on the actual web view content this algorithm might sometimes be not very reliable and will slow down each click as we anyway fallback to the usual coordinates transformation flow if it fails. It is advised to enable strict tap if you use <a href="../execute-methods/#mobile-calibratewebtorealcoordinatestranslation">mobile: calibrateWebToRealCoordinatesTranslation extension</a>. Only applicable if <code>nativeWebTap</code> is enabled. <code>false</code> by default</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:safariInitialUrl</code></td>
+<td>Initial safari url, default is a local welcome page. Setting it to an empty string will skip the initial navigation.</td>
+<td>e.g. <code>https://www.github.com</code></td>
+</tr>
+<tr>
+<td><code>appium:safariAllowPopups</code></td>
+<td>(Simulator only) Allow javascript to open new windows in Safari. Default keeps current sim setting.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:safariIgnoreFraudWarning</code></td>
+<td>(Simulator only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:safariOpenLinksInBackground</code></td>
+<td>(Simulator only) Whether Safari should allow links to open in new windows. Default keeps current sim setting.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:webviewConnectRetries</code></td>
+<td>Number of times to send connection message to remote debugger, to get webview. Default: <code>8</code></td>
+<td>e.g., <code>12</code></td>
+</tr>
+<tr>
+<td><code>appium:webkitResponseTimeout</code></td>
+<td>(Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to <code>5000</code></td>
+<td>e.g., <code>10000</code></td>
+</tr>
+<tr>
+<td><code>appium:enableAsyncExecuteFromHttps</code></td>
+<td>Capability to allow simulators to execute asynchronous JavaScript on pages using HTTPS. Defaults to <code>false</code></td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:fullContextList</code></td>
+<td>Returns the detailed information on contexts for the <a href="https://appium.io/docs/en/commands/context/get-contexts/index.html">get available context</a> command. If this capability is enabled, then each item in the returned contexts list would additionally include WebView title, full URL and the bundle identifier. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:enablePerformanceLogging</code></td>
+<td>Enable Safari's performance logging (default <code>false</code>)</td>
+<td><code>true</code>, <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:autoWebview</code></td>
+<td>Move directly into Webview context if available. Default <code>false</code></td>
+<td><code>true</code>, <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:skipTriggerInputEventAfterSendkeys</code></td>
+<td>If this capability is set to <code>true</code>, then whenever you call the Send Keys method in a web context, the driver will not fire an additional <code>input</code> event on the input field used for the call. This event, turned on by default, helps in situations where JS frameworks (like React) do not respond to the input events that occur by default when the underlying Selenium atom is executed. Default <code>false</code></td>
+<td><code>true</code>, <code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="other">Other</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appium:resetOnSessionStartOnly</code></td>
+<td>Whether to perform reset on test session finish (<code>false</code>) or not (<code>true</code>). Keeping this variable set to <code>true</code> and Simulator running (the default behaviour since version 1.6.4) may significantly shorten the duration of test session initialization.</td>
+<td>Either <code>true</code> or <code>false</code>. Defaults to <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:commandTimeouts</code></td>
+<td>Custom timeout(s) in milliseconds for WDA backend commands execution. This might be useful if WDA backend freezes unexpectedly or requires too much time to fail and blocks automated test execution. The value is expected to be of type string and can either contain max milliseconds to wait for each WDA command to be executed before terminating the session forcefully or a valid JSON string, where keys are internal Appium command names (you can find these in logs, look for "Executing command 'command_name'" records) and values are timeouts in milliseconds. You can also set the 'default' key to assign the timeout for all other commands not explicitly enumerated as JSON keys.</td>
+<td><code>'120000'</code>, <code>'{"findElement": 40000, "findElements": 40000, "setValue": 20000, "default": 120000}'</code></td>
+</tr>
+<tr>
+<td><code>appium:useJSONSource</code></td>
+<td>Get JSON source from WDA and transform it to XML on the Appium server side. Defaults to <code>false</code>.</td>
+<td>e.g., <code>true</code></td>
+</tr>
+<tr>
+<td><code>appium:skipLogCapture</code></td>
+<td>Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to <code>false</code>.</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:launchWithIDB</code></td>
+<td>Launch WebDriverAgentRunner with <a href="https://github.com/facebook/idb">idb</a> instead of xcodebuild. This could save a significant amout of time by skiping the xcodebuild process, although the idb might not be very reliable, especially with fresh Xcode SDKs. Check the <a href="https://github.com/facebook/idb/issues">idb repository</a> for more details on possible compatibility issues. Defaults to <code>false</code></td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:showIOSLog</code></td>
+<td>Whether to show any logs captured from a device in the appium logs. Default <code>false</code></td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:clearSystemFiles</code></td>
+<td>Whether to clean temporary XCTest files (for example logs) when a testing session is closed. <code>false</code> by default</td>
+<td><code>true</code> or <code>false</code></td>
+</tr>
+<tr>
+<td><code>appium:newCommandTimeout</code></td>
+<td>How long (in seconds) the driver should wait for a new command from the client before assuming the client has stopped sending requests. After the timeout the session is going to be deleted. <code>60</code> seconds by default. Setting it to zero disables the timer.</td>
+<td>e.g. <code>100</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  </body>
+</html>
