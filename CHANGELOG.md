@@ -1,3 +1,10 @@
+## [5.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.7.0...v5.8.0) (2023-10-30)
+
+
+### Features
+
+* Add 'mobile: keys' extension ([#2156](https://github.com/appium/appium-xcuitest-driver/issues/2156)) ([db39d66](https://github.com/appium/appium-xcuitest-driver/commit/db39d66e6605d22d7b8d1150a9612b74cb962f79))
+
 ## [5.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.6.0...v5.7.0) (2023-10-13)
 
 
