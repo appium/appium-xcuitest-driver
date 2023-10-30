@@ -1370,6 +1370,20 @@ Checks if the system on-screen keyboard is visible.
 
 `true` if the keyboard is visible
 
+### mobile: keys
+
+Send keys to the given element or to the application under test.
+This API is only supported since Xcode 15/iOS 17.
+It is not supported on tvOS.
+The API only works on iPad. On iOS calling it has no effect.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId | string | no | Unique identifier of the element to send the keys to. If unset then keys are sent to the current application under test. | 21045BC8-013C-43BD-9B1E-4C6DC7AB0744
+keys | array | yes | Array of keys to type. Each item could either be a string, that represents a key itself (see the official documentation on XCUIElement's [typeKey:modifierFlags: method](https://developer.apple.com/documentation/xctest/xcuielement/1500604-typekey?language=objc) and on [XCUIKeyboardKey constants](https://developer.apple.com/documentation/xctest/xcuikeyboardkey?language=objc)) or a dictionary with `key` and `modifierFlags` entries, if the key should also be entered with modifiers. | ['h', 'i'] or [{key: 'h', modifierFlags: 1 << 1}, {key: 'i', modifierFlags: 1 << 2}] or ['XCUIKeyboardKeyEscape'] |
+
 ### mobile: lock
 
 Lock the device (and optionally unlock it after a certain amount of time). Only simple (e.g. without a password) locks are supported.

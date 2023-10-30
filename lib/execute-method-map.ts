@@ -442,6 +442,13 @@ export const executeMethodMap = {
   'mobile: calibrateWebToRealCoordinatesTranslation': {
     command: 'mobileCalibrateWebToRealCoordinatesTranslation',
   },
+  'mobile: keys': {
+    command: 'mobileKeys',
+    params: {
+      required: ['keys'],
+      optional: ['elementId'],
+    },
+  },
   'mobile: deepLink': {
     command: 'mobileDeepLink',
     params: {
