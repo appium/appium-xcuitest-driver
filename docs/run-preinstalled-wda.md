@@ -114,3 +114,12 @@ driver = @core.start_driver
 # do something
 driver.quit
 ```
+
+> **Note**
+> As of iOS 17, the testmanagerd service name has changed to `com.apple.dt.testmanagerd.runner` from `com.apple.testmanagerd`.
+> It causes an unexpected WDA process crash with embedded XCTest frameworks while running a single WebDriverAgent package on various OS environments without `xcodebuild`.
+> Since appium-webdriveragent v5.10.0, the WDA module can refer to the device's local XCTtest frameworks.
+> It lets the Appium/WebDriverAgent package use proper dependencies for the device with a single prebuilt WebDriverAgent package.
+> To achieve the system reference, you should remove the package internal's frameworks as below from the `WebDriverAgentRunner-Runner.app`
+> with `rm -rf WebDriverAgentRunner-Runner.app/Frameworks/XC*.framework`.
+> The same package is available from https://github.com/appium/WebDriverAgent/releases
