@@ -6,9 +6,9 @@ Beside of standard W3C APIs the driver provides the below custom command extensi
 
 ```java
 // Java 11+
-var result = driver.executeScript("mobile: <methodName>", Map.of(
-    "arg1", "value1",
-    "arg2", "value2"
+var result = driver.executeScript("mobile: <methodName>", Map.ofEntries(
+    Map.entry("arg1", "value1"),
+    Map.entry("arg2", "value2")
     // you may add more pairs if needed or skip providing the map completely
     // if all arguments are defined as optional
 ));
