@@ -1439,3 +1439,5 @@ detailedDescription | string | The detailed description of the found accessbilit
 compactDescription | string | The compact description of the found accessbility issue. | Some compact issue description
 auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
 element | string | The description of the element this issue was found for. | 'Yes' button
+elementDescription | string | The debug description of the element this issue was found for. Availble since driver version | A long string describing the element itself and its position in the page tree hierarchy
+
