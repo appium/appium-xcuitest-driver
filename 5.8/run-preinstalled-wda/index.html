@@ -1629,6 +1629,16 @@ Test bundles cannot be versioned using <code>CFBundleVersion</code> as vanilla a
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># do something</span>
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">driver</span><span class="o">.</span><span class="n">quit</span>
 </code></pre></div>
+<blockquote>
+<p><strong>Note</strong>
+As of iOS 17, the testmanagerd service name has changed to <code>com.apple.dt.testmanagerd.runner</code> from <code>com.apple.testmanagerd</code>.
+It causes an unexpected WDA process crash with embedded XCTest frameworks while running a single WebDriverAgent package on various OS environments without <code>xcodebuild</code>.
+Since appium-webdriveragent v5.10.0, the WDA module can refer to the device's local XCTtest frameworks.
+It lets the Appium/WebDriverAgent package use proper dependencies for the device with a single prebuilt WebDriverAgent package.
+To achieve the system reference, you should remove the package internal's frameworks as below from the <code>WebDriverAgentRunner-Runner.app</code>
+with <code>rm -rf WebDriverAgentRunner-Runner.app/Frameworks/XC*.framework</code>.
+The same package is available from https://github.com/appium/WebDriverAgent/releases</p>
+</blockquote>
 
 
 
