@@ -1,3 +1,10 @@
+## [5.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.0...v5.8.1) (2023-11-01)
+
+
+### Bug Fixes
+
+* Sync package-lock ([09be06f](https://github.com/appium/appium-xcuitest-driver/commit/09be06f7c13f3aaba5a4f1b8552e0dbb356ec200))
+
 ## [5.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.7.0...v5.8.0) (2023-10-30)
 
 
