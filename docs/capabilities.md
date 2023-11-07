@@ -80,6 +80,8 @@ Capability | Description
 |`appium:shouldTerminateApp`| Specify if the app should be terminated on session end. This capability only has an effect if an application identifier has been passed to the test session (either explicitly, by setting bundleId, or implicitly, by providing app). Default is `true` unless `noReset` capability is set to `true`. |`true` or `false`|
 |`appium:forceAppLaunch`| Specify if the app should be forcefully restarted if it is already running on session startup. This capability only has an effect if an application identifier has been passed to the test session (either explicitly, by setting bundleId, or implicitly, by providing app). Default is `true` unless `noReset` capability is set to `true`. |`true` or `false`|
 |`appium:useNativeCachingStrategy`| Set this capability to `false` in order to use the custom elements caching strategy. This might help to avoid stale element exception on property change. By default the native XCTest cache resolution is used (`true`) for all native locators (e.g. all, but xpath). Check the corresponding [WebDriverAgent pull request](https://github.com/appium/WebDriverAgent/pull/516) for more details. |`true` or `false`|
+|`appium:skipDeviceCheck`| Whether to skip the device check in a new session request. This could help to avoid [Apple TV 4k tvOS 17](https://github.com/appium/appium/issues/19343) connection issue, but if you need this capability, the session will have communication issue with the device. Only commands that can work over WebDriverAgent may work.
+
 
 ### Simulator
 

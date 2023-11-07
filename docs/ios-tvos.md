@@ -7,8 +7,10 @@ tvOS is supported since XCUITest driver bundled with Appium 1.13.0+
 <img src="https://user-images.githubusercontent.com/5511591/55161297-876e0200-51a8-11e9-8313-8d9f15a0db9d.gif" width=50%>
 
 > **Warning**
-> Apple TV 4K is not supported because [appium-ios-device](https://github.com/appium/appium-ios-device) library,
-> that we use to support low-level communication with devices, only supports devices connected via USB.
+> Apple TV 4K device with tvOS 17 may not work because [appium-ios-device](https://github.com/appium/appium-ios-device) library,
+> that we use to support low-level communication with devices, does not work for tvOS 17.
+> As a workaround, please use `appium:skipDeviceCheck` capability with `appium:webDriverAgentUrl` to avoid device communication.
+> [This page](./attach-to-running-wda.md) may help to check how to use `appium:webDriverAgentUrl`.
 
 ## Setup
 
