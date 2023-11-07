@@ -27,11 +27,11 @@ If the environment had port-forward to the connected device, it can be `http://l
 }
 ```
 
-This method allows you to manage the WebDriverAgent application process by yourself.
+This method allows you to manage the WebDriverAgent application process by yourself, for example manage the process with 3rd party libraries, Xcode etc.
 XCUITest driver simply attaches to the WebDriverAgent application process.
 It may improve the application performance.
 
-Some xcuitest driver APIs (for example the [mobile: calibrateWebToRealCoordinatesTranslation](./execute-methods.md#mobile-calibratewebtorealcoordinatestranslation) one) might still require to know
+Some XCUITest driver APIs (for example the [mobile: calibrateWebToRealCoordinatesTranslation](./execute-methods.md#mobile-calibratewebtorealcoordinatestranslation) one) might still require to know
 the port number of the remote device if it is a real device. Providing
 `webDriverAgentUrl` capability might not be sufficient to recognize the remote port number in case it is different from the local one. Consider settings the `appium:wdaRemotePort` capability value
 in such case to supply the driver with the appropriate data.
