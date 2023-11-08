@@ -1,3 +1,10 @@
+## [5.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.1...v5.8.2) (2023-11-08)
+
+
+### Bug Fixes
+
+* to push a new release with updated npm-shrinkwrap ([b0dfc39](https://github.com/appium/appium-xcuitest-driver/commit/b0dfc393316b6573a7b15855d97d16f29570eb9b))
+
 ## [5.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.0...v5.8.1) (2023-11-01)
 
 
