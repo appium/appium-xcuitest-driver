@@ -1,5 +1,9 @@
 name: Unit Tests
-on: [push, pull_request]
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   # https://thekevinwang.com/2021/09/19/github-actions-dynamic-matrix/
