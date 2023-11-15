@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4b4a2bd9.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
@@ -2748,7 +2748,7 @@
 <h3 id="all_commands">ALL_COMMANDS</h3>
 <p>• <strong>ALL_COMMANDS</strong>: <code>any</code>[] = <code>[]</code></p>
 <h4 id="defined-in">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/routes.js:931</p>
+<p>node_modules/@appium/base-driver/lib/protocol/routes.js:921</p>
 <hr />
 <h3 id="create_session_command">CREATE_SESSION_COMMAND</h3>
 <p>• <code>Const</code> <strong>CREATE_SESSION_COMMAND</strong>: <code>"createSession"</code></p>
@@ -2763,7 +2763,7 @@
 <h3 id="default_ws_pathname_prefix">DEFAULT_WS_PATHNAME_PREFIX</h3>
 <p>• <code>Const</code> <strong>DEFAULT_WS_PATHNAME_PREFIX</strong>: <code>"/ws"</code></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/express/websocket.js:6</p>
+<p>node_modules/@appium/base-driver/lib/express/websocket.js:7</p>
 <hr />
 <h3 id="delete_session_command">DELETE_SESSION_COMMAND</h3>
 <p>• <code>Const</code> <strong>DELETE_SESSION_COMMAND</strong>: <code>"deleteSession"</code></p>
@@ -3712,34 +3712,6 @@ any parameters that are expected in a request parameters can be <code>required</
 <tr>
 <td style="text-align: left;"><code>/session/:sessionId/appium/device/remove_app.POST.payloadParams.required</code></td>
 <td style="text-align: left;">readonly [readonly [<code>"appId"</code>], readonly [<code>"bundleId"</code>]]</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate</code></td>
-<td style="text-align: left;">{ <code>POST</code>: { <code>command</code>: <code>"mobileRotation"</code> = 'mobileRotation'; <code>deprecated</code>: <code>true</code> = true; <code>payloadParams</code>: { <code>optional</code>: readonly [<code>"element"</code>] ; <code>required</code>: readonly [<code>"x"</code>, <code>"y"</code>, <code>"radius"</code>, <code>"rotation"</code>, <code>"touchCount"</code>, <code>"duration"</code>]  }  }  }</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate.POST</code></td>
-<td style="text-align: left;">{ <code>command</code>: <code>"mobileRotation"</code> = 'mobileRotation'; <code>deprecated</code>: <code>true</code> = true; <code>payloadParams</code>: { <code>optional</code>: readonly [<code>"element"</code>] ; <code>required</code>: readonly [<code>"x"</code>, <code>"y"</code>, <code>"radius"</code>, <code>"rotation"</code>, <code>"touchCount"</code>, <code>"duration"</code>]  }  }</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate.POST.command</code></td>
-<td style="text-align: left;"><code>"mobileRotation"</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate.POST.deprecated</code></td>
-<td style="text-align: left;"><code>true</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate.POST.payloadParams</code></td>
-<td style="text-align: left;">{ <code>optional</code>: readonly [<code>"element"</code>] ; <code>required</code>: readonly [<code>"x"</code>, <code>"y"</code>, <code>"radius"</code>, <code>"rotation"</code>, <code>"touchCount"</code>, <code>"duration"</code>]  }</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate.POST.payloadParams.optional</code></td>
-<td style="text-align: left;">readonly [<code>"element"</code>]</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>/session/:sessionId/appium/device/rotate.POST.payloadParams.required</code></td>
-<td style="text-align: left;">readonly [<code>"x"</code>, <code>"y"</code>, <code>"radius"</code>, <code>"rotation"</code>, <code>"touchCount"</code>, <code>"duration"</code>]</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>/session/:sessionId/appium/device/send_sms</code></td>
@@ -6277,7 +6249,7 @@ any parameters that are expected in a request parameters can be <code>required</
 <h3 id="no_session_id_commands">NO_SESSION_ID_COMMANDS</h3>
 <p>• <code>Const</code> <strong>NO_SESSION_ID_COMMANDS</strong>: <code>string</code>[]</p>
 <h4 id="defined-in_7">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/routes.js:1015</p>
+<p>node_modules/@appium/base-driver/lib/protocol/routes.js:1005</p>
 <hr />
 <h3 id="prefixed_appium_opts_cap">PREFIXED_APPIUM_OPTS_CAP</h3>
 <p>• <code>Const</code> <strong>PREFIXED_APPIUM_OPTS_CAP</strong>: <code>string</code></p>
@@ -6500,7 +6472,7 @@ any parameters that are expected in a request parameters can be <code>required</
 </tbody>
 </table>
 <h4 id="defined-in_13">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:938</p>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:943</p>
 <hr />
 <h3 id="statuscodes">statusCodes</h3>
 <p>• <code>Const</code> <strong>statusCodes</strong>: <code>Object</code></p>
@@ -6914,7 +6886,7 @@ any parameters that are expected in a request parameters can be <code>required</
 <p><code>ProtocolError</code></p>
 <p>The error that is associated with provided JSONWP status code</p>
 <h4 id="defined-in_17">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1037</p>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1042</p>
 <hr />
 <h3 id="errorfromw3cjsoncode">errorFromW3CJsonCode</h3>
 <p>▸ <strong>errorFromW3CJsonCode</strong>(<code>code</code>, <code>message</code>, <code>stacktrace?</code>): <code>ProtocolError</code></p>
@@ -6954,7 +6926,7 @@ any parameters that are expected in a request parameters can be <code>required</
 <p><code>ProtocolError</code></p>
 <p>The error that is associated with the W3C error string</p>
 <h4 id="defined-in_18">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1056</p>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1061</p>
 <hr />
 <h3 id="getsummarybycode">getSummaryByCode</h3>
 <p>▸ <strong>getSummaryByCode</strong>(<code>code</code>): <code>string</code></p>
@@ -7018,7 +6990,7 @@ any parameters that are expected in a request parameters can be <code>required</
 <h4 id="returns_5">Returns</h4>
 <p>err is T</p>
 <h4 id="defined-in_20">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1011</p>
+<p>node_modules/@appium/base-driver/lib/protocol/errors.js:1016</p>
 <hr />
 <h3 id="issessioncommand">isSessionCommand</h3>
 <p>▸ <strong>isSessionCommand</strong>(<code>command</code>): <code>boolean</code></p>
@@ -7119,7 +7091,7 @@ any parameters that are expected in a request parameters can be <code>required</
 <h4 id="returns_9">Returns</h4>
 <p><code>string</code></p>
 <h4 id="defined-in_24">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/express/server.js:251</p>
+<p>node_modules/@appium/base-driver/lib/express/server.js:290</p>
 <hr />
 <h3 id="processcapabilities">processCapabilities</h3>
 <p>▸ <strong>processCapabilities</strong>&lt;<code>C</code>, <code>W3CCaps</code>&gt;(<code>w3cCaps</code>, <code>constraints?</code>, <code>shouldValidateCaps?</code>): <a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>&gt;</p>
@@ -7309,7 +7281,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 <h4 id="returns_14">Returns</h4>
 <p><code>undefined</code> | <code>string</code></p>
 <h4 id="defined-in_29">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/protocol/routes.js:978</p>
+<p>node_modules/@appium/base-driver/lib/protocol/routes.js:968</p>
 <hr />
 <h3 id="server">server</h3>
 <p>▸ <strong>server</strong>(<code>opts</code>): <code>Promise</code>&lt;<a href="../appium_types/#appiumserver"><code>AppiumServer</code></a>&gt;</p>
@@ -7331,7 +7303,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
 <h4 id="returns_15">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types/#appiumserver"><code>AppiumServer</code></a>&gt;</p>
 <h4 id="defined-in_30">Defined in</h4>
-<p>node_modules/@appium/base-driver/lib/express/server.js:38</p>
+<p>node_modules/@appium/base-driver/lib/express/server.js:78</p>
 <hr />
 <h3 id="validatecaps">validateCaps</h3>
 <p>▸ <strong>validateCaps</strong>&lt;<code>C</code>&gt;(<code>caps</code>, <code>constraints?</code>, <code>opts?</code>): <a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>&gt;</p>
@@ -7459,7 +7431,7 @@ within the 'appium:options' capability and promoted it to the top level.</p>
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>

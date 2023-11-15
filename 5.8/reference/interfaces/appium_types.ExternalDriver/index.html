@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.4b4a2bd9.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
@@ -6459,41 +6459,6 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#mobilerotation" class="md-nav__link">
-    mobileRotation
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-        
-          <!--
-  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
   <a href="#networkspeed" class="md-nav__link">
     networkSpeed
   </a>
@@ -8929,7 +8894,6 @@ None of these are implemented within Appium itself.</p>
 <li><a href="./#longpresskeycode">longPressKeyCode</a></li>
 <li><a href="./#maximizewindow">maximizeWindow</a></li>
 <li><a href="./#minimizewindow">minimizeWindow</a></li>
-<li><a href="./#mobilerotation">mobileRotation</a></li>
 <li><a href="./#networkspeed">networkSpeed</a></li>
 <li><a href="./#newcommandtimeout">newCommandTimeout</a></li>
 <li><a href="./#onunexpectedshutdown">onUnexpectedShutdown</a></li>
@@ -9192,6 +9156,14 @@ None of these are implemented within Appium itself.</p>
 <td style="text-align: left;"><code>boolean</code></td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>sslCertificatePath</code></td>
+<td style="text-align: left;"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sslKeyPath</code></td>
+<td style="text-align: left;"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>strictCaps</code></td>
 <td style="text-align: left;"><code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>&gt;</td>
 </tr>
@@ -9400,7 +9372,7 @@ None of these are implemented within Appium itself.</p>
 <h4 id="returns_1">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_30">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1419</p>
+<p>node_modules/@appium/types/lib/driver.ts:1396</p>
 <hr />
 <h3 id="activateimeengine">activateIMEEngine</h3>
 <p>▸ <code>Optional</code> <strong>activateIMEEngine</strong>(<code>engine</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
@@ -9426,7 +9398,7 @@ None of these are implemented within Appium itself.</p>
 <h4 id="returns_2">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_31">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1673</p>
+<p>node_modules/@appium/types/lib/driver.ts:1650</p>
 <hr />
 <h3 id="active">active</h3>
 <p>▸ <code>Optional</code> <strong>active</strong>(): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>&gt;&gt;</p>
@@ -9494,7 +9466,7 @@ None of these are implemented within Appium itself.</p>
 <h4 id="returns_4">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_33">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1934</p>
+<p>node_modules/@appium/types/lib/driver.ts:1911</p>
 <hr />
 <h3 id="addmanageddriver">addManagedDriver</h3>
 <p>▸ <strong>addManagedDriver</strong>(<code>driver</code>): <code>void</code></p>
@@ -9571,7 +9543,7 @@ None of these are implemented within Appium itself.</p>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The authenticator ID</p>
 <h4 id="defined-in_35">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1905</p>
+<p>node_modules/@appium/types/lib/driver.ts:1882</p>
 <hr />
 <h3 id="assertfeatureenabled">assertFeatureEnabled</h3>
 <p>▸ <strong>assertFeatureEnabled</strong>(<code>name</code>): <code>void</code></p>
@@ -9648,7 +9620,7 @@ where the server is Running</p>
 <p><code>Promise</code>&lt;<code>string</code>[]&gt;</p>
 <p>The list of IME engines</p>
 <h4 id="defined-in_38">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1639</p>
+<p>node_modules/@appium/types/lib/driver.ts:1616</p>
 <hr />
 <h3 id="back">back</h3>
 <p>▸ <code>Optional</code> <strong>back</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
@@ -9685,7 +9657,7 @@ where the server is Running</p>
 <h4 id="returns_11">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_40">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1697</p>
+<p>node_modules/@appium/types/lib/driver.ts:1674</p>
 <hr />
 <h3 id="buttonup">buttonUp</h3>
 <p>▸ <code>Optional</code> <strong>buttonUp</strong>(<code>button?</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
@@ -9712,7 +9684,7 @@ where the server is Running</p>
 <h4 id="returns_12">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_41">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1707</p>
+<p>node_modules/@appium/types/lib/driver.ts:1684</p>
 <hr />
 <h3 id="canproxy">canProxy</h3>
 <p>▸ <strong>canProxy</strong>(<code>sessionId?</code>): <code>boolean</code></p>
@@ -9826,7 +9798,7 @@ where the server is Running</p>
 <h4 id="returns_17">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_46">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1717</p>
+<p>node_modules/@appium/types/lib/driver.ts:1694</p>
 <hr />
 <h3 id="closewindow">closeWindow</h3>
 <p>▸ <code>Optional</code> <strong>closeWindow</strong>(): <code>Promise</code>&lt;<code>string</code>[]&gt;</p>
@@ -9919,7 +9891,7 @@ where the server is Running</p>
 <h4 id="returns_21">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_50">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1664</p>
+<p>node_modules/@appium/types/lib/driver.ts:1641</p>
 <hr />
 <h3 id="deletecookie">deleteCookie</h3>
 <p>▸ <code>Optional</code> <strong>deleteCookie</strong>(<code>name</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
@@ -10000,7 +9972,7 @@ where the server is Running</p>
 <h4 id="returns_25">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_54">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1725</p>
+<p>node_modules/@appium/types/lib/driver.ts:1702</p>
 <hr />
 <h3 id="driverforsession">driverForSession</h3>
 <p>▸ <strong>driverForSession</strong>(<code>sessionId</code>): <code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<a href="../../modules/appium_types/#constraints"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&gt;</p>
@@ -10167,7 +10139,7 @@ where the server is Running</p>
 <h4 id="returns_31">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_60">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1605</p>
+<p>node_modules/@appium/types/lib/driver.ts:1582</p>
 <hr />
 <h3 id="equalselement">equalsElement</h3>
 <p>▸ <code>Optional</code> <strong>equalsElement</strong>(<code>elementId</code>, <code>otherElementId</code>): <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
@@ -10199,7 +10171,7 @@ where the server is Running</p>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p>True if the elements are equal, false otherwise</p>
 <h4 id="defined-in_61">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1630</p>
+<p>node_modules/@appium/types/lib/driver.ts:1607</p>
 <hr />
 <h3 id="execute">execute</h3>
 <p>▸ <code>Optional</code> <strong>execute</strong>(<code>script</code>, <code>args</code>): <code>Promise</code>&lt;<code>unknown</code>&gt;</p>
@@ -10297,7 +10269,7 @@ object if the promise is rejected)</p>
 <p><code>Promise</code>&lt;<code>unknown</code>&gt;</p>
 <p>The result of the command execution</p>
 <h4 id="defined-in_64">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1888</p>
+<p>node_modules/@appium/types/lib/driver.ts:1865</p>
 <hr />
 <h3 id="executecommand">executeCommand</h3>
 <p>▸ <strong>executeCommand</strong>(<code>cmd</code>, <code>...args</code>): <code>Promise</code>&lt;<code>any</code>&gt;</p>
@@ -10850,7 +10822,7 @@ look for elements among the set of descendants of a given element</p>
 <h4 id="returns_49">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_78">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1779</p>
+<p>node_modules/@appium/types/lib/driver.ts:1756</p>
 <hr />
 <h3 id="forward">forward</h3>
 <p>▸ <code>Optional</code> <strong>forward</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
@@ -10881,7 +10853,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The name of the active engine</p>
 <h4 id="defined-in_81">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1648</p>
+<p>node_modules/@appium/types/lib/driver.ts:1625</p>
 <hr />
 <h3 id="getalerttext">getAlertText</h3>
 <p>▸ <code>Optional</code> <strong>getAlertText</strong>(): <code>Promise</code>&lt;<code>null</code> | <code>string</code>&gt;</p>
@@ -10936,7 +10908,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<a href="../appium_types.Credential/"><code>Credential</code></a>[]&gt;</p>
 <p>The list of Credentials</p>
 <h4 id="defined-in_84">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1950</p>
+<p>node_modules/@appium/types/lib/driver.ts:1927</p>
 <hr />
 <h3 id="getcomputedlabel">getComputedLabel</h3>
 <p>▸ <code>Optional</code> <strong>getComputedLabel</strong>(<code>elementId</code>): <code>Promise</code>&lt;<code>null</code> | <code>string</code>&gt;</p>
@@ -11003,7 +10975,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<code>Ctx</code>[]&gt;</p>
 <p>The list of context names</p>
 <h4 id="defined-in_87">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1827</p>
+<p>node_modules/@appium/types/lib/driver.ts:1804</p>
 <hr />
 <h3 id="getcookie">getCookie</h3>
 <p>▸ <code>Optional</code> <strong>getCookie</strong>(<code>name</code>): <code>Promise</code>&lt;<a href="../appium_types.Cookie/"><code>Cookie</code></a>&gt;</p>
@@ -11085,7 +11057,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The activity name</p>
 <h4 id="defined-in_91">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1393</p>
+<p>node_modules/@appium/types/lib/driver.ts:1370</p>
 <hr />
 <h3 id="getcurrentcontext">getCurrentContext</h3>
 <p>▸ <code>Optional</code> <strong>getCurrentContext</strong>(): <code>Promise</code>&lt;<code>null</code> | <code>Ctx</code>&gt;</p>
@@ -11096,7 +11068,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<code>null</code> | <code>Ctx</code>&gt;</p>
 <p>The context name</p>
 <h4 id="defined-in_92">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1811</p>
+<p>node_modules/@appium/types/lib/driver.ts:1788</p>
 <hr />
 <h3 id="getcurrentpackage">getCurrentPackage</h3>
 <p>▸ <code>Optional</code> <strong>getCurrentPackage</strong>(): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11106,7 +11078,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The package name</p>
 <h4 id="defined-in_93">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1403</p>
+<p>node_modules/@appium/types/lib/driver.ts:1380</p>
 <hr />
 <h3 id="getdevicetime">getDeviceTime</h3>
 <p>▸ <code>Optional</code> <strong>getDeviceTime</strong>(<code>format?</code>): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11142,7 +11114,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<code>number</code>&gt;</p>
 <p>The density</p>
 <h4 id="defined-in_95">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1594</p>
+<p>node_modules/@appium/types/lib/driver.ts:1571</p>
 <hr />
 <h3 id="getelementrect">getElementRect</h3>
 <p>▸ <code>Optional</code> <strong>getElementRect</strong>(<code>elementId</code>): <code>Promise</code>&lt;<a href="../appium_types.Rect/"><code>Rect</code></a>&gt;</p>
@@ -11207,7 +11179,7 @@ look for elements among the set of descendants of a given element</p>
 <p><code>Promise</code>&lt;<a href="../appium_types.Location/"><code>Location</code></a>&gt;</p>
 <p>The location</p>
 <h4 id="defined-in_98">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1793</p>
+<p>node_modules/@appium/types/lib/driver.ts:1770</p>
 <hr />
 <h3 id="getlog">getLog</h3>
 <p>▸ <strong>getLog</strong>(<code>logType</code>): <code>Promise</code>&lt;<code>any</code>&gt;</p>
@@ -11321,7 +11293,7 @@ look for elements among the set of descendants of a given element</p>
 <p>A number which is a bitmask representing categories like Data, Wifi, and Airplane
 mode status</p>
 <h4 id="defined-in_104">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1848</p>
+<p>node_modules/@appium/types/lib/driver.ts:1825</p>
 <hr />
 <h3 id="getorientation">getOrientation</h3>
 <p>▸ <code>Optional</code> <strong>getOrientation</strong>(): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11330,7 +11302,7 @@ mode status</p>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The orientation string</p>
 <h4 id="defined-in_105">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1680</p>
+<p>node_modules/@appium/types/lib/driver.ts:1657</p>
 <hr />
 <h3 id="getpageindex">getPageIndex</h3>
 <p>▸ <code>Optional</code> <strong>getPageIndex</strong>(<code>elementId</code>): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11357,7 +11329,7 @@ mode status</p>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The page index</p>
 <h4 id="defined-in_106">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1839</p>
+<p>node_modules/@appium/types/lib/driver.ts:1816</p>
 <hr />
 <h3 id="getpagesource">getPageSource</h3>
 <p>▸ <strong>getPageSource</strong>(): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11486,7 +11458,7 @@ the performance data by type.</p>
 <p><code>Promise</code>&lt;<a href="../appium_types.Rotation/"><code>Rotation</code></a>&gt;</p>
 <p>The Rotation object consisting of x, y, and z rotation values (0 &lt;= n &lt;= 360)</p>
 <h4 id="defined-in_112">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1866</p>
+<p>node_modules/@appium/types/lib/driver.ts:1843</p>
 <hr />
 <h3 id="getscreenshot">getScreenshot</h3>
 <p>▸ <code>Optional</code> <strong>getScreenshot</strong>(): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11569,7 +11541,7 @@ the performance data by type.</p>
 <p><code>Promise</code>&lt;<code>unknown</code>&gt;</p>
 <p>An array of information objects of driver-specific shape</p>
 <h4 id="defined-in_118">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1584</p>
+<p>node_modules/@appium/types/lib/driver.ts:1561</p>
 <hr />
 <h3 id="gettext">getText</h3>
 <p>▸ <code>Optional</code> <strong>getText</strong>(<code>elementId</code>): <code>Promise</code>&lt;<code>string</code>&gt;</p>
@@ -11777,7 +11749,7 @@ response</p>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p>Whether the keyboard was successfully hidden. May never return <code>false</code> on some platforms</p>
 <h4 id="defined-in_128">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1467</p>
+<p>node_modules/@appium/types/lib/driver.ts:1444</p>
 <hr />
 <h3 id="implicitwait">implicitWait</h3>
 <p>▸ <strong>implicitWait</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
@@ -11919,7 +11891,7 @@ response</p>
 <h4 id="returns_104">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_133">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1411</p>
+<p>node_modules/@appium/types/lib/driver.ts:1388</p>
 <hr />
 <h3 id="isappinstalled">isAppInstalled</h3>
 <p>▸ <code>Optional</code> <strong>isAppInstalled</strong>(<code>appId</code>): <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
@@ -11944,7 +11916,7 @@ response</p>
 <h4 id="returns_105">Returns</h4>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <h4 id="defined-in_134">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1444</p>
+<p>node_modules/@appium/types/lib/driver.ts:1421</p>
 <hr />
 <h3 id="isfeatureenabled">isFeatureEnabled</h3>
 <p>▸ <strong>isFeatureEnabled</strong>(<code>name</code>): <code>boolean</code></p>
@@ -11978,7 +11950,7 @@ response</p>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p>True if the IME is activated</p>
 <h4 id="defined-in_136">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1657</p>
+<p>node_modules/@appium/types/lib/driver.ts:1634</p>
 <hr />
 <h3 id="iskeyboardshown">isKeyboardShown</h3>
 <p>▸ <code>Optional</code> <strong>isKeyboardShown</strong>(): <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
@@ -11987,7 +11959,7 @@ response</p>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p>Whether the keyboard is shown</p>
 <h4 id="defined-in_137">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1479</p>
+<p>node_modules/@appium/types/lib/driver.ts:1456</p>
 <hr />
 <h3 id="ismjsonwpprotocol">isMjsonwpProtocol</h3>
 <p>▸ <strong>isMjsonwpProtocol</strong>(): <code>boolean</code></p>
@@ -12179,68 +12151,11 @@ response</p>
 <h4 id="defined-in_146">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:922</p>
 <hr />
-<h3 id="mobilerotation">mobileRotation</h3>
-<p>▸ <code>Optional</code> <strong>mobileRotation</strong>(<code>x</code>, <code>y</code>, <code>radius</code>, <code>rotation</code>, <code>touchCount</code>, <code>duration</code>, <code>elementId?</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
-<p>Construct a rotation gesture? Unclear what this command does and it does not appear to be used</p>
-<p><strong><code>Deprecated</code></strong></p>
-<p>Use setRotation instead</p>
-<h4 id="parameters_74">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>x</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the x coordinate of the rotation center</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>y</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the y coordinate of the rotation center</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>radius</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the radius of the rotation circle</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>rotation</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the rotation angle? idk</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>touchCount</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">how many fingers to rotate</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>duration</code></td>
-<td style="text-align: left;"><code>string</code></td>
-<td style="text-align: left;">-</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>elementId?</code></td>
-<td style="text-align: left;"><code>string</code></td>
-<td style="text-align: left;">if we're rotating around an element</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_118">Returns</h4>
-<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_147">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1375</p>
-<hr />
 <h3 id="networkspeed">networkSpeed</h3>
 <p>▸ <code>Optional</code> <strong>networkSpeed</strong>(<code>netspeed</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the network speed of the device</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_75">Parameters</h4>
+<h4 id="parameters_74">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12257,15 +12172,15 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_119">Returns</h4>
+<h4 id="returns_118">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_148">Defined in</h4>
+<h4 id="defined-in_147">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1350</p>
 <hr />
 <h3 id="newcommandtimeout">newCommandTimeout</h3>
 <p>▸ <strong>newCommandTimeout</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set Appium's new command timeout</p>
-<h4 id="parameters_76">Parameters</h4>
+<h4 id="parameters_75">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12282,16 +12197,16 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_120">Returns</h4>
+<h4 id="returns_119">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_71">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#newcommandtimeout">newCommandTimeout</a></p>
-<h4 id="defined-in_149">Defined in</h4>
+<h4 id="defined-in_148">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:129</p>
 <hr />
 <h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
 <p>▸ <strong>onUnexpectedShutdown</strong>(<code>handler</code>): <code>void</code></p>
-<h4 id="parameters_77">Parameters</h4>
+<h4 id="parameters_76">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12306,26 +12221,53 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_121">Returns</h4>
+<h4 id="returns_120">Returns</h4>
 <p><code>void</code></p>
 <h4 id="inherited-from_72">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#onunexpectedshutdown">onUnexpectedShutdown</a></p>
-<h4 id="defined-in_150">Defined in</h4>
+<h4 id="defined-in_149">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:599</p>
 <hr />
 <h3 id="opennotifications">openNotifications</h3>
 <p>▸ <code>Optional</code> <strong>openNotifications</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Open the notifications shade/screen</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="returns_122">Returns</h4>
+<h4 id="returns_121">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_151">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1545</p>
+<h4 id="defined-in_150">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1522</p>
 <hr />
 <h3 id="pageloadtimeoutmjsonwp">pageLoadTimeoutMJSONWP</h3>
 <p>▸ <strong>pageLoadTimeoutMJSONWP</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the page load timeout value that was sent in via the JSONWP</p>
 <p><strong><code>Deprecated</code></strong></p>
+<h4 id="parameters_77">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ms</code></td>
+<td style="text-align: left;"><code>number</code></td>
+<td style="text-align: left;">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_122">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
+<h4 id="inherited-from_73">Inherited from</h4>
+<p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#pageloadtimeoutmjsonwp">pageLoadTimeoutMJSONWP</a></p>
+<h4 id="defined-in_151">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:107</p>
+<hr />
+<h3 id="pageloadtimeoutw3c">pageLoadTimeoutW3C</h3>
+<p>▸ <strong>pageLoadTimeoutW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
+<p>Set the page load timeout value that was sent in via the W3C protocol</p>
 <h4 id="parameters_78">Parameters</h4>
 <table>
 <thead>
@@ -12345,42 +12287,15 @@ response</p>
 </table>
 <h4 id="returns_123">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="inherited-from_73">Inherited from</h4>
-<p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#pageloadtimeoutmjsonwp">pageLoadTimeoutMJSONWP</a></p>
-<h4 id="defined-in_152">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:107</p>
-<hr />
-<h3 id="pageloadtimeoutw3c">pageLoadTimeoutW3C</h3>
-<p>▸ <strong>pageLoadTimeoutW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
-<p>Set the page load timeout value that was sent in via the W3C protocol</p>
-<h4 id="parameters_79">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>ms</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the timeout in ms</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_124">Returns</h4>
-<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_74">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#pageloadtimeoutw3c">pageLoadTimeoutW3C</a></p>
-<h4 id="defined-in_153">Defined in</h4>
+<h4 id="defined-in_152">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:99</p>
 <hr />
 <h3 id="parsetimeoutargument">parseTimeoutArgument</h3>
 <p>▸ <strong>parseTimeoutArgument</strong>(<code>ms</code>): <code>number</code></p>
 <p>Get a timeout value from a number or a string</p>
-<h4 id="parameters_80">Parameters</h4>
+<h4 id="parameters_79">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12397,12 +12312,12 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_125">Returns</h4>
+<h4 id="returns_124">Returns</h4>
 <p><code>number</code></p>
 <p>The timeout as a number in ms</p>
 <h4 id="inherited-from_75">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#parsetimeoutargument">parseTimeoutArgument</a></p>
-<h4 id="defined-in_154">Defined in</h4>
+<h4 id="defined-in_153">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:138</p>
 <hr />
 <h3 id="performactions">performActions</h3>
@@ -12410,7 +12325,7 @@ response</p>
 <p>Perform touch or keyboard actions</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#perform-actions">https://w3c.github.io/webdriver/#perform-actions</a></p>
-<h4 id="parameters_81">Parameters</h4>
+<h4 id="parameters_80">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12427,9 +12342,9 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_126">Returns</h4>
+<h4 id="returns_125">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_155">Defined in</h4>
+<h4 id="defined-in_154">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1160</p>
 <hr />
 <h3 id="postacceptalert">postAcceptAlert</h3>
@@ -12437,9 +12352,9 @@ response</p>
 <p>Accept a simple dialog/alert</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#accept-alert">https://w3c.github.io/webdriver/#accept-alert</a></p>
-<h4 id="returns_127">Returns</h4>
+<h4 id="returns_126">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_156">Defined in</h4>
+<h4 id="defined-in_155">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1178</p>
 <hr />
 <h3 id="postdismissalert">postDismissAlert</h3>
@@ -12447,16 +12362,16 @@ response</p>
 <p>Dismiss a simple dialog/alert</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#dismiss-alert">https://w3c.github.io/webdriver/#dismiss-alert</a></p>
-<h4 id="returns_128">Returns</h4>
+<h4 id="returns_127">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_157">Defined in</h4>
+<h4 id="defined-in_156">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1172</p>
 <hr />
 <h3 id="powerac">powerAC</h3>
 <p>▸ <code>Optional</code> <strong>powerAC</strong>(<code>state</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the AC-connected power state of the device</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_82">Parameters</h4>
+<h4 id="parameters_81">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12473,16 +12388,16 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_129">Returns</h4>
+<h4 id="returns_128">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_158">Defined in</h4>
+<h4 id="defined-in_157">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1341</p>
 <hr />
 <h3 id="powercapacity">powerCapacity</h3>
 <p>▸ <code>Optional</code> <strong>powerCapacity</strong>(<code>percent</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the simulated power capacity of the device</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_83">Parameters</h4>
+<h4 id="parameters_82">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12499,16 +12414,16 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_130">Returns</h4>
+<h4 id="returns_129">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_159">Defined in</h4>
+<h4 id="defined-in_158">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1332</p>
 <hr />
 <h3 id="presskeycode">pressKeyCode</h3>
 <p>▸ <code>Optional</code> <strong>pressKeyCode</strong>(<code>keycode</code>, <code>metastate?</code>, <code>flags?</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Press a device hardware key by its code for the default duration</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_84">Parameters</h4>
+<h4 id="parameters_83">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12535,14 +12450,14 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_131">Returns</h4>
+<h4 id="returns_130">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_160">Defined in</h4>
+<h4 id="defined-in_159">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1262</p>
 <hr />
 <h3 id="proxyactive">proxyActive</h3>
 <p>▸ <strong>proxyActive</strong>(<code>sessionId?</code>): <code>boolean</code></p>
-<h4 id="parameters_85">Parameters</h4>
+<h4 id="parameters_84">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12557,11 +12472,11 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_132">Returns</h4>
+<h4 id="returns_131">Returns</h4>
 <p><code>boolean</code></p>
 <h4 id="inherited-from_76">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#proxyactive">proxyActive</a></p>
-<h4 id="defined-in_161">Defined in</h4>
+<h4 id="defined-in_160">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:638</p>
 <hr />
 <h3 id="proxycommand">proxyCommand</h3>
@@ -12589,7 +12504,7 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="parameters_86">Parameters</h4>
+<h4 id="parameters_85">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12616,15 +12531,15 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_133">Returns</h4>
+<h4 id="returns_132">Returns</h4>
 <p><code>Promise</code>&lt;<code>TRes</code>&gt;</p>
 <p>The return value of the proxied command</p>
-<h4 id="defined-in_162">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1986</p>
+<h4 id="defined-in_161">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1963</p>
 <hr />
 <h3 id="proxyrouteisavoided">proxyRouteIsAvoided</h3>
 <p>▸ <strong>proxyRouteIsAvoided</strong>(<code>sessionId</code>, <code>method</code>, <code>url</code>, <code>body?</code>): <code>boolean</code></p>
-<h4 id="parameters_87">Parameters</h4>
+<h4 id="parameters_86">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12651,17 +12566,17 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_134">Returns</h4>
+<h4 id="returns_133">Returns</h4>
 <p><code>boolean</code></p>
 <h4 id="inherited-from_77">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#proxyrouteisavoided">proxyRouteIsAvoided</a></p>
-<h4 id="defined-in_163">Defined in</h4>
+<h4 id="defined-in_162">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:641</p>
 <hr />
 <h3 id="pullfile">pullFile</h3>
 <p>▸ <code>Optional</code> <strong>pullFile</strong>(<code>path</code>): <code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>Retrieve the data from a file on the device at a given path</p>
-<h4 id="parameters_88">Parameters</h4>
+<h4 id="parameters_87">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12678,16 +12593,16 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_135">Returns</h4>
+<h4 id="returns_134">Returns</h4>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The base64-encoded file data</p>
-<h4 id="defined-in_164">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1496</p>
+<h4 id="defined-in_163">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1473</p>
 <hr />
 <h3 id="pullfolder">pullFolder</h3>
 <p>▸ <code>Optional</code> <strong>pullFolder</strong>(<code>path</code>): <code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>Retrieve the data from a folder on the device at a given path</p>
-<h4 id="parameters_89">Parameters</h4>
+<h4 id="parameters_88">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12704,16 +12619,16 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_136">Returns</h4>
+<h4 id="returns_135">Returns</h4>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The base64-encoded zip file of the directory contents</p>
-<h4 id="defined-in_165">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1505</p>
+<h4 id="defined-in_164">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1482</p>
 <hr />
 <h3 id="pushfile">pushFile</h3>
 <p>▸ <code>Optional</code> <strong>pushFile</strong>(<code>path</code>, <code>data</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Push data to a file at a remote path on the device</p>
-<h4 id="parameters_90">Parameters</h4>
+<h4 id="parameters_89">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12735,15 +12650,15 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_137">Returns</h4>
+<h4 id="returns_136">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_166">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1487</p>
+<h4 id="defined-in_165">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1464</p>
 <hr />
 <h3 id="queryappstate">queryAppState</h3>
 <p>▸ <code>Optional</code> <strong>queryAppState</strong>(<code>appId</code>): <code>Promise</code>&lt;<code>0</code> | <code>2</code> | <code>1</code> | <code>3</code> | <code>4</code>&gt;</p>
 <p>Get the running state of an app</p>
-<h4 id="parameters_91">Parameters</h4>
+<h4 id="parameters_90">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12760,22 +12675,22 @@ response</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_138">Returns</h4>
+<h4 id="returns_137">Returns</h4>
 <p><code>Promise</code>&lt;<code>0</code> | <code>2</code> | <code>1</code> | <code>3</code> | <code>4</code>&gt;</p>
 <p>A number representing the state. <code>0</code> means not installed, <code>1</code> means not running, <code>2</code>
 means running in background but suspended, <code>3</code> means running in the background, and <code>4</code> means
 running in the foreground</p>
-<h4 id="defined-in_167">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1455</p>
+<h4 id="defined-in_166">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1432</p>
 <hr />
 <h3 id="refresh">refresh</h3>
 <p>▸ <code>Optional</code> <strong>refresh</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Refresh the page</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#refresh">https://w3c.github.io/webdriver/#refresh</a></p>
-<h4 id="returns_139">Returns</h4>
+<h4 id="returns_138">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_168">Defined in</h4>
+<h4 id="defined-in_167">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:810</p>
 <hr />
 <h3 id="releaseactions">releaseActions</h3>
@@ -12783,9 +12698,9 @@ running in the foreground</p>
 <p>Release all keys or buttons that are currently pressed</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#release-actions">https://w3c.github.io/webdriver/#release-actions</a></p>
-<h4 id="returns_140">Returns</h4>
+<h4 id="returns_139">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_169">Defined in</h4>
+<h4 id="defined-in_168">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1166</p>
 <hr />
 <h3 id="removeallauthcredentials">removeAllAuthCredentials</h3>
@@ -12793,15 +12708,15 @@ running in the foreground</p>
 <p>Remove all auth credentials</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-all-credentials">https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-all-credentials</a></p>
-<h4 id="returns_141">Returns</h4>
+<h4 id="returns_140">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_170">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1956</p>
+<h4 id="defined-in_169">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1933</p>
 <hr />
 <h3 id="removeapp">removeApp</h3>
 <p>▸ <code>Optional</code> <strong>removeApp</strong>(<code>appId</code>, <code>options?</code>): <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p>Remove / uninstall an app</p>
-<h4 id="parameters_92">Parameters</h4>
+<h4 id="parameters_91">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12823,16 +12738,16 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_142">Returns</h4>
+<h4 id="returns_141">Returns</h4>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p><code>true</code> if successful</p>
-<h4 id="defined-in_171">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1429</p>
+<h4 id="defined-in_170">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1406</p>
 <hr />
 <h3 id="removeauthcredential">removeAuthCredential</h3>
 <p>▸ <code>Optional</code> <strong>removeAuthCredential</strong>(<code>credentialId</code>, <code>authenticatorId</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Remove a specific auth credential</p>
-<h4 id="parameters_93">Parameters</h4>
+<h4 id="parameters_92">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12854,17 +12769,17 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_143">Returns</h4>
+<h4 id="returns_142">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_172">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1964</p>
+<h4 id="defined-in_171">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1941</p>
 <hr />
 <h3 id="removevirtualauthenticator">removeVirtualAuthenticator</h3>
 <p>▸ <code>Optional</code> <strong>removeVirtualAuthenticator</strong>(<code>authenticatorId</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Remove a virtual authenticator</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-virtual-authenticator">https://www.w3.org/TR/webauthn-2/#sctn-automation-remove-virtual-authenticator</a></p>
-<h4 id="parameters_94">Parameters</h4>
+<h4 id="parameters_93">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12881,16 +12796,16 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_144">Returns</h4>
+<h4 id="returns_143">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_173">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1920</p>
+<h4 id="defined-in_172">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1897</p>
 <hr />
 <h3 id="replacevalue">replaceValue</h3>
 <p>▸ <code>Optional</code> <strong>replaceValue</strong>(<code>value</code>, <code>elementId</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the value of a text field but ensure the current value is replace and not appended</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_95">Parameters</h4>
+<h4 id="parameters_94">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -12912,27 +12827,54 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_145">Returns</h4>
+<h4 id="returns_144">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_174">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1616</p>
+<h4 id="defined-in_173">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1593</p>
 <hr />
 <h3 id="reset">reset</h3>
 <p>▸ <strong>reset</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Reset the current session (run the delete session and create session subroutines)</p>
 <p><strong><code>Deprecated</code></strong></p>
 <p>Use explicit session management commands instead</p>
-<h4 id="returns_146">Returns</h4>
+<h4 id="returns_145">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_78">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#reset">reset</a></p>
-<h4 id="defined-in_175">Defined in</h4>
+<h4 id="defined-in_174">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:714</p>
 <hr />
 <h3 id="scripttimeoutmjsonwp">scriptTimeoutMJSONWP</h3>
 <p>▸ <strong>scriptTimeoutMJSONWP</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the script timeout value that was sent in via the JSONWP</p>
 <p><strong><code>Deprecated</code></strong></p>
+<h4 id="parameters_95">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ms</code></td>
+<td style="text-align: left;"><code>number</code></td>
+<td style="text-align: left;">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_146">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
+<h4 id="inherited-from_79">Inherited from</h4>
+<p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#scripttimeoutmjsonwp">scriptTimeoutMJSONWP</a></p>
+<h4 id="defined-in_175">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:122</p>
+<hr />
+<h3 id="scripttimeoutw3c">scriptTimeoutW3C</h3>
+<p>▸ <strong>scriptTimeoutW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
+<p>Set the script timeout value that was sent in via the W3C protocol</p>
 <h4 id="parameters_96">Parameters</h4>
 <table>
 <thead>
@@ -12952,43 +12894,16 @@ running in the foreground</p>
 </table>
 <h4 id="returns_147">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="inherited-from_79">Inherited from</h4>
-<p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#scripttimeoutmjsonwp">scriptTimeoutMJSONWP</a></p>
-<h4 id="defined-in_176">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:122</p>
-<hr />
-<h3 id="scripttimeoutw3c">scriptTimeoutW3C</h3>
-<p>▸ <strong>scriptTimeoutW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
-<p>Set the script timeout value that was sent in via the W3C protocol</p>
-<h4 id="parameters_97">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>ms</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the timeout in ms</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_148">Returns</h4>
-<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_80">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#scripttimeoutw3c">scriptTimeoutW3C</a></p>
-<h4 id="defined-in_177">Defined in</h4>
+<h4 id="defined-in_176">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:114</p>
 <hr />
 <h3 id="sendsms">sendSMS</h3>
 <p>▸ <code>Optional</code> <strong>sendSMS</strong>(<code>phoneNumber</code>, <code>message</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Simulate sending an SMS message from a certain phone number to the device</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_98">Parameters</h4>
+<h4 id="parameters_97">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13010,14 +12925,14 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_149">Returns</h4>
+<h4 id="returns_148">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_178">Defined in</h4>
+<h4 id="defined-in_177">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1293</p>
 <hr />
 <h3 id="sessionexists">sessionExists</h3>
 <p>▸ <strong>sessionExists</strong>(<code>sessionId?</code>): <code>boolean</code></p>
-<h4 id="parameters_99">Parameters</h4>
+<h4 id="parameters_98">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13032,11 +12947,11 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_150">Returns</h4>
+<h4 id="returns_149">Returns</h4>
 <p><code>boolean</code></p>
 <h4 id="inherited-from_81">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#sessionexists">sessionExists</a></p>
-<h4 id="defined-in_179">Defined in</h4>
+<h4 id="defined-in_178">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:632</p>
 <hr />
 <h3 id="setalerttext">setAlertText</h3>
@@ -13044,7 +12959,7 @@ running in the foreground</p>
 <p>Set the text field of an alert prompt</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#send-alert-text">https://w3c.github.io/webdriver/#send-alert-text</a></p>
-<h4 id="parameters_100">Parameters</h4>
+<h4 id="parameters_99">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13061,9 +12976,9 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_151">Returns</h4>
+<h4 id="returns_150">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_180">Defined in</h4>
+<h4 id="defined-in_179">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1194</p>
 <hr />
 <h3 id="setcontext">setContext</h3>
@@ -13071,7 +12986,7 @@ running in the foreground</p>
 <p>Switch to a context by name</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts">https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts</a></p>
-<h4 id="parameters_101">Parameters</h4>
+<h4 id="parameters_100">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13093,17 +13008,17 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_152">Returns</h4>
+<h4 id="returns_151">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_181">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1819</p>
+<h4 id="defined-in_180">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1796</p>
 <hr />
 <h3 id="setcookie">setCookie</h3>
 <p>▸ <code>Optional</code> <strong>setCookie</strong>(<code>cookie</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Add a cookie to the browsing context</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#add-cookie">https://w3c.github.io/webdriver/#add-cookie</a></p>
-<h4 id="parameters_102">Parameters</h4>
+<h4 id="parameters_101">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13120,9 +13035,9 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_153">Returns</h4>
+<h4 id="returns_152">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_182">Defined in</h4>
+<h4 id="defined-in_181">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1138</p>
 <hr />
 <h3 id="setframe">setFrame</h3>
@@ -13130,7 +13045,7 @@ running in the foreground</p>
 <p>Switch the current browsing context to a frame</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#switch-to-frame">https://w3c.github.io/webdriver/#switch-to-frame</a></p>
-<h4 id="parameters_103">Parameters</h4>
+<h4 id="parameters_102">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13147,15 +13062,15 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_154">Returns</h4>
+<h4 id="returns_153">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_183">Defined in</h4>
+<h4 id="defined-in_182">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:879</p>
 <hr />
 <h3 id="setgeolocation">setGeoLocation</h3>
 <p>▸ <code>Optional</code> <strong>setGeoLocation</strong>(<code>location</code>): <code>Promise</code>&lt;<a href="../appium_types.Location/"><code>Location</code></a>&gt;</p>
 <p>Set the virtual geographical location of a device</p>
-<h4 id="parameters_104">Parameters</h4>
+<h4 id="parameters_103">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13172,16 +13087,16 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_155">Returns</h4>
+<h4 id="returns_154">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types.Location/"><code>Location</code></a>&gt;</p>
 <p>The complete location</p>
-<h4 id="defined-in_184">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1801</p>
+<h4 id="defined-in_183">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1778</p>
 <hr />
 <h3 id="setimplicitwait">setImplicitWait</h3>
 <p>▸ <strong>setImplicitWait</strong>(<code>ms</code>): <code>void</code></p>
 <p>A helper method (not a command) used to set the implicit wait value</p>
-<h4 id="parameters_105">Parameters</h4>
+<h4 id="parameters_104">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13198,11 +13113,11 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_156">Returns</h4>
+<h4 id="returns_155">Returns</h4>
 <p><code>void</code></p>
 <h4 id="inherited-from_82">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#setimplicitwait">setImplicitWait</a></p>
-<h4 id="defined-in_185">Defined in</h4>
+<h4 id="defined-in_184">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:60</p>
 <hr />
 <h3 id="setnetworkconnection">setNetworkConnection</h3>
@@ -13210,7 +13125,7 @@ running in the foreground</p>
 <p>Set the network connection of the device</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes">https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes</a></p>
-<h4 id="parameters_106">Parameters</h4>
+<h4 id="parameters_105">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13227,17 +13142,17 @@ running in the foreground</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_157">Returns</h4>
+<h4 id="returns_156">Returns</h4>
 <p><code>Promise</code>&lt;<code>number</code>&gt;</p>
 <p>A number which is a bitmask representing categories like Data, Wifi, and Airplane
 mode status</p>
-<h4 id="defined-in_186">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1858</p>
+<h4 id="defined-in_185">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1835</p>
 <hr />
 <h3 id="setnewcommandtimeout">setNewCommandTimeout</h3>
 <p>▸ <strong>setNewCommandTimeout</strong>(<code>ms</code>): <code>void</code></p>
 <p>Set the new command timeout</p>
-<h4 id="parameters_107">Parameters</h4>
+<h4 id="parameters_106">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13254,17 +13169,17 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_158">Returns</h4>
+<h4 id="returns_157">Returns</h4>
 <p><code>void</code></p>
 <h4 id="inherited-from_83">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#setnewcommandtimeout">setNewCommandTimeout</a></p>
-<h4 id="defined-in_187">Defined in</h4>
+<h4 id="defined-in_186">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:43</p>
 <hr />
 <h3 id="setorientation">setOrientation</h3>
 <p>▸ <code>Optional</code> <strong>setOrientation</strong>(<code>orientation</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the device orientation</p>
-<h4 id="parameters_108">Parameters</h4>
+<h4 id="parameters_107">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13281,17 +13196,17 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_159">Returns</h4>
+<h4 id="returns_158">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_188">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1687</p>
+<h4 id="defined-in_187">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1664</p>
 <hr />
 <h3 id="setrotation">setRotation</h3>
 <p>▸ <code>Optional</code> <strong>setRotation</strong>(<code>x</code>, <code>y</code>, <code>z</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the device rotation state</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation">https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation</a></p>
-<h4 id="parameters_109">Parameters</h4>
+<h4 id="parameters_108">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13318,17 +13233,17 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_160">Returns</h4>
+<h4 id="returns_159">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_189">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1876</p>
+<h4 id="defined-in_188">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1853</p>
 <hr />
 <h3 id="seturl">setUrl</h3>
 <p>▸ <code>Optional</code> <strong>setUrl</strong>(<code>url</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Navigate to a given url</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#navigate-to">https://w3c.github.io/webdriver/#navigate-to</a></p>
-<h4 id="parameters_110">Parameters</h4>
+<h4 id="parameters_109">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13345,9 +13260,9 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_161">Returns</h4>
+<h4 id="returns_160">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_190">Defined in</h4>
+<h4 id="defined-in_189">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:784</p>
 <hr />
 <h3 id="setuserauthverified">setUserAuthVerified</h3>
@@ -13355,7 +13270,7 @@ mode status</p>
 <p>Set the isUserVerified property of an authenticator</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://www.w3.org/TR/webauthn-2/#sctn-automation-set-user-verified">https://www.w3.org/TR/webauthn-2/#sctn-automation-set-user-verified</a></p>
-<h4 id="parameters_111">Parameters</h4>
+<h4 id="parameters_110">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13377,17 +13292,17 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_162">Returns</h4>
+<h4 id="returns_161">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_191">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1973</p>
+<h4 id="defined-in_190">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1950</p>
 <hr />
 <h3 id="setvalue">setValue</h3>
 <p>▸ <code>Optional</code> <strong>setValue</strong>(<code>text</code>, <code>elementId</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Send keystrokes to an element (or otherwise set its value)</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#element-send-keys">https://w3c.github.io/webdriver/#element-send-keys</a></p>
-<h4 id="parameters_112">Parameters</h4>
+<h4 id="parameters_111">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13409,9 +13324,9 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_163">Returns</h4>
+<h4 id="returns_162">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_192">Defined in</h4>
+<h4 id="defined-in_191">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:1086</p>
 <hr />
 <h3 id="setwindow">setWindow</h3>
@@ -13419,7 +13334,7 @@ mode status</p>
 <p>Switch to a specified window</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#switch-to-window">https://w3c.github.io/webdriver/#switch-to-window</a></p>
-<h4 id="parameters_113">Parameters</h4>
+<h4 id="parameters_112">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13436,9 +13351,9 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_164">Returns</h4>
+<h4 id="returns_163">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_193">Defined in</h4>
+<h4 id="defined-in_192">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:853</p>
 <hr />
 <h3 id="setwindowrect">setWindowRect</h3>
@@ -13446,7 +13361,7 @@ mode status</p>
 <p>Set the current window's size and position</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#set-window-rect">https://w3c.github.io/webdriver/#set-window-rect</a></p>
-<h4 id="parameters_114">Parameters</h4>
+<h4 id="parameters_113">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13478,17 +13393,17 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_165">Returns</h4>
+<h4 id="returns_164">Returns</h4>
 <p><code>Promise</code>&lt;<a href="../appium_types.Rect/"><code>Rect</code></a>&gt;</p>
 <p>The actual <code>Rect</code> of the window after running the command</p>
-<h4 id="defined-in_194">Defined in</h4>
+<h4 id="defined-in_193">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:906</p>
 <hr />
 <h3 id="startactivity">startActivity</h3>
 <p>▸ <code>Optional</code> <strong>startActivity</strong>(<code>appPackage</code>, <code>appActivity</code>, <code>appWaitPackage?</code>, <code>appWaitActivity?</code>, <code>intentAction?</code>, <code>intentCategory?</code>, <code>intentFlags?</code>, <code>optionalIntentArguments?</code>, <code>dontStopAppOnReset?</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Start an Android activity within an app</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="parameters_115">Parameters</h4>
+<h4 id="parameters_114">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13545,27 +13460,27 @@ mode status</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_166">Returns</h4>
+<h4 id="returns_165">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_195">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1565</p>
+<h4 id="defined-in_194">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1542</p>
 <hr />
 <h3 id="startnewcommandtimeout">startNewCommandTimeout</h3>
 <p>▸ <strong>startNewCommandTimeout</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Start the timer for the New Command Timeout, which when it runs out, will stop the current
 session</p>
-<h4 id="returns_167">Returns</h4>
+<h4 id="returns_166">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_84">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#startnewcommandtimeout">startNewCommandTimeout</a></p>
-<h4 id="defined-in_196">Defined in</h4>
+<h4 id="defined-in_195">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:706</p>
 <hr />
 <h3 id="startunexpectedshutdown">startUnexpectedShutdown</h3>
 <p>▸ <strong>startUnexpectedShutdown</strong>(<code>err?</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Signify to any owning processes that this driver encountered an error which should cause the
 session to terminate immediately (for example an upstream service failed)</p>
-<h4 id="parameters_116">Parameters</h4>
+<h4 id="parameters_115">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13582,11 +13497,11 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_168">Returns</h4>
+<h4 id="returns_167">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_85">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#startunexpectedshutdown">startUnexpectedShutdown</a></p>
-<h4 id="defined-in_197">Defined in</h4>
+<h4 id="defined-in_196">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:700</p>
 <hr />
 <h3 id="switchtoparentframe">switchToParentFrame</h3>
@@ -13594,15 +13509,15 @@ session to terminate immediately (for example an upstream service failed)</p>
 <p>Set the current browsing context to the parent of the current context</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#switch-to-parent-frame">https://w3c.github.io/webdriver/#switch-to-parent-frame</a></p>
-<h4 id="returns_169">Returns</h4>
+<h4 id="returns_168">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_198">Defined in</h4>
+<h4 id="defined-in_197">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:885</p>
 <hr />
 <h3 id="terminateapp">terminateApp</h3>
 <p>▸ <code>Optional</code> <strong>terminateApp</strong>(<code>appId</code>, <code>options?</code>): <code>Promise</code>&lt;<code>boolean</code>&gt;</p>
 <p>Quit / terminate / stop a running application</p>
-<h4 id="parameters_117">Parameters</h4>
+<h4 id="parameters_116">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13624,17 +13539,17 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_170">Returns</h4>
+<h4 id="returns_169">Returns</h4>
 <p><code>Promise</code>&lt;<code>boolean</code>&gt;</p>
-<h4 id="defined-in_199">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1437</p>
+<h4 id="defined-in_198">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1414</p>
 <hr />
 <h3 id="timeouts">timeouts</h3>
 <p>▸ <strong>timeouts</strong>(<code>type</code>, <code>ms</code>, <code>script?</code>, <code>pageLoad?</code>, <code>implicit?</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Set the various timeouts associated with a session</p>
 <p><strong><code>See</code></strong></p>
 <p><a href="https://w3c.github.io/webdriver/#set-timeouts">https://w3c.github.io/webdriver/#set-timeouts</a></p>
-<h4 id="parameters_118">Parameters</h4>
+<h4 id="parameters_117">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13671,11 +13586,11 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_171">Returns</h4>
+<h4 id="returns_170">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="inherited-from_86">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#timeouts">timeouts</a></p>
-<h4 id="defined-in_200">Defined in</h4>
+<h4 id="defined-in_199">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:30</p>
 <hr />
 <h3 id="title">title</h3>
@@ -13690,54 +13605,54 @@ session to terminate immediately (for example an upstream service failed)</p>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">();</span>
 </code></pre></div></p>
-<h4 id="returns_172">Returns</h4>
+<h4 id="returns_171">Returns</h4>
 <p><code>Promise</code>&lt;<code>string</code>&gt;</p>
 <p>The title</p>
-<h4 id="defined-in_201">Defined in</h4>
+<h4 id="defined-in_200">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:829</p>
 <hr />
 <h3 id="toggledata">toggleData</h3>
 <p>▸ <code>Optional</code> <strong>toggleData</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Toggle cell network data</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="returns_173">Returns</h4>
+<h4 id="returns_172">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_202">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1521</p>
+<h4 id="defined-in_201">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1498</p>
 <hr />
 <h3 id="toggleflightmode">toggleFlightMode</h3>
 <p>▸ <code>Optional</code> <strong>toggleFlightMode</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Toggle airplane/flight mode for the device</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="returns_174">Returns</h4>
+<h4 id="returns_173">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_203">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1513</p>
+<h4 id="defined-in_202">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1490</p>
 <hr />
 <h3 id="togglelocationservices">toggleLocationServices</h3>
 <p>▸ <code>Optional</code> <strong>toggleLocationServices</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Toggle location services for the device</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="returns_175">Returns</h4>
+<h4 id="returns_174">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_204">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1537</p>
+<h4 id="defined-in_203">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1514</p>
 <hr />
 <h3 id="togglewifi">toggleWiFi</h3>
 <p>▸ <code>Optional</code> <strong>toggleWiFi</strong>(): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Toggle WiFi radio status</p>
 <p><strong><code>Deprecated</code></strong></p>
-<h4 id="returns_176">Returns</h4>
+<h4 id="returns_175">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_205">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1529</p>
+<h4 id="defined-in_204">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1506</p>
 <hr />
 <h3 id="touchdown">touchDown</h3>
 <p>▸ <code>Optional</code> <strong>touchDown</strong>(<code>element</code>, <code>x</code>, <code>y</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Perform a touch down event at the location specified</p>
 <p><strong><code>Deprecated</code></strong></p>
 <p>Use the Actions API instead</p>
-<h4 id="parameters_119">Parameters</h4>
+<h4 id="parameters_118">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13764,17 +13679,17 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_177">Returns</h4>
+<h4 id="returns_176">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_206">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1735</p>
+<h4 id="defined-in_205">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1712</p>
 <hr />
 <h3 id="touchlongclick">touchLongClick</h3>
 <p>▸ <code>Optional</code> <strong>touchLongClick</strong>(<code>element</code>, <code>x</code>, <code>y</code>, <code>duration</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Perform a long touch down event at the location specified</p>
 <p><strong><code>Deprecated</code></strong></p>
 <p>Use the Actions API instead</p>
-<h4 id="parameters_120">Parameters</h4>
+<h4 id="parameters_119">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13801,14 +13716,51 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_178">Returns</h4>
+<h4 id="returns_177">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_207">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1764</p>
+<h4 id="defined-in_206">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1741</p>
 <hr />
 <h3 id="touchmove">touchMove</h3>
 <p>▸ <code>Optional</code> <strong>touchMove</strong>(<code>element</code>, <code>x</code>, <code>y</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
 <p>Perform a touch move event at the location specified</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use the Actions API instead</p>
+<h4 id="parameters_120">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>element</code></td>
+<td style="text-align: left;"><code>string</code></td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x</code></td>
+<td style="text-align: left;"><code>number</code></td>
+<td style="text-align: left;">the x coordinate</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>y</code></td>
+<td style="text-align: left;"><code>number</code></td>
+<td style="text-align: left;">the y coordinate</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_178">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
+<h4 id="defined-in_207">Defined in</h4>
+<p>node_modules/@appium/types/lib/driver.ts:1732</p>
+<hr />
+<h3 id="touchup">touchUp</h3>
+<p>▸ <code>Optional</code> <strong>touchUp</strong>(<code>element</code>, <code>x</code>, <code>y</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
+<p>Perform a touch up event at the location specified</p>
 <p><strong><code>Deprecated</code></strong></p>
 <p>Use the Actions API instead</p>
 <h4 id="parameters_121">Parameters</h4>
@@ -13841,49 +13793,12 @@ session to terminate immediately (for example an upstream service failed)</p>
 <h4 id="returns_179">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>&gt;</p>
 <h4 id="defined-in_208">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1755</p>
-<hr />
-<h3 id="touchup">touchUp</h3>
-<p>▸ <code>Optional</code> <strong>touchUp</strong>(<code>element</code>, <code>x</code>, <code>y</code>): <code>Promise</code>&lt;<code>void</code>&gt;</p>
-<p>Perform a touch up event at the location specified</p>
-<p><strong><code>Deprecated</code></strong></p>
-<p>Use the Actions API instead</p>
-<h4 id="parameters_122">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>element</code></td>
-<td style="text-align: left;"><code>string</code></td>
-<td style="text-align: left;">-</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>x</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the x coordinate</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>y</code></td>
-<td style="text-align: left;"><code>number</code></td>
-<td style="text-align: left;">the y coordinate</td>
-</tr>
-</tbody>
-</table>
-<h4 id="returns_180">Returns</h4>
-<p><code>Promise</code>&lt;<code>void</code>&gt;</p>
-<h4 id="defined-in_209">Defined in</h4>
-<p>node_modules/@appium/types/lib/driver.ts:1745</p>
+<p>node_modules/@appium/types/lib/driver.ts:1722</p>
 <hr />
 <h3 id="validatedesiredcaps">validateDesiredCaps</h3>
 <p>▸ <strong>validateDesiredCaps</strong>(<code>caps</code>): <code>boolean</code></p>
 <p>Validate the capabilities used to start a session</p>
-<h4 id="parameters_123">Parameters</h4>
+<h4 id="parameters_122">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13900,17 +13815,17 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_181">Returns</h4>
+<h4 id="returns_180">Returns</h4>
 <p><code>boolean</code></p>
 <p>Whether or not the capabilities are valid</p>
 <h4 id="inherited-from_87">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#validatedesiredcaps">validateDesiredCaps</a></p>
-<h4 id="defined-in_210">Defined in</h4>
+<h4 id="defined-in_209">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:740</p>
 <hr />
 <h3 id="validatelocatorstrategy">validateLocatorStrategy</h3>
 <p>▸ <strong>validateLocatorStrategy</strong>(<code>strategy</code>, <code>webContext?</code>): <code>void</code></p>
-<h4 id="parameters_124">Parameters</h4>
+<h4 id="parameters_123">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -13929,11 +13844,11 @@ session to terminate immediately (for example an upstream service failed)</p>
 </tr>
 </tbody>
 </table>
-<h4 id="returns_182">Returns</h4>
+<h4 id="returns_181">Returns</h4>
 <p><code>void</code></p>
 <h4 id="inherited-from_88">Inherited from</h4>
 <p><a href="../appium_types.Driver/">Driver</a>.<a href="../appium_types.Driver/#validatelocatorstrategy">validateLocatorStrategy</a></p>
-<h4 id="defined-in_211">Defined in</h4>
+<h4 id="defined-in_210">Defined in</h4>
 <p>node_modules/@appium/types/lib/driver.ts:637</p>
 
 
@@ -13990,7 +13905,7 @@ session to terminate immediately (for example an upstream service failed)</p>
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>
