@@ -1,3 +1,10 @@
+## [5.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.2...v5.9.0) (2023-11-19)
+
+
+### Features
+
+* add * in additionalWebviewBundleIds cap ([#2244](https://github.com/appium/appium-xcuitest-driver/issues/2244)) ([74874f5](https://github.com/appium/appium-xcuitest-driver/commit/74874f536975337a6608633de8aa9435a0edd52a))
+
 ## [5.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.1...v5.8.2) (2023-11-08)
 
 
