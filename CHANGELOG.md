@@ -1,3 +1,10 @@
+## [5.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.9.0...v5.9.1) (2023-11-21)
+
+
+### Bug Fixes
+
+* assign deeply cloned processArguments for starting a WDA session ([#2245](https://github.com/appium/appium-xcuitest-driver/issues/2245)) ([2e6f273](https://github.com/appium/appium-xcuitest-driver/commit/2e6f273e8533cf02284079d1fea919a7062fd2cc))
+
 ## [5.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.2...v5.9.0) (2023-11-19)
 
 
