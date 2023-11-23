@@ -65,6 +65,7 @@
     "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
+    "LICENSE",
     "npm-shrinkwrap.json"
   ],
   "types": "./build/index.d.ts",

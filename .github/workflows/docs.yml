@@ -38,7 +38,7 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useRollingCache: true
-          install-command: npm ci
+          install-command: npm i
       - name: Install dependencies (Python)
         run: npm run install-docs-deps
       - name: Build Docs
