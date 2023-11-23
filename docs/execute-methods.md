@@ -1440,4 +1440,24 @@ compactDescription | string | The compact description of the found accessbility 
 auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
 element | string | The description of the element this issue was found for. | 'Yes' button
 elementDescription | string | The debug description of the element this issue was found for. Availble since driver version | A long string describing the element itself and its position in the page tree hierarchy
-
+elementAttributes | dict | JSON object containing various attributes of the element. | See the example below
+```json
+"elementAttributes":{
+    "isEnabled":"1",
+    "isVisible":"1",
+    "isAccessible":"0",
+    "frame":"{{129, 65}, {135, 18}}",
+    "isFocused":"0",
+    "rect":{
+        "y":65,
+        "x":129,
+        "width":135,
+        "height":18
+    },
+    "value":"Some Button",
+    "label":"Some Button",
+    "type":"StaticText",
+    "name":"Some Button",
+    "rawIdentifier":null
+}
+```
