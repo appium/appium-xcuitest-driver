@@ -1,3 +1,10 @@
+## [5.10.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.10.1...v5.10.2) (2023-11-24)
+
+
+### Reverts
+
+* Revert "fix: tune shrinkwrap" ([46fa202](https://github.com/appium/appium-xcuitest-driver/commit/46fa202af757a92a57c8eb913183b0329343660c))
+
 ## [5.10.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.10.0...v5.10.1) (2023-11-24)
 
 
