@@ -26,7 +26,7 @@ jobs:
         npm prune --omit=dev --omit=peer
         rm -rf node_modules/appium
       name: Remove dev dependencies and appium peer dependencies
-    - run: npm shrinkwrap --omit=dev --omit=peer
+    - run: npm shrinkwrap
       name: Create shrinkwrap
     - run: npm install --only=dev
       name: Install dev dependencies for the release
