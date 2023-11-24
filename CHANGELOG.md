@@ -1,3 +1,30 @@
+## [5.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.9.1...v5.10.0) (2023-11-24)
+
+
+### Features
+
+* elementAttributes added in [#2274](https://github.com/appium/appium-xcuitest-driver/issues/2274) ([1f46269](https://github.com/appium/appium-xcuitest-driver/commit/1f462697f7d5cab213f87244f7ddc00cfd2e2e98))
+
+
+### Miscellaneous Chores
+
+* Bump WDA version to 5.15.2 ([#2274](https://github.com/appium/appium-xcuitest-driver/issues/2274)) ([f6ff336](https://github.com/appium/appium-xcuitest-driver/commit/f6ff336e9093a8acffa03e6cbd8af94eacb1c0f3))
+* **deps-dev:** bump @commitlint/cli from 18.4.2 to 18.4.3 ([#2265](https://github.com/appium/appium-xcuitest-driver/issues/2265)) ([87f15da](https://github.com/appium/appium-xcuitest-driver/commit/87f15da2a8e2eb0a69bd63c0f82c5f36566a8801))
+* **deps-dev:** bump @types/chai from 4.3.10 to 4.3.11 ([02c96bb](https://github.com/appium/appium-xcuitest-driver/commit/02c96bb2182217fd12d93fc64168fdeae617ae2e))
+* **deps-dev:** bump @types/mocha from 10.0.4 to 10.0.5 ([8eb4326](https://github.com/appium/appium-xcuitest-driver/commit/8eb432604f0350d866ab4d46acf09ff7b251ba52))
+* **deps-dev:** bump @types/node from 20.9.2 to 20.9.3 ([3f75af0](https://github.com/appium/appium-xcuitest-driver/commit/3f75af09f7728d830070e0b7c97111cb78e6cfd6))
+* **deps-dev:** bump @types/node from 20.9.3 to 20.9.4 ([#2264](https://github.com/appium/appium-xcuitest-driver/issues/2264)) ([ab03aa5](https://github.com/appium/appium-xcuitest-driver/commit/ab03aa5bef36ce0d263168383eacd77329988747))
+* **deps-dev:** bump @typescript-eslint/eslint-plugin ([efee840](https://github.com/appium/appium-xcuitest-driver/commit/efee8409a420c156838aaff0e9c23d7d647e49a3))
+* **deps-dev:** bump type-fest from 4.8.1 to 4.8.2 ([9a2cfca](https://github.com/appium/appium-xcuitest-driver/commit/9a2cfca66dfc6854b850c86dde3e816210634e61))
+* **deps-dev:** bump webdriverio from 8.23.1 to 8.24.0 ([cd13fb9](https://github.com/appium/appium-xcuitest-driver/commit/cd13fb9aae1045916b13445b379e8b2e3ed4d54b))
+* **deps:** bump appium-ios-device from 2.7.9 to 2.7.10 ([#2250](https://github.com/appium/appium-xcuitest-driver/issues/2250)) ([62a7baf](https://github.com/appium/appium-xcuitest-driver/commit/62a7baf30a7960d9f98bd6dba2155fd9382ffce6))
+* **deps:** bump appium-webdriveragent from 5.14.0 to 5.15.2 ([64b14c9](https://github.com/appium/appium-xcuitest-driver/commit/64b14c93fcf07725e3c1e788eb708b5ab860a5a5))
+* **deps:** bump css-selector-parser from 3.0.0 to 3.0.2 ([#2260](https://github.com/appium/appium-xcuitest-driver/issues/2260)) ([fcfb181](https://github.com/appium/appium-xcuitest-driver/commit/fcfb1818147c6b39869117125ab9c5627a954c5d))
+* **deps:** bump lru-cache from 10.0.2 to 10.0.3 ([#2249](https://github.com/appium/appium-xcuitest-driver/issues/2249)) ([107a401](https://github.com/appium/appium-xcuitest-driver/commit/107a401d329d949e8519d6faabb8e7612a18d777))
+* **deps:** bump teen_process and @types/teen_process ([#2258](https://github.com/appium/appium-xcuitest-driver/issues/2258)) ([da34751](https://github.com/appium/appium-xcuitest-driver/commit/da347517e4e749491d5b834565daba440a10ce6a))
+* Disable package-lock creation ([#2273](https://github.com/appium/appium-xcuitest-driver/issues/2273)) ([c0b5cf8](https://github.com/appium/appium-xcuitest-driver/commit/c0b5cf84d6079b5fcf6f76869d7844a79f7feda3))
+* lock typescript version ([5077e23](https://github.com/appium/appium-xcuitest-driver/commit/5077e232bc2369b7368057a33d7eb3a3a5fbb764))
+
 ## [5.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.9.0...v5.9.1) (2023-11-21)
 
 
