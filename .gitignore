@@ -10,6 +10,7 @@ test-results.xml
 .vscode
 .idea/
 npm-shrinkwrap.json
+package-lock.json*
 site
 typedoc-docs
 docs/reference
