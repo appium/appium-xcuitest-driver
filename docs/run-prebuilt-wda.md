@@ -80,6 +80,7 @@ The stability depends on Xcode.
 
 ## Download prebuilt WebDriverAgent from GitHub appium/WebDriverAgent repository
 
-Still preparing GitHub Actions to upload these prebuilt WebDriverAgent packages for simulators to GitHub releases, but currently you can find these packages in [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml) workflow.
+[GitHub releases](https://github.com/appium/WebDriverAgent/releases) lets you get each WebDriverAgent package for real devices.
+They do not have embedded XCTest frameworks.
 
-Please find proper packages by checking each task.
+[Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml) workflows help to check the script to build them.
