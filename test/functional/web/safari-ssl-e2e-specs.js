@@ -1,8 +1,8 @@
 import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import getPort from 'get-port';
 import https from 'https';
+import {getFreePort} from '../helpers/ports';
 import os from 'os';
 import _pem from 'pem';
 import {amendCapabilities, SAFARI_CAPS} from '../desired';
@@ -22,7 +22,6 @@ describe('Safari SSL', function () {
 
   /** @type {import('node:https').Server} */
   let sslServer;
-  /** @type {import('webdriverio').Browser} */
   let driver;
   /** @type {string} */
   let localHttpsUrl;
@@ -36,7 +35,7 @@ describe('Safari SSL', function () {
       altNames: ['localhost'],
     });
     pemCertificate = keys.certificate;
-    const port = await getPort();
+    const port = await getFreePort();
     localHttpsUrl = `https://localhost:${port}/`;
     // Host an SSL server that uses that certificate
     const serverOpts = {key: keys.serviceKey, cert: pemCertificate};

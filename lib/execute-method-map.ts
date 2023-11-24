@@ -55,8 +55,7 @@ export const executeMethodMap = {
   'mobile: tapWithNumberOfTaps': {
     command: 'mobileTapWithNumberOfTaps',
     params: {
-      required: ['numberOfTouches', 'numberOfTaps'],
-      optional: ['elementId'],
+      required: ['elementId', 'numberOfTouches', 'numberOfTaps'],
     },
   },
   // https://developer.apple.com/documentation/xctest/xcuielement/1618663-pressforduration?language=objc
@@ -196,6 +195,12 @@ export const executeMethodMap = {
       optional: ['applicationType'],
     },
   },
+  'mobile: clearApp': {
+    command: 'mobileClearApp',
+    params: {
+      required: ['bundleId'],
+    },
+  },
   'mobile: viewportScreenshot': {
     command: 'getViewportScreenshot',
   },
@@ -247,6 +252,12 @@ export const executeMethodMap = {
   },
   'mobile: batteryInfo': {
     command: 'mobileGetBatteryInfo',
+  },
+  'mobile: performAccessibilityAudit': {
+    command: 'mobilePerformAccessibilityAudit',
+    params: {
+      optional: ['auditTypes'],
+    },
   },
   'mobile: deviceInfo': {
     command: 'mobileGetDeviceInfo',
@@ -426,6 +437,16 @@ export const executeMethodMap = {
     command: 'mobileUpdateSafariPreferences',
     params: {
       required: ['preferences'],
+    },
+  },
+  'mobile: calibrateWebToRealCoordinatesTranslation': {
+    command: 'mobileCalibrateWebToRealCoordinatesTranslation',
+  },
+  'mobile: keys': {
+    command: 'mobileKeys',
+    params: {
+      required: ['keys'],
+      optional: ['elementId'],
     },
   },
   'mobile: deepLink': {

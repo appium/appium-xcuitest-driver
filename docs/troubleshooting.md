@@ -12,8 +12,30 @@ title: Troubleshooting
     - This configuration is only necessary for XCUITest driver v4.3.0 or lower.
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
 
+
+## Clear the application local data explicitly for real devices
+
+There might be a situation where application data is present on the real device although application itself is not installed. This could happen if:
+- The app is in [offload state](https://discussions.apple.com/thread/254887240)
+- The application state is cached
+- There was an unexpected failure while installing the app. An example of such failure is the `ApplicationVerificationFailed` which happens while installing an app signed with an invalid provisioning profile.
+
+Under the circumstances above the application identifier won't be listed in the [`mobile: listApps`](execute-methods.md#mobile-listapps) output neither deleted by [`mobile: isAppInstalled`](execute-methods.md#mobile-isappinstalled) command. Setting `appium:fullReset` or `appium:enforceAppInstall` capabilities to `true` won't help to clear this data too.
+
+The only way to completely get rid of the cached application data is to call the [`mobile: removeApp`](execute-methods.md#mobile-removeapp) command with the appropriate bundle identifier.
+
+The driver automatically tries to resolve application installs that failed because of `MismatchedApplicationIdentifierEntitlement`, although, if you explicitly ask it to not perform the application uninstall then consider calling [`mobile: removeApp`](execute-methods.md#mobile-removeapp) beforehand `MismatchedApplicationIdentifierEntitlement` error occurs only when the previously installed application's provisioning profile is different from what currently the driver is trying to install.
+
+Below are example steps of the manual approach mentioned above:
+
+1. Start a session without `appium:app` and `appium:bundleId`
+2. Call [`mobile: removeApp`](execute-methods.md#mobile-removeapp) for the target application's bundle id
+3. Install the test target with [`mobile: installApp`](execute-methods.md#mobile-installapp)
+4. Launch the application with [`mobile: launchApp`](execute-methods.md#mobile-launchapp) or [`mobile: activateApp`](execute-methods.md#mobile-activateapp)
+
 ## Weird state
 
+### stop responding
 **Note:** Running `WebDriverAgent` tests on a real device is particularly flakey. If things stop responding, the only recourse is, most often, to restart the device. Logs in the form of the following _may_ start to occur:
 
 ```shell
@@ -23,6 +45,16 @@ dbug WebDriverAgent Device: Jul 26 13:21:42 iamPhone XCTRunner[240] <Warning>: E
 dbug WebDriverAgent Device: Jul 26 13:21:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - Failed to get screenshot within 15s <unknown> 0 1
 dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - App state of (null) is still unknown <unknown> 0 1
 ```
+
+### Get a response after 60+ seconds after a session starts frequently
+
+Did you experience an additional 60 seconds of slow command response that usually should not take long?
+
+
+It might be that the `testmanagerd` process on the device under test has crashed. In such case, the OS tries to restore it causing the above delay while waiting for the resurrected daemon is connecting to the target process.
+This can be fixed by terminating the target application process. For example, if this behavior occurs in `mobile: queryAppState` command call, you could terminate the application once, or restart the device entirely.
+
+Please check [WebDriverAgent#774 pull request](https://github.com/appium/WebDriverAgent/pull/774) for more details.
 
 ## Real device security settings
 

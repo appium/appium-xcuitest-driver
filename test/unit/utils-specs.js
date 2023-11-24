@@ -1,13 +1,14 @@
 import {
-  clearSystemFiles, translateDeviceName,
-  markSystemFilesForCleanup, isLocalHost
+  clearSystemFiles,
+  translateDeviceName,
+  markSystemFilesForCleanup,
+  isLocalHost,
 } from '../../lib/utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { withMocks } from '@appium/test-support';
-import { fs } from 'appium/support';
+import {withMocks} from '@appium/test-support';
+import {fs} from 'appium/support';
 import * as iosUtils from '../../lib/utils';
-
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -15,76 +16,68 @@ chai.use(chaiAsPromised);
 const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
 
 describe('utils', function () {
-  describe('clearSystemFiles', withMocks({iosUtils, fs}, function (mocks) {
-    afterEach(function () {
-      mocks.verify();
-    });
-    it('should delete logs', async function () {
-      const wda = {
-        retrieveDerivedDataPath () {
-          return DERIVED_DATA_ROOT;
-        }
-      };
-      // @ts-ignore withMocks is wonky
-      mocks.fs.expects('glob')
-        .once()
-        .returns([]);
-      // @ts-ignore withMocks is wonky
-      mocks.fs.expects('walkDir')
-        .once()
-        .returns();
+  describe(
+    'clearSystemFiles',
+    withMocks({iosUtils, fs}, function (mocks) {
+      afterEach(function () {
+        mocks.verify();
+      });
+      it('should delete logs', async function () {
+        const wda = {
+          retrieveDerivedDataPath() {
+            return DERIVED_DATA_ROOT;
+          },
+        };
         // @ts-ignore withMocks is wonky
-      mocks.fs.expects('exists')
-        .atLeast(1)
-        .returns(true);
-      // @ts-ignore withMocks is wonky
-      mocks.iosUtils.expects('clearLogs')
-        .once()
-        .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
-        .returns();
-      await clearSystemFiles(wda);
-    });
+        mocks.fs.expects('glob').once().returns([]);
+        // @ts-ignore withMocks is wonky
+        mocks.fs.expects('walkDir').once().returns();
+        // @ts-ignore withMocks is wonky
+        mocks.fs.expects('exists').atLeast(1).returns(true);
+        // @ts-ignore withMocks is wonky
+        mocks.iosUtils
+          .expects('clearLogs')
+          .once()
+          .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
+          .returns();
+        await clearSystemFiles(wda);
+      });
 
-    it('should only delete logs once if the same folder was marked twice for deletion', async function () {
-      let wda = {
-        retrieveDerivedDataPath () {
-          return DERIVED_DATA_ROOT;
-        }
-      };
-      // @ts-ignore withMocks is wonky
-      mocks.fs.expects('glob')
-        .once()
-        .returns([]);
-      // @ts-ignore withMocks is wonky
-      mocks.fs.expects('walkDir')
-        .once()
-        .returns();
-      // @ts-ignore withMocks is wonky
-      mocks.fs.expects('exists')
-        .atLeast(1)
-        .returns(true);
-      // @ts-ignore withMocks is wonky
-      mocks.iosUtils.expects('clearLogs')
-        .once()
-        .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
-        .returns();
-      await markSystemFilesForCleanup(wda);
-      await markSystemFilesForCleanup(wda);
-      await clearSystemFiles(wda);
-      await clearSystemFiles(wda);
-    });
-    it('should do nothing if no derived data path is found', async function () {
-      let wda = {
-        retrieveDerivedDataPath () {
-          return null;
-        }
-      };
-      // @ts-ignore withMocks is wonky
-      mocks.iosUtils.expects('clearLogs')
-        .never();
-      await clearSystemFiles(wda);
-    });
-  }));
+      it('should only delete logs once if the same folder was marked twice for deletion', async function () {
+        let wda = {
+          retrieveDerivedDataPath() {
+            return DERIVED_DATA_ROOT;
+          },
+        };
+        // @ts-ignore withMocks is wonky
+        mocks.fs.expects('glob').once().returns([]);
+        // @ts-ignore withMocks is wonky
+        mocks.fs.expects('walkDir').once().returns();
+        // @ts-ignore withMocks is wonky
+        mocks.fs.expects('exists').atLeast(1).returns(true);
+        // @ts-ignore withMocks is wonky
+        mocks.iosUtils
+          .expects('clearLogs')
+          .once()
+          .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
+          .returns();
+        await markSystemFilesForCleanup(wda);
+        await markSystemFilesForCleanup(wda);
+        await clearSystemFiles(wda);
+        await clearSystemFiles(wda);
+      });
+      it('should do nothing if no derived data path is found', async function () {
+        let wda = {
+          retrieveDerivedDataPath() {
+            return null;
+          },
+        };
+        // @ts-ignore withMocks is wonky
+        mocks.iosUtils.expects('clearLogs').never();
+        await clearSystemFiles(wda);
+      });
+    }),
+  );
 
   describe('determineDevice', function () {
     const ipadDeviceName = 'iPad Simulator';
@@ -128,7 +121,9 @@ describe('utils', function () {
     it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
       // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
       // If this changes, update this test
-      translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName).should.equal('iPad (5th generation)');
+      translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName).should.equal(
+        'iPad (5th generation)',
+      );
     });
   });
 

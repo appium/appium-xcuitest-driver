@@ -65,3 +65,22 @@ export interface WDACapabilities {
   defaultAlertAction: 'accept' | 'dismiss';
   capabilities?: StringRecord<any>;
 }
+
+export interface CalibrationData {
+  /**
+   * webview x offset in real coordinates
+   */
+  offsetX: number;
+  /**
+   * webview y offset in real coordinates
+   */
+  offsetY: number;
+  /**
+   * pixel ratio x inside of the web view
+   */
+  pixelRatioX: number;
+  /**
+   * pixel ratio y inside of the web view
+   */
+  pixelRatioY: number;
+}

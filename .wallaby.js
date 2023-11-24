@@ -15,11 +15,7 @@ module.exports = (wallaby) => {
     env: {
       type: 'node',
     },
-    files: [
-      'package.json',
-      'lib/**/*',
-      'test/unit/helpers.js',
-    ],
+    files: ['package.json', 'lib/**/*', 'test/unit/helpers.js'],
     testFramework: 'mocha',
     tests: ['test/unit/**/*-specs.js'],
     workers: {

@@ -1,15 +1,15 @@
-import cmds from '../../lib/commands';
-import {createSandbox} from 'sinon';
-import {JWProxy} from 'appium/driver';
-import XCUITestDriver from '../../lib/driver';
-import * as appUtils from '../../lib/app-utils';
 import xcode from 'appium-xcode';
-import _ from 'lodash';
+import {JWProxy} from 'appium/driver';
 import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
+import {createSandbox} from 'sinon';
+import sinonChai from 'sinon-chai';
+import * as appUtils from '../../lib/app-utils';
+import cmds from '../../lib/commands';
+import XCUITestDriver from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
-import sinonChai from 'sinon-chai';
-import chaiAsPromised from 'chai-as-promised';
 chai.should();
 chai.use(sinonChai).use(chaiAsPromised);
 
@@ -50,16 +50,14 @@ describe('XCUITestDriver', function () {
 
     it('simulator with ipv4', function () {
       driver.opts.realDevice = false;
-      driver.opts.address = '127.0.0.1';
-      driver.opts.port = '8080';
-      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8080/welcome');
+      driver.opts.wdaLocalPort = 8111;
+      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8111/health');
     });
 
     it('simulator with ipv6', function () {
       driver.opts.realDevice = false;
       driver.opts.address = '::1';
-      driver.opts.port = '8080';
-      expect(driver.getDefaultUrl()).eq('http://[::1]:8080/welcome');
+      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
     });
   });
 
@@ -114,6 +112,7 @@ describe('XCUITestDriver', function () {
             return '/path/to/uds.socket';
           },
           setReduceTransparency: _.noop,
+          setAutoFillPasswords: _.noop,
         };
         realDevice = null;
         sandbox
@@ -130,6 +129,15 @@ describe('XCUITestDriver', function () {
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
         sandbox.stub(utils, 'checkAppPresent');
         sandbox.stub(appUtils, 'extractBundleId');
+        sandbox.stub(utils, 'getAndCheckXcodeVersion').resolves({
+          versionString: '20.0',
+          versionFloat: 20.0,
+          major: 20,
+          minor: 0,
+          toString() {
+            return '20.0';
+          },
+        });
       });
 
       it('should include server capabilities', async function () {
@@ -147,7 +155,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {
               'appium:skipLogCapture': false,
             },
-          })
+          }),
         );
         resCaps[1].javascriptEnabled.should.be.true;
         driver.startLogCapture.called.should.be.true;
@@ -161,7 +169,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {
               'appium:skipLogCapture': true,
             },
-          })
+          }),
         );
         resCaps[1].javascriptEnabled.should.be.true;
         driver.startLogCapture.called.should.be.false;
@@ -175,7 +183,7 @@ describe('XCUITestDriver', function () {
           null,
           _.merge({}, caps, {
             alwaysMatch: {'appium:reduceTransparency': true},
-          })
+          }),
         );
         spy.calledOnce.should.be.true;
         spy.firstCall.args[0].should.eql(true);
@@ -190,7 +198,35 @@ describe('XCUITestDriver', function () {
           null,
           _.merge({}, caps, {
             alwaysMatch: {'appium:reduceTransparency': true},
-          })
+          }),
+        );
+        spy.notCalled.should.be.true;
+      });
+
+      it('should call setAutoFillPasswords for a simulator', async function () {
+        this.timeout(MOCHA_LONG_TIMEOUT);
+        realDevice = false;
+        const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
+        await driver.createSession(
+          null,
+          null,
+          _.merge({}, caps, {
+            alwaysMatch: {'appium:autoFillPasswords': true},
+          }),
+        );
+        spy.calledOnce.should.be.true;
+        spy.firstCall.args[0].should.eql(true);
+      });
+      it('should not call setAutoFillPasswords for a real device', async function () {
+        this.timeout(MOCHA_LONG_TIMEOUT);
+        realDevice = true;
+        const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
+        await driver.createSession(
+          null,
+          null,
+          _.merge({}, caps, {
+            alwaysMatch: {'appium:setAutoFillPasswords': true},
+          }),
         );
         spy.notCalled.should.be.true;
       });
@@ -216,7 +252,7 @@ describe('XCUITestDriver', function () {
 
       it('should allow execute methods with hella whitespace', async function () {
         await expect(driver.execute('mobile:           deviceInfo')).to.eventually.eql(
-          deviceInfoResponse
+          deviceInfoResponse,
         );
       });
 
@@ -239,6 +275,7 @@ describe('XCUITestDriver', function () {
       sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
       sandbox.stub(driver, 'isRealDevice').returns(true);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
+      sandbox.stub(appUtils, 'extractBundleId').resolves('bundle-id');
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
@@ -248,8 +285,8 @@ describe('XCUITestDriver', function () {
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledOnceWith(
         'some-device',
         '/path/to/iosApp.app',
-        undefined,
-        {skipUninstall: true, timeout: undefined, strategy: undefined}
+        'bundle-id',
+        {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
     });
 
@@ -260,6 +297,9 @@ describe('XCUITestDriver', function () {
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
       configureAppStub.onCall(1).resolves('/path/to/iosApp2.app');
+      sandbox.stub(appUtils, 'extractBundleId')
+        .onCall(0).resolves('bundle-id')
+        .onCall(1).resolves('bundle-id2');
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
@@ -269,14 +309,14 @@ describe('XCUITestDriver', function () {
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp1.app',
-        undefined,
-        {skipUninstall: true, timeout: undefined, strategy: undefined}
+        'bundle-id',
+        {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
-        undefined,
-        {skipUninstall: true, timeout: undefined, strategy: undefined}
+        'bundle-id2',
+        {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
     });
 
@@ -285,6 +325,7 @@ describe('XCUITestDriver', function () {
       sandbox.stub(SimulatorManagementModule, 'installToSimulator');
       sandbox.stub(driver, 'isRealDevice').returns(false);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
+      sandbox.stub(appUtils, 'extractBundleId').resolves('bundle-id');
       driver.opts.noReset = false;
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
@@ -295,8 +336,8 @@ describe('XCUITestDriver', function () {
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledOnceWith(
         'some-device',
         '/path/to/iosApp.app',
-        undefined,
-        {newSimulator: false}
+        'bundle-id',
+        {newSimulator: false},
       );
     });
 
@@ -307,6 +348,9 @@ describe('XCUITestDriver', function () {
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
       configureAppStub.onCall(1).resolves('/path/to/iosApp2.app');
+      sandbox.stub(appUtils, 'extractBundleId')
+        .onCall(0).resolves('bundle-id')
+        .onCall(1).resolves('bundle-id2');
       driver.opts.noReset = false;
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
@@ -317,14 +361,14 @@ describe('XCUITestDriver', function () {
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp1.app',
-        undefined,
-        {newSimulator: false}
+        'bundle-id',
+        {newSimulator: false},
       );
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
         'some-device',
         '/path/to/iosApp2.app',
-        undefined,
-        {newSimulator: false}
+        'bundle-id2',
+        {newSimulator: false},
       );
     });
   });
@@ -353,7 +397,7 @@ describe('XCUITestDriver', function () {
       Object.getOwnPropertyNames(XCUITestDriver.prototype).map((propName) => [
         propName,
         XCUITestDriver.prototype[propName],
-      ])
+      ]),
     );
 
     for (const [mixinName, mixin] of Object.entries(cmds)) {
@@ -366,13 +410,13 @@ describe('XCUITestDriver', function () {
         });
 
         for (const propName of Object.getOwnPropertyNames(mixin).filter(
-          (propName) => !memoizedMethods.get(mixinName)?.has(propName)
+          (propName) => !memoizedMethods.get(mixinName)?.has(propName),
         )) {
           it(`${propName} should be mixed in`, function () {
             try {
               expect(
                 foundProps.has(propName),
-                `"${propName}" overwrites a member from the driver prototype or another mixin`
+                `"${propName}" overwrites a member from the driver prototype or another mixin`,
               ).to.be.false;
               expect(driver).to.have.property(propName, mixin[propName]);
             } finally {

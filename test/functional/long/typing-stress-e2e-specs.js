@@ -2,11 +2,10 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { UICATALOG_CAPS, amendCapabilities } from '../desired';
-import { PREDICATE_SEARCH } from '../helpers/element';
-import { initSession, deleteSession } from '../helpers/session';
-import { retryInterval } from 'asyncbox';
-
+import {UICATALOG_CAPS, amendCapabilities} from '../desired';
+import {PREDICATE_SEARCH} from '../helpers/element';
+import {initSession, deleteSession} from '../helpers/session';
+import {retryInterval} from 'asyncbox';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -17,10 +16,9 @@ const TYPING_TRIES = process.env.CI ? 100 : 10;
 describe('XCUITestDriver - long tests', function () {
   this.timeout(0);
 
-  /** @type {import('webdriverio').Browser} */
   let driver;
   before(async function () {
-    const caps = amendCapabilities(UICATALOG_CAPS, { 'appium:maxTypingFrequency': 20 });
+    const caps = amendCapabilities(UICATALOG_CAPS, {'appium:maxTypingFrequency': 20});
     driver = await initSession(caps);
   });
   after(async function () {

@@ -2,21 +2,19 @@ import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 import Simctl from 'node-simctl';
 
-
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
-  driver.opts = {
-    // @ts-expect-error do not put random stuff on opts object
-    device: {
-      simctl: new Simctl(),
-    }
-  };
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
   beforeEach(function () {
+    const simctl = new Simctl();
+    setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
+    getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
+    driver.opts = {
+      // @ts-expect-error do not put random stuff on opts object
+      device: { simctl },
+    };
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
-    setPasteboardStub = sinon.stub(Simctl.prototype, 'setPasteboard');
-    getPasteboardStub = sinon.stub(Simctl.prototype, 'getPasteboard');
   });
 
   afterEach(function () {

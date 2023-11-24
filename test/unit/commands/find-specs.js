@@ -43,29 +43,29 @@ describe('general commands', function () {
       await verifyFind(
         'xpath',
         '//UIAButton/UIATextField',
-        '//XCUIElementTypeButton/XCUIElementTypeTextField'
+        '//XCUIElementTypeButton/XCUIElementTypeTextField',
       );
       await verifyFind(
         'xpath',
         'UIAButton//UIATextField',
-        'XCUIElementTypeButton//XCUIElementTypeTextField'
+        'XCUIElementTypeButton//XCUIElementTypeTextField',
       );
       await verifyFind('xpath', '//UIAButton[@name="foo"]', '//XCUIElementTypeButton[@name="foo"]');
       await verifyFind('xpath', '//UIAButton/Weird', '//XCUIElementTypeButton/Weird');
       await verifyFind(
         'xpath',
         '//UIAMapView/UIAScrollView',
-        '//XCUIElementTypeMap/XCUIElementTypeScrollView'
+        '//XCUIElementTypeMap/XCUIElementTypeScrollView',
       );
       await verifyFind(
         'xpath',
         '//UIAMapView/UIAScrollView[@name="UIADummyData"]',
-        '//XCUIElementTypeMap/XCUIElementTypeScrollView[@name="UIADummyData"]'
+        '//XCUIElementTypeMap/XCUIElementTypeScrollView[@name="UIADummyData"]',
       );
       await verifyFind(
         'xpath',
         '//XCUIElementTypeMap[@name="UIADummyData"]',
-        '//XCUIElementTypeMap[@name="UIADummyData"]'
+        '//XCUIElementTypeMap[@name="UIADummyData"]',
       );
     });
 

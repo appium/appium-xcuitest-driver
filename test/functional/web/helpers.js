@@ -1,7 +1,6 @@
-import { retry, retryInterval } from 'asyncbox';
-import { HOST, PORT } from '../helpers/session';
+import {retry, retryInterval} from 'asyncbox';
+import {HOST, PORT} from '../helpers/session';
 import _ from 'lodash';
-
 
 const BASE_END_POINT = `http://${HOST}:${PORT}`;
 const TEST_END_POINT = `${BASE_END_POINT}/test`;
@@ -16,27 +15,27 @@ const PHISHING_END_POINT = 'http://testsafebrowsing.appspot.com/s/phishing.html'
 const APPIUM_IMAGE = `${BASE_END_POINT}/appium.png`;
 const newCookie = {
   name: 'newcookie',
-  value: 'i am new here'
+  value: 'i am new here',
 };
 const oldCookie1 = {
   name: 'guineacookie1',
-  value: 'i am a cookie value'
+  value: 'i am a cookie value',
 };
 const oldCookie2 = {
   name: 'guineacookie2',
-  value: 'cookié2'
+  value: 'cookié2',
 };
 
-function doesIncludeCookie (cookies, cookie) {
+function doesIncludeCookie(cookies, cookie) {
   cookies.map((c) => c.name).should.include(cookie.name);
   cookies.map((c) => c.value).should.include(cookie.value);
 }
-function doesNotIncludeCookie (cookies, cookie) {
+function doesNotIncludeCookie(cookies, cookie) {
   cookies.map((c) => c.name).should.not.include(cookie.name);
   cookies.map((c) => c.value).should.not.include(cookie.value);
 }
 
-async function spinTitle (driver) {
+async function spinTitle(driver) {
   return await retry(10, async function () {
     const title = await driver.getTitle();
     if (_.isNil(title)) {
@@ -46,7 +45,17 @@ async function spinTitle (driver) {
   });
 }
 
-async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 500) {
+async function spinBodyIncludes(driver, expected) {
+  return await retry(10, async function () {
+    const el = await driver.$('//body');
+    const body = await el.getHTML();
+    if (!_.includes(body, expected)) {
+      throw new Error(`Could not find '${expected}' in the page body. Found: '${body}'`);
+    }
+  });
+}
+
+async function spinTitleEquals(driver, expectedTitle, tries = 10, interval = 500) {
   await retryInterval(tries, interval, async function () {
     const title = await spinTitle(driver);
     if (title !== expectedTitle) {
@@ -55,7 +64,7 @@ async function spinTitleEquals (driver, expectedTitle, tries = 10, interval = 50
   });
 }
 
-async function spinTitleNotEquals (driver, wrongTitle, tries = 10, interval = 500) {
+async function spinTitleNotEquals(driver, wrongTitle, tries = 10, interval = 500) {
   await retryInterval(tries, interval, async function () {
     const title = await spinTitle(driver);
     if (title === wrongTitle) {
@@ -64,12 +73,12 @@ async function spinTitleNotEquals (driver, wrongTitle, tries = 10, interval = 50
   });
 }
 
-async function spinWait (fn, waitMs = 10000, intMs = 500) {
+async function spinWait(fn, waitMs = 10000, intMs = 500) {
   const tries = parseInt(String(waitMs / intMs), 10);
   await retryInterval(tries, intMs, fn);
 }
 
-async function openPage (driver, url, tries = 10, interval = 500) {
+async function openPage(driver, url, tries = 10, interval = 500) {
   await retryInterval(tries, interval, async function () {
     await driver.navigateTo(url);
     await spinTitleNotEquals(driver, 'cannot open page');
@@ -77,8 +86,21 @@ async function openPage (driver, url, tries = 10, interval = 500) {
 }
 
 export {
-  spinTitle, spinTitleEquals, spinWait, openPage, GUINEA_PIG_PAGE,
-  GUINEA_PIG_FRAME_PAGE, GUINEA_PIG_IFRAME_PAGE, PHISHING_END_POINT,
-  APPIUM_IMAGE, GUINEA_PIG_SCROLLABLE_PAGE, GUINEA_PIG_APP_BANNER_PAGE,
-  doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1, oldCookie2,
+  spinTitle,
+  spinTitleEquals,
+  spinWait,
+  openPage,
+  GUINEA_PIG_PAGE,
+  GUINEA_PIG_FRAME_PAGE,
+  GUINEA_PIG_IFRAME_PAGE,
+  PHISHING_END_POINT,
+  APPIUM_IMAGE,
+  GUINEA_PIG_SCROLLABLE_PAGE,
+  GUINEA_PIG_APP_BANNER_PAGE,
+  doesIncludeCookie,
+  doesNotIncludeCookie,
+  newCookie,
+  oldCookie1,
+  oldCookie2,
+  spinBodyIncludes,
 };

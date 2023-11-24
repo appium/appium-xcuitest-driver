@@ -1,28 +1,26 @@
-const { WebDriverAgent } = require('appium-webdriveragent');
+const {WebDriverAgent} = require('appium-webdriveragent');
 const xcode = require('appium-xcode');
 const B = require('bluebird');
-const { Simctl } = require('node-simctl');
-const { getSimulator } = require('appium-ios-simulator');
+const {Simctl} = require('node-simctl');
+const {getSimulator} = require('appium-ios-simulator');
 const log = require('fancy-log');
 
-
 // TODO: allow passing in all the various build params as CLI args
-async function build () {
+async function build() {
   const [xcodeVersion, platformVersion] = await B.all([
     xcode.getVersion(true),
-    xcode.getMaxIOSSDK()
+    xcode.getMaxIOSSDK(),
   ]);
   const verifyDevicePresence = (info) => {
     if (!info) {
-      throw new Error(
-        `Cannot find any available iOS ${platformVersion} Simulator on your system`
-      );
+      throw new Error(`Cannot find any available iOS ${platformVersion} Simulator on your system`);
     }
     return info;
   };
   const deviceInfo = verifyDevicePresence(
-    (await new Simctl().getDevices(platformVersion, 'iOS'))
-      .find(({name}) => name.includes('iPhone'))
+    (await new Simctl().getDevices(platformVersion, 'iOS')).find(({name}) =>
+      name.includes('iPhone'),
+    ),
   );
   const device = await getSimulator(deviceInfo.udid, {
     platform: deviceInfo.platform,

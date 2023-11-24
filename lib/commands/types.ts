@@ -145,7 +145,7 @@ export interface PageChangeNotification {
  */
 export type ContainerRootSupplier = (
   bundleId: string,
-  containerType: string | null
+  containerType: string | null,
 ) => string | Promise<string>;
 
 export interface WaitingAtoms {
@@ -549,4 +549,19 @@ export interface Viewport {
    * Screen height
    */
   height: number;
+}
+
+export interface KeyboardKey {
+  /**
+   * Represents a key to type (see
+   * https://developer.apple.com/documentation/xctest/xcuielement/1500604-typekey?language=objc
+   * and https://developer.apple.com/documentation/xctest/xcuikeyboardkey?language=objc)
+   */
+  key: string;
+  /**
+   * Set of modifier flags
+   * (https://developer.apple.com/documentation/xctest/xcuikeymodifierflags?language=objc)
+   * to use when typing the key.
+   */
+  modifierFlags?: number;
 }

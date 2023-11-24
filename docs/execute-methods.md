@@ -2,7 +2,49 @@
 title: Execute Methods
 ---
 
-Beside of standard W3C APIs the driver provides the following custom command extensions to execute platform specific scenarios:
+Beside of standard W3C APIs the driver provides the below custom command extensions to execute platform specific scenarios. Use the following source code examples in order to invoke them from your client code:
+
+```java
+// Java 11+
+var result = driver.executeScript("mobile: <methodName>", Map.ofEntries(
+    Map.entry("arg1", "value1"),
+    Map.entry("arg2", "value2")
+    // you may add more pairs if needed or skip providing the map completely
+    // if all arguments are defined as optional
+));
+```
+
+```js
+// WebdriverIO
+const result = await driver.executeScript('mobile: <methodName>', [{
+    arg1: "value1",
+    arg2: "value2",
+}]);
+```
+
+```python
+# Python
+result = driver.execute_script('mobile: <methodName>', {
+    'arg1': 'value1',
+    'arg2': 'value2',
+})
+```
+
+```ruby
+# Ruby
+result = @driver.execute_script 'mobile: <methodName>', {
+    arg1: 'value1',
+    arg2: 'value2',
+}
+```
+
+```csharp
+// Dotnet
+object result = driver.ExecuteScript("mobile: <methodName>", new Dictionary<string, object>() {
+    {"arg1", "value1"},
+    {"arg2", "value2"}
+}));
+```
 
 ### mobile: selectPickerWheelValue
 
@@ -108,6 +150,7 @@ strategy | string | no | One of possible app installation strategies on real dev
 ### mobile: isAppInstalled
 
 Checks whether the given application is installed on the device under test.
+An [offload application]((https://discussions.apple.com/thread/254887240)) could be handled as not installed.
 
 #### Arguments
 
@@ -122,6 +165,9 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
+
+An [offload application]((https://discussions.apple.com/thread/254887240)) also can be removed.
+Please check [Clear the application local data explicitly for real devices](troubleshooting.md#clear-the-application-local-data-explicitly-for-real-devices) to ensure the application local data cleanup.
 
 #### Arguments
 
@@ -205,6 +251,7 @@ bundleId | string | yes | The bundle identifier of the application to be activat
 
 List applications installed on the real device under test. This extension throws an error if called
 for a Simulator device.
+Offload applications will not be in the result.
 
 #### Arguments
 
@@ -215,6 +262,32 @@ applicationType | string | no | The type of applications to list. Either `System
 #### Returned Result
 
 A list of apps, where each item is a map where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports files upload and download into its `documents` container. Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
+
+### mobile: clearApp
+
+Deletes data files from the data container of an installed app,
+so it could start from the clean state next time it is launched.
+The destination app will be terminated if it is running when this API is invoked.
+Sometimes it might also be necessary to invoke the following APIs
+to fully reset the state of an installed app (make sure the app is not running while
+calling them):
+- [mobile: clearKeychains](#mobile-clearkeychains)
+- [mobile: resetPermission](#mobile-resetpermission)
+
+This API might not be 100% reliable for some apps. The only reliable method to fully
+reset an existing app that Apple supports is to [uninstall](#mobile-removeapp) it and then perform a fresh [install](#mobile-installapp) of the same app.
+
+This API only works on simulators. An exception is thrown if executed with real devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | The bundle identifier of the application to be cleared | com.mycompany.myapp
+
+#### Returned Result
+
+`true` if at least one item has been successfully deleted from the app data container.
 
 ### mobile: startPerfRecord
 
@@ -1170,6 +1243,36 @@ If the connection is disconnected, condition inducer will be automatically disab
 
 Either `true` or `false`, where `true` means disabling of the condition inducer has been successful
 
+### mobile: calibrateWebToRealCoordinatesTranslation
+
+Calibrates web to real coordinates translation.
+This API can only be called from Safari web context.
+It must load a custom page to the browser, and then restore
+the original one, so don't call it if you can potentially
+lose the current web app state.
+The outcome of this API is then used if `nativeWebTap` capability/setting is enabled.
+The returned value could also be used to manually transform web coordinates
+to real device ones in client scripts.
+
+It is adviced to call this API at least once before changing the device orientation
+or device screen layout as the recetly received value is cached for the session lifetime
+and may become obsolete.
+
+It is advised to enable `nativeWebTapStrict` capability/setting to speed up dynamic coordinates
+transformation if you use this extension.
+
+#### Returned Result
+
+An object with three properties used to properly shift Safari web element coordinates into native context:
+- `offsetX`: Webview X offset in real coordinates
+- `offsetY`: Webview Y offset in real coordinates
+- `pixelRatioX`: Webview X pixel ratio
+- `pixelRatioY`: Webview Y pixel ratio
+
+The following formulas are used for coordinates translation:
+`RealX = offsetX + webviewX * pixelRatioX`
+`RealY = offsetY + webviewY * pixelRatioY`
+
 ### mobile: updateSafariPreferences
 
 Updates preferences of Mobile Safari on Simulator
@@ -1214,6 +1317,8 @@ Sets simulated geolocation value.
 This functionality is only available since xcuitest driver version 4.18.
 Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
+It is recommended for iOS 17+ real devices to simulate the device location.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -1229,7 +1334,7 @@ Xcode must be at version 14.3+ and iOS must be at version 16.4+.
 
 > **Warning**
 > Do not forget to reset the simulated geolocation value after your automated test is finished.
-> If the value is not reset explcitly then the simulated one will remain until the next device restart.
+> If the value is not reset explicitly then the simulated one will remain until the next device restart.
 
 ### mobile: getAppStrings
 
@@ -1265,6 +1370,20 @@ Checks if the system on-screen keyboard is visible.
 
 `true` if the keyboard is visible
 
+### mobile: keys
+
+Send keys to the given element or to the application under test.
+This API is only supported since Xcode 15/iOS 17.
+It is not supported on tvOS.
+The API only works on iPad. On iOS calling it has no effect.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+elementId | string | no | Unique identifier of the element to send the keys to. If unset then keys are sent to the current application under test. | 21045BC8-013C-43BD-9B1E-4C6DC7AB0744
+keys | array | yes | Array of keys to type. Each item could either be a string, that represents a key itself (see the official documentation on XCUIElement's [typeKey:modifierFlags: method](https://developer.apple.com/documentation/xctest/xcuielement/1500604-typekey?language=objc) and on [XCUIKeyboardKey constants](https://developer.apple.com/documentation/xctest/xcuikeyboardkey?language=objc)) or a dictionary with `key` and `modifierFlags` entries, if the key should also be entered with modifiers. | ['h', 'i'] or [{key: 'h', modifierFlags: 1 << 1}, {key: 'i', modifierFlags: 1 << 2}] or ['XCUIKeyboardKeyEscape'] |
+
 ### mobile: lock
 
 Lock the device (and optionally unlock it after a certain amount of time). Only simple (e.g. without a password) locks are supported.
@@ -1297,3 +1416,48 @@ if necessary. The call is blocking.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 seconds | number | no | The amount of seconds to wait between putting the app to background and restoring it. Any negative value means to not restore the app after putting it to background (the default behavior). | 5
+
+### mobile: performAccessibilityAudit
+
+Performs accessbility audit of the current application according to the given type or multiple types.
+Wraps the XCTest's [performAccessibilityAuditWithAuditTypes](https://developer.apple.com/documentation/xctest/xcuiapplication/4190847-performaccessibilityauditwithaud?language=objc) API.
+Only available since Xcode 15/iOS 17.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+auditTypes | string[] | no | One or more type names to perform the audit for. The full list of available names could be found in the official [XCTest API documentation](https://developer.apple.com/documentation/xctest/xcuiaccessibilityaudittype?language=objc). If no type if provided explicitly then `XCUIAccessibilityAuditTypeAll` is assumed. | ['XCUIAccessibilityAuditTypeContrast', 'XCUIAccessibilityAuditTypeElementDetection']
+
+#### Returned Result
+
+List of found issues or an empty list. Each list item is a map consisting of the following items:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+detailedDescription | string | The detailed description of the found accessbility issue. | Some longer issue description
+compactDescription | string | The compact description of the found accessbility issue. | Some compact issue description
+auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
+element | string | The description of the element this issue was found for. | 'Yes' button
+elementDescription | string | The debug description of the element this issue was found for. Availble since driver version | A long string describing the element itself and its position in the page tree hierarchy
+elementAttributes | dict | JSON object containing various attributes of the element. | See the example below
+```json
+"elementAttributes":{
+    "isEnabled":"1",
+    "isVisible":"1",
+    "isAccessible":"0",
+    "frame":"{{129, 65}, {135, 18}}",
+    "isFocused":"0",
+    "rect":{
+        "y":65,
+        "x":129,
+        "width":135,
+        "height":18
+    },
+    "value":"Some Button",
+    "label":"Some Button",
+    "type":"StaticText",
+    "name":"Some Button",
+    "rawIdentifier":null
+}
+```

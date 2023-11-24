@@ -1,4 +1,4 @@
-import { runSimulatorReset } from '../../lib/simulator-management.js';
+import {runSimulatorReset} from '../../lib/simulator-management.js';
 import chai from 'chai';
 
 const should = chai.should();
@@ -14,7 +14,7 @@ describe('simulator management', function () {
       clean: () => {
         result = 'cleaned';
       },
-      shutdown: () => {}
+      shutdown: () => {},
     };
 
     beforeEach(function () {
@@ -25,7 +25,8 @@ describe('simulator management', function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
-        noReset: false, fullReset: false
+        noReset: false,
+        fullReset: false,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       result.bundleId.should.eql('io.appium.example');
@@ -34,7 +35,8 @@ describe('simulator management', function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
-        noReset: true, fullReset: false
+        noReset: true,
+        fullReset: false,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       should.equal(result, undefined);
@@ -43,7 +45,8 @@ describe('simulator management', function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
-        noReset: false, fullReset: true
+        noReset: false,
+        fullReset: true,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       result.should.eql('cleaned');
@@ -53,7 +56,8 @@ describe('simulator management', function () {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
         app: 'path/to/app.app',
-        noReset: false, fullReset: false
+        noReset: false,
+        fullReset: false,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       should.equal(result, undefined);
@@ -63,7 +67,8 @@ describe('simulator management', function () {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
         app: 'path/to/app.app',
-        noReset: true, fullReset: false
+        noReset: true,
+        fullReset: false,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       should.equal(result, undefined);
@@ -73,7 +78,8 @@ describe('simulator management', function () {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         bundleId: 'io.appium.example',
         app: 'path/to/app.app',
-        noReset: false, fullReset: true
+        noReset: false,
+        fullReset: true,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       result.should.eql('cleaned');
@@ -81,7 +87,8 @@ describe('simulator management', function () {
     it('should not call scrubApp with fastReset, but no bundleid and app', async function () {
       const opts = {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
-        noReset: false, fullReset: false
+        noReset: false,
+        fullReset: false,
       };
       await runSimulatorReset(stoppedDeviceDummy, opts);
       should.equal(result, undefined);

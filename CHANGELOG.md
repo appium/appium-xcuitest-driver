@@ -1,3 +1,359 @@
+## [5.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.9.0...v5.9.1) (2023-11-21)
+
+
+### Bug Fixes
+
+* assign deeply cloned processArguments for starting a WDA session ([#2245](https://github.com/appium/appium-xcuitest-driver/issues/2245)) ([2e6f273](https://github.com/appium/appium-xcuitest-driver/commit/2e6f273e8533cf02284079d1fea919a7062fd2cc))
+
+## [5.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.2...v5.9.0) (2023-11-19)
+
+
+### Features
+
+* add * in additionalWebviewBundleIds cap ([#2244](https://github.com/appium/appium-xcuitest-driver/issues/2244)) ([74874f5](https://github.com/appium/appium-xcuitest-driver/commit/74874f536975337a6608633de8aa9435a0edd52a))
+
+## [5.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.1...v5.8.2) (2023-11-08)
+
+
+### Bug Fixes
+
+* to push a new release with updated npm-shrinkwrap ([b0dfc39](https://github.com/appium/appium-xcuitest-driver/commit/b0dfc393316b6573a7b15855d97d16f29570eb9b))
+
+## [5.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.8.0...v5.8.1) (2023-11-01)
+
+
+### Bug Fixes
+
+* Sync package-lock ([09be06f](https://github.com/appium/appium-xcuitest-driver/commit/09be06f7c13f3aaba5a4f1b8552e0dbb356ec200))
+
+## [5.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.7.0...v5.8.0) (2023-10-30)
+
+
+### Features
+
+* Add 'mobile: keys' extension ([#2156](https://github.com/appium/appium-xcuitest-driver/issues/2156)) ([db39d66](https://github.com/appium/appium-xcuitest-driver/commit/db39d66e6605d22d7b8d1150a9612b74cb962f79))
+
+## [5.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.6.0...v5.7.0) (2023-10-13)
+
+
+### Features
+
+* Add 'mobile: calibrateWebToRealCoordinatesTranslation' API ([#2071](https://github.com/appium/appium-xcuitest-driver/issues/2071)) ([b3fa78d](https://github.com/appium/appium-xcuitest-driver/commit/b3fa78d69bdaec03435e02a7e4ffb0b80a9bbde3))
+
+## [5.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.5.0...v5.6.0) (2023-10-03)
+
+
+### Features
+
+* use mobile:setSimulatedLocation in setGeoLocation for ios 17 ([#2062](https://github.com/appium/appium-xcuitest-driver/issues/2062)) ([69dfab9](https://github.com/appium/appium-xcuitest-driver/commit/69dfab95dc7ba1506e2c1fe2a59e4e4be6f7b113))
+
+## [5.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.4.1...v5.5.0) (2023-10-02)
+
+
+### Features
+
+* uninstall the test app once and install that again when MismatchedApplicationIdentifierEntitlement installation error occurs ([#2050](https://github.com/appium/appium-xcuitest-driver/issues/2050)) ([0c561f5](https://github.com/appium/appium-xcuitest-driver/commit/0c561f514822965166e6f87ee9725ad28542f185))
+
+## [5.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.4.0...v5.4.1) (2023-10-01)
+
+
+### Bug Fixes
+
+* get bundleId for other apps before calling installation ([#2054](https://github.com/appium/appium-xcuitest-driver/issues/2054)) ([4feaf33](https://github.com/appium/appium-xcuitest-driver/commit/4feaf336dae242605543fb84d5c7b40aa5103470))
+
+## [5.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.3...v5.4.0) (2023-09-26)
+
+
+### Features
+
+* Add clearApp extension ([#2031](https://github.com/appium/appium-xcuitest-driver/issues/2031)) ([ae0afdc](https://github.com/appium/appium-xcuitest-driver/commit/ae0afdcafabbb8164b3996627c7c3fc0f788eaf3))
+
+## [5.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.2...v5.3.3) (2023-09-24)
+
+
+### Bug Fixes
+
+* try fix release to include npm-shrinkwrap.json ([#2023](https://github.com/appium/appium-xcuitest-driver/issues/2023)) ([57fc5b8](https://github.com/appium/appium-xcuitest-driver/commit/57fc5b8dca469887cd196aee95d4230c2e21e889)), closes [#2022](https://github.com/appium/appium-xcuitest-driver/issues/2022)
+
+## [5.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.3.0...v5.3.1) (2023-09-23)
+
+
+### Bug Fixes
+
+* bump wda (5.9.0, 5.9.1) and simulator(5.3.2) ([#2021](https://github.com/appium/appium-xcuitest-driver/issues/2021)) ([f6f78f5](https://github.com/appium/appium-xcuitest-driver/commit/f6f78f579da4bf439a9a2011ab02c1f9a105a1f3))
+
+## [5.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.2.1...v5.3.0) (2023-09-20)
+
+
+### Features
+
+* add capability to run special input event triggering after send keys ([d559803](https://github.com/appium/appium-xcuitest-driver/commit/d5598039b52dc6c475b2cbb3c5c5049cc673a866)), closes [appium/appium#19052](https://github.com/appium/appium/issues/19052)
+
+## [5.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.2.0...v5.2.1) (2023-09-19)
+
+
+### Bug Fixes
+
+* terminateApp with devicectl for iOS 17 ([#1997](https://github.com/appium/appium-xcuitest-driver/issues/1997)) ([16c7319](https://github.com/appium/appium-xcuitest-driver/commit/16c73198397495f235cc49f6fb978050a9e2f49d))
+
+## [5.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.1.0...v5.2.0) (2023-09-16)
+
+
+### Features
+
+* support pageSourceExcludedAttributes ([#1996](https://github.com/appium/appium-xcuitest-driver/issues/1996)) ([4bcea84](https://github.com/appium/appium-xcuitest-driver/commit/4bcea840148aa126579603d8417f77e3437db312))
+
+## [5.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.0.0...v5.1.0) (2023-09-14)
+
+
+### Features
+
+* add autoFillPasswords capability ([#1972](https://github.com/appium/appium-xcuitest-driver/issues/1972)) ([85aaa7f](https://github.com/appium/appium-xcuitest-driver/commit/85aaa7f62a5f882ebcaabe1c2c2272d5c9217481))
+* dummy feat commit to run the auto release ([#1983](https://github.com/appium/appium-xcuitest-driver/issues/1983)) ([5916712](https://github.com/appium/appium-xcuitest-driver/commit/59167127f618dc350c9bdcf414c23c008d17169f))
+
+## [5.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.35.0...v5.0.0) (2023-09-05)
+
+### Code Refactoring
+
+* Deprecate obsolete endpoints ([#1955](https://github.com/appium/appium-xcuitest-driver/issues/1955))
+    * The includeDeviceCapsToSessionInfo capability has no effect now
+    * The obsolete getSession API does not return any extra driver-specific data anymore (e.g. statBarHeight, pixelRatio, viewportRect)
+    * Obsolete reset, launchApp and closeApp APIs now throw errors on invocation
+
+## [4.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.34.1...v4.35.0) (2023-08-25)
+
+
+### Features
+
+* Include 'hittable' attribute ([#1918](https://github.com/appium/appium-xcuitest-driver/issues/1918)) ([b56a3d4](https://github.com/appium/appium-xcuitest-driver/commit/b56a3d4e06e3a345cdcfee9c8d8b174e6063e3ca))
+
+## [4.34.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.34.0...v4.34.1) (2023-08-21)
+
+
+### Bug Fixes
+
+* Update glob options ([4a7a963](https://github.com/appium/appium-xcuitest-driver/commit/4a7a96319c653350b21f1836cba8afce0290a983))
+
+## [4.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.2...v4.34.0) (2023-08-16)
+
+
+### Features
+
+* use new selenium atoms from remote debugger ([2707c01](https://github.com/appium/appium-xcuitest-driver/commit/2707c015a8990f0d666b35fefcfe15b368f9c605))
+
+## [4.33.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.1...v4.33.2) (2023-08-04)
+
+
+### Bug Fixes
+
+* Args sequence for mobileTapWithNumberOfTaps ([4cb7430](https://github.com/appium/appium-xcuitest-driver/commit/4cb7430afae40307601711907fee89afb459ee48))
+
+## [4.33.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.33.0...v4.33.1) (2023-08-04)
+
+
+### Bug Fixes
+
+* Args order for mobileTapWithNumberOfTaps call ([#1854](https://github.com/appium/appium-xcuitest-driver/issues/1854)) ([27ec7b3](https://github.com/appium/appium-xcuitest-driver/commit/27ec7b38b0b509cbf83506d44cdc376c3d0bbf6a))
+
+## [4.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.25...v4.33.0) (2023-08-02)
+
+
+### Features
+
+* Lock only major package versions ([#1835](https://github.com/appium/appium-xcuitest-driver/issues/1835)) ([d640d77](https://github.com/appium/appium-xcuitest-driver/commit/d640d770ac5d9899b22ce6f6a62222bff1d10111))
+
+## [4.32.25](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.24...v4.32.25) (2023-08-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency lru-cache to v10 ([#1776](https://github.com/appium/appium-xcuitest-driver/issues/1776)) ([2079a56](https://github.com/appium/appium-xcuitest-driver/commit/2079a56578fbdd5a09220caff1c1f1e7f8ec4254))
+
+## [4.32.24](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.23...v4.32.24) (2023-08-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-simulator to v5.1.3 ([#1830](https://github.com/appium/appium-xcuitest-driver/issues/1830)) ([f71f9a0](https://github.com/appium/appium-xcuitest-driver/commit/f71f9a00868d8a69657a8fb6340418f9c9ab2e4a))
+
+## [4.32.23](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.22...v4.32.23) (2023-07-21)
+
+
+### Bug Fixes
+
+* isAppInstalled in Xcode 15 env for simulator ([#1822](https://github.com/appium/appium-xcuitest-driver/issues/1822)) ([78f2ef2](https://github.com/appium/appium-xcuitest-driver/commit/78f2ef2fe2b7ace3d6ddadb3157f338a0f6c4cb3))
+
+## [4.32.22](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.21...v4.32.22) (2023-07-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @xmldom/xmldom to v0.8.10 ([598aafe](https://github.com/appium/appium-xcuitest-driver/commit/598aafebd808c654ed182e52e4a09be193182554))
+
+## [4.32.21](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.20...v4.32.21) (2023-07-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.6.0 for waitForQuiescence in in /wda/apps/launch ([#1817](https://github.com/appium/appium-xcuitest-driver/issues/1817)) ([9e4ded1](https://github.com/appium/appium-xcuitest-driver/commit/9e4ded1fe475d7aa83c638b1d2ca3e79936e7fc5))
+
+## [4.32.20](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.19...v4.32.20) (2023-07-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @xmldom/xmldom to v0.8.9 ([a5312c6](https://github.com/appium/appium-xcuitest-driver/commit/a5312c6bf1fd4fe2a2f5722e776b4ac7f17248a8))
+
+## [4.32.19](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.18...v4.32.19) (2023-07-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.5.4 ([a3bed9e](https://github.com/appium/appium-xcuitest-driver/commit/a3bed9e3a3fb3326556526e0046c6a67a9026ac8))
+
+## [4.32.18](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.17...v4.32.18) (2023-07-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency node-simctl to v7.1.17 ([6d52868](https://github.com/appium/appium-xcuitest-driver/commit/6d52868be4d449a610a5ec86f3972a5736714d42))
+
+## [4.32.17](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.16...v4.32.17) (2023-07-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-xcode to v5.1.4 ([b2d0960](https://github.com/appium/appium-xcuitest-driver/commit/b2d0960d19757d72c48b6fe807181c9a4aa82cde))
+
+## [4.32.16](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.15...v4.32.16) (2023-07-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.5.2 ([cebc357](https://github.com/appium/appium-xcuitest-driver/commit/cebc357c6da924e9d440f85af0ad6dcfa4e3df1a))
+
+## [4.32.15](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.14...v4.32.15) (2023-07-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-remote-debugger to v9.1.17 ([519cc40](https://github.com/appium/appium-xcuitest-driver/commit/519cc40528c3bfc72e45b55d5210401db8fe609b))
+
+## [4.32.14](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.13...v4.32.14) (2023-07-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-simulator to v5.1.1 ([ce0d917](https://github.com/appium/appium-xcuitest-driver/commit/ce0d91780003fa4dfd7231ff75fdc9178b804f30))
+
+## [4.32.13](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.12...v4.32.13) (2023-07-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-device to v2.5.4 ([1b14568](https://github.com/appium/appium-xcuitest-driver/commit/1b145684920ab85c76b1808c5b293c6390a5f53c))
+
+## [4.32.12](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.11...v4.32.12) (2023-07-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-idb to v1.6.13 ([9f0f26c](https://github.com/appium/appium-xcuitest-driver/commit/9f0f26c7da9ea3ca6a099afa6e00d82cec3cb2d1))
+
+## [4.32.11](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.10...v4.32.11) (2023-07-01)
+
+
+### Reverts
+
+* Revert "chore(workflows): pin dependencies (#1773)" (#1794) ([abb6de9](https://github.com/appium/appium-xcuitest-driver/commit/abb6de9e135cdc66878f61665ff9d2290e070666)), closes [#1773](https://github.com/appium/appium-xcuitest-driver/issues/1773) [#1794](https://github.com/appium/appium-xcuitest-driver/issues/1794)
+
+
+### Code Refactoring
+
+* Tune temporary simulator creation logic ([#1790](https://github.com/appium/appium-xcuitest-driver/issues/1790)) ([9ac2f6a](https://github.com/appium/appium-xcuitest-driver/commit/9ac2f6a52348230f7d4c425722a4ef07c8ac4043))
+
+## [4.32.10](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.9...v4.32.10) (2023-06-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency css-selector-parser to v2.3.2 ([77dbcee](https://github.com/appium/appium-xcuitest-driver/commit/77dbceefbc10f44ab5bc0e9a50f5aa3c781064d4))
+
+## [4.32.9](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.8...v4.32.9) (2023-06-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-ios-simulator to v5.1.0 ([4810e6f](https://github.com/appium/appium-xcuitest-driver/commit/4810e6f853780ad195702b208169b6ad958f72ca))
+
+## [4.32.8](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.7...v4.32.8) (2023-06-23)
+
+
+### Bug Fixes
+
+* Copypaste in mobile method names ([#1783](https://github.com/appium/appium-xcuitest-driver/issues/1783)) ([710d246](https://github.com/appium/appium-xcuitest-driver/commit/710d24631b052f9499573e65ca24b34e238b7c02))
+
+## [4.32.7](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.6...v4.32.7) (2023-06-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.5.3 ([5f35e37](https://github.com/appium/appium-xcuitest-driver/commit/5f35e37946b8e0643b7fc5117858ee98f3219327))
+
+## [4.32.6](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.5...v4.32.6) (2023-06-23)
+
+
+### Bug Fixes
+
+* trigger release based on package.json update ([b40c8f4](https://github.com/appium/appium-xcuitest-driver/commit/b40c8f45e4aa9ca4cc0da8ace0fc83f1c79b691a))
+
+## [4.32.5](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.4...v4.32.5) (2023-06-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.5.2 ([d6c236d](https://github.com/appium/appium-xcuitest-driver/commit/d6c236da158dc6fe50a20e812917cc4dc132447b))
+
+## [4.32.4](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.3...v4.32.4) (2023-06-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency css-selector-parser to v2 ([#1759](https://github.com/appium/appium-xcuitest-driver/issues/1759)) ([0426349](https://github.com/appium/appium-xcuitest-driver/commit/0426349da313127111c19d4de44151ab45ecb64f))
+
+## [4.32.3](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.2...v4.32.3) (2023-06-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency appium-webdriveragent to v5.5.1 ([#1770](https://github.com/appium/appium-xcuitest-driver/issues/1770)) ([e1c1bc9](https://github.com/appium/appium-xcuitest-driver/commit/e1c1bc932c9d550d1aaa1e82b6638eea8952c616))
+
+## [4.32.2](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.1...v4.32.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency node-simctl to v7.1.16 ([#1743](https://github.com/appium/appium-xcuitest-driver/issues/1743)) ([33eced1](https://github.com/appium/appium-xcuitest-driver/commit/33eced1a309091bc3c7826c5a2fce36c2c9e87dd))
+
+## [4.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v4.32.0...v4.32.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency teen_process to v2.0.4 ([#1758](https://github.com/appium/appium-xcuitest-driver/issues/1758)) ([a95e08a](https://github.com/appium/appium-xcuitest-driver/commit/a95e08a40a2d8653b4bc2162102a681396f25eb5))
+
+## [4.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.31.0...v4.32.0) (2023-06-13)
+
+
+### Features
+
+* Add 'mobile: performAccessibilityAudit' extension ([#1754](https://github.com/appium/appium-xcuitest-driver/issues/1754)) ([cf2bb1b](https://github.com/appium/appium-xcuitest-driver/commit/cf2bb1b70e11a23438526b62018c892c29123cc8))
+
+
+### Bug Fixes
+
+* Only request chosen application attributes ([#1753](https://github.com/appium/appium-xcuitest-driver/issues/1753)) ([a8caa79](https://github.com/appium/appium-xcuitest-driver/commit/a8caa79269dc525a80c70cdc58f21789f39e8eba))
+
 ## [4.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v4.30.9...v4.31.0) (2023-06-10)
 
 

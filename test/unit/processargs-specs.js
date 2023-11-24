@@ -62,7 +62,7 @@ describe('process args', function () {
       driver.validateDesiredCaps(desiredWithProArgsObject);
       await driver.startWdaSession(
         desiredWithProArgsObject.bundleId,
-        desiredWithProArgsObject.processArguments
+        desiredWithProArgsObject.processArguments,
       );
       proxySpy.should.have.been.calledOnceWith('/session', 'POST', desired);
     });
@@ -81,7 +81,7 @@ describe('process args', function () {
       driver.validateDesiredCaps(desiredWithProArgsString);
       await driver.startWdaSession(
         desiredWithProArgsString.bundleId,
-        desiredWithProArgsString.processArguments
+        desiredWithProArgsString.processArguments,
       );
       proxySpy.should.have.been.calledOnceWith('/session', 'POST', desired);
     });

@@ -11,7 +11,7 @@ const TEST_BUNDLE_PATH = path.resolve(
   '..',
   '..',
   'assets',
-  'XCTesterAppUITests-Runner.app'
+  'XCTesterAppUITests-Runner.app',
 );
 const XCTEST_BUNDLE_PATH = path.join(TEST_BUNDLE_PATH, 'PlugIns', 'XCTesterAppUITests.xctest');
 
@@ -73,11 +73,11 @@ if (process.env.LAUNCH_WITH_IDB) {
       res.code.should.equal(0);
       res.passed.should.be.true;
       res.results[0].testName.should.eql(
-        'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample'
+        'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
       );
       res.results[0].passed.should.be.true;
       res.results[1].testName.should.eql(
-        'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance'
+        'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
       );
       res.results[1].passed.should.be.true;
     });

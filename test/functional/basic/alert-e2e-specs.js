@@ -1,10 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { retryInterval } from 'asyncbox';
-import { amendCapabilities, UICATALOG_CAPS } from '../desired';
-import { initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT } from '../helpers/session';
-
+import {retryInterval} from 'asyncbox';
+import {amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -22,7 +21,6 @@ describe('XCUITestDriver - alerts -', function () {
   after(async function () {
     await deleteSession();
   });
-
 
   beforeEach(async function () {
     await retryInterval(5, 500, async () => {
@@ -84,8 +82,8 @@ describe('XCUITestDriver - alerts -', function () {
         alert: 'Secure Text Entry',
         field: 'XCUIElementTypeSecureTextField',
         text: 'hello world',
-        expectedText: '•••••••••••'
-      }
+        expectedText: '•••••••••••',
+      },
     ];
     for (const test of testData) {
       it(`should be able to interact with a prompt with a ${test.name}`, async function () {
@@ -108,7 +106,10 @@ describe('XCUITestDriver - alerts -', function () {
   });
 
   it('should throw a NoAlertOpenError when no alert is open', async function () {
-    await driver.acceptAlert()
-      .should.be.rejectedWith(/An attempt was made to operate on a modal dialog when one was not open/);
+    await driver
+      .acceptAlert()
+      .should.be.rejectedWith(
+        /An attempt was made to operate on a modal dialog when one was not open/,
+      );
   });
 });

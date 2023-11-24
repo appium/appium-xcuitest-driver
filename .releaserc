@@ -1,7 +1,7 @@
 {
   "plugins": [
     ["@semantic-release/commit-analyzer", {
-      "preset": "conventionalcommits"
+      "preset": "angular"
     }],
     ["@semantic-release/release-notes-generator", {
       "preset": "conventionalcommits",
@@ -11,7 +11,7 @@
           {"type": "fix", "section": "Bug Fixes"},
           {"type": "perf", "section": "Performance Improvements"},
           {"type": "revert", "section": "Reverts"},
-          {"type": "chore", "section": "Miscellaneous Chores", "hidden": true},
+          {"type": "chore", "section": "Miscellaneous Chores"},
           {"type": "refactor", "section": "Code Refactoring"},
           {"type": "docs", "section": "Documentation", "hidden": true},
           {"type": "style", "section": "Styles", "hidden": true},
