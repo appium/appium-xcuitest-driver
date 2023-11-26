@@ -1,3 +1,10 @@
+## [5.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.10.2...v5.11.0) (2023-11-26)
+
+
+### Features
+
+* set location permission via xcrun simctl privacy ([#2275](https://github.com/appium/appium-xcuitest-driver/issues/2275)) ([3f6979b](https://github.com/appium/appium-xcuitest-driver/commit/3f6979b6500f0a5b048b6fe642f9cbebb78e32ca))
+
 ## [5.10.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.10.1...v5.10.2) (2023-11-24)
 
 
