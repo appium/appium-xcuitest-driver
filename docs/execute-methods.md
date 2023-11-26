@@ -564,7 +564,13 @@ Either 'yes', 'no', 'unset' or 'limited'
 
 ### mobile: setPermission
 
-Set application permission state on Simulator. This method requires [WIX applesimutils](https://github.com/wix/AppleSimulatorUtils) to be installed on the host where Appium server is running.
+Set application permission state on Simulator.
+
+`location` and `location-always` services are by `xcrun simctl privacy` command since XCUITest driver version 5.11.0.
+The command will kill the `bundleId` application process if it is running.
+
+Other services such as `contacts` are processed by [WIX applesimutils](https://github.com/wix/AppleSimulatorUtils), which will not kill the `bundleId` application process.
+[WIX applesimutils](https://github.com/wix/AppleSimulatorUtils) needs to be installed on the host where Appium server is running.
 
 #### Arguments
 
