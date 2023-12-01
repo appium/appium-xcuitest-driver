@@ -22,8 +22,8 @@ jobs:
     - run: npm run test
       name: Run NPM Test
     - run: |
-        rm -rf package-lock.json
         npm prune --omit=dev --omit=peer
+        rm -rf package-lock.json
         rm -rf node_modules/appium
       name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
