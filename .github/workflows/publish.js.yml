@@ -24,7 +24,6 @@ jobs:
     - run: |
         npm prune --omit=dev --omit=peer
         rm -rf package-lock.json
-        rm -rf node_modules/appium
       name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
       name: Create shrinkwrap
