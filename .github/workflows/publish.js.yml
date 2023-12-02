@@ -17,11 +17,11 @@ jobs:
       with:
         node-version: lts/*
         check-latest: true
-    - run: npm install
+    - run: npm install --no-package-lock
       name: Install dependencies
     - run: npm run test
       name: Run NPM Test
-    - run: npm prune --omit=dev --omit=peer
+    - run: npm prune --omit=dev --omit=peer --no-package-lock
       name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
       name: Create shrinkwrap
