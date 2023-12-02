@@ -1,3 +1,11 @@
+## [5.11.4](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.3...v5.11.4) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune publish.js.yml further ([077935d](https://github.com/appium/appium-xcuitest-driver/commit/077935db0d6795761d9b6498d4a0c346f0400ec1))
+* tune publish.js.yml further again ([7fbada9](https://github.com/appium/appium-xcuitest-driver/commit/7fbada98971976183200c040945b3ae110ea948a))
+
 ## [5.11.3](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.2...v5.11.3) (2023-12-02)
 
 
