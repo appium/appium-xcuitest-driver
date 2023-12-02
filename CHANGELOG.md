@@ -1,3 +1,10 @@
+## [5.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.0...v5.11.1) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune shrinkwrap for a release ([#2277](https://github.com/appium/appium-xcuitest-driver/issues/2277)) ([33726f2](https://github.com/appium/appium-xcuitest-driver/commit/33726f20905c589ecf56faeae030eda8ce33e78f))
+
 ## [5.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.10.2...v5.11.0) (2023-11-26)
 
 
