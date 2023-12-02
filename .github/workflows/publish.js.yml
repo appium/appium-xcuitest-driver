@@ -22,17 +22,19 @@ jobs:
       name: Install dependencies
     - run: npm run test
       name: Run NPM Test
-    - run: ls -all
-    - run: npm prune --omit=dev --omit=peer
+    - run: |
+        # GH env weirdly generates lock file, so here needs to remove the node_modules
+        # and lock file once before doing omit dev and peer env for the npm shrinkwrap
+        rm -rf node_modules
+        rm -rf package-lock.json
+        npm prune --omit=dev --omit=peer
       name: Remove dev dependencies and appium peer dependencies
-    - run: ls -all      
     - run: npm shrinkwrap
       name: Create shrinkwrap
-    - run: ls -all
     - run: npm install --only=dev
       name: Install dev dependencies for the release
-    # - run: npx semantic-release
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-    #   name: Release
+    - run: npx semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      name: Release
