@@ -18,22 +18,25 @@ jobs:
       with:
         node-version: lts/*
         check-latest: true
-    - run: npm install
+    - run: npm install --no-package-lock
       name: Install dependencies
+    - run: ls -all
     - run: npm run test
       name: Run NPM Test
+    - run: ls -all
     - run: |
         rm -rf node_modules
         rm -rf package-lock.json
-        npm prune --omit=dev --omit=peer
+        npm prune --omit=dev --omit=peer --no-package-lock
       name: Remove dev dependencies and appium peer dependencies
     - run: npm shrinkwrap
       name: Create shrinkwrap
+    - run: ls -all
       # "--no-package-lock" prevent adding dev dependencies
     - run: npm install --only=dev --no-package-lock
       name: Install dev dependencies for the release
-    - run: npx semantic-release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      name: Release
+    # - run: npx semantic-release
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    #   name: Release
