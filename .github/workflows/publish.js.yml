@@ -20,10 +20,14 @@ jobs:
         check-latest: true
     - run: npm install
       name: Install dependencies
+    - run: ls -all
     - run: npm run test
       name: Run NPM Test
     - run: ls -all
-    - run: npm prune --omit=dev --omit=peer
+    - run: 
+        rm -rf node_modules
+        rm -rf package-lock.json
+        npm prune --omit=dev --omit=peer
       name: Remove dev dependencies and appium peer dependencies
     - run: ls -all      
     - run: npm shrinkwrap
