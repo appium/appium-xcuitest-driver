@@ -1,3 +1,10 @@
+## [5.11.6](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.5...v5.11.6) (2023-12-02)
+
+
+### Bug Fixes
+
+* npm install dev after creating npm shrinkwrap ([148d3cd](https://github.com/appium/appium-xcuitest-driver/commit/148d3cd9bfa12c3caa158dd4083dd5e571261fe6))
+
 ## [5.11.5](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.4...v5.11.5) (2023-12-02)
 
 
