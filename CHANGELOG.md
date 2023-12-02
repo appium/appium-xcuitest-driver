@@ -1,3 +1,10 @@
+## [5.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.1...v5.11.2) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune release script ([#2278](https://github.com/appium/appium-xcuitest-driver/issues/2278)) ([b94cb19](https://github.com/appium/appium-xcuitest-driver/commit/b94cb19d5184e84cb572f07533eec7ddca6cad67))
+
 ## [5.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.0...v5.11.1) (2023-12-02)
 
 
