@@ -24,7 +24,7 @@ jobs:
     - run: npm run test
       name: Run NPM Test
     - run: ls -all
-    - run: 
+    - run: |
         rm -rf node_modules
         rm -rf package-lock.json
         npm prune --omit=dev --omit=peer
