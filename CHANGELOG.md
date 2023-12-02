@@ -1,3 +1,10 @@
+## [5.11.5](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.4...v5.11.5) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune to minimize release module ([#2280](https://github.com/appium/appium-xcuitest-driver/issues/2280)) ([c82bafc](https://github.com/appium/appium-xcuitest-driver/commit/c82bafc5ce7e630f82dff49d314a6de7233b867d))
+
 ## [5.11.4](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.3...v5.11.4) (2023-12-02)
 
 
