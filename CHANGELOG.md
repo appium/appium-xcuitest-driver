@@ -1,3 +1,10 @@
+## [5.11.8](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.7...v5.11.8) (2023-12-04)
+
+
+### Bug Fixes
+
+* keep backward compatibility for the value of set location command via xcrun simctl privacy ([#2282](https://github.com/appium/appium-xcuitest-driver/issues/2282)) ([a1a7c48](https://github.com/appium/appium-xcuitest-driver/commit/a1a7c487b122708e218e9609e54162743bfeddb1))
+
 ## [5.11.7](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.6...v5.11.7) (2023-12-02)
 
 
