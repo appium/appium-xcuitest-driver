@@ -36,6 +36,7 @@ nav:
       - locator-strategies.md
       - ios-predicate.md
       - parallel-tests.md
+      - commands.md
       - execute-methods.md
       - clipboard.md
       - touch-id.md
