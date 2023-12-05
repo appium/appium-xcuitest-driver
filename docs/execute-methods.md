@@ -808,7 +808,7 @@ Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUIT
 
 ### mobile: viewportRect
 
-Retrieves the viwport dimensions.
+Retrieves the viewport dimensions.
 The viewport is the device's screen size with status bar size subtracted if the latter is present/visible.
 
 #### Returned Result
@@ -818,6 +818,14 @@ The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}
 `left` and `top` are distance from the `left` of the screen and the `top` of the screen. [iOS Drawing Concepts](https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html) could help about the relationship of coordinate.
 
 `width` and `height` are the screen's width and height.
+
+### mobile: viewportScreenshot
+
+Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect))
+
+#### Returned Result
+
+Base64-encoded string, which represents the viewport screenshot.
 
 ### mobile: deviceScreenInfo
 
@@ -1411,6 +1419,10 @@ Determine whether the device is locked.
 #### Returned Result
 
 Either `true` or `false`
+
+### mobile: shake
+
+Shakes the device. This functionality is only supported on simulators.
 
 ### mobile: backgroundApp
 
