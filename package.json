@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "5.11.0",
+  "version": "5.11.8",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -72,7 +72,7 @@
   "dependencies": {
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.5.4",
-    "appium-ios-simulator": "^5.5.0",
+    "appium-ios-simulator": "^5.5.1",
     "appium-remote-debugger": "^10.0.0",
     "appium-webdriveragent": "^5.15.2",
     "appium-xcode": "^5.1.4",
