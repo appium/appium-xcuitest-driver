@@ -1,3 +1,10 @@
+## [5.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.8...v5.12.0) (2023-12-06)
+
+
+### Features
+
+* use skipSyncUiDialogTranslation option for localization on simulators ([#2276](https://github.com/appium/appium-xcuitest-driver/issues/2276)) ([3f4898a](https://github.com/appium/appium-xcuitest-driver/commit/3f4898a13b22dd9ab5514ab20db9ecd274931018)), closes [/github.com/appium/appium/issues/19440#issuecomment-1823461012](https://github.com/appium//github.com/appium/appium/issues/19440/issues/issuecomment-1823461012)
+
 ## [5.11.8](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.7...v5.11.8) (2023-12-04)
 
 
