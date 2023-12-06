@@ -682,8 +682,9 @@ remotePath | string | yes | Same value as for `mobile: deleteFile` except of the
 Change localization settings on the currently booted Simulator.
 The changed settings are only applied for the *newly started* applications/activities.
 Currently running applications will stay unchanged. This means, for example, that the keyboard
-should be hidden and shown again in order to observe the changed layout, and curresponding
+should be hidden and shown again in order to observe the changed layout, and corresponding
 apps must be restarted in order to observe their interface using the newly set locale/language.
+Also this method might leave some system UI alerts untranslated.
 Be careful while setting the actual arguments since their actual values are not strictly checked.
 This could lead to an unexpected behavior if an incorrect/unsupported language or locale abbreviation is provided.
 
