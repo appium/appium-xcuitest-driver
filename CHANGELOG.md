@@ -1,3 +1,10 @@
+## [5.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.0...v5.12.1) (2023-12-07)
+
+
+### Bug Fixes
+
+* include a fix of setAppearance in iOS 17+ ([#2284](https://github.com/appium/appium-xcuitest-driver/issues/2284)) ([f89d4cc](https://github.com/appium/appium-xcuitest-driver/commit/f89d4ccc0c3e78bb53b0483ef367566222bc194a))
+
 ## [5.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.8...v5.12.0) (2023-12-06)
 
 
