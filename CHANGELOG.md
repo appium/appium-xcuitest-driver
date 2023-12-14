@@ -1,3 +1,15 @@
+## [5.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.1...v5.12.2) (2023-12-14)
+
+
+### Bug Fixes
+
+* (dummy) ([88e1f8a](https://github.com/appium/appium-xcuitest-driver/commit/88e1f8aae8a8c13c674c1bef5f9c6d91ed588b13))
+
+
+### Miscellaneous Chores
+
+* use appearance for getAppearance ([#2285](https://github.com/appium/appium-xcuitest-driver/issues/2285)) ([1108e8c](https://github.com/appium/appium-xcuitest-driver/commit/1108e8cf3e86dab4f345429a30d5b466e43dd39b))
+
 ## [5.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.0...v5.12.1) (2023-12-07)
 
 
