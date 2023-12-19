@@ -12,8 +12,6 @@ theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
   custom_dir: docs/overrides
-  features:
-    - navigation.tabs
 extra_css:
   - assets/stylesheets/extra.css
 extra:
@@ -41,7 +39,6 @@ nav:
       - clipboard.md
       - touch-id.md
       - troubleshooting.md
-      - reference/commands/appium-xcuitest-driver.md
   - Guides:
       - Improve session startup performance:
           - run-preinstalled-wda.md
