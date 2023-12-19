@@ -186,8 +186,5 @@
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
-  },
-  "typedoc": {
-    "entryPoint": "index.js"
   }
 }
