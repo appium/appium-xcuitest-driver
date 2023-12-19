@@ -1,3 +1,86 @@
+## [5.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.1...v5.12.2) (2023-12-14)
+
+
+### Bug Fixes
+
+* (dummy) ([88e1f8a](https://github.com/appium/appium-xcuitest-driver/commit/88e1f8aae8a8c13c674c1bef5f9c6d91ed588b13))
+
+
+### Miscellaneous Chores
+
+* use appearance for getAppearance ([#2285](https://github.com/appium/appium-xcuitest-driver/issues/2285)) ([1108e8c](https://github.com/appium/appium-xcuitest-driver/commit/1108e8cf3e86dab4f345429a30d5b466e43dd39b))
+
+## [5.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.0...v5.12.1) (2023-12-07)
+
+
+### Bug Fixes
+
+* include a fix of setAppearance in iOS 17+ ([#2284](https://github.com/appium/appium-xcuitest-driver/issues/2284)) ([f89d4cc](https://github.com/appium/appium-xcuitest-driver/commit/f89d4ccc0c3e78bb53b0483ef367566222bc194a))
+
+## [5.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.8...v5.12.0) (2023-12-06)
+
+
+### Features
+
+* use skipSyncUiDialogTranslation option for localization on simulators ([#2276](https://github.com/appium/appium-xcuitest-driver/issues/2276)) ([3f4898a](https://github.com/appium/appium-xcuitest-driver/commit/3f4898a13b22dd9ab5514ab20db9ecd274931018)), closes [/github.com/appium/appium/issues/19440#issuecomment-1823461012](https://github.com/appium//github.com/appium/appium/issues/19440/issues/issuecomment-1823461012)
+
+## [5.11.8](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.7...v5.11.8) (2023-12-04)
+
+
+### Bug Fixes
+
+* keep backward compatibility for the value of set location command via xcrun simctl privacy ([#2282](https://github.com/appium/appium-xcuitest-driver/issues/2282)) ([a1a7c48](https://github.com/appium/appium-xcuitest-driver/commit/a1a7c487b122708e218e9609e54162743bfeddb1))
+
+## [5.11.7](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.6...v5.11.7) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune a bit more ([#2281](https://github.com/appium/appium-xcuitest-driver/issues/2281)) ([23d2f68](https://github.com/appium/appium-xcuitest-driver/commit/23d2f6803d77c08a7419c2feb291d50edc2c05ac))
+
+## [5.11.6](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.5...v5.11.6) (2023-12-02)
+
+
+### Bug Fixes
+
+* npm install dev after creating npm shrinkwrap ([148d3cd](https://github.com/appium/appium-xcuitest-driver/commit/148d3cd9bfa12c3caa158dd4083dd5e571261fe6))
+
+## [5.11.5](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.4...v5.11.5) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune to minimize release module ([#2280](https://github.com/appium/appium-xcuitest-driver/issues/2280)) ([c82bafc](https://github.com/appium/appium-xcuitest-driver/commit/c82bafc5ce7e630f82dff49d314a6de7233b867d))
+
+## [5.11.4](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.3...v5.11.4) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune publish.js.yml further ([077935d](https://github.com/appium/appium-xcuitest-driver/commit/077935db0d6795761d9b6498d4a0c346f0400ec1))
+* tune publish.js.yml further again ([7fbada9](https://github.com/appium/appium-xcuitest-driver/commit/7fbada98971976183200c040945b3ae110ea948a))
+
+## [5.11.3](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.2...v5.11.3) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune publish.js.yml further ([9108c75](https://github.com/appium/appium-xcuitest-driver/commit/9108c757c7b06b986bb75646b9af90d43ad8973f))
+
+## [5.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.1...v5.11.2) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune release script ([#2278](https://github.com/appium/appium-xcuitest-driver/issues/2278)) ([b94cb19](https://github.com/appium/appium-xcuitest-driver/commit/b94cb19d5184e84cb572f07533eec7ddca6cad67))
+
+## [5.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.11.0...v5.11.1) (2023-12-02)
+
+
+### Bug Fixes
+
+* tune shrinkwrap for a release ([#2277](https://github.com/appium/appium-xcuitest-driver/issues/2277)) ([33726f2](https://github.com/appium/appium-xcuitest-driver/commit/33726f20905c589ecf56faeae030eda8ce33e78f))
+
 ## [5.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.10.2...v5.11.0) (2023-11-26)
 
 
