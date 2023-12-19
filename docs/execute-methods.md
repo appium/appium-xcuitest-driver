@@ -150,7 +150,7 @@ strategy | string | no | One of possible app installation strategies on real dev
 ### mobile: isAppInstalled
 
 Checks whether the given application is installed on the device under test.
-An [offload application]((https://discussions.apple.com/thread/254887240)) could be handled as not installed.
+[Offloaded applications](https://discussions.apple.com/thread/254887240) are handled as not installed.
 
 #### Arguments
 
@@ -165,9 +165,9 @@ Either `true` or `false`
 ### mobile: removeApp
 
 Removes the given application from the device under test.
+[Offloaded application](https://discussions.apple.com/thread/254887240) can also be removed.
 
-An [offload application]((https://discussions.apple.com/thread/254887240)) also can be removed.
-Please check [Clear the application local data explicitly for real devices](troubleshooting.md#clear-the-application-local-data-explicitly-for-real-devices) to ensure the application local data cleanup.
+For real devices, please also check [how to explicitly clear the application local data](troubleshooting.md#clear-the-application-local-data-explicitly-for-real-devices).
 
 #### Arguments
 
