@@ -8,8 +8,8 @@ which could be then retrieved on the client side. Apple does not provide any API
 retrieve the audio stream from a Simulator or a real device, but it is possible to redirect that
 stream to the host machine, where it could be captured.
 
-- [mobile: startAudioRecording](./execute-methods.md#mobile-startaudiorecording)
-- [mobile: stopAudioRecording](./execute-methods.md#mobile-stopaudiorecording)
+- [mobile: startAudioRecording](../reference/execute-methods.md#mobile-startaudiorecording)
+- [mobile: stopAudioRecording](../reference//execute-methods.md#mobile-stopaudiorecording)
 
 ### Server Requirements
 

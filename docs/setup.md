@@ -67,12 +67,12 @@ Minimum XCUITest driver version | Tested for compatibility with Xcode version
 
 ## tvOS Support
 
-Read the [tvOS support](ios-tvos.md) article to get more details on how to automate testing for this platform.
+Read the [tvOS support](./guides/ios-tvos.md) article to get more details on how to automate testing for this platform.
 
 
 ## Real devices
 
 ### Configuration
 
-See the [real device configuration documentation](./real-device-config.md).
+See the [real device configuration documentation](./guides/real-device-config.md).
 

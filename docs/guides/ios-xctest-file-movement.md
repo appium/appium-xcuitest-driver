@@ -57,7 +57,7 @@ The file is in _On My iPhone/Keynote_ of _Files_ app.
 
 |Top | On  My iPhone | Keynote |
 |:----:|:----:|:----:|
-|![](ios-xctest-file-movement/top_files.png)|![](ios-xctest-file-movement/on_my_iphone.png)|![](ios-xctest-file-movement/keynote.png)|
+|![](./assets/images/ios-xctest-file-movement/top_files.png)|![](./assets/images/ios-xctest-file-movement/on_my_iphone.png)|![](./assets/images/ios-xctest-file-movement/keynote.png)|
 
 If the file is in deeper place like _On My iPhone/Keynote/Dir1/Dir2_, then the Ruby command should be:
 

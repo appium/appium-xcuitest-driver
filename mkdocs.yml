@@ -8,11 +8,14 @@ edit_uri: edit/master/docs
 site_description: Documentation for the Appium XCUITest driver for iOS automation
 docs_dir: docs
 site_dir: site
+
 theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
+
 extra_css:
   - assets/stylesheets/extra.css
+
 extra:
   homepage: /appium-xcuitest-driver
   version:
@@ -20,35 +23,65 @@ extra:
   social:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/AppiumDevs
+
+plugins:
+  redirects:
+    redirect_maps:
+      'actions.md': 'guides/actions.md'
+      'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
+      'audio-capture.md': 'guides/audio-capture.md'
+      'ci-setup.md': 'guides/ci-setup.md'
+      'ios-tvos.md': 'guides/ios-tvos.md'
+      'ios-xctest-file-movement.md': 'guides/ios-xctest-file-movement.md'
+      'ios-xctest-install-certificate.md': 'guides/ios-xctest-install-certificate.md'
+      'multiple-xcode-versions.md': 'guides/multiple-xcode-versions.md'
+      'real-device-config.md': 'guides/real-device-config.md'
+      'run-prebuilt-wda.md': 'guides/run-prebuilt-wda.md'
+      'run-preinstalled-wda.md': 'guides/run-preinstalled-wda.md'
+      'wda-custom-server.md': 'guides/wda-custom-server.md'
+      'capabilities.md': 'reference/capabilities.md'
+      'clipboard.md': 'reference/clipboard.md'
+      'commands.md': 'reference/commands.md'
+      'element-attributes.md': 'reference/element-attributes.md'
+      'execute-methods.md': 'reference/execute-methods.md'
+      'ios-predicate.md': 'reference/ios-predicate.md'
+      'locator-strategies.md': 'reference/locator-strategies.md'
+      'parallel-tests.md': 'reference/parallel-tests.md'
+      'security-flags.md': 'reference/security-flags.md'
+      'server-args.md': 'reference/server-args.md'
+      'settings.md': 'reference/settings.md'
+      'touch-id.md': 'reference/touch-id.md'
+      'troubleshooting.md': 'reference/troubleshooting.md'
+
 nav:
   - index.md
   - setup.md
   - device-preparation.md
   - Reference:
-      - server-args.md
-      - capabilities.md
-      - element-attributes.md
-      - security-flags.md
-      - settings.md
-      - locator-strategies.md
-      - ios-predicate.md
-      - parallel-tests.md
-      - commands.md
-      - execute-methods.md
-      - clipboard.md
-      - touch-id.md
-      - troubleshooting.md
+      - reference/server-args.md
+      - reference/capabilities.md
+      - reference/element-attributes.md
+      - reference/security-flags.md
+      - reference/settings.md
+      - reference/locator-strategies.md
+      - reference/ios-predicate.md
+      - reference/parallel-tests.md
+      - reference/commands.md
+      - reference/execute-methods.md
+      - reference/clipboard.md
+      - reference/touch-id.md
+      - reference/troubleshooting.md
   - Guides:
       - Improve session startup performance:
-          - run-preinstalled-wda.md
-          - run-prebuilt-wda.md
-          - attach-to-running-wda.md
-      - real-device-config.md
-      - ci-setup.md
-      - multiple-xcode-versions.md
-      - wda-custom-server.md
-      - ios-tvos.md
-      - actions.md
-      - audio-capture.md
-      - ios-xctest-file-movement.md
-      - ios-xctest-install-certificate.md
+          - guides/run-preinstalled-wda.md
+          - guides/run-prebuilt-wda.md
+          - guides/attach-to-running-wda.md
+      - guides/real-device-config.md
+      - guides/ci-setup.md
+      - guides/multiple-xcode-versions.md
+      - guides/wda-custom-server.md
+      - guides/ios-tvos.md
+      - guides/actions.md
+      - guides/audio-capture.md
+      - guides/ios-xctest-file-movement.md
+      - guides/ios-xctest-install-certificate.md
