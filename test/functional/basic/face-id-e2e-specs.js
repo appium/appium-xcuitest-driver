@@ -1,10 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {amendCapabilities, FACEIDAPP_CAPS} from '../desired';
+import {amendCapabilities, extractCapabilityValue, FACEIDAPP_CAPS} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import B from 'bluebird';
 import {killAllSimulators} from '../helpers/simulator';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
+import {util} from 'appium/support';
 import {waitForCondition} from 'asyncbox';
 
 chai.should();
@@ -14,9 +15,10 @@ const expect = chai.expect;
 const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 const FACE_ID_SELECTOR = '**/XCUIElementTypeStaticText[`label == "Face ID"`]';
 const FACE_ID_LOCATOR = `${CLASS_CHAIN_SEARCH}:${FACE_ID_SELECTOR}`;
-const ALLOW_SELECTOR =
+const BIOMETRIC_SELECTOR =
   '**/XCUIElementTypeStaticText[`label == "Do you want to allow “biometric” to use Face ID?"`]';
-const ALLOW_LOCATOR = `${CLASS_CHAIN_SEARCH}:${ALLOW_SELECTOR}`;
+const BIOMETRIC_LOCATOR = `${CLASS_CHAIN_SEARCH}:${BIOMETRIC_SELECTOR}`;
+const ALLOW_LOCATOR = util.compareVersions(extractCapabilityValue(FACEIDAPP_CAPS, 'appium:platformVersion'), '>=', '17.0') ? '~Allow' : '~OK';
 
 const MOCHA_RETRIES = process.env.CI ? 3 : 1;
 
@@ -88,8 +90,8 @@ if (!process.env.CI) {
         await authenticateButton.click();
 
         // This is necessary only for the first time
-        if (await driver.$(ALLOW_LOCATOR).elementId) {
-          const okButton = await driver.$('~OK');
+        if (await driver.$(BIOMETRIC_LOCATOR).elementId) {
+          const okButton = await driver.$(ALLOW_LOCATOR);
           await okButton.click();
         }
         await waitUntilExist(FACE_ID_LOCATOR);
@@ -104,8 +106,8 @@ if (!process.env.CI) {
         await authenticateButton.click();
 
         // This is necessary only for the first time
-        if (await driver.$(ALLOW_LOCATOR).elementId) {
-          const okButton = await driver.$('~OK');
+        if (await driver.$(BIOMETRIC_LOCATOR).elementId) {
+          const okButton = await driver.$(ALLOW_LOCATOR);
           await okButton.click();
         }
         await waitUntilExist(FACE_ID_LOCATOR);
@@ -129,8 +131,8 @@ if (!process.env.CI) {
         await authenticateButton.click();
 
         // This is necessary only for the first time
-        if (await driver.$(ALLOW_LOCATOR).elementId) {
-          const okButton = await driver.$('~OK');
+        if (await driver.$(BIOMETRIC_LOCATOR).elementId) {
+          const okButton = await driver.$(ALLOW_LOCATOR);
           await okButton.click();
         }
         await waitUntilExist(FACE_ID_LOCATOR);
