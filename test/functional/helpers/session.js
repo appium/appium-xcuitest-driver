@@ -1,4 +1,6 @@
+import path from 'path';
 import {extractCapabilityValue} from '../desired';
+import {XcodeBuild} from 'appium-webdriveragent/build/lib/xcodebuild';
 
 const HOST = process.env.APPIUM_TEST_SERVER_HOST || '127.0.0.1';
 const PORT = parseInt(String(process.env.APPIUM_TEST_SERVER_PORT), 10) || 4567;
@@ -49,4 +51,20 @@ function hasDefaultPrebuiltWDA() {
   return didBuildWda;
 }
 
-export {initSession, deleteSession, hasDefaultPrebuiltWDA, HOST, PORT, MOCHA_TIMEOUT};
+async function getUsePrebuiltWDACaps() {
+  const caps = {
+    'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA()
+  };
+  if (didBuildWda) {
+    caps['appium:derivedDataPath'] = await getDerivedDataPath();
+  }
+  return caps;
+}
+
+async function getDerivedDataPath() {
+  const agentPath = path.join(__dirname, '..', '..', '..', 'node_modules', 'appium-webdriveragent', 'WebDriverAgent.xcodeproj');
+  const xcodebuild = new XcodeBuild('', null, {agentPath});
+  return await xcodebuild.retrieveDerivedDataPath();
+}
+
+export {initSession, deleteSession, hasDefaultPrebuiltWDA, getUsePrebuiltWDACaps, HOST, PORT, MOCHA_TIMEOUT};
