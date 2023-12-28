@@ -139,6 +139,7 @@ if (!process.env.CI) {
 
         await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
         expect(await driver.$('~Succeeded').elementId).to.exist;
+        await B.delay(1000); // For iOS 17
         okButton = await driver.$('~OK');
         await okButton.click();
         await B.delay(1000);
