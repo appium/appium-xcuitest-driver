@@ -4,7 +4,7 @@ import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
 import {UICATALOG_CAPS, amendCapabilities} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
 
 chai.should();
@@ -19,9 +19,7 @@ describe('XCUITestDriver - gestures', function () {
 
   describe('dynamic gestures', function () {
     before(async function () {
-      const caps = amendCapabilities(UICATALOG_CAPS, {
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
+      const caps = amendCapabilities(UICATALOG_CAPS, await getUsePrebuiltWDACaps());
       driver = await initSession(caps);
     });
     beforeEach(async function () {

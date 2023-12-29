@@ -5,7 +5,7 @@ import B from 'bluebird';
 import util from 'util';
 import {retryInterval} from 'asyncbox';
 import {amendCapabilities, UICATALOG_CAPS} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
 
@@ -18,9 +18,7 @@ describe('XCUITestDriver - basics -', function () {
 
   let driver;
   before(async function () {
-    const caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+    const caps = amendCapabilities(UICATALOG_CAPS, await getUsePrebuiltWDACaps());
     driver = await initSession(caps);
   });
   after(async function () {
