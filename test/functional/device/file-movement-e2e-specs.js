@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {amendCapabilities, UICATALOG_CAPS} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {fs, tempDir, zip} from 'appium/support';
 import path from 'path';
 
@@ -20,9 +20,7 @@ describe('XCUITestDriver - file movement', function () {
 
   let driver;
   before(async function () {
-    const caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+    const caps = amendCapabilities(UICATALOG_CAPS, await getUsePrebuiltWDACaps());
     driver = await initSession(caps);
   });
   after(async function () {

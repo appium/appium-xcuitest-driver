@@ -1,7 +1,7 @@
 import chai from 'chai';
 import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession, getUsePrebuiltWDACaps} from '../helpers/session';
 import {GENERIC_CAPS, amendCapabilities} from '../desired';
 import xcode from 'appium-xcode';
 
@@ -32,9 +32,8 @@ if (process.env.LAUNCH_WITH_IDB) {
       }
       const caps = amendCapabilities(GENERIC_CAPS, {
         'appium:app': APP_UNDER_TEST_PATH,
-        'appium:launchWithIDB': true,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
+        'appium:launchWithIDB': true
+      }, await getUsePrebuiltWDACaps());
       driver = await initSession(caps);
     });
 
