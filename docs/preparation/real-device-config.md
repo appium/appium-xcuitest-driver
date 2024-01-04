@@ -55,7 +55,7 @@ The problem is that the developer is not trusted on the device. If you manually
 try to run the `WebDriverAgentRunner` app on the device, you will see a popup
 message:
 
-![Untrusted developer](./assets/images/real-device-config/untrusted-dev.png)
+![Untrusted developer](./assets/images/untrusted-dev.png)
 
 You can go to Settings => General => Device Management on the device to trust
 the developer and allow the `WebDriverAgentRunner` app to be run (see [Apple
@@ -74,31 +74,31 @@ default application bundle.
 This will manifest as something like an error that Xcode **failed to create
 provisioning profile**:
 
-![No provisioning profile](./assets/images/real-device-config/no-prov-prof.png)
+![No provisioning profile](./assets/images/no-prov-prof.png)
 
 The easiest way around this is to create a provisioning profile by opening
 [Xcode](https://developer.apple.com/xcode/) and creating a new project:
 
-![Create new project](./assets/images/real-device-config/create-new-project.png)
+![Create new project](./assets/images/create-new-project.png)
 
 The type does not matter, other than it being "iOS". "Single View Application"
 is the easiest:
 
-![Create single page](./assets/images/real-device-config/create-single-page.png)
+![Create single page](./assets/images/create-single-page.png)
 
 The important part is to use a unique "Product Name" and "Organization Name". Also,
 at this point, specify your "Team".
 
-![Setup bundle](./assets/images/real-device-config/set-up-bundle.png)
+![Setup bundle](./assets/images/set-up-bundle.png)
 
 You can confirm that the provisioning profile was created by looking at the "Project"
 tab:
 
-![Project pane](./assets/images/real-device-config/project-prov-prof.png)
+![Project pane](./assets/images/project-prov-prof.png)
 
 Or by going into your account preferences and seeing the provisioning profile:
 
-![Check provisioning profile](./assets/images/real-device-config/check-prov-prof.png)
+![Check provisioning profile](./assets/images/check-prov-prof.png)
 
 At this point you have a valid provisioning profile. Make note of the bundle id
 you associated with it, and add that in the `updatedWDABundleId` desired
@@ -131,23 +131,23 @@ an Appium release before 1.20.0) you also have to run
     in the "General" tab, and then select your `Development Team`. This
     should also auto select `Signing Ceritificate`. The outcome should look as
     shown below:
-    ![WebDriverAgent in Xcode project](./assets/images/real-device-config/xcode-config.png)
+    ![WebDriverAgent in Xcode project](./assets/images/xcode-config.png)
 
     * Xcode may fail to create a provisioning profile for the `WebDriverAgentRunner`
       target:
 
-      ![Xcode provisioning fail](./assets/images/real-device-config/xcode-facebook-fail.png)
+      ![Xcode provisioning fail](./assets/images/xcode-facebook-fail.png)
 
     * This necessitates manually changing the bundle id for the target by going
       into the "Build Settings" tab, and changing the "Product Bundle Identifier"
       from `com.facebook.WebDriverAgentRunner` to something that Xcode will accept:
 
-      ![Xcode bundle id](./assets/images/real-device-config/xcode-bundle-id.png)
+      ![Xcode bundle id](./assets/images/xcode-bundle-id.png)
 
     * Going back to the "General" tab for the `WebDriverAgentRunner` target, you
       should now see that it has created a provisioning profile and all is well:
 
-      ![Xcode provisioning profile](./assets/images/real-device-config/xcode-facebook-succeed.png)
+      ![Xcode provisioning profile](./assets/images/xcode-facebook-succeed.png)
 
 *   Finally, you can verify that everything works. Build the project:
 ```bash
@@ -213,7 +213,7 @@ On successful completion the resulting package `WebDriverAgentRunner-Runner.app`
 
 The `WebDriverAgentRunner-Runner.app` can be installed to any real device allowed by the provisioning profile.
 
-You can install the package with 3rd party tools and manage it separately as explained in [How To Set Up And Customize WebDriverAgent Server](./wda-custom-server.md).
+You can install the package with 3rd party tools and manage it separately as explained in [How To Set Up And Customize WebDriverAgent Server](../guides/wda-custom-server.md).
 If the codesign is not correct, the installation will fail because of the package verification error by iOS.
 
 As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do [`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format) separately by yourself.
