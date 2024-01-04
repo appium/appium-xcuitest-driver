@@ -2,7 +2,7 @@ import chai from 'chai';
 import _ from 'lodash';
 import chaiAsPromised from 'chai-as-promised';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   openPage,
   spinTitleEquals,
@@ -32,10 +32,11 @@ describe('safari - windows and frames', function () {
     let driver;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
-        'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-        'appium:safariAllowPopups': false,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
+          'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+          'appium:safariAllowPopups': false,
+        },
+        await getUsePrebuiltWDACaps()
+      );
       driver = await initSession(caps);
       await driver.setTimeout({pageLoad: 100});
     });
@@ -55,13 +56,14 @@ describe('safari - windows and frames', function () {
     let driver;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
-        'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-        'appium:safariAllowPopups': true,
-        // using JS atoms to open new window will, even if safari does not disable
-        // popups, open an alert asking if it is ok.
-        'appium:nativeWebTap': true,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
+          'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+          'appium:safariAllowPopups': true,
+          // using JS atoms to open new window will, even if safari does not disable
+          // popups, open an alert asking if it is ok.
+          'appium:nativeWebTap': true,
+        },
+        await getUsePrebuiltWDACaps()
+      );
       driver = await initSession(caps);
     });
     after(async function () {

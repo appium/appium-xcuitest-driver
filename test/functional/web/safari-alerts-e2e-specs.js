@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {retryInterval} from 'asyncbox';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from './helpers';
 
 chai.should();
@@ -14,10 +14,11 @@ describe('safari - alerts', function () {
   let driver;
   before(async function () {
     const caps = amendCapabilities(SAFARI_CAPS, {
-      'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-      'appium:safariAllowPopups': true,
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+        'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+        'appium:safariAllowPopups': true
+      },
+      await getUsePrebuiltWDACaps()
+    );
     driver = await initSession(caps);
   });
   after(async function () {
