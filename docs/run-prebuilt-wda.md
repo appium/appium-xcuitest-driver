@@ -68,7 +68,7 @@ Based on the above case, the usage of `useXctestrunFile` and `bootstrapPath` wil
   "appium:automationName": "xcuitest",
   "appium:platformVersion": "15.5",
   "appium:deviceName": "iPhone 12",
-  "appium:useXctestrunFile": "true",
+  "appium:useXctestrunFile": true,
   "appium:bootstrapPath": "/path/to/wda_build/Build/Products"
 }
 ```
@@ -77,3 +77,10 @@ We haven't tested all possible combinations, but probably the target device coul
 
 The same thing could achieve with `derivedDataPath` and `usePrebuiltWDA` capabilities, but it may fail if the `xcodebuild` cannot find or handle the `.xctestrun` properly.
 The stability depends on Xcode.
+
+## Download prebuilt WebDriverAgent from GitHub appium/WebDriverAgent repository
+
+[GitHub releases](https://github.com/appium/WebDriverAgent/releases) allows you to get each WebDriverAgent package for real devices.
+They do not have embedded XCTest frameworks.
+
+[Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml) workflows help to check the script to build them.

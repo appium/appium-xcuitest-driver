@@ -564,7 +564,13 @@ Either 'yes', 'no', 'unset' or 'limited'
 
 ### mobile: setPermission
 
-Set application permission state on Simulator. This method requires [WIX applesimutils](https://github.com/wix/AppleSimulatorUtils) to be installed on the host where Appium server is running.
+Set application permission state on Simulator.
+
+`location` and `location-always` services are by `xcrun simctl privacy` command since XCUITest driver version 5.11.0.
+The command will kill the `bundleId` application process if it is running.
+
+Other services such as `contacts` are processed by [WIX applesimutils](https://github.com/wix/AppleSimulatorUtils), which will not kill the `bundleId` application process.
+[WIX applesimutils](https://github.com/wix/AppleSimulatorUtils) needs to be installed on the host where Appium server is running.
 
 #### Arguments
 
@@ -676,8 +682,9 @@ remotePath | string | yes | Same value as for `mobile: deleteFile` except of the
 Change localization settings on the currently booted Simulator.
 The changed settings are only applied for the *newly started* applications/activities.
 Currently running applications will stay unchanged. This means, for example, that the keyboard
-should be hidden and shown again in order to observe the changed layout, and curresponding
+should be hidden and shown again in order to observe the changed layout, and corresponding
 apps must be restarted in order to observe their interface using the newly set locale/language.
+Also this method might leave some system UI alerts untranslated.
 Be careful while setting the actual arguments since their actual values are not strictly checked.
 This could lead to an unexpected behavior if an incorrect/unsupported language or locale abbreviation is provided.
 
@@ -1440,4 +1447,24 @@ compactDescription | string | The compact description of the found accessbility 
 auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
 element | string | The description of the element this issue was found for. | 'Yes' button
 elementDescription | string | The debug description of the element this issue was found for. Availble since driver version | A long string describing the element itself and its position in the page tree hierarchy
-
+elementAttributes | dict | JSON object containing various attributes of the element. | See the example below
+```json
+"elementAttributes":{
+    "isEnabled":"1",
+    "isVisible":"1",
+    "isAccessible":"0",
+    "frame":"{{129, 65}, {135, 18}}",
+    "isFocused":"0",
+    "rect":{
+        "y":65,
+        "x":129,
+        "width":135,
+        "height":18
+    },
+    "value":"Some Button",
+    "label":"Some Button",
+    "type":"StaticText",
+    "name":"Some Button",
+    "rawIdentifier":null
+}
+```

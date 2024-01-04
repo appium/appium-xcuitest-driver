@@ -2,6 +2,7 @@ name: Build Docs
 
 on:
   pull_request:
+    branches: [ master ]
     paths:
       - 'typedoc.json'
       - 'tsconfig.json'
@@ -14,6 +15,7 @@ on:
       - '!ci-jobs/**'
       - '!**/test/**'
   push:
+    branches: [ master ]
     paths:
       - 'typedoc.json'
       - 'tsconfig.json'
@@ -32,11 +34,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
-      - name: Install dependencies (Node.js)
-        uses: bahmutov/npm-install@v1
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v3
         with:
-          useRollingCache: true
-          install-command: npm ci
+          node-version: lts/*
+          check-latest: true
+      - run: npm install
+        name: Install dependencies
       - name: Install dependencies (Python)
         run: npm run install-docs-deps
       - name: Build Docs

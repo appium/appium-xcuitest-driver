@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "5.8.1",
+  "version": "5.12.2",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -65,15 +65,16 @@
     "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
+    "LICENSE",
     "npm-shrinkwrap.json"
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.5.4",
-    "appium-ios-simulator": "^5.3.3",
+    "appium-ios-simulator": "^5.5.1",
     "appium-remote-debugger": "^10.0.0",
-    "appium-webdriveragent": "^5.13.0",
+    "appium-webdriveragent": "^5.15.5",
     "appium-xcode": "^5.1.4",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
@@ -149,7 +150,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.4.7",
     "@types/portscanner": "^2.1.1",
-    "@types/sinon": "^10.0.16",
+    "@types/sinon": "^17.0.0",
     "@types/sinon-chai": "^3.2.9",
     "@types/teen_process": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
@@ -180,7 +181,7 @@
     "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.1",
     "type-fest": "^4.1.0",
-    "typescript": "^5.1.6",
+    "typescript": "~5.2",
     "webdriverio": "^8.14.3"
   },
   "overrides": {

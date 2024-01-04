@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import chai from 'chai';
+import _ from 'lodash';
 import XCUITestDriver from '../../lib/driver';
 
 chai.should();
@@ -87,6 +88,7 @@ describe('language and locale', function () {
         env: processArguments.env,
       };
 
+      const expectedProcessArguments = _.cloneDeep(processArguments);
       const expectedWDACapabilities = {
         capabilities: {
           firstMatch: [
@@ -121,6 +123,7 @@ describe('language and locale', function () {
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/session');
       proxySpy.firstCall.args[1].should.eql('POST');
+      desiredCapabilities.processArguments.should.eql(expectedProcessArguments);
       /** @type {any} */ (proxySpy.firstCall.args[2]).should.eql(expectedWDACapabilities);
     });
   });

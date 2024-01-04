@@ -31,7 +31,7 @@ jobs:
       uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
+    - run: npm install
     - name: Install dependencies (Python)
       run: npm run install-docs-deps
     - name: Build and deploy docs

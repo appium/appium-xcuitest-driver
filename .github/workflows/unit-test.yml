@@ -1,5 +1,9 @@
 name: Unit Tests
-on: [push, pull_request]
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   # https://thekevinwang.com/2021/09/19/github-actions-dynamic-matrix/
@@ -25,7 +29,7 @@ jobs:
       uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
+    - run: npm i
       name: Install dev dependencies
     - run: npm run lint
       name: Linter
