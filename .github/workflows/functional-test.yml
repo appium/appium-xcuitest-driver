@@ -130,5 +130,5 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@master
       with:
-        name: appium_xCodev${{ matrix.xcodeVersion }}_iOSv${{ matrix.iosVersion }}.log
+        name: appium_e2eRoot_${{ matrix.e2eRoot }}_xCodev${{ matrix.xcodeVersion }}_iOSv${{ matrix.iosVersion }}.log
         path: appium.log
