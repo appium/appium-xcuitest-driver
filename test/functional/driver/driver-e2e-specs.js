@@ -5,7 +5,7 @@ import {getSimulator} from 'appium-ios-simulator';
 import {killAllSimulators, shutdownSimulator, deleteDeviceWithRetry} from '../helpers/simulator';
 import Simctl from 'node-simctl';
 import B from 'bluebird';
-import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession, getUsePrebuiltWDACaps, HOST} from '../helpers/session';
 import {
   UICATALOG_SIM_CAPS,
   amendCapabilities,
@@ -46,9 +46,10 @@ describe('XCUITestDriver', function () {
     const udid = await createDevice();
     baseCaps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
     caps = amendCapabilities(baseCaps, {
-      'appium:usePrebuiltWDA': true,
-      'appium:wdaStartupRetries': 0,
-    });
+        'appium:wdaStartupRetries': 0,
+      },
+      await getUsePrebuiltWDACaps()
+    );
   });
   after(async function () {
     const sim = await getSimulator(extractCapabilityValue(caps, 'appium:udid'), {
