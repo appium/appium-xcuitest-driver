@@ -105,7 +105,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
     "format": "prettier --check './**/*.(js|ts)'",
-    "install-docs-deps": "appium-docs init --no-mkdocs -e index.js",
+    "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "husky install; npm run rebuild",
     "rebuild": "npm run clean; npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
@@ -133,7 +133,7 @@
     "appium": "^2.0.0"
   },
   "devDependencies": {
-    "@appium/docutils": "^0.x",
+    "@appium/docutils": "^1.0.2",
     "@appium/eslint-config-appium": "^8.0.4",
     "@appium/eslint-config-appium-ts": "^0.x",
     "@appium/test-support": "^3.0.20",
@@ -186,8 +186,5 @@
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
-  },
-  "typedoc": {
-    "entryPoint": "index.js"
   }
 }

@@ -4,7 +4,6 @@ on:
   pull_request:
     branches: [ master ]
     paths:
-      - 'typedoc.json'
       - 'tsconfig.json'
       - 'scripts/build-docs.js'
       - 'package*.json'
@@ -17,7 +16,6 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'typedoc.json'
       - 'tsconfig.json'
       - 'scripts/build-docs.js'
       - 'package*.json'

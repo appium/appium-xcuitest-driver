@@ -809,7 +809,7 @@ Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUIT
 
 ### mobile: viewportRect
 
-Retrieves the viwport dimensions.
+Retrieves the viewport dimensions.
 The viewport is the device's screen size with status bar size subtracted if the latter is present/visible.
 
 #### Returned Result
@@ -819,6 +819,14 @@ The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}
 `left` and `top` are distance from the `left` of the screen and the `top` of the screen. [iOS Drawing Concepts](https://developer.apple.com/library/archive/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html) could help about the relationship of coordinate.
 
 `width` and `height` are the screen's width and height.
+
+### mobile: viewportScreenshot
+
+Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect))
+
+#### Returned Result
+
+Base64-encoded string, which represents the viewport screenshot.
 
 ### mobile: deviceScreenInfo
 
@@ -1061,32 +1069,6 @@ toY | number | no | The y coordinate of ending drag point. Must be provided if `
 
 [pressForDuration:thenDragToElement:withVelocity:thenHoldForDuration:](https://developer.apple.com/documentation/xctest/xcuielement/3551693-pressforduration?language=objc)
 [pressForDuration:thenDragToCoordinate:withVelocity:thenHoldForDuration:](https://developer.apple.com/documentation/xctest/xcuicoordinate/3551692-pressforduration?language=objc)
-
-### mobile: selectPickerWheelValue
-
-Performs selection of the next or previous picker wheel value. This might
-be useful if these values are populated dynamically, so you don't know which
-one to select or value selection does not work because of XCTest bug.
-
-#### Arguments
-
-Name | Type | Required | Description | Example
---- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | yes | PickerWheel's internal element id (as hexadecimal hash string) to perform value selection on. The element must be of type XCUIElementTypePickerWheel | fe50b60b-916d-420b-8728-ee2072ec53eb
-order | string | yes | Either _next_ to select the value next to the current one from the target picker wheel or _previous_ to select the previous one | next
-offset | number | no | The value in range [0.01, 0.5]. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small offset value may not change the picker wheel value and too high value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range [0.15, 0.3]. _0.2_ by default | 0.3
-
-#### Examples
-
-```java
-// Java
-JavascriptExecutor js = (JavascriptExecutor) driver;
-Map<String, Object> params = new HashMap<>();
-params.put("order", "next");
-params.put("offset", 0.15);
-params.put("element", ((RemoteWebElement) element).getId());
-js.executeScript("mobile: selectPickerWheelValue", params);
-```
 
 ### mobile: rotateElement
 
@@ -1412,6 +1394,10 @@ Determine whether the device is locked.
 #### Returned Result
 
 Either `true` or `false`
+
+### mobile: shake
+
+Shakes the device. This functionality is only supported on simulators.
 
 ### mobile: backgroundApp
 

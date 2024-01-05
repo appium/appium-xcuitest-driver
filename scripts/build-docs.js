@@ -2,7 +2,7 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const {buildReferenceDocs, deploy, updateNav} = require('@appium/docutils');
+const {deploy} = require('@appium/docutils');
 const {logger} = require('@appium/support');
 const path = require('path');
 const semver = require('semver');
@@ -17,26 +17,19 @@ const REPO_DIR = path.resolve(__dirname, '..');
 const LATEST_ALIAS = 'latest';
 
 const packageJson = require.resolve('../package.json');
-const typedocJson = require.resolve('../typedoc.json');
 
 const branch = process.env.APPIUM_DOCS_BRANCH ?? DOCS_BRANCH;
-const prefix = process.env.APPIUM_DOCS_PREFIX ?? DOCS_PREFIX;
+const deployPrefix  = process.env.APPIUM_DOCS_PREFIX ?? DOCS_PREFIX;
 const remote = process.env.APPIUM_DOCS_REMOTE ?? DOCS_REMOTE;
 
 const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
-const rebase = push;
 
 async function main() {
   log.info(`Building XCUI docs and committing to ${DOCS_BRANCH}`);
   const {major, minor} = semver.parse(version);
   const deployVersion = `${major}.${minor}`;
 
-  await buildReferenceDocs();
-
   const mkdocsYml = path.join(REPO_DIR, 'mkdocs.yml');
-
-  log.info(`Updating nav in ${mkdocsYml}`);
-  await updateNav({mkdocsYml, typedocJson});
 
   log.info(`Building docs for version ${deployVersion}`);
   await deploy({
@@ -44,7 +37,7 @@ async function main() {
     push,
     rebase,
     branch,
-    prefix,
+    deployPrefix,
     remote,
     packageJson,
     deployVersion,
