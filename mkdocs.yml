@@ -29,6 +29,7 @@ nav:
   - overview.md
   - Installation:
       - installation/index.md
+      - installation/requirements.md
   - Device Preparation:
       - preparation/index.md
       - preparation/real-device-config.md

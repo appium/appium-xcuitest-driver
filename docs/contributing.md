@@ -38,7 +38,7 @@ the tests locally. These include:
 * `REAL_DEVICE` - set to anything truthy, makes the tests use real device capabilities
 * `_FORCE_LOGS` - set to `1` to get the log output, not just spec
 * `PLATFORM_VERSION` - change the version to run the tests against (defaults to `11.3`)
-* `XCCONFIG_FILE` - specify where the XCode config file is for a real device run (if
+* `XCCONFIG_FILE` - specify where the Xcode config file is for a real device run (if
   blank, and running a real device test, it will search for the first file in
   the root directory of the repo with the extension `.xcconfig`)
 * `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
