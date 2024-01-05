@@ -10,7 +10,7 @@ This works for real devices and simulators, but primary usage is for real device
 1. Start a WebDriverAgent application on a device
 2. Start an XCUITest driver session with `appium:webDriverAgentUrl` capability
 
-Please read [Manage WebDriverAgent by yourself](./wda-custom-server.md) and [Real Device Configuration](../preparation/real-device-config.md) about how to prepare a WebDriverAgent application for real devices and start it.
+Please read [Manage WebDriverAgent by yourself](./wda-custom-server.md) and [Real Device Configuration](../preparation/real-device-prov-profile-setup.md) about how to prepare a WebDriverAgent application for real devices and start it.
 
 The `appium:webDriverAgentUrl` should be `http://<reachable ip address for the device>:8100`.
 If the environment had port-forward to the connected device, it can be `http://localhost:8100`.

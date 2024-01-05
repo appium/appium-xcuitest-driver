@@ -1,14 +1,6 @@
 ---
-title: Real Device Configuration
+title: Provisioning Profile Setup for Real Devices
 ---
-
-In order to use real iOS/iPadOS devices with the XCUITest driver, some additional configuration
-is required.
-
-- Devices using iOS/iPadOS 16 or later require enabling Developer Mode. Please read
-  [Apple's documentation on Developer Mode](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device)
-  for more details. `devmodectl streaming` CLI on macOS 13+ and installing development signed apps
-  also help enabling the mode.
 
 ### Basic (automatic) configuration
 

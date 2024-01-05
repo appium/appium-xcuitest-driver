@@ -2,51 +2,59 @@
 title: Device Preparation
 ---
 
-## Automatic device preference update
+Before using the XCUITest driver with a simulator or real device, some device preparation is required.
 
-Appium XCUITest prepares preferences of the device under test automatically.
-Some of them are also configurable via Appium capabilities and the Settings API.
+## Automatic Adjustments
 
-### Keyboards configuration
+The XCUITest driver automatically adjusts some device preferences for testing purposes.
 
-Appium configures keyboard preferences by default to make test runs more stable.
-You can change some of them via the Settings API.
+### Keyboard Configuration
 
-- Turn `Auto-Correction` in Keyboards off
-- Turn `Predictive` in Keyboards off
-- Mark keyboard tutorial as complete
-- (Only for Simulator) Toggle software keyboard on
+Some keyboard preferences are changed in order to make test runs more stable. You can change some
+of them via the [Settings API](https://appium.io/docs/en/latest/guides/settings/).
 
-## Manual setup for fine tuning
+- _Settings -> General -> Keyboard -> Auto-Correction_ is turned OFF
+- _Settings -> General -> Keyboard -> Predictive Text_ is turned OFF
+- The keyboard tutorial is marked as complete
+- (Simulator Only) Software keyboard is turned ON
 
-Automatic configuration availability is limited on iOS, especially for a real device. You may need to manually change the device configuration.
+## Manual Adjustments
 
-### Enable Web testing availability
+Unfortunately, not all configuration can be done automatically, and some changes must be applied manually.
 
-Please turn on _Web Inspector_ on iOS device via _Settings_ -> _Safari_ -> _Advanced_
+### Accessibility Settings
 
-#### If iOS/iPadOS version is 16.4 or above
+- To avoid miscalculation of element coordinates, please make sure the zoom preference is turned off
+  in _Settings -> Accessibility -> Zoom_.
+- Some accessibility settings may expose additional view elements. Appium does not modify these
+  settings automatically, since they could affect the way your application under test performs.
+  Please change them manually if needed. Note that the available accessibility content depends on
+  the OS version.
+    - _Settings -> Accessibility -> Spoken Content -> Speak Selection_
 
-Make sure the destination `WKWebView` and/or `JSContext` component have [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable) property set to `true`.
-Read [Enabling the Inspection of Web Content in Apps](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/) for more details on this property.
+### Webview Testing
 
-#### Chrome v115+ and iOS 16.4+ support Web testing availability
+- Webviews on iOS/iPadOS 16.4 or above may require additional configuration from the application developer.
+  Specifically, the destination `WKWebView` and/or `JSContext` component must have the
+  [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable)
+  property set to `true`. Please read [the WebKit documentation page](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/)
+  for more details on this property.
+- Starting from iOS/iPadOS 16.4, the Google Chrome browser also supports webview testing. This feature
+  requires Chrome version 115 or newer. Please read
+  [the Chrome Developer documentation page](https://developer.chrome.com/blog/debugging-chrome-on-ios/)
+  for details on the necessary configuration.
 
-Chrome browser for iOS now provides a remote debugging feature for release versions of the app after the `isInspectable` property has been introduced by Apple.
+### Real Devices
 
-Please turn on _Web Inspector_ on iOS device via Chrome app -> _Settings_ -> _Content Settings_ -> _Web Inspector_ -> Turn _Web Inspector_ on, then kill the Chrome app process
+Some settings are enabled by default on simulators, but need to be manually changed for real devices.
 
-Please read [Debugging websites in Chrome on iOS 16.4+](https://developer.chrome.com/blog/debugging-chrome-on-ios/) for more details.
-
-### Avoid possible wrong coordinate
-
-Please make sure the zoom preference in accessibility is turned off via _Settings_ -> _Accessibility_ -> _Zoom_. It could cause element coordinates miscalculation.
-
-### Expose more elements if needed
-
-In some cases, enabling of the below preferences helps to make some view elements accessible. Appium does not modify these settings automatically, since they could affect the way your application under test performs. Please change them manually if needed.
-
-- Turn `Spoken Content` in _Settings_ -> _Accessibility_ on
-- Turn `Speak Selection` in _Settings_ -> _Accessibility_ on
-
-Note that the available accessibility content depends on the OS version.
+- Devices using iOS/iPadOS 16 or above require enabling Developer Mode. Please read
+  [Apple's documentation on Developer Mode](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device)
+  for more details. `devmodectl streaming` CLI on macOS 13+ and installing development signed apps
+  also help enabling the mode.
+- After enabling Developer Mode (if applicable), please turn on _Settings -> Developer -> Enable UI Automation_
+- Webviews will not be testable unless the Safari Inspector is enabled. Please turn it on in
+  _Settings -> Safari -> Advanced -> Web Inspector_. Similarly, you may want to turn on the adjacent
+  option _Settings -> Safari -> Advanced -> Remote Automation_.
+- Additional configuration is required to set up the developer provisioning profile. Please
+  see the [Provisioning Profile Setup for Real Devices](./real-device-prov-profile-setup.md) page for details.
