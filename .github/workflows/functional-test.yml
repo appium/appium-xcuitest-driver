@@ -101,7 +101,7 @@ jobs:
       name: Prepare the server
 
     - run: |
-        target_sim_id=$(xcrun simctl list devices available | grep "${{ matrix.deviceName }} (" | cut -d "(" -f2 | cut -d ")" -f1)
+        target_sim_id=$(xcrun simctl list devices 'iOS ${{ matrix.iosVersion }}' -j | jq '.devices[]' | jq 'select(length > 0)' | jq -r 'map(select( .name == "${{ matrix.deviceName }}" and .isAvailable == true ))[0].udid') 
         open -Fn "$(xcode-select -p)/Applications/Simulator.app"
         xcrun simctl bootstatus $target_sim_id -b
       name: Preboot ${{ matrix.deviceName }}
