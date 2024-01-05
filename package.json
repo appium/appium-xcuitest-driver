@@ -53,7 +53,8 @@
     },
     "doctor": {
       "checks": [
-        "./build/lib/doctor/checks.js"
+        "./build/lib/doctor/required-checks.js",
+        "./build/lib/doctor/optional-checks.js"
       ]
     }
   },
