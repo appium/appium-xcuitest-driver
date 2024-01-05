@@ -42,6 +42,12 @@ On top of standard Appium requirements XCUITest driver also expects the followin
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) could be used to improve some Simulator interactions
 - [py-ios-device](https://github.com/YueChen-C/py-ios-device) is required in several `mobile:` extensions and to improve the general testing experience for _real_ iOS devices
 
+### Doctor
+
+Since driver version 5.13.0 you can automate the validation for the most of the above
+requirements as well as various optional ones needed by driver extensions by running the
+`appium driver doctor xcuitest` server command.
+
 
 ## Xcode version support
 
