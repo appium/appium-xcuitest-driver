@@ -19,7 +19,7 @@ const LATEST_ALIAS = 'latest';
 const packageJson = require.resolve('../package.json');
 
 const branch = process.env.APPIUM_DOCS_BRANCH ?? DOCS_BRANCH;
-const deployPrefix  = process.env.APPIUM_DOCS_PREFIX ?? DOCS_PREFIX;
+const deployPrefix = process.env.APPIUM_DOCS_PREFIX ?? DOCS_PREFIX;
 const remote = process.env.APPIUM_DOCS_REMOTE ?? DOCS_REMOTE;
 
 const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
@@ -35,7 +35,6 @@ async function main() {
   await deploy({
     mkDocsYml: mkdocsYml,
     push,
-    rebase,
     branch,
     deployPrefix,
     remote,
