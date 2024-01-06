@@ -824,9 +824,9 @@ The response looks like `{"value":{"left":0,"top":96,"width":828,"height":1696}}
 
 Takes a screenshot of the device viewport (see [`mobile: viewportRect`](#mobile-viewportrect))
 
-!!! warning "Unstable"
+!!! warning "Unreliable"
 
-    This method is unstable. We recommend using `mobile: viewportRect` instead
+    This method is unreliable. We recommend using `getScreenshot` instead
 
 #### Returned Result
 
