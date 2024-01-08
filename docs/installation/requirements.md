@@ -2,6 +2,8 @@
 title: System Requirements
 ---
 
+## Main Dependencies
+
 Like all Appium drivers, the XCUITest driver requires Appium to be installed. Refer to the
 [Appium documentation](https://appium.io/docs/en/latest/quickstart/install/) for its requirements
 and prerequisites.
@@ -17,9 +19,8 @@ In addition to Appium system requirements, the XCUITest driver expects the follo
 - Xcode and Xcode Developer Tools must be installed
     - The Appium team usually needs some time to add support for the most recent Xcode/iOS versions,
       especially beta versions (check the [Xcode/iOS version support](#xcodeios-version-support) section)
-- If automating real devices, they must be trusted, added to your developer profile and configured
-  properly for WebDriverAgent signing. Please check the [Real Device Configuration](#real-devices)
-  document for more details.
+- If automating real devices, additional manual configuration is required. Please check the
+  [Device Preparation](../preparation/index.md#real-devices) document for more details.
 - Webviews must be debuggable in order to test them. If it is not possible to connect to your
   webview(s) using [Safari remote debugger](https://appletoolbox.com/use-web-inspector-debug-mobile-safari/),
   then the driver will not be able to identify them.
@@ -39,7 +40,7 @@ In addition to Appium system requirements, the XCUITest driver expects the follo
 
 ## Validate Dependencies Using Doctor
 
-Since driver version 5.13.0 you can automate the validation for the most of the above requirements
+Since driver version 5.13.0, you can automate the validation for the most of the above requirements
 as well as various optional ones needed by driver extensions by running the
 `appium driver doctor xcuitest` command.
 

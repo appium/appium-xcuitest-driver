@@ -56,5 +56,5 @@ Some settings are enabled by default on simulators, but need to be manually chan
 - Webviews will not be testable unless the Safari Inspector is enabled. Please turn it on in
   _Settings -> Safari -> Advanced -> Web Inspector_. Similarly, you may want to turn on the adjacent
   option _Settings -> Safari -> Advanced -> Remote Automation_.
-- Additional configuration is required to set up the developer provisioning profile. Please
-  see the [Provisioning Profile Setup for Real Devices](./real-device-prov-profile-setup.md) page for details.
+- Further configuration is required to set up the developer provisioning profile. Please see the
+  [Provisioning Profile Setup for Real Devices](./real-device-prov-profile-setup.md) page for details.
