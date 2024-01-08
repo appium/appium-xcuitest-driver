@@ -37,6 +37,12 @@ In addition to Appium system requirements, the XCUITest driver expects the follo
 - [`py-ios-device`](https://github.com/YueChen-C/py-ios-device) is required in several `mobile:`
   extensions, and can improve the general testing experience for real devices
 
+## Validate Dependencies Using Doctor
+
+Since driver version 5.13.0 you can automate the validation for the most of the above requirements
+as well as various optional ones needed by driver extensions by running the
+`appium driver doctor xcuitest` command.
+
 ## Xcode/iOS Version Support
 
 Apple regularly updates the XCTest framework (which is used by the XCUITest driver) and publishes

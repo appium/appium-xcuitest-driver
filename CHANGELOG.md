@@ -1,3 +1,17 @@
+## [5.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.0...v5.13.1) (2024-01-07)
+
+
+### Bug Fixes
+
+* Import the proper support module ([#2294](https://github.com/appium/appium-xcuitest-driver/issues/2294)) ([b74ca4a](https://github.com/appium/appium-xcuitest-driver/commit/b74ca4aa05a898599b994376cc755425b5307a0b))
+
+## [5.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.2...v5.13.0) (2024-01-05)
+
+
+### Features
+
+* Add doctor checks ([#2292](https://github.com/appium/appium-xcuitest-driver/issues/2292)) ([804e50a](https://github.com/appium/appium-xcuitest-driver/commit/804e50aa94184061973f488f0cec8c059080d834))
+
 ## [5.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.1...v5.12.2) (2023-12-14)
 
 

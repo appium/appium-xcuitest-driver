@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "5.12.2",
+  "version": "5.13.1",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -50,6 +50,12 @@
       "additionalProperties": false,
       "title": "XCUITest Driver Configuration",
       "description": "Appium configuration schema for the XCUITest driver."
+    },
+    "doctor": {
+      "checks": [
+        "./build/lib/doctor/required-checks.js",
+        "./build/lib/doctor/optional-checks.js"
+      ]
     }
   },
   "main": "./build/index.js",
@@ -70,6 +76,7 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
+    "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.5.4",
     "appium-ios-simulator": "^5.5.1",
@@ -81,7 +88,7 @@
     "bluebird": "^3.7.2",
     "css-selector-parser": "^3.0.0",
     "fancy-log": "^2.0.0",
-    "js2xmlparser2": "^0.2.0",
+    "js2xmlparser2": "^0.x",
     "lodash": "^4.17.21",
     "lru-cache": "^10.0.0",
     "moment": "^2.29.4",
@@ -130,7 +137,7 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^2.0.0"
+    "appium": "^2.4.1"
   },
   "devDependencies": {
     "@appium/docutils": "^1.0.2",
