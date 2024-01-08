@@ -53,37 +53,42 @@ See [Get/Set Clipboard](./clipboard.md) for more details
 
 ``null``
 
-### `toggleEnrollTouchId`
+### `getGeoLocation`
 
-`POST` **`/session/:sessionId/appium/simulator/toggle_touch_id_enrollment`**
+`GET` **`/session/:sessionId/location`**
 
-Toggle whether the device is enrolled in the touch ID program
+Returns the location of the device under test. Location Services for WebDriverAgent must be set to
+'Always' to get the location data correctly.
 
-#### Arguments
+The 'latitude', 'longitude' and 'altitude' could be zero even if the Location Services are set to
+'Always', because the device may need some time to update the location data.
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `enabled?` | `any` | `true` |
+**`Throws`**
 
-#### Returned Result
-
-``null``
-
-### `touchId`
-
-`POST` **`/session/:sessionId/appium/simulator/touch_id`**
-
-Trigger a touch/fingerprint match or match failure
-
-#### Arguments
-
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `match` | `any` | `true` |
+If the device under test returns an error message. i.e.: tvOS returns unsupported error
 
 #### Returned Result
 
-``null``
+`Promise`<`altitude`: `number`, `latitude`: `number`, `longitude`: `number`\>
+
+### `setGeoLocation`
+
+`POST` **`/session/:sessionId/location`**
+
+Set location of the device under test.
+
+For iOS 17+ real devices, this method will call the
+[`mobile: setSimulatedLocation`](./execute-methods.md#mobile-setsimulatedlocation) extension.
+
+#### Arguments
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `location` | `Location` | An object with `latitude` and `longitude` values |
+
+#### Returned Result
+
+`Promise`<`altitude`: `number`, `latitude`: `number`, `longitude`: `number`\>
 
 ### `startRecordingScreen`
 
@@ -168,31 +173,11 @@ Submit the form an element is in
 
 ``null``
 
-### `click`
-
-`POST` **`/session/:sessionId/touch/click`**
-
-Click/tap an element
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#element-click](https://w3c.github.io/webdriver/#element-click)
-
-#### Arguments
-
-| Name | Type |
-| :------ | :------ |
-| `element` | `any` |
-
-#### Returned Result
-
-`any`
-
 ### `background`
 
 !!! note
 
-    We recommended using the [`mobile: backgroundApp`](./execute-methods.md#mobile-backgroundapp) extension instead
+    We recommend using the [`mobile: backgroundApp`](./execute-methods.md#mobile-backgroundapp) extension instead
 
 `POST` **`/session/:sessionId/appium/app/background`**
 
@@ -213,7 +198,7 @@ the app after the timeout or keep it minimized based on the parameter value.
 
 !!! note
 
-    We recommended using the [`mobile: queryAppState`](./execute-methods.md#mobile-queryappstate) extension instead
+    We recommend using the [`mobile: queryAppState`](./execute-methods.md#mobile-queryappstate) extension instead
 
 `POST` **`/session/:sessionId/appium/device/app_state`**
 
@@ -231,7 +216,7 @@ running in the foreground
 
 !!! note
 
-    We recommended using the [`mobile: isLocked`](./execute-methods.md#mobile-islocked) extension instead
+    We recommend using the [`mobile: isLocked`](./execute-methods.md#mobile-islocked) extension instead
 
 `POST` **`/session/:sessionId/appium/device/is_locked`**
 
@@ -247,7 +232,7 @@ Determine whether the device is locked
 
 !!! note
 
-    We recommended using the [`mobile: lock`](./execute-methods.md#mobile-lock) extension instead
+    We recommend using the [`mobile: lock`](./execute-methods.md#mobile-lock) extension instead
 
 `POST` **`/session/:sessionId/appium/device/lock`**
 
@@ -271,7 +256,7 @@ Lock the device (and optionally unlock the device after a certain amount of time
 
 !!! note
 
-    We recommended using the [`mobile: unlock`](./execute-methods.md#mobile-unlock) extension instead
+    We recommend using the [`mobile: unlock`](./execute-methods.md#mobile-unlock) extension instead
 
 `POST` **`/session/:sessionId/appium/device/unlock`**
 
@@ -287,7 +272,7 @@ Unlock the device
 
 !!! note
 
-    We recommended using the [`mobile: shake`](./execute-methods.md#mobile-shake) extension instead
+    We recommend using the [`mobile: shake`](./execute-methods.md#mobile-shake) extension instead
 
 `POST` **`/session/:sessionId/appium/device/shake`**
 
@@ -301,7 +286,7 @@ Shake the device
 
 !!! note
 
-    We recommended using the [`mobile: getAppStrings`](./execute-methods.md#mobile-getappstrings) extension instead
+    We recommend using the [`mobile: getAppStrings`](./execute-methods.md#mobile-getappstrings) extension instead
 
 `POST` **`/session/:sessionId/appium/app/strings`**
 
@@ -319,6 +304,30 @@ Return the language-specific strings for an app
 `StringRecord`<`string`\>
 
 A record of localized keys to localized text
+
+### `click`
+
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use the [`mobile: tap`](./execute-methods.md#mobile-tap) extension instead
+
+`POST` **`/session/:sessionId/touch/click`**
+
+Click/tap an element
+
+**`See`**
+
+[https://w3c.github.io/webdriver/#element-click](https://w3c.github.io/webdriver/#element-click)
+
+#### Arguments
+
+| Name | Type |
+| :------ | :------ |
+| `element` | `any` |
+
+#### Returned Result
+
+`any`
 
 ### `setValueImmediate`
 
@@ -358,21 +367,61 @@ Send keys to the app
 
 ``null``
 
-### `receiveAsyncReturned Result`
+### `receiveAsyncResponse`
 
 !!! warning "Deprecated"
 
     This method is deprecated
 
-`POST` **`/session/:sessionId/appium/receive_async_Returned Result`**
+`POST` **`/session/:sessionId/appium/receive_async_response`**
 
-Collect the Returned Result of an async script execution
+Collect the response of an async script execution
 
 #### Arguments
 
 | Name | Type |
 | :------ | :------ |
-| `Returned Result` | `any` |
+| `response` | `any` |
+
+#### Returned Result
+
+``null``
+
+### `toggleEnrollTouchId`
+
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use the [`mobile: enrollBiometric`](./execute-methods.md#mobile-enrollbiometric) extension instead
+
+`POST` **`/session/:sessionId/appium/simulator/toggle_touch_id_enrollment`**
+
+Toggle whether the device is enrolled in the touch ID program
+
+#### Arguments
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `enabled?` | `any` | `true` |
+
+#### Returned Result
+
+``null``
+
+### `touchId`
+
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use the [`mobile: sendBiometricMatch`](./execute-methods.md#mobile-sendbiometricmatch) extension instead
+
+`POST` **`/session/:sessionId/appium/simulator/touch_id`**
+
+Trigger a touch/fingerprint match or match failure
+
+#### Arguments
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `match` | `any` | `true` |
 
 #### Returned Result
 

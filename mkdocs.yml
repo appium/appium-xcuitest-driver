@@ -12,7 +12,7 @@ site_dir: site
 theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
-
+  custom_dir: docs/overrides
 extra_css:
   - assets/stylesheets/extra.css
 
@@ -81,7 +81,7 @@ plugins:
       'wda-custom-server.md': 'guides/wda-custom-server.md'
       'capabilities.md': 'reference/capabilities.md'
       'clipboard.md': 'reference/clipboard.md'
-      'commands.md': 'reference/commands.md'
+      'reference/commands/appium-xcuitest-driver.md': 'reference/commands.md'
       'element-attributes.md': 'reference/element-attributes.md'
       'execute-methods.md': 'reference/execute-methods.md'
       'ios-predicate.md': 'reference/ios-predicate.md'

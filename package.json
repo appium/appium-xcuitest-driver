@@ -133,7 +133,7 @@
     "appium": "^2.0.0"
   },
   "devDependencies": {
-    "@appium/docutils": "^1.0.1",
+    "@appium/docutils": "^1.0.2",
     "@appium/eslint-config-appium": "^8.0.4",
     "@appium/eslint-config-appium-ts": "^0.x",
     "@appium/test-support": "^3.0.20",
