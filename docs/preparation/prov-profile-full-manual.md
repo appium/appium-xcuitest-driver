@@ -14,10 +14,11 @@ and is _not_ recommended:
   mkdir -p Resources/WebDriverAgent.bundle
   ```
 * Open `WebDriverAgent.xcodeproj` in Xcode. This will likely open a screen with an empty editor.
-* In the file browser on the left side, select the root "WebDriverAgent" project, which will open
-  it in the editor. Then, under "Targets", select "WebDriverAgentRunner".
-* Check "Automatically manage signing", and then select your "Team". The outcome should be similar
-  to the following:
+* In the file browser on the left side, select the root _WebDriverAgent_ project, which will open
+  it in the editor. Then, under _Targets_, select _WebDriverAgentRunner_, and switch to the
+  _Signing & Capabilities_ tab.
+* Check _Automatically manage signing_, and then select your _Team_ (you may need to first sign
+  into Xcode). The outcome should be similar to the following:
 
     ![WebDriverAgent in Xcode project](./assets/images/xcode-config.png)
 
@@ -25,8 +26,8 @@ and is _not_ recommended:
 
     ![Xcode provisioning fail](./assets/images/xcode-facebook-fail.png)
 
-* Change the "Bundle Identifier" from `com.facebook.WebDriverAgentRunner` to something that Xcode
-  will accept. You can also do this in the "Build Settings" tab:
+* Change the _Bundle Identifier_ from `com.facebook.WebDriverAgentRunner` to something that Xcode
+  will accept. You can also do this in the _Build Settings_ tab:
 
     ![Xcode bundle id](./assets/images/xcode-bundle-id.png)
 
