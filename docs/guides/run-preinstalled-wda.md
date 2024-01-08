@@ -65,7 +65,7 @@ The steps are:
 4. Chose the target device
 5. Run test via `Product` -> `Test` from the menu bar
 
-Please read [Real Device Configuration tutorial](../preparation/real-device-prov-profile-setup.md) to configure the WebDriverAgent package for a real device before the step 4.
+Please read [Real Device Configuration tutorial](../preparation/real-device-config.md) to configure the WebDriverAgent package for a real device before the step 4.
 
 If it is a non-paid account by `appium` user name, the bundle id would have `com.appium` prefix.
 Then, the WebDriverAgent-Runner's bundle id could be `com.appium.WebDriverAgentRunner` for example.
@@ -83,13 +83,13 @@ The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
 
 Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) can install the built WebDriverAgent package.
 
-`WebDriverAgentRunner-Runner.app` package may exist in a `derivedDataPath` directory as explained in [Real Device Configuration tutorial](../preparation/real-device-prov-profile-setup.md).
+`WebDriverAgentRunner-Runner.app` package may exist in a `derivedDataPath` directory as explained in [Real Device Configuration tutorial](../preparation/real-device-config.md).
 The `WebDriverAgentRunner-Runner.app` can be installed without xcodebuild with the 3rd party tools.
 
 
 ### Set `appium:prebuiltWDAPath`
 
-If `appium:prebuiltWDAPath` is provided with a properly signed `WebDriverAgentRunner-Runner.app` test bundle (please check [Real Device Configuration tutorial](../preparation/real-device-prov-profile-setup.md)), XCUITest driver will install the application and launch it every test session.
+If `appium:prebuiltWDAPath` is provided with a properly signed `WebDriverAgentRunner-Runner.app` test bundle (please check [Real Device Configuration tutorial](../preparation/real-device-config.md)), XCUITest driver will install the application and launch it every test session.
 Test bundles cannot be versioned using `CFBundleVersion` as vanilla applications do. That is why it is necessary to (re)install them for every test session.
 
 Usually you can find the actual WebDriverAgentRunner application bundle at the below location if you use Xcode to build it.

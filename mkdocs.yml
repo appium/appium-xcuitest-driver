@@ -32,7 +32,12 @@ nav:
       - installation/requirements.md
   - Device Preparation:
       - preparation/index.md
-      - preparation/real-device-prov-profile-setup.md
+      - preparation/real-device-config.md
+      - Provisioning Profile for Real Devices:
+          - preparation/prov-profile-basic-auto.md
+          - preparation/prov-profile-basic-manual.md
+          - preparation/prov-profile-full-manual.md
+          - preparation/prov-profile-generic-manual.md
   - Reference:
       - reference/server-args.md
       - reference/capabilities.md
@@ -66,7 +71,7 @@ plugins:
   redirects:
     redirect_maps:
       'device-preparation.md': 'preparation/index.md'
-      'real-device-config.md': 'preparation/real-device-prov-profile-setup.md'
+      'real-device-config.md': 'preparation/real-device-config.md'
       'setup.md': 'installation/index.md'
       'actions.md': 'guides/actions.md'
       'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
