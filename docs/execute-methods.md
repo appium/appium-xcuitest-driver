@@ -1395,6 +1395,7 @@ keys | array | yes | Array of keys to type. Each item could either be a string, 
 > The `modifierFlags` argument is of `unsigned long` type and defines the bitmask with depressed modifier keys for the given key.
 > XCTest defines the following possible bitmasks for modifier keys:
 >
+> <pre>
 > typedef NS_OPTIONS(NSUInteger, XCUIKeyModifierFlags) {
 >    XCUIKeyModifierNone       = 0,
 >    XCUIKeyModifierCapsLock   = (1UL << 0),
@@ -1408,6 +1409,7 @@ keys | array | yes | Array of keys to type. Each item could either be a string, 
 >    XCUIKeyModifierAlphaShift = XCUIKeyModifierCapsLock,
 >    XCUIKeyModifierAlternate  = XCUIKeyModifierOption,
 > };
+> </pre>
 >
 > So, for example, if you want Ctrl and Shift to be depressed while entering your key then `modifierFlags` should be set to
 > `(1 << 1) | (1 << 2)`, where the first constant defines `XCUIKeyModifierShift` and the seconds
