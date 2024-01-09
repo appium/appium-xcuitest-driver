@@ -1,14 +1,18 @@
 ---
+hide:
+  - toc
+
 title: Appium Server Arguments
 ---
 
-These arguments are set when you launch the Appium server, with this driver installed. They are for system administrators.
+Some driver arguments can be set when launching the Appium server. This can be done as follows:
 
-Usage: `appium --driver-args='{"xcuitest": {[argName]: [argValue]}}'`
+```
+appium --driver='{"xcuitest": {[argName]: [argValue]}}'
+```
 
 <expand_table>
 
-|Argument|Default|Description|Example|
+|Argument|Description|Default|Example|
 |----|-------|-----------|-------|
-| wdaLocalPort | 8100 | Local port used for communication with ios-web-driver-agent | `--driver-args='{"xcuitest": {"wdaLocalPort": 8100}}'` |
-
+| `wdaLocalPort` | Local port used for communicating with WebDriverAgent | `8100` | `--driver='{"xcuitest": {"wdaLocalPort": 8100}}'` |
