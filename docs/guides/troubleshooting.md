@@ -20,18 +20,18 @@ There might be a situation where application data is present on the real device 
 - The application state is cached
 - There was an unexpected failure while installing the app. An example of such failure is the `ApplicationVerificationFailed` which happens while installing an app signed with an invalid provisioning profile.
 
-Under the circumstances above the application identifier won't be listed in the [`mobile: listApps`](execute-methods.md#mobile-listapps) output neither deleted by [`mobile: isAppInstalled`](execute-methods.md#mobile-isappinstalled) command. Setting `appium:fullReset` or `appium:enforceAppInstall` capabilities to `true` won't help to clear this data too.
+Under the circumstances above the application identifier won't be listed in the [`mobile: listApps`](../reference/execute-methods.md#mobile-listapps) output neither deleted by [`mobile: isAppInstalled`](../reference/execute-methods.md#mobile-isappinstalled) command. Setting `appium:fullReset` or `appium:enforceAppInstall` capabilities to `true` won't help to clear this data too.
 
-The only way to completely get rid of the cached application data is to call the [`mobile: removeApp`](execute-methods.md#mobile-removeapp) command with the appropriate bundle identifier.
+The only way to completely get rid of the cached application data is to call the [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) command with the appropriate bundle identifier.
 
-The driver automatically tries to resolve application installs that failed because of `MismatchedApplicationIdentifierEntitlement`, although, if you explicitly ask it to not perform the application uninstall then consider calling [`mobile: removeApp`](execute-methods.md#mobile-removeapp) beforehand `MismatchedApplicationIdentifierEntitlement` error occurs only when the previously installed application's provisioning profile is different from what currently the driver is trying to install.
+The driver automatically tries to resolve application installs that failed because of `MismatchedApplicationIdentifierEntitlement`, although, if you explicitly ask it to not perform the application uninstall then consider calling [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) beforehand `MismatchedApplicationIdentifierEntitlement` error occurs only when the previously installed application's provisioning profile is different from what currently the driver is trying to install.
 
 Below are example steps of the manual approach mentioned above:
 
 1. Start a session without `appium:app` and `appium:bundleId`
-2. Call [`mobile: removeApp`](execute-methods.md#mobile-removeapp) for the target application's bundle id
-3. Install the test target with [`mobile: installApp`](execute-methods.md#mobile-installapp)
-4. Launch the application with [`mobile: launchApp`](execute-methods.md#mobile-launchapp) or [`mobile: activateApp`](execute-methods.md#mobile-activateapp)
+2. Call [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) for the target application's bundle id
+3. Install the test target with [`mobile: installApp`](../reference/execute-methods.md#mobile-installapp)
+4. Launch the application with [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp) or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp)
 
 ## Weird state
 

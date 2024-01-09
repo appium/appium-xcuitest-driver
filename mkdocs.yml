@@ -39,32 +39,38 @@ nav:
           - preparation/prov-profile-full-manual.md
           - preparation/prov-profile-generic-manual.md
   - Reference:
-      - reference/server-args.md
-      - reference/capabilities.md
-      - reference/element-attributes.md
-      - reference/security-flags.md
-      - reference/settings.md
-      - reference/locator-strategies.md
-      - reference/ios-predicate.md
-      - reference/parallel-tests.md
-      - reference/commands.md
-      - reference/execute-methods.md
-      - reference/clipboard.md
-      - reference/touch-id.md
-      - reference/troubleshooting.md
+      - Server Configuration:
+          - reference/server-args.md
+          - reference/security-flags.md
+      - Session Configuration:
+          - reference/capabilities.md
+          - reference/settings.md
+          - reference/commands.md
+          - reference/execute-methods.md
+      - Element Management:
+          - reference/locator-strategies.md
+          - reference/ios-predicate.md
+          - reference/element-attributes.md
   - Guides:
-      - Improve session startup performance:
-          - guides/run-preinstalled-wda.md
-          - guides/run-prebuilt-wda.md
-          - guides/attach-to-running-wda.md
-      - guides/ci-setup.md
-      - guides/multiple-xcode-versions.md
-      - guides/wda-custom-server.md
-      - guides/ios-tvos.md
-      - guides/actions.md
-      - guides/audio-capture.md
-      - guides/ios-xctest-file-movement.md
-      - guides/ios-xctest-install-certificate.md
+      - Environment Configuration:
+          - guides/parallel-tests.md
+          - guides/ci-setup.md
+          - guides/multiple-xcode-versions.md
+          - Improve Session Startup Performance:
+              - guides/run-preinstalled-wda.md
+              - guides/run-prebuilt-wda.md
+              - guides/attach-to-running-wda.md
+          - guides/wda-custom-server.md
+      - Driver Actions:
+          - guides/audio-capture.md
+          - guides/file-transfer.md
+          - guides/install-certificate.md
+          - guides/clipboard.md
+          - guides/touch-id.md
+      - Other:
+          - guides/tvos.md
+          - guides/input-events.md
+          - guides/troubleshooting.md
   - contributing.md
 
 plugins:
@@ -73,27 +79,27 @@ plugins:
       'device-preparation.md': 'preparation/index.md'
       'real-device-config.md': 'preparation/real-device-config.md'
       'setup.md': 'installation/index.md'
-      'actions.md': 'guides/actions.md'
+      'actions.md': 'guides/input-events.md'
       'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
       'audio-capture.md': 'guides/audio-capture.md'
       'ci-setup.md': 'guides/ci-setup.md'
-      'ios-tvos.md': 'guides/ios-tvos.md'
-      'ios-xctest-file-movement.md': 'guides/ios-xctest-file-movement.md'
-      'ios-xctest-install-certificate.md': 'guides/ios-xctest-install-certificate.md'
+      'clipboard.md': 'guides/clipboard.md'
+      'ios-tvos.md': 'guides/tvos.md'
+      'ios-xctest-file-movement.md': 'guides/file-transfer.md'
+      'ios-xctest-install-certificate.md': 'guides/install-certificate.md'
       'multiple-xcode-versions.md': 'guides/multiple-xcode-versions.md'
+      'parallel-tests.md': 'guides/parallel-tests.md'
       'run-prebuilt-wda.md': 'guides/run-prebuilt-wda.md'
       'run-preinstalled-wda.md': 'guides/run-preinstalled-wda.md'
+      'touch-id.md': 'guides/touch-id.md'
+      'troubleshooting.md': 'guides/troubleshooting.md'
       'wda-custom-server.md': 'guides/wda-custom-server.md'
       'capabilities.md': 'reference/capabilities.md'
-      'clipboard.md': 'reference/clipboard.md'
       'reference/commands/appium-xcuitest-driver.md': 'reference/commands.md'
       'element-attributes.md': 'reference/element-attributes.md'
       'execute-methods.md': 'reference/execute-methods.md'
       'ios-predicate.md': 'reference/ios-predicate.md'
       'locator-strategies.md': 'reference/locator-strategies.md'
-      'parallel-tests.md': 'reference/parallel-tests.md'
       'security-flags.md': 'reference/security-flags.md'
       'server-args.md': 'reference/server-args.md'
       'settings.md': 'reference/settings.md'
-      'touch-id.md': 'reference/touch-id.md'
-      'troubleshooting.md': 'reference/troubleshooting.md'

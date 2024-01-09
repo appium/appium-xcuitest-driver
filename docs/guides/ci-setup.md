@@ -12,7 +12,7 @@ One common such scenario is a prompt asking for a keychain to be unlocked in ord
 There are multiple possible solutions for this:
 
 1. Keychains can be set to have no timeout and be unlocked manually once. This can be done using the keychain access application. Sometimes keychains still lock themselves though and this approach is not recommended.
-2. [It is possible to create a second keychain](../reference/troubleshooting.md#real-device-security-settings), which just stores the required certificate to sign the WebDriverAgent.
+2. [It is possible to create a second keychain](../guides/troubleshooting.md#real-device-security-settings), which just stores the required certificate to sign the WebDriverAgent.
 The issue with this approach is, that Codesign wants to unlock all listed keychains regardless of the specified keychain, thus leading to a password prompt.
 This can be avoided by setting the default keychain and basically hiding the login keychain at the start of building.
 [Stackoverflow article](https://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails) shows how to utelize this approach.

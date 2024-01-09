@@ -6,9 +6,9 @@ title: Get/Set Clipboard
 
 For iOS 13+ real devices, Apple security preferences require the WebDriverAgentRunner application to be in foreground in order to be able to receive the system clipboard content.
 Otherwise an empty string is always returned, or it could raise an exception like (this issue)[https://github.com/appium/appium/issues/18730].
-Consider using [Activate App](execute-methods.md/#mobile-activateapp) and [Background App](execute-methods.md/#mobile-backgroundapp) to change the foreground application.
+Consider using [Activate App](../reference/execute-methods.md/#mobile-activateapp) and [Background App](../reference/execute-methods.md/#mobile-backgroundapp) to change the foreground application.
 
-Simulators also have the same behavior, but [mobile: getPasteboard](execute-methods.md#mobile-getpasteboard) should help for simulators.
+Simulators also have the same behavior, but [mobile: getPasteboard](../reference/execute-methods.md#mobile-getpasteboard) should help for simulators.
 
 
 ### Example
@@ -27,9 +27,9 @@ driver.execute_script 'mobile: activateApp', {bundleId: '<bundle id of the test 
 ## Set Clipboard
 
 For iOS 15+ real devices, Apple security preferences require the WebDriverAgentRunner application to be in foreground in order to set the system clipboard content.
-Consider using [Activate App](execute-methods.md/#mobile-activateapp) and [Background App](execute-methods.md/#mobile-backgroundapp) to change the foreground application. 
+Consider using [Activate App](../reference/execute-methods.md/#mobile-activateapp) and [Background App](../reference/execute-methods.md/#mobile-backgroundapp) to change the foreground application. 
 
-[mobile: setPasteboard](execute-methods.md#mobile-setpasteboard) also helps for simulators.
+[mobile: setPasteboard](../reference/execute-methods.md#mobile-setpasteboard) also helps for simulators.
 
 ### Example
 

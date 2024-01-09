@@ -77,7 +77,7 @@ possible that you may encounter some errors:
     select your development team and trust it. Afterwards you should be able to open/launch the app.
     See [Apple documentation for more information](https://support.apple.com/en-us/HT204460).
 
-* For other issues, please refer to the [Troubleshooting](../reference/troubleshooting.md) page
+* For other issues, please refer to the [Troubleshooting](../guides/troubleshooting.md) page
 
 
 ### Create an Offline Provisioning Profile

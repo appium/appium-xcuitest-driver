@@ -29,8 +29,8 @@ please visit [the Appium documentation](https://appium.io).
 -   Check out the [__Overview__](./overview.md) to learn how the driver works
 -   Go through the [__Installation__](./installation/index.md) steps to get set up
 -   Follow the [__Device Preparation__](./preparation/index.md) instructions to configure your test device
--   Browse the [__Reference__](./reference/commands.md) documentation for everything exposed by the driver
--   Read the different [__Guides__](./guides/run-preinstalled-wda.md) for a variety of instructions, tips and tricks
+-   Browse the [__Reference__](./reference/server-args.md) documentation for everything exposed by the driver
+-   Read the different [__Guides__](./guides/parallel-tests.md) for a variety of instructions, tips and tricks
 -   For contributions to the driver, refer to the [__Contributing__](./contributing.md) page
 
 </div>
