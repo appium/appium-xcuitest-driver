@@ -39,6 +39,7 @@ nav:
           - preparation/prov-profile-full-manual.md
           - preparation/prov-profile-generic-manual.md
   - Reference:
+      - reference/scripts.md
       - Server Configuration:
           - reference/server-args.md
           - reference/security-flags.md
