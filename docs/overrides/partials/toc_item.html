@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016-2023 Martin Donath <martin.donath@squidfunk.com>
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to
@@ -20,21 +20,23 @@
   IN THE SOFTWARE.
 -->
 
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/partials/toc-item.html
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
      for the purpose of not showing all heading objects in the TOC -->
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
   <a href="{{ toc_item.url }}" class="md-nav__link">
-    {{ toc_item.title }}
+    <span class="md-ellipsis">
+      {{ toc_item.title }}
+    </span>
   </a>
 
   <!-- Table of contents list -->
   {% if toc_item.children and toc_item.level < 3 %}
-    <nav class="md-nav" aria-label="{{ toc_item.title }}">
+    <nav class="md-nav" aria-label="{{ toc_item.title | striptags }}">
       <ul class="md-nav__list">
         {% for toc_item in toc_item.children %}
-          {% include "partials/toc-item.html" %}
+          {% include "partials/toc_item.html" %}
         {% endfor %}
       </ul>
     </nav>
