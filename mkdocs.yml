@@ -2,7 +2,7 @@ INHERIT: ./node_modules/@appium/docutils/base-mkdocs.yml
 site_name: Appium XCUITest Driver
 repo_url: https://github.com/appium/appium-xcuitest-driver
 repo_name: appium/appium-xcuitest-driver
-copyright: Copyright &copy; 2012 OpenJS Foundation
+copyright: Copyright &copy; 2012 OpenJS Foundation - <a href="#__consent">Change cookie settings</a>
 site_url: https://appium.github.io/appium-xcuitest-driver
 edit_uri: edit/master/docs
 site_description: Documentation for the Appium XCUITest driver for iOS automation
@@ -12,8 +12,6 @@ theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
   custom_dir: docs/overrides
-  features:
-    - navigation.tabs
 extra_css:
   - assets/stylesheets/extra.css
 extra:
@@ -37,10 +35,10 @@ nav:
       - ios-predicate.md
       - parallel-tests.md
       - execute-methods.md
+      - commands.md
       - clipboard.md
       - touch-id.md
       - troubleshooting.md
-      - reference/commands/appium-xcuitest-driver.md
   - Guides:
       - Improve session startup performance:
           - run-preinstalled-wda.md
@@ -55,3 +53,8 @@ nav:
       - audio-capture.md
       - ios-xctest-file-movement.md
       - ios-xctest-install-certificate.md
+
+plugins:
+  redirects:
+    redirect_maps:
+      'reference/commands/appium-xcuitest-driver.md': 'commands.md'
