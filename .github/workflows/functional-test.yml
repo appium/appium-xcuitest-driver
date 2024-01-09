@@ -79,6 +79,7 @@ jobs:
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
+          --log-timestamp \
           --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
         sleep 5
         popd
