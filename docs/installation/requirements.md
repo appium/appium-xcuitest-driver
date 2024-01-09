@@ -53,6 +53,7 @@ is compatible with such Xcode/iOS versions:
 
 | Xcode/iOS version | Minimum required XCUITest driver version |
 | --- | --- |
+| Xcode 13 / iOS 15 | 3.48.0 |
 | Xcode 14-beta.3 / iOS 16 Beta | 4.7.4 |
 | Xcode 14.3 / iOS 16.4 | 4.21.7 |
 | Xcode 15 / iOS 17 | 4.35.0 |
@@ -63,7 +64,7 @@ versions that are no longer supported by the XCUITest driver, along with the mos
 version that _does_ still supports them. The general aim is to support at least the _current major_
 platform version and the _previous major_ one.
 
-| Xcode/iOS version | Latest compatible XCUITest driver version |
+| Xcode/iOS version | Last compatible XCUITest driver version |
 | --- | --- |
 | Xcode 8 / iOS 10 | 2.95.0 |
 | Xcode 9 / iOS 11 | 2.133.1 |
