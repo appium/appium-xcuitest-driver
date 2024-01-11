@@ -2,16 +2,16 @@
 title: Run Preinstalled WebDriverAgentRunner
 ---
 
-XCUITest driver can launch preinstalled WebDriverAgent directly against a real device.
-It lets you start a XCUITest driver session without the `xcodebuild` command execution to improve the session startup performance.
+The XCUITest driver can be configured to launch an already-installed `WebDriverAgentRunner-Runner`
+application (WDA) on a real device. This allows you to start a session without the `xcodebuild`
+command execution, improving the session startup performance.
 
-> **Note**
-> This method does not work for iOS 17/tvOS 17 environment for now due to platform changes.
-> Please use the `xcodebuild` method.
+!!! warning
 
-## For Real Devices
+    This method currently does not work for iOS 17/tvOS 17 due to platform changes. Please use the
+    default `xcodebuild` approach.
 
-### Capabilities
+## Capabilities
 
 - Required
     - [`appium:usePreinstalledWDA`](../reference/capabilities.md#webdriveragent)
@@ -19,12 +19,36 @@ It lets you start a XCUITest driver session without the `xcodebuild` command exe
     - [`appium:updatedWDABundleId`](../reference/capabilities.md#webdriveragent)
     - [`appium:prebuiltWDAPath`](../reference/capabilities.md#webdriveragent)
 
-### Example steps with Xcode
+## Install WebDriverAgent
 
-1. Run `WebDriverAgentRunner` scheme with Xcode as Test and stop it
-    - Please read [Install WebDriverAgent With Xcode](#with-xcode) below
-2. Start an Appium server process
-3. Start a XCUITest driver session with the capabilities below:
+### Using Xcode
+
+Running a test for the WDA package in Xcode is the easiest way to prepare the device environment:
+
+1. Open WebDriverAgent project in Xcode
+    - You can run `appium driver run xcuitest open-wda` if using XCUITest driver 4.13 or newer
+2. Select the _WebDriverAgentRunner_ scheme 
+3. Select the scheme as _Product -> Scheme -> WebDriverAgentRunner_ (or _WebDriverAgentRunner\_tvOS_ for tvOS)
+4. Select your device in _Product -> Destination_
+5. Select _Product -> Test_ to build and install the WDA app
+
+If using a real device, you may need to change your bundle ID. Please check the
+[Full Manual Provisioning Profile setup](../preparation/prov-profile-full-manual.md) for details.
+
+### Using 3rd Party Tools
+
+Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy),
+[go-ios](https://github.com/danielpaulus/go-ios) and
+[tidevice](https://github.com/alibaba/taobao-iphone-device) can install the WebDriverAgent package.
+
+The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
+directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
+The app can then be installed without `xcodebuild` using the 3rd party tools.
+
+## Launch the Session
+
+After installing the `WebDriverAgentRunner-Runner` application, you can start the Appium server
+and launch an XCUITest driver session with the specified capabilities:
 
 ```
 appium
@@ -45,60 +69,28 @@ driver = @core.start_driver
 driver.quit
 ```
 
-If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAgentRunner.xctrunner` bundle id, the session will launch the WebDriverAgent process without xcodebuild.
+If the `<udid>` device has a WebDriverAgent package with `com.appium.WebDriverAgentRunner.xctrunner`
+bundle ID, the session will launch the WebDriverAgent process without `xcodebuild`.
 
-> **Note**
-> Please ensure that the WebDriverAgent-Runner application is launchable before starting a XCUITest driver session.
-> For example, whether the provisioning profile is trusted by the system.
+!!! note
 
-### Install WebDriverAgent
+    Please ensure that the WDA application is launchable before starting an XCUITest driver session.
+    For example, check whether the provisioning profile is trusted.
 
-#### With Xcode
+## Set `appium:prebuiltWDAPath`
 
-Running test of [WebDriveragent](https://github.com/appium/WebDriverAgent) package with Xcode is the easiest way to prepare the device environment.
-The steps are:
+If the `appium:prebuiltWDAPath` capability is provided with a properly signed
+`WebDriverAgentRunner-Runner.app` test bundle, the XCUITest driver will install the application and
+launch it every test session. Test bundles cannot be versioned using `CFBundleVersion` as vanilla
+applications do, which is why it is necessary to (re)install them for every test session.
 
-1. Open WebDriverAgent project in Xcode
-    - `appium driver run xcuitest open-wda` command after installing XCUITest driver may help
-2. Select `WebDriverAgentRunner` scheme
-    - `WebDriverAgentRunner_tvOS` for tvOS
-4. Chose the target device
-5. Run test via `Product` -> `Test` from the menu bar
-
-Please read [Real Device Configuration tutorial](../preparation/real-device-config.md) to configure the WebDriverAgent package for a real device before the step 4.
-
-If it is a non-paid account by `appium` user name, the bundle id would have `com.appium` prefix.
-Then, the WebDriverAgent-Runner's bundle id could be `com.appium.WebDriverAgentRunner` for example.
-`appium:updatedWDABundleId` value should be `com.appium.WebDriverAgentRunner` then.
-The test bundle by Xcode will be `com.appium.WebDriverAegnt.xctrunner`.
-
-> **Note**
-> Versions of Xcode older than 11 have a different naming convention. This feature does not work for a package which is built by Xcode versions below 12.
-
-> **Note**
-> Please make sure that the installed `WebDriverAgentRunner-Runner` application is still launchable if the XCUITest driver session startup still fails by providing a correct WebDriverAgent bundle identifier.
-> For example, non-paid account has limited period to keep the provisiong profile valid. Sometimes it is necessary to reinstall WebDriverAgentRunner-Runner once, or to restart the device.
-
-#### With 3rd party tools
-
-Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and [tidevice](https://github.com/alibaba/taobao-iphone-device) can install the built WebDriverAgent package.
-
-`WebDriverAgentRunner-Runner.app` package may exist in a `derivedDataPath` directory as explained in [Real Device Configuration tutorial](../preparation/real-device-config.md).
-The `WebDriverAgentRunner-Runner.app` can be installed without xcodebuild with the 3rd party tools.
-
-
-### Set `appium:prebuiltWDAPath`
-
-If `appium:prebuiltWDAPath` is provided with a properly signed `WebDriverAgentRunner-Runner.app` test bundle (please check [Real Device Configuration tutorial](../preparation/real-device-config.md)), XCUITest driver will install the application and launch it every test session.
-Test bundles cannot be versioned using `CFBundleVersion` as vanilla applications do. That is why it is necessary to (re)install them for every test session.
-
-Usually you can find the actual WebDriverAgentRunner application bundle at the below location if you use Xcode to build it.
+Usually you can find the WDA application bundle at the below location if you use Xcode to build it.
 
 ```
 ~/Library/Developer/Xcode/DerivedData/WebDriverAgent-<random string>/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app
 ```
 
-Then, the capabilities will be:
+You can then set your Appium capabilities as follows:
 
 ```ruby
 # Ruby
@@ -115,11 +107,15 @@ driver = @core.start_driver
 driver.quit
 ```
 
-> **Note**
-> As of iOS 17, the testmanagerd service name has changed to `com.apple.dt.testmanagerd.runner` from `com.apple.testmanagerd`.
-> It causes an unexpected WDA process crash with embedded XCTest frameworks while running a single WebDriverAgent package on various OS environments without `xcodebuild`.
-> Since appium-webdriveragent v5.10.0, the WDA module can refer to the device's local XCTtest frameworks.
-> It lets the Appium/WebDriverAgent package use proper dependencies for the device with a single prebuilt WebDriverAgent package.
-> To achieve the system reference, you should remove the package internal's frameworks as below from the `WebDriverAgentRunner-Runner.app`
-> with `rm -rf WebDriverAgentRunner-Runner.app/Frameworks/XC*.framework`.
-> The same package is available from https://github.com/appium/WebDriverAgent/releases
+!!! note
+
+    As of iOS 17, the testmanagerd service name has changed from `com.apple.testmanagerd` to
+    `com.apple.dt.testmanagerd.runner`. It causes an unexpected WDA process crash with embedded
+    XCTest frameworks while running a single WebDriverAgent package on various OS environments
+    without `xcodebuild`.
+    
+    Since WDA v5.10.0, the module can refer to the device's local XCTest frameworks. It lets the
+    Appium/WebDriverAgent package use proper dependencies for the device with a single prebuilt
+    WebDriverAgent package. To set this up, you should remove the package internal frameworks from
+    `WebDriverAgentRunner-Runner.app` with `rm -rf WebDriverAgentRunner-Runner.app/Frameworks/XC*.framework`.
+    The WDA package itself is available from <https://github.com/appium/WebDriverAgent>.

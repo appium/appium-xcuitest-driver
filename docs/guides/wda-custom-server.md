@@ -1,58 +1,44 @@
 ---
-title: Manage WebDriverAgent by yourself
+title: Manage WebDriverAgent by Yourself
 ---
 
-Appium for iOS uses [WebDriverAgent](https://github.com/appium/WebDriverAgent)
-as the automation backend. This backend is based on Apple's XCTest framework and shares all the
-known problem that are present in XCTest. For some of them we have workarounds, but there
-are some that are hardly possible to workaround, for example https://github.com/facebookarchive/WebDriverAgent/issues/507.
-The approach described in this article enables you to have full control over how WDA is built, managed,
-and run on the device. This way you may fine-tune your automated tests in CI environment and make them more stable in
-long-running perspective.
+The XCUITest driver uses [WebDriverAgent](https://github.com/appium/WebDriverAgent) (WDA) as the
+automation backend. This backend is based on Apple's XCTest framework and shares all the known
+problems that are present in XCTest. For some of them we have workarounds, but there are some that
+are hardly possible to workaround ([here is one example](https://github.com/facebookarchive/WebDriverAgent/issues/507)).
+The approach described in this article enables you to have full control over how WDA is built,
+managed, and run on the device. This way you may fine-tune your automated tests in a CI environment
+and make them more stable inlong-running perspective.
 
-Important points:
- * The steps below are not necessary if default Appium capabilities are used.
- The server will do everything for you, however you won't have so much control over WDA.
- * It is mandatory to have SSH or physical access to the machine to which the device under test
- is connected.
+!!! note
+
+    * The steps below are not necessary if default Appium capabilities are used. The server will do
+      everything for you, however, you will not have so much control over WDA.
+    * It is mandatory to have SSH or physical access to the machine to which the device under test
+      is connected.
 
 
 ### WDA Setup
 
-WebDriverAgent source is automatically downloaded as part of XCUITest driver package.
-`appium driver install xcuitest` installes the module in `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
-`APPIUM_HOME` is `~/.appium` by default.
+In order to setup and launch WDA, please check the provided steps in the
+[Run Preinstalled WDA](./run-preinstalled-wda.md#using-xcode) documentation.
 
-Real device requires some more work to be done. Follow
-[Real Device Configuration](../preparation/real-device-config.md)
-to setup code signing.
+### WDA Startup via Code
 
-In order to make sure that WDA source is configured properly:
+WebDriverAgent application acts as a REST server, which proxies external API requests to native
+XCTest calls for your application under test. The server address will be `localhost` if you run your
+tests on a simulator, or the actual phone IP address in case of real device. Appium uses
+[`appium-ios-device`](https://github.com/appium/appium-ios-device) to route network requests to a
+real device from `localhost` via USB, which means one can use this tool to unify the WDA network
+addresses for a simulator and real device.
 
-* Open `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj`
-in Xcode
-* Select _WebDriverAgentRunner_ project
-* Select your real phone/Simulator you'd like to run automated tests on as build target
-* Select Product->Test from the main menu
+You can use `appium-ios-device` to connect to a remote device by requiring the module from your
+JavaScript code. Alternatively, you can use [`iproxy`](https://github.com/libimobiledevice/libusbmuxd#iproxy),
+[`go-ios`](https://github.com/danielpaulus/go-ios) or [`tidevice`](https://github.com/alibaba/taobao-iphone-device)
+to handle the WDA process outside Appium, by installing and launching the WDA package. For instance,
+`iproxy` can be installed using `npm`: `npm install -g iproxy`.
 
-Xcode should successfully build the project and install it on the real device/Simulator,
-so you'll see the icon of WebDriverAgentRunner application on the springboard.
-
-
-### WDA Startup
-
-WebDriverAgent application acts as a REST server, which proxies external API requests to native XCTest calls
-for your application under test. The server address will be _localhost_ if you run your tests on Simulator
-or the actual phone IP address in case of real device. Appium uses [appium-ios-device](https://github.com/appium/appium-ios-device) to route network requests
-to a real device from _localhost_ via USB, which means one can use this tool to unify WDA network
-address for Simulator and for real device.
-
-You can use [appium-ios-device](https://github.com/appium/appium-ios-device) to connect to
-a remote device requiring the module from your JavaScript code as same as Appium.
-Alternatively, you can also use [iproxy](https://github.com/libimobiledevice/libusbmuxd#iproxy), [go-ios](https://github.com/danielpaulus/go-ios) or [tidevice](https://github.com/alibaba/taobao-iphone-device) to handle WebDriverAgent process outside Appium by installing and launching the WebDriverAgent package. For instance, `iproxy` could be installed using npm: `npm install -g iproxy`.
-
-This helper class written in Java illustrates the main implementation details
-wit _iproxy_:
+This helper class written in Java illustrates the main implementation details with `iproxy`:
 
 ```java
 public class WDAServer {
@@ -260,37 +246,38 @@ public class WDAServer {
 }
 ```
 
-One should call this piece of code before to start Appium iOS driver, for example, in setUp method:
+The following piece of code should then be called before starting the XCUITest driver:
 
 ```java
-   if (!WDAServer.getInstance().isRunning()) {
-       WDAServer.getInstance().restart();
-   }
+if (!WDAServer.getInstance().isRunning()) {
+    WDAServer.getInstance().restart();
+}
 ```
 
-It is important to set **webDriverAgentUrl** capability for Appium driver to let it know
-that our WDA driver is ready for use:
+It is important to set the `appium:webDriverAgentUrl` capability for the driver to let it know
+that WDA is ready for use:
 
 ```java
-    capabilities.setCapability("webDriverAgentUrl", WDAServer.SERVER_URL);
+capabilities.setCapability("webDriverAgentUrl", WDAServer.SERVER_URL);
 ```
-
 
 ### Important Notes
 
- * The process does not have direct access to keychain if it is executed by Jenkins agent,
- so we need to prepare keychain before compiling WDA for real device, otherwise codesigning will fail
- * We kill xcodebuild and iproxy processes before restart to make sure compilation succeeds even
- if these are frozen
- * We prepare a separate bash script and detach iproxy/xcodebuild processes, so they can continue
- running in background even after the actual code execution is finished. This is extremely important
- if multiple tests/suites are executed on the same machine/node in automation lab, which requires minimum
- human interaction
- * The value of _BUILD_ID_ environment variable is changed to avoid killing of the background process
- by Jenkins agent after the job is finished
- * _isRunning_ check is done by verifying the actual network endpoint
- * The output of daemonized processes is logged, so it is possible to track errors and unexpected failures.
- The content of the log files is automatically added to the actual error message if the server fails to (re)start.
- * Real device id can be parsed from `system_profiler SPUSBDataType` output
- * Simulator id can be parsed from `xcrun simctl list` output
- * _UrlChecker_ class is imported from org.openqa.selenium.net package
+* The process does not have direct access to keychain if it is executed by a continuous integration
+  agent, so the keychain must be prepated before compiling WDA for real device, otherwise
+  codesigning will fail. Check the [CI Setup](./ci-setup.md) documentation for details.
+* The `xcodebuild` and `iproxy` processes are killed before restart to make sure compilation
+  succeeds, in case the processes are frozen
+* A dedicated `bash` script is used to detach the `iproxy`/`xcodebuild` processes, so they can
+  continue running in background even after the actual code execution is finished. This is extremely
+  important if multiple tests/suites are executed on the same machine/node in automation lab, which
+  requires minimum human interaction
+* The value of the `BUILD_ID` environment variable is changed to avoid the CI agent killing the
+  background process after the job is finished
+* The `isRunning` check is done by verifying the actual network endpoint
+* The output of daemonized processes is logged, so it is possible to track errors and unexpected
+  failures. The content of the log files is automatically added to the actual error message if the
+  server fails to (re)start.
+* Real device id can be parsed from `system_profiler SPUSBDataType` output
+* Simulator id can be parsed from `xcrun simctl list` output
+* The `UrlChecker` class is imported from the `org.openqa.selenium.net` package

@@ -2,12 +2,15 @@
 title: Run Prebuilt WebDriverAgentRunner
 ---
 
+The XCUITest driver runs `xcodebuild` to build and install the WebDriverAgentRunner (WDA) app on the
+target device. You can manually run a modified version of this command in order to prebuild the WDA.
 
-`xcodebuild` has commands; `build-for-testing` and `test-without-building`.
-`build-for-testing` builds a test bundle package. `test-without-building` is to run it.
-Usually XCUITest driver runs both arguments in a new session creation to build the WebDriverAgentRunner application for testing, install it to a device and run it.
+## How `xcodebuild` Works
 
-For instance, XCUITest driver issues a `xcodebuild` command like below:
+By default, `xcodebuild` is run with two commands: `build-for-testing` and `test-without-building`.
+`build-for-testing` builds a test bundle package, whereas `test-without-building` actually runs it.
+
+For instance, XCUITest driver issues an `xcodebuild` command like so:
 
 ```
 xcodebuild build-for-testing test-without-building \
@@ -18,9 +21,10 @@ xcodebuild build-for-testing test-without-building \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-Then, the `xcodebuild` command builds the `WebDriverAgent.xcodeproj` and starts the built package for testing.
+This translates to `xcodebuild` building `WebDriverAgent.xcodeproj` and running the resulting
+package on the specified device.
 
-The command can split for `build-for-testing` part and `test-without-building` part as below:
+The command can be split into `build-for-testing` and `test-without-building` parts as follows:
 
 ```
 xcodebuild build-for-testing \
@@ -37,30 +41,36 @@ xcodebuild test-without-building \
   -destination "platform=iOS Simulator,name=iPhone 14 Pro"
 ```
 
-In the `build-for-testing` part, it generates `.app` package and `.xctestrun` file as below:
+* The `build-for-testing` command generates two files: an `.app` package and an `.xctestrun` file, e.g.:
 
-```
-wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
-                        /WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
-```
+    ```
+    wda_build/Build/Products/Debug-iphonesimulator/WebDriverAgentRunner-Runner.app
+    wda_build/Build/Products/WebDriverAgentRunner_iphonesimulator16.2-arm64.xctestrun
+    ```
 
-The `.xctestrun` file name depends on the `-destination` preference. The file has metadata about the package.
+    The `.xctestrun` file name depends on the `-destination` preference. The file contains metadata
+    about the package (the `DependentProductPaths` key).
 
-In the `test-without-building` part, it starts the WebDriverAgentRunner application for testing by referencing the given `.xctestrun`.
-The file has `DependentProductPaths` key to manage dependencies for `WebDriverAgentRunner-Runner.app` built by the `build-for-testing` for example.
+* The `test-without-building` command starts the WDA application for testing by referencing the
+  provided `.xctestrun` file. Once this is done, `http://localhost:8100` will be able to receive
+  commands for the target device.
 
-After succeeding in starting the WebDriverAgentRunner application for testing, `http://localhost:8100` will be accessible during the command running for _iPhone 14 Pro_ simulator.
+## Capabilities for Prebuilt WDA
 
-XCUITest driver provides `useXctestrunFile` and `bootstrapPath` capabilities to conduct the `test-without-building` command only.
-It will improve WebDriverAgentRunner application setup performance by skipping the `build-for-testing`.
+The XCUITest driver provides two capabilities that allow skipping the `build-for-testing` command,
+and executing only the `test-without-building` command: __`appium:useXctestrunFile`__ and
+__`appium:bootstrapPath`__ (see [Capabilities](../reference/capabilities.md#webdriveragent)).
 
-This method can use both real devices and simulators, but the real device requires proper signing as [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md).
+!!! note
 
-We would recommend to use `useXctestrunFile` for real devices since the above `test-without-building` needs to install the WebDriverAgentRunner package every session creation but the `useXctestrunFile` does not.
+    These capabilities expect that the WDA files are already prebuild, so make sure to first run
+    `xcodebuild` to create the files.
 
-## How to use `appium:useXctestrunFile` and `appium:bootstrapPath` capabilities
+This method can be used on both real devices and simulators, but real devices requires proper
+signing as described in [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md).
+We recommend using this method for real devices.
 
-Based on the above case, the usage of `useXctestrunFile` and `bootstrapPath` will be:
+The capabilities can be used as follows:
 
 ```json
 {
@@ -73,14 +83,17 @@ Based on the above case, the usage of `useXctestrunFile` and `bootstrapPath` wil
 }
 ```
 
-We haven't tested all possible combinations, but probably the target device could be anything.
+Not all combinations have been tested, but the target device can probably be anything.
 
-The same thing could achieve with `derivedDataPath` and `usePrebuiltWDA` capabilities, but it may fail if the `xcodebuild` cannot find or handle the `.xctestrun` properly.
-The stability depends on Xcode.
+The same thing can be achieved with the `appium:derivedDataPath` and `appium:usePrebuiltWDA`
+capabilities, but this may fail if `xcodebuild` cannot find or handle the `.xctestrun` file
+properly. The stability depends on Xcode.
 
-## Download prebuilt WebDriverAgent from GitHub appium/WebDriverAgent repository
+## Download Prebuilt WDA
 
-[GitHub releases](https://github.com/appium/WebDriverAgent/releases) allows you to get each WebDriverAgent package for real devices.
-They do not have embedded XCTest frameworks.
+[The Appium WebDriverAgent GitHub page](https://github.com/appium/WebDriverAgent/releases) provides
+downloads for WebDriverAgent packages for real devices. They do not have embedded XCTest frameworks.
 
-[Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml) workflows help to check the script to build them.
+The [Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and
+[Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml)
+workflows may help with validating the build script.

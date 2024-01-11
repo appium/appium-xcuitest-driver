@@ -15,8 +15,8 @@ and is _not_ recommended:
   ```
 * Open `WebDriverAgent.xcodeproj` in Xcode. This will likely open a screen with an empty editor.
 * In the file browser on the left side, select the root _WebDriverAgent_ project, which will open
-  it in the editor. Then, under _Targets_, select _WebDriverAgentRunner_, and switch to the
-  _Signing & Capabilities_ tab.
+  it in the editor. Then, under _Targets_, select _WebDriverAgentRunner_ (or
+  _WebDriverAgentRunner\_tvOS_ for tvOS), and switch to the _Signing & Capabilities_ tab.
 * Check _Automatically manage signing_, and then select your _Team_ (you may need to first sign
   into Xcode). The outcome should be similar to the following:
 
@@ -30,6 +30,11 @@ and is _not_ recommended:
   will accept. You can also do this in the _Build Settings_ tab:
 
     ![Xcode bundle id](./assets/images/xcode-bundle-id.png)
+  
+!!! note
+
+    Versions of Xcode older than 11 have a different naming convention. This feature may not work
+    for a package which is built by Xcode versions below 12.
 
 * If your bundle identifier is accepted, you should see that Xcode has created a provisioning
   profile and all is well:
@@ -37,9 +42,9 @@ and is _not_ recommended:
     ![Xcode provisioning profile](./assets/images/xcode-facebook-succeed.png)
 
 * Finally, you can verify that everything works:
-    * Select the scheme as `Product -> Scheme -> WebDriverAgentRunner`
-    * Select your real device in `Product -> Destination`
-    * Select `Product -> Test` to build and install the WDA app
+    * Select the scheme as _Product -> Scheme -> WebDriverAgentRunner_
+    * Select your real device in _Product -> Destination_
+    * Select _Product -> Test_ to build and install the WDA app
 
 Proceed with [Validating the WDA Install](./real-device-config.md#validating-the-wda-install) for
 the next steps!
