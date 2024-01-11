@@ -267,7 +267,7 @@ applicationType | string | no | The type of applications to list. Either `System
 
 #### Returned Result
 
-A list of apps, where each item is a map where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports files upload and download into its `documents` container. Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
+A list of apps, where each item is a map where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports files upload and download into its `documents` container. Read the [File Transfer](../guides/file-transfer.md) guide for more details.
 
 ### mobile: clearApp
 
@@ -632,7 +632,7 @@ Pulls a remote file from the device.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-remotePath | string | yes | The path to an existing remote file on the device. This variable can be prefixed with bundle id, so then the file will be pulled from the corresponding application container instead of the default media folder. Use `@<app_bundle_id>:<optional_container_type>/<path_to_the_file_or_folder_inside_container>` format to pull a file from an application container of the given type. The only supported container type for real devices is `documents`. You could use [listApps](#mobile-listapps) extension to check whether this container is available for the particluar app. Containers available for Simulators: `app`, `data`, `groups`, `<A specific App Group container>`. Eventually the whole Simulator file system is [available](https://stackoverflow.com/questions/6480607/is-there-any-way-to-see-the-file-system-on-the-ios-simulator) directly from Finder, so you may pull any file from there by providing a path to it relatively to Simulator's file system root. If the file with the given name does not exist an exception will be thrown. | @com.mycompany.myapp:documents/myfile.txt
+remotePath | string | yes | The path to an existing remote file on the device. See the [File Transfer](../guides/file-transfer.md) guide for accepted formats. If the file with the given name does not exist an exception will be thrown. | @com.mycompany.myapp:documents/myfile.txt
 
 #### Returned Result
 
