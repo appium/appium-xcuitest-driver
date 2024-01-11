@@ -1,17 +1,33 @@
 ---
+hide:
+  - toc
+
 title: Touch ID
 ---
 
-Appium has the capability to simulate [Touch ID](https://support.apple.com/en-ca/HT201371) on iOS Simulators.
+The XCUITest driver has the capability to simulate [Touch ID](https://support.apple.com/en-ca/HT201371).
 
-### Support
-* TouchID simulation is only supported in iOS Simulators. It is not possible to simulate touchId on real devices.
-* Not all iOS devices have touchId so your tests should handle the case where touchId is not supported
+!!! note
 
-### Configuration
-* To use touchId, the application that Appium launches from (such as Terminal, AppiumDesktop, or iTerm) must be added to the accessibility preferences on your Mac. Navigate to `System Preferences > Security & Privacy > Accessibility` and under `Allow the apps below to control your computer` add the application. (The only way Appium can enable enrollment and toggling of Touch ID is to use system-level accessibility APIs to simulate mouse clicks on the Simulator menus via AppleScript. For this reason this feature requires that you give Appium's running context access to these accessibility APIs).
+    This functionality is only supported on simulators.
 
-### Usage
-* Set the desired capability `allowTouchIdEnroll` to true.
-* When the Simulator starts, touch id enrollment will be enabled by default.
-* You can toggle touchId enrollment by calling the client method associated with the endpoint /session/:sessionId/appium/simulator/toggle_touch_id_enrollment
+## Configuration
+
+To use Touch ID, the application that Appium launches from (Terminal, iTerm, etc.) must be added to
+the accessibility preferences on your Mac. Navigate to _System Preferences -> Privacy & Security ->
+Accessibility_ and under _Allow the apps below to control your computer_ add the application.
+
+Why this is needed: The only way Appium can enable enrollment and toggling of Touch ID is to use
+system-level accessibility APIs to simulate mouse clicks on the simulator menus via AppleScript.
+
+## Usage
+
+* Set the capability `appium:allowTouchIdEnroll` to `true`.
+* When the Simulator starts, Touch ID enrollment will be enabled by default
+* You can toggle Touch ID enrollment by calling the
+  [`mobile: enrollBiometric`](../reference/execute-methods.md#mobile-enrollbiometric) extension
+
+!!! note
+
+    Remember that not all iOS devices have Touch ID, so your tests should handle cases where
+    Touch ID is not supported.
