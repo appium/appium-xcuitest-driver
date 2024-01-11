@@ -43,7 +43,7 @@ least, you must know the local path to the project file - `WebDriverAgent.xcodep
   By default, drivers are installed in `~/.appium`, so the project would be located at
   `~/.appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj`.
 * If using XCUITest driver v4.13.0 or newer, you can run the `appium driver run xcuitest open-wda`
-  driver script to directly open `WebDriverAgent.xcodeproj` in Xcode.
+  [driver script](../reference/scripts.md) to directly open `WebDriverAgent.xcodeproj` in Xcode.
 
 The WDA project file can now be used in the manual configuration approaches:
 

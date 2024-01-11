@@ -20,7 +20,7 @@ In addition to Appium system requirements, the XCUITest driver expects the follo
     - The Appium team usually needs some time to add support for the most recent Xcode/iOS versions,
       especially beta versions (check the [Xcode/iOS version support](#xcodeios-version-support) section)
 - If automating real devices, additional manual configuration is required. Please check the
-  [Device Preparation](../preparation/index.md#real-devices) document for more details.
+  [Real Device Configuration](../preparation/real-device-config.md) document for more details.
 - Webviews must be debuggable in order to test them. If it is not possible to connect to your
   webview(s) using [Safari remote debugger](https://appletoolbox.com/use-web-inspector-debug-mobile-safari/),
   then the driver will not be able to identify them.
