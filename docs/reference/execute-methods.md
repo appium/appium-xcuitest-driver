@@ -1383,6 +1383,34 @@ Name | Type | Required | Description | Example
 elementId | string | no | Unique identifier of the element to send the keys to. If unset then keys are sent to the current application under test. | 21045BC8-013C-43BD-9B1E-4C6DC7AB0744
 keys | array | yes | Array of keys to type. Each item could either be a string, that represents a key itself (see the official documentation on XCUIElement's [typeKey:modifierFlags: method](https://developer.apple.com/documentation/xctest/xcuielement/1500604-typekey?language=objc) and on [XCUIKeyboardKey constants](https://developer.apple.com/documentation/xctest/xcuikeyboardkey?language=objc)) or a dictionary with `key` and `modifierFlags` entries, if the key should also be entered with modifiers. | ['h', 'i'] or [{key: 'h', modifierFlags: 1 << 1}, {key: 'i', modifierFlags: 1 << 2}] or ['XCUIKeyboardKeyEscape'] |
 
+!!! note
+
+    The `modifierFlags` argument is of `unsigned long` type and defines the bitmask with depressed modifier keys for the given key.
+    XCTest defines the following possible bitmasks for modifier keys:
+    
+    <pre>
+    typedef NS_OPTIONS(NSUInteger, XCUIKeyModifierFlags) {
+       XCUIKeyModifierNone       = 0,
+       XCUIKeyModifierCapsLock   = (1UL << 0),
+       XCUIKeyModifierShift      = (1UL << 1),
+       XCUIKeyModifierControl    = (1UL << 2),
+       XCUIKeyModifierOption     = (1UL << 3),
+       XCUIKeyModifierCommand    = (1UL << 4),
+       XCUIKeyModifierFunction   = (1UL << 5),
+       // These values align with UIKeyModifierFlags and CGEventFlags.
+       XCUIKeyModifierAlphaShift = XCUIKeyModifierCapsLock,
+       XCUIKeyModifierAlternate  = XCUIKeyModifierOption,
+    };
+    </pre>
+
+    So, for example, if you want Ctrl and Shift to be depressed while entering your key then `modifierFlags` should be set to
+    `(1 << 1) | (1 << 2)`, where the first constant defines `XCUIKeyModifierShift` and the seconds
+    one - `XCUIKeyModifierControl`. We apply the [bitwise or](https://www.programiz.com/c-programming/bitwise-operators#or)
+    (`|`) operator between them to raise both bitflags
+    in the resulting value. The [left bitshift](https://www.programiz.com/c-programming/bitwise-operators#left-shift)
+    (`<<`) operator defines the binary bitmask for the given modifier key.
+    You may combine more keys using the same approach.
+
 ### mobile: lock
 
 Lock the device (and optionally unlock it after a certain amount of time). Only simple (e.g. without a password) locks are supported.

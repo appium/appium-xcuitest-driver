@@ -1,3 +1,10 @@
+## [5.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.1...v5.13.2) (2024-01-09)
+
+
+### Bug Fixes
+
+* **docs:** adjust docs for @appium/docutils 1.0.2 ([#2293](https://github.com/appium/appium-xcuitest-driver/issues/2293)) ([e3312b4](https://github.com/appium/appium-xcuitest-driver/commit/e3312b404540f0bcfb324816d003a7c513720f7d))
+
 ## [5.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.0...v5.13.1) (2024-01-07)
 
 
