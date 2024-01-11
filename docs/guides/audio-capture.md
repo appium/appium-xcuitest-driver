@@ -8,10 +8,10 @@ which could be then retrieved on the client side. Apple does not provide any API
 retrieve the audio stream from a Simulator or a real device, but it is possible to redirect that
 stream to the host machine, where it could be captured.
 
-- [mobile: startAudioRecording](../reference/execute-methods.md#mobile-startaudiorecording)
-- [mobile: stopAudioRecording](../reference//execute-methods.md#mobile-stopaudiorecording)
+* [`mobile: startAudioRecording`](../reference/execute-methods.md#mobile-startaudiorecording)
+* [`mobile: stopAudioRecording`](../reference//execute-methods.md#mobile-stopaudiorecording)
 
-### Server Requirements
+## Server Requirements
 
 - The host machine must have [`ffmpeg`](https://www.ffmpeg.org/download.html) installed and added to PATH.
   It can be installed via [`brew`](https://brew.sh/): `brew install ffmpeg`.
@@ -27,7 +27,7 @@ stream to the host machine, where it could be captured.
   [the Appium documentation on Security](https://appium.io/docs/en/latest/guides/security/) for more details.
   The feature name is `audio_record`.
 
-### Simulator Setup
+## Simulator Setup
 
 The following steps are necessary to setup iOS Simulator audio capture:
 
@@ -46,8 +46,7 @@ The following steps are necessary to setup iOS Simulator audio capture:
   After 5 seconds, a file named `out.mp4` should be created on your desktop, containing the recorded
   audio stream.
 
-
-### Real Device Setup
+## Real Device Setup
 
 The following steps are necessary to setup iOS Real Device audio capture:
 
@@ -72,8 +71,7 @@ The following steps are necessary to setup iOS Real Device audio capture:
 
     Apple does not allow phone calls to be redirected this way. You can only record application or system sounds.
 
-
-### Further Reading
+## Further Reading
 
 * <https://github.com/appium/appium-xcuitest-driver/pull/1207>
 * <https://www.macobserver.com/tips/quick-tip/iphone-audio-input-mac/>
