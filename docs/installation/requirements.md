@@ -46,10 +46,15 @@ as well as various optional ones needed by driver extensions by running the
 
 ## Xcode/iOS Version Support
 
-Apple regularly updates the XCTest framework (which is used by the XCUITest driver) and publishes
-the changes with Xcode and iOS. Many major and even some minor iOS versions include breaking changes
-in the XCTest API. The following table specifies the minimum required XCUITest driver version that
-is compatible with such Xcode/iOS versions:
+The XCUITest driver functionality [relies on the XCTest framework](../overview.md), and changes in
+the XCTest API are published in new Xcode and iOS versions. Many major and even some minor Xcode/iOS
+versions include breaking changes in this API, which require updating the driver code. Similarly,
+maintaining compatibility with older Xcode/iOS versions often requires workarounds, which are
+eventually dropped in order to simplify the code and use newer XCTest features.
+
+Generally, the driver aims to support at least _two_ latest major Xcode and iOS versions.
+
+The following table lists the minimum driver versions required for specific Xcode/iOS versions:
 
 | Xcode/iOS version | Minimum required XCUITest driver version |
 | --- | --- |
@@ -58,17 +63,19 @@ is compatible with such Xcode/iOS versions:
 | Xcode 14.3 / iOS 16.4 | 4.21.7 |
 | Xcode 15 / iOS 17 | 4.35.0 |
 
-Eventually, in order to simplify the client code and to have access to newer platform features, the
-Appium team drops supports for legacy XCTest implementations. The following table lists Xcode/iOS
-versions that are no longer supported by the XCUITest driver, along with the most recent driver
-version that _does_ still supports them. The general aim is to support at least the _current major_
-platform version and the _previous major_ one.
+The following table lists the last driver versions that are compatible with older Xcode versions:
 
-| Xcode/iOS version | Last compatible XCUITest driver version |
+| Xcode version | Last supported XCUITest driver version |
 | --- | --- |
-| Xcode 8 / iOS 10 | 2.95.0 |
-| Xcode 9 / iOS 11 | 2.133.1 |
-| Xcode 10-10.1 / iOS 12-12.1 | 3.31.1 |
-| Xcode 10.2 / iOS 12.2 | 3.56.3 |
-| Xcode 11 / iOS 13 | 4.3.2 |
-| Xcode 12 / iOS 14 | 4.27.2 |
+| Xcode 8 | 2.95.0 |
+| Xcode 9  | 2.133.1 |
+| Xcode 10-10.1 | 3.31.1 |
+| Xcode 10.2 | 3.56.3 |
+| Xcode 11 | 4.3.2 |
+| Xcode 12 | 4.27.2 |
+
+The following table lists the last driver versions that are compatible with older iOS versions:
+
+| iOS version | Last supported XCUITest driver version |
+| --- | --- |
+| iOS < 15 | 4.27.2 |
