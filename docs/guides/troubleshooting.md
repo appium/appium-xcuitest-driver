@@ -2,41 +2,58 @@
 title: Troubleshooting
 ---
 
-## Known problems
+## Known Problems
 
-- After many failures on real devices it could transition to a state where connections are no longer being accepted. To possibly remedy this issue reboot the device. Read https://github.com/facebook/WebDriverAgent/issues/507 for more details.
-- iPhone/iPad real devices show overlay, which has `Automation Running Hold both volume buttons to stop` text, since iOS/iPadOS 15. This is a known limitation of XCTest framework. This limitation does not affect screenshooting APIs though (e.g. the overlay is not visible on taken screenshots).
-- iPhone/iPad real devices [require passcode or touch id](https://github.com/appium/appium/issues/15898#issuecomment-927340411) when they start a XCTest session since iOS/iPadOS 15. Disabling passcode/touch id in the device preference allows to workaround the behaviour above.
-- OpenSSL v3 breaks secure communication with real devices. It can cause a [Failed to receive any data within the timeout](https://github.com/appium/appium/issues/16399) error in [appium-ios-device](https://github.com/appium/appium-ios-device). Please read [this issue](https://github.com/appium/appium-ios-device/pull/88#discussion_r825315862) for more details.
-    - Please make sure your environment has Open SSL v1 for NodeJS environment, or prepare an OpenSSL v3 build by patching `OPENSSL_TLS_SECURITY_LEVEL=1`. (e.g. [an article](https://www.feistyduck.com/library/openssl-cookbook/online/ch-openssl.html))
-    - This configuration is only necessary for XCUITest driver v4.3.0 or lower.
+* Real devices with iOS/iPadOS 15+ show an overlay with the text `Automation Running Hold both
+  volume buttons to stop` while WebDriverAgent is running. This is a known limitation of the XCTest
+  framework. Note that screenshotting functionality is not affected (i.e. the overlay is not visible
+  on taken screenshots).
+* Real devices with iOS/iPadOS 15+ [require passcode or Touch ID](https://github.com/appium/appium/issues/15898#issuecomment-927340411)
+  when starting a new session. A workaround for this is to disable passcode/Touch ID on the device.
+* After many failures on a real device, it could transition to a state where connections are no
+  longer being accepted. Rebooting the device can help remedy this problem. Please read
+  [this issue](https://github.com/facebook/WebDriverAgent/issues/507) for more details.
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
 
+## Leftover Application Data on Real Devices
 
-## Clear the application local data explicitly for real devices
+There might be a situation where application data is present on the real device, even if the
+application itself is not installed. This could happen if:
 
-There might be a situation where application data is present on the real device although application itself is not installed. This could happen if:
-- The app is in [offload state](https://discussions.apple.com/thread/254887240)
+- The app is in an [offloaded state](https://discussions.apple.com/thread/254887240)
 - The application state is cached
-- There was an unexpected failure while installing the app. An example of such failure is the `ApplicationVerificationFailed` which happens while installing an app signed with an invalid provisioning profile.
+- There was an unexpected failure while installing the app. An example of such failure is the
+  `ApplicationVerificationFailed` which happens while installing an app signed with an invalid provisioning profile.
 
-Under the circumstances above the application identifier won't be listed in the [`mobile: listApps`](../reference/execute-methods.md#mobile-listapps) output neither deleted by [`mobile: isAppInstalled`](../reference/execute-methods.md#mobile-isappinstalled) command. Setting `appium:fullReset` or `appium:enforceAppInstall` capabilities to `true` won't help to clear this data too.
+In the above cases, the application identifier will not be listed in the output of
+[`mobile: listApps`](../reference/execute-methods.md#mobile-listapps), and it will not be detected
+by [`mobile: isAppInstalled`](../reference/execute-methods.md#mobile-isappinstalled). Setting
+`appium:fullReset` or `appium:enforceAppInstall` capabilities to `true` also will not help clear this data.
 
-The only way to completely get rid of the cached application data is to call the [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) command with the appropriate bundle identifier.
+The only way to completely get rid of the cached application data is to call the
+[`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) command with the appropriate
+bundle identifier.
 
-The driver automatically tries to resolve application installs that failed because of `MismatchedApplicationIdentifierEntitlement`, although, if you explicitly ask it to not perform the application uninstall then consider calling [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) beforehand `MismatchedApplicationIdentifierEntitlement` error occurs only when the previously installed application's provisioning profile is different from what currently the driver is trying to install.
+The driver does automatically try to resolve application installs that failed because of the
+`MismatchedApplicationIdentifierEntitlement` error. However, in cases when the previously installed
+application's provisioning profile is different from what currently the driver is trying to
+install, and if you explicitly set the driver to _not_ perform application uninstall, then consider
+calling [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) before the
+`MismatchedApplicationIdentifierEntitlement` error occurs. Example steps can be as follows:
 
-Below are example steps of the manual approach mentioned above:
-
-1. Start a session without `appium:app` and `appium:bundleId`
-2. Call [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) for the target application's bundle id
+1. Start a session without `appium:app` and `appium:bundleId` capabilities
+2. Call [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) for the target
+   application's bundle id
 3. Install the test target with [`mobile: installApp`](../reference/execute-methods.md#mobile-installapp)
-4. Launch the application with [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp) or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp)
+4. Launch the application with [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp)
+   or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp)
 
-## Weird state
+## Weird State
 
-### stop responding
-**Note:** Running `WebDriverAgent` tests on a real device is particularly flakey. If things stop responding, the only recourse is, most often, to restart the device. Logs in the form of the following _may_ start to occur:
+### Real Device Stops Responding
+
+Running tests on a real device is particularly flakey. If things stop responding, the only recourse
+is, most often, to restart the device. Logs in the form of the following _may_ start to occur:
 
 ```shell
 info JSONWP Proxy Proxying [POST /session] to [POST http://10.35.4.122:8100/session] with body: {"desiredCapabilities":{"ap..."
@@ -46,21 +63,26 @@ dbug WebDriverAgent Device: Jul 26 13:21:57 iamPhone XCTRunner[240] <Warning>: E
 dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: Enqueue Failure: UI Testing Failure - App state of (null) is still unknown <unknown> 0 1
 ```
 
-### Get a response after 60+ seconds after a session starts frequently
+### Command Takes 60+ Seconds
 
-Did you experience an additional 60 seconds of slow command response that usually should not take long?
+Sometimes it is possible to encounter slowdowns for an additional 60 seconds for a command that
+usually should not take long. This may be caused by a crash in the `testmanagerd` process on the
+device under test. In such case, the OS tries to restore the process, then wait for the resurrected
+daemon to connect to the target process, which causes the aforementioned delay.
 
+This can be fixed by terminating the target application process. For example, if this behavior
+occurs while calling `mobile: queryAppState`, you can terminate the application once, or restart the
+device entirely. Please check [this pull request](https://github.com/appium/WebDriverAgent/pull/774)
+for more details.
 
-It might be that the `testmanagerd` process on the device under test has crashed. In such case, the OS tries to restore it causing the above delay while waiting for the resurrected daemon is connecting to the target process.
-This can be fixed by terminating the target application process. For example, if this behavior occurs in `mobile: queryAppState` command call, you could terminate the application once, or restart the device entirely.
+## Real Device Security Settings
 
-Please check [WebDriverAgent#774 pull request](https://github.com/appium/WebDriverAgent/pull/774) for more details.
-
-## Real device security settings
-
-On some systems, especially CI ones, where tests are executed by a command line agents, macOS Accessibility restrictions make the `WebDriverAgent` system unable to retrieve the development keys from the system keychain. This is usually manifest
-by `xcodebuild` returning an error code `65`. A workaround for this is to use a private key that is not stored on the system
-keychain. See [this issue](https://github.com/appium/appium/issues/6955) and [this Stack Exchange post](http://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails).
+On some systems, especially CI ones, where tests are executed by command line agents, macOS
+Accessibility restrictions result in the WebDriverAgent process being unable to retrieve the
+development keys from the system keychain. This usually manifests by `xcodebuild` returning error
+code `65`. One workaround for this is to use a private key that is not stored on the system
+keychain. See [this issue](https://github.com/appium/appium/issues/6955) and
+[this Stack Exchange post](http://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails).
 
 To export the key, use
 
@@ -71,26 +93,29 @@ security import MyPrivateKey.p12 -t agg -k MyKeychain.keychain -P [p12_Password]
 
 where `MyPrivateKey.p12` is the private development key exported from the system keychain.
 
-The full path to the keychain can then be sent to the Appium system using the `keychainPath` desired capability,
-and the password sent through the `keychainPassword` capability.
-
+You can then use the [`appium:keychainPath`](../reference/capabilities.md#webdriveragent) and
+[`appium:keychainPassword`](../reference/capabilities.md#webdriveragent) capabilities to pass this
+keychain to WebDriverAgent.
 
 ## Simulator Resetting
 
-By default, this driver will create a new iOS simulator and run tests on it, deleting the simulator afterward.
+When testing on simulators, the driver tries to leave the simulator state as it found it:
 
-If you specify a specific simulator using the `udid` capability, this driver will boot the specified simulator and shut it down afterwards.
+* If no `udid` is provided, the driver will create a new iOS simulator, run tests on it, and then
+  delete the simulator
+* If a specific `udid` is provided for a simulator that _is not_ running, the driver will boot the
+  specified simulator, run tests on it, and then shut the simulator down
+* If a specific `udid` is provided for a simulator that _is_ running, the driver will connect to the
+  existing simulator, run tests, and then leave the simulator running
 
-If a udid is provided and the simulator is already running, this driver will leave it running after the test run.
+You can use the `appium:noReset` capability to adjust this behavior: setting it to `true` will
+leave the simulator running at the end of a test session.
 
-In short, this driver tries to leave things as it found them.
+## Caching Issues During Build
 
-You can use the `noReset` capability to adjust this behavior.
-Setting `noReset` to `true` will leave the simulator running at the end of a test session.
-
-## Delete files generated by test runs to avoid possible caching issue
-
-Testing on iOS generates files that can sometimes get large. These include logs, temporary files, and derived data from Xcode runs. Generally the following locations are where they are found, should they need to be deleted:
+Testing on iOS generates files that can sometimes get large. These include logs, temporary files,
+and derived data from Xcode runs, all of which are safe to delete if any issues arise. The files are
+usually found in the following locations, should they need to be deleted:
 
 ```
 $HOME/Library/Logs/CoreSimulator/*

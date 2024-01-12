@@ -173,7 +173,7 @@ Either `true` or `false`
 Removes the given application from the device under test.
 [Offloaded application](https://discussions.apple.com/thread/254887240) can also be removed.
 
-For real devices, please also check [how to explicitly clear the application local data](../guides/troubleshooting.md#clear-the-application-local-data-explicitly-for-real-devices).
+For real devices, please also check [how to explicitly clear the application local data](../guides/troubleshooting.md#leftover-application-data-on-real-devices).
 
 #### Arguments
 
