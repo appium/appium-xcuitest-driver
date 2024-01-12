@@ -69,6 +69,6 @@ platform version and the _previous major_ one.
 | Xcode 8 / iOS 10 | 2.95.0 |
 | Xcode 9 / iOS 11 | 2.133.1 |
 | Xcode 10-10.1 / iOS 12-12.1 | 3.31.1 |
-| Xcode 10.2 / iOS 12.2 | 3.56.1 |
+| Xcode 10.2 / iOS 12.2 | 3.56.3 |
 | Xcode 11 / iOS 13 | 4.3.2 |
 | Xcode 12 / iOS 14 | 4.27.2 |
