@@ -1,3 +1,10 @@
+## [5.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.2...v5.14.0) (2024-01-13)
+
+
+### Features
+
+* use Menu button for tvOS in driver.back ([#2299](https://github.com/appium/appium-xcuitest-driver/issues/2299)) ([b649a96](https://github.com/appium/appium-xcuitest-driver/commit/b649a96e2fe60cba2c229f32155ed6bcfc21afd3))
+
 ## [5.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.1...v5.13.2) (2024-01-09)
 
 
