@@ -19,7 +19,7 @@ Please note that most of the driver-specific functionality is available using
 `POST` **`/session/:sessionId/appium/device/get_clipboard`**
 
 Gets the content of the primary clipboard on the device under test.
-See [Get/Set Clipboard](../guides//clipboard.md) for more details
+See [Get/Set Clipboard](../guides/clipboard.md) for more details
 
 #### Arguments
 
@@ -39,7 +39,7 @@ clipboard contains no data.
 `POST` **`/session/:sessionId/appium/device/set_clipboard`**
 
 Sets the primary clipboard's content on the device under test.
-See [Get/Set Clipboard](../guides//clipboard.md) for more details
+See [Get/Set Clipboard](../guides/clipboard.md) for more details
 
 #### Arguments
 
