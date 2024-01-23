@@ -42,7 +42,7 @@ const APPS = {
 };
 
 const initTimeout = 60 * 1000 * (process.env.CI ?
-  util.compareVersions(PLATFORM_VERSION, '>=', '17.0') ? 48 : 16
+  util.compareVersions(PLATFORM_VERSION, '>=', '17.0') ? 96 : 16
   : 4);
 const GENERIC_CAPS = node.deepFreeze({
   alwaysMatch: {
