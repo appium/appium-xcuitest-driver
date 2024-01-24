@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {UICATALOG_CAPS, amendCapabilities} from '../desired';
+import {UICATALOG_CAPS, UICATALOG_BUNDLE_ID, amendCapabilities} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
@@ -30,6 +30,12 @@ describe('XCUITestDriver - gestures', function () {
       });
     });
     after(async function () {
+      try {
+        await driver.terminateApp(UICATALOG_BUNDLE_ID);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      }
       await deleteSession();
     });
     afterEach(async function () {

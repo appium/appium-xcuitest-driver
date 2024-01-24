@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {amendCapabilities, UICATALOG_CAPS, UICATALOG_BUNDLE_ID} from '../desired';
 import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.should();
@@ -17,6 +17,12 @@ describe('XCUITestDriver - alerts -', function () {
     driver = await initSession(caps);
   });
   after(async function () {
+    try {
+      await driver.terminateApp(UICATALOG_BUNDLE_ID);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
     await deleteSession();
   });
 

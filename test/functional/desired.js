@@ -106,6 +106,8 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:deviceName': 'Apple TV',
 });
 
+const UICATALOG_BUNDLE_ID = 'com.example.apple-samplecode.UICatalog';
+
 export {
   UICATALOG_CAPS,
   UICATALOG_SIM_CAPS,
@@ -120,6 +122,7 @@ export {
   TVOS_CAPS,
   MULTIPLE_APPS,
   GENERIC_CAPS,
+  UICATALOG_BUNDLE_ID,
   amendCapabilities,
   extractCapabilityValue,
 };

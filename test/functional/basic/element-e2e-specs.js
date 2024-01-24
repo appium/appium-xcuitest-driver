@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {extractCapabilityValue, amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {extractCapabilityValue, amendCapabilities, UICATALOG_CAPS, UICATALOG_BUNDLE_ID} from '../desired';
 import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
 
@@ -19,6 +19,12 @@ describe('XCUITestDriver - elements -', function () {
     driver = await initSession(caps);
   });
   after(async function () {
+    try {
+      await driver.terminateApp(UICATALOG_BUNDLE_ID);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
     await deleteSession();
   });
 

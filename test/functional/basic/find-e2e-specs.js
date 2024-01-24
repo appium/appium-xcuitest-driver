@@ -7,6 +7,7 @@ import {
   extractCapabilityValue,
   amendCapabilities,
   UICATALOG_CAPS,
+  UICATALOG_BUNDLE_ID,
   PLATFORM_VERSION,
 } from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
@@ -33,6 +34,12 @@ describe('XCUITestDriver - find -', function () {
     driver = await initSession(caps);
   });
   after(async function () {
+    try {
+      await driver.terminateApp(UICATALOG_BUNDLE_ID);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
     await deleteSession();
   });
 

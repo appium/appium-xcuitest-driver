@@ -4,7 +4,7 @@ import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
 import {retryInterval} from 'asyncbox';
-import {amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {amendCapabilities, UICATALOG_CAPS, UICATALOG_BUNDLE_ID} from '../desired';
 import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
@@ -22,6 +22,12 @@ describe('XCUITestDriver - basics -', function () {
     driver = await initSession(caps);
   });
   after(async function () {
+    try {
+      await driver.terminateApp(UICATALOG_BUNDLE_ID);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
     await deleteSession();
   });
 
