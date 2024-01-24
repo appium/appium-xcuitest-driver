@@ -41,9 +41,7 @@ const APPS = {
   biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app'), // https://github.com/mwakizaka/LocalAuthentication
 };
 
-const initTimeout = 60 * 1000 * (process.env.CI ?
-  util.compareVersions(PLATFORM_VERSION, '>=', '17.0') ? 96 : 16
-  : 4);
+const initTimeout = 60 * 1000 * (process.env.CI ? 16 : 4);
 const GENERIC_CAPS = node.deepFreeze({
   alwaysMatch: {
     platformName: 'iOS',
