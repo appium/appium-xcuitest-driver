@@ -50,18 +50,21 @@ async function deleteSession() {
   }
 }
 
-function hasDefaultPrebuiltWDA() {
-  return didBuildWda;
-}
-
 async function getUsePrebuiltWDACaps() {
-  const caps = {
-    'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA()
-  };
-  if (didBuildWda) {
-    caps['appium:derivedDataPath'] = await getDerivedDataPath();
+  if (process.env.CI) {
+    return {
+      'appium:usePrebuiltWDA': true, // Use WDA built by `appium driver run xcuitest build-wda` command at `Prepare the server` step
+      'appium:derivedDataPath': await getDerivedDataPath()
+    };
+  } else {
+    const caps = {
+      'appium:usePrebuiltWDA': didBuildWda
+    };
+    if (didBuildWda) {
+      caps['appium:derivedDataPath'] = await getDerivedDataPath();
+    }
+    return caps;
   }
-  return caps;
 }
 
 async function getDerivedDataPath() {
@@ -70,4 +73,4 @@ async function getDerivedDataPath() {
   return await xcodebuild.retrieveDerivedDataPath();
 }
 
-export {initSession, deleteSession, hasDefaultPrebuiltWDA, getUsePrebuiltWDACaps, HOST, PORT, MOCHA_TIMEOUT};
+export {initSession, deleteSession, getUsePrebuiltWDACaps, HOST, PORT, MOCHA_TIMEOUT};
