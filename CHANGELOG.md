@@ -1,3 +1,11 @@
+## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 22.0.12 to 23.0.0 ([#2300](https://github.com/appium/appium-xcuitest-driver/issues/2300)) ([f08270b](https://github.com/appium/appium-xcuitest-driver/commit/f08270b26cbd7ab840c5d6d7a29e24c556aca653))
+* Sort files to push by size ([#2301](https://github.com/appium/appium-xcuitest-driver/issues/2301)) ([b23a972](https://github.com/appium/appium-xcuitest-driver/commit/b23a9724ad68dff4a796d9345696b2a5a888b136))
+
 ## [5.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.2...v5.14.0) (2024-01-13)
 
 
