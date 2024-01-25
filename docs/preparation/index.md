@@ -39,6 +39,7 @@ Unfortunately, not all configuration can be done automatically, and some changes
   [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable)
   property set to `true`. Please read [the WebKit documentation page](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/)
   for more details on this property.
+  - WebViews on iOS/iPadOS below version 16.4 must have the [`get-task-allow` entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_cs_debugger) present as `true` in the application manifest.
 - Starting from iOS/iPadOS 16.4, the Google Chrome browser also supports webview testing. This feature
   requires Chrome version 115 or newer. Please read
   [the Chrome Developer documentation page](https://developer.chrome.com/blog/debugging-chrome-on-ios/)
