@@ -164,7 +164,7 @@
     "@typescript-eslint/parser": "^6.9.0",
     "appium": "^2.0.0",
     "axios": "^1.4.0",
-    "chai": "^4.3.7",
+    "chai": "^5.0.3",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
     "conventional-changelog-conventionalcommits": "^7.0.1",
