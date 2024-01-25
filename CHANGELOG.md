@@ -1,3 +1,39 @@
+## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 22.0.12 to 23.0.0 ([#2300](https://github.com/appium/appium-xcuitest-driver/issues/2300)) ([f08270b](https://github.com/appium/appium-xcuitest-driver/commit/f08270b26cbd7ab840c5d6d7a29e24c556aca653))
+* Sort files to push by size ([#2301](https://github.com/appium/appium-xcuitest-driver/issues/2301)) ([b23a972](https://github.com/appium/appium-xcuitest-driver/commit/b23a9724ad68dff4a796d9345696b2a5a888b136))
+
+## [5.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.2...v5.14.0) (2024-01-13)
+
+
+### Features
+
+* use Menu button for tvOS in driver.back ([#2299](https://github.com/appium/appium-xcuitest-driver/issues/2299)) ([b649a96](https://github.com/appium/appium-xcuitest-driver/commit/b649a96e2fe60cba2c229f32155ed6bcfc21afd3))
+
+## [5.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.1...v5.13.2) (2024-01-09)
+
+
+### Bug Fixes
+
+* **docs:** adjust docs for @appium/docutils 1.0.2 ([#2293](https://github.com/appium/appium-xcuitest-driver/issues/2293)) ([e3312b4](https://github.com/appium/appium-xcuitest-driver/commit/e3312b404540f0bcfb324816d003a7c513720f7d))
+
+## [5.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.13.0...v5.13.1) (2024-01-07)
+
+
+### Bug Fixes
+
+* Import the proper support module ([#2294](https://github.com/appium/appium-xcuitest-driver/issues/2294)) ([b74ca4a](https://github.com/appium/appium-xcuitest-driver/commit/b74ca4aa05a898599b994376cc755425b5307a0b))
+
+## [5.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.2...v5.13.0) (2024-01-05)
+
+
+### Features
+
+* Add doctor checks ([#2292](https://github.com/appium/appium-xcuitest-driver/issues/2292)) ([804e50a](https://github.com/appium/appium-xcuitest-driver/commit/804e50aa94184061973f488f0cec8c059080d834))
+
 ## [5.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.12.1...v5.12.2) (2023-12-14)
 
 

@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "5.12.2",
+  "version": "5.14.1",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -50,6 +50,12 @@
       "additionalProperties": false,
       "title": "XCUITest Driver Configuration",
       "description": "Appium configuration schema for the XCUITest driver."
+    },
+    "doctor": {
+      "checks": [
+        "./build/lib/doctor/required-checks.js",
+        "./build/lib/doctor/optional-checks.js"
+      ]
     }
   },
   "main": "./build/index.js",
@@ -70,6 +76,7 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
+    "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.5.4",
     "appium-ios-simulator": "^5.5.1",
@@ -81,7 +88,7 @@
     "bluebird": "^3.7.2",
     "css-selector-parser": "^3.0.0",
     "fancy-log": "^2.0.0",
-    "js2xmlparser2": "^0.2.0",
+    "js2xmlparser2": "^0.x",
     "lodash": "^4.17.21",
     "lru-cache": "^10.0.0",
     "moment": "^2.29.4",
@@ -105,7 +112,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:staged": "lint-staged",
     "format": "prettier --check './**/*.(js|ts)'",
-    "install-docs-deps": "appium-docs init --no-mkdocs -e index.js",
+    "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "husky install; npm run rebuild",
     "rebuild": "npm run clean; npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
@@ -130,10 +137,10 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^2.0.0"
+    "appium": "^2.4.1"
   },
   "devDependencies": {
-    "@appium/docutils": "^0.x",
+    "@appium/docutils": "^1.0.2",
     "@appium/eslint-config-appium": "^8.0.4",
     "@appium/eslint-config-appium-ts": "^0.x",
     "@appium/test-support": "^3.0.20",
@@ -175,7 +182,7 @@
     "pem": "^1.14.8",
     "prettier": "^3.0.0",
     "rimraf": "^5.0.1",
-    "semantic-release": "^22.0.5",
+    "semantic-release": "^23.0.0",
     "sharp": "^0.x",
     "sinon": "^17.0.0",
     "sinon-chai": "^3.7.0",
@@ -186,8 +193,5 @@
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
-  },
-  "typedoc": {
-    "entryPoint": "index.js"
   }
 }

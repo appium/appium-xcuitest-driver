@@ -2,20 +2,20 @@ INHERIT: ./node_modules/@appium/docutils/base-mkdocs.yml
 site_name: Appium XCUITest Driver
 repo_url: https://github.com/appium/appium-xcuitest-driver
 repo_name: appium/appium-xcuitest-driver
-copyright: Copyright &copy; 2012 OpenJS Foundation
+copyright: Copyright &copy; 2012 OpenJS Foundation - <a href="#__consent">Change cookie settings</a>
 site_url: https://appium.github.io/appium-xcuitest-driver
 edit_uri: edit/master/docs
 site_description: Documentation for the Appium XCUITest driver for iOS automation
 docs_dir: docs
 site_dir: site
+
 theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
   custom_dir: docs/overrides
-  features:
-    - navigation.tabs
 extra_css:
   - assets/stylesheets/extra.css
+
 extra:
   homepage: /appium-xcuitest-driver
   version:
@@ -23,35 +23,84 @@ extra:
   social:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/AppiumDevs
+
 nav:
   - index.md
-  - setup.md
-  - device-preparation.md
+  - overview.md
+  - Installation:
+      - installation/index.md
+      - installation/requirements.md
+  - Device Preparation:
+      - preparation/index.md
+      - preparation/real-device-config.md
+      - Provisioning Profile for Real Devices:
+          - preparation/prov-profile-basic-auto.md
+          - preparation/prov-profile-basic-manual.md
+          - preparation/prov-profile-full-manual.md
+          - preparation/prov-profile-generic-manual.md
   - Reference:
-      - server-args.md
-      - capabilities.md
-      - element-attributes.md
-      - security-flags.md
-      - settings.md
-      - locator-strategies.md
-      - ios-predicate.md
-      - parallel-tests.md
-      - execute-methods.md
-      - clipboard.md
-      - touch-id.md
-      - troubleshooting.md
-      - reference/commands/appium-xcuitest-driver.md
+      - reference/scripts.md
+      - Server Configuration:
+          - reference/server-args.md
+          - reference/security-flags.md
+      - Session Configuration:
+          - reference/capabilities.md
+          - reference/settings.md
+          - reference/commands.md
+          - reference/execute-methods.md
+      - Element Management:
+          - reference/locator-strategies.md
+          - reference/ios-predicate.md
+          - reference/element-attributes.md
   - Guides:
-      - Improve session startup performance:
-          - run-preinstalled-wda.md
-          - run-prebuilt-wda.md
-          - attach-to-running-wda.md
-      - real-device-config.md
-      - ci-setup.md
-      - multiple-xcode-versions.md
-      - wda-custom-server.md
-      - ios-tvos.md
-      - actions.md
-      - audio-capture.md
-      - ios-xctest-file-movement.md
-      - ios-xctest-install-certificate.md
+      - Environment Configuration:
+          - guides/parallel-tests.md
+          - guides/ci-setup.md
+          - guides/multiple-xcode-versions.md
+          - Improve Session Startup Performance:
+              - guides/run-preinstalled-wda.md
+              - guides/run-prebuilt-wda.md
+              - guides/attach-to-running-wda.md
+          - guides/wda-custom-server.md
+      - Driver Actions:
+          - guides/audio-capture.md
+          - guides/file-transfer.md
+          - guides/install-certificate.md
+          - guides/clipboard.md
+          - guides/touch-id.md
+      - Other:
+          - guides/tvos.md
+          - guides/input-events.md
+          - guides/troubleshooting.md
+  - contributing.md
+
+plugins:
+  redirects:
+    redirect_maps:
+      'device-preparation.md': 'preparation/index.md'
+      'real-device-config.md': 'preparation/real-device-config.md'
+      'setup.md': 'installation/index.md'
+      'actions.md': 'guides/input-events.md'
+      'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
+      'audio-capture.md': 'guides/audio-capture.md'
+      'ci-setup.md': 'guides/ci-setup.md'
+      'clipboard.md': 'guides/clipboard.md'
+      'ios-tvos.md': 'guides/tvos.md'
+      'ios-xctest-file-movement.md': 'guides/file-transfer.md'
+      'ios-xctest-install-certificate.md': 'guides/install-certificate.md'
+      'multiple-xcode-versions.md': 'guides/multiple-xcode-versions.md'
+      'parallel-tests.md': 'guides/parallel-tests.md'
+      'run-prebuilt-wda.md': 'guides/run-prebuilt-wda.md'
+      'run-preinstalled-wda.md': 'guides/run-preinstalled-wda.md'
+      'touch-id.md': 'guides/touch-id.md'
+      'troubleshooting.md': 'guides/troubleshooting.md'
+      'wda-custom-server.md': 'guides/wda-custom-server.md'
+      'capabilities.md': 'reference/capabilities.md'
+      'reference/commands/appium-xcuitest-driver.md': 'reference/commands.md'
+      'element-attributes.md': 'reference/element-attributes.md'
+      'execute-methods.md': 'reference/execute-methods.md'
+      'ios-predicate.md': 'reference/ios-predicate.md'
+      'locator-strategies.md': 'reference/locator-strategies.md'
+      'security-flags.md': 'reference/security-flags.md'
+      'server-args.md': 'reference/server-args.md'
+      'settings.md': 'reference/settings.md'
