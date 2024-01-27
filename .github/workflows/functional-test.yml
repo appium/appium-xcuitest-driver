@@ -33,7 +33,7 @@ jobs:
         include:
         - xcodeVersion: '15.1'
           iosVersion: '17.2'
-          deviceName: 'iPhone 14'
+          deviceName: 'iPhone SE (3rd generation)'
           deviceNameForTouchId: 'iPhone SE (3rd generation)'
           deviceNameForSafariIpad: 'iPad (10th generation)'
           skipTvOs: true

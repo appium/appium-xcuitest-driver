@@ -57,7 +57,7 @@ const GENERIC_CAPS = node.deepFreeze({
     'appium:showXcodeLog': SHOW_XCODE_LOG,
     'appium:wdaLaunchTimeout': initTimeout,
     'appium:wdaConnectionTimeout': initTimeout,
-    'appium:useNewWDA': true,
+    'appium:useNewWDA': !process.env.CI,
     'appium:webviewConnectTimeout': 30000,
     'appium:simulatorStartupTimeout': initTimeout,
   },
