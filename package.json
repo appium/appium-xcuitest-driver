@@ -110,10 +110,9 @@
     "lint": "eslint .",
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
-    "lint:staged": "lint-staged",
-    "format": "prettier --check './**/*.(js|ts)'",
+    "format": "prettier -w ./lib",
     "install-docs-deps": "appium-docs init --no-mkdocs",
-    "prepare": "husky install; npm run rebuild",
+    "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
     "e2e-test": "mocha --exit --timeout 10m \"./test/functional/**/*-specs.js\"",
@@ -125,11 +124,6 @@
     "e2e-test:web": "mocha \"./test/functional/web\" --exit --timeout 10m",
     "e2e-test:native-web-tap": "mocha \"./test/functional/web/safari-nativewebtap-e2e-specs.js\" --exit --timeout 10m",
     "start": "appium --relaxed-security --port 4567 --keep-alive-timeout 1200"
-  },
-  "lint-staged": {
-    "*.(js|ts)": [
-      "eslint --fix"
-    ]
   },
   "prettier": {
     "bracketSpacing": false,
@@ -146,8 +140,6 @@
     "@appium/test-support": "^3.0.20",
     "@appium/tsconfig": "^0.x",
     "@appium/types": "^0.x",
-    "@commitlint/cli": "^18.0.0",
-    "@commitlint/config-conventional": "^18.0.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",
@@ -174,8 +166,6 @@
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-mocha": "^10.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.0.1",
     "mocha": "^10.2.0",
     "mocha-junit-reporter": "^2.2.1",
     "mocha-multi-reporters": "^1.5.1",
