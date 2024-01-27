@@ -1,3 +1,10 @@
+## [5.14.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.1...v5.14.2) (2024-01-27)
+
+
+### Miscellaneous Chores
+
+* Remove husky and commitlint ([#2307](https://github.com/appium/appium-xcuitest-driver/issues/2307)) ([8142e96](https://github.com/appium/appium-xcuitest-driver/commit/8142e96376630b3f5811532216a686eacc66495e))
+
 ## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
 
 
