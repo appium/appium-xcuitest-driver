@@ -8,8 +8,8 @@ command execution, improving the session startup performance.
 
 !!! warning
 
-    This method currently does not work for iOS 17/tvOS 17 due to platform changes. Please use the
-    default `xcodebuild` approach.
+    This method currently does not work natively for iOS 17/tvOS 17 due to platform changes.
+    Please use the default `xcodebuild` approach or 3rd party tools such as `pymobiledevice3`.
 
 ## Capabilities
 
@@ -37,8 +37,8 @@ If using a real device, you may need to change your bundle ID. Please check the
 
 ### Using 3rd Party Tools
 
-Some 3rd party tools such as [ios-deploy](https://github.com/ios-control/ios-deploy),
-[go-ios](https://github.com/danielpaulus/go-ios) and
+Some 3rd party tools such as [pymobiledevice3](https://github.com/doronz88/pymobiledevice3),
+[ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and
 [tidevice](https://github.com/alibaba/taobao-iphone-device) can install the WebDriverAgent package.
 
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
