@@ -19,6 +19,12 @@ export const executeMethodMap = {
       optional: ['offset'],
     },
   },
+  'mobile: sendMemoryWarning': {
+    command: 'mobileSendMemoryWarning',
+    params: {
+      required: ['bundleId'],
+    },
+  },
   // https://developer.apple.com/documentation/xctest/xcuielement/1618668-swipeleft?language=objc
   // https://developer.apple.com/documentation/xctest/xcuielement/1618674-swiperight?language=objc
   // https://developer.apple.com/documentation/xctest/xcuielement/1618667-swipeup?language=objc

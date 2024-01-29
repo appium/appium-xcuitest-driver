@@ -68,6 +68,21 @@ offset | number | no | The value in range [0.01, 0.5]. It defines how far from p
 value | string | no | If provided WDA will try to automatically scroll in the given direction until the actual picker value reaches the expected one or the amount of scrolling attempts is exceeded. | myvalue
 maxAttempts | number | no | The maximum number of scrolling attempts to reach `value` before an error will be thrown. Only makes sense in combination with `value`. 25 by default | 50
 
+### mobile: sendMemoryWarning
+
+Simulates sending of Low Memory warning to the target application.
+It might be useful to verify the
+[didReceiveMemoryWarning](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621409-didreceivememorywarning?language=objc)
+API in the application under test.
+This feature only works on real devices running iOS 17+ with Xcode 15+ SDK.
+The target application must be running while this API is called.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | Bundle identifier of the app to simulate the warning for | com.great.app
+
 ### mobile: alert
 
 Tries to apply the given action to the currently visible alert.
@@ -1387,7 +1402,7 @@ keys | array | yes | Array of keys to type. Each item could either be a string, 
 
     The `modifierFlags` argument is of `unsigned long` type and defines the bitmask with depressed modifier keys for the given key.
     XCTest defines the following possible bitmasks for modifier keys:
-    
+
     <pre>
     typedef NS_OPTIONS(NSUInteger, XCUIKeyModifierFlags) {
        XCUIKeyModifierNone       = 0,
