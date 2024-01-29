@@ -1,3 +1,10 @@
+## [5.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.2...v5.15.0) (2024-01-29)
+
+
+### Features
+
+* Add 'mobile: sendMemoryWarning' extension ([#2308](https://github.com/appium/appium-xcuitest-driver/issues/2308)) ([014952b](https://github.com/appium/appium-xcuitest-driver/commit/014952b6f98a35518d30d2e25f4809d85609b055))
+
 ## [5.14.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.1...v5.14.2) (2024-01-27)
 
 
