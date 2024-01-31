@@ -14,6 +14,8 @@
 
 ## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
 
+### Bug Fixes
+* Fixed current active application detection in WebDriverAgent [WebDriverAgent#834](https://github.com/appium/WebDriverAgent/pull/834). It might require switching the active application to `com.apple.springboard` in order to interact with system dialogs, such as permission dialogs, while the current active application is not the springboard. Using `mobile:alert` or `acceptAlertButtonSelector`/`dismissAlertButtonSelector` also should help. See also [appium#19716](https://github.com/appium/appium/issues/19716).
 
 ### Miscellaneous Chores
 
