@@ -26,8 +26,6 @@
 
 ## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
 
-Please use `5.15.1`
-
 ### Miscellaneous Chores
 
 * **deps-dev:** bump semantic-release from 22.0.12 to 23.0.0 ([#2300](https://github.com/appium/appium-xcuitest-driver/issues/2300)) ([f08270b](https://github.com/appium/appium-xcuitest-driver/commit/f08270b26cbd7ab840c5d6d7a29e24c556aca653))
