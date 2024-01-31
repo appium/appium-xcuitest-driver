@@ -4,7 +4,7 @@
 ### Bug Fixes
 
 * revert active application detection fix added in 5.14.1 ([#2314](https://github.com/appium/appium-xcuitest-driver/issues/2314)) ([b46243e](https://github.com/appium/appium-xcuitest-driver/commit/b46243e6276ce65bb25f6bd7650a25b935df955f))
-    * Please see [appium#19716](https://github.com/appium/appium/issues/19716) for more details
+    * Please see [appium#19716](https://github.com/appium/appium/issues/19716) for more details. The change addressed in the issue will come in a future release.
 
 ### Code Refactoring
 
