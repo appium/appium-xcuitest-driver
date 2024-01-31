@@ -1134,8 +1134,8 @@ Sends one or more taps with one or more touch points since Appium 1.17.1.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to perform one or more taps. The active application element will be used instead if this parameter is not provided.| fe50b60b-916d-420b-8728-ee2072ec53eb
-numberOfTaps | number | yes | The number of taps | 2
-numberOfTouches | number | yes | The number of touch points | 2
+numberOfTaps | number | no | The number of taps. 1 by default | 2
+numberOfTouches | number | no | The number of touch points. 1 by default | 2
 
 #### Examples
 
@@ -1145,6 +1145,11 @@ e = @driver.find_element :id, 'target element'
 # Taps the element with a single touch point twice
 @driver.execute_script 'mobile: tapWithNumberOfTaps', {elementId: e.ref, numberOfTaps: 2, numberOfTouches: 1}
 ```
+
+- numberOfTaps=1, numberOfTouches=1 -> "vanilla" single tap
+- numberOfTaps=2, numberOfTouches=1 -> double tap
+- numberOfTaps=3, numberOfTouches=1 -> tripple tap
+- numberOfTaps=2, numberOfTouches=2 -> double tap with two fingers
 
 #### Reference
 [tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)

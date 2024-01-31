@@ -61,8 +61,7 @@ export const executeMethodMap = {
   'mobile: tapWithNumberOfTaps': {
     command: 'mobileTapWithNumberOfTaps',
     params: {
-      required: ['numberOfTouches', 'numberOfTaps'],
-      optional: ['elementId'],
+      optional: ['numberOfTouches', 'numberOfTaps', 'elementId'],
     },
   },
   // https://developer.apple.com/documentation/xctest/xcuielement/1618663-pressforduration?language=objc
