@@ -1,3 +1,15 @@
+## [5.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.15.0...v5.15.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* revert active application detection fix added in 5.14.1 ([#2314](https://github.com/appium/appium-xcuitest-driver/issues/2314)) ([b46243e](https://github.com/appium/appium-xcuitest-driver/commit/b46243e6276ce65bb25f6bd7650a25b935df955f))
+
+
+### Code Refactoring
+
+* Unify devicectl usage ([#2310](https://github.com/appium/appium-xcuitest-driver/issues/2310)) ([b788c76](https://github.com/appium/appium-xcuitest-driver/commit/b788c76ef0f020adf5012d729013e7ed69508307))
+
 ## [5.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.2...v5.15.0) (2024-01-29)
 
 
