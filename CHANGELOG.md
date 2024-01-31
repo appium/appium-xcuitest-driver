@@ -4,7 +4,7 @@
 ### Bug Fixes
 
 * revert active application detection fix added in 5.14.1 ([#2314](https://github.com/appium/appium-xcuitest-driver/issues/2314)) ([b46243e](https://github.com/appium/appium-xcuitest-driver/commit/b46243e6276ce65bb25f6bd7650a25b935df955f))
-
+    * Please see [appium#19716](https://github.com/appium/appium/issues/19716) for more details. The change addressed in the issue will come in a future release.
 
 ### Code Refactoring
 
@@ -25,9 +25,6 @@
 * Remove husky and commitlint ([#2307](https://github.com/appium/appium-xcuitest-driver/issues/2307)) ([8142e96](https://github.com/appium/appium-xcuitest-driver/commit/8142e96376630b3f5811532216a686eacc66495e))
 
 ## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
-
-### Bug Fixes
-* Fixed current active application detection in WebDriverAgent [WebDriverAgent#834](https://github.com/appium/WebDriverAgent/pull/834). It might require switching the active application to `com.apple.springboard` in order to interact with system dialogs, such as permission dialogs, while the current active application is not the springboard. Using `mobile:alert` or `acceptAlertButtonSelector`/`dismissAlertButtonSelector` also should help. See also [appium#19716](https://github.com/appium/appium/issues/19716).
 
 ### Miscellaneous Chores
 
