@@ -165,22 +165,11 @@ describe('gesture commands', function () {
     describe('doubleTap', function () {
       const commandName = 'doubleTap';
 
-      it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {x: 100})
-          .should.be.rejectedWith(/"y" parameter should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {y: 200})
-          .should.be.rejectedWith(/"x" parameter should be a valid number/);
-      });
-
-      it('should throw an error if param is invalid', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {x: '', y: 1})
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {x: 1, y: null})
-          .should.be.rejectedWith(/should be a valid number/);
+      it('should proxy a doubleTap request without element through to WDA', async function () {
+        await driver.execute(`mobile: ${commandName}`);
+        proxySpy.calledOnce.should.be.true;
+        proxySpy.firstCall.args[0].should.eql('/wda/doubleTap');
+        proxySpy.firstCall.args[1].should.eql('POST');
       });
 
       it('should proxy a doubleTap request for an element through to WDA', async function () {
@@ -212,12 +201,6 @@ describe('gesture commands', function () {
       const commandName = 'touchAndHold';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 100, x: 1})
-          .should.be.rejectedWith(/"y" parameter should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 100, y: 200})
-          .should.be.rejectedWith(/"x" parameter should be a valid number/i);
         await driver.execute(`mobile: ${commandName}`, {x: 100, y: 200}).should.be.rejected;
       });
 
@@ -225,21 +208,33 @@ describe('gesture commands', function () {
         await driver
           .execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1})
           .should.be.rejectedWith(/should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 1, x: '', y: 1})
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: 1, x: 1, y: null})
-          .should.be.rejectedWith(/should be a valid number/);
+      });
+
+      it('should proxy a touchAndHold request without element through to WDA', async function () {
+        const opts = {duration: 100};
+        await driver.execute(`mobile: ${commandName}`, opts);
+        proxySpy.should.have.been.calledOnceWith(
+          '/wda/touchAndHold',
+          'POST',
+          {
+            ...opts,
+            x: undefined,
+            y: undefined,
+          },
+        );
       });
 
       it('should proxy a touchAndHold request for an element through to WDA', async function () {
-        const opts = {element: 4, duration: 100};
+        const opts = {elementId: 4, duration: 100};
         await driver.execute(`mobile: ${commandName}`, opts);
         proxySpy.should.have.been.calledOnceWith(
           '/wda/element/4/touchAndHold',
           'POST',
-          _.omit(opts, 'elementId'), // note elementId here, not element
+          {
+            ..._.omit(opts, 'elementId'),
+            x: undefined,
+            y: undefined,
+          }
         );
       });
 
@@ -253,31 +248,16 @@ describe('gesture commands', function () {
     describe('tap', function () {
       const commandName = 'tap';
 
-      it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver.execute(`mobile: ${commandName}`, {}).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {x: 100}).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {y: 200}).should.be.rejected;
-      });
-
-      it('should throw an error if param is invalid', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {x: '', y: 1})
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {x: 1, y: null})
-          .should.be.rejectedWith(/should be a valid number/);
-      });
-
       it('should proxy a tap request for an element through to WDA', async function () {
         const opts = {elementId: 4, x: 100, y: 100};
         await driver.execute(`mobile: ${commandName}`, opts);
-        proxySpy.should.have.been.calledOnceWith('/wda/tap/4', 'POST', _.omit(opts, 'elementId'));
+        proxySpy.should.have.been.calledOnceWith('/wda/element/4/tap', 'POST', _.omit(opts, 'elementId'));
       });
 
       it('should proxy a tap request for a coordinate point through to WDA', async function () {
         const opts = {x: 100, y: 100};
         await driver.execute(`mobile: ${commandName}`, opts);
-        proxySpy.should.have.been.calledOnceWith('/wda/tap/0', 'POST', opts);
+        proxySpy.should.have.been.calledOnceWith('/wda/tap', 'POST', opts);
       });
     });
 
