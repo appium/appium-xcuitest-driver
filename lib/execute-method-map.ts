@@ -61,7 +61,7 @@ export const executeMethodMap = {
   'mobile: tapWithNumberOfTaps': {
     command: 'mobileTapWithNumberOfTaps',
     params: {
-      optional: ['numberOfTouches', 'numberOfTaps', 'elementId'],
+      required: ['elementId', 'numberOfTouches', 'numberOfTaps'],
     },
   },
   // https://developer.apple.com/documentation/xctest/xcuielement/1618663-pressforduration?language=objc
@@ -84,8 +84,7 @@ export const executeMethodMap = {
   'mobile: rotateElement': {
     command: 'mobileRotateElement',
     params: {
-      required: ['rotation', 'velocity'],
-      optional: ['elementId'],
+      required: ['elementId', 'rotation', 'velocity'],
     },
   },
   // https://developer.apple.com/documentation/xctest/xcuicoordinate/3551692-pressforduration?language=objc
