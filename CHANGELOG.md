@@ -1,3 +1,17 @@
+## [5.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.16.0...v5.16.1) (2024-02-01)
+
+
+### Reverts
+
+* Revert "feat: Unify gesture extensions (#2313)" ([00161d8](https://github.com/appium/appium-xcuitest-driver/commit/00161d8c71a25cdc9c34707b467f0737c2fcc2d3)), closes [#2313](https://github.com/appium/appium-xcuitest-driver/issues/2313)
+
+## [5.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.15.1...v5.16.0) (2024-02-01)
+
+
+### Features
+
+* Unify gesture extensions ([#2313](https://github.com/appium/appium-xcuitest-driver/issues/2313)) ([50f38c1](https://github.com/appium/appium-xcuitest-driver/commit/50f38c156d1dca5036f4d3ed7951d7e5d463c6fd))
+
 ## [5.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.15.0...v5.15.1) (2024-01-31)
 
 
