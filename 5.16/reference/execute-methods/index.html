@@ -10391,7 +10391,7 @@ necessary child element (tens of them) then the method call may fail.
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
 <td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). The active application element will be used instead if this parameter is not provided.</td>
+<td>The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). Application element will be used if this argument is not set</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
@@ -10446,7 +10446,7 @@ necessary child element (tens of them) then the method call may fail.
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
 <td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to pinch on. The active application element will be used instead if this parameter is not provided.</td>
+<td>The internal element identifier (as hexadecimal hash string) to pinch on. Application element will be used instead if this parameter is not provided</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
@@ -10488,22 +10488,22 @@ necessary child element (tens of them) then the method call may fail.
 <tr>
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
-<td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to double tap on. The active application element will be used instead if this parameter is not provided.</td>
+<td>no if x and y are set</td>
+<td>The internal element identifier (as hexadecimal hash string) to double tap on</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
 <td>x</td>
 <td>number</td>
-<td>no</td>
-<td>Horizontal coordinate offset.</td>
+<td>no if elementId is set</td>
+<td>Screen x tap coordinate of type float.</td>
 <td>100</td>
 </tr>
 <tr>
 <td>y</td>
 <td>number</td>
-<td>no</td>
-<td>Vertical coordinate offset.</td>
+<td>no if elementId is set</td>
+<td>Screen y tap coordinate of type float.</td>
 <td>100</td>
 </tr>
 </tbody>
@@ -10529,8 +10529,8 @@ necessary child element (tens of them) then the method call may fail.
 <tr>
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
-<td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to long tap on. The active application element will be used instead if this parameter is not provided.</td>
+<td>no if x and y are set</td>
+<td>The internal element identifier (as hexadecimal hash string) to long tap on</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
@@ -10543,15 +10543,15 @@ necessary child element (tens of them) then the method call may fail.
 <tr>
 <td>x</td>
 <td>number</td>
-<td>no</td>
-<td>Horizontal coordinate offset.</td>
+<td>no if elementId is set</td>
+<td>Screen x tap coordinate of type float.</td>
 <td>100</td>
 </tr>
 <tr>
 <td>y</td>
 <td>number</td>
-<td>no</td>
-<td>Vertical coordinate offset.</td>
+<td>no if elementId is set</td>
+<td>Screen y tap coordinate of type float.</td>
 <td>100</td>
 </tr>
 </tbody>
@@ -10559,7 +10559,7 @@ necessary child element (tens of them) then the method call may fail.
 <h4 id="examples_4">Examples<a class="headerlink" href="#examples_4" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// c#</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tfLongTap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span><span class="p">();</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">tfLongTap</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;elementId&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">element</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">tfLongTap</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;element&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">element</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">tfLongTap</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;duration&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">2.0</span><span class="p">);</span>
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">((</span><span class="n">IJavaScriptExecutor</span><span class="p">)</span><span class="n">driver</span><span class="p">).</span><span class="n">ExecuteScript</span><span class="p">(</span><span class="s">&quot;mobile: touchAndHold&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tfLongTap</span><span class="p">);</span>
 </code></pre></div>
@@ -10583,7 +10583,7 @@ necessary child element (tens of them) then the method call may fail.
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
 <td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to tap on. The active application element will be used instead if this parameter is not provided.</td>
+<td>The internal element identifier (as hexadecimal hash string) to tap on. Application element will be used instead if this parameter is not provided</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 </tbody>
@@ -10591,7 +10591,7 @@ necessary child element (tens of them) then the method call may fail.
 <h4 id="examples_5">Examples<a class="headerlink" href="#examples_5" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// c#</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tfTap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span><span class="p">();</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">tfTap</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;elementId&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">element</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">tfTap</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;element&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">element</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">((</span><span class="n">IJavaScriptExecutor</span><span class="p">)</span><span class="n">driver</span><span class="p">).</span><span class="n">ExecuteScript</span><span class="p">(</span><span class="s">&quot;mobile: twoFingerTap&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tfTap</span><span class="p">);</span>
 </code></pre></div>
 <h4 id="reference_2">Reference<a class="headerlink" href="#reference_2" title="Permanent link">&para;</a></h4>
@@ -10614,21 +10614,21 @@ necessary child element (tens of them) then the method call may fail.
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
 <td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to tap on. <em>x</em> and <em>y</em> tap coordinates will be calculated relatively to the current element position on the screen if this argument is provided. Otherwise they should be calculated relatively to the active application element.</td>
+<td>The internal element identifier (as hexadecimal hash string) to tap on. <em>x</em> and <em>y</em> tap coordinates will be calulated relatively to the current element position on the screen if this argument is provided. Otherwise they should be calculated relatively to the active application element.</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
 <td>x</td>
 <td>number</td>
 <td>yes</td>
-<td>Horizontal coordinate offset.</td>
+<td>Screen x tap coordinate of type float.</td>
 <td>100</td>
 </tr>
 <tr>
 <td>y</td>
 <td>number</td>
 <td>yes</td>
-<td>Vertical coordinate offset.</td>
+<td>Screen y tap coordinate of type float.</td>
 <td>100</td>
 </tr>
 </tbody>
@@ -10701,7 +10701,7 @@ on the screen</p>
 <a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">params</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;fromY&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
 <a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">params</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;toX&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">);</span>
 <a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="n">params</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;toY&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">);</span>
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="n">params</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;elementId&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="n">RemoteWebElement</span><span class="p">)</span><span class="w"> </span><span class="n">element</span><span class="p">).</span><span class="na">getId</span><span class="p">());</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="n">params</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;element&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="n">RemoteWebElement</span><span class="p">)</span><span class="w"> </span><span class="n">element</span><span class="p">).</span><span class="na">getId</span><span class="p">());</span>
 <a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;mobile: dragFromToForDuration&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
 </code></pre></div>
 <h4 id="reference_3">Reference<a class="headerlink" href="#reference_3" title="Permanent link">&para;</a></h4>
@@ -10805,8 +10805,8 @@ on the screen</p>
 <tr>
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
-<td>no</td>
-<td>Internal element id (as hexadecimal hash string) to perform rotation on. The active application element will be used instead if this parameter is not provided.</td>
+<td>yes</td>
+<td>Internal element id (as hexadecimal hash string) to perform rotation on</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
@@ -10833,7 +10833,7 @@ on the screen</p>
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="s">&quot;rotation&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">Math</span><span class="p">.</span><span class="na">PI</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
 <a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="c1">// in approximately two seconds</span>
 <a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="s">&quot;velocity&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">PI</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span><span class="s">&quot;elementId&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="n">RemoteWebElement</span><span class="p">)</span><span class="w"> </span><span class="n">element</span><span class="p">).</span><span class="na">getId</span><span class="p">()</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">    </span><span class="s">&quot;element&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">((</span><span class="n">RemoteWebElement</span><span class="p">)</span><span class="w"> </span><span class="n">element</span><span class="p">).</span><span class="na">getId</span><span class="p">()</span>
 <a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="p">));</span>
 </code></pre></div>
 <h4 id="reference_4">Reference<a class="headerlink" href="#reference_4" title="Permanent link">&para;</a></h4>
@@ -10855,22 +10855,22 @@ on the screen</p>
 <tr>
 <td>elementId ("element" prior to Appium v 1.22)</td>
 <td>string</td>
-<td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to perform one or more taps. The active application element will be used instead if this parameter is not provided.</td>
+<td>yes</td>
+<td>The internal element identifier (as hexadecimal hash string) to perform one or more taps.</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
 <td>numberOfTaps</td>
 <td>number</td>
-<td>no</td>
-<td>The number of taps. 1 by default</td>
+<td>yes</td>
+<td>The number of taps</td>
 <td>2</td>
 </tr>
 <tr>
 <td>numberOfTouches</td>
 <td>number</td>
-<td>no</td>
-<td>The number of touch points. 1 by default</td>
+<td>yes</td>
+<td>The number of touch points</td>
 <td>2</td>
 </tr>
 </tbody>
@@ -10879,14 +10879,8 @@ on the screen</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Ruby</span>
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vi">@driver</span><span class="o">.</span><span class="n">find_element</span><span class="w"> </span><span class="ss">:id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;target element&#39;</span>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="c1"># Taps the element with a single touch point twice</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: tapWithNumberOfTaps&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="ss">elementId</span><span class="p">:</span><span class="w"> </span><span class="n">e</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">numberOfTaps</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">numberOfTouches</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: tapWithNumberOfTaps&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="ss">element</span><span class="p">:</span><span class="w"> </span><span class="n">e</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span><span class="w"> </span><span class="ss">numberOfTaps</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">numberOfTouches</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
 </code></pre></div>
-<ul>
-<li>numberOfTaps=1, numberOfTouches=1 -&gt; "vanilla" single tap</li>
-<li>numberOfTaps=2, numberOfTouches=1 -&gt; double tap</li>
-<li>numberOfTaps=3, numberOfTouches=1 -&gt; tripple tap</li>
-<li>numberOfTaps=2, numberOfTouches=2 -&gt; double tap with two fingers</li>
-</ul>
 <h4 id="reference_5">Reference<a class="headerlink" href="#reference_5" title="Permanent link">&para;</a></h4>
 <p><a href="https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps">tapWithNumberOfTaps:numberOfTouches:</a></p>
 <h3 id="mobile-forcepress">mobile: forcePress<a class="headerlink" href="#mobile-forcepress" title="Permanent link">&para;</a></h3>
@@ -11487,7 +11481,7 @@ Only available since Xcode 15/iOS 17.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-02-01T07:53:16+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-01</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-02-01T07:56:59+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-01</span>
   </span>
 
     
