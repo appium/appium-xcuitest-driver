@@ -1,3 +1,16 @@
+## [6.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.16.1...v6.0.0) (2024-02-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed the unused getCoordinates API
+* Changed arguments order for various gesture extensions
+* Bumped WDA to ^6.0.0, which includes fixes for the active application detection
+
+### Features
+
+* Unify gesture extensions ([#2317](https://github.com/appium/appium-xcuitest-driver/issues/2317)) ([11c9b3c](https://github.com/appium/appium-xcuitest-driver/commit/11c9b3c0320d795c36ea6b2ee9364ef85fad297c))
+
 ## [5.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.16.0...v5.16.1) (2024-02-01)
 
 
