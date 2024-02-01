@@ -6,6 +6,7 @@
 * Removed the unused getCoordinates API
 * Changed arguments order for various gesture extensions
 * Bumped WDA to ^6.0.0, which includes fixes for the active application detection
+    * This change might require switching the active application to `com.apple.springboard` in order to interact with system dialogs, such as permission dialogs, while the current active application is not the springboard. Using `mobile:alert` or `acceptAlertButtonSelector`/`dismissAlertButtonSelector` also should help. See also [appium#19716](https://github.com/appium/appium/issues/19716).
 
 ### Features
 
