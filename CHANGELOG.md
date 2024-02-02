@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.0...v6.0.1) (2024-02-02)
+
+
+### Miscellaneous Chores
+
+* Paralelize log collection startup ([#2318](https://github.com/appium/appium-xcuitest-driver/issues/2318)) ([ad452c9](https://github.com/appium/appium-xcuitest-driver/commit/ad452c9da9f39671c8e36adbcedbf5fcc92d68a8))
+
 ## [6.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.16.1...v6.0.0) (2024-02-01)
 
 
