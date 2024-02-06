@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.1...v6.0.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* Add validation of Simulator binary architecture ([#2320](https://github.com/appium/appium-xcuitest-driver/issues/2320)) ([967f712](https://github.com/appium/appium-xcuitest-driver/commit/967f71241787728d9b192e3e02d4a568d4dc701f))
+
 ## [6.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.0...v6.0.1) (2024-02-02)
 
 
