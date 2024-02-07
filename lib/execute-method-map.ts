@@ -150,7 +150,7 @@ export const executeMethodMap = {
     command: 'mobileInstallApp',
     params: {
       required: ['app'],
-      optional: ['strategy', 'timeoutMs', 'enforceAppInstall'],
+      optional: ['strategy', 'timeoutMs', 'checkVersion'],
     },
   },
   'mobile: isAppInstalled': {
