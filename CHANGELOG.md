@@ -1,3 +1,10 @@
+## [6.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.3...v6.1.0) (2024-02-09)
+
+
+### Features
+
+* add checkVersion option for mobile:installApp ([#2322](https://github.com/appium/appium-xcuitest-driver/issues/2322)) ([dcc96a9](https://github.com/appium/appium-xcuitest-driver/commit/dcc96a9a4cbc3a650c77dcabdf9a3d48b29f124d))
+
 ## [6.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.2...v6.0.3) (2024-02-08)
 
 
