@@ -1,3 +1,10 @@
+## [6.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.2...v6.0.3) (2024-02-08)
+
+
+### Miscellaneous Chores
+
+* add a guide for the simulated location ([#2321](https://github.com/appium/appium-xcuitest-driver/issues/2321)) ([fe6d965](https://github.com/appium/appium-xcuitest-driver/commit/fe6d96569eebf284c2ab7ecdc8b6e7f9e279ce7f))
+
 ## [6.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.1...v6.0.2) (2024-02-06)
 
 
