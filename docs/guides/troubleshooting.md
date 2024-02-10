@@ -15,6 +15,20 @@ title: Troubleshooting
   [this issue](https://github.com/facebook/WebDriverAgent/issues/507) for more details.
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
 
+## Interact with dialogs managed by `com.apple.springboard`
+
+System dialogs, such as permission dialogs, might not be interactable directly when the active application is not `com.apple.springboard`
+because of the current active application. For example, when a session starts with `appium:app` or `appium:bundleId` capability with
+non-springboard. Despite a similar look, dialogs belonging to the `appium:app` or `appium:bundleId` do not require such adjustment.
+
+XCUITest driver offers a few methods to handle them.
+
+- [`mobile: alert`](../reference/execute-methods.md#mobile-alert)
+- Enable `appium:autoAcceptAlerts`/`appium:autoDismissAlerts`, or interact with alerts via [User Prompts](https://www.w3.org/TR/webdriver1/#user-prompts) in WebDriver endpoints
+    - e.g. `driver.switch_to.alert.accept`
+    - It might need to coordinate element selection with `acceptAlertButtonSelector`/`dismissAlertButtonSelector` in [Settings](../reference/settings.md)
+- Activate `com.apple.springboard` with [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp) before interacting with dialogs
+
 ## Leftover Application Data on Real Devices
 
 There might be a situation where application data is present on the real device, even if the
