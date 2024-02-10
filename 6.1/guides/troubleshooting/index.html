@@ -1832,6 +1832,43 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#interact-with-dialogs-managed-by-comapplespringboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interact with dialogs managed by com.apple.springboard
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#leftover-application-data-on-real-devices" class="md-nav__link">
     <span class="md-ellipsis">
       Leftover Application Data on Real Devices
@@ -2202,6 +2239,43 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#interact-with-dialogs-managed-by-comapplespringboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interact with dialogs managed by com.apple.springboard
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#leftover-application-data-on-real-devices" class="md-nav__link">
     <span class="md-ellipsis">
       Leftover Application Data on Real Devices
@@ -2478,6 +2552,20 @@
   <a href="https://github.com/facebook/WebDriverAgent/issues/507">this issue</a> for more details.</li>
 <li><code>shake</code> is implemented via AppleScript and works only on Simulator due to lack of support from Apple</li>
 </ul>
+<h2 id="interact-with-dialogs-managed-by-comapplespringboard">Interact with dialogs managed by <code>com.apple.springboard</code><a class="headerlink" href="#interact-with-dialogs-managed-by-comapplespringboard" title="Permanent link">&para;</a></h2>
+<p>System dialogs, such as permission dialogs, might not be interactable directly when the active application is not <code>com.apple.springboard</code>.
+Despite a similar look, dialogs belonging to the active session application (e.g. initially passed as <code>appium:app</code> or <code>appium:bundleId</code> capability value)
+do not require such adjustment.</p>
+<p>XCUITest driver offers a few methods to handle them.</p>
+<ul>
+<li><a href="../../reference/execute-methods/#mobile-alert"><code>mobile: alert</code></a></li>
+<li>Enable <code>appium:autoAcceptAlerts</code>/<code>appium:autoDismissAlerts</code>, or interact with alerts via <a href="https://www.w3.org/TR/webdriver1/#user-prompts">User Prompts</a> in WebDriver endpoints<ul>
+<li>e.g. <code>driver.switch_to.alert.accept</code> with the <a href="https://github.com/appium/ruby_lib_core">Appium Ruby client</a></li>
+<li>It might be necessary to coordinate element selection via <code>acceptAlertButtonSelector</code>/<code>dismissAlertButtonSelector</code> settings in <a href="../../reference/settings/">Settings</a></li>
+</ul>
+</li>
+<li>Activate <code>com.apple.springboard</code> with <a href="../../reference/execute-methods/#mobile-activateapp"><code>mobile: activateApp</code></a> before interacting with dialogs</li>
+</ul>
 <h2 id="leftover-application-data-on-real-devices">Leftover Application Data on Real Devices<a class="headerlink" href="#leftover-application-data-on-real-devices" title="Permanent link">&para;</a></h2>
 <p>There might be a situation where application data is present on the real device, even if the
 application itself is not installed. This could happen if:</p>
@@ -2581,7 +2669,7 @@ usually found in the following locations, should they need to be deleted:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-01-18T08:08:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-01-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-02-10T16:53:01+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-10</span>
   </span>
 
     
