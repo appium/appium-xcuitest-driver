@@ -47,6 +47,7 @@ export interface WDASettings {
  */
 export interface WDACapabilities {
   bundleId?: string;
+  initialUrl?: string;
   arguments: string[];
   environment: Record<string, string>;
   eventloopIdleDelaySec: number;
