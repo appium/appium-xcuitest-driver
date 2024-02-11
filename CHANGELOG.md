@@ -1,3 +1,10 @@
+## [6.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.1.0...v6.2.0) (2024-02-11)
+
+
+### Features
+
+* Add the `appium:initialDeeplinkUrl` capabilility ([#2324](https://github.com/appium/appium-xcuitest-driver/issues/2324)) ([167c268](https://github.com/appium/appium-xcuitest-driver/commit/167c2688a21eab0d340d685c13db6681e0e0a265))
+
 ## [6.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.3...v6.1.0) (2024-02-09)
 
 
