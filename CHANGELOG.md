@@ -1,3 +1,16 @@
+## [7.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.2.0...v7.0.0) (2024-02-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed the following obsolete APIs:
+- performTouch
+- performMultiAction
+
+### Features
+
+* Remove obsolete MJSONWP touch actions ([#2325](https://github.com/appium/appium-xcuitest-driver/issues/2325)) ([0e7267a](https://github.com/appium/appium-xcuitest-driver/commit/0e7267a971bc7ff1af3840ee1ea97de1f2773be0))
+
 ## [6.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.1.0...v6.2.0) (2024-02-11)
 
 
