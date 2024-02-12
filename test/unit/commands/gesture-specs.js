@@ -41,28 +41,6 @@ describe('gesture commands', function () {
     });
   });
 
-  describe('tap', function () {
-    it('should send POST request to /tap on WDA when no element is given', async function () {
-      const actions = [{action: 'tap'}];
-      await driver.performTouch(actions);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/touch/perform');
-      proxySpy.firstCall.args[1].should.eql('POST');
-    });
-    it('should send POST request to /tap/element on WDA', async function () {
-      const actions = [{action: 'tap', options: {element: 42}}];
-      await driver.performTouch(actions);
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/wda/touch/perform');
-      proxySpy.firstCall.args[1].should.eql('POST');
-    });
-    it('should send POST request to /tap/element with offset on WDA', async function () {
-      const actions = [{action: 'tap', options: {element: 42, x: 1, y: 2}}];
-      await driver.performTouch(actions);
-      proxySpy.should.have.been.calledOnceWith('/wda/touch/perform', 'POST', {actions});
-    });
-  });
-
   describe('mobile methods', function () {
     describe('anything other than scroll', function () {
       it('should throw an error', async function () {

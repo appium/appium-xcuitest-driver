@@ -305,30 +305,6 @@ Return the language-specific strings for an app
 
 A record of localized keys to localized text
 
-### `click`
-
-!!! warning "Deprecated"
-
-    This method is deprecated. Please use the [`mobile: tap`](./execute-methods.md#mobile-tap) extension instead
-
-`POST` **`/session/:sessionId/touch/click`**
-
-Click/tap an element
-
-**`See`**
-
-[https://w3c.github.io/webdriver/#element-click](https://w3c.github.io/webdriver/#element-click)
-
-#### Arguments
-
-| Name | Type |
-| :------ | :------ |
-| `element` | `any` |
-
-#### Returned Result
-
-`any`
-
 ### `setValueImmediate`
 
 !!! warning "Deprecated"
@@ -492,44 +468,3 @@ Get the window size
 #### Returned Result
 
 `any`
-
-### `performMultiAction`
-
-!!! warning "Deprecated"
-
-    This method is deprecated. Please use `performActions` instead
-
-`POST` **`/session/:sessionId/touch/multi/perform`**
-
-Perform a set of touch actions
-
-#### Arguments
-
-| Name | Type |
-| :------ | :------ |
-| `actions` | `any` |
-| `elementId?` | `any` |
-
-#### Returned Result
-
-`unknown`
-
-### `performTouch`
-
-!!! warning "Deprecated"
-
-    This method is deprecated. Please use `performActions` instead
-
-`POST` **`/session/:sessionId/touch/perform`**
-
-Perform a set of touch actions
-
-#### Arguments
-
-| Name | Type |
-| :------ | :------ |
-| `actions` | `any` |
-
-#### Returned Result
-
-`unknown`
