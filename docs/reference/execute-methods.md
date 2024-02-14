@@ -68,6 +68,21 @@ offset | number | no | The value in range [0.01, 0.5]. It defines how far from p
 value | string | no | If provided WDA will try to automatically scroll in the given direction until the actual picker value reaches the expected one or the amount of scrolling attempts is exceeded. | myvalue
 maxAttempts | number | no | The maximum number of scrolling attempts to reach `value` before an error will be thrown. Only makes sense in combination with `value`. 25 by default | 50
 
+### mobile: sendMemoryWarning
+
+Simulates sending of Low Memory warning to the target application.
+It might be useful to verify the
+[didReceiveMemoryWarning](https://developer.apple.com/documentation/uikit/uiviewcontroller/1621409-didreceivememorywarning?language=objc)
+API in the application under test.
+This feature only works on real devices running iOS 17+ with Xcode 15+ SDK.
+The target application must be running while this API is called.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+bundleId | string | yes | Bundle identifier of the app to simulate the warning for | com.great.app
+
 ### mobile: alert
 
 Tries to apply the given action to the currently visible alert.
@@ -152,6 +167,7 @@ Name | Type | Required | Description | Example
 app | string | yes | See the description of the `appium:app` capability | /path/to/my.app
 timeoutMs | number | no | The maximum time to wait until app install is finished in milliseconds on real devices. If not provided then the value of `appium:appPushTimeout` capability is used. If the capability is not provided then equals to 240000ms | 500000
 strategy | string | no | One of possible app installation strategies on real devices. This argument is ignored on simulators. If not provided then the value of `appium:appInstallStrategy` is used. If the latter is also not provided then `serial` is used. See the description of `appium:appInstallStrategy` capability for more details on available values. | parallel
+checkVersion | bool | no | If set to `true`, it will make xcuitest driver to verify whether the app version currently installed on the device under test is older than the one, which is provided as `app` value. No app install is going to happen if the candidate app has the same or older version number than the already installed copy of it. The version number used for comparison must be provided as [CFBundleVersion](https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleversion) [Semantic Versioning](https://semver.org/)-compatible value in the application's `Info.plist`. No validation is performed and the `app` is installed if `checkVersion` was not provided or `false`, which is default behavior. | true
 
 ### mobile: isAppInstalled
 
@@ -905,7 +921,7 @@ _Important_: The implemntation of this extension relies on several undocumented 
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). Application element will be used if this argument is not set | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
 name | string | no | The accessibility id of the child element, to which scrolling is performed. The same result can be achieved by setting _predicateString_ argument to 'name == accessibilityId'. Has no effect if _elementId_ is not a container | cell12
 direction | Either 'up', 'down', 'left' or 'right' | yes | The main difference from [swipe](#mobile-swipe) call with the same argument is that _scroll_ will try to move the current viewport exactly to the next/previous page (the term "page" means the content, which fits into a single device screen) | down
 predicateString | string | no | The NSPredicate locator of the child element, to which the scrolling should be performed. Has no effect if _elementId_ is not a container | label == "foo"
@@ -926,7 +942,7 @@ Performs pinch gesture on the given element or on the application element.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to pinch on. Application element will be used instead if this parameter is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to pinch on. The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
 scale | number | yes | Pinch scale of type float. Use a scale between 0 and 1 to "pinch close" or zoom out and a scale greater than 1 to "pinch open" or zoom in. | 0.5
 velocity | number | yes | The velocity of the pinch in scale factor per second (float value) | 2.2
 
@@ -949,9 +965,9 @@ Performs double tap gesture on the given element or on the screen.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | no if x and y are set | The internal element identifier (as hexadecimal hash string) to double tap on | fe50b60b-916d-420b-8728-ee2072ec53eb
-x | number | no if elementId is set | Screen x tap coordinate of type float. | 100
-y | number | no if elementId is set | Screen y tap coordinate of type float. | 100
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to double tap on. The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
+x | number | no | Horizontal coordinate offset. | 100
+y | number | no | Vertical coordinate offset. | 100
 
 #### Examples
 
@@ -968,17 +984,17 @@ Performs long press gesture on the given element or on the screen.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | no if x and y are set | The internal element identifier (as hexadecimal hash string) to long tap on | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to long tap on. The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
 duration | number | yes | The float duration of press action in seconds | 1.5
-x | number | no if elementId is set | Screen x tap coordinate of type float. | 100
-y | number | no if elementId is set | Screen y tap coordinate of type float. | 100
+x | number | no | Horizontal coordinate offset. | 100
+y | number | no | Vertical coordinate offset. | 100
 
 #### Examples
 
 ```csharp
 // c#
 Dictionary<string, object> tfLongTap = new Dictionary<string, object>();
-tfLongTap.Add("element", element.Id);
+tfLongTap.Add("elementId", element.Id);
 tfLongTap.Add("duration", 2.0);
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap);
 ```
@@ -995,14 +1011,14 @@ Performs two finger tap gesture on the given element or on the application eleme
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. Application element will be used instead if this parameter is not provided | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
 
 #### Examples
 
 ```csharp
 // c#
 Dictionary<string, object> tfTap = new Dictionary<string, object>();
-tfTap.Add("element", element.Id);
+tfTap.Add("elementId", element.Id);
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap);
 ```
 
@@ -1018,9 +1034,9 @@ Performs tap gesture by coordinates on the given element or on the screen.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. _x_ and _y_ tap coordinates will be calulated relatively to the current element position on the screen if this argument is provided. Otherwise they should be calculated relatively to the active application element. | fe50b60b-916d-420b-8728-ee2072ec53eb
-x | number | yes | Screen x tap coordinate of type float. | 100
-y | number | yes | Screen y tap coordinate of type float. | 100
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to tap on. _x_ and _y_ tap coordinates will be calculated relatively to the current element position on the screen if this argument is provided. Otherwise they should be calculated relatively to the active application element. | fe50b60b-916d-420b-8728-ee2072ec53eb
+x | number | yes | Horizontal coordinate offset. | 100
+y | number | yes | Vertical coordinate offset. | 100
 
 ### mobile: dragFromToForDuration
 
@@ -1049,7 +1065,7 @@ params.put("fromX", 100);
 params.put("fromY", 100);
 params.put("toX", 200);
 params.put("toY", 200);
-params.put("element", ((RemoteWebElement) element).getId());
+params.put("elementId", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: dragFromToForDuration", params);
 ```
 
@@ -1088,7 +1104,7 @@ Performs [rotate](https://developer.apple.com/documentation/xctest/xcuielement/1
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | yes | Internal element id (as hexadecimal hash string) to perform rotation on | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId ("element" prior to Appium v 1.22) | string | no | Internal element id (as hexadecimal hash string) to perform rotation on. The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
 rotation | number | yes | The rotation of the gesture in radians | Math.PI
 velocity | number | yes | The velocity of the rotation gesture in radians per second | Math.PI / 4
 
@@ -1102,7 +1118,7 @@ js.executeScript("mobile: rotateElement", ImmutableMap.of(
     "rotation", -Math.PI / 2,
     // in approximately two seconds
     "velocity", Math.PI / 4,
-    "element", ((RemoteWebElement) element).getId()
+    "elementId", ((RemoteWebElement) element).getId()
 ));
 ```
 
@@ -1118,9 +1134,9 @@ Sends one or more taps with one or more touch points since Appium 1.17.1.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId ("element" prior to Appium v 1.22) | string | yes | The internal element identifier (as hexadecimal hash string) to perform one or more taps. | fe50b60b-916d-420b-8728-ee2072ec53eb
-numberOfTaps | number | yes | The number of taps | 2
-numberOfTouches | number | yes | The number of touch points | 2
+elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to perform one or more taps. The active application element will be used instead if this parameter is not provided.| fe50b60b-916d-420b-8728-ee2072ec53eb
+numberOfTaps | number | no | The number of taps. 1 by default | 2
+numberOfTouches | number | no | The number of touch points. 1 by default | 2
 
 #### Examples
 
@@ -1128,8 +1144,13 @@ numberOfTouches | number | yes | The number of touch points | 2
 # Ruby
 e = @driver.find_element :id, 'target element'
 # Taps the element with a single touch point twice
-@driver.execute_script 'mobile: tapWithNumberOfTaps', {element: e.ref, numberOfTaps: 2, numberOfTouches: 1}
+@driver.execute_script 'mobile: tapWithNumberOfTaps', {elementId: e.ref, numberOfTaps: 2, numberOfTouches: 1}
 ```
+
+- numberOfTaps=1, numberOfTouches=1 -> "vanilla" single tap
+- numberOfTaps=2, numberOfTouches=1 -> double tap
+- numberOfTaps=3, numberOfTouches=1 -> tripple tap
+- numberOfTaps=2, numberOfTouches=2 -> double tap with two fingers
 
 #### Reference
 [tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)
@@ -1387,7 +1408,7 @@ keys | array | yes | Array of keys to type. Each item could either be a string, 
 
     The `modifierFlags` argument is of `unsigned long` type and defines the bitmask with depressed modifier keys for the given key.
     XCTest defines the following possible bitmasks for modifier keys:
-    
+
     <pre>
     typedef NS_OPTIONS(NSUInteger, XCUIKeyModifierFlags) {
        XCUIKeyModifierNone       = 0,

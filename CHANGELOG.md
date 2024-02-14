@@ -1,5 +1,106 @@
-## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
+## [7.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.2.0...v7.0.0) (2024-02-12)
 
+
+### ⚠ BREAKING CHANGES
+
+* Removed the following obsolete APIs:
+- performTouch
+- performMultiAction
+
+### Features
+
+* Remove obsolete MJSONWP touch actions ([#2325](https://github.com/appium/appium-xcuitest-driver/issues/2325)) ([0e7267a](https://github.com/appium/appium-xcuitest-driver/commit/0e7267a971bc7ff1af3840ee1ea97de1f2773be0))
+
+## [6.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.1.0...v6.2.0) (2024-02-11)
+
+
+### Features
+
+* Add the `appium:initialDeeplinkUrl` capabilility ([#2324](https://github.com/appium/appium-xcuitest-driver/issues/2324)) ([167c268](https://github.com/appium/appium-xcuitest-driver/commit/167c2688a21eab0d340d685c13db6681e0e0a265))
+
+## [6.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.3...v6.1.0) (2024-02-09)
+
+
+### Features
+
+* add checkVersion option for mobile:installApp ([#2322](https://github.com/appium/appium-xcuitest-driver/issues/2322)) ([dcc96a9](https://github.com/appium/appium-xcuitest-driver/commit/dcc96a9a4cbc3a650c77dcabdf9a3d48b29f124d))
+
+## [6.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.2...v6.0.3) (2024-02-08)
+
+
+### Miscellaneous Chores
+
+* add a guide for the simulated location ([#2321](https://github.com/appium/appium-xcuitest-driver/issues/2321)) ([fe6d965](https://github.com/appium/appium-xcuitest-driver/commit/fe6d96569eebf284c2ab7ecdc8b6e7f9e279ce7f))
+
+## [6.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.1...v6.0.2) (2024-02-06)
+
+
+### Miscellaneous Chores
+
+* Add validation of Simulator binary architecture ([#2320](https://github.com/appium/appium-xcuitest-driver/issues/2320)) ([967f712](https://github.com/appium/appium-xcuitest-driver/commit/967f71241787728d9b192e3e02d4a568d4dc701f))
+
+## [6.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v6.0.0...v6.0.1) (2024-02-02)
+
+
+### Miscellaneous Chores
+
+* Paralelize log collection startup ([#2318](https://github.com/appium/appium-xcuitest-driver/issues/2318)) ([ad452c9](https://github.com/appium/appium-xcuitest-driver/commit/ad452c9da9f39671c8e36adbcedbf5fcc92d68a8))
+
+## [6.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.16.1...v6.0.0) (2024-02-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed the unused getCoordinates API
+* Changed arguments order for various gesture extensions
+* Bumped WDA to ^6.0.0, which includes fixes for the active application detection
+    * This change might require switching the active application to `com.apple.springboard` in order to interact with system dialogs, such as permission dialogs, while the current active application is not the springboard. Using `mobile:alert` or `acceptAlertButtonSelector`/`dismissAlertButtonSelector` also should help. See also [appium#19716](https://github.com/appium/appium/issues/19716).
+
+### Features
+
+* Unify gesture extensions ([#2317](https://github.com/appium/appium-xcuitest-driver/issues/2317)) ([11c9b3c](https://github.com/appium/appium-xcuitest-driver/commit/11c9b3c0320d795c36ea6b2ee9364ef85fad297c))
+
+## [5.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.16.0...v5.16.1) (2024-02-01)
+
+
+### Reverts
+
+* Revert "feat: Unify gesture extensions (#2313)" ([00161d8](https://github.com/appium/appium-xcuitest-driver/commit/00161d8c71a25cdc9c34707b467f0737c2fcc2d3)), closes [#2313](https://github.com/appium/appium-xcuitest-driver/issues/2313)
+
+## [5.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.15.1...v5.16.0) (2024-02-01)
+
+
+### Features
+
+* Unify gesture extensions ([#2313](https://github.com/appium/appium-xcuitest-driver/issues/2313)) ([50f38c1](https://github.com/appium/appium-xcuitest-driver/commit/50f38c156d1dca5036f4d3ed7951d7e5d463c6fd))
+
+## [5.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.15.0...v5.15.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* revert active application detection fix added in 5.14.1 ([#2314](https://github.com/appium/appium-xcuitest-driver/issues/2314)) ([b46243e](https://github.com/appium/appium-xcuitest-driver/commit/b46243e6276ce65bb25f6bd7650a25b935df955f))
+    * Please see [appium#19716](https://github.com/appium/appium/issues/19716) for more details. The change addressed in the issue will come in a future release.
+
+### Code Refactoring
+
+* Unify devicectl usage ([#2310](https://github.com/appium/appium-xcuitest-driver/issues/2310)) ([b788c76](https://github.com/appium/appium-xcuitest-driver/commit/b788c76ef0f020adf5012d729013e7ed69508307))
+
+## [5.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.2...v5.15.0) (2024-01-29)
+
+
+### Features
+
+* Add 'mobile: sendMemoryWarning' extension ([#2308](https://github.com/appium/appium-xcuitest-driver/issues/2308)) ([014952b](https://github.com/appium/appium-xcuitest-driver/commit/014952b6f98a35518d30d2e25f4809d85609b055))
+
+## [5.14.2](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.1...v5.14.2) (2024-01-27)
+
+
+### Miscellaneous Chores
+
+* Remove husky and commitlint ([#2307](https://github.com/appium/appium-xcuitest-driver/issues/2307)) ([8142e96](https://github.com/appium/appium-xcuitest-driver/commit/8142e96376630b3f5811532216a686eacc66495e))
+
+## [5.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v5.14.0...v5.14.1) (2024-01-24)
 
 ### Miscellaneous Chores
 

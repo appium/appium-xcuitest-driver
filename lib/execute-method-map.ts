@@ -19,6 +19,12 @@ export const executeMethodMap = {
       optional: ['offset'],
     },
   },
+  'mobile: sendMemoryWarning': {
+    command: 'mobileSendMemoryWarning',
+    params: {
+      required: ['bundleId'],
+    },
+  },
   // https://developer.apple.com/documentation/xctest/xcuielement/1618668-swipeleft?language=objc
   // https://developer.apple.com/documentation/xctest/xcuielement/1618674-swiperight?language=objc
   // https://developer.apple.com/documentation/xctest/xcuielement/1618667-swipeup?language=objc
@@ -55,7 +61,7 @@ export const executeMethodMap = {
   'mobile: tapWithNumberOfTaps': {
     command: 'mobileTapWithNumberOfTaps',
     params: {
-      required: ['elementId', 'numberOfTouches', 'numberOfTaps'],
+      optional: ['numberOfTouches', 'numberOfTaps', 'elementId'],
     },
   },
   // https://developer.apple.com/documentation/xctest/xcuielement/1618663-pressforduration?language=objc
@@ -78,7 +84,8 @@ export const executeMethodMap = {
   'mobile: rotateElement': {
     command: 'mobileRotateElement',
     params: {
-      required: ['elementId', 'rotation', 'velocity'],
+      required: ['rotation', 'velocity'],
+      optional: ['elementId'],
     },
   },
   // https://developer.apple.com/documentation/xctest/xcuicoordinate/3551692-pressforduration?language=objc
@@ -143,7 +150,7 @@ export const executeMethodMap = {
     command: 'mobileInstallApp',
     params: {
       required: ['app'],
-      optional: ['strategy', 'timeoutMs'],
+      optional: ['strategy', 'timeoutMs', 'checkVersion'],
     },
   },
   'mobile: isAppInstalled': {
