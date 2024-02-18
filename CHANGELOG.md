@@ -1,3 +1,10 @@
+## [7.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.0.1...v7.1.0) (2024-02-18)
+
+
+### Features
+
+* return the result of getGeoLocation if available for ios 17+ ([#2329](https://github.com/appium/appium-xcuitest-driver/issues/2329)) ([fc0ba2c](https://github.com/appium/appium-xcuitest-driver/commit/fc0ba2c285cccef6f4f229dc5d27b5b2d0d78569))
+
 ## [7.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.0.0...v7.0.1) (2024-02-14)
 
 
