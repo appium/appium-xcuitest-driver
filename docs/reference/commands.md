@@ -65,7 +65,7 @@ The 'latitude', 'longitude' and 'altitude' could be zero even if the Location Se
 
 For iOS 17+ simulators and real devices, this method will return the result of
 [`mobile: getSimulatedLocation`](./execute-methods.md#mobile-getsimulatedlocation) extension
-if they were set by [`mobile: setSimulatedLocation`](./execute-methods.md#mobile-setsimulatedlocation).
+if the simulated location was previously set by [`mobile: setSimulatedLocation`](./execute-methods.md#mobile-setsimulatedlocation).
 
 **`Throws`**
 
