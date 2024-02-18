@@ -63,6 +63,10 @@ Returns the location of the device under test. Location Services for WebDriverAg
 The 'latitude', 'longitude' and 'altitude' could be zero even if the Location Services are set to
 'Always', because the device may need some time to update the location data.
 
+For iOS 17+ simulators and real devices, this method will return the result of
+[`mobile: getSimulatedLocation`](./execute-methods.md#mobile-getsimulatedlocation) extension
+if the simulated location was previously set by [`mobile: setSimulatedLocation`](./execute-methods.md#mobile-setsimulatedlocation).
+
 **`Throws`**
 
 If the device under test returns an error message. i.e.: tvOS returns unsupported error
