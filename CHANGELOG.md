@@ -1,3 +1,10 @@
+## [7.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.1...v7.1.2) (2024-02-23)
+
+
+### Bug Fixes
+
+* Properly handle WDA session startup errors ([#2331](https://github.com/appium/appium-xcuitest-driver/issues/2331)) ([f4ca5ee](https://github.com/appium/appium-xcuitest-driver/commit/f4ca5ee2c542479e6acc990f551c4740d3ddd197))
+
 ## [7.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.0...v7.1.1) (2024-02-23)
 
 
