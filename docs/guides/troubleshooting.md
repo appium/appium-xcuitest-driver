@@ -32,6 +32,8 @@ XCUITest driver offers a few methods to handle them.
     - It might be necessary to coordinate element selection via `acceptAlertButtonSelector`/`dismissAlertButtonSelector` settings in [Settings](../reference/settings.md)
 - Activate `com.apple.springboard` with [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp) before interacting with dialogs
 
+[`mobile: activeAppInfo`](../reference/execute-methods.md#mobile-activateappinfo) helps to understand what application (bundleId) is considered as active for the XCUITest driver.
+
 ## Leftover Application Data on Real Devices
 
 There might be a situation where application data is present on the real device, even if the
