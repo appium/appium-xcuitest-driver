@@ -1,3 +1,10 @@
+## [7.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.2...v7.2.0) (2024-02-28)
+
+
+### Features
+
+* add webviewAtomWaitTimeout to control timeout for the atom execution ([#2335](https://github.com/appium/appium-xcuitest-driver/issues/2335)) ([255671d](https://github.com/appium/appium-xcuitest-driver/commit/255671d6328cdbc96abd46785865a758474ac100))
+
 ## [7.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.1...v7.1.2) (2024-02-23)
 
 
