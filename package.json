@@ -178,7 +178,7 @@
     "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.1",
     "type-fest": "^4.1.0",
-    "typescript": "~5.2",
+    "typescript": "^5.4.2",
     "webdriverio": "^8.14.3"
   },
   "overrides": {
