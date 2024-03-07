@@ -391,6 +391,21 @@ export const executeMethodMap = {
       required: ['bundle'],
     },
   },
+  'mobile: startXCTestScreenRecording': {
+    command: 'mobileStartXctestScreenRecording',
+    params: {
+      optional: ['fps', 'codec'],
+    },
+  },
+  'mobile: getXCTestScreenRecordingInfo': {
+    command: 'mobileGetXctestScreenRecordingInfo',
+  },
+  'mobile: stp[XCTestScreenRecording': {
+    command: 'mobileStopXctestScreenRecording',
+    params: {
+      optional: ['remotePath', 'user', 'pass', 'headers', 'fileFieldName', 'formFields', 'method'],
+    },
+  },
   'mobile: pushNotification': {
     command: 'mobilePushNotification',
     params: {
