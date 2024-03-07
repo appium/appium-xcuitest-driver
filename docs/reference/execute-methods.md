@@ -1518,18 +1518,19 @@ elementAttributes | dict | JSON object containing various attributes of the elem
 
 Start a new screen recording via XCTest.
 
-Since this feature is based on the native implemntation provided by Apple
-it provides the best quality for the least perfomance penalty.
+Since this feature is based on the native implementation provided by Apple
+it provides the best quality for the least perfomance penalty in comparison
+to alternative implementations.
 
 Even though the feature is available for real devices
-there is no possibility to delete stored video files yet,
+there is no possibility to delete video files stored on the device yet,
 which may lead to internal storage overload.
 That is why it was put under the `xctest_screen_record` security
 feature flag if executed from a real device test.
 
 If the screen recording is already running this API is a noop.
 
-This feature is only available since Xcode 15/iOS 17.
+The feature is only available since Xcode 15/iOS 17.
 
 #### Arguments
 
