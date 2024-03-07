@@ -400,7 +400,7 @@ export const executeMethodMap = {
   'mobile: getXCTestScreenRecordingInfo': {
     command: 'mobileGetXctestScreenRecordingInfo',
   },
-  'mobile: stp[XCTestScreenRecording': {
+  'mobile: stopXCTestScreenRecording': {
     command: 'mobileStopXctestScreenRecording',
     params: {
       optional: ['remotePath', 'user', 'pass', 'headers', 'fileFieldName', 'formFields', 'method'],
