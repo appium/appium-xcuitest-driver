@@ -66,8 +66,6 @@
 | POST   | /accept_alert                            | none | |
 | POST   | /dismiss_alert                           | none | |
 | POST   | /click                                   | | button |
-| POST   | /touch/click                             | element | |
-| POST   | /touch/flick                             | | element, xspeed, yspeed, xoffset, yoffset, speed |
 | GET    | /location                                | | |
 | POST   | /location                                | location | |
 | POST   | /log                                     | type | |
@@ -75,8 +73,6 @@
 | GET    | /context                                 | | |
 | POST   | /context                                 | name | |
 | GET    | /contexts                                | | |
-| POST   | /touch/perform                           | actions | |
-| POST   | /touch/multi/perform                     | actions | elementId |
 | POST   | /receive_async_response                  | status, value | |
 
 
