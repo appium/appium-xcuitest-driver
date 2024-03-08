@@ -1,3 +1,20 @@
+## [7.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.2.0...v7.3.0) (2024-03-08)
+
+
+### Features
+
+* Video recording using native XCTest backend ([#2339](https://github.com/appium/appium-xcuitest-driver/issues/2339)) ([e17e88b](https://github.com/appium/appium-xcuitest-driver/commit/e17e88bb471500a1251a380ace91ee351f9e152b))
+
+
+### Bug Fixes
+
+* Update the default timeout for the recent webview detection ([#2337](https://github.com/appium/appium-xcuitest-driver/issues/2337)) ([8d7750c](https://github.com/appium/appium-xcuitest-driver/commit/8d7750c63348d116990cd856ecd9e6853421a42f))
+
+
+### Miscellaneous Chores
+
+* bump typescript ([40d5f5d](https://github.com/appium/appium-xcuitest-driver/commit/40d5f5dc5e1593d072750ece22e251768259b0c7))
+
 ## [7.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.2...v7.2.0) (2024-02-28)
 
 
