@@ -23,6 +23,8 @@ do not require such adjustment.
 
 XCUITest driver offers a few methods to handle them.
 
+- `defaultActiveApplication` settings in [Settings](../reference/settings.md).
+    - `driver.settings.update({defaultActiveApplication: 'com.apple.springboard'})` (Ruby) switches the current active application with `com.apple.springboard` instead of the given target application. It lets the session interact with the springboard. Please do not forget to set the value as `auto` like `driver.settings.update({defaultActiveApplication: 'auto'})` to bring the behavior back to the default behavior
 - Start a session without `appium:app` nor `appium:bundleId`. Then XCUITest driver attempts to get the current active application. This requires you to start an application after a new session request with [`mobile: installApp`](../reference/execute-methods.md#mobile-installapp) to install an app if needed and [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp)/[`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), but it could automatically change the active application with `com.apple.springboard` or activated application on the top. (Note that the automatic detection could have a delay, thus each action could take more time.)
     - When a permission alert exists on the top, it could select the `com.apple.springboard`
     - When another application is on the top by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
