@@ -28,7 +28,7 @@ XCUITest driver offers a few methods to handle them.
     - When another application is on the top by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
 - [`mobile: alert`](../reference/execute-methods.md#mobile-alert)
 - `defaultActiveApplication` settings in [Settings](../reference/settings.md).
-    - `driver.settings.update({defaultActiveApplication: 'com.apple.springboard'})` (with [Appium Ruby client](https://github.com/appium/ruby_lib_core)) switches the current active application with `com.apple.springboard` instead of the given target application. It lets the session interact with the springboard. Please do not forget to set the value as `auto` like `driver.settings.update({defaultActiveApplication: 'auto'})` to bring the behavior back to the default behavior
+    - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
         ```ruby
         # Interacting with the test target
         driver.settings.update({defaultActiveApplication: "com.apple.springboard"})
