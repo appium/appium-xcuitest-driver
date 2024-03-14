@@ -1,3 +1,10 @@
+## [7.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.0...v7.3.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* respect defaultActiveApplication settings in activeApplication selection ([#2343](https://github.com/appium/appium-xcuitest-driver/issues/2343)) ([1837991](https://github.com/appium/appium-xcuitest-driver/commit/18379912c542ff619304476680005d4656f94de4))
+
 ## [7.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.2.0...v7.3.0) (2024-03-08)
 
 
