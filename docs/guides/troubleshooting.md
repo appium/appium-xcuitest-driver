@@ -27,7 +27,7 @@ XCUITest driver offers a few methods to handle them.
     - When a permission alert exists on the top, it could select the `com.apple.springboard`
     - When another application is on the top by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
 - [`mobile: alert`](../reference/execute-methods.md#mobile-alert)
-- `defaultActiveApplication` settings in [Settings](../reference/settings.md).
+- `defaultActiveApplication` setting in [Settings](../reference/settings.md).
     - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
         ```ruby
         # Interacting with the test target
