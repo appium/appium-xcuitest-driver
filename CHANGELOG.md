@@ -1,3 +1,10 @@
+## [7.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.1...v7.4.0) (2024-03-22)
+
+
+### Features
+
+* Support usePreinstalledWDA on simulators ([#2345](https://github.com/appium/appium-xcuitest-driver/issues/2345)) ([2eb4c81](https://github.com/appium/appium-xcuitest-driver/commit/2eb4c81a4de670d3bf6d9fc062ec827b05519f25))
+
 ## [7.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.0...v7.3.1) (2024-03-14)
 
 
