@@ -1,3 +1,10 @@
+## [7.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.0...v7.4.1) (2024-03-22)
+
+
+### Bug Fixes
+
+* Pass valid arg into terminateApp ([#2348](https://github.com/appium/appium-xcuitest-driver/issues/2348)) ([e2e6a6f](https://github.com/appium/appium-xcuitest-driver/commit/e2e6a6faf4f86d9fab63e026c2820fb839a0e98c))
+
 ## [7.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.1...v7.4.0) (2024-03-22)
 
 
