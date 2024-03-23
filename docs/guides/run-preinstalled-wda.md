@@ -8,8 +8,7 @@ command execution, improving the session startup performance.
 
 !!! warning
 
-    This method currently does not work natively for iOS 17/tvOS 17 due to platform changes.
-    Please use the default `xcodebuild` approach or 3rd party tools such as `pymobiledevice3`.
+    This method currently works over `devicectl` for iOS 17+. This may not work for tvOS 17+.
 
 ## Capabilities
 
@@ -27,7 +26,7 @@ Running a test for the WDA package in Xcode is the easiest way to prepare the de
 
 1. Open WebDriverAgent project in Xcode
     - You can run `appium driver run xcuitest open-wda` if using XCUITest driver 4.13 or newer
-2. Select the _WebDriverAgentRunner_ scheme 
+2. Select the _WebDriverAgentRunner_ scheme
 3. Select the scheme as _Product -> Scheme -> WebDriverAgentRunner_ (or _WebDriverAgentRunner\_tvOS_ for tvOS)
 4. Select your device in _Product -> Destination_
 5. Select _Product -> Test_ to build and install the WDA app
@@ -44,6 +43,17 @@ Some 3rd party tools such as [pymobiledevice3](https://github.com/doronz88/pymob
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
 directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
 The app can then be installed without `xcodebuild` using the 3rd party tools.
+
+
+### Additional requirement for iOS 17+/tvOS17+
+
+To launch the app with `xcrun devicectl device process launch` the WebDriverAgent package should not have `Frameworks/XC**` files.
+
+For example, after building the WebDriverAgent with Xcode with proper sign, it generates `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app`.
+Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm Frameworks/WebDriverAgentRunner-Runner.app/XC**`.
+
+Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the`WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it with `devicectl` command as part of `appium:usePreinstalledWDA` functionality.
+
 
 ## Launch the Session
 
@@ -113,7 +123,7 @@ driver.quit
     `com.apple.dt.testmanagerd.runner`. It causes an unexpected WDA process crash with embedded
     XCTest frameworks while running a single WebDriverAgent package on various OS environments
     without `xcodebuild`.
-    
+
     Since WDA v5.10.0, the module can refer to the device's local XCTest frameworks. It lets the
     Appium/WebDriverAgent package use proper dependencies for the device with a single prebuilt
     WebDriverAgent package. To set this up, you should remove the package internal frameworks from
