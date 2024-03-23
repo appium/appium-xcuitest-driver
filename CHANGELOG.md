@@ -1,3 +1,48 @@
+## [7.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.1...v7.4.2) (2024-03-23)
+
+
+### Miscellaneous Chores
+
+* do not print unrelated logs ([#2346](https://github.com/appium/appium-xcuitest-driver/issues/2346)) ([ee5d83e](https://github.com/appium/appium-xcuitest-driver/commit/ee5d83ec73b9113d4876880dea36d107ecadeaaa))
+
+## [7.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.0...v7.4.1) (2024-03-22)
+
+
+### Bug Fixes
+
+* Pass valid arg into terminateApp ([#2348](https://github.com/appium/appium-xcuitest-driver/issues/2348)) ([e2e6a6f](https://github.com/appium/appium-xcuitest-driver/commit/e2e6a6faf4f86d9fab63e026c2820fb839a0e98c))
+
+## [7.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.1...v7.4.0) (2024-03-22)
+
+
+### Features
+
+* Support usePreinstalledWDA on simulators ([#2345](https://github.com/appium/appium-xcuitest-driver/issues/2345)) ([2eb4c81](https://github.com/appium/appium-xcuitest-driver/commit/2eb4c81a4de670d3bf6d9fc062ec827b05519f25))
+
+## [7.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.0...v7.3.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* respect defaultActiveApplication settings in activeApplication selection ([#2343](https://github.com/appium/appium-xcuitest-driver/issues/2343)) ([1837991](https://github.com/appium/appium-xcuitest-driver/commit/18379912c542ff619304476680005d4656f94de4))
+
+## [7.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.2.0...v7.3.0) (2024-03-08)
+
+
+### Features
+
+* Video recording using native XCTest backend ([#2339](https://github.com/appium/appium-xcuitest-driver/issues/2339)) ([e17e88b](https://github.com/appium/appium-xcuitest-driver/commit/e17e88bb471500a1251a380ace91ee351f9e152b))
+
+
+### Bug Fixes
+
+* Update the default timeout for the recent webview detection ([#2337](https://github.com/appium/appium-xcuitest-driver/issues/2337)) ([8d7750c](https://github.com/appium/appium-xcuitest-driver/commit/8d7750c63348d116990cd856ecd9e6853421a42f))
+
+
+### Miscellaneous Chores
+
+* bump typescript ([40d5f5d](https://github.com/appium/appium-xcuitest-driver/commit/40d5f5dc5e1593d072750ece22e251768259b0c7))
+
 ## [7.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.2...v7.2.0) (2024-02-28)
 
 

@@ -27,6 +27,16 @@ XCUITest driver offers a few methods to handle them.
     - When a permission alert exists on the top, it could select the `com.apple.springboard`
     - When another application is on the top by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
 - [`mobile: alert`](../reference/execute-methods.md#mobile-alert)
+- `defaultActiveApplication` setting in [Settings](../reference/settings.md).
+    - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
+        ```ruby
+        # Interacting with the test target
+        driver.settings.update({defaultActiveApplication: "com.apple.springboard"})
+        # to accept the alert
+        driver.find_element("accessibility_id", "Allow Once").click
+        driver.settings.update({defaultActiveApplication: "auto"})
+        # keep interacting with the test target
+        ```
 - Enable `appium:autoAcceptAlerts`/`appium:autoDismissAlerts`, or interact with alerts via [User Prompts](https://www.w3.org/TR/webdriver1/#user-prompts) in WebDriver endpoints
     - e.g. `driver.switch_to.alert.accept` with the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
     - It might be necessary to coordinate element selection via `acceptAlertButtonSelector`/`dismissAlertButtonSelector` settings in [Settings](../reference/settings.md)
