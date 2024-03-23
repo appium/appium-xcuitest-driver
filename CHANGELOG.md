@@ -1,3 +1,10 @@
+## [7.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.1...v7.4.2) (2024-03-23)
+
+
+### Miscellaneous Chores
+
+* do not print unrelated logs ([#2346](https://github.com/appium/appium-xcuitest-driver/issues/2346)) ([ee5d83e](https://github.com/appium/appium-xcuitest-driver/commit/ee5d83ec73b9113d4876880dea36d107ecadeaaa))
+
 ## [7.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.0...v7.4.1) (2024-03-22)
 
 
