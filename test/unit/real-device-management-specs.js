@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import sinonChai from 'sinon-chai';
 import { installToRealDevice } from '../../lib/real-device-management';
-import IOSDeploy from '../../lib/ios-deploy';
+import RealDevice from '../../lib/real-device';
 
 chai.should();
 chai.use(sinonChai).use(chaiAsPromised);
@@ -26,7 +26,7 @@ describe('installToRealDevice', function () {
   });
 
   it('nothing happen without app', async function () {
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install').resolves();
 
@@ -36,7 +36,7 @@ describe('installToRealDevice', function () {
   });
 
   it('nothing happen without bundle id', async function () {
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install').resolves();
 
@@ -49,7 +49,7 @@ describe('installToRealDevice', function () {
     const opts = {
       skipUninstall: true
     };
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install').resolves();
 
@@ -63,7 +63,7 @@ describe('installToRealDevice', function () {
     const opts = {
       skipUninstall: false
     };
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install').resolves();
 
@@ -78,7 +78,7 @@ describe('installToRealDevice', function () {
       skipUninstall: false
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install').throws(err_msg);
 
@@ -93,7 +93,7 @@ describe('installToRealDevice', function () {
     const opts = {
       skipUninstall: true
     };
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install')
       .onCall(0).throws(`{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`)
@@ -110,7 +110,7 @@ describe('installToRealDevice', function () {
       skipUninstall: true
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
-    const iosDeploy = new IOSDeploy(udid);
+    const iosDeploy = new RealDevice(udid);
     sandbox.stub(iosDeploy, 'remove').resolves();
     sandbox.stub(iosDeploy, 'install').throws(err_msg);
     sandbox.stub(iosDeploy, 'isAppInstalled').resolves(true);
