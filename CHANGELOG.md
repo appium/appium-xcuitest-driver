@@ -1,3 +1,10 @@
+## [7.5.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.1...v7.5.2) (2024-03-24)
+
+
+### Miscellaneous Chores
+
+* rename IosDeploy obhect to RealDevice to make the object meaning actual usage ([#2353](https://github.com/appium/appium-xcuitest-driver/issues/2353)) ([b3b7349](https://github.com/appium/appium-xcuitest-driver/commit/b3b734913bc5ef824b6cde58bfe0b389bb87abac))
+
 ## [7.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.0...v7.5.1) (2024-03-24)
 
 
