@@ -53,7 +53,7 @@ To launch the WebDriverAgentRunner package with `xcrun devicectl device process 
 For example, after building the WebDriverAgent with Xcode with proper sign, it generates `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app`.
 Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm Frameworks/WebDriverAgentRunner-Runner.app/XC**`.
 
-Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the`WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it with `devicectl` command as part of `appium:usePreinstalledWDA` functionality.
+Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the `WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it with `devicectl` command as part of `appium:usePreinstalledWDA` functionality.
 
 
 ## Launch the Session
