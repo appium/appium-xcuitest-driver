@@ -1,3 +1,10 @@
+## [7.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.2...v7.5.0) (2024-03-24)
+
+
+### Features
+
+* add appium:usePreinstalledWDA for real iOS 17 devices ([#2350](https://github.com/appium/appium-xcuitest-driver/issues/2350)) ([ec5a1f7](https://github.com/appium/appium-xcuitest-driver/commit/ec5a1f73f06763da47c06386aac729e8ee75d990))
+
 ## [7.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.1...v7.4.2) (2024-03-23)
 
 
