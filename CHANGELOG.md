@@ -1,3 +1,10 @@
+## [7.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.0...v7.5.1) (2024-03-24)
+
+
+### Miscellaneous Chores
+
+* skip connected device check if the caps had webDriverAgentUrl ([#2351](https://github.com/appium/appium-xcuitest-driver/issues/2351)) ([407ad58](https://github.com/appium/appium-xcuitest-driver/commit/407ad58e8df03b700152f9c9bf41546e65afac4f))
+
 ## [7.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.2...v7.5.0) (2024-03-24)
 
 
