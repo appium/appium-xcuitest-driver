@@ -1,3 +1,10 @@
+## [7.5.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.3...v7.5.4) (2024-03-25)
+
+
+### Bug Fixes
+
+* uncaughtException: maxObjectCount exceeded in listApplications ([#2355](https://github.com/appium/appium-xcuitest-driver/issues/2355)) ([6bfc5c5](https://github.com/appium/appium-xcuitest-driver/commit/6bfc5c5e501f14f770d17d3cbea04850451ed2d2))
+
 ## [7.5.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.2...v7.5.3) (2024-03-25)
 
 
