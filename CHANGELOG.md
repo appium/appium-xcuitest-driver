@@ -1,3 +1,16 @@
+## [7.5.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.2...v7.5.3) (2024-03-25)
+
+
+### Bug Fixes
+
+* build error ([#2356](https://github.com/appium/appium-xcuitest-driver/issues/2356)) ([5c5ebc3](https://github.com/appium/appium-xcuitest-driver/commit/5c5ebc3fe1f22568b61ba7bc96dcdedae3bcb247))
+* typo by [#2351](https://github.com/appium/appium-xcuitest-driver/issues/2351) ([63589a1](https://github.com/appium/appium-xcuitest-driver/commit/63589a1c8f6f83356347a4d085e619f70ee79283))
+
+
+### Miscellaneous Chores
+
+* include devicectl in IOSDeploy object ([#2352](https://github.com/appium/appium-xcuitest-driver/issues/2352)) ([6c5abd1](https://github.com/appium/appium-xcuitest-driver/commit/6c5abd1eb35cc5089c8a8cb112b6fc708548c1a4))
+
 ## [7.5.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.1...v7.5.2) (2024-03-24)
 
 
