@@ -8,8 +8,11 @@ command execution, improving the session startup performance.
 
 !!! warning
 
-    This method currently works over `devicectl` for iOS 17+ with Xcode 15+ since XCUITest driver v7.5.0.
+    iOS/tvOS 17+ speicic:
+
+    This method currently works over `devicectl` for iOS 17+ with Xcode 15+ environment since XCUITest driver v7.5.0.
     This may not work for tvOS 17+.
+    iOS/tvOS 16 and lower ones work over [appium-ios-device](https://github.com/appium/appium-ios-device) directly.
 
 ## Capabilities
 
