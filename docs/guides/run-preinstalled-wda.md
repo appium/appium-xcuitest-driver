@@ -46,18 +46,15 @@ Some 3rd party tools such as [pymobiledevice3](https://github.com/doronz88/pymob
 [tidevice](https://github.com/alibaba/taobao-iphone-device), [ios-app-signer](https://github.com/DanTheMan827/ios-app-signer)
 can install the WebDriverAgent package.
 
-
 Some tools let you set an arbitrary bundle identifier (`CFBundleIdentifier` for the `Info.plist`) and sign it with the bundle identifier.
 It may not have `.xctrunner` as the bundle identifier.
 Default `appium:updatedWDABundleId` takes care of the automatic suffix by Xcode. It could break the non- `.xctrunner` package name case.
 `appium:doNotAddXctrunnerSuffix` capability will prevent adding the suffix.
 A session can launch preinstalled bundle id that does not include `.xctrunner`.
 
-
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
 directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
 The app can then be installed without `xcodebuild` using the 3rd party tools.
-
 
 ### Additional requirement for iOS 17+/tvOS17+
 
