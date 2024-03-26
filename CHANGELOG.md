@@ -1,3 +1,10 @@
+## [7.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.5...v7.6.0) (2024-03-26)
+
+
+### Features
+
+* add updatedWDABundleIdSuffix for usePreinstalledWDA usage ([#2358](https://github.com/appium/appium-xcuitest-driver/issues/2358)) ([b8291cb](https://github.com/appium/appium-xcuitest-driver/commit/b8291cbbc6d0a843427906cb810e9adff29c18a1))
+
 ## [7.5.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.4...v7.5.5) (2024-03-26)
 
 
