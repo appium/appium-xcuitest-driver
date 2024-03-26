@@ -283,7 +283,6 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice).to.have.been.calledOnce;
       expect(driver.helpers.configureApp).to.have.been.calledOnce;
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledOnceWith(
-        'some-device',
         '/path/to/iosApp.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined, strategy: undefined},
@@ -307,13 +306,11 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice).to.have.been.calledTwice;
       expect(driver.helpers.configureApp).to.have.been.calledTwice;
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
-        'some-device',
         '/path/to/iosApp1.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined, strategy: undefined},
       );
       expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
-        'some-device',
         '/path/to/iosApp2.app',
         'bundle-id2',
         {skipUninstall: true, timeout: undefined, strategy: undefined},
@@ -334,7 +331,6 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice).to.have.been.calledOnce;
       expect(driver.helpers.configureApp).to.have.been.calledOnce;
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledOnceWith(
-        'some-device',
         '/path/to/iosApp.app',
         'bundle-id',
         {newSimulator: false},
@@ -359,13 +355,11 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice).to.have.been.calledTwice;
       expect(driver.helpers.configureApp).to.have.been.calledTwice;
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
-        'some-device',
         '/path/to/iosApp1.app',
         'bundle-id',
         {newSimulator: false},
       );
       expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
-        'some-device',
         '/path/to/iosApp2.app',
         'bundle-id2',
         {newSimulator: false},

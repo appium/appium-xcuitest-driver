@@ -5,7 +5,7 @@ import {resetTestProcesses} from 'appium-webdriveragent';
 import {shutdownSimulator} from '../../../lib/simulator-management';
 import {killAllSimulators as simKill} from 'appium-ios-simulator';
 
-async function killAllSimulators() {
+export async function killAllSimulators() {
   const simctl = new Simctl();
   const allDevices = _.flatMap(_.values(await simctl.getDevices()));
   const bootedDevices = allDevices.filter((device) => device.state === 'Booted');
@@ -20,11 +20,26 @@ async function killAllSimulators() {
   await simKill();
 }
 
-async function deleteDeviceWithRetry(udid) {
+/**
+ * @param {string} udid
+ */
+export async function deleteDeviceWithRetry(udid) {
   const simctl = new Simctl({udid});
   try {
     await retryInterval(10, 1000, simctl.deleteDevice.bind(simctl));
   } catch (ign) {}
 }
 
-export {killAllSimulators, shutdownSimulator, deleteDeviceWithRetry};
+/**
+ * @param {import('appium-ios-simulator').Simulator} [sim]
+ */
+export async function cleanupSimulator(sim) {
+  if (!sim) {
+    return;
+  }
+  await resetTestProcesses(sim.udid, true);
+  await sim.shutdown();
+  await deleteDeviceWithRetry(sim.udid);
+}
+
+export {shutdownSimulator};
