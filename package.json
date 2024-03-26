@@ -79,7 +79,7 @@
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.5.4",
-    "appium-ios-simulator": "^5.5.1",
+    "appium-ios-simulator": "^6.1.0",
     "appium-remote-debugger": "^11.0.0",
     "appium-webdriveragent": "^8.0.1",
     "appium-xcode": "^5.1.4",
