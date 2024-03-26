@@ -1,3 +1,10 @@
+## [7.5.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.4...v7.5.5) (2024-03-26)
+
+
+### Miscellaneous Chores
+
+* add launchApp via devicectl ([#2354](https://github.com/appium/appium-xcuitest-driver/issues/2354)) ([3907455](https://github.com/appium/appium-xcuitest-driver/commit/3907455d84519709e07d683ac26ef2047ede9d59))
+
 ## [7.5.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.3...v7.5.4) (2024-03-25)
 
 
