@@ -20,6 +20,7 @@ command execution, improving the session startup performance.
     - [`appium:usePreinstalledWDA`](../reference/capabilities.md#webdriveragent)
 - Optional
     - [`appium:updatedWDABundleId`](../reference/capabilities.md#webdriveragent)
+    - [`appium:doNotAddXctrunnerSuffix`](../reference/capabilities.md#webdriveragent)
     - [`appium:prebuiltWDAPath`](../reference/capabilities.md#webdriveragent)
 
 ## Install WebDriverAgent
@@ -42,7 +43,16 @@ If using a real device, you may need to change your bundle ID. Please check the
 
 Some 3rd party tools such as [pymobiledevice3](https://github.com/doronz88/pymobiledevice3),
 [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and
-[tidevice](https://github.com/alibaba/taobao-iphone-device) can install the WebDriverAgent package.
+[tidevice](https://github.com/alibaba/taobao-iphone-device), [ios-app-signer](https://github.com/DanTheMan827/ios-app-signer)
+can install the WebDriverAgent package.
+
+
+Some tools let you set an arbitrary bundle identifier (`CFBundleIdentifier` for the `Info.plist`) and sign it with the bundle identifier.
+It may not have `.xctrunner` as the bundle identifier.
+Default `appium:updatedWDABundleId` takes care of the automatic suffix by Xcode. It could break the non- `.xctrunner` package name case.
+`appium:doNotAddXctrunnerSuffix` capability will prevent adding the suffix.
+A session can launch preinstalled bundle id that does not include `.xctrunner`.
+
 
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
 directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
@@ -90,6 +100,26 @@ bundle ID, the session will launch the WebDriverAgent process without `xcodebuil
 
     Please ensure that the WDA application is launchable before starting an XCUITest driver session.
     For example, check whether the provisioning profile is trusted.
+
+
+```ruby
+# Ruby
+capabilities: {
+  "platformName": "ios",
+  "appium:automationName": "xcuitest",
+  "appium:udid": "<udid>",
+  "appium:usePreinstalledWDA": true,
+  "appium:updatedWDABundleId": "io.appium.wda"
+  "appium:doNotAddXctrunnerSuffix": true
+}
+@core = Appium::Core.for capabilities: capabilities
+driver = @core.start_driver
+# do something
+driver.quit
+```
+
+If the `<udid>` device has a WebDriverAgent package with `io.appium.wda`
+bundle ID, the session will launch the WebDriverAgent process without `xcodebuild`.
 
 ## Set `appium:prebuiltWDAPath`
 
