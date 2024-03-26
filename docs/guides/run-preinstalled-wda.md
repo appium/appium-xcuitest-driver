@@ -21,6 +21,7 @@ command execution, improving the session startup performance.
 - Optional
     - [`appium:updatedWDABundleId`](../reference/capabilities.md#webdriveragent)
     - [`appium:doNotAddXctrunnerSuffix`](../reference/capabilities.md#webdriveragent)
+        - Since XCUITest driver v7.6.0
     - [`appium:prebuiltWDAPath`](../reference/capabilities.md#webdriveragent)
 
 ## Install WebDriverAgent
