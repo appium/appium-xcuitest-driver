@@ -20,7 +20,7 @@ command execution, improving the session startup performance.
     - [`appium:usePreinstalledWDA`](../reference/capabilities.md#webdriveragent)
 - Optional
     - [`appium:updatedWDABundleId`](../reference/capabilities.md#webdriveragent)
-    - [`appium:doNotAddXctrunnerSuffix`](../reference/capabilities.md#webdriveragent)
+    - [`appium:updatedWDABundleIdSuffix`](../reference/capabilities.md#webdriveragent)
         - Since XCUITest driver v7.6.0
     - [`appium:prebuiltWDAPath`](../reference/capabilities.md#webdriveragent)
 
@@ -49,9 +49,9 @@ can install the WebDriverAgent package.
 
 Some tools let you set an arbitrary bundle identifier (`CFBundleIdentifier` for the `Info.plist`) and sign it with the bundle identifier.
 It may not have `.xctrunner` as the bundle identifier.
-Default `appium:updatedWDABundleId` takes care of the hidden automatic suffix, `.xctrunner`, by Xcode, but it could break the non- `.xctrunner` package name case.
-`appium:doNotAddXctrunnerSuffix` capability will prevent adding the suffix.
-A session launches preinstalled bundle id that does not include `.xctrunner` with `"appium:doNotAddXctrunnerSuffix": true`.
+XCUITest driver takes care of the hidden automatic suffix, `.xctrunner`, by Xcode by default with  `appium:updatedWDABundleIdSuffix`.
+The capability sets `.xctrunner` by default for the given `appium:updatedWDABundleId`.
+If you need to launch preinstalled bundle id `io.appium.wda` with `appium:usePreinstalledWDA`, `"appium:updatedWDABundleIdSuffix": ""` (an empty string) will let you achieve it.
 
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
 directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
@@ -108,7 +108,7 @@ capabilities: {
   "appium:udid": "<udid>",
   "appium:usePreinstalledWDA": true,
   "appium:updatedWDABundleId": "io.appium.wda"
-  "appium:doNotAddXctrunnerSuffix": true
+  "appium:updatedWDABundleIdSuffix": ""
 }
 @core = Appium::Core.for capabilities: capabilities
 driver = @core.start_driver
