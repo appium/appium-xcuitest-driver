@@ -115,8 +115,8 @@ driver = @core.start_driver
 driver.quit
 ```
 
-If the `<udid>` device has a WebDriverAgent package with `io.appium.wda`
-bundle ID, the session will launch the WebDriverAgent process without `xcodebuild`.
+If the `<udid>` device has a WebDriverAgent package with `io.appium.wda` bundle ID (it does not have `.xctrunner`),
+the session will launch the WebDriverAgent process without `xcodebuild`.
 
 ## Set `appium:prebuiltWDAPath`
 
