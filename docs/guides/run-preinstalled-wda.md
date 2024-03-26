@@ -48,9 +48,9 @@ can install the WebDriverAgent package.
 
 Some tools let you set an arbitrary bundle identifier (`CFBundleIdentifier` for the `Info.plist`) and sign it with the bundle identifier.
 It may not have `.xctrunner` as the bundle identifier.
-Default `appium:updatedWDABundleId` takes care of the automatic suffix by Xcode. It could break the non- `.xctrunner` package name case.
+Default `appium:updatedWDABundleId` takes care of the hidden automatic suffix, `.xctrunner`, by Xcode, but it could break the non- `.xctrunner` package name case.
 `appium:doNotAddXctrunnerSuffix` capability will prevent adding the suffix.
-A session can launch preinstalled bundle id that does not include `.xctrunner`.
+A session launches preinstalled bundle id that does not include `.xctrunner` with `"appium:doNotAddXctrunnerSuffix": true`.
 
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
 directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
