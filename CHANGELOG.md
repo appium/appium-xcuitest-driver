@@ -1,3 +1,10 @@
+## [7.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.6.0...v7.6.1) (2024-03-27)
+
+
+### Bug Fixes
+
+* set bundle id at the end to make arguments work properly in Devicectl[#launch](https://github.com/appium/appium-xcuitest-driver/issues/launch)App ([#2366](https://github.com/appium/appium-xcuitest-driver/issues/2366)) ([1d3fd28](https://github.com/appium/appium-xcuitest-driver/commit/1d3fd28e57bb72db421dde11eda2d9a10809d06e))
+
 ## [7.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.5...v7.6.0) (2024-03-26)
 
 
