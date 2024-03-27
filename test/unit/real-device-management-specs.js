@@ -4,6 +4,7 @@ import {createSandbox} from 'sinon';
 import sinonChai from 'sinon-chai';
 import { installToRealDevice } from '../../lib/real-device-management';
 import RealDevice from '../../lib/real-device';
+import XCUITestDriver from '../../lib/driver';
 
 chai.should();
 chai.use(sinonChai).use(chaiAsPromised);
@@ -17,8 +18,10 @@ describe('installToRealDevice', function () {
 
   /** @type {sinon.SinonSandbox} */
   let sandbox;
+  let driver;
   beforeEach(function () {
     sandbox = createSandbox();
+    driver = new XCUITestDriver();
   });
 
   afterEach(function () {
@@ -29,8 +32,12 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, undefined, bundleId, {});
+    await installToRealDevice.bind(driver)(undefined, bundleId, {});
     expect(realDevice.remove).to.not.have.been.called;
     expect(realDevice.install).to.not.have.been.called;
   });
@@ -39,8 +46,12 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, app, undefined, {});
+    await installToRealDevice.bind(driver)(app, undefined, {});
     expect(realDevice.remove).to.not.have.been.called;
     expect(realDevice.install).to.not.have.been.called;
   });
@@ -52,8 +63,12 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, app, bundleId, opts);
+    await installToRealDevice.bind(driver)(app, bundleId, opts);
 
     expect(realDevice.remove).to.not.have.been.called;
     expect(realDevice.install).to.have.been.calledOnce;
@@ -66,8 +81,12 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, app, bundleId, opts);
+    await installToRealDevice.bind(driver)(app, bundleId, opts);
 
     expect(realDevice.remove).to.have.been.calledOnce;
     expect(realDevice.install).to.have.been.calledOnce;
@@ -81,8 +100,12 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').throws(err_msg);
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
+    await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
     expect(realDevice.remove).to.have.been.calledOnce;
     expect(realDevice.install).to.have.been.calledOnce;
   });
@@ -98,8 +121,12 @@ describe('installToRealDevice', function () {
     sandbox.stub(realDevice, 'install')
       .onCall(0).throws(`{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`)
       .onCall(1).resolves();
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, app, bundleId, opts);
+    await installToRealDevice.bind(driver)(app, bundleId, opts);
 
     expect(realDevice.remove).to.have.been.calledOnce;
     expect(realDevice.install).to.have.been.calledTwice;
@@ -114,8 +141,12 @@ describe('installToRealDevice', function () {
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').throws(err_msg);
     sandbox.stub(realDevice, 'isAppInstalled').resolves(true);
+    driver.opts = {
+      udid,
+      device: realDevice,
+    };
 
-    await installToRealDevice(realDevice, app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
+    await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
     expect(realDevice.remove).to.not.have.been.called;
     expect(realDevice.install).to.have.been.calledOnce;
   });
