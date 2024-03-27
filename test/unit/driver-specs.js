@@ -177,7 +177,8 @@ describe('XCUITestDriver', function () {
       });
       it('should call setReduceTransparency for a simulator', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
-        realDevice = false;
+        device.simctl = true;
+        delete device.devicectl;
         const spy = sandbox.stub(device, 'setReduceTransparency').resolves({device, realDevice});
         await driver.createSession(
           null,
@@ -192,7 +193,8 @@ describe('XCUITestDriver', function () {
 
       it('should not call setReduceTransparency for a real device', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
-        realDevice = true;
+        delete device.simctl;
+        device.devicectl = true;
         const spy = sandbox.stub(device, 'setReduceTransparency').resolves({device, realDevice});
         await driver.createSession(
           null,
@@ -206,7 +208,8 @@ describe('XCUITestDriver', function () {
 
       it('should call setAutoFillPasswords for a simulator', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
-        realDevice = false;
+        device.simctl = true;
+        delete device.devicectl;
         const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
         await driver.createSession(
           null,
@@ -220,7 +223,8 @@ describe('XCUITestDriver', function () {
       });
       it('should not call setAutoFillPasswords for a real device', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
-        realDevice = true;
+        delete device.simctl;
+        device.devicectl = true;
         const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
         await driver.createSession(
           null,

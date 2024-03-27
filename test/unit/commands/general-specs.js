@@ -106,6 +106,7 @@ describe('general commands', function () {
     });
 
     it('should not be called on a real device', async function () {
+      delete device.simctl;
       device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;

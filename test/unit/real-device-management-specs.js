@@ -32,10 +32,8 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver.opts = {udid};
+    driver._device = realDevice;
 
     await installToRealDevice.bind(driver)(undefined, bundleId, {});
     expect(realDevice.remove).to.not.have.been.called;
@@ -46,10 +44,8 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver._device = realDevice;
+    driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, undefined, {});
     expect(realDevice.remove).to.not.have.been.called;
@@ -63,10 +59,8 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver._device = realDevice;
+    driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
@@ -81,10 +75,8 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').resolves();
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver._device = realDevice;
+    driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
@@ -100,10 +92,8 @@ describe('installToRealDevice', function () {
     const realDevice = new RealDevice(udid);
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').throws(err_msg);
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver._device = realDevice;
+    driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
     expect(realDevice.remove).to.have.been.calledOnce;
@@ -121,10 +111,8 @@ describe('installToRealDevice', function () {
     sandbox.stub(realDevice, 'install')
       .onCall(0).throws(`{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`)
       .onCall(1).resolves();
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver._device = realDevice;
+    driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
@@ -141,10 +129,8 @@ describe('installToRealDevice', function () {
     sandbox.stub(realDevice, 'remove').resolves();
     sandbox.stub(realDevice, 'install').throws(err_msg);
     sandbox.stub(realDevice, 'isAppInstalled').resolves(true);
-    driver.opts = {
-      udid,
-      device: realDevice,
-    };
+    driver._device = realDevice;
+    driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
     expect(realDevice.remove).to.not.have.been.called;
