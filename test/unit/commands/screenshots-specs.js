@@ -13,10 +13,8 @@ describe('screenshots commands', function () {
   beforeEach(function () {
     driver = new XCUITestDriver();
     simctl = new Simctl();
-    driver.opts = {
-      // @ts-expect-error do not put random stuff on opts object
-      device: { simctl },
-    };
+    // @ts-ignore
+    driver._device = { simctl };
     proxyStub = sinon.stub(driver, 'proxyCommand');
   });
   afterEach(function () {
@@ -37,7 +35,6 @@ describe('screenshots commands', function () {
 
       it('should get a screenshot from WDA if no errors are detected', async function () {
         proxyStub.returns(base64PortraitResponse);
-        driver.opts.realDevice = false;
 
         await driver.getScreenshot();
 
@@ -52,7 +49,6 @@ describe('screenshots commands', function () {
         proxyStub.returns(null);
         getScreenshotStub.returns(base64PortraitResponse);
 
-        driver.opts.realDevice = false;
         driver.xcodeVersion = {
           versionFloat: 8.3,
         };
@@ -67,9 +63,14 @@ describe('screenshots commands', function () {
     describe('real device', function () {
       it('should get a screenshot from WDA if no errors are detected', async function () {
         proxyStub.returns(base64PortraitResponse);
-        driver.opts.realDevice = true;
 
-        await driver.getScreenshot();
+        let device = driver.device;
+        try {
+          driver._device = {devicectl: true};
+          await driver.getScreenshot();
+        } finally {
+          driver._device = device;
+        }
 
         proxyStub.calledOnce.should.be.true;
         proxyStub.firstCall.args[0].should.eql('/screenshot');

@@ -10,6 +10,7 @@ import cmds from '../../lib/commands';
 import XCUITestDriver from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
+import RealDevice from '../../lib/real-device';
 chai.should();
 chai.use(sinonChai).use(chaiAsPromised);
 
@@ -38,24 +39,24 @@ describe('XCUITestDriver', function () {
 
   describe('getDefaultUrl', function () {
     let driver;
+    let realDevice;
 
     beforeEach(function () {
       driver = new XCUITestDriver();
+      realDevice = new RealDevice('1234');
     });
 
     it('real device', function () {
-      driver.opts.realDevice = true;
+      driver._device = realDevice;
       expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
     });
 
     it('simulator with ipv4', function () {
-      driver.opts.realDevice = false;
       driver.opts.wdaLocalPort = 8111;
       expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8111/health');
     });
 
     it('simulator with ipv6', function () {
-      driver.opts.realDevice = false;
       driver.opts.address = '::1';
       expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
     });
@@ -348,8 +349,6 @@ describe('XCUITestDriver', function () {
         .onCall(0).resolves('bundle-id')
         .onCall(1).resolves('bundle-id2');
       driver.opts.noReset = false;
-      // @ts-expect-error random stuff on opts
-      driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
       expect(driver.isRealDevice).to.have.been.calledTwice;

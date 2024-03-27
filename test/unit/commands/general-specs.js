@@ -41,17 +41,17 @@ describe('general commands', function () {
     /** @type {import('sinon').SinonSandbox} */
     let sandbox;
 
-    /** @type { {sendBiometricMatch: import('sinon').SinonStub} } */
+    /** @type { {sendBiometricMatch: import('sinon').SinonStub, simctl?: any, devicectl?: any} } */
     let device;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
-      // @ts-expect-error random stuff on opts again
-      driver.opts.device = device = {
+      device = {
+        simctl: true,
         sendBiometricMatch: sandbox.stub(),
       };
-      // @ts-expect-error random stuff on opts again
-      driver.opts.realDevice = false;
+      // @ts-ignore
+      driver._device = device;
     });
 
     afterEach(function () {
@@ -69,9 +69,8 @@ describe('general commands', function () {
     });
 
     it('should not be called on a real device', async function () {
-      // deviceStub.object.realDevice = true;
-      // @ts-expect-error random stuff on opts again
-      driver.opts.realDevice = true;
+      delete device.simctl;
+      device.devicectl = true;
       await driver.touchId().should.be.rejected;
       device.sendBiometricMatch.should.not.have.been.called;
       // sendBiometricMatchSpy.notCalled.should.be.true;
@@ -82,17 +81,17 @@ describe('general commands', function () {
     /** @type {import('sinon').SinonSandbox} */
     let sandbox;
 
-    /** @type { {enrollBiometric: import('sinon').SinonStub} } */
+    /** @type { {enrollBiometric: import('sinon').SinonStub, simctl?: any, devicectl?: any} } */
     let device;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
-      // @ts-expect-error random stuff on opts again
-      driver.opts.device = device = {
+      device = {
+        simctl: true,
         enrollBiometric: sandbox.stub(),
       };
-      // @ts-expect-error random stuff on opts again
-      driver.opts.realDevice = false;
+      // @ts-ignore
+      driver._device = device;
     });
 
     afterEach(function () {
@@ -101,16 +100,13 @@ describe('general commands', function () {
 
     it('should be called on a Simulator', async function () {
       // @ts-expect-error random stuff on opts again
-      driver.opts.realDevice = false;
-      // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId();
       device.enrollBiometric.should.have.been.calledOnce;
     });
 
     it('should not be called on a real device', async function () {
-      // @ts-expect-error random stuff on opts again
-      driver.opts.realDevice = true;
+      device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId().should.be.rejected;
