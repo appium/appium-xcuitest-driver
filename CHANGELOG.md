@@ -1,3 +1,10 @@
+## [7.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.6.1...v7.7.0) (2024-03-27)
+
+
+### Features
+
+* Add the `device` property to the driver ([#2364](https://github.com/appium/appium-xcuitest-driver/issues/2364)) ([92148aa](https://github.com/appium/appium-xcuitest-driver/commit/92148aae6088297162a884516ed8a471b3eeb113))
+
 ## [7.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.6.0...v7.6.1) (2024-03-27)
 
 
