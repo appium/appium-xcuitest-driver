@@ -92,7 +92,8 @@ properly. The stability depends on Xcode.
 ## Capabilities for Prebuilt WDA with `appium:prebuiltWDAPath`
 
 [Run Preinstalled WebDriverAgentRunner](./run-prebuilt-wda.md) provides `appium:prebuiltWDAPath` capability.
-It also achieves the same thing, but the `appium:prebuiltWDAPath` does not use `xcodebuild` like this page's method.
+It also achieves the same thing, but the `appium:prebuiltWDAPath` does not use `xcodebuild`.
+Please check the link for more details.
 
 ## Download Prebuilt WDA
 
