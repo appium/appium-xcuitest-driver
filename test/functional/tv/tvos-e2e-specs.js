@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {getSimulator} from 'appium-ios-simulator';
-import {shutdownSimulator, deleteDeviceWithRetry} from '../helpers/simulator';
+import {cleanupSimulator} from '../helpers/simulator';
 import Simctl from 'node-simctl';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {TVOS_CAPS} from '../desired';
@@ -33,8 +33,7 @@ describe('tvOS', function () {
         platform: TVOS_CAPS.platformName,
         checkExistence: false,
       });
-      await shutdownSimulator(sim);
-      await deleteDeviceWithRetry(udid);
+      await cleanupSimulator(sim);
     }
   });
 

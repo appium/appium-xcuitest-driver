@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {retryInterval} from 'asyncbox';
 import {getSimulator} from 'appium-ios-simulator';
-import {killAllSimulators, shutdownSimulator, deleteDeviceWithRetry} from '../helpers/simulator';
+import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
 import Simctl from 'node-simctl';
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
@@ -55,8 +55,7 @@ describe('XCUITestDriver', function () {
       platform: 'iOS',
       checkExistence: false,
     });
-    await shutdownSimulator(sim);
-    await deleteDeviceWithRetry(extractCapabilityValue(caps, 'appium:udid'));
+    await cleanupSimulator(sim);
   });
 
   afterEach(async function () {
@@ -247,9 +246,7 @@ describe('XCUITestDriver', function () {
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
       } finally {
-        // cleanup
-        await shutdownSimulator(sim);
-        await deleteDeviceWithRetry(udid);
+        await cleanupSimulator(sim);
       }
     });
 
@@ -298,9 +295,7 @@ describe('XCUITestDriver', function () {
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
       } finally {
-        // cleanup
-        await shutdownSimulator(sim);
-        await deleteDeviceWithRetry(udid);
+        await cleanupSimulator(sim);
       }
     });
   });

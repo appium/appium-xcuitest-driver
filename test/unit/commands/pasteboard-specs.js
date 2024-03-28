@@ -10,10 +10,8 @@ describe('pasteboard commands', function () {
     const simctl = new Simctl();
     setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
     getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
-    driver.opts = {
-      // @ts-expect-error do not put random stuff on opts object
-      device: { simctl },
-    };
+    // @ts-ignore
+    driver._device = { simctl };
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
   });
 
