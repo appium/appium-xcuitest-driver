@@ -1,3 +1,10 @@
+## [7.7.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.0...v7.7.1) (2024-03-28)
+
+
+### Miscellaneous Chores
+
+* tune error handling with usePreinstalledWDA ([#2368](https://github.com/appium/appium-xcuitest-driver/issues/2368)) ([1a5aafd](https://github.com/appium/appium-xcuitest-driver/commit/1a5aafd738352e4b7e73c7006668f37ac9f6812e))
+
 ## [7.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.6.1...v7.7.0) (2024-03-27)
 
 
