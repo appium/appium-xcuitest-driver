@@ -86,3 +86,15 @@ Since iOS 16, Apple requires a device to have a live internet connection for val
 signing. It is possible to set up an offline enabled provisiong profile, which allows you to avoid
 the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074)
 regarding detailed configuration steps.
+
+## Tune WebDriverAgent to improve session startup performance
+
+Running `xcodebuild` every time takes much longer time to complete a session startup.
+XCUITest driver offers a few methods to improve the performance with, or without using `xcodebuild`.
+
+Some might require deeper understanding of iOS development environment,
+but they help speedup your test execution speed.
+
+- [Run Preinstalled WebDriverAgentRunner](./../guides/run-preinstalled-wda.md)
+- [Run Prebuilt WebDriverAgentRunner](./../guides/run-prebuilt-wda.md)
+- [Attach to a Running WebDriverAgent](./../guides/attach-to-running-wda.md)
