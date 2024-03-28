@@ -30,8 +30,8 @@ describe('simulator management', function () {
         bundleId: 'io.appium.example',
         noReset: false,
         fullReset: false,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       result.bundleId.should.eql('io.appium.example');
     });
@@ -41,8 +41,8 @@ describe('simulator management', function () {
         bundleId: 'io.appium.example',
         noReset: true,
         fullReset: false,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       should.equal(result, undefined);
     });
@@ -52,8 +52,8 @@ describe('simulator management', function () {
         bundleId: 'io.appium.example',
         noReset: false,
         fullReset: true,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       result.should.eql('cleaned');
     });
@@ -64,8 +64,8 @@ describe('simulator management', function () {
         app: 'path/to/app.app',
         noReset: false,
         fullReset: false,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       should.equal(result, undefined);
     });
@@ -76,8 +76,8 @@ describe('simulator management', function () {
         app: 'path/to/app.app',
         noReset: true,
         fullReset: false,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       should.equal(result, undefined);
     });
@@ -88,8 +88,8 @@ describe('simulator management', function () {
         app: 'path/to/app.app',
         noReset: false,
         fullReset: true,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       result.should.eql('cleaned');
     });
@@ -98,8 +98,8 @@ describe('simulator management', function () {
         udid: '301CD634-00A9-4042-B463-BD4E755167EA',
         noReset: false,
         fullReset: false,
-        device: stoppedDeviceDummy,
       };
+      driver._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
       should.equal(result, undefined);
     });
