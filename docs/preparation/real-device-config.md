@@ -93,7 +93,7 @@ Running `xcodebuild` every time takes much longer time to complete a session sta
 XCUITest driver offers a few methods to improve the performance with, or without using `xcodebuild`.
 
 Some might require deeper understanding of iOS development environment,
-but they help speedup your test execution speed.
+but they help to improve speedup your test execution speed.
 
 - [Run Preinstalled WebDriverAgentRunner](./../guides/run-preinstalled-wda.md)
 - [Run Prebuilt WebDriverAgentRunner](./../guides/run-prebuilt-wda.md)
