@@ -22,6 +22,7 @@ describe('process args', function () {
     useNativeCachingStrategy: true,
     shouldTerminateApp: true,
     shouldUseSingletonTestManager: true,
+    appLaunchStateTimeoutSec: undefined,
     eventloopIdleDelaySec: 0,
   };
 

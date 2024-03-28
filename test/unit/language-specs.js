@@ -23,6 +23,7 @@ describe('language and locale', function () {
     useNativeCachingStrategy: true,
     shouldUseSingletonTestManager: true,
     eventloopIdleDelaySec: 0,
+    appLaunchStateTimeoutSec: undefined,
     environment: {},
   };
 
