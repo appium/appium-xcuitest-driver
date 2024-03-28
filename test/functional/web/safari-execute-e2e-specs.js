@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 // import http from 'http';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {openPage, GUINEA_PIG_PAGE} from './helpers';
 
 chai.should();
@@ -21,10 +21,11 @@ describe('safari - execute -', function () {
   let driver;
   before(async function () {
     const caps = amendCapabilities(SAFARI_CAPS, {
-      'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-      'appium:showSafariConsoleLog': true,
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+        'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+        'appium:showSafariConsoleLog': true,
+      },
+      await getUsePrebuiltWDACaps()
+    );
     driver = await initSession(caps);
   });
   after(async function () {

@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
-import {MULTIPLE_APPS, amendCapabilities} from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession, getUsePrebuiltWDACaps} from '../helpers/session';
+import {MULTIPLE_APPS, amendCapabilities, UICATALOG_BUNDLE_ID} from '../desired';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -12,16 +12,21 @@ describe('OtherApps', function () {
   let caps;
 
   let driver;
-  before(function () {
+  before(async function () {
     caps = amendCapabilities(MULTIPLE_APPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       'appium:wdaStartupRetries': 0,
-    });
+    }, await getUsePrebuiltWDACaps());
   });
 
   afterEach(async function () {
     // try to get rid of the driver, so if a test fails the rest of the
     // tests aren't compromised
+    try {
+      await driver.terminateApp(UICATALOG_BUNDLE_ID);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
     await deleteSession();
   });
 

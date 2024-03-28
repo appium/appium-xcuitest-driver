@@ -2,7 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {util} from 'appium/support';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   extractCapabilityValue,
   amendCapabilities,
@@ -26,20 +26,21 @@ import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 chai.should();
 chai.use(chaiAsPromised);
 
-const caps = amendCapabilities(SAFARI_CAPS, {
-  'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-  'appium:nativeWebTap': true,
-  'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-});
-
 const SPIN_RETRIES = 25;
 
 const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 const SCROLL_AMT = 1400;
 
-describe('Safari - coordinate conversion -', function () {
+describe('Safari - coordinate conversion -', async function () {
   this.timeout(MOCHA_TIMEOUT * 2);
+
+  const caps = amendCapabilities(SAFARI_CAPS, {
+      'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+      'appium:nativeWebTap': true,
+    },
+    await getUsePrebuiltWDACaps()
+  );
 
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
   before(function () {
@@ -59,9 +60,8 @@ describe('Safari - coordinate conversion -', function () {
     async function closeAllTabsViaSettingsApp(deviceName) {
       const newCaps = {
         'appium:deviceName': deviceName,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       };
-      const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
+      const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps, await getUsePrebuiltWDACaps());
       const driver = await initSession(localSettingsCaps);
       await driver
         .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')

@@ -41,7 +41,9 @@ const APPS = {
   biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app'), // https://github.com/mwakizaka/LocalAuthentication
 };
 
-const initTimeout = 60 * 1000 * (process.env.CI ? 16 : 4);
+const initTimeout = 60 * 1000 * (process.env.CI ?
+  util.compareVersions(PLATFORM_VERSION, '>=', '17.0') ? 96 : 16
+  : 4);
 const GENERIC_CAPS = node.deepFreeze({
   alwaysMatch: {
     platformName: 'iOS',
@@ -55,7 +57,7 @@ const GENERIC_CAPS = node.deepFreeze({
     'appium:showXcodeLog': SHOW_XCODE_LOG,
     'appium:wdaLaunchTimeout': initTimeout,
     'appium:wdaConnectionTimeout': initTimeout,
-    'appium:useNewWDA': true,
+    'appium:useNewWDA': !process.env.CI,
     'appium:webviewConnectTimeout': 30000,
     'appium:simulatorStartupTimeout': initTimeout,
   },
@@ -104,6 +106,8 @@ const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:deviceName': 'Apple TV',
 });
 
+const UICATALOG_BUNDLE_ID = 'com.example.apple-samplecode.UICatalog';
+
 export {
   UICATALOG_CAPS,
   UICATALOG_SIM_CAPS,
@@ -118,6 +122,7 @@ export {
   TVOS_CAPS,
   MULTIPLE_APPS,
   GENERIC_CAPS,
+  UICATALOG_BUNDLE_ID,
   amendCapabilities,
   extractCapabilityValue,
 };

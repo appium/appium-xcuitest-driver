@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession, getUsePrebuiltWDACaps} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
   spinTitle,
@@ -46,18 +46,17 @@ describe('Safari - basics -', function () {
     it('should start a session with default init', async function () {
       driver = await initSession(
         amendCapabilities(SAFARI_CAPS, {
-          'appium:noReset': false,
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }),
+            'appium:noReset': false,
+          },
+          await getUsePrebuiltWDACaps()
+        ),
       );
       await spinBodyIncludes(driver, 'I-AM-ALIVE');
     });
 
     it('should start a session with custom init', async function () {
       driver = await initSession(
-        amendCapabilities(DEFAULT_CAPS, {
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }),
+        amendCapabilities(DEFAULT_CAPS, await getUsePrebuiltWDACaps()),
       );
       const title = await spinTitle(driver);
       const expectedTitle = 'I am a page title';
@@ -68,10 +67,11 @@ describe('Safari - basics -', function () {
   describe('basics', function () {
     before(async function () {
       const caps = amendCapabilities(DEFAULT_CAPS, {
-        'appium:safariIgnoreFraudWarning': false,
-        'appium:showSafariConsoleLog': true,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
+          'appium:safariIgnoreFraudWarning': false,
+          'appium:showSafariConsoleLog': true
+        },
+        await getUsePrebuiltWDACaps()
+      );
       driver = await initSession(caps);
     });
     after(async function () {
@@ -490,9 +490,10 @@ describe('Safari - basics -', function () {
       beforeEach(async function () {
         driver = await initSession(
           amendCapabilities(DEFAULT_CAPS, {
-            'appium:safariIgnoreFraudWarning': false,
-            'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-          }),
+              'appium:safariIgnoreFraudWarning': false,
+            },
+            await getUsePrebuiltWDACaps()
+          )
         );
       });
       afterEach(async function () {
@@ -522,9 +523,10 @@ describe('Safari - basics -', function () {
       beforeEach(async function () {
         driver = await initSession(
           amendCapabilities(DEFAULT_CAPS, {
-            'appium:safariIgnoreFraudWarning': true,
-            'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-          }),
+              'appium:safariIgnoreFraudWarning': true,
+            },
+            await getUsePrebuiltWDACaps()
+          ),
         );
       });
       afterEach(async function () {
