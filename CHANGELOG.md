@@ -1,3 +1,10 @@
+## [7.7.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.1...v7.7.2) (2024-03-28)
+
+
+### Bug Fixes
+
+* Address various typing errors ([#2369](https://github.com/appium/appium-xcuitest-driver/issues/2369)) ([e5d7001](https://github.com/appium/appium-xcuitest-driver/commit/e5d70010bd777c8e5fc94da412e0d2cc902c64de))
+
 ## [7.7.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.0...v7.7.1) (2024-03-28)
 
 
