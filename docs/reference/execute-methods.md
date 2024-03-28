@@ -1513,3 +1513,81 @@ elementAttributes | dict | JSON object containing various attributes of the elem
     "rawIdentifier":null
 }
 ```
+
+### mobile: startXCTestScreenRecording
+
+Start a new screen recording via XCTest.
+
+Since this feature is based on the native implementation provided by Apple
+it provides the best quality for the least perfomance penalty in comparison
+to alternative implementations.
+
+Even though the feature is available for real devices
+there is no possibility to delete video files stored on the device yet,
+which may lead to internal storage overload.
+That is why it was put under the `xctest_screen_record` security
+feature flag if executed from a real device test.
+
+If the screen recording is already running this API is a noop.
+
+The feature is only available since Xcode 15/iOS 17.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+fps | number | no | The Frames Per Second value for the resulting video. Providing higher values will create video files that are greater in size, but with smoother transitions. It is highly recommeneded to keep this value is range 1-60. 24 by default | 60
+
+#### Returned Result
+
+The API response consists of the following entries:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+uuid | string | Unique identifier of the video being recorded | 1D988774-C7E2-4817-829D-3B835DDAA7DF
+fps | numner | FPS value | 24
+codec | number | The magic for the used codec. Value of zero means h264 video codec is being used | 0
+startedAt | number | The timestamp when the screen recording has started in float seconds since Unix epoch | 1709826124.123
+
+### mobile: getXCTestScreenRecordingInfo
+
+Retrieves information about the current running screen recording.
+If no screen recording is running then `null` is returned.
+
+#### Returned Result
+
+Same as for [mobile: startXCTestScreenRecording](#mobile-startxctestscreenrecording)
+
+### mobile: stopXCTestScreenRecording
+
+Stops the current XCTest screen recording previously started by the
+[mobile: startXctestScreenRecording](#mobile-startxctestscreenrecording) API.
+
+An error is thrown if no screen recording is running.
+
+The resulting movie is returned as base-64 string or is uploaded to
+a remote location if corresponding options have been provided.
+
+The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY**.
+In order to clean it up from a real device it is necessary to properly
+shut down XCTest by calling `POST /wda/shutdown` API or by doing device factory reset.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+remotePath | string | no | The path to the remote location, where the resulting .mov file should be uploaded. The following protocols are supported: http/https, ftp Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed to the endpoint response value. An exception will be thrown if the generated file is too big to fit into the available process memory. | https://myserver/upload
+user | string | no | The name of the user for the remote authentication. Only works if `remotePath` is provided. | myuser
+pass | string | no | The password for the remote authentication. Only works if `remotePath` is provided. | mypassword
+method | string | no | The http multipart upload method name. Only works if `remotePath` is provided. `PUT` by default | POST
+headers | dict | no | Additional headers mapping for multipart http(s) uploads | {'User-Agent': 'Myserver 1.0'}
+fileFieldName | string | no | The name of the form field, where the file content BLOB should be stored for http(s) uploads. `file` by default | payload
+formFields | dict or array | no | Additional form fields for multipart http(s) uploads | {'field2': 'value2'}
+
+#### Returned Result
+
+Same as for [mobile: startXCTestScreenRecording](#mobile-startxctestscreenrecording) plus the below entry:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+payload | string | Base64-encoded content of the recorded media file if `remotePath` parameter is empty/null or an empty string otherwise. The resulting media is expected to a be a valid QuickTime movie (.mov). | `YXBwaXVt....`

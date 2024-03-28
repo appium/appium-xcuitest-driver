@@ -15,25 +15,6 @@ export interface LifecycleData {
   createSim?: boolean;
 }
 
-/**
- * All of these options are manually added to the `opts` property of the driver, which is strongly discouraged.
- *
- * Future versions of this driver should move these properties somewhere else.
- *
- * @todo If anyone knows anything about the types of these values, please fill them in.
- */
-export interface CustomOpts {
-  device: any;
-  realDevice: any;
-  SimulatorWindowCenter: any;
-  forceSimulatorSoftwareKeyboardPresence: any;
-  iosSdkVersion: string;
-  platformVersion: string;
-  safari: any;
-  sessionId: string | null;
-  elementResponseAttributes: any;
-}
-
 export interface WDASettings {
   elementResponseAttributes: string;
   shouldUseCompactResponses: boolean;

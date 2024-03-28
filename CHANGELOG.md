@@ -1,3 +1,131 @@
+## [7.7.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.1...v7.7.2) (2024-03-28)
+
+
+### Bug Fixes
+
+* Address various typing errors ([#2369](https://github.com/appium/appium-xcuitest-driver/issues/2369)) ([e5d7001](https://github.com/appium/appium-xcuitest-driver/commit/e5d70010bd777c8e5fc94da412e0d2cc902c64de))
+
+## [7.7.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.0...v7.7.1) (2024-03-28)
+
+
+### Miscellaneous Chores
+
+* tune error handling with usePreinstalledWDA ([#2368](https://github.com/appium/appium-xcuitest-driver/issues/2368)) ([1a5aafd](https://github.com/appium/appium-xcuitest-driver/commit/1a5aafd738352e4b7e73c7006668f37ac9f6812e))
+
+## [7.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.6.1...v7.7.0) (2024-03-27)
+
+
+### Features
+
+* Add the `device` property to the driver ([#2364](https://github.com/appium/appium-xcuitest-driver/issues/2364)) ([92148aa](https://github.com/appium/appium-xcuitest-driver/commit/92148aae6088297162a884516ed8a471b3eeb113))
+
+## [7.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.6.0...v7.6.1) (2024-03-27)
+
+
+### Bug Fixes
+
+* set bundle id at the end to make arguments work properly in Devicectl[#launch](https://github.com/appium/appium-xcuitest-driver/issues/launch)App ([#2366](https://github.com/appium/appium-xcuitest-driver/issues/2366)) ([1d3fd28](https://github.com/appium/appium-xcuitest-driver/commit/1d3fd28e57bb72db421dde11eda2d9a10809d06e))
+
+## [7.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.5...v7.6.0) (2024-03-26)
+
+
+### Features
+
+* add updatedWDABundleIdSuffix for usePreinstalledWDA usage ([#2358](https://github.com/appium/appium-xcuitest-driver/issues/2358)) ([b8291cb](https://github.com/appium/appium-xcuitest-driver/commit/b8291cbbc6d0a843427906cb810e9adff29c18a1))
+
+## [7.5.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.4...v7.5.5) (2024-03-26)
+
+
+### Miscellaneous Chores
+
+* add launchApp via devicectl ([#2354](https://github.com/appium/appium-xcuitest-driver/issues/2354)) ([3907455](https://github.com/appium/appium-xcuitest-driver/commit/3907455d84519709e07d683ac26ef2047ede9d59))
+
+## [7.5.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.3...v7.5.4) (2024-03-25)
+
+
+### Bug Fixes
+
+* uncaughtException: maxObjectCount exceeded in listApplications ([#2355](https://github.com/appium/appium-xcuitest-driver/issues/2355)) ([6bfc5c5](https://github.com/appium/appium-xcuitest-driver/commit/6bfc5c5e501f14f770d17d3cbea04850451ed2d2))
+
+## [7.5.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.2...v7.5.3) (2024-03-25)
+
+
+### Bug Fixes
+
+* build error ([#2356](https://github.com/appium/appium-xcuitest-driver/issues/2356)) ([5c5ebc3](https://github.com/appium/appium-xcuitest-driver/commit/5c5ebc3fe1f22568b61ba7bc96dcdedae3bcb247))
+* typo by [#2351](https://github.com/appium/appium-xcuitest-driver/issues/2351) ([63589a1](https://github.com/appium/appium-xcuitest-driver/commit/63589a1c8f6f83356347a4d085e619f70ee79283))
+
+
+### Miscellaneous Chores
+
+* include devicectl in IOSDeploy object ([#2352](https://github.com/appium/appium-xcuitest-driver/issues/2352)) ([6c5abd1](https://github.com/appium/appium-xcuitest-driver/commit/6c5abd1eb35cc5089c8a8cb112b6fc708548c1a4))
+
+## [7.5.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.1...v7.5.2) (2024-03-24)
+
+
+### Miscellaneous Chores
+
+* rename IosDeploy obhect to RealDevice to make the object meaning actual usage ([#2353](https://github.com/appium/appium-xcuitest-driver/issues/2353)) ([b3b7349](https://github.com/appium/appium-xcuitest-driver/commit/b3b734913bc5ef824b6cde58bfe0b389bb87abac))
+
+## [7.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.5.0...v7.5.1) (2024-03-24)
+
+
+### Miscellaneous Chores
+
+* skip connected device check if the caps had webDriverAgentUrl ([#2351](https://github.com/appium/appium-xcuitest-driver/issues/2351)) ([407ad58](https://github.com/appium/appium-xcuitest-driver/commit/407ad58e8df03b700152f9c9bf41546e65afac4f))
+
+## [7.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.2...v7.5.0) (2024-03-24)
+
+
+### Features
+
+* add appium:usePreinstalledWDA for real iOS 17 devices ([#2350](https://github.com/appium/appium-xcuitest-driver/issues/2350)) ([ec5a1f7](https://github.com/appium/appium-xcuitest-driver/commit/ec5a1f73f06763da47c06386aac729e8ee75d990))
+
+## [7.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.1...v7.4.2) (2024-03-23)
+
+
+### Miscellaneous Chores
+
+* do not print unrelated logs ([#2346](https://github.com/appium/appium-xcuitest-driver/issues/2346)) ([ee5d83e](https://github.com/appium/appium-xcuitest-driver/commit/ee5d83ec73b9113d4876880dea36d107ecadeaaa))
+
+## [7.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.4.0...v7.4.1) (2024-03-22)
+
+
+### Bug Fixes
+
+* Pass valid arg into terminateApp ([#2348](https://github.com/appium/appium-xcuitest-driver/issues/2348)) ([e2e6a6f](https://github.com/appium/appium-xcuitest-driver/commit/e2e6a6faf4f86d9fab63e026c2820fb839a0e98c))
+
+## [7.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.1...v7.4.0) (2024-03-22)
+
+
+### Features
+
+* Support usePreinstalledWDA on simulators ([#2345](https://github.com/appium/appium-xcuitest-driver/issues/2345)) ([2eb4c81](https://github.com/appium/appium-xcuitest-driver/commit/2eb4c81a4de670d3bf6d9fc062ec827b05519f25))
+
+## [7.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.3.0...v7.3.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* respect defaultActiveApplication settings in activeApplication selection ([#2343](https://github.com/appium/appium-xcuitest-driver/issues/2343)) ([1837991](https://github.com/appium/appium-xcuitest-driver/commit/18379912c542ff619304476680005d4656f94de4))
+
+## [7.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.2.0...v7.3.0) (2024-03-08)
+
+
+### Features
+
+* Video recording using native XCTest backend ([#2339](https://github.com/appium/appium-xcuitest-driver/issues/2339)) ([e17e88b](https://github.com/appium/appium-xcuitest-driver/commit/e17e88bb471500a1251a380ace91ee351f9e152b))
+
+
+### Bug Fixes
+
+* Update the default timeout for the recent webview detection ([#2337](https://github.com/appium/appium-xcuitest-driver/issues/2337)) ([8d7750c](https://github.com/appium/appium-xcuitest-driver/commit/8d7750c63348d116990cd856ecd9e6853421a42f))
+
+
+### Miscellaneous Chores
+
+* bump typescript ([40d5f5d](https://github.com/appium/appium-xcuitest-driver/commit/40d5f5dc5e1593d072750ece22e251768259b0c7))
+
 ## [7.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.1.2...v7.2.0) (2024-02-28)
 
 
