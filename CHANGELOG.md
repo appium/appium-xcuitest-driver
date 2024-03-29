@@ -1,3 +1,10 @@
+## [7.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.2...v7.8.0) (2024-03-28)
+
+
+### Features
+
+* Add 'appLaunchStateTimeoutSec' capability support ([#2371](https://github.com/appium/appium-xcuitest-driver/issues/2371)) ([c0514e4](https://github.com/appium/appium-xcuitest-driver/commit/c0514e4050c7ab19d3e83a0026a81fa83e8218c4))
+
 ## [7.7.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.1...v7.7.2) (2024-03-28)
 
 
