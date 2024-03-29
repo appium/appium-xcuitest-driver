@@ -1,3 +1,10 @@
+## [7.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.0...v7.8.1) (2024-03-29)
+
+
+### Miscellaneous Chores
+
+* left a comment for future work ([#2372](https://github.com/appium/appium-xcuitest-driver/issues/2372)) ([3f13c62](https://github.com/appium/appium-xcuitest-driver/commit/3f13c624ab2c89c8ff89dd07b2fdcaf33f5d5265))
+
 ## [7.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.2...v7.8.0) (2024-03-28)
 
 
