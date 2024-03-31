@@ -1,3 +1,10 @@
+## [7.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.0...v7.9.1) (2024-03-31)
+
+
+### Miscellaneous Chores
+
+* bump wda ([a777b93](https://github.com/appium/appium-xcuitest-driver/commit/a777b93a5953dfd59e54f40817d198307f72289f))
+
 ## [7.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.2...v7.9.0) (2024-03-31)
 
 
