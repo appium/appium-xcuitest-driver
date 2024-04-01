@@ -85,12 +85,14 @@ The capabilities can be used as follows:
 
 Not all combinations have been tested, but the target device can probably be anything.
 
-The same thing can be achieved with the `appium:derivedDataPath` and `appium:usePrebuiltWDA`
+The same thing can be achieved with the __`appium:derivedDataPath`__ and __`appium:usePrebuiltWDA`__
 capabilities, but this may fail if `xcodebuild` cannot find or handle the `.xctestrun` file
 properly. The stability depends on Xcode.
 
-`appium:prebuildWDA` let XCUITest driver build the WDA before running it, then it handles
-the session with `appium:usePrebuiltWDA`. It might help to skip some preparation with `appium:usePrebuiltWDA` capability.
+__`appium:prebuildWDA`__ lets the XCUITest driver build the WDA before running it, then the session
+will be handled with `appium:usePrebuiltWDA`.
+It might have additional building steps than with `appium:derivedDataPath` and `appium:usePrebuiltWDA`
+combination, but it could help `appium:usePrebuiltWDA` to not manage the WDA project.
 
 ## Capabilities for Prebuilt WDA with `appium:prebuiltWDAPath`
 
