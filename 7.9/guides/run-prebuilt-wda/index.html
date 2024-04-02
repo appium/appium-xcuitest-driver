@@ -1529,9 +1529,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#capabilities-for-prebuilt-wda-with-appiumusexctestrunfile" class="md-nav__link">
+  <a href="#capabilities-for-prebuilt-wda-with-appiumusexctestrunfile-appiumuseprebuiltwda-or-appiumprebuildwda" class="md-nav__link">
     <span class="md-ellipsis">
-      Capabilities for Prebuilt WDA with appium:useXctestrunFile
+      Capabilities for Prebuilt WDA with appium:useXctestrunFile, appium:usePrebuiltWDA or appium:prebuildWDA
     </span>
   </a>
 
@@ -2065,9 +2065,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#capabilities-for-prebuilt-wda-with-appiumusexctestrunfile" class="md-nav__link">
+  <a href="#capabilities-for-prebuilt-wda-with-appiumusexctestrunfile-appiumuseprebuiltwda-or-appiumprebuildwda" class="md-nav__link">
     <span class="md-ellipsis">
-      Capabilities for Prebuilt WDA with appium:useXctestrunFile
+      Capabilities for Prebuilt WDA with appium:useXctestrunFile, appium:usePrebuiltWDA or appium:prebuildWDA
     </span>
   </a>
 
@@ -2216,7 +2216,7 @@ about the package (the <code>DependentProductPaths</code> key).</p>
   commands for the target device.</p>
 </li>
 </ul>
-<h2 id="capabilities-for-prebuilt-wda-with-appiumusexctestrunfile">Capabilities for Prebuilt WDA with <code>appium:useXctestrunFile</code><a class="headerlink" href="#capabilities-for-prebuilt-wda-with-appiumusexctestrunfile" title="Permanent link">&para;</a></h2>
+<h2 id="capabilities-for-prebuilt-wda-with-appiumusexctestrunfile-appiumuseprebuiltwda-or-appiumprebuildwda">Capabilities for Prebuilt WDA with <code>appium:useXctestrunFile</code>, <code>appium:usePrebuiltWDA</code> or <code>appium:prebuildWDA</code><a class="headerlink" href="#capabilities-for-prebuilt-wda-with-appiumusexctestrunfile-appiumuseprebuiltwda-or-appiumprebuildwda" title="Permanent link">&para;</a></h2>
 <p>The XCUITest driver provides two capabilities that allow skipping the <code>build-for-testing</code> command,
 and executing only the <code>test-without-building</code> command: <strong><code>appium:useXctestrunFile</code></strong> and
 <strong><code>appium:bootstrapPath</code></strong> (see <a href="../../reference/capabilities/#webdriveragent">Capabilities</a>).</p>
@@ -2239,9 +2239,13 @@ We recommend using this method for real devices.</p>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">}</span>
 </code></pre></div>
 <p>Not all combinations have been tested, but the target device can probably be anything.</p>
-<p>The same thing can be achieved with the <code>appium:derivedDataPath</code> and <code>appium:usePrebuiltWDA</code>
+<p>The same thing can be achieved with the <strong><code>appium:derivedDataPath</code></strong> and <strong><code>appium:usePrebuiltWDA</code></strong>
 capabilities, but this may fail if <code>xcodebuild</code> cannot find or handle the <code>.xctestrun</code> file
 properly. The stability depends on Xcode.</p>
+<p><strong><code>appium:prebuildWDA</code></strong> lets the XCUITest driver build the WDA before running it, then the session
+will be handled with <code>appium:usePrebuiltWDA</code>.
+It might have additional building steps than with <code>appium:derivedDataPath</code> and <code>appium:usePrebuiltWDA</code>
+combination, but it could help <code>appium:usePrebuiltWDA</code> to not manage the WDA project.</p>
 <h2 id="capabilities-for-prebuilt-wda-with-appiumprebuiltwdapath">Capabilities for Prebuilt WDA with <code>appium:prebuiltWDAPath</code><a class="headerlink" href="#capabilities-for-prebuilt-wda-with-appiumprebuiltwdapath" title="Permanent link">&para;</a></h2>
 <p><a href="./">Run Preinstalled WebDriverAgentRunner</a> provides <code>appium:prebuiltWDAPath</code> capability.
 It also achieves the same thing, but the <code>appium:prebuiltWDAPath</code> does not use <code>xcodebuild</code>.
@@ -2276,7 +2280,7 @@ on your test running environment and re-use it.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-03-27T16:39:54+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-03-27</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-02T16:14:11+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-02</span>
   </span>
 
     
