@@ -1,3 +1,31 @@
+## [7.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.0...v7.9.1) (2024-03-31)
+
+
+### Miscellaneous Chores
+
+* bump wda ([a777b93](https://github.com/appium/appium-xcuitest-driver/commit/a777b93a5953dfd59e54f40817d198307f72289f))
+
+## [7.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.2...v7.9.0) (2024-03-31)
+
+
+### Features
+
+* Enable Safari settings modification for real devices ([#2373](https://github.com/appium/appium-xcuitest-driver/issues/2373)) ([2bf1dc5](https://github.com/appium/appium-xcuitest-driver/commit/2bf1dc56d80ec712c6a7691ca24192df6fc6f4eb))
+
+## [7.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.1...v7.8.2) (2024-03-29)
+
+
+### Miscellaneous Chores
+
+* bump WDA ([1c3d68b](https://github.com/appium/appium-xcuitest-driver/commit/1c3d68b13a60513b4da9179351831ab05ca14bf3))
+
+## [7.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.0...v7.8.1) (2024-03-29)
+
+
+### Miscellaneous Chores
+
+* left a comment for future work ([#2372](https://github.com/appium/appium-xcuitest-driver/issues/2372)) ([3f13c62](https://github.com/appium/appium-xcuitest-driver/commit/3f13c624ab2c89c8ff89dd07b2fdcaf33f5d5265))
+
 ## [7.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.2...v7.8.0) (2024-03-28)
 
 

@@ -55,7 +55,7 @@ xcodebuild test-without-building \
   provided `.xctestrun` file. Once this is done, `http://localhost:8100` will be able to receive
   commands for the target device.
 
-## Capabilities for Prebuilt WDA with `appium:useXctestrunFile`
+## Capabilities for Prebuilt WDA with `appium:useXctestrunFile`, `appium:usePrebuiltWDA` or `appium:prebuildWDA`
 
 The XCUITest driver provides two capabilities that allow skipping the `build-for-testing` command,
 and executing only the `test-without-building` command: __`appium:useXctestrunFile`__ and
@@ -85,9 +85,14 @@ The capabilities can be used as follows:
 
 Not all combinations have been tested, but the target device can probably be anything.
 
-The same thing can be achieved with the `appium:derivedDataPath` and `appium:usePrebuiltWDA`
+The same thing can be achieved with the __`appium:derivedDataPath`__ and __`appium:usePrebuiltWDA`__
 capabilities, but this may fail if `xcodebuild` cannot find or handle the `.xctestrun` file
 properly. The stability depends on Xcode.
+
+__`appium:prebuildWDA`__ lets the XCUITest driver build the WDA before running it, then the session
+will be handled with `appium:usePrebuiltWDA`.
+It might have additional building steps than with `appium:derivedDataPath` and `appium:usePrebuiltWDA`
+combination, but it could help `appium:usePrebuiltWDA` to not manage the WDA project.
 
 ## Capabilities for Prebuilt WDA with `appium:prebuiltWDAPath`
 

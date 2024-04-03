@@ -114,6 +114,7 @@ describe('XCUITestDriver', function () {
           },
           setReduceTransparency: _.noop,
           setAutoFillPasswords: _.noop,
+          reset: _.noop,
         };
         realDevice = null;
         sandbox
