@@ -1,5 +1,3 @@
-import {StringRecord} from '@appium/types';
-
 export interface Page {
   id: number | string;
   isKey?: boolean;
@@ -29,23 +27,23 @@ export interface WDASettings {
 export interface WDACapabilities {
   bundleId?: string;
   initialUrl?: string;
-  arguments: string[];
-  environment: Record<string, string>;
-  eventloopIdleDelaySec: number;
-  shouldWaitForQuiescence: boolean;
-  shouldUseTestManagerForVisibilityDetection: boolean;
-  maxTypingFrequency: number;
-  shouldUseSingletonTestManager: boolean;
+  arguments?: string[];
+  environment?: Record<string, string>;
+  eventloopIdleDelaySec?: number;
+  shouldWaitForQuiescence?: boolean;
+  shouldUseTestManagerForVisibilityDetection?: boolean;
+  maxTypingFrequency?: number;
+  shouldUseSingletonTestManager?: boolean;
   waitForIdleTimeout?: number;
   shouldUseCompactResponses?: number;
   elementResponseFields?: unknown;
   disableAutomaticScreenshots?: boolean;
-  shouldTerminateApp: boolean;
-  forceAppLaunch: boolean;
-  useNativeCachingStrategy: boolean;
-  forceSimulatorSoftwareKeyboardPresence: boolean;
-  defaultAlertAction: 'accept' | 'dismiss';
-  capabilities?: StringRecord<any>;
+  shouldTerminateApp?: boolean;
+  forceAppLaunch?: boolean;
+  useNativeCachingStrategy?: boolean;
+  forceSimulatorSoftwareKeyboardPresence?: boolean;
+  defaultAlertAction?: 'accept' | 'dismiss';
+  appLaunchStateTimeoutSec?: number;
 }
 
 export interface CalibrationData {
