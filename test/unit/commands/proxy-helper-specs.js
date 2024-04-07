@@ -9,8 +9,9 @@ chai.use(chaiAsPromised);
 
 describe('proxy commands', function () {
   let driver = new XCUITestDriver();
-  // give the driver a spy-able proxy object
+  // @ts-ignore give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
+  // @ts-ignore ok for tests
   const proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
 
   afterEach(function () {
@@ -25,8 +26,11 @@ describe('proxy commands', function () {
 
       await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
       proxyStub.calledOnce.should.be.true;
+      // @ts-ignore
       proxyStub.firstCall.args[0].should.eql('/some/endpoint');
+      // @ts-ignore
       proxyStub.firstCall.args[1].should.eql('POST');
+      // @ts-ignore
       proxyStub.firstCall.args[2].some.should.eql('stuff');
     });
     it('should throw an error if no endpoint is given', async function () {

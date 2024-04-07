@@ -13,39 +13,6 @@ export interface LifecycleData {
   createSim?: boolean;
 }
 
-export interface WDASettings {
-  elementResponseAttributes: string;
-  shouldUseCompactResponses: boolean;
-  mjpegServerScreenshotQuality?: number;
-  mjpegServerFramerate?: number;
-  screenshotQuality?: number;
-}
-
-/**
- * @todo This should likely be shipped by `appium-webdriveragent` instead.
- */
-export interface WDACapabilities {
-  bundleId?: string;
-  initialUrl?: string;
-  arguments?: string[];
-  environment?: Record<string, string>;
-  eventloopIdleDelaySec?: number;
-  shouldWaitForQuiescence?: boolean;
-  shouldUseTestManagerForVisibilityDetection?: boolean;
-  maxTypingFrequency?: number;
-  shouldUseSingletonTestManager?: boolean;
-  waitForIdleTimeout?: number;
-  shouldUseCompactResponses?: number;
-  elementResponseFields?: unknown;
-  disableAutomaticScreenshots?: boolean;
-  shouldTerminateApp?: boolean;
-  forceAppLaunch?: boolean;
-  useNativeCachingStrategy?: boolean;
-  forceSimulatorSoftwareKeyboardPresence?: boolean;
-  defaultAlertAction?: 'accept' | 'dismiss';
-  appLaunchStateTimeoutSec?: number;
-}
-
 export interface CalibrationData {
   /**
    * webview x offset in real coordinates
