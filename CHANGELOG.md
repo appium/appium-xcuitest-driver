@@ -1,3 +1,11 @@
+## [7.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.2...v7.9.3) (2024-04-07)
+
+
+### Bug Fixes
+
+* Added platformVersion to capabilities ([#2378](https://github.com/appium/appium-xcuitest-driver/issues/2378)) ([e75cd2c](https://github.com/appium/appium-xcuitest-driver/commit/e75cd2c127b0b2d1206cbd4d7b22923ee553798c))
+* Update various type declarations ([#2380](https://github.com/appium/appium-xcuitest-driver/issues/2380)) ([1e18b2f](https://github.com/appium/appium-xcuitest-driver/commit/1e18b2f7c859f915aa353716add65d0a404c0fa7))
+
 ## [7.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.1...v7.9.2) (2024-04-07)
 
 
