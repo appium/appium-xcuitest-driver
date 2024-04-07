@@ -8,11 +8,12 @@ chai.use(chaiAsPromised);
 
 describe('get activeapp commands', function () {
   const driver = new XCUITestDriver();
-  // give the driver a spy-able proxy object
+  // @ts-ignore give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
   let proxyStub;
 
   this.beforeEach(function () {
+    // @ts-ignore ok for tests
     proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
   });
 
