@@ -89,11 +89,11 @@ describe('utils', function () {
       deviceName.should.equal('iPad Retina');
     });
     it('should set the correct iPad simulator generic device for iOS >= 10.3', function () {
-      let deviceName = translateDeviceName(10.103, ipadDeviceName);
+      let deviceName = translateDeviceName('10.103', ipadDeviceName);
       deviceName.should.equal('iPad Air');
       deviceName = translateDeviceName('10.3', ipadDeviceName);
       deviceName.should.equal('iPad Air');
-      deviceName = translateDeviceName(10.3, ipadDeviceName);
+      deviceName = translateDeviceName('10.3', ipadDeviceName);
       deviceName.should.equal('iPad Air');
     });
     it('should set the correct iPhone simulator generic device', function () {
