@@ -1,3 +1,10 @@
+## [7.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.1...v7.9.2) (2024-04-07)
+
+
+### Bug Fixes
+
+* Properly match simulator udid if webDriverAgentUrl is provided ([#2377](https://github.com/appium/appium-xcuitest-driver/issues/2377)) ([bc71415](https://github.com/appium/appium-xcuitest-driver/commit/bc7141569f6148a8de77dc1989c2400a10a6c3f8))
+
 ## [7.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.0...v7.9.1) (2024-03-31)
 
 
