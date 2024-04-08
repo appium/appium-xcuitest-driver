@@ -1,3 +1,10 @@
+## [7.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.10.0...v7.11.0) (2024-04-08)
+
+
+### Features
+
+* export doctor used in xcuitest driver ([#2381](https://github.com/appium/appium-xcuitest-driver/issues/2381)) ([e8fd02e](https://github.com/appium/appium-xcuitest-driver/commit/e8fd02e00dc6be595d2bef253c00ab75783504e5))
+
 ## [7.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.3...v7.10.0) (2024-04-08)
 
 
