@@ -1,3 +1,10 @@
+## [7.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.0...v7.11.1) (2024-04-08)
+
+
+### Bug Fixes
+
+* update real device check condition ([9255e7c](https://github.com/appium/appium-xcuitest-driver/commit/9255e7c932d20967b0c7860df14015c5b4a63d15))
+
 ## [7.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.10.0...v7.11.0) (2024-04-08)
 
 
