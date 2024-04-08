@@ -1,3 +1,10 @@
+## [7.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.3...v7.10.0) (2024-04-08)
+
+
+### Features
+
+* Add `appTimeZone` capability ([#2379](https://github.com/appium/appium-xcuitest-driver/issues/2379)) ([a06931f](https://github.com/appium/appium-xcuitest-driver/commit/a06931fca03ef4f3de0ea65eb7814660dcb08117))
+
 ## [7.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.2...v7.9.3) (2024-04-07)
 
 
