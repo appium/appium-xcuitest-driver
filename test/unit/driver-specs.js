@@ -75,6 +75,7 @@ describe('XCUITestDriver', function () {
         // fake the proxy to WDA
         const jwproxy = new JWProxy();
         jwproxyCommandSpy = sandbox.stub(jwproxy, 'command').resolves({some: 'thing'});
+        // @ts-ignore ok for tests
         driver.wda = {
           jwproxy,
         };
@@ -114,6 +115,7 @@ describe('XCUITestDriver', function () {
           },
           setReduceTransparency: _.noop,
           setAutoFillPasswords: _.noop,
+          reset: _.noop,
         };
         realDevice = null;
         sandbox
@@ -246,6 +248,7 @@ describe('XCUITestDriver', function () {
         driver = new XCUITestDriver();
         const jwproxy = new JWProxy();
         sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
+        // @ts-ignore ok for tests
         driver.wda = {
           jwproxy,
         };

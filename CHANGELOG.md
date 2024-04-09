@@ -1,3 +1,74 @@
+## [7.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.0...v7.11.1) (2024-04-08)
+
+
+### Bug Fixes
+
+* update real device check condition ([9255e7c](https://github.com/appium/appium-xcuitest-driver/commit/9255e7c932d20967b0c7860df14015c5b4a63d15))
+
+## [7.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.10.0...v7.11.0) (2024-04-08)
+
+
+### Features
+
+* export doctor used in xcuitest driver ([#2381](https://github.com/appium/appium-xcuitest-driver/issues/2381)) ([e8fd02e](https://github.com/appium/appium-xcuitest-driver/commit/e8fd02e00dc6be595d2bef253c00ab75783504e5))
+
+## [7.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.3...v7.10.0) (2024-04-08)
+
+
+### Features
+
+* Add `appTimeZone` capability ([#2379](https://github.com/appium/appium-xcuitest-driver/issues/2379)) ([a06931f](https://github.com/appium/appium-xcuitest-driver/commit/a06931fca03ef4f3de0ea65eb7814660dcb08117))
+
+## [7.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.2...v7.9.3) (2024-04-07)
+
+
+### Bug Fixes
+
+* Added platformVersion to capabilities ([#2378](https://github.com/appium/appium-xcuitest-driver/issues/2378)) ([e75cd2c](https://github.com/appium/appium-xcuitest-driver/commit/e75cd2c127b0b2d1206cbd4d7b22923ee553798c))
+* Update various type declarations ([#2380](https://github.com/appium/appium-xcuitest-driver/issues/2380)) ([1e18b2f](https://github.com/appium/appium-xcuitest-driver/commit/1e18b2f7c859f915aa353716add65d0a404c0fa7))
+
+## [7.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.1...v7.9.2) (2024-04-07)
+
+
+### Bug Fixes
+
+* Properly match simulator udid if webDriverAgentUrl is provided ([#2377](https://github.com/appium/appium-xcuitest-driver/issues/2377)) ([bc71415](https://github.com/appium/appium-xcuitest-driver/commit/bc7141569f6148a8de77dc1989c2400a10a6c3f8))
+
+## [7.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.0...v7.9.1) (2024-03-31)
+
+
+### Miscellaneous Chores
+
+* bump wda ([a777b93](https://github.com/appium/appium-xcuitest-driver/commit/a777b93a5953dfd59e54f40817d198307f72289f))
+
+## [7.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.2...v7.9.0) (2024-03-31)
+
+
+### Features
+
+* Enable Safari settings modification for real devices ([#2373](https://github.com/appium/appium-xcuitest-driver/issues/2373)) ([2bf1dc5](https://github.com/appium/appium-xcuitest-driver/commit/2bf1dc56d80ec712c6a7691ca24192df6fc6f4eb))
+
+## [7.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.1...v7.8.2) (2024-03-29)
+
+
+### Miscellaneous Chores
+
+* bump WDA ([1c3d68b](https://github.com/appium/appium-xcuitest-driver/commit/1c3d68b13a60513b4da9179351831ab05ca14bf3))
+
+## [7.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.8.0...v7.8.1) (2024-03-29)
+
+
+### Miscellaneous Chores
+
+* left a comment for future work ([#2372](https://github.com/appium/appium-xcuitest-driver/issues/2372)) ([3f13c62](https://github.com/appium/appium-xcuitest-driver/commit/3f13c624ab2c89c8ff89dd07b2fdcaf33f5d5265))
+
+## [7.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.2...v7.8.0) (2024-03-28)
+
+
+### Features
+
+* Add 'appLaunchStateTimeoutSec' capability support ([#2371](https://github.com/appium/appium-xcuitest-driver/issues/2371)) ([c0514e4](https://github.com/appium/appium-xcuitest-driver/commit/c0514e4050c7ab19d3e83a0026a81fa83e8218c4))
+
 ## [7.7.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.7.1...v7.7.2) (2024-03-28)
 
 
