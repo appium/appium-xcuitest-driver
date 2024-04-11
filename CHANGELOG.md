@@ -1,3 +1,31 @@
+## [7.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.1...v7.11.2) (2024-04-09)
+
+
+### Miscellaneous Chores
+
+* Remove extra imports ([2104b7a](https://github.com/appium/appium-xcuitest-driver/commit/2104b7a9a58630ab7bf058f5db7990cc275cf588))
+
+## [7.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.0...v7.11.1) (2024-04-08)
+
+
+### Bug Fixes
+
+* update real device check condition ([9255e7c](https://github.com/appium/appium-xcuitest-driver/commit/9255e7c932d20967b0c7860df14015c5b4a63d15))
+
+## [7.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.10.0...v7.11.0) (2024-04-08)
+
+
+### Features
+
+* export doctor used in xcuitest driver ([#2381](https://github.com/appium/appium-xcuitest-driver/issues/2381)) ([e8fd02e](https://github.com/appium/appium-xcuitest-driver/commit/e8fd02e00dc6be595d2bef253c00ab75783504e5))
+
+## [7.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.3...v7.10.0) (2024-04-08)
+
+
+### Features
+
+* Add `appTimeZone` capability ([#2379](https://github.com/appium/appium-xcuitest-driver/issues/2379)) ([a06931f](https://github.com/appium/appium-xcuitest-driver/commit/a06931fca03ef4f3de0ea65eb7814660dcb08117))
+
 ## [7.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.9.2...v7.9.3) (2024-04-07)
 
 
