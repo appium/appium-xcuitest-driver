@@ -1,3 +1,10 @@
+## [7.11.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.2...v7.11.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* Tune appPushTimeout capability ([#2384](https://github.com/appium/appium-xcuitest-driver/issues/2384)) ([0c42d55](https://github.com/appium/appium-xcuitest-driver/commit/0c42d557d459f8ec25277dc1c2672a0045b16329))
+
 ## [7.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.1...v7.11.2) (2024-04-09)
 
 
