@@ -1,3 +1,10 @@
+## [7.11.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.3...v7.11.4) (2024-04-15)
+
+
+### Miscellaneous Chores
+
+* deprecated useSimpleBuildTest, waitForQuiescence and calendarAccessAuthorized ([#2383](https://github.com/appium/appium-xcuitest-driver/issues/2383)) ([090c615](https://github.com/appium/appium-xcuitest-driver/commit/090c615682bb82745174865982eb0bcc5e5b2922))
+
 ## [7.11.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.2...v7.11.3) (2024-04-12)
 
 
