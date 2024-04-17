@@ -314,8 +314,8 @@ describe('element commands', function () {
         sandbox.restore();
       });
 
-      describe('success', function () {
-        it('setValueWithWebAtom with default', async function () {
+      describe('setValueWithWebAtom', function () {
+        it('with default', async function () {
           driver.opts.sendKeyStrategy = undefined;
           await driver.setValue('hello\uE006😀', elementId);
           atomElement.should.have.been.calledOnce;
@@ -326,7 +326,7 @@ describe('element commands', function () {
           );
         });
 
-        it('setValueWithWebAtom with oneByOne', async function () {
+        it('with oneByOne', async function () {
           driver.opts.sendKeyStrategy = 'oneByOne';
           await driver.setValue('hello\uE006😀', elementId);
           atomElement.should.have.been.calledOnce;
