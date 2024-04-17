@@ -1,3 +1,10 @@
+## [7.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.4...v7.12.0) (2024-04-17)
+
+
+### Features
+
+* update Atoms in remtoe debugger to selenium 4.19.0 basis ([#2385](https://github.com/appium/appium-xcuitest-driver/issues/2385)) ([0c45843](https://github.com/appium/appium-xcuitest-driver/commit/0c458437240ea2ab367e2aa2915aa053fb01481b))
+
 ## [7.11.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.3...v7.11.4) (2024-04-15)
 
 
