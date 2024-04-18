@@ -1,3 +1,10 @@
+## [7.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.12.0...v7.13.0) (2024-04-18)
+
+
+### Features
+
+* add sendKeyStrategy for React to type input one by one in Web context ([#2386](https://github.com/appium/appium-xcuitest-driver/issues/2386)) ([50749cf](https://github.com/appium/appium-xcuitest-driver/commit/50749cfc11e39c34c8df9138a06539f865347082))
+
 ## [7.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.4...v7.12.0) (2024-04-17)
 
 
