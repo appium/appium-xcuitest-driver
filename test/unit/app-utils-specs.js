@@ -28,7 +28,7 @@ describe('app-utils', function () {
           cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
         });
         srcStream = fs.createReadStream(tmpSrc);
-        appRoot = await unzipStream(srcStream);
+        ({rootDir: appRoot} = await unzipStream(srcStream));
         await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
@@ -67,7 +67,7 @@ describe('app-utils', function () {
         await zip.toArchive(tmpSrc, {
           cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
         });
-        appRoot = await unzipFile(tmpSrc);
+        ({rootDir: appRoot} = await unzipFile(tmpSrc));
         await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
