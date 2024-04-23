@@ -1,6 +1,7 @@
 import {
   unzipStream,
   unzipFile,
+  isIpa,
 } from '../../lib/app-utils';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -85,6 +86,33 @@ describe('app-utils', function () {
         await unzipFile(tmpSrc).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
+      }
+    });
+  });
+
+  describe('unzipFile', function () {
+    it('should validate .ipa file', async function () {
+      const tmpDir = await tempDir.openDir();
+      let tmpIpa;
+      try {
+        const destDir = path.join(tmpDir, 'Payload');
+        await fs.copyFile(
+          path.resolve(__dirname, '..', 'assets', 'biometric.app'),
+          destDir
+        );
+        tmpIpa = await tempDir.path({
+          prefix: 'foo',
+          suffix: '.ipa',
+        });
+        await zip.toArchive(tmpIpa, {
+          cwd: tmpDir,
+        });
+        await isIpa(tmpIpa).should.eventually.be.true;
+      } finally {
+        await fs.rimraf(tmpDir);
+        if (tmpIpa) {
+          await fs.rimraf(tmpIpa);
+        }
       }
     });
   });

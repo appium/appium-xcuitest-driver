@@ -5,7 +5,6 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import sinonChai from 'sinon-chai';
-import * as appUtils from '../../lib/app-utils';
 import cmds from '../../lib/commands';
 import XCUITestDriver from '../../lib/driver';
 import * as utils from '../../lib/utils';
@@ -131,7 +130,7 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'connectToRemoteDebugger');
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
         sandbox.stub(utils, 'checkAppPresent');
-        sandbox.stub(appUtils, 'extractBundleId');
+        // sandbox.stub(appUtils, 'extractBundleId');
         sandbox.stub(utils, 'getAndCheckXcodeVersion').resolves({
           versionString: '20.0',
           versionFloat: 20.0,
@@ -283,7 +282,7 @@ describe('XCUITestDriver', function () {
       sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
       sandbox.stub(driver, 'isRealDevice').returns(true);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
-      sandbox.stub(appUtils, 'extractBundleId').resolves('bundle-id');
+      // sandbox.stub(appUtils, 'extractBundleId').resolves('bundle-id');
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
@@ -304,9 +303,9 @@ describe('XCUITestDriver', function () {
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
       configureAppStub.onCall(1).resolves('/path/to/iosApp2.app');
-      sandbox.stub(appUtils, 'extractBundleId')
-        .onCall(0).resolves('bundle-id')
-        .onCall(1).resolves('bundle-id2');
+      // sandbox.stub(appUtils, 'extractBundleId')
+      //   .onCall(0).resolves('bundle-id')
+      //   .onCall(1).resolves('bundle-id2');
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
@@ -330,7 +329,7 @@ describe('XCUITestDriver', function () {
       sandbox.stub(SimulatorManagementModule, 'installToSimulator');
       sandbox.stub(driver, 'isRealDevice').returns(false);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
-      sandbox.stub(appUtils, 'extractBundleId').resolves('bundle-id');
+      // sandbox.stub(appUtils, 'extractBundleId').resolves('bundle-id');
       driver.opts.noReset = false;
       // @ts-expect-error random stuff on opts
       driver.opts.device = 'some-device';
@@ -352,9 +351,9 @@ describe('XCUITestDriver', function () {
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
       configureAppStub.onCall(1).resolves('/path/to/iosApp2.app');
-      sandbox.stub(appUtils, 'extractBundleId')
-        .onCall(0).resolves('bundle-id')
-        .onCall(1).resolves('bundle-id2');
+      // sandbox.stub(appUtils, 'extractBundleId')
+      //   .onCall(0).resolves('bundle-id')
+      //   .onCall(1).resolves('bundle-id2');
       driver.opts.noReset = false;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
