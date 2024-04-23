@@ -1,3 +1,10 @@
+## [7.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.13.0...v7.14.0) (2024-04-23)
+
+
+### Features
+
+* Perform bundles extraction in stream ([#2387](https://github.com/appium/appium-xcuitest-driver/issues/2387)) ([b04cebd](https://github.com/appium/appium-xcuitest-driver/commit/b04cebd99418b0e6d55d3c1813700779248e6541))
+
 ## [7.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.12.0...v7.13.0) (2024-04-18)
 
 
