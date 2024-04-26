@@ -1,3 +1,10 @@
+## [7.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.14.0...v7.15.0) (2024-04-26)
+
+
+### Features
+
+* Avoid unzipping of real device .ipa bundles ([#2388](https://github.com/appium/appium-xcuitest-driver/issues/2388)) ([520168a](https://github.com/appium/appium-xcuitest-driver/commit/520168aa7d8c230a44da136b9e8d21971c4ef8f8))
+
 ## [7.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.13.0...v7.14.0) (2024-04-23)
 
 
