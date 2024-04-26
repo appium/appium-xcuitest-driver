@@ -219,6 +219,7 @@ export interface View {
  */
 export type SourceFormat = 'xml' | 'json' | 'description';
 
+/** @deprecated */
 export type AppInstallStrategy = 'serial' | 'parallel' | 'ios-deploy';
 
 export interface ProfileManifest {
