@@ -1,3 +1,10 @@
+## [7.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.0...v7.15.1) (2024-04-27)
+
+
+### Bug Fixes
+
+* Update caching logic for extracted app bundles ([#2389](https://github.com/appium/appium-xcuitest-driver/issues/2389)) ([0424193](https://github.com/appium/appium-xcuitest-driver/commit/04241937414ee6fa986be8719fbb690046b63a56))
+
 ## [7.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.14.0...v7.15.0) (2024-04-26)
 
 
