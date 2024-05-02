@@ -213,7 +213,7 @@ Page source retrieval slowness might be observed if:
 ### Solutions
 
 - Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md).
-  Note that you won't see nested elements in the source tree whose nesting level is lower than
+  Note that you won't see nested elements in the source tree whose nesting level is greater than
   the given size.
 - Retrieve the page source without "expensive" attributes using the
   [mobile: source](../reference/execute-methods.md#mobile-source) method with
