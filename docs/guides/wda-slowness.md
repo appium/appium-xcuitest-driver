@@ -110,7 +110,7 @@ The [XPath](../reference/locator-strategies.md) location strategy
 is not natively supported by XCTest. It's a custom addition
 which is only available in WDA. Such locators have more features than others, but the price
 for it is the observed slowness as we cannot rely on native XCTest location APIs
-while looking for element using XPath.
+while looking for elements using XPath.
 In order to perform XPath lookup WDA needs to take a snapshot of the whole accessibility
 hierarchy with all element attributes resolved, which is a time-expensive operation.
 Location slowness might be observed if:
