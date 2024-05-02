@@ -1,5 +1,5 @@
 ---
-title: How to improve the performance of XCUITest-based scripts
+title: Diagnosing WebDriverAgent Slowness
 ---
 
 The XCUITest driver is based on Apple's [XCTest](https://developer.apple.com/documentation/xctest)
@@ -81,7 +81,7 @@ or mid-session app startup.
 ### Causes
 
 When XCTest starts an app it ensures the accessibility layer of it is ready for interactions.
-To check that the framework verifies the application is idling (e.g. does perform any actions
+To check that the framework verifies the application is idling (e.g. does not perform any actions
 on the main thread) as well as all animations have been finished. If this check times out
 an exception is thrown or WDA may try to continue without any guarantees the app could be
 interacted with (a.k.a. best effort strategy).
@@ -217,7 +217,8 @@ Page source retrieval slowness might be observed if:
   the given size.
 - Retrieve the page source without "expensive" attributes using the
   [mobile: source](../reference/execute-methods.md#mobile-source) method with
-  the appropriate `excludedAttributes` argument value.
+  the appropriate `excludedAttributes` argument value or add such attribute names into
+  the [pageSourceExcludedAttributes setting](../reference/settings.md).
 - Retrieve the native XCTest page source using the
   [mobile: source](../reference/execute-methods.md#mobile-source) method with
   the `format=description` argument value. The returned page source is a poorly-formatted text,
