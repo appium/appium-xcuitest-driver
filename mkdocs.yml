@@ -62,6 +62,7 @@ nav:
               - guides/run-prebuilt-wda.md
               - guides/attach-to-running-wda.md
           - guides/wda-custom-server.md
+          - guides/wda-slowness.md
       - Driver Actions:
           - guides/audio-capture.md
           - guides/file-transfer.md
