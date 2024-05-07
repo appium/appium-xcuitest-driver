@@ -1,3 +1,10 @@
+## [7.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.1...v7.15.2) (2024-05-07)
+
+
+### Bug Fixes
+
+* Properly cache manifests for .ipa bundles containing multiple apps ([#2394](https://github.com/appium/appium-xcuitest-driver/issues/2394)) ([ffd3bbb](https://github.com/appium/appium-xcuitest-driver/commit/ffd3bbbe8ef3e9ef80c2b9af327d88be6e0f367a))
+
 ## [7.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.0...v7.15.1) (2024-04-27)
 
 
