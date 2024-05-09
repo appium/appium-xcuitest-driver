@@ -153,7 +153,7 @@
     "@types/sinon-chai": "^3.2.9",
     "@types/teen_process": "^2.0.1",
     "axios": "^1.4.0",
-    "chai": "^4.3.7",
+    "chai": "^5.1.1",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
     "conventional-changelog-conventionalcommits": "^7.0.1",
