@@ -472,7 +472,7 @@ Name | Type | Description | Example
 pid | number | The process identifier of the active application | 1234
 bundleId | string | The bundle identifier of the active application | com.yolo.myapp
 name | string | The name of the active application, if present | Safari
-processArguments | map | The map containing actual process arguments. Check the description of the [appium:processArguments capability](./capabilities.md#webdriveragent) for more details on its format. | {"args": ["--help"], "env": {"PATH": "/"}}
+processArguments | map | The map containing actual process arguments. Check the description of the [appium:processArguments capability](./capabilities.md#webdriveragent) for more details on its format. Might be empty if no process arguments have been provided on the app startup. | {"args": ["--help"], "env": {"PATH": "/"}}
 
 ### mobile: pressButton
 
