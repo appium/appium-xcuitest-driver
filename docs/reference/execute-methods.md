@@ -465,7 +465,14 @@ Returns information about the active application.
 
 #### Returned Result
 
-Check the `+ (id<FBResponsePayload>)handleActiveAppInfo:(FBRouteRequest *)request` method in [FBCustomCommands.m](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m) for more details on the available map entries.
+The API returns a map with the following entries
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+pid | number | The process identifier of the active application | 1234
+bundleId | string | The bundle identifier of the active application | com.yolo.myapp
+name | string | The name of the active application, if present | Safari
+processArguments | map | The map containing actual process arguments. Check the description of the [appium:processArguments capability](./capabilities.md#webdriveragent) for more details on its format. | {"args": ["--help"], "env": {"PATH": "/"}}
 
 ### mobile: pressButton
 
