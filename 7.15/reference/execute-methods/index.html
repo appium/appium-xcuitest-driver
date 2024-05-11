@@ -9752,7 +9752,43 @@ It includes device information via lockdown in a real device since XCUITest driv
 <h3 id="mobile-activeappinfo">mobile: activeAppInfo<a class="headerlink" href="#mobile-activeappinfo" title="Permanent link">&para;</a></h3>
 <p>Returns information about the active application.</p>
 <h4 id="returned-result_18">Returned Result<a class="headerlink" href="#returned-result_18" title="Permanent link">&para;</a></h4>
-<p>Check the <code>+ (id&lt;FBResponsePayload&gt;)handleActiveAppInfo:(FBRouteRequest *)request</code> method in <a href="https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m">FBCustomCommands.m</a> for more details on the available map entries.</p>
+<p>The API returns a map with the following entries</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pid</td>
+<td>number</td>
+<td>The process identifier of the active application</td>
+<td>1234</td>
+</tr>
+<tr>
+<td>bundleId</td>
+<td>string</td>
+<td>The bundle identifier of the active application</td>
+<td>com.yolo.myapp</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>The name of the active application, if present</td>
+<td>Safari</td>
+</tr>
+<tr>
+<td>processArguments</td>
+<td>map</td>
+<td>The map containing actual process arguments. Check the description of the <a href="../capabilities/#webdriveragent">appium:processArguments capability</a> for more details on its format. Might be empty if no process arguments have been provided on the app startup.</td>
+<td>{"args": ["--help"], "env": {"PATH": "/"}}</td>
+</tr>
+</tbody>
+</table>
 <h3 id="mobile-pressbutton">mobile: pressButton<a class="headerlink" href="#mobile-pressbutton" title="Permanent link">&para;</a></h3>
 <p>Emulates press action on the given physical device button. iOS is <a href="https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton">pressButton:</a>, tvOS is <a href="https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton">pressButton:</a> or <a href="https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton">pressButton:forDuration:</a>.
 <a href="#mobile-performiohidevent">mobile: performIoHidEvent</a> calls a more universal API to perform press with duration on any supported device.</p>
@@ -11920,7 +11956,7 @@ shut down XCTest by calling <code>POST /wda/shutdown</code> API or by doing devi
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-26T18:14:19+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-26</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-05-11T07:47:59+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-11</span>
   </span>
 
     
