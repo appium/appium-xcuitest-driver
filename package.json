@@ -156,7 +156,7 @@
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "chai-subset": "^1.6.0",
-    "conventional-changelog-conventionalcommits": "^7.0.1",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "mocha": "^10.2.0",
     "mocha-junit-reporter": "^2.2.1",
     "mocha-multi-reporters": "^1.5.1",
