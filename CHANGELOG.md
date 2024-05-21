@@ -1,3 +1,10 @@
+## [7.15.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.2...v7.15.3) (2024-05-16)
+
+
+### Miscellaneous Chores
+
+* Update dev dependencies ([b6f02b9](https://github.com/appium/appium-xcuitest-driver/commit/b6f02b9caf3b7fd2bb89b5309234281368207cd5))
+
 ## [7.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.1...v7.15.2) (2024-05-07)
 
 
