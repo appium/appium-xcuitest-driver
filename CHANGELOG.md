@@ -1,3 +1,10 @@
+## [7.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.0...v7.16.1) (2024-05-21)
+
+
+### Bug Fixes
+
+* Update plist detection pattern ([385ed99](https://github.com/appium/appium-xcuitest-driver/commit/385ed99afec1795940d8aba408ac448d73585a59))
+
 ## [7.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.3...v7.16.0) (2024-05-21)
 
 
