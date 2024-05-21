@@ -1,3 +1,10 @@
+## [7.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.3...v7.16.0) (2024-05-21)
+
+
+### Features
+
+* add maxTypingFrequency to settings api ([#2399](https://github.com/appium/appium-xcuitest-driver/issues/2399)) ([c1810c3](https://github.com/appium/appium-xcuitest-driver/commit/c1810c362ecc46e98b0cd01a196211017457c2ac))
+
 ## [7.15.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.2...v7.15.3) (2024-05-16)
 
 
