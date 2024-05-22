@@ -1,3 +1,10 @@
+## [7.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.1...v7.16.2) (2024-05-22)
+
+
+### Miscellaneous Chores
+
+* add note about .app naming finding for future reference ([#2400](https://github.com/appium/appium-xcuitest-driver/issues/2400)) ([aab83d5](https://github.com/appium/appium-xcuitest-driver/commit/aab83d5924b4df606bd50b395dde1898d097f7f7))
+
 ## [7.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.0...v7.16.1) (2024-05-21)
 
 
