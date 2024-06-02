@@ -1,3 +1,10 @@
+## [7.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.2...v7.17.0) (2024-06-02)
+
+
+### Features
+
+* Document respectSystemAlerts setting ([#2402](https://github.com/appium/appium-xcuitest-driver/issues/2402)) ([acf37dd](https://github.com/appium/appium-xcuitest-driver/commit/acf37dd4ee20745908ff87ea48d83d4e143d63d3))
+
 ## [7.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.1...v7.16.2) (2024-05-22)
 
 
