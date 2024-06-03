@@ -1,3 +1,10 @@
+## [7.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.0...v7.17.1) (2024-06-03)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 17.0.2 to 18.0.0 ([#2398](https://github.com/appium/appium-xcuitest-driver/issues/2398)) ([e05b63a](https://github.com/appium/appium-xcuitest-driver/commit/e05b63ae68bab6beca808f66d814db6c4e6ba7d8))
+
 ## [7.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.2...v7.17.0) (2024-06-02)
 
 
