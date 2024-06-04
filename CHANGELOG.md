@@ -1,3 +1,9 @@
+## [7.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.1...v7.17.2) (2024-06-04)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 23.1.1 to 24.0.0 and conventional-changelog-conventionalcommits to 8.0.0 ([#2403](https://github.com/appium/appium-xcuitest-driver/issues/2403)) ([4058b4c](https://github.com/appium/appium-xcuitest-driver/commit/4058b4c33687b11bdc90b3a22acd67330aaab46c))
+
 ## [7.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.0...v7.17.1) (2024-06-03)
 
 
