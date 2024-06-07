@@ -1,3 +1,9 @@
+## [7.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.3...v7.17.4) (2024-06-07)
+
+### Bug Fixes
+
+* Add proper timestamps to server logs ([#2406](https://github.com/appium/appium-xcuitest-driver/issues/2406)) ([28a75ef](https://github.com/appium/appium-xcuitest-driver/commit/28a75efb63e699bf62c73710a6eb8c34abb59d0d))
+
 ## [7.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.2...v7.17.3) (2024-06-05)
 
 ### Bug Fixes
