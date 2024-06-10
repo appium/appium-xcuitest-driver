@@ -154,7 +154,7 @@
     "@types/teen_process": "^2.0.1",
     "axios": "^1.4.0",
     "chai": "^4.3.7",
-    "chai-as-promised": "^7.1.1",
+    "chai-as-promised": "^8.0.0",
     "chai-subset": "^1.6.0",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "mocha": "^10.2.0",
