@@ -111,7 +111,7 @@ to the desired page during the session startup:
 }
 ```
 
-### Deeplink Test On a Real Device (since iOS 17)
+### Deeplink Test On a Real Device (Since iOS 17)
 
 ```json
 {
@@ -123,7 +123,7 @@ to the desired page during the session startup:
 }
 ```
 
-### Deeplink Test On a Simulator (since iOS 17)
+### Deeplink Test On a Simulator (Since iOS 17)
 
 ```json
 {
@@ -135,7 +135,7 @@ to the desired page during the session startup:
 }
 ```
 
-### Custom Test On a Real Device (since iOS 17)
+### Custom Test On a Real Device
 
 ```json
 {
@@ -154,7 +154,7 @@ to manage the life cycle of your app or switch between contexts to
 manage web pages. Check the full list of
 [mobile: execute methods](../reference/execute-methods.md) for more details.
 
-### Custom Test On a Simulator (since iOS 17)
+### Custom Test On a Simulator
 
 ```json
 {
