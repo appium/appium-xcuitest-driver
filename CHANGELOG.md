@@ -1,3 +1,56 @@
+## [7.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.3...v7.17.4) (2024-06-07)
+
+### Bug Fixes
+
+* Add proper timestamps to server logs ([#2406](https://github.com/appium/appium-xcuitest-driver/issues/2406)) ([28a75ef](https://github.com/appium/appium-xcuitest-driver/commit/28a75efb63e699bf62c73710a6eb8c34abb59d0d))
+
+## [7.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.2...v7.17.3) (2024-06-05)
+
+### Bug Fixes
+
+* system prompt for Apple ID sign translation for simulators ([#2405](https://github.com/appium/appium-xcuitest-driver/issues/2405)) ([453fe68](https://github.com/appium/appium-xcuitest-driver/commit/453fe680e0da7988821e50d9779bbec2763371fc))
+
+## [7.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.1...v7.17.2) (2024-06-04)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 23.1.1 to 24.0.0 and conventional-changelog-conventionalcommits to 8.0.0 ([#2403](https://github.com/appium/appium-xcuitest-driver/issues/2403)) ([4058b4c](https://github.com/appium/appium-xcuitest-driver/commit/4058b4c33687b11bdc90b3a22acd67330aaab46c))
+
+## [7.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.0...v7.17.1) (2024-06-03)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 17.0.2 to 18.0.0 ([#2398](https://github.com/appium/appium-xcuitest-driver/issues/2398)) ([e05b63a](https://github.com/appium/appium-xcuitest-driver/commit/e05b63ae68bab6beca808f66d814db6c4e6ba7d8))
+
+## [7.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.2...v7.17.0) (2024-06-02)
+
+
+### Features
+
+* Document respectSystemAlerts setting ([#2402](https://github.com/appium/appium-xcuitest-driver/issues/2402)) ([acf37dd](https://github.com/appium/appium-xcuitest-driver/commit/acf37dd4ee20745908ff87ea48d83d4e143d63d3))
+
+## [7.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.1...v7.16.2) (2024-05-22)
+
+
+### Miscellaneous Chores
+
+* add note about .app naming finding for future reference ([#2400](https://github.com/appium/appium-xcuitest-driver/issues/2400)) ([aab83d5](https://github.com/appium/appium-xcuitest-driver/commit/aab83d5924b4df606bd50b395dde1898d097f7f7))
+
+## [7.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.0...v7.16.1) (2024-05-21)
+
+
+### Bug Fixes
+
+* Update plist detection pattern ([385ed99](https://github.com/appium/appium-xcuitest-driver/commit/385ed99afec1795940d8aba408ac448d73585a59))
+
+## [7.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.3...v7.16.0) (2024-05-21)
+
+
+### Features
+
+* add maxTypingFrequency to settings api ([#2399](https://github.com/appium/appium-xcuitest-driver/issues/2399)) ([c1810c3](https://github.com/appium/appium-xcuitest-driver/commit/c1810c362ecc46e98b0cd01a196211017457c2ac))
+
 ## [7.15.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.2...v7.15.3) (2024-05-16)
 
 

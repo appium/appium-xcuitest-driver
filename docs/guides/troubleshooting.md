@@ -21,11 +21,16 @@ System dialogs, such as permission dialogs, might not be interactable directly w
 Despite a similar look, dialogs belonging to the active session application (e.g. initially passed as `appium:app` or `appium:bundleId` capability value)
 do not require such adjustment.
 
-XCUITest driver offers a few methods to handle them.
+XCUITest driver offers a couple of approaches to handle them:
 
-- Start a session without `appium:app` nor `appium:bundleId`. Then XCUITest driver attempts to get the current active application. This requires you to start an application after a new session request with [`mobile: installApp`](../reference/execute-methods.md#mobile-installapp) to install an app if needed and [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp)/[`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), but it could automatically change the active application with `com.apple.springboard` or activated application on the top. (Note that the automatic detection could have a delay, thus each action could take more time.)
-    - When a permission alert exists on the top, it could select the `com.apple.springboard`
-    - When another application is on the top by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
+- Set the [respectSystemAlerts setting](../reference/settings.md) to `true`. It enforces the active application
+  detection algorithm to check a presence of system alerts and to return the Springboard app if this check succeeds.
+  Such approach emulates the driver behavior prior to version 6 of XCUITest driver, although it might slightly
+  slow down your scripts because each attempt to detect an active app would require to also query for alerts
+  presence.
+- Start a session without `appium:app` nor `appium:bundleId`. Then XCUITest driver attempts to get the current active application. This requires you to start an application after a new session request with [`mobile: installApp`](../reference/execute-methods.md#mobile-installapp) to install an app if needed and [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp)/[`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), but it could automatically change the active application with `com.apple.springboard` or activate an application at the foreground. (Note that the automatic app detection might be lengthy, thus each action could take more time.)
+    - When a permission alert exists at the foreground, it could select the `com.apple.springboard`
+    - When another application is at the foreground by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
 - [`mobile: alert`](../reference/execute-methods.md#mobile-alert)
 - `defaultActiveApplication` setting in [Settings](../reference/settings.md).
     - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)

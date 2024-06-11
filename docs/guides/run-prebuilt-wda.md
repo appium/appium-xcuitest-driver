@@ -96,7 +96,7 @@ combination, but it could help `appium:usePrebuiltWDA` to not manage the WDA pro
 
 ## Capabilities for Prebuilt WDA with `appium:prebuiltWDAPath`
 
-[Run Preinstalled WebDriverAgentRunner](./run-prebuilt-wda.md) provides `appium:prebuiltWDAPath` capability.
+[Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md) provides `appium:prebuiltWDAPath` capability.
 It also achieves the same thing, but the `appium:prebuiltWDAPath` does not use `xcodebuild`.
 Please check the link for more details.
 
