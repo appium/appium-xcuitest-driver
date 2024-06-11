@@ -1,5 +1,5 @@
 ---
-title: Session Capability Sets For Common Testing Scenarious
+title: Basic Examples of Session Capability Sets
 ---
 
 This article describes necessary capabilities that must be provided in order
@@ -9,12 +9,12 @@ be included. For refined setups more of them might need to be provided. Check th
 [Capabilities](../reference/capabilities.md) article for more details
 on each option available for the fine-tuning of XCUITest driver sessions.
 
-### Simple iOS App Test On a Real Device
+### Application File (Real Device)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:platformVersion": "<iOS_Version>",
   "appium:udid": "<Phone_UUID>",
   "appium:app": "/path/to/local/package.ipa"
@@ -35,12 +35,12 @@ connected to the host (or a single one if only one is connected):
   "appium:udid": "auto"
 ```
 
-### Simple iOS App Test On a Simulator
+### Application File (Simulator)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:deviceName": "<Simulator_Name>",
   "appium:platformVersion": "<iOS_Version>",
   "appium:app": "/path/to/local/package.app"
@@ -54,12 +54,12 @@ connected to the host (or a single one if only one is connected):
   "appium:app": "/path/to/local/package.zip"
 ```
 
-### Safari Web Test On a Real Device
+### Safari (Real Device)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "browserName": "Safari",
   "appium:platformVersion": "<iOS_Version>",
   "appium:udid": "<Phone_UUID>"
@@ -73,24 +73,24 @@ to the desired page during the session startup:
   "appium:safariInitialUrl": "https://server.com/page"
 ```
 
-### Safari Web Test On a Simulator
+### Safari (Simulator)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "browserName": "Safari",
   "appium:deviceName": "<Simulator_Name>",
   "appium:platformVersion": "<iOS_Version>"
 }
 ```
 
-### Existing App Test On a Real Device
+### Pre-Installed App (Real Device)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:platformVersion": "<iOS_Version>",
   "appium:udid": "<Phone_UUID>",
   "appium:bundleId": "<Bundle_ID_Of_Preinstalled_App>",
@@ -98,12 +98,15 @@ to the desired page during the session startup:
 }
 ```
 
-### Existing App Test On a Simulator
+The `appium:noReset` capability is set to `true` in order to tell the driver
+the app identified by `appium:bundleId` is already preinstalled and must not be reset.
+
+### Pre-Installed App (Simulator)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:deviceName": "<Simulator_Name>",
   "appium:platformVersion": "<iOS_Version>",
   "appium:bundleId": "<Bundle_ID_Of_Preinstalled_App>",
@@ -111,36 +114,36 @@ to the desired page during the session startup:
 }
 ```
 
-### Deeplink Test On a Real Device (Since iOS 17)
+### Deeplink (Real Device running iOS 17+)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:platformVersion": "<iOS_Version>",
   "appium:udid": "<Phone_UUID>",
   "appium:initialDeeplinkUrl": "<Deeplink_Url>"
 }
 ```
 
-### Deeplink Test On a Simulator (Since iOS 17)
+### Deeplink (Simulator running iOS 17+)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:deviceName": "<Simulator_Name>",
   "appium:platformVersion": "<iOS_Version>",
   "appium:initialDeeplinkUrl": "<Deeplink_Url>"
 }
 ```
 
-### Custom Test On a Real Device
+### Custom Launch (Real Device)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:platformVersion": "<iOS_Version>",
   "appium:udid": "<Phone_UUID>",
 }
@@ -149,17 +152,17 @@ to the desired page during the session startup:
 This will start your test at the Home screen.
 Afterwards you may use any of the application management
 methods, like [mobile: installApp](../reference//execute-methods.md#mobile-installapp)
-or [mobile: activateApp](../reference//execute-methods.md#mobile-activeteapp)
+or [mobile: activateApp](../reference//execute-methods.md#mobile-activateapp)
 to manage the life cycle of your app or switch between contexts to
 manage web pages. Check the full list of
 [mobile: execute methods](../reference/execute-methods.md) for more details.
 
-### Custom Test On a Simulator
+### Custom Launch (Simulator)
 
 ```json
 {
-  "platformName": "mac",
-  "appium:automaitionName": "XCUITest",
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
   "appium:deviceName": "<Simulator_Name>",
   "appium:platformVersion": "<iOS_Version>"
 }
