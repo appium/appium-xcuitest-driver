@@ -35,7 +35,7 @@ connected to the host (or a single one if only one is connected):
   "appium:udid": "auto"
 ```
 
-### Simple iOS App Test On a Simulator Device
+### Simple iOS App Test On a Simulator
 
 ```json
 {
@@ -73,7 +73,7 @@ to the desired page during the session startup:
   "appium:safariInitialUrl": "https://server.com/page"
 ```
 
-### Safari Web Test On a Simulator Device
+### Safari Web Test On a Simulator
 
 ```json
 {
@@ -123,7 +123,7 @@ to the desired page during the session startup:
 }
 ```
 
-### Deeplink Test On a Simulator Device (since iOS 17)
+### Deeplink Test On a Simulator (since iOS 17)
 
 ```json
 {
@@ -154,15 +154,13 @@ to manage the life cycle of your app or switch between contexts to
 manage web pages. Check the full list of
 [mobile: execute methods](../reference/execute-methods.md) for more details.
 
-
-### Deeplink Test On a Simulator Device (since iOS 17)
+### Custom Test On a Simulator (since iOS 17)
 
 ```json
 {
   "platformName": "mac",
   "appium:automaitionName": "XCUITest",
   "appium:deviceName": "<Simulator_Name>",
-  "appium:platformVersion": "<iOS_Version>",
-  "appium:initialDeeplinkUrl": "<Deeplink_Url>"
+  "appium:platformVersion": "<iOS_Version>"
 }
 ```
