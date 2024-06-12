@@ -1,3 +1,9 @@
+## [7.17.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.4...v7.17.5) (2024-06-12)
+
+### Bug Fixes
+
+* stream end after write in a file push ([#2409](https://github.com/appium/appium-xcuitest-driver/issues/2409)) ([b2f57b7](https://github.com/appium/appium-xcuitest-driver/commit/b2f57b7fd7cce340969f522203d9375d3b120cdc))
+
 ## [7.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.3...v7.17.4) (2024-06-07)
 
 ### Bug Fixes
