@@ -1,3 +1,9 @@
+## [7.17.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.5...v7.17.6) (2024-06-18)
+
+### Bug Fixes
+
+* relax the max of recording limitation to 4200 sec as timeLimit ([#2410](https://github.com/appium/appium-xcuitest-driver/issues/2410)) ([42bc4f9](https://github.com/appium/appium-xcuitest-driver/commit/42bc4f9a373126b0025fa5cec60ee2107d101d53))
+
 ## [7.17.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.4...v7.17.5) (2024-06-12)
 
 ### Bug Fixes
