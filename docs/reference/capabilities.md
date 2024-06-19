@@ -121,6 +121,7 @@ about capabilities, refer to the [Appium documentation](https://appium.io/docs/e
 
 |<div style="width:10em">Capability</div>|Description|<div style="width:7em">Example</div>|
 |----------|-----------|------|
+|`pageLoadStrategy` | One of the available page load strategies. See https://www.w3.org/TR/webdriver/#capabilities. DEfault `normal`. | `eager` |
 |`appium:absoluteWebLocations`|This capability will direct the `Get Element Location` command, when used within webviews, to return coordinates which are relative to the origin of the page, rather than relative to the current scroll offset. This capability has no effect outside of webviews. Default `false`.|`true`|
 |`appium:safariGarbageCollect`|Turns on/off Web Inspector garbage collection when executing scripts on Safari. Turning on may improve performance. Defaults to `false`.|`true` or `false`|
 |`appium:includeSafariInWebviews`|Add Safari web contexts to the list of contexts available during a native/webview app test. This is useful if the test opens Safari and needs to be able to interact with it. Defaults to `false`.|`true` or `false`|
