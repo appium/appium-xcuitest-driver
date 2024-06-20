@@ -1,3 +1,9 @@
+## [7.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.6...v7.18.0) (2024-06-20)
+
+### Features
+
+* add pageLoadStrategy for Safari/WebView ([#2411](https://github.com/appium/appium-xcuitest-driver/issues/2411)) ([2517bf7](https://github.com/appium/appium-xcuitest-driver/commit/2517bf75d0de0fd00937c4c12c6ca890a49ef218))
+
 ## [7.17.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.5...v7.17.6) (2024-06-18)
 
 ### Bug Fixes
