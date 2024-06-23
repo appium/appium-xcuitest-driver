@@ -42,8 +42,8 @@ describe('element commands', function () {
     });
 
     this.afterEach(function () {
-      mockDriver.verify()
-    })
+      mockDriver.verify();
+    });
 
     it('should call setValue', async function () {
       mockDriver.expects('setValue').once().withExactArgs('hello', '2').return(undefined);

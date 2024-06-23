@@ -31,7 +31,7 @@ if (!process.env.CI) {
       chai.should();
       chai.use(chaiAsPromised.default);
       expect = chai.expect;
-    })
+    });
 
     beforeEach(async function () {
       await killAllSimulators();
