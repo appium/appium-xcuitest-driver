@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
@@ -22,9 +20,6 @@ import {
 import {util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
 
-chai.should();
-chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 const DEFAULT_CAPS = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
@@ -37,6 +32,18 @@ describe('Safari - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
 
   describe('init', function () {
     afterEach(async function () {

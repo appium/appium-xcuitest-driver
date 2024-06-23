@@ -1,6 +1,4 @@
-import chai from 'chai';
 import path from 'path';
-import chaiAsPromised from 'chai-as-promised';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
 import {GENERIC_CAPS, amendCapabilities} from '../desired';
 import xcode from 'appium-xcode';
@@ -15,15 +13,21 @@ const TEST_BUNDLE_PATH = path.resolve(
 );
 const XCTEST_BUNDLE_PATH = path.join(TEST_BUNDLE_PATH, 'PlugIns', 'XCTesterAppUITests.xctest');
 
-chai.should();
-chai.use(chaiAsPromised);
 
 if (process.env.LAUNCH_WITH_IDB) {
   describe('XCTest', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let driver;
+    let chai;
+
     before(async function () {
+      chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+
+      chai.should();
+      chai.use(chaiAsPromised.default);
+
       // idb_companion doesn't work with xcode 13 or lower due to concurrency lib issue.
       if (
         /** @type {import('appium-xcode').XcodeVersion} */ (await xcode.getVersion(true)).major < 14

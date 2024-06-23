@@ -1,14 +1,10 @@
 // @ts-check
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {UICATALOG_CAPS, amendCapabilities} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession} from '../helpers/session';
 import {retryInterval} from 'asyncbox';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 // leave the long test to Travis
 const TYPING_TRIES = process.env.CI ? 100 : 10;
@@ -17,7 +13,15 @@ describe('XCUITestDriver - long tests', function () {
   this.timeout(0);
 
   let driver;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     const caps = amendCapabilities(UICATALOG_CAPS, {'appium:maxTypingFrequency': 20});
     driver = await initSession(caps);
   });

@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {amendCapabilities, TOUCHIDAPP_CAPS} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import B from 'bluebird';
@@ -7,9 +5,6 @@ import {killAllSimulators} from '../helpers/simulator';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 import {waitForCondition} from 'asyncbox';
 
-chai.should();
-chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 const TOUCH_ID_SELECTOR = '**/XCUIElementTypeStaticText[`label == "Touch ID for “biometric”"`]';
@@ -23,6 +18,18 @@ if (!process.env.CI) {
     this.timeout(MOCHA_TIMEOUT * 2);
     this.retries(MOCHA_RETRIES);
     let driver;
+    let chai;
+    let expect;
+
+    before(async function () {
+      chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+
+      chai.should();
+      chai.use(chaiAsPromised.default);
+
+      expect = chai.expect;
+    });
 
     beforeEach(async function () {
       await killAllSimulators();

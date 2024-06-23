@@ -1,6 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
 import {retryInterval} from 'asyncbox';
@@ -9,15 +6,22 @@ import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
 
-chai.should();
-chai.use(chaiAsPromised);
-chai.use(chaiSubset);
 
 describe('XCUITestDriver - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    const chaiSubset = await import('chai-subset');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+    chai.use(chaiSubset);
+
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });

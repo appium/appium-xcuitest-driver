@@ -1,25 +1,27 @@
 // @ts-check
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {createSandbox} from 'sinon';
-import sinonChai from 'sinon-chai';
+import sinon, {createSandbox} from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 
-chai.should();
-chai.use(chaiAsPromised).use(sinonChai);
 
 describe('element commands', function () {
-  /** @type {sinon.SinonSandbox} */
   let sandbox;
 
   /** @type {XCUITestDriver} */
   let driver;
 
+  let chai;
+
   /** @type {sinon.SinonStubbedMember<XCUITestDriver['proxyCommand']>} */
   let proxyStub;
 
-  before(function () {
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     driver = new XCUITestDriver();
   });
 
@@ -33,14 +35,19 @@ describe('element commands', function () {
   });
 
   describe('setValueImmediate', function () {
+    let mockDriver;
+
     beforeEach(function () {
-      sandbox.stub(driver, 'setValue');
+      mockDriver = sinon.mock(driver);
     });
 
+    this.afterEach(function () {
+      mockDriver.verify()
+    })
+
     it('should call setValue', async function () {
+      mockDriver.expects('setValue').once().withExactArgs('hello', '2').return(undefined);
       await driver.setValueImmediate('hello', '2');
-      driver.setValue.should.have.been.calledOnceWithExactly('hello', '2');
-      driver.setValue.should.have.returned(undefined);
     });
   });
 

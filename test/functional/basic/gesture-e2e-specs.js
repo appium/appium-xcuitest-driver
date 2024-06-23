@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
 import {UICATALOG_CAPS, amendCapabilities} from '../desired';
@@ -7,8 +5,6 @@ import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const BTN_OK_CNCL = 'Okay / Cancel';
 
@@ -16,6 +12,15 @@ describe('XCUITestDriver - gestures', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   describe('dynamic gestures', function () {
     before(async function () {
