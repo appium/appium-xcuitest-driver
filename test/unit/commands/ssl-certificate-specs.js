@@ -11,7 +11,7 @@ describe('ssl certificate parser command', function () {
 
   before(async function () {
     chai = await import('chai');
-    chai.should()
+    chai.should();
   });
 
   it('try to parse LibreSSL command output', function () {

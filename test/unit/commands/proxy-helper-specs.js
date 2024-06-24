@@ -33,7 +33,7 @@ describe('proxy commands', function () {
         '/some/endpoint',
         'POST',
         { some: 'stuff' }
-      )
+      );
       await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
     });
 

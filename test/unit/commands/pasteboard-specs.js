@@ -1,3 +1,4 @@
+// @ts-ignore
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 import Simctl from 'node-simctl';
@@ -7,11 +8,10 @@ describe('pasteboard commands', function () {
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
-    expect = chai.expect;
+    chai.should();
   });
 
   beforeEach(function () {
@@ -40,8 +40,9 @@ describe('pasteboard commands', function () {
       setPasteboardStub.notCalled.should.be.true;
     });
 
-    it('getPasteboard should not be called', function () {
-      expect(driver.mobileGetPasteboard()).to.eventually.be.rejectedWith(/not supported/);
+    it('getPasteboard should not be called', async function () {
+      // @ts-ignore should raises type error
+      await driver.mobileGetPasteboard().should.be.rejectedWith(/not supported/);
       getPasteboardStub.notCalled.should.be.true;
     });
   });
@@ -71,7 +72,8 @@ describe('pasteboard commands', function () {
       getPasteboardStub.returns(content);
       const result = await driver.mobileGetPasteboard();
       getPasteboardStub.calledOnce.should.be.true;
-      expect(result).to.eql(content);
+      // @ts-ignore should raises type error
+      result.should.eql(content);
     });
   });
 });

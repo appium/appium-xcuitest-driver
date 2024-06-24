@@ -77,7 +77,7 @@ describe('language and locale', function () {
       let driver = new XCUITestDriver(desiredCapabilities);
 
       mockDriver = sinon.mock(driver);
-      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities)
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
 
       driver.validateDesiredCaps(desiredCapabilities);
       await driver.startWdaSession(
@@ -135,7 +135,7 @@ describe('language and locale', function () {
       let driver = new XCUITestDriver(desiredCapabilities);
 
       mockDriver = sinon.mock(driver);
-      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities)
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
 
       driver.validateDesiredCaps(desiredCapabilities);
       await driver.startWdaSession(

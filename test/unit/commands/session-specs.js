@@ -9,7 +9,7 @@ describe('session commands', function () {
 
   before(async function () {
     chai = await import('chai');
-    chai.should()
+    chai.should();
   });
 
   beforeEach(function () {
