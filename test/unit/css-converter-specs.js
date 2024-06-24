@@ -4,7 +4,6 @@ import CssConverter from '../../lib/css-converter';
 describe('css-converter.js', function () {
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -12,8 +11,6 @@ describe('css-converter.js', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   describe('simple cases', function () {
@@ -53,7 +50,8 @@ describe('css-converter.js', function () {
     ];
     for (const [cssSelector, iosClassChainSelector] of simpleCases) {
       it(`should convert '${cssSelector}' to '${iosClassChainSelector}'`, function () {
-        expect(CssConverter.toIosClassChainSelector(cssSelector)).to.equal(iosClassChainSelector);
+        // @ts-ignore should raises type error
+        CssConverter.toIosClassChainSelector(cssSelector).should.equal(iosClassChainSelector);
       });
     }
   });
@@ -66,7 +64,8 @@ describe('css-converter.js', function () {
     ]);
     for (const cssSelector of testCases) {
       it(`should reject '${cssSelector}'`, function () {
-        expect((() => CssConverter.toIosClassChainSelector(cssSelector))).to.throw();
+        // @ts-ignore should raises type error
+        (() => CssConverter.toIosClassChainSelector(cssSelector)).should.throw();
       });
     }
   });
