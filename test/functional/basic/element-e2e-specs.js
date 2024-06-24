@@ -11,6 +11,7 @@ describe('XCUITestDriver - elements -', function () {
 
   let driver;
   let chai;
+  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -18,6 +19,8 @@ describe('XCUITestDriver - elements -', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
 
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
@@ -364,12 +367,12 @@ describe('XCUITestDriver - elements -', function () {
           let wheel = wheels[i];
 
           let value = await wheel.getAttribute('value');
-          parseInt(value, 10).should.eql(values[i]);
+          expect(parseInt(value, 10)).to.eql(values[i]);
 
           await wheel.setValue(150);
 
           value = await wheel.getAttribute('value');
-          parseInt(value, 10).should.eql(150);
+          expect(parseInt(value, 10)).to.eql(150);
         }
       });
     });

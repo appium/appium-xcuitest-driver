@@ -1,19 +1,27 @@
 import {
   AppInfosCache,
 } from '../../lib/app-infos-cache';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
 import log from '../../lib/logger.js';
 
 
-chai.should();
-chai.use(chaiAsPromised);
-
 const BIOMETRIC_BUNDLE_ID = 'com.mwakizaka.biometric';
 
 describe('AppInfosCache', function () {
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
+
   describe('retrives info from different types of apps', function () {
     let ipaPath;
     const appPath = path.resolve(__dirname, '..', 'assets', 'biometric.app');
@@ -64,10 +72,10 @@ describe('AppInfosCache', function () {
     });
 
     it('should extract cached info', async function () {
-      await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
-      await cache.extractBundleId(ipaPath).should.eventually.eql(BIOMETRIC_BUNDLE_ID);
-      await cache.extractBundleVersion(appPath).should.eventually.eql('1');
-      await cache.extractExecutableName(ipaPath).should.eventually.eql('biometric');
+      expect(await cache.extractAppPlatforms(appPath)).to.eql(['iPhoneSimulator']);
+      expect(await cache.extractBundleId(ipaPath)).to.eql(BIOMETRIC_BUNDLE_ID);
+      expect(await cache.extractBundleVersion(appPath)).to.eql('1');
+      expect(await cache.extractExecutableName(ipaPath)).to.eql('biometric');
     });
   });
 });

@@ -9,6 +9,7 @@ describe('Accessibility', function () {
   let driver, caps;
 
   let chai;
+  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -16,6 +17,8 @@ describe('Accessibility', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
   });
 
   beforeEach(function () {
@@ -76,12 +79,12 @@ describe('Accessibility', function () {
     it('should enable reduce motion', async function () {
       caps = amendCapabilities(caps, {'appium:reduceMotion': true});
       driver = await initSession(caps);
-      await getReduceMotion(driver).should.eventually.eql('1');
+      expect(await getReduceMotion(driver)).to.eql('1');
     });
     it('should disable reduce motion', async function () {
       caps = amendCapabilities(caps, {'appium:reduceMotion': false});
       driver = await initSession(caps);
-      await getReduceMotion(driver).should.eventually.eql('0');
+      expect(await getReduceMotion(driver)).to.eql('0');
     });
   });
 
@@ -101,12 +104,12 @@ describe('Accessibility', function () {
     it('should enable reduce transparency', async function () {
       caps = amendCapabilities(caps, {'appium:reduceTransparency': true});
       driver = await initSession(caps);
-      await getReduceTransparency(driver).should.eventually.eql('1');
+      expect(await getReduceTransparency(driver)).to.eql('1');
     });
     it('should disable reduce transparency', async function () {
       caps = amendCapabilities(caps, {'appium:reduceTransparency': false});
       driver = await initSession(caps);
-      await getReduceTransparency(driver).should.eventually.eql('0');
+      expect(await getReduceTransparency(driver)).to.eql('0');
     });
   });
 });

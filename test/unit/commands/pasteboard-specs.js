@@ -6,6 +6,14 @@ describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    expect = chai.expect;
+  });
+
   beforeEach(function () {
     const simctl = new Simctl();
     setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
@@ -33,7 +41,7 @@ describe('pasteboard commands', function () {
     });
 
     it('getPasteboard should not be called', async function () {
-      await driver.mobileGetPasteboard().should.be.rejectedWith(/not supported/);
+      expect(await driver.mobileGetPasteboard()).to.be.rejectedWith(/not supported/);
       getPasteboardStub.notCalled.should.be.true;
     });
   });
@@ -63,7 +71,7 @@ describe('pasteboard commands', function () {
       getPasteboardStub.returns(content);
       const result = await driver.mobileGetPasteboard();
       getPasteboardStub.calledOnce.should.be.true;
-      result.should.eql(content);
+      expect(result).to.eql(content);
     });
   });
 });

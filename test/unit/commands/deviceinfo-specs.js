@@ -1,10 +1,6 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('get deviceinfo commands', function () {
   const driver = new XCUITestDriver();
@@ -12,7 +8,20 @@ describe('get deviceinfo commands', function () {
   driver.wda = {jwproxy: {command: () => {}}};
   let proxyStub;
 
-  this.beforeEach(function () {
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
+
+  beforeEach(function () {
     // @ts-ignore ok for tests
     proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
   });
@@ -28,11 +37,11 @@ describe('get deviceinfo commands', function () {
     };
     proxyStub.returns(opts);
 
-    await driver.mobileGetDeviceInfo().should.eventually.eql(opts);
+    expect(await driver.mobileGetDeviceInfo()).to.eql(opts);
   });
 
   it('get device info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    await driver.mobileGetDeviceInfo().should.be.rejected;
+    expect(await driver.mobileGetDeviceInfo()).to.be.rejected;
   });
 });

@@ -1,14 +1,22 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('alert commands', function () {
   let driver = new XCUITestDriver();
   let proxySpy = sinon.stub(driver, 'proxyCommand');
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
 
   afterEach(function () {
     proxySpy.reset();
@@ -49,9 +57,9 @@ describe('alert commands', function () {
     const commandName = 'alert';
 
     it('should reject request to WDA if action parameter is not supported', async function () {
-      await driver
-        .execute(`mobile: ${commandName}`, {action: 'blabla'})
-        .should.be.rejectedWith(/should be either/);
+      expect(await driver
+        .execute(`mobile: ${commandName}`, {action: 'blabla'}))
+        .to.be.rejectedWith(/should be either/);
     });
 
     it('should send accept alert request to WDA with encoded button label', async function () {
@@ -80,7 +88,7 @@ describe('alert commands', function () {
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
       proxySpy.firstCall.args[1].should.eql('GET');
-      response.value[0].should.equal(buttonLabel);
+      expect(response.value[0]).to.equal(buttonLabel);
     });
   });
 });

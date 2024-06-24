@@ -1,11 +1,7 @@
 import {errors} from 'appium/driver';
 import sinon from 'sinon';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import XCUITestDriver from '../../../lib/driver';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('proxy commands', function () {
   let driver = new XCUITestDriver();
@@ -13,6 +9,17 @@ describe('proxy commands', function () {
   driver.wda = {jwproxy: {command: () => {}}};
   // @ts-ignore ok for tests
   const proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
+
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   afterEach(function () {
     if (proxyStub) {
@@ -39,10 +46,9 @@ describe('proxy commands', function () {
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if no method is given', async function () {
-      await driver
+      expect(await driver
         // @ts-expect-error incorrect usage
-        .proxyCommand('/some/endpoint', null, {some: 'stuff'})
-        .should.be.rejectedWith(/GET, POST/);
+        .proxyCommand('/some/endpoint', null, {some: 'stuff'})).to.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {

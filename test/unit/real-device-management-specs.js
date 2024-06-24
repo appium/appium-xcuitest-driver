@@ -1,24 +1,29 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
-import sinonChai from 'sinon-chai';
 import { installToRealDevice } from '../../lib/real-device-management';
 import RealDevice from '../../lib/real-device';
 import XCUITestDriver from '../../lib/driver';
 
-chai.should();
-chai.use(sinonChai).use(chaiAsPromised);
-
-const expect = chai.expect;
 
 describe('installToRealDevice', function () {
   const udid = 'test-udid';
   const app = '/path/to.app';
   const bundleId = 'test.bundle.id';
 
-  /** @type {sinon.SinonSandbox} */
   let sandbox;
   let driver;
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
+
   beforeEach(function () {
     sandbox = createSandbox();
     driver = new XCUITestDriver();

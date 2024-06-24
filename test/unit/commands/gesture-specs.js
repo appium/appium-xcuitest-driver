@@ -2,14 +2,19 @@ import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 import {gesturesChainToString} from '../../../lib/commands/gesture';
 import _ from 'lodash';
-import sinonChai from 'sinon-chai';
-import chai from 'chai';
 
-chai.use(sinonChai);
 
 describe('gesture commands', function () {
   const driver = new XCUITestDriver();
   const proxySpy = sinon.stub(driver, 'proxyCommand');
+
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    expect = chai.expect;
+  });
 
   afterEach(function () {
     proxySpy.reset();
@@ -17,25 +22,25 @@ describe('gesture commands', function () {
 
   describe('gesturesChainToString', function () {
     it('should properly transform simple chain', function () {
-      gesturesChainToString([{action: 'press'}, {action: 'release'}]).should.equal('press-release');
+      expect(gesturesChainToString([{action: 'press'}, {action: 'release'}])).to.equal('press-release');
     });
 
     it('should properly transform complex chain with default keys', function () {
-      gesturesChainToString([
+      expect(gesturesChainToString([
         {action: 'press', x: 1, options: {count: 1}},
         {action: 'release'},
-      ]).should.equal('press(options={"count":1})-release');
+      ])).to.equal('press(options={"count":1})-release');
     });
 
     it('should properly transform complex chain with custom keys', function () {
-      gesturesChainToString(
+      expect(gesturesChainToString(
         [{action: 'press', x: 1, options: {count: 1}}, {action: 'release'}],
         ['x'],
-      ).should.equal('press(x=1)-release');
+      )).to.equal('press(x=1)-release');
     });
 
     it('should properly transform complex chain with all keys', function () {
-      gesturesChainToString([{action: 'press', x: 1}, {action: 'release'}], null).should.equal(
+      expect(gesturesChainToString([{action: 'press', x: 1}, {action: 'release'}], null)).to.equal(
         'press(x=1)-release',
       );
     });
@@ -44,15 +49,15 @@ describe('gesture commands', function () {
   describe('mobile methods', function () {
     describe('anything other than scroll', function () {
       it('should throw an error', async function () {
-        await driver.execute('mobile: somesuch').should.be.rejected;
+        expect(await driver.execute('mobile: somesuch')).to.be.rejected;
       });
     });
 
     describe('scroll', function () {
       it('should throw an error if no scroll type is specified', async function () {
-        await driver
-          .execute('mobile: scroll', {element: 4})
-          .should.be.rejectedWith(/Mobile scroll supports the following strategies/);
+        expect(await driver
+          .execute('mobile: scroll', {element: 4}))
+          .to.be.rejectedWith(/Mobile scroll supports the following strategies/);
       });
       it('should pass through bare element', async function () {
         await driver.execute('mobile: scroll', {element: 4, direction: 'down'});
@@ -98,11 +103,11 @@ describe('gesture commands', function () {
       const commandName = 'swipe';
 
       it('should throw an error if no direction is specified', async function () {
-        await driver.execute(`mobile: ${commandName}`, {element: 4}).should.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {element: 4})).to.be.rejected;
       });
 
       it('should throw an error if invalid direction', async function () {
-        await driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'}).should.be
+        expect(await driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'})).tp.be
           .rejected;
       });
 
@@ -116,18 +121,18 @@ describe('gesture commands', function () {
       const commandName = 'pinch';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1}).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5}).should.be
+        expect(await driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1})).to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5})).to.be
           .rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4, scale: '', velocity: 1})
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4, scale: 0, velocity: null})
-          .should.be.rejectedWith(/should be a valid number/);
+        expect(await driver
+          .execute(`mobile: ${commandName}`, {element: 4, scale: '', velocity: 1}))
+          .to.be.rejectedWith(/should be a valid number/);
+        expect(await driver
+          .execute(`mobile: ${commandName}`, {element: 4, scale: 0, velocity: null}))
+          .to.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a pinch request through to WDA', async function () {
@@ -179,13 +184,13 @@ describe('gesture commands', function () {
       const commandName = 'touchAndHold';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver.execute(`mobile: ${commandName}`, {x: 100, y: 200}).should.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {x: 100, y: 200})).to.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1})
-          .should.be.rejectedWith(/should be a valid number/);
+        expect(await driver
+          .execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1}))
+          .to.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a touchAndHold request without element through to WDA', async function () {
@@ -243,21 +248,21 @@ describe('gesture commands', function () {
       const commandName = 'selectPickerWheelValue';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver.execute(`mobile: ${commandName}`, {}).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {element: 4}).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {order: 'next'}).should.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {})).to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {element: 4})).to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {order: 'next'})).to.be.rejected;
       });
 
       it('should throw an error if offset value cannot be parsed', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4, order: 'next', offset: 'bla'})
-          .should.be.rejectedWith(/should be a valid number/);
+        expect(await driver
+          .execute(`mobile: ${commandName}`, {element: 4, order: 'next', offset: 'bla'}))
+          .to.be.rejectedWith(/should be a valid number/);
       });
 
       it('should throw an error if param is invalid', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {element: 4, order: 'bla'})
-          .should.be.rejectedWith(/is expected to be equal/);
+        expect(await driver
+          .execute(`mobile: ${commandName}`, {element: 4, order: 'bla'}))
+          .to.be.rejectedWith(/is expected to be equal/);
       });
 
       it('should proxy a selectPickerWheel request for an element through to WDA', async function () {
@@ -275,74 +280,74 @@ describe('gesture commands', function () {
       const commandName = 'dragFromToForDuration';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})
-          .should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {
+        expect(await driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100}))
+          .to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromY: 1,
           toX: 100,
           toY: 100,
-        }).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {
+        })).to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromX: 1,
           toX: 100,
           toY: 100,
-        }).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {
+        })).to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromX: 1,
           fromY: 1,
           toY: 100,
-        }).should.be.rejected;
-        await driver.execute(`mobile: ${commandName}`, {
+        })).to.be.rejected;
+        expect(await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromX: 1,
           fromY: 1,
           toX: 100,
-        }).should.be.rejected;
+        })).to.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
-        await driver
-          .execute(`mobile: ${commandName}`, {duration: '', fromX: 1, fromY: 1, toX: 100, toY: 100})
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
+        expect(await driver
+          .execute(`mobile: ${commandName}`, {duration: '', fromX: 1, fromY: 1, toX: 100, toY: 100}))
+          .to.be.rejectedWith(/should be a valid number/);
+        expect(await driver
           .execute(`mobile: ${commandName}`, {
             duration: 100,
             fromX: '',
             fromY: 1,
             toX: 100,
             toY: 100,
-          })
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
-          .execute(`mobile: ${commandName}`, {
-            duration: 100,
-            fromX: 1,
-            fromY: null,
-            toX: 100,
-            toY: 100,
-          })
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
+          }))
+          .to.be.rejectedWith(/should be a valid number/);
+       expect(await driver
+        .execute(`mobile: ${commandName}`, {
+          duration: 100,
+          fromX: 1,
+          fromY: null,
+          toX: 100,
+          toY: 100,
+        }))
+          .to.be.rejectedWith(/should be a valid number/);
+        expect(await driver
           .execute(`mobile: ${commandName}`, {
             duration: 100,
             fromX: 1,
             fromY: 1,
             toX: 'blabla',
             toY: 100,
-          })
-          .should.be.rejectedWith(/should be a valid number/);
-        await driver
+          }))
+          .to.be.rejectedWith(/should be a valid number/);
+        expect(await driver
           .execute(`mobile: ${commandName}`, {
             duration: 100,
             fromX: 1,
             fromY: 1,
             toX: 100,
             toY: NaN,
-          })
-          .should.be.rejectedWith(/should be a valid number/);
+          }))
+          .to.be.rejectedWith(/should be a valid number/);
       });
 
       it('should proxy a dragFromToForDuration request for an element through to WDA', async function () {

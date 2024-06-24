@@ -9,6 +9,7 @@ describe('OtherApps', function () {
 
   let driver;
   let chai;
+  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -16,6 +17,8 @@ describe('OtherApps', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
 
     caps = amendCapabilities(MULTIPLE_APPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
@@ -31,9 +34,7 @@ describe('OtherApps', function () {
 
   it('should start and stop a session', async function () {
     driver = await initSession(caps);
-    await driver.isAppInstalled('io.appium.TestApp').should.eventually.be.equal(true);
-    await driver
-      .isAppInstalled('com.example.apple-samplecode.UICatalog')
-      .should.eventually.be.equal(true);
+    expect(await driver.isAppInstalled('io.appium.TestApp')).to.be.equal(true);
+    expect(await driver.isAppInstalled('com.example.apple-samplecode.UICatalog')).to.be.equal(true);
   });
 });

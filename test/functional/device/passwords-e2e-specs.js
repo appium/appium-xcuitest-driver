@@ -9,6 +9,7 @@ describe('Passwords', function () {
   let driver, caps;
 
   let chai;
+  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -16,6 +17,8 @@ describe('Passwords', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
   });
 
   beforeEach(function () {
@@ -55,12 +58,12 @@ describe('Passwords', function () {
     it('should enable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': true});
       driver = await initSession(caps);
-      await isPasswordsMenuShown(driver).should.eventually.eql(true);
+      expect(await isPasswordsMenuShown(driver)).to.eql(true);
     });
     it('should disable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': false});
       driver = await initSession(caps);
-      await isPasswordsMenuShown(driver).should.eventually.eql(false);
+      expect(await isPasswordsMenuShown(driver)).to.eql(false);
     });
   });
 });

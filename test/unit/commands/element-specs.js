@@ -11,6 +11,7 @@ describe('element commands', function () {
   let driver;
 
   let chai;
+  let expect;
 
   /** @type {sinon.SinonStubbedMember<XCUITestDriver['proxyCommand']>} */
   let proxyStub;
@@ -21,6 +22,8 @@ describe('element commands', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
 
     driver = new XCUITestDriver();
   });
@@ -174,13 +177,13 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-        await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
+        expect(await driver.getContentSize(el)).to.be.rejectedWith(/not yet implemented/);
       });
     });
 
     it('should throw if trying to get contentSize of something other than table or collection', async function () {
       getAttrStub.resolves('XCUIElementTypeStatusBar');
-      await driver.getContentSize(el).should.be.rejectedWith(/Can't get content size for type/);
+      expect(await driver.getContentSize(el)).to.be.rejectedWith(/Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
@@ -291,10 +294,10 @@ describe('element commands', function () {
 
       describe('failure', function () {
         it('should throw invalid argument exception for null', async function () {
-          await driver.setValue(null, elementId).should.be.rejectedWith(/supported/);
+          expect(await driver.setValue(null, elementId)).to.be.rejectedWith(/supported/);
         });
         it('should throw invalid argument exception for object', async function () {
-          await driver.setValue({hi: 'there'}, elementId).should.be.rejectedWith(/supported/);
+          expect(await driver.setValue({hi: 'there'}, elementId)).to.be.rejectedWith(/supported/);
         });
       });
     });
@@ -381,8 +384,8 @@ describe('element commands', function () {
       executeStub.calledOnce.should.be.false;
       atomStub.calledOnce.should.be.true;
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      loc.x.should.equal(0);
-      loc.y.should.equal(0);
+      expect(loc.x).to.equal(0);
+      expect(loc.y).to.equal(0);
     });
 
     it('should get location relative to document with absoluteWebLocations cap', async function () {
@@ -391,8 +394,8 @@ describe('element commands', function () {
       executeStub.calledOnce.should.be.true;
       atomStub.calledOnce.should.be.true;
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      loc.x.should.equal(fixtureXOffset);
-      loc.y.should.equal(fixtureYOffset);
+      expect(loc.x).to.equal(fixtureXOffset);
+      expect(loc.y).to.equal(fixtureYOffset);
     });
   });
 
@@ -431,10 +434,10 @@ describe('element commands', function () {
       getNativeRectStub.calledOnce.should.be.true;
       getLocationStub.calledOnce.should.be.false;
       getSizeStub.calledOnce.should.be.false;
-      rect.x.should.eql(0);
-      rect.y.should.eql(50);
-      rect.width.should.eql(100);
-      rect.height.should.eql(200);
+      expect(rect.x).to.eql(0);
+      expect(rect.y).to.eql(50);
+      expect(rect.width).to.eql(100);
+      expect(rect.height).to.eql(200);
     });
 
     it('should get element rect in Web context', async function () {
@@ -446,10 +449,10 @@ describe('element commands', function () {
       getNativeRectStub.calledOnce.should.be.false;
       getLocationStub.calledOnce.should.be.true;
       getSizeStub.calledOnce.should.be.true;
-      rect.x.should.eql(0);
-      rect.y.should.eql(50);
-      rect.width.should.eql(100);
-      rect.height.should.eql(200);
+      expect(rect.x).to.eql(0);
+      expect(rect.y).to.eql(50);
+      expect(rect.width).to.eql(100);
+      expect(rect.height).to.eql(200);
     });
   });
 });

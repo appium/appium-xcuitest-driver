@@ -1,6 +1,4 @@
 import B from 'bluebird';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import https from 'https';
 import {getFreePort} from '../helpers/ports';
 import os from 'os';
@@ -11,8 +9,6 @@ import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './
 
 const pem = B.promisifyAll(_pem);
 
-chai.should();
-chai.use(chaiAsPromised);
 
 let caps;
 let pemCertificate;
@@ -25,7 +21,18 @@ describe('Safari SSL', function () {
   let driver;
   /** @type {string} */
   let localHttpsUrl;
+  let chai;
+  let expect;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+
     // Create a random pem certificate
     const privateKey = await pem.createPrivateKeyAsync();
     const keys = await pem.createCertificateAsync({
@@ -62,14 +69,14 @@ describe('Safari SSL', function () {
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     try {
       driver = await initSession(caps);
-      await driver.getPageSource().should.eventually.include('Arbitrary text');
+      expect(await driver.getPageSource()).to.include('Arbitrary text');
       await deleteSession();
       await B.delay(1000);
 
       // Now do another session using the same cert to verify that it still works
       driver = await initSession(caps);
       await driver.url(localHttpsUrl);
-      await driver.getPageSource().should.eventually.include('Arbitrary text');
+      expect(await driver.getPageSource()).to.include('Arbitrary text');
     } finally {
       await deleteSession();
     }

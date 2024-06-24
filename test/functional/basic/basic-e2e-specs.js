@@ -12,6 +12,7 @@ describe('XCUITestDriver - basics -', function () {
 
   let driver;
   let chai;
+  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -21,6 +22,8 @@ describe('XCUITestDriver - basics -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
     chai.use(chaiSubset);
+
+    expect = chai.expect;
 
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
@@ -42,7 +45,7 @@ describe('XCUITestDriver - basics -', function () {
       const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
       status.build.version.should.exist;
-      util.inspect(findElementPromise).includes('pending').should.be.true;
+      expect(util.inspect(findElementPromise).includes('pending')).to.be.true;
       try {
         await findElementPromise;
       } catch (err) {
@@ -63,7 +66,7 @@ describe('XCUITestDriver - basics -', function () {
     describe('plain -', function () {
       it('should get the source for the page', async function () {
         let src = await driver.getPageSource();
-        (typeof src).should.eql('string');
+        expect(typeof src).to.eql('string');
         checkSource(src);
       });
     });
@@ -80,7 +83,7 @@ describe('XCUITestDriver - basics -', function () {
     it('should background the app for the specified time', async function () {
       let before = Date.now();
       await driver.background(4);
-      (Date.now() - before).should.be.above(4000);
+      expect(Date.now() - before).to.be.above(4000);
       (await driver.getPageSource()).indexOf('<AppiumAUT>').should.not.eql(-1);
     });
   });
@@ -137,9 +140,9 @@ describe('XCUITestDriver - basics -', function () {
         throw new Error('Image dimensions must not be undefined');
       }
       // Viewport size can be smaller than the full image size + status bar on some devices.
-      fullImgHeight.should.be.gte(viewImgHeight + Math.round(scale * statusBarSize.height));
-      viewImgHeight.should.eql(viewportRect.height);
-      fullImgWidth.should.be.gte(viewImgWidth);
+      expect(fullImgHeight).to.be.gte(viewImgHeight + Math.round(scale * statusBarSize.height));
+      expect(viewImgHeight).to.eql(viewportRect.height);
+      expect(fullImgWidth).to.be.gte(viewImgWidth);
     });
   });
 
@@ -174,7 +177,7 @@ describe('XCUITestDriver - basics -', function () {
     });
     it('should get the current orientation', async function () {
       let orientation = await driver.getOrientation();
-      ['PORTRAIT', 'LANDSCAPE'].should.include(orientation);
+      expect(['PORTRAIT', 'LANDSCAPE']).to.include(orientation);
     });
     it('should set the orientation', async function () {
       await driver.setOrientation('LANDSCAPE');

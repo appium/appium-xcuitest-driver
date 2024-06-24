@@ -162,7 +162,6 @@
     "semantic-release": "^24.0.0",
     "sharp": "^0.x",
     "sinon": "^18.0.0",
-    "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.1",
     "type-fest": "^4.1.0",
     "typescript": "^5.4.2",

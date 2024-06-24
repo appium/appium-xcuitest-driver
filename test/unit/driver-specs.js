@@ -1,20 +1,13 @@
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
-import sinonChai from 'sinon-chai';
 import cmds from '../../lib/commands';
 import XCUITestDriver from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import RealDevice from '../../lib/real-device';
 
-chai.should();
-chai.use(sinonChai).use(chaiAsPromised);
-
-const expect = chai.expect;
 
 const caps = {
   fistMatch: [{}],
@@ -27,8 +20,20 @@ const caps = {
 };
 
 describe('XCUITestDriver', function () {
-  /** @type {sinon.SinonSandbox} */
   let sandbox;
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
+
   beforeEach(function () {
     sandbox = createSandbox();
   });

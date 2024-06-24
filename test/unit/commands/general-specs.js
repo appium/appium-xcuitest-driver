@@ -1,14 +1,19 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import XCUITestDriver from '../../../lib/driver';
-import chai from 'chai';
-import sinonChai from 'sinon-chai';
 
-chai.use(sinonChai);
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
   const proxyStub = sinon.stub(driver, 'proxyCommand');
+
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    expect = chai.expect;
+  });
 
   afterEach(function () {
     proxyStub.reset();
@@ -71,7 +76,7 @@ describe('general commands', function () {
     it('should not be called on a real device', async function () {
       delete device.simctl;
       device.devicectl = true;
-      await driver.touchId().should.be.rejected;
+      expect(await driver.touchId()).to.be.rejected;
       device.sendBiometricMatch.should.not.have.been.called;
       // sendBiometricMatchSpy.notCalled.should.be.true;
     });
@@ -110,7 +115,7 @@ describe('general commands', function () {
       device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
-      await driver.toggleEnrollTouchId().should.be.rejected;
+      expect(await driver.toggleEnrollTouchId()).to.be.rejected;
       device.enrollBiometric.should.not.have.been.called;
     });
   });
@@ -189,11 +194,11 @@ describe('general commands', function () {
     });
 
     it('should get the pixel ratio from WDA', async function () {
-      await driver.getDevicePixelRatio().should.eventually.eql(3);
+      expect(await driver.getDevicePixelRatio()).to.eql(3);
     });
 
     it('should return the height of the status bar', async function () {
-      await driver.getStatusBarHeight().should.eventually.eql(20);
+      expect(await driver.getStatusBarHeight()).to.eql(20);
     });
   });
 });

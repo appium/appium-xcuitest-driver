@@ -25,6 +25,7 @@ describe('XCUITestDriver - find -', function () {
 
   let driver;
   let chai;
+  let expect;
 
   before(async function () {
 
@@ -33,6 +34,8 @@ describe('XCUITestDriver - find -', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
 
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
@@ -162,7 +165,7 @@ describe('XCUITestDriver - find -', function () {
         let begin = Date.now();
         const el = await driver.$('//something_not_there');
         el.error.error.should.equal('no such element');
-        (Date.now() - begin).should.be.above(5000);
+        expect(Date.now() - begin).to.be.above(5000);
       });
       it.skip('should return the last button', async function () {
         let el = await driver.$('//XCUIElementTypeButton[last()]');
@@ -199,9 +202,9 @@ describe('XCUITestDriver - find -', function () {
       it('should search an extended path by descendant', async function () {
         let els = await driver.$$('//XCUIElementTypeTable//XCUIElementTypeButton');
         let texts = await B.all(_.map(els, (el) => el.getAttribute('name')));
-        texts.should.not.include('UICatalog');
-        texts.should.not.include('UIKitCatalog');
-        texts.should.include('X Button');
+        expect(texts).to.not.include('UICatalog');
+        expect(texts).to.not.include('UIKitCatalog');
+        expect(texts).to.include('X Button');
       });
       it.skip('should filter by indices', async function () {
         let el = await driver.$('//XCUIElementTypeTable[1]//XCUIElementTypeButton[4]');

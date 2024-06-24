@@ -1,12 +1,19 @@
 import XCUITestDriver from '../../../lib/driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.should();
-chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 describe('context', function () {
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+    expect = chai.expect;
+  });
+
   describe('onPageChange', function () {
     const pageChangeNotification = {
       appIdKey: '5191',
@@ -54,7 +61,7 @@ describe('context', function () {
       driver.opts.safariIgnoreWebHostnames =
         'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
-      /** @type {(string|number)[]} */ (selectPageArgs).should.eql(['5191', 1]);
+      expect(/** @type {(string|number)[]} */ (selectPageArgs)).to.eql(['5191', 1]);
     });
     it('should not call selectPage if a new page is introduced and that page is blacklisted', async function () {
       let driver = new XCUITestDriver();
