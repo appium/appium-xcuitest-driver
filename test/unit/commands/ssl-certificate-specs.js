@@ -8,18 +8,19 @@ describe('ssl certificate parser command', function () {
   const expectedString = '*.badssl.com';
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
-    expect = chai.expect;
+    chai.should()
   });
 
   it('try to parse LibreSSL command output', function () {
-    expect(parseCommonName(sslOutputLibreSSL)).to.eql(expectedString);
+    // @ts-ignore should raises type error
+    parseCommonName(sslOutputLibreSSL).should.eql(expectedString);
   });
 
   it('try to parse OpenSSL command output', function () {
-    expect(parseCommonName(sslOutputOpenSSL)).to.eql(expectedString);
+    // @ts-ignore should raises type error
+    parseCommonName(sslOutputOpenSSL).should.eql(expectedString);
   });
 });

@@ -7,11 +7,9 @@ describe('proxy commands', function () {
   let driver = new XCUITestDriver();
   // @ts-ignore give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
-  // @ts-ignore ok for tests
-  const proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
 
   let chai;
-  let expect;
+  let mockJwproxy;
 
   before(async function () {
     chai = await import('chai');
@@ -21,38 +19,39 @@ describe('proxy commands', function () {
     chai.use(chaiAsPromised.default);
   });
 
+  beforeEach(function () {
+    mockJwproxy = sinon.mock(driver.wda.jwproxy);
+  });
+
   afterEach(function () {
-    if (proxyStub) {
-      proxyStub.reset();
-    }
+    mockJwproxy.verify();
   });
 
   describe('proxyCommand', function () {
     it('should send command through WDA', async function () {
-      proxyStub.returns({status: 0});
-
+      mockJwproxy.expects('command').once().withExactArgs(
+        '/some/endpoint',
+        'POST',
+        { some: 'stuff' }
+      )
       await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
-      proxyStub.calledOnce.should.be.true;
-      // @ts-ignore
-      proxyStub.firstCall.args[0].should.eql('/some/endpoint');
-      // @ts-ignore
-      proxyStub.firstCall.args[1].should.eql('POST');
-      // @ts-ignore
-      proxyStub.firstCall.args[2].some.should.eql('stuff');
     });
+
     it('should throw an error if no endpoint is given', async function () {
+      mockJwproxy.expects('command').never().called;
       // @ts-expect-error incorrect usage
       await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.be.rejectedWith(/endpoint/);
-      proxyStub.callCount.should.eql(0);
     });
-    it('should throw an error if no method is given', function () {
-      expect(driver
+    it('should throw an error if no method is given', async function () {
+      mockJwproxy.expects('command').never().called;
+      await driver
         // @ts-expect-error incorrect usage
-        .proxyCommand('/some/endpoint', null, {some: 'stuff'})).to.eventually.be.rejectedWith(/GET, POST/);
-      proxyStub.callCount.should.eql(0);
+        .proxyCommand('/some/endpoint', null, {some: 'stuff'})
+        // @ts-ignore should raises type error
+        .should.be.rejectedWith(/GET, POST/);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {
-      proxyStub.returns({status: 13, value: 'WDA error occurred'});
+      mockJwproxy.expects('command').once().returns({status: 13, value: 'WDA error occurred'});
       try {
         await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
       } catch (err) {
@@ -60,12 +59,10 @@ describe('proxy commands', function () {
         err.message.should.include('WDA error occurred');
         err.should.be.an.instanceof(errors.UnknownError);
       }
-      proxyStub.calledOnce.should.be.true;
     });
     it('should not throw an error if no status is returned', async function () {
-      proxyStub.returns({value: 'WDA error occurred'});
+      mockJwproxy.expects('command').once().returns({value: 'WDA error occurred'});
       await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
-      proxyStub.calledOnce.should.be.true;
     });
   });
 });
