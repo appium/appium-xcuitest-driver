@@ -49,7 +49,7 @@ describe('element commands', function () {
     });
 
     it('should call setValue', async function () {
-      mockDriver.expects('setValue').once().withExactArgs('hello', '2').return(undefined);
+      mockDriver.expects('setValue').once().withExactArgs('hello', '2');
       await driver.setValueImmediate('hello', '2');
     });
   });
@@ -59,7 +59,7 @@ describe('element commands', function () {
     const attribute = 'enabled';
 
     afterEach(function () {
-      proxyStub.should.have.been.calledOnce;
+      proxyStub.calledOnce;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {

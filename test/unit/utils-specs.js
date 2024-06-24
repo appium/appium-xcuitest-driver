@@ -14,7 +14,6 @@ const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgst
 describe('utils', function () {
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -22,8 +21,6 @@ describe('utils', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   describe(
@@ -96,42 +93,42 @@ describe('utils', function () {
 
     it('should set the correct iPad simulator generic device', function () {
       let deviceName = translateDeviceName('10.1.2', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Retina');
+      deviceName.should.equal('iPad Retina');
     });
     it('should set the correct iPad simulator generic device for iOS >= 10.3', function () {
       let deviceName = translateDeviceName('10.103', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Air');
+      deviceName.should.equal('iPad Air');
       deviceName = translateDeviceName('10.3', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Air');
+      deviceName.should.equal('iPad Air');
       deviceName = translateDeviceName('10.3', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Air');
+      deviceName.should.equal('iPad Air');
     });
     it('should set the correct iPhone simulator generic device', function () {
-      expect(translateDeviceName('0.0', iphoneDeviceName)).to.equal('iPhone 6');
-      expect(translateDeviceName('10.3', iphoneDeviceName)).to.equal('iPhone 6');
+      translateDeviceName('0.0', iphoneDeviceName).should.equal('iPhone 6');
+      translateDeviceName('10.3', iphoneDeviceName).should.equal('iPhone 6');
     });
     it('should set the correct iPhone simulator generic device for simulators gte iOS 13.0', function () {
-      expect(translateDeviceName('13.0', iphoneDeviceName)).to.equal('iPhone X');
+      translateDeviceName('13.0', iphoneDeviceName).should.equal('iPhone X');
     });
     it('should set the default iPhone simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
       // The highest iOS version we define for iPhone in ios-generic-simulators.js is currently iOS 13.0
       // If this changes, update this test
-      expect(translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName)).to.equal('iPhone X');
+      translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName).should.equal('iPhone X');
     });
     it('should set the default iPad simulator to the lowest generic device that is defined in ios-generic-simulators.js for v0.0', function () {
       // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
       // If this changes, update this test
-      expect(translateDeviceName('0.0', ipadDeviceName)).to.equal('iPad Retina');
+      translateDeviceName('0.0', ipadDeviceName).should.equal('iPad Retina');
     });
     it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js for iOS < 13', function () {
       // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
       // If this changes, update this test
-      expect(translateDeviceName('12.9', ipadDeviceName)).to.equal('iPad Air');
+      translateDeviceName('12.9', ipadDeviceName).should.equal('iPad Air');
     });
     it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
       // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
       // If this changes, update this test
-      expect(translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName)).to.equal(
+      translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName).should.equal(
         'iPad (5th generation)',
       );
     });
@@ -143,34 +140,34 @@ describe('utils', function () {
       isLocalHost(undefined).should.be.false;
     });
     it('should be false with invalid input, empty', function () {
-      expect(isLocalHost('')).to.be.false;
+      isLocalHost('').should.be.false;
     });
     it('should be true with ipv4 localhost', function () {
-      expect(isLocalHost('http://localhost')).to.be.true;
+      isLocalHost('http://localhost').should.be.true;
     });
     it('should be true with ipv4 localhost with port', function () {
-      expect(isLocalHost('http://localhost:8888')).to.be.true;
+      isLocalHost('http://localhost:8888').should.be.true;
     });
     it('should be true with ipv4 127.0.0.1', function () {
-      expect(isLocalHost('http://127.0.0.1')).to.be.true;
+      isLocalHost('http://127.0.0.1').should.be.true;
     });
     it('should be true with ipv6 ::1', function () {
-      expect(isLocalHost('http://[::1]')).to.be.true;
+      isLocalHost('http://[::1]').should.be.true;
     });
     it('should be true with ipv6 ::ffff:127.0.0.1', function () {
-      expect(isLocalHost('http://[::ffff:127.0.0.1]')).to.be.true;
+      isLocalHost('http://[::ffff:127.0.0.1]').should.be.true;
     });
     it('should be true with ipv6 ::ffff:127.0.0.1 with port', function () {
-      expect(isLocalHost('http://[::ffff:127.0.0.1]:8888')).to.be.true;
+      isLocalHost('http://[::ffff:127.0.0.1]:8888').should.be.true;
     });
     it('should be false with ipv4 192.168.1.100', function () {
-      expect(isLocalHost('http://192.168.1.100')).to.be.false;
+      isLocalHost('http://192.168.1.100').should.be.false;
     });
     it('should be false with ipv4 192.168.1.100 with port', function () {
-      expect(isLocalHost('http://192.168.1.100:8888')).to.be.false;
+      isLocalHost('http://192.168.1.100:8888').should.be.false;
     });
     it('should be false with ipv6 2001:db8:85a3:8d3:1319:8a2e:370:7348', function () {
-      expect(isLocalHost('http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]')).to.be.false;
+      isLocalHost('http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]').should.be.false;
     });
   });
 });

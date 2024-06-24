@@ -114,7 +114,7 @@ describe('XCUITestDriver', function () {
     expect(initSession(localCaps)).to.eventually.be.rejected;
   });
 
-  it('should fail to start and stop a session if unknown bundle id used when no sim is running', function () {
+  it('should fail to start and stop a session if unknown bundle id used when no sim is running', async function () {
     await killAllSimulators();
     const localCaps = amendCapabilities(caps, {
       'appium:bundleId': 'io.blahblahblah.blah',
@@ -126,7 +126,7 @@ describe('XCUITestDriver', function () {
   describe('WebdriverAgent port', function () {
     this.retries(3);
 
-    it('should run on default port if no other specified', function () {
+    it('should run on default port if no other specified', async function () {
       const localCaps = amendCapabilities(baseCaps, {
         'appium:fullReset': true,
         'appium:useNewWDA': true,
