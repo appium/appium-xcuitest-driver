@@ -73,6 +73,7 @@ describe('general commands', function () {
     it('should not be called on a real device', async function () {
       delete device.simctl;
       device.devicectl = true;
+      // @ts-ignore should raises type error
       await driver.touchId().should.be.rejected;
 
       device.sendBiometricMatch.called.should.be.false;
@@ -112,6 +113,7 @@ describe('general commands', function () {
       device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
+      // @ts-ignore should raises type error
       await driver.toggleEnrollTouchId().should.be.rejected;
       device.enrollBiometric.called.should.be.false;
     });
@@ -187,10 +189,12 @@ describe('general commands', function () {
     });
 
     it('should get the pixel ratio from WDA', async function () {
+      // @ts-ignore should raises type error
       await driver.getDevicePixelRatio().should.eventually.eql(3);
     });
 
     it('should return the height of the status bar', async function () {
+      // @ts-ignore should raises type error
       await driver.getStatusBarHeight().should.eventually.eql(20);
     });
   });
