@@ -6,7 +6,7 @@ describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';
   let driver = new XCUITestDriver();
   driver.opts.platformVersion = '10.3';
-  let proxySpy = sinon.stub(driver, 'proxyCommand');
+  let mockDriver;
   const DEFAULT_CAPS = {
     elementResponseFields: undefined,
     disableAutomaticScreenshots: undefined,
@@ -44,12 +44,28 @@ describe('process args', function () {
     },
   };
 
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
+  beforeEach(function () {
+    mockDriver = sinon.mock(driver);
+  });
+
   afterEach(function () {
-    proxySpy.reset();
+    mockDriver.verify();
   });
 
   describe('send process args as object', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', desired);
+
       let desiredWithProArgsObject = {
         platformName: 'iOS',
         platformVersion: '10.3',
@@ -63,12 +79,13 @@ describe('process args', function () {
         desiredWithProArgsObject.bundleId,
         desiredWithProArgsObject.processArguments,
       );
-      proxySpy.should.have.been.calledOnceWith('/session', 'POST', desired);
     });
   });
 
   describe('send process args json string', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', desired);
+
       let desiredWithProArgsString = {
         platformName: 'iOS',
         platformVersion: '10.3',
@@ -82,7 +99,6 @@ describe('process args', function () {
         desiredWithProArgsString.bundleId,
         desiredWithProArgsString.processArguments,
       );
-      proxySpy.should.have.been.calledOnceWith('/session', 'POST', desired);
     });
   });
 });
