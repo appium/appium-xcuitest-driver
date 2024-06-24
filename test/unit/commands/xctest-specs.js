@@ -16,18 +16,22 @@ describe('session commands', function () {
   `.trim();
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
-    expect = chai.expect;
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
   });
 
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {
       const results = parseXCTestStdout(xctestLogs1Success);
-      expect(results.length).should.equal(2);
-      expect(results[0]).to.eql({
+      // @ts-ignore should raise type error
+      results.length.should.equal(2);
+      // @ts-ignore should raise type error
+      results[0].should.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
         status: 'passed',
@@ -36,7 +40,8 @@ describe('session commands', function () {
         failureMessage: null,
         location: ':0',
       });
-      expect(results[1]).to.eql({
+      // @ts-ignore should raise type error
+      results[1].should.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: true,
@@ -50,15 +55,18 @@ describe('session commands', function () {
 
     it('should parse successful test logs', function () {
       const results = parseXCTestStdout(xctestLogs2Success);
-      expect(results.length).to.equal(2);
-      expect(results[0]).to.eql({
+      // @ts-ignore should raise type error
+      results.length.should.equal(2);
+      // @ts-ignore should raise type error
+      results[0].should.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
         status: 'passed',
         crashed: false,
         duration: 2.2897069454193115,
       });
-      expect(results[1]).to.eql({
+      // @ts-ignore should raise type error
+      results[1].should.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: true,
@@ -70,15 +78,18 @@ describe('session commands', function () {
 
     it('should parse unsuccessful test logs', function () {
       const results = parseXCTestStdout(xctestLogs2Failure);
-      expect(results.length).to.equal(2);
-      expect(results[0]).to.eql({
+      // @ts-ignore should raise type error
+      results.length.should.equal(2);
+      // @ts-ignore should raise type error
+      results[0].should.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
         status: 'passed',
         crashed: false,
         duration: 1.9255789518356323,
       });
-      expect(results[1]).to.eql({
+      // @ts-ignore should raise type error
+      results[1].should.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: false,
