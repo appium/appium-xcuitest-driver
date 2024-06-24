@@ -24,6 +24,7 @@ describe('gesture commands', function () {
 
   describe('gesturesChainToString', function () {
     it('should properly transform simple chain', function () {
+      // @ts-ignore should  raises type error
       gesturesChainToString([{action: 'press'}, {action: 'release'}]).should.equal('press-release');
     });
 
@@ -31,6 +32,7 @@ describe('gesture commands', function () {
       gesturesChainToString([
         {action: 'press', x: 1, options: {count: 1}},
         {action: 'release'},
+      // @ts-ignore should  raises type error
       ]).should.equal('press(options={"count":1})-release');
     });
 
@@ -38,10 +40,12 @@ describe('gesture commands', function () {
       gesturesChainToString(
         [{action: 'press', x: 1, options: {count: 1}}, {action: 'release'}],
         ['x'],
+      // @ts-ignore should  raises type error
       ).should.equal('press(x=1)-release');
     });
 
     it('should properly transform complex chain with all keys', function () {
+      // @ts-ignore should  raises type error
       gesturesChainToString([{action: 'press', x: 1}, {action: 'release'}], null).should.equal(
         'press(x=1)-release',
       );
@@ -51,6 +55,7 @@ describe('gesture commands', function () {
   describe('mobile methods', function () {
     describe('anything other than scroll', function () {
       it('should throw an error', async function () {
+        // @ts-ignore should  raises type error
         await driver.execute('mobile: somesuch').should.be.rejected;
       });
     });
@@ -59,6 +64,7 @@ describe('gesture commands', function () {
       it('should throw an error if no scroll type is specified', async function () {
         await driver
           .execute('mobile: scroll', {element: 4})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/Mobile scroll supports the following strategies/);
       });
       it('should pass through bare element', async function () {
@@ -95,10 +101,12 @@ describe('gesture commands', function () {
       const commandName = 'swipe';
 
       it('should throw an error if no direction is specified', async function () {
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {element: 4}).should.be.rejected;
       });
 
       it('should throw an error if invalid direction', async function () {
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'}).should.be
           .rejected;
       });
@@ -113,7 +121,9 @@ describe('gesture commands', function () {
       const commandName = 'pinch';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1}).should.be.rejected;
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5}).should.be
           .rejected;
       });
@@ -121,9 +131,11 @@ describe('gesture commands', function () {
       it('should throw an error if param is invalid', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {element: 4, scale: '', velocity: 1})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
         await driver
           .execute(`mobile: ${commandName}`, {element: 4, scale: 0, velocity: null})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
       });
 
@@ -171,12 +183,14 @@ describe('gesture commands', function () {
       const commandName = 'touchAndHold';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {x: 100, y: 200}).should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
       });
 
@@ -225,20 +239,25 @@ describe('gesture commands', function () {
       const commandName = 'selectPickerWheelValue';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {}).should.be.rejected;
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {element: 4}).should.be.rejected;
+        // @ts-ignore should  raises type error
         await driver.execute(`mobile: ${commandName}`, {order: 'next'}).should.be.rejected;
       });
 
       it('should throw an error if offset value cannot be parsed', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {element: 4, order: 'next', offset: 'bla'})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {element: 4, order: 'bla'})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/is expected to be equal/);
       });
 
@@ -254,36 +273,42 @@ describe('gesture commands', function () {
 
       it('should throw an error if no mandatory parameter is specified', async function () {
         await driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})
+          // @ts-ignore should  raises type error
           .should.be.rejected;
         await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromY: 1,
           toX: 100,
           toY: 100,
+        // @ts-ignore should  raises type error
         }).should.be.rejected;
         await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromX: 1,
           toX: 100,
           toY: 100,
+        // @ts-ignore should  raises type error
         }).should.be.rejected;
         await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromX: 1,
           fromY: 1,
           toY: 100,
+        // @ts-ignore should  raises type error
         }).should.be.rejected;
         await driver.execute(`mobile: ${commandName}`, {
           duration: 100,
           fromX: 1,
           fromY: 1,
           toX: 100,
+        // @ts-ignore should  raises type error
         }).should.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
         await driver
           .execute(`mobile: ${commandName}`, {duration: '', fromX: 1, fromY: 1, toX: 100, toY: 100})
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
         await driver
           .execute(`mobile: ${commandName}`, {
@@ -293,6 +318,7 @@ describe('gesture commands', function () {
             toX: 100,
             toY: 100,
           })
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
         await driver
           .execute(`mobile: ${commandName}`, {
@@ -302,6 +328,7 @@ describe('gesture commands', function () {
             toX: 100,
             toY: 100,
           })
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
         await driver
           .execute(`mobile: ${commandName}`, {
@@ -311,6 +338,7 @@ describe('gesture commands', function () {
             toX: 'blabla',
             toY: 100,
           })
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
         await driver
           .execute(`mobile: ${commandName}`, {
@@ -320,6 +348,7 @@ describe('gesture commands', function () {
             toX: 100,
             toY: NaN,
           })
+          // @ts-ignore should  raises type error
           .should.be.rejectedWith(/should be a valid number/);
       });
 
