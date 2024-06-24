@@ -47,8 +47,8 @@ describe('get activeapp commands', function () {
     expect(out.processArguments.args[1]).to.eq('testing');
   });
 
-  it('get active app info raise an error if the endpoint raises error', async function () {
+  it('get active app info raise an error if the endpoint raises error', function () {
     proxyStub.throws();
-    expect(await driver.mobileGetActiveAppInfo()).tp.be.rejected;
+    expect(driver.mobileGetActiveAppInfo()).to.eventually.be.rejected;
   });
 });

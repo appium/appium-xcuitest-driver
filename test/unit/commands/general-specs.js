@@ -73,10 +73,10 @@ describe('general commands', function () {
       device.sendBiometricMatch.should.have.been.calledOnceWith(false, 'touchId');
     });
 
-    it('should not be called on a real device', async function () {
+    it('should not be called on a real device', function () {
       delete device.simctl;
       device.devicectl = true;
-      expect(await driver.touchId()).to.be.rejected;
+      expect(driver.touchId()).to.eventually.be.rejected;
       device.sendBiometricMatch.should.not.have.been.called;
       // sendBiometricMatchSpy.notCalled.should.be.true;
     });
@@ -110,12 +110,12 @@ describe('general commands', function () {
       device.enrollBiometric.should.have.been.calledOnce;
     });
 
-    it('should not be called on a real device', async function () {
+    it('should not be called on a real device', function () {
       delete device.simctl;
       device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
-      expect(await driver.toggleEnrollTouchId()).to.be.rejected;
+      expect(driver.toggleEnrollTouchId()).to.eventually.be.rejected;
       device.enrollBiometric.should.not.have.been.called;
     });
   });

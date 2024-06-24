@@ -1,10 +1,16 @@
 import {runSimulatorReset} from '../../lib/simulator-management.js';
-import chai from 'chai';
 import XCUITestDriver from '../../lib/driver';
 
-const should = chai.should();
-
 describe('simulator management', function () {
+
+  let chai;
+  let should;
+
+  before(async function () {
+    chai = await import('chai');
+    should = chai.should();
+  });
+
   describe('runSimulatorReset', function () {
     let result;
     let driver;

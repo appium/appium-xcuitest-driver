@@ -14,7 +14,6 @@ describe('app-utils', function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
-    chai.should();
     chai.use(chaiAsPromised.default);
 
     expect = chai.expect;
@@ -60,7 +59,7 @@ describe('app-utils', function () {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
-        expect(await unzipStream(srcStream)).to.be.rejected;
+        expect(unzipStream(srcStream)).to.eventually.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
       }
@@ -77,7 +76,7 @@ describe('app-utils', function () {
           cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
-        expect(await fs.exists(path.resolve(appRoot, 'Info.plist'))).tp.be.true;
+        expect(await fs.exists(path.resolve(appRoot, 'Info.plist'))).to.be.true;
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -91,7 +90,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
-        expect(await unzipFile(tmpSrc)).to.be.rejected;
+        expect(unzipFile(tmpSrc)).to.eventually.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
       }

@@ -54,7 +54,7 @@ describe('safari - windows and frames', function () {
 
     it('should not be able to open js popup windows', async function () {
       await driver.executeScript("window.open('/test/guinea-pig2.html', null)", []);
-      expect(await spinTitleEquals(driver, 'I am another page title', 5)).to.be.rejected;
+      expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.be.rejected;
     });
   });
 

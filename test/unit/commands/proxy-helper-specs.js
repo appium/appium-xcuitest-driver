@@ -45,10 +45,10 @@ describe('proxy commands', function () {
       await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.be.rejectedWith(/endpoint/);
       proxyStub.callCount.should.eql(0);
     });
-    it('should throw an error if no method is given', async function () {
-      expect(await driver
+    it('should throw an error if no method is given', function () {
+      expect(driver
         // @ts-expect-error incorrect usage
-        .proxyCommand('/some/endpoint', null, {some: 'stuff'})).to.be.rejectedWith(/GET, POST/);
+        .proxyCommand('/some/endpoint', null, {some: 'stuff'})).to.eventually.be.rejectedWith(/GET, POST/);
       proxyStub.callCount.should.eql(0);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {

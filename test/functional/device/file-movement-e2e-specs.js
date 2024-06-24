@@ -39,7 +39,7 @@ describe('XCUITestDriver - file movement', function () {
   describe('sim relative', function () {
     describe('files', function () {
       it('should not be able to fetch a file from the file system at large', async function () {
-        await driver.pullFile(__filename).should.be.rejected;
+        expect(await driver.pullFile(__filename)).to.eventually.be.rejected;
       });
 
       it('should be able to fetch the Address book', async function () {
@@ -48,9 +48,9 @@ describe('XCUITestDriver - file movement', function () {
       });
 
       it('should not be able to fetch something that does not exist', async function () {
-        await driver
-          .pullFile('Library/AddressBook/nothere.txt')
-          .should.be.rejectedWith(/does not exist/);
+        expect(await driver
+          .pullFile('Library/AddressBook/nothere.txt'))
+          .to.eventually.be.rejectedWith(/does not exist/);
       });
 
       it('should be able to push and pull a file', async function () {
@@ -76,17 +76,17 @@ describe('XCUITestDriver - file movement', function () {
 
         await driver.execute('mobile: deleteFile', {remotePath});
 
-        expect(await pullFileAsString(driver, remotePath)).to.be.rejectedWith(/does not exist/);
+        expect(pullFileAsString(driver, remotePath)).to.eventually.be.rejectedWith(/does not exist/);
       });
     });
 
     describe('folders', function () {
       it('should not pull folders from file system', async function () {
-        await driver.pullFolder(__dirname).should.be.rejected;
+        expect(await driver.pullFolder(__dirname)).to.eventually.be.rejected;
       });
 
       it('should not be able to fetch a folder that does not exist', async function () {
-        await driver.pullFolder('Library/Rollodex').should.be.rejectedWith(/does not exist/);
+        expect(await driver.pullFolder('Library/Rollodex')).to.eventually.be.rejectedWith(/does not exist/);
       });
 
       it('should pull all the files in Library/AddressBook', async function () {
@@ -131,7 +131,7 @@ describe('XCUITestDriver - file movement', function () {
 
       await driver.execute('mobile: deleteFile', {remotePath});
 
-      expect(await pullFileAsString(driver, remotePath)).to.be.rejectedWith(/does not exist/);
+      expect(pullFileAsString(driver, remotePath)).to.eventually.be.rejectedWith(/does not exist/);
     });
   });
 });

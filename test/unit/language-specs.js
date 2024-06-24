@@ -1,9 +1,7 @@
 import sinon from 'sinon';
-import chai from 'chai';
 import _ from 'lodash';
 import XCUITestDriver from '../../lib/driver';
 
-chai.should();
 
 describe('language and locale', function () {
   const LANGUAGE = 'en';

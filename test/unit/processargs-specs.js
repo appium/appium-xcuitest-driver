@@ -1,8 +1,6 @@
 import sinon from 'sinon';
-import chai from 'chai';
 import XCUITestDriver from '../../lib/driver';
 
-chai.should();
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';

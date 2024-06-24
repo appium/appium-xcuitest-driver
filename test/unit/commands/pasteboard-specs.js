@@ -40,8 +40,8 @@ describe('pasteboard commands', function () {
       setPasteboardStub.notCalled.should.be.true;
     });
 
-    it('getPasteboard should not be called', async function () {
-      expect(await driver.mobileGetPasteboard()).to.be.rejectedWith(/not supported/);
+    it('getPasteboard should not be called', function () {
+      expect(driver.mobileGetPasteboard()).to.eventually.be.rejectedWith(/not supported/);
       getPasteboardStub.notCalled.should.be.true;
     });
   });

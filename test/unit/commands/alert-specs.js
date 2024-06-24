@@ -56,10 +56,10 @@ describe('alert commands', function () {
   describe('mobile: alert', function () {
     const commandName = 'alert';
 
-    it('should reject request to WDA if action parameter is not supported', async function () {
-      expect(await driver
+    it('should reject request to WDA if action parameter is not supported', function () {
+      expect(driver
         .execute(`mobile: ${commandName}`, {action: 'blabla'}))
-        .to.be.rejectedWith(/should be either/);
+        .to.eventually.be.rejectedWith(/should be either/);
     });
 
     it('should send accept alert request to WDA with encoded button label', async function () {

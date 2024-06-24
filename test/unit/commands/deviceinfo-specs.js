@@ -40,8 +40,8 @@ describe('get deviceinfo commands', function () {
     expect(await driver.mobileGetDeviceInfo()).to.eql(opts);
   });
 
-  it('get device info raise an error if the endpoint raises error', async function () {
+  it('get device info raise an error if the endpoint raises error', function () {
     proxyStub.throws();
-    expect(await driver.mobileGetDeviceInfo()).to.be.rejected;
+    expect(driver.mobileGetDeviceInfo()).to.eventually.be.rejected;
   });
 });

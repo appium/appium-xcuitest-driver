@@ -77,16 +77,16 @@ describe('general commands', function () {
       );
     });
 
-    it('should reject request for first visible child with no context', async function () {
-      expect(await driver
+    it('should reject request for first visible child with no context', function () {
+      expect(driver
         .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false))
-        .to.be.rejectedWith(/without a context element/);
+        .to.eventually.be.rejectedWith(/without a context element/);
     });
 
-    it('should reject request for multiple first visible children', async function () {
-      expect(await driver
+    it('should reject request for multiple first visible children', function () {
+      expect(driver
         .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true))
-        .to.be.rejectedWith(/Cannot get multiple/);
+        .to.eventually.be.rejectedWith(/Cannot get multiple/);
     });
 
     it('should convert magic first visible child xpath to class chain', async function () {

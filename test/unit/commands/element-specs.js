@@ -176,14 +176,14 @@ describe('element commands', function () {
       afterEach(function () {
         driver.curContext = oldContext;
       });
-      it('should throw when in a web context', async function () {
-        expect(await driver.getContentSize(el)).to.be.rejectedWith(/not yet implemented/);
+      it('should throw when in a web context', function () {
+        expect(driver.getContentSize(el)).to.be.eventually.rejectedWith(/not yet implemented/);
       });
     });
 
-    it('should throw if trying to get contentSize of something other than table or collection', async function () {
+    it('should throw if trying to get contentSize of something other than table or collection', function () {
       getAttrStub.resolves('XCUIElementTypeStatusBar');
-      expect(await driver.getContentSize(el)).to.be.rejectedWith(/Can't get content size for type/);
+      expect(driver.getContentSize(el)).to.be.eventually.rejectedWith(/Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
@@ -293,11 +293,11 @@ describe('element commands', function () {
       });
 
       describe('failure', function () {
-        it('should throw invalid argument exception for null', async function () {
-          expect(await driver.setValue(null, elementId)).to.be.rejectedWith(/supported/);
+        it('should throw invalid argument exception for null', function () {
+          expect(driver.setValue(null, elementId)).to.eventually.be.rejectedWith(/supported/);
         });
-        it('should throw invalid argument exception for object', async function () {
-          expect(await driver.setValue({hi: 'there'}, elementId)).to.be.rejectedWith(/supported/);
+        it('should throw invalid argument exception for object', function () {
+          expect(driver.setValue({hi: 'there'}, elementId)).to.eventually.be.rejectedWith(/supported/);
         });
       });
     });

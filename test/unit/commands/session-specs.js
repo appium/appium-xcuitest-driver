@@ -1,11 +1,9 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
-import chai from 'chai';
-
-chai.should();
 
 describe('session commands', function () {
   let driver = new XCUITestDriver();
+
   driver.opts.udid = 'cecinestpasuneudid';
   let proxySpy = sinon.stub(driver, 'proxyCommand').callsFake(async (endpoint, method) => {
     if (endpoint === '/' && method === 'GET') {
