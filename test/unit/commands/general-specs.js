@@ -5,40 +5,37 @@ import XCUITestDriver from '../../../lib/driver';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
-  const proxyStub = sinon.stub(driver, 'proxyCommand');
 
   let chai;
-  let expect;
+  let mockDriver;
 
   before(async function () {
     chai = await import('chai');
-    expect = chai.expect;
+    chai.should();
+  });
+
+  beforeEach(function () {
+    mockDriver = sinon.mock(driver);
   });
 
   afterEach(function () {
-    proxyStub.reset();
+    mockDriver.verify();
   });
 
   describe('background', function () {
     it('should deactivate app for the given time if seconds is zero or greater', async function () {
+      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/deactivateApp', 'POST', { duration: 0.5 }, true);
       await driver.background(0.5);
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/wda/deactivateApp');
-      proxyStub.firstCall.args[1].should.eql('POST');
     });
 
     it('should switch to home screen if seconds less than zero', async function () {
+      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/homescreen', 'POST', {}, false);
       await driver.background(-1);
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/wda/homescreen');
-      proxyStub.firstCall.args[1].should.eql('POST');
     });
 
     it('should switch to home screen if seconds is null', async function () {
+      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/homescreen', 'POST', {}, false);
       await driver.background();
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/wda/homescreen');
-      proxyStub.firstCall.args[1].should.eql('POST');
     });
   });
 
@@ -65,20 +62,20 @@ describe('general commands', function () {
 
     it('should send default request to Simulator', async function () {
       await driver.touchId();
-      device.sendBiometricMatch.should.have.been.calledOnceWith(true, 'touchId');
+      device.sendBiometricMatch.calledOnceWith(true, 'touchId').should.be.true;
     });
 
     it('should send request to Simulator with false', async function () {
       await driver.touchId(false);
-      device.sendBiometricMatch.should.have.been.calledOnceWith(false, 'touchId');
+      device.sendBiometricMatch.calledOnceWith(false, 'touchId').should.be.true;
     });
 
-    it('should not be called on a real device', function () {
+    it('should not be called on a real device', async function () {
       delete device.simctl;
       device.devicectl = true;
-      expect(driver.touchId()).to.eventually.be.rejected;
-      device.sendBiometricMatch.should.not.have.been.called;
-      // sendBiometricMatchSpy.notCalled.should.be.true;
+      await driver.touchId().should.be.rejected;
+
+      device.sendBiometricMatch.called.should.be.false;
     });
   });
 
@@ -107,27 +104,23 @@ describe('general commands', function () {
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId();
-      device.enrollBiometric.should.have.been.calledOnce;
+      device.enrollBiometric.calledOnce.should.be.true;
     });
 
-    it('should not be called on a real device', function () {
+    it('should not be called on a real device', async function () {
       delete device.simctl;
       device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
-      expect(driver.toggleEnrollTouchId()).to.eventually.be.rejected;
-      device.enrollBiometric.should.not.have.been.called;
+      await driver.toggleEnrollTouchId().should.be.rejected;
+      device.enrollBiometric.called.should.be.false;
     });
   });
 
   describe('window size', function () {
     it('should be able to get the current window size with Rect', async function () {
-      proxyStub.withArgs('/window/size', 'GET').resolves({width: 100, height: 20});
-
+      mockDriver.expects('proxyCommand').once().withExactArgs('/window/size', 'GET').returns({width: 100, height: 20});
       await driver.getWindowRect();
-      proxyStub.calledOnce.should.be.true;
-      proxyStub.firstCall.args[0].should.eql('/window/size');
-      proxyStub.firstCall.args[1].should.eql('GET');
     });
   });
 
@@ -183,8 +176,8 @@ describe('general commands', function () {
   });
 
   describe('getDevicePixelRatio and getStatusBarHeight', function () {
-    beforeEach(function () {
-      proxyStub.withArgs('/wda/screen', 'GET').resolves({
+    before(function () {
+      mockDriver.expects('proxyCommand').withExactArgs('/wda/screen', 'GET').returns({
         statusBarSize: {
           width: 100,
           height: 20,
@@ -194,11 +187,11 @@ describe('general commands', function () {
     });
 
     it('should get the pixel ratio from WDA', async function () {
-      expect(await driver.getDevicePixelRatio()).to.eql(3);
+      await driver.getDevicePixelRatio().should.eventually.eql(3);
     });
 
     it('should return the height of the status bar', async function () {
-      expect(await driver.getStatusBarHeight()).to.eql(20);
+      await driver.getStatusBarHeight().should.eventually.eql(20);
     });
   });
 });
