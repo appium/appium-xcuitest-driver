@@ -1,3 +1,9 @@
+## [7.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.18.0...v7.19.0) (2024-06-25)
+
+### Features
+
+* take viewport screenshot using safari remote debugger ([#2413](https://github.com/appium/appium-xcuitest-driver/issues/2413)) ([4402c29](https://github.com/appium/appium-xcuitest-driver/commit/4402c294333e6084c854d63b4a8387a3b3cbe9ff))
+
 ## [7.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.6...v7.18.0) (2024-06-20)
 
 ### Features
