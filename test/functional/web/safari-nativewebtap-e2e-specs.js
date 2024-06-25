@@ -40,7 +40,6 @@ describe('Safari - coordinate conversion -', function () {
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
