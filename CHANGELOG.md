@@ -1,3 +1,9 @@
+## [7.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.19.0...v7.20.0) (2024-06-25)
+
+### Features
+
+* Introduce the `webScreenshotMode` setting ([#2415](https://github.com/appium/appium-xcuitest-driver/issues/2415)) ([c9d9d44](https://github.com/appium/appium-xcuitest-driver/commit/c9d9d4475bcb8d394ae0ba5f3c0a80bea40d1eed))
+
 ## [7.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.18.0...v7.19.0) (2024-06-25)
 
 ### Features
