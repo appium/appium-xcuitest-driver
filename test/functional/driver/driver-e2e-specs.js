@@ -37,7 +37,6 @@ describe('XCUITestDriver', function () {
   let caps;
   let driver;
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -45,8 +44,6 @@ describe('XCUITestDriver', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
 
     const udid = await createDevice();
     baseCaps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
@@ -72,28 +69,32 @@ describe('XCUITestDriver', function () {
   it('should start and stop a session', async function () {
     driver = await initSession(baseCaps, {connectionRetryTimeout: MOCHA_TIMEOUT});
     const els = await driver.$$('XCUIElementTypeWindow');
-    expect(els.length).to.be.at.least(1);
+    // @ts-ignore
+    els.length.should.be.at.least(1);
   });
 
   it('should start and stop a session doing pre-build', async function () {
     driver = await initSession(amendCapabilities(baseCaps, {'appium:prebuildWDA': true}));
     const els = await driver.$$('XCUIElementTypeWindow');
-    expect(els.length).to.be.at.least(1);
+    // @ts-ignore
+    els.length.should.be.at.least(1);
   });
 
   it('should start and stop a session doing simple build-test', async function () {
     driver = await initSession(amendCapabilities(baseCaps, {'appium:useSimpleBuildTest': true}));
     const els = await driver.$$('XCUIElementTypeWindow');
-    expect(els.length).to.be.at.least(1);
+    // @ts-ignore
+    els.length.should.be.at.least(1);
   });
 
-  it('should start and stop a session with only bundle id', function () {
+  it('should start and stop a session with only bundle id', async function () {
     const localCaps = amendCapabilities(caps, {
       'appium:bundleId': 'com.example.apple-samplecode.UICatalog',
       'appium:noReset': true,
       'appium:app': undefined,
     });
-    expect(initSession(localCaps)).to.eventually.not.be.rejected;
+    // @ts-ignore
+    await initSession(localCaps).should.not.be.rejected;
   });
 
   it('should start and stop a session with only bundle id when no sim is running', async function () {
@@ -103,15 +104,17 @@ describe('XCUITestDriver', function () {
       'appium:noReset': true,
       'appium:app': undefined,
     });
-    expect(initSession(localCaps)).to.eventually.not.be.rejected;
+    // @ts-ignore
+    await initSession(localCaps).should.not.be.rejected;
   });
 
-  it('should fail to start and stop a session if unknown bundle id used', function () {
+  it('should fail to start and stop a session if unknown bundle id used', async function () {
     const localCaps = amendCapabilities(caps, {
       'appium:bundleId': 'io.blahblahblah.blah',
       'appium:app': undefined,
     });
-    expect(initSession(localCaps)).to.eventually.be.rejected;
+    // @ts-ignore
+    await initSession(localCaps).should.be.rejected;
   });
 
   it('should fail to start and stop a session if unknown bundle id used when no sim is running', async function () {
@@ -120,7 +123,8 @@ describe('XCUITestDriver', function () {
       'appium:bundleId': 'io.blahblahblah.blah',
       'appium:app': undefined,
     });
-    expect(initSession(localCaps)).to.eventually.be.rejected;
+    // @ts-ignore
+    await initSession(localCaps).should.be.rejected;
   });
 
   describe('WebdriverAgent port', function () {
@@ -133,7 +137,8 @@ describe('XCUITestDriver', function () {
         'appium:wdaLocalPort': undefined,
       });
       driver = await initSession(localCaps);
-      expect(axios({url: `http://${HOST}:8100/status`})).to.eventually.not.be.rejected;
+      // @ts-ignore
+      await axios({url: `http://${HOST}:8100/status`}).should.not.be.rejected;
     });
     it('should run on port specified', async function () {
       const localCaps = amendCapabilities(baseCaps, {
@@ -142,8 +147,10 @@ describe('XCUITestDriver', function () {
         'appium:wdaLocalPort': 6000,
       });
       driver = await initSession(localCaps);
-      expect(axios({url: `http://${HOST}:8100/status`})).to.eventually.be.rejectedWith(/ECONNREFUSED/);
-      expect(axios({url: `http://${HOST}:8100/status`})).to.eventually.not.be.rejected;
+      // @ts-ignore
+      await axios({url: `http://${HOST}:8100/status`}).should.be.rejectedWith(/ECONNREFUSED/);
+      // @ts-ignore
+      await axios({url: `http://${HOST}:8100/status`}).should.eventually.not.be.rejected;
     });
   });
 
@@ -154,7 +161,8 @@ describe('XCUITestDriver', function () {
       });
       driver = await initSession(localCaps);
 
-      expect(await driver.getOrientation()).to.eventually.eql(initialOrientation);
+      // @ts-ignore
+      await driver.getOrientation().should.eventually.eql(initialOrientation);
     }
 
     for (const orientation of ['LANDSCAPE', 'PORTRAIT']) {
@@ -205,13 +213,15 @@ describe('XCUITestDriver', function () {
           'appium:resetOnSessionStartOnly': false,
         });
 
-        expect(await sim.isRunning()).to.be.true;
+        // @ts-ignore
+        (await sim.isRunning()).should.be.true;
         const simsBefore = await getNumSims();
         await initSession(caps);
         const simsDuring = await getNumSims();
         await deleteSession();
         const simsAfter = await getNumSims();
-        expect(await sim.isRunning()).to.be.false;
+        // @ts-ignore
+        (await sim.isRunning()).should.be.false;
 
         // make sure no new simulators were created during the test
         simsDuring.should.equal(simsBefore);
@@ -240,13 +250,15 @@ describe('XCUITestDriver', function () {
           'appium:noReset': true,
         });
 
-        expect(await sim.isRunning()).to.be.true;
+        // @ts-ignore
+        (await sim.isRunning()).should.be.true;
         const simsBefore = await getNumSims();
         await initSession(caps);
         const simsDuring = await getNumSims();
         await deleteSession();
         const simsAfter = await getNumSims();
-        expect(await sim.isRunning()).to.be.true;
+        // @ts-ignore
+        (await sim.isRunning()).should.be.true;
 
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);
@@ -255,21 +267,23 @@ describe('XCUITestDriver', function () {
       }
     });
 
-    it('with invalid udid: throws an error', function () {
+    it('with invalid udid: throws an error', async function () {
       // test
       const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
         'appium:udid': 'some-random-udid',
       });
 
-      expect(initSession(caps)).to.eventually.be.rejectedWith('Unknown device or simulator UDID');
+      // @ts-ignore
+      await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
     });
 
-    it('with non-existent udid: throws an error', function () {
+    it('with non-existent udid: throws an error', async function () {
       // test
       const udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
       const caps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
 
-      expect(initSession(caps)).to.be.eventually.rejectedWith('Unknown device or simulator UDID');
+      // @ts-ignore
+      await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
     });
 
     it('with noReset set to true: leaves sim booted', async function () {
@@ -295,7 +309,8 @@ describe('XCUITestDriver', function () {
         const simsDuring = await getNumSims();
         await deleteSession();
         const simsAfter = await getNumSims();
-        expect(await sim.isRunning()).to.be.true;
+        // @ts-ignore
+        (await sim.isRunning()).should.be.true;
 
         simsDuring.should.equal(simsBefore);
         simsAfter.should.equal(simsBefore);

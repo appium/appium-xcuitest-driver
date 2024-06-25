@@ -106,7 +106,8 @@ describe('Safari - basics -', function () {
 
           // the page should load after 70000
           await driver.getPageSource().should.eventually.include('I am some page content');
-          expect(Date.now() - startMs).to.be.above(3000);
+          // @ts-ignore
+          (Date.now() - startMs).should.be.above(3000);
         });
       });
     });
@@ -133,7 +134,8 @@ describe('Safari - basics -', function () {
         const before = new Date().getTime();
         (await driver.$('<dsfsdfsdfdsfsd />')).error.error.should.eql('no such element');
         const after = new Date().getTime();
-        expect(after - before >= 5 * 1000).to.be.ok;
+        // @ts-ignore
+        (after - before >= 5 * 1000).should.be.ok;
       });
     });
 
@@ -211,7 +213,8 @@ describe('Safari - basics -', function () {
         const el = await driver.$('#comments');
         await el.clearValue();
         await el.setValue('hello world');
-        expect(['how world', 'hello world']).to.include((await el.getAttribute('value')).toLowerCase());
+        // @ts-ignore
+        ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
     });
     describe('element handling', function () {
@@ -223,7 +226,8 @@ describe('Safari - basics -', function () {
         const el = await driver.$('#comments');
         await el.click();
         await el.setValue('hello world');
-        expect(['how world', 'hello world']).to.include((await el.getAttribute('value')).toLowerCase());
+        // @ts-ignore
+        ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
       it('should clear element', async function () {
         const el = await driver.$('#comments');
