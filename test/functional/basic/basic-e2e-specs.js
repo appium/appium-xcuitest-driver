@@ -16,11 +16,9 @@ describe('XCUITestDriver - basics -', function () {
   before(async function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
-    const chaiSubset = await import('chai-subset');
 
     chai.should();
     chai.use(chaiAsPromised.default);
-    chai.use(chaiSubset);
 
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
@@ -154,7 +152,10 @@ describe('XCUITestDriver - basics -', function () {
       it('should get the list of available logs', async function () {
         const expectedTypes = ['syslog', 'crashlog', 'performance', 'server', 'safariConsole'];
         const actualTypes = await driver.getLogTypes();
-        actualTypes.should.containSubset(expectedTypes);
+        for (const actualType of actualTypes) {
+          // @ts-ignore
+          expectedTypes.includes(actualType).should.be.true;
+        }
       });
     });
 
