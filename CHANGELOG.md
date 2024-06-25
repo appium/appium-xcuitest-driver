@@ -1,3 +1,21 @@
+## [7.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.6...v7.18.0) (2024-06-20)
+
+### Features
+
+* add pageLoadStrategy for Safari/WebView ([#2411](https://github.com/appium/appium-xcuitest-driver/issues/2411)) ([2517bf7](https://github.com/appium/appium-xcuitest-driver/commit/2517bf75d0de0fd00937c4c12c6ca890a49ef218))
+
+## [7.17.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.5...v7.17.6) (2024-06-18)
+
+### Bug Fixes
+
+* relax the max of recording limitation to 4200 sec as timeLimit ([#2410](https://github.com/appium/appium-xcuitest-driver/issues/2410)) ([42bc4f9](https://github.com/appium/appium-xcuitest-driver/commit/42bc4f9a373126b0025fa5cec60ee2107d101d53))
+
+## [7.17.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.4...v7.17.5) (2024-06-12)
+
+### Bug Fixes
+
+* stream end after write in a file push ([#2409](https://github.com/appium/appium-xcuitest-driver/issues/2409)) ([b2f57b7](https://github.com/appium/appium-xcuitest-driver/commit/b2f57b7fd7cce340969f522203d9375d3b120cdc))
+
 ## [7.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.3...v7.17.4) (2024-06-07)
 
 ### Bug Fixes

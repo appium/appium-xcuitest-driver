@@ -73,6 +73,7 @@ nav:
           - guides/tvos.md
           - guides/input-events.md
           - guides/troubleshooting.md
+          - guides/capability-sets.md
   - contributing.md
 
 plugins:
