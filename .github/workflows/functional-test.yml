@@ -1,13 +1,12 @@
 name: Functional Tests
 
 on:
-  # fisable for now
-  # pull_request:
-  #   branches:
-  #   - master
-  #   paths-ignore:
-  #   - 'docs/**'
-  #   - '*.md'
+  pull_request:
+    branches:
+    - master
+    paths-ignore:
+    - 'docs/**'
+    - '*.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

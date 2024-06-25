@@ -23,7 +23,6 @@ const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 
 describe('safari - windows and frames', function () {
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -31,8 +30,6 @@ describe('safari - windows and frames', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   describe('without safariAllowPopups', function () {
@@ -54,7 +51,8 @@ describe('safari - windows and frames', function () {
 
     it('should not be able to open js popup windows', async function () {
       await driver.executeScript("window.open('/test/guinea-pig2.html', null)", []);
-      expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.be.rejected;
+      // @ts-ignore
+      await spinTitleEquals(driver, 'I am another page title', 5).should.be.rejected;
     });
   });
 
@@ -90,7 +88,8 @@ describe('safari - windows and frames', function () {
       it.skip('should be able to open js popup windows', async function () {
         await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
         await driver.acceptAlert();
-        expect(await spinTitleEquals(driver, 'I am another page title', 5)).to.not.be
+        // @ts-ignore
+        await spinTitleEquals(driver, 'I am another page title', 5).should.eventually.not.be
           .rejected;
         await driver.closeWindow();
       });
@@ -197,7 +196,8 @@ describe('safari - windows and frames', function () {
         await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        expect(_.isEmpty(await driver.$$('<frameset />'))).to.be.false;
+        // @ts-ignore
+        _.isEmpty(await driver.$$('<frameset />')).should.be.false;
       });
 
       it('should switch to child frames', async function () {
@@ -205,7 +205,8 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         await driver.switchToFrame(await driver.$('[name="childframe"]'));
-        expect(_.isEmpty(await driver.$$('#only_on_page_2'))).to.be.false;
+        // @ts-ignore
+        _.isEmpty(await driver.$$('#only_on_page_2')).should.be.false;
       });
 
       it('should execute javascript in frame', async function () {
@@ -264,7 +265,8 @@ describe('safari - windows and frames', function () {
         await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        expect(_.size(await driver.$$('<iframe />'))).to.eql(3);
+        // @ts-ignore
+        _.size(await driver.$$('<iframe />')).should.eql(3);
       });
 
       it('should get source within an iframe', async function () {

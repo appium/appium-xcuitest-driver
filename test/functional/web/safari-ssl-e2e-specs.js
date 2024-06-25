@@ -22,7 +22,6 @@ describe('Safari SSL', function () {
   /** @type {string} */
   let localHttpsUrl;
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -30,8 +29,6 @@ describe('Safari SSL', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
 
     // Create a random pem certificate
     const privateKey = await pem.createPrivateKeyAsync();
@@ -69,14 +66,16 @@ describe('Safari SSL', function () {
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     try {
       driver = await initSession(caps);
-      expect(await driver.getPageSource()).to.include('Arbitrary text');
+      // @ts-ignore
+      await driver.getPageSource().should.eventually.include('Arbitrary text');
       await deleteSession();
       await B.delay(1000);
 
       // Now do another session using the same cert to verify that it still works
       driver = await initSession(caps);
       await driver.url(localHttpsUrl);
-      expect(await driver.getPageSource()).to.include('Arbitrary text');
+      // @ts-ignore
+      await driver.getPageSource().should.eventually.include('Arbitrary text');
     } finally {
       await deleteSession();
     }

@@ -49,15 +49,14 @@ describe('Safari - coordinate conversion -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    expect = chai.expect;
-
     if (process.env.CI) {
       return this.skip();
     }
     async function loadPage(driver, url) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);
-        expect(await spinTitle(driver)).to.not.include('Cannot Open Page');
+        // @ts-ignore
+        await spinTitle(driver).should.eventually.not.include('Cannot Open Page');
       });
     }
 
