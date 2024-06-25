@@ -8,15 +8,13 @@ import path from 'node:path';
 
 describe('app-utils', function () {
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
+    chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   describe('unzipStream', function () {
@@ -37,7 +35,8 @@ describe('app-utils', function () {
         });
         srcStream = fs.createReadStream(tmpSrc);
         ({rootDir: appRoot} = await unzipStream(srcStream));
-        expect(await fs.exists(path.resolve(appRoot, 'Info.plist'))).to.be.true;
+        // @ts-ignore should raises type error
+        await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -59,7 +58,8 @@ describe('app-utils', function () {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
-        expect(unzipStream(srcStream)).to.eventually.be.rejected;
+        // @ts-ignore should raises type error
+        await unzipStream(srcStream).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
       }
@@ -76,7 +76,8 @@ describe('app-utils', function () {
           cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
-        expect(await fs.exists(path.resolve(appRoot, 'Info.plist'))).to.be.true;
+        // @ts-ignore should raises type error
+        await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -90,7 +91,8 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
-        expect(unzipFile(tmpSrc)).to.eventually.be.rejected;
+        // @ts-ignore should raises type error
+        await unzipFile(tmpSrc).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
       }

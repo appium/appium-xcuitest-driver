@@ -9,16 +9,12 @@ describe('get activeapp commands', function () {
   let proxyStub;
 
   let chai;
-  let expect;
-
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
+          chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
 
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
+      chai.should();
+      chai.use(chaiAsPromised.default);
   });
 
   beforeEach(function () {
@@ -39,16 +35,23 @@ describe('get activeapp commands', function () {
     });
 
     const out = await driver.mobileGetActiveAppInfo();
-    expect(out.pid).to.eq(15438);
-    expect(out.name).to.eq('');
-    expect(out.bundleId).to.eq('com.apple.DocumentsApp');
-    expect(out.processArguments.env.HAPPY).to.eq('testing');
-    expect(out.processArguments.args[0]).to.eq('happy');
-    expect(out.processArguments.args[1]).to.eq('testing');
+    // @ts-ignore should raises type error
+    out.pid.should.eq(15438);
+    // @ts-ignore should raises type error
+    out.name.should.eq('');
+    // @ts-ignore should raises type error
+    out.bundleId.should.eq('com.apple.DocumentsApp');
+    // @ts-ignore should raises type error
+    out.processArguments.env.HAPPY.should.eq('testing');
+    // @ts-ignore should raises type error
+    out.processArguments.args[0].should.eq('happy');
+    // @ts-ignore should raises type error
+    out.processArguments.args[1].should.eq('testing');
   });
 
-  it('get active app info raise an error if the endpoint raises error', function () {
+  it('get active app info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    expect(driver.mobileGetActiveAppInfo()).to.eventually.be.rejected;
+    // @ts-ignore should raises type error
+    await driver.mobileGetActiveAppInfo().should.be.rejected;
   });
 });

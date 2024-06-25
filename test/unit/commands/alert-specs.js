@@ -6,7 +6,6 @@ describe('alert commands', function () {
   let driver = new XCUITestDriver();
   let proxySpy = sinon.stub(driver, 'proxyCommand');
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -14,8 +13,6 @@ describe('alert commands', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   afterEach(function () {
@@ -33,7 +30,7 @@ describe('alert commands', function () {
   describe('setAlertText', function () {
     it('should send translated POST request to WDA', async function () {
       await driver.setAlertText('some text');
-      proxySpy.calledOnceWith('/alert/text', 'POST', {value: 'some text'});
+      proxySpy.calledOnceWith('/alert/text', 'POST', {value: 'some text'}).should.be.true;
     });
   });
   describe('postAcceptAlert', function () {
@@ -56,16 +53,17 @@ describe('alert commands', function () {
   describe('mobile: alert', function () {
     const commandName = 'alert';
 
-    it('should reject request to WDA if action parameter is not supported', function () {
-      expect(driver
-        .execute(`mobile: ${commandName}`, {action: 'blabla'}))
-        .to.eventually.be.rejectedWith(/should be either/);
+    it('should reject request to WDA if action parameter is not supported', async function () {
+      await driver
+        .execute(`mobile: ${commandName}`, {action: 'blabla'})
+        // @ts-ignore should raises type error
+        .should.be.rejectedWith(/should be either/);
     });
 
     it('should send accept alert request to WDA with encoded button label', async function () {
       const buttonLabel = 'some label';
       await driver.execute(`mobile: ${commandName}`, {action: 'accept', buttonLabel});
-      proxySpy.calledOnceWith('/alert/accept', 'POST', {name: buttonLabel});
+      proxySpy.calledOnceWith('/alert/accept', 'POST', {name: buttonLabel}).should.be.true;
     });
 
     it('should send dimsiss alert request to WDA if button label is not provided', async function () {
@@ -88,7 +86,8 @@ describe('alert commands', function () {
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
       proxySpy.firstCall.args[1].should.eql('GET');
-      expect(response.value[0]).to.equal(buttonLabel);
+      // @ts-ignore should raises type error
+      response.value[0].should.equal(buttonLabel);
     });
   });
 });

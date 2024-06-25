@@ -10,7 +10,6 @@ const BIOMETRIC_BUNDLE_ID = 'com.mwakizaka.biometric';
 
 describe('AppInfosCache', function () {
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -18,8 +17,6 @@ describe('AppInfosCache', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   describe('retrives info from different types of apps', function () {
@@ -72,10 +69,14 @@ describe('AppInfosCache', function () {
     });
 
     it('should extract cached info', async function () {
-      expect(await cache.extractAppPlatforms(appPath)).to.eql(['iPhoneSimulator']);
-      expect(await cache.extractBundleId(ipaPath)).to.eql(BIOMETRIC_BUNDLE_ID);
-      expect(await cache.extractBundleVersion(appPath)).to.eql('1');
-      expect(await cache.extractExecutableName(ipaPath)).to.eql('biometric');
+      // @ts-ignore should raises type error
+      await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
+      // @ts-ignore should raises type error
+      await cache.extractBundleId(ipaPath).should.eventually.eql(BIOMETRIC_BUNDLE_ID);
+      // @ts-ignore should raises type error
+      await cache.extractBundleVersion(appPath).should.eventually.eql('1');
+      // @ts-ignore should raises type error
+      await cache.extractExecutableName(ipaPath).should.eventually.eql('biometric');
     });
   });
 });

@@ -1,5 +1,6 @@
 // @ts-check
 
+// eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 

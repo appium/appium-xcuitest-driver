@@ -9,7 +9,6 @@ describe('get deviceinfo commands', function () {
   let proxyStub;
 
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -17,8 +16,6 @@ describe('get deviceinfo commands', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   beforeEach(function () {
@@ -36,12 +33,13 @@ describe('get deviceinfo commands', function () {
       currentLocale: 'ja_EN',
     };
     proxyStub.returns(opts);
-
-    expect(await driver.mobileGetDeviceInfo()).to.eql(opts);
+    // @ts-ignore should raises type error
+    await driver.mobileGetDeviceInfo().should.eventually.eql(opts);
   });
 
-  it('get device info raise an error if the endpoint raises error', function () {
+  it('get device info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    expect(driver.mobileGetDeviceInfo()).to.eventually.be.rejected;
+    // @ts-ignore should raises type error
+    await driver.mobileGetDeviceInfo().should.be.rejected;
   });
 });
