@@ -12,7 +12,6 @@ describe('installToRealDevice', function () {
   let sandbox;
   let driver;
   let chai;
-  let expect;
 
   before(async function () {
     chai = await import('chai');
@@ -20,8 +19,6 @@ describe('installToRealDevice', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
   });
 
   beforeEach(function () {
@@ -41,8 +38,10 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
 
     await installToRealDevice.bind(driver)(undefined, bundleId, {});
-    expect(realDevice.remove).to.not.have.been.called;
-    expect(realDevice.install).to.not.have.been.called;
+    // @ts-ignore
+    (realDevice.remove).called.should.be.false;
+    // @ts-ignore
+    (realDevice.install).called.should.be.false;
   });
 
   it('nothing happen without bundle id', async function () {
@@ -53,8 +52,10 @@ describe('installToRealDevice', function () {
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, undefined, {});
-    expect(realDevice.remove).to.not.have.been.called;
-    expect(realDevice.install).to.not.have.been.called;
+    // @ts-ignore
+    (realDevice.remove).called.should.be.false;
+    // @ts-ignore
+    (realDevice.install).called.should.be.false;
   });
 
   it('should install without remove', async function () {
@@ -69,8 +70,10 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(realDevice.remove).to.not.have.been.called;
-    expect(realDevice.install).to.have.been.calledOnce;
+    // @ts-ignore
+    (realDevice.remove).called.should.be.false;
+    // @ts-ignore
+    (realDevice.install).calledOnce.should.be.true;
   });
 
   it('should install after remove', async function () {
@@ -85,8 +88,10 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(realDevice.remove).to.have.been.calledOnce;
-    expect(realDevice.install).to.have.been.calledOnce;
+    // @ts-ignore
+    (realDevice.remove).calledOnce.should.be.true;
+    // @ts-ignore
+    (realDevice.install).calledOnce.should.be.true;
   });
 
   it('should raise an error for invalid verification error after uninstall', async function () {
@@ -101,8 +106,10 @@ describe('installToRealDevice', function () {
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
-    expect(realDevice.remove).to.have.been.calledOnce;
-    expect(realDevice.install).to.have.been.calledOnce;
+    // @ts-ignore
+    (realDevice.remove).calledOnce.should.be.true;
+    // @ts-ignore
+    (realDevice.install).calledOnce.should.be.true;
   });
 
   it('should install after removal once because of MismatchedApplicationIdentifierEntitlement error', async function () {
@@ -121,8 +128,10 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(realDevice.remove).to.have.been.calledOnce;
-    expect(realDevice.install).to.have.been.calledTwice;
+    // @ts-ignore
+    (realDevice.remove).calledOnce.should.be.true;
+    // @ts-ignore
+    (realDevice.install).calledTwice.should.be.true;
   });
 
   it('should raise an error in the install ApplicationVerificationFailed error because it is not recoverable', async function () {
@@ -138,7 +147,9 @@ describe('installToRealDevice', function () {
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
-    expect(realDevice.remove).to.not.have.been.called;
-    expect(realDevice.install).to.have.been.calledOnce;
+    // @ts-ignore
+    (realDevice.remove).called.should.be.false;
+    // @ts-ignore
+    (realDevice.install).calledOnce.should.be.true;
   });
 });
