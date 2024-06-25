@@ -11,7 +11,6 @@ describe('element commands', function () {
   let driver;
 
   let chai;
-  let expect;
 
   /** @type {sinon.SinonStubbedMember<XCUITestDriver['proxyCommand']>} */
   let proxyStub;
@@ -22,8 +21,6 @@ describe('element commands', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
 
     driver = new XCUITestDriver();
   });
@@ -38,19 +35,16 @@ describe('element commands', function () {
   });
 
   describe('setValueImmediate', function () {
-    let mockDriver;
-
     beforeEach(function () {
-      mockDriver = sinon.mock(driver);
-    });
-
-    this.afterEach(function () {
-      mockDriver.verify();
+      sandbox.stub(driver, 'setValue');
     });
 
     it('should call setValue', async function () {
-      mockDriver.expects('setValue').once().withExactArgs('hello', '2');
       await driver.setValueImmediate('hello', '2');
+      // @ts-ignore should raises type error
+      driver.setValue.calledOnceWithExactly('hello', '2').should.be.true;
+      // @ts-ignore should raises type error
+      driver.setValue.returned(undefined).should.be.true;
     });
   });
 
@@ -59,7 +53,7 @@ describe('element commands', function () {
     const attribute = 'enabled';
 
     afterEach(function () {
-      proxyStub.calledOnce;
+      proxyStub.calledOnce.should.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
@@ -98,7 +92,7 @@ describe('element commands', function () {
     const property = 'enabled';
 
     afterEach(function () {
-      proxyStub.should.have.been.calledOnce;
+      proxyStub.calledOnce.should.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
@@ -137,8 +131,8 @@ describe('element commands', function () {
       const getContentSizeStub = sandbox.stub(driver, 'getContentSize');
       getContentSizeStub.resolves('foo');
       (await driver.getAttribute('contentSize', 2)).should.eql('foo');
-      proxyStub.should.not.have.been.called;
-      getContentSizeStub.should.have.been.calledOnce;
+      proxyStub.called.should.be.false;
+      getContentSizeStub.calledOnce.should.be.true;
     });
   });
 
@@ -176,14 +170,16 @@ describe('element commands', function () {
       afterEach(function () {
         driver.curContext = oldContext;
       });
-      it('should throw when in a web context', function () {
-        expect(driver.getContentSize(el)).to.be.eventually.rejectedWith(/not yet implemented/);
+      it('should throw when in a web context', async function () {
+      // @ts-ignore should raises type error
+      await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
       });
     });
 
-    it('should throw if trying to get contentSize of something other than table or collection', function () {
+    it('should throw if trying to get contentSize of something other than table or collection', async function () {
       getAttrStub.resolves('XCUIElementTypeStatusBar');
-      expect(driver.getContentSize(el)).to.be.eventually.rejectedWith(/Can't get content size for type/);
+      // @ts-ignore should raises type error
+      await driver.getContentSize(el).should.be.rejectedWith(/Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
@@ -200,7 +196,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset: 100,
       });
-      getRectStub.should.have.been.calledOnce;
+      getRectStub.calledOnce.should.be.true;
     });
 
     it('should get simple difference in element positions of a table', async function () {
@@ -220,7 +216,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset: 170,
       });
-      getRectStub.should.have.been.calledTwice;
+      getRectStub.calledTwice.should.be.true;
     });
 
     it('should be sensitive to row items in the case of a collection view', async function () {
@@ -249,7 +245,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset,
       });
-      getRectStub.should.have.been.calledThrice;
+      getRectStub.calledThrice.should.be.true;
     });
   });
 
@@ -262,42 +258,44 @@ describe('element commands', function () {
       describe('success', function () {
         it('should proxy string as array of characters', async function () {
           await driver.setValue('hello\uE006', elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o', '\n'],
-          });
+          }).should.be.true;
         });
         it('should proxy string with smileys as array of characters', async function () {
           await driver.setValue('hello😀😎', elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
-          });
+          }).should.be.true;
         });
         it('should proxy number as array of characters', async function () {
           await driver.setValue(1234.56, elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['1', '2', '3', '4', '.', '5', '6'],
-          });
+          }).should.be.true;
         });
         it('should proxy string array as array of characters', async function () {
           await driver.setValue(['hel', 'lo'], elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o'],
-          });
+          }).should.be.true;
         });
         it('should proxy integer array as array of characters', async function () {
           await driver.setValue([1234], elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['1', '2', '3', '4'],
-          });
+          }).should.be.true;
         });
       });
 
       describe('failure', function () {
-        it('should throw invalid argument exception for null', function () {
-          expect(driver.setValue(null, elementId)).to.eventually.be.rejectedWith(/supported/);
+        it('should throw invalid argument exception for null', async function () {
+          // @ts-ignore should raises type error
+          await driver.setValue(null, elementId).should.be.rejectedWith(/supported/);
         });
-        it('should throw invalid argument exception for object', function () {
-          expect(driver.setValue({hi: 'there'}, elementId)).to.eventually.be.rejectedWith(/supported/);
+        it('should throw invalid argument exception for object', async function () {
+          // @ts-ignore should raises type error
+          await driver.setValue({hi: 'there'}, elementId).should.be.rejectedWith(/supported/);
         });
       });
     });
@@ -328,19 +326,19 @@ describe('element commands', function () {
         it('with default', async function () {
           driver.opts.sendKeyStrategy = undefined;
           await driver.setValue('hello\uE006😀', elementId);
-          atomElement.should.have.been.calledOnce;
-          executeAtom.should.have.been.calledOnce;
-          setValueWithWebAtom.should.have.been.calledOnceWith(
+          atomElement.calledOnce.should.be.true;
+          executeAtom.calledOnce.should.be.true;
+          setValueWithWebAtom.calledOnceWith(
             webEl,
             'hello\uE006😀'
-          );
+          ).should.be.true;
         });
 
         it('with oneByOne', async function () {
           driver.opts.sendKeyStrategy = 'oneByOne';
           await driver.setValue('hello\uE006😀', elementId);
-          atomElement.should.have.been.calledOnce;
-          executeAtom.should.have.been.calledOnce;
+          atomElement.calledOnce.should.be.true;
+          executeAtom.calledOnce.should.be.true;
           setValueWithWebAtom.getCall(0).args.should.eql([webEl, 'h']);
           setValueWithWebAtom.getCall(1).args.should.eql([webEl, 'e']);
           setValueWithWebAtom.getCall(2).args.should.eql([webEl, 'l']);
@@ -384,8 +382,10 @@ describe('element commands', function () {
       executeStub.calledOnce.should.be.false;
       atomStub.calledOnce.should.be.true;
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      expect(loc.x).to.equal(0);
-      expect(loc.y).to.equal(0);
+      // @ts-ignore should raises type error
+      loc.x.should.equal(0);
+      // @ts-ignore should raises type error
+      loc.y.should.equal(0);
     });
 
     it('should get location relative to document with absoluteWebLocations cap', async function () {
@@ -394,8 +394,10 @@ describe('element commands', function () {
       executeStub.calledOnce.should.be.true;
       atomStub.calledOnce.should.be.true;
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      expect(loc.x).to.equal(fixtureXOffset);
-      expect(loc.y).to.equal(fixtureYOffset);
+      // @ts-ignore should raises type error
+      loc.x.should.equal(fixtureXOffset);
+      // @ts-ignore should raises type error
+      loc.y.should.equal(fixtureYOffset);
     });
   });
 
@@ -434,10 +436,14 @@ describe('element commands', function () {
       getNativeRectStub.calledOnce.should.be.true;
       getLocationStub.calledOnce.should.be.false;
       getSizeStub.calledOnce.should.be.false;
-      expect(rect.x).to.eql(0);
-      expect(rect.y).to.eql(50);
-      expect(rect.width).to.eql(100);
-      expect(rect.height).to.eql(200);
+      // @ts-ignore should raises type error
+      rect.x.should.eql(0);
+      // @ts-ignore should raises type error
+      rect.y.should.eql(50);
+      // @ts-ignore should raises type error
+      rect.width.should.eql(100);
+      // @ts-ignore should raises type error
+      rect.height.should.eql(200);
     });
 
     it('should get element rect in Web context', async function () {
@@ -449,10 +455,14 @@ describe('element commands', function () {
       getNativeRectStub.calledOnce.should.be.false;
       getLocationStub.calledOnce.should.be.true;
       getSizeStub.calledOnce.should.be.true;
-      expect(rect.x).to.eql(0);
-      expect(rect.y).to.eql(50);
-      expect(rect.width).to.eql(100);
-      expect(rect.height).to.eql(200);
+      // @ts-ignore should raises type error
+      rect.x.should.eql(0);
+      // @ts-ignore should raises type error
+      rect.y.should.eql(50);
+      // @ts-ignore should raises type error
+      rect.width.should.eql(100);
+      // @ts-ignore should raises type error
+      rect.height.should.eql(200);
     });
   });
 });
