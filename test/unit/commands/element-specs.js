@@ -244,49 +244,101 @@ describe('element commands', function () {
   });
 
   describe('setValue', function () {
-    const elementId = 2;
-    const expectedEndpoint = `/element/${elementId}/value`;
-    const expectedMethod = 'POST';
+    describe('Native contest', function () {
+      const elementId = 2;
+      const expectedEndpoint = `/element/${elementId}/value`;
+      const expectedMethod = 'POST';
 
-    describe('success', function () {
-      it('should proxy string as array of characters', async function () {
-        await driver.setValue('hello\uE006', elementId);
-        proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
-          value: ['h', 'e', 'l', 'l', 'o', '\n'],
+      describe('success', function () {
+        it('should proxy string as array of characters', async function () {
+          await driver.setValue('hello\uE006', elementId);
+          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+            value: ['h', 'e', 'l', 'l', 'o', '\n'],
+          });
+        });
+        it('should proxy string with smileys as array of characters', async function () {
+          await driver.setValue('hello😀😎', elementId);
+          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+            value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
+          });
+        });
+        it('should proxy number as array of characters', async function () {
+          await driver.setValue(1234.56, elementId);
+          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+            value: ['1', '2', '3', '4', '.', '5', '6'],
+          });
+        });
+        it('should proxy string array as array of characters', async function () {
+          await driver.setValue(['hel', 'lo'], elementId);
+          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+            value: ['h', 'e', 'l', 'l', 'o'],
+          });
+        });
+        it('should proxy integer array as array of characters', async function () {
+          await driver.setValue([1234], elementId);
+          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+            value: ['1', '2', '3', '4'],
+          });
         });
       });
-      it('should proxy string with smileys as array of characters', async function () {
-        await driver.setValue('hello😀😎', elementId);
-        proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
-          value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
+
+      describe('failure', function () {
+        it('should throw invalid argument exception for null', async function () {
+          await driver.setValue(null, elementId).should.be.rejectedWith(/supported/);
         });
-      });
-      it('should proxy number as array of characters', async function () {
-        await driver.setValue(1234.56, elementId);
-        proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
-          value: ['1', '2', '3', '4', '.', '5', '6'],
-        });
-      });
-      it('should proxy string array as array of characters', async function () {
-        await driver.setValue(['hel', 'lo'], elementId);
-        proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
-          value: ['h', 'e', 'l', 'l', 'o'],
-        });
-      });
-      it('should proxy integer array as array of characters', async function () {
-        await driver.setValue([1234], elementId);
-        proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
-          value: ['1', '2', '3', '4'],
+        it('should throw invalid argument exception for object', async function () {
+          await driver.setValue({hi: 'there'}, elementId).should.be.rejectedWith(/supported/);
         });
       });
     });
 
-    describe('failure', function () {
-      it('should throw invalid argument exception for null', async function () {
-        await driver.setValue(null, elementId).should.be.rejectedWith(/supported/);
+    describe('Web contest', function () {
+      const elementId = 2;
+
+      /** @type {sinon.SinonStubbedMember<XCUITestDriver['getAtomsElement']>} */
+      let atomElement;
+      /** @type {sinon.SinonStubbedMember<XCUITestDriver['executeAtom']>} */
+      let executeAtom;
+      /** @type {sinon.SinonStubbedMember<XCUITestDriver['setValueWithWebAtom']>} */
+      let setValueWithWebAtom;
+      const webEl = {ELEMENT: '5000', 'element-6066-11e4-a52e-4f735466cecf': '5000'};
+
+      beforeEach(function () {
+        driver.curContext = 'fake web context';
+        atomElement = sandbox.stub(driver, 'getAtomsElement').returns(webEl);
+        executeAtom = sandbox.stub(driver, 'executeAtom');
+        setValueWithWebAtom = sandbox.stub(driver, 'setValueWithWebAtom');
       });
-      it('should throw invalid argument exception for object', async function () {
-        await driver.setValue({hi: 'there'}, elementId).should.be.rejectedWith(/supported/);
+
+      afterEach(function () {
+        sandbox.restore();
+      });
+
+      describe('setValueWithWebAtom', function () {
+        it('with default', async function () {
+          driver.opts.sendKeyStrategy = undefined;
+          await driver.setValue('hello\uE006😀', elementId);
+          atomElement.should.have.been.calledOnce;
+          executeAtom.should.have.been.calledOnce;
+          setValueWithWebAtom.should.have.been.calledOnceWith(
+            webEl,
+            'hello\uE006😀'
+          );
+        });
+
+        it('with oneByOne', async function () {
+          driver.opts.sendKeyStrategy = 'oneByOne';
+          await driver.setValue('hello\uE006😀', elementId);
+          atomElement.should.have.been.calledOnce;
+          executeAtom.should.have.been.calledOnce;
+          setValueWithWebAtom.getCall(0).args.should.eql([webEl, 'h']);
+          setValueWithWebAtom.getCall(1).args.should.eql([webEl, 'e']);
+          setValueWithWebAtom.getCall(2).args.should.eql([webEl, 'l']);
+          setValueWithWebAtom.getCall(3).args.should.eql([webEl, 'l']);
+          setValueWithWebAtom.getCall(4).args.should.eql([webEl, 'o']);
+          setValueWithWebAtom.getCall(5).args.should.eql([webEl, '\n']);
+          setValueWithWebAtom.getCall(6).args.should.eql([webEl, '😀']);
+        });
       });
     });
   });

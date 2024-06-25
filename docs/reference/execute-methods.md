@@ -166,7 +166,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 app | string | yes | See the description of the `appium:app` capability | /path/to/my.app
 timeoutMs | number | no | The maximum time to wait until app install is finished in milliseconds on real devices. If not provided then the value of `appium:appPushTimeout` capability is used. If the capability is not provided then equals to 240000ms | 500000
-strategy | string | no | One of possible app installation strategies on real devices. This argument is ignored on simulators. If not provided then the value of `appium:appInstallStrategy` is used. If the latter is also not provided then `serial` is used. See the description of `appium:appInstallStrategy` capability for more details on available values. | parallel
+**Deprecated** **Not Used since v7.15.0** strategy | string | no | One of possible app installation strategies on real devices. This argument is ignored on simulators. If not provided then the value of `appium:appInstallStrategy` is used. If the latter is also not provided then `serial` is used. See the description of `appium:appInstallStrategy` capability for more details on available values. | parallel
 checkVersion | bool | no | If set to `true`, it will make xcuitest driver to verify whether the app version currently installed on the device under test is older than the one, which is provided as `app` value. No app install is going to happen if the candidate app has the same or older version number than the already installed copy of it. The version number used for comparison must be provided as [CFBundleVersion](https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleversion) [Semantic Versioning](https://semver.org/)-compatible value in the application's `Info.plist`. No validation is performed and the `app` is installed if `checkVersion` was not provided or `false`, which is default behavior. | true
 
 ### mobile: isAppInstalled
@@ -465,7 +465,14 @@ Returns information about the active application.
 
 #### Returned Result
 
-Check the `+ (id<FBResponsePayload>)handleActiveAppInfo:(FBRouteRequest *)request` method in [FBCustomCommands.m](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m) for more details on the available map entries.
+The API returns a map with the following entries
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+pid | number | The process identifier of the active application | 1234
+bundleId | string | The bundle identifier of the active application | com.yolo.myapp
+name | string | The name of the active application, if present | Safari
+processArguments | map | The map containing actual process arguments. Check the description of the [appium:processArguments capability](./capabilities.md#webdriveragent) for more details on its format. Might be empty if no process arguments have been provided on the app startup. | {"args": ["--help"], "env": {"PATH": "/"}}
 
 ### mobile: pressButton
 

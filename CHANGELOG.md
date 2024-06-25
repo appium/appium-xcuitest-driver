@@ -1,3 +1,144 @@
+## [7.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.6...v7.18.0) (2024-06-20)
+
+### Features
+
+* add pageLoadStrategy for Safari/WebView ([#2411](https://github.com/appium/appium-xcuitest-driver/issues/2411)) ([2517bf7](https://github.com/appium/appium-xcuitest-driver/commit/2517bf75d0de0fd00937c4c12c6ca890a49ef218))
+
+## [7.17.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.5...v7.17.6) (2024-06-18)
+
+### Bug Fixes
+
+* relax the max of recording limitation to 4200 sec as timeLimit ([#2410](https://github.com/appium/appium-xcuitest-driver/issues/2410)) ([42bc4f9](https://github.com/appium/appium-xcuitest-driver/commit/42bc4f9a373126b0025fa5cec60ee2107d101d53))
+
+## [7.17.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.4...v7.17.5) (2024-06-12)
+
+### Bug Fixes
+
+* stream end after write in a file push ([#2409](https://github.com/appium/appium-xcuitest-driver/issues/2409)) ([b2f57b7](https://github.com/appium/appium-xcuitest-driver/commit/b2f57b7fd7cce340969f522203d9375d3b120cdc))
+
+## [7.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.3...v7.17.4) (2024-06-07)
+
+### Bug Fixes
+
+* Add proper timestamps to server logs ([#2406](https://github.com/appium/appium-xcuitest-driver/issues/2406)) ([28a75ef](https://github.com/appium/appium-xcuitest-driver/commit/28a75efb63e699bf62c73710a6eb8c34abb59d0d))
+
+## [7.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.2...v7.17.3) (2024-06-05)
+
+### Bug Fixes
+
+* system prompt for Apple ID sign translation for simulators ([#2405](https://github.com/appium/appium-xcuitest-driver/issues/2405)) ([453fe68](https://github.com/appium/appium-xcuitest-driver/commit/453fe680e0da7988821e50d9779bbec2763371fc))
+
+## [7.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.1...v7.17.2) (2024-06-04)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 23.1.1 to 24.0.0 and conventional-changelog-conventionalcommits to 8.0.0 ([#2403](https://github.com/appium/appium-xcuitest-driver/issues/2403)) ([4058b4c](https://github.com/appium/appium-xcuitest-driver/commit/4058b4c33687b11bdc90b3a22acd67330aaab46c))
+
+## [7.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.0...v7.17.1) (2024-06-03)
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 17.0.2 to 18.0.0 ([#2398](https://github.com/appium/appium-xcuitest-driver/issues/2398)) ([e05b63a](https://github.com/appium/appium-xcuitest-driver/commit/e05b63ae68bab6beca808f66d814db6c4e6ba7d8))
+
+## [7.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.2...v7.17.0) (2024-06-02)
+
+
+### Features
+
+* Document respectSystemAlerts setting ([#2402](https://github.com/appium/appium-xcuitest-driver/issues/2402)) ([acf37dd](https://github.com/appium/appium-xcuitest-driver/commit/acf37dd4ee20745908ff87ea48d83d4e143d63d3))
+
+## [7.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.1...v7.16.2) (2024-05-22)
+
+
+### Miscellaneous Chores
+
+* add note about .app naming finding for future reference ([#2400](https://github.com/appium/appium-xcuitest-driver/issues/2400)) ([aab83d5](https://github.com/appium/appium-xcuitest-driver/commit/aab83d5924b4df606bd50b395dde1898d097f7f7))
+
+## [7.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.16.0...v7.16.1) (2024-05-21)
+
+
+### Bug Fixes
+
+* Update plist detection pattern ([385ed99](https://github.com/appium/appium-xcuitest-driver/commit/385ed99afec1795940d8aba408ac448d73585a59))
+
+## [7.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.3...v7.16.0) (2024-05-21)
+
+
+### Features
+
+* add maxTypingFrequency to settings api ([#2399](https://github.com/appium/appium-xcuitest-driver/issues/2399)) ([c1810c3](https://github.com/appium/appium-xcuitest-driver/commit/c1810c362ecc46e98b0cd01a196211017457c2ac))
+
+## [7.15.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.2...v7.15.3) (2024-05-16)
+
+
+### Miscellaneous Chores
+
+* Update dev dependencies ([b6f02b9](https://github.com/appium/appium-xcuitest-driver/commit/b6f02b9caf3b7fd2bb89b5309234281368207cd5))
+
+## [7.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.1...v7.15.2) (2024-05-07)
+
+
+### Bug Fixes
+
+* Properly cache manifests for .ipa bundles containing multiple apps ([#2394](https://github.com/appium/appium-xcuitest-driver/issues/2394)) ([ffd3bbb](https://github.com/appium/appium-xcuitest-driver/commit/ffd3bbbe8ef3e9ef80c2b9af327d88be6e0f367a))
+
+## [7.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.15.0...v7.15.1) (2024-04-27)
+
+
+### Bug Fixes
+
+* Update caching logic for extracted app bundles ([#2389](https://github.com/appium/appium-xcuitest-driver/issues/2389)) ([0424193](https://github.com/appium/appium-xcuitest-driver/commit/04241937414ee6fa986be8719fbb690046b63a56))
+
+## [7.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.14.0...v7.15.0) (2024-04-26)
+
+
+### Features
+
+* Avoid unzipping of real device .ipa bundles ([#2388](https://github.com/appium/appium-xcuitest-driver/issues/2388)) ([520168a](https://github.com/appium/appium-xcuitest-driver/commit/520168aa7d8c230a44da136b9e8d21971c4ef8f8))
+
+## [7.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.13.0...v7.14.0) (2024-04-23)
+
+
+### Features
+
+* Perform bundles extraction in stream ([#2387](https://github.com/appium/appium-xcuitest-driver/issues/2387)) ([b04cebd](https://github.com/appium/appium-xcuitest-driver/commit/b04cebd99418b0e6d55d3c1813700779248e6541))
+
+## [7.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.12.0...v7.13.0) (2024-04-18)
+
+
+### Features
+
+* add sendKeyStrategy for React to type input one by one in Web context ([#2386](https://github.com/appium/appium-xcuitest-driver/issues/2386)) ([50749cf](https://github.com/appium/appium-xcuitest-driver/commit/50749cfc11e39c34c8df9138a06539f865347082))
+
+## [7.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.4...v7.12.0) (2024-04-17)
+
+
+### Features
+
+* update Atoms in remtoe debugger to selenium 4.19.0 basis ([#2385](https://github.com/appium/appium-xcuitest-driver/issues/2385)) ([0c45843](https://github.com/appium/appium-xcuitest-driver/commit/0c458437240ea2ab367e2aa2915aa053fb01481b))
+
+## [7.11.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.3...v7.11.4) (2024-04-15)
+
+
+### Miscellaneous Chores
+
+* deprecated useSimpleBuildTest, waitForQuiescence and calendarAccessAuthorized ([#2383](https://github.com/appium/appium-xcuitest-driver/issues/2383)) ([090c615](https://github.com/appium/appium-xcuitest-driver/commit/090c615682bb82745174865982eb0bcc5e5b2922))
+
+## [7.11.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.2...v7.11.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* Tune appPushTimeout capability ([#2384](https://github.com/appium/appium-xcuitest-driver/issues/2384)) ([0c42d55](https://github.com/appium/appium-xcuitest-driver/commit/0c42d557d459f8ec25277dc1c2672a0045b16329))
+
+## [7.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.1...v7.11.2) (2024-04-09)
+
+
+### Miscellaneous Chores
+
+* Remove extra imports ([2104b7a](https://github.com/appium/appium-xcuitest-driver/commit/2104b7a9a58630ab7bf058f5db7990cc275cf588))
+
 ## [7.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.11.0...v7.11.1) (2024-04-08)
 
 

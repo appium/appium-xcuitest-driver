@@ -8,7 +8,7 @@ command execution, improving the session startup performance.
 
 !!! warning
 
-    iOS/tvOS 17+ speicic:
+    iOS/tvOS 17+ specific:
 
     This method currently works over `devicectl` for iOS 17+ with Xcode 15+ environment since XCUITest driver v7.5.0.
     This may not work for tvOS 17+.
@@ -58,7 +58,7 @@ The app can then be installed without `xcodebuild` using the 3rd party tools.
 
 ### Additional requirement for iOS 17+/tvOS17+
 
-To launch the WebDriverAgentRunner package with `xcrun devicectl device process launch` it should not have `Frameworks/XC**` files.
+To launch the WebDriverAgentRunner package with `xcrun devicectl device process launch` for real devices it should not have `Frameworks/XC**` files.
 
 For example, after building the WebDriverAgent with Xcode with proper sign, it generates `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app`.
 Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm Frameworks/WebDriverAgentRunner-Runner.app/XC**`.
