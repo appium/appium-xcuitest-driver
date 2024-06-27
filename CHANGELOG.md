@@ -1,3 +1,9 @@
+## [7.20.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.1...v7.20.2) (2024-06-27)
+
+### Miscellaneous Chores
+
+* Bump chai and chai-as-promised ([#2414](https://github.com/appium/appium-xcuitest-driver/issues/2414)) ([6ba1b5e](https://github.com/appium/appium-xcuitest-driver/commit/6ba1b5e4ba192da6b8d7a0370cd3fa79947c540e))
+
 ## [7.20.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.0...v7.20.1) (2024-06-26)
 
 ### Bug Fixes
