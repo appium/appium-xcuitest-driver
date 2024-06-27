@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession, getUsePrebuiltWDACaps} from '../helpers/session';
 import {UICATALOG_CAPS, amendCapabilities, extractCapabilityValue} from '../desired';
 import {util} from 'appium/support';
 
@@ -12,10 +12,8 @@ describe('Passwords', function () {
 
   let driver, caps;
 
-  beforeEach(function () {
-    caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+  beforeEach(async function () {
+    caps = amendCapabilities(UICATALOG_CAPS, await getUsePrebuiltWDACaps());
 
     if (util.compareVersions(extractCapabilityValue(caps, 'appium:platformVersion'), '<', '16.4')) {
       return this.skip();

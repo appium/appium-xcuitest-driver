@@ -29,19 +29,15 @@ jobs:
         - driver
         - web
         - long
-        xcodeVersion: ['13.4', '14.2']
+        xcodeVersion: ['15.1']
         include:
-        - xcodeVersion: '13.4'
-          iosVersion: '15.5'
-          deviceName: 'iPhone 12'
-          tvosVersion: '15.4'
-          tvosDeviceName: 'Apple TV'
-          platform: macos-12
-        - xcodeVersion: '14.2'
-          iosVersion: '16.2'
-          deviceName: 'iPhone 13'
+        - xcodeVersion: '15.1'
+          iosVersion: '17.2'
+          deviceName: 'iPhone SE (3rd generation)'
+          deviceNameForTouchId: 'iPhone SE (3rd generation)'
+          deviceNameForSafariIpad: 'iPad (10th generation)'
           skipTvOs: true
-          platform: macos-12
+          platform: macos-13
       fail-fast: false
 
     runs-on: ${{ matrix.platform }}
@@ -83,14 +79,15 @@ jobs:
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
-          --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
+          --log-timestamp \
+          --keep-alive-timeout 5400 2>&1 > "$cwd/appium.log" &
         sleep 5
         popd
         cat appium.log
       name: Prepare the server
 
     - run: |
-        target_sim_id=$(xcrun simctl list devices available | grep "${{ matrix.deviceName }} (" | cut -d "(" -f2 | cut -d ")" -f1)
+        target_sim_id=$(xcrun simctl list devices 'iOS ${{ matrix.iosVersion }}' -j | jq '.devices[]' | jq 'select(length > 0)' | jq -r 'map(select( .name == "${{ matrix.deviceName }}" and .isAvailable == true ))[0].udid') 
         open -Fn "$(xcode-select -p)/Applications/Simulator.app"
         xcrun simctl bootstatus $target_sim_id -b
       name: Preboot ${{ matrix.deviceName }}
@@ -104,6 +101,8 @@ jobs:
 
         export DEVICE_NAME="${{ matrix.deviceName }}"
         export PLATFORM_VERSION="${{ matrix.iosVersion }}"
+        export DEVICE_NAME_FOR_TOUCH_ID="${{ matrix.deviceNameForTouchId }}"
+        export DEVICE_NAME_FOR_SAFARI_IPAD="${{ matrix.deviceNameForSafariIpad }}"
 
         export RESULTS_XML=test-results.xml
         echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json

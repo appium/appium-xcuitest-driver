@@ -7,10 +7,11 @@ import {
   extractCapabilityValue,
   amendCapabilities,
   UICATALOG_CAPS,
+  UICATALOG_BUNDLE_ID,
   PLATFORM_VERSION,
 } from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, getUsePrebuiltWDACaps, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
 
 chai.should();
@@ -29,12 +30,16 @@ describe('XCUITestDriver - find -', function () {
 
   let driver;
   before(async function () {
-    const caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+    const caps = amendCapabilities(UICATALOG_CAPS, await getUsePrebuiltWDACaps());
     driver = await initSession(caps);
   });
   after(async function () {
+    try {
+      await driver.terminateApp(UICATALOG_BUNDLE_ID);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
     await deleteSession();
   });
 
