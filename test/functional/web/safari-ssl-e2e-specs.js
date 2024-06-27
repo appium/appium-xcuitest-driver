@@ -1,6 +1,4 @@
 import B from 'bluebird';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import https from 'https';
 import {getFreePort} from '../helpers/ports';
 import os from 'os';
@@ -11,8 +9,6 @@ import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './
 
 const pem = B.promisifyAll(_pem);
 
-chai.should();
-chai.use(chaiAsPromised);
 
 let caps;
 let pemCertificate;
@@ -25,7 +21,15 @@ describe('Safari SSL', function () {
   let driver;
   /** @type {string} */
   let localHttpsUrl;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     // Create a random pem certificate
     const privateKey = await pem.createPrivateKeyAsync();
     const keys = await pem.createCertificateAsync({

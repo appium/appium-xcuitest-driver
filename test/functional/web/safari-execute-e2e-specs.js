@@ -1,14 +1,6 @@
-// import _ from 'lodash';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-// import http from 'http';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {openPage, GUINEA_PIG_PAGE} from './helpers';
-
-chai.should();
-chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 const SCROLL_INTO_VIEW = `return arguments[0].scrollIntoView(true);`;
 const GET_RIGHT_INNERHTML = `return document.body.innerHTML.indexOf('I am some page content') > 0`;
@@ -19,7 +11,17 @@ describe('safari - execute -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+  let expect;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+    expect = chai.expect;
+
     const caps = amendCapabilities(SAFARI_CAPS, {
       'appium:safariInitialUrl': GUINEA_PIG_PAGE,
       'appium:showSafariConsoleLog': true,

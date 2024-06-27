@@ -1,17 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import {amendCapabilities, UICATALOG_CAPS} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - performance', function () {
   this.timeout(MOCHA_TIMEOUT);
   const profileName = 'Time Profiler';
 
   let driver;
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   describe('record performance metrics', function () {
     before(async function () {

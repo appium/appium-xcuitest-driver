@@ -1,12 +1,8 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {amendCapabilities, UICATALOG_CAPS} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {fs, tempDir, zip} from 'appium/support';
 import path from 'path';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const UICAT_CONTAINER = `@com.example.apple-samplecode.UICatalog`;
 
@@ -19,7 +15,15 @@ describe('XCUITestDriver - file movement', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });

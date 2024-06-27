@@ -1,20 +1,13 @@
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
-import sinonChai from 'sinon-chai';
 import cmds from '../../lib/commands';
 import XCUITestDriver from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import RealDevice from '../../lib/real-device';
 
-chai.should();
-chai.use(sinonChai).use(chaiAsPromised);
-
-const expect = chai.expect;
 
 const caps = {
   fistMatch: [{}],
@@ -27,8 +20,20 @@ const caps = {
 };
 
 describe('XCUITestDriver', function () {
-  /** @type {sinon.SinonSandbox} */
   let sandbox;
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
+    expect = chai.expect;
+  });
+
   beforeEach(function () {
     sandbox = createSandbox();
   });
@@ -75,7 +80,6 @@ describe('XCUITestDriver', function () {
         // fake the proxy to WDA
         const jwproxy = new JWProxy();
         jwproxyCommandSpy = sandbox.stub(jwproxy, 'command').resolves({some: 'thing'});
-        // @ts-ignore ok for tests
         driver.wda = {
           jwproxy,
         };
@@ -249,7 +253,6 @@ describe('XCUITestDriver', function () {
         driver = new XCUITestDriver();
         const jwproxy = new JWProxy();
         sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
-        // @ts-ignore ok for tests
         driver.wda = {
           jwproxy,
         };
@@ -290,13 +293,13 @@ describe('XCUITestDriver', function () {
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      expect(driver.isRealDevice).to.have.been.calledOnce;
-      expect(driver.helpers.configureApp).to.have.been.calledOnce;
-      expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledOnceWith(
+      (driver.isRealDevice).calledOnce.should.be.true;
+      (driver.helpers.configureApp).calledOnce.should.be.true;
+      (RealDeviceManagementModule.installToRealDevice).calledOnceWith(
         '/path/to/iosApp.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined},
-      );
+      ).should.be.true;
     });
 
     it('should install multiple apps from otherApps as JSON array on on real devices', async function () {
@@ -313,18 +316,18 @@ describe('XCUITestDriver', function () {
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      expect(driver.isRealDevice).to.have.been.calledTwice;
-      expect(driver.helpers.configureApp).to.have.been.calledTwice;
-      expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
+      (driver.isRealDevice).calledTwice.should.be.true;
+      (driver.helpers.configureApp).calledTwice.should.be.true;
+      (RealDeviceManagementModule.installToRealDevice).calledWith(
         '/path/to/iosApp1.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined},
-      );
-      expect(RealDeviceManagementModule.installToRealDevice).to.have.been.calledWith(
+      ).should.be.true;
+      (RealDeviceManagementModule.installToRealDevice).calledWith(
         '/path/to/iosApp2.app',
         'bundle-id2',
         {skipUninstall: true, timeout: undefined},
-      );
+      ).should.be.true;
     });
 
     it('should install multiple apps from otherApps as string on simulators', async function () {
@@ -339,13 +342,13 @@ describe('XCUITestDriver', function () {
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      expect(driver.isRealDevice).to.have.been.calledOnce;
-      expect(driver.helpers.configureApp).to.have.been.calledOnce;
-      expect(SimulatorManagementModule.installToSimulator).to.have.been.calledOnceWith(
+      (driver.isRealDevice).calledOnce.should.be.true;
+      (driver.helpers.configureApp).calledOnce.should.be.true;
+      (SimulatorManagementModule.installToSimulator).calledOnceWith(
         '/path/to/iosApp.app',
         'bundle-id',
         {newSimulator: false},
-      );
+      ).should.be.true;
     });
 
     it('should install multiple apps from otherApps as JSON array on simulators', async function () {
@@ -361,18 +364,18 @@ describe('XCUITestDriver', function () {
       driver.opts.noReset = false;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      expect(driver.isRealDevice).to.have.been.calledTwice;
-      expect(driver.helpers.configureApp).to.have.been.calledTwice;
-      expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
+      (driver.isRealDevice).calledTwice.should.be.true;
+      (driver.helpers.configureApp).calledTwice.should.be.true;
+      (SimulatorManagementModule.installToSimulator).calledWith(
         '/path/to/iosApp1.app',
         'bundle-id',
         {newSimulator: false},
-      );
-      expect(SimulatorManagementModule.installToSimulator).to.have.been.calledWith(
+      ).should.be.true;
+      (SimulatorManagementModule.installToSimulator).calledWith(
         '/path/to/iosApp2.app',
         'bundle-id2',
         {newSimulator: false},
-      );
+      ).should.be.true;
     });
   });
 

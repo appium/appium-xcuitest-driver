@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import _ from 'lodash';
 import {retryInterval} from 'asyncbox';
@@ -13,8 +11,6 @@ import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const TEST_PAUSE_DURATION = 500;
 
@@ -28,7 +24,16 @@ describe('XCUITestDriver - find -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+
   before(async function () {
+
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });

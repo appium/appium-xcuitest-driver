@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {retryInterval} from 'asyncbox';
 import {getSimulator} from 'appium-ios-simulator';
 import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
@@ -17,9 +15,6 @@ import {translateDeviceName} from '../../../lib/utils';
 import axios from 'axios';
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
-
-chai.should();
-chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
 
@@ -41,8 +36,15 @@ describe('XCUITestDriver', function () {
   let baseCaps;
   let caps;
   let driver;
+  let chai;
 
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     const udid = await createDevice();
     baseCaps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
     caps = amendCapabilities(baseCaps, {

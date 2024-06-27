@@ -1,14 +1,19 @@
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('alert commands', function () {
   let driver = new XCUITestDriver();
   let proxySpy = sinon.stub(driver, 'proxyCommand');
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   afterEach(function () {
     proxySpy.reset();
@@ -25,7 +30,7 @@ describe('alert commands', function () {
   describe('setAlertText', function () {
     it('should send translated POST request to WDA', async function () {
       await driver.setAlertText('some text');
-      proxySpy.should.have.been.calledOnceWith('/alert/text', 'POST', {value: 'some text'});
+      proxySpy.calledOnceWith('/alert/text', 'POST', {value: 'some text'}).should.be.true;
     });
   });
   describe('postAcceptAlert', function () {
@@ -57,7 +62,7 @@ describe('alert commands', function () {
     it('should send accept alert request to WDA with encoded button label', async function () {
       const buttonLabel = 'some label';
       await driver.execute(`mobile: ${commandName}`, {action: 'accept', buttonLabel});
-      proxySpy.should.have.been.calledOnceWith('/alert/accept', 'POST', {name: buttonLabel});
+      proxySpy.calledOnceWith('/alert/accept', 'POST', {name: buttonLabel}).should.be.true;
     });
 
     it('should send dimsiss alert request to WDA if button label is not provided', async function () {

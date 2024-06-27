@@ -1,12 +1,10 @@
-import chai from 'chai';
 import {parseXCTestStdout} from '../../../lib/commands/xctest';
 
-chai.should();
 
 describe('session commands', function () {
   const xctestLogs1Success =
     `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Passed: True | Crashed: False | Duration: 1.485 | Failure message:  | Location :0
-    XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Passed: True | Crashed: False | Duration: 14.297 | Failure message:  | Location :0  
+    XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Passed: True | Crashed: False | Duration: 14.297 | Failure message:  | Location :0
   `.trim();
   const xctestLogs2Success =
     ` XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Status: passed | Duration: 2.2897069454193115
@@ -16,6 +14,16 @@ describe('session commands', function () {
     `XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample | Status: passed | Duration: 1.9255789518356323
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Status: failed | Duration: 0.033468008041381836 | Failure message: XCTAssertTrue failed - error message here | Location /path/to/XCTesterAppUITests/XCTesterAppUITests.swift:36
   `.trim();
+
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {

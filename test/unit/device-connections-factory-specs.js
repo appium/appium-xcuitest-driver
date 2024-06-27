@@ -1,13 +1,18 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {DeviceConnectionsFactory} from '../../lib/device-connections-factory';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('DeviceConnectionsFactory', function () {
   let devConFactory;
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   beforeEach(function () {
     devConFactory = new DeviceConnectionsFactory();
