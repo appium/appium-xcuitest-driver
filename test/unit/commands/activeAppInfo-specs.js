@@ -4,7 +4,6 @@ import XCUITestDriver from '../../../lib/driver';
 
 describe('get activeapp commands', function () {
   const driver = new XCUITestDriver();
-  // @ts-ignore give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
   let proxyStub;
 
@@ -18,7 +17,6 @@ describe('get activeapp commands', function () {
   });
 
   beforeEach(function () {
-    // @ts-ignore ok for tests
     proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
   });
 
@@ -35,23 +33,16 @@ describe('get activeapp commands', function () {
     });
 
     const out = await driver.mobileGetActiveAppInfo();
-    // @ts-ignore should raises type error
     out.pid.should.eq(15438);
-    // @ts-ignore should raises type error
     out.name.should.eq('');
-    // @ts-ignore should raises type error
     out.bundleId.should.eq('com.apple.DocumentsApp');
-    // @ts-ignore should raises type error
     out.processArguments.env.HAPPY.should.eq('testing');
-    // @ts-ignore should raises type error
     out.processArguments.args[0].should.eq('happy');
-    // @ts-ignore should raises type error
     out.processArguments.args[1].should.eq('testing');
   });
 
   it('get active app info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    // @ts-ignore should raises type error
     await driver.mobileGetActiveAppInfo().should.be.rejected;
   });
 });

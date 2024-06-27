@@ -66,7 +66,6 @@ describe('Safari SSL', function () {
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     try {
       driver = await initSession(caps);
-      // @ts-ignore
       await driver.getPageSource().should.eventually.include('Arbitrary text');
       await deleteSession();
       await B.delay(1000);
@@ -74,7 +73,6 @@ describe('Safari SSL', function () {
       // Now do another session using the same cert to verify that it still works
       driver = await initSession(caps);
       await driver.url(localHttpsUrl);
-      // @ts-ignore
       await driver.getPageSource().should.eventually.include('Arbitrary text');
     } finally {
       await deleteSession();

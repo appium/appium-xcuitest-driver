@@ -50,7 +50,6 @@ describe('css-converter.js', function () {
     ];
     for (const [cssSelector, iosClassChainSelector] of simpleCases) {
       it(`should convert '${cssSelector}' to '${iosClassChainSelector}'`, function () {
-        // @ts-ignore should raises type error
         CssConverter.toIosClassChainSelector(cssSelector).should.equal(iosClassChainSelector);
       });
     }
@@ -64,7 +63,6 @@ describe('css-converter.js', function () {
     ]);
     for (const cssSelector of testCases) {
       it(`should reject '${cssSelector}'`, function () {
-        // @ts-ignore should raises type error
         (() => CssConverter.toIosClassChainSelector(cssSelector)).should.throw();
       });
     }

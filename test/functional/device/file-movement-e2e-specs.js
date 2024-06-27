@@ -41,7 +41,6 @@ describe('XCUITestDriver - file movement', function () {
 
       it('should be able to fetch the Address book', async function () {
         let stringData = await pullFileAsString(driver, `${UICAT_CONTAINER}/PkgInfo`);
-        // @ts-ignore
         stringData.indexOf('APPL').should.not.equal(-1);
       });
 
@@ -59,7 +58,6 @@ describe('XCUITestDriver - file movement', function () {
         await driver.pushFile(remotePath, base64Data);
 
         const remoteStringData = await pullFileAsString(driver, remotePath);
-        // @ts-ignore
         remoteStringData.should.equal(stringData);
       });
 
@@ -71,12 +69,10 @@ describe('XCUITestDriver - file movement', function () {
         await driver.pushFile(remotePath, base64Data);
 
         const remoteStringData = await pullFileAsString(driver, remotePath);
-        // @ts-ignore
         remoteStringData.should.equal(stringData);
 
         await driver.execute('mobile: deleteFile', {remotePath});
 
-        // @ts-ignore
         await pullFileAsString(driver, remotePath).should.be.rejectedWith(/does not exist/);
       });
     });
@@ -101,7 +97,6 @@ describe('XCUITestDriver - file movement', function () {
           await fs.mkdir(extractedDataPath);
           await zip.extractAllTo(zipPath, extractedDataPath);
           const itemsCount = (await fs.readdir(extractedDataPath)).length;
-          // @ts-ignore
           itemsCount.should.be.above(1);
         } finally {
           await fs.rimraf(tmpRoot);
@@ -118,7 +113,6 @@ describe('XCUITestDriver - file movement', function () {
 
       await driver.pushFile(remotePath, base64Data);
       let remoteStringData = await pullFileAsString(driver, remotePath);
-      // @ts-ignore
       remoteStringData.should.equal(stringData);
     });
 
@@ -130,12 +124,10 @@ describe('XCUITestDriver - file movement', function () {
       await driver.pushFile(remotePath, base64Data);
 
       const remoteStringData = await pullFileAsString(driver, remotePath);
-      // @ts-ignore
       remoteStringData.should.equal(stringData);
 
       await driver.execute('mobile: deleteFile', {remotePath});
 
-      // @ts-ignore
       await pullFileAsString(driver, remotePath).should.be.rejectedWith(/does not exist/);
     });
   });

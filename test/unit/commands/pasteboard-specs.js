@@ -1,4 +1,3 @@
-// @ts-ignore
 import sinon from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 import Simctl from 'node-simctl';
@@ -18,7 +17,6 @@ describe('pasteboard commands', function () {
     const simctl = new Simctl();
     setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
     getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
-    // @ts-ignore
     driver._device = { simctl };
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
   });
@@ -41,7 +39,6 @@ describe('pasteboard commands', function () {
     });
 
     it('getPasteboard should not be called', async function () {
-      // @ts-ignore should raises type error
       await driver.mobileGetPasteboard().should.be.rejectedWith(/not supported/);
       getPasteboardStub.notCalled.should.be.true;
     });
@@ -72,7 +69,6 @@ describe('pasteboard commands', function () {
       getPasteboardStub.returns(content);
       const result = await driver.mobileGetPasteboard();
       getPasteboardStub.calledOnce.should.be.true;
-      // @ts-ignore should raises type error
       result.should.eql(content);
     });
   });

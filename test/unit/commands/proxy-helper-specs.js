@@ -5,7 +5,6 @@ import XCUITestDriver from '../../../lib/driver';
 
 describe('proxy commands', function () {
   let driver = new XCUITestDriver();
-  // @ts-ignore give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
 
   let chai;
@@ -47,7 +46,6 @@ describe('proxy commands', function () {
       await driver
         // @ts-expect-error incorrect usage
         .proxyCommand('/some/endpoint', null, {some: 'stuff'})
-        // @ts-ignore should raises type error
         .should.be.rejectedWith(/GET, POST/);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {

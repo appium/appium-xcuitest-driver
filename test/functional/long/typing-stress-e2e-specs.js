@@ -1,5 +1,3 @@
-// @ts-check
-
 import {UICATALOG_CAPS, amendCapabilities} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession} from '../helpers/session';

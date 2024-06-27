@@ -78,14 +78,12 @@ describe('general commands', function () {
     it('should reject request for first visible child with no context', async function () {
       await driver
         .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)
-        // @ts-ignore should raises type error
         .should.be.rejectedWith(/without a context element/);
     });
 
     it('should reject request for multiple first visible children', async function () {
       await driver
         .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)
-        // @ts-ignore should raises type error
         .should.be.rejectedWith(/Cannot get multiple/);
     });
 

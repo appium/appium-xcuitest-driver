@@ -80,7 +80,6 @@ describe('XCUITestDriver', function () {
         // fake the proxy to WDA
         const jwproxy = new JWProxy();
         jwproxyCommandSpy = sandbox.stub(jwproxy, 'command').resolves({some: 'thing'});
-        // @ts-ignore ok for tests
         driver.wda = {
           jwproxy,
         };
@@ -254,7 +253,6 @@ describe('XCUITestDriver', function () {
         driver = new XCUITestDriver();
         const jwproxy = new JWProxy();
         sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
-        // @ts-ignore ok for tests
         driver.wda = {
           jwproxy,
         };
@@ -295,11 +293,8 @@ describe('XCUITestDriver', function () {
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      // @ts-ignore
       (driver.isRealDevice).calledOnce.should.be.true;
-      // @ts-ignore
       (driver.helpers.configureApp).calledOnce.should.be.true;
-      // @ts-ignore
       (RealDeviceManagementModule.installToRealDevice).calledOnceWith(
         '/path/to/iosApp.app',
         'bundle-id',
@@ -321,17 +316,13 @@ describe('XCUITestDriver', function () {
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      // @ts-ignore
       (driver.isRealDevice).calledTwice.should.be.true;
-      // @ts-ignore
       (driver.helpers.configureApp).calledTwice.should.be.true;
-      // @ts-ignore
       (RealDeviceManagementModule.installToRealDevice).calledWith(
         '/path/to/iosApp1.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined},
       ).should.be.true;
-      // @ts-ignore
       (RealDeviceManagementModule.installToRealDevice).calledWith(
         '/path/to/iosApp2.app',
         'bundle-id2',
@@ -351,11 +342,8 @@ describe('XCUITestDriver', function () {
       driver.opts.device = 'some-device';
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      // @ts-ignore
       (driver.isRealDevice).calledOnce.should.be.true;
-      // @ts-ignore
       (driver.helpers.configureApp).calledOnce.should.be.true;
-      // @ts-ignore
       (SimulatorManagementModule.installToSimulator).calledOnceWith(
         '/path/to/iosApp.app',
         'bundle-id',
@@ -376,17 +364,13 @@ describe('XCUITestDriver', function () {
       driver.opts.noReset = false;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      // @ts-ignore
       (driver.isRealDevice).calledTwice.should.be.true;
-      // @ts-ignore
       (driver.helpers.configureApp).calledTwice.should.be.true;
-      // @ts-ignore
       (SimulatorManagementModule.installToSimulator).calledWith(
         '/path/to/iosApp1.app',
         'bundle-id',
         {newSimulator: false},
       ).should.be.true;
-      // @ts-ignore
       (SimulatorManagementModule.installToSimulator).calledWith(
         '/path/to/iosApp2.app',
         'bundle-id2',

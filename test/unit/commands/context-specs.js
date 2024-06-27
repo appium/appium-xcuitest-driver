@@ -61,7 +61,6 @@ describe('context', function () {
       driver.opts.safariIgnoreWebHostnames =
         'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
-      // @ts-ignore should raises type error
       /** @type {(string|number)[]} */ (selectPageArgs).should.eql(['5191', 1]);
     });
     it('should not call selectPage if a new page is introduced and that page is blacklisted', async function () {

@@ -15,12 +15,10 @@ describe('ssl certificate parser command', function () {
   });
 
   it('try to parse LibreSSL command output', function () {
-    // @ts-ignore should raises type error
     parseCommonName(sslOutputLibreSSL).should.eql(expectedString);
   });
 
   it('try to parse OpenSSL command output', function () {
-    // @ts-ignore should raises type error
     parseCommonName(sslOutputOpenSSL).should.eql(expectedString);
   });
 });

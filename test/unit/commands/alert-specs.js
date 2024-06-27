@@ -56,7 +56,6 @@ describe('alert commands', function () {
     it('should reject request to WDA if action parameter is not supported', async function () {
       await driver
         .execute(`mobile: ${commandName}`, {action: 'blabla'})
-        // @ts-ignore should raises type error
         .should.be.rejectedWith(/should be either/);
     });
 
@@ -86,7 +85,6 @@ describe('alert commands', function () {
       proxySpy.calledOnce.should.be.true;
       proxySpy.firstCall.args[0].should.eql('/wda/alert/buttons');
       proxySpy.firstCall.args[1].should.eql('GET');
-      // @ts-ignore should raises type error
       response.value[0].should.equal(buttonLabel);
     });
   });

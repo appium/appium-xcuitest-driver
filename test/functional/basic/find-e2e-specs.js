@@ -162,7 +162,6 @@ describe('XCUITestDriver - find -', function () {
         let begin = Date.now();
         const el = await driver.$('//something_not_there');
         el.error.error.should.equal('no such element');
-        // @ts-ignore
         (Date.now() - begin).should.be.above(5000);
       });
       it.skip('should return the last button', async function () {
@@ -200,11 +199,8 @@ describe('XCUITestDriver - find -', function () {
       it('should search an extended path by descendant', async function () {
         let els = await driver.$$('//XCUIElementTypeTable//XCUIElementTypeButton');
         let texts = await B.all(_.map(els, (el) => el.getAttribute('name')));
-        // @ts-ignore
         texts.should.not.include('UICatalog');
-        // @ts-ignore
         texts.should.not.include('UIKitCatalog');
-        // @ts-ignore
         texts.should.include('X Button');
       });
       it.skip('should filter by indices', async function () {

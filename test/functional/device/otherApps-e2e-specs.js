@@ -31,11 +31,9 @@ describe('OtherApps', function () {
 
   it('should start and stop a session', async function () {
     driver = await initSession(caps);
-    // @ts-ignore
     await driver.isAppInstalled('io.appium.TestApp').should.eventually.be.equal(true);
     await driver
       .isAppInstalled('com.example.apple-samplecode.UICatalog')
-      // @ts-ignore
       .should.eventually.be.equal(true);
   });
 });

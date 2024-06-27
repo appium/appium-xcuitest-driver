@@ -4,7 +4,6 @@ import XCUITestDriver from '../../../lib/driver';
 
 describe('get deviceinfo commands', function () {
   const driver = new XCUITestDriver();
-  // @ts-ignore give the driver a spy-able proxy object
   driver.wda = {jwproxy: {command: () => {}}};
   let proxyStub;
 
@@ -19,7 +18,6 @@ describe('get deviceinfo commands', function () {
   });
 
   beforeEach(function () {
-    // @ts-ignore ok for tests
     proxyStub = sinon.stub(driver.wda.jwproxy, 'command');
   });
 
@@ -33,13 +31,11 @@ describe('get deviceinfo commands', function () {
       currentLocale: 'ja_EN',
     };
     proxyStub.returns(opts);
-    // @ts-ignore should raises type error
     await driver.mobileGetDeviceInfo().should.eventually.eql(opts);
   });
 
   it('get device info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    // @ts-ignore should raises type error
     await driver.mobileGetDeviceInfo().should.be.rejected;
   });
 });

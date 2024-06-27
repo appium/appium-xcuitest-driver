@@ -51,7 +51,6 @@ describe('safari - windows and frames', function () {
 
     it('should not be able to open js popup windows', async function () {
       await driver.executeScript("window.open('/test/guinea-pig2.html', null)", []);
-      // @ts-ignore
       await spinTitleEquals(driver, 'I am another page title', 5).should.be.rejected;
     });
   });
@@ -88,7 +87,6 @@ describe('safari - windows and frames', function () {
       it.skip('should be able to open js popup windows', async function () {
         await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
         await driver.acceptAlert();
-        // @ts-ignore
         await spinTitleEquals(driver, 'I am another page title', 5).should.eventually.not.be
           .rejected;
         await driver.closeWindow();
@@ -196,7 +194,6 @@ describe('safari - windows and frames', function () {
         await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        // @ts-ignore
         _.isEmpty(await driver.$$('<frameset />')).should.be.false;
       });
 
@@ -205,7 +202,6 @@ describe('safari - windows and frames', function () {
         await driver.getTitle().should.eventually.equal(FRAMESET_TITLE);
 
         await driver.switchToFrame(await driver.$('[name="childframe"]'));
-        // @ts-ignore
         _.isEmpty(await driver.$$('#only_on_page_2')).should.be.false;
       });
 
@@ -265,7 +261,6 @@ describe('safari - windows and frames', function () {
         await h1.getText().should.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        // @ts-ignore
         _.size(await driver.$$('<iframe />')).should.eql(3);
       });
 

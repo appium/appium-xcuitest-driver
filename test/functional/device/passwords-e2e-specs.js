@@ -55,13 +55,11 @@ describe('Passwords', function () {
     it('should enable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': true});
       driver = await initSession(caps);
-      // @ts-ignore
       await isPasswordsMenuShown(driver).should.eventually.eql(true);
     });
     it('should disable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': false});
       driver = await initSession(caps);
-      // @ts-ignore
       await isPasswordsMenuShown(driver).should.eventually.eql(false);
     });
   });

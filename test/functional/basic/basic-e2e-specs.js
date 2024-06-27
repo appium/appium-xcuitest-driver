@@ -40,7 +40,6 @@ describe('XCUITestDriver - basics -', function () {
       const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
       status.build.version.should.exist;
-      // @ts-ignore
       util.inspect(findElementPromise).includes('pending').should.be.true;
       try {
         await findElementPromise;
@@ -62,7 +61,6 @@ describe('XCUITestDriver - basics -', function () {
     describe('plain -', function () {
       it('should get the source for the page', async function () {
         let src = await driver.getPageSource();
-        // @ts-ignore
         (typeof src).should.eql('string');
         checkSource(src);
       });
@@ -80,7 +78,6 @@ describe('XCUITestDriver - basics -', function () {
     it('should background the app for the specified time', async function () {
       let before = Date.now();
       await driver.background(4);
-      // @ts-ignore
       (Date.now() - before).should.be.above(4000);
       (await driver.getPageSource()).indexOf('<AppiumAUT>').should.not.eql(-1);
     });
@@ -137,12 +134,9 @@ describe('XCUITestDriver - basics -', function () {
       ) {
         throw new Error('Image dimensions must not be undefined');
       }
-      // @ts-ignore
       // Viewport size can be smaller than the full image size + status bar on some devices.
       fullImgHeight.should.be.gte(viewImgHeight + Math.round(scale * statusBarSize.height));
-      // @ts-ignore
       viewImgHeight.should.eql(viewportRect.height);
-      // @ts-ignore
       fullImgWidth.should.be.gte(viewImgWidth);
     });
   });
@@ -153,7 +147,6 @@ describe('XCUITestDriver - basics -', function () {
         const expectedTypes = ['syslog', 'crashlog', 'performance', 'server', 'safariConsole'];
         const actualTypes = await driver.getLogTypes();
         for (const actualType of actualTypes) {
-          // @ts-ignore
           expectedTypes.includes(actualType).should.be.true;
         }
       });
@@ -181,7 +174,6 @@ describe('XCUITestDriver - basics -', function () {
     });
     it('should get the current orientation', async function () {
       let orientation = await driver.getOrientation();
-      // @ts-ignore
       ['PORTRAIT', 'LANDSCAPE'].should.include(orientation);
     });
     it('should set the orientation', async function () {

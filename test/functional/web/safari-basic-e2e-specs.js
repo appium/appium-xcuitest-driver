@@ -106,7 +106,6 @@ describe('Safari - basics -', function () {
 
           // the page should load after 70000
           await driver.getPageSource().should.eventually.include('I am some page content');
-          // @ts-ignore
           (Date.now() - startMs).should.be.above(3000);
         });
       });
@@ -134,7 +133,6 @@ describe('Safari - basics -', function () {
         const before = new Date().getTime();
         (await driver.$('<dsfsdfsdfdsfsd />')).error.error.should.eql('no such element');
         const after = new Date().getTime();
-        // @ts-ignore
         (after - before >= 5 * 1000).should.be.ok;
       });
     });
@@ -213,7 +211,6 @@ describe('Safari - basics -', function () {
         const el = await driver.$('#comments');
         await el.clearValue();
         await el.setValue('hello world');
-        // @ts-ignore
         ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
     });
@@ -226,7 +223,6 @@ describe('Safari - basics -', function () {
         const el = await driver.$('#comments');
         await el.click();
         await el.setValue('hello world');
-        // @ts-ignore
         ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
       it('should clear element', async function () {

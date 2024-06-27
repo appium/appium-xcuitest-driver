@@ -1,5 +1,3 @@
-// @ts-check
-
 // eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
@@ -42,9 +40,7 @@ describe('element commands', function () {
 
     it('should call setValue', async function () {
       await driver.setValueImmediate('hello', '2');
-      // @ts-ignore should raises type error
       driver.setValue.calledOnceWithExactly('hello', '2').should.be.true;
-      // @ts-ignore should raises type error
       driver.setValue.returned(undefined).should.be.true;
     });
   });
@@ -172,14 +168,12 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-      // @ts-ignore should raises type error
       await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
       });
     });
 
     it('should throw if trying to get contentSize of something other than table or collection', async function () {
       getAttrStub.resolves('XCUIElementTypeStatusBar');
-      // @ts-ignore should raises type error
       await driver.getContentSize(el).should.be.rejectedWith(/Can't get content size for type/);
     });
 
@@ -291,11 +285,9 @@ describe('element commands', function () {
 
       describe('failure', function () {
         it('should throw invalid argument exception for null', async function () {
-          // @ts-ignore should raises type error
           await driver.setValue(null, elementId).should.be.rejectedWith(/supported/);
         });
         it('should throw invalid argument exception for object', async function () {
-          // @ts-ignore should raises type error
           await driver.setValue({hi: 'there'}, elementId).should.be.rejectedWith(/supported/);
         });
       });
@@ -383,9 +375,7 @@ describe('element commands', function () {
       executeStub.calledOnce.should.be.false;
       atomStub.calledOnce.should.be.true;
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      // @ts-ignore should raises type error
       loc.x.should.equal(0);
-      // @ts-ignore should raises type error
       loc.y.should.equal(0);
     });
 
@@ -395,9 +385,7 @@ describe('element commands', function () {
       executeStub.calledOnce.should.be.true;
       atomStub.calledOnce.should.be.true;
       atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      // @ts-ignore should raises type error
       loc.x.should.equal(fixtureXOffset);
-      // @ts-ignore should raises type error
       loc.y.should.equal(fixtureYOffset);
     });
   });
@@ -437,13 +425,9 @@ describe('element commands', function () {
       getNativeRectStub.calledOnce.should.be.true;
       getLocationStub.calledOnce.should.be.false;
       getSizeStub.calledOnce.should.be.false;
-      // @ts-ignore should raises type error
       rect.x.should.eql(0);
-      // @ts-ignore should raises type error
       rect.y.should.eql(50);
-      // @ts-ignore should raises type error
       rect.width.should.eql(100);
-      // @ts-ignore should raises type error
       rect.height.should.eql(200);
     });
 
@@ -456,13 +440,9 @@ describe('element commands', function () {
       getNativeRectStub.calledOnce.should.be.false;
       getLocationStub.calledOnce.should.be.true;
       getSizeStub.calledOnce.should.be.true;
-      // @ts-ignore should raises type error
       rect.x.should.eql(0);
-      // @ts-ignore should raises type error
       rect.y.should.eql(50);
-      // @ts-ignore should raises type error
       rect.width.should.eql(100);
-      // @ts-ignore should raises type error
       rect.height.should.eql(200);
     });
   });

@@ -54,7 +54,6 @@ describe('Safari - coordinate conversion -', function () {
     async function loadPage(driver, url) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);
-        // @ts-ignore
         await spinTitle(driver).should.eventually.not.include('Cannot Open Page');
       });
     }

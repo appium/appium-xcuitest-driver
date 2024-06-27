@@ -364,13 +364,11 @@ describe('XCUITestDriver - elements -', function () {
           let wheel = wheels[i];
 
           let value = await wheel.getAttribute('value');
-          // @ts-ignore
           parseInt(value, 10).should.eql(values[i]);
 
           await wheel.setValue(150);
 
           value = await wheel.getAttribute('value');
-          // @ts-ignore
           parseInt(value, 10).should.eql(150);
         }
       });

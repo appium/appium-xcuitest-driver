@@ -38,9 +38,7 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
 
     await installToRealDevice.bind(driver)(undefined, bundleId, {});
-    // @ts-ignore
     (realDevice.remove).called.should.be.false;
-    // @ts-ignore
     (realDevice.install).called.should.be.false;
   });
 
@@ -52,9 +50,7 @@ describe('installToRealDevice', function () {
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, undefined, {});
-    // @ts-ignore
     (realDevice.remove).called.should.be.false;
-    // @ts-ignore
     (realDevice.install).called.should.be.false;
   });
 
@@ -70,9 +66,7 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    // @ts-ignore
     (realDevice.remove).called.should.be.false;
-    // @ts-ignore
     (realDevice.install).calledOnce.should.be.true;
   });
 
@@ -88,9 +82,7 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    // @ts-ignore
     (realDevice.remove).calledOnce.should.be.true;
-    // @ts-ignore
     (realDevice.install).calledOnce.should.be.true;
   });
 
@@ -106,9 +98,7 @@ describe('installToRealDevice', function () {
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
-    // @ts-ignore
     (realDevice.remove).calledOnce.should.be.true;
-    // @ts-ignore
     (realDevice.install).calledOnce.should.be.true;
   });
 
@@ -128,9 +118,7 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    // @ts-ignore
     (realDevice.remove).calledOnce.should.be.true;
-    // @ts-ignore
     (realDevice.install).calledTwice.should.be.true;
   });
 
@@ -147,9 +135,7 @@ describe('installToRealDevice', function () {
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts).should.be.rejectedWith('ApplicationVerificationFailed');
-    // @ts-ignore
     (realDevice.remove).called.should.be.false;
-    // @ts-ignore
     (realDevice.install).calledOnce.should.be.true;
   });
 });

@@ -28,9 +28,7 @@ describe('session commands', function () {
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {
       const results = parseXCTestStdout(xctestLogs1Success);
-      // @ts-ignore should raise type error
       results.length.should.equal(2);
-      // @ts-ignore should raise type error
       results[0].should.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
@@ -40,7 +38,6 @@ describe('session commands', function () {
         failureMessage: null,
         location: ':0',
       });
-      // @ts-ignore should raise type error
       results[1].should.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
@@ -55,9 +52,7 @@ describe('session commands', function () {
 
     it('should parse successful test logs', function () {
       const results = parseXCTestStdout(xctestLogs2Success);
-      // @ts-ignore should raise type error
       results.length.should.equal(2);
-      // @ts-ignore should raise type error
       results[0].should.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
@@ -65,7 +60,6 @@ describe('session commands', function () {
         crashed: false,
         duration: 2.2897069454193115,
       });
-      // @ts-ignore should raise type error
       results[1].should.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
@@ -78,9 +72,7 @@ describe('session commands', function () {
 
     it('should parse unsuccessful test logs', function () {
       const results = parseXCTestStdout(xctestLogs2Failure);
-      // @ts-ignore should raise type error
       results.length.should.equal(2);
-      // @ts-ignore should raise type error
       results[0].should.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
@@ -88,7 +80,6 @@ describe('session commands', function () {
         crashed: false,
         duration: 1.9255789518356323,
       });
-      // @ts-ignore should raise type error
       results[1].should.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',

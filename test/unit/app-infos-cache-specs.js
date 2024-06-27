@@ -69,13 +69,9 @@ describe('AppInfosCache', function () {
     });
 
     it('should extract cached info', async function () {
-      // @ts-ignore should raises type error
       await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
-      // @ts-ignore should raises type error
       await cache.extractBundleId(ipaPath).should.eventually.eql(BIOMETRIC_BUNDLE_ID);
-      // @ts-ignore should raises type error
       await cache.extractBundleVersion(appPath).should.eventually.eql('1');
-      // @ts-ignore should raises type error
       await cache.extractExecutableName(ipaPath).should.eventually.eql('biometric');
     });
   });

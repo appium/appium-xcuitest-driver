@@ -35,7 +35,6 @@ describe('app-utils', function () {
         });
         srcStream = fs.createReadStream(tmpSrc);
         ({rootDir: appRoot} = await unzipStream(srcStream));
-        // @ts-ignore should raises type error
         await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
@@ -58,7 +57,6 @@ describe('app-utils', function () {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
-        // @ts-ignore should raises type error
         await unzipStream(srcStream).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
@@ -76,7 +74,6 @@ describe('app-utils', function () {
           cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
-        // @ts-ignore should raises type error
         await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
@@ -91,7 +88,6 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
-        // @ts-ignore should raises type error
         await unzipFile(tmpSrc).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
