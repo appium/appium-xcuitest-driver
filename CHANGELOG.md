@@ -1,3 +1,9 @@
+## [7.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.2...v7.21.0) (2024-06-27)
+
+### Features
+
+* Add mobile: wrappers for the clipboard API ([#2418](https://github.com/appium/appium-xcuitest-driver/issues/2418)) ([3b41576](https://github.com/appium/appium-xcuitest-driver/commit/3b41576b5cb51f6b4c296e48c799c069cae50f63))
+
 ## [7.20.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.1...v7.20.2) (2024-06-27)
 
 ### Miscellaneous Chores
