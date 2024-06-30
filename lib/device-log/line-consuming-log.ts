@@ -10,7 +10,7 @@ export abstract class LineConsumingLog extends IOSLog<string, TSerializedEntry> 
   }
 
   protected override _deserializeEntry(value: TSerializedEntry): LogEntry {
-    const [message, timestamp] = value as [string, number];
+    const [message, timestamp] = value;
     return toLogEntry(message, timestamp);
   }
 }
