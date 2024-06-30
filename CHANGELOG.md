@@ -1,3 +1,9 @@
+## [7.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.0...v7.21.1) (2024-06-30)
+
+### Miscellaneous Chores
+
+* Streamline logging helpers ([#2419](https://github.com/appium/appium-xcuitest-driver/issues/2419)) ([d469237](https://github.com/appium/appium-xcuitest-driver/commit/d469237304d507feb1f59b07fd6a76d51f63fe19))
+
 ## [7.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.2...v7.21.0) (2024-06-27)
 
 ### Features
