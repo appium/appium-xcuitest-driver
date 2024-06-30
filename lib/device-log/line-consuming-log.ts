@@ -14,5 +14,3 @@ export abstract class LineConsumingLog extends IOSLog<string, TSerializedEntry> 
     return toLogEntry(message, timestamp) as LogEntry;
   }
 }
-
-export default IOSLog;
