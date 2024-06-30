@@ -1,0 +1,18 @@
+import {IOSLog} from './ios-log';
+import { toLogEntry } from './helpers';
+import type { LogEntry } from '../commands/types';
+
+type TSerializedEntry = [string, number];
+
+export abstract class LineConsumingLog extends IOSLog<string, TSerializedEntry> {
+  protected override _serializeEntry(value: string): TSerializedEntry {
+    return [value, Date.now()] as TSerializedEntry;
+  }
+
+  protected override _deserializeEntry(value: TSerializedEntry): LogEntry {
+    const [message, timestamp] = value as [string, number];
+    return toLogEntry(message, timestamp) as LogEntry;
+  }
+}
+
+export default IOSLog;

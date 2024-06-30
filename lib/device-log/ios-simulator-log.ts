@@ -1,27 +1,35 @@
 import _ from 'lodash';
-import {IOSLog} from './ios-log';
-import {logger} from 'appium/support';
-import {exec} from 'teen_process';
+import {SubProcess, exec} from 'teen_process';
+import { LineConsumingLog } from './line-consuming-log';
+import type { Simulator } from 'appium-ios-simulator';
+import type { AppiumLogger } from '@appium/types';
 
-const log = logger.getLogger('IOSSimulatorLog');
 const EXECVP_ERROR_PATTERN = /execvp\(\)/;
 
 const START_TIMEOUT = 10000;
 
-export class IOSSimulatorLog extends IOSLog {
-  constructor({sim, showLogs, xcodeVersion, iosSimulatorLogsPredicate}) {
-    super();
-    this.sim = sim;
-    this.showLogs = !!showLogs;
-    this.xcodeVersion = xcodeVersion;
-    this.predicate = iosSimulatorLogsPredicate;
+export interface IOSSimulatorLogOptions {
+  sim: Simulator;
+  showLogs?: boolean;
+  iosSimulatorLogsPredicate?: string;
+  log?: AppiumLogger;
+}
+
+export class IOSSimulatorLog extends LineConsumingLog {
+  private sim: Simulator;
+  private showLogs: boolean;
+  private predicate?: string;
+  private proc: SubProcess | null;
+
+  constructor(opts: IOSSimulatorLogOptions) {
+    super({log: opts.log});
+    this.sim = opts.sim;
+    this.showLogs = !!opts.showLogs;
+    this.predicate = opts.iosSimulatorLogsPredicate;
     this.proc = null;
   }
 
-  /**
-   * @override
-   */
-  async startCapture() {
+  override async startCapture(): Promise<void> {
     if (_.isUndefined(this.sim.udid)) {
       throw new Error(`Log capture requires a sim udid`);
     }
@@ -33,7 +41,7 @@ export class IOSSimulatorLog extends IOSLog {
     if (this.predicate) {
       spawnArgs.push('--predicate', this.predicate);
     }
-    log.debug(
+    this.log.debug(
       `Starting log capture for iOS Simulator with udid '${this.sim.udid}' ` + `using simctl`,
     );
     try {
@@ -48,10 +56,7 @@ export class IOSSimulatorLog extends IOSLog {
     }
   }
 
-  /**
-   * @override
-   */
-  async stopCapture() {
+  override async stopCapture(): Promise<void> {
     if (!this.proc) {
       return;
     }
@@ -59,44 +64,38 @@ export class IOSSimulatorLog extends IOSLog {
     this.proc = null;
   }
 
-  /**
-   * @override
-   */
-  get isCapturing() {
-    return this.proc && this.proc.isRunning;
+  override get isCapturing(): boolean {
+    return Boolean(this.proc && this.proc.isRunning);
   }
 
-  /**
-   * @param {string} logRow
-   * @param {string} [prefix='']
-   */
-  onOutput(logRow, prefix = '') {
+  private onOutput(logRow: string, prefix: string = ''): void {
     this.broadcast(logRow);
     if (this.showLogs) {
       const space = prefix.length > 0 ? ' ' : '';
-      log.info(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
+      this.log.info(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
     }
   }
 
-  async killLogSubProcess() {
-    if (!this.proc.isRunning) {
+  private async killLogSubProcess(): Promise<void> {
+    if (!this.proc?.isRunning) {
       return;
     }
-    log.debug('Stopping iOS log capture');
+
+    this.log.debug('Stopping iOS log capture');
     try {
       await this.proc.stop('SIGTERM', 1000);
     } catch (e) {
       if (!this.proc.isRunning) {
         return;
       }
-      log.warn('Cannot stop log capture process. Sending SIGKILL');
+      this.log.warn('Cannot stop log capture process. Sending SIGKILL');
       await this.proc.stop('SIGKILL');
     }
   }
 
-  async finishStartingLogCapture() {
+  private async finishStartingLogCapture() {
     if (!this.proc) {
-      log.errorAndThrow('Could not capture simulator log');
+      throw this.log.errorWithException('Could not capture simulator log');
     }
 
     for (const streamName of ['stdout', 'stderr']) {
