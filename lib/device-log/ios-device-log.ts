@@ -14,7 +14,7 @@ export class IOSDeviceLog extends LineConsumingLog {
   private service: any | null;
 
   constructor(opts: IOSDeviceLogOpts) {
-    super();
+    super({log: opts.log});
     this.udid = opts.udid;
     this.showLogs = !!opts.showLogs;
     this.service = null;
