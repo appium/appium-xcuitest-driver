@@ -1,3 +1,9 @@
+## [7.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.1...v7.21.2) (2024-07-01)
+
+### Miscellaneous Chores
+
+* Rewrite logging-related classes to typescript ([#2420](https://github.com/appium/appium-xcuitest-driver/issues/2420)) ([9789575](https://github.com/appium/appium-xcuitest-driver/commit/97895755c41a3a729a8f4fd972c0f900a41f383a))
+
 ## [7.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.0...v7.21.1) (2024-06-30)
 
 ### Miscellaneous Chores
