@@ -39,19 +39,6 @@ export abstract class IOSLog<
     return this._log;
   }
 
-  broadcast(entry: TRawEntry): void {
-    let recentIndex = -1;
-    for (const key of this.logs.rkeys()) {
-      recentIndex = key;
-      break;
-    }
-    const serializedEntry = this._serializeEntry(entry);
-    this.logs.set(++recentIndex, serializedEntry);
-    if (this.listenerCount('output')) {
-      this.emit('output', this._deserializeEntry(serializedEntry));
-    }
-  }
-
   getLogs(): LogEntry[] {
     const result: LogEntry[] = [];
     let recentLogIndex: number | null = null;
@@ -81,6 +68,19 @@ export abstract class IOSLog<
 
   protected _clearEntries() {
     this.logs.clear();
+  }
+
+  protected broadcast(entry: TRawEntry): void {
+    let recentIndex = -1;
+    for (const key of this.logs.rkeys()) {
+      recentIndex = key;
+      break;
+    }
+    const serializedEntry = this._serializeEntry(entry);
+    this.logs.set(++recentIndex, serializedEntry);
+    if (this.listenerCount('output')) {
+      this.emit('output', this._deserializeEntry(serializedEntry));
+    }
   }
 }
 

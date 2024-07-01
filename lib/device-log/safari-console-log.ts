@@ -66,7 +66,7 @@ export class SafariConsoleLog extends LineConsumingLog {
    * object, stringified.
    *
    */
-  addLogLine(err: Error | null, entry: SafariConsoleEntry): void {
+  onConsoleLogEvent(err: object | null, entry: SafariConsoleEntry): void {
     const serializedEntry = JSON.stringify(entry);
     this.broadcast(serializedEntry);
     this.log.info(`[SafariConsole] ${_.truncate(serializedEntry)}`);

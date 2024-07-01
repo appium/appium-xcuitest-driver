@@ -56,7 +56,7 @@ export class SafariNetworkLog extends LineConsumingLog {
     return true;
   }
 
-  addLogLine(method: string, entry: SafariNetworkLogEntry): void {
+  onNetworkEvent(method: string, entry: SafariNetworkLogEntry): void {
     if (!MONITORED_EVENTS.includes(method)) {
       return;
     }
