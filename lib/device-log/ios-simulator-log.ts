@@ -99,18 +99,18 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
 
     for (const streamName of ['stdout', 'stderr']) {
-      this.proc.on(`lines-${streamName}`, (/** @type {string[]} */ lines) => {
+      this.proc.on(`lines-${streamName}`, (lines: string[]) => {
         for (const line of lines) {
           this.onOutput(line, ...(streamName === 'stderr' ? ['STDERR'] : []));
         }
       });
     }
 
-    const startDetector = (/** @type {string} */ stdout, /** @type {string} */ stderr) => {
+    const startDetector = (stdout: string, stderr: string) => {
       if (EXECVP_ERROR_PATTERN.test(stderr)) {
         throw new Error('iOS log capture process failed to start');
       }
-      return stdout || stderr;
+      return Boolean(stdout || stderr);
     };
     await this.proc.start(startDetector, START_TIMEOUT);
   }
