@@ -12,13 +12,13 @@ export interface IOSSimulatorLogOptions {
   sim: Simulator;
   showLogs?: boolean;
   iosSimulatorLogsPredicate?: string;
-  log?: AppiumLogger;
+  log: AppiumLogger;
 }
 
 export class IOSSimulatorLog extends LineConsumingLog {
-  private sim: Simulator;
-  private showLogs: boolean;
-  private predicate?: string;
+  private readonly sim: Simulator;
+  private readonly showLogs: boolean;
+  private readonly predicate?: string;
   private proc: SubProcess | null;
 
   constructor(opts: IOSSimulatorLogOptions) {
@@ -93,7 +93,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
   }
 
-  private async finishStartingLogCapture() {
+  private async finishStartingLogCapture(): Promise<void> {
     if (!this.proc) {
       throw this.log.errorWithException('Could not capture simulator log');
     }
