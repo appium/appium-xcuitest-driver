@@ -1,3 +1,9 @@
+## [7.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.2...v7.22.0) (2024-07-02)
+
+### Features
+
+* Update console and network log handlers ([#2421](https://github.com/appium/appium-xcuitest-driver/issues/2421)) ([3c72721](https://github.com/appium/appium-xcuitest-driver/commit/3c727219577c51d941d6fab68feda62eaf7bf774))
+
 ## [7.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.1...v7.21.2) (2024-07-01)
 
 ### Miscellaneous Chores
