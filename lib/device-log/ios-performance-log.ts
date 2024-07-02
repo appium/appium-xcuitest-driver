@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import type { AppiumLogger } from '@appium/types';
+import { MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT } from './helpers';
 import { LineConsumingLog } from './line-consuming-log';
-
-const MAX_EVENTS = 5000;
 
 type PerformanceLogEntry = object;
 export interface IOSPerformanceLogOptions {
@@ -17,7 +16,7 @@ export class IOSPerformanceLog extends LineConsumingLog {
 
   constructor(opts: IOSPerformanceLogOptions) {
     super({
-      maxBufferSize: opts.maxEvents ?? MAX_EVENTS,
+      maxBufferSize: opts.maxEvents ?? MAX_BUFFERED_EVENTS_COUNT,
       log: opts.log,
     });
     this.remoteDebugger = opts.remoteDebugger;
@@ -44,7 +43,7 @@ export class IOSPerformanceLog extends LineConsumingLog {
   private onTimelineEvent(event: PerformanceLogEntry): void {
     const serializedEntry = JSON.stringify(event);
     this.broadcast(serializedEntry);
-    this.log.debug(`Received Timeline event: ${_.truncate(serializedEntry)}`);
+    this.log.debug(`Received Timeline event: ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);
   }
 }
 

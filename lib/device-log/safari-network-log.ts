@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { LineConsumingLog } from './line-consuming-log';
+import { MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT } from './helpers';
 import type { AppiumLogger } from '@appium/types';
 
 const EVENTS_TO_LOG = [
@@ -13,6 +14,7 @@ const MONITORED_EVENTS = [
 ];
 
 export interface SafariConsoleLogOptions {
+  showLogs: boolean;
   log: AppiumLogger;
 }
 
@@ -46,8 +48,14 @@ export interface SafariNetworkLogEntry {
 }
 
 export class SafariNetworkLog extends LineConsumingLog {
+  private readonly _showLogs: boolean;
+
   constructor(opts: SafariConsoleLogOptions) {
-    super({log: opts.log});
+    super({
+      log: opts.log,
+      maxBufferSize: MAX_BUFFERED_EVENTS_COUNT,
+    });
+    this._showLogs = opts.showLogs;
   }
 
   override async startCapture(): Promise<void> {}
@@ -63,8 +71,8 @@ export class SafariNetworkLog extends LineConsumingLog {
 
     const serializedEntry = JSON.stringify(entry);
     this.broadcast(serializedEntry);
-    if (EVENTS_TO_LOG.includes(method)) {
-      this.log.info(`[SafariNetwork] ${_.truncate(serializedEntry)}`);
+    if (this._showLogs && EVENTS_TO_LOG.includes(method)) {
+      this.log.info(`[SafariNetwork] ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);
     }
   }
 }

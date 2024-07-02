@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import type { AppiumLogger } from '@appium/types';
-import { toLogEntry, DEFAULT_LOG_LEVEL } from './helpers';
+import {
+  toLogEntry,
+  DEFAULT_LOG_LEVEL,
+  MAX_JSON_LOG_LENGTH,
+  MAX_BUFFERED_EVENTS_COUNT
+} from './helpers';
 import IOSLog from './ios-log';
 import type { LogEntry } from '../commands/types';
 
@@ -11,6 +16,7 @@ const LOG_LEVELS_MAP = {
 };
 
 export interface SafariConsoleLogOptions {
+  showLogs: boolean;
   log: AppiumLogger;
 }
 
@@ -37,8 +43,14 @@ export interface SafariConsoleEntry {
 type TSerializedEntry = [SafariConsoleEntry, number];
 
 export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntry> {
+  private readonly _showLogs: boolean;
+
   constructor(opts: SafariConsoleLogOptions) {
-    super({log: opts.log});
+    super({
+      log: opts.log,
+      maxBufferSize: MAX_BUFFERED_EVENTS_COUNT,
+    });
+    this._showLogs = opts.showLogs;
   }
 
   override async startCapture(): Promise<void> {}
@@ -78,7 +90,9 @@ export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntr
    */
   onConsoleLogEvent(err: object | null, entry: SafariConsoleEntry): void {
     this.broadcast(entry);
-    this.log.info(`[SafariConsole] ${_.truncate(JSON.stringify(entry))}`);
+    if (this._showLogs) {
+      this.log.info(`[SafariConsole] ${_.truncate(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`);
+    }
   }
 
   protected override _serializeEntry(value: SafariConsoleEntry): TSerializedEntry {
