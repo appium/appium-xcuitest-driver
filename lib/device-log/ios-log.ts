@@ -42,7 +42,7 @@ export abstract class IOSLog<
     for (const value of this.logs.rvalues()) {
       result.push(this._deserializeEntry(value as TSerializedEntry));
     }
-    this.logs.clear();
+    this._clearEntries();
     return result;
   }
 
