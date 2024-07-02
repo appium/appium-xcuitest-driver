@@ -1,6 +1,14 @@
 import _ from 'lodash';
-import { LineConsumingLog } from './line-consuming-log';
 import type { AppiumLogger } from '@appium/types';
+import { toLogEntry, DEFAULT_LOG_LEVEL } from './helpers';
+import IOSLog from './ios-log';
+import type { LogEntry } from '../commands/types';
+
+const LOG_LEVELS_MAP = {
+  error: 'SEVERE',
+  warning: 'WARNING',
+  log: 'FINE',
+};
 
 export interface SafariConsoleLogOptions {
   log: AppiumLogger;
@@ -26,7 +34,9 @@ export interface SafariConsoleEntry {
   stackTrace: SafariConsoleStacktraceEntry[];
 }
 
-export class SafariConsoleLog extends LineConsumingLog {
+type TSerializedEntry = [SafariConsoleEntry, number];
+
+export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntry> {
   constructor(opts: SafariConsoleLogOptions) {
     super({log: opts.log});
   }
@@ -67,10 +77,22 @@ export class SafariConsoleLog extends LineConsumingLog {
    *
    */
   onConsoleLogEvent(err: object | null, entry: SafariConsoleEntry): void {
-    const serializedEntry = JSON.stringify(entry);
-    this.broadcast(serializedEntry);
-    this.log.info(`[SafariConsole] ${_.truncate(serializedEntry)}`);
+    this.broadcast(entry);
+    this.log.info(`[SafariConsole] ${_.truncate(JSON.stringify(entry))}`);
   }
+
+  protected override _serializeEntry(value: SafariConsoleEntry): TSerializedEntry {
+    return [value, Date.now()];
+  }
+
+  protected override _deserializeEntry(value: TSerializedEntry): LogEntry {
+    const [entry, timestamp] = value;
+    return toLogEntry(JSON.stringify(entry), timestamp, mapLogLevel(entry.level));
+  }
+}
+
+function mapLogLevel(originalLevel: string): string {
+  return LOG_LEVELS_MAP[originalLevel] ?? DEFAULT_LOG_LEVEL;
 }
 
 export default SafariConsoleLog;

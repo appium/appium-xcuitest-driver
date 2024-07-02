@@ -1,9 +1,11 @@
 import type { LogEntry } from '../commands/types';
 
-export function toLogEntry(message: string, timestamp: number): LogEntry {
+export const DEFAULT_LOG_LEVEL = 'ALL';
+
+export function toLogEntry(message: string, timestamp: number, level: string = DEFAULT_LOG_LEVEL): LogEntry {
   return {
     timestamp,
-    level: 'ALL',
+    level,
     message,
   };
 }
