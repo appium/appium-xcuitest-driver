@@ -18,7 +18,6 @@ export abstract class IOSLog<
 > extends EventEmitter {
   private maxBufferSize: number;
   private logs: LRUCache<number, TSerializedEntry>;
-  private logIndexSinceLastRequest: number | null;
   private _log: AppiumLogger;
 
   constructor(opts: IOSLogOptions = {}) {
@@ -27,7 +26,6 @@ export abstract class IOSLog<
     this.logs = new LRUCache({
       max: this.maxBufferSize,
     });
-    this.logIndexSinceLastRequest = null;
     this._log = opts.log ?? logger.getLogger(this.constructor.name);
   }
 
@@ -39,40 +37,12 @@ export abstract class IOSLog<
     return this._log;
   }
 
-  broadcast(entry: TRawEntry): void {
-    let recentIndex = -1;
-    for (const key of this.logs.rkeys()) {
-      recentIndex = key;
-      break;
-    }
-    const serializedEntry = this._serializeEntry(entry);
-    this.logs.set(++recentIndex, serializedEntry);
-    if (this.listenerCount('output')) {
-      this.emit('output', this._deserializeEntry(serializedEntry));
-    }
-  }
-
   getLogs(): LogEntry[] {
     const result: LogEntry[] = [];
-    let recentLogIndex: number | null = null;
-    for (const [index, value] of this.logs.entries()) {
-      if (this.logIndexSinceLastRequest && index > this.logIndexSinceLastRequest
-          || !this.logIndexSinceLastRequest) {
-        recentLogIndex = index;
-        result.push(this._deserializeEntry(value));
-      }
+    for (const value of this.logs.rvalues()) {
+      result.push(this._deserializeEntry(value as TSerializedEntry));
     }
-    if (recentLogIndex !== null) {
-      this.logIndexSinceLastRequest = recentLogIndex;
-    }
-    return result;
-  }
-
-  getAllLogs(): LogEntry[] {
-    const result: LogEntry[] = [];
-    for (const value of this.logs.values()) {
-      result.push(this._deserializeEntry(value));
-    }
+    this._clearEntries();
     return result;
   }
 
@@ -81,6 +51,19 @@ export abstract class IOSLog<
 
   protected _clearEntries() {
     this.logs.clear();
+  }
+
+  protected broadcast(entry: TRawEntry): void {
+    let recentIndex = -1;
+    for (const key of this.logs.keys()) {
+      recentIndex = key;
+      break;
+    }
+    const serializedEntry = this._serializeEntry(entry);
+    this.logs.set(++recentIndex, serializedEntry);
+    if (this.listenerCount('output')) {
+      this.emit('output', this._deserializeEntry(serializedEntry));
+    }
   }
 }
 
