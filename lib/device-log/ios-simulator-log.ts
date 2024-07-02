@@ -12,13 +12,13 @@ export interface IOSSimulatorLogOptions {
   sim: Simulator;
   showLogs?: boolean;
   iosSimulatorLogsPredicate?: string;
-  log?: AppiumLogger;
+  log: AppiumLogger;
 }
 
 export class IOSSimulatorLog extends LineConsumingLog {
-  private sim: Simulator;
-  private showLogs: boolean;
-  private predicate?: string;
+  private readonly sim: Simulator;
+  private readonly showLogs: boolean;
+  private readonly predicate?: string;
   private proc: SubProcess | null;
 
   constructor(opts: IOSSimulatorLogOptions) {
@@ -93,24 +93,22 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
   }
 
-  private async finishStartingLogCapture() {
+  private async finishStartingLogCapture(): Promise<void> {
     if (!this.proc) {
       throw this.log.errorWithException('Could not capture simulator log');
     }
 
     for (const streamName of ['stdout', 'stderr']) {
-      this.proc.on(`lines-${streamName}`, (/** @type {string[]} */ lines) => {
-        for (const line of lines) {
-          this.onOutput(line, ...(streamName === 'stderr' ? ['STDERR'] : []));
-        }
+      this.proc.on(`line-${streamName}`, (line: string) => {
+        this.onOutput(line, ...(streamName === 'stderr' ? ['STDERR'] : []));
       });
     }
 
-    const startDetector = (/** @type {string} */ stdout, /** @type {string} */ stderr) => {
+    const startDetector = (stdout: string, stderr: string) => {
       if (EXECVP_ERROR_PATTERN.test(stderr)) {
         throw new Error('iOS log capture process failed to start');
       }
-      return stdout || stderr;
+      return Boolean(stdout || stderr);
     };
     await this.proc.start(startDetector, START_TIMEOUT);
   }

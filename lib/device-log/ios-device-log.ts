@@ -5,12 +5,12 @@ import type { AppiumLogger } from '@appium/types';
 export interface IOSDeviceLogOpts {
   udid: string;
   showLogs?: boolean;
-  log?: AppiumLogger;
+  log: AppiumLogger;
 }
 
 export class IOSDeviceLog extends LineConsumingLog {
-  private udid: string;
-  private showLogs: boolean;
+  private readonly udid: string;
+  private readonly showLogs: boolean;
   private service: any | null;
 
   constructor(opts: IOSDeviceLogOpts) {
