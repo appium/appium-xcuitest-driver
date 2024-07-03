@@ -90,9 +90,9 @@ export class Pyidevice extends BaseDeviceClient {
     ).stdout;
   }
 
-  override async listCrashes(): Promise<object[]> {
+  override async listCrashes(): Promise<string[]> {
     const {stdout} = await this.execute(['crash', 'list']) as TeenProcessExecResult<string>;
-    return JSON.parse(stdout.replace(/'/g, '"')).filter((x) => !['.', '..'].includes(x));
+    return JSON.parse(stdout.replace(/'/g, '"')).filter((x: string) => !['.', '..'].includes(x));
   }
 
   override async exportCrash(name: string, dstFolder: string): Promise<void> {

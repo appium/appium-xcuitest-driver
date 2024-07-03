@@ -27,7 +27,7 @@ export abstract class BaseDeviceClient {
   abstract installProfile(args: InstallProfileArgs): Promise<void>;
   abstract removeProfile(name: string): Promise<string>;
 
-  abstract listCrashes(): Promise<object[]>;
+  abstract listCrashes(): Promise<string[]>;
   abstract exportCrash(name: string, dstFolder: string): Promise<void>;
 
   abstract collectPcap(dstFile: string): Promise<SubProcess>;
