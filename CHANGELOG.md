@@ -1,3 +1,9 @@
+## [7.22.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.22.0...v7.22.1) (2024-07-03)
+
+### Miscellaneous Chores
+
+* Simplify subprocess output analysis ([#2422](https://github.com/appium/appium-xcuitest-driver/issues/2422)) ([c6b9be8](https://github.com/appium/appium-xcuitest-driver/commit/c6b9be8d5120b8097880bef49f67dc06a8bc548e))
+
 ## [7.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.2...v7.22.0) (2024-07-02)
 
 ### Features
