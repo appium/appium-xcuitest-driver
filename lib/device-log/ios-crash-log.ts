@@ -25,7 +25,7 @@ export interface IOSCrashLogOptions {
   log: AppiumLogger;
 }
 
-class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
+export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private readonly _udid: string | undefined;
   private readonly _realDeviceClient: BaseDeviceClient | null;
   private readonly _logDir: string | null;
@@ -152,5 +152,4 @@ class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 }
 
-export {IOSCrashLog};
 export default IOSCrashLog;
