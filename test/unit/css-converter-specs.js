@@ -1,11 +1,18 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import CssConverter from '../../lib/css-converter';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('css-converter.js', function () {
+
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   describe('simple cases', function () {
     const simpleCases = [
       ['XCUIElementTypeWindow:nth-child(2)', '**/XCUIElementTypeWindow[2]'],

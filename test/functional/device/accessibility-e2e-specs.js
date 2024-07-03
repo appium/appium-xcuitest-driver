@@ -1,16 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
 import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('Accessibility', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver, caps;
+
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   beforeEach(function () {
     caps = amendCapabilities(SETTINGS_CAPS, {

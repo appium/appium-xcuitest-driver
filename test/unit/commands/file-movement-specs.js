@@ -1,12 +1,20 @@
 import {parseContainerPath} from '../../../lib/commands/file-movement';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {tempDir} from 'appium/support';
 
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 describe('file-movement', function () {
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+    expect = chai.expect;
+  });
+
   describe('parseContainerPath', function () {
     it('should parse with container', async function () {
       const mntRoot = await tempDir.openDir();
@@ -17,7 +25,7 @@ describe('file-movement', function () {
 
       bundleId.should.eql('io.appium.example');
       pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
-      /** @type {string} */ (containerType).should.eql('app');
+      containerType.should.eql('app');
     });
     it('should parse with container root', async function () {
       const mntRoot = await tempDir.openDir();
@@ -28,7 +36,7 @@ describe('file-movement', function () {
 
       bundleId.should.eql('io.appium.example');
       pathInContainer.should.eql(mntRoot);
-      /** @type {string} */ (containerType).should.eql('documents');
+      containerType.should.eql('documents');
     });
     it('should parse without container', async function () {
       const mntRoot = await tempDir.openDir();
@@ -39,7 +47,7 @@ describe('file-movement', function () {
 
       bundleId.should.eql('io.appium.example');
       pathInContainer.should.eql(`${mntRoot}/Documents/file.txt`);
-      should.equal(containerType, null);
+      expect(containerType).equal(null);
     });
     it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();

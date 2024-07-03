@@ -333,6 +333,19 @@ export const executeMethodMap = {
       required: ['style'],
     },
   },
+  'mobile: getClipboard': {
+    command: 'getClipboard',
+    params: {
+      optional: ['contentType'],
+    },
+  },
+  'mobile: setClipboard': {
+    command: 'setClipboard',
+    params: {
+      required: ['content'],
+      optional: ['contentType'],
+    },
+  },
   'mobile: siriCommand': {
     command: 'mobileSiriCommand',
     params: {

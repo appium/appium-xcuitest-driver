@@ -1,3 +1,58 @@
+## [7.22.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.22.0...v7.22.1) (2024-07-03)
+
+### Miscellaneous Chores
+
+* Simplify subprocess output analysis ([#2422](https://github.com/appium/appium-xcuitest-driver/issues/2422)) ([c6b9be8](https://github.com/appium/appium-xcuitest-driver/commit/c6b9be8d5120b8097880bef49f67dc06a8bc548e))
+
+## [7.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.2...v7.22.0) (2024-07-02)
+
+### Features
+
+* Update console and network log handlers ([#2421](https://github.com/appium/appium-xcuitest-driver/issues/2421)) ([3c72721](https://github.com/appium/appium-xcuitest-driver/commit/3c727219577c51d941d6fab68feda62eaf7bf774))
+
+## [7.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.1...v7.21.2) (2024-07-01)
+
+### Miscellaneous Chores
+
+* Rewrite logging-related classes to typescript ([#2420](https://github.com/appium/appium-xcuitest-driver/issues/2420)) ([9789575](https://github.com/appium/appium-xcuitest-driver/commit/97895755c41a3a729a8f4fd972c0f900a41f383a))
+
+## [7.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.21.0...v7.21.1) (2024-06-30)
+
+### Miscellaneous Chores
+
+* Streamline logging helpers ([#2419](https://github.com/appium/appium-xcuitest-driver/issues/2419)) ([d469237](https://github.com/appium/appium-xcuitest-driver/commit/d469237304d507feb1f59b07fd6a76d51f63fe19))
+
+## [7.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.2...v7.21.0) (2024-06-27)
+
+### Features
+
+* Add mobile: wrappers for the clipboard API ([#2418](https://github.com/appium/appium-xcuitest-driver/issues/2418)) ([3b41576](https://github.com/appium/appium-xcuitest-driver/commit/3b41576b5cb51f6b4c296e48c799c069cae50f63))
+
+## [7.20.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.1...v7.20.2) (2024-06-27)
+
+### Miscellaneous Chores
+
+* Bump chai and chai-as-promised ([#2414](https://github.com/appium/appium-xcuitest-driver/issues/2414)) ([6ba1b5e](https://github.com/appium/appium-xcuitest-driver/commit/6ba1b5e4ba192da6b8d7a0370cd3fa79947c540e))
+
+## [7.20.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.20.0...v7.20.1) (2024-06-26)
+
+### Bug Fixes
+
+* Apply the default exec timeout if not provided explicitly ([#2416](https://github.com/appium/appium-xcuitest-driver/issues/2416)) ([9a793b1](https://github.com/appium/appium-xcuitest-driver/commit/9a793b10a7cbbe317d6b2f85b25162e64a614dee))
+* Respect the remote port capability for real devices ([#2417](https://github.com/appium/appium-xcuitest-driver/issues/2417)) ([f2d80da](https://github.com/appium/appium-xcuitest-driver/commit/f2d80da102b8fb3333b97a768bafe463553704cc))
+
+## [7.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.19.0...v7.20.0) (2024-06-25)
+
+### Features
+
+* Introduce the `webScreenshotMode` setting ([#2415](https://github.com/appium/appium-xcuitest-driver/issues/2415)) ([c9d9d44](https://github.com/appium/appium-xcuitest-driver/commit/c9d9d4475bcb8d394ae0ba5f3c0a80bea40d1eed))
+
+## [7.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.18.0...v7.19.0) (2024-06-25)
+
+### Features
+
+* take viewport screenshot using safari remote debugger ([#2413](https://github.com/appium/appium-xcuitest-driver/issues/2413)) ([4402c29](https://github.com/appium/appium-xcuitest-driver/commit/4402c294333e6084c854d63b4a8387a3b3cbe9ff))
+
 ## [7.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.17.6...v7.18.0) (2024-06-20)
 
 ### Features

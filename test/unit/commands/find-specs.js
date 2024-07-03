@@ -5,6 +5,12 @@ describe('general commands', function () {
   const driver = new XCUITestDriver();
   const proxySpy = sinon.stub(driver, 'proxyCommand');
 
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    chai.should();
+  });
   afterEach(function () {
     proxySpy.reset();
   });
@@ -22,10 +28,10 @@ describe('general commands', function () {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
       } catch (ign) {}
-      proxySpy.should.have.been.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
+      proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
         using: modStrategy || strategy,
         value: modSelector,
-      });
+      }).should.be.true;
       proxySpy.reset();
     }
 
@@ -100,16 +106,16 @@ describe('general commands', function () {
         let el = await driver.findNativeElementOrElements('xpath', variant, false, {
           ELEMENT: 'ctx',
         });
-        proxySpy.should.have.been.calledTwice;
-        proxySpy.should.have.been.calledWith('/element/ctx/element', 'POST', {
+        proxySpy.calledTwice.should.be.true;
+        proxySpy.calledWith('/element/ctx/element', 'POST', {
           using: 'class chain',
           value: '*[1]',
-        });
-        proxySpy.should.have.been.calledWith('/element/ctx/element', 'POST', {
+        }).should.be.true;
+        proxySpy.calledWith('/element/ctx/element', 'POST', {
           using: 'class chain',
           value: '*[2]',
-        });
-        attribSpy.should.have.been.calledTwice;
+        }).should.be.true;
+        attribSpy.calledTwice.should.be.true;
         el.should.eql({ELEMENT: 2});
         proxySpy.reset();
         attribSpy.reset();

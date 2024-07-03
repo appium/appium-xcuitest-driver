@@ -2,15 +2,21 @@ import {
   unzipStream,
   unzipFile,
 } from '../../lib/app-utils';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('app-utils', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   describe('unzipStream', function () {
     it('should unzip from stream', async function () {
       try {

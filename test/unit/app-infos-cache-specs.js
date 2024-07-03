@@ -1,19 +1,24 @@
 import {
   AppInfosCache,
 } from '../../lib/app-infos-cache';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
 import log from '../../lib/logger.js';
 
 
-chai.should();
-chai.use(chaiAsPromised);
-
 const BIOMETRIC_BUNDLE_ID = 'com.mwakizaka.biometric';
 
 describe('AppInfosCache', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   describe('retrives info from different types of apps', function () {
     let ipaPath;
     const appPath = path.resolve(__dirname, '..', 'assets', 'biometric.app');

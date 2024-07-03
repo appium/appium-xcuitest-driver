@@ -4,18 +4,25 @@ import {
   markSystemFilesForCleanup,
   isLocalHost,
 } from '../../lib/utils';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {withMocks} from '@appium/test-support';
 import {fs} from 'appium/support';
 import * as iosUtils from '../../lib/utils';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
 
 describe('utils', function () {
+
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   describe(
     'clearSystemFiles',
     withMocks({iosUtils, fs}, function (mocks) {
@@ -28,13 +35,9 @@ describe('utils', function () {
             return DERIVED_DATA_ROOT;
           },
         };
-        // @ts-ignore withMocks is wonky
         mocks.fs.expects('glob').once().returns([]);
-        // @ts-ignore withMocks is wonky
         mocks.fs.expects('walkDir').once().returns();
-        // @ts-ignore withMocks is wonky
         mocks.fs.expects('exists').atLeast(1).returns(true);
-        // @ts-ignore withMocks is wonky
         mocks.iosUtils
           .expects('clearLogs')
           .once()
@@ -49,13 +52,9 @@ describe('utils', function () {
             return DERIVED_DATA_ROOT;
           },
         };
-        // @ts-ignore withMocks is wonky
         mocks.fs.expects('glob').once().returns([]);
-        // @ts-ignore withMocks is wonky
         mocks.fs.expects('walkDir').once().returns();
-        // @ts-ignore withMocks is wonky
         mocks.fs.expects('exists').atLeast(1).returns(true);
-        // @ts-ignore withMocks is wonky
         mocks.iosUtils
           .expects('clearLogs')
           .once()
@@ -72,7 +71,6 @@ describe('utils', function () {
             return null;
           },
         };
-        // @ts-ignore withMocks is wonky
         mocks.iosUtils.expects('clearLogs').never();
         await clearSystemFiles(wda);
       });

@@ -637,6 +637,32 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 style | string | yes | Either `light` or `dark` | dark
 
+### mobile: getClipboard
+
+Gets the content of the primary clipboard on the device under test.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+contentType | string | no | `plaintext` (default), `image` or `url` | image
+
+#### Returned Result
+
+The actual clipboard content encoded into base64 string.
+An empty string is returned if the clipboard contains no data.
+
+### mobile: setClipboard
+
+Sets the primary clipboard's content on the device under test.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+content| string | yes | The content to be set as base64-encoded string. | QXBwaXVt
+contentType | string | no | `plaintext` (default), `image` or `url` | image
+
 ### mobile: siriCommand
 
 Presents the Siri UI, if it is not currently active, and accepts a string which is then processed as if it were recognized speech. Check the documentation on [activateWithVoiceRecognitionText](https://developer.apple.com/documentation/xctest/xcuisiriservice/2852140-activatewithvoicerecognitiontext?language=objc) XCTest method for more details.

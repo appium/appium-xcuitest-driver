@@ -1,6 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import chaiSubset from 'chai-subset';
 import B from 'bluebird';
 import util from 'util';
 import {retryInterval} from 'asyncbox';
@@ -9,15 +6,20 @@ import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
 
-chai.should();
-chai.use(chaiAsPromised);
-chai.use(chaiSubset);
 
 describe('XCUITestDriver - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     const caps = amendCapabilities(UICATALOG_CAPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });
@@ -144,7 +146,9 @@ describe('XCUITestDriver - basics -', function () {
       it('should get the list of available logs', async function () {
         const expectedTypes = ['syslog', 'crashlog', 'performance', 'server', 'safariConsole'];
         const actualTypes = await driver.getLogTypes();
-        actualTypes.should.containSubset(expectedTypes);
+        for (const actualType of actualTypes) {
+          expectedTypes.includes(actualType).should.be.true;
+        }
       });
     });
 

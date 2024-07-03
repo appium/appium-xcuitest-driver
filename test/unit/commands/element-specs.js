@@ -1,25 +1,26 @@
-// @ts-check
-
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import {createSandbox} from 'sinon';
-import sinonChai from 'sinon-chai';
+// eslint-disable-next-line
+import sinon, {createSandbox} from 'sinon';
 import XCUITestDriver from '../../../lib/driver';
 
-chai.should();
-chai.use(chaiAsPromised).use(sinonChai);
 
 describe('element commands', function () {
-  /** @type {sinon.SinonSandbox} */
   let sandbox;
 
   /** @type {XCUITestDriver} */
   let driver;
 
+  let chai;
+
   /** @type {sinon.SinonStubbedMember<XCUITestDriver['proxyCommand']>} */
   let proxyStub;
 
-  before(function () {
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     driver = new XCUITestDriver();
   });
 
@@ -39,8 +40,8 @@ describe('element commands', function () {
 
     it('should call setValue', async function () {
       await driver.setValueImmediate('hello', '2');
-      driver.setValue.should.have.been.calledOnceWithExactly('hello', '2');
-      driver.setValue.should.have.returned(undefined);
+      driver.setValue.calledOnceWithExactly('hello', '2').should.be.true;
+      driver.setValue.returned(undefined).should.be.true;
     });
   });
 
@@ -49,7 +50,7 @@ describe('element commands', function () {
     const attribute = 'enabled';
 
     afterEach(function () {
-      proxyStub.should.have.been.calledOnce;
+      proxyStub.calledOnce.should.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
@@ -88,7 +89,7 @@ describe('element commands', function () {
     const property = 'enabled';
 
     afterEach(function () {
-      proxyStub.should.have.been.calledOnce;
+      proxyStub.calledOnce.should.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
@@ -127,8 +128,8 @@ describe('element commands', function () {
       const getContentSizeStub = sandbox.stub(driver, 'getContentSize');
       getContentSizeStub.resolves('foo');
       (await driver.getAttribute('contentSize', 2)).should.eql('foo');
-      proxyStub.should.not.have.been.called;
-      getContentSizeStub.should.have.been.calledOnce;
+      proxyStub.called.should.be.false;
+      getContentSizeStub.calledOnce.should.be.true;
     });
   });
 
@@ -167,7 +168,7 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-        await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
+      await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
       });
     });
 
@@ -190,7 +191,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset: 100,
       });
-      getRectStub.should.have.been.calledOnce;
+      getRectStub.calledOnce.should.be.true;
     });
 
     it('should get simple difference in element positions of a table', async function () {
@@ -210,7 +211,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset: 170,
       });
-      getRectStub.should.have.been.calledTwice;
+      getRectStub.calledTwice.should.be.true;
     });
 
     it('should be sensitive to row items in the case of a collection view', async function () {
@@ -239,7 +240,7 @@ describe('element commands', function () {
         left: 0,
         scrollableOffset,
       });
-      getRectStub.should.have.been.calledThrice;
+      getRectStub.calledThrice.should.be.true;
     });
   });
 
@@ -252,33 +253,33 @@ describe('element commands', function () {
       describe('success', function () {
         it('should proxy string as array of characters', async function () {
           await driver.setValue('hello\uE006', elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o', '\n'],
-          });
+          }).should.be.true;
         });
         it('should proxy string with smileys as array of characters', async function () {
           await driver.setValue('hello😀😎', elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
-          });
+          }).should.be.true;
         });
         it('should proxy number as array of characters', async function () {
           await driver.setValue(1234.56, elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['1', '2', '3', '4', '.', '5', '6'],
-          });
+          }).should.be.true;
         });
         it('should proxy string array as array of characters', async function () {
           await driver.setValue(['hel', 'lo'], elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o'],
-          });
+          }).should.be.true;
         });
         it('should proxy integer array as array of characters', async function () {
           await driver.setValue([1234], elementId);
-          proxyStub.should.have.been.calledOnceWith(expectedEndpoint, expectedMethod, {
+          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
             value: ['1', '2', '3', '4'],
-          });
+          }).should.be.true;
         });
       });
 
@@ -318,19 +319,19 @@ describe('element commands', function () {
         it('with default', async function () {
           driver.opts.sendKeyStrategy = undefined;
           await driver.setValue('hello\uE006😀', elementId);
-          atomElement.should.have.been.calledOnce;
-          executeAtom.should.have.been.calledOnce;
-          setValueWithWebAtom.should.have.been.calledOnceWith(
+          atomElement.calledOnce.should.be.true;
+          executeAtom.calledOnce.should.be.true;
+          setValueWithWebAtom.calledOnceWith(
             webEl,
             'hello\uE006😀'
-          );
+          ).should.be.true;
         });
 
         it('with oneByOne', async function () {
           driver.opts.sendKeyStrategy = 'oneByOne';
           await driver.setValue('hello\uE006😀', elementId);
-          atomElement.should.have.been.calledOnce;
-          executeAtom.should.have.been.calledOnce;
+          atomElement.calledOnce.should.be.true;
+          executeAtom.calledOnce.should.be.true;
           setValueWithWebAtom.getCall(0).args.should.eql([webEl, 'h']);
           setValueWithWebAtom.getCall(1).args.should.eql([webEl, 'e']);
           setValueWithWebAtom.getCall(2).args.should.eql([webEl, 'l']);

@@ -1,18 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {retryInterval} from 'asyncbox';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from './helpers';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('safari - alerts', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     const caps = amendCapabilities(SAFARI_CAPS, {
       'appium:safariInitialUrl': GUINEA_PIG_PAGE,
       'appium:safariAllowPopups': true,
