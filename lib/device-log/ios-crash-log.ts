@@ -147,7 +147,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
   }
 
-  async listCrashFiles(): Promise<string[]> {
+  private async listCrashFiles(): Promise<string[]> {
     return this._udid ? await this._gatherFromRealDevice() : await this._gatherFromSimulator();
   }
 }
