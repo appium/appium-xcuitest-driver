@@ -124,10 +124,11 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   private async _gatherFromRealDevice(): Promise<string[]> {
-    if (!this._realDeviceClient || !await this._realDeviceClient.assertExists(false)) {
+    if (!this._realDeviceClient) {
       return [];
     }
 
+    await this._realDeviceClient.assertExists(true);
     return (await this._realDeviceClient.listCrashes())
       .map((x) => `${REAL_DEVICE_MAGIC}${MAGIC_SEP}${x}`);
   }
