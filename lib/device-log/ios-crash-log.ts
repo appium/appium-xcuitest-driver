@@ -1,4 +1,4 @@
-import {fs, tempDir} from 'appium/support';
+import {fs, tempDir, util} from 'appium/support';
 import B from 'bluebird';
 import path from 'path';
 import _ from 'lodash';
@@ -10,8 +10,6 @@ import type { BaseDeviceClient } from '../real-device-clients/base-device-client
 import type { Simulator } from 'appium-ios-simulator';
 import type { LogEntry } from '../commands/types';
 
-const REAL_DEVICE_MAGIC = '3620bbb0-fb9f-4b62-a668-896f2edc4d88';
-const MAGIC_SEP = '/';
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
 // The size of a single diagnostic report might be hundreds of kilobytes.
@@ -42,22 +40,22 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       maxBufferSize: MAX_RECENT_ITEMS,
     });
     this._udid = opts.udid;
-    this._realDeviceClient = this._udid
+    this._sim = opts.sim;
+    this._realDeviceClient = this._isRealDevice()
       ? new Pyidevice({
-        udid: this._udid,
+        udid: this._udid as string,
         log: opts.log,
       })
       : null;
-    this._logDir = opts.udid
+    this._logDir = this._isRealDevice()
       ? null
       : path.resolve(process.env.HOME || '/', 'Library', 'Logs', 'DiagnosticReports');
-    this._sim = opts.sim;
     this._recentCrashFiles = [];
     this._started = false;
   }
 
   override async startCapture(): Promise<void> {
-    this._recentCrashFiles = await this.listCrashFiles();
+    this._recentCrashFiles = await this._listCrashFiles();
     this._started = true;
   }
 
@@ -71,12 +69,13 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   override async getLogs(): Promise<LogEntry[]> {
-    const crashFiles = (await this.listCrashFiles()).slice(-MAX_RECENT_ITEMS);
+    const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
     const diffFiles = _.difference(crashFiles, this._recentCrashFiles);
     if (_.isEmpty(diffFiles)) {
       return [];
     }
 
+    this.log.debug(`Found ${util.pluralize('fresh crash report', diffFiles.length, true)}`);
     await this._serializeCrashes(diffFiles);
     this._recentCrashFiles = crashFiles;
     return super.getLogs();
@@ -98,8 +97,8 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       for (const filePath of paths) {
         promises.push((async () => {
           let fullPath = filePath;
-          if (_.includes(fullPath, REAL_DEVICE_MAGIC)) {
-            const fileName = _.last(fullPath.split(MAGIC_SEP)) as string;
+          if (this._isRealDevice()) {
+            const fileName = filePath;
             try {
               await (this._realDeviceClient as BaseDeviceClient).exportCrash(fileName, tmpRoot);
             } catch (e) {
@@ -129,8 +128,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     }
 
     await this._realDeviceClient.assertExists(true);
-    return (await this._realDeviceClient.listCrashes())
-      .map((x) => `${REAL_DEVICE_MAGIC}${MAGIC_SEP}${x}`);
+    return await this._realDeviceClient.listCrashes();
   }
 
   private async _gatherFromSimulator(): Promise<string[]> {
@@ -154,8 +152,14 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
   }
 
-  private async listCrashFiles(): Promise<string[]> {
-    return this._udid ? await this._gatherFromRealDevice() : await this._gatherFromSimulator();
+  private async _listCrashFiles(): Promise<string[]> {
+    return this._isRealDevice()
+      ? await this._gatherFromRealDevice()
+      : await this._gatherFromSimulator();
+  }
+
+  private _isRealDevice(): boolean {
+    return Boolean(this._udid);
   }
 }
 
