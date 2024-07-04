@@ -55,7 +55,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   override async startCapture(): Promise<void> {
-    this._recentCrashFiles = await this._listCrashFiles();
+    this._recentCrashFiles = await this._listCrashFiles(false);
     this._started = true;
   }
 
@@ -69,7 +69,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   override async getLogs(): Promise<LogEntry[]> {
-    const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
+    const crashFiles = (await this._listCrashFiles(true)).slice(-MAX_RECENT_ITEMS);
     const diffFiles = _.difference(crashFiles, this._recentCrashFiles);
     if (_.isEmpty(diffFiles)) {
       return [];
@@ -116,12 +116,18 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     }
   }
 
-  private async _gatherFromRealDevice(): Promise<string[]> {
+  private async _gatherFromRealDevice(strict: boolean): Promise<string[]> {
     if (!this._realDeviceClient) {
       return [];
     }
+    if (!await this._realDeviceClient.assertExists(strict)) {
+      this.log.info(
+        `The ${_.toLower(this._realDeviceClient.constructor.name)} tool is not present in PATH. ` +
+        `Skipping crash logs collection for real devices.`
+      );
+      return [];
+    }
 
-    await this._realDeviceClient.assertExists(true);
     return await this._realDeviceClient.listCrashes();
   }
 
@@ -147,9 +153,9 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
   }
 
-  private async _listCrashFiles(): Promise<string[]> {
+  private async _listCrashFiles(strict: boolean): Promise<string[]> {
     return this._isRealDevice()
-      ? await this._gatherFromRealDevice()
+      ? await this._gatherFromRealDevice(strict)
       : await this._gatherFromSimulator();
   }
 
