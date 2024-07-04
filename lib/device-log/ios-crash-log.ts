@@ -14,6 +14,9 @@ const REAL_DEVICE_MAGIC = '3620bbb0-fb9f-4b62-a668-896f2edc4d88';
 const MAGIC_SEP = '/';
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
+// The size of a single diagnostic report might be hundreds of kilobytes.
+// Thus we do not want to store too many items in the memory at once.
+const MAX_RECENT_ITEMS = 20;
 
 type TSerializedEntry = [string, number];
 
@@ -34,7 +37,10 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private _started: boolean;
 
   constructor(opts: IOSCrashLogOptions) {
-    super({log: opts.log});
+    super({
+      log: opts.log,
+      maxBufferSize: MAX_RECENT_ITEMS,
+    });
     this._udid = opts.udid;
     this._realDeviceClient = this._udid
       ? new Pyidevice({
@@ -65,7 +71,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   override async getLogs(): Promise<LogEntry[]> {
-    const crashFiles = await this.listCrashFiles();
+    const crashFiles = (await this.listCrashFiles()).slice(-MAX_RECENT_ITEMS);
     const diffFiles = _.difference(crashFiles, this._recentCrashFiles);
     if (_.isEmpty(diffFiles)) {
       return [];
@@ -118,7 +124,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   private async _gatherFromRealDevice(): Promise<string[]> {
-    if (!this._realDeviceClient || !this._realDeviceClient.assertExists(false)) {
+    if (!this._realDeviceClient || !await this._realDeviceClient.assertExists(false)) {
       return [];
     }
 

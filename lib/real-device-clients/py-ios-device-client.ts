@@ -9,6 +9,7 @@ import type { CertificateList } from '../commands/types';
 // https://github.com/YueChen-C/py-ios-device
 
 const BINARY_NAME = 'pyidevice';
+const CRASH_REPORT_EXT = '.ips';
 
 export interface PyideviceOptions extends BaseDeviceClientOptions {
   udid: string;
@@ -92,7 +93,13 @@ export class Pyidevice extends BaseDeviceClient {
 
   override async listCrashes(): Promise<string[]> {
     const {stdout} = await this.execute(['crash', 'list']) as TeenProcessExecResult<string>;
-    return JSON.parse(stdout.replace(/'/g, '"')).filter((x: string) => !['.', '..'].includes(x));
+    // Example output:
+    // ['.', '..', 'SiriSearchFeedback-2023-12-06-144043.ips', '
+    // SiriSearchFeedback-2024-05-22-194219.ips', 'JetsamEvent-2024-05-23-225056.ips',
+    // 'JetsamEvent-2023-09-18-090920.ips', 'JetsamEvent-2024-05-16-054529.ips',
+    // 'Assistant']
+    return JSON.parse(stdout.replace(/'/g, '"'))
+      .filter((x: string) => x.endsWith(CRASH_REPORT_EXT));
   }
 
   override async exportCrash(name: string, dstFolder: string): Promise<void> {
