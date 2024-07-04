@@ -93,29 +93,23 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private async _serializeCrashes(paths: string[]): Promise<void> {
     const tmpRoot = await tempDir.openDir();
     try {
-      const promises: Promise<TSerializedEntry>[] = [];
       for (const filePath of paths) {
-        promises.push((async () => {
-          let fullPath = filePath;
-          if (this._isRealDevice()) {
-            const fileName = filePath;
-            try {
-              await (this._realDeviceClient as BaseDeviceClient).exportCrash(fileName, tmpRoot);
-            } catch (e) {
-              this.log.warn(
-                `Cannot export the crash report '${fileName}'. Skipping it. ` +
-                `Original error: ${e.message}`,
-              );
-              return;
-            }
-            fullPath = path.join(tmpRoot, fileName);
+        let fullPath = filePath;
+        if (this._isRealDevice()) {
+          const fileName = filePath;
+          try {
+            await (this._realDeviceClient as BaseDeviceClient).exportCrash(fileName, tmpRoot);
+          } catch (e) {
+            this.log.warn(
+              `Cannot export the crash report '${fileName}'. Skipping it. ` +
+              `Original error: ${e.message}`,
+            );
+            return;
           }
-          const {ctime} = await fs.stat(fullPath);
-          return [await fs.readFile(fullPath, 'utf8'), ctime.getTime()];
-        })() as Promise<TSerializedEntry>);
-      }
-      for (const entry of await B.all(promises)) {
-        this.broadcast(entry);
+          fullPath = path.join(tmpRoot, fileName);
+        }
+        const {ctime} = await fs.stat(fullPath);
+        this.broadcast([await fs.readFile(fullPath, 'utf8'), ctime.getTime()]);
       }
     } finally {
       await fs.rimraf(tmpRoot);
