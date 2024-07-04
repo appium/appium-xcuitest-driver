@@ -4,7 +4,7 @@ import path from 'path';
 import _ from 'lodash';
 import {Pyidevice} from '../real-device-clients/py-ios-device-client';
 import IOSLog from './ios-log';
-import { toLogEntry } from './helpers';
+import { toLogEntry, grepFile } from './helpers';
 import type { AppiumLogger } from '@appium/types';
 import type { BaseDeviceClient } from '../real-device-clients/base-device-client';
 import type { Simulator } from 'appium-ios-simulator';
@@ -135,12 +135,13 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       cwd: this._logDir,
       absolute: true,
     });
+    const simUdid = (this._sim as Simulator).udid;
     // For Simulator only include files, that contain current UDID
-    return await B.filter(foundFiles, async (x) => {
+    return await B.filter(foundFiles, async (filePath) => {
       try {
-        const content = await fs.readFile(x, 'utf8');
-        return content.toUpperCase().includes((this._sim as Simulator).udid.toUpperCase());
+        return await grepFile(filePath, simUdid, {caseInsensitive: true});
       } catch (err) {
+        this.log.warn(err);
         return false;
       }
     });
