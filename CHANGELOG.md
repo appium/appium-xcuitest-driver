@@ -1,3 +1,9 @@
+## [7.23.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.0...v7.23.1) (2024-07-09)
+
+### Miscellaneous Chores
+
+* Remove extra import ([ab07082](https://github.com/appium/appium-xcuitest-driver/commit/ab070823f7287111a085cacf63ab6d77c2d2f031))
+
 ## [7.23.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.22.1...v7.23.0) (2024-07-04)
 
 ### Features
