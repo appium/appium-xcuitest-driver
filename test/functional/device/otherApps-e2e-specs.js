@@ -1,10 +1,6 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
 import {MULTIPLE_APPS, amendCapabilities} from '../desired';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('OtherApps', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -12,7 +8,15 @@ describe('OtherApps', function () {
   let caps;
 
   let driver;
-  before(function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     caps = amendCapabilities(MULTIPLE_APPS, {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       'appium:wdaStartupRetries': 0,

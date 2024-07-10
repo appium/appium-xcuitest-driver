@@ -566,3 +566,9 @@ export interface KeyboardKey {
    */
   modifierFlags?: number;
 }
+
+export interface LogEntry {
+  timestamp: number;
+  level: string,
+  message: string;
+}

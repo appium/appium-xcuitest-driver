@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {getSimulator} from 'appium-ios-simulator';
 import {cleanupSimulator} from '../helpers/simulator';
 import Simctl from 'node-simctl';
@@ -8,8 +6,6 @@ import {TVOS_CAPS} from '../desired';
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const simctl = new Simctl();
 
@@ -18,7 +14,15 @@ describe('tvOS', function () {
 
   let baseCaps;
   let udid;
+  let chai;
+
   before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     udid = await simctl.createDevice(
       SIM_DEVICE_NAME,
       TVOS_CAPS.deviceName,

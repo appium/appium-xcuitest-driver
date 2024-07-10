@@ -1,5 +1,3 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import {util} from 'appium/support';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
@@ -23,8 +21,6 @@ import {retryInterval} from 'asyncbox';
 import B from 'bluebird';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const caps = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
@@ -42,7 +38,16 @@ describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
 
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
-  before(function () {
+
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+
     if (process.env.CI) {
       return this.skip();
     }

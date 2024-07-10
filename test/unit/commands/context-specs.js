@@ -1,12 +1,19 @@
 import XCUITestDriver from '../../../lib/driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.should();
-chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 describe('context', function () {
+  let chai;
+  let expect;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+    expect = chai.expect;
+  });
+
   describe('onPageChange', function () {
     const pageChangeNotification = {
       appIdKey: '5191',

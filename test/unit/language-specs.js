@@ -1,9 +1,7 @@
 import sinon from 'sinon';
-import chai from 'chai';
 import _ from 'lodash';
 import XCUITestDriver from '../../lib/driver';
 
-chai.should();
 
 describe('language and locale', function () {
   const LANGUAGE = 'en';
@@ -26,6 +24,24 @@ describe('language and locale', function () {
     appLaunchStateTimeoutSec: undefined,
     environment: {},
   };
+
+
+  let mockDriver;
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
+  afterEach(function () {
+    if (mockDriver) {
+      mockDriver.verify();
+    }
+  });
 
   describe('send only language and locale', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
@@ -59,13 +75,15 @@ describe('language and locale', function () {
         });
 
       let driver = new XCUITestDriver(desiredCapabilities);
-      let proxySpy = sinon.stub(driver, 'proxyCommand');
+
+      mockDriver = sinon.mock(driver);
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
+
       driver.validateDesiredCaps(desiredCapabilities);
       await driver.startWdaSession(
         desiredCapabilities.bundleId,
         desiredCapabilities.processArguments,
       );
-      proxySpy.should.have.been.calledOnceWith('/session', 'POST', expectedWDACapabilities);
     });
   });
 
@@ -115,17 +133,16 @@ describe('language and locale', function () {
           processArguments,
         });
       let driver = new XCUITestDriver(desiredCapabilities);
-      let proxySpy = sinon.stub(driver, 'proxyCommand');
+
+      mockDriver = sinon.mock(driver);
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
+
       driver.validateDesiredCaps(desiredCapabilities);
       await driver.startWdaSession(
         desiredCapabilities.bundleId,
         desiredCapabilities.processArguments,
       );
-      proxySpy.calledOnce.should.be.true;
-      proxySpy.firstCall.args[0].should.eql('/session');
-      proxySpy.firstCall.args[1].should.eql('POST');
       desiredCapabilities.processArguments.should.eql(expectedProcessArguments);
-      /** @type {any} */ (proxySpy.firstCall.args[2]).should.eql(expectedWDACapabilities);
     });
   });
 });

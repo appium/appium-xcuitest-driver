@@ -6,11 +6,17 @@ describe('pasteboard commands', function () {
   const driver = new XCUITestDriver();
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    chai.should();
+  });
+
   beforeEach(function () {
     const simctl = new Simctl();
     setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
     getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
-    // @ts-ignore
     driver._device = { simctl };
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
   });

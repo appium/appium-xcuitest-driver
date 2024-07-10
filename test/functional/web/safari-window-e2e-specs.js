@@ -1,6 +1,4 @@
-import chai from 'chai';
 import _ from 'lodash';
-import chaiAsPromised from 'chai-as-promised';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
@@ -12,8 +10,6 @@ import {
 } from './helpers';
 import {waitForCondition} from 'asyncbox';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`;
 const GET_ELEM_ASYNC = `arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);`;
@@ -26,6 +22,16 @@ const SUB_FRAME_3_TITLE = 'Sub frame 3';
 const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 
 describe('safari - windows and frames', function () {
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
+
   describe('without safariAllowPopups', function () {
     this.timeout(MOCHA_TIMEOUT);
 

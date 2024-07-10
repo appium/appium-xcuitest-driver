@@ -1,16 +1,22 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
 import {UICATALOG_CAPS, amendCapabilities, extractCapabilityValue} from '../desired';
 import {util} from 'appium/support';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('Passwords', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver, caps;
+
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+
+    chai.should();
+    chai.use(chaiAsPromised.default);
+  });
 
   beforeEach(function () {
     caps = amendCapabilities(UICATALOG_CAPS, {
