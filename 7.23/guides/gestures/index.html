@@ -10,26 +10,28 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/7.23/contributing/">
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/7.23/guides/gestures/">
       
       
-        <link rel="prev" href="../guides/capability-sets/">
+        <link rel="prev" href="../touch-id/">
       
       
+        <link rel="next" href="../tvos/">
       
-      <link rel="icon" href="../assets/images/appium-logo.png">
+      
+      <link rel="icon" href="../../assets/images/appium-logo.png">
       <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.28">
     
     
       
-        <title>Contributing - Appium XCUITest Driver</title>
+        <title>Gestures - Appium XCUITest Driver</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.6543a935.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
   
@@ -89,11 +91,11 @@
       
     
     
-      <link rel="stylesheet" href="../css/timeago.css">
+      <link rel="stylesheet" href="../../css/timeago.css">
     
-      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -134,7 +136,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="/appium-xcuitest-driver" title="Appium XCUITest Driver" class="md-header__button md-logo" aria-label="Appium XCUITest Driver" data-md-component="logo">
       
-  <img src="../assets/images/appium-logo-white.png" alt="logo">
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -151,7 +153,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              Gestures
             
           </span>
         </div>
@@ -268,7 +270,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
     
@@ -285,7 +287,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../overview/" class="md-tabs__link">
+      <a href="../../overview/" class="md-tabs__link">
         
   
     
@@ -304,7 +306,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../installation/" class="md-tabs__link">
+        <a href="../../installation/" class="md-tabs__link">
           
   
   Installation
@@ -322,7 +324,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../preparation/" class="md-tabs__link">
+        <a href="../../preparation/" class="md-tabs__link">
           
   
   Device Preparation
@@ -340,7 +342,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../reference/scripts/" class="md-tabs__link">
+        <a href="../../reference/scripts/" class="md-tabs__link">
           
   
   Reference
@@ -354,17 +356,21 @@
         
   
   
+    
+  
   
     
     
       
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../guides/parallel-tests/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../parallel-tests/" class="md-tabs__link">
           
   
   Guides
@@ -381,11 +387,9 @@
         
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
         
   
     
@@ -408,9 +412,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -423,7 +425,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="/appium-xcuitest-driver" title="Appium XCUITest Driver" class="md-nav__button md-logo" aria-label="Appium XCUITest Driver" data-md-component="logo">
       
-  <img src="../assets/images/appium-logo-white.png" alt="logo">
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
 
     </a>
     Appium XCUITest Driver
@@ -450,7 +452,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -470,7 +472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overview/" class="md-nav__link">
+      <a href="../../overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -530,7 +532,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
+      <a href="../../installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -551,7 +553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation/requirements/" class="md-nav__link">
+      <a href="../../installation/requirements/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -619,7 +621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preparation/" class="md-nav__link">
+      <a href="../../preparation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -640,7 +642,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preparation/real-device-config/" class="md-nav__link">
+      <a href="../../preparation/real-device-config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -701,7 +703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preparation/prov-profile-basic-auto/" class="md-nav__link">
+      <a href="../../preparation/prov-profile-basic-auto/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -722,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preparation/prov-profile-basic-manual/" class="md-nav__link">
+      <a href="../../preparation/prov-profile-basic-manual/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -743,7 +745,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preparation/prov-profile-full-manual/" class="md-nav__link">
+      <a href="../../preparation/prov-profile-full-manual/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -764,7 +766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../preparation/prov-profile-generic-manual/" class="md-nav__link">
+      <a href="../../preparation/prov-profile-generic-manual/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -840,7 +842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/scripts/" class="md-nav__link">
+      <a href="../../reference/scripts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -901,7 +903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/server-args/" class="md-nav__link">
+      <a href="../../reference/server-args/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -922,7 +924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/security-flags/" class="md-nav__link">
+      <a href="../../reference/security-flags/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -991,7 +993,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/capabilities/" class="md-nav__link">
+      <a href="../../reference/capabilities/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1012,7 +1014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/settings/" class="md-nav__link">
+      <a href="../../reference/settings/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1033,7 +1035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/commands/" class="md-nav__link">
+      <a href="../../reference/commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1054,7 +1056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/execute-methods/" class="md-nav__link">
+      <a href="../../reference/execute-methods/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1123,7 +1125,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/locator-strategies/" class="md-nav__link">
+      <a href="../../reference/locator-strategies/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1144,7 +1146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/ios-predicate/" class="md-nav__link">
+      <a href="../../reference/ios-predicate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1165,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/element-attributes/" class="md-nav__link">
+      <a href="../../reference/element-attributes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1198,25 +1200,30 @@
       
   
   
+    
   
   
+  
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1227,7 +1234,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -1246,17 +1253,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
         
           
-          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1281,7 +1291,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/parallel-tests/" class="md-nav__link">
+      <a href="../parallel-tests/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1302,7 +1312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/ci-setup/" class="md-nav__link">
+      <a href="../ci-setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1323,7 +1333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/multiple-xcode-versions/" class="md-nav__link">
+      <a href="../multiple-xcode-versions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1384,7 +1394,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/run-preinstalled-wda/" class="md-nav__link">
+      <a href="../run-preinstalled-wda/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1405,7 +1415,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/run-prebuilt-wda/" class="md-nav__link">
+      <a href="../run-prebuilt-wda/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1426,7 +1436,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/attach-to-running-wda/" class="md-nav__link">
+      <a href="../attach-to-running-wda/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1455,7 +1465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/wda-custom-server/" class="md-nav__link">
+      <a href="../wda-custom-server/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1476,7 +1486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/wda-slowness/" class="md-nav__link">
+      <a href="../wda-slowness/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1502,25 +1512,30 @@
                 
   
   
+    
   
   
+  
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
         
           
-          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1531,7 +1546,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6_2">
             <span class="md-nav__icon md-icon"></span>
             Driver Actions
@@ -1545,7 +1560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/audio-capture/" class="md-nav__link">
+      <a href="../audio-capture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1566,7 +1581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/file-transfer/" class="md-nav__link">
+      <a href="../file-transfer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1587,7 +1602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/install-certificate/" class="md-nav__link">
+      <a href="../install-certificate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1608,7 +1623,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/clipboard/" class="md-nav__link">
+      <a href="../clipboard/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1629,7 +1644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/touch-id/" class="md-nav__link">
+      <a href="../touch-id/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1647,10 +1662,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../guides/gestures/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1659,6 +1681,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -1684,17 +1707,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
         
           
-          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1719,7 +1745,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/tvos/" class="md-nav__link">
+      <a href="../tvos/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1740,7 +1766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/input-events/" class="md-nav__link">
+      <a href="../input-events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1761,7 +1787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/troubleshooting/" class="md-nav__link">
+      <a href="../troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1782,7 +1808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/capability-sets/" class="md-nav__link">
+      <a href="../capability-sets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1815,17 +1841,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1834,7 +1853,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1847,9 +1865,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1872,7 +1888,7 @@
                   
 
   
-    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/contributing.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/guides/gestures.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
     </a>
@@ -1880,33 +1896,54 @@
   
 
 
-  <h1>Contributing</h1>
+  <h1>Gestures</h1>
 
-<p>Contributions to this project are welcome! To start off, clone it from GitHub and run:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npm<span class="w"> </span>install
-</code></pre></div>
-<p>To watch changes during development:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm<span class="w"> </span>run<span class="w"> </span>watch
-</code></pre></div>
-<p>To run unit/functional tests:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="c1"># unit </span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>npm<span class="w"> </span>run<span class="w"> </span>e2e-test<span class="w"> </span><span class="c1"># functional</span>
-</code></pre></div>
-<p>To develop documentation:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npm<span class="w"> </span>run<span class="w"> </span>install-docs-deps<span class="w"> </span><span class="c1"># install the dependencies (Python packages)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>npm<span class="w"> </span>run<span class="w"> </span>dev:docs<span class="w"> </span><span class="c1"># serve the docs locally and watch for changes</span>
-</code></pre></div>
-<p>There are also a number of environment variables that can be used when running
-the tests locally. These include:</p>
+<p>The XCUITest driver provides multiple options for touch gestures automation.
+For simple gestures, like tap by coordinates, long tap, multi-finger tap, double/triple tap,
+swipe, drag, rotate, scroll or pinch use the below gesture shortcuts:</p>
 <ul>
-<li><code>REAL_DEVICE</code> - set to anything truthy, makes the tests use real device capabilities</li>
-<li><code>_FORCE_LOGS</code> - set to <code>1</code> to get the log output, not just spec</li>
-<li><code>PLATFORM_VERSION</code> - change the version to run the tests against (defaults to <code>11.3</code>)</li>
-<li><code>XCCONFIG_FILE</code> - specify where the Xcode config file is for a real device run (if
-  blank, and running a real device test, it will search for the first file in
-  the root directory of the repo with the extension <code>.xcconfig</code>)</li>
-<li><code>UICATALOG_REAL_DEVICE</code> - path to the real device build of UICatalog, in case
-  the <code>npm</code> installed one is not built for a real device</li>
+<li><a href="../../reference/execute-methods/#mobile-tap">mobile: tap</a></li>
+<li><a href="../../reference/execute-methods/#mobile-doubletap">mobile: doubleTap</a></li>
+<li><a href="../../reference/execute-methods/#mobile-touchandhold">mobile: touchAndHold</a></li>
+<li><a href="../../reference/execute-methods/#mobile-twofingertap">mobile: twoFingerTap</a></li>
+<li><a href="../../reference/execute-methods/#mobile-dragfromtoforduration">mobile: dragFromToForDuration</a></li>
+<li><a href="../../reference/execute-methods/#mobile-dragfromtowithvelocity">mobile: dragFromToWithVelocity</a></li>
+<li><a href="../../reference/execute-methods/#mobile-rotateelement">mobile: rotateElement</a></li>
+<li><a href="../../reference/execute-methods/#mobile-tapwithnumberoftaps">mobile: tapWithNumberOfTaps</a></li>
+<li><a href="../../reference/execute-methods/#mobile-forcepress">mobile: forcePress</a></li>
+<li><a href="../../reference/execute-methods/#mobile-scrolltoelement">mobile: scrollToElement</a></li>
+<li><a href="../../reference/execute-methods/#mobile-scroll">mobile: scroll</a></li>
+<li><a href="../../reference/execute-methods/#mobile-pinch">mobile: pinch</a></li>
+</ul>
+<p>For more sophisticated gestures
+consider using <a href="https://w3c.github.io/webdriver/#actions">W3C actions</a>.</p>
+<p>Make sure you don't use deprecated JSONWP TouchActions APIs. They have been
+removed from the XCUITest driver since version 7.</p>
+<p>If the action code in the client source looks good and satisfies the above requirements,
+but its execution still does not deliver the expected result then the following debugging
+measures might be applied:</p>
+<ul>
+<li>Make sure the gesture has valid coordinates and respects pauses between pointer state changes.
+  For example, it is always mandatory to provide a valid element or valid <code>absolute</code> coordinates
+  to any gesture at the beginning. iOS only registers
+  a long touch/click if the pointer has been depressed for longer than 500ms. For shorter actions
+  a simple click is registered instead.</li>
+<li>If your tests run on Simulator then it is possible to activate pointer tracing by enabling
+  the <a href="../../reference/capabilities/#simulator">appium:simulatorTracePointer</a> capability or by enabling
+  <code>Visual Indicators</code> items from Simulator settings. After running
+  your automation code with this feature enabled you would be able to see the exact pointer trace path
+  and check the velocity of the gesture. Compare the trace
+  to how the same gesture is usually done manually and apply the necessary updates to your code.</li>
+<li>Do not mix webview and native elements in actions arguments. It simply won't work. Native
+  actions could only consume native elements. A single possibility to perform a native action
+  on a web element would be to translate its coordinates into the native context and pass these
+  coordinates as native action arguments.</li>
+</ul>
+<p>Check the below tutorials for more details on how to build reliable action chains:</p>
+<ul>
+<li><a href="https://appiumpro.com/editions/29-automating-complex-gestures-with-the-w3c-actions-api">Automating Complex Gestures with the W3C Actions API</a></li>
+<li><a href="https://www.youtube.com/watch?v=oAJ7jwMNFVU">Swiping your way through Appium by Wim Selles #AppiumConf2021</a></li>
+<li><a href="../input-events/">About iOS Input Events</a></li>
 </ul>
 
 
@@ -1928,7 +1965,7 @@ the tests locally. These include:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-01-18T08:08:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-01-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-11T20:29:52+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-11</span>
   </span>
 
     
@@ -1938,8 +1975,6 @@ the tests locally. These include:</p>
   </aside>
 
 
-
-  
 
 
 
@@ -2063,14 +2098,14 @@ the tests locally. These include:</p>
       </div>
       <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout(function(){document.querySelector("[data-md-component=consent]").hidden=!1},250);var action,form=document.forms.consent;for(action of["submit","reset"])form.addEventListener(action,function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map(function(e){return[e,!0]}))),location.hash="",location.reload()})</script>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
       
-        <script src="../js/timeago.min.js"></script>
+        <script src="../../js/timeago.min.js"></script>
       
-        <script src="../js/timeago_mkdocs_material.js"></script>
+        <script src="../../js/timeago_mkdocs_material.js"></script>
       
     
   </body>
