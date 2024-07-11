@@ -1,3 +1,15 @@
+## [7.23.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.0...v7.23.1) (2024-07-09)
+
+### Miscellaneous Chores
+
+* Remove extra import ([ab07082](https://github.com/appium/appium-xcuitest-driver/commit/ab070823f7287111a085cacf63ab6d77c2d2f031))
+
+## [7.23.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.22.1...v7.23.0) (2024-07-04)
+
+### Features
+
+* Rewrite py-ios-device client and crash reports logger into typescript ([#2423](https://github.com/appium/appium-xcuitest-driver/issues/2423)) ([8d405e8](https://github.com/appium/appium-xcuitest-driver/commit/8d405e8081eb0c4a09217717eb380ab4076a9736))
+
 ## [7.22.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.22.0...v7.22.1) (2024-07-03)
 
 ### Miscellaneous Chores
