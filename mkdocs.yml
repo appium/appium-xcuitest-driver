@@ -69,6 +69,8 @@ nav:
           - guides/install-certificate.md
           - guides/clipboard.md
           - guides/touch-id.md
+      - Gestures:
+          - guides/gestures.md
       - Other:
           - guides/tvos.md
           - guides/input-events.md
