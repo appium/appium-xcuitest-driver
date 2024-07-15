@@ -1,3 +1,9 @@
+## [7.24.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.2...v7.24.0) (2024-07-15)
+
+### Features
+
+* Emit an event on syslog startup ([#2430](https://github.com/appium/appium-xcuitest-driver/issues/2430)) ([157b05e](https://github.com/appium/appium-xcuitest-driver/commit/157b05e134a075e7c3c481725ecd6c39e55c76a7))
+
 ## [7.23.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.1...v7.23.2) (2024-07-13)
 
 ### Bug Fixes
