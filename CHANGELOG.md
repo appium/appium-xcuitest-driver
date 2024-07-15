@@ -1,3 +1,9 @@
+## [7.23.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.1...v7.23.2) (2024-07-13)
+
+### Bug Fixes
+
+* Filter out other simulators properly for shutdown ([#2429](https://github.com/appium/appium-xcuitest-driver/issues/2429)) ([b7a9ad7](https://github.com/appium/appium-xcuitest-driver/commit/b7a9ad7ea8fe698a0d8cbbf0871e4b59eef91f5d))
+
 ## [7.23.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.0...v7.23.1) (2024-07-09)
 
 ### Miscellaneous Chores
