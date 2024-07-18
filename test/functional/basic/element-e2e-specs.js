@@ -320,6 +320,16 @@ describe('XCUITestDriver - elements -', function () {
           await el.click();
 
           const actions = [
+            // Selenium clients generate below code for `driver.action.send_keys('a').perform`.
+            {
+              type: 'pointer',
+              id: 'touch',
+              actions: [
+                {type: 'pause', duration: 0},
+                {type: 'pause', duration: 0},
+                {type: 'pause', duration: 0}
+              ]
+            },
             {
               type: 'key',
               id: 'keyboard',
