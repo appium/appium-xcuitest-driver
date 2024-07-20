@@ -27,6 +27,7 @@ jobs:
     needs:
     - prepare_matrix
     strategy:
+      fail-fast: false
       matrix:
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
     steps:
