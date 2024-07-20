@@ -1,3 +1,9 @@
+## [7.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.0...v7.24.1) (2024-07-20)
+
+### Bug Fixes
+
+* no actions in w3c actions case ([#2432](https://github.com/appium/appium-xcuitest-driver/issues/2432)) ([8bd2bd6](https://github.com/appium/appium-xcuitest-driver/commit/8bd2bd6f4e9c60622b20d5c2af7323630ea1b731))
+
 ## [7.24.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.23.2...v7.24.0) (2024-07-15)
 
 ### Features
