@@ -1,3 +1,9 @@
+## [7.24.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.1...v7.24.2) (2024-07-25)
+
+### Miscellaneous Chores
+
+* Make remote debugger typed ([#2433](https://github.com/appium/appium-xcuitest-driver/issues/2433)) ([f643c16](https://github.com/appium/appium-xcuitest-driver/commit/f643c16e5bd22f3f9d6b2f3c7a30d2f24ab4ea8f))
+
 ## [7.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.0...v7.24.1) (2024-07-20)
 
 ### Bug Fixes
