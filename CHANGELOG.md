@@ -1,3 +1,9 @@
+## [7.24.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.2...v7.24.3) (2024-07-26)
+
+### Miscellaneous Chores
+
+* Raise more helpful error if a W3C action contains a web element ([#2435](https://github.com/appium/appium-xcuitest-driver/issues/2435)) ([5d80cd8](https://github.com/appium/appium-xcuitest-driver/commit/5d80cd8ce24ab9a6cd8c6a5c5bdc8c23a7af3362))
+
 ## [7.24.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.1...v7.24.2) (2024-07-25)
 
 ### Miscellaneous Chores
