@@ -9913,7 +9913,73 @@ Read <a href="https://appiumpro.com/editions/55-using-mobile-execution-commands-
 <p>Returns the miscellaneous information about the device under test.
 It includes device information via lockdown in a real device since XCUITest driver 4.2.0.</p>
 <h4 id="returned-result_16">Returned Result<a class="headerlink" href="#returned-result_16" title="Permanent link">&para;</a></h4>
-<p>Check the <code>+ (id&lt;FBResponsePayload&gt;)handleGetDeviceInfo:(FBRouteRequest *)request</code> method in <a href="https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m">FBCustomCommands.m</a> for more details on the available map entries.</p>
+<p>The returned device information map contains the following entries:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>currentLocale</td>
+<td>string</td>
+<td>Device locale name. See <a href="https://developer.apple.com/documentation/foundation/nslocale/1414388-autoupdatingcurrentlocale">autoupdatingCurrentLocale</a> for more details.</td>
+<td>ja_EN, zh-Hant_US</td>
+</tr>
+<tr>
+<td>timeZone</td>
+<td>string</td>
+<td>Device time zone name. See <a href="https://developer.apple.com/documentation/foundation/nstimezone?language=objc">NSTimeZone</a> documentation for more details.</td>
+<td>America/New_York</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>Device name, synonym for model. Prior to iOS 16, user-assigned device name. See <a href="https://developer.apple.com/documentation/uikit/uidevice/1620015-name?language=objc">UIDevice.name</a> documentation for more details.</td>
+<td>iPhone</td>
+</tr>
+<tr>
+<td>model</td>
+<td>string</td>
+<td>The model of the device. See <a href="https://developer.apple.com/documentation/uikit/uidevice/1620044-model?language=objc">UIDevice.model</a> documentation for more details.</td>
+<td>iPod touch</td>
+</tr>
+<tr>
+<td>uuid</td>
+<td>string</td>
+<td>Device <a href="https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor?language=objc">identifier for vendor</a>. Could be equal to <code>unknown</code> if cannot be retrieved.</td>
+<td>12345abcd</td>
+</tr>
+<tr>
+<td>userInterfaceIdiom</td>
+<td>number</td>
+<td>The style of the interface on the current device. Could help to determine the device type (e.g. iPhone vs iPad). See <a href="https://developer.apple.com/documentation/uikit/uidevice/1620037-userinterfaceidiom?language=objc">UIDevice.userInterfaceIdiom</a> for more details.</td>
+<td>0 (UIUserInterfaceIdiomUnspecified), 1 (UIUserInterfaceIdiomPhone), 2 (UIUserInterfaceIdiomPad), 3 (UIUserInterfaceIdiomTV)</td>
+</tr>
+<tr>
+<td>userInterfaceStyle</td>
+<td>string</td>
+<td>The device's UI <a href="https://developer.apple.com/documentation/xctest/xcuidevice/4108227-appearance?language=objc">appearance</a> style. Possible values are: <code>automatic</code>, <code>light</code>, <code>dark</code>, <code>unknown</code>.</td>
+<td>dark</td>
+</tr>
+<tr>
+<td>isSimulator</td>
+<td>number</td>
+<td>Whether the device is a simulator (1) or a real device (0)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>thermalState</td>
+<td>number</td>
+<td>Thermal state of the device. See <a href="https://developer.apple.com/documentation/foundation/nsprocessinfothermalstate">NSProcessInfoThermalState</a> documentation on possible values.</td>
+<td>0 (NSProcessInfoThermalStateNominal), 1 (NSProcessInfoThermalStateFair), 2 (NSProcessInfoThermalStateSerious), 3 (NSProcessInfoThermalStateCritical)</td>
+</tr>
+</tbody>
+</table>
 <h3 id="mobile-getdevicetime">mobile: getDeviceTime<a class="headerlink" href="#mobile-getdevicetime" title="Permanent link">&para;</a></h3>
 <p>Returns the actual device time.</p>
 <h4 id="arguments_21">Arguments<a class="headerlink" href="#arguments_21" title="Permanent link">&para;</a></h4>
@@ -12202,7 +12268,7 @@ shut down XCTest by calling <code>POST /wda/shutdown</code> API or by doing devi
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-06-27T19:20:17+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-06-27</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-26T07:34:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-26</span>
   </span>
 
     
