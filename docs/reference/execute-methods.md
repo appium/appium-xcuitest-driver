@@ -443,7 +443,19 @@ It includes device information via lockdown in a real device since XCUITest driv
 
 #### Returned Result
 
-Check the `+ (id<FBResponsePayload>)handleGetDeviceInfo:(FBRouteRequest *)request` method in [FBCustomCommands.m](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBCustomCommands.m) for more details on the available map entries.
+The returned device information map contains the following entries:
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+currentLocale | string | Device locale name. See [autoupdatingCurrentLocale](https://developer.apple.com/documentation/foundation/nslocale/1414388-autoupdatingcurrentlocale) for more details. | ja_EN, zh-Hant_US
+timeZone | string | Device time zone name. See [NSTimeZone](https://developer.apple.com/documentation/foundation/nstimezone?language=objc) documentation for more details. | America/New_York
+name | string | Device name, synonym for model. Prior to iOS 16, user-assigned device name. See [UIDevice.name](https://developer.apple.com/documentation/uikit/uidevice/1620015-name?language=objc) documentation for more details. | iPhone
+model | string | The model of the device. See [UIDevice.model](https://developer.apple.com/documentation/uikit/uidevice/1620044-model?language=objc) documentation for more details. | iPod touch
+uuid | string | Device [identifier for vendor](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor?language=objc). Could be equal to `unknown` if cannot be retrieved. | 12345abcd
+userInterfaceIdiom | number | The style of the interface on the current device. Could help to determine the device type (e.g. iPhone vs iPad). See [UIDevice.userInterfaceIdiom](https://developer.apple.com/documentation/uikit/uidevice/1620037-userinterfaceidiom?language=objc) for more details. | 0 (UIUserInterfaceIdiomUnspecified), 1 (UIUserInterfaceIdiomPhone), 2 (UIUserInterfaceIdiomPad), 3 (UIUserInterfaceIdiomTV)
+userInterfaceStyle | string | The device's UI [appearance](https://developer.apple.com/documentation/xctest/xcuidevice/4108227-appearance?language=objc) style. Possible values are: `automatic`, `light`, `dark`, `unknown`. | dark
+isSimulator | number | Whether the device is a simulator (1) or a real device (0) | 1
+thermalState | number | Thermal state of the device. See [NSProcessInfoThermalState](https://developer.apple.com/documentation/foundation/nsprocessinfothermalstate) documentation on possible values. | 0 (NSProcessInfoThermalStateNominal), 1 (NSProcessInfoThermalStateFair), 2 (NSProcessInfoThermalStateSerious), 3 (NSProcessInfoThermalStateCritical)
 
 ### mobile: getDeviceTime
 
