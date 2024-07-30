@@ -1,3 +1,9 @@
+## [7.24.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.3...v7.24.4) (2024-07-30)
+
+### Miscellaneous Chores
+
+* Tune webview connection timeouts ([#2437](https://github.com/appium/appium-xcuitest-driver/issues/2437)) ([02af8e2](https://github.com/appium/appium-xcuitest-driver/commit/02af8e2f6a909471f2ebcec6425b51d5dd242d59))
+
 ## [7.24.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.2...v7.24.3) (2024-07-26)
 
 ### Miscellaneous Chores
