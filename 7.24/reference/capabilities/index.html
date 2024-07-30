@@ -2921,11 +2921,6 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
 <td><code>["io.appium.modifiedId', 'ABCDEF"]</code>, <code>["*"]</code></td>
 </tr>
 <tr>
-<td><code>appium:webviewConnectTimeout</code></td>
-<td>The time to wait, in <code>ms</code>, for the initial presence of webviews in MobileSafari or hybrid apps. Defaults to <code>0</code></td>
-<td><code>5000</code></td>
-</tr>
-<tr>
 <td><code>appium:webviewAtomWaitTimeout</code></td>
 <td>The time to wait, in <code>ms</code>, for each atom execution timeout of webviews in MobileSafari or hybrid apps. Defaults to <code>120000</code>. If the value was zero or less, the timeout keeps the default value.</td>
 <td><code>20000</code></td>
@@ -2967,8 +2962,13 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
 </tr>
 <tr>
 <td><code>appium:webviewConnectRetries</code></td>
-<td>Number of times to send connection message to remote debugger, to get webview. Default: <code>8</code></td>
-<td><code>12</code></td>
+<td>The maximum number of retries before giving up on web view pages detection. The delay between each retry is 500ms, which creates a minimum 10s of wait with the default retries amount of <code>20</code>. This capability has a priority over <code>appium:webviewConnectTimeout</code> one.</td>
+<td><code>10</code></td>
+</tr>
+<tr>
+<td><code>appium:webviewConnectTimeout</code></td>
+<td>The time to wait, in <code>ms</code>, for the presence of webviews in MobileSafari or hybrid apps. If this capability is set and <code>appium:webviewConnectRetries</code> is not provided explicitly then the amount of connection retries will be adjusted automatically in order to satisfy the given timeout.</td>
+<td><code>5000</code></td>
 </tr>
 <tr>
 <td><code>appium:webkitResponseTimeout</code></td>
@@ -3089,7 +3089,7 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-02T22:12:33+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-02</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-30T17:18:32+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-30</span>
   </span>
 
     
