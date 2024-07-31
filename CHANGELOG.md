@@ -1,3 +1,9 @@
+## [7.24.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.5...v7.24.6) (2024-07-31)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 20.14.13 to 22.0.0 ([#2436](https://github.com/appium/appium-xcuitest-driver/issues/2436)) ([6775f45](https://github.com/appium/appium-xcuitest-driver/commit/6775f45792ba4eef61aa688f42e5feb8c1aa1146))
+
 ## [7.24.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.4...v7.24.5) (2024-07-31)
 
 ### Miscellaneous Chores
