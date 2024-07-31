@@ -1,3 +1,9 @@
+## [7.24.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.4...v7.24.5) (2024-07-31)
+
+### Miscellaneous Chores
+
+* Set the default webview connect timeout ([#2438](https://github.com/appium/appium-xcuitest-driver/issues/2438)) ([a63856d](https://github.com/appium/appium-xcuitest-driver/commit/a63856dfe279f187fc8e5a949feed48fb864c40d))
+
 ## [7.24.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.3...v7.24.4) (2024-07-30)
 
 ### Miscellaneous Chores
