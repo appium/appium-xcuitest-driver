@@ -1,3 +1,9 @@
+## [7.24.9](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.8...v7.24.9) (2024-08-01)
+
+### Bug Fixes
+
+* Streamline page selection ([#2440](https://github.com/appium/appium-xcuitest-driver/issues/2440)) ([2564829](https://github.com/appium/appium-xcuitest-driver/commit/2564829b05aa4a1d784b65ddb4b3792734320489))
+
 ## [7.24.8](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.7...v7.24.8) (2024-08-01)
 
 ### Bug Fixes
