@@ -1,3 +1,9 @@
+## [7.24.8](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.7...v7.24.8) (2024-08-01)
+
+### Bug Fixes
+
+* Pyidevice ctor invocations with options object ([#2441](https://github.com/appium/appium-xcuitest-driver/issues/2441)) ([7de0d95](https://github.com/appium/appium-xcuitest-driver/commit/7de0d9535c4def80f4a91e81fa1fa948e58a550c))
+
 ## [7.24.7](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.6...v7.24.7) (2024-08-01)
 
 ### Miscellaneous Chores
