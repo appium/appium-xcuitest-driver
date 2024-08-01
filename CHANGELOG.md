@@ -1,3 +1,9 @@
+## [7.24.7](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.6...v7.24.7) (2024-08-01)
+
+### Miscellaneous Chores
+
+* Improve typing on webview commands ([#2439](https://github.com/appium/appium-xcuitest-driver/issues/2439)) ([eab9498](https://github.com/appium/appium-xcuitest-driver/commit/eab9498ca783f6f5001f5dad63445d2fba30349c))
+
 ## [7.24.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.5...v7.24.6) (2024-07-31)
 
 ### Miscellaneous Chores
