@@ -1,3 +1,33 @@
+## [7.24.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.5...v7.24.6) (2024-07-31)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 20.14.13 to 22.0.0 ([#2436](https://github.com/appium/appium-xcuitest-driver/issues/2436)) ([6775f45](https://github.com/appium/appium-xcuitest-driver/commit/6775f45792ba4eef61aa688f42e5feb8c1aa1146))
+
+## [7.24.5](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.4...v7.24.5) (2024-07-31)
+
+### Miscellaneous Chores
+
+* Set the default webview connect timeout ([#2438](https://github.com/appium/appium-xcuitest-driver/issues/2438)) ([a63856d](https://github.com/appium/appium-xcuitest-driver/commit/a63856dfe279f187fc8e5a949feed48fb864c40d))
+
+## [7.24.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.3...v7.24.4) (2024-07-30)
+
+### Miscellaneous Chores
+
+* Tune webview connection timeouts ([#2437](https://github.com/appium/appium-xcuitest-driver/issues/2437)) ([02af8e2](https://github.com/appium/appium-xcuitest-driver/commit/02af8e2f6a909471f2ebcec6425b51d5dd242d59))
+
+## [7.24.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.2...v7.24.3) (2024-07-26)
+
+### Miscellaneous Chores
+
+* Raise more helpful error if a W3C action contains a web element ([#2435](https://github.com/appium/appium-xcuitest-driver/issues/2435)) ([5d80cd8](https://github.com/appium/appium-xcuitest-driver/commit/5d80cd8ce24ab9a6cd8c6a5c5bdc8c23a7af3362))
+
+## [7.24.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.1...v7.24.2) (2024-07-25)
+
+### Miscellaneous Chores
+
+* Make remote debugger typed ([#2433](https://github.com/appium/appium-xcuitest-driver/issues/2433)) ([f643c16](https://github.com/appium/appium-xcuitest-driver/commit/f643c16e5bd22f3f9d6b2f3c7a30d2f24ab4ea8f))
+
 ## [7.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.0...v7.24.1) (2024-07-20)
 
 ### Bug Fixes
