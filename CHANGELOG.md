@@ -1,3 +1,9 @@
+## [7.24.11](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.10...v7.24.11) (2024-08-02)
+
+### Miscellaneous Chores
+
+* Make remote debugger-related messages more useful ([#2443](https://github.com/appium/appium-xcuitest-driver/issues/2443)) ([65a5ce1](https://github.com/appium/appium-xcuitest-driver/commit/65a5ce11d6e69e7be042e571489f3530647f98a4))
+
 ## [7.24.10](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.9...v7.24.10) (2024-08-02)
 
 ### Miscellaneous Chores
