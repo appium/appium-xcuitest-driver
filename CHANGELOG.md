@@ -1,3 +1,9 @@
+## [7.24.10](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.9...v7.24.10) (2024-08-02)
+
+### Miscellaneous Chores
+
+* Replace fancy-log dependency with appium logger ([#2442](https://github.com/appium/appium-xcuitest-driver/issues/2442)) ([9911b4e](https://github.com/appium/appium-xcuitest-driver/commit/9911b4e315a13ca27d9f1831bec7e2012bfde8b4))
+
 ## [7.24.9](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.8...v7.24.9) (2024-08-01)
 
 ### Bug Fixes
