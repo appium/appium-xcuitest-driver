@@ -1,6 +1,8 @@
 const path = require('path');
 const {exec} = require('teen_process');
-const log = require('fancy-log');
+const {logger} = require('appium/support');
+
+const log = logger.getLogger('WDA');
 const {BOOTSTRAP_PATH} = require('appium-webdriveragent');
 const XCODEPROJ_NAME = 'WebDriverAgent.xcodeproj';
 
