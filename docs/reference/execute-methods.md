@@ -158,7 +158,7 @@ The list of available context objects along with their properties:
 
 ### mobile: installApp
 
-Installs the given application to the device under test. Make sure the app is built for a correct architecture and is signed with a proper developer signature (for real devices) prior to install it.
+Installs the given application to the device under test. Make sure the application is built for a correct architecture and is signed with a proper developer signature (for real devices) prior to install it.
 
 #### Arguments
 
@@ -199,11 +199,65 @@ bundleId | string | yes | The bundle identifier of the application to be removed
 
 #### Returned Result
 
-Either `true` if the app was successfully uninstalled, otherwise `false`
+Either `true` if the application was successfully uninstalled, otherwise `false`
 
 ### mobile: launchApp
 
-Executes the given app on the device under test. If the app is already running then it would be activated. If the app is not installed or cannot be launched then an exception is thrown.
+Executes the given application on the device under test. If the application is already running then it would be activated.
+If the application is not installed or cannot be launched then an exception is thrown.
+
+It accepts `arguments` and `environment` to start an application with them.
+
+An example of the `arguments` usage is language and locale.
+XCTest lets you start an app process by specifing [Language and Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) via the process arguments with `-AppleLanguages` and `-AppleLocale`.
+The format is [Testing Specific Languages and Regions](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/TestingYourInternationalApp/TestingYourInternationalApp.html).
+Please terminate the application if the process was already running. The process should start with the arguments.
+
+=== "Java"
+
+    ```java
+    parameters = new ArrayList<>();
+    var result = driver.executeScript("mobile:launchApp", Map.of(
+        "bundleId", "com.apple.Preferences",
+        "arguments", Arrays.asList("-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP")
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    await driver.executeScript('mobile:launchApp', [{
+      "bundleId": "com.apple.Preferences",
+      "arguments": ["-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
+    }]);
+    ```
+
+=== "Python"
+
+    ```python
+    driver.execute_script("mobile:launchApp", {
+      "bundleId": "com.apple.Preferences",
+      "arguments": ["-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    driver.execute_script "mobile:launchApp", {
+      "bundleId": "com.apple.Preferences",
+      "arguments": ["-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    driver.ExecuteScript("mobile:launchApp", new Dictionary<string, object>() {
+        {"bundleId", "com.apple.Preferences"},
+        {"arguments", new List<string>() { "-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP" }}
+    });
+    ```
 
 #### Arguments
 
