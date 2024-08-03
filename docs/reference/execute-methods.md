@@ -1208,17 +1208,64 @@ velocity | number | yes | The velocity of the rotation gesture in radians per se
 
 #### Examples
 
-```java
-// Java
-JavascriptExecutor js = (JavascriptExecutor) driver;
-js.executeScript("mobile: rotateElement", ImmutableMap.of(
-    // rotate clockwise, 90 degrees
-    "rotation", -Math.PI / 2,
-    // in approximately two seconds
-    "velocity", Math.PI / 4,
-    "elementId", ((RemoteWebElement) element).getId()
-));
-```
+
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: rotateElement", ImmutableMap.of(
+        // rotate clockwise, 90 degrees
+        "rotation", -Math.PI / 2,
+        // in approximately two seconds
+        "velocity", Math.PI / 4,
+        "elementId", e.getId()
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: rotateElement', [{
+      "rotation": -Math.PI / 2,
+      "velocity": Math.PI / 4,
+      "elementId": e.elementId
+    }]);
+    ```
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: rotateElement", {
+      "rotation": -math.pi / 2,
+      "velocity": math.pi / 4,
+      "elementId": e.id
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: rotateElement', {
+      elementId: e.ref, 
+      rotation: PI / 2, 
+      velocity: PI / 4
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: rotateElement", new Dictionary<string, object>() {
+        {"elementId", element.Id},
+        {"rotation", -Math.PI / 2 },
+        {"velocity", Math.PI / 4 },
+    });
+    ```
+
 
 #### Reference
 
@@ -1241,9 +1288,9 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
 === "Java"
 
     ```java
-    RemoteWebElement el = driver.findElement(AppiumBy.accessibilityId("target element"));
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
     var result = driver.executeScript("mobile: tapWithNumberOfTaps", Map.of(
-        "elementId", el.getId(),
+        "elementId", e.getId(),
         "numberOfTaps", 2,
         "numberOfTouches", 1,
     ));
@@ -1292,9 +1339,6 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
         {"numberOfTouches", 1 },
     });
     ```
-
-
-
 
 - numberOfTaps=1, numberOfTouches=1 -> "vanilla" single tap
 - numberOfTaps=2, numberOfTouches=1 -> double tap
