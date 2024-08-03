@@ -209,9 +209,9 @@ If the application is not installed or cannot be launched then an exception is t
 It accepts `arguments` and `environment` to start an application with them.
 
 As an usage example, `arguments` allow you to enforce language and locale for the application to start with.
-XCTest lets you start an app process by specifing [Language and Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) via the process arguments with `-AppleLanguages` and `-AppleLocale`.
+XCTest lets you to start an application process by specifying [Language and Locale IDs](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/LanguageandLocaleIDs/LanguageandLocaleIDs.html) via process `arguments` with `-AppleLanguages` and `-AppleLocale`.
 Check the [Testing Specific Languages and Regions part of the Testing Your Internationalized App](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/TestingYourInternationalApp/TestingYourInternationalApp.html) for more details.
-Please terminate the application if the process was already running. The process should start with the arguments.
+Make sure to terminate the application before launching it with `arguments` if it is already running.
 
 === "Java"
 
