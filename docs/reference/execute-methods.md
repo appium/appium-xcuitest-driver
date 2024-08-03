@@ -216,8 +216,7 @@ Make sure to terminate the application before launching it with `arguments` if i
 === "Java"
 
     ```java
-    parameters = new ArrayList<>();
-    var result = driver.executeScript("mobile:launchApp", Map.of(
+    driver.executeScript("mobile:launchApp", Map.of(
         "bundleId", "com.apple.Preferences",
         "arguments", Arrays.asList("-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP")
     ));
@@ -1239,12 +1238,63 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
 
 #### Examples
 
-```ruby
-# Ruby
-e = @driver.find_element :id, 'target element'
-# Taps the element with a single touch point twice
-@driver.execute_script 'mobile: tapWithNumberOfTaps', {elementId: e.ref, numberOfTaps: 2, numberOfTouches: 1}
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement el = driver.findElement(AppiumBy.accessibilityId("target element"));
+    var result = driver.executeScript("mobile: tapWithNumberOfTaps", Map.of(
+        "elementId", el.getId(),
+        "numberOfTaps", 2,
+        "numberOfTouches", 1,
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: tapWithNumberOfTaps', [{
+      "elementId": e.elementId,
+      "numberOfTaps": 2,
+      "numberOfTouches": 1
+    }]);
+    ```
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: tapWithNumberOfTaps", {
+      "elementId": e.id,
+      "numberOfTaps": 2,
+      "numberOfTouches": 1
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: tapWithNumberOfTaps', {
+      elementId: e.ref, 
+      numberOfTaps: 2, 
+      numberOfTouches: 1
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: touchAndHold", new Dictionary<string, object>() {
+        {"elementId", element.Id},
+        {"numberOfTaps", 2 },
+        {"numberOfTouches", 1 },
+    });
+    ```
+
+
+
 
 - numberOfTaps=1, numberOfTouches=1 -> "vanilla" single tap
 - numberOfTaps=2, numberOfTouches=1 -> double tap
@@ -1592,6 +1642,7 @@ auditType | string or number | The name of the audit type this issue belongs to.
 element | string | The description of the element this issue was found for. | 'Yes' button
 elementDescription | string | The debug description of the element this issue was found for. Availble since driver version | A long string describing the element itself and its position in the page tree hierarchy
 elementAttributes | dict | JSON object containing various attributes of the element. | See the example below
+
 ```json
 "elementAttributes":{
     "isEnabled":"1",
