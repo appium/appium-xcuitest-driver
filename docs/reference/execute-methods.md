@@ -226,8 +226,8 @@ Make sure to terminate the application before launching it with `arguments` if i
 
     ```js
     await driver.executeScript('mobile:launchApp', [{
-      "bundleId": "com.apple.Preferences",
-      "arguments": ["-AppleLanguages", "(ja)", "-AppleLocale", "ja_JP"]
+      bundleId: 'com.apple.Preferences',
+      arguments: ['-AppleLanguages', '(ja)', '-AppleLocale', 'ja_JP']
     }]);
     ```
 
@@ -982,15 +982,59 @@ velocity | number | no | This argument is optional and is only supported since A
 
 #### Examples
 
-```java
-// Java
-JavascriptExecutor js = (JavascriptExecutor) driver;
-Map<String, Object> params = new HashMap<>();
-params.put("direction", "down");
-params.put("velocity", 2500);
-params.put("element", ((RemoteWebElement) element).getId());
-js.executeScript("mobile: swipe", params);
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: swipe", ImmutableMap.of(
+        "velocity": 2500,
+        "direction": "down",
+        "elementId", e.getId()
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript("mobile: swipe", [{
+      velocity: 2500,
+      direction: "down",
+      elementId: e.elementId
+    }]);
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: swipe", {
+      "velocity": 2500,
+      "direction": "down",
+      "elementId": e.id
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: swipe', {
+      velocity: 2500,
+      direction: 'down',
+      elementId: e.ref
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: swipe", new Dictionary<string, object>() {
+        {"elementId", element.Id},
+        {"direction", "down" },
+        {"velocity", 2500 }
+    });
+    ```
 
 #### References
 
@@ -1027,10 +1071,44 @@ toVisible | boolean | no | If set to _true_ then asks to scroll to the first vis
 
 #### Examples
 
-```python
-# Python
-driver.execute_script('mobile: scroll', {'direction': 'down'});
-```
+=== "Java"
+
+    ```java
+    driver.executeScript("mobile: scroll", ImmutableMap.of(
+        "direction", "down"
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    await driver.executeScript('mobile: scroll', [{
+      direction: 'down'
+    }]);
+
+=== "Python"
+
+    ```python
+    driver.execute_script("mobile: scroll", {
+      "direction": "down"
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    driver.execute_script 'mobile: scroll', {
+      direction: 'down'
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    driver.ExecuteScript("mobile: scroll", new Dictionary<string, object>() {
+        {"direction", "down"}
+    });
+    ```
 
 ### mobile: pinch
 
@@ -1046,10 +1124,59 @@ velocity | number | yes | The velocity of the pinch in scale factor per second (
 
 #### Examples
 
-```ruby
-# Ruby
-execute_script 'mobile: pinch', scale: 0.5, velocity: 1.1, element: element.ref
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: pinch", ImmutableMap.of(
+        "scale", 0.5,
+        "velocity", 1.1,
+        "elementId", e.getId()
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: pinch', [{
+      scale: 0.5,
+      velocity: 1.1,
+      elementId: e.elementId
+    }]);
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: pinch", {
+      "scale": 0.5,
+      "velocity": 1.1,
+      "elementId": e.id
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: pinch', {
+      scale: 0.5,
+      velocity: 1.1,
+      elementId: e.ref
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: pinch", new Dictionary<string, object>() {
+        {"elementId", element.Id},
+        {"scale", 0.5 },
+        {"velocity", 1.1 },
+    });
+    ```
 
 #### Reference
 
@@ -1069,10 +1196,49 @@ y | number | no | Vertical coordinate offset. | 100
 
 #### Examples
 
-```javascript
-// javascript
-driver.execute('mobile: doubleTap', {element: element.value.ELEMENT});
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: pinch", ImmutableMap.of(
+        "elementId", e.getId()
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: pinch', [{
+      elementId: e.elementId
+    }]);
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: pinch", {
+      "elementId": e.id
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: pinch', {
+      elementId: e.ref
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: pinch", new Dictionary<string, object>() {
+        {"elementId", element.Id}
+    });
+    ```
 
 ### mobile: touchAndHold
 
@@ -1089,13 +1255,54 @@ y | number | no | Vertical coordinate offset. | 100
 
 #### Examples
 
-```csharp
-// c#
-Dictionary<string, object> tfLongTap = new Dictionary<string, object>();
-tfLongTap.Add("elementId", element.Id);
-tfLongTap.Add("duration", 2.0);
-((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap);
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: touchAndHold", ImmutableMap.of(
+        "elementId", e.getId(),
+        "duration", 2.0
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: touchAndHold', [{
+      elementId: e.elementId,
+      duration: 2.0
+    }]);
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: touchAndHold", {
+      "elementId": e.id,
+      "duration": 2.0
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: touchAndHold', {
+      elementId: e.ref,
+      duration: 2.0
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: touchAndHold", new Dictionary<string, object>() {
+        {"elementId", element.Id},
+        {"duration", 2.0}
+    });
+    ```
 
 #### Reference
 
@@ -1113,12 +1320,49 @@ elementId ("element" prior to Appium v 1.22) | string | no | The internal elemen
 
 #### Examples
 
-```csharp
-// c#
-Dictionary<string, object> tfTap = new Dictionary<string, object>();
-tfTap.Add("elementId", element.Id);
-((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap);
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: twoFingerTap", ImmutableMap.of(
+        "elementId", e.getId()
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: twoFingerTap', [{
+      elementId: e.elementId
+    }]);
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: twoFingerTap", {
+      "elementId": e.id
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: twoFingerTap', {
+      elementId: e.ref
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: twoFingerTap", new Dictionary<string, object>() {
+        {"elementId", element.Id}
+    });
+    ```
 
 #### Reference
 
@@ -1154,18 +1398,75 @@ toY | number | yes | The y coordinate of ending drag point | 200
 
 #### Examples
 
-```java
-// Java
-JavascriptExecutor js = (JavascriptExecutor) driver;
-Map<String, Object> params = new HashMap<>();
-params.put("duration", 1.0);
-params.put("fromX", 100);
-params.put("fromY", 100);
-params.put("toX", 200);
-params.put("toY", 200);
-params.put("elementId", ((RemoteWebElement) element).getId());
-js.executeScript("mobile: dragFromToForDuration", params);
-```
+=== "Java"
+
+    ```java
+    RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
+    driver.executeScript("mobile: dragFromToForDuration", ImmutableMap.of(
+        "elementId", e.getId(),
+        "duration", 1.0,
+        "fromX", 100,
+        "fromY", 100,
+        "toX", 200,
+        "toY", 200
+    ));
+    ```
+
+=== "JS (WebdriverIO)"
+
+    ```js
+    const e = await $('~target element');
+    await driver.executeScript('mobile: dragFromToForDuration', [{
+      elementId: e.elementId,
+      duration: 1.0,
+      fromX: 100,
+      fromY: 100,
+      toX: 200,
+      toY: 200
+    }]);
+
+=== "Python"
+
+    ```python
+    e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
+    driver.execute_script("mobile: dragFromToForDuration", {
+      "elementId": e.id,
+      "duration": 1.0,
+      "fromX": 100,
+      "fromY": 100,
+      "toX": 200,
+      "toY": 200
+    })
+    ```
+
+=== "Ruby"
+
+    ```ruby
+    e = driver.find_element :accessibility_id, 'target element'
+    driver.execute_script 'mobile: dragFromToForDuration', {
+      elementId: e.ref,
+      duration: 1.0,
+      fromX: 100,
+      fromY: 100,
+      toX: 200,
+      toY: 200
+    }
+    ```
+
+=== "C#"
+
+    ```csharp
+    var e = driver.FindElement(By.AccessibilityId("target element"))
+    driver.ExecuteScript("mobile: dragFromToForDuration", new Dictionary<string, object>() {
+        {"elementId", element.Id},
+        {"duration", 1.0,}
+        {"fromX", 100},
+        {"fromY", 100},
+        {"toX", 200},
+        {"toY", 200}
+    });
+    ```
+
 
 #### Reference
 
@@ -1227,9 +1528,9 @@ velocity | number | yes | The velocity of the rotation gesture in radians per se
     ```js
     const e = await $('~target element');
     await driver.executeScript('mobile: rotateElement', [{
-      "rotation": -Math.PI / 2,
-      "velocity": Math.PI / 4,
-      "elementId": e.elementId
+      rotation: -Math.PI / 2,
+      velocity: Math.PI / 4,
+      elementId: e.elementId
     }]);
     ```
 
@@ -1249,8 +1550,8 @@ velocity | number | yes | The velocity of the rotation gesture in radians per se
     ```ruby
     e = driver.find_element :accessibility_id, 'target element'
     driver.execute_script 'mobile: rotateElement', {
-      elementId: e.ref, 
-      rotation: PI / 2, 
+      elementId: e.ref,
+      rotation: PI / 2,
       velocity: PI / 4
     }
     ```
@@ -1301,9 +1602,9 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
     ```js
     const e = await $('~target element');
     await driver.executeScript('mobile: tapWithNumberOfTaps', [{
-      "elementId": e.elementId,
-      "numberOfTaps": 2,
-      "numberOfTouches": 1
+      elementId: e.elementId,
+      numberOfTaps: 2,
+      numberOfTouches: 1
     }]);
     ```
 
@@ -1323,8 +1624,8 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
     ```ruby
     e = driver.find_element :accessibility_id, 'target element'
     driver.execute_script 'mobile: tapWithNumberOfTaps', {
-      elementId: e.ref, 
-      numberOfTaps: 2, 
+      elementId: e.ref,
+      numberOfTaps: 2,
       numberOfTouches: 1
     }
     ```
