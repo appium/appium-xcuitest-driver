@@ -1,3 +1,9 @@
+## [7.24.13](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.12...v7.24.13) (2024-08-08)
+
+### Miscellaneous Chores
+
+* Try to open the initial URL with WDA if no active pages are found ([#2449](https://github.com/appium/appium-xcuitest-driver/issues/2449)) ([08cad3e](https://github.com/appium/appium-xcuitest-driver/commit/08cad3e0d3f2faac6495effb3974ed05a3b7e6cd))
+
 ## [7.24.12](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.11...v7.24.12) (2024-08-04)
 
 ### Miscellaneous Chores
