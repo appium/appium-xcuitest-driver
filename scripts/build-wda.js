@@ -3,7 +3,9 @@ const xcode = require('appium-xcode');
 const B = require('bluebird');
 const {Simctl} = require('node-simctl');
 const {getSimulator} = require('appium-ios-simulator');
-const log = require('fancy-log');
+const {logger} = require('appium/support');
+
+const log = logger.getLogger('WDA');
 
 // TODO: allow passing in all the various build params as CLI args
 async function build() {
