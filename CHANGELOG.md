@@ -1,3 +1,9 @@
+## [7.24.16](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.15...v7.24.16) (2024-08-16)
+
+### Miscellaneous Chores
+
+* Improve web view detection error messages ([#2452](https://github.com/appium/appium-xcuitest-driver/issues/2452)) ([efd5fa3](https://github.com/appium/appium-xcuitest-driver/commit/efd5fa3732bd7a5a74091f4b79991d8e18b56f69))
+
 ## [7.24.15](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.14...v7.24.15) (2024-08-09)
 
 ### Miscellaneous Chores
