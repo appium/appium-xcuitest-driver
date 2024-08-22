@@ -1,3 +1,9 @@
+## [7.24.17](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.16...v7.24.17) (2024-08-22)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump webdriverio from 8.40.3 to 9.0.6 ([#2457](https://github.com/appium/appium-xcuitest-driver/issues/2457)) ([4d9ba89](https://github.com/appium/appium-xcuitest-driver/commit/4d9ba8937746b8fa354fc019af3ebfe439e72dee))
+
 ## [7.24.16](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.15...v7.24.16) (2024-08-16)
 
 ### Miscellaneous Chores
