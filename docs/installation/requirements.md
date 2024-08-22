@@ -62,6 +62,7 @@ The following table lists the minimum driver versions required for specific Xcod
 | Xcode 14-beta.3 / iOS 16 Beta | 4.7.4 |
 | Xcode 14.3 / iOS 16.4 | 4.21.7 |
 | Xcode 15 / iOS 17 | 4.35.0 |
+| Xcode 16-beta.5 / iOS 18 | 7.24.15 |
 
 The following table lists the last driver versions that are compatible with older Xcode versions:
 
