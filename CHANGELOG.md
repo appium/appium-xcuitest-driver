@@ -1,3 +1,63 @@
+## [7.24.16](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.15...v7.24.16) (2024-08-16)
+
+### Miscellaneous Chores
+
+* Improve web view detection error messages ([#2452](https://github.com/appium/appium-xcuitest-driver/issues/2452)) ([efd5fa3](https://github.com/appium/appium-xcuitest-driver/commit/efd5fa3732bd7a5a74091f4b79991d8e18b56f69))
+
+## [7.24.15](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.14...v7.24.15) (2024-08-09)
+
+### Miscellaneous Chores
+
+* Bump WDA ([#2451](https://github.com/appium/appium-xcuitest-driver/issues/2451)) ([c1a6413](https://github.com/appium/appium-xcuitest-driver/commit/c1a64138db210e52a54c49e5a654793a282cfc2c))
+
+## [7.24.14](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.13...v7.24.14) (2024-08-08)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2450](https://github.com/appium/appium-xcuitest-driver/issues/2450)) ([c705a36](https://github.com/appium/appium-xcuitest-driver/commit/c705a3603d206127b805df6b6fb052c47a466e2a))
+
+## [7.24.13](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.12...v7.24.13) (2024-08-08)
+
+### Miscellaneous Chores
+
+* Try to open the initial URL with WDA if no active pages are found ([#2449](https://github.com/appium/appium-xcuitest-driver/issues/2449)) ([08cad3e](https://github.com/appium/appium-xcuitest-driver/commit/08cad3e0d3f2faac6495effb3974ed05a3b7e6cd))
+
+## [7.24.12](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.11...v7.24.12) (2024-08-04)
+
+### Miscellaneous Chores
+
+* Bump remote debugger to v12 ([#2446](https://github.com/appium/appium-xcuitest-driver/issues/2446)) ([093d4d4](https://github.com/appium/appium-xcuitest-driver/commit/093d4d44b438d8f05b4e5efe231c4f304f80f98c))
+
+## [7.24.11](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.10...v7.24.11) (2024-08-02)
+
+### Miscellaneous Chores
+
+* Make remote debugger-related messages more useful ([#2443](https://github.com/appium/appium-xcuitest-driver/issues/2443)) ([65a5ce1](https://github.com/appium/appium-xcuitest-driver/commit/65a5ce11d6e69e7be042e571489f3530647f98a4))
+
+## [7.24.10](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.9...v7.24.10) (2024-08-02)
+
+### Miscellaneous Chores
+
+* Replace fancy-log dependency with appium logger ([#2442](https://github.com/appium/appium-xcuitest-driver/issues/2442)) ([9911b4e](https://github.com/appium/appium-xcuitest-driver/commit/9911b4e315a13ca27d9f1831bec7e2012bfde8b4))
+
+## [7.24.9](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.8...v7.24.9) (2024-08-01)
+
+### Bug Fixes
+
+* Streamline page selection ([#2440](https://github.com/appium/appium-xcuitest-driver/issues/2440)) ([2564829](https://github.com/appium/appium-xcuitest-driver/commit/2564829b05aa4a1d784b65ddb4b3792734320489))
+
+## [7.24.8](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.7...v7.24.8) (2024-08-01)
+
+### Bug Fixes
+
+* Pyidevice ctor invocations with options object ([#2441](https://github.com/appium/appium-xcuitest-driver/issues/2441)) ([7de0d95](https://github.com/appium/appium-xcuitest-driver/commit/7de0d9535c4def80f4a91e81fa1fa948e58a550c))
+
+## [7.24.7](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.6...v7.24.7) (2024-08-01)
+
+### Miscellaneous Chores
+
+* Improve typing on webview commands ([#2439](https://github.com/appium/appium-xcuitest-driver/issues/2439)) ([eab9498](https://github.com/appium/appium-xcuitest-driver/commit/eab9498ca783f6f5001f5dad63445d2fba30349c))
+
 ## [7.24.6](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.5...v7.24.6) (2024-07-31)
 
 ### Miscellaneous Chores
