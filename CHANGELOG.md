@@ -1,3 +1,9 @@
+## [7.24.18](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.17...v7.24.18) (2024-08-26)
+
+### Miscellaneous Chores
+
+* Bump appium-ios-device ([d67869e](https://github.com/appium/appium-xcuitest-driver/commit/d67869ef2243d1a7f0bd4780062e9370ab87d6c8))
+
 ## [7.24.17](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.16...v7.24.17) (2024-08-22)
 
 ### Miscellaneous Chores
