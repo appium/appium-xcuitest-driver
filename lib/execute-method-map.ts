@@ -552,7 +552,7 @@ export const executeMethodMap = {
     command: 'mobileSimctl',
     params: {
       required: ['command'],
-      optional: ['args', 'timeout'],
+      optional: ['args'],
     },
   },
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
