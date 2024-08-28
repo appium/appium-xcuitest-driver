@@ -2090,8 +2090,9 @@ payload | string | Base64-encoded content of the recorded media file if `remoteP
 ### mobile: simctl
 
 Runs the given commands under `xcrun simctl`.
-
 This method requires `simctl` server [secuity option](https://appium.io/docs/en/latest/guides/security/).
+
+`stream` commands such as log stream keep listening the output, thus Appium may not return any response so long (10 mins by default),
 
 #### Arguments
 Name | Type | Required | Description | Example
