@@ -2096,5 +2096,5 @@ This method requires `simctl` server [secuity option](https://appium.io/docs/en/
 #### Arguments
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-command | string | yes | subcommand
-args | array of string | no | arguments for the subcommand
+command | string | yes | a subcommand for the `simctl`. | `'spawn'`
+args | array | no | array of string as arguments for the command. | `['devices', 'booted', '--json']`
