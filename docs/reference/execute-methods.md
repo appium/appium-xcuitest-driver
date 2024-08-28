@@ -2086,3 +2086,15 @@ Same as for [mobile: startXCTestScreenRecording](#mobile-startxctestscreenrecord
 Name | Type | Description | Example
 --- | --- | --- | ---
 payload | string | Base64-encoded content of the recorded media file if `remotePath` parameter is empty/null or an empty string otherwise. The resulting media is expected to a be a valid QuickTime movie (.mov). | `YXBwaXVt....`
+
+### mobile: simctl
+
+Runs the given commands under `xcrun simctl`.
+
+This method requires `simctl` server [secuity option](https://appium.io/docs/en/latest/guides/security/).
+
+#### Arguments
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+command | string | yes | subcommand
+args | array of string | no | arguments for the subcommand
