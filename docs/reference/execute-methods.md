@@ -2098,3 +2098,11 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 command | string | yes | a subcommand for the `simctl`. | `'spawn'`
 args | array | no | array of string as arguments for the command. | `['devices', 'booted', '--json']`
+
+#### Returned Result
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+stdout | string | The standard output of the command. | `"{\n  \"devices\" : {\n    \"com.apple.CoreSimulator.SimRuntime.iOS`...
+stderr | string | The standard error of the command. | `` (empty string if no error occurred)
+code | string | The status code of the command. | `0`
