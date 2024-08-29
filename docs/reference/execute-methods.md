@@ -2089,7 +2089,7 @@ payload | string | Base64-encoded content of the recorded media file if `remoteP
 
 ### mobile: simctl
 
-Runs the given commands as a subcommand of `xcrun simctl`.
+Runs the given command as a subcommand of `xcrun simctl`.
 This method requires `simctl` [server secuity option](https://appium.io/docs/en/latest/guides/security/).
 
 `stream` commands such as log stream keeps listening the output, thus Appium keeps waiting for the command to end.
@@ -2104,6 +2104,6 @@ args | array | no | array of string as arguments for the command. | `['devices',
 
 Name | Type | Description | Example
 --- | --- | --- | ---
-stdout | string | The standard output of the command. | `"{\n  \"devices\" : {\n    \"com.apple.CoreSimulator.SimRuntime.iOS`...
-stderr | string | The standard error of the command. | `` (empty string if no error occurred)
+stdout | string | The standard output of the command. | `'{\n  \'devices\' : {\n    \'com.apple.CoreSimulator.SimRuntime.iOS...'`
+stderr | string | The standard error of the command. | `''`
 code | string | The status code of the command. | `0`
