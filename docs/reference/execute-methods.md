@@ -2089,15 +2089,15 @@ payload | string | Base64-encoded content of the recorded media file if `remoteP
 
 ### mobile: simctl
 
-Runs the given commands under `xcrun simctl`.
-This method requires `simctl` server [secuity option](https://appium.io/docs/en/latest/guides/security/).
+Runs the given commands as a subcommand of `xcrun simctl`.
+This method requires `simctl` [server secuity option](https://appium.io/docs/en/latest/guides/security/).
 
-`stream` commands such as log stream keep listening the output, thus Appium may not return any response so long (10 mins by default),
+`stream` commands such as log stream keeps listening the output, thus Appium keeps waiting for the command to end.
 
 #### Arguments
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-command | string | yes | a subcommand for the `simctl`. | `'spawn'`
+command | string | yes | a subcommand for the `simctl`. | `'list'`
 args | array | no | array of string as arguments for the command. | `['devices', 'booted', '--json']`
 
 #### Returned Result
