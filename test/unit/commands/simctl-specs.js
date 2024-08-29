@@ -1,5 +1,4 @@
 import sinon from 'sinon';
-import _ from 'lodash';
 import XCUITestDriver from '../../../lib/driver';
 import Simctl from 'node-simctl';
 
@@ -7,11 +6,10 @@ import Simctl from 'node-simctl';
 describe('general commands', function () {
   const driver = new XCUITestDriver();
   const simctl = new Simctl();
-  driver._device = { simctl }
+  driver._device = { simctl };
 
   let chai;
   let mockSimctl;
-  let device;
 
   before(async function () {
     chai = await import('chai');
@@ -28,9 +26,8 @@ describe('general commands', function () {
 
   describe('simctl', function () {
     it('should call xcrun simctl', async function () {
-      console.log(device)
       driver.isFeatureEnabled = () => true;
-      mockSimctl.expects('exec').once().withExactArgs('list', { args: [ 'devices', 'booted', '--json' ]});
+      mockSimctl.expects('exec').once().withExactArgs('list', { args: ['devices', 'booted', '--json']});
       await driver.mobileSimctl('list', ['devices', 'booted', '--json']);
     });
 
