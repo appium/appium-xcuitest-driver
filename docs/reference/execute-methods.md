@@ -2090,21 +2090,20 @@ payload | string | Base64-encoded content of the recorded media file if `remoteP
 ### mobile: simctl
 
 Runs the given command as a subcommand of `xcrun simctl` against the device under test.
-This method requires `simctl` [server secuity option](https://appium.io/docs/en/latest/guides/security/).
 
 `stream` commands such as log stream keeps listening the output, thus Appium keeps waiting for the command to end up to the given `timeot`.
 
 #### Arguments
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-command | string | yes | a subcommand for the `simctl`. | `'list'`
-args | array | no | array of string as arguments for the command after `<device>`. For example `getenv` subcommand accept `simctl getenv <device> <variable name>`. The `<device>` will be filled out automatically. This `args` should be the ` <variable name>` part only. | `['ENV_EXAMPLE']`
+command | string | yes | a subcommand for the `simctl`. Please check the error message about the latest available commands. | `'getenv'`
+args | array | no | array of string as arguments for the command after `<device>`. For example `getenv` subcommand accept `simctl getenv <device> <variable name>`. The `<device>` will be filled out automatically. This `args` should be the ` <variable name>` part only. | `['HOME']`
 timeout | number | no | Command timeout in milliseconds. If the command blocks for longer than this timeout then an exception is going to be thrown. The default timeout is `600000` ms. | `10000`
 
 #### Returned Result
 
 Name | Type | Description | Example
 --- | --- | --- | ---
-stdout | string | The standard output of the command. | `'{\n  \'devices\' : {\n    \'com.apple.CoreSimulator.SimRuntime.iOS...'`
+stdout | string | The standard output of the command. | `'/Users/user/Library/Developer/CoreSimulator/Devices/60EB8FDB-92E0-4895-B466-0153C6DE7BAE/data\n'`
 stderr | string | The standard error of the command. | `''`
 code | string | The status code of the command. | `0`
