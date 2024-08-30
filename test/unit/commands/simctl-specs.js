@@ -26,15 +26,29 @@ describe('general commands', function () {
 
   describe('simctl', function () {
     it('should call xcrun simctl', async function () {
-      driver.isFeatureEnabled = () => true;
-      mockSimctl.expects('exec').once().withExactArgs('list', { args: ['devices', 'booted', '--json']});
-      await driver.mobileSimctl('list', ['devices', 'booted', '--json']);
+      driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
+      mockSimctl.expects('exec').once().withExactArgs(
+        'getenv',
+        {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME']}
+      );
+      await driver.mobileSimctl('getenv', ['HOME']);
     });
 
-    it('should raise an error as not allowed', async function () {
-      driver.isFeatureEnabled = () => false;
+    it('should raise an error as not supported command', async function () {
+      driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
       mockSimctl.expects('exec').never();
-      await driver.mobileSimctl('list', ['devices', 'booted', '--json']).should.eventually.be.rejected;
+      await driver.mobileSimctl(
+        'list',
+        ['devices', 'booted', '--json']
+      ).should.eventually.be.rejected;
+    });
+
+    it('should raise an error as no udid', async function () {
+      driver.opts.udid = null;
+      mockSimctl.expects('exec').never();
+      await driver.mobileSimctl(
+        'getenv', ['HOME']
+      ).should.eventually.be.rejected;
     });
   });
 });
