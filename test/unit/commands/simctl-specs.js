@@ -30,9 +30,19 @@ describe('general commands', function () {
       driver.isSimulator = () => true;
       mockSimctl.expects('exec').once().withExactArgs(
         'getenv',
-        {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME']}
+        {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME'], timeout: undefined}
       );
       await driver.mobileSimctl('getenv', ['HOME']);
+    });
+
+    it('should call xcrun simctl with timeout', async function () {
+      driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
+      driver.isSimulator = () => true;
+      mockSimctl.expects('exec').once().withExactArgs(
+        'getenv',
+        {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME'], timeout: 10000}
+      );
+      await driver.mobileSimctl('getenv', ['HOME'], 10000);
     });
 
     it('should raise an error as not supported command', async function () {
