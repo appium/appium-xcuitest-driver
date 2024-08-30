@@ -2091,8 +2091,6 @@ payload | string | Base64-encoded content of the recorded media file if `remoteP
 
 Runs the given command as a subcommand of `xcrun simctl` against the device under test.
 
-`stream` commands such as log stream keeps listening the output, thus Appium keeps waiting for the command to end up to the given `timeot`.
-
 #### Arguments
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
@@ -2105,5 +2103,5 @@ timeout | number | no | Command timeout in milliseconds. If the command blocks f
 Name | Type | Description | Example
 --- | --- | --- | ---
 stdout | string | The standard output of the command. | `'/Users/user/Library/Developer/CoreSimulator/Devices/60EB8FDB-92E0-4895-B466-0153C6DE7BAE/data\n'`
-stderr | string | The standard error of the command. | `''`
+stderr | string | The standard error of the command. | `''` (an empty string)
 code | string | The status code of the command. | `0`
