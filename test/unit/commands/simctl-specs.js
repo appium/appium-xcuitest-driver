@@ -27,6 +27,7 @@ describe('general commands', function () {
   describe('simctl', function () {
     it('should call xcrun simctl', async function () {
       driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
+      driver.isSimulator = () => true;
       mockSimctl.expects('exec').once().withExactArgs(
         'getenv',
         {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME']}
@@ -36,6 +37,7 @@ describe('general commands', function () {
 
     it('should raise an error as not supported command', async function () {
       driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
+      driver.isSimulator = () => true;
       mockSimctl.expects('exec').never();
       await driver.mobileSimctl(
         'list',
@@ -45,6 +47,16 @@ describe('general commands', function () {
 
     it('should raise an error as no udid', async function () {
       driver.opts.udid = null;
+      driver.isSimulator = () => true;
+      mockSimctl.expects('exec').never();
+      await driver.mobileSimctl(
+        'getenv', ['HOME']
+      ).should.eventually.be.rejected;
+    });
+
+    it('should raise an error for non-simulator', async function () {
+      driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
+      driver.isSimulator = () => false;
       mockSimctl.expects('exec').never();
       await driver.mobileSimctl(
         'getenv', ['HOME']
