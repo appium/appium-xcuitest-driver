@@ -2089,16 +2089,17 @@ payload | string | Base64-encoded content of the recorded media file if `remoteP
 
 ### mobile: simctl
 
-Runs the given command as a subcommand of `xcrun simctl`.
+Runs the given command as a subcommand of `xcrun simctl` against the device under test.
 This method requires `simctl` [server secuity option](https://appium.io/docs/en/latest/guides/security/).
 
-`stream` commands such as log stream keeps listening the output, thus Appium keeps waiting for the command to end.
+`stream` commands such as log stream keeps listening the output, thus Appium keeps waiting for the command to end up to the given `timeot`.
 
 #### Arguments
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 command | string | yes | a subcommand for the `simctl`. | `'list'`
-args | array | no | array of string as arguments for the command. | `['devices', 'booted', '--json']`
+args | array | no | array of string as arguments for the command after `<device>`. For example `getenv` subcommand accept `simctl getenv <device> <variable name>`. The `<device>` will be filled out automatically. This `args` should be the ` <variable name>` part only. | `['ENV_EXAMPLE']`
+timeout | number | no | Command timeout in milliseconds. If the command blocks for longer than this timeout then an exception is going to be thrown. The default timeout is `600000` ms. | `10000`
 
 #### Returned Result
 
