@@ -1,3 +1,9 @@
+## [7.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.18...v7.25.0) (2024-08-31)
+
+### Features
+
+* add mobile:simctl to run listed simctl subcommands ([#2461](https://github.com/appium/appium-xcuitest-driver/issues/2461)) ([6aac043](https://github.com/appium/appium-xcuitest-driver/commit/6aac043d6882137e23f44da2ce2773657df3378c))
+
 ## [7.24.18](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.17...v7.24.18) (2024-08-26)
 
 ### Miscellaneous Chores
