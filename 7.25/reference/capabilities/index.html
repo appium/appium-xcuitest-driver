@@ -2697,6 +2697,11 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
 <td><code>12000</code></td>
 </tr>
 <tr>
+<td><code>appium:mjpegScreenshotUrl</code></td>
+<td>The URL of a service that provides realtime device screenshots in MJPEG format. If provided then the actual command to retrieve a screenshot will be requesting pictures from this service rather than directly from the server. Appium does not handle port forward etc to the URL.</td>
+<td><code>http://&lt;ip address to the device&gt;:9100</code></td>
+</tr>
+<tr>
 <td><code>appium:screenshotQuality</code></td>
 <td>Changes the initial quality of display screenshots. This capability affects the screenshoting speed and the actual quality of resulting screenshots. Before version 5.4.0 of WebDriverAgent possible values were: <code>0</code>, <code>1</code> (default), <code>2</code>, where <code>0</code> abbreviates lossless PNG, <code>1</code> is a high-quality JPEG and <code>2</code> is a low-quality JPEG. In the version 5.4.0 one more mode has been added (<code>3</code>), which is now the default one. It abbreviates lossless HEIC with fallback to PNG if the device does not support hardware-accelerated HEIC encoding. You can also change the value of screenshotQuality in <a href="../settings/">settings</a>.</td>
 <td><code>2</code></td>
@@ -3079,7 +3084,7 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-31T16:21:35+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-31</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-09-03T15:19:48+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-09-03</span>
   </span>
 
     
