@@ -1,3 +1,9 @@
+## [7.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.25.0...v7.26.0) (2024-09-05)
+
+### Features
+
+* Publish different log types over BiDi ([#2458](https://github.com/appium/appium-xcuitest-driver/issues/2458)) ([29e9d5e](https://github.com/appium/appium-xcuitest-driver/commit/29e9d5e18c9fe2523dd586d7a32fdce870a81ff0))
+
 ## [7.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.18...v7.25.0) (2024-08-31)
 
 ### Features
