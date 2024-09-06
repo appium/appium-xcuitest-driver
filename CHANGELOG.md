@@ -1,3 +1,9 @@
+## [7.26.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.0...v7.26.1) (2024-09-06)
+
+### Bug Fixes
+
+* safari process management will be done by WDA for real devices ([#2464](https://github.com/appium/appium-xcuitest-driver/issues/2464)) ([18eddc3](https://github.com/appium/appium-xcuitest-driver/commit/18eddc3c48a8361182511a14e46915d6db71cda2))
+
 ## [7.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.25.0...v7.26.0) (2024-09-05)
 
 ### Features
