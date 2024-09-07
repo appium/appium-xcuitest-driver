@@ -1,3 +1,9 @@
+## [7.26.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.1...v7.26.2) (2024-09-07)
+
+### Miscellaneous Chores
+
+* Set static event realm ([a08ce4f](https://github.com/appium/appium-xcuitest-driver/commit/a08ce4ffb3e73e21fed4d7a28d0004bcaa899bde))
+
 ## [7.26.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.0...v7.26.1) (2024-09-06)
 
 ### Bug Fixes
