@@ -14,7 +14,7 @@ This event is emitted if the driver retrieves a new entry for any of the below l
 
 ### crashlog
 
-Events are emitted for both emulator and real devices. The latter only works if [py-ios-device](hhttps://github.com/YueChen-C/py-ios-device) is installed on the server host. Each event contains a particular device crash report entry.
+Events are emitted for both emulator and real devices. The latter only works if [py-ios-device](https://github.com/YueChen-C/py-ios-device) is installed on the server host. Each event contains a particular device crash report entry.
 Events are always emitted with the `NATIVE_APP` context.
 
 ### syslog
@@ -24,19 +24,19 @@ Events are always emitted with the `NATIVE_APP` context.
 
 ### safariConsole
 
-Events are emitted for both emulator and real devices. Each event contains a single safari console log line.
+Events are emitted for both emulator and real devices. Each event contains a single Safari console log line.
 Events are always emitted with the appropriate web context name from which they were generated.
 Events are only emitted if the `appium:showSafariConsoleLog` capability value is provided.
 
 ### safariNetwork
 
-Events are emitted for both emulator and real devices. Each event contains a single safari network log line.
+Events are emitted for both emulator and real devices. Each event contains a single Safari network log line.
 Events are always emitted with the appropriate web context name from which they were generated.
 Events are only emitted if the `appium:showSafariNetworkLog` capability value is provided.
 
 ### performance
 
-Events are emitted for both emulator and real devices. Each event contains a single safari performance log line.
+Events are emitted for both emulator and real devices. Each event contains a single Safari performance log line.
 Events are always emitted with the appropriate web context name from which they were generated.
 Events are only emitted if the `appium:enablePerformanceLogging` capability value is provided.
 
