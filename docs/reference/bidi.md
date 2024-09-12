@@ -2,7 +2,7 @@
 title: BiDi Protocol Support
 ---
 
-XCUITest driver had partial support of the [BiDi Protocol](https://w3c.github.io/webdriver-bidi/) since version 7.26.0.
+XCUITest driver has partial support of the [BiDi Protocol](https://w3c.github.io/webdriver-bidi/) since version 7.26.0.
 Only events and commands mentioned below are supported.
 All other entities described in the spec throw not implemented errors.
 
