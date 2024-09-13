@@ -2,212 +2,212 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/contributing/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/endpoints-wda/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/endpoints/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/overview/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/attach-to-running-wda/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/audio-capture/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/capability-sets/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/ci-setup/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/clipboard/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/file-transfer/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/gestures/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/input-events/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/install-certificate/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/multiple-xcode-versions/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/parallel-tests/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/run-prebuilt-wda/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/run-preinstalled-wda/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/touch-id/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/troubleshooting/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/tvos/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/wda-custom-server/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/guides/wda-slowness/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/installation/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/installation/requirements/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/preparation/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/preparation/prov-profile-basic-auto/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/preparation/prov-profile-basic-manual/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/preparation/prov-profile-full-manual/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/preparation/prov-profile-generic-manual/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/preparation/real-device-config/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/bidi/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/capabilities/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/commands/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/element-attributes/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/execute-methods/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/ios-predicate/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/locator-strategies/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/scripts/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/security-flags/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/server-args/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/7.26/reference/settings/</loc>
-         <lastmod>2024-09-12</lastmod>
+         <lastmod>2024-09-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
