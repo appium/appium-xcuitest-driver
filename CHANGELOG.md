@@ -1,3 +1,9 @@
+## [7.26.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.2...v7.26.3) (2024-09-13)
+
+### Bug Fixes
+
+* Strip colors from server logs ([#2466](https://github.com/appium/appium-xcuitest-driver/issues/2466)) ([661f9d3](https://github.com/appium/appium-xcuitest-driver/commit/661f9d3f0fcb0d483de137fc542de141f077b1dc))
+
 ## [7.26.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.1...v7.26.2) (2024-09-07)
 
 ### Miscellaneous Chores
