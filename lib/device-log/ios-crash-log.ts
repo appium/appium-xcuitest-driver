@@ -2,13 +2,13 @@ import {fs, tempDir, util} from 'appium/support';
 import B from 'bluebird';
 import path from 'path';
 import _ from 'lodash';
-import {Pyidevice} from '../real-device-clients/py-ios-device-client';
 import IOSLog from './ios-log';
 import { toLogEntry, grepFile } from './helpers';
 import type { AppiumLogger } from '@appium/types';
 import type { BaseDeviceClient } from '../real-device-clients/base-device-client';
 import type { Simulator } from 'appium-ios-simulator';
 import type { LogEntry } from '../commands/types';
+import { selectDeviceClient } from '../real-device-clients/device-client';
 
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
@@ -28,10 +28,10 @@ export interface IOSCrashLogOptions {
 
 export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private readonly _udid: string | undefined;
-  private readonly _realDeviceClient: BaseDeviceClient | null;
   private readonly _logDir: string | null;
   private readonly _sim: Simulator | undefined;
   private _recentCrashFiles: string[];
+  private _realDeviceClient: BaseDeviceClient | null;
   private _started: boolean;
 
   constructor(opts: IOSCrashLogOptions) {
@@ -41,12 +41,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
     this._udid = opts.udid;
     this._sim = opts.sim;
-    this._realDeviceClient = this._isRealDevice()
-      ? new Pyidevice({
-        udid: this._udid as string,
-        log: opts.log,
-      })
-      : null;
+    this._realDeviceClient = null;
     this._logDir = this._isRealDevice()
       ? null
       : path.resolve(process.env.HOME || '/', 'Library', 'Logs', 'DiagnosticReports');
@@ -55,6 +50,12 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   override async startCapture(): Promise<void> {
+    if (this._isRealDevice() && !this._realDeviceClient) {
+      this._realDeviceClient = await selectDeviceClient({
+        udid: this._udid as string,
+        log: this.log,
+      });
+    }
     this._recentCrashFiles = await this._listCrashFiles(false);
     this._started = true;
   }
