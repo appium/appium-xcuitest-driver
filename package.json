@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "7.24.16",
+  "version": "7.26.4",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -78,7 +78,7 @@
   "dependencies": {
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
-    "appium-ios-device": "^2.5.4",
+    "appium-ios-device": "^2.7.23",
     "appium-ios-simulator": "^6.1.7",
     "appium-remote-debugger": "^12.1.1",
     "appium-webdriveragent": "^8.9.1",
@@ -92,7 +92,7 @@
     "lru-cache": "^10.0.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.x",
-    "node-simctl": "^7.1.17",
+    "node-simctl": "^7.6.0",
     "portscanner": "^2.2.0",
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
@@ -158,11 +158,11 @@
     "rimraf": "^5.0.1",
     "semantic-release": "^24.0.0",
     "sharp": "^0.x",
-    "sinon": "^18.0.0",
+    "sinon": "^19.0.2",
     "ts-node": "^10.9.1",
     "type-fest": "^4.1.0",
     "typescript": "^5.4.2",
-    "webdriverio": "^8.14.3"
+    "webdriverio": "^9.0.6"
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"

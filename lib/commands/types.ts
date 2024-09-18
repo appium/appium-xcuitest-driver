@@ -572,3 +572,5 @@ export interface LogEntry {
   level: string,
   message: string;
 }
+
+export type LogListener = (logEntry: LogEntry) => any;
