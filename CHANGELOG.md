@@ -1,3 +1,51 @@
+## [7.26.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.3...v7.26.4) (2024-09-17)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 18.0.1 to 19.0.2 ([#2469](https://github.com/appium/appium-xcuitest-driver/issues/2469)) ([e737dde](https://github.com/appium/appium-xcuitest-driver/commit/e737dde53880b70536440cec84037ad58ed7f4ab))
+
+## [7.26.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.2...v7.26.3) (2024-09-13)
+
+### Bug Fixes
+
+* Strip colors from server logs ([#2466](https://github.com/appium/appium-xcuitest-driver/issues/2466)) ([661f9d3](https://github.com/appium/appium-xcuitest-driver/commit/661f9d3f0fcb0d483de137fc542de141f077b1dc))
+
+## [7.26.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.1...v7.26.2) (2024-09-07)
+
+### Miscellaneous Chores
+
+* Set static event realm ([a08ce4f](https://github.com/appium/appium-xcuitest-driver/commit/a08ce4ffb3e73e21fed4d7a28d0004bcaa899bde))
+
+## [7.26.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.0...v7.26.1) (2024-09-06)
+
+### Bug Fixes
+
+* safari process management will be done by WDA for real devices ([#2464](https://github.com/appium/appium-xcuitest-driver/issues/2464)) ([18eddc3](https://github.com/appium/appium-xcuitest-driver/commit/18eddc3c48a8361182511a14e46915d6db71cda2))
+
+## [7.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.25.0...v7.26.0) (2024-09-05)
+
+### Features
+
+* Publish different log types over BiDi ([#2458](https://github.com/appium/appium-xcuitest-driver/issues/2458)) ([29e9d5e](https://github.com/appium/appium-xcuitest-driver/commit/29e9d5e18c9fe2523dd586d7a32fdce870a81ff0))
+
+## [7.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.18...v7.25.0) (2024-08-31)
+
+### Features
+
+* add mobile:simctl to run listed simctl subcommands ([#2461](https://github.com/appium/appium-xcuitest-driver/issues/2461)) ([6aac043](https://github.com/appium/appium-xcuitest-driver/commit/6aac043d6882137e23f44da2ce2773657df3378c))
+
+## [7.24.18](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.17...v7.24.18) (2024-08-26)
+
+### Miscellaneous Chores
+
+* Bump appium-ios-device ([d67869e](https://github.com/appium/appium-xcuitest-driver/commit/d67869ef2243d1a7f0bd4780062e9370ab87d6c8))
+
+## [7.24.17](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.16...v7.24.17) (2024-08-22)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump webdriverio from 8.40.3 to 9.0.6 ([#2457](https://github.com/appium/appium-xcuitest-driver/issues/2457)) ([4d9ba89](https://github.com/appium/appium-xcuitest-driver/commit/4d9ba8937746b8fa354fc019af3ebfe439e72dee))
+
 ## [7.24.16](https://github.com/appium/appium-xcuitest-driver/compare/v7.24.15...v7.24.16) (2024-08-16)
 
 ### Miscellaneous Chores
