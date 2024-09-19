@@ -1947,6 +1947,43 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interact with dialogs managed by com.apple.ContactsUI.LimitedAccessPromptView
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#leftover-application-data-on-real-devices" class="md-nav__link">
     <span class="md-ellipsis">
       Leftover Application Data on Real Devices
@@ -2375,6 +2412,43 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interact with dialogs managed by com.apple.ContactsUI.LimitedAccessPromptView
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#leftover-application-data-on-real-devices" class="md-nav__link">
     <span class="md-ellipsis">
       Leftover Application Data on Real Devices
@@ -2687,6 +2761,24 @@ do not require such adjustment.</p>
 <li>Activate <code>com.apple.springboard</code> with <a href="../../reference/execute-methods/#mobile-activateapp"><code>mobile: activateApp</code></a> before interacting with dialogs</li>
 </ul>
 <p><a href="../../reference/execute-methods/#mobile-activateappinfo"><code>mobile: activeAppInfo</code></a> helps to understand what application (bundleId) is considered as active for the XCUITest driver.</p>
+<h2 id="interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview">Interact with dialogs managed by <code>com.apple.ContactsUI.LimitedAccessPromptView</code><a class="headerlink" href="#interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview" title="Permanent link">&para;</a></h2>
+<p>iOS 18 introduced a new process named <code>com.apple.ContactsUI.LimitedAccessPromptView</code>. See <a href="https://github.com/appium/appium/issues/20591">this issue</a> for more details.
+As of XCUITest driver v7.26.4, the only workaround to interact with views available through the process is the below method:</p>
+<ul>
+<li><code>defaultActiveApplication</code> setting in <a href="../../reference/settings/">Settings</a>.<ul>
+<li>e.g. With the <a href="https://github.com/appium/ruby_lib_core">Appium Ruby client</a>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Interacting with the test target</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">driver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="ss">defaultActiveApplication</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.apple.ContactsUI.LimitedAccessPromptView&quot;</span><span class="p">})</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># to accept the alert</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s2">&quot;accessibility_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Select Contacts&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">driver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="ss">defaultActiveApplication</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">})</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># keep interacting with the test target</span>
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
+<p>The <code>com.apple.ContactsUI.LimitedAccessPromptView</code> process can get elements available through <code>com.apple.springboard</code>, such as several system permission dialogs.
+iOS 18+ devices may be possible to use <code>com.apple.ContactsUI.LimitedAccessPromptView</code> to interact with elements managed either by <code>com.apple.ContactsUI.LimitedAccessPromptView</code> or <code>com.apple.springboard</code>.</p>
 <h2 id="leftover-application-data-on-real-devices">Leftover Application Data on Real Devices<a class="headerlink" href="#leftover-application-data-on-real-devices" title="Permanent link">&para;</a></h2>
 <p>There might be a situation where application data is present on the real device, even if the
 application itself is not installed. This could happen if:</p>
@@ -2721,11 +2813,11 @@ calling <a href="../../reference/execute-methods/#mobile-removeapp"><code>mobile
 <h3 id="real-device-stops-responding">Real Device Stops Responding<a class="headerlink" href="#real-device-stops-responding" title="Permanent link">&para;</a></h3>
 <p>Running tests on a real device is particularly flakey. If things stop responding, the only recourse
 is, most often, to restart the device. Logs in the form of the following <em>may</em> start to occur:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>info<span class="w"> </span>JSONWP<span class="w"> </span>Proxy<span class="w"> </span>Proxying<span class="w"> </span><span class="o">[</span>POST<span class="w"> </span>/session<span class="o">]</span><span class="w"> </span>to<span class="w"> </span><span class="o">[</span>POST<span class="w"> </span>http://10.35.4.122:8100/session<span class="o">]</span><span class="w"> </span>with<span class="w"> </span>body:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;desiredCapabilities&quot;</span>:<span class="o">{</span><span class="s2">&quot;ap...&quot;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:20:42<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Listening<span class="w"> </span>on<span class="w"> </span>USB
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:21:42<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>update<span class="w"> </span>application<span class="w"> </span>state<span class="w"> </span>promptly.<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:21:57<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>get<span class="w"> </span>screenshot<span class="w"> </span>within<span class="w"> </span>15s<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:22:57<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>App<span class="w"> </span>state<span class="w"> </span>of<span class="w"> </span><span class="o">(</span>null<span class="o">)</span><span class="w"> </span>is<span class="w"> </span>still<span class="w"> </span>unknown<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>info<span class="w"> </span>JSONWP<span class="w"> </span>Proxy<span class="w"> </span>Proxying<span class="w"> </span><span class="o">[</span>POST<span class="w"> </span>/session<span class="o">]</span><span class="w"> </span>to<span class="w"> </span><span class="o">[</span>POST<span class="w"> </span>http://10.35.4.122:8100/session<span class="o">]</span><span class="w"> </span>with<span class="w"> </span>body:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;desiredCapabilities&quot;</span>:<span class="o">{</span><span class="s2">&quot;ap...&quot;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:20:42<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Listening<span class="w"> </span>on<span class="w"> </span>USB
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:21:42<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>update<span class="w"> </span>application<span class="w"> </span>state<span class="w"> </span>promptly.<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:21:57<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>get<span class="w"> </span>screenshot<span class="w"> </span>within<span class="w"> </span>15s<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:22:57<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>App<span class="w"> </span>state<span class="w"> </span>of<span class="w"> </span><span class="o">(</span>null<span class="o">)</span><span class="w"> </span>is<span class="w"> </span>still<span class="w"> </span>unknown<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
 </code></pre></div>
 <h3 id="command-takes-60-seconds">Command Takes 60+ Seconds<a class="headerlink" href="#command-takes-60-seconds" title="Permanent link">&para;</a></h3>
 <p>Sometimes it is possible to encounter slowdowns for an additional 60 seconds for a command that
@@ -2744,8 +2836,8 @@ code <code>65</code>. One workaround for this is to use a private key that is no
 keychain. See <a href="https://github.com/appium/appium/issues/6955">this issue</a> and
 <a href="http://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails">this Stack Exchange post</a>.</p>
 <p>To export the key, use</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>security create-keychain -p [keychain_password] MyKeychain.keychain
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>security import MyPrivateKey.p12 -t agg -k MyKeychain.keychain -P [p12_Password] -A
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>security create-keychain -p [keychain_password] MyKeychain.keychain
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>security import MyPrivateKey.p12 -t agg -k MyKeychain.keychain -P [p12_Password] -A
 </code></pre></div>
 <p>where <code>MyPrivateKey.p12</code> is the private development key exported from the system keychain.</p>
 <p>You can then use the <a href="../../reference/capabilities/#webdriveragent"><code>appium:keychainPath</code></a> and
@@ -2767,8 +2859,8 @@ leave the simulator running at the end of a test session.</p>
 <p>Testing on iOS generates files that can sometimes get large. These include logs, temporary files,
 and derived data from Xcode runs, all of which are safe to delete if any issues arise. The files are
 usually found in the following locations, should they need to be deleted:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$HOME/Library/Logs/CoreSimulator/*
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>$HOME/Library/Developer/Xcode/DerivedData/*
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$HOME/Library/Logs/CoreSimulator/*
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$HOME/Library/Developer/Xcode/DerivedData/*
 </code></pre></div>
 
 
@@ -2790,7 +2882,7 @@ usually found in the following locations, should they need to be deleted:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-06-02T12:59:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-06-02</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-09-19T21:08:37+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-09-19</span>
   </span>
 
     
