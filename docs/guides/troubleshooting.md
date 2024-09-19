@@ -51,8 +51,8 @@ XCUITest driver offers a couple of approaches to handle them:
 
 ## Interact with dialogs managed by `com.apple.ContactsUI.LimitedAccessPromptView`
 
-iOS 18 introduced a new process, named `com.apple.ContactsUI.LimitedAccessPromptView`. See [this issue](https://github.com/appium/appium/issues/20591) for more details.
-As of XCUITest driver v7.26.4, the only workaround to interact with the view is below method:
+iOS 18 introduced a new process named `com.apple.ContactsUI.LimitedAccessPromptView`. See [this issue](https://github.com/appium/appium/issues/20591) for more details.
+As of XCUITest driver v7.26.4, the only workaround to interact with views available through the process is the below method:
 
 - `defaultActiveApplication` setting in [Settings](../reference/settings.md).
     - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
