@@ -49,6 +49,25 @@ XCUITest driver offers a couple of approaches to handle them:
 
 [`mobile: activeAppInfo`](../reference/execute-methods.md#mobile-activateappinfo) helps to understand what application (bundleId) is considered as active for the XCUITest driver.
 
+## Interact with dialogs managed by `com.apple.ContactsUI.LimitedAccessPromptView`
+
+iOS 18 introduced a new process, named `com.apple.ContactsUI.LimitedAccessPromptView`. See [this issue](https://github.com/appium/appium/issues/20591) for more details.
+As of XCUITest driver v7.26.4, the only workaround to interact with the view is below method:
+
+- `defaultActiveApplication` setting in [Settings](../reference/settings.md).
+    - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
+        ```ruby
+        # Interacting with the test target
+        driver.settings.update({defaultActiveApplication: "com.apple.ContactsUI.LimitedAccessPromptView"})
+        # to accept the alert
+        driver.find_element("accessibility_id", "Select Contacts").click
+        driver.settings.update({defaultActiveApplication: "auto"})
+        # keep interacting with the test target
+        ```
+
+`com.apple.ContactsUI.LimitedAccessPromptView` looks like can include elements available via `com.apple.springboard` thus you could use `com.apple.ContactsUI.LimitedAccessPromptView` instead of `com.apple.springboard` for iOS 18 for now to interact with dialogs manabed either `com.apple.ContactsUI.LimitedAccessPromptView` or `com.apple.springboard`.
+
+
 ## Leftover Application Data on Real Devices
 
 There might be a situation where application data is present on the real device, even if the
