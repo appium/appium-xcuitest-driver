@@ -65,8 +65,8 @@ As of XCUITest driver v7.26.4, the only workaround to interact with the view is 
         # keep interacting with the test target
         ```
 
-`com.apple.ContactsUI.LimitedAccessPromptView` looks like can include elements available via `com.apple.springboard` thus you could use `com.apple.ContactsUI.LimitedAccessPromptView` instead of `com.apple.springboard` for iOS 18 for now to interact with dialogs manabed either `com.apple.ContactsUI.LimitedAccessPromptView` or `com.apple.springboard`.
-
+The `com.apple.ContactsUI.LimitedAccessPromptView` process can get elements available through `com.apple.springboard`, such as several system permission dialogs.
+iOS 18+ devices may be possible to use `com.apple.ContactsUI.LimitedAccessPromptView` to interact with elements managed either by `com.apple.ContactsUI.LimitedAccessPromptView` or `com.apple.springboard`.
 
 ## Leftover Application Data on Real Devices
 
