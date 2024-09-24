@@ -15,4 +15,4 @@ appium driver run xcuitest <script-name>
 |Script Name|Description|
 |------------|-----------|
 |`open-wda`|Opens the WebDriverAgent project in Xcode|
-|`build-wda`|Builds the WebDriverAgent project using the first available iPhone simulator and the latest iOS supported by the current Xcode version|
+|`build-wda`|Builds the WebDriverAgent project using the first available iPhone simulator and the latest iOS supported by the current Xcode version. Use `--sdk` and `--name` to customize iOS version and the device|
