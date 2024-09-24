@@ -1,39 +1,38 @@
 const {WebDriverAgent} = require('appium-webdriveragent');
 const xcode = require('appium-xcode');
-const B = require('bluebird');
 const {Simctl} = require('node-simctl');
 const {getSimulator} = require('appium-ios-simulator');
 const {logger} = require('appium/support');
-const yargs = require('yargs/yargs');
-const {hideBin} = require('yargs/helpers');
 
 const log = logger.getLogger('WDA');
 
-const argv = yargs(hideBin(process.argv)).options({
-  sdk: {type: 'string', alias: 'v', demandOption: false, describe: 'iOS SDK version to use'},
-  name: {
-    type: 'string',
-    alias: 'd',
-    demandOption: false,
-    describe: 'Name of the iOS simulator to use',
-  },
-}).argv;
+function parseArgValue(argName) {
+  const argNamePattern = new RegExp(`^--${argName}\\b`);
+  for (let i = 1; i < process.argv.length; ++i) {
+    const arg = process.argv[i];
+    if (argNamePattern.test(arg)) {
+      return arg.includes('=') ? arg.split('=')[1] : process.argv[i + 1];
+    }
+  }
+  return null;
+}
 
 async function build() {
-  let [xcodeVersion, platformVersion] = await B.all([xcode.getVersion(true), xcode.getMaxIOSSDK()]);
-  platformVersion = argv.sdk || platformVersion;
+  const customDevice = parseArgValue('name');
+  const xcodeVersion = await xcode.getVersion(true);
+  const platformVersion = parseArgValue('sdk') || (await xcode.getMaxIOSSDK());
 
   const verifyDevicePresence = (info) => {
     if (!info) {
       throw new Error(
-        `Cannot find any available iOS ${platformVersion} ${argv.name || ''} Simulator on your system`,
+        `Cannot find any available iOS ${platformVersion} ${customDevice || ''} Simulator on your system`,
       );
     }
     return info;
   };
   const deviceInfo = verifyDevicePresence(
     (await new Simctl().getDevices(platformVersion, 'iOS')).find(({name}) =>
-      name.includes(argv.name || 'iPhone'),
+      name.includes(customDevice || 'iPhone'),
     ),
   );
   const device = await getSimulator(deviceInfo.udid, {
