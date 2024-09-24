@@ -25,7 +25,7 @@ async function build() {
   const verifyDevicePresence = (info) => {
     if (!info) {
       throw new Error(
-        `Cannot find any available iOS ${platformVersion} ${customDevice ? `${customDevice} ` : ''}simulator on your system. Only the following simulators are available:\n${iosDevices.map((e) => e.name).join('\n')})`,
+        `Cannot find any available iOS ${platformVersion} ${customDevice ? `${customDevice} ` : ''}simulator on your system. Only the following simulators are available:\n${iosDevices.map((e) => e.name).join('\n')}`,
       );
     }
     return info;
