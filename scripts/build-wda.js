@@ -21,19 +21,17 @@ async function build() {
   const customDevice = parseArgValue('name');
   const xcodeVersion = await xcode.getVersion(true);
   const platformVersion = parseArgValue('sdk') || (await xcode.getMaxIOSSDK());
-
+  const iosDevices = await new Simctl().getDevices(platformVersion, 'iOS');
   const verifyDevicePresence = (info) => {
     if (!info) {
       throw new Error(
-        `Cannot find any available iOS ${platformVersion} ${customDevice ? `${customDevice} ` : ''}Simulator on your system`,
+        `Cannot find any available iOS ${platformVersion} ${customDevice ? `${customDevice} ` : ''}simulator on your system. Only the following simulators are available:\n${iosDevices.map((e) => e.name).join('\n')})`,
       );
     }
     return info;
   };
   const deviceInfo = verifyDevicePresence(
-    (await new Simctl().getDevices(platformVersion, 'iOS')).find(({name}) =>
-      name.includes(customDevice || 'iPhone'),
-    ),
+    iosDevices.find(({name}) => name.includes(customDevice || 'iPhone')),
   );
   const device = await getSimulator(deviceInfo.udid, {
     platform: deviceInfo.platform,
