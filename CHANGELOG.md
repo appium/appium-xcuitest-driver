@@ -1,3 +1,9 @@
+## [7.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.4...v7.27.0) (2024-09-25)
+
+### Features
+
+* build-wda script parameters ([#2475](https://github.com/appium/appium-xcuitest-driver/issues/2475)) ([b8bdfad](https://github.com/appium/appium-xcuitest-driver/commit/b8bdfad3c86efd2d351e99fd53c879d7e6e4b082))
+
 ## [7.26.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.3...v7.26.4) (2024-09-17)
 
 ### Miscellaneous Chores
