@@ -181,4 +181,4 @@ Please try out iOS 17.6 or a newer version which includes [a possible fix by App
 
 Frequent Web Inspector debugger disconnection started since iOS 17.2 (or iOS 17.0), that eventually caused `Disconnecting from remote debugger` error.
 It could be improved since iOS 17.6.
-Please check [a PR](https://github.com/appium/appium-xcuitest-driver/pull/2334) for more details.
+Please check [the corresponding pull request](https://github.com/appium/appium-xcuitest-driver/pull/2334) for more details.
