@@ -1,3 +1,9 @@
+## [7.27.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.27.0...v7.27.1) (2024-10-09)
+
+### Bug Fixes
+
+* use lipo -info instead of file for architecture detection ([#2478](https://github.com/appium/appium-xcuitest-driver/issues/2478)) ([993aa3a](https://github.com/appium/appium-xcuitest-driver/commit/993aa3a13fe257a636293b78aa5fa757601dcc09))
+
 ## [7.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.4...v7.27.0) (2024-09-25)
 
 ### Features
