@@ -53,7 +53,7 @@ export class Pyidevice extends BaseDeviceClient {
   }
 
   override async listProfiles(): Promise<CertificateList> {
-    const {stdout} = await this.execute(['profiles', 'list']) as TeenProcessExecResult<string>;
+    const {stdout} = await this.execute(['profiles', 'list']);
     return JSON.parse(stdout);
   }
 
@@ -87,12 +87,12 @@ export class Pyidevice extends BaseDeviceClient {
 
   override async removeProfile(name: string): Promise<string> {
     return (
-      await this.execute(['profiles', 'remove', '--name', name], {logStdout: true}) as TeenProcessExecResult<string>
+      await this.execute(['profiles', 'remove', '--name', name], {logStdout: true})
     ).stdout;
   }
 
   override async listCrashes(): Promise<string[]> {
-    const {stdout} = await this.execute(['crash', 'list']) as TeenProcessExecResult<string>;
+    const {stdout} = await this.execute(['crash', 'list']);
     // Example output:
     // ['.', '..', 'SiriSearchFeedback-2023-12-06-144043.ips', '
     // SiriSearchFeedback-2024-05-22-194219.ips', 'JetsamEvent-2024-05-23-225056.ips',
@@ -114,15 +114,15 @@ export class Pyidevice extends BaseDeviceClient {
     return await this.execute(['pcapd', dstFile], {
       format: null,
       asynchronous: true,
-    }) as SubProcess;
+    });
   }
 
-  private async execute(
+  private async execute<T extends ExecuteOptions>(
     args: string[],
-    opts: ExecuteOptions = {}
-  ): Promise<TeenProcessExecResult<string> | SubProcess> {
+    opts?: T
+  ): Promise<T extends {asynchronous: true} ? SubProcess : TeenProcessExecResult<string>> {
     await this.assertExists();
-    const {cwd, format = 'json', logStdout = false, asynchronous = false} = opts;
+    const {cwd, format = 'json', logStdout = false, asynchronous = false} = opts ?? {};
 
     const finalArgs = [...args, '--udid', this._udid, '--network'];
     if (format) {
@@ -135,12 +135,14 @@ export class Pyidevice extends BaseDeviceClient {
       if (asynchronous) {
         const result = new SubProcess(binaryPath, finalArgs, {cwd});
         await result.start(0);
+        //@ts-ignore This is OK
         return result;
       }
       const result = await exec(binaryPath, finalArgs, {cwd});
       if (logStdout) {
         this.log.debug(`Command output: ${result.stdout}`);
       }
+      //@ts-ignore This is OK
       return result;
     } catch (e) {
       throw new Error(`'${cmdStr}' failed. Original error: ${e.stderr || e.stdout || e.message}`);
