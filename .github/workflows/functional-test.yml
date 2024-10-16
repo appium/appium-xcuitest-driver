@@ -30,19 +30,18 @@ jobs:
         - driver
         - web
         - long
-        xcodeVersion: ['14.3.1', '15.2']
         include:
         - xcodeVersion: '14.3.1'
           iosVersion: '16.4'
-          deviceName: 'iPhone 13'
+          deviceName: 'iPhone 14'
           tvosVersion: '16.4'
           tvosDeviceName: 'Apple TV'
           platform: macos-13
-        - xcodeVersion: '15.2'
-          iosVersion: '17.2'
-          deviceName: 'iPhone 14'
+        - xcodeVersion: '15.4'
+          iosVersion: '17.5'
+          deviceName: 'iPhone 15'
           skipTvOs: true
-          platform: macos-13
+          platform: macos-14
       fail-fast: false
 
     runs-on: ${{ matrix.platform }}
