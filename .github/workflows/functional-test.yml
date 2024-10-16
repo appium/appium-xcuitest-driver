@@ -30,6 +30,7 @@ jobs:
         - driver
         - web
         - long
+        xcodeVersion: ['14.3.1', '15.4']
         include:
         - xcodeVersion: '14.3.1'
           iosVersion: '16.4'
