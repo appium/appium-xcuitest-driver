@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {SubProcess, exec} from 'teen_process';
+import {util} from 'appium/support';
 import { LineConsumingLog } from './line-consuming-log';
 import type { Simulator } from 'appium-ios-simulator';
 import type { AppiumLogger } from '@appium/types';
@@ -49,7 +50,8 @@ export class IOSSimulatorLog extends LineConsumingLog {
       spawnArgs.push('--level', this.logLevel);
     }
     this.log.debug(
-      `Starting log capture for iOS Simulator with udid '${this.sim.udid}' using simctl`,
+      `Starting log capture for iOS Simulator with udid '${this.sim.udid}' ` +
+      `via simctl using the following arguments '${util.quote(spawnArgs)}'`
     );
     await this.cleanupObsoleteLogStreams();
     try {
