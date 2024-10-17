@@ -1,3 +1,9 @@
+## [7.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.27.1...v7.28.0) (2024-10-17)
+
+### Features
+
+* Add 'simulatorLogLevel' capability ([#2479](https://github.com/appium/appium-xcuitest-driver/issues/2479)) ([b75f5ec](https://github.com/appium/appium-xcuitest-driver/commit/b75f5ecbc87d2245a330e043b8ca5aac96f8cac1))
+
 ## [7.27.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.27.0...v7.27.1) (2024-10-09)
 
 ### Bug Fixes
