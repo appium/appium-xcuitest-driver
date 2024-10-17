@@ -74,6 +74,7 @@ jobs:
       with:
         model: "${{ matrix.deviceName }}"
         os_version: "${{ matrix.iosVersion }}"
+        shutdown_after_job: false
     - run: xcrun simctl bootstatus ${{ steps.prepareSimulator.outputs.udid }} -b
       name: Wait for Simulator to finish booting
 
