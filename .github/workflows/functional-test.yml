@@ -49,7 +49,7 @@ jobs:
 
     name: e2e
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Node.js
       uses: actions/setup-node@v3
@@ -68,12 +68,14 @@ jobs:
         xcrun simctl list runtimes
         xcrun --sdk iphonesimulator --show-sdk-version
       name: List Runtimes
-
     - name: Prepare iOS simulator
+      id: prepareSimulator
       uses: futureware-tech/simulator-action@v3
       with:
         model: "${{ matrix.deviceName }}"
         os_version: "${{ matrix.iosVersion }}"
+    - run: xcrun simctl bootstatus ${{ steps.prepareSimulator.outputs.udid }} -b
+      name: Wait for Simulator to finish booting
 
     - run: |
         npm install --no-save mjpeg-consumer
