@@ -1,3 +1,9 @@
+## [7.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.0...v7.28.1) (2024-10-18)
+
+### Bug Fixes
+
+* bump WDA to fix transient overlay windows handling when respectSystemAlerts is enabled ([#2482](https://github.com/appium/appium-xcuitest-driver/issues/2482)) ([e504a6d](https://github.com/appium/appium-xcuitest-driver/commit/e504a6dc6fca4a4d5480a4a37d47b2f26cdee243))
+
 ## [7.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.27.1...v7.28.0) (2024-10-17)
 
 ### Features
