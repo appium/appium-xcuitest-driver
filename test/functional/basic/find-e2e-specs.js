@@ -87,7 +87,7 @@ describe('XCUITestDriver - find -', function () {
       // we will have the previous elements, so the get command will be fulfilled.
       await B.delay(1000);
 
-      await driver.setTimeout({ 'implicit': 5000 });
+      await driver.setTimeout({ implicit: 5000 });
       table = await driver.$('XCUIElementTypeTable');
       let el2 = await driver.$('XCUIElementTypeStaticText');
       let el2Name = await el2.getAttribute('name');
@@ -157,7 +157,7 @@ describe('XCUITestDriver - find -', function () {
       });
 
       it('should respect implicit wait', async function () {
-        await driver.setTimeout({ 'implicit': 5000 });
+        await driver.setTimeout({ implicit: 5000 });
 
         let begin = Date.now();
         const el = await driver.$('//something_not_there');
