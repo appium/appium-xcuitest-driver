@@ -1,3 +1,9 @@
+## [7.28.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.1...v7.28.2) (2024-10-23)
+
+### Bug Fixes
+
+* typo in .npmrc ([#2483](https://github.com/appium/appium-xcuitest-driver/issues/2483)) ([8b09ef0](https://github.com/appium/appium-xcuitest-driver/commit/8b09ef08c5eb39800c3f31cba15256fe1b69d4b3))
+
 ## [7.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.0...v7.28.1) (2024-10-18)
 
 ### Bug Fixes
