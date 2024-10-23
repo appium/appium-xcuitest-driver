@@ -174,3 +174,11 @@ usually found in the following locations, should they need to be deleted:
 $HOME/Library/Logs/CoreSimulator/*
 $HOME/Library/Developer/Xcode/DerivedData/*
 ```
+
+## Frequent `Disconnecting from remote debugger` error in iOS 17
+
+Please try out iOS 17.6 or a newer version which includes [a possible fix by Apple](https://developer.apple.com/documentation/safari-release-notes/safari-17_6-release-notes#Web-Inspector).
+
+Frequent Web Inspector debugger disconnection started since iOS 17.2 (or iOS 17.0), that eventually caused `Disconnecting from remote debugger` error.
+It could be improved since iOS 17.6.
+Please check [the corresponding pull request](https://github.com/appium/appium-xcuitest-driver/pull/2334) for more details.

@@ -1,3 +1,27 @@
+## [7.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.0...v7.28.1) (2024-10-18)
+
+### Bug Fixes
+
+* bump WDA to fix transient overlay windows handling when respectSystemAlerts is enabled ([#2482](https://github.com/appium/appium-xcuitest-driver/issues/2482)) ([e504a6d](https://github.com/appium/appium-xcuitest-driver/commit/e504a6dc6fca4a4d5480a4a37d47b2f26cdee243))
+
+## [7.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.27.1...v7.28.0) (2024-10-17)
+
+### Features
+
+* Add 'simulatorLogLevel' capability ([#2479](https://github.com/appium/appium-xcuitest-driver/issues/2479)) ([b75f5ec](https://github.com/appium/appium-xcuitest-driver/commit/b75f5ecbc87d2245a330e043b8ca5aac96f8cac1))
+
+## [7.27.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.27.0...v7.27.1) (2024-10-09)
+
+### Bug Fixes
+
+* use lipo -info instead of file for architecture detection ([#2478](https://github.com/appium/appium-xcuitest-driver/issues/2478)) ([993aa3a](https://github.com/appium/appium-xcuitest-driver/commit/993aa3a13fe257a636293b78aa5fa757601dcc09))
+
+## [7.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.4...v7.27.0) (2024-09-25)
+
+### Features
+
+* build-wda script parameters ([#2475](https://github.com/appium/appium-xcuitest-driver/issues/2475)) ([b8bdfad](https://github.com/appium/appium-xcuitest-driver/commit/b8bdfad3c86efd2d351e99fd53c879d7e6e4b082))
+
 ## [7.26.4](https://github.com/appium/appium-xcuitest-driver/compare/v7.26.3...v7.26.4) (2024-09-17)
 
 ### Miscellaneous Chores
