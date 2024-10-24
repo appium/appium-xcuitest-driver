@@ -162,7 +162,7 @@
     "ts-node": "^10.9.1",
     "type-fest": "^4.1.0",
     "typescript": "^5.4.2",
-    "webdriverio": "^9.0.6"
+    "webdriverio": "https://pkg.pr.new/webdriverio/webdriverio/webdriverio@13783"
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
