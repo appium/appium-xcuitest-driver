@@ -1,3 +1,9 @@
+## [7.28.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.2...v7.28.3) (2024-10-23)
+
+### Bug Fixes
+
+* Add accessible attribute to the xml tree in case of useJSONSource ([#2484](https://github.com/appium/appium-xcuitest-driver/issues/2484)) ([e25ac81](https://github.com/appium/appium-xcuitest-driver/commit/e25ac81dcba287362c49c5768fcc4ab0c09de18c))
+
 ## [7.28.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.1...v7.28.2) (2024-10-23)
 
 ### Bug Fixes
