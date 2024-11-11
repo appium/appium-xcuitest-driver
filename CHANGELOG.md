@@ -1,3 +1,9 @@
+## [7.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.3...v7.29.0) (2024-11-11)
+
+### Features
+
+* add useClearTextShortcut to setting api ([#2490](https://github.com/appium/appium-xcuitest-driver/issues/2490)) ([f54a157](https://github.com/appium/appium-xcuitest-driver/commit/f54a1570da5ca791ccb1f3f7402dafd1b9860c1b))
+
 ## [7.28.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.2...v7.28.3) (2024-10-23)
 
 ### Bug Fixes
