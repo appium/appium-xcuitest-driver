@@ -1,3 +1,9 @@
+## [7.29.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.29.0...v7.29.1) (2024-11-11)
+
+### Bug Fixes
+
+* Tune simulator app architecture validation ([#2492](https://github.com/appium/appium-xcuitest-driver/issues/2492)) ([0738ae9](https://github.com/appium/appium-xcuitest-driver/commit/0738ae9a6db8da8a47fe08c6d9e2d463c1c17591))
+
 ## [7.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.3...v7.29.0) (2024-11-11)
 
 ### Features
