@@ -1,3 +1,9 @@
+## [7.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.29.1...v7.30.0) (2024-11-12)
+
+### Features
+
+* Return default native window handle in native context ([#2491](https://github.com/appium/appium-xcuitest-driver/issues/2491)) ([0a545e0](https://github.com/appium/appium-xcuitest-driver/commit/0a545e0e63f67c3d57ca551f8eff163fceff35b4))
+
 ## [7.29.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.29.0...v7.29.1) (2024-11-11)
 
 ### Bug Fixes
