@@ -1,3 +1,9 @@
+## [7.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.30.0...v7.31.0) (2024-11-12)
+
+### Features
+
+* Add support for excluded_attributes to source api with json format ([#2493](https://github.com/appium/appium-xcuitest-driver/issues/2493)) ([85eed0a](https://github.com/appium/appium-xcuitest-driver/commit/85eed0aed39650b95bc4b82e05c3834dbc270b5c))
+
 ## [7.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.29.1...v7.30.0) (2024-11-12)
 
 ### Features
