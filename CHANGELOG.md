@@ -1,3 +1,9 @@
+## [7.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.31.0...v7.32.0) (2024-11-16)
+
+### Features
+
+* Add a BiDi event upon context change ([#2494](https://github.com/appium/appium-xcuitest-driver/issues/2494)) ([09c824d](https://github.com/appium/appium-xcuitest-driver/commit/09c824d357b62574d8c89da76735e58756964442))
+
 ## [7.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.30.0...v7.31.0) (2024-11-12)
 
 ### Features
