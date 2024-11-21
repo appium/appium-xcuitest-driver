@@ -1,3 +1,45 @@
+## [7.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.31.0...v7.32.0) (2024-11-16)
+
+### Features
+
+* Add a BiDi event upon context change ([#2494](https://github.com/appium/appium-xcuitest-driver/issues/2494)) ([09c824d](https://github.com/appium/appium-xcuitest-driver/commit/09c824d357b62574d8c89da76735e58756964442))
+
+## [7.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.30.0...v7.31.0) (2024-11-12)
+
+### Features
+
+* Add support for excluded_attributes to source api with json format ([#2493](https://github.com/appium/appium-xcuitest-driver/issues/2493)) ([85eed0a](https://github.com/appium/appium-xcuitest-driver/commit/85eed0aed39650b95bc4b82e05c3834dbc270b5c))
+
+## [7.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.29.1...v7.30.0) (2024-11-12)
+
+### Features
+
+* Return default native window handle in native context ([#2491](https://github.com/appium/appium-xcuitest-driver/issues/2491)) ([0a545e0](https://github.com/appium/appium-xcuitest-driver/commit/0a545e0e63f67c3d57ca551f8eff163fceff35b4))
+
+## [7.29.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.29.0...v7.29.1) (2024-11-11)
+
+### Bug Fixes
+
+* Tune simulator app architecture validation ([#2492](https://github.com/appium/appium-xcuitest-driver/issues/2492)) ([0738ae9](https://github.com/appium/appium-xcuitest-driver/commit/0738ae9a6db8da8a47fe08c6d9e2d463c1c17591))
+
+## [7.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.3...v7.29.0) (2024-11-11)
+
+### Features
+
+* add useClearTextShortcut to setting api ([#2490](https://github.com/appium/appium-xcuitest-driver/issues/2490)) ([f54a157](https://github.com/appium/appium-xcuitest-driver/commit/f54a1570da5ca791ccb1f3f7402dafd1b9860c1b))
+
+## [7.28.3](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.2...v7.28.3) (2024-10-23)
+
+### Bug Fixes
+
+* Add accessible attribute to the xml tree in case of useJSONSource ([#2484](https://github.com/appium/appium-xcuitest-driver/issues/2484)) ([e25ac81](https://github.com/appium/appium-xcuitest-driver/commit/e25ac81dcba287362c49c5768fcc4ab0c09de18c))
+
+## [7.28.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.1...v7.28.2) (2024-10-23)
+
+### Bug Fixes
+
+* typo in .npmrc ([#2483](https://github.com/appium/appium-xcuitest-driver/issues/2483)) ([8b09ef0](https://github.com/appium/appium-xcuitest-driver/commit/8b09ef08c5eb39800c3f31cba15256fe1b69d4b3))
+
 ## [7.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.28.0...v7.28.1) (2024-10-18)
 
 ### Bug Fixes
