@@ -65,71 +65,73 @@ the web view context on session initialization by setting the `autoWebview`
 
 ### Examples
 
+=== "Java"
+    ```java
+    // java
+    // assuming we have a set of capabilities
+    driver = new AppiumDriver(new URL("http://127.0.0.1:4723/"), options);
 
-```java
-// java
-// assuming we have a set of capabilities
-driver = new AppiumDriver(new URL("http://127.0.0.1:4723/"), options);
+    Set<String> contextNames = driver.getContextHandles();
+    for (String contextName : contextNames) {
+        System.out.println(contextName); //prints out something like NATIVE_APP \n WEBVIEW_1
+    }
+    driver.context(contextNames.toArray()[1]); // set context to WEBVIEW_1
 
-Set<String> contextNames = driver.getContextHandles();
-for (String contextName : contextNames) {
-    System.out.println(contextName); //prints out something like NATIVE_APP \n WEBVIEW_1
-}
-driver.context(contextNames.toArray()[1]); // set context to WEBVIEW_1
+    //do some web testing
+    String myText = driver.findElement(By.cssSelector(".green_button")).click();
 
-//do some web testing
-String myText = driver.findElement(By.cssSelector(".green_button")).click();
+    driver.context("NATIVE_APP");
 
-driver.context("NATIVE_APP");
+    // do more native testing if we want
 
-// do more native testing if we want
+    driver.quit();
+    ```
+    
+=== "Ruby"
+    ```ruby
+    # ruby_lib_core
+    # assuming we have a set of capabilities
+    @driver = Appium::Core.for(url: SERVER_URL, desired_capabilities: capabilities).start_driver
+    # ruby_lib
+    # opts = { caps: capabilities, appium_lib: { custom_url: SERVER_URL }}
+    # @driver = Appium::Driver.new(opts, true).start_driver
 
-driver.quit();
-```
+    # I switch to the last context because its always the webview in our case, in other cases you may need to specify a context
+    # View the appium logs while running @driver.contexts to figure out which context is the one you want and find the associated ID
+    # Then switch to it using @driver.switch_to.context("WEBVIEW_6")
 
-```ruby
-# ruby_lib_core
-# assuming we have a set of capabilities
-@driver = Appium::Core.for(url: SERVER_URL, desired_capabilities: capabilities).start_driver
-# ruby_lib
-# opts = { caps: capabilities, appium_lib: { custom_url: SERVER_URL }}
-# @driver = Appium::Driver.new(opts, true).start_driver
+    Given(/^I switch to webview$/) do
+        webview = @driver.available_contexts.last
+        @driver.switch_to.context(webview)
+    end
 
-# I switch to the last context because its always the webview in our case, in other cases you may need to specify a context
-# View the appium logs while running @driver.contexts to figure out which context is the one you want and find the associated ID
-# Then switch to it using @driver.switch_to.context("WEBVIEW_6")
+    Given(/^I switch out of webview$/) do
+        @driver.switch_to.context(@driver.contexts.first)
+    end
 
-Given(/^I switch to webview$/) do
-    webview = @driver.available_contexts.last
-    @driver.switch_to.context(webview)
-end
+    # Now you can use CSS to select an element inside your webview
 
-Given(/^I switch out of webview$/) do
-    @driver.switch_to.context(@driver.contexts.first)
-end
+    And(/^I click a webview button $/) do
+        @driver.find_element(:css, ".green_button").click
+    end
+    ```
 
-# Now you can use CSS to select an element inside your webview
+=== "Python"
+    ```python
+    # python
+    # assuming we have an initialized `driver` object for an app
 
-And(/^I click a webview button $/) do
-    @driver.find_element(:css, ".green_button").click
-end
-```
+    # switch to webview
+    webview = driver.contexts.last
+    driver.switch_to.context(webview)
 
-```python
-# python
-# assuming we have an initialized `driver` object for an app
+    # do some webby stuff
+    driver.find_element(By.CSS, ".green_button").click
 
-# switch to webview
-webview = driver.contexts.last
-driver.switch_to.context(webview)
+    # switch back to native view
+    driver.switch_to.context(driver.contexts.first)
 
-# do some webby stuff
-driver.find_element(By.CSS, ".green_button").click
+    # do more native testing if we want
 
-# switch back to native view
-driver.switch_to.context(driver.contexts.first)
-
-# do more native testing if we want
-
-driver.quit()
-```
+    driver.quit()
+    ```
