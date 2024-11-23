@@ -76,6 +76,8 @@ nav:
           - guides/input-events.md
           - guides/troubleshooting.md
           - guides/capability-sets.md
+          - guides/elements-lookup-troubleshooting.md
+          - guides/hybrid.md
   - contributing.md
 
 plugins:
