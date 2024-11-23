@@ -81,3 +81,43 @@ There are known cases where application interface/behavior might differ in simul
 if the screen size or device model/OS version/system setting differs. That is why always make sure your debug
 environment, for example one where Appium Inspector is used,
 is as close as possible to the environment where automated tests are being executed.
+
+
+## Symptom #3
+
+The desired element is shown in the page tree, but its property value is not what expect it to be, for example it
+is shown as visible while I don't see it or vice versa.
+
+## Resolutions To Symptom #3
+
+### XCUITest driver has minimum influence to attribute values
+
+This is a simple and at the same time complicated topic. Since XCUITest driver is based on Apple's XCTest,
+all attribute values are retrieved from the latter. Standard attributes provided by XCTest could be found in
+[XCUIElementAttributes](https://developer.apple.com/documentation/xctest/xcuielementattributes?language=objc)
+protocol reference. The full list of attributes supported by XCUITest driver's WebElement
+could be found in the [Element Attributes](../reference/element-attributes.md) document.
+Most of the above attributes are simple compilations of standard attributes, for example, `elementType` is
+translated to `type` by matching the corresponding
+[enum](https://developer.apple.com/documentation/xctest/xcuielementtype?language=objc) value to a string representation, `name` is compiled from original element's identifier and label depending on what is
+present first. The full list of mapping rules between standard and XCUITest attribute values could be found in
+[WebDriverAgent sources](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m).
+Although, some attributes there, like `visible` or `accessible` have no direct mapping in XCTest
+and are retrieved directly from the accessibility framework ~~using dark magic~~.
+This means the actual value of these attributes only depends on accessibility internals and is there
+mostly due to ~~legacy~~ convenience purposes, as the original XCTest does not even expose them.
+We'd love to deprecate and remove this legacy burden and only rely on officially supported attributes,
+although historically many people rely on them, so we keep it, even though their values might
+be not reliable and there is no good way to debug this behavior or somehow influence it.
+The final recommendation there would be:
+- If the value of an attribute that directly or indirectly relies on a public XCUIElement attribute
+  is different from what you expect then run a vanilla XCTest with the same app and make sure
+  it's not the same as you see in the XCUITest driver. If it is then the only place to complain
+  would be the Apple support forum or a XCTest bug tracker. If you can confirm the issue lies in
+  WebDriverAgent's mapping logic then feel free to raise an
+  [issue](https://github.com/appium/WebDriverAgent/issues) to its maintainers.
+- If the value of an attribute that is a "custom" XCUITest attribute, like `visible` or `accessible`,
+  is different from what you expect then we, most likely, won't be able to help you. You may try
+  to improve the corresponding WebDrivergent sources, but keep in mind there are many automation
+  tests around that rely on the current way these attributes are calculated, and we probably don't
+  want to break them.
