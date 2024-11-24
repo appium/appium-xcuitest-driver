@@ -39,8 +39,8 @@ _or_ the combination of `xcodeOrgId` and `xcodeSigningId`.
       Unit" field in your iPhone Developer certificate in your keychain.
 * `xcodeSigningId` / `CODE_SIGN_IDENTITY` is usually either `Apple Developer` or `iPhone Developer`.
 * `updatedWDABundleId` is the bundle id you would like to use for the built WebDriverAgent.
-    * Appium replaces the exisitng placeholder of `com.facebook.WebDriverAgentRunner` in `WebDriverAgent.xcodeproj` with the given capability value.
-    * `xcodebuild` adds `.xctrunner` automatically for XCTest package, thus the provisioning profile you're using should have the suffix explicitly, or it can be for bundle id which has `*`.
+    * Appium replaces the existing placeholder of `com.facebook.WebDriverAgentRunner` in `WebDriverAgent.xcodeproj` with the given capability value.
+    * `xcodebuild` adds `.xctrunner` automatically for XCTest package. Thus, the provisioning profile you're using should have the suffix explicitly, or it can be for bundle id which has `*`.
         * For instance, when the `appium:updatedWDABundleId` is `io.appium.WebDriverAgentRunner`, the given provisioning profile should be for `io.appium.WebDriverAgentRunner.xctrunner`, `io.appium.WebDriverAgentRunner.*` or `*`.
 
 Once this configuration is done, you should specify your real device UDID with the `udid` desired
