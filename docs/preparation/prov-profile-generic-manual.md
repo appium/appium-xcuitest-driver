@@ -40,7 +40,10 @@ advanced codesign usage scenarios.
 !!! note
 
     The Appium team distributes generic builds with `CODE_SIGNING_ALLOWED=NO` at
-    <https://github.com/appium/WebDriverAgent/releases>. It is recommended to sign packages with a
-    wildcard (`*`) provisioning profile, although such profiles require a paid Apple Developer
-    account. In case of a free account, you may need to update the bundle id before building the
-    WebDriverAgent package.
+    [WebDriverAgent package releases](https://github.com/appium/WebDriverAgent/releases).
+    It is recommended to sign packages with a wildcard (`*`) provisioning profile,
+    although such profiles require a paid Apple Developer account.
+    For example, if you're preparing such a provisioning profile for `io.appium.WebDriverAgentRunner.xctrunner`, it will be `io.appium.*`, `io.appium.WebDriverAgentRunner.*` or `*`.
+    In case of a free account, you may need to update the bundle id before building
+    the WebDriverAgent package to prepare a properly signed WebDriverAgent package
+    by `xcodebuild`.

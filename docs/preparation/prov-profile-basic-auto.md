@@ -12,7 +12,8 @@ to use the automatic configuration strategy. There are two ways to do this:
     ```json
     {
       "appium:xcodeOrgId": "<Team ID>",
-      "appium:xcodeSigningId": "Apple Developer"
+      "appium:xcodeSigningId": "Apple Developer",
+      "appium:updatedWDABundleId": "<budnle id your provisiong profile can accept>"
     }
     ```
 * Create a `.xcconfig` file somewhere on your file system and add the following to it:
@@ -37,6 +38,10 @@ _or_ the combination of `xcodeOrgId` and `xcodeSigningId`.
       section under the team name. You can also find your Team ID listed under the "Organizational
       Unit" field in your iPhone Developer certificate in your keychain.
 * `xcodeSigningId` / `CODE_SIGN_IDENTITY` is usually either `Apple Developer` or `iPhone Developer`.
+* `updatedWDABundleId` is the bundle id you would like to use for the built WebDriverAgent.
+    * Appium replaces the exisitng placeholder of `com.facebook.WebDriverAgentRunner` in `WebDriverAgent.xcodeproj` with the given capability value.
+    * `xcodebuild` adds `.xctrunner` automatically for XCTest package, thus the provisioning profile you're using should have the suffix, or can be `*`.
+    * For instance, the `appium:updatedWDABundleId` is `io.appium.WebDriverAgentRunner`, the given provisioning profile should be for `io.appium.WebDriverAgentRunner.xctrunner`, `io.appium.WebDriverAgentRunner.*` or `*`.
 
 Once this configuration is done, you should specify your real device UDID with the `udid` desired
 capability, after which you should be able to start your test. Proceed with
