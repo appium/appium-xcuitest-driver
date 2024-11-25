@@ -13,7 +13,7 @@ to use the automatic configuration strategy. There are two ways to do this:
     {
       "appium:xcodeOrgId": "<Team ID>",
       "appium:xcodeSigningId": "Apple Developer",
-      "appium:updatedWDABundleId": "<budnle id your provisiong profile can accept>"
+      "appium:updatedWDABundleId": "<bundle id your provisioning profile can accept>"
     }
     ```
 * Create a `.xcconfig` file somewhere on your file system and add the following to it:
