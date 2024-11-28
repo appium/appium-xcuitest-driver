@@ -21,6 +21,7 @@ env:
 jobs:
   build:
 
+    # https://github.com/actions/runner-images/tree/main/images/macos
     strategy:
       matrix:
         e2eRoot:
@@ -29,26 +30,26 @@ jobs:
         - driver
         - web
         - long
-        xcodeVersion: ['13.4', '14.2']
+        xcodeVersion: ['14.3.1', '15.4']
         include:
-        - xcodeVersion: '13.4'
-          iosVersion: '15.5'
-          deviceName: 'iPhone 12'
-          tvosVersion: '15.4'
+        - xcodeVersion: '14.3.1'
+          iosVersion: '16.4'
+          deviceName: 'iPhone 14'
+          tvosVersion: '16.4'
           tvosDeviceName: 'Apple TV'
-          platform: macos-12
-        - xcodeVersion: '14.2'
-          iosVersion: '16.2'
-          deviceName: 'iPhone 13'
+          platform: macos-13
+        - xcodeVersion: '15.4'
+          iosVersion: '17.5'
+          deviceName: 'iPhone 15'
           skipTvOs: true
-          platform: macos-12
+          platform: macos-14
       fail-fast: false
 
     runs-on: ${{ matrix.platform }}
 
     name: e2e
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Node.js
       uses: actions/setup-node@v3
@@ -67,6 +68,15 @@ jobs:
         xcrun simctl list runtimes
         xcrun --sdk iphonesimulator --show-sdk-version
       name: List Runtimes
+    - name: Prepare iOS simulator
+      id: prepareSimulator
+      uses: futureware-tech/simulator-action@v3
+      with:
+        model: "${{ matrix.deviceName }}"
+        os_version: "${{ matrix.iosVersion }}"
+        shutdown_after_job: false
+    - run: xcrun simctl bootstatus ${{ steps.prepareSimulator.outputs.udid }} -b
+      name: Wait for Simulator to finish booting
 
     - run: |
         npm install --no-save mjpeg-consumer
@@ -77,7 +87,7 @@ jobs:
         npm install -g appium
         appium driver install --source=local "$cwd"
         appium driver doctor xcuitest
-        appium driver run xcuitest build-wda
+        appium driver run xcuitest build-wda --sdk=${{ matrix.iosVersion }} --name="${{ matrix.deviceName }}"
         echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
         nohup appium server \
           --port=$APPIUM_TEST_SERVER_PORT \
@@ -88,12 +98,6 @@ jobs:
         popd
         cat appium.log
       name: Prepare the server
-
-    - run: |
-        target_sim_id=$(xcrun simctl list devices available | grep "${{ matrix.deviceName }} (" | cut -d "(" -f2 | cut -d ")" -f1)
-        open -Fn "$(xcode-select -p)/Applications/Simulator.app"
-        xcrun simctl bootstatus $target_sim_id -b
-      name: Preboot ${{ matrix.deviceName }}
 
     - run: |
         if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
