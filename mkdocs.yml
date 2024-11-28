@@ -63,7 +63,6 @@ nav:
               - guides/run-prebuilt-wda.md
               - guides/attach-to-running-wda.md
           - guides/wda-custom-server.md
-          - guides/wda-slowness.md
       - Driver Actions:
           - guides/audio-capture.md
           - guides/file-transfer.md
@@ -71,11 +70,15 @@ nav:
           - guides/clipboard.md
           - guides/touch-id.md
           - guides/gestures.md
+      - Troubleshooting:
+          - guides/troubleshooting.md
+          - guides/elements-lookup-troubleshooting.md
+          - guides/wda-slowness.md
       - Other:
           - guides/tvos.md
           - guides/input-events.md
-          - guides/troubleshooting.md
           - guides/capability-sets.md
+          - guides/hybrid.md
   - contributing.md
 
 plugins:
