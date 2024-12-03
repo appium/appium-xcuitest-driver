@@ -1,3 +1,9 @@
+## [7.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.32.0...v7.32.1) (2024-12-03)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump mocha from 10.8.2 to 11.0.1 ([#2497](https://github.com/appium/appium-xcuitest-driver/issues/2497)) ([4e9eabc](https://github.com/appium/appium-xcuitest-driver/commit/4e9eabc43fcc537b0dcda246fadfb263555046be))
+
 ## [7.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.31.0...v7.32.0) (2024-11-16)
 
 ### Features
