@@ -1,3 +1,9 @@
+## [7.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.32.1...v7.33.0) (2024-12-09)
+
+### Features
+
+* Screenshooting of web elements ([#2499](https://github.com/appium/appium-xcuitest-driver/issues/2499)) ([b12e4dd](https://github.com/appium/appium-xcuitest-driver/commit/b12e4dd449895d5d4a4909c0b74df5a401013b69))
+
 ## [7.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.32.0...v7.32.1) (2024-12-03)
 
 ### Miscellaneous Chores
