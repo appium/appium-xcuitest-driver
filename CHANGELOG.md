@@ -1,3 +1,9 @@
+## [7.33.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.33.0...v7.33.1) (2024-12-12)
+
+### Miscellaneous Chores
+
+* Replace occurrences of the deprecated errorAndThrow API ([#2501](https://github.com/appium/appium-xcuitest-driver/issues/2501)) ([d2122eb](https://github.com/appium/appium-xcuitest-driver/commit/d2122ebb86e82026ede34803c33a5234e4111982))
+
 ## [7.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.32.1...v7.33.0) (2024-12-09)
 
 ### Features
