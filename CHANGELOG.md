@@ -1,3 +1,9 @@
+## [7.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.33.1...v7.34.0) (2024-12-13)
+
+### Features
+
+* extend to handle critical notification elements in respectSystemAlerts settings ([#2502](https://github.com/appium/appium-xcuitest-driver/issues/2502)) ([b4fcccb](https://github.com/appium/appium-xcuitest-driver/commit/b4fcccb1c79f0d6b3dcc4041267893b849c2f557))
+
 ## [7.33.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.33.0...v7.33.1) (2024-12-12)
 
 ### Miscellaneous Chores
