@@ -1208,16 +1208,53 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#appiumcontextupdate" class="md-nav__link">
+  <a href="#appiumxcuitestcontextupdate" class="md-nav__link">
     <span class="md-ellipsis">
-      appium.contextUpdate
+      appium:xcuitest.contextUpdate
     </span>
   </a>
 
   <!-- Table of contents list -->
   
-    <nav class="md-nav" aria-label="appium.contextUpdate">
+    <nav class="md-nav" aria-label="appium:xcuitest.contextUpdate">
       <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#cddl" class="md-nav__link">
+    <span class="md-ellipsis">
+      CDDL
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
         
           <!--
   Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
@@ -2701,16 +2738,53 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#appiumcontextupdate" class="md-nav__link">
+  <a href="#appiumxcuitestcontextupdate" class="md-nav__link">
     <span class="md-ellipsis">
-      appium.contextUpdate
+      appium:xcuitest.contextUpdate
     </span>
   </a>
 
   <!-- Table of contents list -->
   
-    <nav class="md-nav" aria-label="appium.contextUpdate">
+    <nav class="md-nav" aria-label="appium:xcuitest.contextUpdate">
       <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#cddl" class="md-nav__link">
+    <span class="md-ellipsis">
+      CDDL
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
         
           <!--
   Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
@@ -2842,10 +2916,19 @@ Events are only emitted if the <code>appium:enablePerformanceLogging</code> capa
 <p>Events are emitted for both emulator and real devices. Each event contains a single Appium server log line.
 Events are always emitted with the <code>NATIVE_APP</code> context.
 Events are only emitted if the <code>get_server_logs</code> server security feature is enabled.</p>
-<h2 id="appiumcontextupdate">appium.contextUpdate<a class="headerlink" href="#appiumcontextupdate" title="Permanent link">&para;</a></h2>
+<h2 id="appiumxcuitestcontextupdate">appium:xcuitest.contextUpdate<a class="headerlink" href="#appiumxcuitestcontextupdate" title="Permanent link">&para;</a></h2>
 <p>This event is emitted upon the context change, either explicit or implicit.
 The event is always emitted upon new session initialization.
 See the <a href="https://github.com/appium/appium/issues/20741">GitHub feature ticket</a> for more details.</p>
+<h3 id="cddl">CDDL<a class="headerlink" href="#cddl" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="s">appium</span><span class="p">:</span><span class="nc">xcuitest.contextUpdated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="s">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;appium:xcuitest.contextUpdated&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="s">params</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="s">name</span><span class="p">:</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="s">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NATIVE&quot;</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s2">&quot;WEB&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
+</code></pre></div>
 <p>The event contains the following params:</p>
 <h3 id="name">name<a class="headerlink" href="#name" title="Permanent link">&para;</a></h3>
 <p>Contains the actual name of the new context, for example <code>NATIVE_APP</code>.</p>
@@ -2871,7 +2954,7 @@ See the <a href="https://github.com/appium/appium/issues/20741">GitHub feature t
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-11-16T21:23:32+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-11-16</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-12-14T18:42:44+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-12-14</span>
   </span>
 
     
