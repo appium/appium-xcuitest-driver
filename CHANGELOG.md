@@ -1,3 +1,9 @@
+## [7.34.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.0...v7.34.1) (2024-12-14)
+
+### Miscellaneous Chores
+
+* Tune contextUpdated event generation ([#2503](https://github.com/appium/appium-xcuitest-driver/issues/2503)) ([8ee8fcf](https://github.com/appium/appium-xcuitest-driver/commit/8ee8fcfd0898c7a38c4bb5064d18360d2eb45451))
+
 ## [7.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.33.1...v7.34.0) (2024-12-13)
 
 ### Features
