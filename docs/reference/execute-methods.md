@@ -518,7 +518,7 @@ Returns the actual device time.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-format | string | no | The format specifier string. Read [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601 | YYYY-MM-DD HH:mm:ss
+format | string | no | The format specifier string. Read [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601 | `YYYY-MM-DD HH:mm:ss`
 
 #### Returned Result
 
