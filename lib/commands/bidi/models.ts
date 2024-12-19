@@ -1,7 +1,8 @@
-import type { LogEntryAddedEvent, ContextUpdatedEvent } from './types';
+import type { LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel } from './types';
 import { NATIVE_WIN } from '../../utils';
 import { CONTEXT_UPDATED_EVENT, CONTEXT_UPDATED_EVENT_OBSOLETE, LOG_ENTRY_ADDED_EVENT } from './constants';
 import type { LogEntry } from '../types';
+import _ from 'lodash';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
@@ -30,7 +31,7 @@ export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: s
     method: LOG_ENTRY_ADDED_EVENT,
     params: {
       type,
-      level: entry.level,
+      level: adjustLogLevel(entry.level),
       source: {
         realm: '',
       },
@@ -38,4 +39,17 @@ export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: s
       timestamp: entry.timestamp,
     },
   };
+}
+
+function adjustLogLevel(originalLevel: string): BiDiLogLevel {
+  const originalLevelLc = _.toLower(originalLevel);
+  switch (originalLevelLc) {
+    case 'debug':
+    case 'info':
+    case 'warn':
+    case 'error':
+      return originalLevelLc as BiDiLogLevel;
+    default:
+      return 'info';
+  }
 }

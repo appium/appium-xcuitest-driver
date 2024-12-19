@@ -7,9 +7,11 @@ interface LogEntrySource {
   realm: string;
 }
 
+export type BiDiLogLevel = 'debug' | 'info' | 'warn' | 'error';
+
 interface LogEntryAddedEventParams {
   type: string;
-  level: string;
+  level: BiDiLogLevel;
   source: LogEntrySource;
   text: string;
   timestamp: number;
