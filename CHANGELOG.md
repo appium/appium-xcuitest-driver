@@ -1,3 +1,9 @@
+## [7.34.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.1...v7.34.2) (2024-12-19)
+
+### Bug Fixes
+
+* Adjust log level for BiDi events ([#2505](https://github.com/appium/appium-xcuitest-driver/issues/2505)) ([1a73fcd](https://github.com/appium/appium-xcuitest-driver/commit/1a73fcd0c879f2bb70e0c431e110c8d601ff754d))
+
 ## [7.34.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.0...v7.34.1) (2024-12-14)
 
 ### Miscellaneous Chores
