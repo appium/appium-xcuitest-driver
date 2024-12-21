@@ -23,8 +23,8 @@
     "npm": ">=8"
   },
   "appium": {
-    "driverName": "xcuitest",
-    "automationName": "XCUITest",
+    "driverName": "xcuitestdriver",
+    "automationName": "XCUITestDriver",
     "platformNames": [
       "iOS",
       "tvOS"
@@ -81,7 +81,7 @@
     "appium-ios-device": "^2.7.23",
     "appium-ios-simulator": "^6.1.7",
     "appium-remote-debugger": "^12.1.1",
-    "appium-webdriveragent": "^8.12.0",
+    "appium-webdriveragent": "github:qa-pilot/WebDriverAgent#master",
     "appium-xcode": "^5.1.4",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
