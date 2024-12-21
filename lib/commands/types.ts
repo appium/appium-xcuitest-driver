@@ -217,7 +217,7 @@ export interface View {
  *     one to fetch.
  * - `json`: Similar to `xml`, but the tree hierarchy is represented as JSON elements.
  */
-export type SourceFormat = 'xml' | 'json' | 'description';
+export type SourceFormat = 'xml' | 'json' | 'description' | 'newJson';
 
 /** @deprecated */
 export type AppInstallStrategy = 'serial' | 'parallel' | 'ios-deploy';
