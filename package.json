@@ -78,7 +78,7 @@
   "dependencies": {
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
-    "appium-ios-device": "^2.7.23",
+    "appium-ios-device": "^2.8.0",
     "appium-ios-simulator": "^6.1.7",
     "appium-remote-debugger": "^12.1.1",
     "appium-webdriveragent": "^8.12.0",
