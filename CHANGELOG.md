@@ -1,3 +1,9 @@
+## [7.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.2...v7.35.0) (2024-12-23)
+
+### Features
+
+* Bump appium-ios-device to support USBMUXD_SOCKET_ADDRESS ([#2507](https://github.com/appium/appium-xcuitest-driver/issues/2507)) ([a8adca8](https://github.com/appium/appium-xcuitest-driver/commit/a8adca87556d1b42265ba5b2474b7e4d23050c84))
+
 ## [7.34.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.1...v7.34.2) (2024-12-19)
 
 ### Bug Fixes
