@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 
 describe('element commands', function () {
@@ -160,8 +160,6 @@ describe('element commands', function () {
 
       beforeEach(function () {
         oldContext = driver.curContext;
-      });
-      beforeEach(function () {
         driver.curContext = 'WEBVIEW';
       });
       afterEach(function () {

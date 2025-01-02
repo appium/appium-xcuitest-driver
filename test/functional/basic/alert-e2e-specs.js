@@ -37,7 +37,7 @@ describe('XCUITestDriver - alerts -', function () {
   afterEach(async function () {
     try {
       await driver.dismissAlert();
-    } catch (ign) {}
+    } catch {}
     await driver.back();
   });
 

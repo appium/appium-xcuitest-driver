@@ -61,7 +61,7 @@ if (!process.env.CI) {
           waitMs: timeout,
           intervalMs: 300,
         });
-      } catch (e) {
+      } catch {
         throw new Error(
           `Element located by '${locator}' done not exist after ${timeout}ms timeout`,
         );

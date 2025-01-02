@@ -1,6 +1,6 @@
 import {parseContainerPath} from '../../../lib/commands/file-movement';
 import {tempDir} from 'appium/support';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 
 describe('file-movement', function () {

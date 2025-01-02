@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Simctl from 'node-simctl';
+import {Simctl} from 'node-simctl';
 import {retryInterval} from 'asyncbox';
 import {resetTestProcesses} from 'appium-webdriveragent';
 import {shutdownSimulator} from '../../../lib/simulator-management';
@@ -27,7 +27,7 @@ export async function deleteDeviceWithRetry(udid) {
   const simctl = new Simctl({udid});
   try {
     await retryInterval(10, 1000, simctl.deleteDevice.bind(simctl));
-  } catch (ign) {}
+  } catch {}
 }
 
 /**

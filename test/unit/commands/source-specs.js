@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
 const xmlBody = '<some-xml/>';
@@ -7,7 +7,7 @@ const srcTree = `${xmlHeader}${xmlBody}`;
 
 describe('source commands', function () {
   let driver = new XCUITestDriver();
-  let proxyStub = sinon.stub(driver, 'proxyCommand').callsFake(async () => srcTree); // eslint-disable-line require-await
+  let proxyStub = sinon.stub(driver, 'proxyCommand').callsFake(async () => srcTree);
 
   afterEach(function () {
     proxyStub.resetHistory();

@@ -40,7 +40,7 @@ export class Pyidevice extends BaseDeviceClient {
     try {
       this._binaryPath = await fs.which(BINARY_NAME);
       return true;
-    } catch (e) {
+    } catch {
       if (isStrict) {
         throw new Error(
           `${BINARY_NAME} binary cannot be found in PATH. ` +

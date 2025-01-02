@@ -33,7 +33,6 @@ describe('safari - execute -', function () {
     await deleteSession();
   });
 
-  // eslint-disable-next-line require-await
   async function runTests(secure = false) {
     describe('mobile: x methods', function () {
       it('should run in native context', async function () {

@@ -3,7 +3,7 @@ import B from 'bluebird';
 import path from 'path';
 import _ from 'lodash';
 import {Pyidevice} from '../real-device-clients/py-ios-device-client';
-import IOSLog from './ios-log';
+import {IOSLog} from './ios-log';
 import { toLogEntry, grepFile } from './helpers';
 import type { AppiumLogger } from '@appium/types';
 import type { BaseDeviceClient } from '../real-device-clients/base-device-client';
@@ -59,7 +59,6 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     this._started = true;
   }
 
-  // eslint-disable-next-line require-await
   override async stopCapture(): Promise<void> {
     this._started = false;
   }
