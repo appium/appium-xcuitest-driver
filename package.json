@@ -89,7 +89,7 @@
     "css-selector-parser": "^3.0.0",
     "js2xmlparser2": "^0.x",
     "lodash": "^4.17.21",
-    "lru-cache": "^10.0.0",
+    "lru-cache": "^11.0.2",
     "moment": "^2.29.4",
     "moment-timezone": "^0.x",
     "node-simctl": "^7.6.0",
