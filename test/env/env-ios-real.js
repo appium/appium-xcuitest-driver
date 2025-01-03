@@ -1,6 +1,6 @@
 import moment from 'moment';
 import envBase from './env-base';
-import log from './logger';
+import {log} from './logger';
 
 const platforms = ['10', '11', '10.3', '11.3', '11.4'];
 

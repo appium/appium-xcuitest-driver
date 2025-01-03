@@ -141,7 +141,7 @@ describe('XCUITestDriver - find -', function () {
         // and make sure we are at the top of the page
         try {
           await driver.execute('mobile: scroll', {direction: 'up'});
-        } catch (ign) {}
+        } catch {}
       });
       beforeEach(async function () {
         // go into the right page
@@ -191,7 +191,7 @@ describe('XCUITestDriver - find -', function () {
         let el;
         try {
           el = await driver.$('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
-        } catch (err) {
+        } catch {
           el = await driver.$('//XCUIElementTypeNavigationBar/XCUIElementTypeOther');
         }
         (await el.getAttribute('name')).should.equal('Buttons');
@@ -319,7 +319,7 @@ describe('XCUITestDriver - find -', function () {
       try {
         const el = await driver.$('~Text Fields');
         await driver.execute('mobile: scroll', {element: el.elementId, toVisible: true});
-      } catch (ign) {}
+      } catch {}
     });
     afterEach(async function () {
       await driver.back();

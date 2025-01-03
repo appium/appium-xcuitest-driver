@@ -87,7 +87,7 @@ describe('XCUITestDriver - basics -', function () {
     after(async function () {
       try {
         await driver.setOrientation('PORTRAIT');
-      } catch (ign) {}
+      } catch {}
     });
     it('should get an app screenshot', async function () {
       let screenshot = await driver.takeScreenshot();
@@ -105,7 +105,7 @@ describe('XCUITestDriver - basics -', function () {
 
       try {
         await driver.setOrientation('LANDSCAPE');
-      } catch (ign) {}
+      } catch {}
       // take a little pause while it orients, otherwise you get the screenshot
       // on an angle
       await B.delay(500);

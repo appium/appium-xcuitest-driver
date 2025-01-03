@@ -3,10 +3,10 @@ import {JWProxy} from 'appium/driver';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import cmds from '../../lib/commands';
-import XCUITestDriver from '../../lib/driver';
+import {XCUITestDriver} from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
-import RealDevice from '../../lib/real-device';
+import {RealDevice} from '../../lib/real-device';
 
 
 const caps = {
@@ -126,7 +126,6 @@ describe('XCUITestDriver', function () {
         realDevice = null;
         sandbox
           .stub(driver, 'determineDevice')
-          // eslint-disable-next-line require-await
           .callsFake(async () => ({device, realDevice, udid: 'stuff'}));
         sandbox.stub(driver, 'configureApp');
         sandbox.stub(driver, 'startLogCapture');

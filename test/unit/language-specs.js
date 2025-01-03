@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import XCUITestDriver from '../../lib/driver';
+import {XCUITestDriver} from '../../lib/driver';
 
 
 describe('language and locale', function () {

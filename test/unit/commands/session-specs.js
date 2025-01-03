@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 describe('session commands', function () {
   let driver = new XCUITestDriver();
@@ -17,7 +17,14 @@ describe('session commands', function () {
   });
 
   afterEach(function () {
-    mockDriver.verify();
+    try {
+      mockDriver.verify();
+    } finally {
+      proxySpy.reset();
+      for (let stub of otherStubs) {
+        stub.reset();
+      }
+    }
   });
 
   driver.opts.udid = 'cecinestpasuneudid';
@@ -43,11 +50,4 @@ describe('session commands', function () {
     }),
     sinon.stub(driver, 'getDevicePixelRatio').resolves(3),
   ];
-
-  afterEach(function () {
-    proxySpy.reset();
-    for (let stub of otherStubs) {
-      stub.reset();
-    }
-  });
 });

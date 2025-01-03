@@ -1,3 +1,5 @@
+/* eslint-disable mocha/no-nested-tests */
+
 import _ from 'lodash';
 import {util} from 'appium/support';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';

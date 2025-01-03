@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 
 describe('alert commands', function () {

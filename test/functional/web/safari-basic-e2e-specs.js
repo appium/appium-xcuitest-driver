@@ -213,12 +213,6 @@ describe('Safari - basics -', function () {
         await el.setValue('hello world');
         ['how world', 'hello world'].should.include((await el.getAttribute('value')).toLowerCase());
       });
-    });
-    describe('element handling', function () {
-      beforeEach(async function () {
-        await openPage(driver, GUINEA_PIG_PAGE);
-      });
-
       it('should send keystrokes to active element', async function () {
         const el = await driver.$('#comments');
         await el.click();

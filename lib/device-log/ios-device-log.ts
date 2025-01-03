@@ -32,7 +32,6 @@ export class IOSDeviceLog extends LineConsumingLog {
     return !!this.service;
   }
 
-  // eslint-disable-next-line require-await
   override async stopCapture(): Promise<void> {
     if (!this.service) {
       return;

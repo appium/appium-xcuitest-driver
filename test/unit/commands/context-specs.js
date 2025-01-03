@@ -1,4 +1,4 @@
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 
 describe('context', function () {

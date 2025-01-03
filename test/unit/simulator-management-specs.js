@@ -1,5 +1,5 @@
 import {runSimulatorReset} from '../../lib/simulator-management.js';
-import XCUITestDriver from '../../lib/driver';
+import {XCUITestDriver} from '../../lib/driver';
 
 describe('simulator management', function () {
 
