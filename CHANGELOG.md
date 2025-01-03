@@ -1,3 +1,9 @@
+## [7.35.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.0...v7.35.1) (2025-01-03)
+
+### Miscellaneous Chores
+
+* Bump eslint version ([#2508](https://github.com/appium/appium-xcuitest-driver/issues/2508)) ([565e6bc](https://github.com/appium/appium-xcuitest-driver/commit/565e6bc345f07678e77134f9b84182fa996b1853))
+
 ## [7.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.2...v7.35.0) (2024-12-23)
 
 ### Features
