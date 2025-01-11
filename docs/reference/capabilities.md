@@ -10,7 +10,7 @@ about capabilities, refer to the [Appium documentation](https://appium.io/docs/e
 | <div style="width:10em">Capability</div> | Description |
 | --- | --- |
 | `platformName` | Could be set to `ios`. Appium itself is not strict about this capability value if `automationName` is provided, so feel free to assign it to any supported platform name if this is needed, for example, to make Selenium Grid working. |
-| `browserName` | The name of the browser to run the test on. If this capability is provided then the driver will try to start the test in Web context mode (Native mode is applied by default). Read [Automating hybrid apps](https://github.com/appium/appium/blob/1.x/docs/en/writing-running-appium/web/hybrid.md) for more details. Usually equals to `safari`. |
+| `browserName` | The name of the browser to run the test on. If this capability is provided then the driver will try to start the test in Web context mode (Native mode is applied by default). Read [Automating hybrid apps](../guides/hybrid.md) for more details. Usually equals to `safari`. |
 | `appium:automationName` | Must always be set to `xcuitest`. Values of `automationName` are compared case-insensitively. |
 | `appium:deviceName` | The name of the device under test. Consider setting `udid` for real devices and use this one for Simulator selection instead |
 | `appium:platformVersion` | The platform version of an emulator or a real device. This capability is used for device autodetection if `udid` is not provided |

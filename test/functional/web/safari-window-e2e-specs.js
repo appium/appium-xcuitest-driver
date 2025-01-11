@@ -140,7 +140,7 @@ describe('safari - windows and frames', function () {
               waitMs: timeout,
               intervalMs: 300,
             });
-          } catch (e) {
+          } catch {
             throw new Error(
               `Element located by '${locator}' still exists after ${timeout}ms timeout`,
             );

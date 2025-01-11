@@ -1,3 +1,51 @@
+## [7.35.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.0...v7.35.1) (2025-01-03)
+
+### Miscellaneous Chores
+
+* Bump eslint version ([#2508](https://github.com/appium/appium-xcuitest-driver/issues/2508)) ([565e6bc](https://github.com/appium/appium-xcuitest-driver/commit/565e6bc345f07678e77134f9b84182fa996b1853))
+
+## [7.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.2...v7.35.0) (2024-12-23)
+
+### Features
+
+* Bump appium-ios-device to support USBMUXD_SOCKET_ADDRESS ([#2507](https://github.com/appium/appium-xcuitest-driver/issues/2507)) ([a8adca8](https://github.com/appium/appium-xcuitest-driver/commit/a8adca87556d1b42265ba5b2474b7e4d23050c84))
+
+## [7.34.2](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.1...v7.34.2) (2024-12-19)
+
+### Bug Fixes
+
+* Adjust log level for BiDi events ([#2505](https://github.com/appium/appium-xcuitest-driver/issues/2505)) ([1a73fcd](https://github.com/appium/appium-xcuitest-driver/commit/1a73fcd0c879f2bb70e0c431e110c8d601ff754d))
+
+## [7.34.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.34.0...v7.34.1) (2024-12-14)
+
+### Miscellaneous Chores
+
+* Tune contextUpdated event generation ([#2503](https://github.com/appium/appium-xcuitest-driver/issues/2503)) ([8ee8fcf](https://github.com/appium/appium-xcuitest-driver/commit/8ee8fcfd0898c7a38c4bb5064d18360d2eb45451))
+
+## [7.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.33.1...v7.34.0) (2024-12-13)
+
+### Features
+
+* extend to handle critical notification elements in respectSystemAlerts settings ([#2502](https://github.com/appium/appium-xcuitest-driver/issues/2502)) ([b4fcccb](https://github.com/appium/appium-xcuitest-driver/commit/b4fcccb1c79f0d6b3dcc4041267893b849c2f557))
+
+## [7.33.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.33.0...v7.33.1) (2024-12-12)
+
+### Miscellaneous Chores
+
+* Replace occurrences of the deprecated errorAndThrow API ([#2501](https://github.com/appium/appium-xcuitest-driver/issues/2501)) ([d2122eb](https://github.com/appium/appium-xcuitest-driver/commit/d2122ebb86e82026ede34803c33a5234e4111982))
+
+## [7.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.32.1...v7.33.0) (2024-12-09)
+
+### Features
+
+* Screenshooting of web elements ([#2499](https://github.com/appium/appium-xcuitest-driver/issues/2499)) ([b12e4dd](https://github.com/appium/appium-xcuitest-driver/commit/b12e4dd449895d5d4a4909c0b74df5a401013b69))
+
+## [7.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.32.0...v7.32.1) (2024-12-03)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump mocha from 10.8.2 to 11.0.1 ([#2497](https://github.com/appium/appium-xcuitest-driver/issues/2497)) ([4e9eabc](https://github.com/appium/appium-xcuitest-driver/commit/4e9eabc43fcc537b0dcda246fadfb263555046be))
+
 ## [7.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.31.0...v7.32.0) (2024-11-16)
 
 ### Features

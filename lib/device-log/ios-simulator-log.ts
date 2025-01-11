@@ -90,7 +90,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
     this.log.debug('Stopping iOS log capture');
     try {
       await this.proc.stop('SIGTERM', 1000);
-    } catch (e) {
+    } catch {
       if (!this.proc.isRunning) {
         return;
       }

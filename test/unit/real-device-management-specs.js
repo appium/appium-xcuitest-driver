@@ -1,7 +1,7 @@
 import {createSandbox} from 'sinon';
 import { installToRealDevice } from '../../lib/real-device-management';
-import RealDevice from '../../lib/real-device';
-import XCUITestDriver from '../../lib/driver';
+import {RealDevice} from '../../lib/real-device';
+import {XCUITestDriver} from '../../lib/driver';
 
 
 describe('installToRealDevice', function () {

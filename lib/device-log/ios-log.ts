@@ -37,7 +37,6 @@ export abstract class IOSLog<
     return this._log;
   }
 
-  // eslint-disable-next-line require-await
   async getLogs(): Promise<LogEntry[]> {
     const result: LogEntry[] = [];
     for (const value of this.logs.rvalues()) {

@@ -2,7 +2,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import envBase from './env-base';
 import platformDefinition from './ios-sim-platforms';
-import log from './logger';
+import { log } from './logger';
 
 const platforms = [];
 

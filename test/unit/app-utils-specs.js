@@ -21,7 +21,7 @@ describe('app-utils', function () {
     it('should unzip from stream', async function () {
       try {
         await fs.which('bsdtar');
-      } catch (e) {
+      } catch {
         return;
       }
 
@@ -47,7 +47,7 @@ describe('app-utils', function () {
     it('should fail for invalid archives', async function () {
       try {
         await fs.which('bsdtar');
-      } catch (e) {
+      } catch {
         return;
       }
 

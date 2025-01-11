@@ -1,6 +1,6 @@
 import {errors} from 'appium/driver';
 import sinon from 'sinon';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 
 describe('proxy commands', function () {

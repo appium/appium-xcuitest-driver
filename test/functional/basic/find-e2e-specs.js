@@ -87,7 +87,7 @@ describe('XCUITestDriver - find -', function () {
       // we will have the previous elements, so the get command will be fulfilled.
       await B.delay(1000);
 
-      await driver.setImplicitTimeout(5000);
+      await driver.setTimeout({ implicit: 5000 });
       table = await driver.$('XCUIElementTypeTable');
       let el2 = await driver.$('XCUIElementTypeStaticText');
       let el2Name = await el2.getAttribute('name');
@@ -141,7 +141,7 @@ describe('XCUITestDriver - find -', function () {
         // and make sure we are at the top of the page
         try {
           await driver.execute('mobile: scroll', {direction: 'up'});
-        } catch (ign) {}
+        } catch {}
       });
       beforeEach(async function () {
         // go into the right page
@@ -157,7 +157,7 @@ describe('XCUITestDriver - find -', function () {
       });
 
       it('should respect implicit wait', async function () {
-        await driver.setImplicitTimeout(5000);
+        await driver.setTimeout({ implicit: 5000 });
 
         let begin = Date.now();
         const el = await driver.$('//something_not_there');
@@ -191,7 +191,7 @@ describe('XCUITestDriver - find -', function () {
         let el;
         try {
           el = await driver.$('//XCUIElementTypeNavigationBar/XCUIElementTypeStaticText');
-        } catch (err) {
+        } catch {
           el = await driver.$('//XCUIElementTypeNavigationBar/XCUIElementTypeOther');
         }
         (await el.getAttribute('name')).should.equal('Buttons');
@@ -319,7 +319,7 @@ describe('XCUITestDriver - find -', function () {
       try {
         const el = await driver.$('~Text Fields');
         await driver.execute('mobile: scroll', {element: el.elementId, toVisible: true});
-      } catch (ign) {}
+      } catch {}
     });
     afterEach(async function () {
       await driver.back();

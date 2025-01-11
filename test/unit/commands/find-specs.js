@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import XCUITestDriver from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
@@ -27,7 +27,7 @@ describe('general commands', function () {
     async function verifyFind(strategy, selector, modSelector, modStrategy = null, mult = false) {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
-      } catch (ign) {}
+      } catch {}
       proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
         using: modStrategy || strategy,
         value: modSelector,

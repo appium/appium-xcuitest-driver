@@ -49,7 +49,7 @@ describe('Accessibility', function () {
       await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == 'Accessibility'`)
         .click();
-    } catch (err) {
+    } catch {
       await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == 'General'`)
         .click();

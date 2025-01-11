@@ -39,7 +39,7 @@ async function initSession(caps, remoteOpts = {}) {
 async function deleteSession() {
   try {
     await driver.deleteSession();
-  } catch (ign) {
+  } catch {
   } finally {
     driver = undefined;
   }

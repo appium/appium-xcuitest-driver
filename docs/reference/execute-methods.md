@@ -518,7 +518,7 @@ Returns the actual device time.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-format | string | no | The format specifier string. Read [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601 | YYYY-MM-DD HH:mm:ss
+format | string | no | The format specifier string. Read [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601 | `YYYY-MM-DD HH:mm:ss`
 
 #### Returned Result
 
@@ -1200,7 +1200,7 @@ y | number | no | Vertical coordinate offset. | 100
 
     ```java
     RemoteWebElement e = driver.findElement(AppiumBy.accessibilityId("target element"));
-    driver.executeScript("mobile: pinch", ImmutableMap.of(
+    driver.executeScript("mobile: doubleTap", ImmutableMap.of(
         "elementId", e.getId()
     ));
     ```
@@ -1209,7 +1209,7 @@ y | number | no | Vertical coordinate offset. | 100
 
     ```js
     const e = await $('~target element');
-    await driver.executeScript('mobile: pinch', [{
+    await driver.executeScript('mobile: doubleTap', [{
       elementId: e.elementId
     }]);
 
@@ -1217,7 +1217,7 @@ y | number | no | Vertical coordinate offset. | 100
 
     ```python
     e = driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='target element')
-    driver.execute_script("mobile: pinch", {
+    driver.execute_script("mobile: doubleTap", {
       "elementId": e.id
     })
     ```
@@ -1226,7 +1226,7 @@ y | number | no | Vertical coordinate offset. | 100
 
     ```ruby
     e = driver.find_element :accessibility_id, 'target element'
-    driver.execute_script 'mobile: pinch', {
+    driver.execute_script 'mobile: doubleTap', {
       elementId: e.ref
     }
     ```
@@ -1235,7 +1235,7 @@ y | number | no | Vertical coordinate offset. | 100
 
     ```csharp
     var e = driver.FindElement(By.AccessibilityId("target element"))
-    driver.ExecuteScript("mobile: pinch", new Dictionary<string, object>() {
+    driver.ExecuteScript("mobile: doubleTap", new Dictionary<string, object>() {
         {"elementId", element.Id}
     });
     ```

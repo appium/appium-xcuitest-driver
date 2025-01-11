@@ -1,5 +1,6 @@
 import {parseContainerPath} from '../../../lib/commands/file-movement';
 import {tempDir} from 'appium/support';
+import {XCUITestDriver} from '../../../lib/driver';
 
 
 describe('file-movement', function () {
@@ -16,9 +17,19 @@ describe('file-movement', function () {
   });
 
   describe('parseContainerPath', function () {
+    let driver;
+
+    beforeEach(function () {
+      driver = new XCUITestDriver();
+    });
+
+    afterEach(function () {
+      driver = null;
+    });
+
     it('should parse with container', async function () {
       const mntRoot = await tempDir.openDir();
-      const {bundleId, pathInContainer, containerType} = await parseContainerPath(
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(driver)(
         '@io.appium.example:app/Documents/file.txt',
         mntRoot,
       );
@@ -29,7 +40,7 @@ describe('file-movement', function () {
     });
     it('should parse with container root', async function () {
       const mntRoot = await tempDir.openDir();
-      const {bundleId, pathInContainer, containerType} = await parseContainerPath(
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(driver)(
         '@io.appium.example:documents/',
         mntRoot,
       );
@@ -40,7 +51,7 @@ describe('file-movement', function () {
     });
     it('should parse without container', async function () {
       const mntRoot = await tempDir.openDir();
-      const {bundleId, pathInContainer, containerType} = await parseContainerPath(
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(driver)(
         '@io.appium.example/Documents/file.txt',
         mntRoot,
       );
@@ -51,7 +62,7 @@ describe('file-movement', function () {
     });
     it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();
-      await parseContainerPath('@io.appium.example:documents', mntRoot).should.be.rejected;
+      await parseContainerPath.bind(driver)('@io.appium.example:documents', mntRoot).should.be.rejected;
     });
   });
 });

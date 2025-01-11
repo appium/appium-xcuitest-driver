@@ -1,7 +1,7 @@
 import {retryInterval} from 'asyncbox';
 import {getSimulator} from 'appium-ios-simulator';
 import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
-import Simctl from 'node-simctl';
+import {Simctl} from 'node-simctl';
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
 import {

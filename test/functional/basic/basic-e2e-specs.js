@@ -36,7 +36,7 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should return status immediately if another operation is in progress', async function () {
-      await driver.setImplicitTimeout(10000);
+      await driver.setTimeout({ implicit: 10000 });
       const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
       status.build.version.should.exist;
@@ -87,7 +87,7 @@ describe('XCUITestDriver - basics -', function () {
     after(async function () {
       try {
         await driver.setOrientation('PORTRAIT');
-      } catch (ign) {}
+      } catch {}
     });
     it('should get an app screenshot', async function () {
       let screenshot = await driver.takeScreenshot();
@@ -105,7 +105,7 @@ describe('XCUITestDriver - basics -', function () {
 
       try {
         await driver.setOrientation('LANDSCAPE');
-      } catch (ign) {}
+      } catch {}
       // take a little pause while it orients, otherwise you get the screenshot
       // on an angle
       await B.delay(500);

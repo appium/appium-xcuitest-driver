@@ -1,6 +1,6 @@
 import {getSimulator} from 'appium-ios-simulator';
 import {cleanupSimulator} from '../helpers/simulator';
-import Simctl from 'node-simctl';
+import {Simctl} from 'node-simctl';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {TVOS_CAPS} from '../desired';
 
