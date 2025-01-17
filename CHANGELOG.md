@@ -1,3 +1,13 @@
+## [8.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.1...v8.0.0) (2025-01-17)
+
+### ⚠ BREAKING CHANGES
+
+* Removed the customSnapshotTimeout setting as a result of WDA upgrade to v9
+
+### Features
+
+* Bump WDA to v9 ([#2511](https://github.com/appium/appium-xcuitest-driver/issues/2511)) ([3067ae5](https://github.com/appium/appium-xcuitest-driver/commit/3067ae5f75520b750925e4a9671a8441a05ffdf8))
+
 ## [7.35.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.0...v7.35.1) (2025-01-03)
 
 ### Miscellaneous Chores
