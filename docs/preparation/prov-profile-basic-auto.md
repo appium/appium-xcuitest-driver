@@ -42,7 +42,7 @@ _or_ the combination of `appium:xcodeOrgId` and `appium:xcodeSigningId`.
     * Appium replaces the existing placeholder of `com.facebook.WebDriverAgentRunner` in `WebDriverAgent.xcodeproj` with the given capability value.
     * `xcodebuild` adds `.xctrunner` automatically for XCTest package. Thus, the provisioning profile you're using should have the suffix explicitly, or it can be for bundle id which has `*`.
         * For instance, when the `appium:updatedWDABundleId` is `io.appium.WebDriverAgentRunner`, the given provisioning profile should be for `io.appium.WebDriverAgentRunner.xctrunner`, `io.appium.WebDriverAgentRunner.*` or `*`.
-    * `appium:allowProvisioningDeviceRegistration` lets XCUITest driver set `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flags for the `xcodebuild` command. They will help register the target device to the matched provisioning profile if it still doesn't have the device. Please read `xcodebuild` command description about the actual behavior.
+    * `appium:allowProvisioningDeviceRegistration` lets XCUITest driver set `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flags for the `xcodebuild` command. They will help register the target device to the matched provisioning profile if it still doesn't have the device. Please check `man xcodebuild` output for more details.
 
 Once this configuration is done, you should specify your real device UDID with the `udid` desired
 capability, after which you should be able to start your test. Proceed with
