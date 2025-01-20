@@ -8,7 +8,6 @@ import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import {RealDevice} from '../../lib/real-device';
 
-
 const caps = {
   fistMatch: [{}],
   alwaysMatch: {
@@ -243,6 +242,28 @@ describe('XCUITestDriver', function () {
           }),
         );
         spy.notCalled.should.be.true;
+      });
+
+      it('should throw an error if mjpegServerPort is occupied', async function () {
+        this.timeout(MOCHA_LONG_TIMEOUT);
+        delete device.simctl;
+        device.devicectl = true;
+        const net = require('net');
+        const server = net.createServer();
+        await new Promise((resolve) => server.listen(9100, resolve));
+        try {
+          await driver.createSession(
+            null,
+            null,
+            _.merge({}, caps, {
+              alwaysMatch: {'appium:mjpegServerPort': 9100},
+            }),
+          ).should.be.rejectedWith(
+            'Cannot ensure MJPEG broadcast functionality by forwarding the local port 9100 requested by the \'mjpegServerPort\' capability to the device port 9100. Original error: Error: The port #9100 is occupied by an other process'
+          );
+        } finally {
+          await new Promise((resolve) => server.close(resolve));
+        }
       });
     });
 
