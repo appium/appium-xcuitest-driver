@@ -106,7 +106,7 @@ describe('XCUITestDriver', function () {
 
       afterEach(async function () {
         await driver.deleteSession();
-      })
+      });
       beforeEach(function () {
         driver = new XCUITestDriver();
         device = {
