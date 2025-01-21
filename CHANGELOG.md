@@ -1,3 +1,9 @@
+## [8.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.0.0...v8.1.0) (2025-01-21)
+
+### Features
+
+* create port forward when mjpegServerPort is provided in caps ([#2517](https://github.com/appium/appium-xcuitest-driver/issues/2517)) ([ed4c9cf](https://github.com/appium/appium-xcuitest-driver/commit/ed4c9cfa55c988b69140c08dcec01edde7b6b371))
+
 ## [8.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.1...v8.0.0) (2025-01-17)
 
 ### ⚠ BREAKING CHANGES
