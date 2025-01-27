@@ -338,6 +338,22 @@ export type ButtonName = AnyCase<
 export type Style = 'dark' | 'light' | 'unsupported' | 'unknown';
 
 /**
+ * Returned in the {@linkcode XCUITest.mobileGetIncreaseContrast mobile: getIncreaseContrast} command response.
+ */
+export type IncreaseContrast =
+    | 'enabled'
+    | 'disabled'
+    | 'unsupported'
+    | 'unknown'
+
+/**
+ * Argument in the {@linkcode XCUITest.mobileSetIncreaseContrast mobile: setIncreaseContrast} command.
+ */
+export type IncreaseContrastAction =
+    | 'enabled'
+    | 'disabled'
+
+/**
  * Argument in the {@linkcode XCUITest.mobileSetContentSize mobile: setContentSize} command.
  */
 export type ContentSizeAction =

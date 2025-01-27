@@ -702,6 +702,43 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 style | string | yes | Either `light` or `dark` | dark
 
+### mobile: getIncreaseContrast
+
+TODO
+
+#### Returned Result
+
+TODO
+
+### mobile: setIncreaseContrast
+
+TODO
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+increaseContrast | string | yes | Either `enabled` or `disabled` | enabled
+
+### mobile: getContentSize
+
+TODO
+
+#### Returned Result
+
+TODO
+
+### mobile: setContentSize
+
+TODO
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+size | string | yes |  | large
+
+
 ### mobile: getClipboard
 
 Gets the content of the primary clipboard on the device under test.
