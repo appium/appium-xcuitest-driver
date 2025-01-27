@@ -704,40 +704,73 @@ style | string | yes | Either `light` or `dark` | dark
 
 ### mobile: getIncreaseContrast
 
-TODO
+Get the device's increase contrast accessibility mode.
 
 #### Returned Result
 
-TODO
+One of below:
+
+- `enabled`: Increase Contrast is enabled.
+- `disabled`: Increase Contrast is disabled.
+- `unsupported`: The platform or runtime version do not support the Increase Contrast setting.
+- `unknown`: The current setting is unknown or there was an error detecting it.
+
 
 ### mobile: setIncreaseContrast
 
-TODO
+Enable or disable the device's increase contrast accessibility mode.
 
 #### Arguments
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-increaseContrast | string | yes | Either `enabled` or `disabled` | enabled
+increaseContrast | string | yes | Either `enabled` or `disabled` (case insensitive) | 'enabled'
 
 ### mobile: getContentSize
 
-TODO
+Get the device's content size.
 
 #### Returned Result
 
-TODO
+One of below:
+
+- `extra-small`
+- `small`
+- `medium`
+- `large`
+- `extra-large`
+- `extra-extra-large`
+- `extra-extra-extra-large`
+- `accessibility-medium`
+- `accessibility-large`
+- `accessibility-extra-large`
+- `accessibility-extra-extra-large`
+- `accessibility-extra-extra-extra-large`
+- `unknown`
+- `unsupported`
 
 ### mobile: setContentSize
 
-TODO
+Set the device's content size.
 
 #### Arguments
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-size | string | yes |  | large
+size | string | yes | One of content size value list below in case-insensitive. | large
 
+- `extra-small`
+- `small`
+- `medium`
+- `large`
+- `extra-large`
+- `extra-extra-large`
+- `extra-extra-extra-large`
+- `accessibility-medium`
+- `accessibility-large`
+- `accessibility-extra-large`
+- `accessibility-extra-extra-large`
+- `accessibility-extra-extra-extra-large`
 
 ### mobile: getClipboard
 
