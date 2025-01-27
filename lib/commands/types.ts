@@ -344,14 +344,14 @@ export type IncreaseContrast =
     | 'enabled'
     | 'disabled'
     | 'unsupported'
-    | 'unknown'
+    | 'unknown';
 
 /**
  * Argument in the {@linkcode XCUITest.mobileSetIncreaseContrast mobile: setIncreaseContrast} command.
  */
 export type IncreaseContrastAction =
     | 'enabled'
-    | 'disabled'
+    | 'disabled';
 
 /**
  * Argument in the {@linkcode XCUITest.mobileSetContentSize mobile: setContentSize} command.
@@ -370,7 +370,7 @@ export type ContentSizeAction =
     | 'accessibility-extra-extra-large'
     | 'accessibility-extra-extra-extra-large'
     | 'increment'
-    | 'decrement'
+    | 'decrement';
 
 /**
  * Returned in the {@linkcode XCUITest.mobileGetContentSize mobile: getContentSize} command response.
@@ -389,7 +389,7 @@ export type ContentSize =
     | 'accessibility-extra-extra-large'
     | 'accessibility-extra-extra-extra-large'
     | 'unknown'
-    | 'unsupported'
+    | 'unsupported';
 
 export interface ScreenInfo {
   /**
