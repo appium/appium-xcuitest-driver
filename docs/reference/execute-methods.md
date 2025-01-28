@@ -702,7 +702,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 style | string | yes | Either `light` or `dark` | dark
 
-### mobile: getIncreaseContrast
+### mobile: increaseContrast
 
 Get the device's increase contrast accessibility mode.
 
@@ -726,7 +726,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 increaseContrast | string | yes | Either `enabled` or `disabled` (case insensitive) | 'enabled'
 
-### mobile: getContentSize
+### mobile: contentSize
 
 Get the device's content size.
 
