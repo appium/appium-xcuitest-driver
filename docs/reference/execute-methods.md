@@ -704,7 +704,7 @@ style | string | yes | Either `light` or `dark` | dark
 
 ### mobile: increaseContrast
 
-Get the device's increase contrast accessibility mode.
+Get the device's "increase contrast" accessibility mode.
 
 #### Returned Result
 
@@ -712,13 +712,13 @@ One of below:
 
 - `enabled`: Increase Contrast is enabled.
 - `disabled`: Increase Contrast is disabled.
-- `unsupported`: The platform or runtime version do not support the Increase Contrast setting.
+- `unsupported`: The platform or runtime version does not support the Increase Contrast setting.
 - `unknown`: The current setting is unknown or there was an error detecting it.
 
 
 ### mobile: setIncreaseContrast
 
-Enable or disable the device's increase contrast accessibility mode.
+Enable or disable the device's "increase contrast" accessibility mode.
 
 #### Arguments
 
@@ -757,7 +757,7 @@ Set the device's content size.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-size | string | yes | One of content size value list below in case-insensitive. | large
+size | string | yes | One of the content sizes listed below in case-insensitive. | large
 
 - `extra-small`
 - `small`
