@@ -1,3 +1,9 @@
+## [8.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.1.0...v8.2.0) (2025-01-29)
+
+### Features
+
+* add increase contrast and content size commands ([#2520](https://github.com/appium/appium-xcuitest-driver/issues/2520)) ([a3fc183](https://github.com/appium/appium-xcuitest-driver/commit/a3fc18322fcded1842acf7ce7d56ad82cb4312ca))
+
 ## [8.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.0.0...v8.1.0) (2025-01-21)
 
 ### Features
