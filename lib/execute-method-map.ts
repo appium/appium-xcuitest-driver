@@ -333,7 +333,7 @@ export const executeMethodMap = {
       required: ['style'],
     },
   },
-  'mobile: increaseContrast': {
+  'mobile: getIncreaseContrast': {
     command: 'mobileGetIncreaseContrast'
   },
   'mobile: setIncreaseContrast': {

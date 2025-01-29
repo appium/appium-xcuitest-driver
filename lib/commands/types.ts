@@ -340,7 +340,7 @@ export type Style = 'dark' | 'light' | 'unsupported' | 'unknown';
 /**
  * Returned in the {@linkcode XCUITest.mobileGetIncreaseContrast mobile: getIncreaseContrast} command response.
  */
-export type IncreaseContrast =
+export type IncreaseContrastResult =
     | 'enabled'
     | 'disabled'
     | 'unsupported'
@@ -375,7 +375,7 @@ export type ContentSizeAction =
 /**
  * Returned in the {@linkcode XCUITest.mobileGetContentSize mobile: getContentSize} command response.
  */
-export type ContentSize =
+export type ContentSizeResult =
     | 'extra-small'
     | 'small'
     | 'medium'

@@ -702,7 +702,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 style | string | yes | Either `light` or `dark` | dark
 
-### mobile: increaseContrast
+### mobile: getIncreaseContrast
 
 Get the device's "increase contrast" accessibility mode.
 
