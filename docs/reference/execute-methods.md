@@ -705,6 +705,7 @@ style | string | yes | Either `light` or `dark` | dark
 ### mobile: getIncreaseContrast
 
 Get the device's "increase contrast" accessibility mode.
+This API only works on simulators. An exception is thrown if executed with real devices.
 
 #### Returned Result
 
@@ -719,6 +720,7 @@ One of below:
 ### mobile: setIncreaseContrast
 
 Enable or disable the device's "increase contrast" accessibility mode.
+This API only works on simulators. An exception is thrown if executed with real devices.
 
 #### Arguments
 
@@ -729,6 +731,7 @@ increaseContrast | string | yes | Either `enabled` or `disabled` (case insensiti
 ### mobile: contentSize
 
 Get the device's content size.
+This API only works on simulators. An exception is thrown if executed with real devices.
 
 #### Returned Result
 
@@ -752,6 +755,7 @@ One of below:
 ### mobile: setContentSize
 
 Set the device's content size.
+This API only works on simulators. An exception is thrown if executed with real devices.
 
 #### Arguments
 
