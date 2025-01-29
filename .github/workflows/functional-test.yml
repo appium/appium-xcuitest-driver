@@ -30,14 +30,14 @@ jobs:
         - driver
         - web
         - long
-        xcodeVersion: ['14.3.1', '15.4']
+        xcodeVersion: ['16.2', '15.4']
         include:
-        - xcodeVersion: '14.3.1'
-          iosVersion: '16.4'
-          deviceName: 'iPhone 14'
-          tvosVersion: '16.4'
+        - xcodeVersion: '16.2'
+          iosVersion: '18.2'
+          deviceName: 'iPhone 16'
+          tvosVersion: '18.2'
           tvosDeviceName: 'Apple TV'
-          platform: macos-13
+          platform: macos-15
         - xcodeVersion: '15.4'
           iosVersion: '17.5'
           deviceName: 'iPhone 15'
@@ -70,13 +70,12 @@ jobs:
       name: List Runtimes
     - name: Prepare iOS simulator
       id: prepareSimulator
-      uses: futureware-tech/simulator-action@v3
+      uses: futureware-tech/simulator-action@v4
       with:
         model: "${{ matrix.deviceName }}"
         os_version: "${{ matrix.iosVersion }}"
         shutdown_after_job: false
-    - run: xcrun simctl bootstatus ${{ steps.prepareSimulator.outputs.udid }} -b
-      name: Wait for Simulator to finish booting
+        wait_for_boot: true
 
     - run: |
         npm install --no-save mjpeg-consumer
