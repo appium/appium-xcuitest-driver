@@ -1,3 +1,9 @@
+## [8.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.2.0...v8.3.0) (2025-01-30)
+
+### Features
+
+* always use vendContainer to add files without extra app permissions ([#2522](https://github.com/appium/appium-xcuitest-driver/issues/2522)) ([6f3e7b5](https://github.com/appium/appium-xcuitest-driver/commit/6f3e7b5b30f7f5c438cd0cc0fce1f2aa7a3f4f3b))
+
 ## [8.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.1.0...v8.2.0) (2025-01-29)
 
 ### Features
