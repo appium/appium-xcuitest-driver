@@ -27,7 +27,7 @@ possible formats this path can take:
 * `<container-type>` is the container type
     * On simulators, common values are `app`, `data`, `groups`, but a custom one can also be provided
     * On real devices, the only accepted value is `documents`. All others are treated as Format 2
-        * In `xcuitest-driver` versions prior to version `v8.1.0` the following limitation applies:
+        * In `xcuitest-driver` versions prior to version `v8.3.0` the following limitation applies:
         This value can only be specified for apps that have the `UIFileSharingEnabled` flag set to
           `true`. You can use the [`mobile: listApps`](../reference/execute-methods.md#mobile-listapps)
           extension to identify such apps.
