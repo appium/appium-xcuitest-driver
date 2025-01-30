@@ -1,6 +1,6 @@
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
-import {SETTINGS_CAPS, amendCapabilities} from '../desired';
+import {SETTINGS_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 
 
 describe('Accessibility', function () {
@@ -43,30 +43,21 @@ describe('Accessibility', function () {
   });
 
   async function showAccessibilityTab(driver) {
-    let hasGeneralTab = false;
-    try {
-      // iOS 13 has Accessibility outside the General tab
-      await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == 'Accessibility'`)
-        .click();
-    } catch {
+    if (isIosVersionBelow('18.0')) {
       await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == 'General'`)
         .click();
-      await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == 'Accessibility'`)
-        .click();
-      hasGeneralTab = true;
     }
-    return hasGeneralTab;
+    await driver
+      .$(`${PREDICATE_SEARCH}:name == 'Accessibility'`)
+      .click();
   }
 
   describe('ReduceMotion', function () {
     async function getReduceMotion(driver) {
-      const hasGeneralTab = await showAccessibilityTab(driver);
-      const motionCellName = hasGeneralTab ? 'Reduce Motion' : 'Motion';
+      await showAccessibilityTab(driver);
       await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == '${motionCellName}'`)
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion'}`)
         .click();
       return await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'`)
@@ -90,7 +81,7 @@ describe('Accessibility', function () {
       await showAccessibilityTab(driver);
       await driver
         .$(
-          `${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == '${'Display & Text Size'}'`,
+          `${PREDICATE_SEARCH}:name == 'Display & Text Size'`,
         )
         .click();
       return await driver
