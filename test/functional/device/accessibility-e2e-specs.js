@@ -1,6 +1,6 @@
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
-import {SETTINGS_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
+import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 
 
 describe('Accessibility', function () {
@@ -43,11 +43,6 @@ describe('Accessibility', function () {
   });
 
   async function showAccessibilityTab(driver) {
-    if (isIosVersionBelow('18.0')) {
-      await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name == 'General'`)
-        .click();
-    }
     await driver
       .$(`${PREDICATE_SEARCH}:name == 'Accessibility'`)
       .click();
