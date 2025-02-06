@@ -1,3 +1,9 @@
+## [8.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.0...v8.3.1) (2025-02-06)
+
+### Miscellaneous Chores
+
+* bump wda version to 9.0.3 ([b645987](https://github.com/appium/appium-xcuitest-driver/commit/b64598758ee5040d98ff9bda6872d8b5a0ff125e))
+
 ## [8.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.2.0...v8.3.0) (2025-01-30)
 
 ### Features
