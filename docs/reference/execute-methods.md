@@ -702,6 +702,80 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 style | string | yes | Either `light` or `dark` | dark
 
+### mobile: getIncreaseContrast
+
+Get the device's "increase contrast" accessibility mode.
+This API only works on simulators. An exception is thrown if executed with real devices.
+
+#### Returned Result
+
+One of below:
+
+- `enabled`: Increase Contrast is enabled.
+- `disabled`: Increase Contrast is disabled.
+- `unsupported`: The platform or runtime version does not support the Increase Contrast setting.
+- `unknown`: The current setting is unknown or there was an error detecting it.
+
+
+### mobile: setIncreaseContrast
+
+Enable or disable the device's "increase contrast" accessibility mode.
+This API only works on simulators. An exception is thrown if executed with real devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+increaseContrast | string | yes | Either `enabled` or `disabled` (case insensitive) | 'enabled'
+
+### mobile: contentSize
+
+Get the device's content size.
+This API only works on simulators. An exception is thrown if executed with real devices.
+
+#### Returned Result
+
+One of below:
+
+- `extra-small`
+- `small`
+- `medium`
+- `large`
+- `extra-large`
+- `extra-extra-large`
+- `extra-extra-extra-large`
+- `accessibility-medium`
+- `accessibility-large`
+- `accessibility-extra-large`
+- `accessibility-extra-extra-large`
+- `accessibility-extra-extra-extra-large`
+- `unknown`
+- `unsupported`
+
+### mobile: setContentSize
+
+Set the device's content size.
+This API only works on simulators. An exception is thrown if executed with real devices.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+size | string | yes | One of the content sizes listed below in case-insensitive. | large
+
+- `extra-small`
+- `small`
+- `medium`
+- `large`
+- `extra-large`
+- `extra-extra-large`
+- `extra-extra-extra-large`
+- `accessibility-medium`
+- `accessibility-large`
+- `accessibility-extra-large`
+- `accessibility-extra-extra-large`
+- `accessibility-extra-extra-extra-large`
+
 ### mobile: getClipboard
 
 Gets the content of the primary clipboard on the device under test.

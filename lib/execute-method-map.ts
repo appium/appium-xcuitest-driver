@@ -333,6 +333,24 @@ export const executeMethodMap = {
       required: ['style'],
     },
   },
+  'mobile: getIncreaseContrast': {
+    command: 'mobileGetIncreaseContrast'
+  },
+  'mobile: setIncreaseContrast': {
+    command: 'mobileSetIncreaseContrast',
+    params: {
+      required: ['increaseContrast'],
+    },
+  },
+  'mobile: contentSize': {
+    command: 'mobileGetContentSize'
+  },
+  'mobile: setContentSize': {
+    command: 'mobileSetContentSize',
+    params: {
+      required: ['size'],
+    },
+  },
   'mobile: getClipboard': {
     command: 'getClipboard',
     params: {

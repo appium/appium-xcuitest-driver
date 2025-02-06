@@ -1,3 +1,31 @@
+## [8.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.2.0...v8.3.0) (2025-01-30)
+
+### Features
+
+* always use vendContainer to add files without extra app permissions ([#2522](https://github.com/appium/appium-xcuitest-driver/issues/2522)) ([6f3e7b5](https://github.com/appium/appium-xcuitest-driver/commit/6f3e7b5b30f7f5c438cd0cc0fce1f2aa7a3f4f3b))
+
+## [8.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.1.0...v8.2.0) (2025-01-29)
+
+### Features
+
+* add increase contrast and content size commands ([#2520](https://github.com/appium/appium-xcuitest-driver/issues/2520)) ([a3fc183](https://github.com/appium/appium-xcuitest-driver/commit/a3fc18322fcded1842acf7ce7d56ad82cb4312ca))
+
+## [8.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.0.0...v8.1.0) (2025-01-21)
+
+### Features
+
+* create port forward when mjpegServerPort is provided in caps ([#2517](https://github.com/appium/appium-xcuitest-driver/issues/2517)) ([ed4c9cf](https://github.com/appium/appium-xcuitest-driver/commit/ed4c9cfa55c988b69140c08dcec01edde7b6b371))
+
+## [8.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.1...v8.0.0) (2025-01-17)
+
+### ⚠ BREAKING CHANGES
+
+* Removed the customSnapshotTimeout setting as a result of WDA upgrade to v9
+
+### Features
+
+* Bump WDA to v9 ([#2511](https://github.com/appium/appium-xcuitest-driver/issues/2511)) ([3067ae5](https://github.com/appium/appium-xcuitest-driver/commit/3067ae5f75520b750925e4a9671a8441a05ffdf8))
+
 ## [7.35.1](https://github.com/appium/appium-xcuitest-driver/compare/v7.35.0...v7.35.1) (2025-01-03)
 
 ### Miscellaneous Chores
