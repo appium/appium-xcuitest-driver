@@ -1,3 +1,9 @@
+## [8.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.1...v8.3.2) (2025-02-21)
+
+### Bug Fixes
+
+* Pass reqBasePath proxy option ([#2527](https://github.com/appium/appium-xcuitest-driver/issues/2527)) ([234c16c](https://github.com/appium/appium-xcuitest-driver/commit/234c16ce00096e83ad2156c69d236bf2c297c353))
+
 ## [8.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.0...v8.3.1) (2025-02-06)
 
 ### Miscellaneous Chores
