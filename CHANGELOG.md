@@ -1,3 +1,9 @@
+## [8.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.3...v8.4.0) (2025-03-09)
+
+### Features
+
+* add placeholderValue explicitly as an element attribute ([#2529](https://github.com/appium/appium-xcuitest-driver/issues/2529)) ([5c4aee5](https://github.com/appium/appium-xcuitest-driver/commit/5c4aee50ee661fdceeda920c8008c761ec91323d))
+
 ## [8.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.2...v8.3.3) (2025-02-25)
 
 ### Miscellaneous Chores
