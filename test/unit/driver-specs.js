@@ -460,4 +460,378 @@ describe('XCUITestDriver', function () {
       });
     }
   });
+  describe('executeCommand with WDA restart flow', function () {
+    let driver;
+    let superExecuteCommandStub;
+    let isWdaConnectionErrorStub;
+    let reconnectWdaStub;
+    let reinitializeSessionStub;
+    let proxyCommandStub;
+    let logStub;
+
+    beforeEach(function () {
+      driver = new XCUITestDriver();
+      driver.sessionId = 'test-session-id';
+
+      superExecuteCommandStub = sandbox.stub();
+      sandbox.stub(XCUITestDriver.prototype, 'executeCommand').callsFake(function (cmd, ...args) {
+        return driver.executeCommand.wrappedMethod.call(this, cmd, ...args);
+      });
+
+      isWdaConnectionErrorStub = sandbox.stub(driver, 'isWdaConnectionError');
+      reconnectWdaStub = sandbox.stub(driver, 'reconnectWda');
+      reinitializeSessionStub = sandbox.stub(driver, 'reinitializeSession');
+      proxyCommandStub = sandbox.stub(driver, 'proxyCommand');
+
+      logStub = {
+        debug: sandbox.stub(),
+        info: sandbox.stub(),
+        warn: sandbox.stub(),
+        error: sandbox.stub(),
+      };
+
+      sandbox.stub(driver, 'log').get(() => logStub);
+      Object.defineProperty(Object.getPrototypeOf(XCUITestDriver.prototype), 'executeCommand', {
+        value: superExecuteCommandStub,
+        writable: true,
+      });
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should bypass recovery flow when enableWdaRestart is not set', async function () {
+      driver.opts = {enableWdaRestart: false};
+      superExecuteCommandStub.resolves('success');
+
+      const result = await driver.executeCommand('test-command', 'arg1');
+
+      expect(result).to.equal('success');
+      expect(superExecuteCommandStub.calledOnce).to.be.true;
+      expect(superExecuteCommandStub.calledWith('test-command', 'arg1')).to.be.true;
+      expect(reconnectWdaStub.called).to.be.false;
+      expect(reinitializeSessionStub.called).to.be.false;
+    });
+
+    it('should bypass recovery flow for special commands even with enableWdaRestart true', async function () {
+      driver.opts = {enableWdaRestart: true};
+      driver.getStatus = sandbox.stub().resolves({status: 'ok'});
+      await driver.executeCommand('getStatus');
+      expect(driver.getStatus.calledOnce).to.be.true;
+      expect(superExecuteCommandStub.called).to.be.false;
+      driver.getStatus.reset();
+      superExecuteCommandStub.resolves({sessionId: 'new-session'});
+      await driver.executeCommand('createSession');
+      expect(superExecuteCommandStub.calledWith('createSession')).to.be.true;
+    });
+
+    it('should attempt recovery when WDA connection error occurs and enableWdaRestart is true', async function () {
+      driver.opts = {
+        enableWdaRestart: true,
+        wdaStartupRetries: 2,
+      };
+
+      const connectionError = new Error('socket hang up');
+      superExecuteCommandStub.onFirstCall().rejects(connectionError);
+      superExecuteCommandStub.onSecondCall().resolves('success after recovery');
+
+      isWdaConnectionErrorStub.withArgs(connectionError).returns(true);
+      reconnectWdaStub.resolves({status: 0});
+      proxyCommandStub.resolves();
+
+      const result = await driver.executeCommand('findElement', 'accessibility id', 'submit');
+
+      expect(result).to.equal('success after recovery');
+      expect(superExecuteCommandStub.callCount).to.equal(2);
+      expect(reconnectWdaStub.calledOnce).to.be.true;
+      expect(logStub.warn.calledWith(sandbox.match(/WDA issue detected/))).to.be.true;
+      expect(logStub.info.calledWith('Recovery successful, retrying original command')).to.be.true;
+    });
+
+    it('should reinitialize session when proxyCommand fails with invalid session error', async function () {
+      driver.opts = {
+        enableWdaRestart: true,
+        wdaStartupRetries: 2,
+      };
+
+      const connectionError = new Error('socket hang up');
+      const sessionError = new Error('invalid session id');
+
+      superExecuteCommandStub.onFirstCall().rejects(connectionError);
+      superExecuteCommandStub.onSecondCall().resolves('success after recovery');
+
+      isWdaConnectionErrorStub.withArgs(connectionError).returns(true);
+      reconnectWdaStub.resolves({status: 0});
+      proxyCommandStub.rejects(sessionError);
+      isWdaConnectionErrorStub.withArgs(sessionError).returns(false);
+      reinitializeSessionStub.resolves('new-session-id');
+
+      const result = await driver.executeCommand('findElement', 'accessibility id', 'submit');
+
+      expect(result).to.equal('success after recovery');
+      expect(superExecuteCommandStub.callCount).to.equal(2);
+      expect(reconnectWdaStub.calledOnce).to.be.true;
+      expect(reinitializeSessionStub.calledOnce).to.be.true;
+      expect(logStub.info.calledWith(sandbox.match(/WDA session is invalid/))).to.be.true;
+    });
+
+    it('should skip directly to reinitializeSession when reconnectWda fails', async function () {
+      driver.opts = {
+        enableWdaRestart: true,
+        wdaStartupRetries: 2,
+      };
+
+      const connectionError = new Error('socket hang up');
+      const reconnectError = new Error('reconnect failed');
+
+      superExecuteCommandStub.onFirstCall().rejects(connectionError);
+      superExecuteCommandStub.onSecondCall().resolves('success after recovery');
+
+      isWdaConnectionErrorStub.withArgs(connectionError).returns(true);
+      reconnectWdaStub.rejects(reconnectError);
+      reinitializeSessionStub.resolves('new-session-id');
+
+      const result = await driver.executeCommand('findElement', 'accessibility id', 'submit');
+
+      expect(result).to.equal('success after recovery');
+      expect(superExecuteCommandStub.callCount).to.equal(2);
+      expect(reconnectWdaStub.calledOnce).to.be.true;
+      expect(reinitializeSessionStub.calledOnce).to.be.true;
+      expect(logStub.warn.calledWith(sandbox.match(/Reconnection failed/))).to.be.true;
+      expect(logStub.info.calledWith('Attempting full WDA reinitialization...')).to.be.true;
+    });
+
+    it('should give up after max attempts and throw the original error', async function () {
+      driver.opts = {
+        enableWdaRestart: true,
+        wdaStartupRetries: 2,
+      };
+
+      const connectionError = new Error('socket hang up');
+
+      superExecuteCommandStub.rejects(connectionError);
+      isWdaConnectionErrorStub.withArgs(connectionError).returns(true);
+      reconnectWdaStub.resolves({status: 0});
+      proxyCommandStub.resolves();
+
+      try {
+        await driver.executeCommand('findElement', 'accessibility id', 'submit');
+        expect.fail('Should have thrown an error');
+      } catch (err) {
+        expect(err).to.equal(connectionError);
+        expect(superExecuteCommandStub.callCount).to.equal(3); // Initial + 2 retries
+        expect(reconnectWdaStub.callCount).to.equal(2);
+        expect(logStub.warn.calledWith(sandbox.match(/WDA issue detected. Recovery attempt 2\/2/)))
+          .to.be.true;
+      }
+    });
+
+    it('should not attempt recovery for non-connection errors when enableWdaRestart is true', async function () {
+      driver.opts = {
+        enableWdaRestart: true,
+        wdaStartupRetries: 2,
+      };
+
+      const nonConnectionError = new Error('element not found');
+      superExecuteCommandStub.rejects(nonConnectionError);
+      isWdaConnectionErrorStub.withArgs(nonConnectionError).returns(false);
+
+      try {
+        await driver.executeCommand('findElement', 'accessibility id', 'submit');
+        expect.fail('Should have thrown an error');
+      } catch (err) {
+        expect(err).to.equal(nonConnectionError);
+        expect(superExecuteCommandStub.calledOnce).to.be.true;
+        expect(reconnectWdaStub.called).to.be.false;
+        expect(reinitializeSessionStub.called).to.be.false;
+      }
+    });
+
+    it('should detect session invalid errors and treat them as recoverable', async function () {
+      driver.opts = {
+        enableWdaRestart: true,
+        wdaStartupRetries: 2,
+      };
+
+      const sessionError = new Error('Session does not exist');
+      superExecuteCommandStub.onFirstCall().rejects(sessionError);
+      superExecuteCommandStub.onSecondCall().resolves('success after recovery');
+
+      isWdaConnectionErrorStub.withArgs(sessionError).returns(false);
+
+      reconnectWdaStub.resolves({status: 0});
+      proxyCommandStub.rejects(new Error('invalid session id'));
+      reinitializeSessionStub.resolves('new-session-id');
+
+      const result = await driver.executeCommand('findElement', 'accessibility id', 'submit');
+
+      expect(result).to.equal('success after recovery');
+      expect(superExecuteCommandStub.callCount).to.equal(2);
+      expect(reinitializeSessionStub.calledOnce).to.be.true;
+    });
+  });
+
+  describe('isWdaConnectionError', function () {
+    let driver;
+
+    beforeEach(function () {
+      driver = new XCUITestDriver();
+    });
+
+    it('should return false for null or undefined error', function () {
+      expect(driver.isWdaConnectionError(null)).to.be.false;
+      expect(driver.isWdaConnectionError(undefined)).to.be.false;
+    });
+
+    it('should return true for ECONNREFUSED error', function () {
+      const error = new Error('Failed to connect: ECONNREFUSED');
+      expect(driver.isWdaConnectionError(error)).to.be.true;
+    });
+
+    it('should return true for socket hang up error', function () {
+      const error = new Error('socket hang up');
+      expect(driver.isWdaConnectionError(error)).to.be.true;
+    });
+
+    it('should return false for non-connection errors', function () {
+      const error = new Error('element not found');
+      expect(driver.isWdaConnectionError(error)).to.be.false;
+    });
+  });
+
+  describe('XCUITestDriver - reconnectWda', function () {
+    let driver;
+    let sandbox;
+    let clock;
+    let logStub;
+
+    beforeEach(function () {
+      sandbox = createSandbox();
+      clock = sandbox.useFakeTimers();
+
+      driver = new XCUITestDriver();
+
+      driver.wda = {
+        isRunning: sandbox.stub(),
+      };
+
+      // Stub logging
+      logStub = {
+        debug: sandbox.stub(),
+        info: sandbox.stub(),
+        warn: sandbox.stub(),
+        error: sandbox.stub(),
+      };
+      sandbox.stub(driver, 'log').get(() => logStub);
+      sandbox.stub(driver, 'delay').callsFake((ms) => {
+        clock.tick(ms);
+        return Promise.resolve();
+      });
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should successfully reconnect when WDA responds immediately', async function () {
+      driver.wda.isRunning.resolves(true);
+
+      const result = await driver.reconnectWda();
+
+      expect(result).to.be.true;
+      expect(driver.wda.isRunning.calledOnce).to.be.true;
+      expect(logStub.info.calledWith(sandbox.match('WDA is now reachable'))).to.be.true;
+    });
+
+    it('should retry until successful within timeout period', async function () {
+      driver.wda.isRunning
+        .onFirstCall()
+        .resolves(false)
+        .onSecondCall()
+        .resolves(false)
+        .onThirdCall()
+        .resolves(true);
+
+      const result = await driver.reconnectWda();
+
+      expect(result).to.be.true;
+      expect(driver.wda.isRunning.callCount).to.equal(3);
+      expect(driver.delay.callCount).to.be.at.least(2);
+      expect(logStub.info.calledWith(sandbox.match('WDA is now reachable'))).to.be.true;
+    });
+
+    it('should throw error if reconnection fails within timeout period', async function () {
+      driver.wda.isRunning.resolves(false);
+      const timeoutMs = 1000;
+
+      await expect(driver.reconnectWda(timeoutMs)).to.be.rejectedWith(
+        /Failed to reconnect to WDA within.*ms/,
+      );
+      expect(driver.wda.isRunning.called).to.be.true;
+    });
+  });
+
+  describe('XCUITestDriver - reinitializeSession', function () {
+    let driver;
+    let sandbox;
+    let wdaStub;
+    let logStub;
+    let startWdaStub;
+
+    beforeEach(function () {
+      sandbox = createSandbox();
+
+      driver = new XCUITestDriver();
+      driver.wda = {
+        isRunning: sandbox.stub(),
+      };
+
+      logStub = {
+        debug: sandbox.stub(),
+        info: sandbox.stub(),
+        warn: sandbox.stub(),
+        error: sandbox.stub(),
+      };
+      sandbox.stub(driver, 'log').get(() => logStub);
+      driver._isRecovering = true;
+      driver.opts = {bundleId: 'com.example'};
+
+      wdaStub = {
+        isRunning: sandbox.stub(),
+        quit: sandbox.stub().resolves(),
+        fullyStarted: true,
+        proxyReqRes: sandbox.stub(),
+      };
+      driver.wda = wdaStub;
+
+      startWdaStub = sandbox.stub(driver, 'startWda');
+      sandbox.stub(driver, 'startWdaSession').resolves();
+      sandbox.stub(driver, 'restoreContext').resolves();
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should throw error if starting WDA fails and reset _isRecovering', async function () {
+      wdaStub.isRunning.resolves(false);
+      startWdaStub.rejects(new Error('Start WDA failed'));
+
+      await expect(driver.reinitializeSession()).to.be.rejectedWith('Start WDA failed');
+      expect(driver._isRecovering).to.be.false;
+      expect(logStub.error.calledWith(sandbox.match('Failed to reinitialize WDA session'))).to.be
+        .true;
+      expect(startWdaStub.calledOnce).to.be.true;
+    });
+
+    it('should reset _isRecovering even if isRunning throws an error', async function () {
+      wdaStub.isRunning.rejects(new Error('WDA check failed'));
+
+      await expect(driver.reinitializeSession()).to.be.rejectedWith('WDA check failed');
+      expect(driver._isRecovering).to.be.false;
+      expect(logStub.error.calledWith(sandbox.match('Failed to reinitialize WDA session'))).to.be
+        .true;
+    });
+  });
 });
