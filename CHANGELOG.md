@@ -1,3 +1,9 @@
+## [8.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.1...v8.4.2) (2025-03-13)
+
+### Bug Fixes
+
+* Make sure a proper file names encoding is used while unzipping files from app bundles ([#2534](https://github.com/appium/appium-xcuitest-driver/issues/2534)) ([cb4034a](https://github.com/appium/appium-xcuitest-driver/commit/cb4034a86924578119a8639452268230ae0f1f71))
+
 ## [8.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.0...v8.4.1) (2025-03-13)
 
 ### Miscellaneous Chores
