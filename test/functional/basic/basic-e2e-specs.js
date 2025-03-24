@@ -195,7 +195,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('window size -', function () {
     it('should be able to get the current window size', async function () {
-      let size = await driver.getWindowSize();
+      let size = await driver.getWindowRect();
       size.width.should.be.a('number');
       size.height.should.be.a('number');
     });
