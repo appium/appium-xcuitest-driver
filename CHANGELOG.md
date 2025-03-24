@@ -1,3 +1,15 @@
+## [9.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.3...v9.0.0) (2025-03-24)
+
+### ⚠ BREAKING CHANGES
+
+* The following deprecated driver methods were removed:
+- getWindowSizeWeb
+- getWindowSizeNative
+
+### Features
+
+* Switch size retrieval to use the W3C window/rect endpoint ([#2538](https://github.com/appium/appium-xcuitest-driver/issues/2538)) ([cdc421f](https://github.com/appium/appium-xcuitest-driver/commit/cdc421f70dba0ad907d180fc23f4719724fe0bcf))
+
 ## [8.4.3](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.2...v8.4.3) (2025-03-14)
 
 ### Miscellaneous Chores
