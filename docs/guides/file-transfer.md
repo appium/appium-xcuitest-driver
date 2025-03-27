@@ -30,7 +30,7 @@ possible formats this path can take:
         * This value can only be specified for apps that have the `UIFileSharingEnabled` flag set to
           `true`. You can use the [`mobile: listApps`](../reference/execute-methods.md#mobile-listapps)
           extension to identify such apps.
-        * `skipDocumentsContainerCheckInFileManagement` Settings API helps to avoid this limitation on certain cases.
+        * `skipDocumentsContainerCheckInFileManagement` [Settings API](https://appium.io/docs/en/latest/guides/settings/) helps you to avoid this limitation on certain cases..
 
 * `<path-to-file-or-folder>` is the target file or folder
     * On real devices, if `<container-type>` is set to `documents`, this path will be mapped to
