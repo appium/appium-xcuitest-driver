@@ -30,6 +30,8 @@ possible formats this path can take:
         * This value can only be specified for apps that have the `UIFileSharingEnabled` flag set to
           `true`. You can use the [`mobile: listApps`](../reference/execute-methods.md#mobile-listapps)
           extension to identify such apps.
+        * `skipDocumentsContainerCheckInFileManagement` Settings API could ignore this flag check.
+
 * `<path-to-file-or-folder>` is the target file or folder
     * On real devices, if `<container-type>` is set to `documents`, this path will be mapped to
       `On My iPhone/<app name>` in the _Files_ app
