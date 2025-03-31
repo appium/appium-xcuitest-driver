@@ -1,3 +1,9 @@
+## [9.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.0.2...v9.1.0) (2025-03-31)
+
+### Features
+
+* add skipDocumentsContainerCheck settings to apply [#2541](https://github.com/appium/appium-xcuitest-driver/issues/2541) change ([#2542](https://github.com/appium/appium-xcuitest-driver/issues/2542)) ([abf13cf](https://github.com/appium/appium-xcuitest-driver/commit/abf13cfe1d4acf723a0bd7873bf63bfa8b8673bd))
+
 ## [9.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.0.1...v9.0.2) (2025-03-27)
 
 ### Miscellaneous Chores
