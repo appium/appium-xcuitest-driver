@@ -1,3 +1,9 @@
+## [9.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.1...v9.1.2) (2025-03-31)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 19.0.5 to 20.0.0 ([#2540](https://github.com/appium/appium-xcuitest-driver/issues/2540)) ([96e30a9](https://github.com/appium/appium-xcuitest-driver/commit/96e30a95027b8f5beab5cd32d888a654ab3f2fdc))
+
 ## [9.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.0...v9.1.1) (2025-03-31)
 
 ### Bug Fixes
