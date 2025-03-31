@@ -1,3 +1,9 @@
+## [9.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.0...v9.1.1) (2025-03-31)
+
+### Bug Fixes
+
+* bind this ([#2543](https://github.com/appium/appium-xcuitest-driver/issues/2543)) ([c9adc42](https://github.com/appium/appium-xcuitest-driver/commit/c9adc421f72124dc4243cb0f2df73c620c6554b5))
+
 ## [9.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.0.2...v9.1.0) (2025-03-31)
 
 ### Features
