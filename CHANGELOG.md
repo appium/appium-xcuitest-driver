@@ -1,3 +1,9 @@
+## [9.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.3...v9.1.4) (2025-04-05)
+
+### Miscellaneous Chores
+
+* bump appium-ios-simulator to include a fix for applesimutils usage ([49d401e](https://github.com/appium/appium-xcuitest-driver/commit/49d401eacba45a14e22bc01c4da9ab80a4985379))
+
 ## [9.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.2...v9.1.3) (2025-04-02)
 
 ### Miscellaneous Chores
