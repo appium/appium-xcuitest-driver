@@ -1,3 +1,9 @@
+## [9.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.4...v9.2.0) (2025-04-10)
+
+### Features
+
+* Bump WDA to enable the autoClickAlertSelector setting ([#2550](https://github.com/appium/appium-xcuitest-driver/issues/2550)) ([3136cbe](https://github.com/appium/appium-xcuitest-driver/commit/3136cbedb4a172eb3d782be3e20853a6b174cf2c))
+
 ## [9.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.3...v9.1.4) (2025-04-05)
 
 ### Miscellaneous Chores
