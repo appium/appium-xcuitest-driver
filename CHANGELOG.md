@@ -1,3 +1,105 @@
+## [9.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.4...v9.2.0) (2025-04-10)
+
+### Features
+
+* Bump WDA to enable the autoClickAlertSelector setting ([#2550](https://github.com/appium/appium-xcuitest-driver/issues/2550)) ([3136cbe](https://github.com/appium/appium-xcuitest-driver/commit/3136cbedb4a172eb3d782be3e20853a6b174cf2c))
+
+## [9.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.3...v9.1.4) (2025-04-05)
+
+### Miscellaneous Chores
+
+* bump appium-ios-simulator to include a fix for applesimutils usage ([49d401e](https://github.com/appium/appium-xcuitest-driver/commit/49d401eacba45a14e22bc01c4da9ab80a4985379))
+
+## [9.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.2...v9.1.3) (2025-04-02)
+
+### Miscellaneous Chores
+
+* Bump WDA ([2a59ee5](https://github.com/appium/appium-xcuitest-driver/commit/2a59ee573303c5ee7e0c8a323e1de08da505f10a))
+
+## [9.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.1...v9.1.2) (2025-03-31)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 19.0.5 to 20.0.0 ([#2540](https://github.com/appium/appium-xcuitest-driver/issues/2540)) ([96e30a9](https://github.com/appium/appium-xcuitest-driver/commit/96e30a95027b8f5beab5cd32d888a654ab3f2fdc))
+
+## [9.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.0...v9.1.1) (2025-03-31)
+
+### Bug Fixes
+
+* bind this ([#2543](https://github.com/appium/appium-xcuitest-driver/issues/2543)) ([c9adc42](https://github.com/appium/appium-xcuitest-driver/commit/c9adc421f72124dc4243cb0f2df73c620c6554b5))
+
+## [9.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.0.2...v9.1.0) (2025-03-31)
+
+### Features
+
+* add skipDocumentsContainerCheck settings to apply [#2541](https://github.com/appium/appium-xcuitest-driver/issues/2541) change ([#2542](https://github.com/appium/appium-xcuitest-driver/issues/2542)) ([abf13cf](https://github.com/appium/appium-xcuitest-driver/commit/abf13cfe1d4acf723a0bd7873bf63bfa8b8673bd))
+
+## [9.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.0.1...v9.0.2) (2025-03-27)
+
+### Miscellaneous Chores
+
+* Bump WDA ([fe7cce1](https://github.com/appium/appium-xcuitest-driver/commit/fe7cce11931893bfa193f7128169a5986d882f4f))
+
+## [9.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.0.0...v9.0.1) (2025-03-26)
+
+### Miscellaneous Chores
+
+* Bump WDA ([9c0341e](https://github.com/appium/appium-xcuitest-driver/commit/9c0341eaeb80b8e19212348d8125efaec1661d6c))
+
+## [9.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.3...v9.0.0) (2025-03-24)
+
+### ⚠ BREAKING CHANGES
+
+* The following deprecated driver methods were removed:
+- getWindowSizeWeb
+- getWindowSizeNative
+
+### Features
+
+* Switch size retrieval to use the W3C window/rect endpoint ([#2538](https://github.com/appium/appium-xcuitest-driver/issues/2538)) ([cdc421f](https://github.com/appium/appium-xcuitest-driver/commit/cdc421f70dba0ad907d180fc23f4719724fe0bcf))
+
+## [8.4.3](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.2...v8.4.3) (2025-03-14)
+
+### Miscellaneous Chores
+
+* Bump WDA ([#2535](https://github.com/appium/appium-xcuitest-driver/issues/2535)) ([7a20be7](https://github.com/appium/appium-xcuitest-driver/commit/7a20be72c3b5c45d056d1a2bba28088a4caba19d))
+
+## [8.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.1...v8.4.2) (2025-03-13)
+
+### Bug Fixes
+
+* Make sure a proper file names encoding is used while unzipping files from app bundles ([#2534](https://github.com/appium/appium-xcuitest-driver/issues/2534)) ([cb4034a](https://github.com/appium/appium-xcuitest-driver/commit/cb4034a86924578119a8639452268230ae0f1f71))
+
+## [8.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v8.4.0...v8.4.1) (2025-03-13)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([0272eee](https://github.com/appium/appium-xcuitest-driver/commit/0272eee54a5c88c2a87cb81213620062dfc7de82))
+
+## [8.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.3...v8.4.0) (2025-03-09)
+
+### Features
+
+* add placeholderValue explicitly as an element attribute ([#2529](https://github.com/appium/appium-xcuitest-driver/issues/2529)) ([5c4aee5](https://github.com/appium/appium-xcuitest-driver/commit/5c4aee50ee661fdceeda920c8008c761ec91323d))
+
+## [8.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.2...v8.3.3) (2025-02-25)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([9b7c329](https://github.com/appium/appium-xcuitest-driver/commit/9b7c329ff9fef4acc140ac3836c10410cd4f0b96))
+
+## [8.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.1...v8.3.2) (2025-02-21)
+
+### Bug Fixes
+
+* Pass reqBasePath proxy option ([#2527](https://github.com/appium/appium-xcuitest-driver/issues/2527)) ([234c16c](https://github.com/appium/appium-xcuitest-driver/commit/234c16ce00096e83ad2156c69d236bf2c297c353))
+
+## [8.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v8.3.0...v8.3.1) (2025-02-06)
+
+### Miscellaneous Chores
+
+* bump wda version to 9.0.3 ([b645987](https://github.com/appium/appium-xcuitest-driver/commit/b64598758ee5040d98ff9bda6872d8b5a0ff125e))
+
 ## [8.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v8.2.0...v8.3.0) (2025-01-30)
 
 ### Features

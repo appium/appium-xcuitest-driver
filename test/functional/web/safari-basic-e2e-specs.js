@@ -259,7 +259,7 @@ describe('Safari - basics -', function () {
         await a.getTagName().should.eventually.equal('a');
       });
       it('should retrieve a window size', async function () {
-        const size = await driver.getWindowSize();
+        const size = await driver.getWindowRect();
         size.height.should.be.above(0);
         size.width.should.be.above(0);
       });
