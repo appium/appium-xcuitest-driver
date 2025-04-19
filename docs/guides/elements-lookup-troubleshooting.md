@@ -146,3 +146,13 @@ The final recommendation there would be:
   to improve the corresponding WebDriverAgent sources, but keep in mind there are many automation
   tests around that rely on the current way these attributes are calculated, and we probably don't
   want to break them.
+
+## Symptom #4
+
+The desired element is shown in the page tree, but its property value contains partial value. e.g. if an element's `text` attribute had 600 bytes words, but the XML page tree included only 512 byt. Rest of them were cut off.
+
+## Resolutions To Symptom #4
+
+Get the attribute after getting the individual element. For example, if an element's `text` attribute had 600 bytes words, but the XML page tree included only 512 bytes, please get the element with `findElement` and get the `text` element attribute. The individual attribute call will get the attribute by getting snapshot deeply. Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and [this PR](https://github.com/appium/WebDriverAgent/pull/1007) about the details.
+
+Apple's XCTest framework includes partial text for long wording for the default snapshot. When you inspect an element with [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription), which has long text, it prints the value partially while the [value](https://developer.apple.com/documentation/xctest/xcuielementattributes/value) attribute like `element.value` prints entire the value. It looks like Apple designs the XCTest framework so. Appium generates the page tree with the default snapshot, but Appium tries to return the value with deep snapshot like this case.
