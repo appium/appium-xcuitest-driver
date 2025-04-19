@@ -153,6 +153,6 @@ The desired element is shown in the page tree, but its property value contains p
 
 ## Resolutions To Symptom #4
 
-Get the attribute after getting the element. For example, getting the element with `findElement` and getting the `value` element attribute. The individual attribute call will get the attribute by getting snapshot deeply to return the entire value. Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and [this PR](https://github.com/appium/WebDriverAgent/pull/1007) about the details.
+Get the element attribute after getting the element. For example, getting the element with `findElement` and getting the `value` from the element attribute. The individual attribute gets the element attribute by getting snapshot deeply to return the entire value. Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and [this PR](https://github.com/appium/WebDriverAgent/pull/1007) about the details.
 
 Apple's XCTest framework might include partial text for long wording for the default snapshot. When you inspect such an element, which has long text, with [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription), it prints the value partially while the [value](https://developer.apple.com/documentation/xctest/xcuielementattributes/value) attribute like `element.value` prints entire the value. It looks like Apple designs the XCTest framework so.
