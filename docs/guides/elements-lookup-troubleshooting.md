@@ -149,10 +149,10 @@ The final recommendation there would be:
 
 ## Symptom #4
 
-The desired element is shown in the page tree, but its property value contains partial value. e.g. if an element's `text` attribute had 600 bytes words, but the XML page tree included only 512 byt. Rest of them were cut off.
+The desired element is shown in the page tree, but its property value contains partial value. e.g. if the element's `value` attribute had 600 bytes words, the XML page tree includes only 512 bytes. Rest of them are cut off.
 
 ## Resolutions To Symptom #4
 
-Get the attribute after getting the individual element. For example, if an element's `text` attribute had 600 bytes words, but the XML page tree included only 512 bytes, please get the element with `findElement` and get the `text` element attribute. The individual attribute call will get the attribute by getting snapshot deeply. Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and [this PR](https://github.com/appium/WebDriverAgent/pull/1007) about the details.
+Get the attribute after getting the element. For example, getting the element with `findElement` and getting the `value` element attribute. The individual attribute call will get the attribute by getting snapshot deeply to return the entire value. Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and [this PR](https://github.com/appium/WebDriverAgent/pull/1007) about the details.
 
-Apple's XCTest framework includes partial text for long wording for the default snapshot. When you inspect an element with [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription), which has long text, it prints the value partially while the [value](https://developer.apple.com/documentation/xctest/xcuielementattributes/value) attribute like `element.value` prints entire the value. It looks like Apple designs the XCTest framework so. Appium generates the page tree with the default snapshot, but Appium tries to return the value with deep snapshot like this case.
+Apple's XCTest framework might include partial text for long wording for the default snapshot. When you inspect such an element, which has long text, with [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription), it prints the value partially while the [value](https://developer.apple.com/documentation/xctest/xcuielementattributes/value) attribute like `element.value` prints entire the value. It looks like Apple designs the XCTest framework so.
