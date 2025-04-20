@@ -1,3 +1,9 @@
+## [9.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.0...v9.2.1) (2025-04-20)
+
+### Bug Fixes
+
+* Missing text in long text for get text/value ([#2553](https://github.com/appium/appium-xcuitest-driver/issues/2553)) ([95d8c6d](https://github.com/appium/appium-xcuitest-driver/commit/95d8c6dbcf5790e7ebb704786581453103c7dbec))
+
 ## [9.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.4...v9.2.0) (2025-04-10)
 
 ### Features
