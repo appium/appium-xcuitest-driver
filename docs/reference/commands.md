@@ -165,6 +165,10 @@ or an empty string.
 
 ### `getSize`
 
+!!! warning "Deprecated"
+
+    This method is deprecated. Please refer to the [Get Element Rect][https://www.w3.org/TR/webdriver1/#dfn-get-element-rect] instead
+
 `GET` **`/session/:sessionId/element/:elementId/size`**
 
 Get the size of an element
@@ -176,6 +180,10 @@ Get the size of an element
 The positions of the element
 
 ### `submit`
+
+!!! warning "Deprecated"
+
+    This method is deprecated. Please click the submit button instead
 
 `POST` **`/session/:sessionId/element/:elementId/submit`**
 
@@ -359,7 +367,7 @@ Send keys to the app
 
 !!! warning "Deprecated"
 
-    This method is deprecated
+    This method is deprecated. Please use the [Execute Async Script](https://www.w3.org/TR/webdriver1/#dfn-execute-async-script) instead
 
 `POST` **`/session/:sessionId/appium/receive_async_response`**
 
