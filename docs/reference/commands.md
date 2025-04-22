@@ -16,6 +16,10 @@ Please note that most of the driver-specific functionality is available using
 
 ### `getClipboard`
 
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use [`mobile: getClipboard`](./execute-methods.md#mobile-getclipboard) extension instead
+
 `POST` **`/session/:sessionId/appium/device/get_clipboard`**
 
 Gets the content of the primary clipboard on the device under test.
@@ -35,6 +39,10 @@ The actual clipboard content encoded into base64 string. An empty string is retu
 clipboard contains no data.
 
 ### `setClipboard`
+
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use [`mobile: setClipboard`](./execute-methods.md#mobile-setclipboard) extension instead
 
 `POST` **`/session/:sessionId/appium/device/set_clipboard`**
 
@@ -200,9 +208,9 @@ the app after the timeout or keep it minimized based on the parameter value.
 
 ### `queryAppState`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: queryAppState`](./execute-methods.md#mobile-queryappstate) extension instead
+    This method is deprecated. Please use [`mobile: queryAppState`](./execute-methods.md#mobile-queryappstate) extension instead
 
 `POST` **`/session/:sessionId/appium/device/app_state`**
 
@@ -218,9 +226,9 @@ running in the foreground
 
 ### `isLocked`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: isLocked`](./execute-methods.md#mobile-islocked) extension instead
+    This method is deprecated. Please use [`mobile: isLocked`](./execute-methods.md#mobile-islocked) extension instead
 
 `POST` **`/session/:sessionId/appium/device/is_locked`**
 
@@ -234,9 +242,9 @@ Determine whether the device is locked
 
 ### `lock`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: lock`](./execute-methods.md#mobile-lock) extension instead
+    This method is deprecated. Please use [`mobile: lock`](./execute-methods.md#mobile-lock) extension instead
 
 `POST` **`/session/:sessionId/appium/device/lock`**
 
@@ -258,9 +266,9 @@ Lock the device (and optionally unlock the device after a certain amount of time
 
 ### `unlock`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: unlock`](./execute-methods.md#mobile-unlock) extension instead
+    This method is deprecated. Please use [`mobile: unlock`](./execute-methods.md#mobile-unlock) extension instead
 
 `POST` **`/session/:sessionId/appium/device/unlock`**
 
@@ -274,9 +282,9 @@ Unlock the device
 
 ### `mobileShake`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: shake`](./execute-methods.md#mobile-shake) extension instead
+    This method is deprecated. Please use [`mobile: shake`](./execute-methods.md#mobile-shake) extension instead
 
 `POST` **`/session/:sessionId/appium/device/shake`**
 
