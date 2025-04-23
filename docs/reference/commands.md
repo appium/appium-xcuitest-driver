@@ -16,6 +16,10 @@ Please note that most of the driver-specific functionality is available using
 
 ### `getClipboard`
 
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use the [`mobile: getClipboard`](./execute-methods.md#mobile-getclipboard) extension instead
+
 `POST` **`/session/:sessionId/appium/device/get_clipboard`**
 
 Gets the content of the primary clipboard on the device under test.
@@ -35,6 +39,10 @@ The actual clipboard content encoded into base64 string. An empty string is retu
 clipboard contains no data.
 
 ### `setClipboard`
+
+!!! warning "Deprecated"
+
+    This method is deprecated. Please use the [`mobile: setClipboard`](./execute-methods.md#mobile-setclipboard) extension instead
 
 `POST` **`/session/:sessionId/appium/device/set_clipboard`**
 
@@ -157,6 +165,10 @@ or an empty string.
 
 ### `getSize`
 
+!!! warning "Deprecated"
+
+    This method is deprecated. Please refer to the [Get Element Rect][https://www.w3.org/TR/webdriver1/#dfn-get-element-rect] instead
+
 `GET` **`/session/:sessionId/element/:elementId/size`**
 
 Get the size of an element
@@ -169,6 +181,10 @@ The positions of the element
 
 ### `submit`
 
+!!! warning "Deprecated"
+
+    This method is deprecated. Please click the submit button instead
+
 `POST` **`/session/:sessionId/element/:elementId/submit`**
 
 Submit the form an element is in
@@ -179,9 +195,9 @@ Submit the form an element is in
 
 ### `background`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: backgroundApp`](./execute-methods.md#mobile-backgroundapp) extension instead
+    This method is deprecated. Please use the [`mobile: backgroundApp`](./execute-methods.md#mobile-backgroundapp) extension instead
 
 `POST` **`/session/:sessionId/appium/app/background`**
 
@@ -200,9 +216,9 @@ the app after the timeout or keep it minimized based on the parameter value.
 
 ### `queryAppState`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: queryAppState`](./execute-methods.md#mobile-queryappstate) extension instead
+    This method is deprecated. Please use the [`mobile: queryAppState`](./execute-methods.md#mobile-queryappstate) extension instead
 
 `POST` **`/session/:sessionId/appium/device/app_state`**
 
@@ -218,9 +234,9 @@ running in the foreground
 
 ### `isLocked`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: isLocked`](./execute-methods.md#mobile-islocked) extension instead
+    This method is deprecated. Please use the [`mobile: isLocked`](./execute-methods.md#mobile-islocked) extension instead
 
 `POST` **`/session/:sessionId/appium/device/is_locked`**
 
@@ -234,9 +250,9 @@ Determine whether the device is locked
 
 ### `lock`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: lock`](./execute-methods.md#mobile-lock) extension instead
+    This method is deprecated. Please use the [`mobile: lock`](./execute-methods.md#mobile-lock) extension instead
 
 `POST` **`/session/:sessionId/appium/device/lock`**
 
@@ -258,9 +274,9 @@ Lock the device (and optionally unlock the device after a certain amount of time
 
 ### `unlock`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: unlock`](./execute-methods.md#mobile-unlock) extension instead
+    This method is deprecated. Please use the [`mobile: unlock`](./execute-methods.md#mobile-unlock) extension instead
 
 `POST` **`/session/:sessionId/appium/device/unlock`**
 
@@ -274,9 +290,9 @@ Unlock the device
 
 ### `mobileShake`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: shake`](./execute-methods.md#mobile-shake) extension instead
+    This method is deprecated. Please use the [`mobile: shake`](./execute-methods.md#mobile-shake) extension instead
 
 `POST` **`/session/:sessionId/appium/device/shake`**
 
@@ -288,9 +304,9 @@ Shake the device
 
 ### `getStrings`
 
-!!! note
+!!! warning "Deprecated"
 
-    We recommend using the [`mobile: getAppStrings`](./execute-methods.md#mobile-getappstrings) extension instead
+    This method is deprecated. Please use the  [`mobile: getAppStrings`](./execute-methods.md#mobile-getappstrings) extension instead
 
 `POST` **`/session/:sessionId/appium/app/strings`**
 
@@ -351,7 +367,7 @@ Send keys to the app
 
 !!! warning "Deprecated"
 
-    This method is deprecated
+    This method is deprecated. Please use the [Execute Async Script](https://www.w3.org/TR/webdriver1/#dfn-execute-async-script) instead
 
 `POST` **`/session/:sessionId/appium/receive_async_response`**
 
