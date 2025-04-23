@@ -3892,6 +3892,10 @@ these commands.</p>
 for commands inherited by the XCUITest driver</p>
 </div>
 <h3 id="getclipboard"><code>getClipboard</code><a class="headerlink" href="#getclipboard" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-getclipboard"><code>mobile: getClipboard</code></a> extension instead</p>
+</div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/get_clipboard</code></strong></p>
 <p>Gets the content of the primary clipboard on the device under test.
 See <a href="../../guides/clipboard/">Get/Set Clipboard</a> for more details</p>
@@ -3915,6 +3919,10 @@ See <a href="../../guides/clipboard/">Get/Set Clipboard</a> for more details</p>
 <p>The actual clipboard content encoded into base64 string. An empty string is returned if the
 clipboard contains no data.</p>
 <h3 id="setclipboard"><code>setClipboard</code><a class="headerlink" href="#setclipboard" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-setclipboard"><code>mobile: setClipboard</code></a> extension instead</p>
+</div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/set_clipboard</code></strong></p>
 <p>Sets the primary clipboard's content on the device under test.
 See <a href="../../guides/clipboard/">Get/Set Clipboard</a> for more details</p>
@@ -4045,20 +4053,28 @@ to the remote location.</p>
 <p>Base64-encoded content of the recorded media file if <code>remotePath</code> parameter is empty or null,
 or an empty string.</p>
 <h3 id="getsize"><code>getSize</code><a class="headerlink" href="#getsize" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please refer to the [Get Element Rect][https://www.w3.org/TR/webdriver1/#dfn-get-element-rect] instead</p>
+</div>
 <p><code>GET</code> <strong><code>/session/:sessionId/element/:elementId/size</code></strong></p>
 <p>Get the size of an element</p>
 <h4 id="returned-result_6">Returned Result<a class="headerlink" href="#returned-result_6" title="Permanent link">&para;</a></h4>
 <p><code>Size</code></p>
 <p>The positions of the element</p>
 <h3 id="submit"><code>submit</code><a class="headerlink" href="#submit" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please click the submit button instead</p>
+</div>
 <p><code>POST</code> <strong><code>/session/:sessionId/element/:elementId/submit</code></strong></p>
 <p>Submit the form an element is in</p>
 <h4 id="returned-result_7">Returned Result<a class="headerlink" href="#returned-result_7" title="Permanent link">&para;</a></h4>
 <p><code>null</code></p>
 <h3 id="background"><code>background</code><a class="headerlink" href="#background" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-backgroundapp"><code>mobile: backgroundApp</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-backgroundapp"><code>mobile: backgroundApp</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/app/background</code></strong></p>
 <p>Close app (simulate device home button). It is possible to restore
@@ -4081,9 +4097,9 @@ the app after the timeout or keep it minimized based on the parameter value.</p>
 <h4 id="returned-result_8">Returned Result<a class="headerlink" href="#returned-result_8" title="Permanent link">&para;</a></h4>
 <p><code>unknown</code></p>
 <h3 id="queryappstate"><code>queryAppState</code><a class="headerlink" href="#queryappstate" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-queryappstate"><code>mobile: queryAppState</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-queryappstate"><code>mobile: queryAppState</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/app_state</code></strong></p>
 <p>Get the running state of an app</p>
@@ -4093,9 +4109,9 @@ the app after the timeout or keep it minimized based on the parameter value.</p>
 means running in background but suspended, <code>3</code> means running in the background, and <code>4</code> means
 running in the foreground</p>
 <h3 id="islocked"><code>isLocked</code><a class="headerlink" href="#islocked" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-islocked"><code>mobile: isLocked</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-islocked"><code>mobile: isLocked</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/is_locked</code></strong></p>
 <p>Determine whether the device is locked</p>
@@ -4103,9 +4119,9 @@ running in the foreground</p>
 <p><code>boolean</code></p>
 <p><code>true</code> if the device is locked, <code>false</code> otherwise</p>
 <h3 id="lock"><code>lock</code><a class="headerlink" href="#lock" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-lock"><code>mobile: lock</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-lock"><code>mobile: lock</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/lock</code></strong></p>
 <p>Lock the device (and optionally unlock the device after a certain amount of time)</p>
@@ -4129,9 +4145,9 @@ running in the foreground</p>
 <h4 id="returned-result_11">Returned Result<a class="headerlink" href="#returned-result_11" title="Permanent link">&para;</a></h4>
 <p><code>null</code></p>
 <h3 id="unlock"><code>unlock</code><a class="headerlink" href="#unlock" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-unlock"><code>mobile: unlock</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-unlock"><code>mobile: unlock</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/unlock</code></strong></p>
 <p>Unlock the device</p>
@@ -4140,18 +4156,18 @@ running in the foreground</p>
 <h4 id="returned-result_12">Returned Result<a class="headerlink" href="#returned-result_12" title="Permanent link">&para;</a></h4>
 <p><code>null</code></p>
 <h3 id="mobileshake"><code>mobileShake</code><a class="headerlink" href="#mobileshake" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-shake"><code>mobile: shake</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the <a href="../execute-methods/#mobile-shake"><code>mobile: shake</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/device/shake</code></strong></p>
 <p>Shake the device</p>
 <h4 id="returned-result_13">Returned Result<a class="headerlink" href="#returned-result_13" title="Permanent link">&para;</a></h4>
 <p><code>null</code></p>
 <h3 id="getstrings"><code>getStrings</code><a class="headerlink" href="#getstrings" title="Permanent link">&para;</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend using the <a href="../execute-methods/#mobile-getappstrings"><code>mobile: getAppStrings</code></a> extension instead</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method is deprecated. Please use the  <a href="../execute-methods/#mobile-getappstrings"><code>mobile: getAppStrings</code></a> extension instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/app/strings</code></strong></p>
 <p>Return the language-specific strings for an app</p>
@@ -4233,7 +4249,7 @@ running in the foreground</p>
 <h3 id="receiveasyncresponse"><code>receiveAsyncResponse</code><a class="headerlink" href="#receiveasyncresponse" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Deprecated</p>
-<p>This method is deprecated</p>
+<p>This method is deprecated. Please use the <a href="https://www.w3.org/TR/webdriver1/#dfn-execute-async-script">Execute Async Script</a> instead</p>
 </div>
 <p><code>POST</code> <strong><code>/session/:sessionId/appium/receive_async_response</code></strong></p>
 <p>Collect the response of an async script execution</p>
@@ -4379,7 +4395,7 @@ running in the foreground</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="February 18, 2024 23:01:51"><span class="timeago" datetime="2024-02-18T23:01:51+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="February 18, 2024 23:01:51">2024-02-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 23, 2025 17:08:07"><span class="timeago" datetime="2025-04-23T17:08:07+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 23, 2025 17:08:07">2025-04-23</span>
   </span>
 
     
