@@ -2139,7 +2139,8 @@ a remote location if corresponding options have been provided.
 
 The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY**.
 In order to clean it up from a real device it is necessary to properly
-shut down XCTest by calling `POST /wda/shutdown` API or by doing device factory reset.
+shut down XCTest by calling `GET /wda/shutdown` API to the WebDriverAgent server running
+on the device directly or by doing device factory reset.
 
 #### Arguments
 
