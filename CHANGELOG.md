@@ -1,3 +1,9 @@
+## [9.2.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.2...v9.2.3) (2025-04-23)
+
+### Miscellaneous Chores
+
+* add deprecated marks in lib/method-map.js ([#2554](https://github.com/appium/appium-xcuitest-driver/issues/2554)) ([73c83c0](https://github.com/appium/appium-xcuitest-driver/commit/73c83c0c083f683fad0631b251fa8bd69c325870))
+
 ## [9.2.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.1...v9.2.2) (2025-04-23)
 
 ### Bug Fixes
