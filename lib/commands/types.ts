@@ -110,7 +110,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    *
    * See [the FFMPEG wiki](https://trac.ffmpeg.org/wiki/Scaling) for possible values.
    *
-   * No scale is applied by default. If both `videoFilters` and `videoScale` are set then only `videoFilters` value will be respected.
+   * No scale is applied by default. If both `videoFilters` and `videoScale` are set, then only `videoFilters` value will be respected.
    * @see https://trac.ffmpeg.org/wiki/Scaling
    */
   videoScale?: string;
@@ -128,10 +128,22 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
   forceRestart?: boolean;
   /**
    * The maximum recording time, in seconds.
-   * The the maximum value is 600 (10 minutes).
+   * The maximum value is 600 (10 minutes).
    * @defaultValue 180
    */
   timeLimit?: string | number;
+
+  /**
+   * Hardware acceleration type.
+   * Cuda is only available on devices with NVIDIA GPUs.
+   * VideoToolbox is only available on devices with Apple Silicon.
+   *
+   * @defaultValue None
+   *
+   * @see  https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
+   * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC
+   */
+  hardwareAcceleration?: "cuda" | "videoToolbox";
 }
 
 export interface PageChangeNotification {
