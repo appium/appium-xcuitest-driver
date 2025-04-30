@@ -1,3 +1,21 @@
+## [9.2.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.2...v9.2.3) (2025-04-23)
+
+### Miscellaneous Chores
+
+* add deprecated marks in lib/method-map.js ([#2554](https://github.com/appium/appium-xcuitest-driver/issues/2554)) ([73c83c0](https://github.com/appium/appium-xcuitest-driver/commit/73c83c0c083f683fad0631b251fa8bd69c325870))
+
+## [9.2.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.1...v9.2.2) (2025-04-23)
+
+### Bug Fixes
+
+* update mjpegScalingFactor data type settings.md with WDA 9.6.1 ([#2556](https://github.com/appium/appium-xcuitest-driver/issues/2556)) ([7eaff7b](https://github.com/appium/appium-xcuitest-driver/commit/7eaff7b3bac7d4659689f75e0687db17075dfd07))
+
+## [9.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.0...v9.2.1) (2025-04-20)
+
+### Bug Fixes
+
+* Missing text in long text for get text/value ([#2553](https://github.com/appium/appium-xcuitest-driver/issues/2553)) ([95d8c6d](https://github.com/appium/appium-xcuitest-driver/commit/95d8c6dbcf5790e7ebb704786581453103c7dbec))
+
 ## [9.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.1.4...v9.2.0) (2025-04-10)
 
 ### Features
