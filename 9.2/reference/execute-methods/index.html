@@ -10565,8 +10565,10 @@ On simulators before Xcode 11.4 SDK Apple provides no official way to do it via 
 <p>Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at <code>/ws/session/:sessionId:/appium/syslog</code> endpoint. The method will return immediately if the web socket is already listening.
 Each connected webcoket listener will receive syslog lines as soon as they are visible to Appium.
 Read <a href="https://appiumpro.com/editions/55-using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium">Using Mobile Execution Commands to Continuously Stream Device Logs with Appium</a> Appium Pro article for more details on this feature.</p>
+<p>Consider using <a href="./docs/bidi.md#logentryadded">logs broadcast via BiDi</a> over this extension.</p>
 <h3 id="mobile-stoplogsbroadcast">mobile: stopLogsBroadcast<a class="headerlink" href="#mobile-stoplogsbroadcast" title="Permanent link">&para;</a></h3>
 <p>Stops the syslog broadcasting wesocket server previously started by <code>mobile: startLogsBroadcast</code>. This method will return immediately if no server is running.</p>
+<p>Consider using <a href="./docs/bidi.md#logentryadded">logs broadcast via BiDi</a> over this extension.</p>
 <h3 id="mobile-batteryinfo">mobile: batteryInfo<a class="headerlink" href="#mobile-batteryinfo" title="Permanent link">&para;</a></h3>
 <p>Reads the battery information from the device under test. This endpoint only returns reliable result on real devices.</p>
 <h4 id="returned-result_15">Returned Result<a class="headerlink" href="#returned-result_15" title="Permanent link">&para;</a></h4>
@@ -13461,7 +13463,7 @@ Does not work for real devices.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 23, 2025 17:07:41"><span class="timeago" datetime="2025-04-23T17:07:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 23, 2025 17:07:41">2025-04-23</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 6, 2025 21:55:20"><span class="timeago" datetime="2025-05-06T21:55:20+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 6, 2025 21:55:20">2025-05-06</span>
   </span>
 
     
