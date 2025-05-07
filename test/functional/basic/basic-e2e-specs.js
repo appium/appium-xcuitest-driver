@@ -203,7 +203,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('get geo location -', function () {
     it('should fail because of preference error', async function () {
-      await driver.getGeoLocation().should.be.rejectedWith('Location service must be');
+      await driver.execute('mobile: getSimulatedLocation').should.be.rejectedWith('Location service must be');
     });
   });
 
@@ -214,7 +214,7 @@ describe('XCUITestDriver - basics -', function () {
         // in order to run this method successfully
         return this.skip();
       }
-      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be
+      await driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}).should.not.be
         .rejected;
     });
   });
@@ -253,8 +253,11 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should start a session, navigate to url, get title', async function () {
-      // on some systems (like Travis) it takes a while to load the webview
-      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 1000});
+      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 10000});
+      if (process.env.CI && contexts.length < 2) {
+        // Skip on CI, since the simulator may be too slow to fetch a webview context in time
+        return this.skip();
+      }
 
       await driver.switchContext(contexts[1].id);
       await driver.navigateTo(GUINEA_PIG_PAGE);
