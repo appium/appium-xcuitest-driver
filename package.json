@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.2.4",
+  "version": "10.0.0-beta.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
