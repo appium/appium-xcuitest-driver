@@ -201,19 +201,9 @@ describe('XCUITestDriver - basics -', function () {
     });
   });
 
-  describe('get geo location -', function () {
-    it('should fail because of preference error', async function () {
-      await driver.execute('mobile: getSimulatedLocation').should.be.rejectedWith('Location service must be');
-    });
-  });
-
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI) {
-        // skip on Travis, since Appium process should have access to system accessibility
-        // in order to run this method successfully
-        return this.skip();
-      }
+      await driver.execute('mobile: getSimulatedLocation').should.be.fulfilled;
       await driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}).should.not.be
         .rejected;
     });
@@ -221,12 +211,7 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI) {
-        // skip on Travis, since Appium process should have access to system accessibility
-        // in order to run this method successfully
-        return this.skip();
-      }
-      await driver.shake().should.not.be.rejected;
+      await driver.execute('mobile: shake').should.be.fulfilled;
     });
   });
 
