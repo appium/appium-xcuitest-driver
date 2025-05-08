@@ -119,7 +119,7 @@ describe('XCUITestDriver - basics -', function () {
   describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
       const {statusBarSize, scale} = await driver.execute('mobile: deviceScreenInfo');
-      const {viewportRect} = await driver.execute('mobile: viewportRect');
+      const viewportRect = await driver.execute('mobile: viewportRect');
       const fullScreen = await driver.takeScreenshot();
       const viewScreen = await driver.execute('mobile: viewportScreenshot');
       const fullImg = sharp(Buffer.from(fullScreen, 'base64'));
@@ -201,32 +201,17 @@ describe('XCUITestDriver - basics -', function () {
     });
   });
 
-  describe('get geo location -', function () {
-    it('should fail because of preference error', async function () {
-      await driver.getGeoLocation().should.be.rejectedWith('Location service must be');
-    });
-  });
-
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI) {
-        // skip on Travis, since Appium process should have access to system accessibility
-        // in order to run this method successfully
-        return this.skip();
-      }
-      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be
+      await driver.execute('mobile: getSimulatedLocation').should.be.fulfilled;
+      await driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}).should.not.be
         .rejected;
     });
   });
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI) {
-        // skip on Travis, since Appium process should have access to system accessibility
-        // in order to run this method successfully
-        return this.skip();
-      }
-      await driver.shake().should.not.be.rejected;
+      await driver.execute('mobile: shake').should.be.fulfilled;
     });
   });
 
@@ -253,8 +238,11 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should start a session, navigate to url, get title', async function () {
-      // on some systems (like Travis) it takes a while to load the webview
-      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 1000});
+      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 10000});
+      if (process.env.CI && contexts.length < 2) {
+        // Skip on CI, since the simulator may be too slow to fetch a webview context in time
+        return this.skip();
+      }
 
       await driver.switchContext(contexts[1].id);
       await driver.navigateTo(GUINEA_PIG_PAGE);

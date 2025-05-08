@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.2.4",
+  "version": "10.0.0-beta.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -130,7 +130,7 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^2.5.4"
+    "appium": "^3.0.0-beta.0"
   },
   "devDependencies": {
     "@appium/docutils": "^1.0.2",
