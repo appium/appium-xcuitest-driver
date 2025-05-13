@@ -130,7 +130,7 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.0"
+    "appium": "^3.0.0-beta.1"
   },
   "devDependencies": {
     "@appium/docutils": "^1.0.2",
