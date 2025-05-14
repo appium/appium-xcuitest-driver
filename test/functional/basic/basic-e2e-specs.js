@@ -147,7 +147,7 @@ describe('XCUITestDriver - basics -', function () {
         const expectedTypes = ['syslog', 'crashlog', 'performance', 'server', 'safariConsole'];
         const actualTypes = await driver.getLogTypes();
         for (const actualType of actualTypes) {
-          expectedTypes.includes(actualType).should.be.true;
+          expectedTypes.should.include(actualType);
         }
       });
     });
