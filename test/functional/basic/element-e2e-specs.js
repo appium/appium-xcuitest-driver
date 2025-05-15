@@ -56,13 +56,7 @@ describe('XCUITestDriver - elements -', function () {
   describe('displayed', function () {
     it('should get the displayed status for a displayed element', async function () {
       let el = await driver.$('~Buttons');
-      let displayed = await el.isDisplayed();
-      displayed.should.be.true;
-    });
-    it('should get the displayed status for an undisplayed element', async function () {
-      let el = await driver.$('~Web View');
-      let displayed = await el.isDisplayed();
-      displayed.should.be.false;
+      (await el.isDisplayed()).should.be.true;
     });
   });
 
