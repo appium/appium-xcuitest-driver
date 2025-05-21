@@ -1,3 +1,9 @@
+## [9.2.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.4...v9.2.5) (2025-05-21)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#2564](https://github.com/appium/appium-xcuitest-driver/issues/2564)) ([5d98175](https://github.com/appium/appium-xcuitest-driver/commit/5d98175ddc71bff3d38bedbf3cf18ca5d859a665))
+
 ## [9.2.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.3...v9.2.4) (2025-05-01)
 
 ### Miscellaneous Chores
