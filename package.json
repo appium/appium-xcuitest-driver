@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.2.3",
+  "version": "9.2.5",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -81,7 +81,7 @@
     "appium-ios-device": "^2.8.0",
     "appium-ios-simulator": "^6.2.2",
     "appium-remote-debugger": "^12.2.0",
-    "appium-webdriveragent": "^9.5.2",
+    "appium-webdriveragent": "^9.6.2",
     "appium-xcode": "^5.1.4",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
@@ -149,7 +149,7 @@
     "axios": "^1.4.0",
     "chai": "^5.1.1",
     "chai-as-promised": "^8.0.0",
-    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "conventional-changelog-conventionalcommits": "^9.0.0",
     "mocha": "^11.0.1",
     "mocha-junit-reporter": "^2.2.1",
     "mocha-multi-reporters": "^1.5.1",
