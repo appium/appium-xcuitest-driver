@@ -1,3 +1,9 @@
+## [9.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.5...v9.3.0) (2025-05-28)
+
+### Features
+
+* Add traits attributes ([#2566](https://github.com/appium/appium-xcuitest-driver/issues/2566)) ([73429cd](https://github.com/appium/appium-xcuitest-driver/commit/73429cd7b9a2e9054dc35ae87be5d2c0e1c62d56))
+
 ## [9.2.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.4...v9.2.5) (2025-05-21)
 
 ### Miscellaneous Chores
