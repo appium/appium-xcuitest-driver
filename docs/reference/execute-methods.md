@@ -470,9 +470,13 @@ Starts iOS system logs broadcast websocket on the same host and port where Appiu
 Each connected webcoket listener will receive syslog lines as soon as they are visible to Appium.
 Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Appium](https://appiumpro.com/editions/55-using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium) Appium Pro article for more details on this feature.
 
+Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this extension.
+
 ### mobile: stopLogsBroadcast
 
 Stops the syslog broadcasting wesocket server previously started by `mobile: startLogsBroadcast`. This method will return immediately if no server is running.
+
+Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this extension.
 
 ### mobile: batteryInfo
 
