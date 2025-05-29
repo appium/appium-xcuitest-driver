@@ -1,3 +1,9 @@
+## [9.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.0...v9.3.1) (2025-05-29)
+
+### Miscellaneous Chores
+
+* Add geolocation endpoints to the method map ([#2567](https://github.com/appium/appium-xcuitest-driver/issues/2567)) ([95a0be7](https://github.com/appium/appium-xcuitest-driver/commit/95a0be784d516b7880c5f546f6ccd63b62379d3f))
+
 ## [9.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.5...v9.3.0) (2025-05-28)
 
 ### Features
