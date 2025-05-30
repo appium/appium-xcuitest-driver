@@ -1128,7 +1128,7 @@ export enum HIDUsagePowerDeviceEvent {
   /* Reserved 0x48 - 0x4F */
   kHIDUsage_PD_SwitchOnControl = 0x50 /* DV F- Power Device Switch On Control */,
   kHIDUsage_PD_SwitchOffControl = 0x51 /* DV F- Power Device Switch Off Control */,
-  kHIDUsage_PD_ToggleControl = 0x52 /* DV F- Power Device Toogle Sequence Control */,
+  kHIDUsage_PD_ToggleControl = 0x52 /* DV F- Power Device Toggle Sequence Control */,
   kHIDUsage_PD_LowVoltageTransfer = 0x53 /* DV F- Power Device Min Transfer Voltage */,
   kHIDUsage_PD_HighVoltageTransfer = 0x54 /* DV F- Power Device Max Transfer Voltage */,
   kHIDUsage_PD_DelayBeforeReboot = 0x55 /* DV F- Power Device Delay Before Reboot */,
