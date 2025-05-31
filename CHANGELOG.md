@@ -1,3 +1,10 @@
+## [9.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.1...v9.3.2) (2025-05-31)
+
+### Miscellaneous Chores
+
+* fix typos ([#2568](https://github.com/appium/appium-xcuitest-driver/issues/2568)) ([a1f5842](https://github.com/appium/appium-xcuitest-driver/commit/a1f5842402c189e91a09ba5b7250a584d434f56e))
+* use optional chain for better readability ([#2569](https://github.com/appium/appium-xcuitest-driver/issues/2569)) ([035efc0](https://github.com/appium/appium-xcuitest-driver/commit/035efc0c8cf435ffbaf2355e0054bd589969af58))
+
 ## [9.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.0...v9.3.1) (2025-05-29)
 
 ### Miscellaneous Chores
