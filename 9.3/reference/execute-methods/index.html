@@ -10397,7 +10397,7 @@ If the recording for the given profile is already running then nothing is done.<
 </tbody>
 </table>
 <h3 id="mobile-stopperfrecord">mobile: stopPerfRecord<a class="headerlink" href="#mobile-stopperfrecord" title="Permanent link">&para;</a></h3>
-<p>Stops the performance recording operation previosuly started by <code>mobile: startPerfRecord</code> call. If the previous call has already been completed due to the timeout then its result is returned immediately. An error is thrown if the performance recording has failed to start and recorded no data.</p>
+<p>Stops the performance recording operation previously started by <code>mobile: startPerfRecord</code> call. If the previous call has already been completed due to the timeout then its result is returned immediately. An error is thrown if the performance recording has failed to start and recorded no data.</p>
 <h4 id="arguments_18">Arguments<a class="headerlink" href="#arguments_18" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -11419,7 +11419,7 @@ This could lead to an unexpected behavior if an incorrect/unsupported language o
 <td>locale</td>
 <td>map</td>
 <td>no</td>
-<td>System locale properties. The <code>name</code> key is required and should be set to a valid language abbreviation. The <code>calendar</code>key is optonal and could be set to a valid calendar format name. You could switch the system locale/calendar format in preferences of your booted simulator, run <code>xcrun simctl spawn booted defaults read .GlobalPreferences.plist</code>, and inspect the value of <code>AppleLocale</code> to see possible combinations.</td>
+<td>System locale properties. The <code>name</code> key is required and should be set to a valid language abbreviation. The <code>calendar</code>key is optional and could be set to a valid calendar format name. You could switch the system locale/calendar format in preferences of your booted simulator, run <code>xcrun simctl spawn booted defaults read .GlobalPreferences.plist</code>, and inspect the value of <code>AppleLocale</code> to see possible combinations.</td>
 <td><code>{"name": "uk_UA", "calendar": "gregorian"}</code></td>
 </tr>
 </tbody>
@@ -11529,7 +11529,7 @@ real iOS devices.</p>
 <h3 id="mobile-stoppcap">mobile: stopPcap<a class="headerlink" href="#mobile-stoppcap" title="Permanent link">&para;</a></h3>
 <p>Stops network traffic capture. If no traffic capture process is running then the endpoint will try to get the recently recorded file. If no previously recorded file is found and no active traffic capture processes are running then the method returns an empty string.</p>
 <h4 id="returned-result_29">Returned Result<a class="headerlink" href="#returned-result_29" title="Permanent link">&para;</a></h4>
-<p>Base64-encoded content of the traffic capture file (.pcap) or an empty string if no traffic capture has been started before. Netowrk capture files could be opened in <a href="https://www.wireshark.org/">Wireshark</a> application.</p>
+<p>Base64-encoded content of the traffic capture file (.pcap) or an empty string if no traffic capture has been started before. Network capture files could be opened in <a href="https://www.wireshark.org/">Wireshark</a> application.</p>
 <h3 id="mobile-runxctest">mobile: runXCTest<a class="headerlink" href="#mobile-runxctest" title="Permanent link">&para;</a></h3>
 <p>Run a native XCTest script. Launches a subprocess that runs the XC Test and blocks until it is completed. Parses the stdout of the process and returns its result as an array. Facebook's <a href="https://github.com/facebook/idb">IDB</a> tool is required to run such tests.</p>
 <h4 id="arguments_45">Arguments<a class="headerlink" href="#arguments_45" title="Permanent link">&para;</a></h4>
@@ -11787,14 +11787,14 @@ await driver.executeScript("mobile: swipe", [{
 </ul>
 <h3 id="mobile-scroll">mobile: scroll<a class="headerlink" href="#mobile-scroll" title="Permanent link">&para;</a></h3>
 <p>Scrolls the element or the whole screen. Different scrolling strategies are supported.
-Arguments define the choosen strategy: either 'name', 'direction', 'predicateString' or
+Arguments define the chosen strategy: either 'name', 'direction', 'predicateString' or
 'toVisible' in that order. All strategies are exclusive and only one strategy
 can be applied at a single moment of time. Use "mobile: scroll" to emulate precise
 scrolling in tables or collection views, where it is already known to which element
 the scrolling should be performed. Although, there is one known limitation there: in case
 it is necessary to perform too many scroll gestures on parent container to reach the
 necessary child element (tens of them) then the method call may fail.
-<em>Important</em>: The implemntation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might <em>not</em> always work as expected.</p>
+<em>Important</em>: The implementation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might <em>not</em> always work as expected.</p>
 <h4 id="arguments_49">Arguments<a class="headerlink" href="#arguments_49" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -12627,7 +12627,7 @@ await driver.executeScript('mobile: dragFromToForDuration', [{
 <ul>
 <li>numberOfTaps=1, numberOfTouches=1 -&gt; "vanilla" single tap</li>
 <li>numberOfTaps=2, numberOfTouches=1 -&gt; double tap</li>
-<li>numberOfTaps=3, numberOfTouches=1 -&gt; tripple tap</li>
+<li>numberOfTaps=3, numberOfTouches=1 -&gt; triple tap</li>
 <li>numberOfTaps=2, numberOfTouches=2 -&gt; double tap with two fingers</li>
 </ul>
 <h4 id="reference_5">Reference<a class="headerlink" href="#reference_5" title="Permanent link">&para;</a></h4>
@@ -12651,7 +12651,7 @@ An error is thrown if the target device does not support force press gesture.</p
 <td>elementId</td>
 <td>string</td>
 <td>no</td>
-<td>The internal element identifier (as hexadecimal hash string) to perform one or more taps. It is expected that both x and y are provided if this argument is ommitted. If the element identifier is provided without coordinates then the actual element's touch point will be calculated automatically by WebDriverAgent.</td>
+<td>The internal element identifier (as hexadecimal hash string) to perform one or more taps. It is expected that both x and y are provided if this argument is omitted. If the element identifier is provided without coordinates then the actual element's touch point will be calculated automatically by WebDriverAgent.</td>
 <td>fe50b60b-916d-420b-8728-ee2072ec53eb</td>
 </tr>
 <tr>
@@ -12796,7 +12796,7 @@ lose the current web app state.
 The outcome of this API is then used if <code>nativeWebTap</code> capability/setting is enabled.
 The returned value could also be used to manually transform web coordinates
 to real device ones in client scripts.</p>
-<p>It is adviced to call this API at least once before changing the device orientation
+<p>It is advised to call this API at least once before changing the device orientation
 or device screen layout as the recetly received value is cached for the session lifetime
 and may become obsolete.</p>
 <p>It is advised to enable <code>nativeWebTapStrict</code> capability/setting to speed up dynamic coordinates
@@ -13112,7 +13112,7 @@ if necessary. The call is blocking.</p>
 </tbody>
 </table>
 <h3 id="mobile-performaccessibilityaudit">mobile: performAccessibilityAudit<a class="headerlink" href="#mobile-performaccessibilityaudit" title="Permanent link">&para;</a></h3>
-<p>Performs accessbility audit of the current application according to the given type or multiple types.
+<p>Performs accessibility audit of the current application according to the given type or multiple types.
 Wraps the XCTest's <a href="https://developer.apple.com/documentation/xctest/xcuiapplication/4190847-performaccessibilityauditwithaud?language=objc">performAccessibilityAuditWithAuditTypes</a> API.
 Only available since Xcode 15/iOS 17.</p>
 <h4 id="arguments_69">Arguments<a class="headerlink" href="#arguments_69" title="Permanent link">&para;</a></h4>
@@ -13151,13 +13151,13 @@ Only available since Xcode 15/iOS 17.</p>
 <tr>
 <td>detailedDescription</td>
 <td>string</td>
-<td>The detailed description of the found accessbility issue.</td>
+<td>The detailed description of the found accessibility issue.</td>
 <td>Some longer issue description</td>
 </tr>
 <tr>
 <td>compactDescription</td>
 <td>string</td>
-<td>The compact description of the found accessbility issue.</td>
+<td>The compact description of the found accessibility issue.</td>
 <td>Some compact issue description</td>
 </tr>
 <tr>
@@ -13175,7 +13175,7 @@ Only available since Xcode 15/iOS 17.</p>
 <tr>
 <td>elementDescription</td>
 <td>string</td>
-<td>The debug description of the element this issue was found for. Availble since driver version</td>
+<td>The debug description of the element this issue was found for. Available since driver version</td>
 <td>A long string describing the element itself and its position in the page tree hierarchy</td>
 </tr>
 <tr>
@@ -13208,7 +13208,7 @@ Only available since Xcode 15/iOS 17.</p>
 <h3 id="mobile-startxctestscreenrecording">mobile: startXCTestScreenRecording<a class="headerlink" href="#mobile-startxctestscreenrecording" title="Permanent link">&para;</a></h3>
 <p>Start a new screen recording via XCTest.</p>
 <p>Since this feature is based on the native implementation provided by Apple
-it provides the best quality for the least perfomance penalty in comparison
+it provides the best quality for the least performance penalty in comparison
 to alternative implementations.</p>
 <p>Even though the feature is available for real devices
 there is no possibility to delete video files stored on the device yet,
@@ -13233,7 +13233,7 @@ feature flag if executed from a real device test.</p>
 <td>fps</td>
 <td>number</td>
 <td>no</td>
-<td>The Frames Per Second value for the resulting video. Providing higher values will create video files that are greater in size, but with smoother transitions. It is highly recommeneded to keep this value is range 1-60. 24 by default</td>
+<td>The Frames Per Second value for the resulting video. Providing higher values will create video files that are greater in size, but with smoother transitions. It is highly recommended to keep this value is range 1-60. 24 by default</td>
 <td>60</td>
 </tr>
 </tbody>
@@ -13258,7 +13258,7 @@ feature flag if executed from a real device test.</p>
 </tr>
 <tr>
 <td>fps</td>
-<td>numner</td>
+<td>number</td>
 <td>FPS value</td>
 <td>24</td>
 </tr>
@@ -13463,7 +13463,7 @@ Does not work for real devices.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 7, 2025 05:10:41"><span class="timeago" datetime="2025-05-07T05:10:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 7, 2025 05:10:41">2025-05-07</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 31, 2025 08:02:35"><span class="timeago" datetime="2025-05-31T08:02:35+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 31, 2025 08:02:35">2025-05-31</span>
   </span>
 
     
