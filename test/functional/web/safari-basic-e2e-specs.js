@@ -408,10 +408,11 @@ describe('Safari - basics -', function () {
           });
 
           it('should be able to set a cookie with expiry', async function () {
-            const expiredCookie = Object.assign({}, newCookie, {
+            const expiredCookie = {
+              ...newCookie,
               expiry: parseInt(String(Date.now() / 1000), 10) - 1000, // set cookie in past
               name: 'expiredcookie',
-            });
+            };
 
             let cookies = await driver.getAllCookies();
             doesNotIncludeCookie(cookies, expiredCookie);

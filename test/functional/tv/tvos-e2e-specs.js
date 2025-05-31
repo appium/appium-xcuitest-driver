@@ -42,7 +42,7 @@ describe('tvOS', function () {
   });
 
   beforeEach(function () {
-    baseCaps = Object.assign({}, TVOS_CAPS, {udid});
+    baseCaps = {...TVOS_CAPS, udid};
   });
 
   afterEach(async function () {
