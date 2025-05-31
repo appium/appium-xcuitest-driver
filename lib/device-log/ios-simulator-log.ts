@@ -131,7 +131,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       await exec('kill', pids.map(String));
     } catch (e) {
       this.log.warn(
-        `Cound not terminate one or more obsolete log streams: ${e.stderr || e.message}`
+        `Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`
       );
     }
   }
