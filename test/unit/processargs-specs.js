@@ -34,11 +34,12 @@ describe('process args', function () {
   let desired = {
     capabilities: {
       firstMatch: [
-        Object.assign({}, DEFAULT_CAPS, {
+        {
+          ...DEFAULT_CAPS,
           bundleId: BUNDLE_ID,
           arguments: PROCESS_ARGS_OBJECT.args,
           environment: PROCESS_ARGS_OBJECT.env,
-        }),
+        },
       ],
       alwaysMatch: {},
     },
