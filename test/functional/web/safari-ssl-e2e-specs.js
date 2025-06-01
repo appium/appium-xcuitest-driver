@@ -80,11 +80,12 @@ describe('Safari SSL', function () {
   });
 
   describe('cookies', function () {
-    const secureCookie = Object.assign({}, newCookie, {
+    const secureCookie = {
+      ...newCookie,
       secure: true,
       name: 'securecookie',
       value: 'this is a secure cookie',
-    });
+    };
 
     before(async function () {
       driver = await initSession(caps);
