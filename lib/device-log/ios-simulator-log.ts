@@ -71,7 +71,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
   }
 
   override get isCapturing(): boolean {
-    return Boolean(this.proc && this.proc.isRunning);
+    return Boolean(this.proc?.isRunning);
   }
 
   private onOutput(logRow: string, prefix: string = ''): void {
@@ -131,7 +131,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       await exec('kill', pids.map(String));
     } catch (e) {
       this.log.warn(
-        `Cound not terminate one or more obsolete log streams: ${e.stderr || e.message}`
+        `Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`
       );
     }
   }

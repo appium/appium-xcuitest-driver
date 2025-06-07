@@ -83,7 +83,7 @@ possible that you may encounter some errors:
 ### Create an Offline Provisioning Profile
 
 Since iOS 16, Apple requires a device to have a live internet connection for validating the code
-signing. It is possible to set up an offline enabled provisiong profile, which allows you to avoid
+signing. It is possible to set up an offline enabled provisioning profile, which allows you to avoid
 the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074)
 regarding detailed configuration steps.
 

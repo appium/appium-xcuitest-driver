@@ -1,3 +1,32 @@
+## [9.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.2...v9.4.0) (2025-06-04)
+
+### Features
+
+* add documentation for new appium setting: includeHittableInPageSource ([#2571](https://github.com/appium/appium-xcuitest-driver/issues/2571)) ([de310a3](https://github.com/appium/appium-xcuitest-driver/commit/de310a39a64f835e534ee9f5453539487a5bbe79))
+
+### Code Refactoring
+
+* use an object spread instead of Object.assign ([#2570](https://github.com/appium/appium-xcuitest-driver/issues/2570)) ([16bae3a](https://github.com/appium/appium-xcuitest-driver/commit/16bae3acb0e3cee456218d09db9f6b8846f336d4))
+
+## [9.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.1...v9.3.2) (2025-05-31)
+
+### Miscellaneous Chores
+
+* fix typos ([#2568](https://github.com/appium/appium-xcuitest-driver/issues/2568)) ([a1f5842](https://github.com/appium/appium-xcuitest-driver/commit/a1f5842402c189e91a09ba5b7250a584d434f56e))
+* use optional chain for better readability ([#2569](https://github.com/appium/appium-xcuitest-driver/issues/2569)) ([035efc0](https://github.com/appium/appium-xcuitest-driver/commit/035efc0c8cf435ffbaf2355e0054bd589969af58))
+
+## [9.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.0...v9.3.1) (2025-05-29)
+
+### Miscellaneous Chores
+
+* Add geolocation endpoints to the method map ([#2567](https://github.com/appium/appium-xcuitest-driver/issues/2567)) ([95a0be7](https://github.com/appium/appium-xcuitest-driver/commit/95a0be784d516b7880c5f546f6ccd63b62379d3f))
+
+## [9.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.5...v9.3.0) (2025-05-28)
+
+### Features
+
+* Add traits attributes ([#2566](https://github.com/appium/appium-xcuitest-driver/issues/2566)) ([73429cd](https://github.com/appium/appium-xcuitest-driver/commit/73429cd7b9a2e9054dc35ae87be5d2c0e1c62d56))
+
 ## [9.2.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.4...v9.2.5) (2025-05-21)
 
 ### Miscellaneous Chores
