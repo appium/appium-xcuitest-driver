@@ -140,7 +140,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    *
    * @defaultValue None
    *
-   * @see  https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
+   * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
    * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC
    */
   hardwareAcceleration?: 'cuda' | 'videoToolbox';
