@@ -144,7 +144,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC
    */
   hardwareAcceleration?: 'cuda' | 'videoToolbox';
-  }
+}
 
 export interface PageChangeNotification {
   pageArray: Page[];
