@@ -138,7 +138,6 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    * Cuda is only available on devices with NVIDIA GPUs.
    * VideoToolbox is only available on devices with Apple Silicon.
    *
-   * @defaultValue None
    *
    * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
    * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC
