@@ -1,3 +1,10 @@
+## [9.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.4.0...v9.5.0) (2025-06-10)
+
+### Features
+
+* add documentation with min/max value ([#2576](https://github.com/appium/appium-xcuitest-driver/issues/2576)) ([c296411](https://github.com/appium/appium-xcuitest-driver/commit/c2964111ea1924baf0594e8d3f7a0aa22c22b50a))
+* add focused attribute to element representation in XML source tree ([#2575](https://github.com/appium/appium-xcuitest-driver/issues/2575)) ([14ccdce](https://github.com/appium/appium-xcuitest-driver/commit/14ccdce9b80a2f06c121fd6f0adef83c06567082))
+
 ## [9.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.2...v9.4.0) (2025-06-04)
 
 ### Features
