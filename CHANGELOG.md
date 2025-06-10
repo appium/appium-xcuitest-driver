@@ -1,3 +1,9 @@
+## [9.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.5.0...v9.6.0) (2025-06-10)
+
+### Features
+
+* Hardware Acceleration for Video Decode, Encode and Scaling ([#2559](https://github.com/appium/appium-xcuitest-driver/issues/2559)) ([d21345a](https://github.com/appium/appium-xcuitest-driver/commit/d21345a1b8e34d136033550937298c6f2e08111b))
+
 ## [9.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.4.0...v9.5.0) (2025-06-10)
 
 ### Features
