@@ -134,15 +134,23 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
   timeLimit?: string | number;
 
   /**
-   * Hardware acceleration type.
-   * Cuda is only available on devices with NVIDIA GPUs.
-   * VideoToolbox is only available on devices with Apple Silicon.
+   * Hardware acceleration to be used by FFMPEG for decoding, encoding and scaling.
    *
    *
-   * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
-   * @see https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC
+   *  * `videoToolbox` Apple Silicon
+   *  * `cuda` NVIDIA GPU
+   *  * `amf_dx11` AMD and DirectX 11
+   *  * `qsv` Intel Quick Sync Video
+   *  * `vaapi` Video Acceleration API (VAAPI)
+   *
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#PlatformAPIAvailability| Platform API Availability }
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox| VideoToolbox}
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC|Cuda}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/AMF|AMF}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/QuickSync|QSV}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/VAAPI|VAAPI}
    */
-  hardwareAcceleration?: 'cuda' | 'videoToolbox';
+  hardwareAcceleration?: 'cuda' | 'videoToolbox' | 'amf_dx11' | 'qsv' | 'vaapi';
 }
 
 export interface PageChangeNotification {
