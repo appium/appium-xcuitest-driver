@@ -49,20 +49,12 @@ export class IOSSimulatorLog extends LineConsumingLog {
       throw new Error(`iOS Simulator with udid '${this.sim.udid}' is not running`);
     }
 
-    if (this.iosSyslogFile) {
+    if (this.iosSyslogFile && this.showLogs) {
       try {
         this.syslogLogger = winston.createLogger({
           level: 'debug',
-          format: format.combine(
-            format.timestamp(),
-            format.simple()
-          ),
-          transports: [
-            new winston.transports.File({
-              filename: this.iosSyslogFile,
-              options: { flags: 'a' }
-            }),
-          ],
+          format: format.combine(format.timestamp(), format.simple()),
+          transports: [new winston.transports.File({filename: this.iosSyslogFile})]
         });
 
         this.log.info(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
@@ -128,13 +120,12 @@ export class IOSSimulatorLog extends LineConsumingLog {
 
   private onOutput(logRow: string, prefix: string = ''): void {
     this.broadcast(logRow);
-    
-    // ONLY LOG TO MAIN APPIUM LOG: IF showLogs IS TRUE AND iosSyslogFile IS NOT SET, ELSE IF BOTH ARE SET LOG TO PROVIDE FILE PATH
     if (this.showLogs && !this.iosSyslogFile) {
       const space = prefix.length > 0 ? ' ' : '';
       this.log.info(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
     } else if (this.iosSyslogFile && this.showLogs) {
-        this._writeToSyslogFile(logRow);
+      const space = prefix.length > 0 ? ' ' : '';
+      this.writeToSyslogFile(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
     }
   }
 
@@ -143,8 +134,8 @@ export class IOSSimulatorLog extends LineConsumingLog {
    * @param {string} logRow - The log line to write.
    * @private
    */
-  private _writeToSyslogFile(logRow: string): void {
-    if (this.syslogLogger) {
+  private writeToSyslogFile(logRow: string): void {
+    if (this.syslogLogger && this.showLogs) {
       this.syslogLogger.info(logRow);
     }
   }
