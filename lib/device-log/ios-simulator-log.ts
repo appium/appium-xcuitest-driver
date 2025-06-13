@@ -44,26 +44,22 @@ export class IOSSimulatorLog extends LineConsumingLog {
     if (_.isUndefined(this.sim.udid)) {
       throw new Error(`Log capture requires a sim udid`);
     }
-
     if (!(await this.sim.isRunning())) {
       throw new Error(`iOS Simulator with udid '${this.sim.udid}' is not running`);
     }
-
     if (this.iosSyslogFile && this.showLogs) {
       try {
         this.syslogLogger = winston.createLogger({
-          level: 'debug',
+          level: 'info',
           format: format.combine(format.timestamp(), format.simple()),
-          transports: [new winston.transports.File({filename: this.iosSyslogFile})]
+          transports: [ new winston.transports.File({filename: this.iosSyslogFile}) ]
         });
-
-        this.log.info(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
+        this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
         this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`);
         this.syslogLogger = null;
       }
     }
-
     const spawnArgs = ['log', 'stream', '--style', 'compact'];
     if (this.predicate) {
       spawnArgs.push('--predicate', this.predicate);
@@ -80,16 +76,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       this.proc = await this.sim.simctl.spawnSubProcess(spawnArgs);
       await this.finishStartingLogCapture();
     } catch (e) {
-      if (this.syslogLogger) {
-        const fileTransport = this.syslogLogger.transports.find(
-          (t) => t instanceof winston.transports.File && t.filename === this.iosSyslogFile
-        );
-        if (fileTransport) {
-          fileTransport.end?.();
-          this.syslogLogger.remove(fileTransport);
-        }
-        this.syslogLogger = null;
-      }
+      this.shutdownSyslogger();
       throw new Error(`Simulator log capture failed. Original error: ${e.message}`);
     }
   }
@@ -100,11 +87,18 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
     await this.killLogSubProcess();
     this.proc = null;
+    this.shutdownSyslogger();
+  }
 
+  override get isCapturing(): boolean {
+    return Boolean(this.proc?.isRunning);
+  }
+
+  private shutdownSyslogger(): void {
     if (this.syslogLogger) {
-      this.log.info(`Closing iOS syslog file: '${this.iosSyslogFile}'`);
+      this.log.debug(`Closing iOS syslog file: '${this.iosSyslogFile}'`);
       const fileTransport = this.syslogLogger.transports.find(
-        (t) => t instanceof winston.transports.File && t.filename === this.iosSyslogFile
+        (t) => (t instanceof winston.transports.File) && (t.filename === this.iosSyslogFile)
       );
       if (fileTransport) {
         fileTransport.end?.();
@@ -112,10 +106,6 @@ export class IOSSimulatorLog extends LineConsumingLog {
       }
       this.syslogLogger = null;
     }
-  }
-
-  override get isCapturing(): boolean {
-    return Boolean(this.proc?.isRunning);
   }
 
   private onOutput(logRow: string, prefix: string = ''): void {
@@ -144,7 +134,6 @@ export class IOSSimulatorLog extends LineConsumingLog {
     if (!this.proc?.isRunning) {
       return;
     }
-
     this.log.debug('Stopping iOS log capture');
     try {
       await this.proc.stop('SIGTERM', 1000);
@@ -161,13 +150,11 @@ export class IOSSimulatorLog extends LineConsumingLog {
     if (!this.proc) {
       throw this.log.errorWithException('Could not capture simulator log');
     }
-
     for (const streamName of ['stdout', 'stderr']) {
       this.proc.on(`line-${streamName}`, (line: string) => {
         this.onOutput(line, ...(streamName === 'stderr' ? ['STDERR'] : []));
       });
     }
-
     const startDetector = (stdout: string, stderr: string) => {
       if (EXECVP_ERROR_PATTERN.test(stderr)) {
         throw new Error('iOS log capture process failed to start');
