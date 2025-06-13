@@ -22,7 +22,7 @@ const log = logger.getLogger('TunnelCreationTest');
 async function updateTunnelRegistry(results) {
   const now = Date.now();
   const nowISOString = new Date().toISOString();
-  
+
   const registry = {
     tunnels: {},
     metadata: {
@@ -94,14 +94,14 @@ async function getInfoServer() {
     conn.end();
   });
 
-  await new Promise((resolve, reject) => {
-    server.listen(INFO_SERVER_PORT, '127.0.0.1', () => {
-      resolve();
+  // Using try/catch instead of Promise constructor with callbacks
+  try {
+    await new Promise((resolve) => {
+      server.listen(INFO_SERVER_PORT, '127.0.0.1', resolve);
     });
-    server.on('error', (err) => {
-      reject(err);
-    });
-  });
+  } catch (err) {
+    throw new Error(`Failed to start server: ${err.message}`);
+  }
 
   const serverInfo = { server, port: INFO_SERVER_PORT };
   activeServers.push(serverInfo);
@@ -405,13 +405,11 @@ async function main() {
       log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
 
       log.info('\n💡 Example usage:');
-      log.info('   curl http://localhost:4723/remotexpc/tunnels');
-      log.info('   curl http://localhost:4723/remotexpc/tunnels/metadata');
+      log.info('   curl http://localhost:42314/remotexpc/tunnels');
+      log.info('   curl http://localhost:42314/remotexpc/tunnels/metadata');
       if (successful.length > 0) {
         const firstUdid = successful[0].device.Properties.SerialNumber;
-        log.info(
-          `   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`,
-        );
+        log.info(`   curl http://localhost:42314/remotexpc/tunnels/${firstUdid}`);
       }
     }
   } catch (error) {
