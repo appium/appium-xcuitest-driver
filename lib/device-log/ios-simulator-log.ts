@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {SubProcess, exec} from 'teen_process';
 import {util} from 'appium/support';
 import { LineConsumingLog } from './line-consuming-log';
+import winston, { format } from 'winston';
 import type { Simulator } from 'appium-ios-simulator';
 import type { AppiumLogger } from '@appium/types';
 
@@ -16,6 +17,7 @@ export interface IOSSimulatorLogOptions {
   iosSimulatorLogsPredicate?: string;
   simulatorLogLevel?: string;
   log: AppiumLogger;
+  iosSyslogFile?: string;
 }
 
 export class IOSSimulatorLog extends LineConsumingLog {
@@ -24,6 +26,8 @@ export class IOSSimulatorLog extends LineConsumingLog {
   private readonly predicate?: string;
   private readonly logLevel?: string;
   private proc: SubProcess | null;
+  private readonly iosSyslogFile?: string;
+  private syslogLogger: winston.Logger | null;
 
   constructor(opts: IOSSimulatorLogOptions) {
     super({log: opts.log});
@@ -32,6 +36,8 @@ export class IOSSimulatorLog extends LineConsumingLog {
     this.predicate = opts.iosSimulatorLogsPredicate;
     this.logLevel = opts.simulatorLogLevel;
     this.proc = null;
+    this.iosSyslogFile = opts.iosSyslogFile;
+    this.syslogLogger = null;
   }
 
   override async startCapture(): Promise<void> {
@@ -42,6 +48,30 @@ export class IOSSimulatorLog extends LineConsumingLog {
     if (!(await this.sim.isRunning())) {
       throw new Error(`iOS Simulator with udid '${this.sim.udid}' is not running`);
     }
+
+    if (this.iosSyslogFile) {
+      try {
+        this.syslogLogger = winston.createLogger({
+          level: 'debug',
+          format: format.combine(
+            format.timestamp(),
+            format.simple()
+          ),
+          transports: [
+            new winston.transports.File({
+              filename: this.iosSyslogFile,
+              options: { flags: 'a' }
+            }),
+          ],
+        });
+
+        this.log.info(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
+      } catch (e) {
+        this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`);
+        this.syslogLogger = null;
+      }
+    }
+
     const spawnArgs = ['log', 'stream', '--style', 'compact'];
     if (this.predicate) {
       spawnArgs.push('--predicate', this.predicate);
@@ -58,6 +88,16 @@ export class IOSSimulatorLog extends LineConsumingLog {
       this.proc = await this.sim.simctl.spawnSubProcess(spawnArgs);
       await this.finishStartingLogCapture();
     } catch (e) {
+      if (this.syslogLogger) {
+        const fileTransport = this.syslogLogger.transports.find(
+          (t) => t instanceof winston.transports.File && t.filename === this.iosSyslogFile
+        );
+        if (fileTransport) {
+          fileTransport.end?.();
+          this.syslogLogger.remove(fileTransport);
+        }
+        this.syslogLogger = null;
+      }
       throw new Error(`Simulator log capture failed. Original error: ${e.message}`);
     }
   }
@@ -68,6 +108,18 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
     await this.killLogSubProcess();
     this.proc = null;
+
+    if (this.syslogLogger) {
+      this.log.info(`Closing iOS syslog file: '${this.iosSyslogFile}'`);
+      const fileTransport = this.syslogLogger.transports.find(
+        (t) => t instanceof winston.transports.File && t.filename === this.iosSyslogFile
+      );
+      if (fileTransport) {
+        fileTransport.end?.();
+        this.syslogLogger.remove(fileTransport);
+      }
+      this.syslogLogger = null;
+    }
   }
 
   override get isCapturing(): boolean {
@@ -76,9 +128,24 @@ export class IOSSimulatorLog extends LineConsumingLog {
 
   private onOutput(logRow: string, prefix: string = ''): void {
     this.broadcast(logRow);
-    if (this.showLogs) {
+    
+    // ONLY LOG TO MAIN APPIUM LOG: IF showLogs IS TRUE AND iosSyslogFile IS NOT SET, ELSE IF BOTH ARE SET LOG TO PROVIDE FILE PATH
+    if (this.showLogs && !this.iosSyslogFile) {
       const space = prefix.length > 0 ? ' ' : '';
       this.log.info(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
+    } else if (this.iosSyslogFile && this.showLogs) {
+        this._writeToSyslogFile(logRow);
+    }
+  }
+
+  /**
+   * Writes the given log row to the dedicated iOS syslog file if the logger is active.
+   * @param {string} logRow - The log line to write.
+   * @private
+   */
+  private _writeToSyslogFile(logRow: string): void {
+    if (this.syslogLogger) {
+      this.syslogLogger.info(logRow);
     }
   }
 
