@@ -110,11 +110,10 @@ export class IOSSimulatorLog extends LineConsumingLog {
 
   private onOutput(logRow: string, prefix: string = ''): void {
     this.broadcast(logRow);
+    const space = prefix.length > 0 ? ' ' : '';
     if (this.showLogs && !this.iosSyslogFile) {
-      const space = prefix.length > 0 ? ' ' : '';
       this.log.info(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
     } else if (this.iosSyslogFile && this.showLogs) {
-      const space = prefix.length > 0 ? ' ' : '';
       this.writeToSyslogFile(`[IOS_SYSLOG_ROW${space}${prefix}] ${logRow}`);
     }
   }
