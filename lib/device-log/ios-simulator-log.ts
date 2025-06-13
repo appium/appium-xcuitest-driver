@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {SubProcess, exec} from 'teen_process';
 import {util} from 'appium/support';
 import { LineConsumingLog } from './line-consuming-log';
-import winston, { format } from 'winston';
+import { transports, createLogger, format, Logger } from 'winston';
 import type { Simulator } from 'appium-ios-simulator';
 import type { AppiumLogger } from '@appium/types';
 
@@ -27,7 +27,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
   private readonly logLevel?: string;
   private proc: SubProcess | null;
   private readonly iosSyslogFile?: string;
-  private syslogLogger: winston.Logger | null;
+  private syslogLogger: Logger | null;
 
   constructor(opts: IOSSimulatorLogOptions) {
     super({log: opts.log});
@@ -49,10 +49,10 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
     if (this.iosSyslogFile && this.showLogs) {
       try {
-        this.syslogLogger = winston.createLogger({
+        this.syslogLogger = createLogger({
           level: 'info',
           format: format.combine(format.timestamp(), format.simple()),
-          transports: [ new winston.transports.File({filename: this.iosSyslogFile}) ]
+          transports: [new transports.File({filename: this.iosSyslogFile})]
         });
         this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
@@ -98,7 +98,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
     if (this.syslogLogger) {
       this.log.debug(`Closing iOS syslog file: '${this.iosSyslogFile}'`);
       const fileTransport = this.syslogLogger.transports.find(
-        (t) => (t instanceof winston.transports.File) && (t.filename === this.iosSyslogFile)
+        (t) => (t instanceof transports.File) && (t.filename === this.iosSyslogFile)
       );
       if (fileTransport) {
         fileTransport.end?.();
