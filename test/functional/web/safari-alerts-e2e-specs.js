@@ -36,8 +36,6 @@ describe('safari - alerts', function () {
     await retryInterval(5, 500, driver.dismissAlert.bind(driver));
   }
 
-  // All tests below are skipped until https://github.com/appium/appium/issues/17013 is resolved
-
   it('should accept alert', async function () {
     const alert = await driver.$('#alert1');
     await alert.click();
