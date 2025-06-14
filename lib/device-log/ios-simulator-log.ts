@@ -5,6 +5,7 @@ import { LineConsumingLog } from './line-consuming-log';
 import { transports, createLogger, format, Logger } from 'winston';
 import type { Simulator } from 'appium-ios-simulator';
 import type { AppiumLogger } from '@appium/types';
+import fs from 'node:fs/promises';
 
 const EXECVP_ERROR_PATTERN = /execvp\(\)/;
 const LOG_STREAMING_PROCESS_NAME_PATTERN = /^com\.apple\.xpc\.launchd\.oneshot\.0x[0-f]+\.log$/;
@@ -48,11 +49,13 @@ export class IOSSimulatorLog extends LineConsumingLog {
       throw new Error(`iOS Simulator with udid '${this.sim.udid}' is not running`);
     }
     if (this.iosSyslogFile && this.showLogs) {
+      await this.clearExistingSyslog();
       try {
         this.syslogLogger = createLogger({
           level: 'info',
           format: format.combine(format.timestamp(), format.simple()),
-          transports: [new transports.File({filename: this.iosSyslogFile})]
+          transports: [new transports.File({filename: this.iosSyslogFile})],
+          exitOnError: false
         });
         this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
@@ -92,6 +95,21 @@ export class IOSSimulatorLog extends LineConsumingLog {
 
   override get isCapturing(): boolean {
     return Boolean(this.proc?.isRunning);
+  }
+
+  private async clearExistingSyslog(): Promise<void> {
+    if (this.iosSyslogFile === undefined) {
+      this.log.debug('iOS Syslog file path is not defined, skipping deletion.');
+      return;
+    }
+    try {
+      await fs.unlink(this.iosSyslogFile);
+      this.log.debug(`Existing iOS Syslog file: '${this.iosSyslogFile}' deleted.`);
+    } catch (unlinkErr) {
+      if (unlinkErr.code !== 'ENOENT') {
+        this.log.warn(`Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`);
+      }
+    }
   }
 
   private shutdownSyslogger(): void {
