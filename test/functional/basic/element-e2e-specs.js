@@ -60,7 +60,8 @@ describe('XCUITestDriver - elements -', function () {
       displayed.should.be.true;
     });
     it('should get the displayed status for an undisplayed element', async function () {
-      let el = await driver.$('~Web View');
+      // this value is invisible in the view
+      let el = await driver.$('~Horizontal scroll bar, 1 page');
       let displayed = await el.isDisplayed();
       displayed.should.be.false;
     });
