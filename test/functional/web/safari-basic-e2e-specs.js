@@ -513,7 +513,7 @@ describe('Safari - basics -', function () {
 
           await B.delay(1000);
           await retryInterval(10, 500, async function () {
-            await driver.getPageSource().should.eventually.include('Phishing Page Example');
+            await driver.getPageSource().should.eventually.include('Deceptive Website Warning');
           });
         } finally {
           await driver.switchContext(ctx);
