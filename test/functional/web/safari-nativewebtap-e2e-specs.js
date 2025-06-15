@@ -1,15 +1,14 @@
 /* eslint-disable mocha/no-nested-tests */
 
 import _ from 'lodash';
-import {util} from 'appium/support';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
-  extractCapabilityValue,
   amendCapabilities,
   SETTINGS_CAPS,
   SAFARI_CAPS,
   DEVICE_NAME,
   DEVICE_NAME_FOR_SAFARI_IPAD,
+  isIosVersionAtLeast
 } from '../desired';
 import {
   openPage,
@@ -71,13 +70,7 @@ describe('Safari - coordinate conversion -', function () {
       const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
       const driver = await initSession(localSettingsCaps);
 
-      const isPlatformVersionGreaterOrEqualTo = (platformVersion) => util.compareVersions(
-        extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-        '>=',
-        platformVersion,
-      );
-
-      if (isPlatformVersionGreaterOrEqualTo('18.0')) {
+      if (isIosVersionAtLeast('18.0')) {
         await driver.execute('mobile: scroll', {direction: 'down'});
         await driver
           .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Apps"`]')
@@ -95,7 +88,7 @@ describe('Safari - coordinate conversion -', function () {
       }
       await driver.$('~CLEAR_HISTORY_AND_DATA').click();
 
-      if (isPlatformVersionGreaterOrEqualTo('18.0')) {
+      if (isIosVersionAtLeast('18.0')) {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`)
           .click();
@@ -107,7 +100,7 @@ describe('Safari - coordinate conversion -', function () {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`)
           .click();
-      } else if (isPlatformVersionGreaterOrEqualTo('17.0')) {
+      } else if (isIosVersionAtLeast('17.0')) {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`)
           .click();
@@ -120,7 +113,7 @@ describe('Safari - coordinate conversion -', function () {
           // for iPhone
           await driver.$('~Clear History and Data').click();
         }
-        if (isPlatformVersionGreaterOrEqualTo('16.0')) {
+        if (isIosVersionAtLeast('16.0')) {
           await driver
             .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]')
             .click();

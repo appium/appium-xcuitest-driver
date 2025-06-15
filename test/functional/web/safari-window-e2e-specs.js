@@ -1,5 +1,9 @@
 import _ from 'lodash';
-import {SAFARI_CAPS, amendCapabilities, extractCapabilityValue} from '../desired';
+import {
+  SAFARI_CAPS,
+  amendCapabilities,
+  isIosVersionBelow
+} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   openPage,
@@ -9,7 +13,6 @@ import {
   GUINEA_PIG_IFRAME_PAGE,
 } from './helpers';
 import {waitForCondition} from 'asyncbox';
-import { util } from 'appium/support';
 
 
 const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`;
@@ -61,8 +64,6 @@ describe('safari - windows and frames', function () {
 
     let driver;
 
-    let isPlatformVersionLessThan;
-
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
         'appium:safariInitialUrl': GUINEA_PIG_PAGE,
@@ -72,12 +73,6 @@ describe('safari - windows and frames', function () {
         'appium:nativeWebTap': true,
         'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
-
-      isPlatformVersionLessThan = (platformVersion) => util.compareVersions(
-        extractCapabilityValue(caps, 'appium:platformVersion'),
-        '<',
-        platformVersion,
-      );
 
       driver = await initSession(caps);
     });
@@ -112,7 +107,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to open and close windows', async function () {
-        if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
           this.skip();
         }
 
@@ -125,7 +120,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to use window handles', async function () {
-        if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
           this.skip();
         }
 
@@ -151,7 +146,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to go back and forward', async function () {
-        if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
           this.skip();
         }
 
@@ -184,7 +179,7 @@ describe('safari - windows and frames', function () {
 
       // broken on real devices, see https://github.com/appium/appium/issues/5167
       it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async function () {
-        if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
           this.skip();
         }
 

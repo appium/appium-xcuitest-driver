@@ -1,8 +1,11 @@
 import {retryInterval} from 'asyncbox';
-import {SAFARI_CAPS, amendCapabilities, extractCapabilityValue} from '../desired';
+import {
+  SAFARI_CAPS,
+  amendCapabilities,
+  isIosVersionBelow
+} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from './helpers';
-import { util } from 'appium/support';
 
 
 describe('safari - alerts', function () {
@@ -24,12 +27,7 @@ describe('safari - alerts', function () {
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });
 
-    const isPlatformVersionLessThan = (platformVersion) => util.compareVersions(
-      extractCapabilityValue(caps, 'appium:platformVersion'),
-      '<',
-      platformVersion,
-    );
-    if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+    if (process.env.CI && isIosVersionBelow('18.0')) {
       this.skip();
     };
 

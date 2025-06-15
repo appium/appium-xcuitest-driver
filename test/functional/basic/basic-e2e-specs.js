@@ -1,7 +1,11 @@
 import B from 'bluebird';
 import util from 'util';
 import {retryInterval} from 'asyncbox';
-import {amendCapabilities, UICATALOG_CAPS} from '../desired';
+import {
+  amendCapabilities,
+  isIosVersionBelow,
+  UICATALOG_CAPS
+} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
@@ -248,6 +252,10 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should start a session, navigate to url, get title', async function () {
+      if (process.env.CI && isIosVersionBelow('18.0')) {
+        this.skip();
+      }
+
       // It takes a while to load the webview on slow env such as CI
       const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 10000});
 
