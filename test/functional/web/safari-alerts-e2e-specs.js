@@ -1,5 +1,9 @@
 import {retryInterval} from 'asyncbox';
-import {SAFARI_CAPS, amendCapabilities} from '../desired';
+import {
+  SAFARI_CAPS,
+  amendCapabilities,
+  isIosVersionBelow
+} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from './helpers';
 
@@ -22,6 +26,11 @@ describe('safari - alerts', function () {
       'appium:safariAllowPopups': true,
       'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });
+
+    if (process.env.CI && isIosVersionBelow('18.0')) {
+      this.skip();
+    };
+
     driver = await initSession(caps);
   });
   after(async function () {
@@ -35,8 +44,6 @@ describe('safari - alerts', function () {
   async function dismissAlert(driver) {
     await retryInterval(5, 500, driver.dismissAlert.bind(driver));
   }
-
-  // All tests below are skipped until https://github.com/appium/appium/issues/17013 is resolved
 
   it('should accept alert', async function () {
     const alert = await driver.$('#alert1');
