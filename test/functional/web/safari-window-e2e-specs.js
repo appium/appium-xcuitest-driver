@@ -112,6 +112,10 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to open and close windows', async function () {
+        if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+          this.skip();
+        }
+
         const el = await driver.$('#blanklink');
         await el.click();
         await spinTitleEquals(driver, 'I am another page title');
@@ -121,6 +125,10 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to use window handles', async function () {
+        if (process.env.CI && isPlatformVersionLessThan('18.0')) {
+          this.skip();
+        }
+
         const initialWindowHandle = await driver.getWindowHandle();
 
         const el = await driver.$('#blanklink');
