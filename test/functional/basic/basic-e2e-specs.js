@@ -118,6 +118,11 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('viewportScreenshot -', function () {
     it('should get a cropped screenshot of the viewport without statusbar', async function () {
+      if (process.env.CI) {
+        // Skip on GHA. Local had no issue but GHA had failed in 'mobile: viewportScreenshot'.
+        return this.skip();
+      }
+
       const {statusBarSize, scale} = await driver.execute('mobile: deviceScreenInfo');
       const viewportRect = await driver.execute('mobile: viewportRect');
       const fullScreen = await driver.takeScreenshot();
@@ -209,11 +214,6 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI) {
-        // skip on Travis, since Appium process should have access to system accessibility
-        // in order to run this method successfully
-        return this.skip();
-      }
       await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be
         .rejected;
     });
@@ -221,11 +221,6 @@ describe('XCUITestDriver - basics -', function () {
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      if (process.env.CI) {
-        // skip on Travis, since Appium process should have access to system accessibility
-        // in order to run this method successfully
-        return this.skip();
-      }
       await driver.shake().should.not.be.rejected;
     });
   });
