@@ -1,3 +1,9 @@
+## [9.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.1...v9.7.0) (2025-06-15)
+
+### Features
+
+* add iosSyslogFile as a capability ([#2582](https://github.com/appium/appium-xcuitest-driver/issues/2582)) ([43448b4](https://github.com/appium/appium-xcuitest-driver/commit/43448b4a924a5304c947501b7e79a472a2ab6e74))
+
 ## [9.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.0...v9.6.1) (2025-06-12)
 
 ### Miscellaneous Chores
