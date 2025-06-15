@@ -249,7 +249,7 @@ describe('XCUITestDriver - basics -', function () {
 
     it('should start a session, navigate to url, get title', async function () {
       // on some systems (like Travis) it takes a while to load the webview
-      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 1000});
+      const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 10000});
 
       await driver.switchContext(contexts[1].id);
       await driver.navigateTo(GUINEA_PIG_PAGE);
