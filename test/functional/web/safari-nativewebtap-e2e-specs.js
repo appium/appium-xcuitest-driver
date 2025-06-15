@@ -71,13 +71,13 @@ describe('Safari - coordinate conversion -', function () {
       const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
       const driver = await initSession(localSettingsCaps);
 
-      if (
-        util.compareVersions(
-          extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-          '>=',
-          '18.0',
-        )
-      ) {
+      const isPlatformVersionGreaterOrEqualTo = (platformVersion) => util.compareVersions(
+        extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
+        '>=',
+        platformVersion,
+      );
+
+      if (isPlatformVersionGreaterOrEqualTo('18.0')) {
         await driver.execute('mobile: scroll', {direction: 'down'});
         await driver
           .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Apps"`]')
@@ -95,13 +95,7 @@ describe('Safari - coordinate conversion -', function () {
       }
       await driver.$('~CLEAR_HISTORY_AND_DATA').click();
 
-      if (
-        util.compareVersions(
-          extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-          '>=',
-          '18.0',
-        )
-      ) {
+      if (isPlatformVersionGreaterOrEqualTo('18.0')) {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`)
           .click();
@@ -113,13 +107,7 @@ describe('Safari - coordinate conversion -', function () {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`)
           .click();
-      } else if (
-        util.compareVersions(
-          extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-          '>=',
-          '17.0',
-        )
-      ) {
+      } else if (isPlatformVersionGreaterOrEqualTo('17.0')) {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`)
           .click();
@@ -132,13 +120,7 @@ describe('Safari - coordinate conversion -', function () {
           // for iPhone
           await driver.$('~Clear History and Data').click();
         }
-        if (
-          util.compareVersions(
-            extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-            '>=',
-            '16.0',
-          )
-        ) {
+        if (isPlatformVersionGreaterOrEqualTo('16.0')) {
           await driver
             .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]')
             .click();
