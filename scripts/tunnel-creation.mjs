@@ -16,8 +16,8 @@ const log = logger.getLogger('TunnelCreationTest');
 
 /**
  * Update tunnel registry with new tunnel information
- * @param {Array} results - Array of tunnel results
- * @returns {Object} Updated tunnel registry
+ * @type {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
+ * @returns {Promise<import('appium-ios-remotexpc').TunnelRegistry>} Updated tunnel registry
  */
 async function updateTunnelRegistry(results) {
   const now = Date.now();
@@ -167,20 +167,10 @@ function setupCleanupHandlers() {
 }
 
 /**
- * @typedef {Object} SocketInfo
- * @property {Object} server - Server object
- * @property {number} port - Server port
- * @property {Object} deviceInfo - Device information
- * @property {string} deviceInfo.udid - Device UDID
- * @property {string} deviceInfo.address - Device address
- * @property {number} [deviceInfo.rsdPort] - Device RSD port
- */
-
-/**
  * Create tunnel for a single device
- * @param {Object} device - Device object
- * @param {Object} tlsOptions - TLS options
- * @returns {Promise<Object>} Tunnel result
+ * @param {Device} device - Device object
+ * @param {import('tls').ConnectionOptions} tlsOptions - TLS options
+ * @returns {Promise<import('appium-ios-remotexpc').TunnelResult & { socket?: any; socketInfo?: import('appium-ios-remotexpc').SocketInfo }>} Tunnel result
  */
 async function createTunnelForDevice(device, tlsOptions) {
   const udid = device.Properties.SerialNumber;
