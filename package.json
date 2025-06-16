@@ -98,7 +98,8 @@
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
     "teen_process": "^2.2.0",
-    "ws": "^8.13.0"
+    "ws": "^8.13.0",
+    "appium-ios-remotexpc": "file:../appium-ios-remotexpc"
   },
   "scripts": {
     "build": "tsc -b",

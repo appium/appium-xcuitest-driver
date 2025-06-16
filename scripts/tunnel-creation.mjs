@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-
+/**
+ * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
+ * This script demonstrates the tunnel creation workflow for all connected devices
+ */
 import { logger } from '@appium/support';
 import net from 'node:net';
 
@@ -9,7 +12,7 @@ import {
   createLockdownServiceByUDID,
   createUsbmux,
   startCoreDeviceProxy,
-  startTunnelRegistryServer,
+  startTunnelRegistryServer
 } from 'appium-ios-remotexpc';
 
 const log = logger.getLogger('TunnelCreationTest');
@@ -19,10 +22,12 @@ const log = logger.getLogger('TunnelCreationTest');
  * @type {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
  * @returns {Promise<import('appium-ios-remotexpc').TunnelRegistry>} Updated tunnel registry
  */
+
 async function updateTunnelRegistry(results) {
   const now = Date.now();
   const nowISOString = new Date().toISOString();
-
+  
+  // Initialize registry if it doesn't exist
   const registry = {
     tunnels: {},
     metadata: {
@@ -32,6 +37,7 @@ async function updateTunnelRegistry(results) {
     }
   };
 
+  // Update tunnels
   for (const result of results) {
     if (result.success) {
       const udid = result.device.Properties.SerialNumber;
@@ -49,6 +55,7 @@ async function updateTunnelRegistry(results) {
     }
   }
 
+  // Update metadata
   registry.metadata = {
     lastUpdated: nowISOString,
     totalTunnels: Object.keys(registry.tunnels).length,
@@ -63,24 +70,32 @@ const packetStreamServers = new Map();
 
 const deviceInfoMap = new Map();
 
-const INFO_SERVER_PORT = 49152;
-let PACKET_STREAM_BASE_PORT = 50000;
+const INFO_SERVER_PORT = 49160;
+let PACKET_STREAM_BASE_PORT = 50001;
 
 /**
  * Create or get the info server that provides information about all devices
- * @returns {Promise<Object>} Server info object with server and port
+ * @returns {Promise<{server: net.Server, port: number}>} Server info object with server and port
  */
 async function getInfoServer() {
+  // Check if we already have an active server
   const existingServer = activeServers.find((s) => s.port === INFO_SERVER_PORT);
   if (existingServer) {
     return existingServer;
   }
 
+  // Create a new server
   const server = net.createServer();
 
+  // Handle connections
   server.on('connection', (conn) => {
+    // Convert the device info map to an array
     const devices = Array.from(deviceInfoMap.values());
+
+    // Create the response JSON
     const responseJson = JSON.stringify({ devices }, null, 2);
+
+    // Send a proper HTTP response
     const httpResponse = [
       'HTTP/1.1 200 OK',
       'Content-Type: application/json',
@@ -94,7 +109,7 @@ async function getInfoServer() {
     conn.end();
   });
 
-  // Using try/catch instead of Promise constructor with callbacks
+  // Start the server
   try {
     await new Promise((resolve) => {
       server.listen(INFO_SERVER_PORT, '127.0.0.1', resolve);
@@ -103,6 +118,7 @@ async function getInfoServer() {
     throw new Error(`Failed to start server: ${err.message}`);
   }
 
+  // Add to active servers
   const serverInfo = { server, port: INFO_SERVER_PORT };
   activeServers.push(serverInfo);
 
@@ -116,55 +132,80 @@ function setupCleanupHandlers() {
   const cleanup = async (signal) => {
     log.warn(`\nReceived ${signal}. Cleaning up...`);
 
+    // Close all packet stream servers
     if (packetStreamServers.size > 0) {
       log.info(
         `Closing ${packetStreamServers.size} packet stream server(s)...`,
       );
+      const packetStreamClosePromises = [];
       for (const [udid, server] of packetStreamServers) {
         try {
-          await server.stop();
-          log.info(`Closed packet stream server for device ${udid}`);
+          const closePromise = server.stop().then(() => {
+            log.info(`Closed packet stream server for device ${udid}`);
+          }).catch((err) => {
+            log.warn(
+              `Failed to close packet stream server for device ${udid}: ${err}`,
+            );
+          });
+          packetStreamClosePromises.push(closePromise);
         } catch (err) {
           log.warn(
             `Failed to close packet stream server for device ${udid}: ${err}`,
           );
         }
       }
+      await Promise.allSettled(packetStreamClosePromises);
       packetStreamServers.clear();
     }
 
+    // Close all active servers
     if (activeServers.length > 0) {
       log.info(`Closing ${activeServers.length} active server(s)...`);
+      const serverClosePromises = [];
       for (const serverInfo of activeServers) {
         try {
-          serverInfo.server.close();
-          log.info(`Closed server on port ${serverInfo.port}`);
+          const closePromise = new Promise((resolve) => {
+            serverInfo.server.close(() => {
+              log.info(`Closed server on port ${serverInfo.port}`);
+              resolve();
+            });
+          });
+          serverClosePromises.push(closePromise);
         } catch (err) {
           log.warn(`Failed to close server on port ${serverInfo.port}: ${err}`);
         }
       }
+      await Promise.allSettled(serverClosePromises);
+      activeServers.length = 0; // Clear the array
     }
 
     log.info('Cleanup completed. Exiting...');
     process.exit(0);
   };
 
-  process.on('SIGINT', () => cleanup('SIGINT (Ctrl+C)'));
-  process.on('SIGTERM', () => cleanup('SIGTERM'));
-  process.on('SIGHUP', () => cleanup('SIGHUP'));
+  // Handle various termination signals
+  process.on('SIGINT', async () => {
+    await cleanup('SIGINT (Ctrl+C)');
+  });
+  process.on('SIGTERM', async () => {
+    await cleanup('SIGTERM');
+  });
+  process.on('SIGHUP', async () => {
+    await cleanup('SIGHUP');
+  });
 
+  // Handle uncaught exceptions and unhandled rejections
   process.on('uncaughtException', async (error) => {
     log.error('Uncaught Exception:', error);
     await cleanup('Uncaught Exception');
-    process.exit(1);
   });
 
   process.on('unhandledRejection', async (reason, promise) => {
     log.error('Unhandled Rejection at:', promise, 'reason:', reason);
     await cleanup('Unhandled Rejection');
-    process.exit(1);
   });
 }
+
 
 /**
  * Create tunnel for a single device
@@ -174,7 +215,6 @@ function setupCleanupHandlers() {
  */
 async function createTunnelForDevice(device, tlsOptions) {
   const udid = device.Properties.SerialNumber;
-
   try {
     log.info(`\n--- Processing device: ${udid} ---`);
     log.info(`Device ID: ${device.DeviceID}`);
@@ -292,7 +332,6 @@ async function createTunnelForDevice(device, tlsOptions) {
 }
 
 /**
- * Main function
  */
 async function main() {
   setupCleanupHandlers();
@@ -361,7 +400,6 @@ async function main() {
     }
 
     log.info(`\nProcessing ${devicesToProcess.length} device(s)...`);
-
     const results = [];
 
     for (const device of devicesToProcess) {
@@ -384,7 +422,7 @@ async function main() {
     if (successful.length > 0) {
       log.info('\n✅ Successful tunnels:');
       const registry = await updateTunnelRegistry(results);
-      await startTunnelRegistryServer(registry);
+      await startTunnelRegistryServer(registry, 42319);
 
       log.info('\n📁 Tunnel registry API:');
       log.info('   The tunnel registry is now available through the API at:');
@@ -395,11 +433,13 @@ async function main() {
       log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
 
       log.info('\n💡 Example usage:');
-      log.info('   curl http://localhost:42314/remotexpc/tunnels');
-      log.info('   curl http://localhost:42314/remotexpc/tunnels/metadata');
+      log.info('   curl http://localhost:4723/remotexpc/tunnels');
+      log.info('   curl http://localhost:4723/remotexpc/tunnels/metadata');
       if (successful.length > 0) {
         const firstUdid = successful[0].device.Properties.SerialNumber;
-        log.info(`   curl http://localhost:42314/remotexpc/tunnels/${firstUdid}`);
+        log.info(
+          `   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`,
+        );
       }
     }
   } catch (error) {
