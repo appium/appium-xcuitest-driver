@@ -74,11 +74,25 @@ describe('Safari - coordinate conversion -', function () {
       // To open Safari menu in Settings app
       ////
       const openSafariMenuIOS18 = async () => {
-        await driver.execute('mobile: scroll', {direction: 'down'});
+        const windowRect = await driver.getWindowRect();
+        const scrollAction = [
+          {
+            type: 'pointer',
+            id: 'touch',
+            actions: [
+              { type: 'pointerMove', duration: 0, x: windowRect.width / 2, y: windowRect.height * 0.8 },
+              { type: 'pointerDown', button: 0 },
+              { type: 'pause', duration: 500 },
+              { type: 'pointerMove', duration: 0, x: windowRect.width / 2, y: windowRect.height * 0.2 },
+              { type: 'pointerUp', button: 0 },
+            ]
+          }
+        ];
+        await driver.performActions(scrollAction);
         await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`).click();
         // to check the view transition to be completed
         await driver.$(`-ios predicate string:label='Default Apps'`);
-        await driver.execute('mobile: scroll', {direction: 'down'});
+        await driver.performActions(scrollAction);
         await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`).click();
       };
       const openSafariMenuIOS17AndBelow = async () => {
