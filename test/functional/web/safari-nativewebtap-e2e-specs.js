@@ -70,25 +70,29 @@ describe('Safari - coordinate conversion -', function () {
       const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
       const driver = await initSession(localSettingsCaps);
 
-      if (isIosVersionAtLeast('18.0')) {
-        await driver.execute('mobile: scroll', {direction: 'down'});
-        await driver
-          .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Apps"`]')
-          .click();
-        await driver
-          .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "DEfault Apps"`]');
-        await driver.execute('mobile: scroll', {direction: 'down'});
+      ////
+      // To open Safari menu in Settings app
+      ////
+      const openSafariMenuIOS18 = async () => {
+        const appsElementPredicate = `type='XCUIElementTypeStaticText' AND label='Apps'`;
+        await driver.execute('mobile: scroll', {direction: 'down', predicateString: appsElementPredicate});
+        await driver.$(`-ios predicate string:${appsElementPredicate}`).click();
+        // to check the view transition.
+        await driver.$(`-ios predicate string:label='Default Apps'`);
+        const safariPredicate = `type='XCUIElementTypeStaticText' AND label='Safari'`;
+        await driver.execute('mobile: scroll', {direction: 'down', predicateString: safariPredicate});
+        await driver.$(`-ios predicate string:${safariPredicate}`).click();
+      };
+      const openSafariMenuIOS17AndBelow = async () => {
         await driver
           .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')
           .click();
-      } else {
-        await driver
-          .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')
-          .click();
-      }
-      await driver.$('~CLEAR_HISTORY_AND_DATA').click();
+      };
 
-      if (isIosVersionAtLeast('18.0')) {
+      ////
+      // To clear history and data in the safari menue
+      ////
+      const clearHistoryIOS18 = async () => {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`)
           .click();
@@ -100,12 +104,14 @@ describe('Safari - coordinate conversion -', function () {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`)
           .click();
-      } else if (isIosVersionAtLeast('17.0')) {
+      };
+      const clearHistoryIOS17 = async () => {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`)
           .click();
         await driver.$$('~Clear History')[1].click();
-      } else {
+      };
+      const clearHistoryIOS16AndBelow = async () => {
         if ((await driver.$$('~Clear').length) > 0) {
           // for iPad
           await driver.$('~Clear').click();
@@ -118,6 +124,21 @@ describe('Safari - coordinate conversion -', function () {
             .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]')
             .click();
         }
+      };
+
+      if (isIosVersionAtLeast('18.0')) {
+        await openSafariMenuIOS18();
+      } else {
+        await openSafariMenuIOS17AndBelow();
+      }
+      await driver.$('~CLEAR_HISTORY_AND_DATA').click();
+
+      if (isIosVersionAtLeast('18.0')) {
+        await clearHistoryIOS18();
+      } else if (isIosVersionAtLeast('17.0')) {
+        await clearHistoryIOS17();
+      } else {
+        await clearHistoryIOS16AndBelow();
       }
       await deleteSession();
     }
