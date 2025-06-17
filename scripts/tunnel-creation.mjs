@@ -4,7 +4,7 @@
  * This script demonstrates the tunnel creation workflow for all connected devices
  */
 import {logger} from '@appium/support';
-
+import _ from 'lodash';
 import {
   PacketStreamServer,
   TunnelManager,
@@ -66,7 +66,11 @@ async function updateTunnelRegistry(results) {
 
 const packetStreamServers = new Map();
 
+// Default port value, will be updated in main() if --packet-stream-base-port is provided
 let PACKET_STREAM_BASE_PORT = 50000;
+
+// Default port value, will be updated in main() if --tunnel-registry-port is provided
+let TUNNEL_REGISTRY_PORT = 42314;
 /**
  * Setup cleanup handlers for graceful shutdown
  */
@@ -159,7 +163,7 @@ async function createTunnelForDevice(device, tlsOptions) {
 
       log.info(`Packet stream server started on port ${packetStreamPort}`);
     } catch (err) {
-      log.warn(`Failed to start packet stream server: ${err}`);
+      throw new Error(`Failed to start packet stream server: ${err}`);
     }
 
     log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
@@ -170,7 +174,7 @@ async function createTunnelForDevice(device, tlsOptions) {
     }
 
     try {
-      if (socket && typeof socket === 'object' && socket.setNoDelay) {
+      if (_.isFunction(socket?.setNoDelay)) {
         socket.setNoDelay(true);
       }
 
@@ -200,13 +204,7 @@ async function createTunnelForDevice(device, tlsOptions) {
     }
   } catch (error) {
     const errorMessage = `Failed to create tunnel for device ${udid}: ${error}`;
-    log.error(`❌ ${errorMessage}`);
-    return {
-      device,
-      tunnel: {Address: '', RsdPort: 0},
-      success: false,
-      error: errorMessage,
-    };
+    throw new Error(`❌ ${errorMessage}`);
   }
 }
 
@@ -217,7 +215,35 @@ async function main() {
 
   const args = process.argv.slice(2);
   const keepOpenFlag = args.includes('--keep-open') || args.includes('-k');
-  const specificUdid = args.find((arg) => !arg.startsWith('-'));
+  
+  // Extract UDID from command line arguments
+  // If the first argument is provided and is not a flag, use it as the UDID
+  let specificUdid = args.includes('--udid') || args.includes('-u');
+  
+  // Handle packet stream base port
+  let packetStreamBasePortArg = args.find(arg => arg.startsWith('--packet-stream-base-port='));
+  if (packetStreamBasePortArg) {
+    PACKET_STREAM_BASE_PORT = parseInt(packetStreamBasePortArg.split('=')[1], 10);
+    log.info(`Using packet stream base port: ${PACKET_STREAM_BASE_PORT}`);
+  } else {
+    const packetStreamBasePortIndex = args.indexOf('--packet-stream-base-port');
+    if (packetStreamBasePortIndex !== -1 && packetStreamBasePortIndex + 1 < args.length) {
+      PACKET_STREAM_BASE_PORT = parseInt(args[packetStreamBasePortIndex + 1], 10);
+      log.info(`Using packet stream base port: ${PACKET_STREAM_BASE_PORT}`);
+    }
+  }
+
+  let tunnelRegistryPortArg = args.find(arg => arg.startsWith('--tunnel-registry-port='));
+  if (tunnelRegistryPortArg) {
+    TUNNEL_REGISTRY_PORT = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
+    log.info(`Using tunnel registry port: ${TUNNEL_REGISTRY_PORT}`);
+  } else {
+    const tunnelRegistryPortIndex = args.indexOf('--tunnel-registry-port');
+    if (tunnelRegistryPortIndex !== -1 && tunnelRegistryPortIndex + 1 < args.length) {
+      TUNNEL_REGISTRY_PORT = parseInt(args[tunnelRegistryPortIndex + 1], 10);
+      log.info(`Using tunnel registry port: ${TUNNEL_REGISTRY_PORT}`);
+    }
+  }
 
   if (specificUdid) {
     log.info(`Starting tunnel creation test for specific UDID: ${specificUdid}`);
@@ -296,7 +322,7 @@ async function main() {
     if (successful.length > 0) {
       log.info('\n✅ Successful tunnels:');
       const registry = await updateTunnelRegistry(results);
-      await startTunnelRegistryServer(registry);
+      await startTunnelRegistryServer(registry, TUNNEL_REGISTRY_PORT);
 
       log.info('\n📁 Tunnel registry API:');
       log.info('   The tunnel registry is now available through the API at:');
