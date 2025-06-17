@@ -221,7 +221,6 @@ async function main() {
   tunnelCreator.setupCleanupHandlers();
 
   const args = process.argv.slice(2);
-  const keepOpenFlag = args.includes('--keep-open') || args.includes('-k');
   
   // Extract UDID from command line arguments
   // If the first argument is provided and is not a flag, use it as the UDID
@@ -256,10 +255,6 @@ async function main() {
     log.info(`Starting tunnel creation test for specific UDID: ${specificUdid}`);
   } else {
     log.info('Starting tunnel creation test for all connected devices');
-  }
-
-  if (keepOpenFlag) {
-    log.info('Running in "keep connections open" mode for lsof inspection');
   }
 
   try {
