@@ -121,7 +121,7 @@ jobs:
           failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
           threshold=$(( (failures + errors) * 100 / (tests - skipped) ))
           cat "$RESULTS_XML"
-          if [[ $threshold -gt 8 ]]; then
+          if [[ $threshold -gt 0 ]]; then
             echo "${threshold}% of tests failed"
             exit 1
           else

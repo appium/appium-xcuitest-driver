@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
-import {SAFARI_CAPS, amendCapabilities} from '../desired';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {
   spinTitle,
   spinTitleEquals,
@@ -51,6 +51,10 @@ describe('Safari - basics -', function () {
     });
 
     it('should start a session with default init', async function () {
+      if (process.env.CI && isIosVersionBelow('18.0')) {
+        this.skip();
+      }
+
       driver = await initSession(
         amendCapabilities(SAFARI_CAPS, {
           'appium:noReset': false,

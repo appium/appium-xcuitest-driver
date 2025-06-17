@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.6.1",
+  "version": "9.7.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -99,7 +99,7 @@
     "source-map-support": "^0.x",
     "teen_process": "^2.2.0",
     "ws": "^8.13.0",
-    "appium-ios-remotexpc": "file:../appium-ios-remotexpc"
+    "winston": "3.17.0"
   },
   "scripts": {
     "build": "tsc -b",
