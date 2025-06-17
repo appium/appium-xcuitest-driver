@@ -221,13 +221,13 @@ async function main() {
   tunnelCreator.setupCleanupHandlers();
 
   const args = process.argv.slice(2);
-  
+
   // Extract UDID from command line arguments
   // If the first argument is provided and is not a flag, use it as the UDID
   let specificUdid = args.includes('--udid') || args.includes('-u');
-  
+
   // Handle packet stream base port
-  let packetStreamBasePortArg = args.find(arg => arg.startsWith('--packet-stream-base-port='));
+  let packetStreamBasePortArg = args.find((arg) => arg.startsWith('--packet-stream-base-port='));
   if (packetStreamBasePortArg) {
     tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePortArg.split('=')[1], 10);
     log.info(`Using packet stream base port: ${tunnelCreator.packetStreamBasePort}`);
@@ -239,7 +239,7 @@ async function main() {
     }
   }
 
-  let tunnelRegistryPortArg = args.find(arg => arg.startsWith('--tunnel-registry-port='));
+  let tunnelRegistryPortArg = args.find((arg) => arg.startsWith('--tunnel-registry-port='));
   if (tunnelRegistryPortArg) {
     tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
     log.info(`Using tunnel registry port: ${tunnelCreator.tunnelRegistryPort}`);
