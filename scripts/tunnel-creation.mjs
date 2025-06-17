@@ -17,201 +17,208 @@ import {
 const log = logger.getLogger('TunnelCreation');
 
 /**
- * Update tunnel registry with new tunnel information
- * @type {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
- * @returns {Promise<import('appium-ios-remotexpc').TunnelRegistry>} Updated tunnel registry
+ * TunnelCreator class for managing tunnel creation and related operations
  */
+class TunnelCreator {
+  constructor() {
+    this.packetStreamServers = new Map();
+    // Default port value, will be updated in main() if --packet-stream-base-port is provided
+    this.packetStreamBasePort = 50000;
+    // Default port value, will be updated in main() if --tunnel-registry-port is provided
+    this.tunnelRegistryPort = 42314;
+  }
 
-async function updateTunnelRegistry(results) {
-  const now = Date.now();
-  const nowISOString = new Date().toISOString();
+  /**
+   * Update tunnel registry with new tunnel information
+   * @type {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
+   * @returns {Promise<import('appium-ios-remotexpc').TunnelRegistry>} Updated tunnel registry
+   */
+  async updateTunnelRegistry(results) {
+    const now = Date.now();
+    const nowISOString = new Date().toISOString();
 
-  // Initialize registry if it doesn't exist
-  const registry = {
-    tunnels: {},
-    metadata: {
+    // Initialize registry if it doesn't exist
+    const registry = {
+      tunnels: {},
+      metadata: {
+        lastUpdated: nowISOString,
+        totalTunnels: 0,
+        activeTunnels: 0,
+      },
+    };
+
+    // Update tunnels
+    for (const result of results) {
+      if (result.success) {
+        const udid = result.device.Properties.SerialNumber;
+        registry.tunnels[udid] = {
+          udid,
+          deviceId: result.device.DeviceID,
+          address: result.tunnel.Address,
+          rsdPort: result.tunnel.RsdPort ?? 0,
+          packetStreamPort: result.packetStreamPort,
+          connectionType: result.device.Properties.ConnectionType,
+          productId: result.device.Properties.ProductID,
+          createdAt: registry.tunnels[udid]?.createdAt ?? now,
+          lastUpdated: now,
+        };
+      }
+    }
+
+    // Update metadata
+    registry.metadata = {
       lastUpdated: nowISOString,
-      totalTunnels: 0,
-      activeTunnels: 0,
-    },
-  };
+      totalTunnels: Object.keys(registry.tunnels).length,
+      activeTunnels: Object.keys(registry.tunnels).length, // Assuming all are active for now
+    };
 
-  // Update tunnels
-  for (const result of results) {
-    if (result.success) {
-      const udid = result.device.Properties.SerialNumber;
-      registry.tunnels[udid] = {
-        udid,
-        deviceId: result.device.DeviceID,
-        address: result.tunnel.Address,
-        rsdPort: result.tunnel.RsdPort ?? 0,
-        packetStreamPort: result.packetStreamPort,
-        connectionType: result.device.Properties.ConnectionType,
-        productId: result.device.Properties.ProductID,
-        createdAt: registry.tunnels[udid]?.createdAt ?? now,
-        lastUpdated: now,
-      };
-    }
+    return registry;
   }
 
-  // Update metadata
-  registry.metadata = {
-    lastUpdated: nowISOString,
-    totalTunnels: Object.keys(registry.tunnels).length,
-    activeTunnels: Object.keys(registry.tunnels).length, // Assuming all are active for now
-  };
+  /**
+   * Setup cleanup handlers for graceful shutdown
+   */
+  setupCleanupHandlers() {
+    const cleanup = async (signal) => {
+      log.warn(`\nReceived ${signal}. Cleaning up...`);
 
-  return registry;
-}
-
-const packetStreamServers = new Map();
-
-// Default port value, will be updated in main() if --packet-stream-base-port is provided
-let PACKET_STREAM_BASE_PORT = 50000;
-
-// Default port value, will be updated in main() if --tunnel-registry-port is provided
-let TUNNEL_REGISTRY_PORT = 42314;
-/**
- * Setup cleanup handlers for graceful shutdown
- */
-function setupCleanupHandlers() {
-  const cleanup = async (signal) => {
-    log.warn(`\nReceived ${signal}. Cleaning up...`);
-
-    // Close all packet stream servers
-    if (packetStreamServers.size > 0) {
-      log.info(`Closing ${packetStreamServers.size} packet stream server(s)...`);
-      for (const [udid, server] of packetStreamServers) {
-        try {
-          await server.stop();
-          log.info(`Closed packet stream server for device ${udid}`);
-        } catch (err) {
-          log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
+      // Close all packet stream servers
+      if (this.packetStreamServers.size > 0) {
+        log.info(`Closing ${this.packetStreamServers.size} packet stream server(s)...`);
+        for (const [udid, server] of this.packetStreamServers) {
+          try {
+            await server.stop();
+            log.info(`Closed packet stream server for device ${udid}`);
+          } catch (err) {
+            log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
+          }
         }
-      }
-      packetStreamServers.clear();
-    }
-
-    log.info('Cleanup completed. Exiting...');
-    process.exit(0);
-  };
-
-  // Handle various termination signals
-  process.on('SIGINT', () => cleanup('SIGINT (Ctrl+C)'));
-  process.on('SIGTERM', () => cleanup('SIGTERM'));
-  process.on('SIGHUP', () => cleanup('SIGHUP'));
-
-  // Handle uncaught exceptions and unhandled rejections
-  process.on('uncaughtException', async (error) => {
-    log.error('Uncaught Exception:', error);
-    await cleanup('Uncaught Exception');
-    process.exit(1);
-  });
-
-  process.on('unhandledRejection', async (reason, promise) => {
-    log.error('Unhandled Rejection at:', promise, 'reason:', reason);
-    await cleanup('Unhandled Rejection');
-    process.exit(1);
-  });
-}
-
-/**
- * Create tunnel for a single device
- * @param {Device} device - Device object
- * @param {import('tls').ConnectionOptions} tlsOptions - TLS options
- * @returns {Promise<import('appium-ios-remotexpc').TunnelResult & { socket?: any; socketInfo?: import('appium-ios-remotexpc').SocketInfo }>} Tunnel result
- */
-
-async function createTunnelForDevice(device, tlsOptions) {
-  const udid = device.Properties.SerialNumber;
-
-  try {
-    log.info(`\n--- Processing device: ${udid} ---`);
-    log.info(`Device ID: ${device.DeviceID}`);
-    log.info(`Connection Type: ${device.Properties.ConnectionType}`);
-    log.info(`Product ID: ${device.Properties.ProductID}`);
-
-    log.info('Creating lockdown service...');
-    const {lockdownService, device: lockdownDevice} = await createLockdownServiceByUDID(udid);
-    log.info(`Lockdown service created for device: ${lockdownDevice.Properties.SerialNumber}`);
-
-    log.info('Starting CoreDeviceProxy...');
-    const {socket} = await startCoreDeviceProxy(
-      lockdownService,
-      lockdownDevice.DeviceID,
-      lockdownDevice.Properties.SerialNumber,
-      tlsOptions,
-    );
-    log.info('CoreDeviceProxy started successfully');
-
-    log.info('Creating tunnel...');
-    const tunnel = await TunnelManager.getTunnel(socket);
-    log.info(`Tunnel created for address: ${tunnel.Address} with RsdPort: ${tunnel.RsdPort}`);
-
-    let packetStreamPort;
-    try {
-      packetStreamPort = PACKET_STREAM_BASE_PORT++;
-      const packetStreamServer = new PacketStreamServer(packetStreamPort);
-      await packetStreamServer.start();
-
-      const consumer = packetStreamServer.getPacketConsumer();
-      if (consumer) {
-        tunnel.addPacketConsumer(consumer);
+        this.packetStreamServers.clear();
       }
 
-      packetStreamServers.set(udid, packetStreamServer);
+      log.info('Cleanup completed. Exiting...');
+      process.exit(0);
+    };
 
-      log.info(`Packet stream server started on port ${packetStreamPort}`);
-    } catch (err) {
-      throw new Error(`Failed to start packet stream server: ${err}`);
-    }
+    // Handle various termination signals
+    process.on('SIGINT', () => cleanup('SIGINT (Ctrl+C)'));
+    process.on('SIGTERM', () => cleanup('SIGTERM'));
+    process.on('SIGHUP', () => cleanup('SIGHUP'));
 
-    log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
-    log.info(`   Tunnel Address: ${tunnel.Address}`);
-    log.info(`   Tunnel RsdPort: ${tunnel.RsdPort}`);
-    if (packetStreamPort) {
-      log.info(`   Packet Stream Port: ${packetStreamPort}`);
-    }
+    // Handle uncaught exceptions and unhandled rejections
+    process.on('uncaughtException', async (error) => {
+      log.error('Uncaught Exception:', error);
+      await cleanup('Uncaught Exception');
+      process.exit(1);
+    });
+
+    process.on('unhandledRejection', async (reason, promise) => {
+      log.error('Unhandled Rejection at:', promise, 'reason:', reason);
+      await cleanup('Unhandled Rejection');
+      process.exit(1);
+    });
+  }
+
+  /**
+   * Create tunnel for a single device
+   * @param {Device} device - Device object
+   * @param {import('tls').ConnectionOptions} tlsOptions - TLS options
+   * @returns {Promise<import('appium-ios-remotexpc').TunnelResult & { socket?: any; socketInfo?: import('appium-ios-remotexpc').SocketInfo }>} Tunnel result
+   */
+  async createTunnelForDevice(device, tlsOptions) {
+    const udid = device.Properties.SerialNumber;
 
     try {
-      if (_.isFunction(socket?.setNoDelay)) {
-        socket.setNoDelay(true);
+      log.info(`\n--- Processing device: ${udid} ---`);
+      log.info(`Device ID: ${device.DeviceID}`);
+      log.info(`Connection Type: ${device.Properties.ConnectionType}`);
+      log.info(`Product ID: ${device.Properties.ProductID}`);
+
+      log.info('Creating lockdown service...');
+      const {lockdownService, device: lockdownDevice} = await createLockdownServiceByUDID(udid);
+      log.info(`Lockdown service created for device: ${lockdownDevice.Properties.SerialNumber}`);
+
+      log.info('Starting CoreDeviceProxy...');
+      const {socket} = await startCoreDeviceProxy(
+        lockdownService,
+        lockdownDevice.DeviceID,
+        lockdownDevice.Properties.SerialNumber,
+        tlsOptions,
+      );
+      log.info('CoreDeviceProxy started successfully');
+
+      log.info('Creating tunnel...');
+      const tunnel = await TunnelManager.getTunnel(socket);
+      log.info(`Tunnel created for address: ${tunnel.Address} with RsdPort: ${tunnel.RsdPort}`);
+
+      let packetStreamPort;
+      try {
+        packetStreamPort = this.packetStreamBasePort++;
+        const packetStreamServer = new PacketStreamServer(packetStreamPort);
+        await packetStreamServer.start();
+
+        const consumer = packetStreamServer.getPacketConsumer();
+        if (consumer) {
+          tunnel.addPacketConsumer(consumer);
+        }
+
+        this.packetStreamServers.set(udid, packetStreamServer);
+
+        log.info(`Packet stream server started on port ${packetStreamPort}`);
+      } catch (err) {
+        throw new Error(`Failed to start packet stream server: ${err}`);
       }
 
-      return {
-        device,
-        tunnel: {
-          Address: tunnel.Address,
-          RsdPort: tunnel.RsdPort,
-        },
-        packetStreamPort,
-        success: true,
-        socket,
-      };
-    } catch (err) {
-      log.warn(`Could not add device to info server: ${err}`);
+      log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
+      log.info(`   Tunnel Address: ${tunnel.Address}`);
+      log.info(`   Tunnel RsdPort: ${tunnel.RsdPort}`);
+      if (packetStreamPort) {
+        log.info(`   Packet Stream Port: ${packetStreamPort}`);
+      }
 
-      return {
-        device,
-        tunnel: {
-          Address: tunnel.Address,
-          RsdPort: tunnel.RsdPort,
-        },
-        packetStreamPort,
-        success: true,
-        socket,
-      };
+      try {
+        if (_.isFunction(socket?.setNoDelay)) {
+          socket.setNoDelay(true);
+        }
+
+        return {
+          device,
+          tunnel: {
+            Address: tunnel.Address,
+            RsdPort: tunnel.RsdPort,
+          },
+          packetStreamPort,
+          success: true,
+          socket,
+        };
+      } catch (err) {
+        log.warn(`Could not add device to info server: ${err}`);
+
+        return {
+          device,
+          tunnel: {
+            Address: tunnel.Address,
+            RsdPort: tunnel.RsdPort,
+          },
+          packetStreamPort,
+          success: true,
+          socket,
+        };
+      }
+    } catch (error) {
+      const errorMessage = `Failed to create tunnel for device ${udid}: ${error}`;
+      throw new Error(`❌ ${errorMessage}`);
     }
-  } catch (error) {
-    const errorMessage = `Failed to create tunnel for device ${udid}: ${error}`;
-    throw new Error(`❌ ${errorMessage}`);
   }
 }
+
+// Create an instance of TunnelCreator
+const tunnelCreator = new TunnelCreator();
 
 /**
  */
 async function main() {
-  setupCleanupHandlers();
+  tunnelCreator.setupCleanupHandlers();
 
   const args = process.argv.slice(2);
   const keepOpenFlag = args.includes('--keep-open') || args.includes('-k');
@@ -223,25 +230,25 @@ async function main() {
   // Handle packet stream base port
   let packetStreamBasePortArg = args.find(arg => arg.startsWith('--packet-stream-base-port='));
   if (packetStreamBasePortArg) {
-    PACKET_STREAM_BASE_PORT = parseInt(packetStreamBasePortArg.split('=')[1], 10);
-    log.info(`Using packet stream base port: ${PACKET_STREAM_BASE_PORT}`);
+    tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePortArg.split('=')[1], 10);
+    log.info(`Using packet stream base port: ${tunnelCreator.packetStreamBasePort}`);
   } else {
     const packetStreamBasePortIndex = args.indexOf('--packet-stream-base-port');
     if (packetStreamBasePortIndex !== -1 && packetStreamBasePortIndex + 1 < args.length) {
-      PACKET_STREAM_BASE_PORT = parseInt(args[packetStreamBasePortIndex + 1], 10);
-      log.info(`Using packet stream base port: ${PACKET_STREAM_BASE_PORT}`);
+      tunnelCreator.packetStreamBasePort = parseInt(args[packetStreamBasePortIndex + 1], 10);
+      log.info(`Using packet stream base port: ${tunnelCreator.packetStreamBasePort}`);
     }
   }
 
   let tunnelRegistryPortArg = args.find(arg => arg.startsWith('--tunnel-registry-port='));
   if (tunnelRegistryPortArg) {
-    TUNNEL_REGISTRY_PORT = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
-    log.info(`Using tunnel registry port: ${TUNNEL_REGISTRY_PORT}`);
+    tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
+    log.info(`Using tunnel registry port: ${tunnelCreator.tunnelRegistryPort}`);
   } else {
     const tunnelRegistryPortIndex = args.indexOf('--tunnel-registry-port');
     if (tunnelRegistryPortIndex !== -1 && tunnelRegistryPortIndex + 1 < args.length) {
-      TUNNEL_REGISTRY_PORT = parseInt(args[tunnelRegistryPortIndex + 1], 10);
-      log.info(`Using tunnel registry port: ${TUNNEL_REGISTRY_PORT}`);
+      tunnelCreator.tunnelRegistryPort = parseInt(args[tunnelRegistryPortIndex + 1], 10);
+      log.info(`Using tunnel registry port: ${tunnelCreator.tunnelRegistryPort}`);
     }
   }
 
@@ -303,7 +310,7 @@ async function main() {
     const results = [];
 
     for (const device of devicesToProcess) {
-      const result = await createTunnelForDevice(device, tlsOptions);
+      const result = await tunnelCreator.createTunnelForDevice(device, tlsOptions);
       results.push(result);
 
       if (devicesToProcess.length > 1) {
@@ -321,20 +328,16 @@ async function main() {
 
     if (successful.length > 0) {
       log.info('\n✅ Successful tunnels:');
-      const registry = await updateTunnelRegistry(results);
-      await startTunnelRegistryServer(registry, TUNNEL_REGISTRY_PORT);
+      const registry = await tunnelCreator.updateTunnelRegistry(results);
+      await startTunnelRegistryServer(registry, tunnelCreator.tunnelRegistryPort);
 
       log.info('\n📁 Tunnel registry API:');
       log.info('   The tunnel registry is now available through the API at:');
-      log.info('   http://localhost:42314/remotexpc/tunnels');
+      log.info(`   http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels`);
       log.info('\n   Available endpoints:');
       log.info('   - GET /remotexpc/tunnels - List all tunnels');
       log.info('   - GET /remotexpc/tunnels/:udid - Get tunnel by UDID');
       log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
-
-      log.info('\n💡 Example usage:');
-      log.info('   curl http://localhost:4723/remotexpc/tunnels');
-      log.info('   curl http://localhost:4723/remotexpc/tunnels/metadata');
       if (successful.length > 0) {
         const firstUdid = successful[0].device.Properties.SerialNumber;
         log.info(`   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`);
