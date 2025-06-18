@@ -5,6 +5,7 @@
  */
 import {logger} from '@appium/support';
 import _ from 'lodash';
+/* eslint-disable import/no-unresolved */
 import {
   PacketStreamServer,
   TunnelManager,
@@ -21,11 +22,11 @@ const log = logger.getLogger('TunnelCreation');
  */
 class TunnelCreator {
   constructor() {
-    this.packetStreamServers = new Map();
+    this._packetStreamServers = new Map();
     // Default port value, will be updated in main() if --packet-stream-base-port is provided
-    this.packetStreamBasePort = 50000;
+    this._packetStreamBasePort = 50000;
     // Default port value, will be updated in main() if --tunnel-registry-port is provided
-    this.tunnelRegistryPort = 42314;
+    this._tunnelRegistryPort = 42314;
   }
 
   /**
@@ -83,9 +84,9 @@ class TunnelCreator {
       log.warn(`\nReceived ${signal}. Cleaning up...`);
 
       // Close all packet stream servers
-      if (this.packetStreamServers.size > 0) {
-        log.info(`Closing ${this.packetStreamServers.size} packet stream server(s)...`);
-        for (const [udid, server] of this.packetStreamServers) {
+      if (this._packetStreamServers.size > 0) {
+        log.info(`Closing ${this._packetStreamServers.size} packet stream server(s)...`);
+        for (const [udid, server] of this._packetStreamServers) {
           try {
             await server.stop();
             log.info(`Closed packet stream server for device ${udid}`);
@@ -93,7 +94,7 @@ class TunnelCreator {
             log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
           }
         }
-        this.packetStreamServers.clear();
+        this._packetStreamServers.clear();
       }
 
       log.info('Cleanup completed. Exiting...');
@@ -152,22 +153,18 @@ class TunnelCreator {
       log.info(`Tunnel created for address: ${tunnel.Address} with RsdPort: ${tunnel.RsdPort}`);
 
       let packetStreamPort;
-      try {
-        packetStreamPort = this.packetStreamBasePort++;
-        const packetStreamServer = new PacketStreamServer(packetStreamPort);
-        await packetStreamServer.start();
+      packetStreamPort = this._packetStreamBasePort++;
+      const packetStreamServer = new PacketStreamServer(packetStreamPort);
+      await packetStreamServer.start();
 
-        const consumer = packetStreamServer.getPacketConsumer();
-        if (consumer) {
-          tunnel.addPacketConsumer(consumer);
-        }
-
-        this.packetStreamServers.set(udid, packetStreamServer);
-
-        log.info(`Packet stream server started on port ${packetStreamPort}`);
-      } catch (err) {
-        throw new Error(`Failed to start packet stream server: ${err}`);
+      const consumer = packetStreamServer.getPacketConsumer();
+      if (consumer) {
+        tunnel.addPacketConsumer(consumer);
       }
+
+      this._packetStreamServers.set(udid, packetStreamServer);
+
+      log.info(`Packet stream server started on port ${packetStreamPort}`);
 
       log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
       log.info(`   Tunnel Address: ${tunnel.Address}`);
@@ -212,12 +209,11 @@ class TunnelCreator {
   }
 }
 
-// Create an instance of TunnelCreator
-const tunnelCreator = new TunnelCreator();
-
 /**
  */
 async function main() {
+  // Create an instance of TunnelCreator
+  const tunnelCreator = new TunnelCreator();
   tunnelCreator.setupCleanupHandlers();
 
   const args = process.argv.slice(2);
@@ -229,25 +225,25 @@ async function main() {
   // Handle packet stream base port
   let packetStreamBasePortArg = args.find((arg) => arg.startsWith('--packet-stream-base-port='));
   if (packetStreamBasePortArg) {
-    tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePortArg.split('=')[1], 10);
-    log.info(`Using packet stream base port: ${tunnelCreator.packetStreamBasePort}`);
+    tunnelCreator._packetStreamBasePort = parseInt(packetStreamBasePortArg.split('=')[1], 10);
+    log.info(`Using packet stream base port: ${tunnelCreator._packetStreamBasePort}`);
   } else {
     const packetStreamBasePortIndex = args.indexOf('--packet-stream-base-port');
     if (packetStreamBasePortIndex !== -1 && packetStreamBasePortIndex + 1 < args.length) {
-      tunnelCreator.packetStreamBasePort = parseInt(args[packetStreamBasePortIndex + 1], 10);
-      log.info(`Using packet stream base port: ${tunnelCreator.packetStreamBasePort}`);
+      tunnelCreator._packetStreamBasePort = parseInt(args[packetStreamBasePortIndex + 1], 10);
+      log.info(`Using packet stream base port: ${tunnelCreator._packetStreamBasePort}`);
     }
   }
 
   let tunnelRegistryPortArg = args.find((arg) => arg.startsWith('--tunnel-registry-port='));
   if (tunnelRegistryPortArg) {
-    tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
-    log.info(`Using tunnel registry port: ${tunnelCreator.tunnelRegistryPort}`);
+    tunnelCreator._tunnelRegistryPort = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
+    log.info(`Using tunnel registry port: ${tunnelCreator._tunnelRegistryPort}`);
   } else {
     const tunnelRegistryPortIndex = args.indexOf('--tunnel-registry-port');
     if (tunnelRegistryPortIndex !== -1 && tunnelRegistryPortIndex + 1 < args.length) {
-      tunnelCreator.tunnelRegistryPort = parseInt(args[tunnelRegistryPortIndex + 1], 10);
-      log.info(`Using tunnel registry port: ${tunnelCreator.tunnelRegistryPort}`);
+      tunnelCreator._tunnelRegistryPort = parseInt(args[tunnelRegistryPortIndex + 1], 10);
+      log.info(`Using tunnel registry port: ${tunnelCreator._tunnelRegistryPort}`);
     }
   }
 
@@ -257,23 +253,22 @@ async function main() {
     log.info('Starting tunnel creation test for all connected devices');
   }
 
+  /** @type {import('tls').ConnectionOptions} */
+  const tlsOptions = {
+    rejectUnauthorized: false,
+    minVersion: 'TLSv1.2',
+  };
+
+  log.info('Connecting to usbmuxd...');
+  const usbmux = await createUsbmux();
+
   try {
-    const tlsOptions = {
-      rejectUnauthorized: false,
-      minVersion: 'TLSv1.2',
-    };
-
-    log.info('Connecting to usbmuxd...');
-    const usbmux = await createUsbmux();
-
     log.info('Listing all connected devices...');
     const devices = await usbmux.listDevices();
 
-    await usbmux.close();
-
     if (devices.length === 0) {
       log.warn('No devices found. Make sure iOS devices are connected and trusted.');
-      process.exit(0);
+      return;
     }
 
     log.info(`Found ${devices.length} connected device(s):`);
@@ -302,15 +297,12 @@ async function main() {
 
     log.info(`\nProcessing ${devicesToProcess.length} device(s)...`);
 
+    /** @type {import('appium-ios-remotexpc').TunnelResult[]} */
     const results = [];
 
     for (const device of devicesToProcess) {
       const result = await tunnelCreator.createTunnelForDevice(device, tlsOptions);
       results.push(result);
-
-      if (devicesToProcess.length > 1) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
     }
 
     log.info('\n=== TUNNEL CREATION SUMMARY ===');
@@ -324,11 +316,11 @@ async function main() {
     if (successful.length > 0) {
       log.info('\n✅ Successful tunnels:');
       const registry = await tunnelCreator.updateTunnelRegistry(results);
-      await startTunnelRegistryServer(registry, tunnelCreator.tunnelRegistryPort);
+      await startTunnelRegistryServer(registry, tunnelCreator._tunnelRegistryPort);
 
       log.info('\n📁 Tunnel registry API:');
       log.info('   The tunnel registry is now available through the API at:');
-      log.info(`   http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels`);
+      log.info(`   http://localhost:${tunnelCreator._tunnelRegistryPort}/remotexpc/tunnels`);
       log.info('\n   Available endpoints:');
       log.info('   - GET /remotexpc/tunnels - List all tunnels');
       log.info('   - GET /remotexpc/tunnels/:udid - Get tunnel by UDID');
@@ -338,14 +330,9 @@ async function main() {
         log.info(`   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`);
       }
     }
-  } catch (error) {
-    log.error(`Error during tunnel creation test: ${error}`);
-    process.exit(1);
+  } finally {
+    await usbmux.close();
   }
 }
 
-// Run the main function
-main().catch(async (error) => {
-  log.error(`Fatal error: ${error}`);
-  process.exit(1);
-});
+(async () => await main())();
