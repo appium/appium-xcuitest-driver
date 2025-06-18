@@ -1,7 +1,7 @@
 import {amendCapabilities, FACEIDAPP_CAPS} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import B from 'bluebird';
-import {killAllSimulators} from 'appium-ios-simulator';
+import {killAllSimulators} from '../helpers/simulator';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 import {waitForCondition} from 'asyncbox';
 
