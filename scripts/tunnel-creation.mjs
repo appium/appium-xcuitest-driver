@@ -234,7 +234,7 @@ class TunnelCreator {
     let devicesToProcess = devices;
     if (specificUdid) {
       devicesToProcess = devices.filter(
-        (device) => device.Properties.SerialNumber === specificUdid
+        (device) => device.Properties.SerialNumber === specificUdid,
       );
 
       if (devicesToProcess.length === 0) {
@@ -339,7 +339,7 @@ async function main() {
     tunnelCreator.packetStreamBasePort = port;
   });
 
-  // Parse tunnel registry port  
+  // Parse tunnel registry port
   parsePortArg(args, '--tunnel-registry-port', (port) => {
     tunnelCreator.tunnelRegistryPort = port;
   });
@@ -351,7 +351,7 @@ async function main() {
     throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
   }
 
-  /** @type {import('tls').ConnectionOptions} */  
+  /** @type {import('tls').ConnectionOptions} */
   const tlsOptions = {
     rejectUnauthorized: false,
     minVersion: 'TLSv1.2',
