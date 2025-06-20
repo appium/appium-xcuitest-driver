@@ -99,7 +99,8 @@
     "source-map-support": "^0.x",
     "teen_process": "^2.2.0",
     "ws": "^8.13.0",
-    "winston": "3.17.0"
+    "winston": "3.17.0",
+    "@appium/strongbox": "^0.x"
   },
   "scripts": {
     "build": "tsc -b",

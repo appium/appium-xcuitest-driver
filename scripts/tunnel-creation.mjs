@@ -15,6 +15,8 @@ import {
   startTunnelRegistryServer,
 } from 'appium-ios-remotexpc';
 
+import {strongbox} from '@appium/strongbox';
+
 const log = logger.getLogger('TunnelCreation');
 
 /**
@@ -245,6 +247,14 @@ async function main() {
       tunnelCreator._tunnelRegistryPort = parseInt(args[tunnelRegistryPortIndex + 1], 10);
       log.info(`Using tunnel registry port: ${tunnelCreator._tunnelRegistryPort}`);
     }
+  }
+
+  const box = strongbox('appium-xcuitest-driver');
+  try {
+    await box.createItemWithValue('tunnelRegistryPort', String(tunnelCreator._tunnelRegistryPort),
+    );
+  } catch (error) {
+    throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
   }
 
   if (specificUdid) {
