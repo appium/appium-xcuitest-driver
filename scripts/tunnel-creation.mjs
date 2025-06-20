@@ -18,6 +18,8 @@ import {
 import {strongbox} from '@appium/strongbox';
 
 const log = logger.getLogger('TunnelCreation');
+const APPIUM_XCUITEST_DRIVER = 'appium-xcuitest-driver';
+const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
 
 /**
  * TunnelCreator class for managing tunnel creation and related operations
@@ -29,6 +31,22 @@ class TunnelCreator {
     this._packetStreamBasePort = 50000;
     // Default port value, will be updated in main() if --tunnel-registry-port is provided
     this._tunnelRegistryPort = 42314;
+  }
+
+  get packetStreamBasePort() {
+    return this._packetStreamBasePort;
+  }
+
+  set packetStreamBasePort(port) {
+    this._packetStreamBasePort = port;
+  }
+
+  get tunnelRegistryPort() {
+    return this._tunnelRegistryPort;
+  }
+
+  set tunnelRegistryPort(port) {
+    this._tunnelRegistryPort = port;
   }
 
   /**
@@ -131,148 +149,72 @@ class TunnelCreator {
   async createTunnelForDevice(device, tlsOptions) {
     const udid = device.Properties.SerialNumber;
 
-    try {
-      log.info(`\n--- Processing device: ${udid} ---`);
-      log.info(`Device ID: ${device.DeviceID}`);
-      log.info(`Connection Type: ${device.Properties.ConnectionType}`);
-      log.info(`Product ID: ${device.Properties.ProductID}`);
+    log.info(`\n--- Processing device: ${udid} ---`);
+    log.info(`Device ID: ${device.DeviceID}`);
+    log.info(`Connection Type: ${device.Properties.ConnectionType}`);
+    log.info(`Product ID: ${device.Properties.ProductID}`);
 
-      log.info('Creating lockdown service...');
-      const {lockdownService, device: lockdownDevice} = await createLockdownServiceByUDID(udid);
-      log.info(`Lockdown service created for device: ${lockdownDevice.Properties.SerialNumber}`);
+    log.info('Creating lockdown service...');
+    const {lockdownService, device: lockdownDevice} = await createLockdownServiceByUDID(udid);
+    log.info(`Lockdown service created for device: ${lockdownDevice.Properties.SerialNumber}`);
 
-      log.info('Starting CoreDeviceProxy...');
-      const {socket} = await startCoreDeviceProxy(
-        lockdownService,
-        lockdownDevice.DeviceID,
-        lockdownDevice.Properties.SerialNumber,
-        tlsOptions,
-      );
-      log.info('CoreDeviceProxy started successfully');
-
-      log.info('Creating tunnel...');
-      const tunnel = await TunnelManager.getTunnel(socket);
-      log.info(`Tunnel created for address: ${tunnel.Address} with RsdPort: ${tunnel.RsdPort}`);
-
-      let packetStreamPort;
-      packetStreamPort = this._packetStreamBasePort++;
-      const packetStreamServer = new PacketStreamServer(packetStreamPort);
-      await packetStreamServer.start();
-
-      const consumer = packetStreamServer.getPacketConsumer();
-      if (consumer) {
-        tunnel.addPacketConsumer(consumer);
-      }
-
-      this._packetStreamServers.set(udid, packetStreamServer);
-
-      log.info(`Packet stream server started on port ${packetStreamPort}`);
-
-      log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
-      log.info(`   Tunnel Address: ${tunnel.Address}`);
-      log.info(`   Tunnel RsdPort: ${tunnel.RsdPort}`);
-      if (packetStreamPort) {
-        log.info(`   Packet Stream Port: ${packetStreamPort}`);
-      }
-
-      try {
-        if (_.isFunction(socket?.setNoDelay)) {
-          socket.setNoDelay(true);
-        }
-
-        return {
-          device,
-          tunnel: {
-            Address: tunnel.Address,
-            RsdPort: tunnel.RsdPort,
-          },
-          packetStreamPort,
-          success: true,
-          socket,
-        };
-      } catch (err) {
-        log.warn(`Could not add device to info server: ${err}`);
-
-        return {
-          device,
-          tunnel: {
-            Address: tunnel.Address,
-            RsdPort: tunnel.RsdPort,
-          },
-          packetStreamPort,
-          success: true,
-          socket,
-        };
-      }
-    } catch (error) {
-      const errorMessage = `Failed to create tunnel for device ${udid}: ${error}`;
-      throw new Error(`❌ ${errorMessage}`);
-    }
-  }
-}
-
-/**
- */
-async function main() {
-  // Create an instance of TunnelCreator
-  const tunnelCreator = new TunnelCreator();
-  tunnelCreator.setupCleanupHandlers();
-
-  const args = process.argv.slice(2);
-
-  // Extract UDID from command line arguments
-  // If the first argument is provided and is not a flag, use it as the UDID
-  let specificUdid = args.includes('--udid') || args.includes('-u');
-
-  // Handle packet stream base port
-  let packetStreamBasePortArg = args.find((arg) => arg.startsWith('--packet-stream-base-port='));
-  if (packetStreamBasePortArg) {
-    tunnelCreator._packetStreamBasePort = parseInt(packetStreamBasePortArg.split('=')[1], 10);
-    log.info(`Using packet stream base port: ${tunnelCreator._packetStreamBasePort}`);
-  } else {
-    const packetStreamBasePortIndex = args.indexOf('--packet-stream-base-port');
-    if (packetStreamBasePortIndex !== -1 && packetStreamBasePortIndex + 1 < args.length) {
-      tunnelCreator._packetStreamBasePort = parseInt(args[packetStreamBasePortIndex + 1], 10);
-      log.info(`Using packet stream base port: ${tunnelCreator._packetStreamBasePort}`);
-    }
-  }
-
-  let tunnelRegistryPortArg = args.find((arg) => arg.startsWith('--tunnel-registry-port='));
-  if (tunnelRegistryPortArg) {
-    tunnelCreator._tunnelRegistryPort = parseInt(tunnelRegistryPortArg.split('=')[1], 10);
-    log.info(`Using tunnel registry port: ${tunnelCreator._tunnelRegistryPort}`);
-  } else {
-    const tunnelRegistryPortIndex = args.indexOf('--tunnel-registry-port');
-    if (tunnelRegistryPortIndex !== -1 && tunnelRegistryPortIndex + 1 < args.length) {
-      tunnelCreator._tunnelRegistryPort = parseInt(args[tunnelRegistryPortIndex + 1], 10);
-      log.info(`Using tunnel registry port: ${tunnelCreator._tunnelRegistryPort}`);
-    }
-  }
-
-  const box = strongbox('appium-xcuitest-driver');
-  try {
-    await box.createItemWithValue('tunnelRegistryPort', String(tunnelCreator._tunnelRegistryPort),
+    log.info('Starting CoreDeviceProxy...');
+    const {socket} = await startCoreDeviceProxy(
+      lockdownService,
+      lockdownDevice.DeviceID,
+      lockdownDevice.Properties.SerialNumber,
+      tlsOptions,
     );
-  } catch (error) {
-    throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
+    log.info('CoreDeviceProxy started successfully');
+
+    log.info('Creating tunnel...');
+    const tunnel = await TunnelManager.getTunnel(socket);
+    log.info(`Tunnel created for address: ${tunnel.Address} with RsdPort: ${tunnel.RsdPort}`);
+
+    let packetStreamPort;
+    packetStreamPort = this._packetStreamBasePort++;
+    const packetStreamServer = new PacketStreamServer(packetStreamPort);
+    await packetStreamServer.start();
+
+    const consumer = packetStreamServer.getPacketConsumer();
+    if (consumer) {
+      tunnel.addPacketConsumer(consumer);
+    }
+
+    this._packetStreamServers.set(udid, packetStreamServer);
+
+    log.info(`Packet stream server started on port ${packetStreamPort}`);
+
+    log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
+    log.info(`   Tunnel Address: ${tunnel.Address}`);
+    log.info(`   Tunnel RsdPort: ${tunnel.RsdPort}`);
+    if (packetStreamPort) {
+      log.info(`   Packet Stream Port: ${packetStreamPort}`);
+    }
+
+    if (_.isFunction(socket?.setNoDelay)) {
+      socket.setNoDelay(true);
+    }
+
+    return {
+      device,
+      tunnel: {
+        Address: tunnel.Address,
+        RsdPort: tunnel.RsdPort,
+      },
+      packetStreamPort,
+      success: true,
+      socket,
+    };
   }
 
-  if (specificUdid) {
-    log.info(`Starting tunnel creation test for specific UDID: ${specificUdid}`);
-  } else {
-    log.info('Starting tunnel creation test for all connected devices');
-  }
-
-  /** @type {import('tls').ConnectionOptions} */
-  const tlsOptions = {
-    rejectUnauthorized: false,
-    minVersion: 'TLSv1.2',
-  };
-
-  log.info('Connecting to usbmuxd...');
-  const usbmux = await createUsbmux();
-
-  try {
+  /**
+   * Sets up tunnels for all connected devices.
+   * @param {import('appium-ios-remotexpc').Usbmux} usbmux - The usbmux object.
+   * @param {string|undefined} specificUdid - A specific UDID to process, or undefined for all devices.
+   * @param {import('tls').ConnectionOptions} tlsOptions - TLS options.
+   */
+  async setupTunnels(usbmux, specificUdid, tlsOptions) {
     log.info('Listing all connected devices...');
     const devices = await usbmux.listDevices();
 
@@ -292,7 +234,7 @@ async function main() {
     let devicesToProcess = devices;
     if (specificUdid) {
       devicesToProcess = devices.filter(
-        (device) => device.Properties.SerialNumber === specificUdid,
+        (device) => device.Properties.SerialNumber === specificUdid
       );
 
       if (devicesToProcess.length === 0) {
@@ -311,7 +253,7 @@ async function main() {
     const results = [];
 
     for (const device of devicesToProcess) {
-      const result = await tunnelCreator.createTunnelForDevice(device, tlsOptions);
+      const result = await this.createTunnelForDevice(device, tlsOptions);
       results.push(result);
     }
 
@@ -325,12 +267,12 @@ async function main() {
 
     if (successful.length > 0) {
       log.info('\n✅ Successful tunnels:');
-      const registry = await tunnelCreator.updateTunnelRegistry(results);
-      await startTunnelRegistryServer(registry, tunnelCreator._tunnelRegistryPort);
+      const registry = await this.updateTunnelRegistry(results);
+      await startTunnelRegistryServer(registry, this._tunnelRegistryPort);
 
       log.info('\n📁 Tunnel registry API:');
       log.info('   The tunnel registry is now available through the API at:');
-      log.info(`   http://localhost:${tunnelCreator._tunnelRegistryPort}/remotexpc/tunnels`);
+      log.info(`   http://localhost:${this._tunnelRegistryPort}/remotexpc/tunnels`);
       log.info('\n   Available endpoints:');
       log.info('   - GET /remotexpc/tunnels - List all tunnels');
       log.info('   - GET /remotexpc/tunnels/:udid - Get tunnel by UDID');
@@ -340,6 +282,86 @@ async function main() {
         log.info(`   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`);
       }
     }
+  }
+}
+
+// Helper function to parse port arguments
+const parsePortArg = (args, flagName, setter) => {
+  const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
+  if (equalsArg) {
+    const port = parseInt(equalsArg.split('=')[1], 10);
+    setter(port);
+    log.info(`Using ${flagName.slice(2)}: ${port}`);
+  } else {
+    const flagIndex = args.indexOf(flagName);
+    if (flagIndex !== -1 && flagIndex + 1 < args.length) {
+      const port = parseInt(args[flagIndex + 1], 10);
+      setter(port);
+      log.info(`Using ${flagName.slice(2)}: ${port}`);
+    }
+  }
+};
+
+// Helper function to parse string arguments
+const parseStringArg = (args, flagName, setter) => {
+  const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
+  if (equalsArg) {
+    const value = equalsArg.split('=')[1];
+    setter(value);
+    log.info(`Using ${flagName.slice(2)}: ${value}`);
+  } else {
+    const flagIndex = args.indexOf(flagName);
+    if (flagIndex !== -1 && flagIndex + 1 < args.length) {
+      const value = args[flagIndex + 1];
+      setter(value);
+      log.info(`Using ${flagName.slice(2)}: ${value}`);
+    }
+  }
+};
+
+/**
+ */
+async function main() {
+  // Create an instance of TunnelCreator
+  const tunnelCreator = new TunnelCreator();
+  tunnelCreator.setupCleanupHandlers();
+
+  const args = process.argv.slice(2);
+
+  let specificUdid;
+  // Parse specific UDID
+  parseStringArg(args, '--udid', (udid) => {
+    specificUdid = udid;
+  });
+
+  // Parse packet stream base port
+  parsePortArg(args, '--packet-stream-base-port', (port) => {
+    tunnelCreator.packetStreamBasePort = port;
+  });
+
+  // Parse tunnel registry port  
+  parsePortArg(args, '--tunnel-registry-port', (port) => {
+    tunnelCreator.tunnelRegistryPort = port;
+  });
+
+  const box = strongbox(APPIUM_XCUITEST_DRIVER);
+  try {
+    await box.createItemWithValue(TUNNEL_REGISTRY_PORT, String(tunnelCreator.tunnelRegistryPort));
+  } catch (error) {
+    throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
+  }
+
+  /** @type {import('tls').ConnectionOptions} */  
+  const tlsOptions = {
+    rejectUnauthorized: false,
+    minVersion: 'TLSv1.2',
+  };
+
+  log.info('Connecting to usbmuxd...');
+  const usbmux = await createUsbmux();
+
+  try {
+    await tunnelCreator.setupTunnels(usbmux, specificUdid, tlsOptions);
   } finally {
     await usbmux.close();
   }
