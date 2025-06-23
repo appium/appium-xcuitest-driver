@@ -3,7 +3,7 @@
  * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
  * This script demonstrates the tunnel creation workflow for all connected devices
  */
-import {logger} from '@appium/support';
+import {logger, node} from '@appium/support';
 import _ from 'lodash';
 /* eslint-disable import/no-unresolved */
 import {
@@ -18,9 +18,6 @@ import {
 import {strongbox} from '@appium/strongbox';
 import path from 'path';
 import fs from 'fs';
-import {fileURLToPath} from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
 
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
@@ -287,8 +284,13 @@ class TunnelCreator {
   }
 }
 
-// Helper function to parse string arguments
-const parseArg = (args, flagName) => {
+/**
+ * Helper function to parse string arguments
+ * @param {string[]} args - Array of command line arguments
+ * @param {string} flagName - Name of the flag to parse (e.g. '--udid')
+ * @returns {string|undefined} The value of the flag if found, undefined otherwise
+ */
+function parseArg(args, flagName) {
   const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
   if (equalsArg) {
     const value = equalsArg.split('=')[1];
@@ -305,32 +307,7 @@ const parseArg = (args, flagName) => {
   return undefined;
 };
 
-/**
- * Calculates the path to the current module's root folder
- *
- * @returns {string} The full path to module root
- * @throws {Error} If the current module root folder cannot be determined
- */
-const getModuleRoot = _.memoize(function getModuleRoot() {
-  let currentDir = path.dirname(path.resolve(__filename));
-  let isAtFsRoot = false;
-  while (!isAtFsRoot) {
-    const manifestPath = path.join(currentDir, 'package.json');
-    try {
-      if (
-        fs.existsSync(manifestPath) &&
-        JSON.parse(fs.readFileSync(manifestPath, 'utf8')).name === 'appium-xcuitest-driver'
-      ) {
-        return currentDir;
-      }
-    } catch {}
-    currentDir = path.dirname(currentDir);
-    isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
-  }
-  throw new Error('Cannot find the root folder of the appium-xcuitest-driver Node.js module');
-});
-
-const BOOTSTRAP_PATH = getModuleRoot();
+const BOOTSTRAP_PATH = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
 
 /**
  */

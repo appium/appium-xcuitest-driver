@@ -100,8 +100,7 @@
     "source-map-support": "^0.x",
     "teen_process": "^2.2.0",
     "winston": "3.17.0",
-    "ws": "^8.13.0",
-    "appium-ios-remotexpc": "file:/Users/srinivasans/workspace/LT/appium-ios-remotexpc"
+    "ws": "^8.13.0"
   },
   "scripts": {
     "build": "tsc -b",
