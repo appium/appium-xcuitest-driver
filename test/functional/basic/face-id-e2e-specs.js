@@ -12,6 +12,8 @@ const FACE_ID_LOCATOR = `${CLASS_CHAIN_SEARCH}:${FACE_ID_SELECTOR}`;
 const ALLOW_SELECTOR =
   '**/XCUIElementTypeStaticText[`label == "Do you want to allow “biometric” to use Face ID?"`]';
 const ALLOW_LOCATOR = `${CLASS_CHAIN_SEARCH}:${ALLOW_SELECTOR}`;
+const FACE_ID_SUCCEEDED_SELECTOR = '**/XCUIElementTypeStaticText[`label == "Succeeded"`]';
+const FACE_ID_SUCCEEDED_LOCATOR = `${CLASS_CHAIN_SEARCH}:${FACE_ID_SUCCEEDED_SELECTOR}`;
 
 const MOCHA_RETRIES = process.env.CI ? 3 : 1;
 
@@ -31,10 +33,6 @@ if (!process.env.CI) {
       chai.should();
       chai.use(chaiAsPromised.default);
       expect = chai.expect;
-    });
-
-    beforeEach(async function () {
-      await killAllSimulators();
     });
 
     afterEach(async function () {
@@ -93,6 +91,7 @@ if (!process.env.CI) {
         const authenticateButton = await driver.$('~Authenticate with Face ID');
         await authenticateButton.click();
 
+        await driver.updateSettings({defaultActiveApplication: 'com.apple.springboard'});
         // This is necessary only for the first time
         if (await driver.$(ALLOW_LOCATOR).elementId) {
           const okButton = await driver.$('~OK');
@@ -101,6 +100,9 @@ if (!process.env.CI) {
         await waitUntilExist(FACE_ID_LOCATOR);
 
         await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
+
+        await driver.updateSettings({defaultActiveApplication: 'com.mwakizaka.biometric'});
+        await waitUntilExist(FACE_ID_SUCCEEDED_LOCATOR);
         expect(await driver.$('~Succeeded').elementId).to.exist;
       });
 
@@ -109,6 +111,7 @@ if (!process.env.CI) {
         const authenticateButton = await driver.$('~Authenticate with Face ID');
         await authenticateButton.click();
 
+        await driver.updateSettings({defaultActiveApplication: 'com.apple.springboard'});
         // This is necessary only for the first time
         if (await driver.$(ALLOW_LOCATOR).elementId) {
           const okButton = await driver.$('~OK');
@@ -134,6 +137,7 @@ if (!process.env.CI) {
         await doEnrollment();
         await authenticateButton.click();
 
+        await driver.updateSettings({defaultActiveApplication: 'com.apple.springboard'});
         // This is necessary only for the first time
         if (await driver.$(ALLOW_LOCATOR).elementId) {
           const okButton = await driver.$('~OK');
@@ -142,15 +146,26 @@ if (!process.env.CI) {
         await waitUntilExist(FACE_ID_LOCATOR);
 
         await driver.execute('mobile: sendBiometricMatch', {type: 'faceId', match: true});
-        expect(await driver.$('~Succeeded').elementId).to.exist;
-        okButton = await driver.$('~OK');
-        await okButton.click();
-        await B.delay(1000);
+
+        await driver.updateSettings({defaultActiveApplication: 'com.mwakizaka.biometric'});
+        await waitUntilExist(FACE_ID_SUCCEEDED_LOCATOR);
+        const succceeded = await driver.$('~Succeeded');
+        expect(succceeded.elementId).to.exist;
+        // Here needs to click ok on the popup after the overlay goes away.
+        await waitForCondition(async () => {
+          try {
+            await driver.$(`~OK`).click();
+            return false;
+          } catch {
+            return true;
+          }
+        }, {waitMs: 10_000, intervalMs: 200 });
 
         // Unenroll again
         await doEnrollment(false);
         authenticateButton = await driver.$('~Authenticate with Face ID');
         await authenticateButton.click();
+        await waitUntilExist('~Biometry is not enrolled.');
         expect(await driver.$('~Biometry is not enrolled.').elementId).to.exist;
       });
     });
