@@ -16,9 +16,13 @@ import {
 } from 'appium-ios-remotexpc';
 
 import {strongbox} from '@appium/strongbox';
+import path from 'path';
+import fs from 'fs';
+import {fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
 
 const log = logger.getLogger('TunnelCreation');
-const APPIUM_XCUITEST_DRIVER = 'appium-xcuitest-driver';
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
 
 /**
@@ -130,13 +134,11 @@ class TunnelCreator {
     process.on('uncaughtException', async (error) => {
       log.error('Uncaught Exception:', error);
       await cleanup('Uncaught Exception');
-      process.exit(1);
     });
 
     process.on('unhandledRejection', async (reason, promise) => {
       log.error('Unhandled Rejection at:', promise, 'reason:', reason);
       await cleanup('Unhandled Rejection');
-      process.exit(1);
     });
   }
 
@@ -285,39 +287,50 @@ class TunnelCreator {
   }
 }
 
-// Helper function to parse port arguments
-const parsePortArg = (args, flagName, setter) => {
-  const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
-  if (equalsArg) {
-    const port = parseInt(equalsArg.split('=')[1], 10);
-    setter(port);
-    log.info(`Using ${flagName.slice(2)}: ${port}`);
-  } else {
-    const flagIndex = args.indexOf(flagName);
-    if (flagIndex !== -1 && flagIndex + 1 < args.length) {
-      const port = parseInt(args[flagIndex + 1], 10);
-      setter(port);
-      log.info(`Using ${flagName.slice(2)}: ${port}`);
-    }
-  }
-};
-
 // Helper function to parse string arguments
-const parseStringArg = (args, flagName, setter) => {
+const parseArg = (args, flagName) => {
   const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
   if (equalsArg) {
     const value = equalsArg.split('=')[1];
-    setter(value);
     log.info(`Using ${flagName.slice(2)}: ${value}`);
+    return value;
   } else {
     const flagIndex = args.indexOf(flagName);
     if (flagIndex !== -1 && flagIndex + 1 < args.length) {
       const value = args[flagIndex + 1];
-      setter(value);
       log.info(`Using ${flagName.slice(2)}: ${value}`);
+      return value;
     }
   }
+  return undefined;
 };
+
+/**
+ * Calculates the path to the current module's root folder
+ *
+ * @returns {string} The full path to module root
+ * @throws {Error} If the current module root folder cannot be determined
+ */
+const getModuleRoot = _.memoize(function getModuleRoot() {
+  let currentDir = path.dirname(path.resolve(__filename));
+  let isAtFsRoot = false;
+  while (!isAtFsRoot) {
+    const manifestPath = path.join(currentDir, 'package.json');
+    try {
+      if (
+        fs.existsSync(manifestPath) &&
+        JSON.parse(fs.readFileSync(manifestPath, 'utf8')).name === 'appium-xcuitest-driver'
+      ) {
+        return currentDir;
+      }
+    } catch {}
+    currentDir = path.dirname(currentDir);
+    isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
+  }
+  throw new Error('Cannot find the root folder of the appium-xcuitest-driver Node.js module');
+});
+
+const BOOTSTRAP_PATH = getModuleRoot();
 
 /**
  */
@@ -328,23 +341,22 @@ async function main() {
 
   const args = process.argv.slice(2);
 
-  let specificUdid;
-  // Parse specific UDID
-  parseStringArg(args, '--udid', (udid) => {
-    specificUdid = udid;
-  });
+  const specificUdid = parseArg(args, '--udid');
 
-  // Parse packet stream base port
-  parsePortArg(args, '--packet-stream-base-port', (port) => {
-    tunnelCreator.packetStreamBasePort = port;
-  });
+  const packetStreamBasePort = parseArg(args, '--packet-stream-base-port');
+  if (packetStreamBasePort !== undefined) {
+    tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePort, 10);
+  }
 
-  // Parse tunnel registry port
-  parsePortArg(args, '--tunnel-registry-port', (port) => {
-    tunnelCreator.tunnelRegistryPort = port;
-  });
+  const tunnelRegistryPort = parseArg(args, '--tunnel-registry-port');
+  if (tunnelRegistryPort !== undefined) {
+    tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
+  }
 
-  const box = strongbox(APPIUM_XCUITEST_DRIVER);
+  const packageInfo = JSON.parse(
+    fs.readFileSync(path.join(BOOTSTRAP_PATH, 'package.json'), 'utf8'),
+  );
+  const box = strongbox(packageInfo.name);
   try {
     await box.createItemWithValue(TUNNEL_REGISTRY_PORT, String(tunnelCreator.tunnelRegistryPort));
   } catch (error) {
