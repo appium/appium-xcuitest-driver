@@ -107,7 +107,7 @@ The method will help to avoid `xcodebuild` related slowness.
 downloads for WebDriverAgent packages for real devices and simulators.
 WebDriverAgent packages for real devices do not have embedded XCTest frameworks so that
 they can run on iOS 17+ devices.
-Simulators environment need everything, so the package size for simulators are greater than for real devices.
+Simulators need everything, so package sizes for simulators are greater than for real devices.
 
 The [Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and
 [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml)
