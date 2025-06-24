@@ -7,7 +7,7 @@ import http from 'http';
 import https from 'https';
 
 const DEST_ZIP = 'WebDriverAgentRunner-Build-Sim-arm64.zip';
-const DEST_DIR = 'WebDriverAgentRunner-Build-Sim-arm64';
+const DEST_DIR = 'wda';
 const WDA_URL = (version) => `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${DEST_ZIP}`;
 
 async function webdriveragentPkgVersion() {
