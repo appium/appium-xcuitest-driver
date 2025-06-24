@@ -32,7 +32,8 @@
     "mainClass": "XCUITestDriver",
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
-      "open-wda": "./scripts/open-wda.js"
+      "open-wda": "./scripts/open-wda.js",
+      "download-wda": "./scripts/download-wda.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",
