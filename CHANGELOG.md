@@ -1,3 +1,9 @@
+## [9.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.7.0...v9.8.0) (2025-06-24)
+
+### Features
+
+* Save tunnel registry using strong box ([#2585](https://github.com/appium/appium-xcuitest-driver/issues/2585)) ([8868b1a](https://github.com/appium/appium-xcuitest-driver/commit/8868b1aba093d996d41cc47b17e4ae077457f2b7))
+
 ## [9.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.1...v9.7.0) (2025-06-15)
 
 ### Features
