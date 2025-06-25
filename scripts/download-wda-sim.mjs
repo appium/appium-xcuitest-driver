@@ -1,28 +1,44 @@
-#!/usr/bin/env node
-
 import {fs, zip} from '@appium/support';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import http from 'http';
 import https from 'https';
+import os from 'os';
+import _ from 'lodash';
+import { parseArgValue } from './utils.mjs';
 
-const DEST_ZIP = 'WebDriverAgentRunner-Build-Sim-arm64.zip';
-const DEST_DIR = 'wda';
-const WDA_URL = (version) => `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${DEST_ZIP}`;
+const DEFAULT_DEST_DIR = 'wda';
+const WDA_URL = (version, zipFileName) =>
+  `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
+const DEST_ZIP = (platform) => {
+  const scheme = _.toLower(platform) === 'tvos'
+    ? 'WebDriverAgentRunner_tvOS'
+    : 'WebDriverAgentRunner';
+  return (os.arch() === 'arm64')
+    ? `${scheme}-Build-Sim-arm64.zip`
+    : `${scheme}-Build-Sim-x86_64.zip`;
+};
 
+/**
+ * Return installed appium-webdriveragent package version
+ * @returns [number]
+ */
 async function webdriveragentPkgVersion() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   const pkgPath = path.join(__dirname, '../node_modules/appium-webdriveragent/package.json');
-  const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
-  return pkg.version;
+  return JSON.parse(await fs.readFile(pkgPath, 'utf8')).version;
 };
 
+/**
+ * Download a content from the given 'url' into the given 'dest'
+ * @param {string} url URL to download content from.
+ * @param {string} dest A path to file to store the content to.
+ */
 function downloadFile(url, dest) {
   return new Promise((resolve, reject) => {
     const protocol = url.startsWith('https') ? https : http;
     const file = fs.createWriteStream(dest);
-
     const handleResponse = (response) => {
       // handle redirect
       if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
@@ -39,7 +55,6 @@ function downloadFile(url, dest) {
       response.pipe(file);
       file.on('finish', () => file.close(resolve));
     };
-
     protocol.get(url, handleResponse).on('error', (err) => {
       fs.unlink(dest, () => reject(err));
     });
@@ -49,10 +64,14 @@ function downloadFile(url, dest) {
 async function unzipFile(zipPath, destDir) {
   await fs.mkdir(destDir, {recursive: true});
   await zip.extractAllTo(zipPath, destDir);
+  await fs.unlink(zipPath);
 }
 
 (async () => {
-  const wdaVersion = '9.14.6'; // await webdriveragentPkgVersion();
-  await downloadFile(WDA_URL(wdaVersion), DEST_ZIP);
-  await unzipFile(DEST_ZIP, path.resolve(DEST_DIR));
+  const platform = parseArgValue('platform');
+  const destDirPath = parseArgValue('outdir');
+  const wdaVersion = await webdriveragentPkgVersion();
+  const zipFileName = DEST_ZIP(platform);
+  await downloadFile(WDA_URL(wdaVersion, zipFileName), zipFileName);
+  await unzipFile(zipFileName, path.resolve(destDirPath || DEFAULT_DEST_DIR));
 })();
