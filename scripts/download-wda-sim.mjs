@@ -11,12 +11,8 @@ const DEFAULT_DEST_DIR = 'wda';
 const WDA_URL = (version, zipFileName) =>
   `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
 const DEST_ZIP = (platform) => {
-  const scheme = _.toLower(platform) === 'tvos'
-    ? 'WebDriverAgentRunner_tvOS'
-    : 'WebDriverAgentRunner';
-  return (os.arch() === 'arm64')
-    ? `${scheme}-Build-Sim-arm64.zip`
-    : `${scheme}-Build-Sim-x86_64.zip`;
+  const scheme = `WebDriverAgentRunner${_.toLower(platform) === 'tvos' ? '_tvOS' : ''}`;
+  return `${scheme}-Build-Sim-${os.arch() === 'arm64' ? 'arm64' : 'x86_64'}.zip`;
 };
 
 /**
@@ -70,8 +66,8 @@ async function unzipFile(zipPath, destDir) {
 (async () => {
   const platform = parseArgValue('platform');
   const destDirPath = parseArgValue('outdir');
-  const wdaVersion = await webdriveragentPkgVersion();
   const zipFileName = DEST_ZIP(platform);
+  const wdaVersion = await webdriveragentPkgVersion();
   await downloadFile(WDA_URL(wdaVersion, zipFileName), zipFileName);
   await unzipFile(zipFileName, path.resolve(destDirPath || DEFAULT_DEST_DIR));
 })();
