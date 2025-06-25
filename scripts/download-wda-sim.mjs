@@ -1,10 +1,10 @@
 import {fs, logger, zip} from '@appium/support';
-import { fileURLToPath } from 'url';
-import path from 'path';
 import http from 'http';
 import https from 'https';
-import os from 'os';
 import _ from 'lodash';
+import os from 'os';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { parseArgValue } from './utils.mjs';
 
 const DEFAULT_DEST_DIR = 'wda';
