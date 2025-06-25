@@ -1,4 +1,4 @@
-import {fs, zip} from '@appium/support';
+import {fs, logger, zip} from '@appium/support';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import http from 'http';
@@ -8,9 +8,11 @@ import _ from 'lodash';
 import { parseArgValue } from './utils.mjs';
 
 const DEFAULT_DEST_DIR = 'wda';
-const WDA_URL = (version, zipFileName) =>
+
+const log = logger.getLogger('WDA');
+const wda_url = (version, zipFileName) =>
   `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
-const DEST_ZIP = (platform) => {
+const dest_zip = (platform) => {
   const scheme = `WebDriverAgentRunner${_.toLower(platform) === 'tvos' ? '_tvOS' : ''}`;
   return `${scheme}-Build-Sim-${os.arch() === 'arm64' ? 'arm64' : 'x86_64'}.zip`;
 };
@@ -66,8 +68,12 @@ async function unzipFile(zipPath, destDir) {
 (async () => {
   const platform = parseArgValue('platform');
   const destDirPath = parseArgValue('outdir');
-  const zipFileName = DEST_ZIP(platform);
+  const zipFileName = dest_zip(platform);
   const wdaVersion = await webdriveragentPkgVersion();
-  await downloadFile(WDA_URL(wdaVersion, zipFileName), zipFileName);
-  await unzipFile(zipFileName, path.resolve(destDirPath || DEFAULT_DEST_DIR));
+  const url_to_download = wda_url(wdaVersion, zipFileName);
+  log.info(`Downloading ${url_to_download}`);
+  await downloadFile(url_to_download, zipFileName);
+  const destination = path.resolve(destDirPath || DEFAULT_DEST_DIR);
+  log.info(`Unpacking ${zipFileName} into ${destination}`);
+  await unzipFile(zipFileName, destination);
 })();
