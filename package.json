@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.7.0",
+  "version": "9.8.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -33,6 +33,7 @@
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
       "open-wda": "./scripts/open-wda.js",
+      "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda": "./scripts/download-wda.mjs"
     },
     "schema": {
@@ -77,6 +78,7 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
+    "@appium/strongbox": "^0.x",
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.8.0",
@@ -98,8 +100,8 @@
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
     "teen_process": "^2.2.0",
-    "ws": "^8.13.0",
-    "winston": "3.17.0"
+    "winston": "3.17.0",
+    "ws": "^8.13.0"
   },
   "scripts": {
     "build": "tsc -b",
