@@ -41,7 +41,7 @@ async function unzipFile(zipPath, destDir) {
 async function getWDAPrebuiltPackage() {
   const destDirPath = parseArgValue('outdir');
   if (!destDirPath) {
-    log.error(`--outdir is required`)
+    log.error(`--outdir is required`);
     process.exit(1);
   }
 
