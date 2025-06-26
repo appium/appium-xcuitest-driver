@@ -27,7 +27,7 @@ async function webdriveragentPkgVersion() {
 };
 
 /**
- * Prepare the workng root directory.
+ * Prepare the working root directory.
  * @returns {string} Root directory to download and unzip.
  */
 async function prepareRootDir() {
