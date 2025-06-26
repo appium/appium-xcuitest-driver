@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.8.0",
+  "version": "9.8.1",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -162,7 +162,7 @@
     "rimraf": "^5.0.1",
     "semantic-release": "^24.0.0",
     "sharp": "^0.x",
-    "sinon": "^20.0.0",
+    "sinon": "^21.0.0",
     "ts-node": "^10.9.1",
     "type-fest": "^4.1.0",
     "typescript": "^5.4.2",
