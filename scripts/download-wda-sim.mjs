@@ -71,5 +71,4 @@ async function getWDAPrebuiltPackage() {
   }
 }
 
-
 (async () => await getWDAPrebuiltPackage())();
