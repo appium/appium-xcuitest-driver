@@ -112,3 +112,5 @@ Simulators need everything, so package sizes for simulators are greater than for
 The [Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and
 [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml)
 workflows may help with validating the build script.
+
+`appium driver run xcuitest download-wda-sim` command helps to download the prebuilt WDA.

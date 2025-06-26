@@ -33,7 +33,8 @@
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
       "open-wda": "./scripts/open-wda.js",
-      "tunnel-creation": "./scripts/tunnel-creation.mjs"
+      "tunnel-creation": "./scripts/tunnel-creation.mjs",
+      "download-wda-sim": "./scripts/download-wda-sim.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",
