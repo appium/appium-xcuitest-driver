@@ -44,30 +44,24 @@ async function prepareRootDir() {
 }
 
 async function getWDAPrebuiltPackage() {
+  const destDir = await prepareRootDir();
+  const platform = parseArgValue('platform');
+  const zipFileName = destZip(platform);
+  const wdaVersion = await webdriveragentPkgVersion();
+  const urlToDownload = wdaUrl(wdaVersion, zipFileName);
+  const downloadedZipFile = path.join(destDir, zipFileName);
   try {
-    const destDir = await prepareRootDir();
-    const platform = parseArgValue('platform');
-    const zipFileName = destZip(platform);
-    const wdaVersion = await webdriveragentPkgVersion();
-    const urlToDownload = wdaUrl(wdaVersion, zipFileName);
-    const downloadedZipFile = path.join(destDir, zipFileName);
-    try {
-      log.info(`Downloading ${urlToDownload}`);
-      await net.downloadFile(urlToDownload, downloadedZipFile);
+    log.info(`Downloading ${urlToDownload}`);
+    await net.downloadFile(urlToDownload, downloadedZipFile);
 
-      log.info(`Unpacking ${downloadedZipFile} into ${destDir}`);
-      await zip.extractAllTo(downloadedZipFile, destDir);
+    log.info(`Unpacking ${downloadedZipFile} into ${destDir}`);
+    await zip.extractAllTo(downloadedZipFile, destDir);
 
-      log.info(`Deleting ${downloadedZipFile}`);
-    } finally {
-      if (await fs.exists(downloadedZipFile)) {
-        await fs.unlink(downloadedZipFile);
-      }
+    log.info(`Deleting ${downloadedZipFile}`);
+  } finally {
+    if (await fs.exists(downloadedZipFile)) {
+      await fs.unlink(downloadedZipFile);
     }
-    process.exit(0);
-  } catch (err) {
-    log.error(err.message || err);
-    process.exit(1);
   }
 }
 
