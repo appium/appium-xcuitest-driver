@@ -4,7 +4,7 @@ import os from 'os';
 import path from 'path';
 import { parseArgValue } from './utils.mjs';
 
-const log = logger.getLogger('WDA');
+const log = logger.getLogger('download-wda-sim');
 const wdaUrl = (version, zipFileName) =>
   `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
 const destZip = (platform) => {
