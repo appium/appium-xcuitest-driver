@@ -1,3 +1,9 @@
+## [9.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.8.1...v9.9.0) (2025-06-26)
+
+### Features
+
+* add download-wda-sim to download prebuilt WDA for Sim ([#2587](https://github.com/appium/appium-xcuitest-driver/issues/2587)) ([c1fb5a4](https://github.com/appium/appium-xcuitest-driver/commit/c1fb5a4df52cc8d8816c0a362916570d8236275d))
+
 ## [9.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.8.0...v9.8.1) (2025-06-25)
 
 ### Miscellaneous Chores
