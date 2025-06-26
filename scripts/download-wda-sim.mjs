@@ -33,13 +33,11 @@ async function webdriveragentPkgVersion() {
 async function prepareRootDir() {
   const destDirRoot = parseArgValue('outdir');
   if (!destDirRoot) {
-    log.error(`--outdir is required`);
-    throw new Error();
+    throw new Error(`--outdir is required`);
   }
   const destDir = path.resolve(process.cwd(), destDirRoot);
   if (await fs.exists(destDir)) {
-    log.error(`${destDir} already exists.`);
-    throw new Error();
+    throw new Error(`${destDir} already exists.`);
   }
   await fs.mkdir(destDir, {recursive: true});
   return destDir;
@@ -67,7 +65,8 @@ async function getWDAPrebuiltPackage() {
       }
     }
     process.exit(0);
-  } catch {
+  } catch (err) {
+    log.error(err.message || err);
     process.exit(1);
   }
 }
