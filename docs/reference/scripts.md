@@ -21,5 +21,5 @@ appium driver run xcuitest <script-name>
 |`tunnel-creation --udid=<device-udid>` or `-u <device-udid>`|Creates a tunnel for a specific iOS device with the given UDID|
 |`tunnel-creation --packet-stream-base-port=<port>`|Specifies the base port for packet stream servers (default: 50000)|
 |`tunnel-creation --tunnel-registry-port=<port>`|Specifies the port for the tunnel registry server (default: 42314)|
-|`download-wda-sim --outdir=/path/to/custom/dir`|Download corresponding version's prebuilt WDA for iOS matched with the host machine architecture from [GitHub WebDriver release page](https://github.com/appium/WebDriverAgent/releases) into `--outdir` directory.|
-|`download-wda-sim --platform=tvos --outdir=/path/to/custom/dir`|Download corresponding version's prebuilt WDA for `--platform` into `--outdir` directory. If `--platform=tvos` is provided, the download module will be for tvOS, otherwise the command will download iOS.|
+|`download-wda-sim --outdir=/path/to/dir`|Download corresponding version's prebuilt WDA for iOS matched with the host machine architecture from [GitHub WebDriver release page](https://github.com/appium/WebDriverAgent/releases) into `--outdir` directory. The downloaded package name will be `WebDriverAgentRunner-Runner.app`.|
+|`download-wda-sim --platform=tvos --outdir=/path/to/dir`|Download corresponding version's prebuilt WDA for `--platform` into `--outdir` directory. If `--platform=tvos` is provided, the download module will be for tvOS (`WebDriverAgentRunner_tvOS-Runner.app`), otherwise the command will download iOS.|
