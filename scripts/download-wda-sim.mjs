@@ -37,7 +37,7 @@ async function prepareRootDir() {
   }
   const destDir = path.resolve(process.cwd(), destDirRoot);
   if (await fs.exists(destDir)) {
-    throw new Error(`${destDir} already exists.`);
+    throw new Error(`${destDir} already exists`);
   }
   await fs.mkdir(destDir, {recursive: true});
   return destDir;
