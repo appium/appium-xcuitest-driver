@@ -2,7 +2,7 @@
  * Get the value of the given argument name.
  *
  * @param {string} argName
- * @returns
+ * @returns {string?} The value of the given 'argName'.
  */
 export function parseArgValue(argName) {
   const argNamePattern = new RegExp(`^--${argName}\\b`);
