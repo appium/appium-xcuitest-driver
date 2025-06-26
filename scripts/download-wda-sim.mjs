@@ -27,37 +27,49 @@ async function webdriveragentPkgVersion() {
 };
 
 /**
- * Unzip the given zipPath into the destDir.
- * @param {string} zipPath Path of zip file
- * @param {string} destDir Path to unzip.
+ * Prepare the workng root directory.
+ * @returns {string} Root directory to download and unzip.
  */
-async function unzipFile(zipPath, destDir) {
+async function prepareRootDir() {
+  const destDirRoot = parseArgValue('outdir');
+  if (!destDirRoot) {
+    log.error(`--outdir is required`);
+    throw new Error();
+  }
+  const destDir = path.resolve(process.cwd(), destDirRoot);
+  if (await fs.exists(destDir)) {
+    log.error(`${destDir} already exists.`);
+    throw new Error();
+  }
   await fs.mkdir(destDir, {recursive: true});
-  await zip.extractAllTo(zipPath, destDir);
-  await fs.unlink(zipPath);
+  return destDir;
 }
 
-
 async function getWDAPrebuiltPackage() {
-  const destDirPath = parseArgValue('outdir');
-  if (!destDirPath) {
-    log.error(`--outdir is required`);
+  try {
+    const destDir = await prepareRootDir();
+    const platform = parseArgValue('platform');
+    const zipFileName = destZip(platform);
+    const wdaVersion = await webdriveragentPkgVersion();
+    const urlToDownload = wdaUrl(wdaVersion, zipFileName);
+    const downloadedZipFile = path.join(destDir, zipFileName);
+    try {
+      log.info(`Downloading ${urlToDownload}`);
+      await net.downloadFile(urlToDownload, downloadedZipFile);
+
+      log.info(`Unpacking ${downloadedZipFile} into ${destDir}`);
+      await zip.extractAllTo(downloadedZipFile, destDir);
+
+      log.info(`Deleting ${downloadedZipFile}`);
+    } finally {
+      if (await fs.exists(downloadedZipFile)) {
+        await fs.unlink(downloadedZipFile);
+      }
+    }
+    process.exit(0);
+  } catch {
     process.exit(1);
   }
-
-  const platform = parseArgValue('platform');
-  const zipFileName = destZip(platform);
-  const wdaVersion = await webdriveragentPkgVersion();
-
-  const urlToDownload = wdaUrl(wdaVersion, zipFileName);
-
-  log.info(`Downloading ${urlToDownload}`);
-  await net.downloadFile(urlToDownload, zipFileName);
-
-  const destination = path.resolve(destDirPath);
-  log.info(`Unpacking ${zipFileName} into ${destination}`);
-  await unzipFile(zipFileName, destination);
-  process.exit(0);
 }
 
 
