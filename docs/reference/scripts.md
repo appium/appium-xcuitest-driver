@@ -22,4 +22,4 @@ appium driver run xcuitest <script-name>
 |`tunnel-creation --packet-stream-base-port=<port>`|Specifies the base port for packet stream servers (default: 50000)|
 |`tunnel-creation --tunnel-registry-port=<port>`|Specifies the port for the tunnel registry server (default: 42314)|
 |`download-wda-sim --outdir=/path/to/custom/dir`|Download corresponding version's prebuilt WDA for iOS matched with the host machine architecture from [GitHub WebDriver release page](https://github.com/appium/WebDriverAgent/releases) into `--outdir` directory.|
-|`download-wda-sim --platform=tvos --outdir=/path/to/custom/dir`|Download corresponding version's prebuilt WDA for `--platform` into `--outdir` directory. `tvos` or `ios` are available for the `--platform`.|
+|`download-wda-sim --platform=tvos --outdir=/path/to/custom/dir`|Download corresponding version's prebuilt WDA for `--platform` into `--outdir` directory. If `--platform=tvos` is provided, the download module will be for tvOS, othwserwise the command will download iOS.|
