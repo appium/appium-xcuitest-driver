@@ -3,7 +3,7 @@ const xcode = require('appium-xcode');
 const {Simctl} = require('node-simctl');
 const {getSimulator} = require('appium-ios-simulator');
 const {logger} = require('appium/support');
-const { parseArgValue } = require('./utils');
+const {parseArgValue} = require('./utils');
 
 const log = logger.getLogger('WDA');
 
