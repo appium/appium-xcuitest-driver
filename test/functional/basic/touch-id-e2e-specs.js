@@ -31,10 +31,6 @@ if (!process.env.CI) {
       expect = chai.expect;
     });
 
-    beforeEach(async function () {
-      await killAllSimulators();
-    });
-
     afterEach(async function () {
       await deleteSession();
       await B.delay(500);

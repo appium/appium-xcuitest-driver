@@ -170,7 +170,7 @@ describe('XCUITestDriver - find -', function () {
       });
       it('should return a single element', async function () {
         let el = await driver.$('//XCUIElementTypeButton');
-        (await el.getAttribute('name')).should.equal(APP_TITLE);
+        (await el.getAttribute('label')).should.equal(APP_TITLE);
       });
       it('should return multiple elements', async function () {
         let els = await driver.$$('//XCUIElementTypeButton');
