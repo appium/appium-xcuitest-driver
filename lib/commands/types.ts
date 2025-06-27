@@ -110,7 +110,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    *
    * See [the FFMPEG wiki](https://trac.ffmpeg.org/wiki/Scaling) for possible values.
    *
-   * No scale is applied by default. If both `videoFilters` and `videoScale` are set then only `videoFilters` value will be respected.
+   * No scale is applied by default. If both `videoFilters` and `videoScale` are set, then only `videoFilters` value will be respected.
    * @see https://trac.ffmpeg.org/wiki/Scaling
    */
   videoScale?: string;
@@ -128,10 +128,29 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
   forceRestart?: boolean;
   /**
    * The maximum recording time, in seconds.
-   * The the maximum value is 600 (10 minutes).
+   * The maximum value is 600 (10 minutes).
    * @defaultValue 180
    */
   timeLimit?: string | number;
+
+  /**
+   * Hardware acceleration to be used by FFMPEG for decoding, encoding and scaling.
+   *
+   *
+   *  * `videoToolbox` Apple Silicon
+   *  * `cuda` NVIDIA GPU
+   *  * `amf_dx11` AMD and DirectX 11
+   *  * `qsv` Intel Quick Sync Video
+   *  * `vaapi` Video Acceleration API (VAAPI)
+   *
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#PlatformAPIAvailability| Platform API Availability }
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox| VideoToolbox}
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC|Cuda}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/AMF|AMF}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/QuickSync|QSV}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/VAAPI|VAAPI}
+   */
+  hardwareAcceleration?: 'cuda' | 'videoToolbox' | 'amf_dx11' | 'qsv' | 'vaapi';
 }
 
 export interface PageChangeNotification {

@@ -264,7 +264,7 @@ capabilities.setCapability("webDriverAgentUrl", WDAServer.SERVER_URL);
 ### Important Notes
 
 * The process does not have direct access to keychain if it is executed by a continuous integration
-  agent, so the keychain must be prepated before compiling WDA for real device, otherwise
+  agent, so the keychain must be prepared before compiling WDA for real device, otherwise
   codesigning will fail. Check the [CI Setup](./ci-setup.md) documentation for details.
 * The `xcodebuild` and `iproxy` processes are killed before restart to make sure compilation
   succeeds, in case the processes are frozen

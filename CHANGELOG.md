@@ -1,3 +1,81 @@
+## [9.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.8.1...v9.9.0) (2025-06-26)
+
+### Features
+
+* add download-wda-sim to download prebuilt WDA for Sim ([#2587](https://github.com/appium/appium-xcuitest-driver/issues/2587)) ([c1fb5a4](https://github.com/appium/appium-xcuitest-driver/commit/c1fb5a4df52cc8d8816c0a362916570d8236275d))
+
+## [9.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.8.0...v9.8.1) (2025-06-25)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 20.0.0 to 21.0.0 ([#2579](https://github.com/appium/appium-xcuitest-driver/issues/2579)) ([c5100ed](https://github.com/appium/appium-xcuitest-driver/commit/c5100eda36750640c5c2e8aaf6d459b7951477ca))
+
+## [9.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.7.0...v9.8.0) (2025-06-24)
+
+### Features
+
+* Save tunnel registry using strong box ([#2585](https://github.com/appium/appium-xcuitest-driver/issues/2585)) ([8868b1a](https://github.com/appium/appium-xcuitest-driver/commit/8868b1aba093d996d41cc47b17e4ae077457f2b7))
+
+## [9.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.1...v9.7.0) (2025-06-15)
+
+### Features
+
+* add iosSyslogFile as a capability ([#2582](https://github.com/appium/appium-xcuitest-driver/issues/2582)) ([43448b4](https://github.com/appium/appium-xcuitest-driver/commit/43448b4a924a5304c947501b7e79a472a2ab6e74))
+
+## [9.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.0...v9.6.1) (2025-06-12)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 22.15.31 to 24.0.1 ([#2578](https://github.com/appium/appium-xcuitest-driver/issues/2578)) ([c0cfd0e](https://github.com/appium/appium-xcuitest-driver/commit/c0cfd0e7c427bb8eb7e2f08cb97f9488ece98577))
+
+## [9.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.5.0...v9.6.0) (2025-06-10)
+
+### Features
+
+* Hardware Acceleration for Video Decode, Encode and Scaling ([#2559](https://github.com/appium/appium-xcuitest-driver/issues/2559)) ([d21345a](https://github.com/appium/appium-xcuitest-driver/commit/d21345a1b8e34d136033550937298c6f2e08111b))
+
+## [9.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.4.0...v9.5.0) (2025-06-10)
+
+### Features
+
+* add documentation with min/max value ([#2576](https://github.com/appium/appium-xcuitest-driver/issues/2576)) ([c296411](https://github.com/appium/appium-xcuitest-driver/commit/c2964111ea1924baf0594e8d3f7a0aa22c22b50a))
+* add focused attribute to element representation in XML source tree ([#2575](https://github.com/appium/appium-xcuitest-driver/issues/2575)) ([14ccdce](https://github.com/appium/appium-xcuitest-driver/commit/14ccdce9b80a2f06c121fd6f0adef83c06567082))
+
+## [9.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.2...v9.4.0) (2025-06-04)
+
+### Features
+
+* add documentation for new appium setting: includeHittableInPageSource ([#2571](https://github.com/appium/appium-xcuitest-driver/issues/2571)) ([de310a3](https://github.com/appium/appium-xcuitest-driver/commit/de310a39a64f835e534ee9f5453539487a5bbe79))
+
+### Code Refactoring
+
+* use an object spread instead of Object.assign ([#2570](https://github.com/appium/appium-xcuitest-driver/issues/2570)) ([16bae3a](https://github.com/appium/appium-xcuitest-driver/commit/16bae3acb0e3cee456218d09db9f6b8846f336d4))
+
+## [9.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.1...v9.3.2) (2025-05-31)
+
+### Miscellaneous Chores
+
+* fix typos ([#2568](https://github.com/appium/appium-xcuitest-driver/issues/2568)) ([a1f5842](https://github.com/appium/appium-xcuitest-driver/commit/a1f5842402c189e91a09ba5b7250a584d434f56e))
+* use optional chain for better readability ([#2569](https://github.com/appium/appium-xcuitest-driver/issues/2569)) ([035efc0](https://github.com/appium/appium-xcuitest-driver/commit/035efc0c8cf435ffbaf2355e0054bd589969af58))
+
+## [9.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.0...v9.3.1) (2025-05-29)
+
+### Miscellaneous Chores
+
+* Add geolocation endpoints to the method map ([#2567](https://github.com/appium/appium-xcuitest-driver/issues/2567)) ([95a0be7](https://github.com/appium/appium-xcuitest-driver/commit/95a0be784d516b7880c5f546f6ccd63b62379d3f))
+
+## [9.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.5...v9.3.0) (2025-05-28)
+
+### Features
+
+* Add traits attributes ([#2566](https://github.com/appium/appium-xcuitest-driver/issues/2566)) ([73429cd](https://github.com/appium/appium-xcuitest-driver/commit/73429cd7b9a2e9054dc35ae87be5d2c0e1c62d56))
+
+## [9.2.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.4...v9.2.5) (2025-05-21)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#2564](https://github.com/appium/appium-xcuitest-driver/issues/2564)) ([5d98175](https://github.com/appium/appium-xcuitest-driver/commit/5d98175ddc71bff3d38bedbf3cf18ca5d859a665))
+
 ## [9.2.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.2.3...v9.2.4) (2025-05-01)
 
 ### Miscellaneous Chores
