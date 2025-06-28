@@ -3,7 +3,10 @@
  * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
  * This script demonstrates the tunnel creation workflow for all connected devices
  */
-import {logger, node} from 'appium/support.js';
+
+// TODO: Please revert '@appium/support' to 'appium/support.js' and "@appium/support" dependency
+// in Appium 3 based version
+import {logger, node} from '@appium/support';
 import _ from 'lodash';
 /* eslint-disable import/no-unresolved */
 import {
