@@ -1,6 +1,4 @@
-// TODO: Please revert '@appium/support' to 'appium/support.js' and "@appium/support" dependency
-// in Appium 3 based version
-import {fs, logger, zip, net, node} from '@appium/support';
+import {fs, logger, zip, net, node} from 'appium/support.js';
 import _ from 'lodash';
 import os from 'os';
 import path from 'path';
