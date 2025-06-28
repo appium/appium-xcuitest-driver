@@ -56,14 +56,12 @@ describe('XCUITestDriver - elements -', function () {
   describe('displayed', function () {
     it('should get the displayed status for a displayed element', async function () {
       let el = await driver.$('~Buttons');
-      let displayed = await el.isDisplayed();
-      displayed.should.be.true;
+      (await el.isDisplayed()).should.be.true;
     });
     it('should get the displayed status for an undisplayed element', async function () {
       // this value is invisible in the view
       let el = await driver.$('~Horizontal scroll bar, 1 page');
-      let displayed = await el.isDisplayed();
-      displayed.should.be.false;
+      (await el.isDisplayed()).should.be.false;
     });
   });
 
