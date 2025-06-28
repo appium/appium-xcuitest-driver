@@ -101,6 +101,13 @@ calling [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) 
 4. Launch the application with [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp)
    or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp)
 
+
+!!! note
+
+    We observed that iOS 18+ environments can retain the permission preference even after reinstallation.
+    Please refer to [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2572) for more information about this behavior.
+    
+
 ## Weird State
 
 ### Real Device Stops Responding
@@ -120,7 +127,7 @@ dbug WebDriverAgent Device: Jul 26 13:22:57 iamPhone XCTRunner[240] <Warning>: E
 
 Sometimes it is possible to encounter slowdowns for an additional 60 seconds for a command that
 usually should not take long. This may be caused by a crash in the `testmanagerd` process on the
-device under test. In such case, the OS tries to restore the process, then wait for the resurrected
+device under test. In such a case, the OS tries to restore the process, then wait for the resurrected
 daemon to connect to the target process, which causes the aforementioned delay.
 
 This can be fixed by terminating the target application process. For example, if this behavior

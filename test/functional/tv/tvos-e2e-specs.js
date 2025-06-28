@@ -42,7 +42,7 @@ describe('tvOS', function () {
   });
 
   beforeEach(function () {
-    baseCaps = Object.assign({}, TVOS_CAPS, {udid});
+    baseCaps = {...TVOS_CAPS, udid};
   });
 
   afterEach(async function () {
@@ -52,15 +52,13 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSettings', async function () {
     baseCaps.autoLaunch = true;
     const driver = await initSession(baseCaps);
-    // @ts-expect-error does this exist? I guess it does?
-    (await driver.elementByAccessibilityId('General')).should.exist;
+    (await driver.$('~General')).should.exist;
   });
 
   it('should launch com.apple.TVSettings with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
     await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSettings'});
-    // @ts-expect-error does this exist? I guess it does?
-    (await driver.elementByAccessibilityId('General')).should.exist;
+    (await driver.$('~General')).should.exist;
   });
 });

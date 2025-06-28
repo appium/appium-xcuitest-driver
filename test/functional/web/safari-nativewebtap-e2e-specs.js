@@ -1,15 +1,14 @@
 /* eslint-disable mocha/no-nested-tests */
 
 import _ from 'lodash';
-import {util} from 'appium/support';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
-  extractCapabilityValue,
   amendCapabilities,
   SETTINGS_CAPS,
   SAFARI_CAPS,
   DEVICE_NAME,
   DEVICE_NAME_FOR_SAFARI_IPAD,
+  isIosVersionAtLeast
 } from '../desired';
 import {
   openPage,
@@ -70,23 +69,61 @@ describe('Safari - coordinate conversion -', function () {
       };
       const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
       const driver = await initSession(localSettingsCaps);
-      await driver
-        .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')
-        .click();
-      await driver.$('~CLEAR_HISTORY_AND_DATA').click();
 
-      if (
-        util.compareVersions(
-          extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-          '>=',
-          '17.0',
-        )
-      ) {
+      ////
+      // To open Safari menu in Settings app
+      ////
+      const openSafariMenuIOS18 = async () => {
+        const windowRect = await driver.getWindowRect();
+        const scrollAction = [
+          {
+            type: 'pointer',
+            id: 'touch',
+            actions: [
+              { type: 'pointerMove', duration: 0, x: windowRect.width / 2, y: windowRect.height * 0.8 },
+              { type: 'pointerDown', button: 0 },
+              { type: 'pause', duration: 500 },
+              { type: 'pointerMove', duration: 0, x: windowRect.width / 2, y: windowRect.height * 0.2 },
+              { type: 'pointerUp', button: 0 },
+            ]
+          }
+        ];
+        await driver.performActions(scrollAction);
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`).click();
+        // to check the view transition to be completed
+        await driver.$(`-ios predicate string:label='Default Apps'`);
+        await driver.performActions(scrollAction);
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`).click();
+      };
+      const openSafariMenuIOS17AndBelow = async () => {
+        await driver
+          .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')
+          .click();
+      };
+
+      ////
+      // To clear history and data in the safari menue
+      ////
+      const clearHistoryIOS18 = async () => {
+        await driver
+          .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`)
+          .click();
+        const closeTabEl = await driver
+          .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`);
+        if (await closeTabEl.getValue() === '0') {
+          await closeTabEl.click();
+        }
+        await driver
+          .$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`)
+          .click();
+      };
+      const clearHistoryIOS17 = async () => {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`)
           .click();
         await driver.$$('~Clear History')[1].click();
-      } else {
+      };
+      const clearHistoryIOS16AndBelow = async () => {
         if ((await driver.$$('~Clear').length) > 0) {
           // for iPad
           await driver.$('~Clear').click();
@@ -94,17 +131,26 @@ describe('Safari - coordinate conversion -', function () {
           // for iPhone
           await driver.$('~Clear History and Data').click();
         }
-        if (
-          util.compareVersions(
-            extractCapabilityValue(localSettingsCaps, 'appium:platformVersion'),
-            '>=',
-            '16.0',
-          )
-        ) {
+        if (isIosVersionAtLeast('16.0')) {
           await driver
             .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]')
             .click();
         }
+      };
+
+      if (isIosVersionAtLeast('18.0')) {
+        await openSafariMenuIOS18();
+      } else {
+        await openSafariMenuIOS17AndBelow();
+      }
+      await driver.$('~CLEAR_HISTORY_AND_DATA').click();
+
+      if (isIosVersionAtLeast('18.0')) {
+        await clearHistoryIOS18();
+      } else if (isIosVersionAtLeast('17.0')) {
+        await clearHistoryIOS17();
+      } else {
+        await clearHistoryIOS16AndBelow();
       }
       await deleteSession();
     }
@@ -149,7 +195,7 @@ describe('Safari - coordinate conversion -', function () {
         it('should be able to tap on an element', async function () {
           await loadPage(driver, GUINEA_PIG_PAGE);
 
-          await driver.$(`=${PAGE_3_LINK}`).click();
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
@@ -157,7 +203,7 @@ describe('Safari - coordinate conversion -', function () {
         it('should be able to tap on an element when the app banner is up', async function () {
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
 
-          await driver.$(`=${PAGE_3_LINK}`).click();
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
@@ -168,12 +214,13 @@ describe('Safari - coordinate conversion -', function () {
           });
 
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
-          await driver.$(`=${PAGE_3_LINK}`).click();
+          await spinTitleEquals(driver, 'I am a page title', SPIN_RETRIES);
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
 
           await driver.updateSettings({nativeWebTapSmartAppBannerVisibility: 'invisible'});
           await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
-          await driver.$(`=${PAGE_3_LINK}`).click();
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
 
@@ -184,7 +231,7 @@ describe('Safari - coordinate conversion -', function () {
           //await driver.execute('mobile: scroll', {direction: 'down'});
           await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
-          await driver.$(`=${PAGE_3_LINK}`).click();
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
@@ -223,7 +270,7 @@ describe('Safari - coordinate conversion -', function () {
             await loadPage(driver, GUINEA_PIG_PAGE);
 
             // open a new tab and go to it
-            await driver.$(`=i am a new window link`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=i am a new window link`));
 
             await retryInterval(10, 1000, async function () {
               await driver.getTitle().should.eventually.eql('I am another page title');
@@ -233,14 +280,14 @@ describe('Safari - coordinate conversion -', function () {
           it('should be able to tap on an element', async function () {
             await loadPage(driver, GUINEA_PIG_PAGE);
 
-            await driver.$(`=${PAGE_3_LINK}`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
 
             await driver.back();
 
             // try again, just to make sure
-            await driver.$(`=${PAGE_3_LINK}`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
@@ -251,11 +298,11 @@ describe('Safari - coordinate conversion -', function () {
             });
 
             await loadPage(driver, GUINEA_PIG_PAGE);
-            await driver.$(`=${PAGE_3_LINK}`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
             await driver.updateSettings({nativeWebTapTabBarVisibility: 'visible'});
             await loadPage(driver, GUINEA_PIG_PAGE);
-            await driver.$(`=${PAGE_3_LINK}`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
           });
 
           it('should be able to tap on an element after scrolling', async function () {
@@ -265,7 +312,7 @@ describe('Safari - coordinate conversion -', function () {
             //await driver.execute('mobile: scroll', {direction: 'down'});
             await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
 
-            await driver.$(`=${PAGE_3_LINK}`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });
@@ -296,7 +343,7 @@ describe('Safari - coordinate conversion -', function () {
               await driver.switchContext(ctx);
             }
 
-            await driver.$(`=${PAGE_3_LINK}`).click();
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
             await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
           });

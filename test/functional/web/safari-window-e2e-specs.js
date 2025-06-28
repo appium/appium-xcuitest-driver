@@ -1,5 +1,9 @@
 import _ from 'lodash';
-import {SAFARI_CAPS, amendCapabilities} from '../desired';
+import {
+  SAFARI_CAPS,
+  amendCapabilities,
+  isIosVersionBelow
+} from '../desired';
 import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   openPage,
@@ -59,6 +63,7 @@ describe('safari - windows and frames', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let driver;
+
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
         'appium:safariInitialUrl': GUINEA_PIG_PAGE,
@@ -68,6 +73,7 @@ describe('safari - windows and frames', function () {
         'appium:nativeWebTap': true,
         'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
+
       driver = await initSession(caps);
     });
     after(async function () {
@@ -83,12 +89,14 @@ describe('safari - windows and frames', function () {
         await openPage(driver, GUINEA_PIG_PAGE);
       });
 
-      // There is a bug in iOS Simulator on iOS 14 that's causing the popup blocker to not work.
-      it.skip('should be able to open js popup windows', async function () {
+      it('should be able to open js popup windows', async function () {
+        await driver.updateSettings({autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]'});
+
         await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
-        await driver.acceptAlert();
         await spinTitleEquals(driver, 'I am another page title', 5).should.eventually.not.be
           .rejected;
+        await driver.updateSettings({autoClickAlertSelector: ''});
+
         await driver.closeWindow();
       });
 
@@ -99,6 +107,10 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to open and close windows', async function () {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
+          this.skip();
+        }
+
         const el = await driver.$('#blanklink');
         await el.click();
         await spinTitleEquals(driver, 'I am another page title');
@@ -108,6 +120,10 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to use window handles', async function () {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
+          this.skip();
+        }
+
         const initialWindowHandle = await driver.getWindowHandle();
 
         const el = await driver.$('#blanklink');
@@ -130,6 +146,10 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to go back and forward', async function () {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
+          this.skip();
+        }
+
         const link = await driver.$('=i am a link');
         await link.click();
 
@@ -159,6 +179,10 @@ describe('safari - windows and frames', function () {
 
       // broken on real devices, see https://github.com/appium/appium/issues/5167
       it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async function () {
+        if (process.env.CI && isIosVersionBelow('18.0')) {
+          this.skip();
+        }
+
         const link = await driver.$('=i am a new window link');
         await link.click();
         await spinTitleEquals(driver, 'I am another page title', 30);

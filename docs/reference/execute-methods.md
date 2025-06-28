@@ -382,7 +382,7 @@ pid | string or number | no | The ID of the process to measure the performance f
 
 ### mobile: stopPerfRecord
 
-Stops the performance recording operation previosuly started by `mobile: startPerfRecord` call. If the previous call has already been completed due to the timeout then its result is returned immediately. An error is thrown if the performance recording has failed to start and recorded no data.
+Stops the performance recording operation previously started by `mobile: startPerfRecord` call. If the previous call has already been completed due to the timeout then its result is returned immediately. An error is thrown if the performance recording has failed to start and recorded no data.
 
 #### Arguments
 
@@ -892,7 +892,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 keyboard | map | no | On-screen keyboard properties. The `name` key is required and should be set to a valid locale abbreviation. The `layout` key is also required. The `hardware` key is optional and could be omitted or set to `Automated`. You could switch the keyboard layout in system preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleKeyboards` to see possible combinations. | `{"name": "de_CH", "layout": "QWERTZ", "hardware": "Automated"}`
 language | map | no | System language properties. The `name` key is required and should be set to a valid language abbreviation. You could switch the system language in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLanguages` to see possible combinations. | `{"name": "zh-Hant-CN"}`
-locale | map | no | System locale properties. The `name` key is required and should be set to a valid language abbreviation. The `calendar`key is optonal and could be set to a valid calendar format name. You could switch the system locale/calendar format in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLocale` to see possible combinations. | `{"name": "uk_UA", "calendar": "gregorian"}`
+locale | map | no | System locale properties. The `name` key is required and should be set to a valid language abbreviation. The `calendar`key is optional and could be set to a valid calendar format name. You could switch the system locale/calendar format in preferences of your booted simulator, run `xcrun simctl spawn booted defaults read .GlobalPreferences.plist`, and inspect the value of `AppleLocale` to see possible combinations. | `{"name": "uk_UA", "calendar": "gregorian"}`
 
 #### Returned Result
 
@@ -940,7 +940,7 @@ Stops network traffic capture. If no traffic capture process is running then the
 
 #### Returned Result
 
-Base64-encoded content of the traffic capture file (.pcap) or an empty string if no traffic capture has been started before. Netowrk capture files could be opened in [Wireshark](https://www.wireshark.org/) application.
+Base64-encoded content of the traffic capture file (.pcap) or an empty string if no traffic capture has been started before. Network capture files could be opened in [Wireshark](https://www.wireshark.org/) application.
 
 ### mobile: runXCTest
 
@@ -1128,14 +1128,14 @@ velocity | number | no | This argument is optional and is only supported since A
 ### mobile: scroll
 
 Scrolls the element or the whole screen. Different scrolling strategies are supported.
-Arguments define the choosen strategy: either 'name', 'direction', 'predicateString' or
+Arguments define the chosen strategy: either 'name', 'direction', 'predicateString' or
 'toVisible' in that order. All strategies are exclusive and only one strategy
 can be applied at a single moment of time. Use "mobile: scroll" to emulate precise
 scrolling in tables or collection views, where it is already known to which element
 the scrolling should be performed. Although, there is one known limitation there: in case
 it is necessary to perform too many scroll gestures on parent container to reach the
 necessary child element (tens of them) then the method call may fail.
-_Important_: The implemntation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might *not* always work as expected.
+_Important_: The implementation of this extension relies on several undocumented XCTest features, which might not always be reliable. Thus it might *not* always work as expected.
 
 #### Arguments
 
@@ -1721,7 +1721,7 @@ numberOfTouches | number | no | The number of touch points. 1 by default | 2
 
 - numberOfTaps=1, numberOfTouches=1 -> "vanilla" single tap
 - numberOfTaps=2, numberOfTouches=1 -> double tap
-- numberOfTaps=3, numberOfTouches=1 -> tripple tap
+- numberOfTaps=3, numberOfTouches=1 -> triple tap
 - numberOfTaps=2, numberOfTouches=2 -> double tap with two fingers
 
 #### Reference
@@ -1736,7 +1736,7 @@ An error is thrown if the target device does not support force press gesture.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-elementId | string | no | The internal element identifier (as hexadecimal hash string) to perform one or more taps. It is expected that both x and y are provided if this argument is ommitted. If the element identifier is provided without coordinates then the actual element's touch point will be calculated automatically by WebDriverAgent. | fe50b60b-916d-420b-8728-ee2072ec53eb
+elementId | string | no | The internal element identifier (as hexadecimal hash string) to perform one or more taps. It is expected that both x and y are provided if this argument is omitted. If the element identifier is provided without coordinates then the actual element's touch point will be calculated automatically by WebDriverAgent. | fe50b60b-916d-420b-8728-ee2072ec53eb
 x | number | no | x coordinate of the gesture. It is calculated relatively to the given element (if provided). Otherwise the gesture destination point is calculated relatively to the active application. | 100
 y | number | no | y coordinate of the gesture. It is calculated relatively to the given element (if provided). Otherwise the gesture destination point is calculated relatively to the active application | 100
 duration | number | no | The float number of seconds the force press action would take. If duration is provided then it is also expected that a custom pressure value is provided as well. `0.5` by default. | 2.5
@@ -1846,7 +1846,7 @@ The outcome of this API is then used if `nativeWebTap` capability/setting is ena
 The returned value could also be used to manually transform web coordinates
 to real device ones in client scripts.
 
-It is adviced to call this API at least once before changing the device orientation
+It is advised to call this API at least once before changing the device orientation
 or device screen layout as the recetly received value is cached for the session lifetime
 and may become obsolete.
 
@@ -2043,7 +2043,7 @@ seconds | number | no | The amount of seconds to wait between putting the app to
 
 ### mobile: performAccessibilityAudit
 
-Performs accessbility audit of the current application according to the given type or multiple types.
+Performs accessibility audit of the current application according to the given type or multiple types.
 Wraps the XCTest's [performAccessibilityAuditWithAuditTypes](https://developer.apple.com/documentation/xctest/xcuiapplication/4190847-performaccessibilityauditwithaud?language=objc) API.
 Only available since Xcode 15/iOS 17.
 
@@ -2059,11 +2059,11 @@ List of found issues or an empty list. Each list item is a map consisting of the
 
 Name | Type | Description | Example
 --- | --- | --- | ---
-detailedDescription | string | The detailed description of the found accessbility issue. | Some longer issue description
-compactDescription | string | The compact description of the found accessbility issue. | Some compact issue description
+detailedDescription | string | The detailed description of the found accessibility issue. | Some longer issue description
+compactDescription | string | The compact description of the found accessibility issue. | Some compact issue description
 auditType | string or number | The name of the audit type this issue belongs to. Could be a number if the type name is unknown. | 'XCUIAccessibilityAuditTypeContrast'
 element | string | The description of the element this issue was found for. | 'Yes' button
-elementDescription | string | The debug description of the element this issue was found for. Availble since driver version | A long string describing the element itself and its position in the page tree hierarchy
+elementDescription | string | The debug description of the element this issue was found for. Available since driver version | A long string describing the element itself and its position in the page tree hierarchy
 elementAttributes | dict | JSON object containing various attributes of the element. | See the example below
 
 ```json
@@ -2092,7 +2092,7 @@ elementAttributes | dict | JSON object containing various attributes of the elem
 Start a new screen recording via XCTest.
 
 Since this feature is based on the native implementation provided by Apple
-it provides the best quality for the least perfomance penalty in comparison
+it provides the best quality for the least performance penalty in comparison
 to alternative implementations.
 
 Even though the feature is available for real devices
@@ -2109,7 +2109,7 @@ The feature is only available since Xcode 15/iOS 17.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-fps | number | no | The Frames Per Second value for the resulting video. Providing higher values will create video files that are greater in size, but with smoother transitions. It is highly recommeneded to keep this value is range 1-60. 24 by default | 60
+fps | number | no | The Frames Per Second value for the resulting video. Providing higher values will create video files that are greater in size, but with smoother transitions. It is highly recommended to keep this value is range 1-60. 24 by default | 60
 
 #### Returned Result
 
@@ -2118,7 +2118,7 @@ The API response consists of the following entries:
 Name | Type | Description | Example
 --- | --- | --- | ---
 uuid | string | Unique identifier of the video being recorded | 1D988774-C7E2-4817-829D-3B835DDAA7DF
-fps | numner | FPS value | 24
+fps | number | FPS value | 24
 codec | number | The magic for the used codec. Value of zero means h264 video codec is being used | 0
 startedAt | number | The timestamp when the screen recording has started in float seconds since Unix epoch | 1709826124.123
 

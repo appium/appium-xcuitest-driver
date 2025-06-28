@@ -48,7 +48,8 @@ describe('language and locale', function () {
       const expectedWDACapabilities = {
         capabilities: {
           firstMatch: [
-            Object.assign({}, DEFAULT_CAPS, {
+            {
+              ...DEFAULT_CAPS,
               bundleId: BUNDLE_ID,
               arguments: [
                 '-AppleLanguages',
@@ -58,7 +59,7 @@ describe('language and locale', function () {
                 '-AppleLocale',
                 LOCALE,
               ],
-            }),
+            },
           ],
           alwaysMatch: {},
         },
@@ -111,11 +112,11 @@ describe('language and locale', function () {
       const expectedWDACapabilities = {
         capabilities: {
           firstMatch: [
-            Object.assign({}, DEFAULT_CAPS, {
+            {...DEFAULT_CAPS,
               bundleId: BUNDLE_ID,
               arguments: augmentedProcessArgumentsWithLanguage.args,
               environment: processArguments.env,
-            }),
+            },
           ],
           alwaysMatch: {},
         },

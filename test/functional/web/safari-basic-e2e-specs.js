@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
-import {SAFARI_CAPS, amendCapabilities} from '../desired';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {
   spinTitle,
   spinTitleEquals,
@@ -51,6 +51,10 @@ describe('Safari - basics -', function () {
     });
 
     it('should start a session with default init', async function () {
+      if (process.env.CI && isIosVersionBelow('18.0')) {
+        this.skip();
+      }
+
       driver = await initSession(
         amendCapabilities(SAFARI_CAPS, {
           'appium:noReset': false,
@@ -408,10 +412,11 @@ describe('Safari - basics -', function () {
           });
 
           it('should be able to set a cookie with expiry', async function () {
-            const expiredCookie = Object.assign({}, newCookie, {
+            const expiredCookie = {
+              ...newCookie,
               expiry: parseInt(String(Date.now() / 1000), 10) - 1000, // set cookie in past
               name: 'expiredcookie',
-            });
+            };
 
             let cookies = await driver.getAllCookies();
             doesNotIncludeCookie(cookies, expiredCookie);
