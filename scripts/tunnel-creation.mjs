@@ -8,7 +8,9 @@
 // in Appium 3 based version
 import {logger, node} from '@appium/support';
 import _ from 'lodash';
+
 /* eslint-disable import/no-unresolved */
+// TODO: Remove this once we publish the appium-ios-remotexpc package to npm
 import {
   PacketStreamServer,
   TunnelManager,
