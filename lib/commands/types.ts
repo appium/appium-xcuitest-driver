@@ -3,7 +3,7 @@ import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
 import type {LiteralUnion, SetOptional, SetRequired} from 'type-fest';
 import type {Page} from '../types';
-import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
+import type {AuthorizationStatus, ThermalState} from './enum';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
