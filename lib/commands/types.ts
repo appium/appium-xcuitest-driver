@@ -3,11 +3,27 @@ import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
 import type {LiteralUnion, SetOptional, SetRequired} from 'type-fest';
 import type {Page} from '../types';
-import type {AuthorizationStatus, ThermalState} from './enum';
+import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
 export type LocationWithAltitude = SetRequired<Location, 'altitude'>;
+
+
+/**
+ * Battery information. Returned by the `mobile: getBatteryInfo` execute method.
+ */
+export interface BatteryInfo {
+  /**
+   * Battery level in range `[0.0, 1.0]`, where `1.0` means 100% charge.
+   */
+  level: number;
+  /**
+   * Battery state
+   */
+  state: BatteryState;
+}
+
 
 /**
  * Options for `stopRecordingScreen` command
