@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { LineConsumingLog } from './line-consuming-log';
 import { MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT } from './helpers';
-import type { AppiumLogger } from '@appium/types';
+import type { AppiumLogger, StringRecord } from '@appium/types';
 
 const EVENTS_TO_LOG = [
   'Network.loadingFinished',
@@ -19,23 +19,61 @@ export interface SafariConsoleLogOptions {
 }
 
 export interface SafariNetworkResponseTiming {
+  startTime: number;
+  redirectStart: number;
+  redirectEnd: number;
+  fetchStart: number;
+  domainLookupStart: number;
+  domainLookupEnd: number;
+  connectStart: number;
+  connectEnd: number;
+  secureConnectionStart: number;
+  requestStart: number;
   responseStart: number;
-  receiveHeadersEnd: number;
+  responseEnd: number;
 }
 
 export interface SafariNetworkResponse {
   url: string;
   status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  mimeType: string;
   timing: SafariNetworkResponseTiming;
   source: string;
+  security: StringRecord
 }
 
 export interface SafariNetworkLogEntryMetrics {
+  requestHeaderBytesSent: number;
+  requestBodyBytesSent: number;
+  responseHeaderBytesReceived: number;
+  isProxyConnection: boolean;
   responseBodyBytesReceived: number;
+  responseBodyDecodedSize: number;
+  securityConnection: StringRecord;
+}
+
+export interface SafariNetworkRequest {
+  url: string;
+  method: string;
+  headers: Record<string, string>;
+  rereferrerPolicy: string;
+}
+
+export interface SafariNetworkRequestInitiator {
+  type: string;
 }
 
 export interface SafariNetworkLogEntry {
   requestId: string;
+  frameId?: string;
+  loaderId?: string;
+  documentURL?: string;
+  request?: SafariNetworkRequest
+  timestamp?: number;
+  walltime?: number;
+  inititator?: SafariNetworkRequestInitiator;
   response?: SafariNetworkResponse;
   type?: string;
   initiator?: string;
@@ -45,6 +83,7 @@ export interface SafariNetworkLogEntry {
   // When a network call is cancelled, Safari returns `cancelled` as error text
   // but has a boolean `canceled`.
   canceled?: boolean;
+  [key: string]: any; // Allow additional properties
 }
 
 export class SafariNetworkLog extends LineConsumingLog {
@@ -64,14 +103,15 @@ export class SafariNetworkLog extends LineConsumingLog {
     return true;
   }
 
-  onNetworkEvent(method: string, entry: SafariNetworkLogEntry): void {
-    if (!MONITORED_EVENTS.includes(method)) {
+  onNetworkEvent(err?: Error, entry?: SafariNetworkLogEntry, method?: string): void {
+    if (!_.includes(MONITORED_EVENTS, method)) {
+      this.log.debug(`[SafariNetwork] Ignoring unmonitored event: ${method}`);
       return;
     }
 
     const serializedEntry = JSON.stringify(entry);
     this.broadcast(serializedEntry);
-    if (this._showLogs && EVENTS_TO_LOG.includes(method)) {
+    if (this._showLogs && _.includes(EVENTS_TO_LOG, method)) {
       this.log.info(`[SafariNetwork] ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);
     }
   }
