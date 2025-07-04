@@ -1,3 +1,9 @@
+## [9.9.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.3...v9.9.4) (2025-07-04)
+
+### Bug Fixes
+
+* Safari network logging ([#2594](https://github.com/appium/appium-xcuitest-driver/issues/2594)) ([c2afe9e](https://github.com/appium/appium-xcuitest-driver/commit/c2afe9e773c23ac624a6a1638a2b1eecfd13e2ec))
+
 ## [9.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.2...v9.9.3) (2025-07-03)
 
 ### Miscellaneous Chores
