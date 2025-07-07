@@ -88,7 +88,12 @@ export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntr
    * object, stringified.
    *
    */
-  onConsoleLogEvent(err: object | null, entry: SafariConsoleEntry): void {
+  onConsoleLogEvent(err?: Error, entry?: SafariConsoleEntry): void {
+    if (!entry) {
+      this.log.debug(`[SafariConsole] Ignoring empty console log entry: ${err?.message}`);
+      return;
+    }
+
     this.broadcast(entry);
     if (this._showLogs) {
       this.log.info(`[SafariConsole] ${_.truncate(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`);
