@@ -501,10 +501,12 @@ The returned object is a superset of the basic battery info, and may look like:
 {
   "level": 0.85,
   "state": 2,
-  "AbsoluteCapacity": 1234,
-  "CycleCount": 456,
-  "Temperature": 29.5,
-  "...": "other advanced fields"
+  "advance": {
+    "AbsoluteCapacity": 1234,
+    "CycleCount": 456,
+    "Temperature": 29.5,
+    "...": "other advanced fields"
+  }
 }
 ```
 
