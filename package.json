@@ -19,8 +19,8 @@
     "url": "https://github.com/appium/appium-xcuitest-driver/issues"
   },
   "engines": {
-    "node": ">=20",
-    "npm": ">=10"
+    "node": ">=16",
+    "npm": ">=8"
   },
   "appium": {
     "driverName": "xcuitest",
@@ -79,6 +79,7 @@
   "types": "./build/index.d.ts",
   "dependencies": {
     "@appium/strongbox": "^0.x",
+    "@appium/support": "^6.1.1",
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.8.0",
@@ -134,7 +135,7 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.1"
+    "appium": "^2.5.4"
   },
   "devDependencies": {
     "@appium/docutils": "^1.0.2",
@@ -170,9 +171,5 @@
   },
   "overrides": {
     "http-cache-semantics": "4.1.1"
-  },
-  "publishConfig": {
-    "access": "public",
-    "tag": "beta"
   }
 }
