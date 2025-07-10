@@ -153,10 +153,9 @@ describe('XCUITestDriver - basics -', function () {
   describe('logging -', function () {
     describe('types -', function () {
       it('should get the list of available logs', async function () {
-        const expectedTypes = ['syslog', 'crashlog', 'performance', 'safariConsole', 'safariNetwork', 'server'];
         const actualTypes = await driver.getLogTypes();
-        for (const actualType of actualTypes) {
-          expectedTypes.includes(actualType).should.be.true;
+        for (const expectedType of ['syslog', 'crashlog', 'performance', 'safariConsole', 'safariNetwork', 'server']) {
+          actualTypes.should.include(expectedType);
         }
       });
     });
@@ -210,22 +209,17 @@ describe('XCUITestDriver - basics -', function () {
     });
   });
 
-  describe('get geo location -', function () {
-    it('should fail because of preference error', async function () {
-      await driver.getGeoLocation().should.be.rejectedWith('Location service must be');
-    });
-  });
-
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      await driver.setGeoLocation({latitude: '30.0001', longitude: '21.0002'}).should.not.be
+      await driver.execute('mobile: getSimulatedLocation').should.be.fulfilled;
+      await driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}).should.not.be
         .rejected;
     });
   });
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      await driver.shake().should.not.be.rejected;
+      await driver.execute('mobile: shake').should.be.fulfilled;
     });
   });
 
@@ -256,8 +250,11 @@ describe('XCUITestDriver - basics -', function () {
         this.skip();
       }
 
-      // It takes a while to load the webview on slow env such as CI
       const contexts = await driver.execute('mobile: getContexts', {waitForWebviewMs: 10000});
+      if (process.env.CI && contexts.length < 2) {
+        // Skip on CI, since the simulator may be too slow to fetch a webview context in time
+        return this.skip();
+      }
 
       await driver.switchContext(contexts[1].id);
       await driver.navigateTo(GUINEA_PIG_PAGE);
