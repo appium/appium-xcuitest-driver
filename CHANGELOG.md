@@ -1,3 +1,9 @@
+## [9.9.6](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.5...v9.9.6) (2025-07-13)
+
+### Miscellaneous Chores
+
+* Improve atom execution timeout error message ([#2598](https://github.com/appium/appium-xcuitest-driver/issues/2598)) ([34c5ac4](https://github.com/appium/appium-xcuitest-driver/commit/34c5ac421ef333f5af298bb7723d9ac1be42d2d2))
+
 ## [9.9.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.4...v9.9.5) (2025-07-10)
 
 ### Miscellaneous Chores
