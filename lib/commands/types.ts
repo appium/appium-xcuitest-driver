@@ -9,7 +9,6 @@ export type Direction = 'up' | 'down' | 'left' | 'right';
 
 export type LocationWithAltitude = SetRequired<Location, 'altitude'>;
 
-
 /**
  * Battery information. Returned by the `mobile: getBatteryInfo` execute method.
  */
