@@ -109,7 +109,7 @@ export class SafariNetworkLog extends LineConsumingLog {
       return;
     }
 
-    const serializedEntry = JSON.stringify(entry);
+    const serializedEntry = JSON.stringify({method, event: entry});
     this.broadcast(serializedEntry);
     if (this._showLogs && _.includes(EVENTS_TO_LOG, method)) {
       this.log.info(`[SafariNetwork] ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);

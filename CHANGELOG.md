@@ -1,3 +1,15 @@
+## [9.9.6](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.5...v9.9.6) (2025-07-13)
+
+### Miscellaneous Chores
+
+* Improve atom execution timeout error message ([#2598](https://github.com/appium/appium-xcuitest-driver/issues/2598)) ([34c5ac4](https://github.com/appium/appium-xcuitest-driver/commit/34c5ac421ef333f5af298bb7723d9ac1be42d2d2))
+
+## [9.9.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.4...v9.9.5) (2025-07-10)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2596](https://github.com/appium/appium-xcuitest-driver/issues/2596)) ([a10b91d](https://github.com/appium/appium-xcuitest-driver/commit/a10b91dc16213527f0c7f57f247e8cb70c211b40))
+
 ## [9.9.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.3...v9.9.4) (2025-07-04)
 
 ### Bug Fixes
