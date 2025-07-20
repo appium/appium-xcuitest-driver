@@ -23,7 +23,7 @@ xcodebuild build-for-testing test-without-building \
 ```
 
 This translates to `xcodebuild` building `WebDriverAgent.xcodeproj` and running the resulting
-package on the specified device. `wda_build` path will have the built package.
+package on the specified device. The built package will be located in the `wda_build` path.
 
 The command can be split into `build-for-testing` and `test-without-building` parts as follows:
 
