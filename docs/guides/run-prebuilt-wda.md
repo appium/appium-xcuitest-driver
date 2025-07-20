@@ -78,7 +78,7 @@ and `appium:usePreinstalledWDA` capabilities.
 These capabilities combination allows the XCUITest driver to install prebuilt WDA specified with
 `appium:prebuiltWDAPath` and starting it **without** `xcodebuild`.
 
-`download-wda-sim` command helps to download proper version of WDA for your XCUITest driver version
+`download-wda-sim` command helps to download the proper version of WDA for your XCUITest driver version
 in simulator use.
 
 ```bash
