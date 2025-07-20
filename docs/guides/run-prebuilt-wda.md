@@ -9,7 +9,7 @@ You can manually run a modified version of this command in order to prebuild the
 ## Understanding How `xcodebuild` Works
 
 By default, `xcodebuild` is run with two commands: `build-for-testing` and `test-without-building`.
-`build-for-testing` builds a test bundle package, whereas `test-without-building` runs it.
+`build-for-testing` builds a test bundle package, whereas `test-without-building` actually runs it.
 
 For instance, XCUITest driver issues an `xcodebuild` command like so:
 
