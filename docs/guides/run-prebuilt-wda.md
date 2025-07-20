@@ -75,8 +75,8 @@ workflows may help with validating the build script.
 
 [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md) provides `appium:prebuiltWDAPath`
 and `appium:usePreinstalledWDA` capabilities.
-These capabilities combination allows the XCUITest driver to install prebuilt WDA specified with
-`appium:prebuiltWDAPath` and start it **without** `xcodebuild`.
+These capabilities allow the XCUITest driver to install prebuilt WDA specified with
+`appium:prebuiltWDAPath` and start it **without** running `xcodebuild`.
 
 The `download-wda-sim` command helps to download the proper version of WDA for your XCUITest driver version
 for simulator use.
