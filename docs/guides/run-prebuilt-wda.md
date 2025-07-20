@@ -60,7 +60,7 @@ xcodebuild test-without-building \
 
 ### Download Prebuilt WDA and run them with `appium:prebuiltWDAPath` and `appium:usePreinstalledWDA`
 
-This approach lets the XCUITest driver start WDA without running `xcodebuild` by using prebuilt WDA packages.
+This approach allows the XCUITest driver to start WDA without running `xcodebuild` by using prebuilt WDA packages.
 We recommend this method if you don't need to modify the WDA source code.
 
 [The Appium WebDriverAgent GitHub page](https://github.com/appium/WebDriverAgent/releases) provides
