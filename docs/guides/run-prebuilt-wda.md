@@ -94,7 +94,7 @@ Then, starting a new session with capabilities below:
 }
 ```
 
-The new session starts without `xcodebuild` run.
+The new session starts without an `xcodebuild` run.
 
 ### Capabilities for Prebuilt WDA with `appium:useXctestrunFile`, `appium:usePrebuiltWDA` or `appium:prebuildWDA`
 
