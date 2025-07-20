@@ -67,7 +67,7 @@ We recommend this method if you don't need to modify the WDA source code.
 downloads for WebDriverAgent packages for real devices and simulators.
 WebDriverAgent packages for real devices do not have embedded XCTest frameworks so that
 they can run on iOS 17+ devices. Please read [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md)
-for more details. Understanding app signing is also important for real devices.
+for more details about running on real devices. Understanding app signing is also important when working with real devices.
 Simulators need everything, so WDA package sizes for simulators are greater than for real devices.
 The [Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and
 [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml)
