@@ -3,7 +3,7 @@ title: Run Prebuilt WebDriverAgentRunner
 ---
 
 The XCUITest driver runs `xcodebuild` to build and install the WebDriverAgentRunner (WDA) app on the
-target device. Running the command every time could slow down the new session creation performance.
+target device. Running the command every time could slow down new session creation.
 You can manually run a modified version of this command in order to prebuild the WDA.
 
 ## Understanding How `xcodebuild` Works
