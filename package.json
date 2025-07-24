@@ -84,7 +84,7 @@
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.8.0",
     "appium-ios-simulator": "^6.2.2",
-    "appium-ios-remotexpc": "^0.1.0",
+    "appium-ios-remotexpc": "^0.x",
     "appium-remote-debugger": "^13.1.0",
     "appium-webdriveragent": "^9.11.0",
     "appium-xcode": "^5.1.4",
