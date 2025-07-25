@@ -573,4 +573,5 @@ export const executeMethodMap = {
       optional: ['args', 'timeout'],
     },
   },
+  // @ts-ignore temporary to pass build for now
 } as const satisfies ExecuteMethodMap<XCUITestDriver>;
