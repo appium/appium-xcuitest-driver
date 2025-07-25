@@ -1,3 +1,9 @@
+## [9.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.6...v9.10.0) (2025-07-25)
+
+### Features
+
+* Added support for fetching batteryInformation from shim service ([#2592](https://github.com/appium/appium-xcuitest-driver/issues/2592)) ([8dce773](https://github.com/appium/appium-xcuitest-driver/commit/8dce77333b7c7c719492c03268a50de7631d8c79)), closes [#2593](https://github.com/appium/appium-xcuitest-driver/issues/2593)
+
 ## [9.9.6](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.5...v9.9.6) (2025-07-13)
 
 ### Miscellaneous Chores
