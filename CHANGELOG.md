@@ -1,3 +1,39 @@
+## [9.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.6...v9.10.0) (2025-07-25)
+
+### Features
+
+* Added support for fetching batteryInformation from shim service ([#2592](https://github.com/appium/appium-xcuitest-driver/issues/2592)) ([8dce773](https://github.com/appium/appium-xcuitest-driver/commit/8dce77333b7c7c719492c03268a50de7631d8c79)), closes [#2593](https://github.com/appium/appium-xcuitest-driver/issues/2593)
+
+## [9.9.6](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.5...v9.9.6) (2025-07-13)
+
+### Miscellaneous Chores
+
+* Improve atom execution timeout error message ([#2598](https://github.com/appium/appium-xcuitest-driver/issues/2598)) ([34c5ac4](https://github.com/appium/appium-xcuitest-driver/commit/34c5ac421ef333f5af298bb7723d9ac1be42d2d2))
+
+## [9.9.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.4...v9.9.5) (2025-07-10)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2596](https://github.com/appium/appium-xcuitest-driver/issues/2596)) ([a10b91d](https://github.com/appium/appium-xcuitest-driver/commit/a10b91dc16213527f0c7f57f247e8cb70c211b40))
+
+## [9.9.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.3...v9.9.4) (2025-07-04)
+
+### Bug Fixes
+
+* Safari network logging ([#2594](https://github.com/appium/appium-xcuitest-driver/issues/2594)) ([c2afe9e](https://github.com/appium/appium-xcuitest-driver/commit/c2afe9e773c23ac624a6a1638a2b1eecfd13e2ec))
+
+## [9.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.2...v9.9.3) (2025-07-03)
+
+### Miscellaneous Chores
+
+* bump remote debugger ([7540f38](https://github.com/appium/appium-xcuitest-driver/commit/7540f3875367bc7c739334a60ddbddb699112d0b))
+
+## [9.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.1...v9.9.2) (2025-07-03)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([edab935](https://github.com/appium/appium-xcuitest-driver/commit/edab935a5964aa4a6033e92e69db18b00493976a))
+
 ## [9.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.0...v9.9.1) (2025-06-28)
 
 ### Bug Fixes

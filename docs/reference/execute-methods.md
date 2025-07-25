@@ -484,14 +484,33 @@ Reads the battery information from the device under test. This endpoint only ret
 
 #### Returned Result
 
-The actual battery info map, which consists of the following entries:
+The returned object always includes at least the following entries:
 
-- level: Battery level in range [0.0, 1.0], where 1.0 means 100% charge.
-- state: Battery state as an integer number. The following values are possible:
+- `level`: Battery level in range [0.0, 1.0], where 1.0 means 100% charge.
+- `state`: Battery state as an integer number. The following values are possible:
    *   UIDeviceBatteryStateUnknown = 0
    *   UIDeviceBatteryStateUnplugged = 1  // on battery, discharging
    *   UIDeviceBatteryStateCharging = 2   // plugged in, less than 100%
    *   UIDeviceBatteryStateFull = 3       // plugged in, at 100%
+
+On iOS 18 and newer real devices, the returned object may also include many additional advanced battery information fields, such as capacity, health metrics, temperature, and more. For a full list of possible advanced fields, see the [BatteryInfo](../../lib/commands/advanced-battery-types.ts).
+
+The returned object is a superset of the basic battery info, and may look like:
+
+```json
+{
+  "level": 0.85,
+  "state": 2,
+  "advanced": {
+    "AbsoluteCapacity": 1234,
+    "CycleCount": 456,
+    "Temperature": 29.5,
+    "...": "other advanced fields"
+  }
+}
+```
+
+If advanced fields are not available (e.g., on older iOS versions or simulators), only `level` and `state` will be present.
 
 ### mobile: deviceInfo
 
@@ -1777,7 +1796,7 @@ The above three extensions are available since the driver version 4.9.0.
 
 You can create a condition on a connected device to test your app under adverse conditions, such as poor network connectivity or thermal constraints.
 
-When you start a device condition, the operating system on the device behaves as if its environment has changed. The device condition remains active until you stop the device condition or disconnect the device. For example, you can start a device condition, run your app, monitor your app’s energy usage, and then stop the condition.
+When you start a device condition, the operating system on the device behaves as if its environment has changed. The device condition remains active until you stop the device condition or disconnect the device. For example, you can start a device condition, run your app, monitor your app's energy usage, and then stop the condition.
 
 Reference: [Test under adverse device conditions (iOS)](https://help.apple.com/xcode/mac/current/#/dev308429d42)
 

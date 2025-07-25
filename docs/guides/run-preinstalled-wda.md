@@ -105,6 +105,15 @@ bundle ID, the session will launch the WebDriverAgent process without `xcodebuil
     For example, check whether the provisioning profile is trusted.
 
 
+!!! note
+
+    Please make sure the device under test has the developer disk image mounted.
+    This is necessary to start an XCTest session and load the required XCTest libraries from the device.
+    For example, starting Xcode after connecting the device to the host machine will mount the developer disk image automatically.
+    Using third-party tools can also help to mount the developer disk image service.
+    Please check the documentation for each tool to understand how to mount the developer disk image.
+
+
 ```ruby
 # Ruby
 capabilities: {

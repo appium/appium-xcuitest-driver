@@ -5,7 +5,7 @@
  */
 import {logger, node} from 'appium/support.js';
 import _ from 'lodash';
-/* eslint-disable import/no-unresolved */
+
 import {
   PacketStreamServer,
   TunnelManager,
