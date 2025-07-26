@@ -1,3 +1,9 @@
+## [9.10.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.0...v9.10.1) (2025-07-26)
+
+### Miscellaneous Chores
+
+* make  appium-ios-remotexpc optional deps ([#2600](https://github.com/appium/appium-xcuitest-driver/issues/2600)) ([5d956cf](https://github.com/appium/appium-xcuitest-driver/commit/5d956cf1653e48d5f5dc699ae63a70c67c2499ed))
+
 ## [9.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.6...v9.10.0) (2025-07-25)
 
 ### Features
