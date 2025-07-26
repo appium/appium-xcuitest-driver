@@ -106,7 +106,7 @@
   },
   "optionalDependencies": {
     "appium-ios-remotexpc": "^0.x"
-  }
+  },
   "scripts": {
     "build": "tsc -b",
     "clean": "npm run build -- --clean",
