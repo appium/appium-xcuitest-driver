@@ -1,3 +1,9 @@
+## [9.10.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.2...v9.10.3) (2025-08-04)
+
+### Miscellaneous Chores
+
+* bump appium-ios-device to 2.9.0 ([#2603](https://github.com/appium/appium-xcuitest-driver/issues/2603)) ([69a6ca9](https://github.com/appium/appium-xcuitest-driver/commit/69a6ca95391b9dce74d8130fd818705a20ac073e))
+
 ## [9.10.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.1...v9.10.2) (2025-08-03)
 
 ### Miscellaneous Chores
