@@ -23,6 +23,7 @@ export interface BatteryInfo {
   state: BatteryState;
 }
 
+
 /**
  * Options for `stopRecordingScreen` command
  */

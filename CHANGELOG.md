@@ -1,3 +1,33 @@
+## [9.10.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.2...v9.10.3) (2025-08-04)
+
+### Miscellaneous Chores
+
+* bump appium-ios-device to 2.9.0 ([#2603](https://github.com/appium/appium-xcuitest-driver/issues/2603)) ([69a6ca9](https://github.com/appium/appium-xcuitest-driver/commit/69a6ca95391b9dce74d8130fd818705a20ac073e))
+
+## [9.10.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.1...v9.10.2) (2025-08-03)
+
+### Miscellaneous Chores
+
+* leave wda version info or debugging ([#2602](https://github.com/appium/appium-xcuitest-driver/issues/2602)) ([b683532](https://github.com/appium/appium-xcuitest-driver/commit/b68353263eb7a8fb814a6dcbb8b532df3a40a799))
+
+## [9.10.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.0...v9.10.1) (2025-07-26)
+
+### Miscellaneous Chores
+
+* make  appium-ios-remotexpc optional deps ([#2600](https://github.com/appium/appium-xcuitest-driver/issues/2600)) ([5d956cf](https://github.com/appium/appium-xcuitest-driver/commit/5d956cf1653e48d5f5dc699ae63a70c67c2499ed))
+
+## [9.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.6...v9.10.0) (2025-07-25)
+
+### Features
+
+* Added support for fetching batteryInformation from shim service ([#2592](https://github.com/appium/appium-xcuitest-driver/issues/2592)) ([8dce773](https://github.com/appium/appium-xcuitest-driver/commit/8dce77333b7c7c719492c03268a50de7631d8c79)), closes [#2593](https://github.com/appium/appium-xcuitest-driver/issues/2593)
+
+## [9.9.6](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.5...v9.9.6) (2025-07-13)
+
+### Miscellaneous Chores
+
+* Improve atom execution timeout error message ([#2598](https://github.com/appium/appium-xcuitest-driver/issues/2598)) ([34c5ac4](https://github.com/appium/appium-xcuitest-driver/commit/34c5ac421ef333f5af298bb7723d9ac1be42d2d2))
+
 ## [9.9.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.4...v9.9.5) (2025-07-10)
 
 ### Miscellaneous Chores
