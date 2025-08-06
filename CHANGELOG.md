@@ -1,3 +1,9 @@
+## [9.10.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.3...v9.10.4) (2025-08-06)
+
+### Bug Fixes
+
+* Make sure session id is set before cleaning up socket handlers ([#2604](https://github.com/appium/appium-xcuitest-driver/issues/2604)) ([3c73836](https://github.com/appium/appium-xcuitest-driver/commit/3c738363c1c7bb6106d6b2584558a0891dd8a47c))
+
 ## [9.10.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.2...v9.10.3) (2025-08-04)
 
 ### Miscellaneous Chores
