@@ -81,11 +81,10 @@
     "@appium/strongbox": "^0.x",
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
-    "appium-ios-device": "^2.8.0",
+    "appium-ios-device": "^2.9.0",
     "appium-ios-simulator": "^6.2.2",
-    "appium-ios-remotexpc": "^0.x",
-    "appium-remote-debugger": "^13.1.0",
-    "appium-webdriveragent": "^9.11.0",
+    "appium-remote-debugger": "^13.1.1",
+    "appium-webdriveragent": "^9.15.2",
     "appium-xcode": "^5.1.4",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
@@ -103,6 +102,9 @@
     "teen_process": "^2.2.0",
     "winston": "3.17.0",
     "ws": "^8.13.0"
+  },
+  "optionalDependencies": {
+    "appium-ios-remotexpc": "^0.x"
   },
   "scripts": {
     "build": "tsc -b",
