@@ -33,9 +33,9 @@ jobs:
         xcodeVersion: ['16.2', '15.4']
         include:
         - xcodeVersion: '16.2'
-          iosVersion: '18.2'
+          iosVersion: '18.5'
           deviceName: 'iPhone 16'
-          tvosVersion: '18.2'
+          tvosVersion: '18.5'
           tvosDeviceName: 'Apple TV'
           platform: macos-15
         - xcodeVersion: '15.4'
