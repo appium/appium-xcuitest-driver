@@ -78,7 +78,7 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
-    "@appium/strongbox": "^0.x",
+    "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
     "appium-idb": "^1.6.13",
     "appium-ios-device": "^2.9.0",
@@ -140,11 +140,11 @@
     "appium": "^3.0.0-beta.1"
   },
   "devDependencies": {
-    "@appium/docutils": "^1.0.2",
-    "@appium/eslint-config-appium-ts": "^1.0.0",
-    "@appium/test-support": "^3.0.20",
-    "@appium/tsconfig": "^0.x",
-    "@appium/types": "^0.x",
+    "@appium/docutils": "^2.0.0-rc.1",
+    "@appium/eslint-config-appium-ts": "^2.0.0-rc.1",
+    "@appium/test-support": "^4.0.0-rc.1",
+    "@appium/tsconfig": "^1.0.0-rc.1",
+    "@appium/types": "^1.0.0-rc.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",
