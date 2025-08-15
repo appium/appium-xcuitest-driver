@@ -83,7 +83,7 @@ jobs:
         export cwd=$(pwd)
         pushd "$cwd"
         cd ~
-        npm install -g appium@beta
+        npm install -g appium@rc
         appium driver install --source=local "$cwd"
         appium driver doctor xcuitest
         appium driver run xcuitest build-wda --sdk=${{ matrix.iosVersion }} --name="${{ matrix.deviceName }}"
