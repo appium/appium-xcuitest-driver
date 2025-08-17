@@ -30,9 +30,9 @@ jobs:
         - driver
         - web
         - long
-        xcodeVersion: ['16.2', '15.4']
+        xcodeVersion: ['16.4', '15.4']
         include:
-        - xcodeVersion: '16.2'
+        - xcodeVersion: '16.4'
           iosVersion: '18.5'
           deviceName: 'iPhone 16'
           tvosVersion: '18.5'
