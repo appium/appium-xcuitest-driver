@@ -19,7 +19,7 @@
     "url": "https://github.com/appium/appium-xcuitest-driver/issues"
   },
   "engines": {
-    "node": ">=20",
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
     "npm": ">=10"
   },
   "appium": {
@@ -168,9 +168,5 @@
     "type-fest": "^4.1.0",
     "typescript": "^5.4.2",
     "webdriverio": "^9.4.1"
-  },
-  "publishConfig": {
-    "access": "public",
-    "tag": "beta"
   }
 }
