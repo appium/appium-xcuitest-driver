@@ -1,3 +1,9 @@
+## [9.10.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.4...v9.10.5) (2025-08-17)
+
+### Miscellaneous Chores
+
+* drop rimraf deps from dev deps as no references ([#2607](https://github.com/appium/appium-xcuitest-driver/issues/2607)) ([0dc17bd](https://github.com/appium/appium-xcuitest-driver/commit/0dc17bd86e6fafdcb76aeee44d64388ea6ab6d58))
+
 ## [9.10.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.3...v9.10.4) (2025-08-06)
 
 ### Bug Fixes
