@@ -6,11 +6,15 @@
 [![Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml/badge.svg)](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml)
 
 This is an [Appium](https://appium.github.io/appium) driver for automating iOS applications on iOS,
-iPadOS, and tvOS. You can add it to your Appium 2+ server install: (Only macOS is supported as the host platform, as it requires Xcode and developer tools.)
+iPadOS, and tvOS.
 
-```bash
-appium driver install xcuitest
-```
+> [!IMPORTANT]
+> Only macOS is supported as the host platform, as it requires Xcode and developer tools.
+
+> [!IMPORTANT]
+> Since major version *10.0.0*, this driver is only compatible with Appium 3. Use the `appium driver install xcuitest`
+> command to add it to your distribution.
+
 
 ## Documentation
 
@@ -34,7 +38,7 @@ npm run watch
 To run unit/functional tests:
 
 ```bash
-npm test # unit 
+npm test # unit
 npm run e2e-test # functional
 ```
 

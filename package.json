@@ -19,8 +19,8 @@
     "url": "https://github.com/appium/appium-xcuitest-driver/issues"
   },
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10"
   },
   "appium": {
     "driverName": "xcuitest",
@@ -78,15 +78,14 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
-    "@appium/strongbox": "^0.x",
-    "@appium/support": "^6.1.1",
+    "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
-    "appium-idb": "^1.6.13",
-    "appium-ios-device": "^2.9.0",
-    "appium-ios-simulator": "^6.2.2",
-    "appium-remote-debugger": "^13.1.1",
-    "appium-webdriveragent": "^9.15.2",
-    "appium-xcode": "^5.1.4",
+    "appium-idb": "^2.0.0",
+    "appium-ios-device": "^3.0.0",
+    "appium-ios-simulator": "^7.0.0",
+    "appium-remote-debugger": "^14.0.0",
+    "appium-webdriveragent": "^10.0.0",
+    "appium-xcode": "^6.0.0",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
     "bluebird": "^3.7.2",
@@ -96,11 +95,11 @@
     "lru-cache": "^10.0.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.x",
-    "node-simctl": "^7.7.1",
+    "node-simctl": "^8.0.0",
     "portscanner": "^2.2.0",
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
-    "teen_process": "^2.2.0",
+    "teen_process": "^3.0.0",
     "winston": "3.17.0",
     "ws": "^8.13.0"
   },
@@ -138,14 +137,14 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^2.5.4"
+    "appium": "^3.0.0-rc.2"
   },
   "devDependencies": {
-    "@appium/docutils": "^1.0.2",
-    "@appium/eslint-config-appium-ts": "^1.0.0",
-    "@appium/test-support": "^3.0.20",
-    "@appium/tsconfig": "^0.x",
-    "@appium/types": "^0.x",
+    "@appium/docutils": "^2.0.0-rc.1",
+    "@appium/eslint-config-appium-ts": "^2.0.0-rc.1",
+    "@appium/test-support": "^4.0.0-rc.1",
+    "@appium/tsconfig": "^1.0.0-rc.1",
+    "@appium/types": "^1.0.0-rc.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",
@@ -153,7 +152,6 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^24.0.1",
     "@types/portscanner": "^2.1.1",
-    "@types/teen_process": "^2.0.1",
     "axios": "^1.4.0",
     "chai": "^5.1.1",
     "chai-as-promised": "^8.0.0",
@@ -170,8 +168,5 @@
     "type-fest": "^4.1.0",
     "typescript": "^5.4.2",
     "webdriverio": "^9.4.1"
-  },
-  "overrides": {
-    "http-cache-semantics": "4.1.1"
   }
 }

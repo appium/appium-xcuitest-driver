@@ -78,12 +78,21 @@ jobs:
         wait_for_boot: true
 
     - run: |
+        appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
+        pushd "$(pwd)"
+        cd ~
+        npm install -g "appium@$appium_ver"
+        popd
+      name: Install Appium Server
+    - run: |
+        npm install
         npm install --no-save mjpeg-consumer
         npm install mocha-multi-reporters --save-dev
+      name: Install dev dependencies
+    - run: |
         export cwd=$(pwd)
         pushd "$cwd"
         cd ~
-        npm install -g appium
         appium driver install --source=local "$cwd"
         appium driver doctor xcuitest
         appium driver run xcuitest build-wda --sdk=${{ matrix.iosVersion }} --name="${{ matrix.deviceName }}"
