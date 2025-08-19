@@ -1,3 +1,15 @@
+## [10.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.5...v10.0.0) (2025-08-19)
+
+### ⚠ BREAKING CHANGES
+
+* Required Node.js version has been bumped to ^20.19.0 || ^22.12.0 || >=24.0.0
+* Required npm version has been bumped to >=10
+* Required Appium server version has been bumped to >=3.0.0-rc.2
+
+### Features
+
+* Update server compatibility for Appium 3 ([#2590](https://github.com/appium/appium-xcuitest-driver/issues/2590)) ([313578a](https://github.com/appium/appium-xcuitest-driver/commit/313578ac565d54b402ade9fd542f6138ac928594))
+
 ## [9.10.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.4...v9.10.5) (2025-08-17)
 
 ### Miscellaneous Chores
