@@ -1,3 +1,9 @@
+## [10.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.0...v10.0.1) (2025-08-23)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump chai from 5.3.2 to 6.0.0 ([#2612](https://github.com/appium/appium-xcuitest-driver/issues/2612)) ([66db332](https://github.com/appium/appium-xcuitest-driver/commit/66db332bca5f16ca68bbfc6ced2dcd72c9c51d1a))
+
 ## [10.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.5...v10.0.0) (2025-08-19)
 
 ### ⚠ BREAKING CHANGES
