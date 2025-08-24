@@ -1,3 +1,9 @@
+## [10.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.1...v10.0.2) (2025-08-24)
+
+### Miscellaneous Chores
+
+* **deps:** bump lru-cache from 10.4.3 to 11.1.0 ([#2539](https://github.com/appium/appium-xcuitest-driver/issues/2539)) ([ed46fbd](https://github.com/appium/appium-xcuitest-driver/commit/ed46fbdc975c08998cd41689f8b886cf3158561e))
+
 ## [10.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.0...v10.0.1) (2025-08-23)
 
 ### Miscellaneous Chores
