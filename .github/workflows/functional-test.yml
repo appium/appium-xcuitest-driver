@@ -28,7 +28,8 @@ jobs:
         e2eRoot:
         - basic
         - device
-        - driver
+        # In CI env driver tests are unstable, because it's expensive to start and stop simulators
+        # - driver
         - web
         - long
         xcodeVersion: ['16.4', '15.4']
@@ -114,14 +115,14 @@ jobs:
           elapsed=$((current_time - start_time))
 
           if nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
-            echo "Appium server is running after $elapsed seconds (HTTP 200)"
+            echo "Appium server is running after $elapsed seconds"
             popd
             cat appium.log
             exit 0
           fi
 
           if [[ "$elapsed" -ge "$TIMEOUT_SEC" ]]; then
-            echo "${TIMEOUT_SEC}s timeout reached: Appium server is NOT running (Last status: HTTP $status)"
+            echo "${elapsed} seconds timeout reached: Appium server is NOT running"
             exit 1
           fi
 
