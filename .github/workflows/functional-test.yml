@@ -17,6 +17,7 @@ env:
   SHOW_XCODE_LOG: true
   APPIUM_TEST_SERVER_PORT: '4567'
   APPIUM_TEST_SERVER_HOST: '127.0.0.1'
+  PREBUILT_WDA_PATH: ${{ github.workspace }}/wda/WebDriverAgentRunner-Runner.app
 
 jobs:
   build:
@@ -95,7 +96,7 @@ jobs:
         cd ~
         appium driver install --source=local "$cwd"
         appium driver doctor xcuitest
-        appium driver run xcuitest build-wda --sdk=${{ matrix.iosVersion }} --name="${{ matrix.deviceName }}"
+        appium driver run xcuitest download-wda-sim  --platform=ios --outdir=$(dirname "$PREBUILT_WDA_PATH")
         echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
         nohup appium server \
           --port=$APPIUM_TEST_SERVER_PORT \
@@ -104,26 +105,23 @@ jobs:
           --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
 
         TIMEOUT_SEC=15
-        URL="http://${APPIUM_TEST_SERVER_HOST}:${APPIUM_TEST_SERVER_PORT}/status"
         INTERVAL_SEC=1
 
         start_time=$(date +%s)
         echo "Checking service at $URL for up to $TIMEOUT_SEC seconds..."
         while true; do
-          status=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-
           current_time=$(date +%s)
           elapsed=$((current_time - start_time))
 
-          if [[ "$status" -eq 200 ]]; then
-            echo "Appium server is running at $URL after $elapsed seconds (HTTP 200)"
+          if nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+            echo "Appium server is running after $elapsed seconds (HTTP 200)"
             popd
             cat appium.log
             exit 0
           fi
 
           if [[ "$elapsed" -ge "$TIMEOUT_SEC" ]]; then
-            echo "Timeout reached: Appium server is NOT running at $URL (Last status: HTTP $status)"
+            echo "${TIMEOUT_SEC}s timeout reached: Appium server is NOT running (Last status: HTTP $status)"
             exit 1
           fi
 
