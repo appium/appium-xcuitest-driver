@@ -102,18 +102,36 @@ jobs:
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
           --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
-        sleep 5
-        popd
-        cat appium.log
+
+        TIMEOUT_SEC=15
+        URL="http://${APPIUM_TEST_SERVER_HOST}:${APPIUM_TEST_SERVER_PORT}/status"
+        INTERVAL_SEC=1
+
+        start_time=$(date +%s)
+        echo "Checking service at $URL for up to $TIMEOUT_SEC seconds..."
+        while true; do
+          status=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+
+          current_time=$(date +%s)
+          elapsed=$((current_time - start_time))
+
+          if [[ "$status" -eq 200 ]]; then
+            echo "Appium server is running at $URL after $elapsed seconds (HTTP 200)"
+            popd
+            cat appium.log
+            exit 0
+          fi
+
+          if [[ "$elapsed" -ge "$TIMEOUT_SEC" ]]; then
+            echo "Timeout reached: Appium server is NOT running at $URL (Last status: HTTP $status)"
+            exit 1
+          fi
+
+          sleep "$INTERVAL_SEC"
+        done
       name: Prepare the server
 
     - run: |
-        if ! nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
-          echo "Appium server is still not listening at $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
-          cat appium.log
-          exit 1
-        fi
-
         export DEVICE_NAME="${{ matrix.deviceName }}"
         export PLATFORM_VERSION="${{ matrix.iosVersion }}"
 
