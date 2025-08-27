@@ -2,8 +2,7 @@ import {extractCapabilityValue} from '../desired';
 
 const HOST = process.env.APPIUM_TEST_SERVER_HOST || '127.0.0.1';
 const PORT = parseInt(String(process.env.APPIUM_TEST_SERVER_PORT), 10) || 4567;
-// on CI the timeout needs to be long, mostly so WDA can be built the first time
-const MOCHA_TIMEOUT = 60 * 1000 * (process.env.CI ? 16 : 4);
+const MOCHA_TIMEOUT = 60 * 1000 * 4;
 
 let driver;
 let didBuildWda = false;

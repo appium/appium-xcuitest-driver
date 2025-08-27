@@ -40,7 +40,7 @@ const APPS = {
   biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app'), // https://github.com/mwakizaka/LocalAuthentication
 };
 
-const initTimeout = 60 * 1000 * (process.env.CI ? 16 : 4);
+const initTimeout = 60 * 1000 * 4;
 const prebuiltWdaOpts = process.env.PREBUILT_WDA_PATH
   ? {
     'appium:usePreinstalledWDA': true,

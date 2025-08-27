@@ -103,13 +103,15 @@ jobs:
           --port=$APPIUM_TEST_SERVER_PORT \
           --address=$APPIUM_TEST_SERVER_HOST \
           --relaxed-security \
-          --keep-alive-timeout 1200 2>&1 > "$cwd/appium.log" &
+          --log-no-colors \
+          --log-timestamp \
+          --keep-alive-timeout 1200 \
+          2>&1 > "$cwd/appium.log" &
 
         TIMEOUT_SEC=15
         INTERVAL_SEC=1
 
         start_time=$(date +%s)
-        echo "Checking service at $URL for up to $TIMEOUT_SEC seconds..."
         while true; do
           current_time=$(date +%s)
           elapsed=$((current_time - start_time))
@@ -126,6 +128,7 @@ jobs:
             exit 1
           fi
 
+          echo "Waiting $elapsed seconds for Appium server to start..."
           sleep "$INTERVAL_SEC"
         done
       name: Prepare the server
