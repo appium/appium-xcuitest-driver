@@ -3,12 +3,11 @@ import _ from 'lodash';
 import {retryInterval} from 'asyncbox';
 import {
   extractCapabilityValue,
-  amendCapabilities,
   UICATALOG_CAPS,
   PLATFORM_VERSION,
 } from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
 
 
@@ -34,10 +33,7 @@ describe('XCUITestDriver - find -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    const caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
-    driver = await initSession(caps);
+    driver = await initSession(UICATALOG_CAPS);
   });
   after(async function () {
     await deleteSession();

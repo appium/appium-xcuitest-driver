@@ -1,5 +1,5 @@
 import path from 'path';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {GENERIC_CAPS, amendCapabilities} from '../desired';
 import xcode from 'appium-xcode';
 
@@ -37,7 +37,6 @@ if (process.env.LAUNCH_WITH_IDB) {
       const caps = amendCapabilities(GENERIC_CAPS, {
         'appium:app': APP_UNDER_TEST_PATH,
         'appium:launchWithIDB': true,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
       driver = await initSession(caps);
     });

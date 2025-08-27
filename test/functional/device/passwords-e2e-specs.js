@@ -1,4 +1,4 @@
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {UICATALOG_CAPS, amendCapabilities, extractCapabilityValue} from '../desired';
 import {util} from 'appium/support';
 
@@ -19,9 +19,7 @@ describe('Passwords', function () {
   });
 
   beforeEach(function () {
-    caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+    caps = UICATALOG_CAPS;
 
     if (util.compareVersions(extractCapabilityValue(caps, 'appium:platformVersion'), '<', '16.4')) {
       return this.skip();

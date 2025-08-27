@@ -67,7 +67,7 @@ describe('XCUITestDriver', function () {
   });
 
   it('should start and stop a session', async function () {
-    driver = await initSession(baseCaps, {connectionRetryTimeout: MOCHA_TIMEOUT});
+    driver = await initSession(baseCaps);
     const els = await driver.$$('XCUIElementTypeWindow');
     els.length.should.be.at.least(1);
   });

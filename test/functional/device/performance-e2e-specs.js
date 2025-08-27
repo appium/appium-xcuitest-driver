@@ -1,6 +1,6 @@
 import B from 'bluebird';
-import {amendCapabilities, UICATALOG_CAPS} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {UICATALOG_CAPS} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 
 describe('XCUITestDriver - performance', function () {
@@ -25,10 +25,7 @@ describe('XCUITestDriver - performance', function () {
         this.skip();
       }
 
-      const caps = amendCapabilities(UICATALOG_CAPS, {
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-      });
-      driver = await initSession(caps);
+      driver = await initSession(UICATALOG_CAPS);
     });
     after(async function () {
       await deleteSession();

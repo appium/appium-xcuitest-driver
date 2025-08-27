@@ -66,10 +66,11 @@ jobs:
     - run: xcrun simctl list devices available
       name: List Installed Simulators
     - run: |
-        brew install xq
         xcrun simctl list runtimes
         xcrun --sdk iphonesimulator --show-sdk-version
       name: List Runtimes
+    - name: Start iOS Simulator UI
+      run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
     - name: Prepare iOS simulator
       id: prepareSimulator
       uses: futureware-tech/simulator-action@v4
@@ -87,6 +88,7 @@ jobs:
         popd
       name: Install Appium Server
     - run: |
+        brew install xq
         npm install
         npm install --no-save mjpeg-consumer
         npm install mocha-multi-reporters --save-dev
