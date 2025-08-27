@@ -1,3 +1,9 @@
+## [10.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.2...v10.0.3) (2025-08-27)
+
+### Miscellaneous Chores
+
+* bump appium-ios-remotexpc to publish with latest ([#2616](https://github.com/appium/appium-xcuitest-driver/issues/2616)) ([67487f5](https://github.com/appium/appium-xcuitest-driver/commit/67487f50a65a17f9ccebe01091441dfdcf95ff32))
+
 ## [10.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.1...v10.0.2) (2025-08-24)
 
 ### Miscellaneous Chores
