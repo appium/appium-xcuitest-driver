@@ -1,5 +1,5 @@
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {openPage, GUINEA_PIG_PAGE} from './helpers';
 
 const SCROLL_INTO_VIEW = `return arguments[0].scrollIntoView(true);`;
@@ -25,7 +25,6 @@ describe('safari - execute -', function () {
     const caps = amendCapabilities(SAFARI_CAPS, {
       'appium:safariInitialUrl': GUINEA_PIG_PAGE,
       'appium:showSafariConsoleLog': true,
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });
     driver = await initSession(caps);
   });

@@ -4,7 +4,7 @@ import {getFreePort} from '../helpers/ports';
 import os from 'os';
 import _pem from 'pem';
 import {amendCapabilities, SAFARI_CAPS} from '../desired';
-import {deleteSession, hasDefaultPrebuiltWDA, initSession, MOCHA_TIMEOUT} from '../helpers/session';
+import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
 
 const pem = B.promisifyAll(_pem);
@@ -53,7 +53,6 @@ describe('Safari SSL', function () {
       'appium:safariInitialUrl': localHttpsUrl,
       'appium:noReset': true,
       'appium:customSSLCert': pemCertificate + os.EOL,
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });
   });
   after(async function () {

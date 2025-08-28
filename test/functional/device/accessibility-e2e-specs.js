@@ -1,5 +1,5 @@
 import {PREDICATE_SEARCH} from '../helpers/element';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 
 
@@ -19,9 +19,7 @@ describe('Accessibility', function () {
   });
 
   beforeEach(function () {
-    caps = amendCapabilities(SETTINGS_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+    caps = SETTINGS_CAPS;
   });
 
   afterEach(async function () {

@@ -1,5 +1,5 @@
 import B from 'bluebird';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {
   spinTitle,
@@ -57,18 +57,13 @@ describe('Safari - basics -', function () {
       driver = await initSession(
         amendCapabilities(SAFARI_CAPS, {
           'appium:noReset': false,
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
         }),
       );
       await spinBodyIncludes(driver, 'I-AM-ALIVE');
     });
 
     it('should start a session with custom init', async function () {
-      driver = await initSession(
-        amendCapabilities(DEFAULT_CAPS, {
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }),
-      );
+      driver = await initSession(DEFAULT_CAPS);
       const title = await spinTitle(driver);
       const expectedTitle = 'I am a page title';
       title.should.equal(expectedTitle);
@@ -80,7 +75,6 @@ describe('Safari - basics -', function () {
       const caps = amendCapabilities(DEFAULT_CAPS, {
         'appium:safariIgnoreFraudWarning': false,
         'appium:showSafariConsoleLog': true,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
       driver = await initSession(caps);
     });

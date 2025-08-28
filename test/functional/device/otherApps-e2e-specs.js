@@ -1,4 +1,4 @@
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {MULTIPLE_APPS, amendCapabilities} from '../desired';
 
 
@@ -18,7 +18,6 @@ describe('OtherApps', function () {
     chai.use(chaiAsPromised.default);
 
     caps = amendCapabilities(MULTIPLE_APPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       'appium:wdaStartupRetries': 0,
     });
   });

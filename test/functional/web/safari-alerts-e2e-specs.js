@@ -4,7 +4,7 @@ import {
   amendCapabilities,
   isIosVersionBelow
 } from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from './helpers';
 
 
@@ -24,7 +24,6 @@ describe('safari - alerts', function () {
     const caps = amendCapabilities(SAFARI_CAPS, {
       'appium:safariInitialUrl': GUINEA_PIG_PAGE,
       'appium:safariAllowPopups': true,
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
     });
 
     if (process.env.CI && isIosVersionBelow('18.0')) {

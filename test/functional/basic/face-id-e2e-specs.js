@@ -1,5 +1,5 @@
-import {amendCapabilities, FACEIDAPP_CAPS} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {FACEIDAPP_CAPS} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import B from 'bluebird';
 import {killAllSimulators} from '../helpers/simulator';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
@@ -72,10 +72,7 @@ if (!process.env.CI) {
 
     describe('faceID enrollment functional tests applied to FaceID sample app', function () {
       beforeEach(async function () {
-        const caps = amendCapabilities(FACEIDAPP_CAPS, {
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        });
-        driver = await initSession(caps);
+        driver = await initSession(FACEIDAPP_CAPS);
         await B.delay(2000); // Give the app a couple seconds to open
       });
 

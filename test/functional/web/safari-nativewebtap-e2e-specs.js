@@ -1,7 +1,7 @@
 /* eslint-disable mocha/no-nested-tests */
 
 import _ from 'lodash';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   amendCapabilities,
   SETTINGS_CAPS,
@@ -26,7 +26,6 @@ import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 const caps = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
   'appium:nativeWebTap': true,
-  'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
 });
 
 const SPIN_RETRIES = 25;
@@ -65,7 +64,6 @@ describe('Safari - coordinate conversion -', function () {
     async function closeAllTabsViaSettingsApp(deviceName) {
       const newCaps = {
         'appium:deviceName': deviceName,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       };
       const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
       const driver = await initSession(localSettingsCaps);
