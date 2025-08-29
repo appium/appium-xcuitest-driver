@@ -73,6 +73,7 @@ describe('safari - windows and frames', function () {
       });
 
       driver = await initSession(caps);
+      await driver.setTimeout({pageLoad: 90000});
     });
     after(async function () {
       await deleteSession();
