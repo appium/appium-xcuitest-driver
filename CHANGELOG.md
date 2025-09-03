@@ -1,3 +1,9 @@
+## [10.0.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.4...v10.0.5) (2025-09-03)
+
+### Miscellaneous Chores
+
+* Bump WDA ([#2619](https://github.com/appium/appium-xcuitest-driver/issues/2619)) ([280b1bc](https://github.com/appium/appium-xcuitest-driver/commit/280b1bc6bb0e612eb08c3242648c83bb42e38973))
+
 ## [10.0.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.3...v10.0.4) (2025-08-29)
 
 ### Miscellaneous Chores
