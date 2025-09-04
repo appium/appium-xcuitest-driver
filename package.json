@@ -70,6 +70,7 @@
     "lib",
     "scripts",
     "build/index.js",
+    "build/index.d.ts",
     "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
