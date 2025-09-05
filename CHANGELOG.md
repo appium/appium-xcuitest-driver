@@ -1,3 +1,9 @@
+## [10.0.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.5...v10.0.6) (2025-09-05)
+
+### Bug Fixes
+
+* add TypeScript declarations to npm package files ([#2620](https://github.com/appium/appium-xcuitest-driver/issues/2620)) ([15c0798](https://github.com/appium/appium-xcuitest-driver/commit/15c079840ce2c91552bc3110d49a0f9bf12c406d))
+
 ## [10.0.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.4...v10.0.5) (2025-09-03)
 
 ### Miscellaneous Chores
