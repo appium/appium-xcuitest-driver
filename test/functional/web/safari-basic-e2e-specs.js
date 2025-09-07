@@ -55,15 +55,12 @@ describe('Safari - basics -', function () {
       }
 
       driver = await initSession(
-        amendCapabilities(SAFARI_CAPS, {
-          'appium:noReset': false,
-        }),
+        amendCapabilities(DEFAULT_CAPS),
       );
       await spinBodyIncludes(driver, 'I-AM-ALIVE');
     });
 
     it('should start a session with custom init', async function () {
-      driver = await initSession(DEFAULT_CAPS);
       const title = await spinTitle(driver);
       const expectedTitle = 'I am a page title';
       title.should.equal(expectedTitle);
