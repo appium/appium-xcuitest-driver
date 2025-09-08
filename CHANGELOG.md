@@ -1,3 +1,9 @@
+## [10.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.6...v10.1.0) (2025-09-08)
+
+### Features
+
+* Bump remote debugger ([#2621](https://github.com/appium/appium-xcuitest-driver/issues/2621)) ([04d48ab](https://github.com/appium/appium-xcuitest-driver/commit/04d48ab2e37b089db3d8834d856dbf4193e1bdb1))
+
 ## [10.0.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.5...v10.0.6) (2025-09-05)
 
 ### Bug Fixes
