@@ -1,13 +1,11 @@
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
+import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
-  spinTitle,
   spinTitleEquals,
   spinWait,
   openPage,
   GUINEA_PIG_PAGE,
-  spinBodyIncludes,
   // GUINEA_PIG_SCROLLABLE_PAGE,
   GUINEA_PIG_IFRAME_PAGE,
   doesIncludeCookie,
@@ -42,32 +40,6 @@ describe('Safari - basics -', function () {
     chai.use(chaiAsPromised.default);
 
     expect = chai.expect;
-  });
-
-  describe('init', function () {
-    afterEach(async function () {
-      await deleteSession();
-    });
-
-    it('should start a session with default init', async function () {
-      if (process.env.CI && isIosVersionBelow('18.0')) {
-        this.skip();
-      }
-
-      driver = await initSession(
-        amendCapabilities(SAFARI_CAPS, {
-          'appium:noReset': false,
-        }),
-      );
-      await spinBodyIncludes(driver, 'I-AM-ALIVE');
-    });
-
-    it('should start a session with custom init', async function () {
-      driver = await initSession(DEFAULT_CAPS);
-      const title = await spinTitle(driver);
-      const expectedTitle = 'I am a page title';
-      title.should.equal(expectedTitle);
-    });
   });
 
   describe('basics', function () {

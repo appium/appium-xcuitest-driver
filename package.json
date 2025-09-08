@@ -84,7 +84,7 @@
     "appium-idb": "^2.0.0",
     "appium-ios-device": "^3.0.0",
     "appium-ios-simulator": "^7.0.0",
-    "appium-remote-debugger": "^14.0.5",
+    "appium-remote-debugger": "^15.0.1",
     "appium-webdriveragent": "^10.1.0",
     "appium-xcode": "^6.0.0",
     "async-lock": "^1.4.0",
