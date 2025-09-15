@@ -1,3 +1,10 @@
+## [10.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.0...v10.1.1) (2025-09-15)
+
+### Miscellaneous Chores
+
+* **deps-dev:** remove type-fest dependency ([#2624](https://github.com/appium/appium-xcuitest-driver/issues/2624)) ([8dd7dab](https://github.com/appium/appium-xcuitest-driver/commit/8dd7dabd0e58d815e7a8c47f27aa1e86a2ca856a))
+* **deps:** bump appium-ios-remotexpc from 0.3.3 to 0.x ([#2625](https://github.com/appium/appium-xcuitest-driver/issues/2625)) ([555262b](https://github.com/appium/appium-xcuitest-driver/commit/555262b7634620bf6465d186c5a3c68f5b054992))
+
 ## [10.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.6...v10.1.0) (2025-09-08)
 
 ### Features
