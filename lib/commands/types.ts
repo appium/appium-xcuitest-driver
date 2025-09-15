@@ -1,13 +1,12 @@
 import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
 import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
-import type {LiteralUnion, SetOptional, SetRequired} from 'type-fest';
 import type {Page} from '../types';
 import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-export type LocationWithAltitude = SetRequired<Location, 'altitude'>;
+export type LocationWithAltitude = Location & {altitude: number};
 
 /**
  * Battery information. Returned by the `mobile: getBatteryInfo` execute method.
@@ -211,18 +210,17 @@ export interface Context {
   url?: string;
 }
 
-export type ViewContext<S extends string = string> = Context &
-  (S extends NativeAppId ? {view: SetOptional<View, 'id'>} : {view: View});
+export type ViewContext = Context & {view?: View};
 
 export type NativeAppId = 'NATIVE_APP';
 
-export type FullContext<S extends string = string> = Omit<View, 'id'> & ViewContext<S>;
+export type FullContext = Omit<View, 'id'> & ViewContext;
 
 export interface View {
   /**
    * @privateRemarks Type of this is best guess
    */
-  id: number | string;
+  id?: number | string;
   title?: string;
   url?: string;
   bundleId?: string;
@@ -271,7 +269,7 @@ export interface DeviceInfo {
   timeZone: string;
   name: string;
   model: string;
-  uuid: LiteralUnion<'unknown', string>;
+  uuid: 'unknown' | string;
   userInterfaceIdiom: string;
   userInterfaceStyle: string;
   isSimulator: boolean;
