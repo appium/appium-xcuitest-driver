@@ -1,3 +1,196 @@
+## [10.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.0...v10.1.1) (2025-09-15)
+
+### Miscellaneous Chores
+
+* **deps-dev:** remove type-fest dependency ([#2624](https://github.com/appium/appium-xcuitest-driver/issues/2624)) ([8dd7dab](https://github.com/appium/appium-xcuitest-driver/commit/8dd7dabd0e58d815e7a8c47f27aa1e86a2ca856a))
+* **deps:** bump appium-ios-remotexpc from 0.3.3 to 0.x ([#2625](https://github.com/appium/appium-xcuitest-driver/issues/2625)) ([555262b](https://github.com/appium/appium-xcuitest-driver/commit/555262b7634620bf6465d186c5a3c68f5b054992))
+
+## [10.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.6...v10.1.0) (2025-09-08)
+
+### Features
+
+* Bump remote debugger ([#2621](https://github.com/appium/appium-xcuitest-driver/issues/2621)) ([04d48ab](https://github.com/appium/appium-xcuitest-driver/commit/04d48ab2e37b089db3d8834d856dbf4193e1bdb1))
+
+## [10.0.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.5...v10.0.6) (2025-09-05)
+
+### Bug Fixes
+
+* add TypeScript declarations to npm package files ([#2620](https://github.com/appium/appium-xcuitest-driver/issues/2620)) ([15c0798](https://github.com/appium/appium-xcuitest-driver/commit/15c079840ce2c91552bc3110d49a0f9bf12c406d))
+
+## [10.0.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.4...v10.0.5) (2025-09-03)
+
+### Miscellaneous Chores
+
+* Bump WDA ([#2619](https://github.com/appium/appium-xcuitest-driver/issues/2619)) ([280b1bc](https://github.com/appium/appium-xcuitest-driver/commit/280b1bc6bb0e612eb08c3242648c83bb42e38973))
+
+## [10.0.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.3...v10.0.4) (2025-08-29)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2618](https://github.com/appium/appium-xcuitest-driver/issues/2618)) ([5167d1b](https://github.com/appium/appium-xcuitest-driver/commit/5167d1bc1d2baed85dd2564aa24a28cf00bb1a0f))
+
+## [10.0.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.2...v10.0.3) (2025-08-27)
+
+### Miscellaneous Chores
+
+* bump appium-ios-remotexpc to publish with latest ([#2616](https://github.com/appium/appium-xcuitest-driver/issues/2616)) ([67487f5](https://github.com/appium/appium-xcuitest-driver/commit/67487f50a65a17f9ccebe01091441dfdcf95ff32))
+
+## [10.0.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.1...v10.0.2) (2025-08-24)
+
+### Miscellaneous Chores
+
+* **deps:** bump lru-cache from 10.4.3 to 11.1.0 ([#2539](https://github.com/appium/appium-xcuitest-driver/issues/2539)) ([ed46fbd](https://github.com/appium/appium-xcuitest-driver/commit/ed46fbdc975c08998cd41689f8b886cf3158561e))
+
+## [10.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.0.0...v10.0.1) (2025-08-23)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump chai from 5.3.2 to 6.0.0 ([#2612](https://github.com/appium/appium-xcuitest-driver/issues/2612)) ([66db332](https://github.com/appium/appium-xcuitest-driver/commit/66db332bca5f16ca68bbfc6ced2dcd72c9c51d1a))
+
+## [10.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.5...v10.0.0) (2025-08-19)
+
+### ⚠ BREAKING CHANGES
+
+* Required Node.js version has been bumped to ^20.19.0 || ^22.12.0 || >=24.0.0
+* Required npm version has been bumped to >=10
+* Required Appium server version has been bumped to >=3.0.0-rc.2
+
+### Features
+
+* Update server compatibility for Appium 3 ([#2590](https://github.com/appium/appium-xcuitest-driver/issues/2590)) ([313578a](https://github.com/appium/appium-xcuitest-driver/commit/313578ac565d54b402ade9fd542f6138ac928594))
+
+## [9.10.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.4...v9.10.5) (2025-08-17)
+
+### Miscellaneous Chores
+
+* drop rimraf deps from dev deps as no references ([#2607](https://github.com/appium/appium-xcuitest-driver/issues/2607)) ([0dc17bd](https://github.com/appium/appium-xcuitest-driver/commit/0dc17bd86e6fafdcb76aeee44d64388ea6ab6d58))
+
+## [9.10.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.3...v9.10.4) (2025-08-06)
+
+### Bug Fixes
+
+* Make sure session id is set before cleaning up socket handlers ([#2604](https://github.com/appium/appium-xcuitest-driver/issues/2604)) ([3c73836](https://github.com/appium/appium-xcuitest-driver/commit/3c738363c1c7bb6106d6b2584558a0891dd8a47c))
+
+## [9.10.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.2...v9.10.3) (2025-08-04)
+
+### Miscellaneous Chores
+
+* bump appium-ios-device to 2.9.0 ([#2603](https://github.com/appium/appium-xcuitest-driver/issues/2603)) ([69a6ca9](https://github.com/appium/appium-xcuitest-driver/commit/69a6ca95391b9dce74d8130fd818705a20ac073e))
+
+## [9.10.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.1...v9.10.2) (2025-08-03)
+
+### Miscellaneous Chores
+
+* leave wda version info or debugging ([#2602](https://github.com/appium/appium-xcuitest-driver/issues/2602)) ([b683532](https://github.com/appium/appium-xcuitest-driver/commit/b68353263eb7a8fb814a6dcbb8b532df3a40a799))
+
+## [9.10.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.10.0...v9.10.1) (2025-07-26)
+
+### Miscellaneous Chores
+
+* make  appium-ios-remotexpc optional deps ([#2600](https://github.com/appium/appium-xcuitest-driver/issues/2600)) ([5d956cf](https://github.com/appium/appium-xcuitest-driver/commit/5d956cf1653e48d5f5dc699ae63a70c67c2499ed))
+
+## [9.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.6...v9.10.0) (2025-07-25)
+
+### Features
+
+* Added support for fetching batteryInformation from shim service ([#2592](https://github.com/appium/appium-xcuitest-driver/issues/2592)) ([8dce773](https://github.com/appium/appium-xcuitest-driver/commit/8dce77333b7c7c719492c03268a50de7631d8c79)), closes [#2593](https://github.com/appium/appium-xcuitest-driver/issues/2593)
+
+## [9.9.6](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.5...v9.9.6) (2025-07-13)
+
+### Miscellaneous Chores
+
+* Improve atom execution timeout error message ([#2598](https://github.com/appium/appium-xcuitest-driver/issues/2598)) ([34c5ac4](https://github.com/appium/appium-xcuitest-driver/commit/34c5ac421ef333f5af298bb7723d9ac1be42d2d2))
+
+## [9.9.5](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.4...v9.9.5) (2025-07-10)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2596](https://github.com/appium/appium-xcuitest-driver/issues/2596)) ([a10b91d](https://github.com/appium/appium-xcuitest-driver/commit/a10b91dc16213527f0c7f57f247e8cb70c211b40))
+
+## [9.9.4](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.3...v9.9.4) (2025-07-04)
+
+### Bug Fixes
+
+* Safari network logging ([#2594](https://github.com/appium/appium-xcuitest-driver/issues/2594)) ([c2afe9e](https://github.com/appium/appium-xcuitest-driver/commit/c2afe9e773c23ac624a6a1638a2b1eecfd13e2ec))
+
+## [9.9.3](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.2...v9.9.3) (2025-07-03)
+
+### Miscellaneous Chores
+
+* bump remote debugger ([7540f38](https://github.com/appium/appium-xcuitest-driver/commit/7540f3875367bc7c739334a60ddbddb699112d0b))
+
+## [9.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.1...v9.9.2) (2025-07-03)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([edab935](https://github.com/appium/appium-xcuitest-driver/commit/edab935a5964aa4a6033e92e69db18b00493976a))
+
+## [9.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.9.0...v9.9.1) (2025-06-28)
+
+### Bug Fixes
+
+* add @ temporary fix ([#2588](https://github.com/appium/appium-xcuitest-driver/issues/2588)) ([f0ffbf6](https://github.com/appium/appium-xcuitest-driver/commit/f0ffbf6133458c3c3bcf69a1dbefc992c1ad599e))
+
+## [9.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.8.1...v9.9.0) (2025-06-26)
+
+### Features
+
+* add download-wda-sim to download prebuilt WDA for Sim ([#2587](https://github.com/appium/appium-xcuitest-driver/issues/2587)) ([c1fb5a4](https://github.com/appium/appium-xcuitest-driver/commit/c1fb5a4df52cc8d8816c0a362916570d8236275d))
+
+## [9.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.8.0...v9.8.1) (2025-06-25)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump sinon from 20.0.0 to 21.0.0 ([#2579](https://github.com/appium/appium-xcuitest-driver/issues/2579)) ([c5100ed](https://github.com/appium/appium-xcuitest-driver/commit/c5100eda36750640c5c2e8aaf6d459b7951477ca))
+
+## [9.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.7.0...v9.8.0) (2025-06-24)
+
+### Features
+
+* Save tunnel registry using strong box ([#2585](https://github.com/appium/appium-xcuitest-driver/issues/2585)) ([8868b1a](https://github.com/appium/appium-xcuitest-driver/commit/8868b1aba093d996d41cc47b17e4ae077457f2b7))
+
+## [9.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.1...v9.7.0) (2025-06-15)
+
+### Features
+
+* add iosSyslogFile as a capability ([#2582](https://github.com/appium/appium-xcuitest-driver/issues/2582)) ([43448b4](https://github.com/appium/appium-xcuitest-driver/commit/43448b4a924a5304c947501b7e79a472a2ab6e74))
+
+## [9.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.6.0...v9.6.1) (2025-06-12)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 22.15.31 to 24.0.1 ([#2578](https://github.com/appium/appium-xcuitest-driver/issues/2578)) ([c0cfd0e](https://github.com/appium/appium-xcuitest-driver/commit/c0cfd0e7c427bb8eb7e2f08cb97f9488ece98577))
+
+## [9.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.5.0...v9.6.0) (2025-06-10)
+
+### Features
+
+* Hardware Acceleration for Video Decode, Encode and Scaling ([#2559](https://github.com/appium/appium-xcuitest-driver/issues/2559)) ([d21345a](https://github.com/appium/appium-xcuitest-driver/commit/d21345a1b8e34d136033550937298c6f2e08111b))
+
+## [9.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.4.0...v9.5.0) (2025-06-10)
+
+### Features
+
+* add documentation with min/max value ([#2576](https://github.com/appium/appium-xcuitest-driver/issues/2576)) ([c296411](https://github.com/appium/appium-xcuitest-driver/commit/c2964111ea1924baf0594e8d3f7a0aa22c22b50a))
+* add focused attribute to element representation in XML source tree ([#2575](https://github.com/appium/appium-xcuitest-driver/issues/2575)) ([14ccdce](https://github.com/appium/appium-xcuitest-driver/commit/14ccdce9b80a2f06c121fd6f0adef83c06567082))
+
+## [9.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.2...v9.4.0) (2025-06-04)
+
+### Features
+
+* add documentation for new appium setting: includeHittableInPageSource ([#2571](https://github.com/appium/appium-xcuitest-driver/issues/2571)) ([de310a3](https://github.com/appium/appium-xcuitest-driver/commit/de310a39a64f835e534ee9f5453539487a5bbe79))
+
+### Code Refactoring
+
+* use an object spread instead of Object.assign ([#2570](https://github.com/appium/appium-xcuitest-driver/issues/2570)) ([16bae3a](https://github.com/appium/appium-xcuitest-driver/commit/16bae3acb0e3cee456218d09db9f6b8846f336d4))
+
+## [9.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.1...v9.3.2) (2025-05-31)
+
+### Miscellaneous Chores
+
+* fix typos ([#2568](https://github.com/appium/appium-xcuitest-driver/issues/2568)) ([a1f5842](https://github.com/appium/appium-xcuitest-driver/commit/a1f5842402c189e91a09ba5b7250a584d434f56e))
+* use optional chain for better readability ([#2569](https://github.com/appium/appium-xcuitest-driver/issues/2569)) ([035efc0](https://github.com/appium/appium-xcuitest-driver/commit/035efc0c8cf435ffbaf2355e0054bd589969af58))
+
 ## [9.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v9.3.0...v9.3.1) (2025-05-29)
 
 ### Miscellaneous Chores

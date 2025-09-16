@@ -40,7 +40,12 @@ const APPS = {
   biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app'), // https://github.com/mwakizaka/LocalAuthentication
 };
 
-const initTimeout = 60 * 1000 * (process.env.CI ? 16 : 4);
+const initTimeout = 60 * 1000 * 4;
+const prebuiltWdaOpts = process.env.PREBUILT_WDA_PATH
+  ? {
+    'appium:usePreinstalledWDA': true,
+    'appium:prebuiltWDAPath': process.env.PREBUILT_WDA_PATH,
+  } : {};
 export const GENERIC_CAPS = node.deepFreeze({
   alwaysMatch: {
     platformName: 'iOS',
@@ -54,10 +59,10 @@ export const GENERIC_CAPS = node.deepFreeze({
     'appium:showXcodeLog': SHOW_XCODE_LOG,
     'appium:wdaLaunchTimeout': initTimeout,
     'appium:wdaConnectionTimeout': initTimeout,
-    'appium:useNewWDA': true,
-    'appium:webviewConnectTimeout': 30000,
+    'appium:webviewConnectTimeout': Math.round(initTimeout * 0.8),
     'appium:simulatorStartupTimeout': initTimeout,
     'appium:forceAppLaunch': true,
+    ...prebuiltWdaOpts,
   },
   firstMatch: [{}],
 });

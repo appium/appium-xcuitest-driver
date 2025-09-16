@@ -1,5 +1,5 @@
-import {amendCapabilities, TOUCHIDAPP_CAPS} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {TOUCHIDAPP_CAPS} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import B from 'bluebird';
 import {killAllSimulators} from '../helpers/simulator';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
@@ -29,10 +29,6 @@ if (!process.env.CI) {
       chai.use(chaiAsPromised.default);
 
       expect = chai.expect;
-    });
-
-    beforeEach(async function () {
-      await killAllSimulators();
     });
 
     afterEach(async function () {
@@ -72,10 +68,7 @@ if (!process.env.CI) {
 
     describe('touchID enrollment functional tests applied to TouchId sample app', function () {
       beforeEach(async function () {
-        const caps = amendCapabilities(TOUCHIDAPP_CAPS, {
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        });
-        driver = await initSession(caps);
+        driver = await initSession(TOUCHIDAPP_CAPS);
         await B.delay(2000); // Give the app a couple seconds to open
       });
 

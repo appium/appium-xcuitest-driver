@@ -1,13 +1,12 @@
 import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
 import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
-import type {LiteralUnion, SetOptional, SetRequired} from 'type-fest';
 import type {Page} from '../types';
 import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-export type LocationWithAltitude = SetRequired<Location, 'altitude'>;
+export type LocationWithAltitude = Location & {altitude: number};
 
 /**
  * Battery information. Returned by the `mobile: getBatteryInfo` execute method.
@@ -22,6 +21,7 @@ export interface BatteryInfo {
    */
   state: BatteryState;
 }
+
 
 /**
  * Options for `stopRecordingScreen` command
@@ -110,7 +110,7 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
    *
    * See [the FFMPEG wiki](https://trac.ffmpeg.org/wiki/Scaling) for possible values.
    *
-   * No scale is applied by default. If both `videoFilters` and `videoScale` are set then only `videoFilters` value will be respected.
+   * No scale is applied by default. If both `videoFilters` and `videoScale` are set, then only `videoFilters` value will be respected.
    * @see https://trac.ffmpeg.org/wiki/Scaling
    */
   videoScale?: string;
@@ -128,10 +128,29 @@ export interface StartRecordingScreenOptions extends StopRecordingScreenOptions 
   forceRestart?: boolean;
   /**
    * The maximum recording time, in seconds.
-   * The the maximum value is 600 (10 minutes).
+   * The maximum value is 600 (10 minutes).
    * @defaultValue 180
    */
   timeLimit?: string | number;
+
+  /**
+   * Hardware acceleration to be used by FFMPEG for decoding, encoding and scaling.
+   *
+   *
+   *  * `videoToolbox` Apple Silicon
+   *  * `cuda` NVIDIA GPU
+   *  * `amf_dx11` AMD and DirectX 11
+   *  * `qsv` Intel Quick Sync Video
+   *  * `vaapi` Video Acceleration API (VAAPI)
+   *
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#PlatformAPIAvailability| Platform API Availability }
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox| VideoToolbox}
+   * @see {@link https://trac.ffmpeg.org/wiki/HWAccelIntro#CUDANVENCNVDEC|Cuda}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/AMF|AMF}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/QuickSync|QSV}
+   * @see {@link https://trac.ffmpeg.org/wiki/Hardware/VAAPI|VAAPI}
+   */
+  hardwareAcceleration?: 'cuda' | 'videoToolbox' | 'amf_dx11' | 'qsv' | 'vaapi';
 }
 
 export interface PageChangeNotification {
@@ -191,18 +210,17 @@ export interface Context {
   url?: string;
 }
 
-export type ViewContext<S extends string = string> = Context &
-  (S extends NativeAppId ? {view: SetOptional<View, 'id'>} : {view: View});
+export type ViewContext = Context & {view?: View};
 
 export type NativeAppId = 'NATIVE_APP';
 
-export type FullContext<S extends string = string> = Omit<View, 'id'> & ViewContext<S>;
+export type FullContext = Omit<View, 'id'> & ViewContext;
 
 export interface View {
   /**
    * @privateRemarks Type of this is best guess
    */
-  id: number | string;
+  id?: number | string;
   title?: string;
   url?: string;
   bundleId?: string;
@@ -251,7 +269,7 @@ export interface DeviceInfo {
   timeZone: string;
   name: string;
   model: string;
-  uuid: LiteralUnion<'unknown', string>;
+  uuid: 'unknown' | string;
   userInterfaceIdiom: string;
   userInterfaceStyle: string;
   isSimulator: boolean;

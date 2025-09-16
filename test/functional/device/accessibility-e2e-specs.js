@@ -1,5 +1,5 @@
 import {PREDICATE_SEARCH} from '../helpers/element';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 
 
@@ -19,9 +19,7 @@ describe('Accessibility', function () {
   });
 
   beforeEach(function () {
-    caps = amendCapabilities(SETTINGS_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
+    caps = SETTINGS_CAPS;
   });
 
   afterEach(async function () {
@@ -52,10 +50,10 @@ describe('Accessibility', function () {
     async function getReduceMotion(driver) {
       await showAccessibilityTab(driver);
       await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion'}`)
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`)
         .click();
       return await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name == 'Reduce Motion'`)
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`)
         .getAttribute('value');
     }
 
@@ -76,11 +74,12 @@ describe('Accessibility', function () {
       await showAccessibilityTab(driver);
       await driver
         .$(
-          `${PREDICATE_SEARCH}:name == 'Display & Text Size'`,
+          `${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`,
         )
         .click();
+
       return await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name == 'Reduce Transparency'`)
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Transparency', 'REDUCE_TRANSPARENCY'}`)
         .getAttribute('value');
     }
 

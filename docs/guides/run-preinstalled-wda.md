@@ -65,6 +65,12 @@ Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like 
 
 Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the `WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it with `devicectl` command as part of `appium:usePreinstalledWDA` functionality.
 
+!!! note
+
+    You can also remove `Frameworks/Testing.framework` and `Frameworks/libXCTestSwiftSupport.dylib` to reduce the package size
+    because WebDriverAgent doesn't need both. Then, the total size of the WebDriverAgent runner app can be 3MB or less.
+    `Testing.framework` is almost 6MB and `libXCTestSwiftSupport.dylib` is 2.6MB with Xcode 16 build.
+    
 
 ## Launch the Session
 
@@ -97,6 +103,15 @@ bundle ID, the session will launch the WebDriverAgent process without `xcodebuil
 
     Please ensure that the WDA application is launchable before starting an XCUITest driver session.
     For example, check whether the provisioning profile is trusted.
+
+
+!!! note
+
+    Please make sure the device under test has the developer disk image mounted.
+    This is necessary to start an XCTest session and load the required XCTest libraries from the device.
+    For example, starting Xcode after connecting the device to the host machine will mount the developer disk image automatically.
+    Using third-party tools can also help to mount the developer disk image service.
+    Please check the documentation for each tool to understand how to mount the developer disk image.
 
 
 ```ruby

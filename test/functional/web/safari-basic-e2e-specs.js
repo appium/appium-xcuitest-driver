@@ -1,15 +1,12 @@
 import B from 'bluebird';
-import {MOCHA_TIMEOUT, initSession, deleteSession, hasDefaultPrebuiltWDA} from '../helpers/session';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
-  spinTitle,
   spinTitleEquals,
   spinWait,
   openPage,
   GUINEA_PIG_PAGE,
-  spinBodyIncludes,
   // GUINEA_PIG_SCROLLABLE_PAGE,
-  PHISHING_END_POINT,
   GUINEA_PIG_IFRAME_PAGE,
   doesIncludeCookie,
   doesNotIncludeCookie,
@@ -45,39 +42,11 @@ describe('Safari - basics -', function () {
     expect = chai.expect;
   });
 
-  describe('init', function () {
-    afterEach(async function () {
-      await deleteSession();
-    });
-
-    it('should start a session with default init', async function () {
-      driver = await initSession(
-        amendCapabilities(SAFARI_CAPS, {
-          'appium:noReset': false,
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }),
-      );
-      await spinBodyIncludes(driver, 'I-AM-ALIVE');
-    });
-
-    it('should start a session with custom init', async function () {
-      driver = await initSession(
-        amendCapabilities(DEFAULT_CAPS, {
-          'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-        }),
-      );
-      const title = await spinTitle(driver);
-      const expectedTitle = 'I am a page title';
-      title.should.equal(expectedTitle);
-    });
-  });
-
   describe('basics', function () {
     before(async function () {
       const caps = amendCapabilities(DEFAULT_CAPS, {
         'appium:safariIgnoreFraudWarning': false,
         'appium:showSafariConsoleLog': true,
-        'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
       });
       driver = await initSession(caps);
     });
@@ -408,10 +377,11 @@ describe('Safari - basics -', function () {
           });
 
           it('should be able to set a cookie with expiry', async function () {
-            const expiredCookie = Object.assign({}, newCookie, {
+            const expiredCookie = {
+              ...newCookie,
               expiry: parseInt(String(Date.now() / 1000), 10) - 1000, // set cookie in past
               name: 'expiredcookie',
-            });
+            };
 
             let cookies = await driver.getAllCookies();
             doesNotIncludeCookie(cookies, expiredCookie);
@@ -486,56 +456,4 @@ describe('Safari - basics -', function () {
     });
   });
 
-  describe('safariIgnoreFraudWarning', function () {
-    describe('false', function () {
-      beforeEach(async function () {
-        driver = await initSession(
-          amendCapabilities(DEFAULT_CAPS, {
-            'appium:safariIgnoreFraudWarning': false,
-            'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-          }),
-        );
-      });
-      afterEach(async function () {
-        await deleteSession();
-      });
-
-      it('should display a phishing warning', async function () {
-        await openPage(driver, PHISHING_END_POINT);
-
-        // on iOS 12.2+ the browser never fully loads the page with a phishing
-        // warning, and it never gets into the Web Inspector.
-        // it does, however, get visible in the native context!
-        const ctx = await driver.getContext();
-        try {
-          await driver.switchContext('NATIVE_APP');
-
-          await B.delay(1000);
-          await retryInterval(10, 500, async function () {
-            await driver.getPageSource().should.eventually.include('Deceptive Website Warning');
-          });
-        } finally {
-          await driver.switchContext(ctx);
-        }
-      });
-    });
-    describe('true', function () {
-      beforeEach(async function () {
-        driver = await initSession(
-          amendCapabilities(DEFAULT_CAPS, {
-            'appium:safariIgnoreFraudWarning': true,
-            'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-          }),
-        );
-      });
-      afterEach(async function () {
-        await deleteSession();
-      });
-
-      it('should not display a phishing warning', async function () {
-        await openPage(driver, PHISHING_END_POINT);
-        await driver.getTitle().should.eventually.not.eql('Deceptive Website Warning');
-      });
-    });
-  });
 });

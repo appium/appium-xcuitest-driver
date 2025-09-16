@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "9.3.1",
+  "version": "10.1.1",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -19,8 +19,8 @@
     "url": "https://github.com/appium/appium-xcuitest-driver/issues"
   },
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=10"
   },
   "appium": {
     "driverName": "xcuitest",
@@ -32,7 +32,9 @@
     "mainClass": "XCUITestDriver",
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
-      "open-wda": "./scripts/open-wda.js"
+      "open-wda": "./scripts/open-wda.js",
+      "tunnel-creation": "./scripts/tunnel-creation.mjs",
+      "download-wda-sim": "./scripts/download-wda-sim.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",
@@ -68,6 +70,7 @@
     "lib",
     "scripts",
     "build/index.js",
+    "build/index.d.ts",
     "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
@@ -76,28 +79,33 @@
   ],
   "types": "./build/index.d.ts",
   "dependencies": {
+    "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
-    "appium-idb": "^1.6.13",
-    "appium-ios-device": "^2.8.0",
-    "appium-ios-simulator": "^6.2.2",
-    "appium-remote-debugger": "^12.2.0",
-    "appium-webdriveragent": "^9.10.0",
-    "appium-xcode": "^5.1.4",
+    "appium-idb": "^2.0.0",
+    "appium-ios-device": "^3.0.0",
+    "appium-ios-simulator": "^7.0.0",
+    "appium-remote-debugger": "^15.0.1",
+    "appium-webdriveragent": "^10.1.0",
+    "appium-xcode": "^6.0.0",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
     "bluebird": "^3.7.2",
     "css-selector-parser": "^3.0.0",
     "js2xmlparser2": "^0.x",
     "lodash": "^4.17.21",
-    "lru-cache": "^10.0.0",
+    "lru-cache": "^11.1.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.x",
-    "node-simctl": "^7.7.1",
+    "node-simctl": "^8.0.0",
     "portscanner": "^2.2.0",
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
-    "teen_process": "^2.2.0",
+    "teen_process": "^3.0.0",
+    "winston": "3.17.0",
     "ws": "^8.13.0"
+  },
+  "optionalDependencies": {
+    "appium-ios-remotexpc": "^0.x"
   },
   "scripts": {
     "build": "tsc -b",
@@ -130,24 +138,23 @@
     "singleQuote": true
   },
   "peerDependencies": {
-    "appium": "^2.5.4"
+    "appium": "^3.0.0-rc.2"
   },
   "devDependencies": {
-    "@appium/docutils": "^1.0.2",
-    "@appium/eslint-config-appium-ts": "^1.0.0",
-    "@appium/test-support": "^3.0.20",
-    "@appium/tsconfig": "^0.x",
-    "@appium/types": "^0.x",
+    "@appium/docutils": "^2.0.0-rc.1",
+    "@appium/eslint-config-appium-ts": "^2.0.0-rc.1",
+    "@appium/test-support": "^4.0.0-rc.1",
+    "@appium/tsconfig": "^1.0.0-rc.1",
+    "@appium/types": "^1.0.0-rc.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/bluebird": "^3.5.38",
     "@types/lodash": "^4.14.196",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.1",
     "@types/portscanner": "^2.1.1",
-    "@types/teen_process": "^2.0.1",
     "axios": "^1.4.0",
-    "chai": "^5.1.1",
+    "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
     "conventional-changelog-conventionalcommits": "^9.0.0",
     "mocha": "^11.0.1",
@@ -155,16 +162,11 @@
     "mocha-multi-reporters": "^1.5.1",
     "pem": "^1.14.8",
     "prettier": "^3.0.0",
-    "rimraf": "^5.0.1",
     "semantic-release": "^24.0.0",
     "sharp": "^0.x",
-    "sinon": "^20.0.0",
+    "sinon": "^21.0.0",
     "ts-node": "^10.9.1",
-    "type-fest": "^4.1.0",
     "typescript": "^5.4.2",
     "webdriverio": "^9.4.1"
-  },
-  "overrides": {
-    "http-cache-semantics": "4.1.1"
   }
 }

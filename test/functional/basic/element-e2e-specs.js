@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {extractCapabilityValue, amendCapabilities, UICATALOG_CAPS} from '../desired';
-import {initSession, deleteSession, hasDefaultPrebuiltWDA, MOCHA_TIMEOUT} from '../helpers/session';
+import {extractCapabilityValue, UICATALOG_CAPS} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
 
 
@@ -19,10 +19,7 @@ describe('XCUITestDriver - elements -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    const caps = amendCapabilities(UICATALOG_CAPS, {
-      'appium:usePrebuiltWDA': hasDefaultPrebuiltWDA(),
-    });
-    driver = await initSession(caps);
+    driver = await initSession(UICATALOG_CAPS);
   });
   after(async function () {
     await deleteSession();
@@ -56,13 +53,12 @@ describe('XCUITestDriver - elements -', function () {
   describe('displayed', function () {
     it('should get the displayed status for a displayed element', async function () {
       let el = await driver.$('~Buttons');
-      let displayed = await el.isDisplayed();
-      displayed.should.be.true;
+      (await el.isDisplayed()).should.be.true;
     });
     it('should get the displayed status for an undisplayed element', async function () {
-      let el = await driver.$('~Web View');
-      let displayed = await el.isDisplayed();
-      displayed.should.be.false;
+      // this value is invisible in the view
+      let el = await driver.$('~Horizontal scroll bar, 1 page');
+      (await el.isDisplayed()).should.be.false;
     });
   });
 
