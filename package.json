@@ -108,7 +108,8 @@
     "appium-ios-remotexpc": "^0.x"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b --incremental",
+    "build:fast": "tsc -b --incremental --skipLibCheck",
     "clean": "npm run build -- --clean",
     "dev": "npm run build -- --watch",
     "build:docs": "appium-docs build",
@@ -121,6 +122,7 @@
     "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
+    "rebuild:fast": "npm run clean; npm run build:fast",
     "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
     "e2e-test": "mocha --exit --timeout 10m \"./test/functional/**/*-specs.js\"",
     "e2e-test:basic": "mocha \"./test/functional/basic\" --exit --timeout 10m",

@@ -4,7 +4,9 @@
   "compilerOptions": {
     "outDir": "build",
     "types": ["node", "mocha"],
-    "checkJs": true
+    "checkJs": true,
+    "incremental": true,
+    "tsBuildInfoFile": "build/tsconfig.tsbuildinfo"
   },
   "include": [
     "index.js",
