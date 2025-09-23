@@ -342,6 +342,7 @@ async function main() {
       default:
         throw new Error(`Unknown command: ${command}\nUse "node image-mounter.mjs help" for usage information.`);
     }
+    process.exit(0);
   } catch (error) {
     log.error(`❌ Error: ${error.message}`);
     process.exit(1);
