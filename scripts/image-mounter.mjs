@@ -27,7 +27,7 @@ class ImageMounter {
     try {
       this.remoteXPCModule = await import('appium-ios-remotexpc');
       return this.remoteXPCModule;
-    } catch (error) {
+    } catch {
       throw new Error(
         'appium-ios-remotexpc is not installed. Please install it using:\n' +
         'npm install appium-ios-remotexpc\n\n' +
@@ -218,56 +218,20 @@ NOTE:
   program
     .command('mount')
     .description('Mount a Developer Disk Image on iOS device')
-    .argument('[image]', 'Path to the .dmg image file')
-    .argument('[manifest]', 'Path to the BuildManifest.plist file')
-    .argument('[trustcache]', 'Path to the .trustcache file')
-    .option('-i, --image <path>', 'Path to the .dmg image file')
-    .option('-m, --manifest <path>', 'Path to the BuildManifest.plist file')
-    .option('-t, --trustcache <path>', 'Path to the .trustcache file')
+    .requiredOption('-i, --image <path>', 'Path to the .dmg image file')
+    .requiredOption('-m, --manifest <path>', 'Path to the BuildManifest.plist file')
+    .requiredOption('-t, --trustcache <path>', 'Path to the .trustcache file')
     .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
     .addHelpText('after', `
 EXAMPLES:
-  # Mount using positional arguments
-  node image-mounter.mjs mount DeveloperDiskImage.dmg BuildManifest.plist DeveloperDiskImage.trustcache
-
-  # Mount using flags
+  # Mount Developer Disk Image
   node image-mounter.mjs mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
 
   # Mount on specific device
-  node image-mounter.mjs mount --udid <udid> DeveloperDiskImage.dmg BuildManifest.plist DeveloperDiskImage.trustcache`)
-    .action(async (image, manifest, trustcache, options) => {
+  node image-mounter.mjs mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`)
+    .action(async (options) => {
       try {
-        let imagePath, manifestPath, trustCachePath;
-
-        if (options.image || options.manifest || options.trustcache) {
-          if (!options.image || !options.manifest || !options.trustcache) {
-            throw new Error(
-              'When using flags, all three files must be specified:\n' +
-              '  --image <path>\n' +
-              '  --manifest <path>\n' +
-              '  --trustcache <path>\n\n' +
-              'Use "node image-mounter.mjs mount --help" for usage examples.'
-            );
-          }
-          imagePath = options.image;
-          manifestPath = options.manifest;
-          trustCachePath = options.trustcache;
-        } else {
-          if (!image || !manifest || !trustcache) {
-            throw new Error(
-              'Mount command requires exactly 3 files in order:\n' +
-              '  1. Image file (.dmg)\n' +
-              '  2. Build Manifest file (.plist)\n' +
-              '  3. Trust Cache file (.trustcache)\n\n' +
-              'Use "node image-mounter.mjs mount --help" for usage examples.'
-            );
-          }
-          imagePath = image;
-          manifestPath = manifest;
-          trustCachePath = trustcache;
-        }
-
-        await imageMounter.mount(imagePath, manifestPath, trustCachePath, options.udid);
+        await imageMounter.mount(options.image, options.manifest, options.trustcache, options.udid);
         process.exit(0);
       } catch (error) {
         log.error(`❌ Error: ${error.message}`);
