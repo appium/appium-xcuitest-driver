@@ -83,18 +83,18 @@ class ImageMounter {
 
       let targetDevice;
       if (udid) {
-        targetDevice = devices.find(device => device.Properties.SerialNumber === udid);
+        targetDevice = devices.find((device) => device.Properties.SerialNumber === udid);
         if (!targetDevice) {
           throw new Error(
             `Device with UDID ${udid} not found. Available devices:\n` +
-            devices.map(d => `  - ${d.Properties.SerialNumber}`).join('\n')
+            devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n')
           );
         }
       } else {
         if (devices.length > 1) {
           log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
           log.warn('Available devices:');
-          devices.forEach(device => {
+          devices.forEach((device) => {
             log.warn(`  - ${device.Properties.SerialNumber}`);
           });
           log.warn('Use --udid flag to specify a specific device.');
@@ -154,18 +154,18 @@ class ImageMounter {
 
       let targetDevice;
       if (udid) {
-        targetDevice = devices.find(device => device.Properties.SerialNumber === udid);
+        targetDevice = devices.find((device) => device.Properties.SerialNumber === udid);
         if (!targetDevice) {
           throw new Error(
             `Device with UDID ${udid} not found. Available devices:\n` +
-            devices.map(d => `  - ${d.Properties.SerialNumber}`).join('\n')
+            devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n')
           );
         }
       } else {
         if (devices.length > 1) {
           log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
           log.warn('Available devices:');
-          devices.forEach(device => {
+          devices.forEach((device) => {
             log.warn(`  - ${device.Properties.SerialNumber}`);
           });
           log.warn('Use --udid flag to specify a specific device.');
@@ -304,7 +304,7 @@ async function main() {
           manifestPath = manifestFlag;
           trustCachePath = trustCacheFlag;
         } else {
-          const positionalArgs = args.slice(1).filter(arg => !arg.startsWith('--'));
+          const positionalArgs = args.slice(1).filter((arg) => !arg.startsWith('--'));
           if (udid) {
             // Remove UDID from positional args if it was specified as a flag
             const udidIndex = positionalArgs.indexOf(udid);
