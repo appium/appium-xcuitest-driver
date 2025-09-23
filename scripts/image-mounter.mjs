@@ -54,6 +54,65 @@ class ImageMounter {
     }
   }
 
+  async getTargetDevice(udid) {
+    const remoteXPC = await this.initializeRemoteXPC();
+    const {createUsbmux} = remoteXPC;
+
+    log.info('Connecting to usbmuxd...');
+    const usbmux = await createUsbmux();
+
+    const devices = await usbmux.listDevices();
+    if (devices.length === 0) {
+      await usbmux.close();
+      throw new Error('No devices found. Make sure iOS devices are connected and trusted.');
+    }
+
+    let targetDevice;
+    if (udid) {
+      targetDevice = devices.find((device) => device.Properties.SerialNumber === udid);
+      if (!targetDevice) {
+        await usbmux.close();
+        throw new Error(
+          `Device with UDID ${udid} not found. Available devices:\n` +
+          devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n')
+        );
+      }
+    } else {
+      if (devices.length > 1) {
+        log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
+        log.warn('Available devices:');
+        devices.forEach((device) => {
+          log.warn(`  - ${device.Properties.SerialNumber}`);
+        });
+        log.warn('Use --udid flag to specify a specific device.');
+      }
+      targetDevice = devices[0];
+    }
+
+    return {usbmux, targetDevice};
+  }
+
+  async withImageMounterService(udid, fn) {
+    const {usbmux, targetDevice} = await this.getTargetDevice(udid);
+    const deviceUdid = targetDevice.Properties.SerialNumber;
+
+    try {
+      const remoteXPC = await this.initializeRemoteXPC();
+      const {Services} = remoteXPC;
+
+      log.info('Starting mobile image mounter service...');
+      const {mobileImageMounterService: imageMounterService} = await Services.startMobileImageMounterService(deviceUdid);
+
+      try {
+        return await fn(imageMounterService, deviceUdid);
+      } finally {
+        await imageMounterService.cleanup();
+      }
+    } finally {
+      await usbmux.close();
+    }
+  }
+
   /**
    * Mount Personalized Developer Disk Image on device
    * @param {string} imagePath - Path to the .dmg file
@@ -62,75 +121,28 @@ class ImageMounter {
    * @param {string} udid - Device UDID (optional)
    */
   async mount(imagePath, manifestPath, trustCachePath, udid) {
-
     const [validatedImagePath, validatedManifestPath, validatedTrustCachePath] = await Promise.all([
       this.validateFile(imagePath, 'Image (.dmg)'),
       this.validateFile(manifestPath, 'Build Manifest (.plist)'),
       this.validateFile(trustCachePath, 'Trust Cache (.trustcache)')
     ]);
 
-    const remoteXPC = await this.initializeRemoteXPC();
-    const {Services, createUsbmux} = remoteXPC;
-
-    let usbmux;
-    try {
-      log.info('Connecting to usbmuxd...');
-      usbmux = await createUsbmux();
-
-      const devices = await usbmux.listDevices();
-      if (devices.length === 0) {
-        throw new Error('No devices found. Make sure iOS devices are connected and trusted.');
-      }
-
-      let targetDevice;
-      if (udid) {
-        targetDevice = devices.find((device) => device.Properties.SerialNumber === udid);
-        if (!targetDevice) {
-          throw new Error(
-            `Device with UDID ${udid} not found. Available devices:\n` +
-            devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n')
-          );
-        }
-      } else {
-        if (devices.length > 1) {
-          log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
-          log.warn('Available devices:');
-          devices.forEach((device) => {
-            log.warn(`  - ${device.Properties.SerialNumber}`);
-          });
-          log.warn('Use --udid flag to specify a specific device.');
-        }
-        targetDevice = devices[0];
-      }
-
-      const deviceUdid = targetDevice.Properties.SerialNumber;
+    await this.withImageMounterService(udid, async (imageMounterService, deviceUdid) => {
       log.info(`Mounting image on device: ${deviceUdid}`);
 
-      log.info('Starting mobile image mounter service...');
-      const {mobileImageMounterService: imageMounterService} = await Services.startMobileImageMounterService(deviceUdid);
-
-      try {
-        if (await imageMounterService.isPersonalizedImageMounted()) {
-          log.info('✅ Personalized image is already mounted on the device');
-          return;
-        }
-
-        await imageMounterService.mount(
-          validatedImagePath,
-          validatedManifestPath,
-          validatedTrustCachePath
-        );
-
-        log.info('✅ Image mounted successfully!');
-      } finally {
-        await imageMounterService.cleanup();
+      if (await imageMounterService.isPersonalizedImageMounted()) {
+        log.info('✅ Personalized image is already mounted on the device');
+        return;
       }
 
-    } finally {
-      if (usbmux) {
-        await usbmux.close();
-      }
-    }
+      await imageMounterService.mount(
+        validatedImagePath,
+        validatedManifestPath,
+        validatedTrustCachePath
+      );
+
+      log.info('✅ Image mounted successfully!');
+    });
   }
 
   /**
@@ -139,64 +151,15 @@ class ImageMounter {
    * @param {string} mountPath - Mount path to unmount (optional)
    */
   async unmount(udid, mountPath = '/System/Developer') {
-
-    const remoteXPC = await this.initializeRemoteXPC();
-    const {Services, createUsbmux} = remoteXPC;
-
-    let usbmux;
-    try {
-      log.info('Connecting to usbmuxd...');
-      usbmux = await createUsbmux();
-
-      const devices = await usbmux.listDevices();
-      if (devices.length === 0) {
-        throw new Error('No devices found. Make sure iOS devices are connected and trusted.');
-      }
-
-      let targetDevice;
-      if (udid) {
-        targetDevice = devices.find((device) => device.Properties.SerialNumber === udid);
-        if (!targetDevice) {
-          throw new Error(
-            `Device with UDID ${udid} not found. Available devices:\n` +
-            devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n')
-          );
-        }
-      } else {
-        if (devices.length > 1) {
-          log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
-          log.warn('Available devices:');
-          devices.forEach((device) => {
-            log.warn(`  - ${device.Properties.SerialNumber}`);
-          });
-          log.warn('Use --udid flag to specify a specific device.');
-        }
-        targetDevice = devices[0];
-      }
-
-      const deviceUdid = targetDevice.Properties.SerialNumber;
+    await this.withImageMounterService(udid, async (imageMounterService, deviceUdid) => {
       log.info(`Unmounting image from device: ${deviceUdid}`);
       log.info(`Mount path: ${mountPath}`);
 
-      log.info('Starting mobile image mounter service...');
-      const {mobileImageMounterService: imageMounterService} = await Services.startMobileImageMounterService(deviceUdid);
-
-      try {
-        await imageMounterService.unmountImage(mountPath);
-        log.info('✅ Image unmounted successfully!');
-      } finally {
-        await imageMounterService.cleanup();
-      }
-
-    } finally {
-      if (usbmux) {
-        await usbmux.close();
-      }
-    }
+      await imageMounterService.unmountImage(mountPath);
+      log.info('✅ Image unmounted successfully!');
+    });
   }
 }
-
-
 
 /**
  * CLI with Commander.js
