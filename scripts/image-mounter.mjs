@@ -7,6 +7,7 @@
 import {logger} from '@appium/support';
 import {promises as fs} from 'fs';
 import path from 'path';
+import {Command} from 'commander';
 
 const log = logger.getLogger('ImageMounter');
 
@@ -195,57 +196,36 @@ class ImageMounter {
   }
 }
 
-function parseArg(args, flagName) {
-  const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
-  if (equalsArg) {
-    return equalsArg.split('=')[1];
-  }
 
-  const flagIndex = args.indexOf(flagName);
-  if (flagIndex !== -1 && flagIndex + 1 < args.length) {
-    return args[flagIndex + 1];
-  }
-
-  return undefined;
-}
 
 /**
- * Display help information
+ * CLI with Commander.js
  */
-function showHelp() {
-  console.log(`
-Image Mounter CLI - Mount and unmount Developer Disk Images on iOS devices
+async function main() {
+  const program = new Command();
+  const imageMounter = new ImageMounter();
 
-USAGE:
-  node image-mounter.mjs <command> [options] [files]
+  program
+    .name('image-mounter.mjs')
+    .description('Mount and unmount Developer Disk Images on iOS devices')
+    .version('1.0.0')
+    .addHelpText('after', `
+NOTE:
+  This script requires the 'appium-ios-remotexpc' package to be installed.
+  Install it using: npm install appium-ios-remotexpc`);
 
-COMMANDS:
-  mount      Mount a Developer Disk Image
-  unmount    Unmount a Developer Disk Image
-  help       Show this help message
-
-MOUNT COMMAND:
-  node image-mounter.mjs mount <image.dmg> <BuildManifest.plist> <image.trustcache>
-  node image-mounter.mjs mount --image <path> --manifest <path> --trustcache <path>
-
-  Positional arguments (must be in order):
-    1. Image file (.dmg)
-    2. Build Manifest file (.plist)
-    3. Trust Cache file (.trustcache)
-
-  Options:
-    --image <path>       Path to the .dmg image file
-    --manifest <path>    Path to the BuildManifest.plist file
-    --trustcache <path>  Path to the .trustcache file
-    --udid <udid>        Target device UDID (optional, uses first device if not specified)
-
-UNMOUNT COMMAND:
-  node image-mounter.mjs unmount [options]
-
-  Options:
-    --udid <udid>        Target device UDID (optional, uses first device if not specified)
-    --mount-path <path>  Mount path to unmount (default: /System/Developer)
-
+  // Mount command
+  program
+    .command('mount')
+    .description('Mount a Developer Disk Image on iOS device')
+    .argument('[image]', 'Path to the .dmg image file')
+    .argument('[manifest]', 'Path to the BuildManifest.plist file')
+    .argument('[trustcache]', 'Path to the .trustcache file')
+    .option('-i, --image <path>', 'Path to the .dmg image file')
+    .option('-m, --manifest <path>', 'Path to the BuildManifest.plist file')
+    .option('-t, --trustcache <path>', 'Path to the .trustcache file')
+    .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
+    .addHelpText('after', `
 EXAMPLES:
   # Mount using positional arguments
   node image-mounter.mjs mount DeveloperDiskImage.dmg BuildManifest.plist DeveloperDiskImage.trustcache
@@ -254,99 +234,71 @@ EXAMPLES:
   node image-mounter.mjs mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
 
   # Mount on specific device
-  node image-mounter.mjs mount --udid <udid> DeveloperDiskImage.dmg BuildManifest.plist DeveloperDiskImage.trustcache
-
-  # Unmount
-  node image-mounter.mjs unmount
-
-  # Unmount from specific device
-  node image-mounter.mjs unmount --udid <udid>
-
-NOTE:
-  This script requires the 'appium-ios-remotexpc' package to be installed.
-  Install it using: npm install appium-ios-remotexpc
-`);
-}
-
-
-async function main() {
-  const args = process.argv.slice(2);
-
-  if (args.length === 0 || args[0] === 'help' || args[0] === '--help' || args[0] === '-h') {
-    showHelp();
-    return;
-  }
-
-  const command = args[0];
-  const imageMounter = new ImageMounter();
-
-  try {
-    switch (command) {
-      case 'mount': {
-        const udid = parseArg(args, '--udid');
-
-        const imageFlag = parseArg(args, '--image');
-        const manifestFlag = parseArg(args, '--manifest');
-        const trustCacheFlag = parseArg(args, '--trustcache');
-
+  node image-mounter.mjs mount --udid <udid> DeveloperDiskImage.dmg BuildManifest.plist DeveloperDiskImage.trustcache`)
+    .action(async (image, manifest, trustcache, options) => {
+      try {
         let imagePath, manifestPath, trustCachePath;
 
-        if (imageFlag || manifestFlag || trustCacheFlag) {
-          if (!imageFlag || !manifestFlag || !trustCacheFlag) {
+        if (options.image || options.manifest || options.trustcache) {
+          if (!options.image || !options.manifest || !options.trustcache) {
             throw new Error(
               'When using flags, all three files must be specified:\n' +
               '  --image <path>\n' +
               '  --manifest <path>\n' +
-              '  --trustcache <path>'
+              '  --trustcache <path>\n\n' +
+              'Use "node image-mounter.mjs mount --help" for usage examples.'
             );
           }
-          imagePath = imageFlag;
-          manifestPath = manifestFlag;
-          trustCachePath = trustCacheFlag;
+          imagePath = options.image;
+          manifestPath = options.manifest;
+          trustCachePath = options.trustcache;
         } else {
-          const positionalArgs = args.slice(1).filter((arg) => !arg.startsWith('--'));
-          if (udid) {
-            // Remove UDID from positional args if it was specified as a flag
-            const udidIndex = positionalArgs.indexOf(udid);
-            if (udidIndex > -1) {
-              positionalArgs.splice(udidIndex, 1);
-            }
-          }
-
-          if (positionalArgs.length !== 3) {
+          if (!image || !manifest || !trustcache) {
             throw new Error(
               'Mount command requires exactly 3 files in order:\n' +
               '  1. Image file (.dmg)\n' +
               '  2. Build Manifest file (.plist)\n' +
               '  3. Trust Cache file (.trustcache)\n\n' +
-              `Received ${positionalArgs.length} files: ${positionalArgs.join(', ')}\n\n` +
-              'Use "node image-mounter.mjs help" for usage examples.'
+              'Use "node image-mounter.mjs mount --help" for usage examples.'
             );
           }
-
-          [imagePath, manifestPath, trustCachePath] = positionalArgs;
+          imagePath = image;
+          manifestPath = manifest;
+          trustCachePath = trustcache;
         }
 
-        await imageMounter.mount(imagePath, manifestPath, trustCachePath, udid);
-        break;
+        await imageMounter.mount(imagePath, manifestPath, trustCachePath, options.udid);
+        process.exit(0);
+      } catch (error) {
+        log.error(`❌ Error: ${error.message}`);
+        process.exit(1);
       }
+    });
 
-      case 'unmount': {
-        const udid = parseArg(args, '--udid');
-        const mountPath = parseArg(args, '--mount-path');
+  // Unmount command
+  program
+    .command('unmount')
+    .description('Unmount a Developer Disk Image from iOS device')
+    .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
+    .option('-p, --mount-path <path>', 'Mount path to unmount', '/System/Developer')
+    .addHelpText('after', `
+EXAMPLES:
+  # Unmount from default path
+  node image-mounter.mjs unmount
 
-        await imageMounter.unmount(udid, mountPath);
-        break;
+  # Unmount from specific device
+  node image-mounter.mjs unmount --udid <udid>`)
+    .action(async (options) => {
+      try {
+        await imageMounter.unmount(options.udid, options.mountPath);
+        process.exit(0);
+      } catch (error) {
+        log.error(`❌ Error: ${error.message}`);
+        process.exit(1);
       }
+    });
 
-      default:
-        throw new Error(`Unknown command: ${command}\nUse "node image-mounter.mjs help" for usage information.`);
-    }
-    process.exit(0);
-  } catch (error) {
-    log.error(`❌ Error: ${error.message}`);
-    process.exit(1);
-  }
+  await program.parseAsync(process.argv);
 }
 
 process.on('SIGINT', () => {
