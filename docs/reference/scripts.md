@@ -23,3 +23,7 @@ appium driver run xcuitest <script-name>
 |`tunnel-creation --tunnel-registry-port=<port>`|Specifies the port for the tunnel registry server (default: 42314)|
 |`download-wda-sim --outdir=/path/to/dir`|Download corresponding version's prebuilt WDA for iOS matched with the host machine architecture from [GitHub WebDriver release page](https://github.com/appium/WebDriverAgent/releases) into `--outdir` directory. The downloaded package name will be `WebDriverAgentRunner-Runner.app`.|
 |`download-wda-sim --platform=tvos --outdir=/path/to/dir`|Download corresponding version's prebuilt WDA for `--platform` into `--outdir` directory. If `--platform=tvos` is provided, the download module will be for tvOS (`WebDriverAgentRunner_tvOS-Runner.app`), otherwise the command will download iOS.|
+|`image-mounter mount --image <path> --manifest <path> --trustcache <path>`|Mount a Personalized Developer Disk Image on an iOS device. Requires paths to the .dmg image file, BuildManifest.plist, and .trustcache file. Requires the `appium-ios-remotexpc` optional dependency.|
+|`image-mounter mount --image <path> --manifest <path> --trustcache <path> --udid <device-udid>`|Mount a Developer Disk Image on a specific iOS device with the given UDID|
+|`image-mounter unmount`|Unmount a Developer Disk Image from the first available iOS device (default mount path: `/System/Developer`)|
+|`image-mounter unmount --udid <device-udid>`|Unmount a Developer Disk Image from a specific iOS device with the given UDID|

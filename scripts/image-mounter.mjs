@@ -37,8 +37,9 @@ class ImageMounter {
   }
 
   async validateFile(filePath, fileType) {
+    const absolutePath = path.resolve(filePath);
+
     try {
-      const absolutePath = path.resolve(filePath);
       const stat = await fs.stat(absolutePath);
 
       if (!stat.isFile()) {
@@ -48,15 +49,14 @@ class ImageMounter {
       return absolutePath;
     } catch (error) {
       if (error.code === 'ENOENT') {
-        throw new Error(`${fileType} file not found: ${path.resolve(filePath)}`);
+        throw new Error(`${fileType} file not found: ${absolutePath}`);
       }
       throw error;
     }
   }
 
   async getTargetDevice(udid) {
-    const remoteXPC = await this.initializeRemoteXPC();
-    const {createUsbmux} = remoteXPC;
+    const {createUsbmux} = await this.initializeRemoteXPC();
 
     log.info('Connecting to usbmuxd...');
     const usbmux = await createUsbmux();
@@ -64,7 +64,10 @@ class ImageMounter {
     const devices = await usbmux.listDevices();
     if (devices.length === 0) {
       await usbmux.close();
-      throw new Error('No devices found. Make sure iOS devices are connected and trusted.');
+      throw new Error(
+        'No iOS devices found. Ensure a device is connected, unlocked, and trusted. ' +
+        'See https://appium.github.io/appium-xcuitest-driver/latest/preparation/real-device-config/ for details.'
+      );
     }
 
     let targetDevice;
@@ -81,10 +84,10 @@ class ImageMounter {
       if (devices.length > 1) {
         log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
         log.warn('Available devices:');
-        devices.forEach((device) => {
-          log.warn(`  - ${device.Properties.SerialNumber}`);
-        });
-        log.warn('Use --udid flag to specify a specific device.');
+        devices.forEach((device) =>
+          log.warn(`  - ${device.Properties.SerialNumber}`
+        ));
+        log.warn('Use --udid flag to specify a particular device.');
       }
       targetDevice = devices[0];
     }
@@ -118,7 +121,7 @@ class ImageMounter {
    * @param {string} imagePath - Path to the .dmg file
    * @param {string} manifestPath - Path to the BuildManifest.plist file
    * @param {string} trustCachePath - Path to the .trustcache file
-   * @param {string} udid - Device UDID (optional)
+   * @param {string} [udid] - Device UDID
    */
   async mount(imagePath, manifestPath, trustCachePath, udid) {
     const [validatedImagePath, validatedManifestPath, validatedTrustCachePath] = await Promise.all([
@@ -147,8 +150,8 @@ class ImageMounter {
 
   /**
    * Unmount image from device
-   * @param {string} udid - Device UDID (optional)
-   * @param {string} mountPath - Mount path to unmount (optional)
+   * @param {string} [udid] - Device UDID
+   * @param {string} [mountPath='/System/Developer'] - Mount path to unmount
    */
   async unmount(udid, mountPath = '/System/Developer') {
     await this.withImageMounterService(udid, async (imageMounterService, deviceUdid) => {
@@ -169,7 +172,7 @@ async function main() {
   const imageMounter = new ImageMounter();
 
   program
-    .name('image-mounter.mjs')
+    .name('appium driver run xcuitest image-mounter')
     .description('Mount and unmount Developer Disk Images on iOS devices')
     .version('1.0.0')
     .addHelpText('after', `
@@ -188,10 +191,10 @@ NOTE:
     .addHelpText('after', `
 EXAMPLES:
   # Mount Developer Disk Image
-  node image-mounter.mjs mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
+  appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
 
   # Mount on specific device
-  node image-mounter.mjs mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`)
+  appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`)
     .action(async (options) => {
       try {
         await imageMounter.mount(options.image, options.manifest, options.trustcache, options.udid);
@@ -211,10 +214,10 @@ EXAMPLES:
     .addHelpText('after', `
 EXAMPLES:
   # Unmount from default path
-  node image-mounter.mjs unmount
+  appium driver run xcuitest image-mounter unmount
 
   # Unmount from specific device
-  node image-mounter.mjs unmount --udid <udid>`)
+  appium driver run xcuitest image-mounter unmount --udid <udid>`)
     .action(async (options) => {
       try {
         await imageMounter.unmount(options.udid, options.mountPath);
@@ -227,15 +230,5 @@ EXAMPLES:
 
   await program.parseAsync(process.argv);
 }
-
-process.on('SIGINT', () => {
-  log.info('\nReceived SIGINT. Exiting...');
-  process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-  log.info('\nReceived SIGTERM. Exiting...');
-  process.exit(0);
-});
 
 (async () => await main())();
