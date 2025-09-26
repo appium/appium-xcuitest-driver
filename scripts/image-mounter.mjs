@@ -164,6 +164,17 @@ class ImageMounter {
   }
 }
 
+async function executeCommand(commandFn, ...args) {
+  try {
+    await commandFn(...args);
+    // TODO: Remove explicit process.exit() once downstream library bug is fixed (tuntap/remotexpc)
+    process.exit(0);
+  } catch (error) {
+    log.error(`❌ Error: ${error.message}`);
+    process.exit(1);
+  }
+}
+
 /**
  * CLI with Commander.js
  */
@@ -196,13 +207,13 @@ EXAMPLES:
   # Mount on specific device
   appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`)
     .action(async (options) => {
-      try {
-        await imageMounter.mount(options.image, options.manifest, options.trustcache, options.udid);
-        process.exit(0);
-      } catch (error) {
-        log.error(`❌ Error: ${error.message}`);
-        process.exit(1);
-      }
+      await executeCommand(
+        imageMounter.mount.bind(imageMounter),
+        options.image,
+        options.manifest,
+        options.trustcache,
+        options.udid
+      );
     });
 
   // Unmount command
@@ -219,13 +230,11 @@ EXAMPLES:
   # Unmount from specific device
   appium driver run xcuitest image-mounter unmount --udid <udid>`)
     .action(async (options) => {
-      try {
-        await imageMounter.unmount(options.udid, options.mountPath);
-        process.exit(0);
-      } catch (error) {
-        log.error(`❌ Error: ${error.message}`);
-        process.exit(1);
-      }
+      await executeCommand(
+        imageMounter.unmount.bind(imageMounter),
+        options.udid,
+        options.mountPath
+      );
     });
 
   await program.parseAsync(process.argv);
