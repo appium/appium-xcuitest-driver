@@ -101,7 +101,7 @@
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
     "teen_process": "^3.0.0",
-    "winston": "3.17.0",
+    "winston": "3.18.1",
     "ws": "^8.13.0"
   },
   "optionalDependencies": {
