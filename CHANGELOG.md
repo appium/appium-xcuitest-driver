@@ -1,3 +1,9 @@
+## [10.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.2...v10.1.3) (2025-10-01)
+
+### Miscellaneous Chores
+
+* Unlock winston ([9649bd1](https://github.com/appium/appium-xcuitest-driver/commit/9649bd1de0c045813751f8f4d5eb4af0a0e1f271))
+
 ## [10.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.1...v10.1.2) (2025-09-16)
 
 ### Miscellaneous Chores
