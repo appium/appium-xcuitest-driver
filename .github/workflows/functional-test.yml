@@ -39,7 +39,7 @@ jobs:
           deviceName: 'iPhone 17'
           tvosVersion: '26.0'
           tvosDeviceName: 'Apple TV'
-          platform: macos-15
+          platform: macos-26
         - xcodeVersion: '16.4'
           iosVersion: '18.5'
           deviceName: 'iPhone 16'
