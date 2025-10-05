@@ -100,16 +100,25 @@ class ImageMounter {
     const deviceUdid = targetDevice.Properties.SerialNumber;
 
     try {
-      const remoteXPC = await this.initializeRemoteXPC();
-      const {Services} = remoteXPC;
+      const remoteXPCModule = await this.initializeRemoteXPC();
+      const {
+        Services
+      } = remoteXPCModule;
 
       log.info('Starting mobile image mounter service...');
-      const {mobileImageMounterService: imageMounterService} = await Services.startMobileImageMounterService(deviceUdid);
+      const {
+        mobileImageMounterService: imageMounterService,
+        remoteXPC
+      } = await Services.startMobileImageMounterService(deviceUdid);
 
       try {
         return await fn(imageMounterService, deviceUdid);
       } finally {
         await imageMounterService.cleanup();
+        if (remoteXPC) {
+          log.info(`Closing remoteXPC connection for device ${deviceUdid}`);
+          await remoteXPC.close();
+        }
       }
     } finally {
       await usbmux.close();
@@ -167,11 +176,8 @@ class ImageMounter {
 async function executeCommand(commandFn, ...args) {
   try {
     await commandFn(...args);
-    // TODO: Remove explicit process.exit() once downstream library bug is fixed (tuntap/remotexpc)
-    process.exit(0);
   } catch (error) {
     log.error(`❌ Error: ${error.message}`);
-    process.exit(1);
   }
 }
 
