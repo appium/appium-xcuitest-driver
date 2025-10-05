@@ -1,3 +1,9 @@
+## [10.1.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.4...v10.1.5) (2025-10-05)
+
+### Miscellaneous Chores
+
+* Update ESM script imports ([#2636](https://github.com/appium/appium-xcuitest-driver/issues/2636)) ([6cafc44](https://github.com/appium/appium-xcuitest-driver/commit/6cafc44468f0f20ce53ca2ca4c4d9b267911eb9f))
+
 ## [10.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.3...v10.1.4) (2025-10-03)
 
 ### Miscellaneous Chores
