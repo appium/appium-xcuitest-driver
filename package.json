@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.1.4",
+  "version": "10.1.6",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -32,7 +32,7 @@
     "mainClass": "XCUITestDriver",
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
-      "open-wda": "./scripts/open-wda.js",
+      "open-wda": "./scripts/open-wda.mjs",
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
       "image-mounter": "./scripts/image-mounter.mjs"

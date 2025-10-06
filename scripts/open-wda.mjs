@@ -1,9 +1,9 @@
-const path = require('path');
-const {exec} = require('teen_process');
-const {logger} = require('appium/support');
+import path from 'node:path';
+import { exec } from 'teen_process';
+import { logger } from 'appium/support.js';
+import { BOOTSTRAP_PATH } from 'appium-webdriveragent';
 
 const log = logger.getLogger('WDA');
-const {BOOTSTRAP_PATH} = require('appium-webdriveragent');
 const XCODEPROJ_NAME = 'WebDriverAgent.xcodeproj';
 
 async function openWda() {

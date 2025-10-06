@@ -3,7 +3,7 @@
 /* eslint-disable promise/prefer-await-to-then */
 
 const {deploy} = require('@appium/docutils');
-const {logger} = require('@appium/support');
+const {logger} = require('appium/support');
 const path = require('path');
 const semver = require('semver');
 const {version} = require('../package.json');
