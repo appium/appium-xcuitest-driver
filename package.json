@@ -32,7 +32,7 @@
     "mainClass": "XCUITestDriver",
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
-      "open-wda": "./scripts/open-wda.js",
+      "open-wda": "./scripts/open-wda.mjs",
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs"
     },
