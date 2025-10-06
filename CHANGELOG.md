@@ -1,3 +1,9 @@
+## [10.1.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.5...v10.1.6) (2025-10-06)
+
+### Miscellaneous Chores
+
+* Migrate open-wda script to ESM ([#2637](https://github.com/appium/appium-xcuitest-driver/issues/2637)) ([f441b88](https://github.com/appium/appium-xcuitest-driver/commit/f441b88cfac77829eed4b59214ff8475bd876738))
+
 ## [10.1.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.4...v10.1.5) (2025-10-05)
 
 ### Miscellaneous Chores
