@@ -4,7 +4,7 @@
  * This script provides a CLI interface to mount/unmount DDI via remote XPC services
  */
 
-import {logger} from '@appium/support';
+import {logger} from 'appium/support.js';
 import {promises as fs} from 'fs';
 import path from 'path';
 import {Command} from 'commander';
@@ -173,14 +173,6 @@ class ImageMounter {
   }
 }
 
-async function executeCommand(commandFn, ...args) {
-  try {
-    await commandFn(...args);
-  } catch (error) {
-    log.error(`❌ Error: ${error.message}`);
-  }
-}
-
 /**
  * CLI with Commander.js
  */
@@ -213,8 +205,7 @@ EXAMPLES:
   # Mount on specific device
   appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`)
     .action(async (options) => {
-      await executeCommand(
-        imageMounter.mount.bind(imageMounter),
+      await imageMounter.mount(
         options.image,
         options.manifest,
         options.trustcache,
@@ -236,8 +227,7 @@ EXAMPLES:
   # Unmount from specific device
   appium driver run xcuitest image-mounter unmount --udid <udid>`)
     .action(async (options) => {
-      await executeCommand(
-        imageMounter.unmount.bind(imageMounter),
+      await imageMounter.unmount(
         options.udid,
         options.mountPath
       );
