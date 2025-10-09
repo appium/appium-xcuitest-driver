@@ -34,7 +34,8 @@
       "build-wda": "./scripts/build-wda.js",
       "open-wda": "./scripts/open-wda.mjs",
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
-      "download-wda-sim": "./scripts/download-wda-sim.mjs"
+      "download-wda-sim": "./scripts/download-wda-sim.mjs",
+      "image-mounter": "./scripts/image-mounter.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",
@@ -90,6 +91,7 @@
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
     "bluebird": "^3.7.2",
+    "commander": "^14.0.1",
     "css-selector-parser": "^3.0.0",
     "js2xmlparser2": "^0.x",
     "lodash": "^4.17.21",
