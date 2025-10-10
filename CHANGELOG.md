@@ -1,3 +1,15 @@
+## [10.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.7...v10.2.0) (2025-10-10)
+
+### Features
+
+* Add optional simulator doctor check ([#2639](https://github.com/appium/appium-xcuitest-driver/issues/2639)) ([201d451](https://github.com/appium/appium-xcuitest-driver/commit/201d4519d051546dfd3b9f94f87e19a7914b7932))
+
+## [10.1.7](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.6...v10.1.7) (2025-10-10)
+
+### Miscellaneous Chores
+
+* Improve some doctor messaging ([#2638](https://github.com/appium/appium-xcuitest-driver/issues/2638)) ([701b083](https://github.com/appium/appium-xcuitest-driver/commit/701b0839fe0cd9fa899a6fa7a1bc06a0e9dc5689))
+
 ## [10.1.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.5...v10.1.6) (2025-10-06)
 
 ### Miscellaneous Chores
