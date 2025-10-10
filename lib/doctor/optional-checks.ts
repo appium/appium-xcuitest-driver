@@ -37,27 +37,6 @@ export class OptionalIdbCommandCheck implements IDoctorCheck {
 }
 export const optionalIdbCheck = new OptionalIdbCommandCheck();
 
-interface SimulatorPlatform {
-  displayName: string;
-  name: string;
-}
-
-interface InstalledSdk {
-  buildID: string;
-  canonicalName: string;
-  displayName: string;
-  isBaseSdk: boolean;
-  platform: string;
-  platformPath: string;
-  platformVersion: string;
-  productBuildVersion: string;
-  productCopyright: string;
-  productName: string;
-  productVersion: string;
-  sdkPath: string;
-  sdkVersion: string;
-}
-
 export class OptionalSimulatorCheck implements IDoctorCheck {
   log!: AppiumLogger;
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [
@@ -172,3 +151,23 @@ export class OptionalFfmpegCheck implements IDoctorCheck {
 }
 export const optionalFfmpegCheck = new OptionalFfmpegCheck();
 
+interface SimulatorPlatform {
+  displayName: string;
+  name: string;
+}
+
+interface InstalledSdk {
+  buildID?: string;
+  canonicalName: string;
+  displayName: string;
+  isBaseSdk: boolean;
+  platform: string;
+  platformPath: string;
+  platformVersion: string;
+  productBuildVersion?: string;
+  productCopyright?: string;
+  productName?: string;
+  productVersion?: string;
+  sdkPath: string;
+  sdkVersion: string;
+}
