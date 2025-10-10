@@ -1,3 +1,9 @@
+## [10.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.2.0...v10.2.1) (2025-10-10)
+
+### Miscellaneous Chores
+
+* Migrate doctor checks to typescript ([#2640](https://github.com/appium/appium-xcuitest-driver/issues/2640)) ([1bd49a7](https://github.com/appium/appium-xcuitest-driver/commit/1bd49a74a2e7789efd2cc52527b4559e9c91aa64))
+
 ## [10.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.7...v10.2.0) (2025-10-10)
 
 ### Features
