@@ -1,3 +1,33 @@
+## [10.1.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.5...v10.1.6) (2025-10-06)
+
+### Miscellaneous Chores
+
+* Migrate open-wda script to ESM ([#2637](https://github.com/appium/appium-xcuitest-driver/issues/2637)) ([f441b88](https://github.com/appium/appium-xcuitest-driver/commit/f441b88cfac77829eed4b59214ff8475bd876738))
+
+## [10.1.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.4...v10.1.5) (2025-10-05)
+
+### Miscellaneous Chores
+
+* Update ESM script imports ([#2636](https://github.com/appium/appium-xcuitest-driver/issues/2636)) ([6cafc44](https://github.com/appium/appium-xcuitest-driver/commit/6cafc44468f0f20ce53ca2ca4c4d9b267911eb9f))
+
+## [10.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.3...v10.1.4) (2025-10-03)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2635](https://github.com/appium/appium-xcuitest-driver/issues/2635)) ([387f2df](https://github.com/appium/appium-xcuitest-driver/commit/387f2dfdcc39ac209d126207134d9920717bc660))
+
+## [10.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.2...v10.1.3) (2025-10-01)
+
+### Miscellaneous Chores
+
+* Unlock winston ([9649bd1](https://github.com/appium/appium-xcuitest-driver/commit/9649bd1de0c045813751f8f4d5eb4af0a0e1f271))
+
+## [10.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.1...v10.1.2) (2025-09-16)
+
+### Miscellaneous Chores
+
+* Bump remote debugger ([#2626](https://github.com/appium/appium-xcuitest-driver/issues/2626)) ([4ef1a50](https://github.com/appium/appium-xcuitest-driver/commit/4ef1a50bdd003680b40a4529200d49c26c4286fc))
+
 ## [10.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.1.0...v10.1.1) (2025-09-15)
 
 ### Miscellaneous Chores

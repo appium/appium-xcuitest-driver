@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.1.1",
+  "version": "10.1.6",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -32,9 +32,10 @@
     "mainClass": "XCUITestDriver",
     "scripts": {
       "build-wda": "./scripts/build-wda.js",
-      "open-wda": "./scripts/open-wda.js",
+      "open-wda": "./scripts/open-wda.mjs",
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
-      "download-wda-sim": "./scripts/download-wda-sim.mjs"
+      "download-wda-sim": "./scripts/download-wda-sim.mjs",
+      "image-mounter": "./scripts/image-mounter.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",
@@ -84,12 +85,13 @@
     "appium-idb": "^2.0.0",
     "appium-ios-device": "^3.0.0",
     "appium-ios-simulator": "^7.0.0",
-    "appium-remote-debugger": "^15.0.1",
+    "appium-remote-debugger": "^15.0.3",
     "appium-webdriveragent": "^10.1.0",
     "appium-xcode": "^6.0.0",
     "async-lock": "^1.4.0",
     "asyncbox": "^3.0.0",
     "bluebird": "^3.7.2",
+    "commander": "^14.0.1",
     "css-selector-parser": "^3.0.0",
     "js2xmlparser2": "^0.x",
     "lodash": "^4.17.21",
@@ -101,7 +103,7 @@
     "semver": "^7.5.4",
     "source-map-support": "^0.x",
     "teen_process": "^3.0.0",
-    "winston": "3.17.0",
+    "winston": "^3.17.0",
     "ws": "^8.13.0"
   },
   "optionalDependencies": {
