@@ -29,7 +29,6 @@ nav:
   - overview.md
   - Installation:
       - installation/index.md
-      - installation/requirements.md
   - Device Preparation:
       - preparation/index.md
       - preparation/real-device-config.md
@@ -111,3 +110,4 @@ plugins:
       'security-flags.md': 'reference/security-flags.md'
       'server-args.md': 'reference/server-args.md'
       'settings.md': 'reference/settings.md'
+      'installation/requirements.md': 'installation/index.md'
