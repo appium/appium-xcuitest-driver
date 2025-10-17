@@ -1,3 +1,9 @@
+## [10.2.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.2.1...v10.2.2) (2025-10-17)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump semantic-release from 24.2.9 to 25.0.0 ([#2642](https://github.com/appium/appium-xcuitest-driver/issues/2642)) ([059aabc](https://github.com/appium/appium-xcuitest-driver/commit/059aabc38d33cebd448b314320318be09228317e))
+
 ## [10.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.2.0...v10.2.1) (2025-10-10)
 
 ### Miscellaneous Chores
