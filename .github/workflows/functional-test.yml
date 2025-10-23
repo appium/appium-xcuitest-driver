@@ -72,9 +72,7 @@ jobs:
 
     - run: xcrun simctl list devices available
       name: List Installed Simulators
-    - run: |
-        xcrun simctl list runtimes
-        xcrun --sdk iphonesimulator --show-sdk-version
+    - run: xcrun simctl list runtimes
       name: List Runtimes
     - name: Start iOS Simulator UI
       run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
@@ -86,6 +84,8 @@ jobs:
         os_version: "${{ matrix.iosVersion }}"
         shutdown_after_job: false
         wait_for_boot: true
+    - name: Finalize iOS simulator boot
+      run: xcrun --sdk iphonesimulator --show-sdk-version
 
     - run: |
         appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
