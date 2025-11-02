@@ -1,3 +1,9 @@
+## [10.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.3.0...v10.4.0) (2025-11-02)
+
+### Features
+
+* Make command exports more straightforward ([#2646](https://github.com/appium/appium-xcuitest-driver/issues/2646)) ([254bc04](https://github.com/appium/appium-xcuitest-driver/commit/254bc0468bba9cee4437286495ba7c0273ddd16e))
+
 ## [10.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.2.2...v10.3.0) (2025-11-02)
 
 ### Features
