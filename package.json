@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.2.2",
+  "version": "10.3.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -98,6 +98,7 @@
     "lru-cache": "^11.1.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.x",
+    "node-devicectl": "^1.0.1",
     "node-simctl": "^8.0.0",
     "portscanner": "^2.2.0",
     "semver": "^7.5.4",
