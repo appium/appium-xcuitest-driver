@@ -1,3 +1,9 @@
+## [10.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.1...v10.4.2) (2025-11-03)
+
+### Bug Fixes
+
+* Use devicectl while listing available device udids ([#2648](https://github.com/appium/appium-xcuitest-driver/issues/2648)) ([5953a97](https://github.com/appium/appium-xcuitest-driver/commit/5953a979ef7f2b15b415ddb819ccb4bfd26680dd))
+
 ## [10.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.0...v10.4.1) (2025-11-03)
 
 ### Miscellaneous Chores
