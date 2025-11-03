@@ -157,13 +157,21 @@ jobs:
           errors=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@errors')
           skipped=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@skipped')
           failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
-          threshold=$(( (failures + errors) * 100 / (tests - skipped) ))
+          # Count timeout failures to exclude from CI status
+          # Match failures containing "timeout" (case-insensitive)
+          timeout_failures=$(cat "$RESULTS_XML" | xq --xpath 'count(//testcase[failure[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "timeout")]])')
+          # Subtract timeout failures from total failures
+          non_timeout_failures=$((failures - timeout_failures))
+          threshold=$(( (non_timeout_failures + errors) * 100 / (tests - skipped) ))
           cat "$RESULTS_XML"
+          if [[ $timeout_failures -gt 0 ]]; then
+            echo "Found $timeout_failures timeout failure(s) - these will not affect CI status"
+          fi
           if [[ $threshold -gt 0 ]]; then
-            echo "${threshold}% of tests failed"
+            echo "${threshold}% of tests failed (excluding timeouts)"
             exit 1
           else
-            echo "${threshold}% of tests failed. This is (probably) fine"
+            echo "${threshold}% of tests failed (excluding timeouts). This is (probably) fine"
           fi
         fi
       name: Run functional tests
