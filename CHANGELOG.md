@@ -1,3 +1,9 @@
+## [10.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.0...v10.4.1) (2025-11-03)
+
+### Miscellaneous Chores
+
+* Ditch unused cookie-related functions ([#2647](https://github.com/appium/appium-xcuitest-driver/issues/2647)) ([f068585](https://github.com/appium/appium-xcuitest-driver/commit/f0685855a9014b6ee7d4281e77fe67563848ddd0))
+
 ## [10.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.3.0...v10.4.0) (2025-11-02)
 
 ### Features
