@@ -1,3 +1,9 @@
+## [10.4.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.2...v10.4.3) (2025-11-03)
+
+### Miscellaneous Chores
+
+* update webdriveragent to 10.2.1 ([#2645](https://github.com/appium/appium-xcuitest-driver/issues/2645)) ([899842a](https://github.com/appium/appium-xcuitest-driver/commit/899842a7ceb9a4a66f4c25be36fbc3408fb28e95))
+
 ## [10.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.1...v10.4.2) (2025-11-03)
 
 ### Bug Fixes
