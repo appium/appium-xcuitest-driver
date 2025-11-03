@@ -215,6 +215,7 @@ export const executeMethodMap = {
     command: 'getViewportRect',
   },
   'mobile: startPerfRecord': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileStartPerfRecord',
     params: {
       optional: ['timeout', 'profileName', 'pid'],
@@ -252,6 +253,7 @@ export const executeMethodMap = {
     command: 'mobileListCertificates',
   },
   'mobile: startLogsBroadcast': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileStartLogsBroadcast',
   },
   'mobile: stopLogsBroadcast': {
@@ -466,24 +468,28 @@ export const executeMethodMap = {
     command: 'mobileResetLocationService',
   },
   'mobile: startPcap': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileStartPcap',
     params: {
       optional: ['timeLimitSec', 'forceRestart'],
     },
   },
   'mobile: stopPcap': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileStopPcap',
   },
   'mobile: listConditionInducers': {
     command: 'listConditionInducers',
   },
   'mobile: enableConditionInducer': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'enableConditionInducer',
     params: {
       required: ['conditionID', 'profileID'],
     },
   },
   'mobile: disableConditionInducer': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'disableConditionInducer',
   },
   'mobile: updateSafariPreferences': {
@@ -493,6 +499,7 @@ export const executeMethodMap = {
     },
   },
   'mobile: calibrateWebToRealCoordinatesTranslation': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileCalibrateWebToRealCoordinatesTranslation',
   },
   'mobile: keys': {
@@ -525,6 +532,7 @@ export const executeMethodMap = {
     command: 'mobileShake',
   },
   'mobile: startAudioRecording': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'startAudioRecording',
     params: {
       required: ['audioInput'],
@@ -539,6 +547,7 @@ export const executeMethodMap = {
     },
   },
   'mobile: stopAudioRecording': {
+    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'stopAudioRecording',
   },
   'mobile: hideKeyboard': {

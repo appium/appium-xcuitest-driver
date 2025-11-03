@@ -1,3 +1,27 @@
+## [10.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.1...v10.4.2) (2025-11-03)
+
+### Bug Fixes
+
+* Use devicectl while listing available device udids ([#2648](https://github.com/appium/appium-xcuitest-driver/issues/2648)) ([5953a97](https://github.com/appium/appium-xcuitest-driver/commit/5953a979ef7f2b15b415ddb819ccb4bfd26680dd))
+
+## [10.4.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.0...v10.4.1) (2025-11-03)
+
+### Miscellaneous Chores
+
+* Ditch unused cookie-related functions ([#2647](https://github.com/appium/appium-xcuitest-driver/issues/2647)) ([f068585](https://github.com/appium/appium-xcuitest-driver/commit/f0685855a9014b6ee7d4281e77fe67563848ddd0))
+
+## [10.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.3.0...v10.4.0) (2025-11-02)
+
+### Features
+
+* Make command exports more straightforward ([#2646](https://github.com/appium/appium-xcuitest-driver/issues/2646)) ([254bc04](https://github.com/appium/appium-xcuitest-driver/commit/254bc0468bba9cee4437286495ba7c0273ddd16e))
+
+## [10.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.2.2...v10.3.0) (2025-11-02)
+
+### Features
+
+* Switch to devicectl module usage ([#2644](https://github.com/appium/appium-xcuitest-driver/issues/2644)) ([7e7e642](https://github.com/appium/appium-xcuitest-driver/commit/7e7e64263a225e90bf48d1e14b7fd961acba9ede))
+
 ## [10.2.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.2.1...v10.2.2) (2025-10-17)
 
 ### Miscellaneous Chores
