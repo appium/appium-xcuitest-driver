@@ -6,6 +6,7 @@ import _pem from 'pem';
 import {amendCapabilities, SAFARI_CAPS} from '../desired';
 import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
+import { waitForCondition } from 'asyncbox';
 
 const pem = B.promisifyAll(_pem);
 
@@ -63,16 +64,29 @@ describe('Safari SSL', function () {
   });
 
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
+    const assertPageSource = async () => {
+      await waitForCondition(
+        async () => (await driver.getPageSource()).includes('Arbitrary text'), {
+          waitMs: 10000,
+          intervalMs: 500,
+        }
+      );
+    };
+
     try {
       driver = await initSession(caps);
-      await driver.getPageSource().should.eventually.include('Arbitrary text');
+      await assertPageSource();
+    } finally {
       await deleteSession();
-      await B.delay(1000);
+    }
 
-      // Now do another session using the same cert to verify that it still works
+    await B.delay(100);
+
+    // Now do another session using the same cert to verify that it still works
+    try {
       driver = await initSession(caps);
       await driver.url(localHttpsUrl);
-      await driver.getPageSource().should.eventually.include('Arbitrary text');
+      await assertPageSource();
     } finally {
       await deleteSession();
     }
