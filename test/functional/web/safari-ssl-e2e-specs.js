@@ -67,8 +67,8 @@ describe('Safari SSL', function () {
     const assertPageSource = async () => {
       await waitForCondition(
         async () => (await driver.getPageSource()).includes('Arbitrary text'), {
-          timeout: 10000,
-          interval: 500,
+          waitMs: 10000,
+          intervalMs: 500,
         }
       );
     };
