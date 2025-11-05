@@ -43,6 +43,8 @@ nav:
       - Server Configuration:
           - reference/server-args.md
           - reference/security-flags.md
+      - Driver Configuration:
+          - reference/env-vars.md
       - Session Configuration:
           - reference/capabilities.md
           - reference/settings.md
