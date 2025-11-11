@@ -1,3 +1,9 @@
+## [10.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.3...v10.5.0) (2025-11-11)
+
+### Features
+
+* Bump appium-remote-debugger for iOS 26.2 beta webview ([#2652](https://github.com/appium/appium-xcuitest-driver/issues/2652)) ([20c5591](https://github.com/appium/appium-xcuitest-driver/commit/20c55917cc35faf287e49fd2f6a321af4e7e2215))
+
 ## [10.4.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.2...v10.4.3) (2025-11-03)
 
 ### Miscellaneous Chores
