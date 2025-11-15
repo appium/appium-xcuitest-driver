@@ -1,3 +1,9 @@
+## [10.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.5.0...v10.5.1) (2025-11-15)
+
+### Miscellaneous Chores
+
+* publish via trusted publisher ([#2653](https://github.com/appium/appium-xcuitest-driver/issues/2653)) ([7c208a1](https://github.com/appium/appium-xcuitest-driver/commit/7c208a14525b46b19c08ae05d6e8ae4e6efd7421))
+
 ## [10.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.4.3...v10.5.0) (2025-11-11)
 
 ### Features
