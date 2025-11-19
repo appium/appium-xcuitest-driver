@@ -6,7 +6,7 @@ import path from 'node:path';
 import log from '../../lib/logger.js';
 
 
-const BIOMETRIC_BUNDLE_ID = 'com.mwakizaka.biometric';
+const UICATALOG_BUNDLE_ID = 'com.example.apple-samplecode.UICatalog';
 
 describe('AppInfosCache', function () {
   let chai;
@@ -21,14 +21,14 @@ describe('AppInfosCache', function () {
 
   describe('retrives info from different types of apps', function () {
     let ipaPath;
-    const appPath = path.resolve(__dirname, '..', 'assets', 'biometric.app');
+    const appPath = path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app');
     /** @type {AppInfosCache} */
     let cache;
 
     before(async function () {
       const tmpDir = await tempDir.openDir();
       try {
-        const destDir = path.join(tmpDir, 'Payload', 'biometric.app');
+        const destDir = path.join(tmpDir, 'Payload', 'UIKitCatalog-iphonesimulator.app');
         await fs.mkdirp(destDir);
         await fs.copyFile(appPath, destDir);
         ipaPath = await tempDir.path({
@@ -56,23 +56,23 @@ describe('AppInfosCache', function () {
 
     it('should cache ipa', async function () {
       const info = await cache.put(ipaPath);
-      await info.CFBundleIdentifier.should.eql(BIOMETRIC_BUNDLE_ID);
+      await info.CFBundleIdentifier.should.eql(UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(ipaPath);
       info.should.be.equal(info2);
     });
 
     it('should cache app', async function () {
       const info = await cache.put(appPath);
-      await info.CFBundleIdentifier.should.eql(BIOMETRIC_BUNDLE_ID);
+      await info.CFBundleIdentifier.should.eql(UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(appPath);
       info.should.be.equal(info2);
     });
 
     it('should extract cached info', async function () {
       await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
-      await cache.extractBundleId(ipaPath).should.eventually.eql(BIOMETRIC_BUNDLE_ID);
-      await cache.extractBundleVersion(appPath).should.eventually.eql('1');
-      await cache.extractExecutableName(ipaPath).should.eventually.eql('biometric');
+      await cache.extractBundleId(ipaPath).should.eventually.eql(UICATALOG_BUNDLE_ID);
+      await cache.extractBundleVersion(appPath).should.eventually.eql('2.13');
+      await cache.extractExecutableName(ipaPath).should.eventually.eql('UIKitCatalog');
     });
   });
 });

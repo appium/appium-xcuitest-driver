@@ -31,7 +31,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'temp.zip');
         await zip.toArchive(tmpSrc, {
-          cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
+          cwd: path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app'),
         });
         srcStream = fs.createReadStream(tmpSrc);
         ({rootDir: appRoot} = await unzipStream(srcStream));
@@ -55,7 +55,7 @@ describe('app-utils', function () {
       let srcStream;
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
-        await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
+        await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app', 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
         await unzipStream(srcStream).should.be.rejected;
       } finally {
@@ -71,7 +71,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'temp.zip');
         await zip.toArchive(tmpSrc, {
-          cwd: path.resolve(__dirname, '..', 'assets', 'biometric.app'),
+          cwd: path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app'),
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
         await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
@@ -87,7 +87,7 @@ describe('app-utils', function () {
       const tmpDir = await tempDir.openDir();
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
-        await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'biometric.app', 'Info.plist'), tmpSrc);
+        await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app', 'Info.plist'), tmpSrc);
         await unzipFile(tmpSrc).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
