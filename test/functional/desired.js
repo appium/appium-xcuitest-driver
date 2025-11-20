@@ -25,9 +25,7 @@ export function extractCapabilityValue(caps, capName) {
 
 export const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '17.4';
 export const DEVICE_NAME = process.env.DEVICE_NAME || 'iPhone 15';
-const DEVICE_NAME_FOR_TOUCH_ID = process.env.DEVICE_NAME_FOR_TOUCH_ID || 'iPhone 15';
 export const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
-const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const APPS = {
   uiCatalogApp: path.resolve(
@@ -37,7 +35,6 @@ const APPS = {
     'UIKitCatalog-iphonesimulator.app',
   ), // https://github.com/appium/ios-uicatalog
   iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app'), // https://github.com/appium/ios-test-app
-  biometricApp: path.resolve(__dirname, '..', 'assets', 'biometric.app'), // https://github.com/mwakizaka/LocalAuthentication
 };
 
 const initTimeout = 60 * 1000 * 4;
@@ -52,7 +49,6 @@ export const GENERIC_CAPS = node.deepFreeze({
     'appium:platformVersion': PLATFORM_VERSION,
     'appium:deviceName': DEVICE_NAME,
     'appium:automationName': 'XCUITest',
-    'appium:launchWithIDB': LAUNCH_WITH_IDB,
     'appium:noReset': true,
     'appium:maxTypingFrequency': 30,
     'appium:clearSystemFiles': true,
@@ -110,15 +106,6 @@ export const TESTAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
 export const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
   'appium:app': APPS.uiCatalogApp,
   'appium:otherApps': APPS.iosTestApp,
-});
-
-export const TOUCHIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.biometricApp,
-  'appium:deviceName': DEVICE_NAME_FOR_TOUCH_ID,
-});
-
-export const FACEIDAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.biometricApp,
 });
 
 export const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
