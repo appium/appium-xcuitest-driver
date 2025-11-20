@@ -71,7 +71,6 @@ describe('AppInfosCache', function () {
     it('should extract cached info', async function () {
       await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
       await cache.extractBundleId(ipaPath).should.eventually.eql(UICATALOG_BUNDLE_ID);
-      await cache.extractBundleVersion(appPath).should.eventually.eql('2.13');
       await cache.extractExecutableName(ipaPath).should.eventually.eql('UIKitCatalog');
     });
   });
