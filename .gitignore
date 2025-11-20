@@ -12,3 +12,4 @@ test-results.xml
 npm-shrinkwrap.json
 package-lock.json*
 site
+test/fixtures/

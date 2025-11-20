@@ -5,12 +5,13 @@ import {Simctl} from 'node-simctl';
 import B from 'bluebird';
 import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
 import {
-  UICATALOG_SIM_CAPS,
+  getUICatalogSimCaps,
   amendCapabilities,
   extractCapabilityValue,
   PLATFORM_VERSION,
   DEVICE_NAME,
 } from '../desired';
+import {UICATALOG_BUNDLE_ID} from '../../setup.js';
 import {translateDeviceName} from '../../../lib/utils';
 import axios from 'axios';
 
@@ -46,7 +47,8 @@ describe('XCUITestDriver', function () {
     chai.use(chaiAsPromised.default);
 
     const udid = await createDevice();
-    baseCaps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
+    const uiCatalogSimCaps = await getUICatalogSimCaps();
+    baseCaps = amendCapabilities(uiCatalogSimCaps, {'appium:udid': udid});
     caps = amendCapabilities(baseCaps, {
       'appium:usePrebuiltWDA': true,
       'appium:wdaStartupRetries': 0,
@@ -86,7 +88,7 @@ describe('XCUITestDriver', function () {
 
   it('should start and stop a session with only bundle id', async function () {
     const localCaps = amendCapabilities(caps, {
-      'appium:bundleId': 'com.example.apple-samplecode.UICatalog',
+      'appium:bundleId': UICATALOG_BUNDLE_ID,
       'appium:noReset': true,
       'appium:app': undefined,
     });
@@ -96,7 +98,7 @@ describe('XCUITestDriver', function () {
   it('should start and stop a session with only bundle id when no sim is running', async function () {
     await killAllSimulators();
     const localCaps = amendCapabilities(caps, {
-      'appium:bundleId': 'com.example.apple-samplecode.UICatalog',
+      'appium:bundleId': UICATALOG_BUNDLE_ID,
       'appium:noReset': true,
       'appium:app': undefined,
     });
@@ -171,7 +173,8 @@ describe('XCUITestDriver', function () {
     });
 
     it('default: creates sim and deletes it afterwards', async function () {
-      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+      const uiCatalogSimCaps = await getUICatalogSimCaps();
+      const caps = amendCapabilities(uiCatalogSimCaps, {
         'appium:enforceFreshSimulatorCreation': true,
       });
 
@@ -196,7 +199,8 @@ describe('XCUITestDriver', function () {
 
       try {
         // test
-        const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        const uiCatalogSimCaps = await getUICatalogSimCaps();
+        const caps = amendCapabilities(uiCatalogSimCaps, {
           'appium:udid': udid,
           'appium:fullReset': true,
           'appium:resetOnSessionStartOnly': false,
@@ -232,7 +236,8 @@ describe('XCUITestDriver', function () {
         await B.delay(2000);
 
         // test
-        const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        const uiCatalogSimCaps = await getUICatalogSimCaps();
+        const caps = amendCapabilities(uiCatalogSimCaps, {
           'appium:udid': udid,
           'appium:noReset': true,
         });
@@ -254,7 +259,8 @@ describe('XCUITestDriver', function () {
 
     it('with invalid udid: throws an error', async function () {
       // test
-      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+      const uiCatalogSimCaps = await getUICatalogSimCaps();
+      const caps = amendCapabilities(uiCatalogSimCaps, {
         'appium:udid': 'some-random-udid',
       });
 
@@ -264,7 +270,8 @@ describe('XCUITestDriver', function () {
     it('with non-existent udid: throws an error', async function () {
       // test
       const udid = 'a77841db006fb1762fee0bb6a2477b2b3e1cfa7d';
-      const caps = amendCapabilities(UICATALOG_SIM_CAPS, {'appium:udid': udid});
+      const uiCatalogSimCaps = await getUICatalogSimCaps();
+      const caps = amendCapabilities(uiCatalogSimCaps, {'appium:udid': udid});
 
       await initSession(caps).should.be.rejectedWith('Unknown device or simulator UDID');
     });
@@ -282,7 +289,8 @@ describe('XCUITestDriver', function () {
         await B.delay(2000);
 
         // test
-        const caps = amendCapabilities(UICATALOG_SIM_CAPS, {
+        const uiCatalogSimCaps = await getUICatalogSimCaps();
+        const caps = amendCapabilities(uiCatalogSimCaps, {
           'appium:udid': udid,
           'appium:noReset': true,
         });

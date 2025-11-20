@@ -1,4 +1,4 @@
-import {UICATALOG_CAPS, amendCapabilities} from '../desired';
+import {getUICatalogCaps, amendCapabilities} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession} from '../helpers/session';
 import {retryInterval} from 'asyncbox';
@@ -20,7 +20,8 @@ describe('XCUITestDriver - long tests', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    const caps = amendCapabilities(UICATALOG_CAPS, {'appium:maxTypingFrequency': 20});
+    const uiCatalogCaps = await getUICatalogCaps();
+    const caps = amendCapabilities(uiCatalogCaps, {'appium:maxTypingFrequency': 20});
     driver = await initSession(caps);
   });
   after(async function () {

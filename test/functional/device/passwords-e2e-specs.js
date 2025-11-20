@@ -1,5 +1,5 @@
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {UICATALOG_CAPS, amendCapabilities, extractCapabilityValue} from '../desired';
+import {getUICatalogCaps, amendCapabilities, extractCapabilityValue} from '../desired';
 import {util} from 'appium/support';
 
 
@@ -10,16 +10,20 @@ describe('Passwords', function () {
 
   let chai;
 
+  let uiCatalogCaps;
+
   before(async function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    uiCatalogCaps = await getUICatalogCaps();
   });
 
   beforeEach(function () {
-    caps = UICATALOG_CAPS;
+    caps = uiCatalogCaps;
 
     if (util.compareVersions(extractCapabilityValue(caps, 'appium:platformVersion'), '<', '16.4')) {
       return this.skip();
