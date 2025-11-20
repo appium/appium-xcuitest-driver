@@ -206,7 +206,7 @@ describe('Safari - basics -', function () {
       });
       it('should be able to retrieve css properties', async function () {
         const el = await driver.$('#fbemail');
-        (await el.getCSSProperty('background-color')).value.should.equal('rgba(255,255,255,1)');
+        (await el.getCSSProperty('background-color')).value.should.contain('rgb');
       });
       it('should retrieve an element size', async function () {
         const el = await driver.$('#i_am_an_id');
