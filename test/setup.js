@@ -82,7 +82,7 @@ async function downloadAndExtractApp(url, cachePath, zipFileName) {
 
           // Use the first (shallowest) .app bundle found
           const extractedAppPath = path.join(extractDir, appPaths[0]);
-          await fs.move(extractedAppPath, cachePath);
+          await fs.mv(extractedAppPath, cachePath, {mkdirp: true});
         } finally {
           await fs.rimraf(extractDir);
         }
