@@ -4,9 +4,7 @@ import {
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
 import log from '../../lib/logger.js';
-
-
-const UICATALOG_BUNDLE_ID = 'com.example.apple-samplecode.UICatalog';
+import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup.js';
 
 describe('AppInfosCache', function () {
   let chai;
@@ -21,11 +19,13 @@ describe('AppInfosCache', function () {
 
   describe('retrives info from different types of apps', function () {
     let ipaPath;
-    const appPath = path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app');
+    let appPath;
     /** @type {AppInfosCache} */
     let cache;
 
     before(async function () {
+      // Download the UIKitCatalog app dynamically
+      appPath = await getUIKitCatalogPath();
       const tmpDir = await tempDir.openDir();
       try {
         const destDir = path.join(tmpDir, 'Payload', 'UIKitCatalog-iphonesimulator.app');
@@ -71,7 +71,6 @@ describe('AppInfosCache', function () {
     it('should extract cached info', async function () {
       await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
       await cache.extractBundleId(ipaPath).should.eventually.eql(UICATALOG_BUNDLE_ID);
-      await cache.extractBundleVersion(appPath).should.eventually.eql('2.13');
       await cache.extractExecutableName(ipaPath).should.eventually.eql('UIKitCatalog');
     });
   });

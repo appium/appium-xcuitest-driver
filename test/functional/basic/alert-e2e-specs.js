@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {UICATALOG_CAPS} from '../desired';
+import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 
@@ -17,7 +17,8 @@ describe('XCUITestDriver - alerts -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    driver = await initSession(UICATALOG_CAPS);
+    const uiCatalogCaps = await getUICatalogCaps();
+    driver = await initSession(uiCatalogCaps);
   });
   after(async function () {
     await deleteSession();

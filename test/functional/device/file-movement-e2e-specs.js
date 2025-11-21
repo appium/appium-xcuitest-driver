@@ -1,10 +1,11 @@
-import {UICATALOG_CAPS} from '../desired';
+import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {fs, tempDir, zip} from 'appium/support';
 import path from 'path';
+import {UICATALOG_BUNDLE_ID} from '../../setup.js';
 
 
-const UICAT_CONTAINER = `@com.example.apple-samplecode.UICatalog`;
+const UICAT_CONTAINER = `@${UICATALOG_BUNDLE_ID}`;
 
 async function pullFileAsString(driver, remotePath) {
   let remoteData64 = await driver.pullFile(remotePath);
@@ -24,7 +25,8 @@ describe('XCUITestDriver - file movement', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    driver = await initSession(UICATALOG_CAPS);
+    const uiCatalogCaps = await getUICatalogCaps();
+    driver = await initSession(uiCatalogCaps);
   });
   after(async function () {
     await deleteSession();

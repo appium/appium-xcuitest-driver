@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {extractCapabilityValue, UICATALOG_CAPS} from '../desired';
+import {extractCapabilityValue, getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
 
@@ -19,7 +19,8 @@ describe('XCUITestDriver - elements -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    driver = await initSession(UICATALOG_CAPS);
+    const uiCatalogCaps = await getUICatalogCaps();
+    driver = await initSession(uiCatalogCaps);
   });
   after(async function () {
     await deleteSession();
@@ -111,9 +112,10 @@ describe('XCUITestDriver - elements -', function () {
 
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
+      const uiCatalogCaps = await getUICatalogCaps();
       if (
         util.compareVersions(
-          extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion'),
+          extractCapabilityValue(uiCatalogCaps, 'appium:platformVersion'),
           '>=',
           '13.0',
         )

@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import {retryInterval} from 'asyncbox';
-import {UICATALOG_CAPS} from '../desired';
+import {getUICatalogCaps} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
@@ -24,7 +24,8 @@ describe('XCUITestDriver - gestures', function () {
 
   describe('dynamic gestures', function () {
     before(async function () {
-      driver = await initSession(UICATALOG_CAPS);
+      const uiCatalogCaps = await getUICatalogCaps();
+      driver = await initSession(uiCatalogCaps);
     });
     beforeEach(async function () {
       await driver.back();

@@ -3,7 +3,7 @@ import util from 'util';
 import {retryInterval} from 'asyncbox';
 import {
   isIosVersionBelow,
-  UICATALOG_CAPS
+  getUICatalogCaps,
 } from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from '../web/helpers';
@@ -23,7 +23,8 @@ describe('XCUITestDriver - basics -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    driver = await initSession(UICATALOG_CAPS);
+    const uiCatalogCaps = await getUICatalogCaps();
+    driver = await initSession(uiCatalogCaps);
   });
   after(async function () {
     await deleteSession();

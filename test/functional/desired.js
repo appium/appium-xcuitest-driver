@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import path from 'path';
 import {util, node} from 'appium/support';
+import {getUIKitCatalogPath, getTestAppPath} from '../setup.js';
 
 // translate integer environment variable to a boolean 0=false, !0=true
 function checkFeatureInEnv(envArg) {
@@ -27,15 +27,7 @@ export const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '17.4';
 export const DEVICE_NAME = process.env.DEVICE_NAME || 'iPhone 15';
 export const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
-const APPS = {
-  uiCatalogApp: path.resolve(
-    __dirname,
-    '..',
-    'assets',
-    'UIKitCatalog-iphonesimulator.app',
-  ), // https://github.com/appium/ios-uicatalog
-  iosTestApp: path.resolve(__dirname, '..', 'assets', 'TestApp-iphonesimulator.app'), // https://github.com/appium/ios-test-app
-};
+
 
 const initTimeout = 60 * 1000 * 4;
 const prebuiltWdaOpts = process.env.PREBUILT_WDA_PATH
@@ -81,14 +73,34 @@ export function isIosVersionBelow(maxVersion) {
   return util.compareVersions(PLATFORM_VERSION, '<', maxVersion);
 }
 
-export const UICATALOG_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.uiCatalogApp,
-});
+// Export async getter functions for caps
+export async function getUICatalogCaps() {
+  const uiCatalogApp = await getUIKitCatalogPath();
+  return amendCapabilities(GENERIC_CAPS, {
+    'appium:app': uiCatalogApp,
+  });
+}
 
-export const UICATALOG_SIM_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.uiCatalogApp,
-  'appium:noReset': false,
-}); // do not want to have no reset on the tests that use this
+export async function getUICatalogSimCaps() {
+  const uiCatalogApp = await getUIKitCatalogPath();
+  return amendCapabilities(GENERIC_CAPS, {
+    'appium:app': uiCatalogApp,
+    'appium:noReset': false,
+  }); // do not want to have no reset on the tests that use this
+}
+
+export async function getMultipleApps() {
+  const [uiCatalogApp, testApp] = await Promise.all([
+    getUIKitCatalogPath(),
+    getTestAppPath(),
+  ]);
+  return amendCapabilities(GENERIC_CAPS, {
+    'appium:app': uiCatalogApp,
+    'appium:otherApps': testApp,
+  });
+}
+
+// Note: Tests should use getUICatalogCaps(), getUICatalogSimCaps(), or getMultipleApps() directly
 
 export const SETTINGS_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:bundleId': 'com.apple.Preferences',
@@ -99,14 +111,12 @@ export const SAFARI_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:nativeWebTap': false,
 });
 
-export const TESTAPP_CAPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.iosTestApp,
-});
-
-export const MULTIPLE_APPS = amendCapabilities(GENERIC_CAPS, {
-  'appium:app': APPS.uiCatalogApp,
-  'appium:otherApps': APPS.iosTestApp,
-});
+export async function getTestAppCaps() {
+  const testApp = await getTestAppPath();
+  return amendCapabilities(GENERIC_CAPS, {
+    'appium:app': testApp,
+  });
+}
 
 export const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   platformName: 'tvOS',

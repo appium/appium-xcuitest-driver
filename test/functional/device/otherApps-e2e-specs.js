@@ -1,5 +1,6 @@
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {MULTIPLE_APPS, amendCapabilities} from '../desired';
+import {getMultipleApps, amendCapabilities} from '../desired';
+import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup.js';
 
 
 describe('OtherApps', function () {
@@ -17,7 +18,8 @@ describe('OtherApps', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    caps = amendCapabilities(MULTIPLE_APPS, {
+    const multipleApps = await getMultipleApps();
+    caps = amendCapabilities(multipleApps, {
       'appium:wdaStartupRetries': 0,
     });
   });
@@ -30,9 +32,9 @@ describe('OtherApps', function () {
 
   it('should start and stop a session', async function () {
     driver = await initSession(caps);
-    await driver.isAppInstalled('io.appium.TestApp').should.eventually.be.equal(true);
+    await driver.isAppInstalled(TESTAPP_BUNDLE_ID).should.eventually.be.equal(true);
     await driver
-      .isAppInstalled('com.example.apple-samplecode.UICatalog')
+      .isAppInstalled(UICATALOG_BUNDLE_ID)
       .should.eventually.be.equal(true);
   });
 });

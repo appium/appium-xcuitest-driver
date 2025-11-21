@@ -1,5 +1,5 @@
 import B from 'bluebird';
-import {UICATALOG_CAPS} from '../desired';
+import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 
@@ -25,7 +25,8 @@ describe('XCUITestDriver - performance', function () {
         this.skip();
       }
 
-      driver = await initSession(UICATALOG_CAPS);
+      const uiCatalogCaps = await getUICatalogCaps();
+      driver = await initSession(uiCatalogCaps);
     });
     after(async function () {
       await deleteSession();
