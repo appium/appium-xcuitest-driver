@@ -4,10 +4,12 @@ import {
 } from '../../lib/app-utils';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
+import {getUIKitCatalogPath} from '../setup.js';
 
 
 describe('app-utils', function () {
   let chai;
+  let uiCatalogAppPath;
 
   before(async function () {
     chai = await import('chai');
@@ -15,6 +17,9 @@ describe('app-utils', function () {
 
     chai.should();
     chai.use(chaiAsPromised.default);
+
+    // Download the UIKitCatalog app dynamically
+    uiCatalogAppPath = await getUIKitCatalogPath();
   });
 
   describe('unzipStream', function () {
@@ -31,7 +36,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'temp.zip');
         await zip.toArchive(tmpSrc, {
-          cwd: path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app'),
+          cwd: uiCatalogAppPath,
         });
         srcStream = fs.createReadStream(tmpSrc);
         ({rootDir: appRoot} = await unzipStream(srcStream));
@@ -55,7 +60,7 @@ describe('app-utils', function () {
       let srcStream;
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
-        await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app', 'Info.plist'), tmpSrc);
+        await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
         await unzipStream(srcStream).should.be.rejected;
       } finally {
@@ -71,7 +76,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'temp.zip');
         await zip.toArchive(tmpSrc, {
-          cwd: path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app'),
+          cwd: uiCatalogAppPath,
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
         await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
@@ -87,7 +92,7 @@ describe('app-utils', function () {
       const tmpDir = await tempDir.openDir();
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
-        await fs.copyFile(path.resolve(__dirname, '..', 'assets', 'UIKitCatalog-iphonesimulator.app', 'Info.plist'), tmpSrc);
+        await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), tmpSrc);
         await unzipFile(tmpSrc).should.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);

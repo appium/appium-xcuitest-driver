@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {retryInterval} from 'asyncbox';
 import {
   extractCapabilityValue,
-  UICATALOG_CAPS,
+  getUICatalogCaps,
   PLATFORM_VERSION,
 } from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
@@ -33,7 +33,8 @@ describe('XCUITestDriver - find -', function () {
     chai.should();
     chai.use(chaiAsPromised.default);
 
-    driver = await initSession(UICATALOG_CAPS);
+    const uiCatalogCaps = await getUICatalogCaps();
+    driver = await initSession(uiCatalogCaps);
   });
   after(async function () {
     await deleteSession();
@@ -294,9 +295,10 @@ describe('XCUITestDriver - find -', function () {
     describe('textfield case', function () {
       it('should find only one textfield', async function () {
         // TODO: this works locally but fails in CI.
+        const uiCatalogCaps = await getUICatalogCaps();
         if (
           process.env.CI &&
-          extractCapabilityValue(UICATALOG_CAPS, 'appium:platformVersion') === '10.3'
+          extractCapabilityValue(uiCatalogCaps, 'appium:platformVersion') === '10.3'
         ) {
           return this.skip();
         }
