@@ -1,3 +1,9 @@
+## [10.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.5.1...v10.6.0) (2025-11-22)
+
+### Features
+
+* add context for BiDi LogEntrySource ([#2656](https://github.com/appium/appium-xcuitest-driver/issues/2656)) ([daa0a56](https://github.com/appium/appium-xcuitest-driver/commit/daa0a56adcca9b237939b989299553f7a7a2415d))
+
 ## [10.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.5.0...v10.5.1) (2025-11-15)
 
 ### Miscellaneous Chores
