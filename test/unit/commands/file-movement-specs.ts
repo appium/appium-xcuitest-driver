@@ -1,19 +1,12 @@
 import {parseContainerPath} from '../../../lib/commands/file-movement';
 import {tempDir} from 'appium/support';
 import {XCUITestDriver} from '../../../lib/driver';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('file-movement', function () {
-  let chai;
-  let expect;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.use(chaiAsPromised.default);
-    expect = chai.expect;
-  });
 
   describe('parseContainerPath', function () {
     let driver;

@@ -5,14 +5,12 @@ import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
 import log from '../../lib/logger';
 import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 describe('AppInfosCache', function () {
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   describe('retrives info from different types of apps', function () {
     let ipaPath;

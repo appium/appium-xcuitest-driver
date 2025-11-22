@@ -1,22 +1,16 @@
 import {errors} from 'appium/driver';
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('proxy commands', function () {
   const driver = new XCUITestDriver();
   driver.wda = {jwproxy: {command: async () => ({})} as any} as any;
 
-  let chai;
   let mockJwproxy;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.use(chaiAsPromised.default);
-  });
 
   beforeEach(function () {
     mockJwproxy = sinon.mock(driver.wda.jwproxy);

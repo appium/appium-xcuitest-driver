@@ -1,6 +1,9 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../lib/driver';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';
@@ -45,11 +48,6 @@ describe('process args', function () {
     },
   };
 
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   beforeEach(function () {
     mockDriver = sinon.mock(driver);

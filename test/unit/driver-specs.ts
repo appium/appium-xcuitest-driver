@@ -53,7 +53,10 @@ import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import {RealDevice} from '../../lib/real-device';
 import net from 'node:net';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 const caps = {
   fistMatch: [{}],
@@ -67,12 +70,6 @@ const caps = {
 
 describe('XCUITestDriver', function () {
   let sandbox;
-
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();

@@ -1,6 +1,8 @@
 import {parseXCTestStdout} from '../../../lib/commands/xctest';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('session commands', function () {
   const xctestLogs1Success =
@@ -16,11 +18,6 @@ describe('session commands', function () {
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Status: failed | Duration: 0.033468008041381836 | Failure message: XCTAssertTrue failed - error message here | Location /path/to/XCTesterAppUITests/XCTesterAppUITests.swift:36
   `.trim();
 
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {

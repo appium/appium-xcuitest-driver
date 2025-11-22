@@ -1,8 +1,10 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import {XCUITestDriver} from '../../lib/driver';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('language and locale', function () {
   const LANGUAGE = 'en';
@@ -28,11 +30,6 @@ describe('language and locale', function () {
 
 
   let mockDriver;
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   afterEach(function () {
     if (mockDriver) {

@@ -7,18 +7,14 @@ import {
 import {withMocks} from '@appium/test-support';
 import {fs} from 'appium/support';
 import * as iosUtils from '../../lib/utils';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
 
 describe('utils', function () {
-
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   describe(
     'clearSystemFiles',

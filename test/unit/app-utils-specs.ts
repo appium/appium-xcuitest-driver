@@ -5,19 +5,15 @@ import {
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
 import {getUIKitCatalogPath} from '../setup';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('app-utils', function () {
-  let chai;
   let uiCatalogAppPath;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.use(chaiAsPromised.default);
-
     // Download the UIKitCatalog app dynamically
     uiCatalogAppPath = await getUIKitCatalogPath();
   });

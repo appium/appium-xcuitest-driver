@@ -1,17 +1,10 @@
 import {XCUITestDriver} from '../../../lib/driver';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('context', function () {
-  let chai;
-  let expect;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.use(chaiAsPromised.default);
-    expect = chai.expect;
-  });
 
   describe('onPageChange', function () {
     const pageChangeNotification = {

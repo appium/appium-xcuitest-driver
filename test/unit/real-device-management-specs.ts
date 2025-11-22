@@ -2,9 +2,11 @@ import {createSandbox} from 'sinon';
 import { installToRealDevice } from '../../lib/real-device-management';
 import {RealDevice} from '../../lib/real-device';
 import {XCUITestDriver} from '../../lib/driver';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import type {SinonStub} from 'sinon';
 
+chai.use(chaiAsPromised);
 
 describe('installToRealDevice', function () {
   const udid = 'test-udid';
@@ -13,11 +15,6 @@ describe('installToRealDevice', function () {
 
   let sandbox;
   let driver;
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();

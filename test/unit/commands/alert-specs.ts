@@ -1,16 +1,13 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('alert commands', function () {
   const driver = new XCUITestDriver();
   const proxySpy = sinon.stub(driver, 'proxyCommand');
-  before(async function () {
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-  });
 
   afterEach(function () {
     proxySpy.reset();

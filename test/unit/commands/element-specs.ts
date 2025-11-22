@@ -1,8 +1,10 @@
 // eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
-import {expect} from 'chai';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('element commands', function () {
   let sandbox;
@@ -10,17 +12,10 @@ describe('element commands', function () {
   /** @type {XCUITestDriver} */
   let driver;
 
-  let chai;
-
   /** @type {sinon.SinonStubbedMember<XCUITestDriver['proxyCommand']>} */
   let proxyStub;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.use(chaiAsPromised.default);
-
     driver = new XCUITestDriver();
   });
 
