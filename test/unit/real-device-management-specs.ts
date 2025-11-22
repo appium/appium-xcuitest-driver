@@ -3,6 +3,7 @@ import { installToRealDevice } from '../../lib/real-device-management';
 import {RealDevice} from '../../lib/real-device';
 import {XCUITestDriver} from '../../lib/driver';
 import {expect} from 'chai';
+import type {SinonStub} from 'sinon';
 
 
 describe('installToRealDevice', function () {
@@ -29,26 +30,26 @@ describe('installToRealDevice', function () {
 
   it('nothing happen without app', async function () {
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install').resolves();
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver.opts = {udid};
     driver._device = realDevice;
 
     await installToRealDevice.bind(driver)(undefined, bundleId, {});
-    expect(realDevice.remove.called).to.be.false;
-    expect(realDevice.install.called).to.be.false;
+    expect(removeStub.called).to.be.false;
+    expect(installStub.called).to.be.false;
   });
 
   it('nothing happen without bundle id', async function () {
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install').resolves();
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver._device = realDevice;
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, undefined, {});
-    expect(realDevice.remove.called).to.be.false;
-    expect(realDevice.install.called).to.be.false;
+    expect(removeStub.called).to.be.false;
+    expect(installStub.called).to.be.false;
   });
 
   it('should install without remove', async function () {
@@ -56,15 +57,15 @@ describe('installToRealDevice', function () {
       skipUninstall: true
     };
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install').resolves();
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver._device = realDevice;
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(realDevice.remove.called).to.be.false;
-    expect(realDevice.install.calledOnce).to.be.true;
+    expect(removeStub.called).to.be.false;
+    expect(installStub.calledOnce).to.be.true;
   });
 
   it('should install after remove', async function () {
@@ -72,15 +73,15 @@ describe('installToRealDevice', function () {
       skipUninstall: false
     };
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install').resolves();
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver._device = realDevice;
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(realDevice.remove.calledOnce).to.be.true;
-    expect(realDevice.install.calledOnce).to.be.true;
+    expect(removeStub.calledOnce).to.be.true;
+    expect(installStub.calledOnce).to.be.true;
   });
 
   it('should raise an error for invalid verification error after uninstall', async function () {
@@ -89,14 +90,14 @@ describe('installToRealDevice', function () {
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install').throws(err_msg);
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as SinonStub;
     driver._device = realDevice;
     driver.opts = {udid};
 
     await expect(installToRealDevice.bind(driver)(app, bundleId, opts)).to.be.rejectedWith('ApplicationVerificationFailed');
-    expect(realDevice.remove.calledOnce).to.be.true;
-    expect(realDevice.install.calledOnce).to.be.true;
+    expect(removeStub.calledOnce).to.be.true;
+    expect(installStub.calledOnce).to.be.true;
   });
 
   it('should install after removal once because of MismatchedApplicationIdentifierEntitlement error', async function () {
@@ -106,17 +107,17 @@ describe('installToRealDevice', function () {
       skipUninstall: true
     };
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install')
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install')
       .onCall(0).throws(`{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`)
-      .onCall(1).resolves();
+      .onCall(1).resolves() as SinonStub;
     driver._device = realDevice;
     driver.opts = {udid};
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(realDevice.remove.calledOnce).to.be.true;
-    expect(realDevice.install.calledTwice).to.be.true;
+    expect(removeStub.calledOnce).to.be.true;
+    expect(installStub.calledTwice).to.be.true;
   });
 
   it('should raise an error in the install ApplicationVerificationFailed error because it is not recoverable', async function () {
@@ -125,14 +126,14 @@ describe('installToRealDevice', function () {
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
     const realDevice = new RealDevice(udid);
-    sandbox.stub(realDevice, 'remove').resolves();
-    sandbox.stub(realDevice, 'install').throws(err_msg);
+    const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
+    const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as SinonStub;
     sandbox.stub(realDevice, 'isAppInstalled').resolves(true);
     driver._device = realDevice;
     driver.opts = {udid};
 
     await expect(installToRealDevice.bind(driver)(app, bundleId, opts)).to.be.rejectedWith('ApplicationVerificationFailed');
-    expect(realDevice.remove.called).to.be.false;
-    expect(realDevice.install.calledOnce).to.be.true;
+    expect(removeStub.called).to.be.false;
+    expect(installStub.calledOnce).to.be.true;
   });
 });
