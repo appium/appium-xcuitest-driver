@@ -1,3 +1,9 @@
+## [10.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.7.0...v10.8.0) (2025-11-22)
+
+### Features
+
+* add support for condition inducer DVT service via remotexpc ([#2657](https://github.com/appium/appium-xcuitest-driver/issues/2657)) ([98abbb8](https://github.com/appium/appium-xcuitest-driver/commit/98abbb8232698b8bc4d3dd70a132b769a46c29f8))
+
 ## [10.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.6.0...v10.7.0) (2025-11-22)
 
 ### Features
