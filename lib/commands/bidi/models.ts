@@ -34,6 +34,7 @@ export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: s
       level: adjustLogLevel(entry.level),
       source: {
         realm: '',
+        context
       },
       text: entry.message,
       timestamp: entry.timestamp,

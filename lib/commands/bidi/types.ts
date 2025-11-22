@@ -5,6 +5,7 @@ interface BiDiEvent<TParams> {
 
 interface LogEntrySource {
   realm: string;
+  context?: string;
 }
 
 export type BiDiLogLevel = 'debug' | 'info' | 'warn' | 'error';
