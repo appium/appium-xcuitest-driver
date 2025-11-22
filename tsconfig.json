@@ -8,6 +8,8 @@
   },
   "include": [
     "index.js",
-    "lib"
+    "lib",
+    "test/unit",
+    "test/setup.js"
   ]
 }

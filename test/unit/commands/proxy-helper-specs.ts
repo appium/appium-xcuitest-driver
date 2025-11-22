@@ -1,11 +1,12 @@
 import {errors} from 'appium/driver';
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
+import {expect} from 'chai';
 
 
 describe('proxy commands', function () {
-  let driver = new XCUITestDriver();
-  driver.wda = {jwproxy: {command: () => {}}};
+  const driver = new XCUITestDriver();
+  driver.wda = {jwproxy: {command: async () => ({})} as any} as any;
 
   let chai;
   let mockJwproxy;
@@ -14,7 +15,6 @@ describe('proxy commands', function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
-    chai.should();
     chai.use(chaiAsPromised.default);
   });
 
@@ -39,23 +39,24 @@ describe('proxy commands', function () {
     it('should throw an error if no endpoint is given', async function () {
       mockJwproxy.expects('command').never().called;
       // @ts-expect-error incorrect usage
-      await driver.proxyCommand(null, 'POST', {some: 'stuff'}).should.be.rejectedWith(/endpoint/);
+      await expect(driver.proxyCommand(null, 'POST', {some: 'stuff'})).to.be.rejectedWith(/endpoint/);
     });
     it('should throw an error if no method is given', async function () {
       mockJwproxy.expects('command').never().called;
-      await driver
-        // @ts-expect-error incorrect usage
-        .proxyCommand('/some/endpoint', null, {some: 'stuff'})
-        .should.be.rejectedWith(/GET, POST/);
+      await expect(
+        driver
+          // @ts-expect-error incorrect usage
+          .proxyCommand('/some/endpoint', null, {some: 'stuff'})
+      ).to.be.rejectedWith(/GET, POST/);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {
       mockJwproxy.expects('command').once().returns({status: 13, value: 'WDA error occurred'});
       try {
         await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
       } catch (err) {
-        err.jsonwpCode.should.eql(13);
-        err.message.should.include('WDA error occurred');
-        err.should.be.an.instanceof(errors.UnknownError);
+        expect(err.jsonwpCode).to.eql(13);
+        expect(err.message).to.include('WDA error occurred');
+        expect(err).to.be.an.instanceof(errors.UnknownError);
       }
     });
     it('should not throw an error if no status is returned', async function () {

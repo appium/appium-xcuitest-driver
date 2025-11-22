@@ -1,16 +1,13 @@
 import { grepFile } from '../../lib/device-log/helpers';
 import {fs, tempDir} from 'appium/support';
 import path from 'node:path';
+import {expect} from 'chai';
 
 
 describe('log-helpers', function () {
-  let chai;
-
   before(async function () {
-    chai = await import('chai');
+    const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
     chai.use(chaiAsPromised.default);
   });
 
@@ -28,19 +25,19 @@ describe('log-helpers', function () {
     it('should grep file content case sensitive', async function () {
       const filePath = path.join(tmpRoot, 'grep.test');
       await fs.writeFile(filePath, `123\n45\nab`, 'utf8');
-      await grepFile(filePath, 'ab').should.eventually.be.true;
+      await expect(grepFile(filePath, 'ab')).to.eventually.be.true;
     });
 
     it('should grep file content case insensitive', async function () {
       const filePath = path.join(tmpRoot, 'grep.test');
       await fs.writeFile(filePath, `123\n45\nAB\ncd`, 'utf8');
-      await grepFile(filePath, 'ab', {caseInsensitive: true}).should.eventually.be.true;
+      await expect(grepFile(filePath, 'ab', {caseInsensitive: true})).to.eventually.be.true;
     });
 
     it('should return false if no match', async function () {
       const filePath = path.join(tmpRoot, 'grep.test');
       await fs.writeFile(filePath, `123\n45\nAB`, 'utf8');
-      await grepFile(filePath, 'cd', {caseInsensitive: true}).should.eventually.be.false;
+      await expect(grepFile(filePath, 'cd', {caseInsensitive: true})).to.eventually.be.false;
     });
   });
 });

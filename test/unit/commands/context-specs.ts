@@ -9,7 +9,6 @@ describe('context', function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
-    chai.should();
     chai.use(chaiAsPromised.default);
     expect = chai.expect;
   });
@@ -45,26 +44,26 @@ describe('context', function () {
       ],
     };
     it('should call select page if a new page is introduced and that page is not blacklisted', async function () {
-      let driver = new XCUITestDriver();
+      const driver = new XCUITestDriver();
       driver.curContext = '5191.5';
       driver.contexts = ['5191.5', '5191.3', '5191.4'];
       /** @type {undefined|(string|number)[]} */
-      let selectPageArgs;
+      let selectPageArgs: (string | number)[] | undefined;
       const remoteMock = {
         isConnected: true,
-        selectPage: (...args) => {
+        selectPage: (...args: any[]) => {
           selectPageArgs = args;
           return {catch: () => {}};
         },
-      };
+      } as any;
       driver.remote = remoteMock;
       driver.opts.safariIgnoreWebHostnames =
         'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
-      /** @type {(string|number)[]} */ (selectPageArgs).should.eql(['5191', 1]);
+      expect(selectPageArgs).to.eql(['5191', 1]);
     });
     it('should not call selectPage if a new page is introduced and that page is blacklisted', async function () {
-      let driver = new XCUITestDriver();
+      const driver = new XCUITestDriver();
       driver.curContext = '5191.1';
       const testContexts = [
         ['5191.1', '5191.3', '5191.4'],
@@ -73,14 +72,14 @@ describe('context', function () {
 
       for (const testContext of testContexts) {
         driver.contexts = testContext;
-        let selectPageArgs = null;
+        let selectPageArgs: (string | number)[] | null = null;
         const remoteMock = {
           isConnected: true,
-          selectPage: (...args) => {
+          selectPage: (...args: any[]) => {
             selectPageArgs = args;
             return {catch: () => {}};
           },
-        };
+        } as any;
         driver.remote = remoteMock;
         driver.opts.safariIgnoreWebHostnames =
           'www.google.com, www.bing.com,www.yahoo.com, about:blank, ';

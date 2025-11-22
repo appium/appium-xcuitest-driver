@@ -124,7 +124,7 @@
     "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
-    "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\"",
+    "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.ts\"",
     "e2e-test": "mocha --exit --timeout 10m \"./test/functional/**/*-specs.js\"",
     "e2e-test:basic": "mocha \"./test/functional/basic\" --exit --timeout 10m",
     "e2e-test:device": "mocha \"./test/functional/device\" --exit --timeout 10m",

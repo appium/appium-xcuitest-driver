@@ -4,7 +4,8 @@ import {
 } from '../../lib/app-utils';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
-import {getUIKitCatalogPath} from '../setup.js';
+import {getUIKitCatalogPath} from '../setup';
+import {expect} from 'chai';
 
 
 describe('app-utils', function () {
@@ -15,7 +16,6 @@ describe('app-utils', function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
-    chai.should();
     chai.use(chaiAsPromised.default);
 
     // Download the UIKitCatalog app dynamically
@@ -40,7 +40,7 @@ describe('app-utils', function () {
         });
         srcStream = fs.createReadStream(tmpSrc);
         ({rootDir: appRoot} = await unzipStream(srcStream));
-        await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
+        await expect(fs.exists(path.resolve(appRoot, 'Info.plist'))).to.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -62,7 +62,7 @@ describe('app-utils', function () {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
-        await unzipStream(srcStream).should.be.rejected;
+        await expect(unzipStream(srcStream)).to.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
       }
@@ -79,7 +79,7 @@ describe('app-utils', function () {
           cwd: uiCatalogAppPath,
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
-        await fs.exists(path.resolve(appRoot, 'Info.plist')).should.eventually.be.true;
+        await expect(fs.exists(path.resolve(appRoot, 'Info.plist'))).to.eventually.be.true;
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -93,7 +93,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), tmpSrc);
-        await unzipFile(tmpSrc).should.be.rejected;
+        await expect(unzipFile(tmpSrc)).to.be.rejected;
       } finally {
         await fs.rimraf(tmpDir);
       }

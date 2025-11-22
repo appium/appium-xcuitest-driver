@@ -1,18 +1,13 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import {XCUITestDriver} from '../../../lib/driver';
+import {expect} from 'chai';
 
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
 
-  let chai;
   let mockDriver;
-
-  before(async function () {
-    chai = await import('chai');
-    chai.should();
-  });
 
   beforeEach(function () {
     mockDriver = sinon.mock(driver);
@@ -61,20 +56,20 @@ describe('general commands', function () {
 
     it('should send default request to Simulator', async function () {
       await driver.touchId();
-      device.sendBiometricMatch.calledOnceWith(true, 'touchId').should.be.true;
+      expect(device.sendBiometricMatch.calledOnceWithExactly(true, 'touchId')).to.be.true;
     });
 
     it('should send request to Simulator with false', async function () {
       await driver.touchId(false);
-      device.sendBiometricMatch.calledOnceWith(false, 'touchId').should.be.true;
+      expect(device.sendBiometricMatch.calledOnceWithExactly(false, 'touchId')).to.be.true;
     });
 
     it('should not be called on a real device', async function () {
       delete device.simctl;
       device.devicectl = true;
-      await driver.touchId().should.be.rejected;
+      await expect(driver.touchId()).to.be.rejected;
 
-      device.sendBiometricMatch.called.should.be.false;
+      expect(device.sendBiometricMatch.called).to.be.false;
     });
   });
 
@@ -102,7 +97,7 @@ describe('general commands', function () {
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId();
-      device.enrollBiometric.calledOnce.should.be.true;
+      expect(device.enrollBiometric.calledOnce).to.be.true;
     });
 
     it('should not be called on a real device', async function () {
@@ -110,8 +105,8 @@ describe('general commands', function () {
       device.devicectl = true;
       // @ts-expect-error random stuff on opts again
       driver.opts.allowTouchIdEnroll = true;
-      await driver.toggleEnrollTouchId().should.be.rejected;
-      device.enrollBiometric.called.should.be.false;
+      await expect(driver.toggleEnrollTouchId()).to.be.rejected;
+      expect(device.enrollBiometric.called).to.be.false;
     });
   });
 
@@ -138,11 +133,11 @@ describe('general commands', function () {
     });
 
     it('should start out with setting defaulting to false', async function () {
-      (await driver.getSettings()).nativeWebTap.should.eql(false);
+      expect((await driver.getSettings()).nativeWebTap).to.eql(false);
     });
 
     it('should default to value sent in caps after session starts', async function () {
-      (await driver.getSettings()).nativeWebTap.should.eql(false);
+      expect((await driver.getSettings()).nativeWebTap).to.eql(false);
       await driver.createSession(
         null,
         null,
@@ -152,17 +147,17 @@ describe('general commands', function () {
           },
         }),
       );
-      (await driver.getSettings()).nativeWebTap.should.eql(true);
+      expect((await driver.getSettings()).nativeWebTap).to.eql(true);
     });
 
     it('should update opts value based on settings update', async function () {
-      (await driver.getSettings()).nativeWebTap.should.eql(false);
+      expect((await driver.getSettings()).nativeWebTap).to.eql(false);
       await driver.updateSettings({nativeWebTap: true});
-      (await driver.getSettings()).nativeWebTap.should.eql(true);
-      driver.opts.nativeWebTap.should.be.true;
+      expect((await driver.getSettings()).nativeWebTap).to.eql(true);
+      expect(driver.opts.nativeWebTap).to.be.true;
       await driver.updateSettings({nativeWebTap: false});
-      (await driver.getSettings()).nativeWebTap.should.eql(false);
-      driver.opts.nativeWebTap.should.be.false;
+      expect((await driver.getSettings()).nativeWebTap).to.eql(false);
+      expect(driver.opts.nativeWebTap).to.be.false;
     });
   });
 
@@ -178,11 +173,11 @@ describe('general commands', function () {
     });
 
     it('should get the pixel ratio from WDA', async function () {
-      await driver.getDevicePixelRatio().should.eventually.eql(3);
+      await expect(driver.getDevicePixelRatio()).to.eventually.eql(3);
     });
 
     it('should return the height of the status bar', async function () {
-      await driver.getStatusBarHeight().should.eventually.eql(20);
+      await expect(driver.getStatusBarHeight()).to.eventually.eql(20);
     });
   });
 });

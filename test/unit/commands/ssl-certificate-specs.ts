@@ -1,4 +1,5 @@
 import {parseCommonName} from '../../../lib/commands/certificate';
+import {expect} from 'chai';
 
 
 describe('ssl certificate parser command', function () {
@@ -7,18 +8,11 @@ describe('ssl certificate parser command', function () {
     'subject=C = US, ST = California, L = San Francisco, O = BadSSL, CN = *.badssl.com';
   const expectedString = '*.badssl.com';
 
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    chai.should();
-  });
-
   it('try to parse LibreSSL command output', function () {
-    parseCommonName(sslOutputLibreSSL).should.eql(expectedString);
+    expect(parseCommonName(sslOutputLibreSSL)).to.eql(expectedString);
   });
 
   it('try to parse OpenSSL command output', function () {
-    parseCommonName(sslOutputOpenSSL).should.eql(expectedString);
+    expect(parseCommonName(sslOutputOpenSSL)).to.eql(expectedString);
   });
 });

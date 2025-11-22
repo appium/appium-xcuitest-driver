@@ -3,17 +3,14 @@ import {
 } from '../../lib/app-infos-cache';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
-import log from '../../lib/logger.js';
-import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup.js';
+import log from '../../lib/logger';
+import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup';
+import {expect} from 'chai';
 
 describe('AppInfosCache', function () {
-  let chai;
-
   before(async function () {
-    chai = await import('chai');
+    const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
     chai.use(chaiAsPromised.default);
   });
 
@@ -56,22 +53,22 @@ describe('AppInfosCache', function () {
 
     it('should cache ipa', async function () {
       const info = await cache.put(ipaPath);
-      await info.CFBundleIdentifier.should.eql(UICATALOG_BUNDLE_ID);
+      expect(await info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(ipaPath);
-      info.should.be.equal(info2);
+      expect(info).to.equal(info2);
     });
 
     it('should cache app', async function () {
       const info = await cache.put(appPath);
-      await info.CFBundleIdentifier.should.eql(UICATALOG_BUNDLE_ID);
+      expect(await info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(appPath);
-      info.should.be.equal(info2);
+      expect(info).to.equal(info2);
     });
 
     it('should extract cached info', async function () {
-      await cache.extractAppPlatforms(appPath).should.eventually.eql(['iPhoneSimulator']);
-      await cache.extractBundleId(ipaPath).should.eventually.eql(UICATALOG_BUNDLE_ID);
-      await cache.extractExecutableName(ipaPath).should.eventually.eql('UIKitCatalog');
+      await expect(cache.extractAppPlatforms(appPath)).to.eventually.eql(['iPhoneSimulator']);
+      await expect(cache.extractBundleId(ipaPath)).to.eventually.eql(UICATALOG_BUNDLE_ID);
+      await expect(cache.extractExecutableName(ipaPath)).to.eventually.eql('UIKitCatalog');
     });
   });
 });

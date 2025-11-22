@@ -1,16 +1,10 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
+import {expect} from 'chai';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
   const proxySpy = sinon.stub(driver, 'proxyCommand');
-
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    chai.should();
-  });
   afterEach(function () {
     proxySpy.reset();
   });
@@ -24,14 +18,14 @@ describe('general commands', function () {
      * @param {string|null} modStrategy
      * @param {boolean} mult
      */
-    async function verifyFind(strategy, selector, modSelector, modStrategy = null, mult = false) {
+    async function verifyFind(strategy: string, selector: string, modSelector: string, modStrategy: string | null = null, mult = false) {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
       } catch {}
-      proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
+      expect(proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
         using: modStrategy || strategy,
         value: modSelector,
-      }).should.be.true;
+      })).to.be.true;
       proxySpy.reset();
     }
 
@@ -76,15 +70,15 @@ describe('general commands', function () {
     });
 
     it('should reject request for first visible child with no context', async function () {
-      await driver
-        .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)
-        .should.be.rejectedWith(/without a context element/);
+      await expect(
+        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)
+      ).to.be.rejectedWith(/without a context element/);
     });
 
     it('should reject request for multiple first visible children', async function () {
-      await driver
-        .findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)
-        .should.be.rejectedWith(/Cannot get multiple/);
+      await expect(
+        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)
+      ).to.be.rejectedWith(/Cannot get multiple/);
     });
 
     it('should convert magic first visible child xpath to class chain', async function () {
@@ -93,7 +87,7 @@ describe('general commands', function () {
         "/*[@firstVisible='true']",
         "/*[@firstVisible = 'true']",
       ];
-      let attribSpy = sinon.stub(driver, 'getAttribute');
+      const attribSpy = sinon.stub(driver, 'getAttribute');
       for (const variant of variants) {
         proxySpy
           .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[1]'})
@@ -103,20 +97,20 @@ describe('general commands', function () {
           .resolves({ELEMENT: 2});
         attribSpy.withArgs('visible', {ELEMENT: 1}).resolves('false');
         attribSpy.withArgs('visible', {ELEMENT: 2}).resolves('true');
-        let el = await driver.findNativeElementOrElements('xpath', variant, false, {
+        const el = await driver.findNativeElementOrElements('xpath', variant, false, {
           ELEMENT: 'ctx',
         });
-        proxySpy.calledTwice.should.be.true;
-        proxySpy.calledWith('/element/ctx/element', 'POST', {
+        expect(proxySpy.calledTwice).to.be.true;
+        expect(proxySpy.calledWith('/element/ctx/element', 'POST', {
           using: 'class chain',
           value: '*[1]',
-        }).should.be.true;
-        proxySpy.calledWith('/element/ctx/element', 'POST', {
+        })).to.be.true;
+        expect(proxySpy.calledWith('/element/ctx/element', 'POST', {
           using: 'class chain',
           value: '*[2]',
-        }).should.be.true;
-        attribSpy.calledTwice.should.be.true;
-        el.should.eql({ELEMENT: 2});
+        })).to.be.true;
+        expect(attribSpy.calledTwice).to.be.true;
+        expect(el).to.eql({ELEMENT: 2});
         proxySpy.reset();
         attribSpy.reset();
       }

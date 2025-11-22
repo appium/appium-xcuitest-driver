@@ -1,23 +1,18 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
 import {Simctl} from 'node-simctl';
+import {expect} from 'chai';
 
 
 describe('general commands', function () {
   const driver = new XCUITestDriver();
   const simctl = new Simctl();
-  driver._device = { simctl };
+  driver._device = { simctl } as any;
 
-  let chai;
   let mockSimctl;
 
-  before(async function () {
-    chai = await import('chai');
-    chai.should();
-  });
-
   beforeEach(function () {
-    mockSimctl = sinon.mock(driver.device.simctl);
+    mockSimctl = sinon.mock((driver.device as any).simctl);
   });
 
   afterEach(function () {
@@ -49,28 +44,28 @@ describe('general commands', function () {
       driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
       driver.isSimulator = () => true;
       mockSimctl.expects('exec').never();
-      await driver.mobileSimctl(
+      await expect(driver.mobileSimctl(
         'list',
         ['devices', 'booted', '--json']
-      ).should.eventually.be.rejected;
+      )).to.eventually.be.rejected;
     });
 
     it('should raise an error as no udid', async function () {
       driver.opts.udid = null;
       driver.isSimulator = () => true;
       mockSimctl.expects('exec').never();
-      await driver.mobileSimctl(
+      await expect(driver.mobileSimctl(
         'getenv', ['HOME']
-      ).should.eventually.be.rejected;
+      )).to.eventually.be.rejected;
     });
 
     it('should raise an error for non-simulator', async function () {
       driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
       driver.isSimulator = () => false;
       mockSimctl.expects('exec').never();
-      await driver.mobileSimctl(
+      await expect(driver.mobileSimctl(
         'getenv', ['HOME']
-      ).should.eventually.be.rejected;
+      )).to.eventually.be.rejected;
     });
   });
 });

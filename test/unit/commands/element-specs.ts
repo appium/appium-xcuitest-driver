@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
+import {expect} from 'chai';
 
 
 describe('element commands', function () {
@@ -18,7 +19,6 @@ describe('element commands', function () {
     chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
 
-    chai.should();
     chai.use(chaiAsPromised.default);
 
     driver = new XCUITestDriver();
@@ -40,8 +40,8 @@ describe('element commands', function () {
 
     it('should call setValue', async function () {
       await driver.setValueImmediate('hello', '2');
-      driver.setValue.calledOnceWithExactly('hello', '2').should.be.true;
-      driver.setValue.returned(undefined).should.be.true;
+      expect(driver.setValue.calledOnceWithExactly('hello', '2')).to.be.true;
+      expect(driver.setValue.returned(undefined)).to.be.true;
     });
   });
 
@@ -50,27 +50,27 @@ describe('element commands', function () {
     const attribute = 'enabled';
 
     afterEach(function () {
-      proxyStub.calledOnce.should.be.true;
+      expect(proxyStub.calledOnce).to.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
       proxyStub.resolves(1);
-      (await driver.getAttribute(attribute, elementId)).should.eql('true');
+      expect(await driver.getAttribute(attribute, elementId)).to.eql('true');
     });
 
     it('should properly parse boolean false attribute presented as integer', async function () {
       proxyStub.resolves(0);
-      (await driver.getAttribute(attribute, elementId)).should.eql('false');
+      expect(await driver.getAttribute(attribute, elementId)).to.eql('false');
     });
 
     it('should properly parse integer attribute presented as string', async function () {
       proxyStub.resolves('0');
-      (await driver.getAttribute(attribute, elementId)).should.eql('0');
+      expect(await driver.getAttribute(attribute, elementId)).to.eql('0');
     });
 
     it('should properly parse boolean attribute presented as bool', async function () {
       proxyStub.resolves(false);
-      (await driver.getAttribute(attribute, elementId)).should.eql('false');
+      expect(await driver.getAttribute(attribute, elementId)).to.eql('false');
     });
 
     it('should properly parse null attribute', async function () {
@@ -80,7 +80,7 @@ describe('element commands', function () {
 
     it('should properly parse string attribute', async function () {
       proxyStub.resolves('value');
-      (await driver.getAttribute(attribute, elementId)).should.eql('value');
+      expect(await driver.getAttribute(attribute, elementId)).to.eql('value');
     });
   });
 
@@ -89,27 +89,27 @@ describe('element commands', function () {
     const property = 'enabled';
 
     afterEach(function () {
-      proxyStub.calledOnce.should.be.true;
+      expect(proxyStub.calledOnce).to.be.true;
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
       proxyStub.resolves(1);
-      (await driver.getProperty(property, elementId)).should.eql('true');
+      expect(await driver.getProperty(property, elementId)).to.eql('true');
     });
 
     it('should properly parse boolean false attribute presented as integer', async function () {
       proxyStub.resolves(0);
-      (await driver.getProperty(property, elementId)).should.eql('false');
+      expect(await driver.getProperty(property, elementId)).to.eql('false');
     });
 
     it('should properly parse integer attribute presented as string', async function () {
       proxyStub.resolves('0');
-      (await driver.getProperty(property, elementId)).should.eql('0');
+      expect(await driver.getProperty(property, elementId)).to.eql('0');
     });
 
     it('should properly parse boolean attribute presented as bool', async function () {
       proxyStub.resolves(false);
-      (await driver.getProperty(property, elementId)).should.eql('false');
+      expect(await driver.getProperty(property, elementId)).to.eql('false');
     });
 
     it('should properly parse null attribute', async function () {
@@ -119,7 +119,7 @@ describe('element commands', function () {
 
     it('should properly parse string attribute', async function () {
       proxyStub.resolves('value');
-      (await driver.getProperty(property, elementId)).should.eql('value');
+      expect(await driver.getProperty(property, elementId)).to.eql('value');
     });
   });
 
@@ -127,9 +127,9 @@ describe('element commands', function () {
     it('should call the internal method instead of WDA', async function () {
       const getContentSizeStub = sandbox.stub(driver, 'getContentSize');
       getContentSizeStub.resolves('foo');
-      (await driver.getAttribute('contentSize', 2)).should.eql('foo');
-      proxyStub.called.should.be.false;
-      getContentSizeStub.calledOnce.should.be.true;
+      expect(await driver.getAttribute('contentSize', 2)).to.eql('foo');
+      expect(proxyStub.called).to.be.false;
+      expect(getContentSizeStub.calledOnce).to.be.true;
     });
   });
 
@@ -166,13 +166,13 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-      await driver.getContentSize(el).should.be.rejectedWith(/not yet implemented/);
+      await expect(driver.getContentSize(el)).to.be.rejectedWith(/not yet implemented/);
       });
     });
 
     it('should throw if trying to get contentSize of something other than table or collection', async function () {
       getAttrStub.resolves('XCUIElementTypeStatusBar');
-      await driver.getContentSize(el).should.be.rejectedWith(/Can't get content size for type/);
+      await expect(driver.getContentSize(el)).to.be.rejectedWith(/Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
@@ -182,14 +182,14 @@ describe('element commands', function () {
       getSizeStub.resolves({height: 100, width: 200});
       getLocationStub.resolves({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el));
-      contentSizeObj.should.eql({
+      expect(contentSizeObj).to.eql({
         width: 200,
         height: 100,
         top: 0,
         left: 0,
         scrollableOffset: 100,
       });
-      getRectStub.calledOnce.should.be.true;
+      expect(getRectStub.calledOnce).to.be.true;
     });
 
     it('should get simple difference in element positions of a table', async function () {
@@ -202,14 +202,14 @@ describe('element commands', function () {
       getSizeStub.resolves({height: 100, width: 200});
       getLocationStub.resolves({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el));
-      contentSizeObj.should.eql({
+      expect(contentSizeObj).to.eql({
         width: 200,
         height: 100,
         top: 0,
         left: 0,
         scrollableOffset: 170,
       });
-      getRectStub.calledTwice.should.be.true;
+      expect(getRectStub.calledTwice).to.be.true;
     });
 
     it('should be sensitive to row items in the case of a collection view', async function () {
@@ -231,14 +231,14 @@ describe('element commands', function () {
       getSizeStub.resolves({height: 100, width: 200});
       getLocationStub.resolves({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el));
-      contentSizeObj.should.eql({
+      expect(contentSizeObj).to.eql({
         width: 200,
         height: 100,
         top: 0,
         left: 0,
         scrollableOffset,
       });
-      getRectStub.calledThrice.should.be.true;
+      expect(getRectStub.calledThrice).to.be.true;
     });
   });
 
@@ -251,42 +251,42 @@ describe('element commands', function () {
       describe('success', function () {
         it('should proxy string as array of characters', async function () {
           await driver.setValue('hello\uE006', elementId);
-          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
+          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o', '\n'],
-          }).should.be.true;
+          })).to.be.true;
         });
         it('should proxy string with smileys as array of characters', async function () {
           await driver.setValue('hello😀😎', elementId);
-          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
+          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
-          }).should.be.true;
+          })).to.be.true;
         });
         it('should proxy number as array of characters', async function () {
           await driver.setValue(1234.56, elementId);
-          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
+          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
             value: ['1', '2', '3', '4', '.', '5', '6'],
-          }).should.be.true;
+          })).to.be.true;
         });
         it('should proxy string array as array of characters', async function () {
           await driver.setValue(['hel', 'lo'], elementId);
-          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
+          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
             value: ['h', 'e', 'l', 'l', 'o'],
-          }).should.be.true;
+          })).to.be.true;
         });
         it('should proxy integer array as array of characters', async function () {
           await driver.setValue([1234], elementId);
-          proxyStub.calledOnceWith(expectedEndpoint, expectedMethod, {
+          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
             value: ['1', '2', '3', '4'],
-          }).should.be.true;
+          })).to.be.true;
         });
       });
 
       describe('failure', function () {
         it('should throw invalid argument exception for null', async function () {
-          await driver.setValue(null, elementId).should.be.rejectedWith(/supported/);
+          await expect(driver.setValue(null, elementId)).to.be.rejectedWith(/supported/);
         });
         it('should throw invalid argument exception for object', async function () {
-          await driver.setValue({hi: 'there'}, elementId).should.be.rejectedWith(/supported/);
+          await expect(driver.setValue({hi: 'there'}, elementId)).to.be.rejectedWith(/supported/);
         });
       });
     });
@@ -317,26 +317,26 @@ describe('element commands', function () {
         it('with default', async function () {
           driver.opts.sendKeyStrategy = undefined;
           await driver.setValue('hello\uE006😀', elementId);
-          atomElement.calledOnce.should.be.true;
-          executeAtom.calledOnce.should.be.true;
-          setValueWithWebAtom.calledOnceWith(
+          expect(atomElement.calledOnce).to.be.true;
+          expect(executeAtom.calledOnce).to.be.true;
+          expect(setValueWithWebAtom.calledOnceWithExactly(
             webEl,
             'hello\uE006😀'
-          ).should.be.true;
+          )).to.be.true;
         });
 
         it('with oneByOne', async function () {
           driver.opts.sendKeyStrategy = 'oneByOne';
           await driver.setValue('hello\uE006😀', elementId);
-          atomElement.calledOnce.should.be.true;
-          executeAtom.calledOnce.should.be.true;
-          setValueWithWebAtom.getCall(0).args.should.eql([webEl, 'h']);
-          setValueWithWebAtom.getCall(1).args.should.eql([webEl, 'e']);
-          setValueWithWebAtom.getCall(2).args.should.eql([webEl, 'l']);
-          setValueWithWebAtom.getCall(3).args.should.eql([webEl, 'l']);
-          setValueWithWebAtom.getCall(4).args.should.eql([webEl, 'o']);
-          setValueWithWebAtom.getCall(5).args.should.eql([webEl, '\n']);
-          setValueWithWebAtom.getCall(6).args.should.eql([webEl, '😀']);
+          expect(atomElement.calledOnce).to.be.true;
+          expect(executeAtom.calledOnce).to.be.true;
+          expect(setValueWithWebAtom.getCall(0).args).to.eql([webEl, 'h']);
+          expect(setValueWithWebAtom.getCall(1).args).to.eql([webEl, 'e']);
+          expect(setValueWithWebAtom.getCall(2).args).to.eql([webEl, 'l']);
+          expect(setValueWithWebAtom.getCall(3).args).to.eql([webEl, 'l']);
+          expect(setValueWithWebAtom.getCall(4).args).to.eql([webEl, 'o']);
+          expect(setValueWithWebAtom.getCall(5).args).to.eql([webEl, '\n']);
+          expect(setValueWithWebAtom.getCall(6).args).to.eql([webEl, '😀']);
         });
       });
     });
@@ -370,21 +370,21 @@ describe('element commands', function () {
 
     it('should get location relative to scroll by default', async function () {
       const loc = await driver.getLocation(webEl);
-      executeStub.calledOnce.should.be.false;
-      atomStub.calledOnce.should.be.true;
-      atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      loc.x.should.equal(0);
-      loc.y.should.equal(0);
+      expect(executeStub.calledOnce).to.be.false;
+      expect(atomStub.calledOnce).to.be.true;
+      expect(atomStub.firstCall.args[0]).to.eql('get_top_left_coordinates');
+      expect(loc.x).to.equal(0);
+      expect(loc.y).to.equal(0);
     });
 
     it('should get location relative to document with absoluteWebLocations cap', async function () {
       driver.opts.absoluteWebLocations = true;
       const loc = await driver.getLocation(webEl);
-      executeStub.calledOnce.should.be.true;
-      atomStub.calledOnce.should.be.true;
-      atomStub.firstCall.args[0].should.eql('get_top_left_coordinates');
-      loc.x.should.equal(fixtureXOffset);
-      loc.y.should.equal(fixtureYOffset);
+      expect(executeStub.calledOnce).to.be.true;
+      expect(atomStub.calledOnce).to.be.true;
+      expect(atomStub.firstCall.args[0]).to.eql('get_top_left_coordinates');
+      expect(loc.x).to.equal(fixtureXOffset);
+      expect(loc.y).to.equal(fixtureYOffset);
     });
   });
 
@@ -419,14 +419,14 @@ describe('element commands', function () {
 
       const rect = await driver.getElementRect(elem);
 
-      isWebContextStub.calledOnce.should.be.true;
-      getNativeRectStub.calledOnce.should.be.true;
-      getLocationStub.calledOnce.should.be.false;
-      getSizeStub.calledOnce.should.be.false;
-      rect.x.should.eql(0);
-      rect.y.should.eql(50);
-      rect.width.should.eql(100);
-      rect.height.should.eql(200);
+      expect(isWebContextStub.calledOnce).to.be.true;
+      expect(getNativeRectStub.calledOnce).to.be.true;
+      expect(getLocationStub.calledOnce).to.be.false;
+      expect(getSizeStub.calledOnce).to.be.false;
+      expect(rect.x).to.eql(0);
+      expect(rect.y).to.eql(50);
+      expect(rect.width).to.eql(100);
+      expect(rect.height).to.eql(200);
     });
 
     it('should get element rect in Web context', async function () {
@@ -434,14 +434,14 @@ describe('element commands', function () {
 
       const rect = await driver.getElementRect(elem);
 
-      isWebContextStub.calledOnce.should.be.true;
-      getNativeRectStub.calledOnce.should.be.false;
-      getLocationStub.calledOnce.should.be.true;
-      getSizeStub.calledOnce.should.be.true;
-      rect.x.should.eql(0);
-      rect.y.should.eql(50);
-      rect.width.should.eql(100);
-      rect.height.should.eql(200);
+      expect(isWebContextStub.calledOnce).to.be.true;
+      expect(getNativeRectStub.calledOnce).to.be.false;
+      expect(getLocationStub.calledOnce).to.be.true;
+      expect(getSizeStub.calledOnce).to.be.true;
+      expect(rect.x).to.eql(0);
+      expect(rect.y).to.eql(50);
+      expect(rect.width).to.eql(100);
+      expect(rect.height).to.eql(200);
     });
   });
 });
