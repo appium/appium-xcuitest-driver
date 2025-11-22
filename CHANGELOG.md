@@ -1,3 +1,9 @@
+## [10.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.6.0...v10.7.0) (2025-11-22)
+
+### Features
+
+* Bump ios-simulator ([#2658](https://github.com/appium/appium-xcuitest-driver/issues/2658)) ([0384e5d](https://github.com/appium/appium-xcuitest-driver/commit/0384e5dd0db6a005a4ed0e68060b5839a08730c8))
+
 ## [10.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.5.1...v10.6.0) (2025-11-22)
 
 ### Features
