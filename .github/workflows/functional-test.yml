@@ -148,7 +148,7 @@ jobs:
 
         export RESULTS_XML=test-results.xml
         echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
-        ARGS=("./test/functional/${{ matrix.e2eRoot }}" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
+        ARGS=("./test/functional/${{ matrix.e2eRoot }}/**/*-specs.ts" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
         if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
           ARGS+=(--grep XCUITestDriver)
         fi
