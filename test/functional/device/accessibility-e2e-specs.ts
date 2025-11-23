@@ -42,6 +42,9 @@ describe('Accessibility', function () {
   describe('ReduceMotion', function () {
     async function getReduceMotion(driver: any) {
       await showAccessibilityTab(driver);
+      await driver
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`)
+        .click();
       return await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`)
         .getAttribute('value');
