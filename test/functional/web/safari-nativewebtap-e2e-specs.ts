@@ -21,6 +21,10 @@ import {
 import {retryInterval} from 'asyncbox';
 import B from 'bluebird';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 
 const caps = amendCapabilities(SAFARI_CAPS, {
@@ -39,29 +43,21 @@ describe('Safari - coordinate conversion -', function () {
 
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
 
-  let chai;
-
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     if (process.env.CI) {
       return this.skip();
     }
-    async function loadPage(driver, url) {
+    async function loadPage(driver: any, url: string) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);
-        await spinTitle(driver).should.eventually.not.include('Cannot Open Page');
+        await expect(spinTitle(driver)).to.eventually.not.include('Cannot Open Page');
       });
     }
 
     // Close all tabs in Safari before running tests because left over tabs can affect the test results.
     // If possible, it's probably better to kick com.apple.mobilesafari.settings.DeleteAllDataAndCachesTask
     // task in com.apple.Preferences app or something equivalent rather than closing tabs via GUI.
-    async function closeAllTabsViaSettingsApp(deviceName) {
+    async function closeAllTabsViaSettingsApp(deviceName: string) {
       const newCaps = {
         'appium:deviceName': deviceName,
       };
@@ -167,7 +163,7 @@ describe('Safari - coordinate conversion -', function () {
           try {
             await closeAllTabsViaSettingsApp(deviceName);
             driver = await initSession(localCaps);
-          } catch (err) {
+          } catch (err: any) {
             if (
               err.message.includes('Invalid device type') ||
               err.message.includes('Incompatible device')
@@ -239,7 +235,7 @@ describe('Safari - coordinate conversion -', function () {
 
           await loadPage(driver, GUINEA_PIG_PAGE);
 
-          (await driver.getPageSource()).should.not.include('Your comments: Hello');
+          expect(await driver.getPageSource()).to.not.include('Your comments: Hello');
 
           const comments = await driver.$('[name="comments"]');
           await driver.elementSendKeys(comments.elementId, 'Hello');
@@ -248,7 +244,7 @@ describe('Safari - coordinate conversion -', function () {
 
           await retryInterval(5, 500, async function () {
             const src = await driver.getPageSource();
-            return src.should.include('Your comments: Hello');
+            expect(src).to.include('Your comments: Hello');
           });
         });
 
@@ -257,7 +253,7 @@ describe('Safari - coordinate conversion -', function () {
 
           await driver.$('#alert1').click();
           await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
-          await driver.getTitle().should.eventually.include('I am a page title');
+          await expect(driver.getTitle()).to.eventually.include('I am a page title');
         });
 
         describe('with tabs -', function () {
@@ -271,7 +267,7 @@ describe('Safari - coordinate conversion -', function () {
             await driver.execute('arguments[0].click();', await driver.$(`=i am a new window link`));
 
             await retryInterval(10, 1000, async function () {
-              await driver.getTitle().should.eventually.eql('I am another page title');
+              await expect(driver.getTitle()).to.eventually.eql('I am another page title');
             });
           });
 
@@ -355,3 +351,4 @@ describe('Safari - coordinate conversion -', function () {
     // it does not, however, need to actually run. Mocha FTW!
   });
 });
+

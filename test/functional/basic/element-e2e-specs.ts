@@ -4,21 +4,17 @@ import {retryInterval} from 'asyncbox';
 import {extractCapabilityValue, getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - elements -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  let chai;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     const uiCatalogCaps = await getUICatalogCaps();
     driver = await initSession(uiCatalogCaps);
   });
@@ -28,85 +24,85 @@ describe('XCUITestDriver - elements -', function () {
 
   describe('text', function () {
     it('should get the text of an element', async function () {
-      let el = await driver.$('~Buttons');
-      let text = await el.getText();
-      text.should.eql('Buttons');
+      const el = await driver.$('~Buttons');
+      const text = await el.getText();
+      expect(text).to.eql('Buttons');
     });
     it('should not mix up elements', async function () {
-      let el1 = await driver.$('~Buttons');
-      let text1 = await el1.getText();
-      text1.should.eql('Buttons');
+      const el1 = await driver.$('~Buttons');
+      const text1 = await el1.getText();
+      expect(text1).to.eql('Buttons');
 
-      let el2 = await driver.$('~Image View');
-      let text2 = await el2.getText();
-      text2.should.eql('Image View');
+      const el2 = await driver.$('~Image View');
+      const text2 = await el2.getText();
+      expect(text2).to.eql('Image View');
     });
   });
 
   describe('name', function () {
     it('should get the name of an element', async function () {
-      let el = await driver.$('~Buttons');
-      let name = await el.getTagName();
-      name.should.eql('XCUIElementTypeStaticText');
+      const el = await driver.$('~Buttons');
+      const name = await el.getTagName();
+      expect(name).to.eql('XCUIElementTypeStaticText');
     });
   });
 
   describe('displayed', function () {
     it('should get the displayed status for a displayed element', async function () {
-      let el = await driver.$('~Buttons');
-      (await el.isDisplayed()).should.be.true;
+      const el = await driver.$('~Buttons');
+      expect(await el.isDisplayed()).to.be.true;
     });
     it('should get the displayed status for an undisplayed element', async function () {
       // this value is invisible in the view
-      let el = await driver.$('~Horizontal scroll bar, 1 page');
-      (await el.isDisplayed()).should.be.false;
+      const el = await driver.$('~Horizontal scroll bar, 1 page');
+      expect(await el.isDisplayed()).to.be.false;
     });
   });
 
   describe('location', function () {
     it('should get the location of an element', async function () {
-      let el = await driver.$('~Buttons');
-      let loc = await el.getLocation();
-      loc.x.should.exist;
-      loc.y.should.exist;
+      const el = await driver.$('~Buttons');
+      const loc = await el.getLocation();
+      expect(loc.x).to.exist;
+      expect(loc.y).to.exist;
     });
     it('should not mix up locations', async function () {
-      let el1 = await driver.$('~Date Picker');
-      let loc1 = await el1.getLocation();
+      const el1 = await driver.$('~Date Picker');
+      const loc1 = await el1.getLocation();
 
-      let el2 = await driver.$('~Image View');
-      let loc2 = await el2.getLocation();
+      const el2 = await driver.$('~Image View');
+      const loc2 = await el2.getLocation();
 
-      loc1.x.should.eql(loc2.x);
-      loc1.y.should.be.below(loc2.y);
+      expect(loc1.x).to.eql(loc2.x);
+      expect(loc1.y).to.be.below(loc2.y);
     });
   });
 
   describe('location_in_view', function () {
     it('should get the location of an element', async function () {
-      let el = await driver.$('~Buttons');
-      let loc = await el.getLocation();
-      loc.x.should.exist;
-      loc.y.should.exist;
+      const el = await driver.$('~Buttons');
+      const loc = await el.getLocation();
+      expect(loc.x).to.exist;
+      expect(loc.y).to.exist;
     });
     it('should not mix up locations', async function () {
-      let el1 = await driver.$('~Date Picker');
-      let loc1 = await el1.getLocation();
+      const el1 = await driver.$('~Date Picker');
+      const loc1 = await el1.getLocation();
 
-      let el2 = await driver.$('~Image View');
-      let loc2 = await el2.getLocation();
+      const el2 = await driver.$('~Image View');
+      const loc2 = await el2.getLocation();
 
-      loc1.x.should.eql(loc2.x);
-      loc1.y.should.be.below(loc2.y);
+      expect(loc1.x).to.eql(loc2.x);
+      expect(loc1.y).to.be.below(loc2.y);
     });
   });
 
   describe('size', function () {
     it('should get the size of the element', async function () {
-      let el = await driver.$('~Buttons');
-      let size = await el.getSize();
-      size.width.should.exist;
-      size.height.should.exist;
+      const el = await driver.$('~Buttons');
+      const size = await el.getSize();
+      expect(size.width).to.exist;
+      expect(size.height).to.exist;
     });
   });
 
@@ -122,17 +118,17 @@ describe('XCUITestDriver - elements -', function () {
       ) {
         return this.skip();
       }
-      let table = await driver.$('XCUIElementTypeTable');
-      let contentSize = JSON.parse(await table.getAttribute('contentSize'));
-      contentSize.width.should.be.a('number');
-      contentSize.height.should.be.a('number');
-      contentSize.top.should.be.a('number');
-      contentSize.left.should.be.a('number');
-      contentSize.scrollableOffset.should.be.a('number');
-      contentSize.height.should.be.above(500);
+      const table = await driver.$('XCUIElementTypeTable');
+      const contentSize = JSON.parse(await table.getAttribute('contentSize'));
+      expect(contentSize.width).to.be.a('number');
+      expect(contentSize.height).to.be.a('number');
+      expect(contentSize.top).to.be.a('number');
+      expect(contentSize.left).to.be.a('number');
+      expect(contentSize.scrollableOffset).to.be.a('number');
+      expect(contentSize.height).to.be.above(500);
       // basically, the height of the inner content should be at least 200
       // pixels more than the height of the container
-      contentSize.scrollableOffset.should.be.above(contentSize.height + 200);
+      expect(contentSize.scrollableOffset).to.be.above(contentSize.height + 200);
     });
 
     it.skip('should get the contentSize of a collection view', async function () {
@@ -144,19 +140,17 @@ describe('XCUITestDriver - elements -', function () {
       if (wrongTypeEl.error) {
         wrongTypeEl = await driver.$('~UICatalog');
       }
-      await wrongTypeEl
-        .getAttribute('contentSize')
-        .should.eventually.be.rejectedWith(/Can't get content size for type/);
+      await expect(wrongTypeEl.getAttribute('contentSize')).to.eventually.be.rejectedWith(/Can't get content size for type/);
     });
   });
 
   describe('touch click', function () {
     it('should click an element', async function () {
       await retryInterval(10, 500, async function () {
-        let el = await driver.$('~Buttons');
+        const el = await driver.$('~Buttons');
         await el.click();
         await B.delay(1000);
-        (await driver.$$('XCUIElementTypeButton')).should.have.length.above(4);
+        expect(await driver.$$('XCUIElementTypeButton')).to.have.length.above(4);
         await driver.back();
       });
     });
@@ -166,11 +160,11 @@ describe('XCUITestDriver - elements -', function () {
     this.retries(2);
 
     describe('text fields', function () {
-      let text1 = 'bunchoftext';
-      let text2 = 'differenttext';
-      let text3 = 'http://appium.io/';
-      let secureText = _.map(new Array(text1.length), () => '•').join('');
-      let phText = 'Placeholder text';
+      const text1 = 'bunchoftext';
+      const text2 = 'differenttext';
+      const text3 = 'http://appium.io/';
+      const secureText = _.map(new Array(text1.length), () => '•').join('');
+      const phText = 'Placeholder text';
 
       beforeEach(async function () {
         const el = await retryInterval(10, 500, async function () {
@@ -185,33 +179,33 @@ describe('XCUITestDriver - elements -', function () {
 
       describe('set value', function () {
         it('should type in the text field', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
+          const el = await driver.$('XCUIElementTypeTextField');
           await el.setValue(text1);
 
-          let text = await el.getText();
-          text.should.eql(text1);
+          const text = await el.getText();
+          expect(text).to.eql(text1);
         });
         it('should type in the text field even before the keyboard is up', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
+          const el = await driver.$('XCUIElementTypeTextField');
           await el.setValue(text1);
 
-          let text = await el.getText();
-          text.should.eql(text1);
+          const text = await el.getText();
+          expect(text).to.eql(text1);
         });
         it('should type a url in the text field', async function () {
           // in Travis this sometimes gets the wrong text
-          let retries = process.env.CI ? 5 : 1;
+          const retries = process.env.CI ? 5 : 1;
           await retryInterval(retries, 100, async () => {
-            let el = await driver.$('XCUIElementTypeTextField');
+            const el = await driver.$('XCUIElementTypeTextField');
             await el.clearValue();
             await el.setValue(text3);
 
-            let text = await el.getText();
-            text.should.eql(text3);
+            const text = await el.getText();
+            expect(text).to.eql(text3);
           });
         });
         it('should be able to type into two text fields', async function () {
-          let els = await driver.$$('XCUIElementTypeTextField');
+          const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
           await driver.hideKeyboard();
@@ -219,101 +213,101 @@ describe('XCUITestDriver - elements -', function () {
           await els[1].setValue(text2);
 
           let text = await els[0].getText();
-          text.should.eql(text1);
+          expect(text).to.eql(text1);
 
           text = await els[1].getText();
-          text.should.eql(text2);
+          expect(text).to.eql(text2);
         });
         it('should type in a secure text field', async function () {
-          let els = await driver.$$('XCUIElementTypeSecureTextField');
+          const els = await driver.$$('XCUIElementTypeSecureTextField');
           await els[0].setValue(text1);
 
-          let text = await els[0].getText();
-          text.should.not.eql(text1);
-          text.length.should.eql(text1.length);
-          text.should.eql(secureText);
+          const text = await els[0].getText();
+          expect(text).to.not.eql(text1);
+          expect(text.length).to.eql(text1.length);
+          expect(text).to.eql(secureText);
         });
         it('should type a backspace', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
+          const el = await driver.$('XCUIElementTypeTextField');
 
           await driver.elementSendKeys(el.elementId, '0123456789\uE003');
 
-          let text = await el.getText();
-          text.should.eql('012345678');
+          const text = await el.getText();
+          expect(text).to.eql('012345678');
         });
         it('should type a delete', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
+          const el = await driver.$('XCUIElementTypeTextField');
 
           await driver.elementSendKeys(el.elementId, '0123456789\ue017');
 
-          let text = await el.getText();
-          text.should.eql('012345678');
+          const text = await el.getText();
+          expect(text).to.eql('012345678');
         });
         it('should type a newline', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
+          const el = await driver.$('XCUIElementTypeTextField');
 
           await driver.elementSendKeys(el.elementId, '0123456789\uE006');
 
-          let text = await el.getText();
-          text.should.eql('0123456789');
+          const text = await el.getText();
+          expect(text).to.eql('0123456789');
         });
       });
 
       describe('clear', function () {
         it('should clear a text field', async function () {
-          let text1 = '0123456789abcdefghijklmnopqrstuvwxyz';
-          let el = await driver.$('XCUIElementTypeTextField');
+          const text1 = '0123456789abcdefghijklmnopqrstuvwxyz';
+          const el = await driver.$('XCUIElementTypeTextField');
           await el.setValue(text1);
 
           let text = await el.getText();
-          text.should.eql(text1);
+          expect(text).to.eql(text1);
 
           await el.clearValue();
 
           text = await el.getText();
-          text.should.eql(phText);
+          expect(text).to.eql(phText);
         });
         it('should be able to clear two text fields', async function () {
-          let els = await driver.$$('XCUIElementTypeTextField');
+          const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
           let text = await els[0].getText();
-          text.should.eql(text1);
+          expect(text).to.eql(text1);
 
           await driver.hideKeyboard();
 
           await els[1].setValue(text2);
 
           text = await els[1].getText();
-          text.should.eql(text2);
+          expect(text).to.eql(text2);
 
           await els[0].clearValue();
 
           text = await els[0].getText();
-          text.should.eql(phText);
+          expect(text).to.eql(phText);
 
           await driver.hideKeyboard();
 
           await els[1].clearValue();
 
           text = await els[1].getText();
-          text.should.eql(phText);
+          expect(text).to.eql(phText);
         });
         it('should clear a secure text field', async function () {
-          let el = await driver.$('XCUIElementTypeSecureTextField');
+          const el = await driver.$('XCUIElementTypeSecureTextField');
           await el.setValue(text1);
 
           let text = await el.getText();
-          text.should.eql(secureText);
+          expect(text).to.eql(secureText);
 
           await el.clearValue();
           text = await el.getText();
-          text.should.eql(phText);
+          expect(text).to.eql(phText);
         });
       });
       describe('key', function () {
         it('should be able to send text to the active element', async function () {
-          let el = await driver.$('XCUIElementTypeTextField');
+          const el = await driver.$('XCUIElementTypeTextField');
           // make sure the keyboard is up
           await el.click();
 
@@ -346,20 +340,20 @@ describe('XCUITestDriver - elements -', function () {
           ];
           await driver.performActions(actions);
 
-          let text = await el.getText();
-          text.should.eql('hiあ');
+          const text = await el.getText();
+          expect(text).to.eql('hiあ');
         });
       });
       describe('hide keyboard', function () {
         it('should pass if the keyboard is already hidden', async function () {
-          await driver.hideKeyboard().should.be.fulfilled;
+          await expect(driver.hideKeyboard()).to.be.fulfilled;
         });
       });
     });
 
     describe('picker wheel', function () {
       beforeEach(async function () {
-        let el = await driver.$('~Picker View');
+        const el = await driver.$('~Picker View');
         await el.click();
       });
 
@@ -368,21 +362,22 @@ describe('XCUITestDriver - elements -', function () {
       });
 
       it('should be able to set the value', async function () {
-        let wheels = await driver.$$('XCUIElementTypePickerWheel');
+        const wheels = await driver.$$('XCUIElementTypePickerWheel');
 
-        let values = [65, 205, 120];
+        const values = [65, 205, 120];
         for (let i = 0; i < 3; i++) {
-          let wheel = wheels[i];
+          const wheel = wheels[i];
 
           let value = await wheel.getAttribute('value');
-          parseInt(value, 10).should.eql(values[i]);
+          expect(parseInt(value, 10)).to.eql(values[i]);
 
           await wheel.setValue(150);
 
           value = await wheel.getAttribute('value');
-          parseInt(value, 10).should.eql(150);
+          expect(parseInt(value, 10)).to.eql(150);
         }
       });
     });
   });
 });
+

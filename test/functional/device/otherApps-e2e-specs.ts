@@ -1,7 +1,10 @@
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {getMultipleApps, amendCapabilities} from '../desired';
-import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup.js';
+import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('OtherApps', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -9,15 +12,8 @@ describe('OtherApps', function () {
   let caps;
 
   let driver;
-  let chai;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     const multipleApps = await getMultipleApps();
     caps = amendCapabilities(multipleApps, {
       'appium:wdaStartupRetries': 0,
@@ -32,9 +28,8 @@ describe('OtherApps', function () {
 
   it('should start and stop a session', async function () {
     driver = await initSession(caps);
-    await driver.isAppInstalled(TESTAPP_BUNDLE_ID).should.eventually.be.equal(true);
-    await driver
-      .isAppInstalled(UICATALOG_BUNDLE_ID)
-      .should.eventually.be.equal(true);
+    await expect(driver.isAppInstalled(TESTAPP_BUNDLE_ID)).to.eventually.be.equal(true);
+    await expect(driver.isAppInstalled(UICATALOG_BUNDLE_ID)).to.eventually.be.equal(true);
   });
 });
+

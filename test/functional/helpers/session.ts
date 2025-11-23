@@ -14,9 +14,9 @@ async function initSession(caps, remoteOpts = {}) {
     connectionRetryCount: 1,
     ...remoteOpts,
   });
-  // @ts-expect-error private API, apparently
+  // @ts-ignore private API, apparently
   driver.name = undefined;
-  // @ts-expect-error private API, apparently
+  // @ts-ignore private API, apparently
   driver.errored = false;
   return driver;
 }
@@ -31,3 +31,4 @@ async function deleteSession() {
 }
 
 export {initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT};
+

@@ -1,22 +1,16 @@
 import B from 'bluebird';
 import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('XCUITestDriver - performance', function () {
   this.timeout(MOCHA_TIMEOUT);
   const profileName = 'Time Profiler';
 
   let driver;
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   describe('record performance metrics', function () {
     before(async function () {
@@ -37,11 +31,12 @@ describe('XCUITestDriver - performance', function () {
         profileName,
       });
       await B.delay(5000);
-      (
+      expect(
         await driver.execute('mobile: stopPerfRecord', {
           profileName,
         })
-      ).should.not.be.empty;
+      ).to.not.be.empty;
     });
   });
 });
+

@@ -2,13 +2,16 @@ import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {fs, tempDir, zip} from 'appium/support';
 import path from 'path';
-import {UICATALOG_BUNDLE_ID} from '../../setup.js';
+import {UICATALOG_BUNDLE_ID} from '../../setup';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 const UICAT_CONTAINER = `@${UICATALOG_BUNDLE_ID}`;
 
-async function pullFileAsString(driver, remotePath) {
-  let remoteData64 = await driver.pullFile(remotePath);
+async function pullFileAsString(driver: any, remotePath: string) {
+  const remoteData64 = await driver.pullFile(remotePath);
   return Buffer.from(remoteData64, 'base64').toString();
 }
 
@@ -16,15 +19,8 @@ describe('XCUITestDriver - file movement', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  let chai;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     const uiCatalogCaps = await getUICatalogCaps();
     driver = await initSession(uiCatalogCaps);
   });
@@ -35,18 +31,18 @@ describe('XCUITestDriver - file movement', function () {
   describe('sim relative', function () {
     describe('files', function () {
       it('should not be able to fetch a file from the file system at large', async function () {
-        await driver.pullFile(__filename).should.be.rejected;
+        await expect(driver.pullFile(__filename)).to.be.rejected;
       });
 
       it('should be able to fetch the Address book', async function () {
-        let stringData = await pullFileAsString(driver, `${UICAT_CONTAINER}/PkgInfo`);
-        stringData.indexOf('APPL').should.not.equal(-1);
+        const stringData = await pullFileAsString(driver, `${UICAT_CONTAINER}/PkgInfo`);
+        expect(stringData.indexOf('APPL')).to.not.equal(-1);
       });
 
       it('should not be able to fetch something that does not exist', async function () {
-        await driver
+        await expect(driver
           .pullFile('Library/AddressBook/nothere.txt')
-          .should.be.rejectedWith(/does not exist/);
+        ).to.be.rejectedWith(/does not exist/);
       });
 
       it('should be able to push and pull a file', async function () {
@@ -57,7 +53,7 @@ describe('XCUITestDriver - file movement', function () {
         await driver.pushFile(remotePath, base64Data);
 
         const remoteStringData = await pullFileAsString(driver, remotePath);
-        remoteStringData.should.equal(stringData);
+        expect(remoteStringData).to.equal(stringData);
       });
 
       it('should be able to delete a file', async function () {
@@ -68,21 +64,21 @@ describe('XCUITestDriver - file movement', function () {
         await driver.pushFile(remotePath, base64Data);
 
         const remoteStringData = await pullFileAsString(driver, remotePath);
-        remoteStringData.should.equal(stringData);
+        expect(remoteStringData).to.equal(stringData);
 
         await driver.execute('mobile: deleteFile', {remotePath});
 
-        await pullFileAsString(driver, remotePath).should.be.rejectedWith(/does not exist/);
+        await expect(pullFileAsString(driver, remotePath)).to.be.rejectedWith(/does not exist/);
       });
     });
 
     describe('folders', function () {
       it('should not pull folders from file system', async function () {
-        await driver.pullFolder(__dirname).should.be.rejected;
+        await expect(driver.pullFolder(__dirname)).to.be.rejected;
       });
 
       it('should not be able to fetch a folder that does not exist', async function () {
-        await driver.pullFolder('Library/Rollodex').should.be.rejectedWith(/does not exist/);
+        await expect(driver.pullFolder('Library/Rollodex')).to.be.rejectedWith(/does not exist/);
       });
 
       it('should pull all the files in Library/AddressBook', async function () {
@@ -96,7 +92,7 @@ describe('XCUITestDriver - file movement', function () {
           await fs.mkdir(extractedDataPath);
           await zip.extractAllTo(zipPath, extractedDataPath);
           const itemsCount = (await fs.readdir(extractedDataPath)).length;
-          itemsCount.should.be.above(1);
+          expect(itemsCount).to.be.above(1);
         } finally {
           await fs.rimraf(tmpRoot);
         }
@@ -106,13 +102,13 @@ describe('XCUITestDriver - file movement', function () {
 
   describe('app relative', function () {
     it('should be able to push and pull a file from the app directory', async function () {
-      let stringData = `random string data ${Math.random()}`;
-      let base64Data = Buffer.from(stringData).toString('base64');
-      let remotePath = `${UICAT_CONTAINER}/UICatalog.app/somefile.tmp`;
+      const stringData = `random string data ${Math.random()}`;
+      const base64Data = Buffer.from(stringData).toString('base64');
+      const remotePath = `${UICAT_CONTAINER}/UICatalog.app/somefile.tmp`;
 
       await driver.pushFile(remotePath, base64Data);
-      let remoteStringData = await pullFileAsString(driver, remotePath);
-      remoteStringData.should.equal(stringData);
+      const remoteStringData = await pullFileAsString(driver, remotePath);
+      expect(remoteStringData).to.equal(stringData);
     });
 
     it('should be able to delete a file from the app directory', async function () {
@@ -123,11 +119,12 @@ describe('XCUITestDriver - file movement', function () {
       await driver.pushFile(remotePath, base64Data);
 
       const remoteStringData = await pullFileAsString(driver, remotePath);
-      remoteStringData.should.equal(stringData);
+      expect(remoteStringData).to.equal(stringData);
 
       await driver.execute('mobile: deleteFile', {remotePath});
 
-      await pullFileAsString(driver, remotePath).should.be.rejectedWith(/does not exist/);
+      await expect(pullFileAsString(driver, remotePath)).to.be.rejectedWith(/does not exist/);
     });
   });
 });
+
