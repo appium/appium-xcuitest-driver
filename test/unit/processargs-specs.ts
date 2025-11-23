@@ -1,10 +1,13 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../lib/driver';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';
-  let driver = new XCUITestDriver();
+  const driver = new XCUITestDriver();
   driver.opts.platformVersion = '10.3';
   let mockDriver;
   const DEFAULT_CAPS = {
@@ -29,9 +32,9 @@ describe('process args', function () {
     env: {a: 'b', c: 'd'},
   };
 
-  let processArgsString = JSON.stringify(PROCESS_ARGS_OBJECT);
+  const processArgsString = JSON.stringify(PROCESS_ARGS_OBJECT);
 
-  let desired = {
+  const desired = {
     capabilities: {
       firstMatch: [
         {
@@ -45,15 +48,6 @@ describe('process args', function () {
     },
   };
 
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   beforeEach(function () {
     mockDriver = sinon.mock(driver);
@@ -67,7 +61,7 @@ describe('process args', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
       mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', desired);
 
-      let desiredWithProArgsObject = {
+      const desiredWithProArgsObject = {
         platformName: 'iOS',
         platformVersion: '10.3',
         deviceName: 'iPhone 6',
@@ -87,7 +81,7 @@ describe('process args', function () {
     it('should send translated POST /session request with valid desired caps to WDA', async function () {
       mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', desired);
 
-      let desiredWithProArgsString = {
+      const desiredWithProArgsString = {
         platformName: 'iOS',
         platformVersion: '10.3',
         deviceName: 'iPhone 6',

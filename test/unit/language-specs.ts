@@ -1,7 +1,10 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import {XCUITestDriver} from '../../lib/driver';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('language and locale', function () {
   const LANGUAGE = 'en';
@@ -27,15 +30,6 @@ describe('language and locale', function () {
 
 
   let mockDriver;
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   afterEach(function () {
     if (mockDriver) {
@@ -64,18 +58,17 @@ describe('language and locale', function () {
           alwaysMatch: {},
         },
       };
-      let desiredCapabilities =
-        /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */ ({
-          platformName: 'iOS',
-          platformVersion: '9.3',
-          deviceName: 'iPhone 6',
-          app: 'testapp.app',
-          language: LANGUAGE,
-          locale: LOCALE,
-          bundleId: BUNDLE_ID,
-        });
+      const desiredCapabilities: any = {
+        platformName: 'iOS',
+        platformVersion: '9.3',
+        deviceName: 'iPhone 6',
+        app: 'testapp.app',
+        language: LANGUAGE,
+        locale: LOCALE,
+        bundleId: BUNDLE_ID,
+      };
 
-      let driver = new XCUITestDriver(desiredCapabilities);
+      const driver = new XCUITestDriver(desiredCapabilities);
 
       mockDriver = sinon.mock(driver);
       mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
@@ -122,18 +115,17 @@ describe('language and locale', function () {
         },
       };
 
-      const desiredCapabilities =
-        /** @type {import('@appium/types').DriverOpts<import('../../lib/driver').XCUITestDriverConstraints>} */ ({
-          platformName: 'iOS',
-          platformVersion: '9.3',
-          deviceName: 'iPhone 6',
-          app: 'testapp.app',
-          language: LANGUAGE,
-          locale: LOCALE,
-          bundleId: BUNDLE_ID,
-          processArguments,
-        });
-      let driver = new XCUITestDriver(desiredCapabilities);
+      const desiredCapabilities: any = {
+        platformName: 'iOS',
+        platformVersion: '9.3',
+        deviceName: 'iPhone 6',
+        app: 'testapp.app',
+        language: LANGUAGE,
+        locale: LOCALE,
+        bundleId: BUNDLE_ID,
+        processArguments,
+      };
+      const driver = new XCUITestDriver(desiredCapabilities);
 
       mockDriver = sinon.mock(driver);
       mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
@@ -143,7 +135,7 @@ describe('language and locale', function () {
         desiredCapabilities.bundleId,
         desiredCapabilities.processArguments,
       );
-      desiredCapabilities.processArguments.should.eql(expectedProcessArguments);
+      expect(desiredCapabilities.processArguments).to.eql(expectedProcessArguments);
     });
   });
 });

@@ -1,17 +1,10 @@
 import CssConverter from '../../lib/css-converter';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('css-converter.js', function () {
-
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   describe('simple cases', function () {
     const simpleCases = [
@@ -50,7 +43,7 @@ describe('css-converter.js', function () {
     ];
     for (const [cssSelector, iosClassChainSelector] of simpleCases) {
       it(`should convert '${cssSelector}' to '${iosClassChainSelector}'`, function () {
-        CssConverter.toIosClassChainSelector(cssSelector).should.equal(iosClassChainSelector);
+        expect(CssConverter.toIosClassChainSelector(cssSelector)).to.equal(iosClassChainSelector);
       });
     }
   });
@@ -63,7 +56,7 @@ describe('css-converter.js', function () {
     ]);
     for (const cssSelector of testCases) {
       it(`should reject '${cssSelector}'`, function () {
-        (() => CssConverter.toIosClassChainSelector(cssSelector)).should.throw();
+        expect(() => CssConverter.toIosClassChainSelector(cssSelector)).to.throw();
       });
     }
   });

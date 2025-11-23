@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
 import {Simctl} from 'node-simctl';
+import {expect} from 'chai';
 
 describe('screenshots commands', function () {
   let driver;
@@ -37,11 +38,11 @@ describe('screenshots commands', function () {
 
         await driver.getScreenshot();
 
-        proxyStub.calledOnce.should.be.true;
-        proxyStub.firstCall.args[0].should.eql('/screenshot');
-        proxyStub.firstCall.args[1].should.eql('GET');
+        expect(proxyStub.calledOnce).to.be.true;
+        expect(proxyStub.firstCall.args[0]).to.eql('/screenshot');
+        expect(proxyStub.firstCall.args[1]).to.eql('GET');
 
-        getScreenshotStub.notCalled.should.be.true;
+        expect(getScreenshotStub.notCalled).to.be.true;
       });
 
       it('should get a screenshot from simctl if WDA call fails and Xcode version >= 8.1', async function () {
@@ -52,10 +53,10 @@ describe('screenshots commands', function () {
           versionFloat: 8.3,
         };
         const result = await driver.getScreenshot();
-        result.should.equal(base64PortraitResponse);
+        expect(result).to.equal(base64PortraitResponse);
 
-        proxyStub.calledOnce.should.be.true;
-        getScreenshotStub.calledOnce.should.be.true;
+        expect(proxyStub.calledOnce).to.be.true;
+        expect(getScreenshotStub.calledOnce).to.be.true;
       });
     });
 
@@ -63,7 +64,7 @@ describe('screenshots commands', function () {
       it('should get a screenshot from WDA if no errors are detected', async function () {
         proxyStub.returns(base64PortraitResponse);
 
-        let device = driver.device;
+        const device = driver.device;
         try {
           driver._device = {devicectl: true};
           await driver.getScreenshot();
@@ -71,9 +72,9 @@ describe('screenshots commands', function () {
           driver._device = device;
         }
 
-        proxyStub.calledOnce.should.be.true;
-        proxyStub.firstCall.args[0].should.eql('/screenshot');
-        proxyStub.firstCall.args[1].should.eql('GET');
+        expect(proxyStub.calledOnce).to.be.true;
+        expect(proxyStub.firstCall.args[0]).to.eql('/screenshot');
+        expect(proxyStub.firstCall.args[1]).to.eql('GET');
       });
     });
   });

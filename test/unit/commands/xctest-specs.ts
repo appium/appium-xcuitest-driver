@@ -1,5 +1,8 @@
 import {parseXCTestStdout} from '../../../lib/commands/xctest';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('session commands', function () {
   const xctestLogs1Success =
@@ -15,21 +18,12 @@ describe('session commands', function () {
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Status: failed | Duration: 0.033468008041381836 | Failure message: XCTAssertTrue failed - error message here | Location /path/to/XCTesterAppUITests/XCTesterAppUITests.swift:36
   `.trim();
 
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {
       const results = parseXCTestStdout(xctestLogs1Success);
-      results.length.should.equal(2);
-      results[0].should.eql({
+      expect(results.length).to.equal(2);
+      expect(results[0]).to.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
         status: 'passed',
@@ -38,7 +32,7 @@ describe('session commands', function () {
         failureMessage: null,
         location: ':0',
       });
-      results[1].should.eql({
+      expect(results[1]).to.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: true,
@@ -52,15 +46,15 @@ describe('session commands', function () {
 
     it('should parse successful test logs', function () {
       const results = parseXCTestStdout(xctestLogs2Success);
-      results.length.should.equal(2);
-      results[0].should.eql({
+      expect(results.length).to.equal(2);
+      expect(results[0]).to.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
         status: 'passed',
         crashed: false,
         duration: 2.2897069454193115,
       });
-      results[1].should.eql({
+      expect(results[1]).to.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: true,
@@ -72,15 +66,15 @@ describe('session commands', function () {
 
     it('should parse unsuccessful test logs', function () {
       const results = parseXCTestStdout(xctestLogs2Failure);
-      results.length.should.equal(2);
-      results[0].should.eql({
+      expect(results.length).to.equal(2);
+      expect(results[0]).to.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
         passed: true,
         status: 'passed',
         crashed: false,
         duration: 1.9255789518356323,
       });
-      results[1].should.eql({
+      expect(results[1]).to.eql({
         testName:
           'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance',
         passed: false,

@@ -53,6 +53,10 @@ import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import {RealDevice} from '../../lib/real-device';
 import net from 'node:net';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 const caps = {
   fistMatch: [{}],
@@ -66,18 +70,6 @@ const caps = {
 
 describe('XCUITestDriver', function () {
   let sandbox;
-  let chai;
-  let expect;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
-    expect = chai.expect;
-  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -132,15 +124,15 @@ describe('XCUITestDriver', function () {
 
       it('should not have wda status by default', async function () {
         const status = await driver.getStatus();
-        jwproxyCommandSpy.calledOnce.should.be.false;
+        expect(jwproxyCommandSpy.calledOnce).to.be.false;
         expect(status.wda).to.be.undefined;
       });
 
       it('should return wda status if cached', async function () {
         driver.cachedWdaStatus = {};
         const status = await driver.getStatus();
-        jwproxyCommandSpy.called.should.be.false;
-        status.wda.should.exist;
+        expect(jwproxyCommandSpy.called).to.be.false;
+        expect(status.wda).to.exist;
       });
     });
 
@@ -198,7 +190,7 @@ describe('XCUITestDriver', function () {
       it('should include server capabilities', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
         const resCaps = await driver.createSession(null, null, _.cloneDeep(caps));
-        resCaps[1].javascriptEnabled.should.be.true;
+        expect(resCaps[1].javascriptEnabled).to.be.true;
       });
 
       it('should call startLogCapture', async function () {
@@ -212,8 +204,8 @@ describe('XCUITestDriver', function () {
             },
           }),
         );
-        resCaps[1].javascriptEnabled.should.be.true;
-        driver.startLogCapture.called.should.be.true;
+        expect(resCaps[1].javascriptEnabled).to.be.true;
+        expect(driver.startLogCapture.called).to.be.true;
       });
       it('should not call startLogCapture', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
@@ -226,8 +218,8 @@ describe('XCUITestDriver', function () {
             },
           }),
         );
-        resCaps[1].javascriptEnabled.should.be.true;
-        driver.startLogCapture.called.should.be.false;
+        expect(resCaps[1].javascriptEnabled).to.be.true;
+        expect(driver.startLogCapture.called).to.be.false;
       });
       it('should call setReduceTransparency for a simulator', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
@@ -241,8 +233,8 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:reduceTransparency': true},
           }),
         );
-        spy.calledOnce.should.be.true;
-        spy.firstCall.args[0].should.eql(true);
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.firstCall.args[0]).to.eql(true);
       });
 
       it('should not call setReduceTransparency for a real device', async function () {
@@ -257,7 +249,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:reduceTransparency': true},
           }),
         );
-        spy.notCalled.should.be.true;
+        expect(spy.notCalled).to.be.true;
       });
 
       it('should call setAutoFillPasswords for a simulator', async function () {
@@ -272,8 +264,8 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:autoFillPasswords': true},
           }),
         );
-        spy.calledOnce.should.be.true;
-        spy.firstCall.args[0].should.eql(true);
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.firstCall.args[0]).to.eql(true);
       });
       it('should not call setAutoFillPasswords for a real device', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
@@ -287,7 +279,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:setAutoFillPasswords': true},
           }),
         );
-        spy.notCalled.should.be.true;
+        expect(spy.notCalled).to.be.true;
       });
 
       it('should throw an error if mjpegServerPort is occupied', async function () {
@@ -295,18 +287,20 @@ describe('XCUITestDriver', function () {
         delete device.simctl;
         device.devicectl = true;
         const server = net.createServer();
-        await new Promise((resolve, reject) => {
-          server.listen(9100, resolve);
+        await new Promise<void>((resolve, reject) => {
+          server.listen(9100, () => resolve());
           server.on('error', reject);
         });
         try {
-          await driver.createSession(
-            null,
-            null,
-            _.merge({}, caps, {
-              alwaysMatch: {'appium:mjpegServerPort': 9100},
-            }),
-          ).should.be.rejectedWith(/mjpegServerPort.*port #9100 is occupied/);
+          await expect(
+            driver.createSession(
+              null,
+              null,
+              _.merge({}, caps, {
+                alwaysMatch: {'appium:mjpegServerPort': 9100},
+              }),
+            )
+          ).to.be.rejectedWith(/mjpegServerPort.*port #9100 is occupied/);
         } finally {
           await new Promise((resolve, reject) => {
             server.close(resolve);
@@ -361,17 +355,16 @@ describe('XCUITestDriver', function () {
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
       sandbox.mock(driver.appInfosCache)
         .expects('extractBundleId').resolves('bundle-id');
-      // @ts-expect-error random stuff on opts
-      driver.opts.device = 'some-device';
+      driver.opts.device = 'some-device' as any;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      (driver.isRealDevice).calledOnce.should.be.true;
-      (driver.helpers.configureApp).calledOnce.should.be.true;
-      (RealDeviceManagementModule.installToRealDevice).calledOnceWith(
+      expect(driver.isRealDevice.calledOnce).to.be.true;
+      expect(driver.helpers.configureApp.calledOnce).to.be.true;
+      expect(RealDeviceManagementModule.installToRealDevice.calledOnceWithExactly(
         '/path/to/iosApp.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined},
-      ).should.be.true;
+      )).to.be.true;
     });
 
     it('should install multiple apps from otherApps as JSON array on on real devices', async function () {
@@ -384,22 +377,21 @@ describe('XCUITestDriver', function () {
       sandbox.stub(driver.appInfosCache, 'extractBundleId')
         .onCall(0).resolves('bundle-id')
         .onCall(1).resolves('bundle-id2');
-      // @ts-expect-error random stuff on opts
-      driver.opts.device = 'some-device';
+      driver.opts.device = 'some-device' as any;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      (driver.isRealDevice).calledTwice.should.be.true;
-      (driver.helpers.configureApp).calledTwice.should.be.true;
-      (RealDeviceManagementModule.installToRealDevice).calledWith(
+      expect(driver.isRealDevice.calledTwice).to.be.true;
+      expect(driver.helpers.configureApp.calledTwice).to.be.true;
+      expect(RealDeviceManagementModule.installToRealDevice.calledWith(
         '/path/to/iosApp1.app',
         'bundle-id',
         {skipUninstall: true, timeout: undefined},
-      ).should.be.true;
-      (RealDeviceManagementModule.installToRealDevice).calledWith(
+      )).to.be.true;
+      expect(RealDeviceManagementModule.installToRealDevice.calledWith(
         '/path/to/iosApp2.app',
         'bundle-id2',
         {skipUninstall: true, timeout: undefined},
-      ).should.be.true;
+      )).to.be.true;
     });
 
     it('should install multiple apps from otherApps as string on simulators', async function () {
@@ -410,17 +402,16 @@ describe('XCUITestDriver', function () {
       sandbox.mock(driver.appInfosCache)
         .expects('extractBundleId').resolves('bundle-id');
       driver.opts.noReset = false;
-      // @ts-expect-error random stuff on opts
-      driver.opts.device = 'some-device';
+      driver.opts.device = 'some-device' as any;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('/path/to/iosApp.app');
-      (driver.isRealDevice).calledOnce.should.be.true;
-      (driver.helpers.configureApp).calledOnce.should.be.true;
-      (SimulatorManagementModule.installToSimulator).calledOnceWith(
+      expect(driver.isRealDevice.calledOnce).to.be.true;
+      expect(driver.helpers.configureApp.calledOnce).to.be.true;
+      expect(SimulatorManagementModule.installToSimulator.calledOnceWithExactly(
         '/path/to/iosApp.app',
         'bundle-id',
         {newSimulator: false},
-      ).should.be.true;
+      )).to.be.true;
     });
 
     it('should install multiple apps from otherApps as JSON array on simulators', async function () {
@@ -436,18 +427,18 @@ describe('XCUITestDriver', function () {
       driver.opts.noReset = false;
       driver.lifecycleData = {createSim: false};
       await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
-      (driver.isRealDevice).calledTwice.should.be.true;
-      (driver.helpers.configureApp).calledTwice.should.be.true;
-      (SimulatorManagementModule.installToSimulator).calledWith(
+      expect(driver.isRealDevice.calledTwice).to.be.true;
+      expect(driver.helpers.configureApp.calledTwice).to.be.true;
+      expect(SimulatorManagementModule.installToSimulator.calledWith(
         '/path/to/iosApp1.app',
         'bundle-id',
         {newSimulator: false},
-      ).should.be.true;
-      (SimulatorManagementModule.installToSimulator).calledWith(
+      )).to.be.true;
+      expect(SimulatorManagementModule.installToSimulator.calledWith(
         '/path/to/iosApp2.app',
         'bundle-id2',
         {newSimulator: false},
-      ).should.be.true;
+      )).to.be.true;
     });
   });
 
