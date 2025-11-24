@@ -9,7 +9,6 @@
   "include": [
     "index.js",
     "lib",
-    "test/unit",
-    "test/setup.js"
+    "test"
   ]
 }

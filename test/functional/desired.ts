@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import {util, node} from 'appium/support';
-import {getUIKitCatalogPath, getTestAppPath} from '../setup.js';
+import {getUIKitCatalogPath, getTestAppPath} from '../setup';
 
 // translate integer environment variable to a boolean 0=false, !0=true
 function checkFeatureInEnv(envArg) {
   /** @type {string|number} */
-  let feature = parseInt(String(process.env[envArg]), 10);
+  let feature: string | number = parseInt(String(process.env[envArg]), 10);
   if (isNaN(feature)) {
     feature = String(process.env[envArg]);
   }
@@ -123,3 +123,4 @@ export const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:bundleId': 'com.apple.TVSettings',
   'appium:deviceName': 'Apple TV',
 });
+

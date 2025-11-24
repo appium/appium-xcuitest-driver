@@ -1,24 +1,19 @@
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {getUICatalogCaps, amendCapabilities, extractCapabilityValue} from '../desired';
 import {util} from 'appium/support';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('Passwords', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver, caps;
 
-  let chai;
-
   let uiCatalogCaps;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     uiCatalogCaps = await getUICatalogCaps();
   });
 
@@ -42,7 +37,7 @@ describe('Passwords', function () {
   });
 
   describe('AutoFillPasswords', function () {
-    async function isPasswordsMenuShown(driver) {
+    async function isPasswordsMenuShown(driver: any) {
       const el = await driver.$('~Text Fields');
       await el.click();
 
@@ -57,12 +52,13 @@ describe('Passwords', function () {
     it('should enable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': true});
       driver = await initSession(caps);
-      await isPasswordsMenuShown(driver).should.eventually.eql(true);
+      await expect(isPasswordsMenuShown(driver)).to.eventually.eql(true);
     });
     it('should disable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': false});
       driver = await initSession(caps);
-      await isPasswordsMenuShown(driver).should.eventually.eql(false);
+      await expect(isPasswordsMenuShown(driver)).to.eventually.eql(false);
     });
   });
 });
+

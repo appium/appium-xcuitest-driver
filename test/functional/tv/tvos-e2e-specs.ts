@@ -3,6 +3,10 @@ import {cleanupSimulator} from '../helpers/simulator';
 import {Simctl} from 'node-simctl';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {TVOS_CAPS} from '../desired';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
@@ -14,15 +18,8 @@ describe('tvOS', function () {
 
   let baseCaps;
   let udid;
-  let chai;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     udid = await simctl.createDevice(
       SIM_DEVICE_NAME,
       TVOS_CAPS.deviceName,
@@ -52,13 +49,14 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSettings', async function () {
     baseCaps.autoLaunch = true;
     const driver = await initSession(baseCaps);
-    (await driver.$('~General')).should.exist;
+    expect(await driver.$('~General')).to.exist;
   });
 
   it('should launch com.apple.TVSettings with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
     await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSettings'});
-    (await driver.$('~General')).should.exist;
+    expect(await driver.$('~General')).to.exist;
   });
 });
+

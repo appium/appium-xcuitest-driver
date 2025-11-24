@@ -1,6 +1,9 @@
 import {retry, retryInterval} from 'asyncbox';
 import {HOST, PORT} from '../helpers/session';
 import _ from 'lodash';
+import chai, {expect} from 'chai';
+
+chai.should();
 
 const BASE_END_POINT = `http://${HOST}:${PORT}`;
 const TEST_END_POINT = `${BASE_END_POINT}/test`;
@@ -27,12 +30,12 @@ const oldCookie2 = {
 };
 
 function doesIncludeCookie(cookies, cookie) {
-  cookies.map((c) => c.name).should.include(cookie.name);
-  cookies.map((c) => c.value).should.include(cookie.value);
+  expect(cookies.map((c) => c.name)).to.include(cookie.name);
+  expect(cookies.map((c) => c.value)).to.include(cookie.value);
 }
 function doesNotIncludeCookie(cookies, cookie) {
-  cookies.map((c) => c.name).should.not.include(cookie.name);
-  cookies.map((c) => c.value).should.not.include(cookie.value);
+  expect(cookies.map((c) => c.name)).to.not.include(cookie.name);
+  expect(cookies.map((c) => c.value)).to.not.include(cookie.value);
 }
 
 async function spinTitle(driver) {
@@ -104,3 +107,4 @@ export {
   oldCookie2,
   spinBodyIncludes,
 };
+

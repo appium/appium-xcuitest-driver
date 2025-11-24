@@ -7,6 +7,10 @@ import {amendCapabilities, SAFARI_CAPS} from '../desired';
 import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
 import { waitForCondition } from 'asyncbox';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 const pem = B.promisifyAll(_pem);
 
@@ -22,15 +26,8 @@ describe('Safari SSL', function () {
   let driver;
   /** @type {string} */
   let localHttpsUrl;
-  let chai;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-
     // Create a random pem certificate
     const privateKey = await pem.createPrivateKeyAsync();
     const keys = await pem.createCertificateAsync({
@@ -153,3 +150,4 @@ describe('Safari SSL', function () {
     });
   });
 });
+

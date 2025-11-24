@@ -1,22 +1,15 @@
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SETTINGS_CAPS, amendCapabilities} from '../desired';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 describe('Accessibility', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver, caps;
-
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   beforeEach(function () {
     caps = SETTINGS_CAPS;
@@ -40,14 +33,14 @@ describe('Accessibility', function () {
     }
   });
 
-  async function showAccessibilityTab(driver) {
+  async function showAccessibilityTab(driver: any) {
     await driver
       .$(`${PREDICATE_SEARCH}:name == 'Accessibility'`)
       .click();
   }
 
   describe('ReduceMotion', function () {
-    async function getReduceMotion(driver) {
+    async function getReduceMotion(driver: any) {
       await showAccessibilityTab(driver);
       await driver
         .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`)
@@ -60,17 +53,17 @@ describe('Accessibility', function () {
     it('should enable reduce motion', async function () {
       caps = amendCapabilities(caps, {'appium:reduceMotion': true});
       driver = await initSession(caps);
-      await getReduceMotion(driver).should.eventually.eql('1');
+      await expect(getReduceMotion(driver)).to.eventually.eql('1');
     });
     it('should disable reduce motion', async function () {
       caps = amendCapabilities(caps, {'appium:reduceMotion': false});
       driver = await initSession(caps);
-      await getReduceMotion(driver).should.eventually.eql('0');
+      await expect(getReduceMotion(driver)).to.eventually.eql('0');
     });
   });
 
   describe('ReduceTransparency', function () {
-    async function getReduceTransparency(driver) {
+    async function getReduceTransparency(driver: any) {
       await showAccessibilityTab(driver);
       await driver
         .$(
@@ -86,12 +79,13 @@ describe('Accessibility', function () {
     it('should enable reduce transparency', async function () {
       caps = amendCapabilities(caps, {'appium:reduceTransparency': true});
       driver = await initSession(caps);
-      await getReduceTransparency(driver).should.eventually.eql('1');
+      await expect(getReduceTransparency(driver)).to.eventually.eql('1');
     });
     it('should disable reduce transparency', async function () {
       caps = amendCapabilities(caps, {'appium:reduceTransparency': false});
       driver = await initSession(caps);
-      await getReduceTransparency(driver).should.eventually.eql('0');
+      await expect(getReduceTransparency(driver)).to.eventually.eql('0');
     });
   });
 });
+

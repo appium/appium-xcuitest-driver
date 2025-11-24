@@ -10,14 +10,14 @@ const TESTAPP_CACHE_PATH = path.resolve(__dirname, 'fixtures', 'VodQAReactNative
 export const TESTAPP_BUNDLE_ID = 'org.reactjs.native.example.VodQAReactNative';
 
 // Cache the download promises to prevent concurrent downloads
-const downloadPromises = new Map();
+const downloadPromises = new Map<string, Promise<string>>();
 
 /**
  * Finds .app bundles in a directory (similar to findApps in app-utils.js)
  * @param {string} searchPath Directory to search in
  * @returns {Promise<string[]>} Array of relative paths to .app bundles
  */
-async function findApps(searchPath) {
+async function findApps(searchPath: string): Promise<string[]> {
   const globPattern = '**/*.app';
   const sortedBundleItems = (
     await fs.glob(globPattern, {
@@ -37,11 +37,11 @@ async function findApps(searchPath) {
  * @returns {Promise<string>} The path to the cached app directory
  * @throws {Error} If the download or extraction fails
  */
-async function downloadAndExtractApp(url, cachePath, zipFileName) {
+async function downloadAndExtractApp(url: string, cachePath: string, zipFileName: string): Promise<string> {
   // If a download is already in progress, wait for it first
   // This prevents returning a partially downloaded file
   if (downloadPromises.has(cachePath)) {
-    return downloadPromises.get(cachePath);
+    return downloadPromises.get(cachePath)!;
   }
 
   // Check if the app already exists locally (only after ensuring no download is in progress)
@@ -50,7 +50,7 @@ async function downloadAndExtractApp(url, cachePath, zipFileName) {
   }
 
   // Start the download
-  const downloadPromise = (async () => {
+  const downloadPromise = (async (): Promise<string> => {
     try {
       // Double-check if file exists (another process might have downloaded it)
       if (await fs.exists(cachePath)) {
@@ -108,7 +108,7 @@ async function downloadAndExtractApp(url, cachePath, zipFileName) {
  * @returns {Promise<string>} The path to the cached app directory
  * @throws {Error} If the download or extraction fails
  */
-export async function getUIKitCatalogPath() {
+export async function getUIKitCatalogPath(): Promise<string> {
   return downloadAndExtractApp(
     UICATALOG_URL,
     UICATALOG_CACHE_PATH,
@@ -123,7 +123,7 @@ export async function getUIKitCatalogPath() {
  * @returns {Promise<string>} The path to the cached app directory
  * @throws {Error} If the download or extraction fails
  */
-export async function getTestAppPath() {
+export async function getTestAppPath(): Promise<string> {
   return downloadAndExtractApp(
     TESTAPP_URL,
     TESTAPP_CACHE_PATH,

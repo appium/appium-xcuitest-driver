@@ -1,6 +1,10 @@
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {openPage, GUINEA_PIG_PAGE} from './helpers';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 const SCROLL_INTO_VIEW = `return arguments[0].scrollIntoView(true);`;
 const GET_RIGHT_INNERHTML = `return document.body.innerHTML.indexOf('I am some page content') > 0`;
@@ -11,17 +15,8 @@ describe('safari - execute -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  let chai;
-  let expect;
 
   before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-    expect = chai.expect;
-
     const caps = amendCapabilities(SAFARI_CAPS, {
       'appium:safariInitialUrl': GUINEA_PIG_PAGE,
       'appium:showSafariConsoleLog': true,
@@ -35,21 +30,21 @@ describe('safari - execute -', function () {
   async function runTests(secure = false) {
     describe('mobile: x methods', function () {
       it('should run in native context', async function () {
-        await driver.executeScript('mobile: scroll', [{direction: 'down'}]).should.not.be.rejected;
+        await expect(driver.executeScript('mobile: scroll', [{direction: 'down'}])).to.not.be.rejected;
       });
     });
 
     describe('synchronous', function () {
       it('should bubble up javascript errors', async function () {
-        await driver.executeScript(`'nan'--`, []).should.be.rejected;
+        await expect(driver.executeScript(`'nan'--`, [])).to.be.rejected;
       });
 
       it('should eval javascript', async function () {
-        await driver.executeScript('return 1 + 1', []).should.eventually.equal(2);
+        await expect(driver.executeScript('return 1 + 1', [])).to.eventually.equal(2);
       });
 
       it('should not be returning hardcoded results', async function () {
-        await driver.executeScript('return 1+1', []).should.eventually.equal(2);
+        await expect(driver.executeScript('return 1+1', [])).to.eventually.equal(2);
       });
 
       it(`should return nothing when you don't explicitly return`, async function () {
@@ -58,8 +53,8 @@ describe('safari - execute -', function () {
 
       if (!secure) {
         it('should execute code inside the web view', async function () {
-          await driver.executeScript(GET_RIGHT_INNERHTML, []).should.eventually.be.ok;
-          await driver.executeScript(GET_WRONG_INNERHTML, []).should.eventually.not.be.ok;
+          await expect(driver.executeScript(GET_RIGHT_INNERHTML, [])).to.eventually.be.ok;
+          await expect(driver.executeScript(GET_WRONG_INNERHTML, [])).to.eventually.not.be.ok;
         });
 
         it('should convert selenium element arg to webview element', async function () {
@@ -69,31 +64,31 @@ describe('safari - execute -', function () {
 
         it('should catch stale or undefined element as arg', async function () {
           const el = await driver.findElement('id', 'useragent');
-          return driver.executeScript(SCROLL_INTO_VIEW, [{ELEMENT: el.value + 1}]).should.be
+          await expect(driver.executeScript(SCROLL_INTO_VIEW, [{ELEMENT: el.value + 1}])).to.be
             .rejected;
         });
 
         it('should be able to return multiple elements from javascript', async function () {
-          await driver
+          await expect(driver
             .executeScript(GET_ELEM_BY_TAGNAME, [])
-            .should.eventually.have.length.above(0);
+          ).to.eventually.have.length.above(0);
         });
       }
 
       it('should pass along non-element arguments', async function () {
         const arg = 'non-element-argument';
-        await driver
+        await expect(driver
           .executeScript('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [
             arg,
           ])
-          .should.eventually.equal(arg);
+        ).to.eventually.equal(arg);
       });
 
       it('should handle return values correctly', async function () {
         const arg = ['one', 'two', 'three'];
-        await driver
+        await expect(driver
           .executeScript('var args = Array.prototype.slice.call(arguments, 0); return args;', arg)
-          .should.eventually.eql(arg);
+        ).to.eventually.eql(arg);
       });
     });
 
@@ -157,3 +152,4 @@ describe('safari - execute -', function () {
     runTests(true);
   });
 });
+

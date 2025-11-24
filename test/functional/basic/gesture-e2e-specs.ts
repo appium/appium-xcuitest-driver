@@ -4,7 +4,10 @@ import {getUICatalogCaps} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 const BTN_OK_CNCL = 'Okay / Cancel';
 
@@ -12,15 +15,6 @@ describe('XCUITestDriver - gestures', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
-  let chai;
-
-  before(async function () {
-    chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-
-    chai.should();
-    chai.use(chaiAsPromised.default);
-  });
 
   describe('dynamic gestures', function () {
     before(async function () {
@@ -50,10 +44,10 @@ describe('XCUITestDriver - gestures', function () {
         await btn.waitForExist({timeout: 500});
       });
 
-      async function exitModal(name) {
+      async function exitModal(name: string) {
         // should exist, will throw error if it doesn't
         const els = await driver.$(`~${name}`);
-        await els.isExisting().should.eventually.be.equal(true);
+        await expect(els.isExisting()).to.eventually.be.equal(true);
 
         await retryInterval(5, 100, async () => {
           const el = await driver.$(`~${name}`);
@@ -94,7 +88,7 @@ describe('XCUITestDriver - gestures', function () {
       const size2 = await el2.getSize();
 
       const el3 = await driver.$('~Web View');
-      await el3.isDisplayed().should.eventually.be.false;
+      await expect(el3.isDisplayed()).to.eventually.be.false;
 
       await driver
         .action('pointer')
@@ -106,7 +100,7 @@ describe('XCUITestDriver - gestures', function () {
         .perform();
 
       await retryInterval(5, 1000, async function () {
-        await el3.isDisplayed().should.eventually.be.equal(true);
+        await expect(el3.isDisplayed()).to.eventually.be.equal(true);
       });
     });
     it('should double tap on an element', async function () {
@@ -121,7 +115,7 @@ describe('XCUITestDriver - gestures', function () {
 
       await B.delay(1000);
       const num = await driver.$('~2');
-      await num.isExisting().should.eventually.be.true;
+      await expect(num.isExisting()).to.eventually.be.true;
     });
     // TODO: Need a scrollable screen.
     it.skip(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
@@ -130,15 +124,15 @@ describe('XCUITestDriver - gestures', function () {
       const pickerEl = await driver.$('~Picker View');
       const loc = await pickerEl.getLocation();
 
-      await driver.execute('mobile: swipe', {element: winEl, direction: 'up'}).should.not.be
+      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'up'})).to.not.be
         .rejected;
       const locMiddle = await pickerEl.getLocation();
-      locMiddle.y.should.be.below(loc.y);
+      expect(locMiddle.y).to.be.below(loc.y);
 
-      await driver.execute('mobile: swipe', {element: winEl, direction: 'down'}).should.not.be
+      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'down'})).to.not.be
         .rejected;
       const locFinal = await pickerEl.getLocation();
-      locFinal.y.should.be.above(locMiddle.y);
+      expect(locFinal.y).to.be.above(locMiddle.y);
     });
     describe('pinch and zoom', function () {
       beforeEach(async function () {
@@ -202,3 +196,4 @@ describe('XCUITestDriver - gestures', function () {
     });
   });
 });
+
