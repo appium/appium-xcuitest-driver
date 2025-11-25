@@ -1,3 +1,9 @@
+## [10.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.0...v10.8.1) (2025-11-25)
+
+### Bug Fixes
+
+* Update mobile: resetLocationService endpoint ([#2661](https://github.com/appium/appium-xcuitest-driver/issues/2661)) ([c361c08](https://github.com/appium/appium-xcuitest-driver/commit/c361c08896f99839f2441a8e669f58d7ca6a0052))
+
 ## [10.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.7.0...v10.8.0) (2025-11-22)
 
 ### Features
