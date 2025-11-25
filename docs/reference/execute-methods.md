@@ -1777,8 +1777,10 @@ elementId | string | yes | The internal element identifier (as hexadecimal hash 
 ### mobile: resetLocationService
 
 Reset the location service on real device since Appium 1.22.0.
-It could delay a few seconds to reflect the location by the system.
-It raises an error if the device is simulator or an error occurred during the reset.
+It take a few seconds to reflect the new location by the system.
+The API raises an error if the device is simulator or an
+unexpected error has occurred on iOS version below 17.
+On iOS 17+ it is an alias to [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation).
 
 ### mobile: enableConditionInducer
 
