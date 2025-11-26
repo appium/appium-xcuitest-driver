@@ -12,7 +12,6 @@ import {
   DEVICE_NAME,
 } from '../desired';
 import {UICATALOG_BUNDLE_ID} from '../../setup';
-import {translateDeviceName} from '../../../lib/utils';
 import axios from 'axios';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -26,7 +25,7 @@ const simctl = new Simctl();
 async function createDevice() {
   return await simctl.createDevice(
     SIM_DEVICE_NAME,
-    translateDeviceName(PLATFORM_VERSION, DEVICE_NAME),
+    DEVICE_NAME,
     PLATFORM_VERSION,
   );
 }
