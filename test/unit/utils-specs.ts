@@ -1,6 +1,5 @@
 import {
   clearSystemFiles,
-  translateDeviceName,
   markSystemFilesForCleanup,
   isLocalHost,
 } from '../../lib/utils';
@@ -70,53 +69,6 @@ describe('utils', function () {
     }),
   );
 
-  describe('determineDevice', function () {
-    const ipadDeviceName = 'iPad Simulator';
-    const iphoneDeviceName = 'iPhone Simulator';
-    const outrageouslyHighIosVersion = '999999.999999';
-
-    it('should set the correct iPad simulator generic device', function () {
-      const deviceName = translateDeviceName('10.1.2', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Retina');
-    });
-    it('should set the correct iPad simulator generic device for iOS >= 10.3', function () {
-      let deviceName = translateDeviceName('10.103', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Air');
-      deviceName = translateDeviceName('10.3', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Air');
-      deviceName = translateDeviceName('10.3', ipadDeviceName);
-      expect(deviceName).to.equal('iPad Air');
-    });
-    it('should set the correct iPhone simulator generic device', function () {
-      expect(translateDeviceName('0.0', iphoneDeviceName)).to.equal('iPhone 6');
-      expect(translateDeviceName('10.3', iphoneDeviceName)).to.equal('iPhone 6');
-    });
-    it('should set the correct iPhone simulator generic device for simulators gte iOS 13.0', function () {
-      expect(translateDeviceName('13.0', iphoneDeviceName)).to.equal('iPhone X');
-    });
-    it('should set the default iPhone simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
-      // The highest iOS version we define for iPhone in ios-generic-simulators.js is currently iOS 13.0
-      // If this changes, update this test
-      expect(translateDeviceName(outrageouslyHighIosVersion, iphoneDeviceName)).to.equal('iPhone X');
-    });
-    it('should set the default iPad simulator to the lowest generic device that is defined in ios-generic-simulators.js for v0.0', function () {
-      // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
-      // If this changes, update this test
-      expect(translateDeviceName('0.0', ipadDeviceName)).to.equal('iPad Retina');
-    });
-    it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js for iOS < 13', function () {
-      // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
-      // If this changes, update this test
-      expect(translateDeviceName('12.9', ipadDeviceName)).to.equal('iPad Air');
-    });
-    it('should set the default iPad simulator to the highest generic device that is defined in ios-generic-simulators.js', function () {
-      // The highest iOS version for iPad we define in ios-generic-simulators.js is currently iOS 10.3
-      // If this changes, update this test
-      expect(translateDeviceName(outrageouslyHighIosVersion, ipadDeviceName)).to.equal(
-        'iPad (5th generation)',
-      );
-    });
-  });
 
   describe('isLocalHost', function () {
     it('should be false with invalid input, undefined', function () {
