@@ -210,7 +210,7 @@ export async function runSimulatorReset(
  */
 export async function installToSimulator(
   this: XCUITestDriver,
-  app?: string,
+  app: string,
   bundleId?: string,
   opts: SimulatorInstallOptions = {},
 ): Promise<void> {

@@ -341,9 +341,9 @@ export async function getConnectedDevices(): Promise<string[]> {
 //#region Public Real Device Class
 
 export class RealDevice {
-  udid: string;
-  private _log: AppiumLogger;
-  devicectl: Devicectl;
+  readonly udid: string;
+  private readonly _log: AppiumLogger;
+  readonly devicectl: Devicectl;
 
   constructor(udid: string, logger?: AppiumLogger) {
     this.udid = udid;
@@ -626,7 +626,7 @@ export class RealDevice {
  */
 export async function installToRealDevice(
   this: XCUITestDriver,
-  app?: string,
+  app: string,
   bundleId?: string,
   opts: ManagementInstallOptions = {}
 ): Promise<void> {

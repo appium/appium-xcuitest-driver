@@ -221,10 +221,10 @@ export class DeviceConnectionsFactory {
     }
     const currentKey = this._toKey(udid, port);
     if (usePortForwarding) {
-      if (devicePort == null) {
+      if (!_.isInteger(devicePort)) {
         throw new Error('devicePort is required when usePortForwarding is true');
       }
-      const iproxy = new iProxy(udid, port, devicePort);
+      const iproxy = new iProxy(udid, port, Number(devicePort));
       try {
         await iproxy.start();
         this._connectionsMapping[currentKey] = {iproxy};
@@ -303,4 +303,3 @@ interface RequestConnectionOptions {
   usePortForwarding?: boolean;
   devicePort?: number | null;
 }
-
