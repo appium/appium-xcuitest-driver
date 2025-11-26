@@ -1,3 +1,9 @@
+## [10.8.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.2...v10.8.3) (2025-11-26)
+
+### Miscellaneous Chores
+
+* Mark 'launchWithIDB' capability as deprecated ([#2663](https://github.com/appium/appium-xcuitest-driver/issues/2663)) ([c5a541c](https://github.com/appium/appium-xcuitest-driver/commit/c5a541ca72f51d40fc6512c619306b75a8551933))
+
 ## [10.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.1...v10.8.2) (2025-11-26)
 
 ### Miscellaneous Chores
