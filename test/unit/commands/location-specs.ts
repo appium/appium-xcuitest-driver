@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
 import {services} from 'appium-ios-device';
-import {RealDevice} from '../../../lib/real-device';
+import {RealDevice} from '../../../lib/device/real-device-management';
 import {expect} from 'chai';
 
 describe('location commands', function () {

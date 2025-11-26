@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {Simctl} from 'node-simctl';
 import {retryInterval} from 'asyncbox';
 import {resetTestProcesses} from 'appium-webdriveragent';
-import {shutdownSimulator} from '../../../lib/simulator-management';
+import {shutdownSimulator} from '../../../lib/device/simulator-management';
 import {killAllSimulators as simKill} from 'appium-ios-simulator';
 
 export async function killAllSimulators() {

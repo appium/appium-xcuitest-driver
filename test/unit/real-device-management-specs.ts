@@ -1,6 +1,5 @@
 import {createSandbox} from 'sinon';
-import { installToRealDevice } from '../../lib/real-device-management';
-import {RealDevice} from '../../lib/real-device';
+import { installToRealDevice, RealDevice } from '../../lib/device/real-device-management';
 import {XCUITestDriver} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
