@@ -1,3 +1,9 @@
+## [10.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.1...v10.8.2) (2025-11-26)
+
+### Miscellaneous Chores
+
+* Strip the obsolete translateDeviceName helper ([#2662](https://github.com/appium/appium-xcuitest-driver/issues/2662)) ([9ee20c5](https://github.com/appium/appium-xcuitest-driver/commit/9ee20c52af0fda84ba11e9b387a6b464919d9454))
+
 ## [10.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.0...v10.8.1) (2025-11-25)
 
 ### Bug Fixes
