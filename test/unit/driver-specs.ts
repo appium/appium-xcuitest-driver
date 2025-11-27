@@ -51,7 +51,7 @@ import * as increaseContrastCommands from '../../lib/commands/increase-contrast'
 import {XCUITestDriver} from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
-import {RealDevice} from '../../lib/real-device';
+import {RealDevice} from '../../lib/device/real-device-management';
 import net from 'node:net';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -349,7 +349,7 @@ describe('XCUITestDriver', function () {
     });
 
     it('should install multiple apps from otherApps as string on on real devices', async function () {
-      const RealDeviceManagementModule = require('../../lib/real-device-management');
+      const RealDeviceManagementModule = require('../../lib/device/real-device-management');
       sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
       sandbox.stub(driver, 'isRealDevice').returns(true);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
@@ -368,7 +368,7 @@ describe('XCUITestDriver', function () {
     });
 
     it('should install multiple apps from otherApps as JSON array on on real devices', async function () {
-      const RealDeviceManagementModule = require('../../lib/real-device-management');
+      const RealDeviceManagementModule = require('../../lib/device/real-device-management');
       sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
       sandbox.stub(driver, 'isRealDevice').returns(true);
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
@@ -395,7 +395,7 @@ describe('XCUITestDriver', function () {
     });
 
     it('should install multiple apps from otherApps as string on simulators', async function () {
-      const SimulatorManagementModule = require('../../lib/simulator-management');
+      const SimulatorManagementModule = require('../../lib/device/simulator-management');
       sandbox.stub(SimulatorManagementModule, 'installToSimulator');
       sandbox.stub(driver, 'isRealDevice').returns(false);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
@@ -415,7 +415,7 @@ describe('XCUITestDriver', function () {
     });
 
     it('should install multiple apps from otherApps as JSON array on simulators', async function () {
-      const SimulatorManagementModule = require('../../lib/simulator-management');
+      const SimulatorManagementModule = require('../../lib/device/simulator-management');
       sandbox.stub(SimulatorManagementModule, 'installToSimulator');
       sandbox.stub(driver, 'isRealDevice').returns(false);
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');

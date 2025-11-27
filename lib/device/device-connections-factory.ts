@@ -5,30 +5,39 @@ import {logger, util, timing} from 'appium/support';
 import {utilities} from 'appium-ios-device';
 import {checkPortStatus} from 'portscanner';
 import {waitForCondition} from 'asyncbox';
+import type { AppiumLogger } from '@appium/types';
 
 const LOCALHOST = '127.0.0.1';
 
 class iProxy {
-  constructor(udid, localport, deviceport) {
-    this.localport = parseInt(localport, 10);
-    this.deviceport = parseInt(deviceport, 10);
+  private readonly localport: number;
+  private readonly deviceport: number;
+  private readonly udid: string;
+  private localServer: net.Server | null;
+  private readonly log: AppiumLogger;
+  private onBeforeProcessExit: (() => void) | null;
+
+  constructor(udid: string, localport: string | number, deviceport: string | number) {
+    this.localport = parseInt(String(localport), 10);
+    this.deviceport = parseInt(String(deviceport), 10);
     this.udid = udid;
     this.localServer = null;
     this.log = logger.getLogger(`iProxy@${udid.substring(0, 8)}:${this.localport}`);
+    this.onBeforeProcessExit = null;
   }
 
-  async start() {
+  async start(): Promise<void> {
     if (this.localServer) {
       return;
     }
 
-    this.localServer = net.createServer(async (localSocket) => {
-      let remoteSocket;
+    this.localServer = net.createServer(async (localSocket: net.Socket) => {
+      let remoteSocket: any;
       try {
         // We can only connect to the remote socket after the local socket connection succeeds
         remoteSocket = await utilities.connectPort(this.udid, this.deviceport);
       } catch (e) {
-        this.log.debug(e.message);
+        this.log.debug((e as Error).message);
         localSocket.destroy();
         return;
       }
@@ -42,19 +51,23 @@ class iProxy {
         localSocket.destroy();
       });
       // not all remote socket errors are critical for the user
-      remoteSocket.on('error', (e) => this.log.debug(e));
+      remoteSocket.on('error', (e: Error) => this.log.debug(e));
       localSocket.once('end', destroyCommChannel);
       localSocket.once('close', () => {
         destroyCommChannel();
         remoteSocket.destroy();
       });
-      localSocket.on('error', (e) => this.log.warn(e.message));
+      localSocket.on('error', (e: Error) => this.log.warn(e.message));
       localSocket.pipe(remoteSocket);
       remoteSocket.pipe(localSocket);
     });
-    const listeningPromise = new B((resolve, reject) => {
-      /** @type {net.Server} */ (this.localServer).once('listening', resolve);
-      /** @type {net.Server} */ (this.localServer).once('error', reject);
+    const listeningPromise = new B<void>((resolve, reject) => {
+      if (this.localServer) {
+        this.localServer.once('listening', resolve);
+        this.localServer.once('error', reject);
+      } else {
+        reject(new Error('Local server is not initialized'));
+      }
     });
     this.localServer.listen(this.localport);
     try {
@@ -63,8 +76,8 @@ class iProxy {
       this.localServer = null;
       throw e;
     }
-    this.localServer.on('error', (e) => this.log.warn(e.message));
-    this.localServer.once('close', (e) => {
+    this.localServer.on('error', (e: Error) => this.log.warn(e.message));
+    this.localServer.once('close', (e?: Error) => {
       if (e) {
         this.log.info(`The connection has been closed with error ${e.message}`);
       } else {
@@ -75,10 +88,21 @@ class iProxy {
 
     this.onBeforeProcessExit = this._closeLocalServer.bind(this);
     // Make sure we free up the socket on process exit
-    process.on('beforeExit', this.onBeforeProcessExit);
+    if (this.onBeforeProcessExit) {
+      process.on('beforeExit', this.onBeforeProcessExit);
+    }
   }
 
-  _closeLocalServer() {
+  stop(): void {
+    if (this.onBeforeProcessExit) {
+      process.off('beforeExit', this.onBeforeProcessExit);
+      this.onBeforeProcessExit = null;
+    }
+
+    this._closeLocalServer();
+  }
+
+  private _closeLocalServer(): void {
     if (!this.localServer) {
       return;
     }
@@ -87,52 +111,24 @@ class iProxy {
     this.localServer.close();
     this.localServer = null;
   }
-
-  stop() {
-    if (this.onBeforeProcessExit) {
-      process.off('beforeExit', this.onBeforeProcessExit);
-      this.onBeforeProcessExit = null;
-    }
-
-    this._closeLocalServer();
-  }
 }
 
 const log = logger.getLogger('DevCon Factory');
 const PORT_CLOSE_TIMEOUT = 15 * 1000; // 15 seconds
 const SPLITTER = ':';
 
-class DeviceConnectionsFactory {
+export class DeviceConnectionsFactory {
+  private _connectionsMapping: ConnectionMapping;
+
   constructor() {
     this._connectionsMapping = {};
   }
 
-  _udidAsToken(udid) {
-    return `${util.hasValue(udid) ? udid : ''}${SPLITTER}`;
-  }
-
-  _portAsToken(port) {
-    return `${SPLITTER}${util.hasValue(port) ? port : ''}`;
-  }
-
-  _toKey(udid = null, port = null) {
-    return `${util.hasValue(udid) ? udid : ''}${SPLITTER}${util.hasValue(port) ? port : ''}`;
-  }
-
-  _releaseProxiedConnections(connectionKeys) {
-    const keys = connectionKeys.filter((k) => _.has(this._connectionsMapping[k], 'iproxy'));
-    for (const key of keys) {
-      log.info(`Releasing the listener for '${key}'`);
-      try {
-        this._connectionsMapping[key].iproxy.stop();
-      } catch (e) {
-        log.debug(e);
-      }
-    }
-    return keys;
-  }
-
-  listConnections(udid = null, port = null, strict = false) {
+  listConnections(
+    udid: string | null = null,
+    port: string | number | null = null,
+    strict: boolean = false
+  ): string[] {
     if (!udid && !port) {
       return [];
     }
@@ -149,7 +145,11 @@ class DeviceConnectionsFactory {
     );
   }
 
-  async requestConnection(udid, port, options = {}) {
+  async requestConnection(
+    udid?: string | null,
+    port?: string | number | null,
+    options: RequestConnectionOptions = {}
+  ): Promise<void> {
     if (!udid || !port) {
       log.warn('Did not know how to request the connection:');
       if (!udid) {
@@ -174,7 +174,7 @@ class DeviceConnectionsFactory {
     }
 
     if (usePortForwarding) {
-      let isPortBusy = (await checkPortStatus(port, LOCALHOST)) === 'open';
+      let isPortBusy = (await checkPortStatus(Number(port), LOCALHOST)) === 'open';
       if (isPortBusy) {
         log.warn(`Port #${port} is busy. Did you quit the previous driver session(s) properly?`);
         if (!_.isEmpty(connectionsOnPort)) {
@@ -187,7 +187,7 @@ class DeviceConnectionsFactory {
             await waitForCondition(
               async () => {
                 try {
-                  if ((await checkPortStatus(port, LOCALHOST)) !== 'open') {
+                  if ((await checkPortStatus(Number(port), LOCALHOST)) !== 'open') {
                     log.info(
                       `Port #${port} has been successfully released after ` +
                         `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
@@ -221,7 +221,10 @@ class DeviceConnectionsFactory {
     }
     const currentKey = this._toKey(udid, port);
     if (usePortForwarding) {
-      const iproxy = new iProxy(udid, port, devicePort);
+      if (!_.isInteger(devicePort)) {
+        throw new Error('devicePort is required when usePortForwarding is true');
+      }
+      const iproxy = new iProxy(udid, port, Number(devicePort));
       try {
         await iproxy.start();
         this._connectionsMapping[currentKey] = {iproxy};
@@ -239,7 +242,7 @@ class DeviceConnectionsFactory {
     log.info(`Successfully requested the connection for ${currentKey}`);
   }
 
-  releaseConnection(udid = null, port = null) {
+  releaseConnection(udid: string | null = null, port: string | number | null = null): void {
     if (!udid && !port) {
       log.warn(
         'Neither device UDID nor local port is set. ' +
@@ -261,9 +264,42 @@ class DeviceConnectionsFactory {
     }
     log.debug(`Cached connections count: ${_.size(this._connectionsMapping)}`);
   }
+
+  private _udidAsToken(udid?: string | null): string {
+    return `${util.hasValue(udid) ? udid : ''}${SPLITTER}`;
+  }
+
+  private _portAsToken(port?: string | number | null): string {
+    return `${SPLITTER}${util.hasValue(port) ? port : ''}`;
+  }
+
+  private _toKey(udid: string | null = null, port: string | number | null = null): string {
+    return `${util.hasValue(udid) ? udid : ''}${SPLITTER}${util.hasValue(port) ? port : ''}`;
+  }
+
+  private _releaseProxiedConnections(connectionKeys: string[]): string[] {
+    const keys = connectionKeys.filter((k) => _.has(this._connectionsMapping[k], 'iproxy'));
+    for (const key of keys) {
+      log.info(`Releasing the listener for '${key}'`);
+      try {
+        this._connectionsMapping[key].iproxy?.stop();
+      } catch (e) {
+        log.debug(e);
+      }
+    }
+    return keys;
+  }
 }
 
-const DEVICE_CONNECTIONS_FACTORY = new DeviceConnectionsFactory();
+export const DEVICE_CONNECTIONS_FACTORY = new DeviceConnectionsFactory();
 
-export {DEVICE_CONNECTIONS_FACTORY, DeviceConnectionsFactory};
-export default DEVICE_CONNECTIONS_FACTORY;
+interface ConnectionMapping {
+  [key: string]: {
+    iproxy?: iProxy;
+  };
+}
+
+interface RequestConnectionOptions {
+  usePortForwarding?: boolean;
+  devicePort?: number | null;
+}

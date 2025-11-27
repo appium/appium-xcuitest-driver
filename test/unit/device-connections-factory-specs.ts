@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {DeviceConnectionsFactory} from '../../lib/device-connections-factory';
+import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
