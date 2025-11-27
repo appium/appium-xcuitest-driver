@@ -1,3 +1,9 @@
+## [10.8.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.3...v10.8.4) (2025-11-27)
+
+### Miscellaneous Chores
+
+* Migrate device helpers to typescript ([#2664](https://github.com/appium/appium-xcuitest-driver/issues/2664)) ([34590b9](https://github.com/appium/appium-xcuitest-driver/commit/34590b92cc749b4a30cd2132bf9a6877ac1346fc))
+
 ## [10.8.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.2...v10.8.3) (2025-11-26)
 
 ### Miscellaneous Chores
