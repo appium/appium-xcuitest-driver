@@ -126,6 +126,7 @@ The following are the last driver versions that are compatible with older Xcode 
 
 | Xcode version | Last supported XCUITest driver version |
 | --- | --- |
+| Xcode 13 | `10.6.0` (WDA `10.2.2`) |
 | Xcode 12 | `4.27.2` (WDA `4.15.1`) |
 | Xcode 11 | `4.2.0` (WDA `4.0.0`) |
 
