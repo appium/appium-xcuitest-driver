@@ -7,7 +7,7 @@ import {
   MAX_BUFFERED_EVENTS_COUNT
 } from './helpers';
 import { IOSLog } from './ios-log';
-import type { LogEntry } from '../commands/types';
+import type { LogEntry } from '../../commands/types';
 
 const LOG_LEVELS_MAP = {
   error: 'SEVERE',

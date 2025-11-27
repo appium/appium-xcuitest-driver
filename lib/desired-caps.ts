@@ -1,8 +1,10 @@
+import type {Constraints} from '@appium/types';
+
 // These platform names should be valid in simulator name
 const PLATFORM_NAME_IOS = 'iOS';
 const PLATFORM_NAME_TVOS = 'tvOS';
 
-const desiredCapConstraints = /** @type {const} */ ({
+const desiredCapConstraints = {
   platformName: {
     // override
     presence: true,
@@ -391,7 +393,8 @@ const desiredCapConstraints = /** @type {const} */ ({
     isString: true,
     inclusionCaseInsensitive: ['none', 'eager', 'normal']
   }
-});
+} as const satisfies Constraints;
 
 export {desiredCapConstraints, PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS};
-export default desiredCapConstraints;
+
+export type XCUITestDriverConstraints = typeof desiredCapConstraints;

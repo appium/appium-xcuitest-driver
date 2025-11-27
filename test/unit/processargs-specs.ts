@@ -7,7 +7,7 @@ chai.use(chaiAsPromised);
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   driver.opts.platformVersion = '10.3';
   let mockDriver;
   const DEFAULT_CAPS = {

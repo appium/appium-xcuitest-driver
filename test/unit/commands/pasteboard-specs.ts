@@ -4,7 +4,7 @@ import {Simctl} from 'node-simctl';
 import {expect} from 'chai';
 
 describe('pasteboard commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   let isSimulatorStub, setPasteboardStub, getPasteboardStub;
 
   beforeEach(function () {

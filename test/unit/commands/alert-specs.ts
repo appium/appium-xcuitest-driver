@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('alert commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   const proxySpy = sinon.stub(driver, 'proxyCommand');
 
   afterEach(function () {

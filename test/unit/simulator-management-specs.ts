@@ -23,7 +23,7 @@ describe('simulator management', function () {
 
     beforeEach(function () {
       result = undefined;
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
     });
 
     it('should call scrubApp with fastReset', async function () {

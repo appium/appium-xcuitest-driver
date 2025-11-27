@@ -6,8 +6,8 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('get deviceinfo commands', function () {
-  const driver = new XCUITestDriver();
-  driver.wda = {jwproxy: {command: async () => ({})} as any} as any;
+  const driver = new XCUITestDriver({} as any);
+  driver._wda = {jwproxy: {command: async () => ({})} as any} as any;
   let proxyStub;
 
   beforeEach(function () {

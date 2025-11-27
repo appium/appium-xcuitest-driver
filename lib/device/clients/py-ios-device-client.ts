@@ -4,7 +4,7 @@ import path from 'path';
 import { BaseDeviceClient } from './base-device-client';
 import type { BaseDeviceClientOptions, InstallProfileArgs } from './base-device-client';
 import type { TeenProcessExecResult } from 'teen_process';
-import type { CertificateList } from '../commands/types';
+import type { CertificateList } from '../../commands/types';
 
 // https://github.com/YueChen-C/py-ios-device
 

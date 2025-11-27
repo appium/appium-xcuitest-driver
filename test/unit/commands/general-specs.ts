@@ -5,7 +5,7 @@ import {expect} from 'chai';
 
 
 describe('general commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
 
   let mockDriver;
 
@@ -123,7 +123,7 @@ describe('general commands', function () {
     };
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       startStub = sinon.stub(driver, 'start');
     });
 

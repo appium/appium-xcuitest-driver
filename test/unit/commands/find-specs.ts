@@ -3,7 +3,7 @@ import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
 
 describe('general commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   const proxySpy = sinon.stub(driver, 'proxyCommand');
   afterEach(function () {
     proxySpy.reset();

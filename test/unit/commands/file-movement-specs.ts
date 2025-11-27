@@ -12,7 +12,7 @@ describe('file-movement', function () {
     let driver;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
     });
 
     afterEach(function () {

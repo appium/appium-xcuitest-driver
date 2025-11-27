@@ -1,8 +1,18 @@
 import IDB from 'appium-idb';
 import {getSimulator} from 'appium-ios-simulator';
-import {WebDriverAgent} from 'appium-webdriveragent';
+import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import {BaseDriver, DeviceSettings, errors} from 'appium/driver';
 import {fs, mjpeg, util, timing} from 'appium/support';
+import type {
+  RouteMatcher,
+  DefaultCreateSessionResult,
+  DriverData,
+  StringRecord,
+  ExternalDriver,
+  W3CDriverCaps,
+  DriverCaps,
+  DriverOpts,
+} from '@appium/types';
 import AsyncLock from 'async-lock';
 import {retryInterval} from 'asyncbox';
 import B from 'bluebird';
@@ -64,17 +74,17 @@ import * as webCommands from './commands/web';
 import * as xctestCommands from './commands/xctest';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
-import {desiredCapConstraints} from './desired-caps';
+import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
 import {DEVICE_CONNECTIONS_FACTORY} from './device/device-connections-factory';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
-import { Pyidevice } from './real-device-clients/py-ios-device-client';
+import { Pyidevice } from './device/clients/py-ios-device-client';
 import {
   installToRealDevice,
   runRealDeviceReset,
   applySafariStartupArgs,
   detectUdid,
-  RealDevice,
+  RealDevice as RealDeviceClass,
   getConnectedDevices,
 } from './device/real-device-management';
 import {
@@ -105,6 +115,22 @@ import {
 } from './utils';
 import { AppInfosCache } from './app-infos-cache';
 import { notifyBiDiContextChange } from './commands/context';
+import type { CalibrationData, AsyncPromise, LifecycleData } from './types';
+import type { WaitingAtoms, LogListener, FullContext } from './commands/types';
+import type { PerfRecorder } from './commands/performance';
+import type { AudioRecorder } from './commands/record-audio';
+import type { TrafficCapture } from './commands/pcap';
+import type { ScreenRecorder } from './commands/recordscreen';
+import type { DVTServiceWithConnection } from './commands/condition.js';
+import type { IOSDeviceLog } from './device/log/ios-device-log';
+import type { IOSSimulatorLog } from './device/log/ios-simulator-log';
+import type { IOSCrashLog } from './device/log/ios-crash-log';
+import type { SafariConsoleLog } from './device/log/safari-console-log';
+import type { SafariNetworkLog } from './device/log/safari-network-log';
+import type { IOSPerformanceLog } from './device/log/ios-performance-log';
+import type { RemoteDebugger } from 'appium-remote-debugger';
+import type { XcodeVersion } from 'appium-xcode';
+import type { Simulator } from 'appium-ios-simulator';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 const CUSTOMIZE_RESULT_BUNDLE_PATH = 'customize_result_bundle_path';
@@ -148,8 +174,7 @@ const SUPPORTED_ORIENATIONS = ['LANDSCAPE', 'PORTRAIT'];
 const DEFAULT_MJPEG_SERVER_PORT = 9100;
 
 /* eslint-disable no-useless-escape */
-/** @type {import('@appium/types').RouteMatcher[]} */
-const NO_PROXY_NATIVE_LIST = [
+const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
   ['DELETE', /window/],
   ['GET', /^\/session\/[^\/]+$/],
   ['GET', /alert_text/],
@@ -194,9 +219,9 @@ const NO_PROXY_NATIVE_LIST = [
   ['DELETE', /cookie/],
   ['GET', /cookie/],
   ['POST', /cookie/],
-];
+] as RouteMatcher[];
 
-const NO_PROXY_WEB_LIST = /** @type {import('@appium/types').RouteMatcher[]} */ ([
+const NO_PROXY_WEB_LIST: RouteMatcher[] = [
   ['GET', /attribute/],
   ['GET', /element/],
   ['GET', /text/],
@@ -208,7 +233,8 @@ const NO_PROXY_WEB_LIST = /** @type {import('@appium/types').RouteMatcher[]} */ 
   ['POST', /frame/],
   ['POST', /keys/],
   ['POST', /refresh/],
-]).concat(NO_PROXY_NATIVE_LIST);
+  ...NO_PROXY_NATIVE_LIST,
+] as RouteMatcher[];
 /* eslint-enable no-useless-escape */
 
 const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
@@ -218,112 +244,57 @@ const CAP_NAMES_NO_XCODEBUILD_REQUIRED = ['webDriverAgentUrl', 'usePreinstalledW
 
 const BUNDLE_VERSION_PATTERN = /CFBundleVersion\s+=\s+"?([^(;|")]+)/;
 
-/**
- * @implements {ExternalDriver<XCUITestDriverConstraints, FullContext|string>}
- * @extends {BaseDriver<XCUITestDriverConstraints>}
- * @privateRemarks **This class should be considered "final"**. It cannot be extended
- * due to use of public class field assignments.  If extending this class becomes a hard requirement, refer to the implementation of `BaseDriver` on how to do so.
- */
-export class XCUITestDriver extends BaseDriver {
+export class XCUITestDriver
+  extends BaseDriver<XCUITestDriverConstraints, StringRecord>
+  implements ExternalDriver<XCUITestDriverConstraints, FullContext|string, StringRecord> {
   static newMethodMap = newMethodMap;
 
   static executeMethodMap = executeMethodMap;
 
-  /** @type {string|null|undefined} */
-  curWindowHandle;
+  curWindowHandle: string | null | undefined;
+  selectingNewPage: boolean | undefined;
+  contexts: string[];
+  curContext: string | null;
+  curWebFrames: string[];
 
-  /**
-   * @type {boolean|undefined}
-   */
-  selectingNewPage;
+  webviewCalibrationResult: CalibrationData | null;
+  asyncPromise: AsyncPromise | undefined;
+  asyncWaitMs: number | undefined;
+  _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null;
+  _perfRecorders: PerfRecorder[];
+  webElementsCache: LRUCache<any, any>;
 
-  /** @type {string[]} */
-  contexts;
+  _conditionInducerService: any | null; // needs types
+  _remoteXPCConditionInducerConnection: DVTServiceWithConnection | null; // RemoteXPC DVT connection for iOS>=18 condition inducer
+  _isSafariIphone: boolean | undefined;
+  _isSafariNotched: boolean | undefined;
+  _waitingAtoms: WaitingAtoms;
+  lifecycleData: LifecycleData;
 
-  /** @type {string|null} */
-  curContext;
+  _audioRecorder: AudioRecorder | null;
+  xcodeVersion: XcodeVersion | undefined;
+  _trafficCapture: TrafficCapture | null;
+  _recentScreenRecorder: ScreenRecorder | null;
+  _device: Simulator | RealDeviceClass;
+  _iosSdkVersion: string | null;
+  _wda: WebDriverAgent | null;
+  remote: RemoteDebugger | null;
+  logs: DriverLogs;
+  _bidiServerLogListener: LogListener | undefined;
 
-  /** @type {string[]} */
-  curWebFrames;
+  // Additional properties that were missing
+  appInfosCache: AppInfosCache;
+  doesSupportBidi: boolean;
+  jwpProxyActive: boolean;
+  proxyReqRes: ((...args: any[]) => any) | null;
+  safari: boolean;
+  cachedWdaStatus: any;
+  _currentUrl: string | null;
+  pageLoadMs: number;
+  landscapeWebCoordsOffset: number;
+  mjpegStream?: mjpeg.MJpegStream;
 
-  /** @type {import('./types').CalibrationData|null} */
-  webviewCalibrationResult;
-
-  /** @type {import('./types').AsyncPromise|undefined} */
-  asyncPromise;
-
-  /** @type {number|undefined} */
-  asyncWaitMs;
-
-  /** @type {((logRecord: {message: string}) => void)|null} */
-  _syslogWebsocketListener;
-
-  /** @type {import('./commands/performance').PerfRecorder[]} */
-  _perfRecorders;
-
-  /** @type {LRUCache} */
-  webElementsCache;
-
-  /**
-   * @type {any|null}
-   * @privateRemarks needs types
-   **/
-  _conditionInducerService;
-
-  /**
-   * @type {import('./commands/condition.js').DVTServiceWithConnection|null}
-   * @privateRemarks RemoteXPC DVT connection for iOS>=18 condition inducer
-   **/
-  _remoteXPCConditionInducerConnection;
-
-  /** @type {boolean|undefined} */
-  _isSafariIphone;
-
-  /** @type {boolean|undefined} */
-  _isSafariNotched;
-
-  /** @type {import('./commands/types').WaitingAtoms} */
-  _waitingAtoms;
-
-  /** @type {import('./types').LifecycleData} */
-  lifecycleData;
-
-  /** @type {import('./commands/record-audio').AudioRecorder|null} */
-  _audioRecorder;
-
-  /** @type {XcodeVersion|undefined} */
-  xcodeVersion;
-
-  /** @type {import('./commands/pcap').TrafficCapture|null} */
-  _trafficCapture;
-
-  /** @type {import('./commands/recordscreen').ScreenRecorder|null} */
-  _recentScreenRecorder;
-
-  /** @type {Simulator|RealDevice} */
-  _device;
-
-  /** @type {string|null} */
-  _iosSdkVersion;
-
-  /** @type {WebDriverAgent} */
-  wda;
-
-  /** @type {import('appium-remote-debugger').RemoteDebugger|null} */
-  remote;
-
-  /** @type {DriverLogs} */
-  logs;
-
-  /** @type {import('./commands/types').LogListener|undefined} */
-  _bidiServerLogListener;
-
-  /**
-   *
-   * @param {XCUITestDriverOpts} opts
-   * @param {boolean} shouldValidateCaps
-   */
-  constructor(opts = /** @type {XCUITestDriverOpts} */ ({}), shouldValidateCaps = true) {
+  constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
     this.locatorStrategies = [
@@ -368,101 +339,19 @@ export class XCUITestDriver extends BaseDriver {
     this.appInfosCache = new AppInfosCache(this.log);
     this.remote = null;
     this.doesSupportBidi = true;
+    this._wda = null;
   }
 
-  async onSettingsUpdate(key, value) {
-    // skip sending the update request to the WDA nor saving it in opts
-    // to not spend unnecessary time.
-    if (['pageSourceExcludedAttributes'].includes(key)) {
-      return;
-    }
-
-    if (key !== 'nativeWebTap' && key !== 'nativeWebTapStrict') {
-      return await this.proxyCommand('/appium/settings', 'POST', {
-        settings: {[key]: value},
-      });
-    }
-    this.opts[key] = !!value;
-  }
-
-  resetIos() {
-    this.opts = this.opts || {};
-    // @ts-ignore this is ok
-    this.wda = null;
-    this.jwpProxyActive = false;
-    this.proxyReqRes = null;
-    this.safari = false;
-    this.cachedWdaStatus = null;
-
-    this.curWebFrames = [];
-    this._currentUrl = null;
-    this.curContext = null;
-    this.xcodeVersion = undefined;
-    this.contexts = [];
-    this.implicitWaitMs = 0;
-    this.pageLoadMs = 6000;
-    this.landscapeWebCoordsOffset = 0;
-    this.remote = null;
-    this._conditionInducerService = null;
-    this._remoteXPCConditionInducerConnection = null;
-
-    this.webElementsCache = new LRUCache({
-      max: WEB_ELEMENTS_CACHE_SIZE,
-    });
-
-    this._waitingAtoms = {
-      count: 0,
-      alertNotifier: new EventEmitter(),
-      alertMonitor: B.resolve(),
-    };
-  }
-
-  get driverData() {
-    // TODO fill out resource info here
-    return {};
-  }
-
-  async getStatus() {
-    const status = {
-      ready: true,
-      message: 'The driver is ready to accept new connections',
-      build: await getDriverInfo(),
-    };
-    if (this.cachedWdaStatus) {
-      status.wda = this.cachedWdaStatus;
-    }
-    return status;
-  }
-
-  mergeCliArgsToOpts() {
-    let didMerge = false;
-    // this.cliArgs should never include anything we do not expect.
-    for (const [key, value] of Object.entries(this.cliArgs ?? {})) {
-      if (_.has(this.opts, key)) {
-        this.log.info(
-          `CLI arg '${key}' with value '${value}' overwrites value '${this.opts[key]}' sent in via caps)`,
-        );
-        didMerge = true;
-      }
-      this.opts[key] = value;
-    }
-    return didMerge;
-  }
-
-  /**
-   * @returns {Simulator|RealDevice}
-   */
-  get device() {
-    return this._device;
-  }
-
-  isXcodebuildNeeded() {
-    return !(CAP_NAMES_NO_XCODEBUILD_REQUIRED.some((x) => Boolean(this.opts[x])));
-  }
-
-  async createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData) {
+  // Override methods from BaseDriver
+  override async createSession(
+    w3cCaps1: W3CXCUITestDriverCaps,
+    w3cCaps2?: W3CXCUITestDriverCaps,
+    w3cCaps3?: W3CXCUITestDriverCaps,
+    driverData?: DriverData[]
+  ): Promise<DefaultCreateSessionResult<XCUITestDriverConstraints>> {
     try {
-      let [sessionId, caps] = await super.createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData);
+      const [sessionId, initialCaps] = await super.createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData);
+      let caps = initialCaps;
 
       // merge cli args to opts, and if we did merge any, revalidate opts to ensure the final set
       // is also consistent
@@ -489,8 +378,7 @@ export class XCUITestDriver extends BaseDriver {
         await this.updateSettings({useJSONSource: this.opts.useJSONSource});
       }
 
-      /** @type {import('appium-webdriveragent').WDASettings} */
-      let wdaSettings = {
+      const wdaSettings: StringRecord = {
         elementResponseAttributes: DEFAULT_SETTINGS.elementResponseAttributes,
         shouldUseCompactResponses: DEFAULT_SETTINGS.shouldUseCompactResponses,
       };
@@ -526,11 +414,335 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * Handles MJPEG server-related capabilities
-   * @returns {Promise<void>}
-   */
-  async handleMjpegOptions() {
+  override async deleteSession(sessionId?: string): Promise<void> {
+    await removeAllSessionWebSocketHandlers.bind(this)();
+
+    for (const recorder of _.compact([
+      this._recentScreenRecorder,
+      this._audioRecorder,
+      this._trafficCapture,
+    ])) {
+      await recorder.interrupt(true);
+      await recorder.cleanup();
+    }
+
+    if (!_.isEmpty(this._perfRecorders)) {
+      await B.all(this._perfRecorders.map((x) => x.stop(true)));
+      this._perfRecorders = [];
+    }
+
+    if (this._conditionInducerService || this._remoteXPCConditionInducerConnection) {
+      try {
+        await this.disableConditionInducer();
+      } catch (err) {
+        this.log.warn(`Cannot disable condition inducer: ${err.message}`);
+      }
+    }
+
+    await this.stop();
+
+    if (this._wda && this.isXcodebuildNeeded()) {
+      if (this.opts.clearSystemFiles) {
+        let synchronizationKey = XCUITestDriver.name;
+        const derivedDataPath = await this.wda.retrieveDerivedDataPath();
+        if (derivedDataPath) {
+          synchronizationKey = path.normalize(derivedDataPath);
+        }
+        await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
+          await clearSystemFiles(this.wda);
+        });
+      } else {
+        this.log.debug('Not clearing log files. Use `clearSystemFiles` capability to turn on.');
+      }
+    }
+
+    if (this.remote) {
+      this.log.debug('Found a remote debugger session. Removing...');
+      await this.stopRemote();
+    }
+
+    if (this.opts.resetOnSessionStartOnly === false) {
+      await this.runReset(true);
+    }
+
+    const simulatorDevice = this.isSimulator() ? /** @type {Simulator} */ (this.device) : null;
+    if (simulatorDevice && this.lifecycleData.createSim) {
+      this.log.debug(`Deleting simulator created for this run (udid: '${simulatorDevice.udid}')`);
+      await shutdownSimulator.bind(this)();
+      await (simulatorDevice as Simulator).delete();
+    }
+
+    const shouldResetLocationService = this.isRealDevice() && !!this.opts.resetLocationService;
+    if (shouldResetLocationService) {
+      try {
+        await this.mobileResetLocationService();
+      } catch {
+        /* Ignore this error since mobileResetLocationService already logged the error */
+      }
+    }
+
+    await this.logs.syslog?.stopCapture();
+    _.values(this.logs).forEach((x: any) => x?.removeAllListeners?.());
+    if (this._bidiServerLogListener) {
+      this.log.unwrap().off('log', this._bidiServerLogListener);
+    }
+    this.logs = {};
+
+    if (this.mjpegStream) {
+      this.log.info('Closing MJPEG stream');
+      this.mjpegStream.stop();
+    }
+
+    this.resetIos();
+
+    await super.deleteSession(sessionId);
+  }
+
+  override async executeCommand(cmd: string, ...args: any[]): Promise<any> {
+    this.log.debug(`Executing command '${cmd}'`);
+
+    if (cmd === 'receiveAsyncResponse') {
+      return await this.receiveAsyncResponse(...args);
+    }
+    // TODO: once this fix gets into base driver remove from here
+    if (cmd === 'getStatus') {
+      return await this.getStatus();
+    }
+    return await super.executeCommand(cmd, ...args);
+  }
+
+  override proxyActive(): boolean {
+    return Boolean(this.jwpProxyActive);
+  }
+
+  override getProxyAvoidList(): RouteMatcher[] {
+    if (this.isWebview()) {
+      return NO_PROXY_WEB_LIST;
+    }
+    return NO_PROXY_NATIVE_LIST;
+  }
+
+  override canProxy(): boolean {
+    return true;
+  }
+
+  override validateLocatorStrategy(strategy: string): void {
+    super.validateLocatorStrategy(strategy, this.isWebContext());
+  }
+
+  override validateDesiredCaps(caps: any): caps is DriverCaps<XCUITestDriverConstraints> {
+    if (!super.validateDesiredCaps(caps)) {
+      return false;
+    }
+
+    // make sure that the capabilities have one of `app` or `bundleId`
+    if (_.toLower(caps.browserName) !== 'safari' && !caps.app && !caps.bundleId) {
+      this.log.info(
+        'The desired capabilities include neither an app nor a bundleId. ' +
+          'WebDriverAgent will be started without the default app',
+      );
+    }
+
+    if (!util.coerceVersion(String(caps.platformVersion), false)) {
+      this.log.warn(
+        `'platformVersion' capability ('${caps.platformVersion}') is not a valid version number. ` +
+          `Consider fixing it or be ready to experience an inconsistent driver behavior.`,
+      );
+    }
+
+    const verifyProcessArgument = (processArguments) => {
+      const {args, env} = processArguments;
+      if (!_.isNil(args) && !_.isArray(args)) {
+        throw this.log.errorWithException('processArguments.args must be an array of strings');
+      }
+      if (!_.isNil(env) && !_.isPlainObject(env)) {
+        throw this.log.errorWithException(
+          'processArguments.env must be an object <key,value> pair {a:b, c:d}',
+        );
+      }
+    };
+
+    // `processArguments` should be JSON string or an object with arguments and/ environment details
+    if (caps.processArguments) {
+      if (_.isString(caps.processArguments)) {
+        try {
+          // try to parse the string as JSON
+          caps.processArguments = JSON.parse(caps.processArguments as string);
+          verifyProcessArgument(caps.processArguments);
+        } catch (err) {
+          throw this.log.errorWithException(
+            `processArguments must be a JSON format or an object with format {args : [], env : {a:b, c:d}}. ` +
+              `Both environment and argument can be null. Error: ${err}`,
+          );
+        }
+      } else if (_.isPlainObject(caps.processArguments)) {
+        verifyProcessArgument(caps.processArguments);
+      } else {
+        throw this.log.errorWithException(
+          `'processArguments must be an object, or a string JSON object with format {args : [], env : {a:b, c:d}}. ` +
+            `Both environment and argument can be null.`,
+        );
+      }
+    }
+
+    // there is no point in having `keychainPath` without `keychainPassword`
+    if (
+      (caps.keychainPath && !caps.keychainPassword) ||
+      (!caps.keychainPath && caps.keychainPassword)
+    ) {
+      throw this.log.errorWithException(
+        `If 'keychainPath' is set, 'keychainPassword' must also be set (and vice versa).`,
+      );
+    }
+
+    // `resetOnSessionStartOnly` should be set to true by default
+    this.opts.resetOnSessionStartOnly =
+      !util.hasValue(this.opts.resetOnSessionStartOnly) || this.opts.resetOnSessionStartOnly;
+    this.opts.useNewWDA = util.hasValue(this.opts.useNewWDA) ? this.opts.useNewWDA : false;
+
+    if (caps.commandTimeouts) {
+      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts);
+    }
+
+    if (_.isString(caps.webDriverAgentUrl)) {
+      const {protocol, host} = url.parse(caps.webDriverAgentUrl);
+      if (_.isEmpty(protocol) || _.isEmpty(host)) {
+        throw this.log.errorWithException(
+          `'webDriverAgentUrl' capability is expected to contain a valid WebDriverAgent server URL. ` +
+            `'${caps.webDriverAgentUrl}' is given instead`,
+        );
+      }
+    }
+
+    if (caps.browserName) {
+      if (caps.bundleId) {
+        throw this.log.errorWithException(
+          `'browserName' cannot be set together with 'bundleId' capability`
+        );
+      }
+      // warn if the capabilities have both `app` and `browser, although this
+      // is common with selenium grid
+      if (caps.app) {
+        this.log.warn(
+          `The capabilities should generally not include both an 'app' and a 'browserName'`,
+        );
+      }
+    }
+
+    if (caps.permissions) {
+      try {
+        for (const [bundleId, perms] of _.toPairs(JSON.parse(caps.permissions))) {
+          if (!_.isString(bundleId)) {
+            throw new Error(`'${JSON.stringify(bundleId)}' must be a string`);
+          }
+          if (!_.isPlainObject(perms)) {
+            throw new Error(`'${JSON.stringify(perms)}' must be a JSON object`);
+          }
+        }
+      } catch (e) {
+        throw this.log.errorWithException(
+          `'${caps.permissions}' is expected to be a valid object with format ` +
+            `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}. Original error: ${e.message}`,
+        );
+      }
+    }
+
+    if (caps.platformVersion && !util.coerceVersion(caps.platformVersion, false)) {
+      throw this.log.errorWithException(
+        `'platformVersion' must be a valid version number. ` +
+          `'${caps.platformVersion}' is given instead.`,
+      );
+    }
+
+    // additionalWebviewBundleIds is an array, JSON array, or string
+    if (caps.additionalWebviewBundleIds) {
+        caps.additionalWebviewBundleIds = this.helpers.parseCapsArray(
+          caps.additionalWebviewBundleIds as string | string[],
+        );
+    }
+
+    // finally, return true since the superclass check passed, as did this
+    return true;
+  }
+
+  // Getter methods
+  get wda(): WebDriverAgent {
+    if (!this._wda) {
+      throw new Error('WebDriverAgent is not initialized');
+    }
+    return this._wda;
+  }
+
+  get driverData(): Record<string, any> {
+    // TODO fill out resource info here
+    return {};
+  }
+
+  get device(): Simulator | RealDeviceClass {
+    return this._device;
+  }
+
+  // Utility methods
+  isSafari(): boolean {
+    return !!this.safari;
+  }
+
+  isRealDevice(): boolean {
+    return 'devicectl' in (this.device ?? {});
+  }
+
+  isSimulator(): boolean {
+    return 'simctl' in (this.device ?? {});
+  }
+
+  isXcodebuildNeeded(): boolean {
+    return !(CAP_NAMES_NO_XCODEBUILD_REQUIRED.some((x) => Boolean(this.opts[x])));
+  }
+
+  // Core driver methods
+  async onSettingsUpdate(key: string, value: any): Promise<any> {
+    // skip sending the update request to the WDA nor saving it in opts
+    // to not spend unnecessary time.
+    if (['pageSourceExcludedAttributes'].includes(key)) {
+      return;
+    }
+
+    if (key !== 'nativeWebTap' && key !== 'nativeWebTapStrict') {
+      return await this.proxyCommand('/appium/settings', 'POST', {
+        settings: {[key]: value},
+      });
+    }
+    this.opts[key] = !!value;
+  }
+
+  async getStatus(): Promise<Record<string, any>> {
+    const status = {
+      ready: true,
+      message: 'The driver is ready to accept new connections',
+      build: await getDriverInfo(),
+    };
+    if (this.cachedWdaStatus) {
+      (status as any).wda = this.cachedWdaStatus;
+    }
+    return status;
+  }
+
+  mergeCliArgsToOpts(): boolean {
+    let didMerge = false;
+    // this.cliArgs should never include anything we do not expect.
+    for (const [key, value] of Object.entries(this.cliArgs ?? {})) {
+      if (_.has(this.opts, key)) {
+        this.log.info(
+          `CLI arg '${key}' with value '${value}' overwrites value '${this.opts[key]}' sent in via caps)`,
+        );
+        didMerge = true;
+      }
+      this.opts[key] = value;
+    }
+    return didMerge;
+  }
+
+  async handleMjpegOptions(): Promise<void> {
     await this.allocateMjpegServerPort();
     // turn on mjpeg stream reading if requested
     if (this.opts.mjpegScreenshotUrl) {
@@ -540,12 +752,7 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * Allocates and configures port forwarding for the MJPEG server
-   * @returns {Promise<void>}
-   * @throws {Error} If port forwarding fails and mjpegServerPort capability value is provided explicitly
-   */
-  async allocateMjpegServerPort() {
+  async allocateMjpegServerPort(): Promise<void> {
     const mjpegServerPort = this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT;
     this.log.debug(
       `Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`,
@@ -573,16 +780,12 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * Returns the default URL for Safari browser
-   * @returns {string} The default URL
-   */
-  getDefaultUrl() {
+  getDefaultUrl(): string {
     // Setting this to some external URL slows down the session init
     return `${this.getWdaLocalhostRoot()}/health`;
   }
 
-  async start() {
+  async start(): Promise<void> {
     this.opts.noReset = !!this.opts.noReset;
     this.opts.fullReset = !!this.opts.fullReset;
 
@@ -604,7 +807,7 @@ export class XCUITestDriver extends BaseDriver {
         this.log.info(
           `Setting simulator devices set path to '${this.opts.simulatorDevicesSetPath}'`,
         );
-        (/** @type {Simulator} */ (this.device)).devicesSetPath = this.opts.simulatorDevicesSetPath;
+        (this.device as Simulator).devicesSetPath = this.opts.simulatorDevicesSetPath;
       }
     }
 
@@ -656,23 +859,32 @@ export class XCUITestDriver extends BaseDriver {
 
     await this.runReset();
 
-    this.wda = new WebDriverAgent(
-      /** @type {import('appium-xcode').XcodeVersion} */ (this.xcodeVersion),
+    if (!this.xcodeVersion) {
+      throw new Error('Xcode version is required but was not set');
+    }
+    this._wda = new WebDriverAgent(
+      this.xcodeVersion,
       {
         ...this.opts,
         device: this.device,
         realDevice: this.isRealDevice(),
         iosSdkVersion: this._iosSdkVersion ?? undefined,
         reqBasePath: this.basePath,
-      },
-      // @ts-ignore this is ok
+      } as WebDriverAgentArgs,
       this.log,
     );
     // Derived data path retrieval is an expensive operation
     // We could start that now in background and get the cached result
     // whenever it is needed
-    // eslint-disable-next-line promise/prefer-await-to-then
-    this.wda.retrieveDerivedDataPath().catch((e) => this.log.debug(e));
+    (
+      async () => {
+        try {
+          await this.wda.retrieveDerivedDataPath();
+        } catch (e) {
+          this.log.debug(e);
+        }
+      }
+    )();
 
     const memoizedLogInfo = _.memoize(() => {
       this.log.info(
@@ -724,8 +936,8 @@ export class XCUITestDriver extends BaseDriver {
     if (this.isSimulator()) {
       if (this.opts.permissions) {
         this.log.debug('Setting the requested permissions before WDA is started');
-        for (const [bundleId, permissionsMapping] of _.toPairs(JSON.parse(this.opts.permissions))) {
-          await /** @type {Simulator} */ (this.device).setPermissions(bundleId, permissionsMapping);
+        for (const [bundleId, permissionsMapping] of _.toPairs(JSON.parse(this.opts.permissions as string))) {
+          await (this.device as Simulator).setPermissions(bundleId, permissionsMapping as StringRecord);
         }
       }
 
@@ -770,10 +982,40 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * Start the simulator and initialize based on capabilities
-   */
-  async initSimulator() {
+  async runReset(enforceSimulatorShutdown = false): Promise<void> {
+    this.logEvent('resetStarted');
+    if (this.isRealDevice()) {
+      await runRealDeviceReset.bind(this)();
+    } else {
+      await runSimulatorReset.bind(this)(enforceSimulatorShutdown);
+    }
+    this.logEvent('resetComplete');
+  }
+
+  async stop(): Promise<void> {
+    this.jwpProxyActive = false;
+    this.proxyReqRes = null;
+
+    if (this._wda?.fullyStarted) {
+      if (this.wda.jwproxy) {
+        try {
+          await this.proxyCommand(`/session/${this.sessionId}`, 'DELETE');
+        } catch (err) {
+          // an error here should not short-circuit the rest of clean up
+          this.log.debug(`Unable to DELETE session on WDA: '${err.message}'. Continuing shutdown.`);
+        }
+      }
+      // The former could cache the xcodebuild, so should not quit the process.
+      // If the session skipped the xcodebuild (this.wda.canSkipXcodebuild), the this.wda instance
+      // should quit properly.
+      if ((!this.wda.webDriverAgentUrl && this.opts.useNewWDA) || this.wda.canSkipXcodebuild) {
+        await this.wda.quit();
+      }
+    }
+    DEVICE_CONNECTIONS_FACTORY.releaseConnection(this.opts.udid);
+  }
+
+  async initSimulator(): Promise<void> {
     const device = /** @type {Simulator} */ (this.device);
 
     if (this.opts.shutdownOtherSimulators) {
@@ -785,7 +1027,7 @@ export class XCUITestDriver extends BaseDriver {
 
     if (this.opts.customSSLCert) {
       // Simulator must be booted in order to call this helper
-      await device.addCertificate(this.opts.customSSLCert);
+      await (device as Simulator).addCertificate(this.opts.customSSLCert);
       this.logEvent('customCertInstalled');
     }
 
@@ -797,8 +1039,7 @@ export class XCUITestDriver extends BaseDriver {
       this.log.debug('Localization preferences have been updated');
     }
 
-    /** @type {Promise[]} */
-    const promises = ['reduceMotion', 'reduceTransparency', 'autoFillPasswords']
+    const promises: Promise<any>[] = ['reduceMotion', 'reduceTransparency', 'autoFillPasswords']
       .filter((optName) => _.isBoolean(this.opts[optName]))
       .map((optName) => {
         this.log.info(`Setting ${optName} to ${this.opts[optName]}`);
@@ -823,10 +1064,7 @@ export class XCUITestDriver extends BaseDriver {
     this.logEvent('simStarted');
   }
 
-  /**
-   * Start WebDriverAgentRunner
-   */
-  async startWda() {
+  async startWda(): Promise<void> {
     // Don't cleanup the processes if webDriverAgentUrl is set
     if (!util.hasValue(this.wda.webDriverAgentUrl)) {
       await this.wda.cleanupObsoleteProcesses();
@@ -920,8 +1158,7 @@ export class XCUITestDriver extends BaseDriver {
         startupRetries = 1;
       }
 
-      /** @type {Error|null} */
-      let shortCircuitError = null;
+      let shortCircuitError: Error | null = null;
       let retryCount = 0;
       await retryInterval(startupRetries, startupRetryInterval, async () => {
         this.logEvent('wdaStartAttempted');
@@ -933,7 +1170,10 @@ export class XCUITestDriver extends BaseDriver {
             await this.preparePreinstalledWda();
           }
 
-          this.cachedWdaStatus = await this.wda.launch(/** @type {string} */ (this.sessionId));
+          if (!this.sessionId) {
+            throw new Error('Session ID is required but was not set');
+          }
+          this.cachedWdaStatus = await this.wda.launch(this.sessionId);
         } catch (err) {
           this.logEvent('wdaStartFailed');
           this.log.debug(err.stack);
@@ -1012,147 +1252,9 @@ export class XCUITestDriver extends BaseDriver {
     });
   }
 
-  /**
-   *
-   * @param {boolean} [enforceSimulatorShutdown=false]
-   */
-  async runReset(enforceSimulatorShutdown = false) {
-    this.logEvent('resetStarted');
-    if (this.isRealDevice()) {
-      await runRealDeviceReset.bind(this)();
-    } else {
-      await runSimulatorReset.bind(this)(enforceSimulatorShutdown);
-    }
-    this.logEvent('resetComplete');
-  }
 
-  async deleteSession(sessionId) {
-    await removeAllSessionWebSocketHandlers.bind(this)();
 
-    for (const recorder of _.compact([
-      this._recentScreenRecorder,
-      this._audioRecorder,
-      this._trafficCapture,
-    ])) {
-      await recorder.interrupt(true);
-      await recorder.cleanup();
-    }
-
-    if (!_.isEmpty(this._perfRecorders)) {
-      await B.all(this._perfRecorders.map((x) => x.stop(true)));
-      this._perfRecorders = [];
-    }
-
-    if (this._conditionInducerService || this._remoteXPCConditionInducerConnection) {
-      try {
-        await this.disableConditionInducer();
-      } catch (err) {
-        this.log.warn(`Cannot disable condition inducer: ${err.message}`);
-      }
-    }
-
-    await this.stop();
-
-    if (this.wda && this.isXcodebuildNeeded()) {
-      if (this.opts.clearSystemFiles) {
-        let synchronizationKey = XCUITestDriver.name;
-        const derivedDataPath = await this.wda.retrieveDerivedDataPath();
-        if (derivedDataPath) {
-          synchronizationKey = path.normalize(derivedDataPath);
-        }
-        await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
-          await clearSystemFiles(this.wda);
-        });
-      } else {
-        this.log.debug('Not clearing log files. Use `clearSystemFiles` capability to turn on.');
-      }
-    }
-
-    if (this.remote) {
-      this.log.debug('Found a remote debugger session. Removing...');
-      await this.stopRemote();
-    }
-
-    if (this.opts.resetOnSessionStartOnly === false) {
-      await this.runReset(true);
-    }
-
-    const simulatorDevice = this.isSimulator() ? /** @type {Simulator} */ (this.device) : null;
-    if (simulatorDevice && this.lifecycleData.createSim) {
-      this.log.debug(`Deleting simulator created for this run (udid: '${simulatorDevice.udid}')`);
-      await shutdownSimulator.bind(this)();
-      await simulatorDevice.delete();
-    }
-
-    const shouldResetLocationService = this.isRealDevice() && !!this.opts.resetLocationService;
-    if (shouldResetLocationService) {
-      try {
-        await this.mobileResetLocationService();
-      } catch {
-        /* Ignore this error since mobileResetLocationService already logged the error */
-      }
-    }
-
-    await this.logs.syslog?.stopCapture();
-    _.values(this.logs).forEach((x) => x.removeAllListeners());
-    if (this._bidiServerLogListener) {
-      this.log.unwrap().off('log', this._bidiServerLogListener);
-    }
-    this.logs = {};
-
-    if (this.mjpegStream) {
-      this.log.info('Closing MJPEG stream');
-      this.mjpegStream.stop();
-    }
-
-    this.resetIos();
-
-    await super.deleteSession(sessionId);
-  }
-
-  async stop() {
-    this.jwpProxyActive = false;
-    this.proxyReqRes = null;
-
-    if (this.wda?.fullyStarted) {
-      if (this.wda.jwproxy) {
-        try {
-          await this.proxyCommand(`/session/${this.sessionId}`, 'DELETE');
-        } catch (err) {
-          // an error here should not short-circuit the rest of clean up
-          this.log.debug(`Unable to DELETE session on WDA: '${err.message}'. Continuing shutdown.`);
-        }
-      }
-      // The former could cache the xcodebuild, so should not quit the process.
-      // If the session skipped the xcodebuild (this.wda.canSkipXcodebuild), the this.wda instance
-      // should quit properly.
-      if ((!this.wda.webDriverAgentUrl && this.opts.useNewWDA) || this.wda.canSkipXcodebuild) {
-        await this.wda.quit();
-      }
-    }
-    DEVICE_CONNECTIONS_FACTORY.releaseConnection(this.opts.udid);
-  }
-
-  /**
-   *
-   * @param {string} cmd
-   * @param {...any} args
-   * @returns {Promise<any>}
-   */
-  async executeCommand(cmd, ...args) {
-    this.log.debug(`Executing command '${cmd}'`);
-
-    if (cmd === 'receiveAsyncResponse') {
-      return await this.receiveAsyncResponse(...args);
-    }
-    // TODO: once this fix gets into base driver remove from here
-    if (cmd === 'getStatus') {
-      return await this.getStatus();
-    }
-    return await super.executeCommand(cmd, ...args);
-  }
-
-  async configureApp() {
+  async configureApp(): Promise<void> {
     function appIsPackageOrBundle(app) {
       return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
     }
@@ -1176,22 +1278,24 @@ export class XCUITestDriver extends BaseDriver {
     switch (_.toLower(this.opts.app)) {
       case 'settings':
         this.opts.bundleId = 'com.apple.Preferences';
-        this.opts.app = null;
+        this.opts.app = undefined;
         return;
       case 'calendar':
         this.opts.bundleId = 'com.apple.mobilecal';
-        this.opts.app = null;
+        this.opts.app = undefined;
         return;
     }
 
-    this.opts.app = await this.helpers.configureApp(this.opts.app, {
+    this.opts.app = await this.helpers.configureApp(this.opts.app as string, {
       onPostProcess: onPostConfigureApp.bind(this),
       onDownload: onDownloadApp.bind(this),
       supportedExtensions: SUPPORTED_EXTENSIONS,
     });
   }
 
-  async determineDevice() {
+
+
+  async determineDevice(): Promise<{device: Simulator | RealDeviceClass, realDevice: boolean, udid: string}> {
     // in the one case where we create a sim, we will set this state
     this.lifecycleData.createSim = false;
 
@@ -1258,8 +1362,8 @@ export class XCUITestDriver extends BaseDriver {
       }
 
       this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const device = new RealDevice(this.opts.udid, this.log);
-      return {device, realDevice: true, udid: this.opts.udid};
+      const device = new RealDeviceClass(this.opts.udid as string, this.log);
+      return {device, realDevice: true, udid: this.opts.udid as string};
     }
 
     this.log.info(
@@ -1286,11 +1390,9 @@ export class XCUITestDriver extends BaseDriver {
     return {device, realDevice: false, udid: device.udid};
   }
 
-  async startSim() {
-    /** @type {import('appium-ios-simulator').DevicePreferences} */
-    const devicePreferences = {};
-    /** @type {import('appium-ios-simulator').RunOptions} */
-    const runOpts = {
+  async startSim(): Promise<void> {
+    const devicePreferences: any = {};
+    const runOpts: any = {
       scaleFactor: this.opts.scaleFactor,
       connectHardwareKeyboard: !!this.opts.connectHardwareKeyboard,
       pasteboardAutomaticSync: this.opts.simulatorPasteboardAutomaticSync ?? 'off',
@@ -1310,7 +1412,7 @@ export class XCUITestDriver extends BaseDriver {
 
     // This is to workaround XCTest bug about changing Simulator
     // orientation is not synchronized to the actual window orientation
-    const orientation = _.isString(this.opts.orientation) && this.opts.orientation.toUpperCase();
+    const orientation = _.isString(this.opts.orientation) && (this.opts.orientation as string).toUpperCase();
     switch (orientation) {
       case 'LANDSCAPE':
         devicePreferences.SimulatorWindowOrientation = 'LandscapeLeft';
@@ -1322,10 +1424,10 @@ export class XCUITestDriver extends BaseDriver {
         break;
     }
 
-    await /** @type {Simulator} */ (this.device).run(runOpts);
+    await (this.device as Simulator).run(runOpts);
   }
 
-  async createSim() {
+  async createSim(): Promise<Simulator> {
     this.lifecycleData.createSim = true;
     // create sim for caps
     const sim = await createSim.bind(this)();
@@ -1333,7 +1435,7 @@ export class XCUITestDriver extends BaseDriver {
     return sim;
   }
 
-  async startWdaSession(bundleId, processArguments) {
+  async startWdaSession(bundleId?: string, processArguments?: any): Promise<void> {
     const args = processArguments ? _.cloneDeep(processArguments.args) || [] : [];
     if (!_.isArray(args)) {
       throw new Error(
@@ -1371,8 +1473,7 @@ export class XCUITestDriver extends BaseDriver {
       env.TZ = this.opts.appTimeZone;
     }
 
-    /** @type {import('appium-webdriveragent').WDACapabilities} */
-    const wdaCaps = {
+    const wdaCaps: StringRecord = {
       bundleId: this.opts.autoLaunch === false ? undefined : bundleId,
       arguments: args,
       environment: env,
@@ -1415,199 +1516,10 @@ export class XCUITestDriver extends BaseDriver {
     this.log.info(`WDA session startup took ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
   }
 
-  // Override Proxy methods from BaseDriver
-  proxyActive() {
-    return Boolean(this.jwpProxyActive);
-  }
-
-  getProxyAvoidList() {
-    if (this.isWebview()) {
-      return NO_PROXY_WEB_LIST;
-    }
-    return NO_PROXY_NATIVE_LIST;
-  }
-
-  canProxy() {
-    return true;
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  isSafari() {
-    return !!this.safari;
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  isRealDevice() {
-    return 'devicectl' in (this.device ?? {});
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  isSimulator() {
-    return 'simctl' in (this.device ?? {});
-  }
-
-  /**
-   * @param {string} strategy
-   */
-  validateLocatorStrategy(strategy) {
-    super.validateLocatorStrategy(strategy, this.isWebContext());
-  }
-
-  /**
-   * @param {any} caps
-   * @returns {caps is import('@appium/types').DriverCaps<XCUITestDriverConstraints>}
-   */
-  validateDesiredCaps(caps) {
-    if (!super.validateDesiredCaps(caps)) {
-      return false;
-    }
-
-    // make sure that the capabilities have one of `app` or `bundleId`
-    if (_.toLower(caps.browserName) !== 'safari' && !caps.app && !caps.bundleId) {
-      this.log.info(
-        'The desired capabilities include neither an app nor a bundleId. ' +
-          'WebDriverAgent will be started without the default app',
-      );
-    }
-
-    if (!util.coerceVersion(String(caps.platformVersion), false)) {
-      this.log.warn(
-        `'platformVersion' capability ('${caps.platformVersion}') is not a valid version number. ` +
-          `Consider fixing it or be ready to experience an inconsistent driver behavior.`,
-      );
-    }
-
-    let verifyProcessArgument = (processArguments) => {
-      const {args, env} = processArguments;
-      if (!_.isNil(args) && !_.isArray(args)) {
-        throw this.log.errorWithException('processArguments.args must be an array of strings');
-      }
-      if (!_.isNil(env) && !_.isPlainObject(env)) {
-        throw this.log.errorWithException(
-          'processArguments.env must be an object <key,value> pair {a:b, c:d}',
-        );
-      }
-    };
-
-    // `processArguments` should be JSON string or an object with arguments and/ environment details
-    if (caps.processArguments) {
-      if (_.isString(caps.processArguments)) {
-        try {
-          // try to parse the string as JSON
-          caps.processArguments = JSON.parse(caps.processArguments);
-          verifyProcessArgument(caps.processArguments);
-        } catch (err) {
-          throw this.log.errorWithException(
-            `processArguments must be a JSON format or an object with format {args : [], env : {a:b, c:d}}. ` +
-              `Both environment and argument can be null. Error: ${err}`,
-          );
-        }
-      } else if (_.isPlainObject(caps.processArguments)) {
-        verifyProcessArgument(caps.processArguments);
-      } else {
-        throw this.log.errorWithException(
-          `'processArguments must be an object, or a string JSON object with format {args : [], env : {a:b, c:d}}. ` +
-            `Both environment and argument can be null.`,
-        );
-      }
-    }
-
-    // there is no point in having `keychainPath` without `keychainPassword`
-    if (
-      (caps.keychainPath && !caps.keychainPassword) ||
-      (!caps.keychainPath && caps.keychainPassword)
-    ) {
-      throw this.log.errorWithException(
-        `If 'keychainPath' is set, 'keychainPassword' must also be set (and vice versa).`,
-      );
-    }
-
-    // `resetOnSessionStartOnly` should be set to true by default
-    this.opts.resetOnSessionStartOnly =
-      !util.hasValue(this.opts.resetOnSessionStartOnly) || this.opts.resetOnSessionStartOnly;
-    this.opts.useNewWDA = util.hasValue(this.opts.useNewWDA) ? this.opts.useNewWDA : false;
-
-    if (caps.commandTimeouts) {
-      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts);
-    }
-
-    if (_.isString(caps.webDriverAgentUrl)) {
-      const {protocol, host} = url.parse(caps.webDriverAgentUrl);
-      if (_.isEmpty(protocol) || _.isEmpty(host)) {
-        throw this.log.errorWithException(
-          `'webDriverAgentUrl' capability is expected to contain a valid WebDriverAgent server URL. ` +
-            `'${caps.webDriverAgentUrl}' is given instead`,
-        );
-      }
-    }
-
-    if (caps.browserName) {
-      if (caps.bundleId) {
-        throw this.log.errorWithException(
-          `'browserName' cannot be set together with 'bundleId' capability`
-        );
-      }
-      // warn if the capabilities have both `app` and `browser, although this
-      // is common with selenium grid
-      if (caps.app) {
-        this.log.warn(
-          `The capabilities should generally not include both an 'app' and a 'browserName'`,
-        );
-      }
-    }
-
-    if (caps.permissions) {
-      try {
-        for (const [bundleId, perms] of _.toPairs(JSON.parse(caps.permissions))) {
-          if (!_.isString(bundleId)) {
-            throw new Error(`'${JSON.stringify(bundleId)}' must be a string`);
-          }
-          if (!_.isPlainObject(perms)) {
-            throw new Error(`'${JSON.stringify(perms)}' must be a JSON object`);
-          }
-        }
-      } catch (e) {
-        throw this.log.errorWithException(
-          `'${caps.permissions}' is expected to be a valid object with format ` +
-            `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}. Original error: ${e.message}`,
-        );
-      }
-    }
-
-    if (caps.platformVersion && !util.coerceVersion(caps.platformVersion, false)) {
-      throw this.log.errorWithException(
-        `'platformVersion' must be a valid version number. ` +
-          `'${caps.platformVersion}' is given instead.`,
-      );
-    }
-
-    // additionalWebviewBundleIds is an array, JSON array, or string
-    if (caps.additionalWebviewBundleIds) {
-      caps.additionalWebviewBundleIds = this.helpers.parseCapsArray(
-        caps.additionalWebviewBundleIds,
-      );
-    }
-
-    // finally, return true since the superclass check passed, as did this
-    return true;
-  }
-
-  /**
-   * Check if the given app can be installed, or should uninstall before installing it.
-   *
-   * @param {AutInstallationStateOptions} [opts]
-   * @returns {Promise<AutInstallationState>}
-   */
-  async checkAutInstallationState(opts) {
+  async checkAutInstallationState(opts?: AutInstallationStateOptions): Promise<AutInstallationState> {
     const {enforceAppInstall, fullReset, noReset, bundleId, app} = opts ?? this.opts;
 
-    const wasAppInstalled = await this.device.isAppInstalled(bundleId);
+    const wasAppInstalled = !!bundleId && await this.device.isAppInstalled(bundleId);
     if (wasAppInstalled) {
       this.log.info(`App '${bundleId}' is already installed`);
       if (noReset) {
@@ -1628,7 +1540,7 @@ export class XCUITestDriver extends BaseDriver {
       };
     }
 
-    const candidateBundleVersion = await this.appInfosCache.extractBundleVersion(app);
+    const candidateBundleVersion = app ? await this.appInfosCache.extractBundleVersion(app) : undefined;
     this.log.debug(`CFBundleVersion from Info.plist: ${candidateBundleVersion}`);
     if (!candidateBundleVersion) {
       return {
@@ -1638,8 +1550,8 @@ export class XCUITestDriver extends BaseDriver {
     }
 
     const appBundleVersion = this.isRealDevice()
-      ? (await /** @type {RealDevice} */ (this.device).fetchAppInfo(bundleId))?.CFBundleVersion
-      : BUNDLE_VERSION_PATTERN.exec(await /** @type {Simulator} */ (this.device).simctl.appInfo(bundleId))?.[1];
+      ? (await (this.device as RealDeviceClass).fetchAppInfo(bundleId))?.CFBundleVersion
+      : BUNDLE_VERSION_PATTERN.exec(await (this.device as Simulator).simctl.appInfo(bundleId))?.[1];
     this.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
     if (!appBundleVersion) {
       return {
@@ -1648,7 +1560,7 @@ export class XCUITestDriver extends BaseDriver {
       };
     }
 
-    let shouldUpgrade;
+    let shouldUpgrade: boolean;
     try {
       shouldUpgrade = util.compareVersions(candidateBundleVersion, '>', appBundleVersion);
     } catch (err) {
@@ -1675,7 +1587,7 @@ export class XCUITestDriver extends BaseDriver {
     };
   }
 
-  async installAUT() {
+  async installAUT(): Promise<void> {
     // install any other apps
     if (this.opts.otherApps) {
       await this.installOtherApps(this.opts.otherApps);
@@ -1702,7 +1614,7 @@ export class XCUITestDriver extends BaseDriver {
       }
       if (util.hasValue(this.opts.iosInstallPause)) {
         // https://github.com/appium/appium/issues/6889
-        const pauseMs = parseInt(this.opts.iosInstallPause, 10);
+        const pauseMs = this.opts.iosInstallPause;
         this.log.debug(`iosInstallPause set. Pausing ${pauseMs} ms before continuing`);
         await B.delay(pauseMs);
       }
@@ -1710,13 +1622,8 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * @param {string|string[]} otherApps
-   * @returns {Promise<void>}
-   */
-  async installOtherApps(otherApps) {
-    /** @type {string[]|undefined} */
-    let appsList;
+  async installOtherApps(otherApps: string | string[]): Promise<void> {
+    let appsList: string[] | undefined;
     try {
       appsList = this.helpers.parseCapsArray(otherApps);
     } catch (e) {
@@ -1727,14 +1634,12 @@ export class XCUITestDriver extends BaseDriver {
       return;
     }
 
-    /** @type {string[]} */
-    const appPaths = await B.all(appsList.map((app) => this.helpers.configureApp(app, {
+    const appPaths: string[] = await B.all(appsList.map((app) => this.helpers.configureApp(app, {
       onPostProcess: onPostConfigureApp.bind(this),
       onDownload: onDownloadApp.bind(this),
       supportedExtensions: SUPPORTED_EXTENSIONS,
     })));
-    /** @type {string[]} */
-    const appIds = await B.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
+    const appIds: string[] = await B.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
     for (const [appId, appPath] of _.zip(appIds, appPaths)) {
       if (this.isRealDevice()) {
         await installToRealDevice.bind(this)(
@@ -1757,11 +1662,7 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * @param {string} orientation
-   * @returns {Promise<void>}
-   */
-  async setInitialOrientation(orientation) {
+  async setInitialOrientation(orientation: string): Promise<void> {
     const dstOrientation = _.toUpper(orientation);
     if (!SUPPORTED_ORIENATIONS.includes(dstOrientation)) {
       this.log.debug(
@@ -1779,30 +1680,14 @@ export class XCUITestDriver extends BaseDriver {
     }
   }
 
-  /**
-   * @param {string} [cmdName]
-   * @returns {number|undefined}
-   */
-  _getCommandTimeout(cmdName) {
-    if (this.opts.commandTimeouts) {
-      if (cmdName && _.has(this.opts.commandTimeouts, cmdName)) {
-        return this.opts.commandTimeouts[cmdName];
-      }
-      return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
-    }
-  }
-
-  /**
-   * Reset the current session (run the delete session and create session subroutines)
-   */
-  async reset() {
+  async reset(): Promise<never> {
     throw new Error(
       `The reset API has been deprecated and is not supported anymore. ` +
         `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
     );
   }
 
-  async preparePreinstalledWda() {
+  async preparePreinstalledWda(): Promise<void> {
     if (this.isRealDevice()) {
       // Stop the existing process before starting a new one to start a fresh WDA process every session.
       await this.mobileKillApp(this.wda.bundleIdForXctest);
@@ -1835,6 +1720,46 @@ export class XCUITestDriver extends BaseDriver {
         this.opts.prebuiltWDAPath,
         candidateBundleId
       );
+    }
+  }
+
+  resetIos(): void {
+    this.opts = this.opts || {};
+    this._wda = null;
+    this.jwpProxyActive = false;
+    this.proxyReqRes = null;
+    this.safari = false;
+    this.cachedWdaStatus = null;
+
+    this.curWebFrames = [];
+    this._currentUrl = null;
+    this.curContext = null;
+    this.xcodeVersion = undefined;
+    this.contexts = [];
+    this.implicitWaitMs = 0;
+    this.pageLoadMs = 6000;
+    this.landscapeWebCoordsOffset = 0;
+    this.remote = null;
+    this._conditionInducerService = null;
+    this._remoteXPCConditionInducerConnection = null;
+
+    this.webElementsCache = new LRUCache({
+      max: WEB_ELEMENTS_CACHE_SIZE,
+    });
+
+    this._waitingAtoms = {
+      count: 0,
+      alertNotifier: new EventEmitter(),
+      alertMonitor: B.resolve(),
+    };
+  }
+
+  _getCommandTimeout(cmdName?: string): number | undefined {
+    if (this.opts.commandTimeouts) {
+      if (cmdName && _.has(this.opts.commandTimeouts, cmdName)) {
+        return this.opts.commandTimeouts[cmdName];
+      }
+      return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
     }
   }
 
@@ -2288,35 +2213,20 @@ export class XCUITestDriver extends BaseDriver {
 
 export default XCUITestDriver;
 
-/**
- * @template {import('@appium/types').Constraints} C
- * @template [Ctx=string]
- * @typedef {import('@appium/types').ExternalDriver<C, Ctx>} ExternalDriver
- */
+export type AutInstallationStateOptions = Pick<XCUITestDriverOpts, 'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'>;
 
-/**
- * @typedef {Pick<XCUITestDriverOpts, 'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'>} AutInstallationStateOptions
- */
+export interface AutInstallationState {
+  install: boolean; // If the given app should install, or not need to install.
+  skipUninstall: boolean; // If the installed app should be uninstalled, or not.
+}
 
-/**
- * @typedef {Object} AutInstallationState
- * @property {boolean} install - If the given app should install, or not need to install.
- * @property {boolean} skipUninstall - If the installed app should be uninstalled, or not.
- */
+export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
+export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
 
-/**
- * @typedef {typeof desiredCapConstraints} XCUITestDriverConstraints
- * @typedef {import('@appium/types').DriverOpts<XCUITestDriverConstraints>} XCUITestDriverOpts
- * @typedef {import('./commands/types').FullContext} FullContext
- * @typedef {import('appium-xcode').XcodeVersion} XcodeVersion
- * @typedef {import('appium-ios-simulator').Simulator} Simulator
- */
-
-/**
- * @typedef {Object} DriverLogs
- * @property {import('./device-log/ios-device-log').IOSDeviceLog|import('./device-log/ios-simulator-log').IOSSimulatorLog} [syslog]
- * @property {import('./device-log/ios-crash-log').IOSCrashLog} [crashlog]
- * @property {import('./device-log/safari-console-log').SafariConsoleLog} [safariConsole]
- * @property {import('./device-log/safari-network-log').SafariNetworkLog} [safariNetwork]
- * @property {import('./device-log/ios-performance-log').IOSPerformanceLog} [performance]
- */
+export interface DriverLogs {
+  syslog?: IOSDeviceLog | IOSSimulatorLog;
+  crashlog?: IOSCrashLog;
+  safariConsole?: SafariConsoleLog;
+  safariNetwork?: SafariNetworkLog;
+  performance?: IOSPerformanceLog;
+}

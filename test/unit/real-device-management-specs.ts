@@ -17,7 +17,7 @@ describe('installToRealDevice', function () {
 
   beforeEach(function () {
     sandbox = createSandbox();
-    driver = new XCUITestDriver();
+    driver = new XCUITestDriver({} as any);
   });
 
   afterEach(function () {

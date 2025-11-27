@@ -37,7 +37,7 @@ describe('context', function () {
       ],
     };
     it('should call select page if a new page is introduced and that page is not blacklisted', async function () {
-      const driver = new XCUITestDriver();
+      const driver = new XCUITestDriver({} as any);
       driver.curContext = '5191.5';
       driver.contexts = ['5191.5', '5191.3', '5191.4'];
       /** @type {undefined|(string|number)[]} */
@@ -56,7 +56,7 @@ describe('context', function () {
       expect(selectPageArgs).to.eql(['5191', 1]);
     });
     it('should not call selectPage if a new page is introduced and that page is blacklisted', async function () {
-      const driver = new XCUITestDriver();
+      const driver = new XCUITestDriver({} as any);
       driver.curContext = '5191.1';
       const testContexts = [
         ['5191.1', '5191.3', '5191.4'],

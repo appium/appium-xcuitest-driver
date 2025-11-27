@@ -16,7 +16,7 @@ describe('element commands', function () {
   let proxyStub;
 
   before(async function () {
-    driver = new XCUITestDriver();
+    driver = new XCUITestDriver({} as any);
   });
 
   beforeEach(function () {
@@ -351,7 +351,7 @@ describe('element commands', function () {
     let atomStub;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       driver.curContext = 'fake web context';
       executeStub = sandbox.stub(driver, 'execute').resolves([fixtureXOffset, fixtureYOffset]);
       sandbox.stub(driver, 'getAtomsElement').resolvesArg(0);
@@ -397,7 +397,7 @@ describe('element commands', function () {
     const elem = {ELEMENT: '5000'};
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       getNativeRectStub = sandbox
         .stub(driver, 'getNativeRect')
         .resolves({x: 0, y: 50, width: 100, height: 200});

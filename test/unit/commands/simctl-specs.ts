@@ -5,7 +5,7 @@ import {expect} from 'chai';
 
 
 describe('general commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   const simctl = new Simctl();
   driver._device = { simctl } as any;
 
@@ -51,7 +51,7 @@ describe('general commands', function () {
     });
 
     it('should raise an error as no udid', async function () {
-      driver.opts.udid = null;
+      driver.opts.udid = undefined;
       driver.isSimulator = () => true;
       mockSimctl.expects('exec').never();
       await expect(driver.mobileSimctl(

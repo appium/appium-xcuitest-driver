@@ -2,13 +2,13 @@ import {fs, tempDir, util} from 'appium/support';
 import B from 'bluebird';
 import path from 'path';
 import _ from 'lodash';
-import {Pyidevice} from '../real-device-clients/py-ios-device-client';
+import {Pyidevice} from '../clients/py-ios-device-client';
 import {IOSLog} from './ios-log';
 import { toLogEntry, grepFile } from './helpers';
 import type { AppiumLogger } from '@appium/types';
-import type { BaseDeviceClient } from '../real-device-clients/base-device-client';
+import type { BaseDeviceClient } from '../clients/base-device-client';
 import type { Simulator } from 'appium-ios-simulator';
-import type { LogEntry } from '../commands/types';
+import type { LogEntry } from '../../commands/types';
 
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';

@@ -709,8 +709,9 @@ export function applySafariStartupArgs(this: XCUITestDriver): boolean {
   const args = _.toPairs(prefs)
     .flatMap(([key, value]) => [_.startsWith(key, '-') ? key : `-${key}`, String(value)]);
   defaultLogger.debug(`Generated Safari command line arguments: ${args.join(' ')}`);
-  if (_.isPlainObject(this.opts.processArguments)) {
-    this.opts.processArguments.args = [...(this.opts.processArguments.args ?? []), ...args];
+  const processArguments = this.opts.processArguments as {args: string[]} | undefined;
+  if (processArguments && _.isPlainObject(processArguments)) {
+    processArguments.args = [...(processArguments.args ?? []), ...args];
   } else {
     this.opts.processArguments = {args};
   }

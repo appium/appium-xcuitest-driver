@@ -1,6 +1,6 @@
 import {EventEmitter} from 'events';
 import { LRUCache } from 'lru-cache';
-import type { LogEntry } from '../commands/types';
+import type { LogEntry } from '../../commands/types';
 import type { AppiumLogger } from '@appium/types';
 import {logger} from 'appium/support';
 

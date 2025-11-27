@@ -7,7 +7,7 @@ const xmlBody = '<some-xml/>';
 const srcTree = `${xmlHeader}${xmlBody}`;
 
 describe('source commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   const proxyStub = sinon.stub(driver, 'proxyCommand').callsFake(async () => srcTree);
 
   afterEach(function () {

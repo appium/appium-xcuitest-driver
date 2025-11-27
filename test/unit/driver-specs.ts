@@ -84,7 +84,7 @@ describe('XCUITestDriver', function () {
     let realDevice;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       realDevice = new RealDevice('1234');
     });
 
@@ -112,7 +112,7 @@ describe('XCUITestDriver', function () {
       let jwproxyCommandSpy;
 
       beforeEach(function () {
-        driver = new XCUITestDriver();
+        driver = new XCUITestDriver({} as any);
 
         // fake the proxy to WDA
         const jwproxy = new JWProxy();
@@ -145,7 +145,7 @@ describe('XCUITestDriver', function () {
         await driver.deleteSession();
       });
       beforeEach(function () {
-        driver = new XCUITestDriver();
+        driver = new XCUITestDriver({} as any);
         device = {
           shutdown: _.noop,
           isRunning() {
@@ -316,7 +316,7 @@ describe('XCUITestDriver', function () {
       const deviceInfoResponse = {some: 'thing'};
 
       beforeEach(function () {
-        driver = new XCUITestDriver();
+        driver = new XCUITestDriver({} as any);
         const jwproxy = new JWProxy();
         sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
         driver.wda = {
@@ -345,7 +345,7 @@ describe('XCUITestDriver', function () {
     let driver;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
     });
 
     it('should install multiple apps from otherApps as string on on real devices', async function () {
@@ -572,7 +572,7 @@ describe('XCUITestDriver', function () {
         let driver;
 
         before(function () {
-          driver = new XCUITestDriver();
+          driver = new XCUITestDriver({} as any);
         });
 
         for (const propName of Object.getOwnPropertyNames(mixin).filter((propName) =>

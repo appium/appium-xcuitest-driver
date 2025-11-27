@@ -1,4 +1,7 @@
-export const newMethodMap = /** @type {const} */ ({
+import type { MethodMap } from '@appium/types';
+import type { XCUITestDriver } from './driver';
+
+export const newMethodMap = {
   '/session/:sessionId/timeouts/async_script': {
     POST: {
       command: 'asyncScriptTimeout',
@@ -193,4 +196,4 @@ export const newMethodMap = /** @type {const} */ ({
       deprecated: true,
     },
   },
-});
+} as const satisfies MethodMap<XCUITestDriver>;
