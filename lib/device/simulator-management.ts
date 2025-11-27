@@ -159,6 +159,11 @@ export async function runSimulatorReset(
     if (isKeychainsBackupSuccessful) {
       await device.restoreKeychains(keychainsExcludePatterns?.split(',')?.map(_.trim) || []);
       this.log.info(`Successfully restored keychains after full reset`);
+    } else if (keychainsExcludePatterns || keepKeyChains) {
+      this.log.warn(
+        'Cannot restore keychains after full reset, because ' +
+          'the backup operation did not succeed',
+      );
     }
   } else if (bundleId) {
     // fastReset or noReset
