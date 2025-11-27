@@ -84,7 +84,7 @@ import {
   runRealDeviceReset,
   applySafariStartupArgs,
   detectUdid,
-  RealDevice as RealDeviceClass,
+  RealDevice,
   getConnectedDevices,
 } from './device/real-device-management';
 import {
@@ -275,7 +275,7 @@ export class XCUITestDriver
   xcodeVersion: XcodeVersion | undefined;
   _trafficCapture: TrafficCapture | null;
   _recentScreenRecorder: ScreenRecorder | null;
-  _device: Simulator | RealDeviceClass;
+  _device: Simulator | RealDevice;
   _iosSdkVersion: string | null;
   _wda: WebDriverAgent | null;
   remote: RemoteDebugger | null;
@@ -403,10 +403,10 @@ export class XCUITestDriver
 
       await this.handleMjpegOptions();
 
-      return /** @type {[string, import('@appium/types').DriverCaps<XCUITestDriverConstraints>]} */ ([
+      return [
         sessionId,
         caps,
-      ]);
+      ];
     } catch (e) {
       this.log.error(JSON.stringify(e));
       await this.deleteSession();
@@ -465,11 +465,11 @@ export class XCUITestDriver
       await this.runReset(true);
     }
 
-    const simulatorDevice = this.isSimulator() ? /** @type {Simulator} */ (this.device) : null;
+    const simulatorDevice = this.isSimulator() ? this.device as Simulator : null;
     if (simulatorDevice && this.lifecycleData.createSim) {
       this.log.debug(`Deleting simulator created for this run (udid: '${simulatorDevice.udid}')`);
       await shutdownSimulator.bind(this)();
-      await (simulatorDevice as Simulator).delete();
+      await simulatorDevice.delete();
     }
 
     const shouldResetLocationService = this.isRealDevice() && !!this.opts.resetLocationService;
@@ -678,7 +678,7 @@ export class XCUITestDriver
     return {};
   }
 
-  get device(): Simulator | RealDeviceClass {
+  get device(): Simulator | RealDevice {
     return this._device;
   }
 
@@ -1016,7 +1016,7 @@ export class XCUITestDriver
   }
 
   async initSimulator(): Promise<void> {
-    const device = /** @type {Simulator} */ (this.device);
+    const device = this.device as Simulator;
 
     if (this.opts.shutdownOtherSimulators) {
       this.assertFeatureEnabled(SHUTDOWN_OTHER_FEAT_NAME);
@@ -1295,7 +1295,7 @@ export class XCUITestDriver
 
 
 
-  async determineDevice(): Promise<{device: Simulator | RealDeviceClass, realDevice: boolean, udid: string}> {
+  async determineDevice(): Promise<{device: Simulator | RealDevice, realDevice: boolean, udid: string}> {
     // in the one case where we create a sim, we will set this state
     this.lifecycleData.createSim = false;
 
@@ -1362,7 +1362,7 @@ export class XCUITestDriver
       }
 
       this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const device = new RealDeviceClass(this.opts.udid as string, this.log);
+      const device = new RealDevice(this.opts.udid as string, this.log);
       return {device, realDevice: true, udid: this.opts.udid as string};
     }
 
@@ -1550,7 +1550,7 @@ export class XCUITestDriver
     }
 
     const appBundleVersion = this.isRealDevice()
-      ? (await (this.device as RealDeviceClass).fetchAppInfo(bundleId))?.CFBundleVersion
+      ? (await (this.device as RealDevice).fetchAppInfo(bundleId))?.CFBundleVersion
       : BUNDLE_VERSION_PATTERN.exec(await (this.device as Simulator).simctl.appInfo(bundleId))?.[1];
     this.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
     if (!appBundleVersion) {
