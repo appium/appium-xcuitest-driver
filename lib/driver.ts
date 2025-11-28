@@ -859,10 +859,8 @@ export class XCUITestDriver
 
     await this.runReset();
 
-    if (!this.xcodeVersion) {
-      throw new Error('Xcode version is required but was not set');
-    }
     this._wda = new WebDriverAgent(
+      // @ts-ignore This property is not used by WDA, and will be removed in the future
       this.xcodeVersion,
       {
         ...this.opts,
