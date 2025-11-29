@@ -1,4 +1,4 @@
-import type { LogEntry } from '../commands/types';
+import type { LogEntry } from '../../commands/types';
 import { fs } from 'appium/support';
 import { createInterface } from 'node:readline';
 import _ from 'lodash';

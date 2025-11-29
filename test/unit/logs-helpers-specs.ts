@@ -1,4 +1,4 @@
-import { grepFile } from '../../lib/device-log/helpers';
+import { grepFile } from '../../lib/device/log/helpers';
 import {fs, tempDir} from 'appium/support';
 import path from 'node:path';
 import chai, {expect} from 'chai';

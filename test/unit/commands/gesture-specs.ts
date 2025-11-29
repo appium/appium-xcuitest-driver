@@ -5,7 +5,7 @@ import {expect} from 'chai';
 
 
 describe('gesture commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
 
   let mockDriver;
 
@@ -345,7 +345,7 @@ describe('gesture commands', function () {
 });
 
 describe('W3C actions', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
   it('releaseActions should exist and do nothing', async function () {
     await driver.releaseActions();
   });

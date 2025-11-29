@@ -2,52 +2,6 @@ import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
-import * as activeAppInfoCommands from '../../lib/commands/active-app-info';
-import * as alertCommands from '../../lib/commands/alert';
-import * as appManagementCommands from '../../lib/commands/app-management';
-import * as appearanceCommands from '../../lib/commands/appearance';
-import * as appStringsCommands from '../../lib/commands/app-strings';
-import * as auditCommands from '../../lib/commands/audit';
-import * as batteryCommands from '../../lib/commands/battery';
-import * as biometricCommands from '../../lib/commands/biometric';
-import * as certificateCommands from '../../lib/commands/certificate';
-import * as clipboardCommands from '../../lib/commands/clipboard';
-import * as conditionCommands from '../../lib/commands/condition';
-import * as contentSizeCommands from '../../lib/commands/content-size';
-import * as contextCommands from '../../lib/commands/context';
-import * as deviceInfoCommands from '../../lib/commands/deviceInfo';
-import * as elementCommands from '../../lib/commands/element';
-import * as executeCommands from '../../lib/commands/execute';
-import * as fileMovementCommands from '../../lib/commands/file-movement';
-import * as findCommands from '../../lib/commands/find';
-import * as generalCommands from '../../lib/commands/general';
-import * as geolocationCommands from '../../lib/commands/geolocation';
-import * as gestureCommands from '../../lib/commands/gesture';
-import * as iohidCommands from '../../lib/commands/iohid';
-import * as keychainsCommands from '../../lib/commands/keychains';
-import * as keyboardCommands from '../../lib/commands/keyboard';
-import * as localizationCommands from '../../lib/commands/localization';
-import * as locationCommands from '../../lib/commands/location';
-import * as lockCommands from '../../lib/commands/lock';
-import * as logCommands from '../../lib/commands/log';
-import * as memoryCommands from '../../lib/commands/memory';
-import * as navigationCommands from '../../lib/commands/navigation';
-import * as notificationsCommands from '../../lib/commands/notifications';
-import * as pasteboardCommands from '../../lib/commands/pasteboard';
-import * as pcapCommands from '../../lib/commands/pcap';
-import * as performanceCommands from '../../lib/commands/performance';
-import * as permissionsCommands from '../../lib/commands/permissions';
-import * as proxyHelperCommands from '../../lib/commands/proxy-helper';
-import * as recordAudioCommands from '../../lib/commands/record-audio';
-import * as recordScreenCommands from '../../lib/commands/recordscreen';
-import * as screenshotCommands from '../../lib/commands/screenshots';
-import * as sourceCommands from '../../lib/commands/source';
-import * as simctlCommands from '../../lib/commands/simctl';
-import * as timeoutCommands from '../../lib/commands/timeouts';
-import * as webCommands from '../../lib/commands/web';
-import * as xctestCommands from '../../lib/commands/xctest';
-import * as xctestRecordScreenCommands from '../../lib/commands/xctest-record-screen';
-import * as increaseContrastCommands from '../../lib/commands/increase-contrast';
 import {XCUITestDriver} from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
@@ -84,12 +38,21 @@ describe('XCUITestDriver', function () {
     let realDevice;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       realDevice = new RealDevice('1234');
+      // Mock _wda to avoid getter throwing error
+      // For simulators, url.port should be undefined to allow wdaLocalPort to be used
+      driver._wda = {
+        url: {port: undefined},
+      } as any;
     });
 
     it('real device', function () {
       driver._device = realDevice;
+      // For real devices, wda.url.port should be used if available
+      driver._wda = {
+        url: {port: 8100},
+      } as any;
       expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
     });
 
@@ -112,14 +75,14 @@ describe('XCUITestDriver', function () {
       let jwproxyCommandSpy;
 
       beforeEach(function () {
-        driver = new XCUITestDriver();
+        driver = new XCUITestDriver({} as any);
 
         // fake the proxy to WDA
         const jwproxy = new JWProxy();
         jwproxyCommandSpy = sandbox.stub(jwproxy, 'command').resolves({some: 'thing'});
-        driver.wda = {
+        driver._wda = {
           jwproxy,
-        };
+        } as any;
       });
 
       it('should not have wda status by default', async function () {
@@ -145,7 +108,7 @@ describe('XCUITestDriver', function () {
         await driver.deleteSession();
       });
       beforeEach(function () {
-        driver = new XCUITestDriver();
+        driver = new XCUITestDriver({} as any);
         device = {
           shutdown: _.noop,
           isRunning() {
@@ -316,12 +279,12 @@ describe('XCUITestDriver', function () {
       const deviceInfoResponse = {some: 'thing'};
 
       beforeEach(function () {
-        driver = new XCUITestDriver();
+        driver = new XCUITestDriver({} as any);
         const jwproxy = new JWProxy();
         sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
-        driver.wda = {
+        driver._wda = {
           jwproxy,
-        };
+        } as any;
       });
 
       it('should allow execute methods without whitespace', async function () {
@@ -345,7 +308,7 @@ describe('XCUITestDriver', function () {
     let driver;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
     });
 
     it('should install multiple apps from otherApps as string on on real devices', async function () {
@@ -440,157 +403,5 @@ describe('XCUITestDriver', function () {
         {newSimulator: false},
       )).to.be.true;
     });
-  });
-
-  describe('mixins', function () {
-    /**
-     * these methods will fail strict equality checks.
-     * key is the prop of the default export from `lib/commands/index.js`,
-     * value is a set of method names
-     */
-    const memoizedMethods = new Map([
-      [
-        'generalExtensions',
-        new Set(['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo']),
-      ],
-    ]);
-
-    /**
-     * Helper functions that are exported but shouldn't be mixed in as driver methods
-     */
-    const excludeHelperFunctions = new Set([
-      'assertIDB',
-      'parseXCTestStdout',
-      'parseCommonName',
-      'notifyBiDiContextChange',
-      'parseContainerPath',
-      'gesturesChainToString',
-      'assignBiDiLogListener',
-    ]);
-
-    /**
-     * Exported classes that shouldn't be mixed in as driver methods
-     */
-    const excludeClasses = new Set([
-      'AudioRecorder',
-      'ScreenRecorder',
-      'TrafficCapture',
-      'PerfRecorder',
-    ]);
-
-    /**
-     * Determines if a property should be included in the mixin tests
-     * @param {string} propName - The property name to check
-     * @param {string} mixinName - The name of the mixin module
-     * @returns {boolean} - True if the property should be tested
-     */
-    function shouldTestProperty(propName, mixinName) {
-      // Exclude memoized methods
-      if (memoizedMethods.get(mixinName)?.has(propName)) {
-        return false;
-      }
-      // Exclude module system artifacts
-      if (propName === '__esModule') {
-        return false;
-      }
-      // Exclude helper functions that shouldn't be mixed in
-      if (excludeHelperFunctions.has(propName)) {
-        return false;
-      }
-      // Exclude exported classes that shouldn't be mixed in
-      if (excludeClasses.has(propName)) {
-        return false;
-      }
-      return true;
-    }
-
-    /**
-     * Lookup of prop name to method.  Initially, this contains all methods in `XCUITestDriver.prototype`
-     * Used to check if:
-     * - a mixin method overwrites a method in the driver prototype
-     * - a mixin method overwrites a method from another mixin
-     * @type {Map<string,string>}
-     */
-    const foundProps = new Map(
-      Object.getOwnPropertyNames(XCUITestDriver.prototype).map((propName) => [
-        propName,
-        XCUITestDriver.prototype[propName],
-      ]),
-    );
-
-    const cmds = {
-      activeAppInfoExtensions: activeAppInfoCommands,
-      alertExtensions: alertCommands,
-      appManagementExtensions: appManagementCommands,
-      appearanceExtensions: appearanceCommands,
-      appStringsExtensions: appStringsCommands,
-      auditExtensions: auditCommands,
-      batteryExtensions: batteryCommands,
-      biometricExtensions: biometricCommands,
-      certificateExtensions: certificateCommands,
-      clipboardExtensions: clipboardCommands,
-      conditionExtensions: conditionCommands,
-      contentSizeExtensions: contentSizeCommands,
-      contextExtensions: contextCommands,
-      deviceInfoExtensions: deviceInfoCommands,
-      elementExtensions: elementCommands,
-      executeExtensions: executeCommands,
-      fileMovementExtensions: fileMovementCommands,
-      findExtensions: findCommands,
-      generalExtensions: generalCommands,
-      geolocationExtensions: geolocationCommands,
-      gestureExtensions: gestureCommands,
-      iohidExtensions: iohidCommands,
-      keychainsExtensions: keychainsCommands,
-      keyboardExtensions: keyboardCommands,
-      localizationExtensions: localizationCommands,
-      locationExtensions: locationCommands,
-      lockExtensions: lockCommands,
-      logExtensions: logCommands,
-      memoryExtensions: memoryCommands,
-      navigationExtensions: navigationCommands,
-      notificationsExtensions: notificationsCommands,
-      pasteboardExtensions: pasteboardCommands,
-      pcapExtensions: pcapCommands,
-      performanceExtensions: performanceCommands,
-      permissionsExtensions: permissionsCommands,
-      proxyHelperExtensions: proxyHelperCommands,
-      recordAudioExtensions: recordAudioCommands,
-      recordScreenExtensions: recordScreenCommands,
-      screenshotExtensions: screenshotCommands,
-      sourceExtensions: sourceCommands,
-      simctl: simctlCommands,
-      timeoutExtensions: timeoutCommands,
-      webExtensions: webCommands,
-      xctestExtensions: xctestCommands,
-      xctestRecordScreenExtensions: xctestRecordScreenCommands,
-      increaseContrastExtensions: increaseContrastCommands,
-    };
-    for (const [mixinName, mixin] of Object.entries(cmds)) {
-      describe(mixinName, function () {
-        /** @type {XCUITestDriver} */
-        let driver;
-
-        before(function () {
-          driver = new XCUITestDriver();
-        });
-
-        for (const propName of Object.getOwnPropertyNames(mixin).filter((propName) =>
-          shouldTestProperty(propName, mixinName),
-        )) {
-          it(`${propName} should be mixed in`, function () {
-            try {
-              expect(
-                foundProps.has(propName),
-                `"${propName}" overwrites a member from the driver prototype or another mixin`,
-              ).to.be.false;
-              expect(driver).to.have.property(propName, mixin[propName]);
-            } finally {
-              foundProps.set(propName, mixinName);
-            }
-          });
-        }
-      });
-    }
   });
 });

@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
 
 describe('session commands', function () {
-  const driver = new XCUITestDriver();
+  const driver = new XCUITestDriver({} as any);
 
   let mockDriver;
 

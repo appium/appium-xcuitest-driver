@@ -157,7 +157,7 @@ export async function runSimulatorReset(
     const isKeychainsBackupSuccessful = (keychainsExcludePatterns || keepKeyChains) && (await device.backupKeychains());
     await device.clean();
     if (isKeychainsBackupSuccessful) {
-      await device.restoreKeychains(keychainsExcludePatterns || []);
+      await device.restoreKeychains(keychainsExcludePatterns?.split(',')?.map(_.trim) || []);
       this.log.info(`Successfully restored keychains after full reset`);
     } else if (keychainsExcludePatterns || keepKeyChains) {
       this.log.warn(

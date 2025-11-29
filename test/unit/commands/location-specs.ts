@@ -16,7 +16,7 @@ describe('location commands', function () {
 
   describe('getGeoLocation', function () {
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       proxySpy = sinon.stub(driver, 'proxyCommand');
     });
 
@@ -53,7 +53,7 @@ describe('location commands', function () {
     let setLocationStub;
 
     beforeEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       proxySpy = sinon.stub(driver, 'proxyCommand');
       startSimulateLocationServiceStub = sinon.stub(services, 'startSimulateLocationService');
       const mockService = {setLocation() {}, close() {}};
@@ -62,7 +62,7 @@ describe('location commands', function () {
     });
 
     afterEach(function () {
-      driver = new XCUITestDriver();
+      driver = new XCUITestDriver({} as any);
       startSimulateLocationServiceStub.restore();
       setLocationStub.restore();
       proxySpy.reset();
