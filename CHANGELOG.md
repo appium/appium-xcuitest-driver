@@ -1,3 +1,9 @@
+## [10.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.4...v10.9.0) (2025-11-29)
+
+### Features
+
+* Migrate driver module to typescript ([#2666](https://github.com/appium/appium-xcuitest-driver/issues/2666)) ([619c679](https://github.com/appium/appium-xcuitest-driver/commit/619c67916bffd98fd4b00cbca58159ec27bd6c4c))
+
 ## [10.8.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.3...v10.8.4) (2025-11-27)
 
 ### Miscellaneous Chores
