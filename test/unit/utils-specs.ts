@@ -3,9 +3,8 @@ import {
   markSystemFilesForCleanup,
   isLocalHost,
 } from '../../lib/utils';
-import {withMocks} from '@appium/test-support';
+import {createSandbox} from 'sinon';
 import {fs} from 'appium/support';
-import * as iosUtils from '../../lib/utils';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -15,59 +14,58 @@ const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgst
 
 describe('utils', function () {
 
-  describe(
-    'clearSystemFiles',
-    withMocks({iosUtils, fs}, function (mocks: any) {
-      afterEach(function () {
-        mocks.verify();
-      });
-      it('should delete logs', async function () {
-        const wda = {
-          retrieveDerivedDataPath() {
-            return DERIVED_DATA_ROOT;
-          },
-        };
-        mocks.fs.expects('glob').once().returns([]);
-        mocks.fs.expects('walkDir').once().returns();
-        mocks.fs.expects('exists').atLeast(1).returns(true);
-        mocks.iosUtils
-          .expects('clearLogs')
-          .once()
-          .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
-          .returns();
-        await clearSystemFiles(wda);
-      });
+  describe('clearSystemFiles', function () {
+    let sandbox: ReturnType<typeof createSandbox>;
+    let mockFs: ReturnType<typeof createSandbox.mock>;
 
-      it('should only delete logs once if the same folder was marked twice for deletion', async function () {
-        const wda = {
-          retrieveDerivedDataPath() {
-            return DERIVED_DATA_ROOT;
-          },
-        };
-        mocks.fs.expects('glob').once().returns([]);
-        mocks.fs.expects('walkDir').once().returns();
-        mocks.fs.expects('exists').atLeast(1).returns(true);
-        mocks.iosUtils
-          .expects('clearLogs')
-          .once()
-          .withExactArgs([`${DERIVED_DATA_ROOT}/Logs`])
-          .returns();
-        await markSystemFilesForCleanup(wda);
-        await markSystemFilesForCleanup(wda);
-        await clearSystemFiles(wda);
-        await clearSystemFiles(wda);
-      });
-      it('should do nothing if no derived data path is found', async function () {
-        const wda = {
-          retrieveDerivedDataPath() {
-            return null;
-          },
-        };
-        mocks.iosUtils.expects('clearLogs').never();
-        await clearSystemFiles(wda);
-      });
-    }),
-  );
+    beforeEach(function () {
+      sandbox = createSandbox();
+      mockFs = sandbox.mock(fs);
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should delete logs', async function () {
+      const wda = {
+        retrieveDerivedDataPath() {
+          return DERIVED_DATA_ROOT;
+        },
+      };
+      mockFs.expects('glob').once().returns([]);
+      mockFs.expects('exists').atLeast(1).returns(true);
+      mockFs.expects('rimraf').once().withExactArgs(`${DERIVED_DATA_ROOT}/Logs`).resolves();
+      await clearSystemFiles(wda);
+      mockFs.verify();
+    });
+
+    it('should only delete logs once if the same folder was marked twice for deletion', async function () {
+      const wda = {
+        retrieveDerivedDataPath() {
+          return DERIVED_DATA_ROOT;
+        },
+      };
+      mockFs.expects('glob').once().returns([]);
+      mockFs.expects('exists').atLeast(1).returns(true);
+      mockFs.expects('rimraf').once().withExactArgs(`${DERIVED_DATA_ROOT}/Logs`).resolves();
+      await markSystemFilesForCleanup(wda);
+      await markSystemFilesForCleanup(wda);
+      await clearSystemFiles(wda);
+      await clearSystemFiles(wda);
+      mockFs.verify();
+    });
+    it('should do nothing if no derived data path is found', async function () {
+      const wda = {
+        retrieveDerivedDataPath() {
+          return null;
+        },
+      };
+      mockFs.expects('rimraf').never();
+      await clearSystemFiles(wda);
+      mockFs.verify();
+    });
+  });
 
 
   describe('isLocalHost', function () {

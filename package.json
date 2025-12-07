@@ -146,7 +146,6 @@
   "devDependencies": {
     "@appium/docutils": "^2.0.0-rc.1",
     "@appium/eslint-config-appium-ts": "^2.0.0-rc.1",
-    "@appium/test-support": "^4.0.0-rc.1",
     "@appium/tsconfig": "^1.0.0-rc.1",
     "@appium/types": "^1.0.0-rc.1",
     "@semantic-release/changelog": "^6.0.3",
