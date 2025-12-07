@@ -1,3 +1,9 @@
+## [10.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.9.0...v10.9.1) (2025-12-07)
+
+### Miscellaneous Chores
+
+* Ditch usage of @appium/test-support ([#2668](https://github.com/appium/appium-xcuitest-driver/issues/2668)) ([bcc4772](https://github.com/appium/appium-xcuitest-driver/commit/bcc4772a2f8d6074c5e248904a8ac6e1cf101567))
+
 ## [10.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.8.4...v10.9.0) (2025-11-29)
 
 ### Features
