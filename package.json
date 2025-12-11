@@ -152,7 +152,7 @@
     "@types/bluebird": "^3.5.38",
     "@types/lodash": "^4.14.196",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^24.0.1",
+    "@types/node": "^25.0.0",
     "@types/portscanner": "^2.1.1",
     "axios": "^1.4.0",
     "chai": "^6.0.0",
