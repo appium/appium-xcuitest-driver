@@ -1,3 +1,9 @@
+## [10.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.9.2...v10.10.0) (2025-12-11)
+
+### Features
+
+* add APPIUM_XCUITEST_PREFER_DEVICECTL for app installed check also ([#2669](https://github.com/appium/appium-xcuitest-driver/issues/2669)) ([5900a9c](https://github.com/appium/appium-xcuitest-driver/commit/5900a9c769c43fe8e65a7fcfafb9aeeac1a74d36))
+
 ## [10.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.9.1...v10.9.2) (2025-12-11)
 
 ### Miscellaneous Chores
