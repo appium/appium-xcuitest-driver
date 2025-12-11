@@ -102,7 +102,6 @@
     "node-simctl": "^8.0.0",
     "portscanner": "^2.2.0",
     "semver": "^7.5.4",
-    "source-map-support": "^0.x",
     "teen_process": "^3.0.0",
     "winston": "^3.17.0",
     "ws": "^8.13.0"
