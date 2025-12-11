@@ -328,7 +328,7 @@ export async function pushFolder(
  * Get list of connected devices
  */
 export async function getConnectedDevices(): Promise<string[]> {
-  if (['yes', 'true', '1'].includes(_.toLower(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL))) {
+  if (isPreferDevicectlEnabled()) {
     return (await new Devicectl('').listDevices())
       .map(({hardwareProperties}) => hardwareProperties?.udid)
       .filter(Boolean);
@@ -466,6 +466,9 @@ export class RealDevice {
    * @returns Returns True if the app is installed on the device under test.
    */
   async isAppInstalled(bundleId: string): Promise<boolean> {
+    if (isPreferDevicectlEnabled()) {
+      return _.size(await this.devicectl.listApps(bundleId)) > 0;
+    }
     return Boolean(await this.fetchAppInfo(bundleId));
   }
 
@@ -740,6 +743,15 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
 //#endregion
 
 //#region Private Helper Functions
+
+/**
+ * If the environment variable enables APPIUM_XCUITEST_PREFER_DEVICECTL.
+ * This is a workaround for wireless tvOS.
+ * @returns True if the APPIUM_XCUITEST_PREFER_DEVICECTL is set.
+ */
+function isPreferDevicectlEnabled(): boolean {
+  return ['yes', 'true', '1'].includes(_.toLower(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL));
+};
 
 /**
  * Checks a presence of a local folder.
