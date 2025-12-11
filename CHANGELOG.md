@@ -1,3 +1,9 @@
+## [10.10.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.10.0...v10.10.1) (2025-12-11)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @types/node from 24.10.3 to 25.0.0 ([#2671](https://github.com/appium/appium-xcuitest-driver/issues/2671)) ([a176bf2](https://github.com/appium/appium-xcuitest-driver/commit/a176bf21c146919f6ba666240c3241eceb605957))
+
 ## [10.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.9.2...v10.10.0) (2025-12-11)
 
 ### Features
