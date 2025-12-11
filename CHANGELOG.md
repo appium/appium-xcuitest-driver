@@ -1,3 +1,9 @@
+## [10.9.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.9.1...v10.9.2) (2025-12-11)
+
+### Miscellaneous Chores
+
+* **deps:** remove `source-map-support` ([#2670](https://github.com/appium/appium-xcuitest-driver/issues/2670)) ([539801a](https://github.com/appium/appium-xcuitest-driver/commit/539801a688848c91e67b999cbdc54b0536046929))
+
 ## [10.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.9.0...v10.9.1) (2025-12-07)
 
 ### Miscellaneous Chores
