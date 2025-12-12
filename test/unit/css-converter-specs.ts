@@ -1,4 +1,4 @@
-import CssConverter from '../../lib/css-converter';
+import {CssConverter} from '../../lib/css-converter';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

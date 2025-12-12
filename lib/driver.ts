@@ -601,7 +601,7 @@ export class XCUITestDriver
     this.opts.useNewWDA = util.hasValue(this.opts.useNewWDA) ? this.opts.useNewWDA : false;
 
     if (caps.commandTimeouts) {
-      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts);
+      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts as string | Record<string, number>);
     }
 
     if (_.isString(caps.webDriverAgentUrl)) {
