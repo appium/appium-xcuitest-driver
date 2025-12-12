@@ -1547,9 +1547,11 @@ export class XCUITestDriver
       };
     }
 
-    const appBundleVersion = this.isRealDevice()
-      ? (await (this.device as RealDevice).fetchAppInfo(bundleId))?.CFBundleVersion
-      : BUNDLE_VERSION_PATTERN.exec(await (this.device as Simulator).simctl.appInfo(bundleId))?.[1];
+    const appBundleVersion = (
+      this.isRealDevice()
+        ? (await (this.device as RealDevice).fetchAppInfo(bundleId))
+        : (await (this.device as Simulator).simctl.appInfo(bundleId))
+    )?.CFBundleVersion;
     this.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
     if (!appBundleVersion) {
       return {
