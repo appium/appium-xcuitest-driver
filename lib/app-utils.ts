@@ -49,8 +49,6 @@ export interface UnzipInfo {
  * Verify whether the given application is compatible to the
  * platform where it is going to be installed and tested.
  *
- * @this {XCUITestDriver}
- * @returns
  * @throws If bundle architecture does not match the expected device architecture.
  */
 export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<void> {
@@ -145,10 +143,7 @@ export async function parseLocalizableStrings(
       tmpRoot = await tempDir.openDir();
       this.log.info(`Extracting '${app}' into a temporary location to parse its resources`);
       await zip.extractAllTo(app, tmpRoot);
-      const relativeBundleRoot = _.first(await findApps(tmpRoot, [APP_EXT])) as string | undefined;
-      if (!relativeBundleRoot) {
-        throw new Error(`No ${APP_EXT} bundle found in extracted archive`);
-      }
+      const relativeBundleRoot = _.first(await findApps(tmpRoot, [APP_EXT])) as string;
       this.log.info(`Selecting '${relativeBundleRoot}'`);
       bundleRoot = path.join(tmpRoot, relativeBundleRoot);
     }
@@ -410,11 +405,10 @@ export async function onPostConfigureApp(
 // Private functions
 async function readResource(resourcePath: string): Promise<StringRecord> {
   const data = await plist.parsePlistFile(resourcePath);
-  const result: StringRecord = {};
-  for (const [key, value] of _.toPairs(data)) {
+  return _.toPairs(data).reduce((result, [key, value]) => {
     result[key] = _.isString(value) ? value : JSON.stringify(value);
-  }
-  return result;
+    return result;
+  }, {} as StringRecord);
 }
 
 /**

@@ -14,7 +14,7 @@ import type {
 
 export const CssConverter = {
   toIosClassChainSelector(cssSelector: string): string {
-    let cssObj;
+    let cssObj: AstSelector;
     try {
       cssObj = parseCssSelector(cssSelector);
     } catch (e: any) {
@@ -233,9 +233,7 @@ function parseCssRule(cssRule: AstRule): string {
   }
 
   let iosClassChainSelector = '';
-  const astClassNames = cssRule.items.filter(
-    ({type}) => type === 'ClassName'
-  ) as AstClassName[];
+  const astClassNames = cssRule.items.filter(({type}) => type === 'ClassName') as AstClassName[];
   const classNames = astClassNames.map(({name}) => name);
   if (classNames.length) {
     throw new errors.InvalidSelectorError(`'${[cssRule || '', ...classNames].join('.')}'
@@ -243,9 +241,7 @@ function parseCssRule(cssRule: AstRule): string {
       dots separating them`);
   }
 
-  const astTag = cssRule.items.find(({type}) => type === 'TagName') as
-    | AstTagName
-    | undefined;
+  const astTag = cssRule.items.find(({type}) => type === 'TagName') as AstTagName | undefined;
   let tagName = astTag?.name ?? '';
   if (tagName && tagName !== '*' && !_.startsWith(_.toLower(tagName), 'xcuielementtype')) {
     const capitalizedTagName = tagName.charAt(0).toUpperCase() + tagName.slice(1);
@@ -260,15 +256,11 @@ function parseCssRule(cssRule: AstRule): string {
   if (ids.length) {
     attrs.push(`name == "${ids[0]}"`);
   }
-  const attributes = cssRule.items.filter(
-    ({type}) => type === 'Attribute'
-  ) as AstAttribute[];
+  const attributes = cssRule.items.filter(({type}) => type === 'Attribute') as AstAttribute[];
   for (const attr of attributes) {
     attrs.push(parseAttr(attr));
   }
-  const pseudoClasses = cssRule.items.filter(
-    ({type}) => type === 'PseudoClass'
-  ) as AstPseudoClass[];
+  const pseudoClasses = cssRule.items.filter(({type}) => type === 'PseudoClass') as AstPseudoClass[];
   for (const pseudo of pseudoClasses) {
     attrs.push(parsePseudo(pseudo));
   }
@@ -277,9 +269,9 @@ function parseCssRule(cssRule: AstRule): string {
     iosClassChainSelector += `[\`${nonIndexAttrs.join(' AND ')}\`]`;
   }
 
-  const indexAttr = attrs.find((attr) => _.isObject(attr) && (attr as any).index) as
-    | {index: string}
-    | undefined;
+  const indexAttr = attrs.find(
+    (attr) => _.isObject(attr) && (attr as {index: string}).index
+  ) as {index: string} | undefined;
   if (indexAttr) {
     iosClassChainSelector += `[${indexAttr.index}]`;
   }

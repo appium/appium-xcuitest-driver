@@ -26,31 +26,14 @@ const XCTEST_LOG_FILES_PATTERNS = [
 const XCTEST_LOGS_CACHE_FOLDER_PREFIX = 'com.apple.dt.XCTest';
 export const NATIVE_WIN = 'NATIVE_APP';
 
-/**
- * @privateRemarks Is the minimum version really Xcode 7.3?
- * @returns
- */
 export async function getAndCheckXcodeVersion(): Promise<XcodeVersion> {
-  let version: XcodeVersion;
   try {
-    version = (await xcode.getVersion(true)) as XcodeVersion;
+    return await xcode.getVersion(true);
   } catch (err: any) {
-    log.error(err);
-    throw new Error(`Could not determine Xcode version: ${err.message}`);
+    throw log.errorWithException(`Could not determine Xcode version: ${err.message}`);
   }
-
-  // we do not support Xcodes < 7.3,
-  if (version.versionFloat < 7.3) {
-    const msg = `Xcode ${version.versionString} is not supported. Please upgrade to version 7.3 or higher`;
-    log.error(msg);
-    throw new Error(msg);
-  }
-  return version;
 }
 
-/**
- * @returns
- */
 export async function getAndCheckIosSdkVersion(): Promise<string | null> {
   try {
     return await xcode.getMaxIOSSDK();
@@ -59,11 +42,6 @@ export async function getAndCheckIosSdkVersion(): Promise<string | null> {
   }
 }
 
-
-/**
- * @param locations
- * @returns
- */
 export async function clearLogs(locations: string[]): Promise<void> {
   log.debug('Clearing log files');
   const cleanupPromises: Promise<void>[] = [];
@@ -367,7 +345,7 @@ export async function encodeBase64OrUpload(
   }
 
   const {user, pass, method, headers, fileFieldName, formFields} = uploadOptions;
-  const options: any = {
+  const options: net.HttpUploadOptions & net.NetOptions = {
     method: method || 'PUT',
     headers,
     fileFieldName,
@@ -449,21 +427,16 @@ export function requireArgs(argNames: string | string[], opts: Record<string, an
  * the simlator instance.
  *
  * @param action - Description of action
- * @param driver
- * @returns
  */
-export function assertSimulator(action: string, driver: XCUITestDriver): Simulator {
-  if (!driver.isSimulator()) {
+export function assertSimulator(this: XCUITestDriver, action: string): Simulator {
+  if (!this.isSimulator()) {
     throw new Error(`${_.upperFirst(action)} can only be performed on Simulator`);
   }
-  return driver.device as Simulator;
+  return this.device as Simulator;
 }
 
 /**
  * Check if platform name is the TV OS one.
- *
- * @param platformName
- * @returns
  */
 export function isTvOs(platformName: string | null | undefined): boolean {
   return _.toLower(platformName ?? '') === _.toLower(PLATFORM_NAME_TVOS);
@@ -471,36 +444,20 @@ export function isTvOs(platformName: string | null | undefined): boolean {
 
 /**
  * Return normalized platform name.
- *
- * @param platformName
- * @returns
  */
 export function normalizePlatformName(platformName: string | null | undefined): string {
   return isTvOs(platformName) ? PLATFORM_NAME_TVOS : PLATFORM_NAME_IOS;
 }
 
-/**
- * @param opts
- * @returns
- */
 export function shouldSetInitialSafariUrl(opts: XCUITestDriverOpts): boolean {
   return !(opts.safariInitialUrl === '' || (opts.noReset && _.isNil(opts.safariInitialUrl)))
     && !opts.initialDeeplinkUrl;
 }
 
-/**
- * @param opts
- * @returns
- */
 export function isIos17OrNewer(opts: XCUITestDriverOpts): boolean {
   return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '17.0');
 }
 
-/**
- * @param opts
- * @returns
- */
 export function isIos18OrNewer(opts: XCUITestDriverOpts): boolean {
   return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '18.0');
 }
-
