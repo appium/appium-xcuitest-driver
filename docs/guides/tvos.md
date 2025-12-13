@@ -8,8 +8,9 @@ The XCUITest driver supports automation of the tvOS platform.
 
 !!! warning
 
-    Apple TV 4K is not supported. This is because [`appium-ios-device`](https://github.com/appium/appium-ios-device),
-    which is used to support low-level communication with devices, only supports devices connected via USB.
+    Support for network-only Apple TV devices is limited.
+    This is because [`appium-ios-device`](https://github.com/appium/appium-ios-device),
+    which handles low-level communication with devices, only supports USB-connected devices.
 
 ## Setup
 
@@ -29,6 +30,23 @@ You can run tests for tvOS by setting the `platformName` capability to `tvOS`:
 
     If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
     `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` to verify this.
+
+### Network-Only Real Devices
+
+To run tests on network-only Apple TV devices, you may need the following:
+
+- Xcode 26.1 or later (to execute `xcodebuild` against such network-only Apple TV devices)
+- Set the `APPIUM_XCUITEST_PREFER_DEVICECTL` environment variable
+- Provide the `appium:wdaBaseUrl` capability; it must be `http://<the Apple TV's IP address>`
+
+!!! note
+
+    If you provide `appium:webDriverAgentUrl` to manage WebDriverAgent process by yourself,
+    only `APPIUM_XCUITEST_PREFER_DEVICECTL` might be sufficient.
+
+    If your environment exposes the `usbmuxd` interface to Appium via third-party tools,
+    `APPIUM_XCUITEST_PREFER_DEVICECTL` may not be needed.
+    This environment variable could cause conflicts in several behaviors.
 
 ## Basic Actions
 
@@ -112,3 +130,4 @@ so you should not care about which keys should be pressed to reach an arbitrary 
 * <https://github.com/appium/appium-xcuitest-driver/pull/931>
 * <https://github.com/appium/appium-xcuitest-driver/pull/939>
 * <https://github.com/appium/WebDriverAgent/pull/163>
+* <https://github.com/appium/appium-xcuitest-driver/pull/2194>
