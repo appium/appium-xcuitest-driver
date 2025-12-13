@@ -601,7 +601,7 @@ export class XCUITestDriver
     this.opts.useNewWDA = util.hasValue(this.opts.useNewWDA) ? this.opts.useNewWDA : false;
 
     if (caps.commandTimeouts) {
-      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts);
+      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts as string | Record<string, number>);
     }
 
     if (_.isString(caps.webDriverAgentUrl)) {
@@ -1547,9 +1547,11 @@ export class XCUITestDriver
       };
     }
 
-    const appBundleVersion = this.isRealDevice()
-      ? (await (this.device as RealDevice).fetchAppInfo(bundleId))?.CFBundleVersion
-      : BUNDLE_VERSION_PATTERN.exec(await (this.device as Simulator).simctl.appInfo(bundleId))?.[1];
+    const appBundleVersion = (
+      this.isRealDevice()
+        ? (await (this.device as RealDevice).fetchAppInfo(bundleId))
+        : (await (this.device as Simulator).simctl.appInfo(bundleId))
+    )?.CFBundleVersion;
     this.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
     if (!appBundleVersion) {
       return {

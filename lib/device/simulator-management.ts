@@ -6,6 +6,7 @@ import {util, timing} from 'appium/support';
 import {UDID_AUTO, normalizePlatformName} from '../utils';
 import {buildSafariPreferences} from '../app-utils';
 import type { XCUITestDriver } from '../driver';
+import type { DeviceInfo } from 'node-simctl';
 
 const APPIUM_SIM_PREFIX = 'appiumTest';
 
@@ -19,11 +20,15 @@ export async function createSim(this: XCUITestDriver): Promise<Simulator> {
   const platform = normalizePlatformName(this.opts.platformName);
   const simctl = new Simctl({devicesSetPath});
   if (!deviceName) {
-    let deviceNames: string | string[] = 'none';
+    let deviceNames: string[] = [];
     try {
-      deviceNames = (await simctl
-        .getDevices(platformVersion, platform))
-        .map(({deviceName}) => deviceName);
+      const devices = platformVersion
+        ? await simctl.getDevices(platformVersion, platform)
+        : await simctl.getDevices(null, platform);
+      const nameMapper = (device: DeviceInfo) => device.name;
+      deviceNames = Array.isArray(devices)
+        ? devices.map(nameMapper)
+        : _.flatMap(_.values(devices)).map(nameMapper);
     } catch {}
     throw new Error(
       `'deviceName' must be provided in order to create a new Simulator for ${platform} platform. ` +

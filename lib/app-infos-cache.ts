@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {plist, fs, tempDir, zip} from 'appium/support';
 import {LRUCache} from 'lru-cache';
 import B from 'bluebird';
+import type {AppiumLogger, StringRecord} from '@appium/types';
 
-/** @type {LRUCache<string, import('@appium/types').StringRecord>} */
-const MANIFEST_CACHE = new LRUCache({
+const MANIFEST_CACHE = new LRUCache<string, StringRecord>({
   max: 40,
   updateAgeOnHas: true,
 });
@@ -16,20 +16,19 @@ const IPA_ROOT_PLIST_PATH_PATTERN = new RegExp(
 const MAX_MANIFEST_SIZE = 1024 * 1024; // 1 MiB
 
 export class AppInfosCache {
-  /**
-   * @param {import('@appium/types').AppiumLogger} log
-   */
-  constructor (log) {
+  private readonly log: AppiumLogger;
+
+  constructor(log: AppiumLogger) {
     this.log = log;
   }
 
   /**
    *
-   * @param {string} bundlePath Full path to the .ipa or .app bundle
-   * @param {string} propertyName
-   * @returns {Promise<any>}
+   * @param bundlePath Full path to the .ipa or .app bundle
+   * @param propertyName
+   * @returns
    */
-  async extractManifestProperty (bundlePath, propertyName) {
+  async extractManifestProperty(bundlePath: string, propertyName: string): Promise<any> {
     const result = (await this.put(bundlePath))[propertyName];
     this.log.debug(`${propertyName}: ${JSON.stringify(result)}`);
     return result;
@@ -37,28 +36,28 @@ export class AppInfosCache {
 
   /**
    *
-   * @param {string} bundlePath Full path to the .ipa or .app bundle
-   * @returns {Promise<string>}
+   * @param bundlePath Full path to the .ipa or .app bundle
+   * @returns
    */
-  async extractBundleId (bundlePath) {
+  async extractBundleId(bundlePath: string): Promise<string> {
     return await this.extractManifestProperty(bundlePath, 'CFBundleIdentifier');
   }
 
   /**
    *
-   * @param {string} bundlePath Full path to the .ipa or .app bundle
-   * @returns {Promise<string>}
+   * @param bundlePath Full path to the .ipa or .app bundle
+   * @returns
    */
-  async extractBundleVersion (bundlePath) {
+  async extractBundleVersion(bundlePath: string): Promise<string> {
     return await this.extractManifestProperty(bundlePath, 'CFBundleVersion');
   }
 
   /**
    *
-   * @param {string} bundlePath Full path to the .ipa or .app bundle
-   * @returns {Promise<string[]>}
+   * @param bundlePath Full path to the .ipa or .app bundle
+   * @returns
    */
-  async extractAppPlatforms (bundlePath) {
+  async extractAppPlatforms(bundlePath: string): Promise<string[]> {
     const result = await this.extractManifestProperty(bundlePath, 'CFBundleSupportedPlatforms');
     if (!Array.isArray(result)) {
       throw new Error(`${path.basename(bundlePath)}': CFBundleSupportedPlatforms is not a valid list`);
@@ -68,34 +67,32 @@ export class AppInfosCache {
 
   /**
    *
-   * @param {string} bundlePath Full path to the .ipa or .app bundle
-   * @returns {Promise<string>}
+   * @param bundlePath Full path to the .ipa or .app bundle
+   * @returns
    */
-  async extractExecutableName (bundlePath) {
+  async extractExecutableName(bundlePath: string): Promise<string> {
     return await this.extractManifestProperty(bundlePath, 'CFBundleExecutable');
   }
 
   /**
    *
-   * @param {string} bundlePath Full path to the .ipa or .app bundle
-   * @returns {Promise<import('@appium/types').StringRecord>} The payload of the manifest plist
-   * @throws {Error} If the given app is not a valid bundle
+   * @param bundlePath Full path to the .ipa or .app bundle
+   * @returns The payload of the manifest plist
+   * @throws If the given app is not a valid bundle
    */
-  async put (bundlePath) {
+  async put(bundlePath: string): Promise<StringRecord> {
     return (await fs.stat(bundlePath)).isFile()
       ? await this._putIpa(bundlePath)
       : await this._putApp(bundlePath);
   }
 
   /**
-   * @param {string} ipaPath Fill path to the .ipa bundle
-   * @returns {Promise<import('@appium/types').StringRecord>} The payload of the manifest plist
+   * @param ipaPath Fill path to the .ipa bundle
+   * @returns The payload of the manifest plist
    */
-  async _putIpa(ipaPath) {
-    /** @type {import('@appium/types').StringRecord|undefined} */
-    let manifestPayload;
-    /** @type {Error|undefined} */
-    let lastError;
+  private async _putIpa(ipaPath: string): Promise<StringRecord> {
+    let manifestPayload: StringRecord | undefined;
+    let lastError: Error | undefined;
     try {
       await zip.readEntries(ipaPath, async ({entry, extractEntryTo}) => {
         // For a future reference:
@@ -126,7 +123,7 @@ export class AppInfosCache {
             );
             MANIFEST_CACHE.set(hash, manifestPayload);
           }
-        } catch (e) {
+        } catch (e: any) {
           this.log.debug(e.stack);
           lastError = e;
         } finally {
@@ -134,7 +131,7 @@ export class AppInfosCache {
         }
         return false;
       });
-    } catch (e) {
+    } catch (e: any) {
       this.log.debug(e.stack);
       throw new Error(`Cannot find ${MANIFEST_FILE_NAME} in '${ipaPath}'. Is it a valid application bundle?`);
     }
@@ -149,14 +146,15 @@ export class AppInfosCache {
   }
 
   /**
-   * @param {string} appPath Fill path to the .app bundle
-   * @returns {Promise<import('@appium/types').StringRecord>} The payload of the manifest plist
+   * @param appPath Fill path to the .app bundle
+   * @returns The payload of the manifest plist
    */
-  async _putApp(appPath) {
+  private async _putApp(appPath: string): Promise<StringRecord> {
     const manifestPath = path.join(appPath, MANIFEST_FILE_NAME);
     const hash = await fs.hash(manifestPath);
-    if (MANIFEST_CACHE.has(hash)) {
-      return /** @type {import('@appium/types').StringRecord} */ (MANIFEST_CACHE.get(hash));
+    const cached = MANIFEST_CACHE.get(hash);
+    if (cached) {
+      return cached;
     }
     const [payload, stat] = await B.all([
       this._readPlist(manifestPath, appPath),
@@ -172,14 +170,14 @@ export class AppInfosCache {
   }
 
   /**
-   * @param {string} plistPath Full path to the plist
-   * @param {string} bundlePath Full path to .ipa or .app bundle
-   * @returns {Promise<any>} The payload of the plist file
+   * @param plistPath Full path to the plist
+   * @param bundlePath Full path to .ipa or .app bundle
+   * @returns The payload of the plist file
    */
-  async _readPlist(plistPath, bundlePath) {
+  private async _readPlist(plistPath: string, bundlePath: string): Promise<any> {
     try {
       return await plist.parsePlistFile(plistPath);
-    } catch (e) {
+    } catch (e: any) {
       this.log.debug(e.stack);
       throw new Error(`Cannot parse ${MANIFEST_FILE_NAME} of '${bundlePath}'. Is it a valid application bundle?`);
     }

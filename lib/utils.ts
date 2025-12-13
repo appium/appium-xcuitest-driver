@@ -8,12 +8,17 @@ import path from 'node:path';
 import url from 'node:url';
 import * as semver from 'semver';
 import {exec} from 'teen_process';
-import log from './logger';
+import {log} from './logger';
 import {PLATFORM_NAME_TVOS, PLATFORM_NAME_IOS} from './desired-caps';
+import type {XCUITestDriverOpts, XCUITestDriver} from './driver';
+import type {XcodeVersion} from 'appium-xcode';
+import type {Simulator} from 'appium-ios-simulator';
+import type {HTTPHeaders} from '@appium/types';
+import type {Method} from 'axios';
 
 export const UDID_AUTO = 'auto';
 const MODULE_NAME = 'appium-xcuitest-driver';
-const DEFAULT_TIMEOUT_KEY = 'default';
+export const DEFAULT_TIMEOUT_KEY = 'default';
 const XCTEST_LOG_FILES_PATTERNS = [
   /^Session-WebDriverAgentRunner.*\.log$/i,
   /^StandardOutputAndStandardError\.txt$/i,
@@ -21,48 +26,25 @@ const XCTEST_LOG_FILES_PATTERNS = [
 const XCTEST_LOGS_CACHE_FOLDER_PREFIX = 'com.apple.dt.XCTest';
 export const NATIVE_WIN = 'NATIVE_APP';
 
-/**
- * @privateRemarks Is the minimum version really Xcode 7.3?
- * @returns {Promise<XcodeVersion>}
- */
-async function getAndCheckXcodeVersion() {
-  /** @type {XcodeVersion} */
-  let version;
+export async function getAndCheckXcodeVersion(): Promise<XcodeVersion> {
   try {
-    version = /** @type {XcodeVersion} */ (await xcode.getVersion(true));
-  } catch (err) {
-    log.error(err);
-    throw new Error(`Could not determine Xcode version: ${err.message}`);
+    return await xcode.getVersion(true);
+  } catch (err: any) {
+    throw log.errorWithException(`Could not determine Xcode version: ${err.message}`);
   }
-
-  // we do not support Xcodes < 7.3,
-  if (version.versionFloat < 7.3) {
-    const msg = `Xcode ${version.versionString} is not supported. Please upgrade to version 7.3 or higher`;
-    log.error(msg);
-    throw new Error(msg);
-  }
-  return version;
 }
 
-/**
- * @returns {Promise<string|null>}
- */
-async function getAndCheckIosSdkVersion() {
+export async function getAndCheckIosSdkVersion(): Promise<string | null> {
   try {
     return await xcode.getMaxIOSSDK();
-  } catch (err) {
+  } catch (err: any) {
     throw log.errorWithException(`Could not determine iOS SDK version: ${err.message}`);
   }
 }
 
-
-/**
- * @param {string[]} locations
- * @returns {Promise<void>}
- */
-async function clearLogs(locations) {
+export async function clearLogs(locations: string[]): Promise<void> {
   log.debug('Clearing log files');
-  const cleanupPromises = [];
+  const cleanupPromises: Promise<void>[] = [];
   for (const location of locations) {
     if (!(await fs.exists(location))) {
       continue;
@@ -70,7 +52,7 @@ async function clearLogs(locations) {
 
     cleanupPromises.push(
       (async () => {
-        let size;
+        let size: string | undefined;
         try {
           const {stdout} = await exec('du', ['-sh', location]);
           size = stdout.trim().split(/\s+/)[0];
@@ -78,7 +60,7 @@ async function clearLogs(locations) {
         try {
           log.debug(`Deleting '${location}'. ${size ? `Freeing ${size}.` : ''}`);
           await fs.rimraf(location);
-        } catch (err) {
+        } catch (err: any) {
           log.warn(`Unable to delete '${location}': ${err.message}`);
         }
       })(),
@@ -93,9 +75,9 @@ async function clearLogs(locations) {
 // This map contains derived data logs folders as keys
 // and values are the count of times the particular
 // folder has been scheduled for removal
-const derivedDataCleanupMarkers = new Map();
+const derivedDataCleanupMarkers = new Map<string, number>();
 
-async function markSystemFilesForCleanup(wda) {
+export async function markSystemFilesForCleanup(wda: any): Promise<void> {
   if (!wda || !(await wda.retrieveDerivedDataPath())) {
     log.warn(
       'No WebDriverAgent derived data available, so unable to mark system files for cleanup',
@@ -105,13 +87,14 @@ async function markSystemFilesForCleanup(wda) {
 
   const logsRoot = path.resolve(await wda.retrieveDerivedDataPath(), 'Logs');
   let markersCount = 0;
-  if (derivedDataCleanupMarkers.has(logsRoot)) {
-    markersCount = derivedDataCleanupMarkers.get(logsRoot);
+  const existingCount = derivedDataCleanupMarkers.get(logsRoot);
+  if (existingCount !== undefined) {
+    markersCount = existingCount;
   }
   derivedDataCleanupMarkers.set(logsRoot, ++markersCount);
 }
 
-async function clearSystemFiles(wda) {
+export async function clearSystemFiles(wda: any): Promise<void> {
   // only want to clear the system files for the particular WDA xcode run
   if (!wda || !(await wda.retrieveDerivedDataPath())) {
     log.warn('No WebDriverAgent derived data available, so unable to clear system files');
@@ -119,8 +102,9 @@ async function clearSystemFiles(wda) {
   }
 
   const logsRoot = path.resolve(await wda.retrieveDerivedDataPath(), 'Logs');
-  if (derivedDataCleanupMarkers.has(logsRoot)) {
-    let markersCount = derivedDataCleanupMarkers.get(logsRoot);
+  const existingCount = derivedDataCleanupMarkers.get(logsRoot);
+  if (existingCount !== undefined) {
+    let markersCount = existingCount;
     derivedDataCleanupMarkers.set(logsRoot, --markersCount);
     if (markersCount > 0) {
       log.info(
@@ -138,8 +122,7 @@ async function clearSystemFiles(wda) {
     log.debug(`Did not find the temporary XCTest logs root at '${globPattern}'`);
   } else {
     // perform the cleanup asynchronously
-    /** @type {Promise[]} */
-    const promises = [];
+    const promises: Promise<void>[] = [];
     for (const dstFolder of dstFolders) {
       const promise = (async () => {
         try {
@@ -152,7 +135,7 @@ async function clearSystemFiles(wda) {
               fs.rimraf(itemPath);
             }
           });
-        } catch (e) {
+        } catch (e: any) {
           log.debug(e.stack);
           log.info(e.message);
         }
@@ -173,7 +156,7 @@ async function clearSystemFiles(wda) {
   log.info(`There is no ${logsRoot} folder, so not cleaning files`);
 }
 
-async function checkAppPresent(app) {
+export async function checkAppPresent(app: string): Promise<void> {
   log.debug(`Checking whether app '${app}' is actually present on file system`);
   if (!(await fs.exists(app))) {
     throw log.errorWithException(`Could not find app at '${app}'`);
@@ -184,11 +167,13 @@ async function checkAppPresent(app) {
 /**
  * Reads the content to the current module's package.json
  *
- * @returns {Promise<Record<string, any>>} The full path to module root
- * @throws {Error} If the current module's package.json cannot be determined
+ * @returns The full path to module root
+ * @throws If the current module's package.json cannot be determined
  */
-const getModuleManifest = _.memoize(async function getModuleManifest() {
-  let currentDir = path.dirname(path.resolve(__filename));
+const getModuleManifest = _.memoize(async function getModuleManifest(): Promise<Record<string, any>> {
+  // Start from the directory containing the compiled output (build/lib) or source (lib)
+  // and walk up to find package.json
+  let currentDir = path.resolve(__dirname, '..');
   let isAtFsRoot = false;
   while (!isAtFsRoot) {
     const manifestPath = path.join(currentDir, 'package.json');
@@ -200,8 +185,9 @@ const getModuleManifest = _.memoize(async function getModuleManifest() {
         }
       }
     } catch {}
-    currentDir = path.dirname(currentDir);
-    isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
+    const parentDir = path.dirname(currentDir);
+    isAtFsRoot = currentDir.length <= parentDir.length;
+    currentDir = parentDir;
   }
   throw new Error(`Cannot find the package manifest of the ${MODULE_NAME} Node.js module`);
 });
@@ -212,10 +198,15 @@ const getModuleManifest = _.memoize(async function getModuleManifest() {
  * @property {string} built Driver build timestamp
  */
 
+export interface DriverInfo {
+  version: string;
+  built: string;
+}
+
 /**
- * @returns {DriverInfo}
+ * @returns
  */
-const getDriverInfo = _.memoize(async function getDriverInfo() {
+export const getDriverInfo = _.memoize(async function getDriverInfo(): Promise<DriverInfo> {
   const [stat, manifest] = await B.all([
     fs.stat(path.resolve(__dirname, '..')),
     getModuleManifest(),
@@ -226,13 +217,13 @@ const getDriverInfo = _.memoize(async function getDriverInfo() {
   };
 });
 
-function normalizeCommandTimeouts(value) {
+export function normalizeCommandTimeouts(value: string | Record<string, number>): Record<string, number> {
   // The value is normalized already
   if (typeof value !== 'string') {
     return value;
   }
 
-  let result = {};
+  let result: Record<string, number> = {};
   // Use as default timeout for all commands if a single integer value is provided
   if (!isNaN(Number(value))) {
     result[DEFAULT_TIMEOUT_KEY] = _.toInteger(value);
@@ -250,7 +241,7 @@ function normalizeCommandTimeouts(value) {
       `"commandTimeouts" capability should be a valid JSON object. "${value}" was given instead`,
     );
   }
-  for (let [cmd, timeout] of _.toPairs(result)) {
+  for (const [cmd, timeout] of _.toPairs(result)) {
     if (!_.isInteger(timeout) || timeout <= 0) {
       throw log.errorWithException(
         `The timeout for "${cmd}" should be a valid natural number of milliseconds. "${timeout}" was given instead`,
@@ -260,11 +251,11 @@ function normalizeCommandTimeouts(value) {
   return result;
 }
 
-async function printUser() {
+export async function printUser(): Promise<void> {
   try {
-    let {stdout} = await exec('whoami');
+    const {stdout} = await exec('whoami');
     log.debug(`Current user: '${stdout.trim()}'`);
-  } catch (err) {
+  } catch (err: any) {
     log.debug(`Unable to get username running server: ${err.message}`);
   }
 }
@@ -274,16 +265,19 @@ async function printUser() {
  * It is also possible to apply additional filtering based on the
  * process command line.
  *
- * @param {string|number} port - The port number.
- * @param {?Function} filteringFunc - Optional lambda function, which
+ * @param port - The port number.
+ * @param filteringFunc - Optional lambda function, which
  *                                    receives command line string of the particular process
  *                                    listening on given port, and is expected to return
  *                                    either true or false to include/exclude the corresponding PID
  *                                    from the resulting array.
- * @returns {Promise<string[]>} - the list of matched process ids.
+ * @returns - the list of matched process ids.
  */
-async function getPIDsListeningOnPort(port, filteringFunc = null) {
-  const result = [];
+export async function getPIDsListeningOnPort(
+  port: string | number,
+  filteringFunc: ((cmdLine: string) => boolean | Promise<boolean>) | null = null
+): Promise<string[]> {
+  const result: string[] = [];
   try {
     // This only works since Mac OS X El Capitan
     const {stdout} = await exec('lsof', ['-ti', `tcp:${port}`]);
@@ -314,19 +308,32 @@ async function getPIDsListeningOnPort(port, filteringFunc = null) {
  * @property {Record<string, any> | [string, any][]} [formFields] - Additional form fields for multipart http(s) uploads
  */
 
+export interface UploadOptions {
+  user?: string;
+  pass?: string;
+  method?: Method;
+  headers?: HTTPHeaders;
+  fileFieldName?: string;
+  formFields?: Record<string, any> | [string, any][];
+}
+
 /**
  * Encodes the given local file to base64 and returns the resulting string
  * or uploads it to a remote server using http/https or ftp protocols
  * if `remotePath` is set
  *
- * @param {string} localPath - The path to an existing local file
- * @param {string|null} [remotePath] - The path to the remote location, where
+ * @param localPath - The path to an existing local file
+ * @param remotePath - The path to the remote location, where
  *                               this file should be uploaded
- * @param {UploadOptions} uploadOptions - Set of upload options
- * @returns {Promise<string>} Either an empty string if the upload was successful or
+ * @param uploadOptions - Set of upload options
+ * @returns Either an empty string if the upload was successful or
  * base64-encoded file representation if `remotePath` is falsy
  */
-async function encodeBase64OrUpload(localPath, remotePath = null, uploadOptions = {}) {
+export async function encodeBase64OrUpload(
+  localPath: string,
+  remotePath: string | null = null,
+  uploadOptions: UploadOptions = {}
+): Promise<string> {
   if (!(await fs.exists(localPath))) {
     throw log.errorWithException(`The file at '${localPath}' does not exist or is not accessible`);
   }
@@ -338,7 +345,7 @@ async function encodeBase64OrUpload(localPath, remotePath = null, uploadOptions 
   }
 
   const {user, pass, method, headers, fileFieldName, formFields} = uploadOptions;
-  const options = {
+  const options: net.HttpUploadOptions & net.NetOptions = {
     method: method || 'PUT',
     headers,
     fileFieldName,
@@ -347,7 +354,7 @@ async function encodeBase64OrUpload(localPath, remotePath = null, uploadOptions 
   if (user && pass) {
     options.auth = {user, pass};
   }
-  await net.uploadFile(localPath, /** @type {string} */ (remotePath), options);
+  await net.uploadFile(localPath, remotePath as string, options);
   return '';
 }
 
@@ -356,9 +363,9 @@ async function encodeBase64OrUpload(localPath, remotePath = null, uploadOptions 
  * in scope of the current session.
  *
  * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * @returns
  */
-export async function removeAllSessionWebSocketHandlers() {
+export async function removeAllSessionWebSocketHandlers(this: XCUITestDriver): Promise<void> {
   if (!this.sessionId || !_.isFunction(this.server?.getWebSocketHandlers)) {
     return;
   }
@@ -371,12 +378,12 @@ export async function removeAllSessionWebSocketHandlers() {
 
 /**
  * Returns true if the urlString is localhost
- * @param {string} urlString
- * @returns {boolean} Return true if the urlString is localhost
+ * @param urlString
+ * @returns Return true if the urlString is localhost
  */
-function isLocalHost(urlString) {
+export function isLocalHost(urlString: string): boolean {
   try {
-    const hostname = /** @type {string} */ (url.parse(urlString).hostname);
+    const hostname = url.parse(urlString).hostname as string;
     return ['localhost', '127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(hostname);
   } catch {
     log.warn(`'${urlString}' cannot be parsed as a valid URL`);
@@ -387,11 +394,11 @@ function isLocalHost(urlString) {
 /**
  * Normalizes platformVersion to a valid iOS version string
  *
- * @param {string} originalVersion - Loose version number, that can be parsed by semver
- * @return {string} iOS version number in <major>.<minor> format
- * @throws {Error} if the version number cannot be parsed
+ * @param originalVersion - Loose version number, that can be parsed by semver
+ * @return iOS version number in <major>.<minor> format
+ * @throws if the version number cannot be parsed
  */
-function normalizePlatformVersion(originalVersion) {
+export function normalizePlatformVersion(originalVersion: string): string {
   const normalizedVersion = semver.coerce(originalVersion);
   if (!normalizedVersion) {
     throw new Error(`The platform version '${originalVersion}' should be a valid version number`);
@@ -402,11 +409,11 @@ function normalizePlatformVersion(originalVersion) {
 /**
  * Assert the presence of particular keys in the given object
  *
- * @param {string|Array<string>} argNames one or more key names
- * @param {Object} opts the object to check
- * @returns {Object} the same given object
+ * @param argNames one or more key names
+ * @param opts the object to check
+ * @returns the same given object
  */
-function requireArgs(argNames, opts = {}) {
+export function requireArgs(argNames: string | string[], opts: Record<string, any> = {}): Record<string, any> {
   for (const argName of _.isArray(argNames) ? argNames : [argNames]) {
     if (!_.has(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
@@ -419,82 +426,38 @@ function requireArgs(argNames, opts = {}) {
  * Asserts that the given driver is running on a Simulator and return
  * the simlator instance.
  *
- * @param {string} action - Description of action
- * @param {import('./driver').XCUITestDriver} driver
- * @returns {Simulator}
+ * @param action - Description of action
  */
-export function assertSimulator(action, driver) {
-  if (!driver.isSimulator()) {
+export function assertSimulator(this: XCUITestDriver, action: string): Simulator {
+  if (!this.isSimulator()) {
     throw new Error(`${_.upperFirst(action)} can only be performed on Simulator`);
   }
-  return /** @type{Simulator} */ (driver.device);
+  return this.device as Simulator;
 }
 
 /**
  * Check if platform name is the TV OS one.
- *
- * @param {string|null|undefined} platformName
- * @returns {boolean}
  */
-export function isTvOs(platformName) {
+export function isTvOs(platformName: string | null | undefined): boolean {
   return _.toLower(platformName ?? '') === _.toLower(PLATFORM_NAME_TVOS);
 }
 
 /**
  * Return normalized platform name.
- *
- * @param {string|null|undefined} platformName
- * @returns {string}
  */
-export function normalizePlatformName(platformName) {
+export function normalizePlatformName(platformName: string | null | undefined): string {
   return isTvOs(platformName) ? PLATFORM_NAME_TVOS : PLATFORM_NAME_IOS;
 }
 
-/**
- * @param {import('./driver').XCUITestDriverOpts} opts
- * @returns {boolean}
- */
-export function shouldSetInitialSafariUrl(opts) {
+export function shouldSetInitialSafariUrl(opts: XCUITestDriverOpts): boolean {
   return !(opts.safariInitialUrl === '' || (opts.noReset && _.isNil(opts.safariInitialUrl)))
     && !opts.initialDeeplinkUrl;
 }
 
-/**
- * @param {import('./driver').XCUITestDriverOpts} opts
- * @returns {boolean}
- */
-export function isIos17OrNewer(opts) {
+export function isIos17OrNewer(opts: XCUITestDriverOpts): boolean {
   return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '17.0');
 }
 
-/**
- * @param {import('./driver').XCUITestDriverOpts} opts
- * @returns {boolean}
- */
-export function isIos18OrNewer(opts) {
+export function isIos18OrNewer(opts: XCUITestDriverOpts): boolean {
   return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '18.0');
 }
-
-export {
-  getAndCheckXcodeVersion,
-  getAndCheckIosSdkVersion,
-  checkAppPresent,
-  getDriverInfo,
-  clearSystemFiles,
-  normalizeCommandTimeouts,
-  DEFAULT_TIMEOUT_KEY,
-  markSystemFilesForCleanup,
-  printUser,
-  getPIDsListeningOnPort,
-  encodeBase64OrUpload,
-  isLocalHost,
-  normalizePlatformVersion,
-  clearLogs,
-  requireArgs,
-};
-
-/**
- * @typedef {import('appium-xcode').XcodeVersion} XcodeVersion
- * @typedef {import('appium-ios-simulator').Simulator} Simulator
- * @typedef {import('./driver').XCUITestDriver} XCUITestDriver
- */

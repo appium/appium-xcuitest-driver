@@ -28,12 +28,12 @@ describe('pasteboard commands', function () {
 
     it('setPasteboard should not be called', async function () {
       // @ts-expect-error incorrect usage
-      await expect(driver.mobileSetPasteboard({content: 'bla'})).to.be.rejectedWith(/not supported/);
+      await expect(driver.mobileSetPasteboard({content: 'bla'})).to.be.rejectedWith(/can only be performed on Simulator/);
       expect(setPasteboardStub.notCalled).to.be.true;
     });
 
     it('getPasteboard should not be called', async function () {
-      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(/not supported/);
+      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(/can only be performed on Simulator/);
       expect(getPasteboardStub.notCalled).to.be.true;
     });
   });

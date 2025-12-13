@@ -3,7 +3,7 @@ import {
 } from '../../lib/app-infos-cache';
 import { fs, tempDir, zip } from 'appium/support';
 import path from 'node:path';
-import log from '../../lib/logger';
+import {log} from '../../lib/logger';
 import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -51,14 +51,14 @@ describe('AppInfosCache', function () {
 
     it('should cache ipa', async function () {
       const info = await cache.put(ipaPath);
-      expect(await info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
+      expect(info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(ipaPath);
       expect(info).to.equal(info2);
     });
 
     it('should cache app', async function () {
       const info = await cache.put(appPath);
-      expect(await info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
+      expect(info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(appPath);
       expect(info).to.equal(info2);
     });

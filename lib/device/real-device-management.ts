@@ -4,7 +4,7 @@ import {fs, tempDir, mkdirp, zip, util, timing} from 'appium/support';
 import path from 'path';
 import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
-import defaultLogger from '../logger';
+import {log as defaultLogger} from '../logger';
 import { Devicectl } from 'node-devicectl';
 import type { AppiumLogger } from '@appium/types';
 import type { XCUITestDriver } from '../driver';
