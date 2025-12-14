@@ -14,7 +14,6 @@ on:
 jobs:
   node_matrix:
     uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
-  # https://thekevinwang.com/2021/09/19/github-actions-dynamic-matrix/
 
   test:
     runs-on: ubuntu-latest
