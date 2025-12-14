@@ -29,6 +29,9 @@ jobs:
       uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3
       with:
         node-version: ${{ matrix.node-version }}
+    - uses: SocketDev/action@v1
+      with:
+        mode: firewall-free
     - run: sfw npm install --no-package-lock
       name: Install dev dependencies
     - run: npm run lint
