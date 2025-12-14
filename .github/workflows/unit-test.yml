@@ -26,7 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@e33196f7422957bea03ed53f6fbb155025ffc7b8 # v3
+      uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
       with:
         node-version: ${{ matrix.node-version }}
     - uses: SocketDev/action@v1
