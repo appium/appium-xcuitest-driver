@@ -2560,6 +2560,49 @@
 
   <!-- Table of contents list -->
   
+    <nav class="md-nav" aria-label="Setup">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#network-only-real-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network-Only Real Devices
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <!--
@@ -2904,6 +2947,49 @@
 
   <!-- Table of contents list -->
   
+    <nav class="md-nav" aria-label="Setup">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#network-only-real-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network-Only Real Devices
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <!--
@@ -3159,8 +3245,9 @@
 <p><img src="https://user-images.githubusercontent.com/5511591/55161297-876e0200-51a8-11e9-8313-8d9f15a0db9d.gif" width=50%></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Apple TV 4K is not supported. This is because <a href="https://github.com/appium/appium-ios-device"><code>appium-ios-device</code></a>,
-which is used to support low-level communication with devices, only supports devices connected via USB.</p>
+<p>Support for network-only Apple TV devices is limited.
+This is because <a href="https://github.com/appium/appium-ios-device"><code>appium-ios-device</code></a>,
+which handles low-level communication with devices, only supports USB-connected devices.</p>
 </div>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
 <p>You can run tests for tvOS by setting the <code>platformName</code> capability to <code>tvOS</code>:</p>
@@ -3176,6 +3263,21 @@ which is used to support low-level communication with devices, only supports dev
 <p class="admonition-title">Note</p>
 <p>If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
 <code>xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"</code> to verify this.</p>
+</div>
+<h3 id="network-only-real-devices">Network-Only Real Devices<a class="headerlink" href="#network-only-real-devices" title="Permanent link">&para;</a></h3>
+<p>To run tests on network-only Apple TV devices, you may need the following:</p>
+<ul>
+<li>Xcode 26.1 or later (to execute <code>xcodebuild</code> against such network-only Apple TV devices)</li>
+<li>Set the <code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> environment variable</li>
+<li>Provide the <code>appium:wdaBaseUrl</code> capability; it must be <code>http://&lt;the Apple TV's IP address&gt;</code></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you provide <code>appium:webDriverAgentUrl</code> to manage WebDriverAgent process by yourself,
+only <code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> might be sufficient.</p>
+<p>If your environment exposes the <code>usbmuxd</code> interface to Appium via third-party tools,
+<code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> may not be needed.
+This environment variable could cause conflicts in several behaviors.</p>
 </div>
 <h2 id="basic-actions">Basic Actions<a class="headerlink" href="#basic-actions" title="Permanent link">&para;</a></h2>
 <p>tvOS provides <a href="https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/">remote controller</a>
@@ -3251,6 +3353,7 @@ so you should not care about which keys should be pressed to reach an arbitrary 
 <li><a href="https://github.com/appium/appium-xcuitest-driver/pull/931">https://github.com/appium/appium-xcuitest-driver/pull/931</a></li>
 <li><a href="https://github.com/appium/appium-xcuitest-driver/pull/939">https://github.com/appium/appium-xcuitest-driver/pull/939</a></li>
 <li><a href="https://github.com/appium/WebDriverAgent/pull/163">https://github.com/appium/WebDriverAgent/pull/163</a></li>
+<li><a href="https://github.com/appium/appium-xcuitest-driver/pull/2194">https://github.com/appium/appium-xcuitest-driver/pull/2194</a></li>
 </ul>
 
 
@@ -3272,7 +3375,7 @@ so you should not care about which keys should be pressed to reach an arbitrary 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="January 18, 2024 08:08:50 UTC"><span class="timeago" datetime="2024-01-18T08:08:50+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="January 18, 2024 08:08:50 UTC">2024-01-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="December 14, 2025 21:21:32 UTC"><span class="timeago" datetime="2025-12-14T21:21:32+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="December 14, 2025 21:21:32 UTC">2025-12-14</span>
   </span>
 
     
