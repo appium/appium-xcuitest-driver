@@ -89,7 +89,7 @@
     "appium-webdriveragent": "^10.2.1",
     "appium-xcode": "^6.0.2",
     "async-lock": "^1.4.0",
-    "asyncbox": "^3.0.0",
+    "asyncbox": "^4.0.1",
     "bluebird": "^3.7.2",
     "commander": "^14.0.1",
     "css-selector-parser": "^3.0.0",
