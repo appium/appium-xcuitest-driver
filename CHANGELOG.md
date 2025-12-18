@@ -1,3 +1,13 @@
+## [10.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.11.0...v10.12.0) (2025-12-18)
+
+### Features
+
+* Add `enforceCustomSnapshots` setting ([#2680](https://github.com/appium/appium-xcuitest-driver/issues/2680)) ([6758bee](https://github.com/appium/appium-xcuitest-driver/commit/6758beea9d8580d8e4d983b213b07cb96c5e63de))
+
+### Miscellaneous Chores
+
+* **deps:** bump asyncbox from 3.0.0 to 4.0.1 ([#2681](https://github.com/appium/appium-xcuitest-driver/issues/2681)) ([6998151](https://github.com/appium/appium-xcuitest-driver/commit/6998151da802a57276e2149eb21844e087f0430a))
+
 ## [10.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.10.1...v10.11.0) (2025-12-13)
 
 ### Features
