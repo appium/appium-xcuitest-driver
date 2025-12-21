@@ -242,8 +242,6 @@ const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScr
 // Capabilities that do not have xcodebuild process
 const CAP_NAMES_NO_XCODEBUILD_REQUIRED = ['webDriverAgentUrl', 'usePreinstalledWDA'];
 
-const BUNDLE_VERSION_PATTERN = /CFBundleVersion\s+=\s+"?([^(;|")]+)/;
-
 export class XCUITestDriver
   extends BaseDriver<XCUITestDriverConstraints, StringRecord>
   implements ExternalDriver<XCUITestDriverConstraints, FullContext|string, StringRecord> {
@@ -860,8 +858,6 @@ export class XCUITestDriver
     await this.runReset();
 
     this._wda = new WebDriverAgent(
-      // @ts-ignore This property is not used by WDA, and will be removed in the future
-      this.xcodeVersion,
       {
         ...this.opts,
         device: this.device,
