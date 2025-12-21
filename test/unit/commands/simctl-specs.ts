@@ -26,7 +26,7 @@ describe('general commands', function () {
       mockSimctl.expects('exec').once().withExactArgs(
         'getenv',
         {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME'], timeout: undefined}
-      );
+      ).returns(Promise.resolve({stdout: '', stderr: '', code: 0}));
       await driver.mobileSimctl('getenv', ['HOME']);
     });
 
@@ -36,7 +36,7 @@ describe('general commands', function () {
       mockSimctl.expects('exec').once().withExactArgs(
         'getenv',
         {args: ['60EB8FDB-92E0-4895-B466-0153C6DE7BAE', 'HOME'], timeout: 10000}
-      );
+      ).returns(Promise.resolve({stdout: '', stderr: '', code: 0}));
       await driver.mobileSimctl('getenv', ['HOME'], 10000);
     });
 
