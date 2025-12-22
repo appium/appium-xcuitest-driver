@@ -9,31 +9,6 @@ import type {Direction} from './types';
 const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
 
 /**
- * Converts a chain of gestures to a string representation.
- *
- * @param gestures - Array of gesture objects
- * @param keysToInclude - Array of keys to include in the string representation, or null to include all
- */
-export function gesturesChainToString(gestures: any[], keysToInclude: string[] | null = ['options']): string {
-  return gestures
-    .map((item) => {
-      let otherKeys = _.difference(_.keys(item), ['action']);
-      otherKeys = _.isArray(keysToInclude) ? _.intersection(otherKeys, keysToInclude) : otherKeys;
-      if (otherKeys.length) {
-        return (
-          `${item.action}` +
-          `(${_.map(
-            otherKeys,
-            (x) => x + '=' + (_.isPlainObject(item[x]) ? JSON.stringify(item[x]) : item[x]),
-          ).join(', ')})`
-        );
-      }
-      return item.action;
-    })
-    .join('-');
-}
-
-/**
  * Shakes the device.
  *
  * @group Simulator Only
@@ -189,14 +164,6 @@ export async function mobileScroll(
   distance?: number,
   elementId?: Element | string,
 ): Promise<void> {
-  interface WdaScrollParams {
-    name?: string;
-    direction?: Direction;
-    predicateString?: string;
-    toVisible?: boolean;
-    distance?: number;
-  }
-
   const params: WdaScrollParams = {};
   if (name) {
     params.name = name;
@@ -662,3 +629,10 @@ function requireFloat(value: any, paramName: string): number {
   return num;
 }
 
+interface WdaScrollParams {
+  name?: string;
+  direction?: Direction;
+  predicateString?: string;
+  toVisible?: boolean;
+  distance?: number;
+}
