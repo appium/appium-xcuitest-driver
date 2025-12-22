@@ -4,39 +4,6 @@ import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types'
 import '@colors/colors';
 import {exec} from 'teen_process';
 
-export class OptionalIdbCommandCheck implements IDoctorCheck {
-  log!: AppiumLogger;
-  static readonly IDB_README_URL = 'https://git.io/JnxQc';
-
-  async diagnose(): Promise<DoctorCheckResult> {
-    const fbIdbPath = await resolveExecutablePath('idb');
-    const fbCompanionIdbPath = await resolveExecutablePath('idb_companion');
-    if (fbIdbPath && fbCompanionIdbPath) {
-      return doctor.okOptional('idb and idb_companion are installed');
-    }
-
-    if (!fbIdbPath && fbCompanionIdbPath) {
-      return doctor.nokOptional('idb is not installed');
-    } else if (fbIdbPath && !fbCompanionIdbPath) {
-      return doctor.nokOptional('idb_companion is not installed');
-    }
-    return doctor.nokOptional('idb and idb_companion are not installed');
-  }
-
-  async fix(): Promise<string> {
-    return `Why ${'idb'.bold} is needed and how to install it: ${OptionalIdbCommandCheck.IDB_README_URL}`;
-  }
-
-  hasAutofix(): boolean {
-    return false;
-  }
-
-  isOptional(): boolean {
-    return true;
-  }
-}
-export const optionalIdbCheck = new OptionalIdbCommandCheck();
-
 export class OptionalSimulatorCheck implements IDoctorCheck {
   log!: AppiumLogger;
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [
