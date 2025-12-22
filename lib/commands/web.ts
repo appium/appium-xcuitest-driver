@@ -8,7 +8,6 @@ import type {XCUITestDriver} from '../driver';
 import type {Element, Cookie, Size, Position, Rect} from '@appium/types';
 import type {AtomsElement} from './types';
 import type {CalibrationData} from '../types';
-import type {RemoteDebugger} from 'appium-remote-debugger';
 
 const IPHONE_TOP_BAR_HEIGHT = 71;
 const IPHONE_SCROLLED_TOP_BAR_HEIGHT = 41;
@@ -136,7 +135,7 @@ export async function refresh(this: XCUITestDriver): Promise<void> {
     throw new errors.NotImplementedError();
   }
 
-  await (this.remote as RemoteDebugger).execute('window.location.reload()');
+  await this.remote.execute('window.location.reload()');
 }
 
 /**
@@ -150,7 +149,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
     throw new errors.NotImplementedError();
   }
 
-  return await (this.remote as RemoteDebugger).execute('window.location.href') as string;
+  return await this.remote.execute('window.location.href') as string;
 }
 
 /**
@@ -164,7 +163,7 @@ export async function title(this: XCUITestDriver): Promise<string> {
     throw new errors.NotImplementedError();
   }
 
-  return await (this.remote as RemoteDebugger).execute('window.document.title') as string;
+  return await this.remote.execute('window.document.title') as string;
 }
 
 /**
@@ -181,7 +180,7 @@ export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
   }
 
   // get the cookies from the remote debugger, or an empty object
-  const {cookies} = await (this.remote as RemoteDebugger).getCookies();
+  const {cookies} = await this.remote.getCookies();
 
   // the value is URI encoded, so decode it safely
   return cookies.map((cookie) => {
@@ -323,7 +322,7 @@ export function cacheWebElements(this: XCUITestDriver, response: any): any {
  */
 export async function executeAtom(this: XCUITestDriver, atom: string, args: unknown[], alwaysDefaultFrame: boolean = false): Promise<any> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  const promise = (this.remote as RemoteDebugger).executeAtom(atom, args, frames);
+  const promise = this.remote.executeAtom(atom, args, frames);
   return await this.waitForAtom(promise);
 }
 
@@ -338,7 +337,7 @@ export async function executeAtomAsync(this: XCUITestDriver, atom: string, args:
   const promise = new B((resolve, reject) => {
     this.asyncPromise = {resolve, reject};
   });
-  await (this.remote as RemoteDebugger).executeAtomAsync(atom, args, this.curWebFrames);
+  await this.remote.executeAtomAsync(atom, args, this.curWebFrames);
   return await this.waitForAtom(promise);
 }
 
@@ -711,7 +710,7 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
     const { offsetX, offsetY, pixelRatioX, pixelRatioY } = this.webviewCalibrationResult;
     const cmd = '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
       'outerWidth: window.outerWidth, outerHeight: window.outerHeight}; })()';
-    const wvDims = await (this.remote as RemoteDebugger).execute(cmd) as {innerWidth: number; innerHeight: number; outerWidth: number; outerHeight: number};
+    const wvDims = await this.remote.execute(cmd) as {innerWidth: number; innerHeight: number; outerWidth: number; outerHeight: number};
     // https://tripleodeon.com/2011/12/first-understand-your-screen/
     const shouldApplyPixelRatio = wvDims.innerWidth > wvDims.outerWidth
       || wvDims.innerHeight > wvDims.outerHeight;
@@ -748,7 +747,7 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
   const realDims = {w: rect.width, h: rect.height};
 
   const cmd = '(function () { return {w: window.innerWidth, h: window.innerHeight}; })()';
-  const wvDims = await (this.remote as RemoteDebugger).execute(cmd) as {w: number; h: number};
+  const wvDims = await this.remote.execute(cmd) as {w: number; h: number};
 
   // keep track of implicit wait, and set locally to 0
   // https://github.com/appium/appium/issues/14988
@@ -893,11 +892,11 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
  * @param navType - Navigation type (e.g., 'back', 'forward')
  */
 export async function mobileWebNav(this: XCUITestDriver, navType: string): Promise<void> {
-  (this.remote as RemoteDebugger).allowNavigationWithoutReload = true;
+  this.remote.allowNavigationWithoutReload = true;
   try {
     await this.executeAtom('execute_script', [`history.${navType}();`, null]);
   } finally {
-    (this.remote as RemoteDebugger).allowNavigationWithoutReload = false;
+    this.remote.allowNavigationWithoutReload = false;
   }
 }
 
@@ -1027,7 +1026,7 @@ async function generateAtomTimeoutError(this: XCUITestDriver, timer: timing.Time
     `The remote Safari debugger did not respond to the requested ` +
     `command after ${timer.getDuration().asMilliSeconds}ms. `
   );
-  message += (await this.remote?.isJavascriptExecutionBlocked()) ? (
+  message += (await this._remote?.isJavascriptExecutionBlocked()) ? (
     `It appears that JavaScript execution is blocked, ` +
     `which could be caused by either a modal dialog obstructing the current page, ` +
     `or a JavaScript routine monopolizing the event loop.`
@@ -1151,6 +1150,6 @@ function createJSCookie(key: string, value: string, options: {
  */
 async function _deleteCookie(this: XCUITestDriver, cookie: Cookie): Promise<any> {
   const url = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
-  return await (this.remote as RemoteDebugger).deleteCookie(cookie.name, url);
+  return await this.remote.deleteCookie(cookie.name, url);
 }
 

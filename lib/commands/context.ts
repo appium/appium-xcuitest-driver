@@ -60,7 +60,7 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
     await this.setContext(contextId);
     return;
   }
-  const appDict = (this.remote as RemoteDebugger).appDict;
+  const appDict = this.remote.appDict;
   const errSuffix = `Make sure your web application is debuggable ` +
     `and could be inspected in Safari Web Inspector.`;
   if (_.isEmpty(appDict)) {
@@ -108,7 +108,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
   }
   const doListPages = async (retries: number): Promise<Page[]> => {
     try {
-      const pageArray = await (this.remote as RemoteDebugger).selectApp(
+      const pageArray = await this.remote.selectApp(
         shouldFilterByUrl ? this.getCurrentUrl() : undefined,
         retries,
         this.opts.ignoreAboutBlankUrl,
@@ -141,7 +141,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
  * Establishes a connection to the remote debugger and sets up event listeners.
  */
 export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<void> {
-  this.remote = await this.getNewRemoteDebugger();
+  this._remote = await this.getNewRemoteDebugger();
 
   // @ts-ignore static is fine
   this.remote.on(RemoteDebugger.EVENT_PAGE_CHANGE, this.onPageChange.bind(this));
@@ -234,7 +234,7 @@ export async function onPageChange(this: XCUITestDriver, pageChangeNotification:
     this.log.debug('We are in the middle of selecting a page, ignoring');
     return;
   }
-  if (!this.remote?.isConnected) {
+  if (!this._remote?.isConnected) {
     this.log.debug('We have not yet connected, ignoring');
     return;
   }
@@ -324,9 +324,6 @@ export async function onPageChange(this: XCUITestDriver, pageChangeNotification:
     const oldContext = this.curContext;
     this.curContext = `${appIdKey}.${newPage}`;
     try {
-      if (!this.remote) {
-        throw new Error('Remote debugger is not available');
-      }
       await this.remote.selectPage(appIdKey, parseInt(newPage, 10));
       await notifyBiDiContextChange.bind(this)();
     } catch (e: any) {
@@ -356,7 +353,7 @@ export async function stopRemote(this: XCUITestDriver, closeWindowBeforeDisconne
   this.curContext = null;
   await notifyBiDiContextChange.bind(this)();
   this.curWebFrames = [];
-  this.remote = null;
+  this._remote = null;
 }
 
 /**
@@ -551,7 +548,7 @@ export async function setContext(
     const [appIdKey, pageIdKey] = _.map(contextId.split('.'), (id) => parseInt(id, 10));
     try {
       this.selectingNewPage = true;
-      await (this.remote as RemoteDebugger).selectPage(appIdKey, pageIdKey, skipReadyCheck);
+      await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
       await notifyBiDiContextChange.bind(this)();
     } catch (err) {
       this.curContext = this.curWindowHandle = oldContext;
@@ -579,12 +576,12 @@ export async function setContext(
     // start safari logging if the logs handlers are active
     if (name && name !== NATIVE_WIN && this.logs) {
       if (this.logs.safariConsole) {
-        (this.remote as RemoteDebugger).startConsole(
+        this.remote.startConsole(
           this.logs.safariConsole.onConsoleLogEvent.bind(this.logs.safariConsole),
         );
       }
       if (this.logs.safariNetwork) {
-        (this.remote as RemoteDebugger).startNetwork(
+        this.remote.startNetwork(
           this.logs.safariNetwork.onNetworkEvent.bind(this.logs.safariNetwork),
         );
       }
