@@ -1,3 +1,9 @@
+## [10.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.12.0...v10.12.1) (2025-12-22)
+
+### Miscellaneous Chores
+
+* Bump major appium-webdriveragent version to 11 ([#2682](https://github.com/appium/appium-xcuitest-driver/issues/2682)) ([c70e413](https://github.com/appium/appium-xcuitest-driver/commit/c70e4138a151932b4cd5a81b020660b0220f70f3))
+
 ## [10.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.11.0...v10.12.0) (2025-12-18)
 
 ### Features
