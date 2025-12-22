@@ -2,178 +2,178 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/contributing/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/endpoints-wda/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/endpoints/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/overview/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/attach-to-running-wda/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/audio-capture/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/capability-sets/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/ci-setup/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/clipboard/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/elements-lookup-troubleshooting/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/file-transfer/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/gestures/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/hybrid/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/input-events/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/install-certificate/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/multiple-xcode-versions/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/parallel-tests/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/run-prebuilt-wda/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/run-preinstalled-wda/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/touch-id/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/troubleshooting/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/tvos/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/wda-custom-server/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/guides/wda-slowness/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/installation/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/preparation/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/preparation/prov-profile-basic-auto/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/preparation/prov-profile-basic-manual/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/preparation/prov-profile-full-manual/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/preparation/prov-profile-generic-manual/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/preparation/real-device-config/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/bidi/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/capabilities/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/commands/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/element-attributes/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/env-vars/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/execute-methods/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/ios-predicate/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/locator-strategies/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/scripts/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/security-flags/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/server-args/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/10.12/reference/settings/</loc>
-         <lastmod>2025-12-18</lastmod>
+         <lastmod>2025-12-22</lastmod>
     </url>
 </urlset>
