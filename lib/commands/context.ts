@@ -103,7 +103,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
     (shouldFilterByUrl ? ` (expected url: '${this.getCurrentUrl()}')` : '')
   );
 
-  if (!this.remote) {
+  if (!this._remote) {
     await this.connectToRemoteDebugger();
   }
   const doListPages = async (retries: number): Promise<Page[]> => {
@@ -337,23 +337,24 @@ export async function onPageChange(this: XCUITestDriver, pageChangeNotification:
 
 /**
  * Disconnects from the remote debugger and cleans up context state.
- *
- * @param closeWindowBeforeDisconnecting - Whether to close the current window before disconnecting
- * @throws {Error} If not currently connected to a remote debugger
  */
-export async function stopRemote(this: XCUITestDriver, closeWindowBeforeDisconnecting: boolean = false): Promise<void> {
-  if (!this.remote) {
-    throw this.log.errorWithException('Tried to leave a web frame but were not in one');
+export async function stopRemote(this: XCUITestDriver): Promise<void> {
+  if (!this._remote) {
+    return;
   }
 
-  if (closeWindowBeforeDisconnecting) {
-    await this.closeWindow();
+  try {
+    await this.remote.disconnect();
+    this.curContext = null;
+    try {
+      await notifyBiDiContextChange.bind(this)();
+    } catch (err) {
+      this.log.warn(`Failed to notify BiDi context change: ${err.message}`);
+    }
+  } finally {
+    this.curWebFrames = [];
+    this._remote = null;
   }
-  await this.remote.disconnect();
-  this.curContext = null;
-  await notifyBiDiContextChange.bind(this)();
-  this.curWebFrames = [];
-  this._remote = null;
 }
 
 /**
@@ -558,7 +559,7 @@ export async function setContext(
     }
 
     // attempt to start performance logging, if requested
-    if (this.opts.enablePerformanceLogging && this.remote) {
+    if (this.opts.enablePerformanceLogging && this._remote) {
       const context = this.curContext;
       this.log.debug(`Starting performance log on '${context}'`);
       [this.logs.performance,] = assignBiDiLogListener.bind(this)(
