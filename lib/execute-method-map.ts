@@ -499,7 +499,6 @@ export const executeMethodMap = {
     },
   },
   'mobile: calibrateWebToRealCoordinatesTranslation': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileCalibrateWebToRealCoordinatesTranslation',
   },
   'mobile: keys': {

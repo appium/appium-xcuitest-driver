@@ -1,16 +1,20 @@
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import _ from 'lodash';
+import {assertSimulator} from '../utils';
+import type {XCUITestDriver} from '../driver';
+import type {ActionSequence, Element} from '@appium/types';
+import type {Direction} from './types';
 
-const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'];
+const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
 
 /**
+ * Converts a chain of gestures to a string representation.
  *
- * @param {any[]} gestures
- * @param {string[]|null} keysToInclude
- * @returns {string}
+ * @param gestures - Array of gesture objects
+ * @param keysToInclude - Array of keys to include in the string representation, or null to include all
  */
-export function gesturesChainToString(gestures, keysToInclude = ['options']) {
+export function gesturesChainToString(gestures: any[], keysToInclude: string[] | null = ['options']): string {
   return gestures
     .map((item) => {
       let otherKeys = _.difference(_.keys(item), ['action']);
@@ -30,21 +34,22 @@ export function gesturesChainToString(gestures, keysToInclude = ['options']) {
 }
 
 /**
- * Shake the device
- * @this {XCUITestDriver}
+ * Shakes the device.
+ *
  * @group Simulator Only
+ * @throws {Error} If called on a real device
  */
-export async function mobileShake() {
-  if (!this.isSimulator()) {
-    throw new errors.UnknownError('Shake is not supported on real devices');
-  }
-  await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).shake();
+export async function mobileShake(this: XCUITestDriver): Promise<void> {
+  await assertSimulator.call(this, 'Shake device').shake();
 }
 
 /**
- * @this {XCUITestDriver}
+ * Clicks on an element.
+ *
+ * In web context, uses native web tap if configured, otherwise uses atom-based clicking.
+ * In native context, delegates to native click.
  */
-export async function click(el) {
+export async function click(this: XCUITestDriver, el: Element | string): Promise<void> {
   if (!this.isWebContext()) {
     // there are multiple commands that map here, so manually proxy
     return await this.nativeClick(el);
@@ -64,7 +69,7 @@ export async function click(el) {
     // the behaviour of selenium.
     try {
       return await this.executeAtom('click', [atomsElement]);
-    } catch (err) {
+    } catch (err: any) {
       if (err.error === errors.UnexpectedAlertOpenError.error()) {
         return;
       }
@@ -74,18 +79,23 @@ export async function click(el) {
 }
 
 /**
- * @this {XCUITestDriver}
+ * Releases all actions.
+ *
+ * On this platform, this is a no-op.
  */
-export async function releaseActions() {
-  this.log.warn('On this platform, releaseActions is a no-op');
+export async function releaseActions(this: XCUITestDriver): Promise<void> {
+  this.log.info('On this platform, releaseActions is a no-op');
 }
 
 /**
- * @param {import('@appium/types').ActionSequence[]} actions
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * Performs a sequence of W3C actions.
+ *
+ * Automatically converts MOUSE pointer type to TOUCH and filters out zero-duration pauses.
+ *
+ * @param actions - Array of action sequences to perform
+ * @throws {errors.InvalidArgumentError} If actions contain web elements
  */
-export async function performActions(actions) {
+export async function performActions(this: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
   this.log.debug(`Received the following W3C actions: ${JSON.stringify(actions, null, '  ')}`);
   assertNoWebElements(actions);
   // This is mandatory, since WDA only supports TOUCH pointer type
@@ -114,13 +124,14 @@ export async function performActions(actions) {
 }
 
 /**
- * @param {import('@appium/types').Element|string} el
- * @this {XCUITestDriver}
+ * Performs a native click on an element.
+ *
+ * @param el - Element to click
  * @group Native Only
  */
-export async function nativeClick(el) {
+export async function nativeClick(this: XCUITestDriver, el: Element | string): Promise<void> {
   el = util.unwrapElement(el);
-  let endpoint = `/element/${el}/click`;
+  const endpoint = `/element/${el}/click`;
   return await this.proxyCommand(endpoint, 'POST', {});
 }
 
@@ -132,17 +143,15 @@ export async function nativeClick(el) {
  * This API uses native XCTest calls, so it is performant. The same native call is implicitly performed by a `click` command if the destination element is outside the current viewport.
  *
  * @since 4.7.0
- * @throws If the scrolling action cannot be performed
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to scroll to. The destination element must be located in a scrollable container and must be hittable. If the element is already present in the current viewport then no action is performed.
+ * @throws {errors.InvalidArgumentError} If elementId is not provided
  * @privateRemarks See https://github.com/facebook/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBElementCommands.m for details on WDA gestures API
- * @param {Element|string} elementId - The internal element identifier (as hexadecimal hash string) to scroll to. The destination element must be located in a scrollable container and must be hittable. If the element is already present in the current viewport then no action is performed.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
  */
-export async function mobileScrollToElement(elementId) {
+export async function mobileScrollToElement(this: XCUITestDriver, elementId: Element | string): Promise<void> {
   if (!elementId) {
     throw new errors.InvalidArgumentError('Element id must be provided');
   }
-  return await this.proxyCommand(`/wda/element/${elementId}/scrollTo`, 'POST', {});
+  return await this.proxyCommand(`/wda/element/${util.unwrapElement(elementId)}/scrollTo`, 'POST', {});
 }
 
 /**
@@ -159,36 +168,40 @@ export async function mobileScrollToElement(elementId) {
  * - If it is necessary to perform many scroll gestures on parent container to reach the necessary child element (tens of them), then the method call may fail.  *
  * - The implementation of this extension relies on several undocumented XCTest features, which might not always be reliable.
  *
- * @param {string} [name] - The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). The Application element will be used if this argument is not provided.
- * @param {import('./types').Direction} [direction] - The main difference between this command and a `mobile: swipe` command using the same direction is that `mobile: scroll` will attempt to move the current viewport exactly to the next or previous page (the term "page" means the content, which fits into a single device screen).
- * @param {string} [predicateString] - The `NSPredicate` locator of the child element, to which the scrolling should be performed. Has no effect if `elementId` is not a container.
- * @param {boolean} [toVisible] - If `true`, scrolls to the first visible `elementId` in the parent container. Has no effect if `elementId` is unset.
- * @param {number} [distance] - A ratio of the screen height; `1.0` means a full-screen-worth of scrolling.
- * @param {Element|string} [elementId] - Element ID or Element used in various strategies.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param name - The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). The Application element will be used if this argument is not provided.
+ * @param direction - The main difference between this command and a `mobile: swipe` command using the same direction is that `mobile: scroll` will attempt to move the current viewport exactly to the next or previous page (the term "page" means the content, which fits into a single device screen).
+ * @param predicateString - The `NSPredicate` locator of the child element, to which the scrolling should be performed. Has no effect if `elementId` is not a container.
+ * @param toVisible - If `true`, scrolls to the first visible `elementId` in the parent container. Has no effect if `elementId` is unset.
+ * @param distance - A ratio of the screen height; `1.0` means a full-screen-worth of scrolling.
+ * @param elementId - Element ID or Element used in various strategies.
+ * @throws {errors.InvalidArgumentError} If no valid strategy is provided or if direction is invalid
  * @example
  * ```python
  * driver.execute_script('mobile: scroll', {'direction': 'down'})
  * ```
  */
-export async function mobileScroll(name, direction, predicateString, toVisible, distance, elementId) {
-  /**
-   * @todo This should be defined in WDA instead.
-   * @typedef WdaScrollParams
-   * @property {string} [name]
-   * @property {import('./types').Direction} [direction]
-   * @property {string} [predicateString]
-   * @property {boolean} [toVisible]
-   * @property {number} [distance]
-   */
+export async function mobileScroll(
+  this: XCUITestDriver,
+  name?: string,
+  direction?: Direction,
+  predicateString?: string,
+  toVisible?: boolean,
+  distance?: number,
+  elementId?: Element | string,
+): Promise<void> {
+  interface WdaScrollParams {
+    name?: string;
+    direction?: Direction;
+    predicateString?: string;
+    toVisible?: boolean;
+    distance?: number;
+  }
 
-  /** @type {WdaScrollParams} */
-  const params = {};
+  const params: WdaScrollParams = {};
   if (name) {
     params.name = name;
   } else if (direction) {
-    if (!SUPPORTED_GESTURE_DIRECTIONS.includes(_.toLower(direction))) {
+    if (!SUPPORTED_GESTURE_DIRECTIONS.includes(_.toLower(direction) as any)) {
       throw new errors.InvalidArgumentError(
         `'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`,
       );
@@ -214,18 +227,25 @@ export async function mobileScroll(name, direction, predicateString, toVisible, 
 }
 
 /**
- * @param {import('./types').Direction} direction
- * @param {number} [velocity]
- * @param {Element|string} [elementId]
- * @this {XCUITestDriver}
+ * Performs a swipe gesture in the specified direction.
+ *
+ * @param direction - Direction to swipe ('up', 'down', 'left', or 'right')
+ * @param velocity - Optional velocity of the swipe
+ * @param elementId - Optional element to swipe on. If not provided, swipes on the application element
+ * @throws {errors.InvalidArgumentError} If direction is invalid
  */
-export async function mobileSwipe(direction, velocity, elementId) {
-  if (!SUPPORTED_GESTURE_DIRECTIONS.includes(_.toLower(direction))) {
+export async function mobileSwipe(
+  this: XCUITestDriver,
+  direction: Direction,
+  velocity?: number,
+  elementId?: Element | string,
+): Promise<void> {
+  if (!SUPPORTED_GESTURE_DIRECTIONS.includes(_.toLower(direction) as any)) {
     throw new errors.InvalidArgumentError(
       `'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`,
     );
   }
-  const params = {direction};
+  const params: {direction: Direction; velocity?: number} = {direction};
   if (!_.isNil(velocity)) {
     params.velocity = velocity;
   }
@@ -236,11 +256,9 @@ export async function mobileSwipe(direction, velocity, elementId) {
 /**
  * Performs a pinch gesture on the given element or on the Application element.
  *
- * @param {number} scale - Pinch scale (float value). A value between `0` and `1` performs a "pinch close" (or "zoom out"); a value greater than `1` performs a "pinch open" ("zoom in").
- * @param {number} velocity - The velocity of the pinch in scale factor per second (float value).
- * @param {Element|string} [elementId] The internal element identifier (as hexadecimal hash string) to pinch on. The Application element will be used if this parameter is not provided.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param scale - Pinch scale (float value). A value between `0` and `1` performs a "pinch close" (or "zoom out"); a value greater than `1` performs a "pinch open" ("zoom in").
+ * @param velocity - The velocity of the pinch in scale factor per second (float value).
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to pinch on. The Application element will be used if this parameter is not provided.
  * @see https://developer.apple.com/documentation/xctest/xcuielement/1618669-pinchwithscale?language=objc
  * @example
  *
@@ -248,7 +266,12 @@ export async function mobileSwipe(direction, velocity, elementId) {
  * execute_script 'mobile: pinch', scale: 0.5, velocity: 1.1, element: element.ref
  * ```
  */
-export async function mobilePinch(scale, velocity, elementId) {
+export async function mobilePinch(
+  this: XCUITestDriver,
+  scale: number,
+  velocity: number,
+  elementId?: Element | string,
+): Promise<void> {
   const params = {
     scale: requireFloat(scale, 'scale'),
     velocity: requireFloat(velocity, 'velocity'),
@@ -260,18 +283,21 @@ export async function mobilePinch(scale, velocity, elementId) {
 /**
  * Performs double tap gesture on the given element or on the screen.
  *
- * @param {Element|string} [elementId] - The internal element identifier (as hexadecimal hash string) to double tap on. The Application element will be used if this parameter is not provided.
- * @param {number} [x] - The _x_ coordinate (float value) to double tap on.
- * @param {number} [y] - The _y_ coordinate (float value) to double tap on.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to double tap on. The Application element will be used if this parameter is not provided.
+ * @param x - The _x_ coordinate (float value) to double tap on.
+ * @param y - The _y_ coordinate (float value) to double tap on.
  * @example
  * ```javascript
  * // using WebdriverIO
  * await driver.execute('mobile: doubleTap', {element: element.value.ELEMENT});
  * ```
  */
-export async function mobileDoubleTap(elementId, x, y) {
+export async function mobileDoubleTap(
+  this: XCUITestDriver,
+  elementId?: Element | string,
+  x?: number,
+  y?: number,
+): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/doubleTap` : '/wda/doubleTap';
   await this.proxyCommand(endpoint, 'POST', {x, y});
 }
@@ -279,9 +305,7 @@ export async function mobileDoubleTap(elementId, x, y) {
 /**
  * Performs two finger tap gesture on the given element or on the application element.
  *
- * @param {Element|string} [elementId] - The internal element identifier (as hexadecimal hash string) to double tap on. The Application element will be used if this parameter is not provided.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to double tap on. The Application element will be used if this parameter is not provided.
  * @see https://developer.apple.com/documentation/xctest/xcuielement/1618675-twofingertap?language=objc
  * @example
  * ```csharp
@@ -290,7 +314,7 @@ export async function mobileDoubleTap(elementId, x, y) {
  * ((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap);
  * ```
  */
-export async function mobileTwoFingerTap(elementId) {
+export async function mobileTwoFingerTap(this: XCUITestDriver, elementId?: Element | string): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/twoFingerTap` : '/wda/twoFingerTap';
   await this.proxyCommand(endpoint, 'POST');
 }
@@ -298,11 +322,10 @@ export async function mobileTwoFingerTap(elementId) {
 /**
  * Performs a "long press" gesture on the given element or on the screen.
  *
- * @param {number} duration - The duration (in seconds) of the gesture.
- * @param {number} [y] - The _y_ coordinate (float value) to hold on.
- * @param {number} [x] - The _x_ coordinate (float value) to hold on.
- * @param {Element|string} [elementId] - The internal element identifier (as hexadecimal hash string) to double tap on.  The Application element will be used if this parameter is not provided.
- * @this {XCUITestDriver}
+ * @param duration - The duration (in seconds) of the gesture.
+ * @param x - The _x_ coordinate (float value) to hold on.
+ * @param y - The _y_ coordinate (float value) to hold on.
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to hold on. The Application element will be used if this parameter is not provided.
  * @see https://developer.apple.com/documentation/xctest/xcuielement/1618663-pressforduration?language=objc
  * @example
  * ```csharp
@@ -312,7 +335,13 @@ export async function mobileTwoFingerTap(elementId) {
  * ((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap);
  * ```
  */
-export async function mobileTouchAndHold(duration, x, y, elementId) {
+export async function mobileTouchAndHold(
+  this: XCUITestDriver,
+  duration: number,
+  x?: number,
+  y?: number,
+  elementId?: Element | string,
+): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/touchAndHold` : '/wda/touchAndHold';
   await this.proxyCommand(endpoint, 'POST', {
     duration: requireFloat(duration, 'duration'),
@@ -323,13 +352,16 @@ export async function mobileTouchAndHold(duration, x, y, elementId) {
 /**
  * Performs tap gesture by coordinates on the given element or on the screen.
  *
- * @param {number} x - The _x_ coordinate (float value) to tap on. If `elementId` is provided, this is computed relative to the element; otherwise it is computed relative to the active Application element.
- * @param {number} y - The _y_ coordinate (float value) to tap on. If `elementId` is provided, this is computed relative to the element; otherwise it is computed relative to the active Application element.
- * @param {string|Element} [elementId] - The internal element identifier (as hexadecimal hash string) to tap on.  The Application element will be used if this parameter is not provided.
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * @param x - The _x_ coordinate (float value) to tap on. If `elementId` is provided, this is computed relative to the element; otherwise it is computed relative to the active Application element.
+ * @param y - The _y_ coordinate (float value) to tap on. If `elementId` is provided, this is computed relative to the element; otherwise it is computed relative to the active Application element.
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to tap on. The Application element will be used if this parameter is not provided.
  */
-export async function mobileTap(x, y, elementId) {
+export async function mobileTap(
+  this: XCUITestDriver,
+  x: number,
+  y: number,
+  elementId?: string | Element,
+): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/tap` : '/wda/tap';
   await this.proxyCommand(endpoint, 'POST', {x, y});
 }
@@ -337,15 +369,13 @@ export async function mobileTap(x, y, elementId) {
 /**
  * Performs drag and drop gesture by coordinates on the given element or on the screen.
  *
- * @param {number} duration - The duration (in seconds) of the gesture. Must be between `0.5` and `60.0`, inclusive.
- * @param {number} fromX - The _x_ coordinate (float value) of the starting drag point.
- * @param {number} fromY - The _y_ coordinate (float value) of the starting drag point.
- * @param {number} toX - The _x_ coordinate (float value) of the ending drag point.
- * @param {number} toY - The _y_ coordinate (float value) of the ending drag point.
- * @param {string|Element} [elementId] - The internal element identifier (as hexadecimal hash string) to drag.  If provided, all coordinates will be calculated relative to this element; otherwise they will be calculated relative to the active Application element.
- * @returns {Promise<void>}
+ * @param duration - The duration (in seconds) of the gesture. Must be between `0.5` and `60.0`, inclusive.
+ * @param fromX - The _x_ coordinate (float value) of the starting drag point.
+ * @param fromY - The _y_ coordinate (float value) of the starting drag point.
+ * @param toX - The _x_ coordinate (float value) of the ending drag point.
+ * @param toY - The _y_ coordinate (float value) of the ending drag point.
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to drag. If provided, all coordinates will be calculated relative to this element; otherwise they will be calculated relative to the active Application element.
  * @see https://developer.apple.com/documentation/xctest/xcuielement/1500989-clickforduration?language=objc
- * @this {XCUITestDriver}
  * @example
  * ```java
  * JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -359,7 +389,15 @@ export async function mobileTap(x, y, elementId) {
  * js.executeScript("mobile: dragFromToForDuration", params);
  * ```
  */
-export async function mobileDragFromToForDuration(duration, fromX, fromY, toX, toY, elementId) {
+export async function mobileDragFromToForDuration(
+  this: XCUITestDriver,
+  duration: number,
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  elementId?: string | Element,
+): Promise<void> {
   const params = {
     duration: requireFloat(duration, 'duration'),
     fromX: requireFloat(fromX, 'fromX'),
@@ -377,32 +415,41 @@ export async function mobileDragFromToForDuration(duration, fromX, fromY, toX, t
 /**
  * Initiates a press-and-hold gesture, drags to another coordinate or an element with a given velocity, and holds for a given duration.
  *
- * @param {number} pressDuration - The duration (in seconds) of the press-and-hold gesture at the starting point. Must be between `0.5` and `60.0`, inclusive.
- * @param {number} holdDuration - The duration (in seconds) of the hold gesture at the ending point (after dragging). Must be between `0.5` and `60.0`, inclusive.
- * @param {number} velocity - The speed (in pixels-per-second) which to move from the initial position to the end position.
- * @param {string|Element} [fromElementId] - The internal element identifier (as hexadecimal hash string) to drag from.  Absolute screen coordinates are expected if this argument is not provided.
- * @param {string|Element} [toElementId] - The internal element identifier (as hexadecimal hash string) to drag to.  Absolute screen coordinates are expected if this argument is not provided.
- * @param {number} [fromX] - The _x_ coordinate (float value) of the starting drag point.
- * @param {number} [fromY] - The _y_ coordinate (float value) of the starting drag point.
- * @param {number} [toX] - The _x_ coordinate (float value) of the ending drag point.
- * @param {number} [toY] - The _y_ coordinate (float value) of the ending drag point.
- * @returns {Promise<void>}
+ * @param pressDuration - The duration (in seconds) of the press-and-hold gesture at the starting point. Must be between `0.5` and `60.0`, inclusive.
+ * @param holdDuration - The duration (in seconds) of the hold gesture at the ending point (after dragging). Must be between `0.5` and `60.0`, inclusive.
+ * @param velocity - The speed (in pixels-per-second) which to move from the initial position to the end position.
+ * @param fromElementId - The internal element identifier (as hexadecimal hash string) to drag from. Absolute screen coordinates are expected if this argument is not provided.
+ * @param toElementId - The internal element identifier (as hexadecimal hash string) to drag to. Absolute screen coordinates are expected if this argument is not provided.
+ * @param fromX - The _x_ coordinate (float value) of the starting drag point.
+ * @param fromY - The _y_ coordinate (float value) of the starting drag point.
+ * @param toX - The _x_ coordinate (float value) of the ending drag point.
+ * @param toY - The _y_ coordinate (float value) of the ending drag point.
+ * @throws {errors.InvalidArgumentError} If toElementId is missing when fromElementId is provided, or if coordinates are missing when fromElementId is not provided
  * @see https://developer.apple.com/documentation/xctest/xcuielement/3551693-pressforduration?language=objc
  * @see https://developer.apple.com/documentation/xctest/xcuicoordinate/3551692-pressforduration?language=objc
- * @this {XCUITestDriver}
  */
 export async function mobileDragFromToWithVelocity(
-  pressDuration,
-  holdDuration,
-  velocity,
-  fromElementId,
-  toElementId,
-  fromX,
-  fromY,
-  toX,
-  toY,
-) {
-  const params = {
+  this: XCUITestDriver,
+  pressDuration: number,
+  holdDuration: number,
+  velocity: number,
+  fromElementId?: Element | string,
+  toElementId?: Element | string,
+  fromX?: number,
+  fromY?: number,
+  toX?: number,
+  toY?: number,
+): Promise<void> {
+  const params: {
+    pressDuration: number;
+    holdDuration: number;
+    velocity: number;
+    toElement?: string;
+    fromX?: number;
+    fromY?: number;
+    toX?: number;
+    toY?: number;
+  } = {
     pressDuration: requireFloat(pressDuration, 'pressDuration'),
     holdDuration: requireFloat(holdDuration, 'holdDuration'),
     velocity: requireFloat(velocity, 'velocity'),
@@ -422,6 +469,11 @@ export async function mobileDragFromToWithVelocity(
       params,
     );
   }
+  if (fromX === undefined || fromY === undefined || toX === undefined || toY === undefined) {
+    throw new errors.InvalidArgumentError(
+      'When fromElementId is not provided, fromX, fromY, toX, and toY must all be provided',
+    );
+  }
   params.fromX = requireFloat(fromX, 'fromX');
   params.fromY = requireFloat(fromY, 'fromY');
   params.toX = requireFloat(toX, 'toX');
@@ -433,12 +485,9 @@ export async function mobileDragFromToWithVelocity(
  * Sends one or more taps with one or more touch points.
  *
  * @since 1.17.1
- * @param {number} [numberOfTaps=1] - Number of taps to perform.
- * @param {number} [numberOfTouches=1] - Number of touch points to use.
- * @param {string|Element} [elementId] - The internal element identifier (as hexadecimal hash string) to perform one or more taps.
- * The Application element will be used if this parameter is not provided.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param numberOfTaps - Number of taps to perform.
+ * @param numberOfTouches - Number of touch points to use.
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to perform one or more taps. The Application element will be used if this parameter is not provided.
  * @see https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps?language=objc
  * @example
  * ```ruby
@@ -447,7 +496,12 @@ export async function mobileDragFromToWithVelocity(
  * @driver.execute_script 'mobile: tapWithNumberOfTaps', {element: e.ref, numberOfTaps: 2, numberOfTouches: 1}
  * ```
  */
-export async function mobileTapWithNumberOfTaps(numberOfTouches = 1, numberOfTaps = 1, elementId = undefined) {
+export async function mobileTapWithNumberOfTaps(
+  this: XCUITestDriver,
+  numberOfTouches: number = 1,
+  numberOfTaps: number = 1,
+  elementId: Element | string | undefined = undefined,
+): Promise<void> {
   const endpoint = elementId
     ? `/wda/element/${util.unwrapElement(elementId)}/tapWithNumberOfTaps`
     : '/wda/tapWithNumberOfTaps';
@@ -461,16 +515,21 @@ export async function mobileTapWithNumberOfTaps(numberOfTouches = 1, numberOfTap
  * Performs a "force press" on the given element or coordinates.
  *
  * @throws If the target device does not support the "force press" gesture.
- * @param {number} [x] - The _x_ coordinate of the gesture. If `elementId` is set, this is calculated relative to its position; otherwise it's calculated relative to the active Application.
- * @param {number} [y] - The _y_ coordinate of the gesture. If `elementId` is set, this is calculated relative to its position; otherwise it's calculated relative to the active Application.
- * @param {number} [duration] - The duration (in seconds) of the force press. If this is provided, `pressure` must also be provided.
- * @param {number} [pressure] - A float value defining the pressure of the force press. If this is provided, `duration` must also be provided.
- * @param {string|Element} [elementId] - The internal element identifier (as hexadecimal hash string) to perform one or more taps.
- * The Application element will be used if this parameter is not provided.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param x - The _x_ coordinate of the gesture. If `elementId` is set, this is calculated relative to its position; otherwise it's calculated relative to the active Application.
+ * @param y - The _y_ coordinate of the gesture. If `elementId` is set, this is calculated relative to its position; otherwise it's calculated relative to the active Application.
+ * @param duration - The duration (in seconds) of the force press. If this is provided, `pressure` must also be provided.
+ * @param pressure - A float value defining the pressure of the force press. If this is provided, `duration` must also be provided.
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to perform one or more taps. The Application element will be used if this parameter is not provided.
+ * @throws {Error} If the target device does not support the "force press" gesture
  */
-export async function mobileForcePress(x, y, duration, pressure, elementId) {
+export async function mobileForcePress(
+  this: XCUITestDriver,
+  x?: number,
+  y?: number,
+  duration?: number,
+  pressure?: number,
+  elementId?: Element | string,
+): Promise<void> {
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/forceTouch` : `/wda/forceTouch`;
   return await this.proxyCommand(endpoint, 'POST', {x, y, duration, pressure});
 }
@@ -481,12 +540,12 @@ export async function mobileForcePress(x, y, duration, pressure, elementId) {
  * This might be useful if these values are populated dynamically; you don't know which one to select, or the value selection using the `sendKeys` API does not work (for whatever reason).
  *
  * @throws Upon failure to change the current picker value.
- * @param {string|Element} elementId - `PickerWheel`'s internal element ID as hexadecimal hash string. Value selection will be performed on this element. This element must be of type `XCUIElementTypePickerWheel`.
- * @param {'next'|'previous'} order - Either `next` to select the value _next_ to the current from the target picker wheel, or `previous` to select the _previous_ value.
- * @param {number} [offset=0.2] - The value in range `[0.01, 0.5]`. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small an offset value may not change the picker wheel value at all, and too high a value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range `[0.15, 0.3]`.
- * @param {string?} [value=undefined] - If provided WDA will try to automatically scroll in the given direction until the actual picker value reaches the expected one or the amount of scrolling attempts is exceeded.
- * @param {number} [maxAttempts=25] - The maximum number of scrolling attempts to reach `value` before an error will be thrown. Only makes sense in combination with `value`.
- * @this {XCUITestDriver}
+ * @param elementId - `PickerWheel`'s internal element ID as hexadecimal hash string. Value selection will be performed on this element. This element must be of type `XCUIElementTypePickerWheel`.
+ * @param order - Either `next` to select the value _next_ to the current from the target picker wheel, or `previous` to select the _previous_ value.
+ * @param offset - The value in range `[0.01, 0.5]`. It defines how far from picker wheel's center the click should happen. The actual distance is calculated by multiplying this value to the actual picker wheel height. Too small an offset value may not change the picker wheel value at all, and too high a value may cause the wheel to switch two or more values at once. Usually the optimal value is located in range `[0.15, 0.3]`.
+ * @param value - If provided WDA will try to automatically scroll in the given direction until the actual picker value reaches the expected one or the amount of scrolling attempts is exceeded.
+ * @param maxAttempts - The maximum number of scrolling attempts to reach `value` before an error will be thrown. Only makes sense in combination with `value`.
+ * @throws {errors.InvalidArgumentError} If elementId is not provided or if order is invalid
  * @example
  * ```java
  * JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -497,7 +556,14 @@ export async function mobileForcePress(x, y, duration, pressure, elementId) {
  * js.executeScript("mobile: selectPickerWheelValue", params);
  * ```
  */
-export async function mobileSelectPickerWheelValue(elementId, order, offset, value, maxAttempts) {
+export async function mobileSelectPickerWheelValue(
+  this: XCUITestDriver,
+  elementId: Element | string,
+  order: string,
+  offset?: number,
+  value?: string,
+  maxAttempts?: number,
+): Promise<void> {
   if (!elementId) {
     throw new errors.InvalidArgumentError(
       'elementId is expected to be set for selectPickerWheelValue method',
@@ -509,7 +575,7 @@ export async function mobileSelectPickerWheelValue(elementId, order, offset, val
         `'${order}' is given instead`,
     );
   }
-  const params = {order};
+  const params: {order: string; offset?: number; value?: string; maxAttempts?: number} = {order};
   if (offset) {
     params.offset = requireFloat(offset, 'offset');
   }
@@ -526,12 +592,10 @@ export async function mobileSelectPickerWheelValue(elementId, order, offset, val
  * Performs a rotate gesture on the given element.
  *
  * @see https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate?language=objc
- * @param {number} rotation - The rotation gesture (in radians)
- * @param {number} velocity - The velocity (in radians-per-second) of the gesture.
- * @param {string|Element} [elementId] - The internal element identifier (as hexadecimal hash string) to perform the gesture on.
+ * @param rotation - The rotation gesture (in radians)
+ * @param velocity - The velocity (in radians-per-second) of the gesture.
+ * @param elementId - The internal element identifier (as hexadecimal hash string) to perform the gesture on.
  * The Application element will be used if this parameter is not provided.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
  * @example
  * ```java
  * JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -544,20 +608,28 @@ export async function mobileSelectPickerWheelValue(elementId, order, offset, val
  * ));
  * ```
  */
-export async function mobileRotateElement(rotation, velocity, elementId) {
+export async function mobileRotateElement(
+  this: XCUITestDriver,
+  rotation: number,
+  velocity: number,
+  elementId?: Element | string,
+): Promise<void> {
   const params = {
     rotation: requireFloat(rotation, 'rotation'),
     velocity: requireFloat(velocity, 'velocity'),
   };
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/rotate` : '/wda/rotate';
-  return await this.proxyCommand(endpoint, 'POST', params);
+  await this.proxyCommand(endpoint, 'POST', params);
 }
 
 /**
- * @param {import('@appium/types').ActionSequence[]} actionSeq
+ * Asserts that the action sequence does not contain web elements.
+ *
+ * @param actionSeq - Action sequence to check
+ * @throws {errors.InvalidArgumentError} If web elements are found in the action sequence
  */
-function assertNoWebElements(actionSeq) {
-  const isOriginWebElement = (gesture) =>
+function assertNoWebElements(actionSeq: ActionSequence[]): void {
+  const isOriginWebElement = (gesture: any) =>
     _.isPlainObject(gesture) && 'origin' in gesture && JSON.stringify(gesture.origin).includes(':wdc:');
   const hasWebElements = actionSeq
     .some((action) => (action?.actions || []).some(isOriginWebElement));
@@ -575,12 +647,12 @@ function assertNoWebElements(actionSeq) {
 /**
  * Converts the given value to a float number.
  *
- * @throws If `value` is `NaN`
- * @param {any} value
- * @param {string} paramName
- * @returns {number}
+ * @param value - Value to convert
+ * @param paramName - Name of the parameter (for error messages)
+ * @returns The float value
+ * @throws {errors.InvalidArgumentError} If `value` is `NaN`
  */
-function requireFloat(value, paramName) {
+function requireFloat(value: any, paramName: string): number {
   const num = parseFloat(String(value));
   if (Number.isNaN(num)) {
     throw new errors.InvalidArgumentError(
@@ -590,7 +662,3 @@ function requireFloat(value, paramName) {
   return num;
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- * @typedef {import('@appium/types').Element} Element
- */
