@@ -1,3 +1,9 @@
+## [10.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.12.1...v10.12.2) (2025-12-22)
+
+### Miscellaneous Chores
+
+* **deps:** bump teen_process from 3.0.6 to 4.0.4 ([#2684](https://github.com/appium/appium-xcuitest-driver/issues/2684)) ([005e984](https://github.com/appium/appium-xcuitest-driver/commit/005e9846229fc2d4bcb468758f4e653a295599e6))
+
 ## [10.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.12.0...v10.12.1) (2025-12-22)
 
 ### Miscellaneous Chores
