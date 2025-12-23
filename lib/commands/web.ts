@@ -906,9 +906,17 @@ export async function mobileWebNav(this: XCUITestDriver, navType: string): Promi
  * @returns The base URL (e.g., 'http://127.0.0.1:8100')
  */
 export function getWdaLocalhostRoot(this: XCUITestDriver): string {
+  const wdaPort = () => {
+    try {
+      return this.wda.url?.port;
+    } catch {
+      // this.wda could raise an error when that was not initialized yet.
+      return null;
+    }
+  };
   const remotePort =
     ((this.isRealDevice() ? this.opts.wdaRemotePort : null)
-      ?? this.wda?.url?.port
+      ?? wdaPort()
       ?? this.opts.wdaLocalPort)
   || 8100;
   const remoteIp = this.opts.wdaBindingIP ?? '127.0.0.1';
