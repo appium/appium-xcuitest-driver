@@ -1,3 +1,9 @@
+## [10.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.13.0...v10.13.1) (2025-12-23)
+
+### Bug Fixes
+
+* prevent raising error in safari session ([#2686](https://github.com/appium/appium-xcuitest-driver/issues/2686)) ([7c7f5cb](https://github.com/appium/appium-xcuitest-driver/commit/7c7f5cbe6d27634ce52d9024b40673973be0289c))
+
 ## [10.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.12.2...v10.13.0) (2025-12-23)
 
 ### Features
