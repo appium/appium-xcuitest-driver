@@ -1,3 +1,9 @@
+## [10.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.13.1...v10.13.2) (2025-12-23)
+
+### Miscellaneous Chores
+
+* Migrate various command modules (part 2) ([#2687](https://github.com/appium/appium-xcuitest-driver/issues/2687)) ([3b47a66](https://github.com/appium/appium-xcuitest-driver/commit/3b47a664379bf5b1d20472ce83c74ce34ab7a661))
+
 ## [10.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.13.0...v10.13.1) (2025-12-23)
 
 ### Bug Fixes
