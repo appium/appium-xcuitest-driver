@@ -413,14 +413,12 @@ async function trustCertificateInPreferences(driver: XCUITestDriver, name: strin
     value: `**/XCUIElementTypeCell[\`label == '${name}'\`]/**/XCUIElementTypeSwitch`,
   };
   await retry(5, async () => {
-    await (driver as any).mobileSwipe({
-      element: await driver.findNativeElementOrElements(
-        'class name',
-        'XCUIElementTypeTable',
-        false,
-      ),
-      direction: 'up',
-    });
+    const tableEl = await driver.findNativeElementOrElements(
+      'class name',
+      'XCUIElementTypeTable',
+      false,
+    );
+    await driver.mobileSwipe('up', undefined, tableEl);
     await clickElement(driver, Settings.Certificate_Trust_Settings, {
       timeout: 500,
     });
@@ -478,14 +476,12 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
       break;
     }
 
-    await (driver as any).mobileSwipe({
-      element: await driver.findNativeElementOrElements(
-        'class name',
-        'XCUIElementTypeTable',
-        false,
-      ),
-      direction: 'up',
-    });
+    const tableEl = await driver.findNativeElementOrElements(
+      'class name',
+      'XCUIElementTypeTable',
+      false,
+    );
+    await driver.mobileSwipe('up', undefined, tableEl);
   }
   if (!isCertFound) {
     throw new Error(`'${name}' cannot be found in the certificates list`);

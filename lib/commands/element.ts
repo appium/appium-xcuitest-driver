@@ -337,7 +337,7 @@ export async function getContentSize(this: XCUITestDriver, el: Element | string)
   let contentHeight = 0;
   const children = await this.findElOrEls('class chain', locator, true, el);
   if (children.length === 1) {
-    const rect = await this.getElementRect(_.head(children) as Element);
+    const rect = await this.getElementRect(children[0]);
     contentHeight = rect.height;
   } else if (children.length) {
     switch (type) {
