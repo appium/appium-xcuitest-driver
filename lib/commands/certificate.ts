@@ -9,6 +9,9 @@ import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {Pyidevice} from '../device/clients/py-ios-device-client';
 import {errors} from 'appium/driver';
+import type {Simulator} from 'appium-ios-simulator';
+import type {XCUITestDriver} from '../driver';
+import type {CertificateList} from './types';
 
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];
@@ -62,11 +65,8 @@ const OPEN_SSL_PATTERN = /,\sCN\s=\s([^,]+)/;
 
 /**
  * Parses the common name of the certificate from the given string.
- *
- * @param {string} stringCertificate
- * @returns {string} The common name of the certificate
  */
-export function parseCommonName(stringCertificate) {
+export function parseCommonName(stringCertificate: string): string {
   const result = [LIBRE_SSL_PATTERN, OPEN_SSL_PATTERN].reduce((acc, r) => {
     if (acc) {
       return acc;
@@ -87,22 +87,28 @@ export function parseCommonName(stringCertificate) {
  * certificates on Simulator over CLI.
  *
  * On real devices (or simulators before Xcode SDK 11.4), Apple provides no "official" way to do this via the command line.  In such a case (and also as a fallback if CLI setup fails), this method tries to wrap the certificate into `.mobileconfig` format, then deploys the wrapped file to the internal HTTP server so that it can be opened via mobile Safari. This command then goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
- * @param {string} content - Base64-encoded content of the public certificate in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format
- * @param {string} [commonName] - Common name of the certificate. If this is not set, the command will try to parse it from the provided `content`.
- * @param {boolean} isRoot - Defines where the certificate should be installed; either the Trusted Root Store (`true`) or the Keychain (`false`). On environments other than Xcode 11.4+ Simulator, this option is ignored.
- * @returns {Promise<string|void>} The content of the generated `.mobileconfig` file as
+ * @param content - Base64-encoded content of the public certificate in [PEM](https://knowledge.digicert.com/quovadis/ssl-certificates/ssl-general-topics/what-is-pem-format.html) format
+ * @param commonName - Common name of the certificate. If this is not set, the command will try to parse it from the provided `content`.
+ * @param isRoot - Defines where the certificate should be installed; either the Trusted Root Store (`true`) or the Keychain (`false`). On environments other than Xcode 11.4+ Simulator, this option is ignored.
+ * @returns The content of the generated `.mobileconfig` file as
  * a base64-encoded string. This config might be useful for debugging purposes.  If the certificate has been successfully set via CLI, then nothing is returned.
- * @this {XCUITestDriver}
  */
-export async function mobileInstallCertificate(content, commonName, isRoot = true) {
+export async function mobileInstallCertificate(
+  this: XCUITestDriver,
+  content: string,
+  commonName?: string,
+  isRoot = true,
+): Promise<string | void> {
   if (_.isEmpty(content)) {
     throw new Error('Certificate content should not be empty');
   }
 
   if (this.isSimulator()) {
     try {
-      const methodName = isRoot ? 'addRootCertificate' : 'addCertificate';
-      await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).simctl[methodName](Buffer.from(content, 'base64').toString(), {
+      const methodName: 'addRootCertificate' | 'addCertificate' = isRoot
+        ? 'addRootCertificate'
+        : 'addCertificate';
+      await (this.device as Simulator).simctl[methodName](Buffer.from(content, 'base64').toString(), {
         raw: true,
       });
       return;
@@ -188,11 +194,12 @@ export async function mobileInstallCertificate(content, commonName, isRoot = tru
           }
         }
       } else {
-        await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).openUrl(certUrl);
+        await (this.device as Simulator).openUrl(certUrl);
       }
 
       let isCertAlreadyInstalled = false;
-      if (util.compareVersions(/** @type {string} */ (this.opts.platformVersion), '>=', '12.2')) {
+      const platformVersion = this.opts.platformVersion ?? '';
+      if (util.compareVersions(platformVersion, '>=', '12.2')) {
         if (await installPost122Certificate(this, cn)) {
           await clickElement(this, Settings.Profile);
           await trustCertificateInPreferences(this, cn);
@@ -238,16 +245,18 @@ export async function mobileInstallCertificate(content, commonName, isRoot = tru
  *
  * @see https://github.com/YueChen-C/py-ios-device
  * @since 4.19.2
- * @param {string} name - Name of the profile
- * @returns {Promise<string>} Returns status acknowledgment status if
- * tht certificate is successfully removed or 'None' (basically just
- * forwards the original pyidevice output)
+ * @param name - Name of the profile
+ * @returns Status acknowledgment if
+ * the certificate is successfully removed or 'None' (forwards pyidevice output)
  * @throws {Error} If attempting to remove certificates for a simulated device or if `py-ios-device` is not installed
  * @group Real Device Only
  */
-export async function mobileRemoveCertificate(name) {
+export async function mobileRemoveCertificate(this: XCUITestDriver, name: string): Promise<string> {
   if (!this.isRealDevice()) {
     throw new errors.NotImplementedError('This extension is only supported on real devices');
+  }
+  if (!this.opts.udid) {
+    throw new Error('udid capability is required');
   }
   const client = new Pyidevice({
     udid: this.opts.udid,
@@ -263,11 +272,10 @@ export async function mobileRemoveCertificate(name) {
  * This only works _if and only if_ `py-ios-device` is installed on the same machine Appium is running on.
  * @since 4.10.0
  * @see https://github.com/YueChen-C/py-ios-device
- * @returns {Promise<import('./types').CertificateList>} An object describing the certificates installed on the real device.
+ * @returns An object describing the certificates installed on the real device.
  * @throws {Error} If attempting to list certificates for a simulated device or if `py-ios-device` is not installed
- * @this {XCUITestDriver}
  */
-export async function mobileListCertificates() {
+export async function mobileListCertificates(this: XCUITestDriver): Promise<CertificateList> {
   if (!this.isRealDevice()) {
     throw new errors.NotImplementedError('This extension is only supported on real devices');
   }
@@ -287,9 +295,9 @@ export async function mobileListCertificates() {
  * Extracts the common name of the certificate from the given buffer.
  *
  * @param {Buffer} certBuffer
- * @returns {Promise<string>} The common name of the certificate
+ * @returns The common name of the certificate
  */
-async function extractCommonName(certBuffer) {
+async function extractCommonName(certBuffer: Buffer): Promise<string> {
   const tempCert = await tempDir.open({
     prefix: 'cert',
     suffix: '.cer',
@@ -315,12 +323,12 @@ async function extractCommonName(certBuffer) {
  * for more details on such profiles.
  *
  * @param {Buffer} certBuffer - The actual content of PEM certificate encoded into NodeJS buffer
- * @param {string} commonName - Certificate's common name
+ * @param commonName - Certificate's common name
  * @returns {Object} The encoded structure of the given certificate, which is ready to be passed
  * as an argument to plist builder
  * @throws {Error} If the given certificate cannot be parsed
  */
-function toMobileConfig(certBuffer, commonName) {
+function toMobileConfig(certBuffer: Buffer, commonName: string): Record<string, any> {
   const getUUID = () => util.uuidV4().toUpperCase();
   const contentUuid = getUUID();
   return {
@@ -345,8 +353,12 @@ function toMobileConfig(certBuffer, commonName) {
   };
 }
 
-async function clickElement(driver, locator, options = {}) {
-  let element = null;
+async function clickElement(
+  driver: XCUITestDriver,
+  locator: {type: string; value: string},
+  options: {timeout?: number; skipIfInvisible?: boolean} = {},
+): Promise<boolean> {
+  let element: any = null;
   const {timeout = 5000, skipIfInvisible = false} = options;
   const lookupDelay = 500;
   try {
@@ -365,7 +377,7 @@ async function clickElement(driver, locator, options = {}) {
   return true;
 }
 
-async function installPre122Certificate(driver) {
+async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean> {
   // Accept Safari alert
   await clickElement(driver, Button.Allow, {
     // certificate load might take some time on slow machines
@@ -393,7 +405,7 @@ async function installPre122Certificate(driver) {
   return true;
 }
 
-async function trustCertificateInPreferences(driver, name) {
+async function trustCertificateInPreferences(driver: XCUITestDriver, name: string): Promise<void> {
   await clickElement(driver, Settings.General);
   await clickElement(driver, Settings.About);
   const switchLocator = {
@@ -401,14 +413,12 @@ async function trustCertificateInPreferences(driver, name) {
     value: `**/XCUIElementTypeCell[\`label == '${name}'\`]/**/XCUIElementTypeSwitch`,
   };
   await retry(5, async () => {
-    await driver.mobileSwipe({
-      element: await driver.findNativeElementOrElements(
-        'class name',
-        'XCUIElementTypeTable',
-        false,
-      ),
-      direction: 'up',
-    });
+    const tableEl = await driver.findNativeElementOrElements(
+      'class name',
+      'XCUIElementTypeTable',
+      false,
+    );
+    await driver.mobileSwipe('up', undefined, tableEl);
     await clickElement(driver, Settings.Certificate_Trust_Settings, {
       timeout: 500,
     });
@@ -433,7 +443,7 @@ async function trustCertificateInPreferences(driver, name) {
   }
 }
 
-async function installPost122Certificate(driver, name) {
+async function installPost122Certificate(driver: XCUITestDriver, name: string): Promise<boolean> {
   // Accept Safari alert
   await clickElement(driver, Button.Allow, {
     // certificate load might take some time on slow machines
@@ -466,14 +476,12 @@ async function installPost122Certificate(driver, name) {
       break;
     }
 
-    await driver.mobileSwipe({
-      element: await driver.findNativeElementOrElements(
-        'class name',
-        'XCUIElementTypeTable',
-        false,
-      ),
-      direction: 'up',
-    });
+    const tableEl = await driver.findNativeElementOrElements(
+      'class name',
+      'XCUIElementTypeTable',
+      false,
+    );
+    await driver.mobileSwipe('up', undefined, tableEl);
   }
   if (!isCertFound) {
     throw new Error(`'${name}' cannot be found in the certificates list`);
@@ -498,6 +506,3 @@ async function installPost122Certificate(driver, name) {
   return true;
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
