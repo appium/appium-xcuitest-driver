@@ -276,7 +276,7 @@ export class XCUITestDriver
   _device: Simulator | RealDevice;
   _iosSdkVersion: string | null;
   _wda: WebDriverAgent | null;
-  remote: RemoteDebugger | null;
+  _remote: RemoteDebugger | null;
   logs: DriverLogs;
   _bidiServerLogListener: LogListener | undefined;
 
@@ -335,7 +335,7 @@ export class XCUITestDriver
     this.lifecycleData = {};
     this._audioRecorder = null;
     this.appInfosCache = new AppInfosCache(this.log);
-    this.remote = null;
+    this._remote = null;
     this.doesSupportBidi = true;
     this._wda = null;
   }
@@ -454,7 +454,7 @@ export class XCUITestDriver
       }
     }
 
-    if (this.remote) {
+    if (this._remote) {
       this.log.debug('Found a remote debugger session. Removing...');
       await this.stopRemote();
     }
@@ -669,6 +669,13 @@ export class XCUITestDriver
       throw new Error('WebDriverAgent is not initialized');
     }
     return this._wda;
+  }
+
+  get remote(): RemoteDebugger {
+    if (!this._remote) {
+      throw new Error('Remote debugger is not initialized');
+    }
+    return this._remote;
   }
 
   get driverData(): Record<string, any> {
@@ -1735,7 +1742,7 @@ export class XCUITestDriver
     this.implicitWaitMs = 0;
     this.pageLoadMs = 6000;
     this.landscapeWebCoordsOffset = 0;
-    this.remote = null;
+    this._remote = null;
     this._conditionInducerService = null;
     this._remoteXPCConditionInducerConnection = null;
 

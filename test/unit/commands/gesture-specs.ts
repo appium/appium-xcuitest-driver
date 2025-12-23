@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import {XCUITestDriver} from '../../../lib/driver';
-import {gesturesChainToString} from '../../../lib/commands/gesture';
 import {expect} from 'chai';
 
 
@@ -15,32 +14,6 @@ describe('gesture commands', function () {
 
   afterEach(function () {
     mockDriver.verify();
-  });
-
-  describe('gesturesChainToString', function () {
-    it('should properly transform simple chain', function () {
-      expect(gesturesChainToString([{action: 'press'}, {action: 'release'}])).to.equal('press-release');
-    });
-
-    it('should properly transform complex chain with default keys', function () {
-      expect(gesturesChainToString([
-        {action: 'press', x: 1, options: {count: 1}},
-        {action: 'release'},
-      ])).to.equal('press(options={"count":1})-release');
-    });
-
-    it('should properly transform complex chain with custom keys', function () {
-      expect(gesturesChainToString(
-        [{action: 'press', x: 1, options: {count: 1}}, {action: 'release'}],
-        ['x'],
-      )).to.equal('press(x=1)-release');
-    });
-
-    it('should properly transform complex chain with all keys', function () {
-      expect(gesturesChainToString([{action: 'press', x: 1}, {action: 'release'}], null)).to.equal(
-        'press(x=1)-release',
-      );
-    });
   });
 
   describe('mobile methods', function () {

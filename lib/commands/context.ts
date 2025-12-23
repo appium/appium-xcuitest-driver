@@ -10,6 +10,10 @@ import {
 } from './bidi/models';
 import { BIDI_EVENT_NAME } from './bidi/constants';
 import { assignBiDiLogListener } from './log';
+import type {XCUITestDriver} from '../driver';
+import type {Page} from '../types';
+import type {ViewContext, FullContext, PageChangeNotification} from './types';
+import type {Simulator} from 'appium-ios-simulator';
 
 const WEBVIEW_WIN = 'WEBVIEW';
 const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
@@ -19,17 +23,14 @@ const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
 
 
 /**
- * @this {XCUITestDriver}
- * @param {boolean} [useUrl=false]
- * @returns {Promise<import('./types').ViewContext[]>}
+ * Retrieves the list of available contexts and their associated views.
+ *
+ * @param useUrl - Whether to filter webviews by URL
  */
-export async function getContextsAndViews(useUrl = true) {
+export async function getContextsAndViews(this: XCUITestDriver, useUrl: boolean = true): Promise<ViewContext[]> {
   this.log.debug('Retrieving contexts and views');
   const webviews = await this.listWebFrames(useUrl);
-  /**
-   * @type {import('./types').ViewContext[]}
-   */
-  const ctxs = [{id: NATIVE_WIN, view: {}}];
+  const ctxs: ViewContext[] = [{id: NATIVE_WIN, view: {}}];
   this.contexts = [NATIVE_WIN];
   for (const view of webviews) {
     ctxs.push({id: `${WEBVIEW_BASE}${view.id}`, view});
@@ -39,19 +40,18 @@ export async function getContextsAndViews(useUrl = true) {
 }
 
 /**
- * @deprecated this method is not used anywhere and will be removed in the future
- * @this {XCUITestDriver}
- * @returns {boolean}
+ * @deprecated This method is not used anywhere and will be removed in the future
  */
-export function useNewSafari() {
+export function useNewSafari(this: XCUITestDriver): boolean {
   return this.isSimulator() && this.isSafari();
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * Activates the most recently available webview context.
+ *
+ * @throws {Error} If no webview is available or if the remote debugger cannot connect
  */
-export async function activateRecentWebview() {
+export async function activateRecentWebview(this: XCUITestDriver): Promise<void> {
   this.log.debug('Activating a recent webview');
   const timer = new timing.Timer().start();
   const contextId = await this.getRecentWebviewContextId(/.*/, /.*/);
@@ -60,7 +60,7 @@ export async function activateRecentWebview() {
     await this.setContext(contextId);
     return;
   }
-  const appDict = (/** @type {RemoteDebugger} */ (this.remote)).appDict;
+  const appDict = this.remote.appDict;
   const errSuffix = `Make sure your web application is debuggable ` +
     `and could be inspected in Safari Web Inspector.`;
   if (_.isEmpty(appDict)) {
@@ -92,22 +92,23 @@ export async function activateRecentWebview() {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<import('../types').Page[]>}
+ * Lists all available web frames (pages) from the remote debugger.
+ *
+ * @param useUrl - Whether to filter pages by the current URL
  */
-export async function listWebFrames(useUrl = true) {
+export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true): Promise<Page[]> {
   const shouldFilterByUrl = useUrl && !this.isRealDevice() && !!this.getCurrentUrl();
   this.log.debug(
     `Selecting by url: ${shouldFilterByUrl}` +
     (shouldFilterByUrl ? ` (expected url: '${this.getCurrentUrl()}')` : '')
   );
 
-  if (!this.remote) {
+  if (!this._remote) {
     await this.connectToRemoteDebugger();
   }
-  const doListPages = async (/** @type {number} */ retries) => {
+  const doListPages = async (retries: number): Promise<Page[]> => {
     try {
-      const pageArray = await (/** @type {RemoteDebugger} */ (this.remote)).selectApp(
+      const pageArray = await this.remote.selectApp(
         shouldFilterByUrl ? this.getCurrentUrl() : undefined,
         retries,
         this.opts.ignoreAboutBlankUrl,
@@ -117,7 +118,7 @@ export async function listWebFrames(useUrl = true) {
         this.log.debug(`No web frames found after ${util.pluralize('retry', retries, true)}`);
       }
       return pageArray;
-    } catch (err) {
+    } catch (err: any) {
       this.log.debug(
         `No available web pages after ${util.pluralize('retry', retries, true)}: ${err.message}`
       );
@@ -125,9 +126,8 @@ export async function listWebFrames(useUrl = true) {
     }
   };
 
-  /** @type {number} */
   const maxRetriesCount = _.isInteger(this.opts.webviewConnectRetries)
-    ? Math.max(/** @type {number} */ (this.opts.webviewConnectRetries), 1)
+    ? Math.max(this.opts.webviewConnectRetries as number, 1)
     : DEFAULT_LIST_WEB_FRAMES_RETRIES;
   this.log.debug(
     `About to select a web application with ${util.pluralize('retry', maxRetriesCount, true)} ` +
@@ -138,11 +138,10 @@ export async function listWebFrames(useUrl = true) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * Establishes a connection to the remote debugger and sets up event listeners.
  */
-export async function connectToRemoteDebugger() {
-  this.remote = await this.getNewRemoteDebugger();
+export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<void> {
+  this._remote = await this.getNewRemoteDebugger();
 
   // @ts-ignore static is fine
   this.remote.on(RemoteDebugger.EVENT_PAGE_CHANGE, this.onPageChange.bind(this));
@@ -181,14 +180,14 @@ export async function connectToRemoteDebugger() {
  * client code would have to connect to each of them in order to detect the
  * one which needs to be interacted with. This extra effort is not needed with
  * the information provided by this extension.
- * @param {number} [waitForWebviewMs=0] - The period to poll for available webview(s) (in ms)
- * @returns {Promise<Context[]>} The list of available context objects along with their properties.
- * @this {XCUITestDriver}
+ *
+ * @param waitForWebviewMs - The period to poll for available webview(s) (in ms)
+ * @returns The list of available context objects along with their properties.
  */
-export async function mobileGetContexts(waitForWebviewMs = 0) {
+export async function mobileGetContexts(this: XCUITestDriver, waitForWebviewMs: number = 0): Promise<FullContext[]> {
   // make sure it is a number, so the duration check works properly
   if (!_.isNumber(waitForWebviewMs)) {
-    waitForWebviewMs = parseInt(waitForWebviewMs, 10);
+    waitForWebviewMs = parseInt(String(waitForWebviewMs), 10);
     if (isNaN(waitForWebviewMs)) {
       waitForWebviewMs = 0;
     }
@@ -199,10 +198,9 @@ export async function mobileGetContexts(waitForWebviewMs = 0) {
 
   const timer = new timing.Timer().start();
   try {
-    /** @type {FullContext[]} */
-    let contexts;
+    let contexts: FullContext[];
     do {
-      contexts = /** @type {FullContext[]} */ (await this.getContexts());
+      contexts = await this.getContexts() as FullContext[];
 
       if (contexts.length >= 2) {
         this.log.debug(
@@ -220,11 +218,13 @@ export async function mobileGetContexts(waitForWebviewMs = 0) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @param {import('./types').PageChangeNotification} pageChangeNotification
- * @returns {Promise<void>}
+ * Handles page change notifications from the remote debugger.
+ *
+ * Updates the current context when new pages are detected or when pages are closed.
+ *
+ * @param pageChangeNotification - The notification containing page array and app ID
  */
-export async function onPageChange(pageChangeNotification) {
+export async function onPageChange(this: XCUITestDriver, pageChangeNotification: PageChangeNotification): Promise<void> {
   this.log.debug(
     `Remote debugger notified us of a new page listing: ${JSON.stringify(
       pageChangeNotification,
@@ -234,19 +234,16 @@ export async function onPageChange(pageChangeNotification) {
     this.log.debug('We are in the middle of selecting a page, ignoring');
     return;
   }
-  if (!this.remote?.isConnected) {
+  if (!this._remote?.isConnected) {
     this.log.debug('We have not yet connected, ignoring');
     return;
   }
 
   const {appIdKey, pageArray} = pageChangeNotification;
 
-  /** @type {string[]} */
-  const newIds = [];
-  /** @type {string[]} */
-  const newPages = [];
-  /** @type {string|null} */
-  let keyId = null;
+  const newIds: string[] = [];
+  const newPages: string[] = [];
+  let keyId: string | null = null;
   for (const page of pageArray) {
     const id = page.id.toString();
     newIds.push(id);
@@ -286,10 +283,9 @@ export async function onPageChange(pageChangeNotification) {
     return;
   }
 
-  /** @type {string|null} */
-  let newPage = null;
+  let newPage: string | null = null;
   if (newPages.length) {
-    newPage = /** @type {string} */ (_.last(newPages));
+    newPage = _.last(newPages) as string;
     this.log.debug(`We have new pages, selecting page '${newPage}'`);
   } else if (!_.includes(newIds, curPageIdKey)) {
     this.log.debug(
@@ -330,7 +326,7 @@ export async function onPageChange(pageChangeNotification) {
     try {
       await this.remote.selectPage(appIdKey, parseInt(newPage, 10));
       await notifyBiDiContextChange.bind(this)();
-    } catch (e) {
+    } catch (e: any) {
       this.log.warn(`Failed to select page: ${e.message}`);
       this.curContext = oldContext;
     } finally {
@@ -340,47 +336,58 @@ export async function onPageChange(pageChangeNotification) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * Disconnects from the remote debugger and cleans up context state.
  */
-export async function stopRemote(closeWindowBeforeDisconnecting = false) {
-  if (!this.remote) {
-    throw this.log.errorWithException('Tried to leave a web frame but were not in one');
+export async function stopRemote(this: XCUITestDriver): Promise<void> {
+  if (!this._remote) {
+    return;
   }
 
-  if (closeWindowBeforeDisconnecting) {
-    await this.closeWindow();
+  try {
+    await this.remote.disconnect();
+    this.curContext = null;
+    try {
+      await notifyBiDiContextChange.bind(this)();
+    } catch (err) {
+      this.log.warn(`Failed to notify BiDi context change: ${err.message}`);
+    }
+  } finally {
+    this.curWebFrames = [];
+    this._remote = null;
   }
-  await this.remote.disconnect();
-  this.curContext = null;
-  await notifyBiDiContextChange.bind(this)();
-  this.curWebFrames = [];
-  this.remote = null;
 }
 
 /**
- * @this {XCUITestDriver}
- * @param {string|null} url
+ * Sets the current URL for the active webview context.
+ *
+ * @param url - The URL to set, or null to clear
  */
-export function setCurrentUrl(url) {
+export function setCurrentUrl(this: XCUITestDriver, url: string | null): void {
   this._currentUrl = url;
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {string|undefined|null}
+ * Gets the current URL for the active webview context.
+ *
+ * @returns The current URL, or undefined/null if not set
  */
-export function getCurrentUrl() {
+export function getCurrentUrl(this: XCUITestDriver): string | undefined | null {
   return this._currentUrl;
 }
 
 /**
- * @param {RegExp} titleRegExp
- * @param {RegExp} urlRegExp
- * @this {XCUITestDriver}
- * @returns {Promise<string|undefined>}
+ * Finds the most recent webview context ID matching the given title or URL patterns.
+ *
+ * @param titleRegExp - Regular expression to match against page titles
+ * @param urlRegExp - Regular expression to match against page URLs
+ * @returns The matching context ID, or undefined if no match is found
+ * @throws {errors.InvalidArgumentError} If neither regex is provided
  */
-export async function getRecentWebviewContextId(titleRegExp, urlRegExp) {
+export async function getRecentWebviewContextId(
+  this: XCUITestDriver,
+  titleRegExp: RegExp,
+  urlRegExp: RegExp,
+): Promise<string | undefined> {
   if (!_.isRegExp(titleRegExp) && !_.isRegExp(urlRegExp)) {
     throw new errors.InvalidArgumentError(
       'A regular expression for either web view title or url must be provided',
@@ -404,33 +411,38 @@ export async function getRecentWebviewContextId(titleRegExp, urlRegExp) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {boolean}
+ * Checks if the current context is a web context (not native).
+ *
+ * @returns True if currently in a web context
  */
-export function isWebContext() {
+export function isWebContext(this: XCUITestDriver): boolean {
   return !!this.curContext && this.curContext !== NATIVE_WIN;
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {boolean}
+ * Checks if the current context is a webview.
+ *
+ * This is an alias for {@linkcode isWebContext}.
+ *
+ * @returns True if currently in a webview context
  */
-export function isWebview() {
+export function isWebview(this: XCUITestDriver): boolean {
   return this.isWebContext();
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<RemoteDebugger>}
+ * Creates a new remote debugger instance configured for the current device.
+ *
+ * @returns A configured RemoteDebugger instance
  */
-export async function getNewRemoteDebugger() {
+export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<RemoteDebugger> {
   const socketPath = this.isRealDevice()
     ? undefined
-    : (await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).getWebInspectorSocket() ?? undefined);
+    : (await (this.device as Simulator).getWebInspectorSocket() ?? undefined);
   return createRemoteDebugger(
     {
       bundleId: this.opts.bundleId,
-      additionalBundleIds: /** @type {string[] | undefined} */ (this.opts.additionalWebviewBundleIds),
+      additionalBundleIds: this.opts.additionalWebviewBundleIds as string[] | undefined,
       isSafari: this.isSafari(),
       includeSafari: this.opts.includeSafariInWebviews,
       pageLoadMs: this.pageLoadMs,
@@ -440,7 +452,7 @@ export async function getNewRemoteDebugger() {
       garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect)
         ? !!this.opts.safariGarbageCollect
         : false,
-      udid: /** @type {string} */ (this.opts.udid),
+      udid: this.opts.udid as string,
       logAllCommunication: this.opts.safariLogAllCommunication,
       logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
       socketChunkSize: this.opts.safariSocketChunkSize,
@@ -452,10 +464,11 @@ export async function getNewRemoteDebugger() {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<string>}
+ * Gets the identifier of the current context.
+ *
+ * @returns The context identifier (e.g., 'NATIVE_APP' or 'WEBVIEW_xxx')
  */
-export async function getCurrentContext() {
+export async function getCurrentContext(this: XCUITestDriver): Promise<string> {
   if (this.curContext && this.curContext !== NATIVE_WIN) {
     return `${WEBVIEW_BASE}${this.curContext}`;
   }
@@ -463,28 +476,32 @@ export async function getCurrentContext() {
 }
 
 /**
- * Set context
+ * Switches to the specified context (native or webview).
  *
- * @param {string|Context} name - The name of context to set. It could be 'null' as NATIVE_WIN.
- * @param {any} [callback] The callback. (It is not called in this method)
- * @param {boolean} [skipReadyCheck=false] - Whether it waits for the new context is ready
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * @param name - The name of context to set. Can be 'NATIVE_APP', 'WEBVIEW_xxx', or null
+ * @param callback - The callback (not used, kept for compatibility)
+ * @param skipReadyCheck - Whether to skip waiting for the new context to be ready
+ * @throws {errors.NoSuchContextError} If the specified context does not exist
  */
-export async function setContext(name, callback, skipReadyCheck = false) {
-  function alreadyInContext(desired, current) {
+export async function setContext(
+  this: XCUITestDriver,
+  name: string | {id: string} | null,
+  callback?: any,
+  skipReadyCheck: boolean = false,
+): Promise<void> {
+  function alreadyInContext(desired: string | null, current: string | null): boolean {
       return (
         desired === current ||
         (desired === null && current === NATIVE_WIN) ||
         (desired === NATIVE_WIN && current === null)
       );
     }
-    function isNativeContext(context) {
+    function isNativeContext(context: string | null): boolean {
       return context === NATIVE_WIN || context === null;
     }
 
     // allow the full context list to be passed in
-    const strName = String(typeof name === 'object' && name.id ? name.id : name);
+    const strName = String(typeof name === 'object' && name && 'id' in name ? name.id : name);
 
     this.log.debug(
       `Attempting to set context to '${strName || NATIVE_WIN}' from '${
@@ -519,7 +536,7 @@ export async function setContext(name, callback, skipReadyCheck = false) {
       // allow user to pass in "WEBVIEW" without an index
       // the second context will be the first webview as
       // the first is always NATIVE_APP
-      contextId = /** @type {string[]} */ (this.contexts)[1];
+      contextId = (this.contexts as string[])[1];
     }
     if (!_.includes(this.contexts, contextId)) {
       throw new errors.NoSuchContextError();
@@ -532,7 +549,7 @@ export async function setContext(name, callback, skipReadyCheck = false) {
     const [appIdKey, pageIdKey] = _.map(contextId.split('.'), (id) => parseInt(id, 10));
     try {
       this.selectingNewPage = true;
-      await (/** @type {RemoteDebugger} */ (this.remote)).selectPage(appIdKey, pageIdKey, skipReadyCheck);
+      await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
       await notifyBiDiContextChange.bind(this)();
     } catch (err) {
       this.curContext = this.curWindowHandle = oldContext;
@@ -542,7 +559,7 @@ export async function setContext(name, callback, skipReadyCheck = false) {
     }
 
     // attempt to start performance logging, if requested
-    if (this.opts.enablePerformanceLogging && this.remote) {
+    if (this.opts.enablePerformanceLogging && this._remote) {
       const context = this.curContext;
       this.log.debug(`Starting performance log on '${context}'`);
       [this.logs.performance,] = assignBiDiLogListener.bind(this)(
@@ -560,46 +577,56 @@ export async function setContext(name, callback, skipReadyCheck = false) {
     // start safari logging if the logs handlers are active
     if (name && name !== NATIVE_WIN && this.logs) {
       if (this.logs.safariConsole) {
-        (/** @type {RemoteDebugger} */ (this.remote)).startConsole(
+        this.remote.startConsole(
           this.logs.safariConsole.onConsoleLogEvent.bind(this.logs.safariConsole),
         );
       }
       if (this.logs.safariNetwork) {
-        (/** @type {RemoteDebugger} */ (this.remote)).startNetwork(
+        this.remote.startNetwork(
           this.logs.safariNetwork.onNetworkEvent.bind(this.logs.safariNetwork),
-      );
+        );
+      }
     }
   }
-}
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<string[]|FullContext[]>}
+ * Gets the list of available contexts.
+ *
+ * The format depends on the `fullContextList` option:
+ * - If enabled, returns full context objects with title, URL, and bundleId
+ * - If disabled, returns simple context ID strings
+ *
+ * @returns Array of context IDs or full context objects
  */
-export async function getContexts() {
+export async function getContexts(this: XCUITestDriver): Promise<string[] | FullContext[]> {
   this.log.debug('Getting list of available contexts');
   const contexts = await this.getContextsAndViews(false);
 
   if (this.opts.fullContextList) {
-    return /** @type {import('./types').FullContext[]} */ (
-      contexts.map((context) => ({
-        id: context.id.toString(),
-        title: context.view?.title,
-        url: context.view?.url,
-        bundleId: context.view?.bundleId,
-      }))
-    );
+    return contexts.map((context) => ({
+      id: context.id.toString(),
+      title: context.view?.title,
+      url: context.view?.url,
+      bundleId: context.view?.bundleId,
+    })) as FullContext[];
   }
-  return /** @type {string[]} */ (contexts.map((context) => context.id.toString()));
+  return contexts.map((context) => context.id.toString());
 }
 
 /**
- * @this {XCUITestDriver}
- * @param {string} name
- * @param {boolean} [skipReadyCheck]
- * @returns {Promise<void>}
+ * Sets the current window (context) in a web context.
+ *
+ * This is a wrapper around {@linkcode setContext} that translates errors appropriately.
+ *
+ * @param name - The window/context name to switch to
+ * @param skipReadyCheck - Whether to skip waiting for the window to be ready
+ * @throws {errors.NoSuchWindowError} If the window does not exist
  */
-export async function setWindow(name, skipReadyCheck) {
+export async function setWindow(
+  this: XCUITestDriver,
+  name: string,
+  skipReadyCheck?: boolean,
+): Promise<void> {
   if (!this.isWebContext()) {
     // https://github.com/appium/appium/issues/20710
     return;
@@ -613,10 +640,14 @@ export async function setWindow(name, skipReadyCheck) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<string>}
+ * Gets the handle of the current window.
+ *
+ * In native context, returns a default handle. In web context, returns the current context ID.
+ *
+ * @returns The window handle
+ * @throws {errors.InvalidContextError} If not in a valid context
  */
-export async function getWindowHandle() {
+export async function getWindowHandle(this: XCUITestDriver): Promise<string> {
   if (!this.isWebContext()) {
     // https://github.com/appium/appium/issues/20710
     return DEFAULT_NATIVE_WINDOW_HANDLE;
@@ -629,10 +660,13 @@ export async function getWindowHandle() {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<string[]>}
+ * Gets the list of all available window handles.
+ *
+ * In native context, returns a single default handle. In web context, returns all webview handles.
+ *
+ * @returns Array of window handle strings
  */
-export async function getWindowHandles() {
+export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> {
   if (!this.isWebContext()) {
     // https://github.com/appium/appium/issues/20710
     return [DEFAULT_NATIVE_WINDOW_HANDLE];
@@ -653,13 +687,13 @@ export async function getWindowHandles() {
 }
 
 /**
- * Checks if a URL is blacklisted in the 'safariIgnoreWebHostnames' capability
+ * Checks if a URL is blacklisted in the 'safariIgnoreWebHostnames' capability.
  *
- * @param {string} url
- * @param {string} [safariIgnoreWebHostnames]
- * @returns {boolean}
+ * @param url - The URL to check
+ * @param safariIgnoreWebHostnames - Comma-separated list of hostnames to ignore
+ * @returns True if the URL should be ignored
  */
-function isUrlIgnored(url, safariIgnoreWebHostnames) {
+function isUrlIgnored(url: string, safariIgnoreWebHostnames?: string): boolean {
   if (!safariIgnoreWebHostnames || _.isEmpty(safariIgnoreWebHostnames)) {
     return false;
   }
@@ -686,20 +720,13 @@ function isUrlIgnored(url, safariIgnoreWebHostnames) {
 }
 
 /**
- * https://github.com/appium/appium/issues/20741
+ * Notifies BiDi clients about context changes.
  *
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
+ * @see https://github.com/appium/appium/issues/20741
  */
-export async function notifyBiDiContextChange() {
+export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<void> {
   const name = await this.getCurrentContext();
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeObsoleteContextUpdatedEvent(name));
 }
 
-
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- * @typedef {import('./types').Context} Context
- * @typedef {import('./types').FullContext} FullContext
- */

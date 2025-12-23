@@ -49,7 +49,7 @@ describe('context', function () {
           return {catch: () => {}};
         },
       } as any;
-      driver.remote = remoteMock;
+      driver._remote = remoteMock;
       driver.opts.safariIgnoreWebHostnames =
         'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
@@ -73,7 +73,7 @@ describe('context', function () {
             return {catch: () => {}};
           },
         } as any;
-        driver.remote = remoteMock;
+        driver._remote = remoteMock;
         driver.opts.safariIgnoreWebHostnames =
           'www.google.com, www.bing.com,www.yahoo.com, about:blank, ';
         await driver.onPageChange(pageChangeNotification);
