@@ -1,10 +1,13 @@
 import _ from 'lodash';
-import path from 'path';
+import path from 'node:path';
 import {fs, zip, logger, util, tempDir} from 'appium/support';
 import {SubProcess, exec} from 'teen_process';
 import {encodeBase64OrUpload} from '../utils';
 import {waitForCondition} from 'asyncbox';
 import B from 'bluebird';
+import type {XCUITestDriver} from '../driver';
+import type {ActiveAppInfo} from './types';
+import type {Method} from 'axios';
 
 const PERF_RECORD_FEAT_NAME = 'perf_record';
 const PERF_RECORD_SECURITY_MESSAGE =
@@ -34,16 +37,16 @@ const XCRUN = 'xcrun';
  *
  * Read [Recording, Pausing, and Stopping Traces](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Recording,Pausing,andStoppingTraces.html) for more details.
  *
- * @param {number} timeout - The maximum count of milliseconds to record the profiling information.
- * @param {string} profileName - The name of existing performance profile to apply. Can also contain the full path to the chosen template on the server file system. Note: not all profiles are supported on mobile devices.
- * @param {number|'current'} [pid] -  The ID of the process to measure the performance for. Set it to `current` in order to measure the performance of the process, which belongs to the currently active application.  All processes running on the device are measured if `pid` is unset (the default setting).
- * @this {XCUITestDriver}
+ * @param timeout - The maximum count of milliseconds to record the profiling information.
+ * @param profileName - The name of existing performance profile to apply. Can also contain the full path to the chosen template on the server file system. Note: not all profiles are supported on mobile devices.
+ * @param pid - The ID of the process to measure the performance for. Set it to `current` in order to measure the performance of the process, which belongs to the currently active application. All processes running on the device are measured if `pid` is unset (the default setting).
  */
 export async function mobileStartPerfRecord(
+  this: XCUITestDriver,
   timeout = DEFAULT_TIMEOUT_MS,
   profileName = DEFAULT_PROFILE_NAME,
-  pid,
-) {
+  pid?: number | 'current',
+): Promise<void> {
   if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
     throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
   }
@@ -62,21 +65,19 @@ export async function mobileStartPerfRecord(
     }
   }
 
-  let realPid;
+  let realPid: number | undefined;
   if (pid) {
     if (_.toLower(String(pid)) === DEFAULT_PID) {
-      const appInfo = /** @type {import('./types').ActiveAppInfo} */ (
-        await this.proxyCommand('/wda/activeAppInfo', 'GET')
-      );
+      const appInfo = (await this.proxyCommand('/wda/activeAppInfo', 'GET')) as ActiveAppInfo;
       realPid = appInfo.pid;
-    } else {
+    } else if (typeof pid === 'number') {
       realPid = pid;
     }
   }
   const recorder = new PerfRecorder(await tempDir.openDir(), this.device.udid, {
     timeout: parseInt(String(timeout), 10),
     profileName,
-    pid: parseInt(String(realPid), 10),
+    pid: realPid,
   });
   await recorder.start();
   this._perfRecorders = [...(this._perfRecorders || []), recorder];
@@ -89,30 +90,29 @@ export async function mobileStartPerfRecord(
  *
  * The resulting file in `.trace` format can be either returned directly as base64-encoded zip archive or uploaded to a remote location (such files can be pretty large). Afterwards it is possible to unarchive and open such files with Xcode Dev Tools.
  *
- * @param {string} [remotePath] - The path to the remote location, where the resulting zipped `.trace` file should be uploaded.  The following protocols are supported: `http`, `https`, `ftp`. Null or empty string value (the default setting) means the content of resulting file should be zipped, encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated file is too big to fit into the available process memory.
- * @param {string} [user] - The name of the user for the remote authentication. Only works if `remotePath` is provided.
- * @param {string} [pass] - The password for the remote authentication. Only works if `remotePath` is provided.
- * @param {import('axios').Method} [method] -  The http multipart upload method name. Only works if `remotePath` is provided. Defaults to `PUT`
- * @param {string} profileName -  The name of existing performance profile to stop the recording for. Multiple recorders for different profile names could be executed at the same time.
- * @param {Record<string,any>} [headers] - Additional headers mapping for multipart http(s) uploads
- * @param {string} [fileFieldName] -  The name of the form field, where the file content BLOB should be stored for http(s) uploads. Defaults to `file`
- * @param {Record<string,any>|([string, any])[]} [formFields] - Additional form fields for multipart http(s) uploads
- *
- * @returns {Promise<string>} The resulting file in `.trace` format. This file can either be returned directly as base64-encoded `.zip` archive or uploaded to a remote location (note that such files may be large), _depending on the `remotePath` argument value._  Thereafter, the file may be unarchived and opened with Xcode Developer Tools.
+ * @param remotePath - The path to the remote location, where the resulting zipped `.trace` file should be uploaded. The following protocols are supported: `http`, `https`, `ftp`. Null or empty string value (the default setting) means the content of resulting file should be zipped, encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated file is too big to fit into the available process memory.
+ * @param user - The name of the user for the remote authentication. Only works if `remotePath` is provided.
+ * @param pass - The password for the remote authentication. Only works if `remotePath` is provided.
+ * @param method - The http multipart upload method name. Only works if `remotePath` is provided. Defaults to `PUT`
+ * @param profileName - The name of existing performance profile to stop the recording for. Multiple recorders for different profile names could be executed at the same time.
+ * @param headers - Additional headers mapping for multipart http(s) uploads
+ * @param fileFieldName - The name of the form field, where the file content BLOB should be stored for http(s) uploads. Defaults to `file`
+ * @param formFields - Additional form fields for multipart http(s) uploads
+ * @returns The resulting file in `.trace` format. This file can either be returned directly as base64-encoded `.zip` archive or uploaded to a remote location (note that such files may be large), _depending on the `remotePath` argument value._ Thereafter, the file may be unarchived and opened with Xcode Developer Tools.
  * @throws {Error} If no performance recording with given profile name/device udid combination
  * has been started before or the resulting .trace file has not been generated properly.
- * @this {XCUITestDriver}
  */
 export async function mobileStopPerfRecord(
-  remotePath,
-  user,
-  pass,
-  method,
+  this: XCUITestDriver,
+  remotePath?: string,
+  user?: string,
+  pass?: string,
+  method?: Method,
   profileName = DEFAULT_PROFILE_NAME,
-  headers,
-  fileFieldName,
-  formFields,
-) {
+  headers?: Record<string, any>,
+  fileFieldName?: string,
+  formFields?: Record<string, any> | [string, any][],
+): Promise<string> {
   if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
     throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
   }
@@ -131,7 +131,12 @@ export async function mobileStopPerfRecord(
   }
 
   const recorder = _.first(recorders);
-  const resultPath = await /** @type {PerfRecorder} */ (recorder).stop();
+  if (!recorder) {
+    throw this.log.errorWithException(
+      `No recorder found for performance profile '${profileName}' and device ${this.device.udid}`,
+    );
+  }
+  const resultPath = await recorder.stop();
   if (!(await fs.exists(resultPath))) {
     throw this.log.errorWithException(
       `There is no ${DEFAULT_EXT} file found for performance profile '${profileName}' ` +
@@ -152,35 +157,18 @@ export async function mobileStopPerfRecord(
   return result;
 }
 
-
-async function requireXctrace() {
-  const xcrunPath = await requireXcrun();
-  try {
-    await exec(xcrunPath, [XCTRACE, 'help']);
-  } catch (e) {
-    throw new Error(
-      `${XCTRACE} is not available for the active Xcode version. ` +
-        `Please make sure XCode is up to date. Original error: ${e.stderr || e.message}`,
-    );
-  }
-  return xcrunPath;
-}
-
-async function requireInstruments() {
-  try {
-    return await fs.which(INSTRUMENTS);
-  } catch {
-    throw new Error(
-      `${INSTRUMENTS} has not been found in PATH. ` +
-        `Please make sure XCode development tools are installed`,
-    );
-  }
-}
-
 export class PerfRecorder {
-  /** @type {import('teen_process').SubProcess|null} */
-  _process;
-  constructor(reportRoot, udid, opts = {}) {
+  private _process: SubProcess | null;
+  private _zippedReportPath: string;
+  private readonly _timeout: number;
+  private readonly _profileName: string;
+  private readonly _reportPath: string;
+  private readonly _pid: number | undefined;
+  private readonly _udid: string;
+  private readonly _logger: any;
+  private _archivePromise: Promise<string> | null;
+
+  constructor(reportRoot: string, udid: string, opts: PerfRecorderOptions = {}) {
     this._process = null;
     this._zippedReportPath = '';
     this._timeout = opts.timeout && opts.timeout > 0 ? opts.timeout : DEFAULT_TIMEOUT_MS;
@@ -197,15 +185,11 @@ export class PerfRecorder {
     this._archivePromise = null;
   }
 
-  get profileName() {
+  get profileName(): string {
     return this._profileName;
   }
 
-  async getOriginalReportPath() {
-    return (await fs.exists(this._reportPath)) ? this._reportPath : '';
-  }
-
-  async getZippedReportPath() {
+  async getZippedReportPath(): Promise<string> {
     // This is to prevent possible race conditions, because the archive operation
     // could be pretty time-intensive
     if (!this._archivePromise) {
@@ -229,55 +213,21 @@ export class PerfRecorder {
     return await this._archivePromise;
   }
 
-  isRunning() {
+  isRunning(): boolean {
     return !!this._process?.isRunning;
   }
 
-  async _enforceTermination() {
-    if (this._process && this.isRunning()) {
-      this._logger.debug('Force-stopping the currently running perf recording');
-      try {
-        await this._process.stop('SIGKILL');
-      } catch {}
-    }
-    this._process = null;
-    const performCleanup = async () => {
-      try {
-        await B.all(
-          [this._zippedReportPath, path.dirname(this._reportPath)]
-            .filter(Boolean)
-            .map((x) => fs.rimraf(x)),
-        );
-      } catch (e) {
-        this._logger.warn(e.message);
-      }
-    };
-    if (this._archivePromise) {
-      (async () => {
-        try {
-          await this._archivePromise;
-        } catch {
-        } finally {
-          await performCleanup();
-          this._archivePromise = null;
-        }
-      })();
-    }
-    await performCleanup();
-    return '';
-  }
-
-  async start() {
-    let binaryPath;
+  async start(): Promise<void> {
+    let binaryPath: string;
     try {
       binaryPath = await requireXctrace();
-    } catch (e) {
+    } catch (e: any) {
       this._logger.debug(e.message);
       this._logger.warn(`Defaulting to ${INSTRUMENTS} usage`);
       binaryPath = await requireInstruments();
     }
 
-    const args = [];
+    const args: string[] = [];
     const toolName = path.basename(binaryPath) === XCRUN ? XCTRACE : INSTRUMENTS;
     if (toolName === XCTRACE) {
       args.push(
@@ -318,16 +268,18 @@ export class PerfRecorder {
     this._archivePromise = null;
     this._logger.debug(`Starting performance recording: ${util.quote(fullCmd)}`);
     for (const streamName of ['stdout', 'stderr']) {
-      this._process.on(`line-${streamName}`, (line) => this._logger.debug(`[${toolName}] ${line}`));
+      this._process.on(`line-${streamName}`, (line: string) =>
+        this._logger.debug(`[${toolName}] ${line}`),
+      );
     }
-    this._process.once('exit', async (code, signal) => {
+    this._process.once('exit', async (code: number | null, signal: string | null) => {
       this._process = null;
       if (code === 0) {
         this._logger.debug('Performance recording exited without errors');
         try {
           // cache zipped report
           await this.getZippedReportPath();
-        } catch (e) {
+        } catch (e: any) {
           this._logger.warn(e);
         }
       } else {
@@ -366,7 +318,7 @@ export class PerfRecorder {
     this._logger.info(`The performance recording has started. Will timeout in ${this._timeout}ms`);
   }
 
-  async stop(force = false) {
+  async stop(force = false): Promise<string> {
     if (force) {
       return await this._enforceTermination();
     }
@@ -385,9 +337,74 @@ export class PerfRecorder {
     }
     return await this.getZippedReportPath();
   }
+
+  private async getOriginalReportPath(): Promise<string> {
+    return (await fs.exists(this._reportPath)) ? this._reportPath : '';
+  }
+
+  private async _enforceTermination(): Promise<string> {
+    if (this._process && this.isRunning()) {
+      this._logger.debug('Force-stopping the currently running perf recording');
+      try {
+        await this._process.stop('SIGKILL');
+      } catch {
+        // Ignore errors
+      }
+    }
+    this._process = null;
+    const performCleanup = async () => {
+      try {
+        await B.all(
+          [this._zippedReportPath, path.dirname(this._reportPath)]
+            .filter(Boolean)
+            .map((x) => fs.rimraf(x)),
+        );
+      } catch (e: any) {
+        this._logger.warn(e.message);
+      }
+    };
+    if (this._archivePromise) {
+      (async () => {
+        try {
+          await this._archivePromise;
+        } catch {
+          // Ignore errors
+        } finally {
+          await performCleanup();
+          this._archivePromise = null;
+        }
+      })();
+    }
+    await performCleanup();
+    return '';
+  }
 }
 
-async function requireXcrun() {
+async function requireXctrace(): Promise<string> {
+  const xcrunPath = await requireXcrun();
+  try {
+    await exec(xcrunPath, [XCTRACE, 'help']);
+  } catch (e: any) {
+    throw new Error(
+      `${XCTRACE} is not available for the active Xcode version. ` +
+        `Please make sure XCode is up to date. Original error: ${e.stderr || e.message}`,
+    );
+  }
+  return xcrunPath;
+}
+
+async function requireInstruments(): Promise<string> {
+  try {
+    return await fs.which(INSTRUMENTS);
+  } catch {
+    throw new Error(
+      `${INSTRUMENTS} has not been found in PATH. ` +
+        `Please make sure XCode development tools are installed`,
+    );
+  }
+}
+
+async function requireXcrun(): Promise<string> {
   try {
     return await fs.which(XCRUN);
   } catch {
@@ -398,6 +415,8 @@ async function requireXcrun() {
   }
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
+interface PerfRecorderOptions {
+  timeout?: number;
+  profileName?: string;
+  pid?: number;
+}
