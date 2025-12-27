@@ -70,8 +70,8 @@ export async function mobileStartPerfRecord(
     if (_.toLower(String(pid)) === DEFAULT_PID) {
       const appInfo = (await this.proxyCommand('/wda/activeAppInfo', 'GET')) as ActiveAppInfo;
       realPid = appInfo.pid;
-    } else if (typeof pid === 'number') {
-      realPid = pid;
+    } else {
+      realPid = pid as number;
     }
   }
   const recorder = new PerfRecorder(await tempDir.openDir(), this.device.udid, {

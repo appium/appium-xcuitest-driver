@@ -209,21 +209,34 @@ export async function mobileQueryAppState(
 }
 
 /**
- * @param appPath
- * @param opts
+ * Installs the given application to the device under test.
+ *
+ * This is a wrapper around {@linkcode mobileInstallApp mobile: installApp}.
+ *
+ * @param appPath - Path to the application bundle or .ipa/.app file
+ * @param opts - Installation options
+ * @param opts.timeoutMs - Maximum time to wait for installation to complete (in milliseconds)
+ * @param opts.strategy - If `true`, checks the version before installing and skips if already installed
  */
 export async function installApp(
   this: XCUITestDriver,
   appPath: string,
   opts: {timeoutMs?: number; strategy?: boolean} = {},
 ): Promise<void> {
-  // @ts-ignore Probably a TS bug
   await this.mobileInstallApp(appPath, opts.timeoutMs, opts.strategy);
 }
 
 /**
- * @param bundleId
- * @param opts
+ * Activates the given app on the device under test.
+ *
+ * This is a wrapper around {@linkcode mobileLaunchApp mobile: launchApp}. If the app is already
+ * running, it will be activated (brought to foreground). If the app is not installed or cannot
+ * be launched, an exception is thrown.
+ *
+ * @param bundleId - The bundle identifier of the application to be activated
+ * @param opts - Launch options
+ * @param opts.environment - Environment variables mapping for the app
+ * @param opts.arguments - Command line arguments for the app
  */
 export async function activateApp(
   this: XCUITestDriver,
@@ -231,12 +244,17 @@ export async function activateApp(
   opts: {environment?: Record<string, any>; arguments?: string[]} = {},
 ): Promise<void> {
   const {environment, arguments: args} = opts;
-  // @ts-ignore Probably a TS bug
   return await this.mobileLaunchApp(bundleId, args, environment);
 }
 
 /**
- * @param bundleId
+ * Checks whether the given application is installed on the device under test.
+ *
+ * This is a wrapper around {@linkcode mobileIsAppInstalled mobile: isAppInstalled}.
+ * Offload apps are treated as not installed.
+ *
+ * @param bundleId - The bundle identifier of the application to be checked
+ * @returns `true` if the application is installed; `false` otherwise
  */
 export async function isAppInstalled(
   this: XCUITestDriver,
@@ -246,8 +264,14 @@ export async function isAppInstalled(
 }
 
 /**
- * @param bundleId
- * @returns
+ * Terminates the given app on the device under test.
+ *
+ * This is a wrapper around {@linkcode mobileTerminateApp mobile: terminateApp}.
+ * The command performs termination via XCTest's `terminate` API. If the app is not installed,
+ * an exception is thrown. If the app is not running, nothing is done.
+ *
+ * @param bundleId - The bundle identifier of the application to be terminated
+ * @returns `true` if the app has been terminated successfully; `false` otherwise
  */
 export async function terminateApp(
   this: XCUITestDriver,
@@ -257,7 +281,14 @@ export async function terminateApp(
 }
 
 /**
- * @param bundleId
+ * Queries the state of an installed application from the device under test.
+ *
+ * This is a wrapper around {@linkcode mobileQueryAppState mobile: queryAppState}.
+ * If the app with the given `bundleId` is not installed, an exception will be thrown.
+ *
+ * @param bundleId - The bundle identifier of the application to be queried
+ * @returns The actual application state code
+ * @see https://developer.apple.com/documentation/xctest/xcuiapplicationstate?language=objc
  */
 export async function queryAppState(
   this: XCUITestDriver,
@@ -332,15 +363,17 @@ export async function mobileClearApp(
 }
 
 /**
- * Close app (simulate device home button). It is possible to restore
- * the app after the timeout or keep it minimized based on the parameter value.
+ * Closes the app (simulates device home button press).
  *
- * @param seconds
- * - any positive number of seconds: come back after X seconds
- * - any negative number of seconds or zero: never come back
- * - undefined/null: never come back
- * - {timeout: 5000}: come back after 5 seconds
- * - {timeout: null}, {timeout: -2}: never come back
+ * It is possible to restore the app after a timeout or keep it minimized based on the parameter value.
+ *
+ * @param seconds - Timeout configuration. Accepts:
+ *   - A positive number (seconds): app will be restored after the specified number of seconds
+ *   - A negative number or zero: app will not be restored (kept minimized)
+ *   - `undefined` or `null`: app will not be restored (kept minimized)
+ *   - An object with `timeout` property:
+ *     - `{timeout: 5000}`: app will be restored after 5 seconds (timeout in milliseconds)
+ *     - `{timeout: null}` or `{timeout: -2}`: app will not be restored
  */
 export async function background(
   this: XCUITestDriver,
