@@ -11,22 +11,33 @@ import { toLogEntry } from '../device/log/helpers';
 import { NATIVE_WIN } from '../utils';
 import { BIDI_EVENT_NAME } from './bidi/constants';
 import { makeLogEntryAddedEvent } from './bidi/models';
+import type {XCUITestDriver} from '../driver';
+import type {LogEntry, LogListener} from './types';
+import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
+import type {EventEmitter} from 'node:events';
 
 /**
  * Determines the websocket endpoint based on the `sessionId`
- * @param {string} sessionId
- * @returns {string}
  */
-const WEBSOCKET_ENDPOINT = (sessionId) =>
+const WEBSOCKET_ENDPOINT = (sessionId: string): string =>
   `${DEFAULT_WS_PATHNAME_PREFIX}/session/${sessionId}/appium/device/syslog`;
 const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 const GET_SERVER_LOGS_FEATURE = 'get_server_logs';
 
+type XCUITestDriverLogTypes = keyof typeof SUPPORTED_LOG_TYPES;
+
+interface BiDiListenerProperties {
+  type: string;
+  srcEventName?: string;
+  context?: string;
+  entryTransformer?: (x: any) => LogEntry;
+}
+
 /**
- * @type {import('@appium/types').LogDefRecord}
  * @privateRemarks The return types for these getters should be specified
  */
-const SUPPORTED_LOG_TYPES = {
+const SUPPORTED_LOG_TYPES: LogDefRecord = {
   syslog: {
     description: 'System Logs - Device logs for iOS applications on real devices and simulators',
     getter: async (self) => await self.extractLogs('syslog', self.logs),
@@ -49,9 +60,6 @@ const SUPPORTED_LOG_TYPES = {
   },
   server: {
     description: 'Appium server logs',
-    /**
-     * @returns {import('./types').LogEntry[]}
-     */
     getter: (self) => {
       self.assertFeatureEnabled(GET_SERVER_LOGS_FEATURE);
       return self.log.unwrap().record.map(nativeLogEntryToSeleniumEntry);
@@ -59,7 +67,7 @@ const SUPPORTED_LOG_TYPES = {
   },
 };
 
-const LOG_NAMES_TO_CAPABILITY_NAMES_MAP = {
+const LOG_NAMES_TO_CAPABILITY_NAMES_MAP: Record<string, string> = {
   safariConsole: 'showSafariConsoleLog',
   safariNetwork: 'showSafariNetworkLog',
   enablePerformanceLogging: 'enablePerformanceLogging',
@@ -68,12 +76,18 @@ const LOG_NAMES_TO_CAPABILITY_NAMES_MAP = {
 export const supportedLogTypes = SUPPORTED_LOG_TYPES;
 
 /**
+ * Extracts logs of the specified type from the logs container.
  *
- * @param {XCUITestDriverLogTypes} logType
- * @param {Partial<Record<XCUITestDriverLogTypes,{getLogs(): Promise<any>}>>} [logsContainer]
- * @this {XCUITestDriver}
+ * @param logType - The type of log to extract
+ * @param logsContainer - Container holding log objects
+ * @returns The extracted logs
+ * @throws {Error} If logs are not available or the log type is not found
  */
-export async function extractLogs(logType, logsContainer = {}) {
+export async function extractLogs(
+  this: XCUITestDriver,
+  logType: XCUITestDriverLogTypes,
+  logsContainer: Partial<Record<XCUITestDriverLogTypes, {getLogs(): Promise<any>}>> = {},
+): Promise<any> {
   // make sure that we have logs at all
   // otherwise it's not been initialized
   if (_.isEmpty(logsContainer)) {
@@ -97,9 +111,14 @@ export async function extractLogs(logType, logsContainer = {}) {
 }
 
 /**
- * @this {XCUITestDriver}
+ * Starts capturing iOS system logs.
+ *
+ * Initializes and starts capturing syslog and crashlog. Optionally starts Safari console and network logs
+ * if the corresponding capabilities are enabled.
+ *
+ * @returns `true` if syslog capture started successfully; `false` otherwise
  */
-export async function startLogCapture() {
+export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   this.logs = this.logs || {};
   if (!_.isUndefined(this.logs.syslog) && this.logs.syslog.isCapturing) {
     this.log.warn('Trying to start iOS log capture but it has already started!');
@@ -109,7 +128,7 @@ export async function startLogCapture() {
   if (_.isUndefined(this.logs.syslog)) {
     [this.logs.crashlog,] = assignBiDiLogListener.bind(this)(
       new IOSCrashLog({
-        sim: /** @type {import('appium-ios-simulator').Simulator} */ (this.device),
+        sim: this.device as Simulator,
         udid: this.isRealDevice() ? this.opts.udid : undefined,
         log: this.log,
       }), {
@@ -119,12 +138,12 @@ export async function startLogCapture() {
     [this.logs.syslog,] = assignBiDiLogListener.bind(this)(
       this.isRealDevice()
         ? new IOSDeviceLog({
-          udid: /** @type {string} */ (this.opts.udid),
+          udid: this.opts.udid as string,
           showLogs: this.opts.showIOSLog,
           log: this.log,
         })
         : new IOSSimulatorLog({
-          sim: /** @type {import('appium-ios-simulator').Simulator} */ (this.device),
+          sim: this.device as Simulator,
           showLogs: this.opts.showIOSLog,
           iosSimulatorLogsPredicate: this.opts.iosSimulatorLogsPredicate,
           simulatorLogLevel: this.opts.simulatorLogLevel,
@@ -167,14 +186,13 @@ export async function startLogCapture() {
   }
 
   let didStartSyslog = false;
-  /** @type {Promise[]} */
-  const promises = [
+  const promises: Promise<any>[] = [
     (async () => {
       try {
         await this.logs.syslog?.startCapture();
         didStartSyslog = true;
         this.eventEmitter.emit('syslogStarted', this.logs.syslog);
-      } catch (err) {
+      } catch (err: any) {
         this.log.debug(err.stack);
         this.log.warn(`Continuing without capturing device logs: ${err.message}`);
       }
@@ -189,22 +207,18 @@ export async function startLogCapture() {
 /**
  * Starts an iOS system logs broadcast websocket.
  *
- * The websocket listens on the same host and port as Appium.  The endpoint created is `/ws/session/:sessionId:/appium/syslog`.
+ * The websocket listens on the same host and port as Appium. The endpoint created is `/ws/session/:sessionId:/appium/syslog`.
  *
  * If the websocket is already running, this command does nothing.
  *
- * Each connected webcoket listener will receive syslog lines as soon as they are visible to Appium.
+ * Each connected websocket listener will receive syslog lines as soon as they are visible to Appium.
  * @see https://appiumpro.com/editions/55-using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
  */
-export async function mobileStartLogsBroadcast() {
-  const pathname = WEBSOCKET_ENDPOINT(/** @type {string} */ (this.sessionId));
+export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
+  const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
   if (
     !_.isEmpty(
-      await /** @type {import('@appium/types').AppiumServer} */ (
-        this.server
-      ).getWebSocketHandlers(pathname),
+      await (this.server as AppiumServer).getWebSocketHandlers(pathname),
     )
   ) {
     this.log.debug(
@@ -229,7 +243,7 @@ export async function mobileStartLogsBroadcast() {
     }
 
     if (_.isEmpty(this._syslogWebsocketListener)) {
-      this._syslogWebsocketListener = (logRecord) => {
+      this._syslogWebsocketListener = (logRecord: {message: string}) => {
         if (ws?.readyState === WebSocket.OPEN) {
           ws.send(logRecord.message);
         }
@@ -237,7 +251,7 @@ export async function mobileStartLogsBroadcast() {
     }
     this.logs.syslog?.on('output', this._syslogWebsocketListener);
 
-    ws.on('close', (code, reason) => {
+    ws.on('close', (code: number, reason: Buffer) => {
       if (!_.isEmpty(this._syslogWebsocketListener)) {
         this.logs.syslog?.removeListener('output', this._syslogWebsocketListener);
         this._syslogWebsocketListener = null;
@@ -253,45 +267,49 @@ export async function mobileStartLogsBroadcast() {
       this.log.debug(closeMsg);
     });
   });
-  await /** @type {AppiumServer} */ (this.server).addWebSocketHandler(
+  await (this.server as AppiumServer).addWebSocketHandler(
     pathname,
-    /** @type {import('@appium/types').WSServer} */ (wss),
+    wss as WSServer,
   );
 }
 
 /**
- * Stops the syslog broadcasting wesocket server previously started by `mobile: startLogsBroadcast`.
+ * Stops the syslog broadcasting websocket server previously started by `mobile: startLogsBroadcast`.
+ *
  * If no websocket server is running, this command does nothing.
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
  */
-export async function mobileStopLogsBroadcast() {
-  const pathname = WEBSOCKET_ENDPOINT(/** @type {string} */ (this.sessionId));
-  if (_.isEmpty(await /** @type {AppiumServer} */ (this.server).getWebSocketHandlers(pathname))) {
+export async function mobileStopLogsBroadcast(this: XCUITestDriver): Promise<void> {
+  const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
+  if (_.isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
     return;
   }
 
   this.log.debug('Stopping the system logs broadcasting web socket server');
-  await /** @type {AppiumServer} */ (this.server).removeWebSocketHandler(pathname);
+  await (this.server as AppiumServer).removeWebSocketHandler(pathname);
 }
 
 /**
+ * Assigns a BiDi log listener to the given log emitter.
+ *
  * https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
  *
- * @template {import('node:events').EventEmitter} EE
- * @this {XCUITestDriver}
- * @param {EE} logEmitter
- * @param {BiDiListenerProperties} properties
- * @returns {[EE, import('./types').LogListener]}
+ * @template EE extends EventEmitter
+ * @param logEmitter - The event emitter to attach the listener to
+ * @param properties - Configuration for the BiDi listener
+ * @returns A tuple containing the log emitter and the listener function
  */
-export function assignBiDiLogListener (logEmitter, properties) {
+export function assignBiDiLogListener<EE extends EventEmitter>(
+  this: XCUITestDriver,
+  logEmitter: EE,
+  properties: BiDiListenerProperties,
+): [EE, LogListener] {
   const {
     type,
     context = NATIVE_WIN,
     srcEventName = 'output',
     entryTransformer,
   } = properties;
-  const listener = (/** @type {import('./types').LogEntry} */ logEntry) => {
+  const listener: LogListener = (logEntry: LogEntry) => {
     const finalEntry = entryTransformer ? entryTransformer(logEntry) : logEntry;
     this.eventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
   };
@@ -299,29 +317,11 @@ export function assignBiDiLogListener (logEmitter, properties) {
   return [logEmitter, listener];
 }
 
-/**
- *
- * @param {Object} x
- * @returns {import('./types').LogEntry}
- */
-function nativeLogEntryToSeleniumEntry (x) {
+function nativeLogEntryToSeleniumEntry(x: any): LogEntry {
   const msg = _.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
   return toLogEntry(
     _.replace(msg, COLOR_CODE_PATTERN, ''),
-    /** @type {any} */ (x).timestamp ?? Date.now()
+    x.timestamp ?? Date.now()
   );
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- * @typedef {keyof typeof SUPPORTED_LOG_TYPES} XCUITestDriverLogTypes
- * @typedef {import('@appium/types').AppiumServer} AppiumServer
- */
-
-/**
- * @typedef {Object} BiDiListenerProperties
- * @property {string} type
- * @property {string} [srcEventName='output']
- * @property {string} [context=NATIVE_WIN]
- * @property {(x: Object) => import('./types').LogEntry} [entryTransformer]
- */
