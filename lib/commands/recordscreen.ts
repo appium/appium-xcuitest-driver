@@ -5,6 +5,9 @@ import {encodeBase64OrUpload} from '../utils';
 import {WDA_BASE_URL} from 'appium-webdriveragent';
 import {waitForCondition} from 'asyncbox';
 import url from 'url';
+import type {XCUITestDriver} from '../driver';
+import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
+import type {WDASettings} from 'appium-webdriveragent';
 
 /**
  * Set max timeout for 'reconnect_delay_max' ffmpeg argument usage.
@@ -20,14 +23,22 @@ const DEFAULT_VCODEC = 'mjpeg';
 const MP4_EXT = '.mp4';
 const FFMPEG_BINARY = 'ffmpeg';
 const ffmpegLogger = logger.getLogger(FFMPEG_BINARY);
-const QUALITY_MAPPING = {
+const QUALITY_MAPPING: Record<string, number> = {
   low: 10,
   medium: 25,
   high: 75,
   photo: 100,
 };
 
-const HARDWARE_ACCELERATION_PARAMETERS = {
+const HARDWARE_ACCELERATION_PARAMETERS: Record<
+  string,
+  {
+    hwaccel: string;
+    hwaccelOutputFormat: string;
+    scaleFilterHWAccel: string;
+    videoTypeHWAccel: string;
+  }
+> = {
   /* https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox */
   videoToolbox: {
     hwaccel: 'videotoolbox',
@@ -54,21 +65,28 @@ const HARDWARE_ACCELERATION_PARAMETERS = {
     hwaccel: 'qsv',
     hwaccelOutputFormat: '',
     scaleFilterHWAccel: 'scale_qsv',
-    videoTypeHWAccel: 'h264_qsv'
+    videoTypeHWAccel: 'h264_qsv',
   },
   /* https://trac.ffmpeg.org/wiki/Hardware/VAAPI */
   vaapi: {
     hwaccel: 'vaapi',
     hwaccelOutputFormat: 'vaapi',
     scaleFilterHWAccel: 'scale_vaapi',
-    videoTypeHWAccel: 'h264_vaapi'
-  }
+    videoTypeHWAccel: 'h264_vaapi',
+  },
 };
 
 const CAPTURE_START_MARKER = /^\s*frame=/;
 
 export class ScreenRecorder {
-  constructor(udid, log, videoPath, opts = {}) {
+  private readonly videoPath: string;
+  private readonly log: any;
+  private readonly opts: ScreenRecorderOptions;
+  private readonly udid: string;
+  private mainProcess: SubProcess | null;
+  private timeoutHandler: NodeJS.Timeout | null;
+
+  constructor(udid: string, log: any, videoPath: string, opts: ScreenRecorderOptions = {}) {
     this.videoPath = videoPath;
     this.log = log;
     this.opts = opts;
@@ -77,7 +95,7 @@ export class ScreenRecorder {
     this.timeoutHandler = null;
   }
 
-  async start(timeoutMs) {
+  async start(timeoutMs: number): Promise<void> {
     try {
       await fs.which(FFMPEG_BINARY);
     } catch {
@@ -98,7 +116,7 @@ export class ScreenRecorder {
       pixelFormat,
     } = this.opts;
 
-    const args = [
+    const args: string[] = [
       '-f',
       'mjpeg',
       // https://github.com/appium/appium/issues/16294
@@ -115,8 +133,8 @@ export class ScreenRecorder {
       hwaccel,
       hwaccelOutputFormat,
       scaleFilterHWAccel,
-      videoTypeHWAccel
-    } = HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration] ?? {};
+      videoTypeHWAccel,
+    } = HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration || ''] ?? {};
 
     if (hwaccel) {
       args.push('-hwaccel', hwaccel);
@@ -127,10 +145,10 @@ export class ScreenRecorder {
     }
 
     //Parameter `-r` is optional. See details: https://github.com/appium/appium/issues/12067
-    if (videoFps && videoType === 'libx264' || videoTypeHWAccel) {
-      args.push('-r', videoFps);
+    if ((videoFps && videoType === 'libx264') || videoTypeHWAccel) {
+      args.push('-r', String(videoFps));
     }
-    const {protocol, hostname} = url.parse(remoteUrl);
+    const {protocol, hostname} = url.parse(remoteUrl || '');
     args.push('-i', `${protocol}//${hostname}:${remotePort}`);
 
     if (videoFilters || videoScale) {
@@ -141,13 +159,13 @@ export class ScreenRecorder {
     if (pixelFormat) {
       args.push('-pix_fmt', pixelFormat);
     }
-    args.push('-vcodec', videoTypeHWAccel || videoType);
+    args.push('-vcodec', videoTypeHWAccel || videoType || DEFAULT_VCODEC);
     args.push('-y');
     args.push(this.videoPath);
 
     this.mainProcess = new SubProcess(FFMPEG_BINARY, args);
     let isCaptureStarted = false;
-    this.mainProcess.on('line-stderr', (line) => {
+    this.mainProcess.on('line-stderr', (line: string) => {
       if (CAPTURE_START_MARKER.test(line)) {
         if (!isCaptureStarted) {
           isCaptureStarted = true;
@@ -175,9 +193,8 @@ export class ScreenRecorder {
       );
     }
     this.log.info(
-      `Starting screen capture on the device '${
-        this.udid
-      }' with command: '${FFMPEG_BINARY} ${args.join(' ')}'. ` + `Will timeout in ${timeoutMs}ms`,
+      `Starting screen capture on the device '${this.udid}' with command: '${FFMPEG_BINARY} ${args.join(' ')}'. ` +
+        `Will timeout in ${timeoutMs}ms`,
     );
 
     this.timeoutHandler = setTimeout(async () => {
@@ -189,7 +206,7 @@ export class ScreenRecorder {
     }, timeoutMs);
   }
 
-  async interrupt(force = false) {
+  async interrupt(force = false): Promise<boolean> {
     let result = true;
 
     if (this.timeoutHandler) {
@@ -202,7 +219,7 @@ export class ScreenRecorder {
       this.mainProcess = null;
       try {
         await interruptPromise;
-      } catch (e) {
+      } catch (e: any) {
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` +
             `Original error: ${e.message}`,
@@ -214,12 +231,12 @@ export class ScreenRecorder {
     return result;
   }
 
-  async finish() {
+  async finish(): Promise<string> {
     await this.interrupt();
     return this.videoPath;
   }
 
-  async cleanup() {
+  async cleanup(): Promise<void> {
     if (await fs.exists(this.videoPath)) {
       await fs.rimraf(this.videoPath);
     }
@@ -235,13 +252,15 @@ export class ScreenRecorder {
  * If screen recording has been already started then the command will stop it forcefully and start a new one.
  * The previously recorded video file will be deleted.
  *
- * @param {import('./types').StartRecordingScreenOptions} [options] - The available options.
- * @returns {Promise<string>} Base64-encoded content of the recorded media file if
+ * @param options - The available options.
+ * @returns Base64-encoded content of the recorded media file if
  *                   any screen recording is currently running or an empty string.
  * @throws {Error} If screen recording has failed to start.
- * @this {XCUITestDriver}
  */
-export async function startRecordingScreen(options = {}) {
+export async function startRecordingScreen(
+  this: XCUITestDriver,
+  options: StartRecordingScreenOptions = {},
+): Promise<string> {
   const {
     videoType = DEFAULT_VCODEC,
     timeLimit = DEFAULT_RECORDING_TIME_SEC,
@@ -251,21 +270,21 @@ export async function startRecordingScreen(options = {}) {
     videoScale,
     forceRestart,
     pixelFormat,
-    hardwareAcceleration
+    hardwareAcceleration,
   } = options;
 
   let result = '';
   if (!forceRestart) {
     this.log.info(
       `Checking if there is/was a previous screen recording. ` +
-      `Set 'forceRestart' option to 'true' if you'd like to skip this step.`
+        `Set 'forceRestart' option to 'true' if you'd like to skip this step.`,
     );
     result = (await this.stopRecordingScreen(options)) ?? result;
   }
 
   const videoPath = await tempDir.path({
     prefix: `appium_${Math.random().toString(16).substring(2, 8)}`,
-    suffix: MP4_EXT
+    suffix: MP4_EXT,
   });
 
   const wdaBaseUrl = this.opts.wdaBaseUrl || WDA_BASE_URL;
@@ -275,9 +294,9 @@ export async function startRecordingScreen(options = {}) {
     videoType,
     videoFilters,
     videoScale,
-    videoFps,
+    videoFps: typeof videoFps === 'string' ? parseInt(videoFps, 10) : videoFps,
     pixelFormat,
-    hardwareAcceleration
+    hardwareAcceleration,
   });
   if (!(await screenRecorder.interrupt(true))) {
     throw this.log.errorWithException('Unable to stop screen recording process');
@@ -295,10 +314,10 @@ export async function startRecordingScreen(options = {}) {
     );
   }
 
-  let {mjpegServerScreenshotQuality, mjpegServerFramerate} =
-    /** @type {import('appium-webdriveragent').WDASettings} */ (
-    await this.proxyCommand('/appium/settings', 'GET')
-  );
+  let {mjpegServerScreenshotQuality, mjpegServerFramerate} = (await this.proxyCommand(
+    '/appium/settings',
+    'GET',
+  )) as WDASettings;
   if (videoQuality) {
     const quality = _.isInteger(videoQuality)
       ? videoQuality
@@ -306,11 +325,12 @@ export async function startRecordingScreen(options = {}) {
     if (!quality) {
       throw new Error(
         `videoQuality value should be one of ${JSON.stringify(
-          _.keys(QUALITY_MAPPING)
-        )} or a number in range 1..100. ` + `'${videoQuality}' is given instead`
+          _.keys(QUALITY_MAPPING),
+        )} or a number in range 1..100. ` + `'${videoQuality}' is given instead`,
       );
     }
-    mjpegServerScreenshotQuality = mjpegServerScreenshotQuality !== quality ? quality : undefined;
+    mjpegServerScreenshotQuality =
+      mjpegServerScreenshotQuality !== quality ? (quality as number) : undefined;
   } else {
     mjpegServerScreenshotQuality = undefined;
   }
@@ -319,7 +339,7 @@ export async function startRecordingScreen(options = {}) {
     if (isNaN(fps)) {
       throw new Error(
         `videoFps value should be a valid number in range 1..60. ` +
-        `'${videoFps}' is given instead`
+          `'${videoFps}' is given instead`,
       );
     }
     mjpegServerFramerate = mjpegServerFramerate !== fps ? fps : undefined;
@@ -330,8 +350,8 @@ export async function startRecordingScreen(options = {}) {
     await this.proxyCommand('/appium/settings', 'POST', {
       settings: {
         mjpegServerScreenshotQuality,
-        mjpegServerFramerate
-      }
+        mjpegServerFramerate,
+      },
     });
   }
 
@@ -355,16 +375,17 @@ export async function startRecordingScreen(options = {}) {
  * active screen recording processes are running then the method returns an
  * empty string.
  *
- * @param {import('./types').StopRecordingScreenOptions} options - The available
- * options.
- * @returns {Promise<string?>} Base64-encoded content of the recorded media
+ * @param options - The available options.
+ * @returns Base64-encoded content of the recorded media
  * file if `remotePath` parameter is empty or null or an empty string.
  * @throws {Error} If there was an error while getting the name of a media
  *                 file or the file content cannot be uploaded to the remote
  *                 location.
- * @this {XCUITestDriver}
  */
-export async function stopRecordingScreen(options = {}) {
+export async function stopRecordingScreen(
+  this: XCUITestDriver,
+  options: StopRecordingScreenOptions = {},
+): Promise<string | null> {
   if (!this._recentScreenRecorder) {
     this.log.info('Screen recording is not running. There is nothing to stop.');
     return '';
@@ -375,7 +396,7 @@ export async function stopRecordingScreen(options = {}) {
     if (!(await fs.exists(videoPath))) {
       throw this.log.errorWithException(
         `The screen recorder utility has failed ` +
-        `to store the actual screen recording at '${videoPath}'`
+          `to store the actual screen recording at '${videoPath}'`,
       );
     }
     return await encodeBase64OrUpload(videoPath, options.remotePath, options);
@@ -386,6 +407,13 @@ export async function stopRecordingScreen(options = {}) {
   }
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
+interface ScreenRecorderOptions {
+  hardwareAcceleration?: string;
+  remotePort?: number;
+  remoteUrl?: string;
+  videoFps?: number;
+  videoType?: string;
+  videoScale?: string;
+  videoFilters?: string;
+  pixelFormat?: string;
+}

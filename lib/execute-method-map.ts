@@ -215,7 +215,6 @@ export const executeMethodMap = {
     command: 'getViewportRect',
   },
   'mobile: startPerfRecord': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileStartPerfRecord',
     params: {
       optional: ['timeout', 'profileName', 'pid'],
