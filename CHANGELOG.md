@@ -1,3 +1,9 @@
+## [10.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.13.4...v10.14.0) (2025-12-30)
+
+### Features
+
+* add documentation for customActions ([#2690](https://github.com/appium/appium-xcuitest-driver/issues/2690)) ([c8a0473](https://github.com/appium/appium-xcuitest-driver/commit/c8a04730a62353752a5142dab04115e3afe155db))
+
 ## [10.13.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.13.3...v10.13.4) (2025-12-30)
 
 ### Miscellaneous Chores
