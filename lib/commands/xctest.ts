@@ -2,34 +2,42 @@ import B from 'bluebird';
 import {logger} from 'appium/support';
 import _ from 'lodash';
 import {errors} from 'appium/driver';
+import type {XCUITestDriver} from '../driver';
+import type {XCTestResult, RunXCTestResult} from './types';
+import type {StringRecord} from '@appium/types';
+import type IDB from 'appium-idb';
 
 const XCTEST_TIMEOUT = 360000; // 60 minute timeout
 
 const xctestLog = logger.getLogger('XCTest');
 
 /**
- * Asserts that IDB is present and that launchWithIDB was used
+ * Asserts that IDB is present and that launchWithIDB was used.
  *
- * @param {XCUITestDriver['opts']} opts Opts object from the driver instance
+ * @param opts - Opts object from the driver instance
+ * @returns The IDB instance
+ * @throws {Error} If IDB is not available or launchWithIDB is not enabled
  */
-export function assertIDB(opts) {
-  if (!this.device?.idb || !opts.launchWithIDB) {
+export function assertIDB(this: XCUITestDriver, opts: XCUITestDriver['opts']): IDB {
+  const device = this.device as any;
+  if (!device?.idb || !opts.launchWithIDB) {
     throw new Error(
       `To use XCTest runner, IDB (https://github.com/facebook/idb) must be installed ` +
         `and sessions must be run with the "launchWithIDB" capability`,
     );
   }
-  return this.device.idb;
+  return device.idb;
 }
 
 /**
- * Parse the stdout of XC test log
- * @param {string} stdout A line of standard out from `idb xctest run ...`
- * @returns {XCTestResult[]|string[]} results The final output of the XCTest run
+ * Parse the stdout of XC test log.
+ *
+ * @param stdout - A line of standard out from `idb xctest run ...`
+ * @returns The final output of the XCTest run
  */
-export function parseXCTestStdout(stdout) {
+export function parseXCTestStdout(stdout: string): XCTestResult[] | string[] {
   // Parses a 'key' into JSON format
-  function parseKey(name) {
+  function parseKey(name: string): string {
     const words = name.split(' ');
     let out = '';
     for (const word of words) {
@@ -39,7 +47,7 @@ export function parseXCTestStdout(stdout) {
   }
 
   // Parses a 'value' into JSON format
-  function parseValue(value) {
+  function parseValue(value: string): any {
     value = value || '';
     switch (value.toLowerCase()) {
       case 'true':
@@ -51,7 +59,7 @@ export function parseXCTestStdout(stdout) {
       default:
         break;
     }
-    if (!isNaN(value)) {
+    if (!isNaN(Number(value))) {
       if (!_.isString(value)) {
         return 0;
       } else if (value.indexOf('.') > 0) {
@@ -73,16 +81,14 @@ export function parseXCTestStdout(stdout) {
     return [lines[0]];
   }
 
-  /** @type {XCTestResult[]} */
-  const results = [];
+  const results: XCTestResult[] = [];
   for (const line of lines) {
     // The properties are split up by pipes and each property
     // has the format "Some Key : Some Value"
     const properties = line.split('|');
 
     // Parse each property
-    /** @type {XCTestResult} */
-    const output = /** @type {any} */ ({});
+    const output: any = {};
     let entryIndex = 0;
     for (const prop of properties) {
       if (entryIndex === 0) {
@@ -94,7 +100,7 @@ export function parseXCTestStdout(stdout) {
         // e.g. Location /path/to/XCTesterAppUITests/XCTesterAppUITests.swift:36
         output.location = prop.substring(prop.indexOf('Location') + 8).trim();
       } else {
-        let [key, value] = prop.split(':');
+        const [key, value] = prop.split(':');
         output[parseKey(key.trim())] = parseValue(value ? value.trim() : '');
       }
       entryIndex++;
@@ -123,12 +129,13 @@ export function parseXCTestStdout(stdout) {
 }
 
 /**
- * @typedef {Error} XCUITestError
- *
- * @property {number} code Subprocess exit code
- * @property {string} signal The signal (SIG*) that caused the process to fail
- * @property {XCTestResult[]} results The output of the failed test (if there is output)
+ * Error thrown when XCTest subprocess returns non-zero exit code.
  */
+export interface XCUITestError extends Error {
+  code: number;
+  signal?: string;
+  result?: XCTestResult[];
+}
 
 /**
  * Run a native XCTest script.
@@ -137,36 +144,36 @@ export function parseXCTestStdout(stdout) {
  *
  * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** to run such tests; see [the idb docs](https://fbidb.io/docs/test-execution/) for reference.
  *
- * @param {string} testRunnerBundleId - Test app bundle (e.g.: `io.appium.XCTesterAppUITests.xctrunner`)
- * @param {string} appUnderTestBundleId - App-under-test bundle
- * @param {string} xcTestBundleId - XCTest bundle ID
- * @param {string[]} args - Launch arguments to start the test with (see [reference documentation](https://developer.apple.com/documentation/xctest/xcuiapplication/1500477-launcharguments))
- * @param {'app'|'ui'|'logic'} testType - XC test type
- * @param {import('@appium/types').StringRecord} [env] - Environment variables passed to test
- * @param {number} timeout - Timeout (in ms) for session completion.
+ * @param testRunnerBundleId - Test app bundle (e.g.: `io.appium.XCTesterAppUITests.xctrunner`)
+ * @param appUnderTestBundleId - App-under-test bundle
+ * @param xcTestBundleId - XCTest bundle ID
+ * @param args - Launch arguments to start the test with (see [reference documentation](https://developer.apple.com/documentation/xctest/xcuiapplication/1500477-launcharguments))
+ * @param testType - XC test type
+ * @param env - Environment variables passed to test
+ * @param timeout - Timeout (in ms) for session completion
+ * @returns The array of test results
  * @throws {XCUITestError} Error thrown if subprocess returns non-zero exit code
- * @returns {Promise<import('./types').RunXCTestResult>} The array of test results
- * @this {XCUITestDriver}
  */
 export async function mobileRunXCTest(
-  testRunnerBundleId,
-  appUnderTestBundleId,
-  xcTestBundleId,
-  args = [],
-  testType = 'ui',
-  env,
+  this: XCUITestDriver,
+  testRunnerBundleId: string,
+  appUnderTestBundleId: string,
+  xcTestBundleId: string,
+  args: string[] = [],
+  testType: 'app' | 'ui' | 'logic' = 'ui',
+  env?: StringRecord,
   timeout = XCTEST_TIMEOUT,
-) {
-  const subproc = await assertIDB(this.opts).runXCUITest(
+): Promise<RunXCTestResult> {
+  const subproc = await assertIDB.call(this, this.opts).runXCUITest(
     testRunnerBundleId,
     appUnderTestBundleId,
     xcTestBundleId,
     {env, args, testType},
   );
   return await new B((resolve, reject) => {
-    let mostRecentLogObject = null;
-    let xctestTimeout;
-    let lastErrorMessage = null;
+    let mostRecentLogObject: XCTestResult[] | string[] | null = null;
+    let xctestTimeout: NodeJS.Timeout | undefined;
+    let lastErrorMessage: string | null = null;
     if (timeout > 0) {
       xctestTimeout = setTimeout(
         () =>
@@ -179,11 +186,11 @@ export async function mobileRunXCTest(
       );
     }
 
-    subproc.on('output', (stdout, stderr) => {
+    subproc.on('output', (stdout: string, stderr: string) => {
       if (stdout) {
         try {
           mostRecentLogObject = parseXCTestStdout(stdout);
-        } catch (err) {
+        } catch (err: any) {
           // Fails if log parsing fails.
           // This is in case IDB changes the way that logs are formatted and
           // it breaks 'parseXCTestStdout'. If that happens we still want the process
@@ -202,23 +209,25 @@ export async function mobileRunXCTest(
       }
     });
 
-    subproc.on('exit', (code, signal) => {
-      clearTimeout(xctestTimeout);
+    subproc.on('exit', (code: number | null, signal: string | null) => {
+      if (xctestTimeout) {
+        clearTimeout(xctestTimeout);
+      }
       if (code !== 0) {
-        const err = /** @type {any} */ (new Error(lastErrorMessage || mostRecentLogObject));
-        err.code = code;
+        const err = new Error(lastErrorMessage || String(mostRecentLogObject)) as XCUITestError;
+        err.code = code ?? -1;
         if (signal != null) {
           err.signal = signal;
         }
         if (mostRecentLogObject) {
-          err.result = mostRecentLogObject;
+          err.result = mostRecentLogObject as XCTestResult[];
         }
         return reject(err);
       }
       resolve({
-        code,
-        signal,
-        results: mostRecentLogObject,
+        code: code ?? 0,
+        signal: signal ?? null,
+        results: mostRecentLogObject as XCTestResult[],
         passed: true,
       });
     });
@@ -230,11 +239,12 @@ export async function mobileRunXCTest(
  *
  * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** for this command to work.
  *
- * @param {string} xctestApp - Path of the XCTest app (URL or filename with extension `.app`)
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ * @param xctestApp - Path of the XCTest app (URL or filename with extension `.app`)
  */
-export async function mobileInstallXCTestBundle(xctestApp) {
+export async function mobileInstallXCTestBundle(
+  this: XCUITestDriver,
+  xctestApp: string,
+): Promise<void> {
   if (!_.isString(xctestApp)) {
     throw new errors.InvalidArgumentError(
       `'xctestApp' is a required parameter for 'installXCTestBundle' and ` +
@@ -242,7 +252,7 @@ export async function mobileInstallXCTestBundle(xctestApp) {
     );
   }
   xctestLog.info(`Installing bundle '${xctestApp}'`);
-  const idb = assertIDB(this.opts);
+  const idb = assertIDB.call(this, this.opts);
   const res = await this.helpers.configureApp(xctestApp, '.xctest');
   await idb.installXCTestBundle(res);
 }
@@ -252,34 +262,31 @@ export async function mobileInstallXCTestBundle(xctestApp) {
  *
  * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** for this command to work.
  *
- * @returns {Promise<string[]>} List of XCTest bundles (e.g.: `XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance`)
- * @this {XCUITestDriver}
+ * @returns List of XCTest bundles (e.g.: `XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance`)
  */
-export async function mobileListXCTestBundles() {
-  return await assertIDB(this.opts).listXCTestBundles();
+export async function mobileListXCTestBundles(this: XCUITestDriver): Promise<string[]> {
+  return await assertIDB.call(this, this.opts).listXCTestBundles();
 }
 
 /**
- * List XCTests in a test bundle
+ * List XCTests in a test bundle.
  *
  * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** for this command to work.
- * @param {string} bundle - Bundle ID of the XCTest
  *
- * @returns {Promise<string[]>} The list of xctests in the test bundle (e.g., `['XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance']`)
- * @this {XCUITestDriver}
+ * @param bundle - Bundle ID of the XCTest
+ * @returns The list of xctests in the test bundle (e.g., `['XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance']`)
  */
-export async function mobileListXCTestsInTestBundle(bundle) {
+export async function mobileListXCTestsInTestBundle(
+  this: XCUITestDriver,
+  bundle: string,
+): Promise<string[]> {
   if (!_.isString(bundle)) {
     throw new errors.InvalidArgumentError(
       `'bundle' is a required parameter for 'listXCTestsInTestBundle' and ` +
         `must be a string. Found '${bundle}'`,
     );
   }
-  const idb = assertIDB(this.opts);
+  const idb = assertIDB.call(this, this.opts);
   return await idb.listXCTestsInTestBundle(bundle);
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- * @typedef {import('./types').XCTestResult} XCTestResult
- */

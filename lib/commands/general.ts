@@ -3,13 +3,22 @@ import {errors} from 'appium/driver';
 import moment from 'moment-timezone';
 import {utilities} from 'appium-ios-device';
 import {exec} from 'teen_process';
+import type {XCUITestDriver} from '../driver';
+import type {Viewport, ScreenInfo, ButtonName} from './types';
+import type {Size, Rect} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
 
 const MOMENT_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
 /**
- * @this {XCUITestDriver}
+ * Gets the currently active element.
+ *
+ * In web context, returns the active element from the DOM.
+ * In native context, returns the active element from the current view.
+ *
+ * @returns The active element
  */
-export async function active() {
+export async function active(this: XCUITestDriver): Promise<any> {
   if (this.isWebContext()) {
     return this.cacheWebElements(await this.executeAtom('active_element', []));
   }
@@ -17,31 +26,29 @@ export async function active() {
 }
 
 /**
- * Trigger a touch/fingerprint match or match failure
+ * Trigger a touch/fingerprint match or match failure.
  *
- * @param {boolean} match - whether the match should be a success or failure
- * @this {XCUITestDriver}
+ * @param match - Whether the match should be a success or failure
  */
-export async function touchId(match = true) {
+export async function touchId(this: XCUITestDriver, match = true): Promise<void> {
   await this.mobileSendBiometricMatch('touchId', match);
 }
-  /**
-   * Toggle whether the device is enrolled in the touch ID program
-   *
-   * @param {boolean} isEnabled - whether to enable or disable the touch ID program
-   *
-   * @this {XCUITestDriver}
-   */
-export async function toggleEnrollTouchId(isEnabled = true) {
+
+/**
+ * Toggle whether the device is enrolled in the touch ID program.
+ *
+ * @param isEnabled - Whether to enable or disable the touch ID program
+ */
+export async function toggleEnrollTouchId(this: XCUITestDriver, isEnabled = true): Promise<void> {
   await this.mobileEnrollBiometric(isEnabled);
 }
 
 /**
- * Get the window size
- * @this {XCUITestDriver}
- * @returns {Promise<import('@appium/types').Size>}
+ * Get the window size.
+ *
+ * @returns The window size (width and height)
  */
-export async function getWindowSize() {
+export async function getWindowSize(this: XCUITestDriver): Promise<Size> {
   const {width, height} = await this.getWindowRect();
   return {width, height};
 }
@@ -49,11 +56,13 @@ export async function getWindowSize() {
 /**
  * Retrieves the actual device time.
  *
- * @param {string} format - The format specifier string. Read the [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
- * @returns {Promise<string>} Formatted datetime string or the raw command output (if formatting fails)
- * @this {XCUITestDriver}
+ * @param format - The format specifier string. Read the [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
+ * @returns Formatted datetime string or the raw command output (if formatting fails)
  */
-export async function getDeviceTime(format = MOMENT_FORMAT_ISO8601) {
+export async function getDeviceTime(
+  this: XCUITestDriver,
+  format = MOMENT_FORMAT_ISO8601,
+): Promise<string> {
   this.log.info('Attempting to capture iOS device date and time');
   if (!this.isRealDevice()) {
     this.log.info('On simulator. Assuming device time is the same as host time');
@@ -94,22 +103,29 @@ export async function getDeviceTime(format = MOMENT_FORMAT_ISO8601) {
 }
 
 /**
- * Retrieves the current device time
+ * Retrieves the current device time.
  *
- * @param {string} format - See {@linkcode getDeviceTime.format}
- * @returns {Promise<string>} Formatted datetime string or the raw command output if formatting fails
- * @this {XCUITestDriver}
+ * This is a wrapper around {@linkcode getDeviceTime}.
+ *
+ * @param format - See {@linkcode getDeviceTime.format}
+ * @returns Formatted datetime string or the raw command output if formatting fails
  */
-export async function mobileGetDeviceTime(format = MOMENT_FORMAT_ISO8601) {
+export async function mobileGetDeviceTime(
+  this: XCUITestDriver,
+  format = MOMENT_FORMAT_ISO8601,
+): Promise<string> {
   return await this.getDeviceTime(format);
 }
 
 /**
- * For W3C
- * @this {XCUITestDriver}
- * @return {Promise<import('@appium/types').Rect>}
+ * Gets the window rectangle (position and size).
+ *
+ * For W3C compatibility. In web context, returns the browser window dimensions.
+ * In native context, returns the device window dimensions.
+ *
+ * @returns The window rectangle
  */
-export async function getWindowRect() {
+export async function getWindowRect(this: XCUITestDriver): Promise<Rect> {
   if (this.isWebContext()) {
     const script = 'return {' +
       'x: window.screenX || 0,' +
@@ -120,22 +136,29 @@ export async function getWindowRect() {
     return await this.executeAtom('execute_script', [script]);
   }
 
-  return /** @type {import('@appium/types').Rect} */ (
-    await this.proxyCommand('/window/rect', 'GET')
-  );
+  return (await this.proxyCommand('/window/rect', 'GET')) as Rect;
 }
 
 /**
- * @this {XCUITestDriver}
+ * Removes/uninstalls the given application from the device under test.
+ *
+ * This is a wrapper around {@linkcode mobileRemoveApp mobile: removeApp}.
+ *
+ * @param bundleId - The bundle identifier of the application to be removed
+ * @returns `true` if the application has been removed successfully; `false` otherwise
  */
-export async function removeApp(bundleId) {
+export async function removeApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   return await this.mobileRemoveApp(bundleId);
 }
 
 /**
- * @this {XCUITestDriver}
+ * Launches the app.
+ *
+ * @deprecated This API has been deprecated and is not supported anymore.
+ * Consider using corresponding 'mobile:' extensions to manage the state of the app under test.
+ * @throws {Error} Always throws an error indicating the API is deprecated
  */
-export async function launchApp() {
+export async function launchApp(this: XCUITestDriver): Promise<void> {
   throw new Error(
     `The launchApp API has been deprecated and is not supported anymore. ` +
       `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
@@ -143,9 +166,13 @@ export async function launchApp() {
 }
 
 /**
- * @this {XCUITestDriver}
+ * Closes the app.
+ *
+ * @deprecated This API has been deprecated and is not supported anymore.
+ * Consider using corresponding 'mobile:' extensions to manage the state of the app under test.
+ * @throws {Error} Always throws an error indicating the API is deprecated
  */
-export async function closeApp() {
+export async function closeApp(this: XCUITestDriver): Promise<void> {
   throw new Error(
     `The closeApp API has been deprecated and is not supported anymore. ` +
       `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
@@ -153,11 +180,15 @@ export async function closeApp() {
 }
 
 /**
- * @this {XCUITestDriver}
- * @param {string} url
- * @returns {Promise<void>}
+ * Sets the URL for the current session.
+ *
+ * In web context, navigates to the URL using the remote debugger.
+ * In native context on real devices, uses the proxy command.
+ * In native context on simulators, uses simctl to open the URL.
+ *
+ * @param url - The URL to navigate to
  */
-export async function setUrl(url) {
+export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
   this.log.debug(`Attempting to set url '${url}'`);
 
   if (this.isWebContext()) {
@@ -171,7 +202,7 @@ export async function setUrl(url) {
   if (this.isRealDevice()) {
     await this.proxyCommand('/url', 'POST', {url});
   } else {
-    await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).simctl.openUrl(url);
+    await (this.device as Simulator).simctl.openUrl(url);
   }
 }
 
@@ -179,10 +210,10 @@ export async function setUrl(url) {
  * Retrieves the viewport dimensions.
  *
  * The viewport is the device's screen size with status bar size subtracted if the latter is present/visible.
- * @returns {Promise<import('./types').Viewport>}
- * @this {XCUITestDriver}
+ *
+ * @returns The viewport rectangle
  */
-export async function getViewportRect() {
+export async function getViewportRect(this: XCUITestDriver): Promise<Viewport> {
   const scale = await this.getDevicePixelRatio();
   // status bar height comes in unscaled, so scale it
   const statusBarHeight = Math.trunc((await this.getStatusBarHeight()) * scale);
@@ -202,26 +233,29 @@ export async function getViewportRect() {
  * Get information about the screen.
  *
  * @privateRemarks memoized in constructor
- * @this {XCUITestDriver}
- * @returns {Promise<ScreenInfo>}
+ * @returns Screen information including dimensions, scale, and status bar size
  */
-export async function getScreenInfo() {
-  return /** @type {ScreenInfo} */ (await this.proxyCommand('/wda/screen', 'GET'));
+export async function getScreenInfo(this: XCUITestDriver): Promise<ScreenInfo> {
+  return (await this.proxyCommand('/wda/screen', 'GET')) as ScreenInfo;
 }
 
 /**
- * @this {XCUITestDriver}
+ * Gets the status bar height.
+ *
+ * @returns The height of the status bar in logical pixels
  */
-export async function getStatusBarHeight() {
+export async function getStatusBarHeight(this: XCUITestDriver): Promise<number> {
   const {statusBarSize} = await this.getScreenInfo();
   return statusBarSize.height;
 }
 
 /**
- * memoized in constructor
- * @this {XCUITestDriver}
+ * Gets the device pixel ratio.
+ *
+ * @privateRemarks memoized in constructor
+ * @returns The device pixel ratio (scale factor)
  */
-export async function getDevicePixelRatio() {
+export async function getDevicePixelRatio(this: XCUITestDriver): Promise<number> {
   const {scale} = await this.getScreenInfo();
   return scale;
 }
@@ -236,11 +270,14 @@ export async function getDevicePixelRatio() {
  *
  * Use {@linkcode mobilePerformIoHidEvent} to call a more universal API to perform a button press with duration on any supported device.
  *
- * @param {import('./types').ButtonName} name - The name of the button to be pressed.
- * @param {number} [durationSeconds] - The duration of the button press in seconds (float).
- * @this {XCUITestDriver}
+ * @param name - The name of the button to be pressed
+ * @param durationSeconds - The duration of the button press in seconds (float)
  */
-export async function mobilePressButton(name, durationSeconds) {
+export async function mobilePressButton(
+  this: XCUITestDriver,
+  name: ButtonName,
+  durationSeconds?: number,
+): Promise<void> {
   if (!name) {
     throw new errors.InvalidArgumentError('Button name is mandatory');
   }
@@ -254,25 +291,13 @@ export async function mobilePressButton(name, durationSeconds) {
  * Process a string as speech and send it to Siri.
  *
  * Presents the Siri UI, if it is not currently active, and accepts a string which is then processed as if it were recognized speech. See [the documentation of `activateWithVoiceRecognitionText`](https://developer.apple.com/documentation/xctest/xcuisiriservice/2852140-activatewithvoicerecognitiontext?language=objc) for more details.
-
- * @param {string} text - Text to be sent to Siri
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
+ *
+ * @param text - Text to be sent to Siri
  */
-export async function mobileSiriCommand(text) {
+export async function mobileSiriCommand(this: XCUITestDriver, text: string): Promise<void> {
   if (!text) {
     throw new errors.InvalidArgumentError('"text" argument is mandatory');
   }
   await this.proxyCommand('/wda/siri/activate', 'POST', {text});
 }
 
-/**
- * @typedef {Object} PressButtonOptions
- * @property {string} name - The name of the button to be pressed.
- * @property {number} [durationSeconds] - Duration in float seconds.
- */
-
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- * @typedef {import('./types').ScreenInfo} ScreenInfo
- */

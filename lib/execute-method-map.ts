@@ -252,7 +252,6 @@ export const executeMethodMap = {
     command: 'mobileListCertificates',
   },
   'mobile: startLogsBroadcast': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'mobileStartLogsBroadcast',
   },
   'mobile: stopLogsBroadcast': {
