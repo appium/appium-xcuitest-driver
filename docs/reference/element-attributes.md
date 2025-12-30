@@ -25,4 +25,4 @@ The XCUITest driver supports the following element attributes:
 |`traits` | Element's [traits](https://developer.apple.com/documentation/uikit/uiaccessibilitytraits?language=objc) value. This attribute returns a comma-separated string of accessibility traits. This attribute is not included into the XML page source, it may only be retrieved via [getAttribute](https://www.w3.org/TR/webdriver2/#get-element-attribute) API.| `Button, Adjustable`, `Button` |
 | `minValue` | Element's minimum allowed value, typically for controls like sliders or progress indicators. | `0`, `0.0`, `1` |
 | `maxValue` | Element's maximum allowed value, typically for controls like sliders or progress indicators. | `100`, `1.0` |
-| `customActions` | Custom actions attached to a single accessibility element. | `Action 1,Action 2` |
+| `customActions` | Custom accessibility actions attached to a single accessibility element (SwiftUI: [`accessibilityAction`](https://developer.apple.com/documentation/swiftui/view/accessibilityaction(_:_:)), UIKit: [`UIAccessibilityCustomAction`](https://developer.apple.com/documentation/uikit/uiaccessibilitycustomaction)). | `Action 1,Action 2` |
