@@ -2,6 +2,8 @@ import {fs, tempDir, logger, util} from 'appium/support';
 import {SubProcess} from 'teen_process';
 import {encodeBase64OrUpload} from '../utils';
 import {waitForCondition} from 'asyncbox';
+import type {XCUITestDriver} from '../driver';
+import type {AudioRecorderOptions} from './types';
 
 const MAX_RECORDING_TIME_SEC = 43200;
 const AUDIO_RECORD_FEAT_NAME = 'audio_record';
@@ -13,7 +15,13 @@ const FFMPEG_BINARY = 'ffmpeg';
 const ffmpegLogger = logger.getLogger(FFMPEG_BINARY);
 
 export class AudioRecorder {
-  constructor(input, log, audioPath, opts = {}) {
+  private readonly input: string | number;
+  private readonly log: any;
+  private readonly audioPath: string;
+  private readonly opts: AudioRecorderOptions;
+  private mainProcess: SubProcess | null;
+
+  constructor(input: string | number, log: any, audioPath: string, opts: AudioRecorderOptions = {} as AudioRecorderOptions) {
     this.input = input;
     this.log = log;
     this.audioPath = audioPath;
@@ -21,7 +29,7 @@ export class AudioRecorder {
     this.mainProcess = null;
   }
 
-  async start(timeoutSeconds) {
+  async start(timeoutSeconds: number): Promise<void> {
     try {
       await fs.which(FFMPEG_BINARY);
     } catch {
@@ -39,7 +47,7 @@ export class AudioRecorder {
       '-f',
       audioSource,
       '-i',
-      this.input,
+      String(this.input),
       '-c:a',
       audioCodec,
       '-b:a',
@@ -90,7 +98,7 @@ export class AudioRecorder {
     );
     this.mainProcess.once('exit', (code, signal) => {
       // ffmpeg returns code 255 if SIGINT arrives
-      if ([0, 255].includes(code)) {
+      if ([0, 255].includes(code ?? 0)) {
         this.log.info(`The recording session on audio input '${this.input}' has been finished`);
       } else {
         this.log.debug(
@@ -101,17 +109,17 @@ export class AudioRecorder {
     });
   }
 
-  isRecording() {
+  isRecording(): boolean {
     return !!this.mainProcess?.isRunning;
   }
 
-  async interrupt(force = false) {
+  async interrupt(force = false): Promise<boolean> {
     if (this.isRecording()) {
       const interruptPromise = this.mainProcess?.stop(force ? 'SIGTERM' : 'SIGINT');
       this.mainProcess = null;
       try {
         await interruptPromise;
-      } catch (e) {
+      } catch (e: any) {
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` +
             `Original error: ${e.message}`,
@@ -123,12 +131,12 @@ export class AudioRecorder {
     return true;
   }
 
-  async finish() {
+  async finish(): Promise<string> {
     await this.interrupt();
     return this.audioPath;
   }
 
-  async cleanup() {
+  async cleanup(): Promise<void> {
     if (await fs.exists(this.audioPath)) {
       await fs.rimraf(this.audioPath);
     }
@@ -140,27 +148,25 @@ export class AudioRecorder {
  *
  * **To use this command, the `audio_record` security feature must be enabled _and_ [FFMpeg](https://ffmpeg.org/) must be installed on the Appium server.**
  *
- * @param {string|number} audioInput - The name of the corresponding audio input device to use for the capture. The full list of capture devices could be shown by executing `ffmpeg -f avfoundation -list_devices true -i ""`
- * @param {string|number} timeLimit - The maximum recording time, in seconds.
- * @param {string} audioCodec - The name of the audio codec.
- * @param {string} audioBitrate - The bitrate of the resulting audio stream.
- * @param {string|number} audioChannels - The count of audio channels in the resulting stream. Setting it to `1` will create a single channel (mono) audio stream.
- * @param {string|number} audioRate - The sampling rate of the resulting audio stream (in Hz).
- * @param {boolean} forceRestart - Whether to restart audio capture process forcefully when `mobile: startRecordingAudio` is called (`true`) or ignore the call until the current audio recording is completed (`false`).
+ * @param audioInput - The name of the corresponding audio input device to use for the capture. The full list of capture devices could be shown by executing `ffmpeg -f avfoundation -list_devices true -i ""`
+ * @param timeLimit - The maximum recording time, in seconds.
+ * @param audioCodec - The name of the audio codec.
+ * @param audioBitrate - The bitrate of the resulting audio stream.
+ * @param audioChannels - The count of audio channels in the resulting stream. Setting it to `1` will create a single channel (mono) audio stream.
+ * @param audioRate - The sampling rate of the resulting audio stream (in Hz).
+ * @param forceRestart - Whether to restart audio capture process forcefully when `mobile: startRecordingAudio` is called (`true`) or ignore the call until the current audio recording is completed (`false`).
  * @group Real Device Only
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
- * @privateRemarks Using string literals for the default parameters makes better documentation.
  */
 export async function startAudioRecording(
-  audioInput,
-  timeLimit = 180,
+  this: XCUITestDriver,
+  audioInput: string | number,
+  timeLimit: string | number = 180,
   audioCodec = 'aac',
   audioBitrate = '128k',
-  audioChannels = 2,
-  audioRate = 44100,
+  audioChannels: string | number = 2,
+  audioRate: string | number = 44100,
   forceRestart = false,
-) {
+): Promise<void> {
   if (!this.isFeatureEnabled(AUDIO_RECORD_FEAT_NAME)) {
     throw this.log.errorWithException(
       `Audio capture feature must be enabled on the server side. ` +
@@ -203,8 +209,8 @@ export async function startAudioRecording(
     audioSource: DEFAULT_SOURCE,
     audioCodec,
     audioBitrate,
-    audioChannels,
-    audioRate,
+    audioChannels: Number(audioChannels),
+    audioRate: Number(audioRate),
   });
 
   const timeoutSeconds = parseInt(String(timeLimit), 10);
@@ -231,18 +237,17 @@ export async function startAudioRecording(
  * If no previously recorded file is found and no active audio recording
  * processes are running then the method returns an empty string.
  *
- * @returns {Promise<string>} Base64-encoded content of the recorded media file or an
+ * @returns Base64-encoded content of the recorded media file or an
  * empty string if no audio recording has been started before.
  * @throws {Error} If there was an error while getting the recorded file.
- * @this {XCUITestDriver}
  */
-export async function stopAudioRecording() {
+export async function stopAudioRecording(this: XCUITestDriver): Promise<string> {
   if (!this._audioRecorder) {
     this.log.info('Audio recording has not been started. There is nothing to stop');
     return '';
   }
 
-  let resultPath;
+  let resultPath: string;
   try {
     resultPath = await this._audioRecorder.finish();
     if (!(await fs.exists(resultPath))) {
@@ -259,6 +264,3 @@ export async function stopAudioRecording() {
   return await encodeBase64OrUpload(resultPath);
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */

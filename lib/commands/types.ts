@@ -646,3 +646,66 @@ export interface LogEntry {
 }
 
 export type LogListener = (logEntry: LogEntry) => any;
+
+/**
+ * Condition inducer profile configuration
+ */
+export interface Profile {
+  name: string;
+  /** The property is profileID used in {@linkcode XCUITestDriver.enableConditionInducer} */
+  identifier: string;
+  /** Configuration details */
+  description: string;
+}
+
+/**
+ * We can use the returned data to determine whether the Condition is enabled and the currently enabled configuration information
+ */
+export interface Condition {
+  profiles: Profile[];
+  /** The property is conditionID used in {@linkcode XCUITestDriver.enableConditionInducer} */
+  identifier: string;
+  profilesSorted: boolean;
+  isDestructive: boolean;
+  isInternal: boolean;
+  /** `true` if this condition identifier is enabled */
+  isActive: boolean;
+  /** Enabled profiles identifier */
+  activeProfile: string;
+}
+
+/**
+ * Information about an XCTest screen recording session
+ */
+export interface XcTestScreenRecordingInfo {
+  /** Unique identifier of the video being recorded */
+  uuid: string;
+  /** FPS value */
+  fps: number;
+  /** Video codec, where 0 is h264 */
+  codec: number;
+  /** The timestamp when the screen recording has started in float Unix seconds */
+  startedAt: number;
+}
+
+/**
+ * XCTest screen recording result with payload
+ */
+export interface XcTestScreenRecording extends XcTestScreenRecordingInfo {
+  /**
+   * Base64-encoded content of the recorded media file if `remotePath` parameter is empty or null or an empty string otherwise.
+   * The media is expected to a be a valid QuickTime movie (.mov).
+   */
+  payload: string;
+}
+
+/**
+ * Options for AudioRecorder
+ */
+export interface AudioRecorderOptions {
+  audioSource: string;
+  audioCodec: string;
+  audioBitrate: string;
+  audioChannels: number;
+  audioRate: number;
+}
