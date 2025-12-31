@@ -2,27 +2,29 @@ import { Pyidevice } from '../device/clients/py-ios-device-client';
 import {fs, tempDir, util} from 'appium/support';
 import {encodeBase64OrUpload} from '../utils';
 import {errors} from 'appium/driver';
+import type {XCUITestDriver} from '../driver';
+import type {SubProcess} from 'teen_process';
 
 const MAX_CAPTURE_TIME_SEC = 60 * 60 * 12;
 const DEFAULT_EXT = '.pcap';
 
 export class TrafficCapture {
-  /** @type {import('teen_process').SubProcess|null} */
-  mainProcess;
-  constructor(udid, log, resultPath) {
+  private mainProcess: SubProcess | null = null;
+  private readonly udid: string;
+  private readonly log: any;
+  private readonly resultPath: string;
+
+  constructor(udid: string, log: any, resultPath: string) {
     this.udid = udid;
     this.log = log;
     this.resultPath = resultPath;
-    this.mainProcess = null;
   }
 
-  async start(timeoutSeconds) {
-    this.mainProcess = /** @type {import('teen_process').SubProcess} */ (
-      await new Pyidevice({
-        udid: this.udid,
-        log: this.log,
-      }).collectPcap(this.resultPath)
-    );
+  async start(timeoutSeconds: number): Promise<void> {
+    this.mainProcess = await new Pyidevice({
+      udid: this.udid,
+      log: this.log,
+    }).collectPcap(this.resultPath);
     this.mainProcess.on('line-stderr', (line) => this.log.info(`[Pcap] ${line}`));
     this.log.info(
       `Starting network traffic capture session on the device '${this.udid}'. ` +
@@ -37,17 +39,17 @@ export class TrafficCapture {
     });
   }
 
-  isCapturing() {
+  isCapturing(): boolean {
     return !!this.mainProcess?.isRunning;
   }
 
-  async interrupt(force = false) {
+  async interrupt(force = false): Promise<boolean> {
     if (this.isCapturing()) {
       const interruptPromise = this.mainProcess?.stop(force ? 'SIGTERM' : 'SIGINT');
       this.mainProcess = null;
       try {
         await interruptPromise;
-      } catch (e) {
+      } catch (e: any) {
         this.log.warn(
           `Cannot ${force ? 'terminate' : 'interrupt'} the traffic capture session. ` +
             `Original error: ${e.message}`,
@@ -59,12 +61,12 @@ export class TrafficCapture {
     return true;
   }
 
-  async finish() {
+  async finish(): Promise<string> {
     await this.interrupt();
     return this.resultPath;
   }
 
-  async cleanup() {
+  async cleanup(): Promise<void> {
     if (await fs.exists(this.resultPath)) {
       await fs.rimraf(this.resultPath);
     }
@@ -74,13 +76,15 @@ export class TrafficCapture {
 /**
  * Records the given network traffic capture into a .pcap file.
  *
- * @param {number} timeLimitSec - The maximum recording time, in seconds. The maximum value is `43200` (12 hours).
- * @param {boolean} forceRestart - Whether to restart traffic capture process forcefully when startPcap is called (`true`) or ignore the call until the current traffic capture is completed (`false`, the default value).
+ * @param timeLimitSec - The maximum recording time, in seconds. The maximum value is `43200` (12 hours).
+ * @param forceRestart - Whether to restart traffic capture process forcefully when startPcap is called (`true`) or ignore the call until the current traffic capture is completed (`false`, the default value).
  * @throws {Error} If network traffic capture has failed to start.
- * @returns {Promise<void>}
- * @this {XCUITestDriver}
  */
-export async function mobileStartPcap(timeLimitSec = 180, forceRestart = false) {
+export async function mobileStartPcap(
+  this: XCUITestDriver,
+  timeLimitSec = 180,
+  forceRestart = false,
+): Promise<void> {
   if (this.isSimulator()) {
     throw this.log.errorWithException('Network traffic capture only works on real devices');
   }
@@ -135,17 +139,16 @@ export async function mobileStartPcap(timeLimitSec = 180, forceRestart = false) 
  * If no previously recorded file is found and no active traffic capture processes are running, then the method returns an empty string.
  *
  * @remarks Network capture files can be viewed in [Wireshark](https://www.wireshark.org/) and other similar applications.
- * @returns {Promise<string>} Base64-encoded content of the recorded pcap file or an empty string if no traffic capture has been started before.
+ * @returns Base64-encoded content of the recorded pcap file or an empty string if no traffic capture has been started before.
  * @throws {Error} If there was an error while getting the capture file.
- * @this {XCUITestDriver}
  */
-export async function mobileStopPcap() {
+export async function mobileStopPcap(this: XCUITestDriver): Promise<string> {
   if (!this._trafficCapture) {
     this.log.info('Network traffic collector has not been started. There is nothing to stop');
     return '';
   }
 
-  let resultPath;
+  let resultPath: string;
   try {
     resultPath = await this._trafficCapture.finish();
     if (!(await fs.exists(resultPath))) {
@@ -163,6 +166,3 @@ export async function mobileStopPcap() {
   return await encodeBase64OrUpload(resultPath);
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */

@@ -466,14 +466,12 @@ export const executeMethodMap = {
     command: 'mobileResetLocationService',
   },
   'mobile: startPcap': {
-    // @ts-expect-error Method exists on XCUITestDriver but is defined in pcap.js (JS file), so TypeScript can't verify it
     command: 'mobileStartPcap',
     params: {
       optional: ['timeLimitSec', 'forceRestart'],
     },
   },
   'mobile: stopPcap': {
-    // @ts-expect-error Method exists on XCUITestDriver but is defined in pcap.js (JS file), so TypeScript can't verify it
     command: 'mobileStopPcap',
   },
   'mobile: listConditionInducers': {

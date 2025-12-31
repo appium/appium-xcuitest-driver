@@ -500,7 +500,7 @@ export class XCUITestDriver
     this.log.debug(`Executing command '${cmd}'`);
 
     if (cmd === 'receiveAsyncResponse') {
-      return await this.receiveAsyncResponse(...args);
+      return await this.receiveAsyncResponse(args[0], args[1]);
     }
     // TODO: once this fix gets into base driver remove from here
     if (cmd === 'getStatus') {
