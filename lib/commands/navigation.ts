@@ -1,15 +1,17 @@
 import {errors} from 'appium/driver';
 import {waitForCondition} from 'asyncbox';
 import { isTvOs } from '../utils';
+import type {XCUITestDriver} from '../driver';
+import type {Element} from '@appium/types';
 
 // these two constitute the wait after closing a window
 const CLOSE_WINDOW_TIMEOUT = 5000;
 const CLOSE_WINDOW_INTERVAL = 100;
 
 /**
- * @this {XCUITestDriver}
+ * Navigate back in the browser history or native app navigation.
  */
-export async function back() {
+export async function back(this: XCUITestDriver): Promise<void> {
   if (!this.isWebContext()) {
     await this.nativeBack();
   } else {
@@ -18,18 +20,22 @@ export async function back() {
 }
 
 /**
- * @this {XCUITestDriver}
+ * Navigate forward in the browser history.
  */
-export async function forward() {
+export async function forward(this: XCUITestDriver): Promise<void> {
   if (!this.isWebContext()) {
+    // No-op for native context
+    return;
   }
   await this.mobileWebNav('forward');
 }
 
 /**
- * @this {XCUITestDriver}
+ * Closes the current window in a web context.
+ *
+ * @returns Promise that resolves when the window is closed
  */
-export async function closeWindow() {
+export async function closeWindow(this: XCUITestDriver): Promise<any> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError();
   }
@@ -59,14 +65,16 @@ export async function closeWindow() {
  *
  * (Note: the version of Xcode must be 14.3+ and iOS must be 16.4+)
  *
- * @param {string} url - the URL to be opened, e.g. `myscheme://yolo`
- * @param {string} [bundleId] - the application to open the given URL with. If not provided, then
+ * @param url - the URL to be opened, e.g. `myscheme://yolo`
+ * @param bundleId - the application to open the given URL with. If not provided, then
  * the application assigned by the operating system to handle URLs of the appropriate type
- * @returns {Promise<void>}
  * @since 4.17
- * @this {XCUITestDriver}
  */
-export async function mobileDeepLink(url, bundleId) {
+export async function mobileDeepLink(
+  this: XCUITestDriver,
+  url: string,
+  bundleId?: string,
+): Promise<void> {
   return await this.proxyCommand('/url', 'POST', {
     url,
     bundleId,
@@ -74,9 +82,9 @@ export async function mobileDeepLink(url, bundleId) {
 }
 
 /**
- * @this {XCUITestDriver}
+ * Navigate back in native app navigation by finding and clicking the back button.
  */
-export async function nativeBack() {
+export async function nativeBack(this: XCUITestDriver): Promise<void> {
   if (isTvOs(this.opts.platformName)) {
     this.log.debug(`Sending Menu button as back behavior in tvOS`);
     return await this.mobilePressButton('Menu');
@@ -88,7 +96,7 @@ export async function nativeBack() {
       'XCUIElementTypeNavigationBar',
       false,
     );
-    let dstButton;
+    let dstButton: Element<string>;
     const backButtons = await this.findNativeElementOrElements(
       '-ios predicate string',
       'type == "XCUIElementTypeButton" AND label == "Back"',
@@ -113,19 +121,8 @@ export async function nativeBack() {
     }
 
     await this.nativeClick(dstButton);
-  } catch (err) {
+  } catch (err: any) {
     this.log.error(`Unable to find navigation bar and back button: ${err.message}`);
   }
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
-
-/**
- * @typedef {Object} DeepLinkOptions
- * @property {string} url The URL to be opened. This parameter is manadatory
- * @property {string?} bundleId The bundle identifier of an application to open the
- * given url with. If not provided then the default application for the given url scheme
- * is going to be used.
- */

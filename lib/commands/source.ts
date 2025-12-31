@@ -1,12 +1,16 @@
 import _ from 'lodash';
 import js2xml from 'js2xmlparser2';
+import type {XCUITestDriver} from '../driver';
+import type {SourceFormat} from './types';
 
 const APPIUM_AUT_TAG = 'AppiumAUT';
 
 /**
- * @this {XCUITestDriver}
+ * Retrieves the page source of the current application.
+ *
+ * @returns The page source as XML or HTML string
  */
-export async function getPageSource() {
+export async function getPageSource(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
     const script = 'return document.documentElement.outerHTML';
     return await this.executeAtom('execute_script', [script, []]);
@@ -28,14 +32,17 @@ export async function getPageSource() {
 /**
  * Retrieve the source tree of the current page in XML or JSON format.
  *
- * @param {import('./types').SourceFormat} format - Page tree source representation format.
- * @param {string} [excludedAttributes] A comma-separated string of attribute names to exclude from the output. Only works if `format` is `xml`.
+ * @param format - Page tree source representation format.
+ * @param excludedAttributes - A comma-separated string of attribute names to exclude from the output. Only works if `format` is `xml`.
  * @privateRemarks Why isn't `excludedAttributes` an array?
- * @returns {Promise<string>} The source tree of the current page in the given format.
- * @this {XCUITestDriver}
+ * @returns The source tree of the current page in the given format.
  */
-export async function mobileGetSource(format = 'xml', excludedAttributes) {
-  const paramsMap = {
+export async function mobileGetSource(
+  this: XCUITestDriver,
+  format: SourceFormat = 'xml',
+  excludedAttributes?: string,
+): Promise<string> {
+  const paramsMap: Record<string, string> = {
     format,
     scope: APPIUM_AUT_TAG,
   };
@@ -45,7 +52,7 @@ export async function mobileGetSource(format = 'xml', excludedAttributes) {
   const query = Object.entries(paramsMap)
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
     .join('&');
-  return /** @type {string} */ (await this.proxyCommand(`/source?${query}`, 'GET'));
+  return await this.proxyCommand(`/source?${query}`, 'GET') as string;
 }
 
 /**
@@ -76,15 +83,14 @@ export async function mobileGetSource(format = 'xml', excludedAttributes) {
  *     rawIdentifier: null }
  * ```
  */
-function getTreeForXML(srcTree) {
-  function getTree(element, elementIndex, parentPath) {
-    let curPath = `${parentPath}/${elementIndex}`;
-    let rect = element.rect || {};
+function getTreeForXML(srcTree: any): any {
+  function getTree(element: any, elementIndex: number, parentPath: string): any {
+    const curPath = `${parentPath}/${elementIndex}`;
+    const rect = element.rect || {};
     /**
      * @privateRemarks I don't even want to try to type this right now
-     * @type {any}
      */
-    let subtree = {
+    const subtree: any = {
       '@': {
         type: `XCUIElementType${element.type}`,
         enabled: parseInt(element.isEnabled, 10) === 1,
@@ -114,11 +120,11 @@ function getTreeForXML(srcTree) {
       [`XCUIElementType${element.type}`]: subtree,
     };
   }
-  let tree = getTree(srcTree, 0, '');
+  const tree = getTree(srcTree, 0, '');
   return tree;
 }
 
-function getSourceXml(jsonSource) {
+function getSourceXml(jsonSource: any): string {
   return js2xml('AppiumAUT', jsonSource, {
     wrapArray: {enabled: false, elementName: 'element'},
     declaration: {include: true},
@@ -126,6 +132,3 @@ function getSourceXml(jsonSource) {
   });
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
