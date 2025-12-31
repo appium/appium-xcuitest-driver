@@ -121,7 +121,7 @@ import type { PerfRecorder } from './commands/performance';
 import type { AudioRecorder } from './commands/record-audio';
 import type { TrafficCapture } from './commands/pcap';
 import type { ScreenRecorder } from './commands/recordscreen';
-import type { DVTServiceWithConnection } from './commands/condition.js';
+import type { DVTServiceWithConnection } from 'appium-ios-remotexpc';
 import type { IOSDeviceLog } from './device/log/ios-device-log';
 import type { IOSSimulatorLog } from './device/log/ios-simulator-log';
 import type { IOSCrashLog } from './device/log/ios-crash-log';

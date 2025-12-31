@@ -1,24 +1,25 @@
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import _ from 'lodash';
 import { isIos18OrNewer } from '../utils';
+import type {XCUITestDriver} from '../driver';
+import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
+import type {Condition} from './types';
 
 /**
  * Get all available ConditionInducer configuration information, which can be used with
  * {@linkcode XCUITestDriver.enableConditionInducer}
- * @returns {Promise<Condition[]>}
  * @since 4.9.0
  * @see {@link https://help.apple.com/xcode/mac/current/#/dev308429d42}
- * @this {XCUITestDriver}
  */
-export async function listConditionInducers() {
+export async function listConditionInducers(this: XCUITestDriver): Promise<Condition[]> {
   requireConditionInducerCompatibleDevice.call(this);
 
   if (isIos18OrNewer(this.opts)) {
     const dvtConnection = await startRemoteXPC(this.device.udid);
     try {
       const result = await dvtConnection.conditionInducer.list();
-      return /** @type {Condition[]} */ (result);
-    } catch (err) {
+      return result as Condition[];
+    } catch (err: any) {
       this.log.error(`Failed to list condition inducers via RemoteXPC: ${err.message}`);
       throw err;
     } finally {
@@ -50,15 +51,18 @@ export async function listConditionInducers() {
  * (Note: the socket needs to remain connected during operation)
  * (Note: Device conditions are available only for real devices running iOS 13.0 and later.)
  *
- * @param {string} conditionID - Determine which condition IDs are available with the {@linkcode XCUITestDriver.listConditionInducers} command
- * @param {string} profileID - Determine which profile IDs are available with the {@linkcode XCUITestDriver.listConditionInducers} command
- * @returns {Promise<boolean>} `true` if enabling the condition succeeded
+ * @param conditionID - Determine which condition IDs are available with the {@linkcode XCUITestDriver.listConditionInducers} command
+ * @param profileID - Determine which profile IDs are available with the {@linkcode XCUITestDriver.listConditionInducers} command
+ * @returns `true` if enabling the condition succeeded
  * @throws {Error} If you try to start another Condition and the previous Condition has not stopped
  * @since 4.9.0
  * @see {@link https://help.apple.com/xcode/mac/current/#/dev308429d42}
- * @this {XCUITestDriver}
  */
-export async function enableConditionInducer(conditionID, profileID) {
+export async function enableConditionInducer(
+  this: XCUITestDriver,
+  conditionID: string,
+  profileID: string,
+): Promise<boolean> {
   requireConditionInducerCompatibleDevice.call(this);
 
   if (isIos18OrNewer(this.opts)) {
@@ -76,7 +80,7 @@ export async function enableConditionInducer(conditionID, profileID) {
 
       this.log.info(`Successfully enabled condition profile: ${profileID}`);
       return true;
-    } catch (err) {
+    } catch (err: any) {
       await closeRemoteXPC.call(this);
       throw this.log.errorWithException(`Condition inducer '${profileID}' cannot be enabled: '${err.message}'`);
     }
@@ -109,12 +113,11 @@ export async function enableConditionInducer(conditionID, profileID) {
  * condition inducer will be automatically disabled
  *
  * (Note: this is also automatically called upon session cleanup)
- * @returns {Promise<boolean>} `true` if disable the condition succeeded
+ * @returns `true` if disable the condition succeeded
  * @since 4.9.0
  * @see {@link https://help.apple.com/xcode/mac/current/#/dev308429d42}
- * @this {XCUITestDriver}
  */
-export async function disableConditionInducer() {
+export async function disableConditionInducer(this: XCUITestDriver): Promise<boolean> {
   requireConditionInducerCompatibleDevice.call(this);
 
   if (isIos18OrNewer(this.opts)) {
@@ -127,7 +130,7 @@ export async function disableConditionInducer() {
       await this._remoteXPCConditionInducerConnection.conditionInducer.disable();
       this.log.info('Successfully disabled condition inducer');
       return true;
-    } catch (err) {
+    } catch (err: any) {
       this.log.warn(`Failed to disable condition inducer via RemoteXPC: ${err.message}`);
       return false;
     } finally {
@@ -158,81 +161,22 @@ export async function disableConditionInducer() {
   }
 }
 
-/**
- * @this {XCUITestDriver}
- * @returns {void}
- */
-function requireConditionInducerCompatibleDevice() {
+function requireConditionInducerCompatibleDevice(this: XCUITestDriver): void {
   if (this.isSimulator()) {
     throw this.log.errorWithException('Condition inducer only works on real devices');
   }
 }
 
-/**
- * @param {string} udid
- * @returns {Promise<DVTServiceWithConnection>}
- */
-async function startRemoteXPC(udid) {
+async function startRemoteXPC(udid: string): Promise<DVTServiceWithConnection> {
   const {Services} = await import('appium-ios-remotexpc');
   return Services.startDVTService(udid);
 }
 
-/**
- * @this {XCUITestDriver}
- * @returns {Promise<void>}
- */
-async function closeRemoteXPC() {
+async function closeRemoteXPC(this: XCUITestDriver): Promise<void> {
   if (this._remoteXPCConditionInducerConnection) {
     await this._remoteXPCConditionInducerConnection.remoteXPC.close();
     this._remoteXPCConditionInducerConnection = null;
   }
 }
 
-/**
- * @typedef {import('appium-ios-remotexpc', {with: {'resolution-mode': 'import'}}).DVTServiceWithConnection} DVTServiceWithConnection
- */
 
-/**
- * @typedef {Object} Profile
- * @property {string} name
- * @property {string} identifier the property is profileID used in {@linkcode XCUITestDriver.enableConditionInducer}
- * @property {string} description Configuration details
- */
-
-/**
- * We can use the returned data to determine whether the Condition is enabled and the currently enabled configuration information
- * @typedef {Object} Condition
- * @property {Profile[]} profiles
- * @property {string} identifier the property is conditionID used in {@linkcode XCUITestDriver.enableConditionInducer}
- * @property {boolean} profilesSorted
- * @property {boolean} isDestructive
- * @property {boolean} isInternal
- * @property {boolean} isActive `true` if this condition identifier is enabled
- * @property {string} activeProfile  enabled profiles identifier
- * @example {
- *     "profiles": [
- *          {
- *             "name": "100% packet loss",
- *             "identifier": "SlowNetwork100PctLoss",  // MobileEnableConditionInducer profileID
- *             "description": "Name: 100% Loss Scenario\n
- *                             Downlink Bandwidth: 0 Mbps\n
- *                             Downlink Latency:0 ms\n
- *                             Downlink Packet Loss Ratio: 100%\n
- *                             Uplink Bandwidth: 0 Mbps\n
- *                             Uplink Latency: 0 ms\n
- *                             Uplink Packet Loss Ratio: 100%"
- *         }
- *     ],
- *     "profilesSorted": true,
- *     "identifier": "SlowNetworkCondition",    // MobileEnableConditionInducer conditionID
- *     "isDestructive": false,
- *     "isInternal": false,
- *     "activeProfile": "",
- *     "name": "Network Link",
- *     "isActive": false
- * }
- */
-
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */

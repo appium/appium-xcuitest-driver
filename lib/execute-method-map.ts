@@ -466,28 +466,26 @@ export const executeMethodMap = {
     command: 'mobileResetLocationService',
   },
   'mobile: startPcap': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
+    // @ts-expect-error Method exists on XCUITestDriver but is defined in pcap.js (JS file), so TypeScript can't verify it
     command: 'mobileStartPcap',
     params: {
       optional: ['timeLimitSec', 'forceRestart'],
     },
   },
   'mobile: stopPcap': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
+    // @ts-expect-error Method exists on XCUITestDriver but is defined in pcap.js (JS file), so TypeScript can't verify it
     command: 'mobileStopPcap',
   },
   'mobile: listConditionInducers': {
     command: 'listConditionInducers',
   },
   'mobile: enableConditionInducer': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'enableConditionInducer',
     params: {
       required: ['conditionID', 'profileID'],
     },
   },
   'mobile: disableConditionInducer': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'disableConditionInducer',
   },
   'mobile: updateSafariPreferences': {
@@ -529,7 +527,6 @@ export const executeMethodMap = {
     command: 'mobileShake',
   },
   'mobile: startAudioRecording': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'startAudioRecording',
     params: {
       required: ['audioInput'],
@@ -544,7 +541,6 @@ export const executeMethodMap = {
     },
   },
   'mobile: stopAudioRecording': {
-    // @ts-expect-error Class field assignment - method exists on XCUITestDriver
     command: 'stopAudioRecording',
   },
   'mobile: hideKeyboard': {
