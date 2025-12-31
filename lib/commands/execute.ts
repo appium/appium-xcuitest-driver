@@ -36,8 +36,6 @@ export async function receiveAsyncResponse(
   return this.asyncPromise.resolve(value);
 }
 
-type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
-
 /**
  * @template TReturn
  * @param script - Either a script to run, or in the case of an Execute Method, the name of the script to execute.
@@ -46,7 +44,7 @@ type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Rea
 export async function execute<TReturn = unknown>(
   this: XCUITestDriver,
   script: string,
-  args?: ExecuteMethodArgs | readonly any[],
+  args?: ExecuteMethodArgs,
 ): Promise<TReturn> {
   // TODO: create a type that converts args to the parameters of the associated method using the `command` prop of `executeMethodMap`
   script = script.trim().replace(/^mobile:\s*/, 'mobile: ');
@@ -156,3 +154,4 @@ function preprocessExecuteMethodArgs(
   return executeMethodArgs;
 }
 
+type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
