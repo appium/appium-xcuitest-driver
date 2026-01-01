@@ -2,14 +2,18 @@ import _ from 'lodash';
 import {XCUITestDriver} from '../driver';
 import {errors, errorFromCode, errorFromW3CJsonCode} from 'appium/driver';
 import {util} from 'appium/support';
+import type {Element, StringRecord} from '@appium/types';
 
 /**
  * Collect the response of an async script execution
- * @this {XCUITestDriver}
  * @deprecated
  * @privateRemarks It's unclear what this is for. Don't use it.
  */
-export async function receiveAsyncResponse(status, value) {
+export async function receiveAsyncResponse(
+  this: XCUITestDriver,
+  status: number | null | undefined,
+  value: any,
+): Promise<void> {
   this.log.debug(`Received async response: ${JSON.stringify(value)}`);
   if (!util.hasValue(this.asyncPromise)) {
     this.log.warn(
@@ -33,21 +37,22 @@ export async function receiveAsyncResponse(status, value) {
 }
 
 /**
- * @template {ExecuteMethodArgs} [TArgs = unknown[]]
- * @template [TReturn = unknown]
- * @param {string} script - Either a script to run, or in the case of an Execute Method, the name of the script to execute.
- * @param {TArgs} [args]
- * @this {XCUITestDriver}
- * @returns {Promise<TReturn>}
+ * @template TReturn
+ * @param script - Either a script to run, or in the case of an Execute Method, the name of the script to execute.
+ * @param args
  */
-export async function execute(script, args) {
+export async function execute<TReturn = unknown>(
+  this: XCUITestDriver,
+  script: string,
+  args?: ExecuteMethodArgs,
+): Promise<TReturn> {
   // TODO: create a type that converts args to the parameters of the associated method using the `command` prop of `executeMethodMap`
   script = script.trim().replace(/^mobile:\s*/, 'mobile: ');
   if (isExecuteMethod(script)) {
-    const executeMethodArgs = preprocessExecuteMethodArgs(script, args);
+    const executeMethodArgs = preprocessExecuteMethodArgs(script, args as ExecuteMethodArgs | undefined);
     return await this.executeMethod(script, [executeMethodArgs]);
   } else if (this.isWebContext()) {
-    const atomsArgs = this.convertElementsForAtoms(/** @type {readonly any[]} */ (args));
+    const atomsArgs = this.convertElementsForAtoms(args as readonly any[] | undefined);
     const result = await this.executeAtom('execute_script', [script, atomsArgs]);
     return this.cacheWebElements(result);
   } else {
@@ -56,10 +61,13 @@ export async function execute(script, args) {
 }
 
 /**
- * @this {XCUITestDriver}
  * @group Mobile Web Only
  */
-export async function executeAsync(script, args) {
+export async function executeAsync(
+  this: XCUITestDriver,
+  script: string,
+  args?: readonly any[],
+): Promise<any> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError();
   }
@@ -77,16 +85,17 @@ export async function executeAsync(script, args) {
 
 /**
  * Checks if script expects a particular parameter (either optional or required).
- * @template {keyof XCUITestDriver.executeMethodMap} Script
- * @param {Script} script - Script name
- * @param {string} param - Parameter name
+ * @template Script
+ * @param script - Script name
+ * @param param - Parameter name
  * @returns {boolean}
  */
-function executeMethodExpectsParam(script, param) {
-  /** @type {ReadonlyArray<string>|undefined} */
-  let required;
-  /** @type {ReadonlyArray<string>|undefined} */
-  let optional;
+function executeMethodExpectsParam<Script extends keyof typeof XCUITestDriver.executeMethodMap>(
+  script: Script,
+  param: string,
+): boolean {
+  let required: ReadonlyArray<string> | undefined;
+  let optional: ReadonlyArray<string> | undefined;
   const execMethodDef = XCUITestDriver.executeMethodMap[script];
   if ('params' in execMethodDef) {
     if ('required' in execMethodDef.params) {
@@ -101,24 +110,26 @@ function executeMethodExpectsParam(script, param) {
 }
 
 /**
- * @param {any} script
+ * @param script
  * @returns {script is keyof XCUITestDriver.executeMethodMap}
  */
-function isExecuteMethod(script) {
+function isExecuteMethod(script: string): script is keyof typeof XCUITestDriver.executeMethodMap {
   return script in XCUITestDriver.executeMethodMap;
 }
 
 /**
  * Massages the arguments going into an execute method.
- * @param {keyof XCUITestDriver.executeMethodMap} script
- * @param {ExecuteMethodArgs} [args]
- * @returns {StringRecord<unknown>}
+ * @param script
+ * @param args
  */
-function preprocessExecuteMethodArgs(script, args) {
+function preprocessExecuteMethodArgs(
+  script: keyof typeof XCUITestDriver.executeMethodMap,
+  args?: ExecuteMethodArgs,
+): StringRecord<unknown> {
   if (_.isArray(args)) {
     args = _.first(args);
   }
-  const executeMethodArgs = /** @type {StringRecord<unknown>} */ (args ?? {});
+  const executeMethodArgs = (args ?? {}) as StringRecord<unknown>;
   /**
    * Renames the deprecated `element` key to `elementId`.  Historically,
    * all of the pre-Execute-Method-Map execute methods accepted an `element` _or_ and `elementId` param.
@@ -136,18 +147,11 @@ function preprocessExecuteMethodArgs(script, args) {
    */
   if ('elementId' in executeMethodArgs && executeMethodExpectsParam(script, 'elementId')) {
     executeMethodArgs.elementId = util.unwrapElement(
-      /** @type {import('@appium/types').Element|string} */ (executeMethodArgs.elementId),
+      executeMethodArgs.elementId as Element<string> | string,
     );
   }
 
   return executeMethodArgs;
 }
 
-/**
- * @template [T=any]
- * @typedef {import('@appium/types').StringRecord<T>} StringRecord
- */
-
-/**
- * @typedef {readonly any[] | readonly [StringRecord] | Readonly<StringRecord>} ExecuteMethodArgs
- */
+type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;

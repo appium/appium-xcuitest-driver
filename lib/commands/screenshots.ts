@@ -2,19 +2,23 @@ import {retryInterval} from 'asyncbox';
 import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util, imageUtil} from 'appium/support';
+import type {XCUITestDriver} from '../driver';
+import type {Simulator} from 'appium-ios-simulator';
+import type {Element} from '@appium/types';
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<string>}
+ * Takes a screenshot of the current screen.
+ *
+ * @returns Base64-encoded screenshot data
  */
-export async function getScreenshot() {
+export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
     const webScreenshotMode = (await this.settings.getSettings()).webScreenshotMode;
     switch (_.toLower(webScreenshotMode)) {
       case 'page':
       case 'viewport':
         return await this.remote.captureScreenshot({
-          coordinateSystem: /** @type {'Viewport'|'Page'} */ (_.capitalize(webScreenshotMode)),
+          coordinateSystem: _.capitalize(webScreenshotMode) as 'Viewport' | 'Page',
         });
       case 'native':
       case undefined:
@@ -29,7 +33,7 @@ export async function getScreenshot() {
     }
   }
 
-  const getScreenshotFromWDA = async () => {
+  const getScreenshotFromWDA = async (): Promise<string> => {
     this.log.debug(`Taking screenshot with WDA`);
     const data = await this.proxyCommand('/screenshot', 'GET');
     if (!_.isString(data)) {
@@ -53,14 +57,14 @@ export async function getScreenshot() {
 
   try {
     return await getScreenshotFromWDA();
-  } catch (err) {
+  } catch (err: any) {
     this.log.warn(`Error getting screenshot: ${err.message}`);
   }
 
   // simulator attempt
   if (this.isSimulator()) {
     this.log.info(`Falling back to 'simctl io screenshot' API`);
-    const payload = await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).simctl.getScreenshot();
+    const payload = await (this.device as Simulator).simctl.getScreenshot();
     if (!payload) {
       throw new errors.UnableToCaptureScreen();
     }
@@ -68,13 +72,19 @@ export async function getScreenshot() {
   }
 
   // Retry for real devices only. Fail fast on Simulator if simctl does not work as expected
-  return /** @type {string} */ (await retryInterval(2, 1000, getScreenshotFromWDA));
+  return await retryInterval(2, 1000, getScreenshotFromWDA) as string;
 }
 
 /**
- * @this {XCUITestDriver}
+ * Takes a screenshot of a specific element.
+ *
+ * @param el - Element to capture
+ * @returns Base64-encoded screenshot data
  */
-export async function getElementScreenshot(el) {
+export async function getElementScreenshot(
+  this: XCUITestDriver,
+  el: Element<string> | string,
+): Promise<string> {
   el = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(el);
@@ -96,10 +106,11 @@ export async function getElementScreenshot(el) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @returns {Promise<string>}
+ * Takes a screenshot of the current viewport.
+ *
+ * @returns Base64-encoded screenshot data
  */
-export async function getViewportScreenshot() {
+export async function getViewportScreenshot(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
     return await this.remote.captureScreenshot();
   }
@@ -130,6 +141,3 @@ export async function getViewportScreenshot() {
   return await imageUtil.cropBase64Image(screenshot, region);
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
