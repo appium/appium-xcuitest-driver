@@ -1,4 +1,6 @@
 import { errors } from 'appium/driver';
+import type {XCUITestDriver} from '../driver';
+import type {Simulator} from 'appium-ios-simulator';
 
 /**
  * List of subcommands for `simctl` we provide as mobile simctl command.
@@ -27,19 +29,33 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'terminate',
   'ui',
   'uninstall'
-];
+] as const;
+
+export interface SimctlExecResponse {
+  /** The output of standard out. */
+  stdout: string;
+  /** The output of standard error. */
+  stderr: string;
+  /** Return code. */
+  code: number;
+}
 
 /**
  * Run the given command with arguments as `xcrun simctl` subcommand.
  * This method works behind the 'simctl' security flag.
- * @this {XCUITestDriver}
- * @param {string} command Subcommand to run with `xcrun simctl`
- * @param {string[]} [args=[]] arguments for the subcommand. The arguments should be after <device> in the help.
- * @param {number|undefined} timeout - The maximum number of milliseconds
- * @returns {Promise<SimctlExecResponse>}
- * @throws {Error} If the simctl subcommand command returns non-zero return code, or the given subcommand was invalid.
+ *
+ * @param command - Subcommand to run with `xcrun simctl`. Must be one of the supported commands.
+ * @param args - Arguments for the subcommand. The arguments should be after <device> in the help.
+ * @param timeout - The maximum number of milliseconds
+ * @returns The execution result with stdout, stderr, and return code
+ * @throws If the simctl subcommand command returns non-zero return code, or the given subcommand was invalid.
  */
-export async function mobileSimctl(command, args = [], timeout = undefined) {
+export async function mobileSimctl(
+  this: XCUITestDriver,
+  command: string,
+  args: string[] = [],
+  timeout?: number,
+): Promise<SimctlExecResponse> {
   if (!this.isSimulator()) {
     throw new errors.UnsupportedOperationError(`Only simulator is supported.`);
   }
@@ -48,13 +64,13 @@ export async function mobileSimctl(command, args = [], timeout = undefined) {
     throw new errors.InvalidArgumentError(`Unknown device or simulator UDID: '${this.opts.udid}'`);
   }
 
-  if (!SUBCOMMANDS_HAS_DEVICE.includes(command)) {
+  if (!(SUBCOMMANDS_HAS_DEVICE as readonly string[]).includes(command)) {
     throw new errors.InvalidArgumentError(`The given command '${command}' is not supported. ` +
       `Available subcommands are ${SUBCOMMANDS_HAS_DEVICE.join(',')}`);
   }
 
-  const result = await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).simctl.exec(
-    command,
+  const result = await (this.device as Simulator).simctl.exec(
+    command as typeof SUBCOMMANDS_HAS_DEVICE[number],
     {args: [this.opts.udid, ...args], timeout}
   );
   return {
@@ -64,13 +80,3 @@ export async function mobileSimctl(command, args = [], timeout = undefined) {
   };
 }
 
-/**
- * @typedef {Object} SimctlExecResponse
- * @property {string} stdout The output of standard out.
- * @property {string} stderr The output of standard error.
- * @property {number} code Return code.
- */
-
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */

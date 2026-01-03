@@ -1,12 +1,13 @@
 import {errors, routeToCommandName} from 'appium/driver';
 import B from 'bluebird';
+import type {XCUITestDriver} from '../driver';
 
 const GET = 'GET';
 const POST = 'POST';
 const DELETE = 'DELETE';
-const SUPPORTED_METHODS = Object.freeze(new Set(/** @type {const} */ ([GET, POST, DELETE])));
+const SUPPORTED_METHODS = Object.freeze(new Set([GET, POST, DELETE] as const));
 
-const WDA_ROUTES = /** @type {const} */ ({
+const WDA_ROUTES = {
   '/wda/screen': {
     GET: 'getScreenInfo',
   },
@@ -43,22 +44,30 @@ const WDA_ROUTES = /** @type {const} */ ({
   '/wda/locked': {
     GET: 'isLocked',
   },
-});
+} as const;
+
+export type AllowedHttpMethod = 'GET' | 'POST' | 'DELETE';
 
 /**
  * Proxies a command to WebDriverAgent
- * @template [TReq=any]
- * @template [TRes=unknown]
- * @param {string} url
- * @param {AllowedHttpMethod} method
- * @param {TReq} [body]
- * @param {boolean} isSessionCommand
- * @this {import('../driver').XCUITestDriver}
- * @returns {Promise<TRes>}
+ *
+ * @template TReq - Request body type
+ * @template TRes - Response type
+ * @param url - The endpoint URL
+ * @param method - HTTP method to use
+ * @param body - Optional request body
+ * @param isSessionCommand - Whether this is a session command (default: true)
+ * @returns Promise resolving to the response
  */
-export async function proxyCommand(url, method, body, isSessionCommand = true) {
+export async function proxyCommand<TReq = any, TRes = unknown>(
+  this: XCUITestDriver,
+  url: string,
+  method: AllowedHttpMethod,
+  body?: TReq,
+  isSessionCommand: boolean = true,
+): Promise<TRes> {
   if (this.shutdownUnexpectedly) {
-    return /** @type {TRes} */ (undefined);
+    return undefined as TRes;
   }
 
   if (!url) {
@@ -83,12 +92,12 @@ export async function proxyCommand(url, method, body, isSessionCommand = true) {
   }
 
   if (!timeout) {
-    return /** @type {TRes} */ (await proxy.command(url, method, body));
+    return await proxy.command(url, method, body) as TRes;
   }
 
   this.log.debug(`Setting custom timeout to ${timeout} ms for '${cmdName}' command`);
   try {
-    return /** @type {TRes} */ (await B.resolve(proxy.command(url, method, body)).timeout(timeout));
+    return await B.resolve(proxy.command(url, method, body)).timeout(timeout) as TRes;
   } catch (e) {
     if (!(e instanceof B.Promise.TimeoutError)) {
       throw e;
@@ -102,18 +111,9 @@ export async function proxyCommand(url, method, body, isSessionCommand = true) {
   }
 }
 
-/**
- * @param {string} endpoint
- * @param {AllowedHttpMethod} method
- * @returns {string|undefined}
- */
-function wdaRouteToCommandName(endpoint, method) {
+function wdaRouteToCommandName(endpoint: string, method: AllowedHttpMethod): string | undefined {
   if (endpoint in WDA_ROUTES) {
-    return WDA_ROUTES[endpoint][method];
+    return WDA_ROUTES[endpoint as keyof typeof WDA_ROUTES]?.[method];
   }
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- * @typedef {'GET'|'POST'|'DELETE'} AllowedHttpMethod
- */
