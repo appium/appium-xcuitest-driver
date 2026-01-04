@@ -1,10 +1,17 @@
 import _ from 'lodash';
+import type {XCUITestDriver} from '../driver';
+import type {KeyboardKey} from './types';
 
 /**
- * @this {XCUITestDriver}
+ * Hides the keyboard.
+ *
  * @deprecated
  */
-export async function hideKeyboard(strategy, ...possibleKeys) {
+export async function hideKeyboard(
+  this: XCUITestDriver,
+  strategy: any,
+  ...possibleKeys: any[]
+): Promise<boolean> {
   // last parameter is the session id
   const keyNames = _.compact(possibleKeys.slice(0, -1)).map((x) => `${x}`);
   await this.mobileHideKeyboard(keyNames);
@@ -12,10 +19,14 @@ export async function hideKeyboard(strategy, ...possibleKeys) {
 }
 
 /**
- * @this {XCUITestDriver}
- * @param {string[]} keys
+ * Hides the keyboard using the specified key names.
+ *
+ * @param keys - Array of key names to use for dismissing the keyboard
  */
-export async function mobileHideKeyboard(keys = []) {
+export async function mobileHideKeyboard(
+  this: XCUITestDriver,
+  keys: string[] = [],
+): Promise<void> {
   if (!keys.includes('done')) {
     keys.push('done');
   }
@@ -23,9 +34,11 @@ export async function mobileHideKeyboard(keys = []) {
 }
 
 /**
- * @this {XCUITestDriver}
+ * Checks whether the keyboard is currently shown.
+ *
+ * @returns `true` if the keyboard is shown, `false` otherwise
  */
-export async function isKeyboardShown() {
+export async function isKeyboardShown(this: XCUITestDriver): Promise<boolean> {
   try {
     await this.findNativeElementOrElements('class name', 'XCUIElementTypeKeyboard', false);
     return true;
@@ -39,24 +52,20 @@ export async function isKeyboardShown() {
  * This API is not supported on tvOS
  *
  * @since Xcode 15/iOS 17
- * @this {import('../driver').XCUITestDriver}
- * @param {(Key|string)[]} keys Array of keys to type.
+ * @param keys - Array of keys to type.
  * Each item could either be a string, that represents a key itself (see
  * https://developer.apple.com/documentation/xctest/xcuielement/1500604-typekey?language=objc
  * and https://developer.apple.com/documentation/xctest/xcuikeyboardkey?language=objc)
  * or a dictionary, if the key should also be entered with modifiers.
- * @param {string?} [elementId=null] uuid of the element to send keys to.
+ * @param elementId - UUID of the element to send keys to.
  * If the element is not provided then the keys will be sent to the current application.
  */
-export async function mobileKeys(keys, elementId = null) {
+export async function mobileKeys(
+  this: XCUITestDriver,
+  keys: (KeyboardKey | string)[],
+  elementId: string | null = null,
+): Promise<void> {
   const url = `/wda/element/${elementId || 0}/keyboardInput`;
-  return await this.proxyCommand(url, 'POST', { keys });
+  await this.proxyCommand(url, 'POST', { keys });
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
-
-/**
- * @typedef {import('./types').KeyboardKey} Key
- */

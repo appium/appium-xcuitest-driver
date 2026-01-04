@@ -1,5 +1,6 @@
 import {errors} from 'appium/driver';
 import {HIDUsageEvent, HIDPageEvent} from './hid-event';
+import type {XCUITestDriver} from '../driver';
 
 /**
  * Emulates triggering of the given low-level IO HID device event.
@@ -12,12 +13,16 @@ import {HIDUsageEvent, HIDPageEvent} from './hid-event';
  * - `kHIDUsage_Csmr_Power` = `0x30` (Power)
  * - `kHIDUsage_Csmr_Snapshot` = `0x65` (Power + Home)
  *
- * @param {HIDPageEvent} page - The event page identifier
- * @param {HIDUsageEvent} usage - The event usage identifier (usages are defined per-page)
- * @param {number|string} durationSeconds - The event duration in float seconds (XCTest uses `0.005` for a single press event)
- * @this {import('../driver').XCUITestDriver}
+ * @param page - The event page identifier
+ * @param usage - The event usage identifier (usages are defined per-page)
+ * @param durationSeconds - The event duration in float seconds (XCTest uses `0.005` for a single press event)
  */
-export async function mobilePerformIoHidEvent(page, usage, durationSeconds) {
+export async function mobilePerformIoHidEvent(
+  this: XCUITestDriver,
+  page: HIDPageEvent,
+  usage: number,
+  durationSeconds: number | string,
+): Promise<void> {
   if (!isHIDPageEvent(page)) {
     throw new errors.InvalidArgumentError(
       `'page' argument must be a valid HIDPageEvent identifier`,
@@ -30,15 +35,13 @@ export async function mobilePerformIoHidEvent(page, usage, durationSeconds) {
   if (Number.isNaN(duration)) {
     throw new errors.InvalidArgumentError(`'durationSeconds' argument must be a valid number`);
   }
-  return await this.proxyCommand('/wda/performIoHidEvent', 'POST', {page, usage, duration});
+  await this.proxyCommand('/wda/performIoHidEvent', 'POST', {page, usage, duration});
 }
 
 /**
  * Type guard for {@linkcode HIDUsageEvent}
- * @param {any} value
- * @returns {value is HIDUsageEvent}
  */
-function isHIDUsageEvent(value) {
+function isHIDUsageEvent(value: any): value is number {
   if (typeof value === 'string') {
     value = parseInt(value, 10);
   }
@@ -50,10 +53,8 @@ function isHIDUsageEvent(value) {
 
 /**
  * Type guard for {@linkcode HIDPageEvent}
- * @param {any} value
- * @returns {value is HIDPageEvent}
- **/
-function isHIDPageEvent(value) {
+ */
+function isHIDPageEvent(value: any): value is HIDPageEvent {
   if (typeof value === 'string') {
     value = parseInt(value, 10);
   }
@@ -62,3 +63,4 @@ function isHIDPageEvent(value) {
   }
   return value in HIDPageEvent;
 }
+
