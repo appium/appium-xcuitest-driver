@@ -9,8 +9,8 @@ import type {KeyboardKey} from './types';
  */
 export async function hideKeyboard(
   this: XCUITestDriver,
-  strategy: any,
-  ...possibleKeys: any[]
+  strategy?: string,
+  ...possibleKeys: string[]
 ): Promise<boolean> {
   // last parameter is the session id
   const keyNames = _.compact(possibleKeys.slice(0, -1)).map((x) => `${x}`);
@@ -27,10 +27,9 @@ export async function mobileHideKeyboard(
   this: XCUITestDriver,
   keys: string[] = [],
 ): Promise<void> {
-  if (!keys.includes('done')) {
-    keys.push('done');
-  }
-  await this.proxyCommand('/wda/keyboard/dismiss', 'POST', {keyNames: keys});
+  await this.proxyCommand('/wda/keyboard/dismiss', 'POST', {
+    keyNames: keys.includes('done') ? keys : [...keys, 'done'],
+  });
 }
 
 /**

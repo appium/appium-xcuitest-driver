@@ -3,7 +3,7 @@ import type {XCUITestDriver} from '../driver';
 import type {BiometricFeature} from './types';
 import type {Simulator} from 'appium-ios-simulator';
 
-const assertSimulator = (driver: XCUITestDriver) => _assertSimulator.call(driver, 'Biometric enrollment');
+const assertSimulator = (driver: XCUITestDriver): Simulator => _assertSimulator.call(driver, 'Biometric enrollment');
 
 /**
  * Enrolls biometric authentication on a simulated device.
@@ -16,9 +16,7 @@ export async function mobileEnrollBiometric(
   this: XCUITestDriver,
   isEnabled: boolean = true,
 ): Promise<void> {
-  assertSimulator(this);
-
-  await (this.device as Simulator).enrollBiometric(isEnabled);
+  await assertSimulator(this).enrollBiometric(isEnabled);
 }
 
 /**
@@ -36,9 +34,7 @@ export async function mobileSendBiometricMatch(
   type: BiometricFeature = 'touchId',
   match: boolean = true,
 ): Promise<void> {
-  assertSimulator(this);
-
-  await (this.device as Simulator).sendBiometricMatch(match, type);
+  await assertSimulator(this).sendBiometricMatch(match, type);
 }
 
 /**
@@ -51,8 +47,6 @@ export async function mobileSendBiometricMatch(
 export async function mobileIsBiometricEnrolled(
   this: XCUITestDriver,
 ): Promise<boolean> {
-  assertSimulator(this);
-
-  return await (this.device as Simulator).isBiometricEnrolled();
+  return await assertSimulator(this).isBiometricEnrolled();
 }
 

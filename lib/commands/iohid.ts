@@ -41,7 +41,7 @@ export async function mobilePerformIoHidEvent(
 /**
  * Type guard for {@linkcode HIDUsageEvent}
  */
-function isHIDUsageEvent(value: any): value is number {
+function isHIDUsageEvent(value: any): value is keyof typeof HIDUsageEvent {
   if (typeof value === 'string') {
     value = parseInt(value, 10);
   }

@@ -5,7 +5,7 @@ import type {XCUITestDriver} from '../driver';
 import type {ContentSizeAction, ContentSizeResult} from './types';
 import type {Simulator} from 'appium-ios-simulator';
 
-const assertSimulator = (driver: XCUITestDriver) => _assertSimulator.call(driver, 'Content size ui command');
+const assertSimulator = (driver: XCUITestDriver): Simulator => _assertSimulator.call(driver, 'Content size ui command');
 
 const CONTENT_SIZE = [
     'extra-small',
@@ -39,15 +39,13 @@ export async function mobileSetContentSize(
   this: XCUITestDriver,
   size: ContentSizeAction,
 ): Promise<void> {
-  const simulator = assertSimulator(this) as Simulator;
-
   if (!(CONTENT_SIZE as readonly string[]).includes(_.lowerCase(size))) {
     throw new errors.InvalidArgumentError(
       `The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`
     );
   }
 
-  await simulator.setContentSize(size);
+  await assertSimulator(this).setContentSize(size);
 }
 
 /**
