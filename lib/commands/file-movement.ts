@@ -12,7 +12,80 @@ import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {ContainerObject, ContainerRootSupplier} from './types';
 import {isIos18OrNewer} from '../utils';
-import type {HouseArrestServiceWithConnection} from 'appium-ios-remotexpc';
+
+let RemoteXPCServices: any;
+async function getRemoteXPCServices() {
+  if (!RemoteXPCServices) {
+    const remotexpc = await import('appium-ios-remotexpc');
+    RemoteXPCServices = remotexpc.Services;
+  }
+  return RemoteXPCServices;
+}
+
+interface AfcClientResult {
+  afcService: any;
+  cleanup: () => Promise<void>;
+}
+
+interface AfcServiceWrapper {
+  service: any;
+  tunnelConnection?: {host: string; port: number};
+}
+
+/**
+ * Get the appropriate AFC service based on iOS version
+ * @param udid Device UDID
+ * @param useIos18 Whether to use iOS 18+ remotexpc
+ * @returns AFC service instance and optional tunnel connection to cleanup
+ */
+async function getAfcService(udid: string, useIos18: boolean): Promise<AfcServiceWrapper> {
+  if (useIos18) {
+    const Services = await getRemoteXPCServices();
+    const {tunnelConnection} = await Services.createRemoteXPCConnection(udid);
+    const afcService = await Services.startAfcService(udid);
+    return {service: afcService, tunnelConnection};
+  }
+  return {service: await services.startAfcService(udid)};
+}
+
+/**
+ * Get House Arrest AFC service
+ * @param udid Device UDID
+ * @param bundleId App bundle ID
+ * @param containerType Container type (null for app container, 'documents' for documents)
+ * @param useIos18 Whether to use iOS 18+ remotexpc
+ * @param skipDocumentsCheck Skip checking for documents container
+ * @returns AFC service instance and optional tunnel connection to cleanup
+ */
+async function getHouseArrestAfcService(
+  udid: string,
+  bundleId: string,
+  containerType: string | null,
+  useIos18: boolean,
+  skipDocumentsCheck: boolean = false,
+): Promise<AfcServiceWrapper> {
+  const isDocuments = !skipDocumentsCheck && isDocumentsContainer(containerType);
+
+  if (useIos18) {
+    const Services = await getRemoteXPCServices();
+    const {tunnelConnection} = await Services.createRemoteXPCConnection(udid);
+    const {houseArrestService} = await Services.startHouseArrestService(udid);
+    const afcService = isDocuments
+      ? await houseArrestService.vendDocuments(bundleId)
+      : await houseArrestService.vendContainer(bundleId);
+    return {service: afcService, tunnelConnection};
+  }
+  // iOS <18: use appium-ios-device
+  const houseArrestService = await services.startHouseArrestService(udid);
+  const afcService = isDocuments
+    ? await houseArrestService.vendDocuments(bundleId)
+    : await houseArrestService.vendContainer(bundleId);
+  return {service: afcService};
+}
+
+function isDocumentsContainer(containerType?: string | null): boolean {
+  return _.toLower(containerType ?? '') === _.toLower(CONTAINER_DOCUMENTS_PATH);
+}
 
 const CONTAINER_PATH_MARKER = '@';
 // https://regex101.com/r/PLdB0G/2
@@ -230,46 +303,22 @@ async function createAfcClient(
   containerType?: string | null,
 ): Promise<AfcClientResult> {
   const udid = this.device.udid as string;
-  const noopCleanup = async () => {};
+  const useIos18 = isIos18OrNewer(this.opts);
 
-  if (!bundleId) {
-    const afcService = await services.startAfcService(udid);
-    return { afcService, cleanup: noopCleanup };
-  }
+  const {service: afcService} = bundleId
+    ? await getHouseArrestAfcService(
+        udid,
+        bundleId,
+        containerType ?? null,
+        useIos18,
+        this.settings.getSettings().skipDocumentsContainerCheck ?? false,
+      )
+    : await getAfcService(udid, useIos18);
 
-  const {
-    skipDocumentsContainerCheck = false,
-  } = await this.settings.getSettings();
+  // Tunnel connections stay open for the session, no cleanup needed
+  const cleanup = async () => {};
 
-  if (isIos18OrNewer(this.opts)) {
-    const { houseArrestService, remoteXPC } = await startRemoteXPCHouseArrest(udid);
-    const cleanup = async () => {
-      try {
-        await remoteXPC.close();
-      } catch {}
-    };
-    try {
-      const afcService = skipDocumentsContainerCheck || !isDocumentsContainer(containerType)
-        ? await houseArrestService.vendContainer(bundleId)
-        : await houseArrestService.vendDocuments(bundleId);
-      return { afcService, cleanup };
-    } catch (err) {
-      await cleanup();
-      throw err;
-    }
-  }
-
-  const service = await services.startHouseArrestService(udid);
-
-  const afcService = skipDocumentsContainerCheck || !isDocumentsContainer(containerType)
-    ? await service.vendContainer(bundleId)
-    : await service.vendDocuments(bundleId);
-
-  return { afcService, cleanup: noopCleanup };
-}
-
-function isDocumentsContainer(containerType?: string | null): boolean {
-  return _.toLower(containerType ?? '') === _.toLower(CONTAINER_DOCUMENTS_PATH);
+  return {afcService, cleanup};
 }
 
 interface ServiceResult {
@@ -300,11 +349,6 @@ async function createService(
     const { afcService, cleanup } = await createAfcClient.bind(this)();
     return {service: afcService, relativePath: remotePath, cleanup};
   }
-}
-
-async function startRemoteXPCHouseArrest(udid: string): Promise<HouseArrestServiceWithConnection> {
-  const {Services} = await import('appium-ios-remotexpc');
-  return Services.startHouseArrestService(udid);
 }
 
 /**
@@ -455,17 +499,13 @@ async function pullFromRealDevice(
 ): Promise<string> {
   const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
   try {
-    // Check if this is remotexpc AFC (has stat/isdir) or ios-device AFC (has getFileInfo)
+    // remotexpc: isdir() | ios-device: getFileInfo()
     let isDirectory: boolean;
-    if (typeof service.stat === 'function' && typeof service.isdir === 'function') {
-      // appium-ios-remotexpc: use stat and isdir
+    if (typeof service.isdir === 'function') {
       isDirectory = await service.isdir(relativePath);
-    } else if (typeof service.getFileInfo === 'function') {
-      // appium-ios-device: use getFileInfo
+    } else {
       const fileInfo = await service.getFileInfo(relativePath);
       isDirectory = fileInfo.isDirectory();
-    } else {
-      throw new Error('AFC service does not support file info operations');
     }
 
     if (isFile && isDirectory) {
@@ -542,7 +582,7 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
 async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): Promise<void> {
   const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
   try {
-    // Check if this is remotexpc AFC (has rm) or ios-device AFC (has deleteDirectory)
+    // remotexpc: rm() | ios-device: deleteDirectory()
     if (typeof service.rm === 'function') {
       await service.rm(relativePath, true);
     } else {

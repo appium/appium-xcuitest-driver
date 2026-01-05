@@ -29,13 +29,12 @@ const INSTALLATION_STAGING_DIR = 'PublicStaging';
  * @returns The file content as a buffer
  */
 export async function pullFile(afcService: any, remotePath: string): Promise<Buffer> {
-  // Check if this is remotexpc AFC (has getFileContents) or ios-device AFC (has createReadStream)
+  // remotexpc: getFileContents returns Buffer directly
   if (typeof afcService.getFileContents === 'function') {
-    // appium-ios-remotexpc: simple buffer return
     return await afcService.getFileContents(remotePath);
   }
-  
-  // appium-ios-device: stream-based approach
+
+  // ios-device: stream-based approach
   const stream = await afcService.createReadStream(remotePath, {autoDestroy: true});
   const pullPromise = new B((resolve, reject) => {
     stream.on('close', resolve);
@@ -62,11 +61,9 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
     let countFilesSuccess = 0;
     let countFilesFail = 0;
     let countFolders = 0;
-    const pullPromises: B<void>[] = [];
-    
-    // Check if this is remotexpc AFC (has pull method) or ios-device AFC (has walkDir)
+
+    // remotexpc: use high-level pull() method
     if (typeof afcService.pull === 'function') {
-      // appium-ios-remotexpc: use high-level pull method
       await afcService.pull(remoteRootPath, tmpFolder, {
         recursive: true,
         overwrite: true,
@@ -83,7 +80,8 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
         },
       });
     } else {
-      // appium-ios-device: use walkDir method
+      // ios-device: use walkDir method with stream-based pulls
+      const pullPromises: B<void>[] = [];
       await afcService.walkDir(remoteRootPath, true, async (remotePath: string, isDir: boolean) => {
       const localPath = path.join(tmpFolder, remotePath);
       const dirname = isDir ? localPath : path.dirname(localPath);
@@ -130,9 +128,10 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
       }
     });
     // Wait for the rest of files to be pulled
-    if (!_.isEmpty(pullPromises)) {
-      await B.all(pullPromises);
-    }
+      // Wait for remaining file pulls to complete
+      if (!_.isEmpty(pullPromises)) {
+        await B.all(pullPromises);
+      }
     }
     defaultLogger.info(
       `Pulled ${util.pluralize('file', countFilesSuccess, true)} out of ` +
@@ -174,7 +173,7 @@ export async function pushFile(
 
   // Check if this is remotexpc AFC service (has setFileContents/writeFromStream)
   // vs appium-ios-device AFC service (has createWriteStream that accepts path)
-  if (typeof afcService.setFileContents === 'function' && 
+  if (typeof afcService.setFileContents === 'function' &&
       typeof afcService.writeFromStream === 'function') {
     // remotexpc AFC service
     if (Buffer.isBuffer(localPathOrPayload)) {
@@ -273,25 +272,26 @@ export async function pushFolder(
     `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
       `${util.pluralize('file', filesToPush.length, true)} to push`,
   );
-  // create the folder structure first
+  // Create the folder structure
   try {
-    // Check if this is remotexpc AFC (has rm) or ios-device AFC (has deleteDirectory)
+    // remotexpc: rm() | ios-device: deleteDirectory()
     if (typeof afcService.rm === 'function') {
       await afcService.rm(dstRootPath, true);
     } else {
       await afcService.deleteDirectory(dstRootPath);
     }
   } catch {}
-  // Check if this is remotexpc AFC (has mkdir) or ios-device AFC (has createDirectory)
+
+  // remotexpc: mkdir() | ios-device: createDirectory()
   if (typeof afcService.mkdir === 'function') {
     await afcService.mkdir(dstRootPath);
   } else {
     await afcService.createDirectory(dstRootPath);
   }
   for (const relativeFolderPath of foldersToPush) {
-    // createDirectory/mkdir does not accept folder names ending with a path separator
     const absoluteFolderPath = _.trimEnd(path.join(dstRootPath, relativeFolderPath), path.sep);
     if (absoluteFolderPath) {
+      // remotexpc: mkdir() | ios-device: createDirectory()
       if (typeof afcService.mkdir === 'function') {
         await afcService.mkdir(absoluteFolderPath);
       } else {
@@ -839,10 +839,10 @@ async function remoteMkdirp(afcService: any, remoteRoot: string): Promise<void> 
   if (remoteRoot === '.' || remoteRoot === '/') {
     return;
   }
-  
-  // Check if this is remotexpc (has mkdir/listdir) or appium-ios-device (has createDirectory/listDirectory)
+
+  // remotexpc: listdir/mkdir() | ios-device: listDirectory/createDirectory()
   const hasRemoteXpcApi = typeof afcService.mkdir === 'function' && typeof afcService.listdir === 'function';
-  
+
   try {
     if (hasRemoteXpcApi) {
       await afcService.listdir(remoteRoot);
@@ -851,11 +851,10 @@ async function remoteMkdirp(afcService: any, remoteRoot: string): Promise<void> 
     }
     return;
   } catch {
-    // This means that the directory is missing and we got an object not found error.
-    // Therefore, we are going to the parent
+    // Directory is missing, create parent first
     await remoteMkdirp(afcService, path.dirname(remoteRoot));
   }
-  
+
   if (hasRemoteXpcApi) {
     await afcService.mkdir(remoteRoot);
   } else {
