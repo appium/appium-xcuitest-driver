@@ -11,6 +11,8 @@ import {errors} from 'appium/driver';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {ContainerObject, ContainerRootSupplier} from './types';
+import {isIos18OrNewer} from '../utils';
+import type {HouseArrestServiceWithConnection} from 'appium-ios-remotexpc';
 
 const CONTAINER_PATH_MARKER = '@';
 // https://regex101.com/r/PLdB0G/2
@@ -44,9 +46,13 @@ export async function parseContainerPath(
   const typeSeparatorPos = bundleId.indexOf(CONTAINER_TYPE_SEPARATOR);
   // We only consider container type exists if its length is greater than zero
   // not counting the colon
-  if (typeSeparatorPos > 0 && typeSeparatorPos < bundleId.length - 1) {
-    containerType = bundleId.substring(typeSeparatorPos + 1);
-    this.log.debug(`Parsed container type: ${containerType}`);
+  if (typeSeparatorPos > 0) {
+    if (typeSeparatorPos < bundleId.length - 1) {
+      // There's content after the colon - it's a container type
+      containerType = bundleId.substring(typeSeparatorPos + 1);
+      this.log.debug(`Parsed container type: ${containerType}`);
+    }
+    // Always strip the colon and everything after it
     bundleId = bundleId.substring(0, typeSeparatorPos);
   }
   if (_.isNil(containerRootSupplier)) {
@@ -211,50 +217,94 @@ function verifyIsSubPath(originalPath: string, root: string): void {
   }
 }
 
+interface AfcClientResult {
+  /** The AFC service instance */
+  afcService: any;
+  /** Cleanup function to close connections (for remotexpc) */
+  cleanup: () => Promise<void>;
+}
+
 async function createAfcClient(
   this: XCUITestDriver,
   bundleId?: string | null,
   containerType?: string | null,
-): Promise<any> {
+): Promise<AfcClientResult> {
   const udid = this.device.udid as string;
+  const noopCleanup = async () => {};
 
   if (!bundleId) {
-    return await services.startAfcService(udid);
+    const afcService = await services.startAfcService(udid);
+    return { afcService, cleanup: noopCleanup };
   }
-  const service = await services.startHouseArrestService(udid);
 
   const {
     skipDocumentsContainerCheck = false,
   } = await this.settings.getSettings();
 
-  if (skipDocumentsContainerCheck) {
-    return service.vendContainer(bundleId);
+  if (isIos18OrNewer(this.opts)) {
+    const { houseArrestService, remoteXPC } = await startRemoteXPCHouseArrest(udid);
+    const cleanup = async () => {
+      try {
+        await remoteXPC.close();
+      } catch {}
+    };
+    try {
+      const afcService = skipDocumentsContainerCheck || !isDocumentsContainer(containerType)
+        ? await houseArrestService.vendContainer(bundleId)
+        : await houseArrestService.vendDocuments(bundleId);
+      return { afcService, cleanup };
+    } catch (err) {
+      await cleanup();
+      throw err;
+    }
   }
 
-  return isDocumentsContainer(containerType)
-    ? await service.vendDocuments(bundleId)
-    : await service.vendContainer(bundleId);
+  const service = await services.startHouseArrestService(udid);
+
+  const afcService = skipDocumentsContainerCheck || !isDocumentsContainer(containerType)
+    ? await service.vendContainer(bundleId)
+    : await service.vendDocuments(bundleId);
+
+  return { afcService, cleanup: noopCleanup };
 }
 
 function isDocumentsContainer(containerType?: string | null): boolean {
   return _.toLower(containerType ?? '') === _.toLower(CONTAINER_DOCUMENTS_PATH);
 }
 
+interface ServiceResult {
+  /** The AFC service instance */
+  service: any;
+  /** The relative path to the file/folder */
+  relativePath: string;
+  /** Cleanup function to close connections */
+  cleanup: () => Promise<void>;
+}
+
 async function createService(
   this: XCUITestDriver,
   remotePath: string,
-): Promise<{service: any; relativePath: string}> {
+): Promise<ServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
     const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(this)(remotePath);
-    const service = await createAfcClient.bind(this)(bundleId, containerType);
-    const relativePath = isDocumentsContainer(containerType)
+    const { afcService, cleanup } = await createAfcClient.bind(this)(bundleId, containerType);
+    let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
       : pathInContainer;
-    return {service, relativePath};
+    // Ensure path starts with / for AFC operations
+    if (!relativePath.startsWith('/')) {
+      relativePath = `/${relativePath}`;
+    }
+    return {service: afcService, relativePath, cleanup};
   } else {
-    const service = await createAfcClient.bind(this)();
-    return {service, relativePath: remotePath};
+    const { afcService, cleanup } = await createAfcClient.bind(this)();
+    return {service: afcService, relativePath: remotePath, cleanup};
   }
+}
+
+async function startRemoteXPCHouseArrest(udid: string): Promise<HouseArrestServiceWithConnection> {
+  const {Services} = await import('appium-ios-remotexpc');
+  return Services.startHouseArrestService(udid);
 }
 
 /**
@@ -312,7 +362,7 @@ async function pushFileToRealDevice(
   remotePath: string,
   base64Data: string,
 ): Promise<void> {
-  const {service, relativePath} = await createService.bind(this)(remotePath);
+  const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
   try {
     await realDevicePushFile(service, Buffer.from(base64Data, 'base64'), relativePath);
   } catch (e) {
@@ -320,6 +370,7 @@ async function pushFileToRealDevice(
     throw new Error(`Could not push the file to '${remotePath}'. Original error: ${e.message}`);
   } finally {
     service.close();
+    await cleanup();
   }
 }
 
@@ -402,21 +453,34 @@ async function pullFromRealDevice(
   remotePath: string,
   isFile: boolean,
 ): Promise<string> {
-  const {service, relativePath} = await createService.bind(this)(remotePath);
+  const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
   try {
-    const fileInfo = await service.getFileInfo(relativePath);
-    if (isFile && fileInfo.isDirectory()) {
+    // Check if this is remotexpc AFC (has stat/isdir) or ios-device AFC (has getFileInfo)
+    let isDirectory: boolean;
+    if (typeof service.stat === 'function' && typeof service.isdir === 'function') {
+      // appium-ios-remotexpc: use stat and isdir
+      isDirectory = await service.isdir(relativePath);
+    } else if (typeof service.getFileInfo === 'function') {
+      // appium-ios-device: use getFileInfo
+      const fileInfo = await service.getFileInfo(relativePath);
+      isDirectory = fileInfo.isDirectory();
+    } else {
+      throw new Error('AFC service does not support file info operations');
+    }
+
+    if (isFile && isDirectory) {
       throw new Error(`The requested path is not a file. Path: '${remotePath}'`);
     }
-    if (!isFile && !fileInfo.isDirectory()) {
+    if (!isFile && !isDirectory) {
       throw new Error(`The requested path is not a folder. Path: '${remotePath}'`);
     }
 
-    return fileInfo.isFile()
+    return !isDirectory
       ? (await realDevicePullFile(service, relativePath)).toString('base64')
       : (await realDevicePullFolder(service, relativePath)).toString();
   } finally {
     service.close();
+    await cleanup();
   }
 }
 
@@ -476,9 +540,14 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
  * @returns Nothing
  */
 async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): Promise<void> {
-  const {service, relativePath} = await createService.bind(this)(remotePath);
+  const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
   try {
-    await service.deleteDirectory(relativePath);
+    // Check if this is remotexpc AFC (has rm) or ios-device AFC (has deleteDirectory)
+    if (typeof service.rm === 'function') {
+      await service.rm(relativePath, true);
+    } else {
+      await service.deleteDirectory(relativePath);
+    }
   } catch (e) {
     if (e.message.includes(OBJECT_NOT_FOUND_ERROR_MESSAGE)) {
       throw new Error(`Path '${remotePath}' does not exist on the device`);
@@ -486,6 +555,7 @@ async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): P
     throw e;
   } finally {
     service.close();
+    await cleanup();
   }
 }
 
