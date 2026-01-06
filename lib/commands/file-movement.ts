@@ -25,11 +25,13 @@ async function getRemoteXPCServices() {
 interface AfcClientResult {
   afcService: any;
   cleanup: () => Promise<void>;
+  useIos18: boolean;
 }
 
 interface AfcServiceWrapper {
   service: any;
   tunnelConnection?: {host: string; port: number};
+  useIos18: boolean;
 }
 
 /**
@@ -43,9 +45,9 @@ async function getAfcService(udid: string, useIos18: boolean): Promise<AfcServic
     const Services = await getRemoteXPCServices();
     const {tunnelConnection} = await Services.createRemoteXPCConnection(udid);
     const afcService = await Services.startAfcService(udid);
-    return {service: afcService, tunnelConnection};
+    return {service: afcService, tunnelConnection, useIos18};
   }
-  return {service: await services.startAfcService(udid)};
+  return {service: await services.startAfcService(udid), useIos18};
 }
 
 /**
@@ -73,14 +75,14 @@ async function getHouseArrestAfcService(
     const afcService = isDocuments
       ? await houseArrestService.vendDocuments(bundleId)
       : await houseArrestService.vendContainer(bundleId);
-    return {service: afcService, tunnelConnection};
+    return {service: afcService, tunnelConnection, useIos18};
   }
   // iOS <18: use appium-ios-device
   const houseArrestService = await services.startHouseArrestService(udid);
   const afcService = isDocuments
     ? await houseArrestService.vendDocuments(bundleId)
     : await houseArrestService.vendContainer(bundleId);
-  return {service: afcService};
+  return {service: afcService, useIos18};
 }
 
 function isDocumentsContainer(containerType?: string | null): boolean {
@@ -121,7 +123,6 @@ export async function parseContainerPath(
   // not counting the colon
   if (typeSeparatorPos > 0) {
     if (typeSeparatorPos < bundleId.length - 1) {
-      // There's content after the colon - it's a container type
       containerType = bundleId.substring(typeSeparatorPos + 1);
       this.log.debug(`Parsed container type: ${containerType}`);
     }
@@ -318,7 +319,7 @@ async function createAfcClient(
   // Tunnel connections stay open for the session, no cleanup needed
   const cleanup = async () => {};
 
-  return {afcService, cleanup};
+  return {afcService, cleanup, useIos18};
 }
 
 interface ServiceResult {
@@ -328,6 +329,8 @@ interface ServiceResult {
   relativePath: string;
   /** Cleanup function to close connections */
   cleanup: () => Promise<void>;
+  /** Whether using iOS 18+ remotexpc */
+  useIos18: boolean;
 }
 
 async function createService(
@@ -336,7 +339,7 @@ async function createService(
 ): Promise<ServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
     const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(this)(remotePath);
-    const { afcService, cleanup } = await createAfcClient.bind(this)(bundleId, containerType);
+    const { afcService, cleanup, useIos18 } = await createAfcClient.bind(this)(bundleId, containerType);
     let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
       : pathInContainer;
@@ -344,10 +347,10 @@ async function createService(
     if (!relativePath.startsWith('/')) {
       relativePath = `/${relativePath}`;
     }
-    return {service: afcService, relativePath, cleanup};
+    return {service: afcService, relativePath, cleanup, useIos18};
   } else {
-    const { afcService, cleanup } = await createAfcClient.bind(this)();
-    return {service: afcService, relativePath: remotePath, cleanup};
+    const { afcService, cleanup, useIos18 } = await createAfcClient.bind(this)();
+    return {service: afcService, relativePath: remotePath, cleanup, useIos18};
   }
 }
 
@@ -497,11 +500,11 @@ async function pullFromRealDevice(
   remotePath: string,
   isFile: boolean,
 ): Promise<string> {
-  const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
+  const {service, relativePath, cleanup, useIos18} = await createService.bind(this)(remotePath);
   try {
-    // remotexpc: isdir() | ios-device: getFileInfo()
+    // Check if path is a directory
     let isDirectory: boolean;
-    if (typeof service.isdir === 'function') {
+    if (useIos18) {
       isDirectory = await service.isdir(relativePath);
     } else {
       const fileInfo = await service.getFileInfo(relativePath);
@@ -580,10 +583,9 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
  * @returns Nothing
  */
 async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): Promise<void> {
-  const {service, relativePath, cleanup} = await createService.bind(this)(remotePath);
+  const {service, relativePath, cleanup, useIos18} = await createService.bind(this)(remotePath);
   try {
-    // remotexpc: rm() | ios-device: deleteDirectory()
-    if (typeof service.rm === 'function') {
+    if (useIos18) {
       await service.rm(relativePath, true);
     } else {
       await service.deleteDirectory(relativePath);

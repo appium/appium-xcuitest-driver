@@ -18,19 +18,25 @@ const APPLICATION_INSTALLED_NOTIFICATION = 'com.apple.mobile.application_install
 const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';
 
+/**
+ * Type guard to detect iOS 18+ remotexpc AFC service
+ * RemoteXPC services have methods like setFileContents, getFileContents
+ */
+function isRemoteXpcAfc(afcService: any): boolean {
+  return typeof afcService.setFileContents === 'function';
+}
+
 //#region Public File System Functions
 
 /**
  * Retrieve a file from a real device
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param afcService Apple File Client service instance
  * @param remotePath Relative path to the file on the device
  * @returns The file content as a buffer
  */
 export async function pullFile(afcService: any, remotePath: string): Promise<Buffer> {
-  // remotexpc: getFileContents returns Buffer directly
-  if (typeof afcService.getFileContents === 'function') {
+  if (isRemoteXpcAfc(afcService)) {
     return await afcService.getFileContents(remotePath);
   }
 
@@ -49,8 +55,7 @@ export async function pullFile(afcService: any, remotePath: string): Promise<Buf
 /**
  * Retrieve a folder from a real device
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param afcService Apple File Client service instance
  * @param remoteRootPath Relative path to the folder on the device
  * @returns The folder content as a zipped base64-encoded buffer
  */
@@ -62,8 +67,8 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
     let countFilesFail = 0;
     let countFolders = 0;
 
-    // remotexpc: use high-level pull() method
-    if (typeof afcService.pull === 'function') {
+    if (isRemoteXpcAfc(afcService)) {
+      // remotexpc: use high-level pull() method
       await afcService.pull(remoteRootPath, tmpFolder, {
         recursive: true,
         overwrite: true,
@@ -127,7 +132,6 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
         }
       }
     });
-    // Wait for the rest of files to be pulled
       // Wait for remaining file pulls to complete
       if (!_.isEmpty(pullPromises)) {
         await B.all(pullPromises);
@@ -154,7 +158,7 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
  * Pushes a file to a real device
  *
  * @param afcService afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * 'appium-ios-device' or 'appium-ios-remotexpc' module
  * @param localPathOrPayload Either full path to the source file
  * or a buffer payload to be written into the remote destination
  * @param remotePath Relative path to the file on the device. The remote
@@ -171,10 +175,7 @@ export async function pushFile(
   const timer = new timing.Timer().start();
   await remoteMkdirp(afcService, path.dirname(remotePath));
 
-  // Check if this is remotexpc AFC service (has setFileContents/writeFromStream)
-  // vs appium-ios-device AFC service (has createWriteStream that accepts path)
-  if (typeof afcService.setFileContents === 'function' &&
-      typeof afcService.writeFromStream === 'function') {
+  if (isRemoteXpcAfc(afcService)) {
     // remotexpc AFC service
     if (Buffer.isBuffer(localPathOrPayload)) {
       await afcService.setFileContents(remotePath, localPathOrPayload);
@@ -183,7 +184,7 @@ export async function pushFile(
       await afcService.writeFromStream(remotePath, readStream);
     }
   } else {
-    // appium-ios-device AFC service (legacy)
+    // appium-ios-device AFC service
     const source = Buffer.isBuffer(localPathOrPayload)
       ? localPathOrPayload
       : fs.createReadStream(localPathOrPayload, {autoClose: true});
@@ -233,8 +234,7 @@ export async function pushFile(
 /**
  * Pushes a folder to a real device
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param afcService Apple File Client service instance
  * @param srcRootPath The full path to the source folder
  * @param dstRootPath The relative path to the destination folder. The folder
  * will be deleted if already exists.
@@ -274,16 +274,14 @@ export async function pushFolder(
   );
   // Create the folder structure
   try {
-    // remotexpc: rm() | ios-device: deleteDirectory()
-    if (typeof afcService.rm === 'function') {
+    if (isRemoteXpcAfc(afcService)) {
       await afcService.rm(dstRootPath, true);
     } else {
       await afcService.deleteDirectory(dstRootPath);
     }
   } catch {}
 
-  // remotexpc: mkdir() | ios-device: createDirectory()
-  if (typeof afcService.mkdir === 'function') {
+  if (isRemoteXpcAfc(afcService)) {
     await afcService.mkdir(dstRootPath);
   } else {
     await afcService.createDirectory(dstRootPath);
@@ -291,8 +289,7 @@ export async function pushFolder(
   for (const relativeFolderPath of foldersToPush) {
     const absoluteFolderPath = _.trimEnd(path.join(dstRootPath, relativeFolderPath), path.sep);
     if (absoluteFolderPath) {
-      // remotexpc: mkdir() | ios-device: createDirectory()
-      if (typeof afcService.mkdir === 'function') {
+      if (isRemoteXpcAfc(afcService)) {
         await afcService.mkdir(absoluteFolderPath);
       } else {
         await afcService.createDirectory(absoluteFolderPath);
@@ -840,11 +837,8 @@ async function remoteMkdirp(afcService: any, remoteRoot: string): Promise<void> 
     return;
   }
 
-  // remotexpc: listdir/mkdir() | ios-device: listDirectory/createDirectory()
-  const hasRemoteXpcApi = typeof afcService.mkdir === 'function' && typeof afcService.listdir === 'function';
-
   try {
-    if (hasRemoteXpcApi) {
+    if (isRemoteXpcAfc(afcService)) {
       await afcService.listdir(remoteRoot);
     } else {
       await afcService.listDirectory(remoteRoot);
@@ -855,7 +849,7 @@ async function remoteMkdirp(afcService: any, remoteRoot: string): Promise<void> 
     await remoteMkdirp(afcService, path.dirname(remoteRoot));
   }
 
-  if (hasRemoteXpcApi) {
+  if (isRemoteXpcAfc(afcService)) {
     await afcService.mkdir(remoteRoot);
   } else {
     await afcService.createDirectory(remoteRoot);
