@@ -41,7 +41,7 @@ import * as clipboardCommands from './commands/clipboard';
 import * as conditionCommands from './commands/condition';
 import * as contentSizeCommands from './commands/content-size';
 import * as contextCommands from './commands/context';
-import * as deviceInfoCommands from './commands/deviceInfo';
+import * as deviceInfoCommands from './commands/device-info';
 import * as elementCommands from './commands/element';
 import * as executeCommands from './commands/execute';
 import * as fileMovementCommands from './commands/file-movement';
