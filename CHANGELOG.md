@@ -1,3 +1,9 @@
+## [10.14.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.5...v10.14.6) (2026-01-07)
+
+### Miscellaneous Chores
+
+* Migrate the rest of commands to typescript (part 10) ([#2697](https://github.com/appium/appium-xcuitest-driver/issues/2697)) ([73a5cde](https://github.com/appium/appium-xcuitest-driver/commit/73a5cdee66df6df5d78e4518c603d4dad2b780d7))
+
 ## [10.14.5](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.4...v10.14.5) (2026-01-06)
 
 ### Miscellaneous Chores
