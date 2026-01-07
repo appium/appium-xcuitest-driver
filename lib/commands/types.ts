@@ -335,6 +335,29 @@ export interface ProcessArguments {
 }
 
 /**
+ * Accessibility audit item returned by the audit command.
+ */
+export interface AccessibilityAuditItem {
+  /**
+   * The detailed description of the found accessibility issue.
+   */
+  detailedDescription: string;
+  /**
+   * The compact description of the found accessibility issue.
+   */
+  compactDescription: string;
+  /**
+   * The name of the audit type this issue belongs to. Could be
+   * a number if the type name is unknown.
+   */
+  auditType: string | number;
+  /**
+   * The description of the element this issue was found for.
+   */
+  element: string;
+}
+
+/**
  * Pressable button names; used by the {@linkcode XCUITest.mobilePressButton mobile: pressButton} command.
  */
 export type ButtonName = AnyCase<
