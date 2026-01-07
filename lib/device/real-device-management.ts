@@ -72,12 +72,11 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
       await afcService.pull(remoteRootPath, tmpFolder, {
         recursive: true,
         overwrite: true,
-        callback: async (remotePath: string, localPath: string) => {
-          const isDir = await afcService.isdir(remotePath);
+        callback: async (remotePath: string, localPath: string, isDirectory: boolean) => {
           if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
             localTopItem = localPath;
           }
-          if (isDir) {
+          if (isDirectory) {
             ++countFolders;
           } else {
             ++countFilesSuccess;
