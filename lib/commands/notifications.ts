@@ -1,5 +1,8 @@
 import {errors} from 'appium/driver';
 import _ from 'lodash';
+import type {XCUITestDriver} from '../driver';
+import type {PushPayload, NotificationType} from './types';
+import type {Simulator} from 'appium-ios-simulator';
 
 /**
  * Simulates push notification delivery to a simulated device.
@@ -7,12 +10,16 @@ import _ from 'lodash';
  * **Only "remote" push notifications are supported.** VoIP, Complication, File Provider, and other types are unsupported.
  *
  * Supported in Xcode SDK 11.4+.
- * @param {string} bundleId - The bundle identifier of the target application
- * @param {import('./types').PushPayload} payload - Valid push payload.
+ *
+ * @param bundleId - The bundle identifier of the target application
+ * @param payload - Valid push payload.
  * @group Simulator Only
- * @this {XCUITestDriver}
  */
-export async function mobilePushNotification(bundleId, payload) {
+export async function mobilePushNotification(
+  this: XCUITestDriver,
+  bundleId: string,
+  payload: PushPayload,
+): Promise<void> {
   if (!this.isSimulator()) {
     throw new Error('This extension only works on Simulator');
   }
@@ -34,7 +41,7 @@ export async function mobilePushNotification(bundleId, payload) {
         `Got ${JSON.stringify(payload.aps)} instead`,
     );
   }
-  return await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).pushNotification({
+  await (this.device as Simulator).pushNotification({
     ...payload,
     'Simulator Target Bundle': bundleId,
   });
@@ -47,20 +54,21 @@ export async function mobilePushNotification(bundleId, payload) {
  * [`XCTNSNotificationExpectation`](https://developer.apple.com/documentation/xctest/xctnsnotificationexpectation?language=objc) and
  * [`XCTDarwinNotificationExpectation`](https://developer.apple.com/documentation/xctest/xctdarwinnotificationexpectation?language=objc) entities.
  *
- * @param {string} name - The name of the notification to expect
- * @param {import('./types').NotificationType} type - Which notification type to expect.
- * @param {number} timeoutSeconds - For how long to wait until the notification is delivered (in float seconds).
+ * @param name - The name of the notification to expect
+ * @param type - Which notification type to expect.
+ * @param timeoutSeconds - For how long to wait until the notification is delivered (in float seconds).
  * @throws A [`TimeoutError`](https://www.selenium.dev/selenium/docs/api/javascript/module/selenium-webdriver/lib/error_exports_TimeoutError.html) if the expected notification has not been delivered within the given timeout.
- * @this {XCUITestDriver}
  */
-export async function mobileExpectNotification(name, type = 'plain', timeoutSeconds = 60) {
-  return await this.proxyCommand('/wda/expectNotification', 'POST', {
+export async function mobileExpectNotification(
+  this: XCUITestDriver,
+  name: string,
+  type: NotificationType = 'plain',
+  timeoutSeconds: number = 60,
+): Promise<void> {
+  await this.proxyCommand('/wda/expectNotification', 'POST', {
     name,
     type,
     timeout: timeoutSeconds,
   });
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */

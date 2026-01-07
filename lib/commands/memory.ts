@@ -1,20 +1,24 @@
 import _ from 'lodash';
 import { errors } from 'appium/driver';
+import type {XCUITestDriver} from '../driver';
+import type {RealDevice} from '../device/real-device-management';
 
 /**
  * Simulates Low Memory warning on the given application
  *
  * @since Xcode 15
- * @param {string} bundleId - The bundle identifier of the target app. The app must be running
- * @this {XCUITestDriver}
- * @throws {Error} if the app is not running or is not installed
+ * @param bundleId - The bundle identifier of the target app. The app must be running
+ * @throws If the app is not running or is not installed
  */
-export async function mobileSendMemoryWarning(bundleId) {
+export async function mobileSendMemoryWarning(
+  this: XCUITestDriver,
+  bundleId: string,
+): Promise<void> {
   if (!this.isRealDevice()) {
     throw new Error('Memory warning simulation is only supported on real devices');
   }
 
-  const device = /** @type {import('../device/real-device-management').RealDevice} */ (this.device);
+  const device = this.device as RealDevice;
 
   const appInfos = await device.devicectl.listApps(bundleId);
   if (_.isEmpty(appInfos)) {
@@ -33,7 +37,6 @@ export async function mobileSendMemoryWarning(bundleId) {
   // Unfortunately devicectl does not provide more info which would
   // allow to connect a bundle id to a process id.
   const pattern = new RegExp(`^${_.escapeRegExp(appInfos[0].url)}[^/]+$`);
-  /** @type {number[]} */
   const pids = (await device.devicectl.listProcesses())
     .filter(({executable}) => pattern.test(executable))
     .map(({processIdentifier}) => processIdentifier);
@@ -46,6 +49,3 @@ export async function mobileSendMemoryWarning(bundleId) {
   await device.devicectl.sendMemoryWarning(pids[0]);
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */

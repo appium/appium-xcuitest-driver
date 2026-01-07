@@ -1,6 +1,6 @@
-import {assertSimulator as _assertSimulator} from '../utils';
-
-const assertSimulator = (driver) => _assertSimulator.call(driver, 'Localization configuration');
+import {assertSimulator} from '../utils';
+import type {XCUITestDriver} from '../driver';
+import type {KeyboardOptions, LanguageOptions, LocaleOptions} from './types';
 
 /**
  * Change localization settings on the currently booted simulator
@@ -9,21 +9,31 @@ const assertSimulator = (driver) => _assertSimulator.call(driver, 'Localization 
  * Currently running applications will be unchanged. This means, for example, that the keyboard should be hidden and shown again in order to observe the changed layout, and corresponding apps must be restarted in order to observe their interface using the newly set locale/language.
  *
  * The driver performs no strict checking of the arguments (such as locale names). Be aware that an incorrect or invalid string may cause unexpected behavior.
- * @param {import('./types').KeyboardOptions} [keyboard] - Keyboard options
- * @param {import('./types').LanguageOptions} [language] - Language options
- * @param {import('./types').LocaleOptions} [locale] - Locale options
+ * @param keyboard - Keyboard options
+ * @param language - Language options
+ * @param locale - Locale options
  * @throws {Error} If there was a failure while setting the preferences
- * @returns {Promise<boolean>} `true` if any of settings has been successfully changed
+ * @returns `true` if any of settings has been successfully changed
  * @group Simulator Only
- * @this {import('../driver').XCUITestDriver}
  */
-export async function mobileConfigureLocalization(keyboard, language, locale) {
-  assertSimulator(this);
+export async function mobileConfigureLocalization(
+  this: XCUITestDriver,
+  keyboard?: KeyboardOptions,
+  language?: LanguageOptions,
+  locale?: LocaleOptions,
+): Promise<boolean> {
+  ;
 
-  const localizationOptions = {locale, keyboard};
+  const localizationOptions: {
+    locale?: LocaleOptions;
+    keyboard?: KeyboardOptions;
+    language?: LanguageOptions & {skipSyncUiDialogTranslation?: boolean};
+  } = {locale, keyboard};
   if (language) {
     // Assign skipSyncUiDialogTranslation: true option in order to avoid shutting down the WDA session
     localizationOptions.language = Object.assign(language, {skipSyncUiDialogTranslation: true});
   }
-  return await /** @type {import('appium-ios-simulator').Simulator} */ (this.device).configureLocalization(localizationOptions);
+  return await assertSimulator.call(this, 'Localization configuration')
+    .configureLocalization(localizationOptions);
 }
+

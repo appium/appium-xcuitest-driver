@@ -1,19 +1,23 @@
 import {parseLocalizableStrings} from '../app-utils';
+import type {XCUITestDriver} from '../driver';
+import type {StringRecord} from '@appium/types';
 
 /**
  * Return the language-specific strings for an app
  *
- * @param {string} language - The language abbreviation to fetch app strings mapping for.
+ * @param language - The language abbreviation to fetch app strings mapping for.
  * If no language is provided then strings for the 'en language would be returned
- * @param {string|null} [stringFile=null] - Relative path to the corresponding .strings
+ * @param stringFile - Relative path to the corresponding .strings
  * file starting from the corresponding .lproj folder, e.g., `base/main.strings`. If omitted,
  * then Appium will make its best guess where the file is.
  *
- * @returns {Promise<import('@appium/types').StringRecord<string>>} A record of localized keys to localized text
- *
- * @this {XCUITestDriver}
+ * @returns A record of localized keys to localized text
  */
-export async function getStrings(language, stringFile = null) {
+export async function getStrings(
+  this: XCUITestDriver,
+  language: string,
+  stringFile: string | null = null,
+): Promise<StringRecord<string>> {
   this.log.debug(`Gettings strings for language '${language}' and string file '${stringFile}'`);
   return await parseLocalizableStrings.bind(this)(
     {
@@ -25,6 +29,3 @@ export async function getStrings(language, stringFile = null) {
   );
 }
 
-/**
- * @typedef {import('../driver').XCUITestDriver} XCUITestDriver
- */
