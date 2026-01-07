@@ -127,7 +127,7 @@ export async function mobileInstallCertificate(
       let remoteXPCConnection;
       try {
         const {Services} = await import('appium-ios-remotexpc');
-        let {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
+        const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
           this.opts.udid,
         );
         remoteXPCConnection = remoteXPC;
@@ -283,7 +283,7 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
     let remoteXPCConnection;
     try {
       const {Services} = await import('appium-ios-remotexpc');
-      let {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
+      const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
         this.opts.udid,
       );
       remoteXPCConnection = remoteXPC;
@@ -328,7 +328,7 @@ export async function mobileListCertificates(this: XCUITestDriver): Promise<Cert
     let remoteXPCConnection;
     try {
       const {Services} = await import('appium-ios-remotexpc');
-      let {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
+      const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
         this.opts.udid,
       );
       remoteXPCConnection = remoteXPC;
