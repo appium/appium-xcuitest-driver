@@ -1,3 +1,9 @@
+## [10.14.7](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.6...v10.14.7) (2026-01-08)
+
+### Miscellaneous Chores
+
+* Migrate index to typescript ([#2699](https://github.com/appium/appium-xcuitest-driver/issues/2699)) ([bb4c7ff](https://github.com/appium/appium-xcuitest-driver/commit/bb4c7ffb4cff23461c2f2e63ff626749972c3d65))
+
 ## [10.14.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.5...v10.14.6) (2026-01-07)
 
 ### Miscellaneous Chores
