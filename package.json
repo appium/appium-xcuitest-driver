@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.14.5",
+  "version": "10.14.7",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -61,24 +61,21 @@
       ]
     }
   },
-  "main": "./build/index.js",
+  "main": "./build/lib/index.js",
   "bin": {},
   "directories": {
     "lib": "lib"
   },
   "files": [
-    "index.js",
     "lib",
     "scripts",
-    "build/index.js",
-    "build/index.d.ts",
-    "build/lib",
+    "build",
     "!.DS_Store",
     "CHANGELOG.md",
     "LICENSE",
     "npm-shrinkwrap.json"
   ],
-  "types": "./build/index.d.ts",
+  "types": "./build/lib/index.d.ts",
   "dependencies": {
     "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
