@@ -8,6 +8,7 @@ import {log as defaultLogger} from '../logger';
 import { Devicectl } from 'node-devicectl';
 import type { AppiumLogger } from '@appium/types';
 import type { XCUITestDriver } from '../driver';
+import {AfcClient} from './afc-client';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -23,40 +24,50 @@ const INSTALLATION_STAGING_DIR = 'PublicStaging';
 /**
  * Retrieve a file from a real device
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param client AFC client instance
  * @param remotePath Relative path to the file on the device
  * @returns The file content as a buffer
  */
-export async function pullFile(afcService: any, remotePath: string): Promise<Buffer> {
-  const stream = await afcService.createReadStream(remotePath, {autoDestroy: true});
-  const pullPromise = new B((resolve, reject) => {
-    stream.on('close', resolve);
-    stream.on('error', reject);
-  }).timeout(IO_TIMEOUT_MS);
-  const buffers: Buffer[] = [];
-  stream.on('data', (data: Buffer) => buffers.push(data));
-  await pullPromise;
-  return Buffer.concat(buffers);
+export async function pullFile(client: AfcClient, remotePath: string): Promise<Buffer> {
+  // Wrap with timeout for ios-device operations (RemoteXPC handles its own timeouts)
+  return await B.resolve(client.getFileContents(remotePath)).timeout(IO_TIMEOUT_MS);
 }
 
 /**
  * Retrieve a folder from a real device
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param client AFC client instance
  * @param remoteRootPath Relative path to the folder on the device
  * @returns The folder content as a zipped base64-encoded buffer
  */
-export async function pullFolder(afcService: any, remoteRootPath: string): Promise<Buffer> {
+export async function pullFolder(client: AfcClient, remoteRootPath: string): Promise<Buffer> {
   const tmpFolder = await tempDir.openDir();
   try {
     let localTopItem: string | null = null;
     let countFilesSuccess = 0;
     let countFilesFail = 0;
     let countFolders = 0;
-    const pullPromises: B<void>[] = [];
-    await afcService.walkDir(remoteRootPath, true, async (remotePath: string, isDir: boolean) => {
+
+    if (client.isUsingRemoteXPC()) {
+      // remotexpc: use pull() method
+      await client.pull(remoteRootPath, tmpFolder, {
+        recursive: true,
+        overwrite: true,
+        callback: async (remotePath: string, localPath: string, isDirectory: boolean) => {
+          if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
+            localTopItem = localPath;
+          }
+          if (isDirectory) {
+            ++countFolders;
+          } else {
+            ++countFilesSuccess;
+          }
+        },
+      });
+    } else {
+      // ios-device: use walkDir method with stream-based pulls
+      const pullPromises: B<void>[] = [];
+      await client.walkDir(remoteRootPath, true, async (remotePath: string, isDir: boolean) => {
       const localPath = path.join(tmpFolder, remotePath);
       const dirname = isDir ? localPath : path.dirname(localPath);
       if (!(await folderExists(dirname))) {
@@ -70,7 +81,7 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
         return;
       }
 
-      const readStream = await afcService.createReadStream(remotePath, {autoDestroy: true});
+      const readStream = await client.createReadStream(remotePath, {autoDestroy: true});
       const writeStream = fs.createWriteStream(localPath, {autoClose: true});
       pullPromises.push(
         new B<void>((resolve) => {
@@ -101,9 +112,10 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
         }
       }
     });
-    // Wait for the rest of files to be pulled
-    if (!_.isEmpty(pullPromises)) {
-      await B.all(pullPromises);
+      // Wait for remaining file pulls to complete
+      if (!_.isEmpty(pullPromises)) {
+        await B.all(pullPromises);
+      }
     }
     defaultLogger.info(
       `Pulled ${util.pluralize('file', countFilesSuccess, true)} out of ` +
@@ -125,8 +137,7 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
 /**
  * Pushes a file to a real device
  *
- * @param afcService afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param client AFC client instance
  * @param localPathOrPayload Either full path to the source file
  * or a buffer payload to be written into the remote destination
  * @param remotePath Relative path to the file on the device. The remote
@@ -134,49 +145,26 @@ export async function pullFolder(afcService: any, remoteRootPath: string): Promi
  * @param opts Push file options
  */
 export async function pushFile(
-  afcService: any,
+  client: AfcClient,
   localPathOrPayload: string | Buffer,
   remotePath: string,
   opts: PushFileOptions = {}
 ): Promise<void> {
   const {timeoutMs = IO_TIMEOUT_MS} = opts;
   const timer = new timing.Timer().start();
-  await remoteMkdirp(afcService, path.dirname(remotePath));
-  const source = Buffer.isBuffer(localPathOrPayload)
-    ? localPathOrPayload
-    : fs.createReadStream(localPathOrPayload, {autoClose: true});
-  const writeStream = await afcService.createWriteStream(remotePath, {
-    autoDestroy: true,
-  });
-  writeStream.on('finish', writeStream.destroy);
-  let pushError: Error | null = null;
-  const filePushPromise = new B<void>((resolve, reject) => {
-    writeStream.on('close', () => {
-      if (pushError) {
-        reject(pushError);
-      } else {
-        resolve();
-      }
-    });
-    const onStreamError = (e: Error) => {
-      if (!Buffer.isBuffer(source)) {
-        source.unpipe(writeStream);
-      }
-      defaultLogger.debug(e);
-      pushError = e;
-    };
-    writeStream.on('error', onStreamError);
-    if (!Buffer.isBuffer(source)) {
-      source.on('error', onStreamError);
-    }
-  });
-  if (Buffer.isBuffer(source)) {
-    writeStream.write(source);
-    writeStream.end();
-  } else {
-    source.pipe(writeStream);
-  }
-  await filePushPromise.timeout(Math.max(timeoutMs, 60000));
+  await remoteMkdirp(client, path.dirname(remotePath));
+
+  // AfcClient handles the branching internally
+  const pushPromise = Buffer.isBuffer(localPathOrPayload)
+    ? client.setFileContents(remotePath, localPathOrPayload)
+    : client.writeFromStream(
+        remotePath,
+        fs.createReadStream(localPathOrPayload, {autoClose: true})
+      );
+
+  // Wrap with timeout
+  await B.resolve(pushPromise).timeout(Math.max(timeoutMs, 60000));
+
   const fileSize = Buffer.isBuffer(localPathOrPayload)
     ? localPathOrPayload.length
     : (await fs.stat(localPathOrPayload)).size;
@@ -189,15 +177,14 @@ export async function pushFile(
 /**
  * Pushes a folder to a real device
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param client AFC client instance
  * @param srcRootPath The full path to the source folder
  * @param dstRootPath The relative path to the destination folder. The folder
  * will be deleted if already exists.
  * @param opts Push folder options
  */
 export async function pushFolder(
-  afcService: any,
+  client: AfcClient,
   srcRootPath: string,
   dstRootPath: string,
   opts: PushFolderOptions = {}
@@ -228,16 +215,16 @@ export async function pushFolder(
     `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
       `${util.pluralize('file', filesToPush.length, true)} to push`,
   );
-  // create the folder structure first
+  // Create the folder structure
   try {
-    await afcService.deleteDirectory(dstRootPath);
+    await client.deleteDirectory(dstRootPath);
   } catch {}
-  await afcService.createDirectory(dstRootPath);
+
+  await client.createDirectory(dstRootPath);
   for (const relativeFolderPath of foldersToPush) {
-    // createDirectory does not accept folder names ending with a path separator
     const absoluteFolderPath = _.trimEnd(path.join(dstRootPath, relativeFolderPath), path.sep);
     if (absoluteFolderPath) {
-      await afcService.createDirectory(absoluteFolderPath);
+      await client.createDirectory(absoluteFolderPath);
     }
   }
   // do not forget about the root folder
@@ -250,29 +237,10 @@ export async function pushFolder(
     const absoluteSourcePath = path.join(srcRootPath, relativePath);
     const readStream = fs.createReadStream(absoluteSourcePath, {autoClose: true});
     const absoluteDestinationPath = path.join(dstRootPath, relativePath);
-    const writeStream = await afcService.createWriteStream(absoluteDestinationPath, {
-      autoDestroy: true,
-    });
-    writeStream.on('finish', writeStream.destroy);
-    let pushError: Error | null = null;
-    const filePushPromise = new B<void>((resolve, reject) => {
-      writeStream.on('close', () => {
-        if (pushError) {
-          reject(pushError);
-        } else {
-          resolve();
-        }
-      });
-      const onStreamError = (e: Error) => {
-        readStream.unpipe(writeStream);
-        defaultLogger.debug(e);
-        pushError = e;
-      };
-      writeStream.on('error', onStreamError);
-      readStream.on('error', onStreamError);
-    });
-    readStream.pipe(writeStream);
-    await filePushPromise.timeout(Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000));
+
+    // Use writeFromStream which handles both RemoteXPC and ios-device
+    const pushPromise = client.writeFromStream(absoluteDestinationPath, readStream);
+    await B.resolve(pushPromise).timeout(Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000));
   };
 
   if (enableParallelPush) {
@@ -563,34 +531,6 @@ export class RealDevice {
     }
     return true;
   }
-
-  /**
-   * @param bundleName The name of CFBundleName in Info.plist
-   *
-   * @returns A list of User level apps' bundle ids which has
-   *                          'CFBundleName' attribute as 'bundleName'.
-   */
-  async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
-    const service = await services.startInstallationProxyService(this.udid);
-    try {
-      const applications = await service.listApplications({
-        applicationType: 'User', returnAttributes: ['CFBundleIdentifier', 'CFBundleName']
-      });
-      return _.reduce(
-        applications,
-        (acc: string[], {CFBundleName}, key: string) => {
-          if (CFBundleName === bundleName) {
-            acc.push(key);
-          }
-          return acc;
-        },
-        [],
-      );
-    } finally {
-      service.close();
-    }
-  }
-
   async getPlatformVersion(): Promise<string> {
     return await utilities.getOSVersion(this.udid);
   }
@@ -771,24 +711,24 @@ async function folderExists(folderPath: string): Promise<boolean> {
  * Creates remote folder path recursively. Noop if the given path
  * already exists
  *
- * @param afcService Apple File Client service instance from
- * 'appium-ios-device' module
+ * @param client AFC client instance
  * @param remoteRoot The relative path to the remote folder structure
  * to be created
  */
-async function remoteMkdirp(afcService: any, remoteRoot: string): Promise<void> {
+async function remoteMkdirp(client: AfcClient, remoteRoot: string): Promise<void> {
   if (remoteRoot === '.' || remoteRoot === '/') {
     return;
   }
+
   try {
-    await afcService.listDirectory(remoteRoot);
+    await client.listDirectory(remoteRoot);
     return;
   } catch {
-    // This means that the directory is missing and we got an object not found error.
-    // Therefore, we are going to the parent
-    await remoteMkdirp(afcService, path.dirname(remoteRoot));
+    // Directory is missing, create parent first
+    await remoteMkdirp(client, path.dirname(remoteRoot));
   }
-  await afcService.createDirectory(remoteRoot);
+
+  await client.createDirectory(remoteRoot);
 }
 
 //#endregion
