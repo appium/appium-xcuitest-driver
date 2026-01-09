@@ -266,12 +266,12 @@ export class AfcClient {
   async walkDir(
     path: string,
     recursive: boolean,
-    callback: (path: string, isDir: boolean) => Promise<void>
+    onEntry: (path: string, isDir: boolean) => Promise<void>
   ): Promise<void> {
     if (this.isRemoteXPC) {
       throw new Error('RemoteXPC AFC service uses pull() method for recursive operations.');
     }
-    return await (this.service as IOSDeviceAfcService).walkDir(path, recursive, callback);
+    return await (this.service as IOSDeviceAfcService).walkDir(path, recursive, onEntry);
   }
 
   /**
