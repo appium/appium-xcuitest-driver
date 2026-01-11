@@ -1,11 +1,8 @@
 import _ from 'lodash';
-import {assertSimulator as _assertSimulator} from '../utils';
+import {requireSimulator} from '../utils';
 import { errors } from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {IncreaseContrastAction, IncreaseContrastResult} from './types';
-import type {Simulator} from 'appium-ios-simulator';
-
-const assertSimulator = (driver: XCUITestDriver): Simulator => _assertSimulator.call(driver, 'Content size ui command');
 
 const INCREASE_CONTRAST_CONFIG = [
     'enabled',
@@ -30,7 +27,8 @@ export async function mobileSetIncreaseContrast(
     );
   }
 
-  await assertSimulator(this).setIncreaseContrast(increaseContrast);
+  await requireSimulator(this, 'Setting increase contrast')
+    .setIncreaseContrast(increaseContrast);
 }
 
 /**
@@ -44,6 +42,7 @@ export async function mobileSetIncreaseContrast(
 export async function mobileGetIncreaseContrast(
   this: XCUITestDriver,
 ): Promise<IncreaseContrastResult> {
-  return await assertSimulator(this).getIncreaseContrast() as IncreaseContrastResult;
+  return await requireSimulator(this, 'Getting increase contrast')
+    .getIncreaseContrast() as IncreaseContrastResult;
 }
 

@@ -1,11 +1,8 @@
 import _ from 'lodash';
-import {assertSimulator as _assertSimulator} from '../utils';
+import {requireSimulator} from '../utils';
 import { errors } from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {ContentSizeAction, ContentSizeResult} from './types';
-import type {Simulator} from 'appium-ios-simulator';
-
-const assertSimulator = (driver: XCUITestDriver): Simulator => _assertSimulator.call(driver, 'Content size ui command');
 
 const CONTENT_SIZE = [
     'extra-small',
@@ -45,7 +42,7 @@ export async function mobileSetContentSize(
     );
   }
 
-  await assertSimulator(this).setContentSize(size);
+  await requireSimulator(this, 'Setting content size').setContentSize(size);
 }
 
 /**
@@ -62,6 +59,7 @@ export async function mobileSetContentSize(
 export async function mobileGetContentSize(
   this: XCUITestDriver,
 ): Promise<ContentSizeResult> {
-  return await assertSimulator(this).getContentSize() as ContentSizeResult;
+  return await requireSimulator(this, 'Getting content size')
+    .getContentSize() as ContentSizeResult;
 }
 
