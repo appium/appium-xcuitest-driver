@@ -15,16 +15,18 @@ export async function listConditionInducers(this: XCUITestDriver): Promise<Condi
   requireConditionInducerCompatibleDevice.call(this);
 
   if (isIos18OrNewer(this.opts)) {
-    const dvtConnection = await startRemoteXPC(this.device.udid);
+    let dvtConnection;
     try {
+      dvtConnection = await startRemoteXPC(this.device.udid);
       const result = await dvtConnection.conditionInducer.list();
       return result as Condition[];
     } catch (err: any) {
       this.log.error(`Failed to list condition inducers via RemoteXPC: ${err.message}`);
-      throw err;
     } finally {
-      this.log.info(`Closing remoteXPC connection for device ${this.device.udid}`);
-      await dvtConnection.remoteXPC.close();
+      if (dvtConnection) {
+        this.log.info(`Closing remoteXPC connection for device ${this.device.udid}`);
+        await dvtConnection.remoteXPC.close();
+      }
     }
   }
 
@@ -82,7 +84,7 @@ export async function enableConditionInducer(
       return true;
     } catch (err: any) {
       await closeRemoteXPC.call(this);
-      throw this.log.errorWithException(`Condition inducer '${profileID}' cannot be enabled: '${err.message}'`);
+      this.log.error(`Condition inducer '${profileID}' cannot be enabled: '${err.message}'`);
     }
   }
 
