@@ -1,3 +1,9 @@
+## [10.14.9](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.8...v10.14.9) (2026-01-12)
+
+### Miscellaneous Chores
+
+* remove unused getUserInstalledBundleIdsByBundleName API ([821596d](https://github.com/appium/appium-xcuitest-driver/commit/821596d800ce328bea834c6ca57b795db8c6e583))
+
 ## [10.14.8](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.7...v10.14.8) (2026-01-12)
 
 ### Miscellaneous Chores

@@ -536,6 +536,7 @@ export class RealDevice {
     }
     return true;
   }
+
   async getPlatformVersion(): Promise<string> {
     return await utilities.getOSVersion(this.udid);
   }
