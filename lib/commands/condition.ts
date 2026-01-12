@@ -2,8 +2,9 @@ import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import _ from 'lodash';
 import { isIos18OrNewer, requireRealDevice } from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
+import type {DVTServiceWithConnection} from '../device/remotexpc-types';
 import type {Condition} from './types';
+import {getRemoteXPCServices} from '../device/remotexpc-utils';
 
 /**
  * Get all available ConditionInducer configuration information, which can be used with
@@ -162,7 +163,7 @@ export async function disableConditionInducer(this: XCUITestDriver): Promise<boo
 }
 
 async function startRemoteXPC(udid: string): Promise<DVTServiceWithConnection> {
-  const {Services} = await import('appium-ios-remotexpc');
+  const Services = await getRemoteXPCServices();
   return Services.startDVTService(udid);
 }
 
