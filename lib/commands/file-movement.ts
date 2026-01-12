@@ -355,7 +355,7 @@ async function pushFileToRealDevice(
     this.log.debug((e as Error).stack);
     throw new Error(`Could not push the file to '${remotePath}'. Original error: ${(e as Error).message}`);
   } finally {
-    client.close();
+    await client.close();
   }
 }
 
@@ -448,7 +448,7 @@ async function pullFromRealDevice(
       ? (await realDevicePullFile(client, relativePath)).toString('base64')
       : (await realDevicePullFolder(client, relativePath)).toString();
   } finally {
-    client.close();
+    await client.close();
   }
 }
 
@@ -517,7 +517,7 @@ async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): P
     }
     throw e;
   } finally {
-    client.close();
+    await client.close();
   }
 }
 

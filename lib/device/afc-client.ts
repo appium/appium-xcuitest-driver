@@ -2,6 +2,7 @@ import type {Readable, Writable} from 'stream';
 import {Readable as ReadableStream} from 'stream';
 import {services} from 'appium-ios-device';
 import {getRemoteXPCServices} from './remotexpc-utils';
+import {log} from '../logger';
 
 /**
  * Type definitions for RemoteXPC Services module
@@ -75,10 +76,16 @@ export interface AfcPullOptions {
 export class AfcClient {
   private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
   private readonly isRemoteXPC: boolean;
+  private readonly remoteXPCConnection: any;
 
-  private constructor(service: RemoteXPCAfcService | IOSDeviceAfcService, isRemoteXPC: boolean) {
+  private constructor(
+    service: RemoteXPCAfcService | IOSDeviceAfcService,
+    isRemoteXPC: boolean,
+    remoteXPCConnection?: any
+  ) {
     this.service = service;
     this.isRemoteXPC = isRemoteXPC;
+    this.remoteXPCConnection = remoteXPCConnection;
   }
 
   /**
@@ -90,10 +97,28 @@ export class AfcClient {
    */
   static async createForDevice(udid: string, useRemoteXPC: boolean): Promise<AfcClient> {
     if (useRemoteXPC) {
-      const Services = await getRemoteXPCServices();
-      await Services.createRemoteXPCConnection(udid);
-      const afcService = await Services.startAfcService(udid);
-      return new AfcClient(afcService, true);
+      let remoteXPCConnection;
+      let succeeded = false;
+      try {
+        const Services = await getRemoteXPCServices();
+        const connectionResult = await Services.createRemoteXPCConnection(udid);
+        remoteXPCConnection = connectionResult.remoteXPC;
+        const afcService = await Services.startAfcService(udid);
+        const client = new AfcClient(afcService, true, remoteXPCConnection);
+        succeeded = true;
+        return client;
+      } catch (err: any) {
+        log.error(`Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
+      } finally {
+        // Only close connection if we failed (if succeeded, the client owns it)
+        if (remoteXPCConnection && !succeeded) {
+          try {
+            await remoteXPCConnection.close();
+          } catch {
+            // Ignore cleanup errors
+          }
+        }
+      }
     }
 
     const afcService = await services.startAfcService(udid);
@@ -120,13 +145,32 @@ export class AfcClient {
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
     if (useRemoteXPC) {
-      const Services = await getRemoteXPCServices();
-      await Services.createRemoteXPCConnection(udid);
-      const {houseArrestService} = await Services.startHouseArrestService(udid);
-      const afcService = isDocuments
-        ? await houseArrestService.vendDocuments(bundleId)
-        : await houseArrestService.vendContainer(bundleId);
-      return new AfcClient(afcService, true);
+      let remoteXPCConnection;
+      let succeeded = false;
+      try {
+        const Services = await getRemoteXPCServices();
+        const connectionResult = await Services.createRemoteXPCConnection(udid);
+        remoteXPCConnection = connectionResult.remoteXPC;
+        const {houseArrestService, remoteXPC: houseArrestRemoteXPC} = await Services.startHouseArrestService(udid);
+        // Use the remoteXPC from house arrest service if available, otherwise use the one from connection
+        remoteXPCConnection = houseArrestRemoteXPC || remoteXPCConnection;
+        const afcService = isDocuments
+          ? await houseArrestService.vendDocuments(bundleId)
+          : await houseArrestService.vendContainer(bundleId);
+        const client = new AfcClient(afcService, true, remoteXPCConnection);
+        succeeded = true;
+        return client;
+      } catch (err: any) {
+        log.error(`Failed to create AFC client for app via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
+      } finally {
+        if (remoteXPCConnection && !succeeded) {
+          try {
+            await remoteXPCConnection.close();
+          } catch {
+            // Ignore cleanup errors
+          }
+        }
+      }
     }
 
     const houseArrestService = await services.startHouseArrestService(udid);
@@ -290,10 +334,15 @@ export class AfcClient {
   }
 
   /**
-   * Close the AFC service connection
+   * Close the AFC service connection and remoteXPC connection if present
    */
-  close(): void {
+  async close(): Promise<void> {
     this.service.close();
+    if (this.remoteXPCConnection) {
+      try {
+        await this.remoteXPCConnection.close();
+      } catch {}
+    }
   }
 
   /**
