@@ -29,8 +29,10 @@ const INSTALLATION_STAGING_DIR = 'PublicStaging';
  * @returns The file content as a buffer
  */
 export async function pullFile(client: AfcClient, remotePath: string): Promise<Buffer> {
-  // Wrap with timeout for ios-device operations (RemoteXPC handles its own timeouts)
-  return await B.resolve(client.getFileContents(remotePath)).timeout(IO_TIMEOUT_MS);
+  return await B.resolve(client.getFileContents(remotePath)).timeout(
+    IO_TIMEOUT_MS,
+    `Timed out after ${IO_TIMEOUT_MS}ms while pulling file from '${remotePath}'`
+  );
 }
 
 /**
@@ -48,8 +50,7 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
     let countFilesFail = 0;
     let countFolders = 0;
 
-    if (client.isUsingRemoteXPC()) {
-      // remotexpc: use pull() method
+    try {
       await client.pull(remoteRootPath, tmpFolder, {
         recursive: true,
         overwrite: true,
@@ -64,10 +65,11 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
           }
         },
       });
-    } else {
-      // ios-device: use walkDir method with stream-based pulls
-      const pullPromises: B<void>[] = [];
-      await client.walkDir(remoteRootPath, true, async (remotePath: string, isDir: boolean) => {
+    } catch (err: any) {
+      // If pull() is not supported, use walkDir() method
+      if (err.message?.includes('uses walkDir()')) {
+        const pullPromises: B<void>[] = [];
+        await client.walkDir(remoteRootPath, true, async (remotePath: string, isDir: boolean) => {
       const localPath = path.join(tmpFolder, remotePath);
       const dirname = isDir ? localPath : path.dirname(localPath);
       if (!(await folderExists(dirname))) {
@@ -112,9 +114,13 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
         }
       }
     });
-      // Wait for remaining file pulls to complete
-      if (!_.isEmpty(pullPromises)) {
-        await B.all(pullPromises);
+        // Wait for remaining file pulls to complete
+        if (!_.isEmpty(pullPromises)) {
+          await B.all(pullPromises);
+        }
+      } else {
+        // Re-throw if it's not the expected error
+        throw err;
       }
     }
     defaultLogger.info(
@@ -238,7 +244,6 @@ export async function pushFolder(
     const readStream = fs.createReadStream(absoluteSourcePath, {autoClose: true});
     const absoluteDestinationPath = path.join(dstRootPath, relativePath);
 
-    // Use writeFromStream which handles both RemoteXPC and ios-device
     const pushPromise = client.writeFromStream(absoluteDestinationPath, readStream);
     await B.resolve(pushPromise).timeout(Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000));
   };

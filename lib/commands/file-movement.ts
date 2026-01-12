@@ -15,9 +15,14 @@ import {AfcClient} from '../device/afc-client';
 
 //#region Type Definitions
 
-interface ServiceResult {
+interface CreateServiceResult {
   client: AfcClient;
   relativePath: string;
+}
+
+interface CreateAfcClientOptions {
+  bundleId?: string | null;
+  containerType?: string | null;
 }
 
 //#endregion
@@ -221,15 +226,18 @@ export async function mobilePullFolder(this: XCUITestDriver, remotePath: string)
   return await this.pullFolder(remotePath);
 }
 
+//#endregion
+
+//#region Private Helper Functions
+
+/**
+ * Delete file or folder helper
+ */
 async function deleteFileOrFolder(this: XCUITestDriver, remotePath: string): Promise<void> {
   return this.isSimulator()
     ? await deleteFromSimulator.bind(this)(remotePath)
     : await deleteFromRealDevice.bind(this)(remotePath);
 }
-
-//#endregion
-
-//#region Private Helper Functions
 
 /**
  * Check if container type refers to documents container
@@ -255,15 +263,18 @@ function verifyIsSubPath(originalPath: string, root: string): void {
  */
 async function createAfcClient(
   this: XCUITestDriver,
-  bundleId?: string | null,
-  containerType?: string | null,
+  opts: CreateAfcClientOptions = {}
 ): Promise<AfcClient> {
+  const {bundleId, containerType} = opts;
   const udid = this.device.udid as string;
   const useIos18 = isIos18OrNewer(this.opts);
 
   if (bundleId) {
     const skipDocumentsCheck = this.settings.getSettings().skipDocumentsContainerCheck ?? false;
-    return await AfcClient.createForApp(udid, bundleId, containerType ?? null, useIos18, skipDocumentsCheck);
+    return await AfcClient.createForApp(udid, bundleId, useIos18, {
+      containerType: containerType ?? null,
+      skipDocumentsCheck,
+    });
   }
 
   return await AfcClient.createForDevice(udid, useIos18);
@@ -275,10 +286,10 @@ async function createAfcClient(
 async function createService(
   this: XCUITestDriver,
   remotePath: string,
-): Promise<ServiceResult> {
+): Promise<CreateServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
     const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(this)(remotePath);
-    const client = await createAfcClient.bind(this)(bundleId, containerType);
+    const client = await createAfcClient.bind(this)({bundleId, containerType});
     let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
       : pathInContainer;
@@ -288,7 +299,7 @@ async function createService(
     }
     return {client, relativePath};
   } else {
-    const client = await createAfcClient.bind(this)();
+    const client = await createAfcClient.bind(this)({});
     return {client, relativePath: remotePath};
   }
 }
@@ -444,9 +455,9 @@ async function pullFromRealDevice(
       throw new Error(`The requested path is not a folder. Path: '${remotePath}'`);
     }
 
-    return !isDirectory
-      ? (await realDevicePullFile(client, relativePath)).toString('base64')
-      : (await realDevicePullFolder(client, relativePath)).toString();
+    return isDirectory
+      ? (await realDevicePullFolder(client, relativePath)).toString()
+      : (await realDevicePullFile(client, relativePath)).toString('base64');
   } finally {
     await client.close();
   }

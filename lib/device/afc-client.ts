@@ -5,16 +5,23 @@ import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 
 /**
+ * RemoteXPC connection interface
+ */
+export interface RemoteXPCConnection {
+  close(): Promise<void>;
+}
+
+/**
  * Type definitions for RemoteXPC Services module
  */
 export interface RemoteXPCServices {
   createRemoteXPCConnection(udid: string): Promise<{
     tunnelConnection: {host: string; port: number};
-    remoteXPC: unknown;
+    remoteXPC: RemoteXPCConnection;
   }>;
   startAfcService(udid: string): Promise<RemoteXPCAfcService>;
   startHouseArrestService(udid: string): Promise<{
-    remoteXPC: unknown;
+    remoteXPC: RemoteXPCConnection;
     houseArrestService: RemoteXPCHouseArrestService;
   }>;
 }
@@ -67,6 +74,14 @@ export interface AfcPullOptions {
 }
 
 /**
+ * Options for creating an AFC client for app container access
+ */
+export interface CreateForAppOptions {
+  containerType?: string | null;
+  skipDocumentsCheck?: boolean;
+}
+
+/**
  * Unified AFC Client
  *
  * Provides a unified interface for file operations on iOS devices,
@@ -76,16 +91,30 @@ export interface AfcPullOptions {
 export class AfcClient {
   private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
   private readonly isRemoteXPC: boolean;
-  private readonly remoteXPCConnection: any;
+  private readonly remoteXPCConnection?: RemoteXPCConnection;
 
   private constructor(
     service: RemoteXPCAfcService | IOSDeviceAfcService,
     isRemoteXPC: boolean,
-    remoteXPCConnection?: any
+    remoteXPCConnection?: RemoteXPCConnection
   ) {
     this.service = service;
     this.isRemoteXPC = isRemoteXPC;
     this.remoteXPCConnection = remoteXPCConnection;
+  }
+
+  /**
+   * Get service as RemoteXPC AFC service
+   */
+  private get remoteXPCAfcService(): RemoteXPCAfcService {
+    return this.service as RemoteXPCAfcService;
+  }
+
+  /**
+   * Get service as iOS Device AFC service
+   */
+  private get iosDeviceAfcService(): IOSDeviceAfcService {
+    return this.service as IOSDeviceAfcService;
   }
 
   /**
@@ -130,18 +159,17 @@ export class AfcClient {
    *
    * @param udid - Device UDID
    * @param bundleId - App bundle identifier
-   * @param containerType - Container type ('documents' for documents, null for app container)
-   * @param useRemoteXPC - Whether to use remotexpc
-   * @param skipDocumentsCheck - Skip checking for documents container (skipDocumentsContainerCheck setting)
+   * @param useRemoteXPC - Whether to use remotexpc (use isIos18OrNewer(opts) to determine)
+   * @param options - Optional configuration for container access
    * @returns AFC client instance
    */
   static async createForApp(
     udid: string,
     bundleId: string,
-    containerType: string | null,
     useRemoteXPC: boolean,
-    skipDocumentsCheck: boolean = false
+    options?: CreateForAppOptions
   ): Promise<AfcClient> {
+    const {containerType = null, skipDocumentsCheck = false} = options ?? {};
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
     if (useRemoteXPC) {
@@ -185,9 +213,9 @@ export class AfcClient {
    */
   async isDirectory(path: string): Promise<boolean> {
     if (this.isRemoteXPC) {
-      return await (this.service as RemoteXPCAfcService).isdir(path);
+      return await this.remoteXPCAfcService.isdir(path);
     }
-    const fileInfo = await (this.service as IOSDeviceAfcService).getFileInfo(path);
+    const fileInfo = await this.iosDeviceAfcService.getFileInfo(path);
     return fileInfo.isDirectory();
   }
 
@@ -196,9 +224,9 @@ export class AfcClient {
    */
   async listDirectory(path: string): Promise<string[]> {
     if (this.isRemoteXPC) {
-      return await (this.service as RemoteXPCAfcService).listdir(path);
+      return await this.remoteXPCAfcService.listdir(path);
     }
-    return await (this.service as IOSDeviceAfcService).listDirectory(path);
+    return await this.iosDeviceAfcService.listDirectory(path);
   }
 
   /**
@@ -206,9 +234,9 @@ export class AfcClient {
    */
   async createDirectory(path: string): Promise<void> {
     if (this.isRemoteXPC) {
-      await (this.service as RemoteXPCAfcService).mkdir(path);
+      await this.remoteXPCAfcService.mkdir(path);
     } else {
-      await (this.service as IOSDeviceAfcService).createDirectory(path);
+      await this.iosDeviceAfcService.createDirectory(path);
     }
   }
 
@@ -217,9 +245,9 @@ export class AfcClient {
    */
   async deleteDirectory(path: string): Promise<void> {
     if (this.isRemoteXPC) {
-      await (this.service as RemoteXPCAfcService).rm(path, true);
+      await this.remoteXPCAfcService.rm(path, true);
     } else {
-      await (this.service as IOSDeviceAfcService).deleteDirectory(path);
+      await this.iosDeviceAfcService.deleteDirectory(path);
     }
   }
 
@@ -228,11 +256,11 @@ export class AfcClient {
    */
   async getFileContents(path: string): Promise<Buffer> {
     if (this.isRemoteXPC) {
-      return await (this.service as RemoteXPCAfcService).getFileContents(path);
+      return await this.remoteXPCAfcService.getFileContents(path);
     }
 
     // For ios-device, use stream-based approach
-    const stream = await (this.service as IOSDeviceAfcService).createReadStream(path, {
+    const stream = await this.iosDeviceAfcService.createReadStream(path, {
       autoDestroy: true,
     });
     const buffers: Buffer[] = [];
@@ -248,7 +276,7 @@ export class AfcClient {
    */
   async setFileContents(path: string, data: Buffer): Promise<void> {
     if (this.isRemoteXPC) {
-      await (this.service as RemoteXPCAfcService).setFileContents(path, data);
+      await this.remoteXPCAfcService.setFileContents(path, data);
     } else {
       // For ios-device, convert buffer to stream and use writeFromStream
       const bufferStream = ReadableStream.from([data]);
@@ -261,13 +289,17 @@ export class AfcClient {
    */
   async writeFromStream(path: string, stream: Readable): Promise<void> {
     if (this.isRemoteXPC) {
-      await (this.service as RemoteXPCAfcService).writeFromStream(path, stream);
+      await this.remoteXPCAfcService.writeFromStream(path, stream);
     } else {
-      const writeStream = await (this.service as IOSDeviceAfcService).createWriteStream(path, {
+      const writeStream = await this.iosDeviceAfcService.createWriteStream(path, {
         autoDestroy: true,
       });
 
-      writeStream.on('finish', (writeStream as any).destroy);
+      writeStream.on('finish', () => {
+        if (typeof writeStream.destroy === 'function') {
+          writeStream.destroy();
+        }
+      });
 
       return new Promise((resolve, reject) => {
         writeStream.on('close', resolve);
@@ -288,10 +320,10 @@ export class AfcClient {
   async createReadStream(path: string, options?: {autoDestroy?: boolean}): Promise<Readable> {
     if (this.isRemoteXPC) {
       // RemoteXPC doesn't expose createReadStream directly; use getFileContents with a stream wrapper
-      const buffer = await (this.service as RemoteXPCAfcService).getFileContents(path);
+      const buffer = await this.remoteXPCAfcService.getFileContents(path);
       return ReadableStream.from(buffer);
     }
-    return await (this.service as IOSDeviceAfcService).createReadStream(path, options);
+    return await this.iosDeviceAfcService.createReadStream(path, options);
   }
 
   /**
@@ -301,7 +333,7 @@ export class AfcClient {
     if (this.isRemoteXPC) {
       throw new Error('RemoteXPC AFC service does not support createWriteStream directly. Use setFileContents or writeFromStream instead.');
     }
-    return await (this.service as IOSDeviceAfcService).createWriteStream(path, options);
+    return await this.iosDeviceAfcService.createWriteStream(path, options);
   }
 
   /**
@@ -315,7 +347,7 @@ export class AfcClient {
     if (this.isRemoteXPC) {
       throw new Error('RemoteXPC AFC service uses pull() method for recursive operations.');
     }
-    return await (this.service as IOSDeviceAfcService).walkDir(path, recursive, onEntry);
+    return await this.iosDeviceAfcService.walkDir(path, recursive, onEntry);
   }
 
   /**
@@ -327,7 +359,7 @@ export class AfcClient {
     options: AfcPullOptions
   ): Promise<void> {
     if (this.isRemoteXPC) {
-      await (this.service as RemoteXPCAfcService).pull(remotePath, localPath, options);
+      await this.remoteXPCAfcService.pull(remotePath, localPath, options);
     } else {
       throw new Error('iOS Device AFC service uses walkDir() method for recursive operations.');
     }
@@ -343,12 +375,5 @@ export class AfcClient {
         await this.remoteXPCConnection.close();
       } catch {}
     }
-  }
-
-  /**
-   * Check if this is using RemoteXPC
-   */
-  isUsingRemoteXPC(): boolean {
-    return this.isRemoteXPC;
   }
 }

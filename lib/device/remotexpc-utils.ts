@@ -1,3 +1,4 @@
+import {node} from 'appium/support';
 import type {RemoteXPCServices} from './afc-client';
 
 /**
@@ -24,11 +25,12 @@ export async function getRemoteXPCServices(): Promise<RemoteXPCServices> {
     const error = err as Error;
 
     if (error.message.includes('Cannot find module')) {
+      const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', __filename);
       throw new Error(
         'Failed to import appium-ios-remotexpc module. ' +
           'This module is required for iOS 18 and above device operations. ' +
-          'Please ensure appium-ios-remotexpc is installed: ' +
-          'npm install appium-ios-remotexpc. ' +
+          'Please install it by running: ' +
+          `cd "${moduleRoot}" && npm install appium-ios-remotexpc@^0.x. ` +
           `Original error: ${error.message}`
       );
     }
