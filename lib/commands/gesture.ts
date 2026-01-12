@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import _ from 'lodash';
-import {assertSimulator} from '../utils';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {ActionSequence, Element} from '@appium/types';
 import type {Direction} from './types';
@@ -15,7 +15,7 @@ const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
  * @throws {Error} If called on a real device
  */
 export async function mobileShake(this: XCUITestDriver): Promise<void> {
-  await assertSimulator.call(this, 'Shake device').shake();
+  await requireSimulator(this, 'Shake device').shake();
 }
 
 /**

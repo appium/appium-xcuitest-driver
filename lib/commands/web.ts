@@ -3,7 +3,7 @@ import {timing, util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
 import B, {TimeoutError, AggregateError} from 'bluebird';
 import _ from 'lodash';
-import {assertSimulator} from '../utils';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Element, Cookie, Size, Position, Rect} from '@appium/types';
 import type {AtomsElement} from './types';
@@ -1014,7 +1014,7 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
  * @throws {errors.InvalidArgumentError} If the preferences argument is invalid
  */
 export async function mobileUpdateSafariPreferences(this: XCUITestDriver, preferences: Record<string, any>): Promise<void> {
-  const simulator = assertSimulator.call(this, 'Updating Safari preferences');
+  const simulator = requireSimulator(this, 'Updating Safari preferences');
   if (!_.isPlainObject(preferences)) {
     throw new errors.InvalidArgumentError('"preferences" argument must be a valid object');
   }

@@ -1,6 +1,6 @@
 import { Pyidevice } from '../device/clients/py-ios-device-client';
 import {fs, tempDir, util} from 'appium/support';
-import {encodeBase64OrUpload} from '../utils';
+import {encodeBase64OrUpload, requireRealDevice} from '../utils';
 import {errors} from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {SubProcess} from 'teen_process';
@@ -85,9 +85,7 @@ export async function mobileStartPcap(
   timeLimitSec = 180,
   forceRestart = false,
 ): Promise<void> {
-  if (this.isSimulator()) {
-    throw this.log.errorWithException('Network traffic capture only works on real devices');
-  }
+  requireRealDevice(this, 'Network traffic capture');
 
   if (this._trafficCapture?.isCapturing()) {
     this.log.info(`There is an active traffic capture process`);

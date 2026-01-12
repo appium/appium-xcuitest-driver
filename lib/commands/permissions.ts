@@ -1,9 +1,8 @@
 import _ from 'lodash';
 import {PermissionService} from './enum';
-import {assertSimulator as _assertSimulator} from '../utils';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {PermissionState} from './types';
-import type {Simulator} from 'appium-ios-simulator';
 
 /**
  * Resets the given permission for the active application under test.
@@ -58,9 +57,8 @@ export async function mobileGetPermission(
   if (!service) {
     throw new Error(`The 'service' option is expected to be present`);
   }
-  assertSimulator(this);
 
-  return await (this.device as Simulator).getPermission(
+  return await requireSimulator(this, 'Getting permission').getPermission(
     bundleId, String(service)
   ) as PermissionState;
 }
@@ -82,9 +80,6 @@ export async function mobileSetPermissions(
   if (!_.isPlainObject(access)) {
     throw new Error(`The 'access' option is expected to be a map`);
   }
-  assertSimulator(this);
 
-  await (this.device as Simulator).setPermissions(bundleId, access);
+  await requireSimulator(this, 'Setting permissions').setPermissions(bundleId, access);
 }
-
-const assertSimulator = (driver: XCUITestDriver) => _assertSimulator.call(driver, 'Permission-related operations');

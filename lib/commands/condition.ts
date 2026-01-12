@@ -1,6 +1,6 @@
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import _ from 'lodash';
-import { isIos18OrNewer } from '../utils';
+import { isIos18OrNewer, requireRealDevice } from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
 import type {Condition} from './types';
@@ -12,7 +12,7 @@ import type {Condition} from './types';
  * @see {@link https://help.apple.com/xcode/mac/current/#/dev308429d42}
  */
 export async function listConditionInducers(this: XCUITestDriver): Promise<Condition[]> {
-  requireConditionInducerCompatibleDevice.call(this);
+  requireRealDevice(this, 'Condition inducer');
 
   if (isIos18OrNewer(this.opts)) {
     const dvtConnection = await startRemoteXPC(this.device.udid);
@@ -63,7 +63,7 @@ export async function enableConditionInducer(
   conditionID: string,
   profileID: string,
 ): Promise<boolean> {
-  requireConditionInducerCompatibleDevice.call(this);
+  requireRealDevice(this, 'Condition inducer');
 
   if (isIos18OrNewer(this.opts)) {
     if (this._remoteXPCConditionInducerConnection) {
@@ -118,7 +118,7 @@ export async function enableConditionInducer(
  * @see {@link https://help.apple.com/xcode/mac/current/#/dev308429d42}
  */
 export async function disableConditionInducer(this: XCUITestDriver): Promise<boolean> {
-  requireConditionInducerCompatibleDevice.call(this);
+  requireRealDevice(this, 'Condition inducer');
 
   if (isIos18OrNewer(this.opts)) {
     if (!this._remoteXPCConditionInducerConnection) {
@@ -158,12 +158,6 @@ export async function disableConditionInducer(this: XCUITestDriver): Promise<boo
       this._conditionInducerService.close();
       this._conditionInducerService = null;
     }
-  }
-}
-
-function requireConditionInducerCompatibleDevice(this: XCUITestDriver): void {
-  if (this.isSimulator()) {
-    throw this.log.errorWithException('Condition inducer only works on real devices');
   }
 }
 

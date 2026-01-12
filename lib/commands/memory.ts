@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { errors } from 'appium/driver';
+import {requireRealDevice} from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {RealDevice} from '../device/real-device-management';
 
 /**
  * Simulates Low Memory warning on the given application
@@ -14,12 +14,7 @@ export async function mobileSendMemoryWarning(
   this: XCUITestDriver,
   bundleId: string,
 ): Promise<void> {
-  if (!this.isRealDevice()) {
-    throw new Error('Memory warning simulation is only supported on real devices');
-  }
-
-  const device = this.device as RealDevice;
-
+  const device = requireRealDevice(this, 'Memory warning simulation');
   const appInfos = await device.devicectl.listApps(bundleId);
   if (_.isEmpty(appInfos)) {
     throw new errors.InvalidArgumentError(

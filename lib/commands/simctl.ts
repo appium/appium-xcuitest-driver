@@ -1,4 +1,5 @@
 import { errors } from 'appium/driver';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
 
@@ -56,12 +57,10 @@ export async function mobileSimctl(
   args: string[] = [],
   timeout?: number,
 ): Promise<SimctlExecResponse> {
-  if (!this.isSimulator()) {
-    throw new errors.UnsupportedOperationError(`Only simulator is supported.`);
-  }
+  const simulator: Simulator = requireSimulator(this, 'simctl command');
 
   if (!this.opts.udid) {
-    throw new errors.InvalidArgumentError(`Unknown device or simulator UDID: '${this.opts.udid}'`);
+    throw new errors.InvalidArgumentError(`Unknown simulator UDID: '${this.opts.udid}'`);
   }
 
   if (!(SUBCOMMANDS_HAS_DEVICE as readonly string[]).includes(command)) {
@@ -69,7 +68,7 @@ export async function mobileSimctl(
       `Available subcommands are ${SUBCOMMANDS_HAS_DEVICE.join(',')}`);
   }
 
-  const result = await (this.device as Simulator).simctl.exec(
+  const result = await simulator.simctl.exec(
     command as typeof SUBCOMMANDS_HAS_DEVICE[number],
     {args: [this.opts.udid, ...args], timeout}
   );
