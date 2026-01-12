@@ -1,3 +1,9 @@
+## [10.14.8](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.7...v10.14.8) (2026-01-12)
+
+### Miscellaneous Chores
+
+* Unify real device and simulator requirement checks ([#2700](https://github.com/appium/appium-xcuitest-driver/issues/2700)) ([0e5c98a](https://github.com/appium/appium-xcuitest-driver/commit/0e5c98a259cd4365148fa7b8152cd45e8788ea4c))
+
 ## [10.14.7](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.6...v10.14.7) (2026-01-08)
 
 ### Miscellaneous Chores
