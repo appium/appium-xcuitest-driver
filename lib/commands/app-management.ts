@@ -9,10 +9,10 @@ import {
   onPostConfigureApp,
   onDownloadApp,
 } from '../app-utils';
+import {requireRealDevice} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {AppState} from './enum';
 import type {Simulator} from 'appium-ios-simulator';
-import type {RealDevice} from '../device/real-device-management';
 
 /**
  * Installs the given application to the device under test.
@@ -185,11 +185,7 @@ export async function mobileKillApp(
   this: XCUITestDriver,
   bundleId: string,
 ): Promise<boolean> {
-  if (!this.isRealDevice()) {
-    throw new errors.UnsupportedOperationError('A real device is required');
-  }
-
-  return await (this.device as RealDevice).terminateApp(bundleId, String(this.opts.platformVersion));
+  return await requireRealDevice(this, 'Killing app').terminateApp(bundleId, String(this.opts.platformVersion));
 }
 
 /**
@@ -310,11 +306,7 @@ export async function mobileListApps(
   this: XCUITestDriver,
   applicationType: 'User' | 'System' = 'User',
 ): Promise<Record<string, any>[]> {
-  if (!this.isRealDevice()) {
-    throw new errors.NotImplementedError(`This extension is only supported on real devices`);
-  }
-
-  const service = await services.startInstallationProxyService(this.device.udid);
+  const service = await services.startInstallationProxyService(requireRealDevice(this, 'Listing apps').udid);
   try {
     return await service.listApplications({applicationType});
   } finally {

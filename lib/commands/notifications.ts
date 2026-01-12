@@ -1,8 +1,8 @@
 import {errors} from 'appium/driver';
 import _ from 'lodash';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {PushPayload, NotificationType} from './types';
-import type {Simulator} from 'appium-ios-simulator';
 
 /**
  * Simulates push notification delivery to a simulated device.
@@ -20,9 +20,7 @@ export async function mobilePushNotification(
   bundleId: string,
   payload: PushPayload,
 ): Promise<void> {
-  if (!this.isSimulator()) {
-    throw new Error('This extension only works on Simulator');
-  }
+  const simulator = requireSimulator(this, 'Push notification');
 
   if (!bundleId) {
     throw new errors.InvalidArgumentError(
@@ -41,7 +39,7 @@ export async function mobilePushNotification(
         `Got ${JSON.stringify(payload.aps)} instead`,
     );
   }
-  await (this.device as Simulator).pushNotification({
+  await simulator.pushNotification({
     ...payload,
     'Simulator Target Bundle': bundleId,
   });
