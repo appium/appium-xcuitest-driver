@@ -9,25 +9,9 @@ import type {Services} from 'appium-ios-remotexpc';
 let cachedRemoteXPCServices: typeof Services | null = null;
 
 /**
- * Module root and version
+ * Module root and version cached at initialization
  */
-let moduleRoot: string | undefined;
-let remoteXpcVersion: string | undefined;
-
-try {
-  const root = node.getModuleRootSync('appium-xcuitest-driver', __filename);
-  if (root) {
-    moduleRoot = root;
-    const packageJsonPath = path.join(moduleRoot, 'package.json');
-    const packageJsonContent = readFileSync(packageJsonPath, 'utf8');
-    if (packageJsonContent) {
-      const packageJson = JSON.parse(packageJsonContent);
-      remoteXpcVersion = packageJson.optionalDependencies?.['appium-ios-remotexpc'];
-    }
-  }
-} catch {
-  // Error messages will skip install hints
-}
+const {moduleRoot, remoteXpcVersion} = fetchInstallInfo();
 
 /**
  * Get the RemoteXPC Services module dynamically
@@ -59,7 +43,7 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
       if (moduleRoot && remoteXpcVersion) {
         errorMessage +=
           ' Please install it by running: ' +
-          `cd "${moduleRoot}" && npm install "appium-ios-remotexpc@${remoteXpcVersion}"`;
+          `cd "${moduleRoot}" && npm install "appium-ios-remotexpc@${remoteXpcVersion}".`;
       }
 
       errorMessage += ` Original error: ${error.message}`;
@@ -72,4 +56,33 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
         `Original error: ${error.message}`
     );
   }
+}
+
+/**
+ * Fetch module root and appium-ios-remotexpc version from package.json
+ *
+ * @returns Object containing moduleRoot and remoteXpcVersion
+ */
+function fetchInstallInfo(): {
+  moduleRoot: string | undefined;
+  remoteXpcVersion: string | undefined;
+} {
+  try {
+    const root = node.getModuleRootSync('appium-xcuitest-driver', __filename);
+    if (root) {
+      const packageJsonPath = path.join(root, 'package.json');
+      const packageJsonContent = readFileSync(packageJsonPath, 'utf8');
+      if (packageJsonContent) {
+        const packageJson = JSON.parse(packageJsonContent);
+        return {
+          moduleRoot: root,
+          remoteXpcVersion: packageJson.optionalDependencies?.['appium-ios-remotexpc'],
+        };
+      }
+    }
+  } catch {
+    // Error messages will skip install hints
+  }
+
+  return {moduleRoot: undefined, remoteXpcVersion: undefined};
 }
