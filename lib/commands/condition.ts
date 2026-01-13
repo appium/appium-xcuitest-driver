@@ -2,7 +2,7 @@ import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import _ from 'lodash';
 import { isIos18OrNewer, requireRealDevice } from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {DVTServiceWithConnection} from '../device/remotexpc-types';
+import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
 import type {Condition} from './types';
 import {getRemoteXPCServices} from '../device/remotexpc-utils';
 
