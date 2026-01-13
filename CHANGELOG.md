@@ -1,3 +1,9 @@
+## [10.14.10](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.9...v10.14.10) (2026-01-12)
+
+### Bug Fixes
+
+* fallback to existing method ([#2701](https://github.com/appium/appium-xcuitest-driver/issues/2701)) ([20658dd](https://github.com/appium/appium-xcuitest-driver/commit/20658ddc3229594cabdeaf24b0804d430ccba234))
+
 ## [10.14.9](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.8...v10.14.9) (2026-01-12)
 
 ### Miscellaneous Chores
