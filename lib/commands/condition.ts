@@ -54,8 +54,7 @@ export interface IConditionInducer {
 export async function listConditionInducers(this: XCUITestDriver): Promise<Condition[]> {
   requireRealDevice(this, 'Condition inducer');
 
-  const facade = createConditionInducer(this);
-  return await facade.list();
+  return await (this._conditionInducer ?? createConditionInducer(this)).list();
 }
 
 /**
