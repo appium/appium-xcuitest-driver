@@ -1,6 +1,7 @@
 import { isIos18OrNewer } from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {BatteryInfo} from './types';
+import {getRemoteXPCServices} from '../device/remotexpc-utils';
 
 /**
  * Reads the battery information from the device under test.
@@ -16,7 +17,7 @@ export async function mobileGetBatteryInfo(
   if (isIos18OrNewer(this.opts) && this.isRealDevice()) {
     let remoteXPCConnection;
     try {
-      const {Services} = await import('appium-ios-remotexpc');
+      const Services = await getRemoteXPCServices();
       const { diagnosticsService, remoteXPC } = await Services.startDiagnosticsService(this.device.udid);
       remoteXPCConnection = remoteXPC;
       batteryInfoFromShimService = await diagnosticsService.ioregistry({
