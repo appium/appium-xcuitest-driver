@@ -1,5 +1,6 @@
-import {node, fs} from 'appium/support';
+import {node} from 'appium/support';
 import path from 'node:path';
+import {readFileSync} from 'node:fs';
 import type {Services} from 'appium-ios-remotexpc';
 
 /**
@@ -10,23 +11,23 @@ let cachedRemoteXPCServices: typeof Services | null = null;
 /**
  * Module root and version
  */
-let moduleRoot: string;
+let moduleRoot: string | undefined;
 let remoteXpcVersion: string | undefined;
 
-(async () => {
-  try {
-    moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', __filename)!;
+try {
+  const root = node.getModuleRootSync('appium-xcuitest-driver', __filename);
+  if (root) {
+    moduleRoot = root;
     const packageJsonPath = path.join(moduleRoot, 'package.json');
-    const packageJsonContent = await fs.readFile(packageJsonPath, 'utf8');
+    const packageJsonContent = readFileSync(packageJsonPath, 'utf8');
     if (packageJsonContent) {
       const packageJson = JSON.parse(packageJsonContent);
       remoteXpcVersion = packageJson.optionalDependencies?.['appium-ios-remotexpc'];
     }
-  } catch {
-    // Fallback if reading package.json fails
-    remoteXpcVersion = '^0.x';
   }
-})();
+} catch {
+  // Error messages will skip install hints
+}
 
 /**
  * Get the RemoteXPC Services module dynamically
@@ -51,14 +52,18 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
     const error = err as Error;
 
     if (error.message.includes('Cannot find module')) {
-      const version = remoteXpcVersion || '^0.x';
-      throw new Error(
+      let errorMessage =
         'Failed to import appium-ios-remotexpc module. ' +
-          'This module is required for iOS 18 and above device operations. ' +
-          'Please install it by running: ' +
-          `cd "${moduleRoot}" && npm install "appium-ios-remotexpc@${version}" ` +
-          `Original error: ${error.message}`
-      );
+        'This module is required for iOS 18 and above device operations.';
+
+      if (moduleRoot && remoteXpcVersion) {
+        errorMessage +=
+          ' Please install it by running: ' +
+          `cd "${moduleRoot}" && npm install "appium-ios-remotexpc@${remoteXpcVersion}"`;
+      }
+
+      errorMessage += ` Original error: ${error.message}`;
+      throw new Error(errorMessage);
     }
 
     throw new Error(
