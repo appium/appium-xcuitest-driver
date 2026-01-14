@@ -166,7 +166,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   async enable(conditionID: string, profileID: string): Promise<boolean> {
     if (this.connection) {
       throw new Error(
-        `Condition inducer is already running. Disable it first in order to call enable again.`
+        `Condition inducer is already running. Disable it first in order to call 'enable' again.`
       );
     }
 
