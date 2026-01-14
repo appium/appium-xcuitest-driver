@@ -314,7 +314,8 @@ async function createConditionInducer(
 
   const xpcInducer = new RemoteXPCConditionInducer(driver.device.udid, driver.log);
   try {
-    await xpcInducer.startConnection();
+    const connection = await xpcInducer.startConnection();
+    await connection.remoteXPC.close();
   } catch (err: any) {
     driver.log.warn(
       `Unable to use RemoteXPC-based condition inducer for device ${driver.device.udid}, ` +
