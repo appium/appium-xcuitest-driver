@@ -11,20 +11,6 @@ export interface RemoteXPCConnection {
   close(): Promise<void>;
 }
 
-/**
- * Type definitions for RemoteXPC Services module
- */
-export interface RemoteXPCServices {
-  createRemoteXPCConnection(udid: string): Promise<{
-    tunnelConnection: {host: string; port: number};
-    remoteXPC: RemoteXPCConnection;
-  }>;
-  startAfcService(udid: string): Promise<RemoteXPCAfcService>;
-  startHouseArrestService(udid: string): Promise<{
-    remoteXPC: RemoteXPCConnection;
-    houseArrestService: RemoteXPCHouseArrestService;
-  }>;
-}
 
 /**
  * Type for RemoteXPC AFC service (appium-ios-remotexpc)
