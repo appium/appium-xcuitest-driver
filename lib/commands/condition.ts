@@ -266,7 +266,7 @@ class InstrumentConditionInducer implements IConditionInducer {
 
   async disable(): Promise<boolean> {
     if (!this.service) {
-      this.log.warn('Condition inducer server is not started');
+      this.log.warn('Condition inducer server has not started');
       return false;
     }
 
