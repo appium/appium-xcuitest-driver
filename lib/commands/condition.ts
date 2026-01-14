@@ -54,7 +54,8 @@ export interface IConditionInducer {
 export async function listConditionInducers(this: XCUITestDriver): Promise<Condition[]> {
   requireRealDevice(this, 'Condition inducer');
 
-  return await (this._conditionInducer ?? createConditionInducer(this)).list();
+  const facade = this._conditionInducer ?? await createConditionInducer(this);
+  return await facade.list();
 }
 
 /**
@@ -88,7 +89,7 @@ export async function enableConditionInducer(
     );
   }
 
-  const facade = createConditionInducer(this);
+  const facade = await createConditionInducer(this);
   this._conditionInducer = facade;
 
   try {
@@ -212,7 +213,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
     return this.connection !== null;
   }
 
-  private async startConnection(): Promise<DVTServiceWithConnection> {
+  public async startConnection(): Promise<DVTServiceWithConnection> {
     const Services = await getRemoteXPCServices();
     return Services.startDVTService(this.udid);
   }
@@ -304,12 +305,23 @@ class InstrumentConditionInducer implements IConditionInducer {
  * Factory function to create the appropriate condition inducer implementation
  * based on the iOS version
  */
-function createConditionInducer(
+async function createConditionInducer(
   driver: XCUITestDriver,
-): IConditionInducer {
-  if (isIos18OrNewer(driver.opts)) {
-    return new RemoteXPCConditionInducer(driver.device.udid, driver.log);
+): Promise<IConditionInducer> {
+  if (!isIos18OrNewer(driver.opts)) {
+    return new InstrumentConditionInducer(driver.device.udid, driver.log);
   }
-  return new InstrumentConditionInducer(driver.device.udid, driver.log);
+
+  const xpcInducer = new RemoteXPCConditionInducer(driver.device.udid, driver.log);
+  try {
+    await xpcInducer.startConnection();
+  } catch (err: any) {
+    driver.log.warn(
+      `Unable to use RemoteXPC-based condition inducer for device ${driver.device.udid}, ` +
+      `falling back to the legacy implementation: ${err.message}`
+    );
+    return new InstrumentConditionInducer(driver.device.udid, driver.log);
+  }
+  return xpcInducer;
 }
 
