@@ -167,7 +167,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   async enable(conditionID: string, profileID: string): Promise<boolean> {
     if (this.connection) {
       throw new Error(
-        `Condition inducer is already running. Disable it first in order to call enable again.`
+        `Condition inducer is already running. Disable it first in order to call 'enable' again.`
       );
     }
 
@@ -267,7 +267,7 @@ class InstrumentConditionInducer implements IConditionInducer {
 
   async disable(): Promise<boolean> {
     if (!this.service) {
-      this.log.warn('Condition inducer server is not started');
+      this.log.warn('Condition inducer server has not started');
       return false;
     }
 
