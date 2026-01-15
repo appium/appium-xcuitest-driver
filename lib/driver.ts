@@ -39,6 +39,7 @@ import * as biometricCommands from './commands/biometric';
 import * as certificateCommands from './commands/certificate';
 import * as clipboardCommands from './commands/clipboard';
 import * as conditionCommands from './commands/condition';
+import type {IConditionInducer} from './commands/condition';
 import * as contentSizeCommands from './commands/content-size';
 import * as contextCommands from './commands/context';
 import * as deviceInfoCommands from './commands/device-info';
@@ -121,7 +122,6 @@ import type { PerfRecorder } from './commands/performance';
 import type { AudioRecorder } from './commands/record-audio';
 import type { TrafficCapture } from './commands/pcap';
 import type { ScreenRecorder } from './commands/recordscreen';
-import type { DVTServiceWithConnection } from 'appium-ios-remotexpc';
 import type { IOSDeviceLog } from './device/log/ios-device-log';
 import type { IOSSimulatorLog } from './device/log/ios-simulator-log';
 import type { IOSCrashLog } from './device/log/ios-crash-log';
@@ -262,8 +262,7 @@ export class XCUITestDriver
   _perfRecorders: PerfRecorder[];
   webElementsCache: LRUCache<any, any>;
 
-  _conditionInducerService: any | null; // needs types
-  _remoteXPCConditionInducerConnection: DVTServiceWithConnection | null; // RemoteXPC DVT connection for iOS>=18 condition inducer
+  _conditionInducer: IConditionInducer | null; // Condition inducer facade that abstracts implementation details
   _isSafariIphone: boolean | undefined;
   _isSafariNotched: boolean | undefined;
   _waitingAtoms: WaitingAtoms;
@@ -429,7 +428,7 @@ export class XCUITestDriver
       this._perfRecorders = [];
     }
 
-    if (this._conditionInducerService || this._remoteXPCConditionInducerConnection) {
+    if (this._conditionInducer) {
       try {
         await this.disableConditionInducer();
       } catch (err) {
@@ -1743,8 +1742,7 @@ export class XCUITestDriver
     this.pageLoadMs = 6000;
     this.landscapeWebCoordsOffset = 0;
     this._remote = null;
-    this._conditionInducerService = null;
-    this._remoteXPCConditionInducerConnection = null;
+    this._conditionInducer = null;
 
     this.webElementsCache = new LRUCache({
       max: WEB_ELEMENTS_CACHE_SIZE,
