@@ -59,7 +59,7 @@ export interface IOSDeviceAfcService {
 export interface AfcPullOptions {
   recursive?: boolean;
   overwrite?: boolean;
-  callback?: (remotePath: string, localPath: string, isDirectory: boolean) => Promise<void>;
+  onEntry?: (remotePath: string, localPath: string, isDirectory: boolean) => Promise<void>;
 }
 
 /**
@@ -330,7 +330,7 @@ export class AfcClient {
    *
    * @param remotePath - Remote path on the device (file or directory)
    * @param localPath - Local destination path
-   * @param options - Pull options (recursive, overwrite, callback)
+   * @param options - Pull options (recursive, overwrite, onEntry)
    */
   async pull(
     remotePath: string,
@@ -338,7 +338,13 @@ export class AfcClient {
     options: AfcPullOptions = {}
   ): Promise<void> {
     if (this.isRemoteXPC) {
-      await this.remoteXPCAfcService.pull(remotePath, localPath, options);
+      // RemoteXPC expects 'callback' property, so map onEntry -> callback
+      const remoteXpcOptions = {
+        ...options,
+        callback: options.onEntry,
+      };
+      delete remoteXpcOptions.onEntry;
+      await this.remoteXPCAfcService.pull(remotePath, localPath, remoteXpcOptions);
     } else {
       await this.pullWithWalkDir(remotePath, localPath, options);
     }
@@ -353,7 +359,7 @@ export class AfcClient {
     localPath: string,
     options: AfcPullOptions
   ): Promise<void> {
-    const {recursive = false, overwrite = true, callback} = options;
+    const {recursive = false, overwrite = true, onEntry} = options;
 
     const isDir = await this.isDirectory(remotePath);
 
@@ -369,8 +375,8 @@ export class AfcClient {
 
       await this.pullSingleFile(remotePath, localFilePath);
 
-      if (callback) {
-        await callback(remotePath, localFilePath, false);
+      if (onEntry) {
+        await onEntry(remotePath, localFilePath, false);
       }
       return;
     }
@@ -391,8 +397,8 @@ export class AfcClient {
     // Create the root directory
     await mkdirp(localRootDir);
 
-    if (callback) {
-      await callback(remotePath, localRootDir, true);
+    if (onEntry) {
+      await onEntry(remotePath, localRootDir, true);
     }
 
     // Walk the remote directory and pull files
@@ -405,8 +411,8 @@ export class AfcClient {
 
       if (isDirectory) {
         await mkdirp(localEntryPath);
-        if (callback) {
-          await callback(entryPath, localEntryPath, true);
+        if (onEntry) {
+          await onEntry(entryPath, localEntryPath, true);
         }
       } else {
         // Ensure parent directory exists
@@ -419,8 +425,8 @@ export class AfcClient {
 
         await this.pullSingleFile(entryPath, localEntryPath);
 
-        if (callback) {
-          await callback(entryPath, localEntryPath, false);
+        if (onEntry) {
+          await onEntry(entryPath, localEntryPath, false);
         }
       }
     });

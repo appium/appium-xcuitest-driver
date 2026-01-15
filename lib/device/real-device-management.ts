@@ -52,7 +52,7 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
     await client.pull(remoteRootPath, tmpFolder, {
       recursive: true,
       overwrite: true,
-      callback: async (remotePath: string, localPath: string, isDirectory: boolean) => {
+      onEntry: async (remotePath: string, localPath: string, isDirectory: boolean) => {
         if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
           localTopItem = localPath;
         }
