@@ -79,32 +79,17 @@ export interface CreateForAppOptions {
  */
 export class AfcClient {
   private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
-  private readonly isRemoteXPC: boolean;
   private readonly remoteXPCConnection?: RemoteXPCConnection;
 
   private constructor(
     service: RemoteXPCAfcService | IOSDeviceAfcService,
-    isRemoteXPC: boolean,
     remoteXPCConnection?: RemoteXPCConnection
   ) {
     this.service = service;
-    this.isRemoteXPC = isRemoteXPC;
     this.remoteXPCConnection = remoteXPCConnection;
   }
 
-  /**
-   * Get service as RemoteXPC AFC service
-   */
-  private get remoteXPCAfcService(): RemoteXPCAfcService {
-    return this.service as RemoteXPCAfcService;
-  }
-
-  /**
-   * Get service as iOS Device AFC service
-   */
-  private get iosDeviceAfcService(): IOSDeviceAfcService {
-    return this.service as IOSDeviceAfcService;
-  }
+  //#region Public Methods
 
   /**
    * Create an AFC client for device
@@ -115,32 +100,22 @@ export class AfcClient {
    */
   static async createForDevice(udid: string, useRemoteXPC: boolean): Promise<AfcClient> {
     if (useRemoteXPC) {
-      let remoteXPCConnection;
-      let succeeded = false;
-      try {
+      const client = await AfcClient.withRemoteXPCConnection(async () => {
         const Services = await getRemoteXPCServices();
         const connectionResult = await Services.createRemoteXPCConnection(udid);
-        remoteXPCConnection = connectionResult.remoteXPC;
         const afcService = await Services.startAfcService(udid);
-        const client = new AfcClient(afcService, true, remoteXPCConnection);
-        succeeded = true;
+        return {
+          service: afcService,
+          connection: connectionResult.remoteXPC,
+        };
+      });
+      if (client) {
         return client;
-      } catch (err: any) {
-        log.error(`Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
-      } finally {
-        // Only close connection if we failed (if succeeded, the client owns it)
-        if (remoteXPCConnection && !succeeded) {
-          try {
-            await remoteXPCConnection.close();
-          } catch {
-            // Ignore cleanup errors
-          }
-        }
       }
     }
 
     const afcService = await services.startAfcService(udid);
-    return new AfcClient(afcService, false);
+    return new AfcClient(afcService);
   }
 
   /**
@@ -162,31 +137,22 @@ export class AfcClient {
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
     if (useRemoteXPC) {
-      let remoteXPCConnection;
-      let succeeded = false;
-      try {
+      const client = await AfcClient.withRemoteXPCConnection(async () => {
         const Services = await getRemoteXPCServices();
         const connectionResult = await Services.createRemoteXPCConnection(udid);
-        remoteXPCConnection = connectionResult.remoteXPC;
         const {houseArrestService, remoteXPC: houseArrestRemoteXPC} = await Services.startHouseArrestService(udid);
-        // Use the remoteXPC from house arrest service if available, otherwise use the one from connection
-        remoteXPCConnection = houseArrestRemoteXPC || remoteXPCConnection;
         const afcService = isDocuments
           ? await houseArrestService.vendDocuments(bundleId)
           : await houseArrestService.vendContainer(bundleId);
-        const client = new AfcClient(afcService, true, remoteXPCConnection);
-        succeeded = true;
+        // Use the remoteXPC from house arrest service if available, otherwise use the one from connection
+        const connection = houseArrestRemoteXPC || connectionResult.remoteXPC;
+        return {
+          service: afcService,
+          connection,
+        };
+      });
+      if (client) {
         return client;
-      } catch (err: any) {
-        log.error(`Failed to create AFC client for app via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
-      } finally {
-        if (remoteXPCConnection && !succeeded) {
-          try {
-            await remoteXPCConnection.close();
-          } catch {
-            // Ignore cleanup errors
-          }
-        }
       }
     }
 
@@ -194,7 +160,7 @@ export class AfcClient {
     const afcService = isDocuments
       ? await houseArrestService.vendDocuments(bundleId)
       : await houseArrestService.vendContainer(bundleId);
-    return new AfcClient(afcService, false);
+    return new AfcClient(afcService);
   }
 
   /**
@@ -266,11 +232,11 @@ export class AfcClient {
   async setFileContents(path: string, data: Buffer): Promise<void> {
     if (this.isRemoteXPC) {
       await this.remoteXPCAfcService.setFileContents(path, data);
-    } else {
-      // For ios-device, convert buffer to stream and use writeFromStream
-      const bufferStream = ReadableStream.from([data]);
-      return await this.writeFromStream(path, bufferStream);
+      return;
     }
+    // For ios-device, convert buffer to stream and use writeFromStream
+    const bufferStream = ReadableStream.from([data]);
+    return await this.writeFromStream(path, bufferStream);
   }
 
   /**
@@ -279,49 +245,29 @@ export class AfcClient {
   async writeFromStream(path: string, stream: Readable): Promise<void> {
     if (this.isRemoteXPC) {
       await this.remoteXPCAfcService.writeFromStream(path, stream);
-    } else {
-      const writeStream = await this.iosDeviceAfcService.createWriteStream(path, {
-        autoDestroy: true,
-      });
-
-      writeStream.on('finish', () => {
-        if (typeof writeStream.destroy === 'function') {
-          writeStream.destroy();
-        }
-      });
-
-      return new Promise((resolve, reject) => {
-        writeStream.on('close', resolve);
-        const onError = (e: Error) => {
-          stream.unpipe(writeStream);
-          reject(e);
-        };
-        writeStream.on('error', onError);
-        stream.on('error', onError);
-        stream.pipe(writeStream);
-      });
+      return;
     }
-  }
 
-  /**
-   * Create a read stream for a file.
-   */
-  async createReadStream(remotePath: string, options?: {autoDestroy?: boolean}): Promise<Readable> {
-    if (this.isRemoteXPC) {
-      // Use readToStream which returns a streaming Readable
-      return await this.remoteXPCAfcService.readToStream(remotePath);
-    }
-    return await this.iosDeviceAfcService.createReadStream(remotePath, options);
-  }
+    const writeStream = await this.createWriteStream(path, {
+      autoDestroy: true,
+    });
 
-  /**
-   * Create a write stream for a file
-   */
-  async createWriteStream(path: string, options?: {autoDestroy?: boolean}): Promise<Writable> {
-    if (this.isRemoteXPC) {
-      throw new Error('RemoteXPC AFC service does not support createWriteStream directly. Use setFileContents or writeFromStream instead.');
-    }
-    return await this.iosDeviceAfcService.createWriteStream(path, options);
+    writeStream.on('finish', () => {
+      if (typeof writeStream.destroy === 'function') {
+        writeStream.destroy();
+      }
+    });
+
+    return new Promise((resolve, reject) => {
+      writeStream.on('close', resolve);
+      const onError = (e: Error) => {
+        stream.unpipe(writeStream);
+        reject(e);
+      };
+      writeStream.on('error', onError);
+      stream.on('error', onError);
+      stream.pipe(writeStream);
+    });
   }
 
   /**
@@ -348,6 +294,95 @@ export class AfcClient {
     } else {
       await this.pullWithWalkDir(remotePath, localPath, options);
     }
+  }
+
+  /**
+   * Close the AFC service connection and remoteXPC connection if present
+   */
+  async close(): Promise<void> {
+    this.service.close();
+    if (this.remoteXPCConnection) {
+      try {
+        await this.remoteXPCConnection.close();
+      } catch {}
+    }
+  }
+
+  //#endregion
+
+  //#region Private Methods
+
+  /**
+   * Check if this client is using RemoteXPC
+   */
+  private get isRemoteXPC(): boolean {
+    return !!this.remoteXPCConnection;
+  }
+
+  /**
+   * Helper to safely execute remoteXPC operations with connection cleanup
+   * @param operation - Async operation that returns an AfcClient
+   * @returns AfcClient on success, null on failure
+   */
+  private static async withRemoteXPCConnection<T extends RemoteXPCAfcService | IOSDeviceAfcService>(
+    operation: () => Promise<{service: T; connection: RemoteXPCConnection}>
+  ): Promise<AfcClient | null> {
+    let remoteXPCConnection: RemoteXPCConnection | undefined;
+    let succeeded = false;
+    try {
+      const {service, connection} = await operation();
+      remoteXPCConnection = connection;
+      const client = new AfcClient(service, remoteXPCConnection);
+      succeeded = true;
+      return client;
+    } catch (err: any) {
+      log.error(`Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
+      return null;
+    } finally {
+      // Only close connection if we failed (if succeeded, the client owns it)
+      if (remoteXPCConnection && !succeeded) {
+        try {
+          await remoteXPCConnection.close();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+    }
+  }
+
+  /**
+   * Get service as RemoteXPC AFC service
+   */
+  private get remoteXPCAfcService(): RemoteXPCAfcService {
+    return this.service as RemoteXPCAfcService;
+  }
+
+  /**
+   * Get service as iOS Device AFC service
+   */
+  private get iosDeviceAfcService(): IOSDeviceAfcService {
+    return this.service as IOSDeviceAfcService;
+  }
+
+  /**
+   * Create a read stream for a file (internal use only).
+   */
+  private async createReadStream(remotePath: string, options?: {autoDestroy?: boolean}): Promise<Readable> {
+    if (this.isRemoteXPC) {
+      // Use readToStream which returns a streaming Readable
+      return await this.remoteXPCAfcService.readToStream(remotePath);
+    }
+    return await this.iosDeviceAfcService.createReadStream(remotePath, options);
+  }
+
+  /**
+   * Create a write stream for a file
+   */
+  private async createWriteStream(path: string, options?: {autoDestroy?: boolean}): Promise<Writable> {
+    if (this.isRemoteXPC) {
+      throw new Error('RemoteXPC AFC service does not support createWriteStream directly. Use setFileContents or writeFromStream instead.');
+    }
+    return await this.iosDeviceAfcService.createWriteStream(path, options);
   }
 
   /**
@@ -468,15 +503,5 @@ export class AfcClient {
     }
   }
 
-  /**
-   * Close the AFC service connection and remoteXPC connection if present
-   */
-  async close(): Promise<void> {
-    this.service.close();
-    if (this.remoteXPCConnection) {
-      try {
-        await this.remoteXPCConnection.close();
-      } catch {}
-    }
-  }
+  //#endregion
 }
