@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import B, {TimeoutError} from 'bluebird';
-import {fs, tempDir, mkdirp, zip, util, timing} from 'appium/support';
+import {fs, tempDir, zip, util, timing} from 'appium/support';
 import path from 'path';
 import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
@@ -47,90 +47,29 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
   try {
     let localTopItem: string | null = null;
     let countFilesSuccess = 0;
-    let countFilesFail = 0;
     let countFolders = 0;
 
-    try {
-      await client.pull(remoteRootPath, tmpFolder, {
-        recursive: true,
-        overwrite: true,
-        callback: async (remotePath: string, localPath: string, isDirectory: boolean) => {
-          if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
-            localTopItem = localPath;
-          }
-          if (isDirectory) {
-            ++countFolders;
-          } else {
-            ++countFilesSuccess;
-          }
-        },
-      });
-    } catch (err: any) {
-      // If pull() is not supported, use walkDir() method
-      if (err.message?.includes('uses walkDir()')) {
-        const pullPromises: B<void>[] = [];
-        await client.walkDir(remoteRootPath, true, async (remotePath: string, isDir: boolean) => {
-      const localPath = path.join(tmpFolder, remotePath);
-      const dirname = isDir ? localPath : path.dirname(localPath);
-      if (!(await folderExists(dirname))) {
-        await mkdirp(dirname);
-      }
-      if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
-        localTopItem = localPath;
-      }
-      if (isDir) {
-        ++countFolders;
-        return;
-      }
-
-      const readStream = await client.createReadStream(remotePath, {autoDestroy: true});
-      const writeStream = fs.createWriteStream(localPath, {autoClose: true});
-      pullPromises.push(
-        new B<void>((resolve) => {
-          writeStream.on('close', () => {
-            ++countFilesSuccess;
-            resolve();
-          });
-          const onStreamingError = (e: Error) => {
-            readStream.unpipe(writeStream);
-            defaultLogger.warn(
-              `Cannot pull '${remotePath}' to '${localPath}'. ` +
-                `The file will be skipped. Original error: ${e.message}`,
-            );
-            ++countFilesFail;
-            resolve();
-          };
-          writeStream.on('error', onStreamingError);
-          readStream.on('error', onStreamingError);
-        }).timeout(IO_TIMEOUT_MS),
-      );
-      readStream.pipe(writeStream);
-      if (pullPromises.length >= MAX_IO_CHUNK_SIZE) {
-        await B.any(pullPromises);
-        for (let i = pullPromises.length - 1; i >= 0; i--) {
-          if (pullPromises[i].isFulfilled()) {
-            pullPromises.splice(i, 1);
-          }
+    await client.pull(remoteRootPath, tmpFolder, {
+      recursive: true,
+      overwrite: true,
+      callback: async (remotePath: string, localPath: string, isDirectory: boolean) => {
+        if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
+          localTopItem = localPath;
         }
-      }
+        if (isDirectory) {
+          ++countFolders;
+        } else {
+          ++countFilesSuccess;
+        }
+      },
     });
-        // Wait for remaining file pulls to complete
-        if (!_.isEmpty(pullPromises)) {
-          await B.all(pullPromises);
-        }
-      } else {
-        // Re-throw if it's not the expected error
-        throw err;
-      }
-    }
+
     defaultLogger.info(
-      `Pulled ${util.pluralize('file', countFilesSuccess, true)} out of ` +
-        `${countFilesSuccess + countFilesFail} and ${util.pluralize(
-          'folder',
-          countFolders,
-          true,
-        )} ` +
-        `from '${remoteRootPath}'`,
+      `Pulled ${util.pluralize('file', countFilesSuccess, true)} and ${util.pluralize(
+        'folder',
+        countFolders,
+        true,
+      )} from '${remoteRootPath}'`,
     );
     return await zip.toInMemoryZip(localTopItem ? path.dirname(localTopItem) : tmpFolder, {
       encodeToBase64: true,
@@ -698,20 +637,6 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
 function isPreferDevicectlEnabled(): boolean {
   return ['yes', 'true', '1'].includes(_.toLower(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL));
 };
-
-/**
- * Checks a presence of a local folder.
- *
- * @param folderPath Full path to the local folder
- * @returns True if the folder exists and is actually a folder
- */
-async function folderExists(folderPath: string): Promise<boolean> {
-  try {
-    return (await fs.stat(folderPath)).isDirectory();
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Creates remote folder path recursively. Noop if the given path
