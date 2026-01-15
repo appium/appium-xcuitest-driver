@@ -1,3 +1,14 @@
+## [10.14.11](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.10...v10.14.11) (2026-01-15)
+
+### Bug Fixes
+
+* remove removed xcode version arg from build-wda and convert it to mjs ([#2706](https://github.com/appium/appium-xcuitest-driver/issues/2706)) ([b4a40d8](https://github.com/appium/appium-xcuitest-driver/commit/b4a40d8e560bcaa7aea88aa1459b02d9e289a520))
+
+### Code Refactoring
+
+* centralize remoteXPC initialization  ([#2703](https://github.com/appium/appium-xcuitest-driver/issues/2703)) ([c9ec568](https://github.com/appium/appium-xcuitest-driver/commit/c9ec5684413164e2df14cd4b4dcd48aff0c5a369))
+* Incapsulate condition inducer implementation details ([#2704](https://github.com/appium/appium-xcuitest-driver/issues/2704)) ([d5f4064](https://github.com/appium/appium-xcuitest-driver/commit/d5f40648aee2a334b79335c3181ac0610d17a38b))
+
 ## [10.14.10](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.9...v10.14.10) (2026-01-12)
 
 ### Bug Fixes
