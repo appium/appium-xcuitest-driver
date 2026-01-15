@@ -1,15 +1,14 @@
-const {WebDriverAgent} = require('appium-webdriveragent');
-const xcode = require('appium-xcode');
-const {Simctl} = require('node-simctl');
-const {getSimulator} = require('appium-ios-simulator');
-const {logger} = require('appium/support');
-const {parseArgValue} = require('./utils');
+import {WebDriverAgent} from 'appium-webdriveragent';
+import * as xcode from 'appium-xcode';
+import {Simctl} from 'node-simctl';
+import {getSimulator} from 'appium-ios-simulator';
+import {logger} from 'appium/support.js';
+import {parseArgValue} from './utils.js';
 
 const log = logger.getLogger('WDA');
 
 async function build() {
   const customDevice = parseArgValue('name');
-  const xcodeVersion = await xcode.getVersion(true);
   const platformVersion = parseArgValue('sdk') || (await xcode.getMaxIOSSDK());
   const iosDevices = await new Simctl().getDevices(platformVersion, 'iOS');
   const verifyDevicePresence = (info) => {
@@ -27,7 +26,7 @@ async function build() {
     platform: deviceInfo.platform,
     checkExistence: false,
   });
-  const wda = new WebDriverAgent(xcodeVersion, {
+  const wda = new WebDriverAgent({
     iosSdkVersion: platformVersion,
     platformVersion,
     showXcodeLog: true,
