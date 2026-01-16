@@ -476,6 +476,34 @@ export class RealDevice {
     return true;
   }
 
+  /**
+   * ! This method is used by appium-webdriveragent package
+   *
+   * @param bundleName The name of CFBundleName in Info.plist
+   * @returns A list of User level apps' bundle ids which has
+   * 'CFBundleName' attribute as 'bundleName'.
+   */
+  async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
+    const service = await services.startInstallationProxyService(this.udid);
+    try {
+      const applications = await service.listApplications({
+        applicationType: 'User', returnAttributes: ['CFBundleIdentifier', 'CFBundleName']
+      });
+      return _.reduce(
+        applications,
+        (acc: string[], {CFBundleName}, key: string) => {
+          if (CFBundleName === bundleName) {
+            acc.push(key);
+          }
+          return acc;
+        },
+        [],
+      );
+    } finally {
+      service.close();
+    }
+  }
+
   async getPlatformVersion(): Promise<string> {
     return await utilities.getOSVersion(this.udid);
   }
