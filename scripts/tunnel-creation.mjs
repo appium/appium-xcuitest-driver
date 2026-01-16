@@ -52,7 +52,7 @@ class TunnelCreator {
 
   /**
    * Update tunnel registry with new tunnel information
-   * @type {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
+   * @param {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
    * @returns {Promise<import('appium-ios-remotexpc').TunnelRegistry>} Updated tunnel registry
    */
   async updateTunnelRegistry(results) {
@@ -141,11 +141,12 @@ class TunnelCreator {
 
   /**
    * Create tunnel for a single device
-   * @param {Device} device - Device object
+   * @param {import('appium-ios-remotexpc').UsbmuxDevice} device - Device object
    * @param {import('tls').ConnectionOptions} tlsOptions - TLS options
    * @returns {Promise<import('appium-ios-remotexpc').TunnelResult & { socket?: any; socketInfo?: import('appium-ios-remotexpc').SocketInfo }>} Tunnel result
    */
   async createTunnelForDevice(device, tlsOptions) {
+
     const udid = device.Properties.SerialNumber;
 
     log.info(`\n--- Processing device: ${udid} ---`);
@@ -328,6 +329,10 @@ async function main() {
   const tunnelRegistryPort = parseArg(args, '--tunnel-registry-port');
   if (tunnelRegistryPort !== undefined) {
     tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
+  }
+
+  if (!BOOTSTRAP_PATH) {
+    throw new Error(`BOOTSTRAP_PATH is null`);
   }
 
   const packageInfo = JSON.parse(

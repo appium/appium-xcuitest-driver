@@ -10,6 +10,13 @@ const log = logger.getLogger('WDA');
 async function build() {
   const customDevice = parseArgValue('name');
   const platformVersion = parseArgValue('sdk') || (await xcode.getMaxIOSSDK());
+
+  if (!platformVersion) {
+    throw new Error(
+      'Cannot determine iOS SDK version to build for. Please specify --sdk=<version> or ensure Xcode and its command-line tools are installed (try `xcodebuild -showsdks` or `xcode-select --print-path`).'
+    );
+  }
+
   const iosDevices = await new Simctl().getDevices(platformVersion, 'iOS');
   const verifyDevicePresence = (info) => {
     if (!info) {
