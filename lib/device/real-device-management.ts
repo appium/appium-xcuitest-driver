@@ -565,10 +565,11 @@ export class RealDevice {
   }
 
   /**
-   * @param bundleName The name of CFBundleName in Info.plist
+   * ! This method is used by appium-webdriveragent package 
    *
+   * @param bundleName The name of CFBundleName in Info.plist
    * @returns A list of User level apps' bundle ids which has
-   *                          'CFBundleName' attribute as 'bundleName'.
+   * 'CFBundleName' attribute as 'bundleName'.
    */
   async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
     const service = await services.startInstallationProxyService(this.udid);
