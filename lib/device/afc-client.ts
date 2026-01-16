@@ -145,7 +145,7 @@ export class AfcClient {
           ? await houseArrestService.vendDocuments(bundleId)
           : await houseArrestService.vendContainer(bundleId);
         // Use the remoteXPC from house arrest service if available, otherwise use the one from connection
-        const connection = houseArrestRemoteXPC || connectionResult.remoteXPC;
+        const connection = houseArrestRemoteXPC ?? connectionResult.remoteXPC;
         return {
           service: afcService,
           connection,
@@ -248,7 +248,7 @@ export class AfcClient {
       return;
     }
 
-    const writeStream = await this.createWriteStream(path, {
+    const writeStream = await this.iosDeviceAfcService.createWriteStream(path, {
       autoDestroy: true,
     });
 
@@ -376,16 +376,6 @@ export class AfcClient {
   }
 
   /**
-   * Create a write stream for a file
-   */
-  private async createWriteStream(path: string, options?: {autoDestroy?: boolean}): Promise<Writable> {
-    if (this.isRemoteXPC) {
-      throw new Error('RemoteXPC AFC service does not support createWriteStream directly. Use setFileContents or writeFromStream instead.');
-    }
-    return await this.iosDeviceAfcService.createWriteStream(path, options);
-  }
-
-  /**
    * Internal implementation of pull for ios-device using walkDir.
    * Walks the remote directory tree and pulls files to local filesystem.
    */
@@ -404,15 +394,7 @@ export class AfcClient {
         ? path.join(localPath, path.posix.basename(remotePath))
         : localPath;
 
-      if (!overwrite && await this.localPathExists(localFilePath)) {
-        throw new Error(`Local file already exists: ${localFilePath}`);
-      }
-
-      await this.pullSingleFile(remotePath, localFilePath);
-
-      if (onEntry) {
-        await onEntry(remotePath, localFilePath, false);
-      }
+      await this.pullFileWithChecks(remotePath, localFilePath, overwrite, onEntry);
       return;
     }
 
@@ -454,21 +436,39 @@ export class AfcClient {
         const parentDir = path.dirname(localEntryPath);
         await mkdirp(parentDir);
 
-        if (!overwrite && await this.localPathExists(localEntryPath)) {
-          throw new Error(`Local file already exists: ${localEntryPath}`);
-        }
-
-        await this.pullSingleFile(entryPath, localEntryPath);
-
-        if (onEntry) {
-          await onEntry(entryPath, localEntryPath, false);
-        }
+        await this.pullFileWithChecks(entryPath, localEntryPath, overwrite, onEntry);
       }
     });
   }
 
   /**
+   * Pull a single file with checks.
+   *
+   * @param remotePath - Remote file path
+   * @param localPath - Local destination path
+   * @param overwrite - Whether to overwrite existing files
+   * @param onEntry - Optional callback to invoke after pulling
+   */
+  private async pullFileWithChecks(
+    remotePath: string,
+    localPath: string,
+    overwrite: boolean,
+    onEntry?: (remotePath: string, localPath: string, isDirectory: boolean) => Promise<void>
+  ): Promise<void> {
+    if (!overwrite && await this.localPathExists(localPath)) {
+      throw new Error(`Local file already exists: ${localPath}`);
+    }
+
+    await this.pullSingleFile(remotePath, localPath);
+
+    if (onEntry) {
+      await onEntry(remotePath, localPath, false);
+    }
+  }
+
+  /**
    * Pull a single file from device to local filesystem using streams.
+   * This method only works for ios-device.
    */
   private async pullSingleFile(remotePath: string, localPath: string): Promise<void> {
     const readStream = await this.iosDeviceAfcService.createReadStream(remotePath, {
@@ -496,7 +496,7 @@ export class AfcClient {
    */
   private async localPathExists(localPath: string): Promise<boolean> {
     try {
-      await fs.access(localPath);
+      await fs.exists(localPath);
       return true;
     } catch {
       return false;

@@ -108,7 +108,11 @@ export async function pushFile(
       );
 
   // Wrap with timeout
-  await B.resolve(pushPromise).timeout(Math.max(timeoutMs, 60000));
+  const actualTimeout = Math.max(timeoutMs, 60000);
+  await B.resolve(pushPromise).timeout(
+    actualTimeout,
+    `Timed out after ${actualTimeout}ms while pushing file to '${remotePath}'`
+  );
 
   const fileSize = Buffer.isBuffer(localPathOrPayload)
     ? localPathOrPayload.length
@@ -184,7 +188,11 @@ export async function pushFolder(
     const absoluteDestinationPath = path.join(dstRootPath, relativePath);
 
     const pushPromise = client.writeFromStream(absoluteDestinationPath, readStream);
-    await B.resolve(pushPromise).timeout(Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000));
+    const actualTimeout = Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000);
+    await B.resolve(pushPromise).timeout(
+      actualTimeout,
+      `Timed out after ${actualTimeout}ms while pushing '${relativePath}' to '${absoluteDestinationPath}'`
+    );
   };
 
   if (enableParallelPush) {
