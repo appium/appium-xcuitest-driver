@@ -288,8 +288,8 @@ async function createService(
   remotePath: string,
 ): Promise<CreateServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer, containerType} = await parseContainerPath.call(this, remotePath);
-    const client = await createAfcClient.call(this, {bundleId, containerType});
+    const {bundleId, pathInContainer, containerType}: ContainerObject = await parseContainerPath.bind(this)(remotePath);
+    const client: AfcClient = await createAfcClient.bind(this)({bundleId, containerType});
     let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
       : pathInContainer;
@@ -299,7 +299,7 @@ async function createService(
     }
     return {client, relativePath};
   }
-  const client = await createAfcClient.call(this, {});
+  const client: AfcClient = await createAfcClient.bind(this)({});
   return {client, relativePath: remotePath};
 }
 
