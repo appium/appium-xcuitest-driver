@@ -1,3 +1,9 @@
+## [10.14.12](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.11...v10.14.12) (2026-01-16)
+
+### Reverts
+
+* Revert "chore: remove unused getUserInstalledBundleIdsByBundleName API" ([#2710](https://github.com/appium/appium-xcuitest-driver/issues/2710)) ([a800d88](https://github.com/appium/appium-xcuitest-driver/commit/a800d885275ee07e5ab9d18638e4eed0b6f1e392))
+
 ## [10.14.11](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.10...v10.14.11) (2026-01-15)
 
 ### Bug Fixes
