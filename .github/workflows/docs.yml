@@ -5,7 +5,6 @@ on:
     branches: [ master ]
     paths:
       - 'tsconfig.json'
-      - 'scripts/build-docs.js'
       - 'package*.json'
       - 'lib/**/*.ts'
       - 'lib/**/*.js'
@@ -17,7 +16,6 @@ on:
     branches: [ master ]
     paths:
       - 'tsconfig.json'
-      - 'scripts/build-docs.js'
       - 'package*.json'
       - 'lib/**/*.ts'
       - 'lib/**/*.js'
