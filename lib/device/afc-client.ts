@@ -1,31 +1,16 @@
-import type {Readable, Writable} from 'stream';
+import type {Readable} from 'stream';
 import {Readable as ReadableStream} from 'stream';
 import {pipeline} from 'stream/promises';
 import path from 'path';
 import {fs, mkdirp} from 'appium/support';
 import {services} from 'appium-ios-device';
+import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 import type {
   AfcService as RemoteXPCAfcService,
   RemoteXpcConnection,
 } from 'appium-ios-remotexpc';
-
-
-export interface IOSDeviceAfcService {
-  createReadStream(path: string, options?: {autoDestroy?: boolean}): Promise<Readable>;
-  createWriteStream(path: string, options?: {autoDestroy?: boolean}): Promise<Writable>;
-  getFileInfo(path: string): Promise<{isDirectory: () => boolean}>;
-  listDirectory(path: string): Promise<string[]>;
-  createDirectory(path: string): Promise<void>;
-  deleteDirectory(path: string): Promise<void>;
-  walkDir(
-    path: string,
-    recursive: boolean,
-    callback: (path: string, isDir: boolean) => Promise<void>
-  ): Promise<void>;
-  close(): void;
-}
 
 
 /**
@@ -430,7 +415,7 @@ export class AfcClient {
     overwrite: boolean,
     onEntry?: (remotePath: string, localPath: string, isDirectory: boolean) => Promise<void>
   ): Promise<void> {
-    if (!overwrite && await this.localPathExists(localPath)) {
+    if (!overwrite && await fs.exists(localPath)) {
       throw new Error(`Local file already exists: ${localPath}`);
     }
 
@@ -461,18 +446,6 @@ export class AfcClient {
     try {
       const stats = await fs.stat(localPath);
       return stats.isDirectory();
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Check if a local path exists.
-   */
-  private async localPathExists(localPath: string): Promise<boolean> {
-    try {
-      await fs.exists(localPath);
-      return true;
     } catch {
       return false;
     }
