@@ -14,7 +14,7 @@ const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
 // Mobile devices use NAND memory modules for the storage,
 // and the parallelism there is not as performant as on regular SSDs
-const MAX_IO_CHUNK_SIZE = 8;
+export const MAX_IO_CHUNK_SIZE = 8;
 const APPLICATION_INSTALLED_NOTIFICATION = 'com.apple.mobile.application_installed';
 const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';

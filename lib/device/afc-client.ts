@@ -2,6 +2,8 @@ import type {Readable} from 'stream';
 import {Readable as ReadableStream} from 'stream';
 import {pipeline} from 'stream/promises';
 import path from 'path';
+import _ from 'lodash';
+import B from 'bluebird';
 import {fs, mkdirp} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
@@ -11,6 +13,7 @@ import type {
   AfcService as RemoteXPCAfcService,
   RemoteXpcConnection,
 } from 'appium-ios-remotexpc';
+import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
 
 
 /**
@@ -354,7 +357,12 @@ export class AfcClient {
         ? path.join(localPath, path.posix.basename(remotePath))
         : localPath;
 
-      await this.pullFileWithChecks(remotePath, localFilePath, overwrite, onEntry);
+      await this.checkOverwrite(localFilePath, overwrite);
+      await this.pullSingleFile(remotePath, localFilePath);
+
+      if (onEntry) {
+        await onEntry(remotePath, localFilePath, false);
+      }
       return;
     }
 
@@ -378,7 +386,9 @@ export class AfcClient {
       await onEntry(remotePath, localRootDir, true);
     }
 
-    // Walk the remote directory and pull files
+    const pullPromises: B<void>[] = [];
+
+    // Walk the remote directory and pull files in parallel
     await this.iosDeviceAfcService.walkDir(remotePath, true, async (entryPath: string, isDirectory: boolean) => {
       // Calculate relative path from remote root
       const relativePath = entryPath.startsWith(remotePath + '/')
@@ -392,43 +402,81 @@ export class AfcClient {
           await onEntry(entryPath, localEntryPath, true);
         }
       } else {
+        await this.checkOverwrite(localEntryPath, overwrite);
+
         // Ensure parent directory exists
         const parentDir = path.dirname(localEntryPath);
         await mkdirp(parentDir);
 
-        await this.pullFileWithChecks(entryPath, localEntryPath, overwrite, onEntry);
+        // Start async file pull (non-blocking)
+        const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
+          autoDestroy: true,
+        });
+        const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
+
+        pullPromises.push(
+          new B<void>((resolve) => {
+            writeStream.on('close', async () => {
+              // Invoke onEntry callback after successful pull
+              if (onEntry) {
+                try {
+                  await onEntry(entryPath, localEntryPath, false);
+                } catch (err: any) {
+                  log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
+                }
+              }
+              resolve();
+            });
+            const onStreamingError = (e: Error) => {
+              readStream.unpipe(writeStream);
+              log.warn(
+                `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
+                  `The file will be skipped. Original error: ${e.message}`
+              );
+              resolve();
+            };
+            writeStream.on('error', onStreamingError);
+            readStream.on('error', onStreamingError);
+          }).timeout(IO_TIMEOUT_MS)
+        );
+        readStream.pipe(writeStream);
+
+        if (pullPromises.length >= MAX_IO_CHUNK_SIZE) {
+          await B.any(pullPromises);
+          for (let i = pullPromises.length - 1; i >= 0; i--) {
+            if (pullPromises[i].isFulfilled()) {
+              pullPromises.splice(i, 1);
+            }
+          }
+        }
       }
     });
+
+    // Wait for remaining files to be pulled
+    if (!_.isEmpty(pullPromises)) {
+      await B.all(pullPromises);
+    }
   }
 
   /**
-   * Pull a single file with checks.
+   * Check if local file exists and should not be overwritten.
+   * Throws an error if the file exists and overwrite is false.
    *
-   * @param remotePath - Remote file path
-   * @param localPath - Local destination path
-   * @param overwrite - Whether to overwrite existing files
-   * @param onEntry - Optional callback to invoke after pulling
+   * @param localPath - Local file path to check
+   * @param overwrite - Whether to allow overwriting existing files
    */
-  private async pullFileWithChecks(
-    remotePath: string,
-    localPath: string,
-    overwrite: boolean,
-    onEntry?: (remotePath: string, localPath: string, isDirectory: boolean) => Promise<void>
-  ): Promise<void> {
+  private async checkOverwrite(localPath: string, overwrite: boolean): Promise<void> {
     if (!overwrite && await fs.exists(localPath)) {
       throw new Error(`Local file already exists: ${localPath}`);
-    }
-
-    await this.pullSingleFile(remotePath, localPath);
-
-    if (onEntry) {
-      await onEntry(remotePath, localPath, false);
     }
   }
 
   /**
    * Pull a single file from device to local filesystem using streams.
    * This method only works for ios-device.
+   *
+   * @param remotePath - Remote file path
+   * @param localPath - Local destination path
    */
   private async pullSingleFile(remotePath: string, localPath: string): Promise<void> {
     const readStream = await this.iosDeviceAfcService.createReadStream(remotePath, {
