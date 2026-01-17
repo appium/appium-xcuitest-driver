@@ -1,3 +1,9 @@
+## [10.14.13](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.12...v10.14.13) (2026-01-16)
+
+### Miscellaneous Chores
+
+* include scripts to run type checks ([#2711](https://github.com/appium/appium-xcuitest-driver/issues/2711)) ([b00f289](https://github.com/appium/appium-xcuitest-driver/commit/b00f289d4e087d49e148f7518251f17bf67236da))
+
 ## [10.14.12](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.11...v10.14.12) (2026-01-16)
 
 ### Reverts
