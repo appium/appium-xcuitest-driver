@@ -1,3 +1,9 @@
+## [10.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.13...v10.15.0) (2026-01-17)
+
+### Features
+
+* migrate afc and house arrest to use remotexpc when iOS>=18 ([#2696](https://github.com/appium/appium-xcuitest-driver/issues/2696)) ([3ba9fbf](https://github.com/appium/appium-xcuitest-driver/commit/3ba9fbf0e381afcec7c1f6e2daf24690cb0e58e2))
+
 ## [10.14.13](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.12...v10.14.13) (2026-01-16)
 
 ### Miscellaneous Chores
