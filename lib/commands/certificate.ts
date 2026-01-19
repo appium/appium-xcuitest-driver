@@ -7,8 +7,8 @@ import path from 'path';
 import http from 'http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
-import {Pyidevice} from '../device/clients/py-ios-device-client';
-import {requireRealDevice} from '../utils';
+import {CertificateClient} from '../device/certificate-client';
+import {requireRealDevice, isIos18OrNewer} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
@@ -122,18 +122,23 @@ export async function mobileInstallCertificate(
     if (!this.opts.udid) {
       throw new Error('udid capability is required');
     }
-    const client = new Pyidevice({
-      udid: this.opts.udid,
-      log: this.log,
-    });
-    if (await client.assertExists(false)) {
-      await client.installProfile({payload: Buffer.from(content, 'base64')});
-      return;
-    } else {
-      this.log.info(
-        'pyidevice is not installed on your system. ' +
-          'Falling back to the (slow) UI-based installation',
+
+    let client: CertificateClient | null = null;
+    try {
+      client = await CertificateClient.create(
+        this.opts.udid,
+        this.log,
+        isIos18OrNewer(this.opts)
       );
+      await client.installCertificate({payload: Buffer.from(content, 'base64')});
+      return;
+    } catch (err) {
+      this.log.error(`Failed to install the certificate: ${err.message}`);
+      this.log.info('Falling back to the (slow) UI-based installation');
+    } finally {
+      if (client) {
+        await client.close();
+      }
     }
   }
 
@@ -256,12 +261,20 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
   if (!this.opts.udid) {
     throw new Error('udid capability is required');
   }
-  const client = new Pyidevice({
-    udid: this.opts.udid,
-    log: this.log,
-  });
-  await client.assertExists(true);
-  return await client.removeProfile(name);
+
+  let client: CertificateClient | null = null;
+  try {
+    client = await CertificateClient.create(
+      this.opts.udid,
+      this.log,
+      isIos18OrNewer(this.opts)
+    );
+    return await client.removeCertificate(name);
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
 }
 
 /**
@@ -278,14 +291,21 @@ export async function mobileListCertificates(this: XCUITestDriver): Promise<Cert
   if (!this.opts.udid) {
     throw new Error('udid capability is required');
   }
-  const client = new Pyidevice({
-    udid: this.opts.udid,
-    log: this.log,
-  });
-  await client.assertExists(true);
-  return await client.listProfiles();
-}
 
+  let client: CertificateClient | null = null;
+  try {
+    client = await CertificateClient.create(
+      this.opts.udid,
+      this.log,
+      isIos18OrNewer(this.opts)
+    );
+    return await client.listCertificates();
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
+}
 
 /**
  * Extracts the common name of the certificate from the given buffer.
@@ -501,4 +521,3 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
 
   return true;
 }
-
