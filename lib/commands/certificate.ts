@@ -7,7 +7,7 @@ import path from 'path';
 import http from 'http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
-import {Pyidevice} from '../device/clients/py-ios-device-client';
+import {CertificateClient} from '../device/certificate-client';
 import {requireRealDevice} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
@@ -123,38 +123,23 @@ export async function mobileInstallCertificate(
     if (!this.opts.udid) {
       throw new Error('udid capability is required');
     }
-    if (isIos18OrNewer(this.opts)) {
-      let remoteXPCConnection;
-      try {
-        const {Services} = await import('appium-ios-remotexpc');
-        const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
-          this.opts.udid,
-        );
-        remoteXPCConnection = remoteXPC;
 
-        await mobileConfigService.installProfileFromBuffer(Buffer.from(content, 'base64'));
-        return;
-      } catch (err) {
-        this.log.error(`Failed to install the certificate via MobileConfigService: ${err.message}`);
-      } finally {
-        if (remoteXPCConnection) {
-          this.log.debug(`Closing remoteXPC connection for device ${this.opts.udid}`);
-          await remoteXPCConnection.close();
-        }
-      }
-    }
-    const client = new Pyidevice({
-      udid: this.opts.udid,
-      log: this.log,
-    });
-    if (await client.assertExists(false)) {
-      await client.installProfile({payload: Buffer.from(content, 'base64')});
-      return;
-    } else {
-      this.log.info(
-        'pyidevice is not installed on your system. ' +
-          'Falling back to the (slow) UI-based installation',
+    let client: CertificateClient | null = null;
+    try {
+      client = await CertificateClient.create(
+        this.opts.udid,
+        this.log,
+        isIos18OrNewer(this.opts)
       );
+      await client.installCertificate({payload: Buffer.from(content, 'base64')});
+      return;
+    } catch (err) {
+      this.log.error(`Failed to install the certificate: ${err.message}`);
+      this.log.info('Falling back to the (slow) UI-based installation');
+    } finally {
+      if (client) {
+        await client.close();
+      }
     }
   }
 
@@ -277,33 +262,20 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
   if (!this.opts.udid) {
     throw new Error('udid capability is required');
   }
-  if (isIos18OrNewer(this.opts)) {
-    let remoteXPCConnection;
-    try {
-      const {Services} = await import('appium-ios-remotexpc');
-      const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
-        this.opts.udid,
-      );
-      remoteXPCConnection = remoteXPC;
-      await mobileConfigService.removeProfile(name);
-      return 'Acknowledged';
-    } catch (err) {
-      this.log.error(`Failed to remove the certificate via MobileConfigService: ${err.message}`);
-      return 'None';
-    } finally {
-      if (remoteXPCConnection) {
-        this.log.debug(`Closing remoteXPC connection for device ${this.opts.udid}`);
-        await remoteXPCConnection.close();
-      }
+
+  let client: CertificateClient | null = null;
+  try {
+    client = await CertificateClient.create(
+      this.opts.udid,
+      this.log,
+      isIos18OrNewer(this.opts)
+    );
+    return await client.removeCertificate(name);
+  } finally {
+    if (client) {
+      await client.close();
     }
   }
-
-  const client = new Pyidevice({
-    udid: this.opts.udid,
-    log: this.log,
-  });
-  await client.assertExists(true);
-  return await client.removeProfile(name);
 }
 
 /**
@@ -320,31 +292,20 @@ export async function mobileListCertificates(this: XCUITestDriver): Promise<Cert
   if (!this.opts.udid) {
     throw new Error('udid capability is required');
   }
-  if (isIos18OrNewer(this.opts)) {
-    let remoteXPCConnection;
-    try {
-      const {Services} = await import('appium-ios-remotexpc');
-      const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(
-        this.opts.udid,
-      );
-      remoteXPCConnection = remoteXPC;
-      return await mobileConfigService.getProfileList();
-    } catch (err) {
-      this.log.error(`Failed to install the certificate via MobileConfigService: ${err.message}`);
-    } finally {
-      if (remoteXPCConnection) {
-        this.log.debug(`Closing remoteXPC connection for device ${this.opts.udid}`);
-        await remoteXPCConnection.close();
-      }
+
+  let client: CertificateClient | null = null;
+  try {
+    client = await CertificateClient.create(
+      this.opts.udid,
+      this.log,
+      isIos18OrNewer(this.opts)
+    );
+    return await client.listCertificates();
+  } finally {
+    if (client) {
+      await client.close();
     }
   }
-
-  const client = new Pyidevice({
-    udid: this.opts.udid,
-    log: this.log,
-  });
-  await client.assertExists(true);
-  return await client.listProfiles();
 }
 
 /**
