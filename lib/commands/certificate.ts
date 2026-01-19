@@ -119,26 +119,14 @@ export async function mobileInstallCertificate(
       );
     }
   } else {
-    if (!this.opts.udid) {
-      throw new Error('udid capability is required');
-    }
-
-    let client: CertificateClient | null = null;
     try {
-      client = await CertificateClient.create(
-        this.opts.udid,
-        this.log,
-        isIos18OrNewer(this.opts)
-      );
-      await client.installCertificate({payload: Buffer.from(content, 'base64')});
+      await withCertificateClient(this, async (client) => {
+        await client.installCertificate({payload: Buffer.from(content, 'base64')});
+      });
       return;
     } catch (err) {
       this.log.error(`Failed to install the certificate: ${err.message}`);
       this.log.info('Falling back to the (slow) UI-based installation');
-    } finally {
-      if (client) {
-        await client.close();
-      }
     }
   }
 
@@ -166,7 +154,7 @@ export async function mobileInstallCertificate(
     try {
       const host = os.hostname();
       const certUrl = `http://${host}:${tmpPort}/${configName}`;
-      await tmpServer.listen(tmpPort);
+      tmpServer.listen(tmpPort);
       try {
         await waitForCondition(
           async () => {
@@ -238,7 +226,7 @@ export async function mobileInstallCertificate(
 
     return (await util.toInMemoryBase64(configPath)).toString();
   } finally {
-    await tmpServer.close();
+    tmpServer.close();
     await fs.rimraf(tmpRoot);
   }
 }
@@ -258,23 +246,7 @@ export async function mobileInstallCertificate(
  */
 export async function mobileRemoveCertificate(this: XCUITestDriver, name: string): Promise<string> {
   requireRealDevice(this, 'Removing certificate');
-  if (!this.opts.udid) {
-    throw new Error('udid capability is required');
-  }
-
-  let client: CertificateClient | null = null;
-  try {
-    client = await CertificateClient.create(
-      this.opts.udid,
-      this.log,
-      isIos18OrNewer(this.opts)
-    );
-    return await client.removeCertificate(name);
-  } finally {
-    if (client) {
-      await client.close();
-    }
-  }
+  return await withCertificateClient(this, async (client) => client.removeCertificate(name));
 }
 
 /**
@@ -288,18 +260,31 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
  */
 export async function mobileListCertificates(this: XCUITestDriver): Promise<CertificateList> {
   requireRealDevice(this, 'Listing certificates');
-  if (!this.opts.udid) {
-    throw new Error('udid capability is required');
-  }
+  return await withCertificateClient(this, async (client) => client.listCertificates());
+}
 
+/**
+ * Helper function to create a CertificateClient, execute an operation, and ensure cleanup.
+ *
+ * @param driver - The XCUITestDriver instance
+ * @param operation - A callback function that receives the client and performs the operation
+ * @returns The result of the operation callback
+ */
+async function withCertificateClient<T>(
+  driver: XCUITestDriver,
+  operation: (client: CertificateClient) => Promise<T>,
+): Promise<T> {
   let client: CertificateClient | null = null;
   try {
+    if (!driver.opts.udid) {
+      throw new Error('udid capability is required');
+    }
     client = await CertificateClient.create(
-      this.opts.udid,
-      this.log,
-      isIos18OrNewer(this.opts)
+      driver.opts.udid,
+      driver.log,
+      isIos18OrNewer(driver.opts),
     );
-    return await client.listCertificates();
+    return await operation(client);
   } finally {
     if (client) {
       await client.close();
