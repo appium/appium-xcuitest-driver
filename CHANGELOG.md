@@ -1,3 +1,9 @@
+## [10.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.15.0...v10.16.0) (2026-01-19)
+
+### Features
+
+* **certificate:** implement shim functionality ([#2698](https://github.com/appium/appium-xcuitest-driver/issues/2698)) ([7b94dca](https://github.com/appium/appium-xcuitest-driver/commit/7b94dca389395ce0573808a04872215bfc09862e))
+
 ## [10.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.13...v10.15.0) (2026-01-17)
 
 ### Features
