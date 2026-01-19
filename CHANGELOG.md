@@ -1,3 +1,9 @@
+## [10.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.0...v10.16.1) (2026-01-19)
+
+### Miscellaneous Chores
+
+* Remove unnecessary duplication upon certificate client creation ([#2713](https://github.com/appium/appium-xcuitest-driver/issues/2713)) ([9189cfe](https://github.com/appium/appium-xcuitest-driver/commit/9189cfed1ce60e746f85853f4e33408a43e622b7))
+
 ## [10.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.15.0...v10.16.0) (2026-01-19)
 
 ### Features
