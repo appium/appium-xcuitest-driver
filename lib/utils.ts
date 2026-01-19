@@ -13,6 +13,7 @@ import {PLATFORM_NAME_TVOS, PLATFORM_NAME_IOS} from './desired-caps';
 import type {XCUITestDriverOpts, XCUITestDriver} from './driver';
 import type {XcodeVersion} from 'appium-xcode';
 import type {Simulator} from 'appium-ios-simulator';
+import type {RealDevice} from './device/real-device-management';
 import type {HTTPHeaders} from '@appium/types';
 import type {Method} from 'axios';
 
@@ -423,16 +424,31 @@ export function requireArgs(argNames: string | string[], opts: Record<string, an
 }
 
 /**
- * Asserts that the given driver is running on a Simulator and return
+ * Requires that the given driver is running on a Simulator and return
  * the simlator instance.
  *
+ * @param driver - The driver instance
  * @param action - Description of action
  */
-export function assertSimulator(this: XCUITestDriver, action: string): Simulator {
-  if (!this.isSimulator()) {
+export function requireSimulator(driver: XCUITestDriver, action: string): Simulator {
+  if (!driver.isSimulator()) {
     throw new Error(`${_.upperFirst(action)} can only be performed on Simulator`);
   }
-  return this.device as Simulator;
+  return driver.device as Simulator;
+}
+
+/**
+ * Requires that the given driver is running on a real device and return
+ * the real device instance.
+ *
+ * @param driver - The driver instance
+ * @param action - Description of action
+ */
+export function requireRealDevice(driver: XCUITestDriver, action: string): RealDevice {
+  if (!driver.isRealDevice()) {
+    throw new Error(`${_.upperFirst(action)} can only be performed on a real device`);
+  }
+  return driver.device as RealDevice;
 }
 
 /**

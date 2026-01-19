@@ -8,7 +8,7 @@ import http from 'http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {Pyidevice} from '../device/clients/py-ios-device-client';
-import {errors} from 'appium/driver';
+import {requireRealDevice} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
@@ -273,9 +273,7 @@ export async function mobileInstallCertificate(
  * @group Real Device Only
  */
 export async function mobileRemoveCertificate(this: XCUITestDriver, name: string): Promise<string> {
-  if (!this.isRealDevice()) {
-    throw new errors.NotImplementedError('This extension is only supported on real devices');
-  }
+  requireRealDevice(this, 'Removing certificate');
   if (!this.opts.udid) {
     throw new Error('udid capability is required');
   }
@@ -318,9 +316,7 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
  * @throws {Error} If attempting to list certificates for a simulated device or if `py-ios-device` is not installed
  */
 export async function mobileListCertificates(this: XCUITestDriver): Promise<CertificateList> {
-  if (!this.isRealDevice()) {
-    throw new errors.NotImplementedError('This extension is only supported on real devices');
-  }
+  requireRealDevice(this, 'Listing certificates');
   if (!this.opts.udid) {
     throw new Error('udid capability is required');
   }

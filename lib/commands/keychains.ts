@@ -1,4 +1,4 @@
-import {assertSimulator} from '../utils';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 
 /**
@@ -11,6 +11,6 @@ import type {XCUITestDriver} from '../driver';
 export async function mobileClearKeychains(
   this: XCUITestDriver,
 ): Promise<void> {
-  await assertSimulator.call(this, 'Keychain modification').clearKeychains();
+  await requireSimulator(this, 'Keychain modification').clearKeychains();
 }
 

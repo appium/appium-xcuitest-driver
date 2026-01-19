@@ -5,7 +5,6 @@ on:
     branches: [ master ]
     paths:
       - 'tsconfig.json'
-      - 'scripts/build-docs.js'
       - 'package*.json'
       - 'lib/**/*.ts'
       - 'lib/**/*.js'
@@ -17,7 +16,6 @@ on:
     branches: [ master ]
     paths:
       - 'tsconfig.json'
-      - 'scripts/build-docs.js'
       - 'package*.json'
       - 'lib/**/*.ts'
       - 'lib/**/*.js'
@@ -37,7 +35,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Use Node.js LTS
-        uses: actions/setup-node@v6.1.0
+        uses: actions/setup-node@v6.2.0
         with:
           node-version: lts/*
           check-latest: true

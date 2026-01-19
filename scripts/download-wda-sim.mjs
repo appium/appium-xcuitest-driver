@@ -14,11 +14,15 @@ const destZip = (platform) => {
 
 /**
  * Return installed appium-webdriveragent package version
- * @returns {number}
+ * @returns {Promise<number>}
  */
 async function webdriveragentPkgVersion() {
+  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
+  if (!moduleRoot) {
+    throw new Error('Cannot resolve module root for appium-xcuitest-driver');
+  }
   const pkgPath = path.join(
-    node.getModuleRootSync('appium-xcuitest-driver', import.meta.url),
+    moduleRoot,
     'node_modules',
     'appium-webdriveragent',
     'package.json'
@@ -28,7 +32,7 @@ async function webdriveragentPkgVersion() {
 
 /**
  * Prepare the working root directory.
- * @returns {string} Root directory to download and unzip.
+ * @returns {Promise<string>} Root directory to download and unzip.
  */
 async function prepareRootDir() {
   const destDirRoot = parseArgValue('outdir');

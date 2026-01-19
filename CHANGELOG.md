@@ -1,3 +1,56 @@
+## [10.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.13...v10.15.0) (2026-01-17)
+
+### Features
+
+* migrate afc and house arrest to use remotexpc when iOS>=18 ([#2696](https://github.com/appium/appium-xcuitest-driver/issues/2696)) ([3ba9fbf](https://github.com/appium/appium-xcuitest-driver/commit/3ba9fbf0e381afcec7c1f6e2daf24690cb0e58e2))
+
+## [10.14.13](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.12...v10.14.13) (2026-01-16)
+
+### Miscellaneous Chores
+
+* include scripts to run type checks ([#2711](https://github.com/appium/appium-xcuitest-driver/issues/2711)) ([b00f289](https://github.com/appium/appium-xcuitest-driver/commit/b00f289d4e087d49e148f7518251f17bf67236da))
+
+## [10.14.12](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.11...v10.14.12) (2026-01-16)
+
+### Reverts
+
+* Revert "chore: remove unused getUserInstalledBundleIdsByBundleName API" ([#2710](https://github.com/appium/appium-xcuitest-driver/issues/2710)) ([a800d88](https://github.com/appium/appium-xcuitest-driver/commit/a800d885275ee07e5ab9d18638e4eed0b6f1e392))
+
+## [10.14.11](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.10...v10.14.11) (2026-01-15)
+
+### Bug Fixes
+
+* remove removed xcode version arg from build-wda and convert it to mjs ([#2706](https://github.com/appium/appium-xcuitest-driver/issues/2706)) ([b4a40d8](https://github.com/appium/appium-xcuitest-driver/commit/b4a40d8e560bcaa7aea88aa1459b02d9e289a520))
+
+### Code Refactoring
+
+* centralize remoteXPC initialization  ([#2703](https://github.com/appium/appium-xcuitest-driver/issues/2703)) ([c9ec568](https://github.com/appium/appium-xcuitest-driver/commit/c9ec5684413164e2df14cd4b4dcd48aff0c5a369))
+* Incapsulate condition inducer implementation details ([#2704](https://github.com/appium/appium-xcuitest-driver/issues/2704)) ([d5f4064](https://github.com/appium/appium-xcuitest-driver/commit/d5f40648aee2a334b79335c3181ac0610d17a38b))
+
+## [10.14.10](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.9...v10.14.10) (2026-01-12)
+
+### Bug Fixes
+
+* fallback to existing method ([#2701](https://github.com/appium/appium-xcuitest-driver/issues/2701)) ([20658dd](https://github.com/appium/appium-xcuitest-driver/commit/20658ddc3229594cabdeaf24b0804d430ccba234))
+
+## [10.14.9](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.8...v10.14.9) (2026-01-12)
+
+### Miscellaneous Chores
+
+* remove unused getUserInstalledBundleIdsByBundleName API ([821596d](https://github.com/appium/appium-xcuitest-driver/commit/821596d800ce328bea834c6ca57b795db8c6e583))
+
+## [10.14.8](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.7...v10.14.8) (2026-01-12)
+
+### Miscellaneous Chores
+
+* Unify real device and simulator requirement checks ([#2700](https://github.com/appium/appium-xcuitest-driver/issues/2700)) ([0e5c98a](https://github.com/appium/appium-xcuitest-driver/commit/0e5c98a259cd4365148fa7b8152cd45e8788ea4c))
+
+## [10.14.7](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.6...v10.14.7) (2026-01-08)
+
+### Miscellaneous Chores
+
+* Migrate index to typescript ([#2699](https://github.com/appium/appium-xcuitest-driver/issues/2699)) ([bb4c7ff](https://github.com/appium/appium-xcuitest-driver/commit/bb4c7ffb4cff23461c2f2e63ff626749972c3d65))
+
 ## [10.14.6](https://github.com/appium/appium-xcuitest-driver/compare/v10.14.5...v10.14.6) (2026-01-07)
 
 ### Miscellaneous Chores

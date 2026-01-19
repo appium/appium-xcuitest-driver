@@ -1,7 +1,6 @@
 import _ from 'lodash';
-import { assertSimulator } from '../utils';
+import { requireSimulator } from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {Simulator} from 'appium-ios-simulator';
 
 /**
  * Sets the Simulator's pasteboard content to the given value.
@@ -17,12 +16,12 @@ export async function mobileSetPasteboard(
   content: string,
   encoding: BufferEncoding = 'utf8',
 ): Promise<void> {
-  assertSimulator.call(this, 'Setting pasteboard content');
+  const simulator = requireSimulator(this, 'Setting pasteboard content');
   if (!_.isString(content)) {
     // can be empty string
     throw new Error('Pasteboard content is mandatory to set');
   }
-  await (this.device as Simulator).simctl.setPasteboard(content, encoding);
+  await simulator.simctl.setPasteboard(content, encoding);
 }
 
 /**
@@ -38,7 +37,7 @@ export async function mobileGetPasteboard(
   this: XCUITestDriver,
   encoding: BufferEncoding = 'utf8',
 ): Promise<string> {
-  assertSimulator.call(this, 'Getting pasteboard content');
-  return await (this.device as Simulator).simctl.getPasteboard(encoding);
+  return await requireSimulator(this, 'Getting pasteboard content')
+    .simctl.getPasteboard(encoding);
 }
 
