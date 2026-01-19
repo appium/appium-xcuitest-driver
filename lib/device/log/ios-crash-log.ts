@@ -2,11 +2,10 @@ import {fs, tempDir, util} from 'appium/support';
 import B from 'bluebird';
 import path from 'path';
 import _ from 'lodash';
-import {Pyidevice} from '../clients/py-ios-device-client';
+import {CrashReportsClient} from '../crash-reports-client';
 import {IOSLog} from './ios-log';
 import { toLogEntry, grepFile } from './helpers';
 import type { AppiumLogger } from '@appium/types';
-import type { BaseDeviceClient } from '../clients/base-device-client';
 import type { Simulator } from 'appium-ios-simulator';
 import type { LogEntry } from '../../commands/types';
 
@@ -24,11 +23,14 @@ export interface IOSCrashLogOptions {
   /** Simulator instance */
   sim?: Simulator;
   log: AppiumLogger;
+  /** Whether to use RemoteXPC for crash reports (iOS 18+). */
+  useRemoteXPC?: boolean;
 }
 
 export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private readonly _udid: string | undefined;
-  private readonly _realDeviceClient: BaseDeviceClient | null;
+  private readonly _useRemoteXPC: boolean;
+  private _realDeviceClient: CrashReportsClient | null;
   private readonly _logDir: string | null;
   private readonly _sim: Simulator | undefined;
   private _recentCrashFiles: string[];
@@ -41,12 +43,8 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
     this._udid = opts.udid;
     this._sim = opts.sim;
-    this._realDeviceClient = this._isRealDevice()
-      ? new Pyidevice({
-        udid: this._udid as string,
-        log: opts.log,
-      })
-      : null;
+    this._useRemoteXPC = opts.useRemoteXPC ?? false;
+    this._realDeviceClient = null;
     this._logDir = this._isRealDevice()
       ? null
       : path.resolve(process.env.HOME || '/', 'Library', 'Logs', 'DiagnosticReports');
@@ -61,6 +59,11 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
 
   override async stopCapture(): Promise<void> {
     this._started = false;
+    // Clean up the client connection
+    if (this._realDeviceClient) {
+      await this._realDeviceClient.close();
+      this._realDeviceClient = null;
+    }
   }
 
   override get isCapturing(): boolean {
@@ -97,11 +100,11 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
         if (this._isRealDevice()) {
           const fileName = filePath;
           try {
-            await (this._realDeviceClient as BaseDeviceClient).exportCrash(fileName, tmpRoot);
+            await (this._realDeviceClient as CrashReportsClient).exportCrash(fileName, tmpRoot);
           } catch (e) {
             this.log.warn(
               `Cannot export the crash report '${fileName}'. Skipping it. ` +
-              `Original error: ${e.message}`,
+              `Original error: ${(e as Error).message}`,
             );
             return;
           }
@@ -117,8 +120,20 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
 
   private async _gatherFromRealDevice(strict: boolean): Promise<string[]> {
     if (!this._realDeviceClient) {
-      return [];
+      try {
+        this._realDeviceClient = await CrashReportsClient.create(
+          this._udid as string,
+          this._useRemoteXPC
+        );
+      } catch (err) {
+        this.log.error(
+          `Failed to create crash reports client: ${(err as Error).message}. ` +
+          `Skipping crash logs collection for real devices.`
+        );
+        return [];
+      }
     }
+
     if (!await this._realDeviceClient.assertExists(strict)) {
       this.log.info(
         `The ${_.toLower(this._realDeviceClient.constructor.name)} tool is not present in PATH. ` +
