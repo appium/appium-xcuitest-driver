@@ -8,11 +8,10 @@ import http from 'http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {CertificateClient} from '../device/certificate-client';
-import {requireRealDevice} from '../utils';
+import {requireRealDevice, isIos18OrNewer} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
-import {isIos18OrNewer} from '../utils';
 
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];
