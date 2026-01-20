@@ -264,6 +264,7 @@ export class RealDevice {
   readonly udid: string;
   private readonly _log: AppiumLogger;
   readonly devicectl: Devicectl;
+  private platformVersion: string | undefined;
 
   constructor(udid: string, logger?: AppiumLogger) {
     this.udid = udid;
@@ -293,18 +294,20 @@ export class RealDevice {
       timeoutMs = IO_TIMEOUT_MS,
     } = opts;
     const timer = new timing.Timer().start();
-    const afcService = await services.startAfcService(this.udid);
+    const platformVersion = await this.getPlatformVersion();
+    const useRemoteXPC = !!platformVersion && util.compareVersions(platformVersion, '>=', '18.0');
+    const afcClient = await AfcClient.createForDevice(this.udid, useRemoteXPC);
     try {
       let bundlePathOnPhone: string;
       if ((await fs.stat(appPath)).isFile()) {
         // https://github.com/doronz88/pymobiledevice3/blob/6ff5001f5776e03b610363254e82d7fbcad4ef5f/pymobiledevice3/services/installation_proxy.py#L75
         bundlePathOnPhone = `/${path.basename(appPath)}`;
-        await pushFile(afcService, appPath, bundlePathOnPhone, {
+        await pushFile(afcClient, appPath, bundlePathOnPhone, {
           timeoutMs,
         });
       } else {
         bundlePathOnPhone = `${INSTALLATION_STAGING_DIR}/${bundleId}`;
-        await pushFolder(afcService, appPath, bundlePathOnPhone, {
+        await pushFolder(afcClient, appPath, bundlePathOnPhone, {
           enableParallelPush: true,
           timeoutMs,
         });
@@ -325,7 +328,7 @@ export class RealDevice {
       errMessage += `. Original error: ${(err as Error).message}`;
       throw new Error(errMessage);
     } finally {
-      afcService.close();
+      await afcClient.close();
     }
     this.log.info(
       `The installation of '${bundleId}' succeeded after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
@@ -513,7 +516,10 @@ export class RealDevice {
   }
 
   async getPlatformVersion(): Promise<string> {
-    return await utilities.getOSVersion(this.udid);
+    if (!this.platformVersion) {
+      this.platformVersion = await utilities.getOSVersion(this.udid) as string;
+    }
+    return this.platformVersion;
   }
 
   async reset(opts: {bundleId?: string; fullReset?: boolean}): Promise<void> {
