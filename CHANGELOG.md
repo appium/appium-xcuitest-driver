@@ -1,3 +1,9 @@
+## [10.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.2...v10.17.0) (2026-01-20)
+
+### Features
+
+* **crash-reports:** use remotexpc when iOS>=18 ([#2712](https://github.com/appium/appium-xcuitest-driver/issues/2712)) ([3dfe6cb](https://github.com/appium/appium-xcuitest-driver/commit/3dfe6cb4bb7d4d2a556d61c02078a96150be4282))
+
 ## [10.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.1...v10.16.2) (2026-01-20)
 
 ### Bug Fixes
