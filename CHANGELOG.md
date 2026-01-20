@@ -1,3 +1,9 @@
+## [10.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.1...v10.16.2) (2026-01-20)
+
+### Bug Fixes
+
+* Real device app installation ([#2715](https://github.com/appium/appium-xcuitest-driver/issues/2715)) ([f457d66](https://github.com/appium/appium-xcuitest-driver/commit/f457d6630432abcf6b213477000e1ff31aaece8b))
+
 ## [10.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.0...v10.16.1) (2026-01-19)
 
 ### Miscellaneous Chores
