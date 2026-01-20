@@ -83,20 +83,20 @@ export class CrashReportsClient {
    * @returns Array of crash report file names (e.g., ['crash1.ips', 'crash2.crash'])
    */
   async listCrashes(): Promise<string[]> {
-    if (this.isRemoteXPC) {
-      // RemoteXPC: ls returns full paths, filter and extract filenames
-      const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
-      return allFiles
-        .filter((filePath) =>
-          CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext))
-        )
-        .map((filePath) => {
-          const parts = filePath.split('/');
-          return parts[parts.length - 1];
-        });
+    if (!this.isRemoteXPC) {
+      return await this.pyideviceClient.listCrashes();
     }
 
-    return await this.pyideviceClient.listCrashes();
+    // RemoteXPC: ls returns full paths, filter and extract filenames
+    const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
+    return allFiles
+      .filter((filePath) =>
+        CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext))
+      )
+      .map((filePath) => {
+        const parts = filePath.split('/');
+        return parts[parts.length - 1];
+      });
   }
 
   /**
@@ -106,23 +106,25 @@ export class CrashReportsClient {
    * @param dstFolder - Local destination folder path
    */
   async exportCrash(name: string, dstFolder: string): Promise<void> {
-    if (this.isRemoteXPC) {
-      // RemoteXPC: need to find full path first, then pull
-      const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
-      const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
-
-      if (!fullPath) {
-        throw new Error(
-          `Crash report '${name}' not found on device. ` +
-            `Available files: ${allFiles.join(', ')}`
-        );
-      }
-
-      await this.remoteXPCCrashReportsService.pull(dstFolder, fullPath);
-      return;
+    if (!this.isRemoteXPC) {
+      return await this.pyideviceClient.exportCrash(name, dstFolder);
     }
 
-    await this.pyideviceClient.exportCrash(name, dstFolder);
+    // RemoteXPC: need to find full path first, then pull
+    const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
+    const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
+
+    if (!fullPath) {
+      const MAX_FILES_IN_ERROR = 10;
+      const filesList = allFiles.slice(0, MAX_FILES_IN_ERROR).join(', ');
+      const hasMore = allFiles.length > MAX_FILES_IN_ERROR;
+      throw new Error(
+        `Crash report '${name}' not found on device. ` +
+          `Available files: ${filesList}${hasMore ? `, ... and ${allFiles.length - MAX_FILES_IN_ERROR} more` : ''}`
+      );
+    }
+
+    await this.remoteXPCCrashReportsService.pull(dstFolder, fullPath);
   }
 
   /**
