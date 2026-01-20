@@ -8,6 +8,7 @@ import type {Pyidevice as PyideviceClient} from './clients/py-ios-device-client'
 import {Pyidevice} from './clients/py-ios-device-client';
 
 const CRASH_REPORT_EXTENSIONS = ['.ips'];
+const MAX_FILES_IN_ERROR = 10;
 
 /**
  * Unified Crash Reports Client
@@ -115,7 +116,6 @@ export class CrashReportsClient {
     const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
 
     if (!fullPath) {
-      const MAX_FILES_IN_ERROR = 10;
       const filesList = allFiles.slice(0, MAX_FILES_IN_ERROR).join(', ');
       const hasMore = allFiles.length > MAX_FILES_IN_ERROR;
       throw new Error(
@@ -133,20 +133,21 @@ export class CrashReportsClient {
    * Only RemoteXPC clients need explicit cleanup; Pyidevice is stateless
    */
   async close(): Promise<void> {
-    if (this.isRemoteXPC) {
-      this.remoteXPCCrashReportsService.close();
+    if (!this.isRemoteXPC) {
+      return;
+    }
 
-      if (this.remoteXPCConnection) {
-        try {
-          await this.remoteXPCConnection.close();
-        } catch (err) {
-          log.warn(
-            `Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`
-          );
-        }
+    this.remoteXPCCrashReportsService.close();
+
+    if (this.remoteXPCConnection) {
+      try {
+        await this.remoteXPCConnection.close();
+      } catch (err) {
+        log.warn(
+          `Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`
+        );
       }
     }
-    // Pyidevice doesn't need cleanup
   }
 
   //#endregion
