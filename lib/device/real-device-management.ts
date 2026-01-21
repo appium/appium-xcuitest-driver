@@ -7,8 +7,9 @@ import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';
 import { Devicectl } from 'node-devicectl';
 import type { AppiumLogger } from '@appium/types';
-import type { XCUITestDriver } from '../driver';
+import type { XCUITestDriver, XCUITestDriverOpts } from '../driver';
 import {AfcClient} from './afc-client';
+import {isIos18OrNewer} from '../utils';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -264,12 +265,13 @@ export class RealDevice {
   readonly udid: string;
   private readonly _log: AppiumLogger;
   readonly devicectl: Devicectl;
-  private platformVersion: string | undefined;
+  readonly driverOpts: XCUITestDriverOpts;
 
-  constructor(udid: string, logger?: AppiumLogger) {
+  constructor(udid: string, logger?: AppiumLogger, driverOpts?: any) {
     this.udid = udid;
     this._log = logger ?? defaultLogger;
     this.devicectl = new Devicectl(this.udid);
+    this.driverOpts = driverOpts ?? {};
   }
 
   get log(): AppiumLogger {
@@ -294,8 +296,7 @@ export class RealDevice {
       timeoutMs = IO_TIMEOUT_MS,
     } = opts;
     const timer = new timing.Timer().start();
-    const platformVersion = await this.getPlatformVersion();
-    const useRemoteXPC = !!platformVersion && util.compareVersions(platformVersion, '>=', '18.0');
+    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
     const afcClient = await AfcClient.createForDevice(this.udid, useRemoteXPC);
     try {
       let bundlePathOnPhone: string;
@@ -516,10 +517,7 @@ export class RealDevice {
   }
 
   async getPlatformVersion(): Promise<string> {
-    if (!this.platformVersion) {
-      this.platformVersion = await utilities.getOSVersion(this.udid) as string;
-    }
-    return this.platformVersion;
+    return await utilities.getOSVersion(this.udid);
   }
 
   async reset(opts: {bundleId?: string; fullReset?: boolean}): Promise<void> {

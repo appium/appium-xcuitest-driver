@@ -1362,7 +1362,7 @@ export class XCUITestDriver
       }
 
       this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const device = new RealDevice(this.opts.udid as string, this.log);
+      const device = new RealDevice(this.opts.udid as string, this.log, this.opts);
       return {device, realDevice: true, udid: this.opts.udid as string};
     }
 
