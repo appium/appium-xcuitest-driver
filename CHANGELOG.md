@@ -1,3 +1,9 @@
+## [10.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.17.0...v10.17.1) (2026-01-21)
+
+### Miscellaneous Chores
+
+* Update minimum appium-webdriveragent version to 11.1.1 ([2b8fa1e](https://github.com/appium/appium-xcuitest-driver/commit/2b8fa1ee63c4fe4d7175d142577ba6c2abb6e74d))
+
 ## [10.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.2...v10.17.0) (2026-01-20)
 
 ### Features
