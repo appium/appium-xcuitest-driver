@@ -1,6 +1,6 @@
 import {createSandbox} from 'sinon';
 import { installToRealDevice, RealDevice } from '../../lib/device/real-device-management';
-import {XCUITestDriver} from '../../lib/driver';
+import {XCUITestDriver, XCUITestDriverOpts} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonStub} from 'sinon';
@@ -25,7 +25,7 @@ describe('installToRealDevice', function () {
   });
 
   it('nothing happen without app', async function () {
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver.opts = {udid};
@@ -37,7 +37,7 @@ describe('installToRealDevice', function () {
   });
 
   it('nothing happen without bundle id', async function () {
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver._device = realDevice;
@@ -52,7 +52,7 @@ describe('installToRealDevice', function () {
     const opts = {
       skipUninstall: true
     };
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver._device = realDevice;
@@ -68,7 +68,7 @@ describe('installToRealDevice', function () {
     const opts = {
       skipUninstall: false
     };
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install').resolves() as SinonStub;
     driver._device = realDevice;
@@ -85,7 +85,7 @@ describe('installToRealDevice', function () {
       skipUninstall: false
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as SinonStub;
     driver._device = realDevice;
@@ -102,7 +102,7 @@ describe('installToRealDevice', function () {
     const opts = {
       skipUninstall: true
     };
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install')
       .onCall(0).throws(`{"Error":"MismatchedApplicationIdentifierEntitlement","ErrorDescription":"Upgrade's application-identifier entitlement string (TEAM_ID.com.kazucocoa.example) does not match installed application's application-identifier string (ANOTHER_TEAM_ID.com.kazucocoa.example); rejecting upgrade."}`)
@@ -121,7 +121,7 @@ describe('installToRealDevice', function () {
       skipUninstall: true
     };
     const err_msg = `{"Error":"ApplicationVerificationFailed","ErrorDetail":-402620395,"ErrorDescription":"Failed to verify code signature of /path/to.app : 0xe8008015 (A valid provisioning profile for this executable was not found.)"}`;
-    const realDevice = new RealDevice(udid);
+    const realDevice = new RealDevice(udid, {} as XCUITestDriverOpts);
     const removeStub = sandbox.stub(realDevice, 'remove').resolves() as SinonStub;
     const installStub = sandbox.stub(realDevice, 'install').throws(err_msg) as SinonStub;
     sandbox.stub(realDevice, 'isAppInstalled').resolves(true);

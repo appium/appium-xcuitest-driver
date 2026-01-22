@@ -2,7 +2,7 @@ import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
-import {XCUITestDriver} from '../../lib/driver';
+import {XCUITestDriver, XCUITestDriverOpts} from '../../lib/driver';
 import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import {RealDevice} from '../../lib/device/real-device-management';
@@ -39,7 +39,7 @@ describe('XCUITestDriver', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
-      realDevice = new RealDevice('1234');
+      realDevice = new RealDevice('1234', {} as XCUITestDriverOpts);
       // Mock _wda to avoid getter throwing error
       // For simulators, url.port should be undefined to allow wdaLocalPort to be used
       driver._wda = {

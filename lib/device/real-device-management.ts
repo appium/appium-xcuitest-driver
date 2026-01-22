@@ -267,11 +267,11 @@ export class RealDevice {
   readonly devicectl: Devicectl;
   readonly driverOpts: XCUITestDriverOpts;
 
-  constructor(udid: string, logger?: AppiumLogger, driverOpts?: any) {
+  constructor(udid: string, driverOpts: XCUITestDriverOpts, logger?: AppiumLogger) {
     this.udid = udid;
+    this.driverOpts = driverOpts;
     this._log = logger ?? defaultLogger;
     this.devicectl = new Devicectl(this.udid);
-    this.driverOpts = driverOpts ?? {};
   }
 
   get log(): AppiumLogger {
