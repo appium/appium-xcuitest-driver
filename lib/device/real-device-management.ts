@@ -7,7 +7,7 @@ import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';
 import { Devicectl } from 'node-devicectl';
 import type { AppiumLogger } from '@appium/types';
-import type { XCUITestDriver } from '../driver';
+import type { XCUITestDriver, XCUITestDriverOpts } from '../driver';
 import {AfcClient} from './afc-client';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {isIos18OrNewer} from '../utils';
@@ -266,13 +266,13 @@ export class RealDevice {
   readonly udid: string;
   private readonly _log: AppiumLogger;
   readonly devicectl: Devicectl;
-  readonly driverOpts: any; // XCUITestDriverOpts
+  readonly driverOpts: XCUITestDriverOpts;
 
-  constructor(udid: string, logger?: AppiumLogger, driverOpts?: any) {
+  constructor(udid: string, driverOpts: XCUITestDriverOpts, logger?: AppiumLogger) {
     this.udid = udid;
+    this.driverOpts = driverOpts;
     this._log = logger ?? defaultLogger;
     this.devicectl = new Devicectl(this.udid);
-    this.driverOpts = driverOpts ?? {};
   }
 
   get log(): AppiumLogger {

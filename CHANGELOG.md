@@ -1,3 +1,33 @@
+## [10.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.0...v10.18.1) (2026-01-23)
+
+### Miscellaneous Chores
+
+* Exclude tests from the published dist ([38e02c0](https://github.com/appium/appium-xcuitest-driver/commit/38e02c07af337b1f3c9388c9d8e3c4e1e84c3317))
+
+## [10.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.17.1...v10.18.0) (2026-01-23)
+
+### Features
+
+* use `isIos18OrNewer` to check version instead of ios-device util ([#2716](https://github.com/appium/appium-xcuitest-driver/issues/2716)) ([0af4cc4](https://github.com/appium/appium-xcuitest-driver/commit/0af4cc4f92fe6d48f078061bacab0e72ddec0c7c))
+
+## [10.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.17.0...v10.17.1) (2026-01-21)
+
+### Miscellaneous Chores
+
+* Update minimum appium-webdriveragent version to 11.1.1 ([2b8fa1e](https://github.com/appium/appium-xcuitest-driver/commit/2b8fa1ee63c4fe4d7175d142577ba6c2abb6e74d))
+
+## [10.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.2...v10.17.0) (2026-01-20)
+
+### Features
+
+* **crash-reports:** use remotexpc when iOS>=18 ([#2712](https://github.com/appium/appium-xcuitest-driver/issues/2712)) ([3dfe6cb](https://github.com/appium/appium-xcuitest-driver/commit/3dfe6cb4bb7d4d2a556d61c02078a96150be4282))
+
+## [10.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.1...v10.16.2) (2026-01-20)
+
+### Bug Fixes
+
+* Real device app installation ([#2715](https://github.com/appium/appium-xcuitest-driver/issues/2715)) ([f457d66](https://github.com/appium/appium-xcuitest-driver/commit/f457d6630432abcf6b213477000e1ff31aaece8b))
+
 ## [10.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.16.0...v10.16.1) (2026-01-19)
 
 ### Miscellaneous Chores

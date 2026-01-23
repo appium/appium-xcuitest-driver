@@ -8,7 +8,7 @@ import WebSocket from 'ws';
 import { SafariConsoleLog } from '../device/log/safari-console-log';
 import { SafariNetworkLog } from '../device/log/safari-network-log';
 import { toLogEntry } from '../device/log/helpers';
-import { NATIVE_WIN } from '../utils';
+import { NATIVE_WIN, isIos18OrNewer } from '../utils';
 import { BIDI_EVENT_NAME } from './bidi/constants';
 import { makeLogEntryAddedEvent } from './bidi/models';
 import type {XCUITestDriver} from '../driver';
@@ -131,6 +131,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         sim: this.device as Simulator,
         udid: this.isRealDevice() ? this.opts.udid : undefined,
         log: this.log,
+        useRemoteXPC: this.isRealDevice() && isIos18OrNewer(this.opts),
       }), {
         type: 'crashlog',
       }
