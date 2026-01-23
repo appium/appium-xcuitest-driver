@@ -62,8 +62,7 @@ export async function mobileInstallApp(
     }
   }
 
-  await this.device.
-  installApp(
+  await this.device.installApp(
     srcAppPath,
     bundleId,
     {
