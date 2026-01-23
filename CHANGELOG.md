@@ -1,3 +1,9 @@
+## [10.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.0...v10.18.1) (2026-01-23)
+
+### Miscellaneous Chores
+
+* Exclude tests from the published dist ([38e02c0](https://github.com/appium/appium-xcuitest-driver/commit/38e02c07af337b1f3c9388c9d8e3c4e1e84c3317))
+
 ## [10.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.17.1...v10.18.0) (2026-01-23)
 
 ### Features
