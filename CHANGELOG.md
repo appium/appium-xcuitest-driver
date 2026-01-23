@@ -1,3 +1,9 @@
+## [10.18.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.17.1...v10.18.0) (2026-01-23)
+
+### Features
+
+* use `isIos18OrNewer` to check version instead of ios-device util ([#2716](https://github.com/appium/appium-xcuitest-driver/issues/2716)) ([0af4cc4](https://github.com/appium/appium-xcuitest-driver/commit/0af4cc4f92fe6d48f078061bacab0e72ddec0c7c))
+
 ## [10.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.17.0...v10.17.1) (2026-01-21)
 
 ### Miscellaneous Chores
