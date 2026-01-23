@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
+import {XCUITestDriver, XCUITestDriverOpts} from '../../../lib/driver';
 import {services} from 'appium-ios-device';
 import {RealDevice} from '../../../lib/device/real-device-management';
 import {expect} from 'chai';
@@ -77,7 +77,7 @@ describe('location commands', function () {
     describe('on real device', function () {
       beforeEach(function () {
         driver.opts.udid = udid;
-        driver._device = new RealDevice('123');
+        driver._device = new RealDevice('123', {} as XCUITestDriverOpts);
       });
 
       it('should use location service to set a location when no platform version', async function () {
