@@ -73,7 +73,8 @@
     "!.DS_Store",
     "CHANGELOG.md",
     "LICENSE",
-    "npm-shrinkwrap.json"
+    "npm-shrinkwrap.json",
+    "!build/test"
   ],
   "types": "./build/lib/index.d.ts",
   "dependencies": {
