@@ -130,19 +130,7 @@ export class InstallationProxyClient {
     timeout?: number
   ): Promise<any[]> {
     if (this.isRemoteXPC) {
-      // RemoteXPC uses different parameter structure
-      const options: Record<string, any> = {};
-      if (clientOptions?.PackageType) {
-        options.packageType = clientOptions.PackageType;
-      }
-      // Copy other options
-      Object.keys(clientOptions ?? {}).forEach((key) => {
-        if (key !== 'PackageType') {
-          options[key] = clientOptions![key];
-        }
-      });
-
-      await this.remoteXPCService.install(path, options);
+      await this.remoteXPCService.install(path, clientOptions);
       return []; // RemoteXPC returns void, return empty array for compatibility
     }
 
@@ -162,18 +150,7 @@ export class InstallationProxyClient {
     timeout?: number
   ): Promise<any[]> {
     if (this.isRemoteXPC) {
-      const options: Record<string, any> = {};
-      if (clientOptions?.PackageType) {
-        options.packageType = clientOptions.PackageType;
-      }
-      // Copy other options
-      Object.keys(clientOptions ?? {}).forEach((key) => {
-        if (key !== 'PackageType') {
-          options[key] = clientOptions![key];
-        }
-      });
-
-      await this.remoteXPCService.upgrade(path, options);
+      await this.remoteXPCService.upgrade(path, clientOptions);
       return [];
     }
 
