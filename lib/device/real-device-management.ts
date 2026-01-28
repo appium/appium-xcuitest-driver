@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import B, {TimeoutError} from 'bluebird';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
-import path from 'path';
+import path from 'node:path';
 import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';

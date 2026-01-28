@@ -16,8 +16,8 @@ import {
 } from 'appium-ios-remotexpc';
 
 import {strongbox} from '@appium/strongbox';
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';

@@ -1,6 +1,6 @@
 import {fs, tempDir, util} from 'appium/support';
 import B from 'bluebird';
-import path from 'path';
+import path from 'node:path';
 import _ from 'lodash';
 import {CrashReportsClient} from '../crash-reports-client';
 import {IOSLog} from './ios-log';

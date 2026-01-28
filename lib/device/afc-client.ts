@@ -1,7 +1,7 @@
-import type {Readable} from 'stream';
-import {Readable as ReadableStream} from 'stream';
-import {pipeline} from 'stream/promises';
-import path from 'path';
+import type {Readable} from 'node:stream';
+import {Readable as ReadableStream} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
+import path from 'node:path';
 import _ from 'lodash';
 import B from 'bluebird';
 import {fs, mkdirp} from 'appium/support';

@@ -1,7 +1,7 @@
 import B from 'bluebird';
-import https from 'https';
+import https from 'node:https';
 import {getFreePort} from '../helpers/ports';
-import os from 'os';
+import os from 'node:os';
 import _pem from 'pem';
 import {amendCapabilities, SAFARI_CAPS} from '../desired';
 import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';

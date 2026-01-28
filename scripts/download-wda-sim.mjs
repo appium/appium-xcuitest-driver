@@ -1,7 +1,7 @@
 import {fs, logger, zip, net, node} from 'appium/support.js';
 import _ from 'lodash';
-import os from 'os';
-import path from 'path';
+import os from 'node:os';
+import path from 'node:path';
 import {parseArgValue} from './utils.js';
 
 const log = logger.getLogger('download-wda-sim');

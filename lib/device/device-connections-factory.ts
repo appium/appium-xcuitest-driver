@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import net from 'net';
+import net from 'node:net';
 import B from 'bluebird';
 import {logger, util, timing} from 'appium/support';
 import {utilities} from 'appium-ios-device';
