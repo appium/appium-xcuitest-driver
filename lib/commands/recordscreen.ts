@@ -4,7 +4,7 @@ import {SubProcess} from 'teen_process';
 import {encodeBase64OrUpload} from '../utils';
 import {WDA_BASE_URL} from 'appium-webdriveragent';
 import {waitForCondition} from 'asyncbox';
-import url from 'url';
+import url from 'node:url';
 import type {XCUITestDriver} from '../driver';
 import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
 import type {WDASettings} from 'appium-webdriveragent';

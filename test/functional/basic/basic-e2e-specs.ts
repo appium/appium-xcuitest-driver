@@ -1,5 +1,5 @@
 import B from 'bluebird';
-import util from 'util';
+import util from 'node:util';
 import {retryInterval} from 'asyncbox';
 import {
   isIosVersionBelow,
