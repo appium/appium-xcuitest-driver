@@ -8,9 +8,26 @@ import type {
 } from 'appium-ios-remotexpc';
 
 /**
+ * Application information interface
+ */
+interface AppInfo {
+  CFBundleIdentifier?: string;
+  CFBundleName?: string;
+  CFBundleDisplayName?: string;
+  CFBundleVersion?: string;
+  CFBundleShortVersionString?: string;
+  ApplicationType?: string;
+  Path?: string;
+  Container?: string;
+  StaticDiskUsage?: number;
+  DynamicDiskUsage?: number;
+  [key: string]: any;
+}
+
+/**
  * Options for listing applications
  */
-export interface ListApplicationOptions {
+interface ListApplicationOptions {
   applicationType?: 'User' | 'System';
   returnAttributes?: string[];
 }
@@ -18,7 +35,7 @@ export interface ListApplicationOptions {
 /**
  * Options for lookup applications
  */
-export interface LookupApplicationOptions {
+interface LookupApplicationOptions {
   bundleIds: string | string[];
   returnAttributes?: string[];
   applicationType?: 'User' | 'System';
@@ -30,16 +47,10 @@ export interface LookupApplicationOptions {
  * Provides a unified interface for app installation/management operations on iOS devices
  */
 export class InstallationProxyClient {
-  private readonly service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService;
-  private readonly remoteXPCConnection?: RemoteXpcConnection;
-
   private constructor(
-    service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
-    remoteXPCConnection?: RemoteXpcConnection
-  ) {
-    this.service = service;
-    this.remoteXPCConnection = remoteXPCConnection;
-  }
+    private readonly service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
+    private readonly remoteXPCConnection?: RemoteXpcConnection
+  ) {}
 
   //#region Public Methods
 
@@ -75,13 +86,11 @@ export class InstallationProxyClient {
    * @param opts - Options for filtering and selecting attributes
    * @returns Object keyed by bundle ID
    */
-  async listApplications(opts?: ListApplicationOptions): Promise<Record<string, any>> {
+  async listApplications(opts?: ListApplicationOptions): Promise<Record<string, AppInfo>> {
     if (this.isRemoteXPC) {
       // RemoteXPC returns array, need to convert to object
       const apps = await this.remoteXPCService.browse({
-        applicationType: opts?.applicationType === 'User' ? 'User'
-                      : opts?.applicationType === 'System' ? 'System'
-                      : 'Any',
+        applicationType: opts?.applicationType || 'Any',
         returnAttributes: opts?.returnAttributes,
       });
 
@@ -91,7 +100,7 @@ export class InstallationProxyClient {
           acc[app.CFBundleIdentifier] = app;
         }
         return acc;
-      }, {} as Record<string, any>);
+      }, {} as Record<string, AppInfo>);
     }
 
     // ios-device already returns object
@@ -104,7 +113,7 @@ export class InstallationProxyClient {
    * @param opts - Bundle IDs and options
    * @returns Object keyed by bundle ID
    */
-  async lookupApplications(opts: LookupApplicationOptions): Promise<Record<string, any>> {
+  async lookupApplications(opts: LookupApplicationOptions): Promise<Record<string, AppInfo>> {
     const bundleIds = Array.isArray(opts.bundleIds) ? opts.bundleIds : [opts.bundleIds];
 
     if (this.isRemoteXPC) {

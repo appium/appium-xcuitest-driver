@@ -298,8 +298,8 @@ export async function queryAppState(
  *
  * Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
  * @param applicationType - The type of applications to list.
- * @returns A list of apps where each item is a mapping of bundle identifiers to maps of platform-specific app properties.
- * @remarks Having `UIFileSharingEnabled` set to `true` in the return app properties map means this app supports file upload/download in its `documents` container.
+ * @returns An object mapping bundle identifiers to app properties (e.g., CFBundleName, CFBundleVersion, etc.).
+ * @remarks Having `UIFileSharingEnabled` set to `true` in the app properties means the app supports file upload/download in its `documents` container.
  * @group Real Device Only
  */
 export async function mobileListApps(
