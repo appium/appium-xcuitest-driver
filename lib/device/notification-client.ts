@@ -88,10 +88,7 @@ export class NotificationClient {
    */
   async close(): Promise<void> {
     // Close the service first
-    if (this.service && typeof (this.service as any).close === 'function') {
-      (this.service as any).close();
-    }
-
+    this.service.close()
     // Then close RemoteXPC connection if present
     if (this.remoteXPCConnection) {
       try {
