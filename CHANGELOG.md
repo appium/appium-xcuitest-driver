@@ -1,3 +1,9 @@
+## [10.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.1...v10.18.2) (2026-01-27)
+
+### Miscellaneous Chores
+
+* **deps:** bump asyncbox from 4.1.1 to 6.0.1 ([#2719](https://github.com/appium/appium-xcuitest-driver/issues/2719)) ([2861cdc](https://github.com/appium/appium-xcuitest-driver/commit/2861cdc989f8c41bedce2a62f3f5b81dc2454297))
+
 ## [10.18.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.0...v10.18.1) (2026-01-23)
 
 ### Miscellaneous Chores
