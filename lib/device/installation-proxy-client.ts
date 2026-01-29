@@ -131,7 +131,8 @@ export class InstallationProxyClient {
    *
    * @param path - Path to ipa
    * @param clientOptions - Installation options
-   * @param timeout - Timeout in milliseconds
+   * @param timeout - Timeout in milliseconds (only applies to ios-device, RemoteXPC has built-in 10-minute timeout)
+   * @returns Array of progress messages received during installation
    */
   async installApplication(
     path: string,
@@ -139,8 +140,9 @@ export class InstallationProxyClient {
     timeout?: number
   ): Promise<any[]> {
     if (this.isRemoteXPC) {
-      await this.remoteXPCService.install(path, clientOptions);
-      return []; // RemoteXPC returns void, return empty array for compatibility
+      return await this.executeWithProgressCollection(
+        (progressHandler) => this.remoteXPCService.install(path, clientOptions, progressHandler)
+      );
     }
 
     return await this.iosDeviceService.installApplication(path, clientOptions, timeout);
@@ -151,7 +153,8 @@ export class InstallationProxyClient {
    *
    * @param path - Path to app on device
    * @param clientOptions - Installation options
-   * @param timeout - Timeout in milliseconds
+   * @param timeout - Timeout in milliseconds (only applies to ios-device, RemoteXPC has built-in 10-minute timeout)
+   * @returns Array of progress messages received during upgrade
    */
   async upgradeApplication(
     path: string,
@@ -159,8 +162,9 @@ export class InstallationProxyClient {
     timeout?: number
   ): Promise<any[]> {
     if (this.isRemoteXPC) {
-      await this.remoteXPCService.upgrade(path, clientOptions);
-      return [];
+      return await this.executeWithProgressCollection(
+        (progressHandler) => this.remoteXPCService.upgrade(path, clientOptions, progressHandler)
+      );
     }
 
     return await this.iosDeviceService.upgradeApplication(path, clientOptions, timeout);
@@ -170,12 +174,14 @@ export class InstallationProxyClient {
    * Uninstall an application
    *
    * @param bundleId - Bundle ID of app to uninstall
-   * @param timeout - Timeout in milliseconds
+   * @param timeout - Timeout in milliseconds (only applies to ios-device, RemoteXPC has built-in 10-minute timeout)
+   * @returns Array of progress messages received during uninstallation
    */
   async uninstallApplication(bundleId: string, timeout?: number): Promise<any[]> {
     if (this.isRemoteXPC) {
-      await this.remoteXPCService.uninstall(bundleId);
-      return [];
+      return await this.executeWithProgressCollection(
+        (progressHandler) => this.remoteXPCService.uninstall(bundleId, {}, progressHandler)
+      );
     }
 
     return await this.iosDeviceService.uninstallApplication(bundleId, timeout);
@@ -223,6 +229,22 @@ export class InstallationProxyClient {
    */
   private get iosDeviceService(): IOSDeviceInstallationProxyService {
     return this.service as IOSDeviceInstallationProxyService;
+  }
+
+  /**
+   * Execute a RemoteXPC operation and collect progress messages to match ios-device behavior
+   *
+   * @param operation - Function that executes the RemoteXPC operation with a progress handler
+   * @returns Array of progress messages
+   */
+  private async executeWithProgressCollection(
+    operation: (progressHandler: (percentComplete: number, status: string) => void) => Promise<void>
+  ): Promise<any[]> {
+    const messages: any[] = [];
+    await operation((percentComplete, status) => {
+      messages.push({PercentComplete: percentComplete, Status: status});
+    });
+    return messages;
   }
 
   /**
