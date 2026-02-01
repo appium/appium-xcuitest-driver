@@ -1,6 +1,6 @@
 import {exec, SubProcess} from 'teen_process';
 import {fs, util, tempDir} from 'appium/support';
-import path from 'path';
+import path from 'node:path';
 import { BaseDeviceClient } from './base-device-client';
 import type { BaseDeviceClientOptions, InstallProfileArgs } from './base-device-client';
 import type { TeenProcessExecResult } from 'teen_process';

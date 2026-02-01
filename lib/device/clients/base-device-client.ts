@@ -7,7 +7,7 @@ export interface BaseDeviceClientOptions {
 
 export interface InstallProfileArgs {
   profilePath?: string;
-  payload?: string|Buffer;
+  payload?: string | Buffer;
 }
 
 export abstract class BaseDeviceClient {

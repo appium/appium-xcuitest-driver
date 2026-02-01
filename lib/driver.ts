@@ -244,7 +244,7 @@ const CAP_NAMES_NO_XCODEBUILD_REQUIRED = ['webDriverAgentUrl', 'usePreinstalledW
 
 export class XCUITestDriver
   extends BaseDriver<XCUITestDriverConstraints, StringRecord>
-  implements ExternalDriver<XCUITestDriverConstraints, FullContext|string, StringRecord> {
+  implements ExternalDriver<XCUITestDriverConstraints, FullContext | string, StringRecord> {
   static newMethodMap = newMethodMap;
 
   static executeMethodMap = executeMethodMap;
