@@ -1,3 +1,9 @@
+## [10.19.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.19.0...v10.19.1) (2026-02-01)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump @appium/eslint-config-appium-ts from 2.0.5 to 3.0.0 ([#2721](https://github.com/appium/appium-xcuitest-driver/issues/2721)) ([ab6a5b9](https://github.com/appium/appium-xcuitest-driver/commit/ab6a5b94f81bd2da28dfbe80f33abb3a65e2afd5))
+
 ## [10.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.2...v10.19.0) (2026-02-01)
 
 ### Features
