@@ -1,3 +1,9 @@
+## [10.19.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.2...v10.19.0) (2026-02-01)
+
+### Features
+
+* **notification:** implement shim notification proxy and unified notification client ([#2722](https://github.com/appium/appium-xcuitest-driver/issues/2722)) ([c286824](https://github.com/appium/appium-xcuitest-driver/commit/c2868241b25c62e379e55997d4a491420786852f))
+
 ## [10.18.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.18.1...v10.18.2) (2026-01-27)
 
 ### Miscellaneous Chores
