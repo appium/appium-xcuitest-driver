@@ -5,11 +5,12 @@ import path from 'path';
 import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';
-import { Devicectl } from 'node-devicectl';
-import type { AppiumLogger } from '@appium/types';
-import type { XCUITestDriver, XCUITestDriverOpts } from '../driver';
+import {Devicectl} from 'node-devicectl';
+import type {AppiumLogger} from '@appium/types';
+import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
 import {AfcClient} from './afc-client';
 import {InstallationProxyClient} from './installation-proxy-client';
+import {NotificationClient} from './notification-client';
 import {isIos18OrNewer} from '../utils';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
@@ -341,13 +342,15 @@ export class RealDevice {
   async installOrUpgradeApplication(bundlePathOnPhone: string, opts: InstallOrUpgradeOptions): Promise<void> {
     const {isUpgrade, timeout} = opts;
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const notificationService = await services.startNotificationProxyService(this.udid);
+    const notificationClient = await NotificationClient.create(
+      this.udid,
+      this.log,
+      isIos18OrNewer(this.driverOpts),
+    );
     const installationClient = await InstallationProxyClient.create(this.udid, useRemoteXPC);
-    const appInstalledNotification = new B<void>((resolve) => {
-      notificationService.observeNotification(APPLICATION_INSTALLED_NOTIFICATION, {
-        notification: resolve,
-      });
-    });
+    const appInstalledNotification = notificationClient.observeNotification(
+      APPLICATION_INSTALLED_NOTIFICATION,
+    );
     const clientOptions = {PackageType: 'Developer'};
     try {
       if (isUpgrade) {
@@ -364,7 +367,7 @@ export class RealDevice {
         await installationClient.installApplication(bundlePathOnPhone, clientOptions, timeout);
       }
       try {
-        await appInstalledNotification.timeout(
+        await B.resolve(appInstalledNotification).timeout(
           APPLICATION_NOTIFICATION_TIMEOUT_MS,
           `Could not get the application installed notification within ` +
             `${APPLICATION_NOTIFICATION_TIMEOUT_MS}ms but we will continue`,
@@ -374,7 +377,7 @@ export class RealDevice {
       }
     } finally {
       await installationClient.close();
-      notificationService.close();
+      await notificationClient.close();
     }
   }
 
@@ -412,7 +415,7 @@ export class RealDevice {
    */
   async fetchAppInfo(
     bundleId: string,
-    returnAttributes: string | string[] = ['CFBundleIdentifier', 'CFBundleVersion']
+    returnAttributes: string | string[] = ['CFBundleIdentifier', 'CFBundleVersion'],
   ): Promise<Record<string, any> | undefined> {
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
     const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
@@ -669,7 +672,6 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
   this.log.debug(`Detected real device udid: '${udid}'`);
   return udid;
 }
-
 
 //#endregion
 
