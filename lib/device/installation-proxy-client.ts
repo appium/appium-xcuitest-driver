@@ -9,6 +9,16 @@ import type {
 import type {AppInfo, AppInfoMapping} from '../types';
 
 /**
+ * Progress response structure for installation/uninstallation operations
+ */
+interface ProgressResponse {
+  PercentComplete?: number;
+  Status?: string;
+  Error?: string;
+  ErrorDescription?: string;
+}
+
+/**
  * Options for listing applications
  */
 interface ListApplicationOptions {
@@ -122,7 +132,7 @@ export class InstallationProxyClient {
     path: string,
     clientOptions?: Record<string, any>,
     timeoutMs?: number
-  ): Promise<any[]> {
+  ): Promise<ProgressResponse[]> {
     if (this.isRemoteXPC) {
       return await this.executeWithProgressCollection(
         (progressHandler) => this.remoteXPCService.install(
@@ -148,7 +158,7 @@ export class InstallationProxyClient {
     path: string,
     clientOptions?: Record<string, any>,
     timeoutMs?: number
-  ): Promise<any[]> {
+  ): Promise<ProgressResponse[]> {
     if (this.isRemoteXPC) {
       return await this.executeWithProgressCollection(
         (progressHandler) => this.remoteXPCService.upgrade(
@@ -169,7 +179,7 @@ export class InstallationProxyClient {
    * @param timeoutMs - Timeout in milliseconds
    * @returns Array of progress messages received during uninstallation
    */
-  async uninstallApplication(bundleId: string, timeoutMs?: number): Promise<any[]> {
+  async uninstallApplication(bundleId: string, timeoutMs?: number): Promise<ProgressResponse[]> {
     if (this.isRemoteXPC) {
       return await this.executeWithProgressCollection(
         (progressHandler) => this.remoteXPCService.uninstall(
@@ -235,8 +245,8 @@ export class InstallationProxyClient {
    */
   private async executeWithProgressCollection(
     operation: (progressHandler: (percentComplete: number, status: string) => void) => Promise<void>
-  ): Promise<any[]> {
-    const messages: any[] = [];
+  ): Promise<ProgressResponse[]> {
+    const messages: ProgressResponse[] = [];
     await operation((percentComplete, status) => {
       messages.push({PercentComplete: percentComplete, Status: status});
     });
