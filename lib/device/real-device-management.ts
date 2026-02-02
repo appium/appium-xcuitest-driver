@@ -345,7 +345,7 @@ export class RealDevice {
     const notificationClient = await NotificationClient.create(
       this.udid,
       this.log,
-      isIos18OrNewer(this.driverOpts),
+      useRemoteXPC,
     );
     const installationClient = await InstallationProxyClient.create(this.udid, useRemoteXPC);
     const appInstalledNotification = notificationClient.observeNotification(

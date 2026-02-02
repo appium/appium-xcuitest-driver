@@ -12,6 +12,7 @@ import {requireRealDevice, isIos18OrNewer} from '../utils';
 import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
 import type {AppState} from './enum';
+import type {AppInfoMapping} from '../types';
 import type {Simulator} from 'appium-ios-simulator';
 
 /**
@@ -305,7 +306,7 @@ export async function queryAppState(
 export async function mobileListApps(
   this: XCUITestDriver,
   applicationType: 'User' | 'System' = 'User',
-): Promise<Record<string, any>> {
+): Promise<AppInfoMapping> {
   const device = requireRealDevice(this, 'Listing apps');
   const useRemoteXPC = isIos18OrNewer(this.opts);
   const client = await InstallationProxyClient.create(device.udid, useRemoteXPC);
