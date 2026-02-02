@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.19.0",
+  "version": "10.19.1",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -142,7 +142,7 @@
   },
   "devDependencies": {
     "@appium/docutils": "^2.0.0-rc.1",
-    "@appium/eslint-config-appium-ts": "^2.0.0-rc.1",
+    "@appium/eslint-config-appium-ts": "^3.0.0",
     "@appium/tsconfig": "^1.0.0-rc.1",
     "@appium/types": "^1.0.0-rc.1",
     "@semantic-release/changelog": "^6.0.3",

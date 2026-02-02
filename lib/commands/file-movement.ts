@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {fs, tempDir, mkdirp, zip, util} from 'appium/support';
-import path from 'path';
+import path from 'node:path';
 import {
   pullFile as realDevicePullFile,
   pullFolder as realDevicePullFolder,
