@@ -81,25 +81,24 @@ export class InstallationProxyClient {
    * @returns Object keyed by bundle ID
    */
   async listApplications(opts?: ListApplicationOptions): Promise<AppInfoMapping> {
-    if (this.isRemoteXPC) {
-      // RemoteXPC returns array, need to convert to object
-      const apps = await this.remoteXPCService.browse({
-        applicationType: opts?.applicationType || 'Any',
-        // Use '*' to request all attributes when returnAttributes is not explicitly specified
-        returnAttributes: opts?.returnAttributes || '*',
-      });
-
-      // Convert array to object keyed by CFBundleIdentifier
-      return apps.reduce((acc, app) => {
-        if (app.CFBundleIdentifier) {
-          acc[app.CFBundleIdentifier] = app as AppInfo;
-        }
-        return acc;
-      }, {} as AppInfoMapping);
+    if (!this.isRemoteXPC) {
+      return await this.iosDeviceService.listApplications(opts);
     }
 
-    // ios-device already returns object
-    return await this.iosDeviceService.listApplications(opts);
+    // RemoteXPC returns array, need to convert to object
+    const apps = await this.remoteXPCService.browse({
+      applicationType: opts?.applicationType || 'Any',
+      // Use '*' to request all attributes when returnAttributes is not explicitly specified
+      returnAttributes: opts?.returnAttributes || '*',
+    });
+
+    // Convert array to object keyed by CFBundleIdentifier
+    return apps.reduce((acc, app) => {
+      if (app.CFBundleIdentifier) {
+        acc[app.CFBundleIdentifier] = app as AppInfo;
+      }
+      return acc;
+    }, {} as AppInfoMapping);
   }
 
   /**
@@ -109,16 +108,15 @@ export class InstallationProxyClient {
    * @returns Object keyed by bundle ID
    */
   async lookupApplications(opts: LookupApplicationOptions): Promise<AppInfoMapping> {
-    const bundleIds = Array.isArray(opts.bundleIds) ? opts.bundleIds : [opts.bundleIds];
-
-    if (this.isRemoteXPC) {
-      return await this.remoteXPCService.lookup(bundleIds, {
-        returnAttributes: opts.returnAttributes,
-        applicationType: opts.applicationType,
-      }) as AppInfoMapping;
+    if (!this.isRemoteXPC) {
+      return await this.iosDeviceService.lookupApplications(opts);
     }
 
-    return await this.iosDeviceService.lookupApplications(opts);
+    const bundleIds = Array.isArray(opts.bundleIds) ? opts.bundleIds : [opts.bundleIds];
+    return await this.remoteXPCService.lookup(bundleIds, {
+      returnAttributes: opts.returnAttributes,
+      applicationType: opts.applicationType,
+    }) as AppInfoMapping;
   }
 
   /**
@@ -134,17 +132,17 @@ export class InstallationProxyClient {
     clientOptions?: Record<string, any>,
     timeoutMs?: number
   ): Promise<ProgressResponse[]> {
-    if (this.isRemoteXPC) {
-      return await this.executeWithProgressCollection(
-        (progressHandler) => this.remoteXPCService.install(
-          path,
-          {...clientOptions, timeoutMs},
-          progressHandler
-        )
-      );
+    if (!this.isRemoteXPC) {
+      return await this.iosDeviceService.installApplication(path, clientOptions, timeoutMs);
     }
 
-    return await this.iosDeviceService.installApplication(path, clientOptions, timeoutMs);
+    return await this.executeWithProgressCollection(
+      (progressHandler) => this.remoteXPCService.install(
+        path,
+        {...clientOptions, timeoutMs},
+        progressHandler
+      )
+    );
   }
 
   /**
@@ -160,17 +158,17 @@ export class InstallationProxyClient {
     clientOptions?: Record<string, any>,
     timeoutMs?: number
   ): Promise<ProgressResponse[]> {
-    if (this.isRemoteXPC) {
-      return await this.executeWithProgressCollection(
-        (progressHandler) => this.remoteXPCService.upgrade(
-          path,
-          {...clientOptions, timeoutMs},
-          progressHandler
-        )
-      );
+    if (!this.isRemoteXPC) {
+      return await this.iosDeviceService.upgradeApplication(path, clientOptions, timeoutMs);
     }
 
-    return await this.iosDeviceService.upgradeApplication(path, clientOptions, timeoutMs);
+    return await this.executeWithProgressCollection(
+      (progressHandler) => this.remoteXPCService.upgrade(
+        path,
+        {...clientOptions, timeoutMs},
+        progressHandler
+      )
+    );
   }
 
   /**
@@ -181,17 +179,17 @@ export class InstallationProxyClient {
    * @returns Array of progress messages received during uninstallation
    */
   async uninstallApplication(bundleId: string, timeoutMs?: number): Promise<ProgressResponse[]> {
-    if (this.isRemoteXPC) {
-      return await this.executeWithProgressCollection(
-        (progressHandler) => this.remoteXPCService.uninstall(
-          bundleId,
-          {timeoutMs},
-          progressHandler
-        )
-      );
+    if (!this.isRemoteXPC) {
+      return await this.iosDeviceService.uninstallApplication(bundleId, timeoutMs);
     }
 
-    return await this.iosDeviceService.uninstallApplication(bundleId, timeoutMs);
+    return await this.executeWithProgressCollection(
+      (progressHandler) => this.remoteXPCService.uninstall(
+        bundleId,
+        {timeoutMs},
+        progressHandler
+      )
+    );
   }
 
   /**
