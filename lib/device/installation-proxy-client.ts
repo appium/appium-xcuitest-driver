@@ -85,7 +85,8 @@ export class InstallationProxyClient {
       // RemoteXPC returns array, need to convert to object
       const apps = await this.remoteXPCService.browse({
         applicationType: opts?.applicationType || 'Any',
-        returnAttributes: opts?.returnAttributes,
+        // Use '*' to request all attributes when returnAttributes is not explicitly specified
+        returnAttributes: opts?.returnAttributes || '*',
       });
 
       // Convert array to object keyed by CFBundleIdentifier
