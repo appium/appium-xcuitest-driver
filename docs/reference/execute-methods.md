@@ -336,7 +336,7 @@ applicationType | string | no | The type of applications to list. Either `System
 
 #### Returned Result
 
-An object where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports files upload and download into its `documents` container. Read the [File Transfer](../guides/file-transfer.md) guide for more details.
+A map where keys are bundle identifiers and values are maps of platform-specific app properties. Having `UIFileSharingEnabled` set to `true` in the app properties map means this app supports file upload and download into its `documents` container. Read the [File Transfer](../guides/file-transfer.md) guide for more details.
 
 ### mobile: clearApp
 
