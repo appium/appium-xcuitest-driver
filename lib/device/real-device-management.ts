@@ -9,6 +9,7 @@ import {Devicectl} from 'node-devicectl';
 import type {AppiumLogger} from '@appium/types';
 import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
 import {AfcClient} from './afc-client';
+import {InstallationProxyClient} from './installation-proxy-client';
 import {NotificationClient} from './notification-client';
 import {isIos18OrNewer} from '../utils';
 
@@ -280,11 +281,12 @@ export class RealDevice {
   }
 
   async remove(bundleId: string): Promise<void> {
-    const service = await services.startInstallationProxyService(this.udid);
+    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
+    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
     try {
-      await service.uninstallApplication(bundleId);
+      await client.uninstallApplication(bundleId);
     } finally {
-      service.close();
+      await client.close();
     }
   }
 
@@ -339,12 +341,13 @@ export class RealDevice {
 
   async installOrUpgradeApplication(bundlePathOnPhone: string, opts: InstallOrUpgradeOptions): Promise<void> {
     const {isUpgrade, timeout} = opts;
+    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
     const notificationClient = await NotificationClient.create(
       this.udid,
       this.log,
-      isIos18OrNewer(this.driverOpts),
+      useRemoteXPC,
     );
-    const installationService = await services.startInstallationProxyService(this.udid);
+    const installationClient = await InstallationProxyClient.create(this.udid, useRemoteXPC);
     const appInstalledNotification = notificationClient.observeNotification(
       APPLICATION_INSTALLED_NOTIFICATION,
     );
@@ -355,13 +358,13 @@ export class RealDevice {
           `An upgrade of the existing application is going to be performed. ` +
           `Will timeout in ${timeout.toFixed(0)} ms`
         );
-        await installationService.upgradeApplication(bundlePathOnPhone, clientOptions, timeout);
+        await installationClient.upgradeApplication(bundlePathOnPhone, clientOptions, timeout);
       } else {
         this.log.debug(
           `A new application installation is going to be performed. ` +
           `Will timeout in ${timeout.toFixed(0)} ms`
         );
-        await installationService.installApplication(bundlePathOnPhone, clientOptions, timeout);
+        await installationClient.installApplication(bundlePathOnPhone, clientOptions, timeout);
       }
       try {
         await B.resolve(appInstalledNotification).timeout(
@@ -373,7 +376,7 @@ export class RealDevice {
         this.log.warn((e as Error).message);
       }
     } finally {
-      installationService.close();
+      await installationClient.close();
       await notificationClient.close();
     }
   }
@@ -414,26 +417,28 @@ export class RealDevice {
     bundleId: string,
     returnAttributes: string | string[] = ['CFBundleIdentifier', 'CFBundleVersion'],
   ): Promise<Record<string, any> | undefined> {
-    const service = await services.startInstallationProxyService(this.udid);
+    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
+    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
     try {
       return (
-        await service.lookupApplications({
+        await client.lookupApplications({
           bundleIds: bundleId,
           // https://github.com/appium/appium/issues/18753
-          returnAttributes,
+          returnAttributes: Array.isArray(returnAttributes) ? returnAttributes : [returnAttributes],
         })
       )[bundleId];
     } finally {
-      service.close();
+      await client.close();
     }
   }
 
   async terminateApp(bundleId: string, platformVersion: string): Promise<boolean> {
     let instrumentService: any;
-    let installProxyService: any;
+    let installProxyClient: InstallationProxyClient | undefined;
     try {
-      installProxyService = await services.startInstallationProxyService(this.udid);
-      const apps = await installProxyService.listApplications({
+      const useRemoteXPC = isIos18OrNewer(this.driverOpts);
+      installProxyClient = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+      const apps = await installProxyClient.listApplications({
         returnAttributes: ['CFBundleIdentifier', 'CFBundleExecutable']
       });
       if (!apps[bundleId]) {
@@ -481,8 +486,8 @@ export class RealDevice {
       this.log.warn(`Failed to kill '${bundleId}'. Original error: ${(err as any).stderr || (err as Error).message}`);
       return false;
     } finally {
-      if (installProxyService) {
-        installProxyService.close();
+      if (installProxyClient) {
+        await installProxyClient.close();
       }
       if (instrumentService) {
         instrumentService.close();
@@ -499,9 +504,10 @@ export class RealDevice {
    * 'CFBundleName' attribute as 'bundleName'.
    */
   async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
-    const service = await services.startInstallationProxyService(this.udid);
+    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
+    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
     try {
-      const applications = await service.listApplications({
+      const applications = await client.listApplications({
         applicationType: 'User', returnAttributes: ['CFBundleIdentifier', 'CFBundleName']
       });
       return _.reduce(
@@ -515,7 +521,7 @@ export class RealDevice {
         [],
       );
     } finally {
-      service.close();
+      await client.close();
     }
   }
 

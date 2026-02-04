@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {fs, util} from 'appium/support';
 import {errors} from 'appium/driver';
-import {services} from 'appium-ios-device';
 import path from 'node:path';
 import B from 'bluebird';
 import {
@@ -9,9 +8,11 @@ import {
   onPostConfigureApp,
   onDownloadApp,
 } from '../app-utils';
-import {requireRealDevice} from '../utils';
+import {requireRealDevice, isIos18OrNewer} from '../utils';
+import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
 import type {AppState} from './enum';
+import type {AppInfoMapping} from '../types';
 import type {Simulator} from 'appium-ios-simulator';
 
 /**
@@ -298,19 +299,21 @@ export async function queryAppState(
  *
  * Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
  * @param applicationType - The type of applications to list.
- * @returns A list of apps where each item is a mapping of bundle identifiers to maps of platform-specific app properties.
- * @remarks Having `UIFileSharingEnabled` set to `true` in the return app properties map means this app supports file upload/download in its `documents` container.
+ * @returns An object mapping bundle identifiers to app properties (e.g., CFBundleName, CFBundleVersion, etc.).
+ * @remarks Having `UIFileSharingEnabled` set to `true` in the app properties means the app supports file upload/download in its `documents` container.
  * @group Real Device Only
  */
 export async function mobileListApps(
   this: XCUITestDriver,
   applicationType: 'User' | 'System' = 'User',
-): Promise<Record<string, any>[]> {
-  const service = await services.startInstallationProxyService(requireRealDevice(this, 'Listing apps').udid);
+): Promise<AppInfoMapping> {
+  const device = requireRealDevice(this, 'Listing apps');
+  const useRemoteXPC = isIos18OrNewer(this.opts);
+  const client = await InstallationProxyClient.create(device.udid, useRemoteXPC);
   try {
-    return await service.listApplications({applicationType});
+    return await client.listApplications({applicationType});
   } finally {
-    service.close();
+    await client.close();
   }
 }
 
