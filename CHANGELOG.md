@@ -1,3 +1,9 @@
+## [10.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.19.1...v10.20.0) (2026-02-04)
+
+### Features
+
+* **installation-proxy:** use remotexpc when iOS>=18 ([#2714](https://github.com/appium/appium-xcuitest-driver/issues/2714)) ([3e5ecc8](https://github.com/appium/appium-xcuitest-driver/commit/3e5ecc82346d2463ac62a74f5ca1b73192f186fd))
+
 ## [10.19.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.19.0...v10.19.1) (2026-02-01)
 
 ### Miscellaneous Chores
