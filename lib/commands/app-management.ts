@@ -298,7 +298,9 @@ export async function queryAppState(
  * List applications installed on the real device under test
  *
  * Read [Pushing/Pulling files](https://appium.io/docs/en/writing-running-appium/ios/ios-xctest-file-movement/) for more details.
- * @param applicationType - The type of applications to list.
+ * @param applicationType - The type of applications to list (default: 'User').
+ * @param returnAttributes - Array of attribute names to return for each app (e.g., ["CFBundleIdentifier", "CFBundleName"]).
+ *   If not provided, all available attributes are returned.
  * @returns An object mapping bundle identifiers to app properties (e.g., CFBundleName, CFBundleVersion, etc.).
  * @remarks Having `UIFileSharingEnabled` set to `true` in the app properties means the app supports file upload/download in its `documents` container.
  * @group Real Device Only
@@ -306,12 +308,13 @@ export async function queryAppState(
 export async function mobileListApps(
   this: XCUITestDriver,
   applicationType: 'User' | 'System' = 'User',
+  returnAttributes?: string[],
 ): Promise<AppInfoMapping> {
   const device = requireRealDevice(this, 'Listing apps');
   const useRemoteXPC = isIos18OrNewer(this.opts);
   const client = await InstallationProxyClient.create(device.udid, useRemoteXPC);
   try {
-    return await client.listApplications({applicationType});
+    return await client.listApplications({applicationType, returnAttributes});
   } finally {
     await client.close();
   }

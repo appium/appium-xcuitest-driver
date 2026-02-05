@@ -199,7 +199,7 @@ export const executeMethodMap = {
   'mobile: listApps': {
     command: 'mobileListApps',
     params: {
-      optional: ['applicationType'],
+      optional: ['applicationType', 'returnAttributes'],
     },
   },
   'mobile: clearApp': {
