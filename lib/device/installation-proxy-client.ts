@@ -81,15 +81,20 @@ export class InstallationProxyClient {
    * @returns Object keyed by bundle ID
    */
   async listApplications(opts?: ListApplicationOptions): Promise<AppInfoMapping> {
+    // Ensure CFBundleIdentifier is always included
+    const normalizedOpts = opts?.returnAttributes && !opts.returnAttributes.includes('CFBundleIdentifier')
+      ? { ...opts, returnAttributes: ['CFBundleIdentifier', ...opts.returnAttributes] }
+      : opts;
+
     if (!this.isRemoteXPC) {
-      return await this.iosDeviceService.listApplications(opts);
+      return await this.iosDeviceService.listApplications(normalizedOpts);
     }
 
     // RemoteXPC returns array, need to convert to object
     const apps = await this.remoteXPCService.browse({
-      applicationType: opts?.applicationType || 'Any',
+      applicationType: normalizedOpts?.applicationType || 'Any',
       // Use '*' to request all attributes when returnAttributes is not explicitly specified
-      returnAttributes: opts?.returnAttributes || '*',
+      returnAttributes: normalizedOpts?.returnAttributes || '*',
     });
 
     // Convert array to object keyed by CFBundleIdentifier
