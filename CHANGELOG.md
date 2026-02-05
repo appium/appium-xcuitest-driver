@@ -1,3 +1,9 @@
+## [10.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.20.0...v10.21.0) (2026-02-05)
+
+### Features
+
+* **installation-proxy:** support retrieving specific attributes in `listApps` ([#2724](https://github.com/appium/appium-xcuitest-driver/issues/2724)) ([8631eec](https://github.com/appium/appium-xcuitest-driver/commit/8631eec6df2c4f12bae8a933e46915c577b417bb))
+
 ## [10.20.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.19.1...v10.20.0) (2026-02-04)
 
 ### Features
