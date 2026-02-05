@@ -81,10 +81,15 @@ export class InstallationProxyClient {
    * @returns Object keyed by bundle ID
    */
   async listApplications(opts?: ListApplicationOptions): Promise<AppInfoMapping> {
+    let normalizedOpts = opts;
+
     // Ensure CFBundleIdentifier is always included
-    const normalizedOpts = opts?.returnAttributes && !opts.returnAttributes.includes('CFBundleIdentifier')
-      ? { ...opts, returnAttributes: ['CFBundleIdentifier', ...opts.returnAttributes] }
-      : opts;
+    if (opts?.returnAttributes && !opts.returnAttributes.includes('CFBundleIdentifier')) {
+      normalizedOpts = {
+        ...opts,
+        returnAttributes: ['CFBundleIdentifier', ...opts.returnAttributes],
+      };
+    }
 
     if (!this.isRemoteXPC) {
       return await this.iosDeviceService.listApplications(normalizedOpts);
