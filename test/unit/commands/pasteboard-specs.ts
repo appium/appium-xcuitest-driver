@@ -27,8 +27,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should not be called', async function () {
-      // @ts-expect-error incorrect usage
-      await expect(driver.mobileSetPasteboard({content: 'bla'})).to.be.rejectedWith(/can only be performed on Simulator/);
+      await expect(driver.mobileSetPasteboard({content: 'bla'} as any)).to.be.rejectedWith(/can only be performed on Simulator/);
       expect(setPasteboardStub.notCalled).to.be.true;
     });
 
@@ -44,8 +43,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
-      // @ts-expect-error incorrect usage
-      await expect(driver.mobileSetPasteboard()).to.be.rejectedWith(/mandatory to set/);
+      await expect(driver.mobileSetPasteboard(undefined as any)).to.be.rejectedWith(/mandatory to set/);
       expect(setPasteboardStub.notCalled).to.be.true;
     });
 

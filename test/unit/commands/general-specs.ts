@@ -94,8 +94,7 @@ describe('general commands', function () {
     });
 
     it('should be called on a Simulator', async function () {
-      // @ts-expect-error random stuff on opts again
-      driver.opts.allowTouchIdEnroll = true;
+      (driver.opts as Record<string, any>).allowTouchIdEnroll = true;
       await driver.toggleEnrollTouchId();
       expect(device.enrollBiometric.calledOnce).to.be.true;
     });
@@ -103,8 +102,7 @@ describe('general commands', function () {
     it('should not be called on a real device', async function () {
       delete device.simctl;
       device.devicectl = true;
-      // @ts-expect-error random stuff on opts again
-      driver.opts.allowTouchIdEnroll = true;
+      (driver.opts as Record<string, any>).allowTouchIdEnroll = true;
       await expect(driver.toggleEnrollTouchId()).to.be.rejected;
       expect(device.enrollBiometric.called).to.be.false;
     });

@@ -70,8 +70,7 @@ describe('utils', function () {
 
   describe('isLocalHost', function () {
     it('should be false with invalid input, undefined', function () {
-      // @ts-expect-error invalid input
-      expect(isLocalHost(undefined)).to.be.false;
+      expect(isLocalHost(undefined as any)).to.be.false;
     });
     it('should be false with invalid input, empty', function () {
       expect(isLocalHost('')).to.be.false;
