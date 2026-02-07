@@ -47,7 +47,6 @@ export async function createSim(this: XCUITestDriver): Promise<Simulator> {
     platform,
     checkExistence: false,
     devicesSetPath,
-    // @ts-ignore This is ok
     logger: this.log,
   });
 }
@@ -72,7 +71,6 @@ export async function getExistingSim(this: XCUITestDriver): Promise<Simulator | 
       platform,
       checkExistence: false,
       devicesSetPath,
-      // @ts-ignore This is ok
       logger: this.log,
     });
 

@@ -14,9 +14,7 @@ async function initSession(caps, remoteOpts = {}) {
     connectionRetryCount: 1,
     ...remoteOpts,
   });
-  // @ts-ignore private API, apparently
   driver.name = undefined;
-  // @ts-ignore private API, apparently
   driver.errored = false;
   return driver;
 }

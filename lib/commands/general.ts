@@ -78,8 +78,8 @@ export async function getDeviceTime(
       );
       return stdout;
     }
-    // @ts-expect-error This internal prop of moment is evidently a private API
-    return parsedTimestamp.utcOffset(parsedTimestamp._tzm || 0).format(format);
+    const tzm = (parsedTimestamp as moment.Moment & {_tzm?: number})._tzm ?? 0;
+    return parsedTimestamp.utcOffset(tzm).format(format);
   }
 
   const {timestamp, utcOffset, timeZone} = await utilities.getDeviceTime(this.opts.udid);

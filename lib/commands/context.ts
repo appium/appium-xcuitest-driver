@@ -143,9 +143,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
 export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<void> {
   this._remote = await this.getNewRemoteDebugger();
 
-  // @ts-ignore static is fine
   this.remote.on(RemoteDebugger.EVENT_PAGE_CHANGE, this.onPageChange.bind(this));
-  // @ts-ignore static is fine
   this.remote.on(RemoteDebugger.EVENT_FRAMES_DETACHED, () => {
     if (!_.isEmpty(this.curWebFrames)) {
       const curWebFrames = this.curWebFrames;

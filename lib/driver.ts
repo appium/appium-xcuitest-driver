@@ -1051,8 +1051,7 @@ export class XCUITestDriver
       try {
         const idb = new IDB({udid: this.opts.udid});
         await idb.connect();
-        // @ts-ignore This is ok. We are going to ditch idb soon anyway
-        device.idb = idb;
+        (device as Simulator & {idb?: IDB}).idb = idb;
       } catch (e) {
         this.log.debug(e.stack);
         this.log.warn(
@@ -1346,7 +1345,6 @@ export class XCUITestDriver
           try {
             const device = await getSimulator(this.opts.udid, {
               devicesSetPath: this.opts.simulatorDevicesSetPath,
-              // @ts-ignore This is ok
               logger: this.log,
             });
             return {device, realDevice: false, udid: this.opts.udid};
@@ -1483,10 +1481,8 @@ export class XCUITestDriver
       maxTypingFrequency: this.opts.maxTypingFrequency ?? 60,
       shouldUseSingletonTestManager: this.opts.shouldUseSingletonTestManager ?? true,
       waitForIdleTimeout: this.opts.waitForIdleTimeout,
-      // @ts-expect-error - do not assign arbitrary properties to `this.opts`
-      shouldUseCompactResponses: this.opts.shouldUseCompactResponses,
-      // @ts-expect-error - do not assign arbitrary properties to `this.opts`
-      elementResponseFields: this.opts.elementResponseFields,
+      shouldUseCompactResponses: (this.opts as StringRecord).shouldUseCompactResponses,
+      elementResponseFields: (this.opts as StringRecord).elementResponseFields,
       disableAutomaticScreenshots: this.opts.disableAutomaticScreenshots,
       shouldTerminateApp: this.opts.shouldTerminateApp ?? true,
       forceAppLaunch: this.opts.forceAppLaunch ?? true,
@@ -1795,7 +1791,6 @@ export class XCUITestDriver
   installApp = appManagementCommands.installApp;
   activateApp = appManagementCommands.activateApp;
   isAppInstalled = appManagementCommands.isAppInstalled;
-  // @ts-ignore it must return boolean
   terminateApp = appManagementCommands.terminateApp;
   queryAppState = appManagementCommands.queryAppState;
   mobileListApps = appManagementCommands.mobileListApps;
@@ -1869,12 +1864,9 @@ export class XCUITestDriver
 
   getContexts = contextCommands.getContexts;
   getCurrentContext = contextCommands.getCurrentContext;
-  // @ts-ignore This is OK
   getWindowHandle = contextCommands.getWindowHandle;
   getWindowHandles = contextCommands.getWindowHandles;
-  // @ts-ignore Type mismatch: function type vs method signature
   setContext = contextCommands.setContext;
-  // @ts-ignore This is OK
   setWindow = contextCommands.setWindow;
   activateRecentWebview = contextCommands.activateRecentWebview;
   connectToRemoteDebugger = contextCommands.connectToRemoteDebugger;
@@ -1928,7 +1920,6 @@ export class XCUITestDriver
 
   receiveAsyncResponse = executeCommands.receiveAsyncResponse;
   execute = executeCommands.execute;
-  // @ts-ignore Type mismatch: function type vs method signature
   executeAsync = executeCommands.executeAsync;
   // Note: executeMobile is handled internally via execute method
   mobileSimctl = simctlCommands.mobileSimctl;
@@ -1977,7 +1968,6 @@ export class XCUITestDriver
   removeApp = generalCommands.removeApp;
   launchApp = generalCommands.launchApp;
   closeApp = generalCommands.closeApp;
-  // @ts-ignore Type mismatch: function type vs method signature
   setUrl = generalCommands.setUrl;
   getViewportRect = generalCommands.getViewportRect;
   getScreenInfo = generalCommands.getScreenInfo;
@@ -2161,7 +2151,6 @@ export class XCUITestDriver
   /*-----+
    | WEB |
    +-----+*/
-  // @ts-ignore Type mismatch: function type vs method signature
   setFrame = webCommands.setFrame;
   getCssProperty = webCommands.getCssProperty;
   submit = webCommands.submit;

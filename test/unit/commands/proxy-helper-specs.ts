@@ -32,15 +32,12 @@ describe('proxy commands', function () {
 
     it('should throw an error if no endpoint is given', async function () {
       mockJwproxy.expects('command').never().called;
-      // @ts-expect-error incorrect usage
-      await expect(driver.proxyCommand(null, 'POST', {some: 'stuff'})).to.be.rejectedWith(/endpoint/);
+      await expect(driver.proxyCommand(null as any, 'POST', {some: 'stuff'})).to.be.rejectedWith(/endpoint/);
     });
     it('should throw an error if no method is given', async function () {
       mockJwproxy.expects('command').never().called;
       await expect(
-        driver
-          // @ts-expect-error incorrect usage
-          .proxyCommand('/some/endpoint', null, {some: 'stuff'})
+        driver.proxyCommand('/some/endpoint', null as any, {some: 'stuff'})
       ).to.be.rejectedWith(/GET, POST/);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {
