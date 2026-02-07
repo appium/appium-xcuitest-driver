@@ -1,3 +1,9 @@
+## [10.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.0...v10.21.1) (2026-02-07)
+
+### Miscellaneous Chores
+
+* Remove redundant typescript ignores ([#2725](https://github.com/appium/appium-xcuitest-driver/issues/2725)) ([812dbd3](https://github.com/appium/appium-xcuitest-driver/commit/812dbd3614c1221ee0ebf15172f1e90909f718df))
+
 ## [10.21.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.20.0...v10.21.0) (2026-02-05)
 
 ### Features
