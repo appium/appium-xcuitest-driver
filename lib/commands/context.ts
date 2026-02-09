@@ -461,8 +461,6 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
   return isRealDevice
     ? createRemoteDebugger({...baseOpts, udid: this.opts.udid as string}, true)
     : createRemoteDebugger(baseOpts, false);
-  }
-  return createRemoteDebugger(baseOpts, false);
 }
 
 /**
