@@ -458,14 +458,9 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     pageLoadStrategy: this.caps.pageLoadStrategy,
   };
 
-  if (isRealDevice) {
-    return createRemoteDebugger(
-      {
-        ...baseOpts,
-        udid: this.opts.udid as string,
-      },
-      true,
-    );
+  return isRealDevice
+    ? createRemoteDebugger({...baseOpts, udid: this.opts.udid as string}, true)
+    : createRemoteDebugger(baseOpts, false);
   }
   return createRemoteDebugger(baseOpts, false);
 }
