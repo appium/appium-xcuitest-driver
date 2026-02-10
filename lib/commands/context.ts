@@ -434,31 +434,33 @@ export function isWebview(this: XCUITestDriver): boolean {
  * @returns A configured RemoteDebugger instance
  */
 export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<RemoteDebugger> {
-  const socketPath = this.isRealDevice()
+  const isRealDevice = this.isRealDevice();
+  const socketPath = isRealDevice
     ? undefined
     : (await (this.device as Simulator).getWebInspectorSocket() ?? undefined);
-  return createRemoteDebugger(
-    {
-      bundleId: this.opts.bundleId,
-      additionalBundleIds: this.opts.additionalWebviewBundleIds as string[] | undefined,
-      isSafari: this.isSafari(),
-      includeSafari: this.opts.includeSafariInWebviews,
-      pageLoadMs: this.pageLoadMs,
-      platformVersion: this.opts.platformVersion,
-      socketPath,
-      remoteDebugProxy: this.opts.remoteDebugProxy,
-      garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect)
-        ? !!this.opts.safariGarbageCollect
-        : false,
-      udid: this.opts.udid as string,
-      logAllCommunication: this.opts.safariLogAllCommunication,
-      logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
-      socketChunkSize: this.opts.safariSocketChunkSize,
-      webInspectorMaxFrameLength: this.opts.safariWebInspectorMaxFrameLength,
-      pageLoadStrategy: this.caps.pageLoadStrategy,
-    },
-    this.isRealDevice(),
-  );
+
+  const baseOpts = {
+    bundleId: this.opts.bundleId,
+    additionalBundleIds: this.opts.additionalWebviewBundleIds as string[] | undefined,
+    isSafari: this.isSafari(),
+    includeSafari: this.opts.includeSafariInWebviews,
+    pageLoadMs: this.pageLoadMs,
+    platformVersion: this.opts.platformVersion,
+    socketPath,
+    remoteDebugProxy: this.opts.remoteDebugProxy,
+    garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect)
+      ? !!this.opts.safariGarbageCollect
+      : false,
+    logAllCommunication: this.opts.safariLogAllCommunication,
+    logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
+    socketChunkSize: this.opts.safariSocketChunkSize,
+    webInspectorMaxFrameLength: this.opts.safariWebInspectorMaxFrameLength,
+    pageLoadStrategy: this.caps.pageLoadStrategy,
+  };
+
+  return isRealDevice
+    ? createRemoteDebugger({...baseOpts, udid: this.opts.udid as string}, true)
+    : createRemoteDebugger(baseOpts, false);
 }
 
 /**
