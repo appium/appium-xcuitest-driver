@@ -1,3 +1,9 @@
+## [10.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.1...v10.21.2) (2026-02-10)
+
+### Bug Fixes
+
+* fix type error for RemoteDebugger ([#2726](https://github.com/appium/appium-xcuitest-driver/issues/2726)) ([7d8d3d0](https://github.com/appium/appium-xcuitest-driver/commit/7d8d3d0282420cc04162c4e81290f958bdb9e592))
+
 ## [10.21.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.0...v10.21.1) (2026-02-07)
 
 ### Miscellaneous Chores
