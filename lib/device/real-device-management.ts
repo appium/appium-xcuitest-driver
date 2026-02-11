@@ -12,6 +12,7 @@ import {AfcClient} from './afc-client';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {NotificationClient} from './notification-client';
 import {isIos18OrNewer} from '../utils';
+import {getRemoteXPCServices} from './remotexpc-utils';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -433,6 +434,36 @@ export class RealDevice {
   }
 
   async terminateApp(bundleId: string, platformVersion: string): Promise<boolean> {
+    // For iOS 18 and above, use RemoteXPC DVT service.
+    // processControl.getPidForBundleIdentifier gives us the PID directly from the bundle ID
+    if (isIos18OrNewer(this.driverOpts)) {
+      let remoteXPCConnection;
+      try {
+        const Services = await getRemoteXPCServices();
+        const dvt = await Services.startDVTService(this.udid);
+        remoteXPCConnection = dvt.remoteXPC;
+
+        const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
+        if (!pid) {
+          this.log.info(`The process of the bundle id '${bundleId}' was not running`);
+          return false;
+        }
+        this.log.debug(`Found process for '${bundleId}' with PID ${pid} via RemoteXPC`);
+        await dvt.processControl.kill(pid);
+        return true;
+      } catch (err: any) {
+        this.log.error(`Failed to terminate '${bundleId}' via RemoteXPC: ${err.message}`);
+        // Fall through to devicectl/legacy path
+      } finally {
+        if (remoteXPCConnection) {
+          this.log.info(`Closing remoteXPC connection for device ${this.udid}`);
+          await remoteXPCConnection.close();
+        }
+      }
+    }
+
+    // Fallback for iOS 18+ (if RemoteXPC failed) and primary path for iOS 17.x
+    // For iOS < 17, use the legacy instrument service.
     let instrumentService: any;
     let installProxyClient: InstallationProxyClient | undefined;
     try {
@@ -449,7 +480,7 @@ export class RealDevice {
       this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
 
       // 'devicectl' has overhead (generally?) than the instrument service via appium-ios-device,
-      // so hre uses the 'devicectl' only for iOS 17+.
+      // so it uses 'devicectl' only for iOS 17+.
       if (util.compareVersions(platformVersion, '>=', '17.0')) {
         this.log.debug(`Calling devicectl to kill the process`);
 
@@ -476,7 +507,7 @@ export class RealDevice {
           this.log.info(`The process of the bundle id '${bundleId}' was not running`);
           return false;
         }
-          await instrumentService.callChannel(
+        await instrumentService.callChannel(
           INSTRUMENT_CHANNEL.PROCESS_CONTROL,
           'killPid:',
           `${process.pid}`,
