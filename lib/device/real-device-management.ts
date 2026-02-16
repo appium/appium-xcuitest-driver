@@ -24,7 +24,7 @@ const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';
 
 type TerminateAppResult =
-  | {terminated: true; pid?: number}
+  | {terminated: true; pid: number}
   | {terminated: false; reason: 'not_running' | 'error'; detail?: string};
 
 //#region Public File System Functions
@@ -462,14 +462,12 @@ export class RealDevice {
     }
 
     if (result.terminated) {
-      if (result.pid != null) {
-        this.log.debug(`Found process for '${bundleId}' with PID ${result.pid}`);
-      }
+      this.log.debug(`Killed process for '${bundleId}' app with PID ${result.pid}`);
       return true;
     }
     switch (result.reason) {
       case 'not_running':
-        this.log.info(`The process of the '${bundleId}' app was not running`);
+        this.log.info(`The process of '${bundleId}' app was not running`);
         break;
       case 'error':
         this.log.warn(
