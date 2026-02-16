@@ -53,7 +53,7 @@ describe('DeviceConnectionsFactory', function () {
     };
 
     expect(
-      devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping))
+      devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping)),
     ).to.eql(['udid:1234', 'udid4:6545']);
   });
 });

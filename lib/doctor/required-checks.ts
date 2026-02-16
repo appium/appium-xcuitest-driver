@@ -1,9 +1,8 @@
 import {fs, doctor} from 'appium/support';
 import {exec} from 'teen_process';
-import { getPath as getXcodePath } from 'appium-xcode';
+import {getPath as getXcodePath} from 'appium-xcode';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
-
 
 export class XcodeCheck implements IDoctorCheck {
   log!: AppiumLogger;
@@ -31,7 +30,6 @@ export class XcodeCheck implements IDoctorCheck {
 }
 export const xcodeCheck = new XcodeCheck();
 
-
 export class XcodeToolsCheck implements IDoctorCheck {
   log!: AppiumLogger;
 
@@ -40,7 +38,9 @@ export class XcodeToolsCheck implements IDoctorCheck {
     try {
       await exec('xcodebuild', ['-version']);
     } catch (err) {
-      return doctor.nok(`${errPrefix}. Cannot run 'xcodebuild': ${(err as any).stderr || (err as Error).message}`);
+      return doctor.nok(
+        `${errPrefix}. Cannot run 'xcodebuild': ${(err as any).stderr || (err as Error).message}`,
+      );
     }
     return doctor.ok(`Xcode Command Line Tools are installed and work properly`);
   }
@@ -59,14 +59,14 @@ export class XcodeToolsCheck implements IDoctorCheck {
 }
 export const xcodeToolsCheck = new XcodeToolsCheck();
 
-
 class EnvVarAndPathCheck implements IDoctorCheck {
   log!: AppiumLogger;
-  static readonly ENVIRONMENT_VARS_TUTORIAL_URL = 'https://github.com/appium/java-client/blob/master/docs/environment.md';
+  static readonly ENVIRONMENT_VARS_TUTORIAL_URL =
+    'https://github.com/appium/java-client/blob/master/docs/environment.md';
 
   constructor(
     private readonly varName: string,
-    private readonly opts: EnvVarCheckOptions = {}
+    private readonly opts: EnvVarCheckOptions = {},
   ) {}
 
   async diagnose(): Promise<DoctorCheckResult> {
@@ -75,17 +75,21 @@ class EnvVarAndPathCheck implements IDoctorCheck {
       return doctor.nok(`${this.varName} environment variable is NOT set!`);
     }
 
-    if (!await fs.exists(varValue)) {
+    if (!(await fs.exists(varValue))) {
       const errMsg = `${this.varName} is set to '${varValue}' but this path does not exist!`;
       return doctor.nok(errMsg);
     }
 
     const stat = await fs.stat(varValue);
     if (this.opts.expectDir && !stat.isDirectory()) {
-      return doctor.nok(`${this.varName} is expected to be a valid folder, got a file path instead`);
+      return doctor.nok(
+        `${this.varName} is expected to be a valid folder, got a file path instead`,
+      );
     }
     if (this.opts.expectFile && stat.isDirectory()) {
-      return doctor.nok(`${this.varName} is expected to be a valid file, got a folder path instead`);
+      return doctor.nok(
+        `${this.varName} is expected to be a valid file, got a folder path instead`,
+      );
     }
 
     return doctor.ok(`${this.varName} is set to: ${varValue}`);

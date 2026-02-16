@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import {SubProcess, exec} from 'teen_process';
 import {util} from 'appium/support';
-import { LineConsumingLog } from './line-consuming-log';
-import { transports, createLogger, format, Logger } from 'winston';
-import type { Simulator } from 'appium-ios-simulator';
-import type { AppiumLogger } from '@appium/types';
+import {LineConsumingLog} from './line-consuming-log';
+import {transports, createLogger, format, Logger} from 'winston';
+import type {Simulator} from 'appium-ios-simulator';
+import type {AppiumLogger} from '@appium/types';
 import fs from 'node:fs/promises';
 
 const EXECVP_ERROR_PATTERN = /execvp\(\)/;
@@ -55,11 +55,13 @@ export class IOSSimulatorLog extends LineConsumingLog {
           level: 'info',
           format: format.combine(format.timestamp(), format.simple()),
           transports: [new transports.File({filename: this.iosSyslogFile})],
-          exitOnError: false
+          exitOnError: false,
         });
         this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
-        this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`);
+        this.log.warn(
+          `Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`,
+        );
         this.syslogLogger = null;
       }
     }
@@ -72,7 +74,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
     this.log.debug(
       `Starting log capture for iOS Simulator with udid '${this.sim.udid}' ` +
-      `via simctl using the following arguments '${util.quote(spawnArgs)}'`
+        `via simctl using the following arguments '${util.quote(spawnArgs)}'`,
     );
     await this.cleanupObsoleteLogStreams();
     try {
@@ -107,7 +109,9 @@ export class IOSSimulatorLog extends LineConsumingLog {
       this.log.debug(`Existing iOS Syslog file: '${this.iosSyslogFile}' deleted.`);
     } catch (unlinkErr) {
       if (unlinkErr.code !== 'ENOENT') {
-        this.log.warn(`Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`);
+        this.log.warn(
+          `Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`,
+        );
       }
     }
   }
@@ -116,7 +120,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
     if (this.syslogLogger) {
       this.log.debug(`Closing iOS syslog file: '${this.iosSyslogFile}'`);
       const fileTransport = this.syslogLogger.transports.find(
-        (t) => (t instanceof transports.File) && (t.filename === this.iosSyslogFile)
+        (t) => t instanceof transports.File && t.filename === this.iosSyslogFile,
       );
       if (fileTransport) {
         fileTransport.end?.();
@@ -193,7 +197,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       await exec('kill', pids.map(String));
     } catch (e) {
       this.log.warn(
-        `Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`
+        `Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`,
       );
     }
   }

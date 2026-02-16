@@ -23,7 +23,7 @@ export class CrashReportsClient {
 
   private constructor(
     service: RemoteXPCCrashReportsService | PyideviceClient,
-    remoteXPCConnection?: RemoteXpcConnection
+    remoteXPCConnection?: RemoteXpcConnection,
   ) {
     this.service = service;
     this.remoteXPCConnection = remoteXPCConnection;
@@ -91,9 +91,7 @@ export class CrashReportsClient {
     // RemoteXPC: ls returns full paths, filter and extract filenames
     const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
     return allFiles
-      .filter((filePath) =>
-        CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext))
-      )
+      .filter((filePath) => CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext)))
       .map((filePath) => {
         const parts = filePath.split('/');
         return parts[parts.length - 1];
@@ -120,7 +118,7 @@ export class CrashReportsClient {
       const hasMore = allFiles.length > MAX_FILES_IN_ERROR;
       throw new Error(
         `Crash report '${name}' not found on device. ` +
-          `Available files: ${filesList}${hasMore ? `, ... and ${allFiles.length - MAX_FILES_IN_ERROR} more` : ''}`
+          `Available files: ${filesList}${hasMore ? `, ... and ${allFiles.length - MAX_FILES_IN_ERROR} more` : ''}`,
       );
     }
 
@@ -143,9 +141,7 @@ export class CrashReportsClient {
       try {
         await this.remoteXPCConnection.close();
       } catch (err) {
-        log.warn(
-          `Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`
-        );
+        log.warn(`Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`);
       }
     }
   }
@@ -170,7 +166,7 @@ export class CrashReportsClient {
     operation: () => Promise<{
       service: RemoteXPCCrashReportsService;
       connection: RemoteXpcConnection;
-    }>
+    }>,
   ): Promise<CrashReportsClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
@@ -183,7 +179,7 @@ export class CrashReportsClient {
     } catch (err: any) {
       log.error(
         `Failed to create crash reports client via RemoteXPC: ${err.message}. ` +
-          `Falling back to py-ios-device (pyidevice)`
+          `Falling back to py-ios-device (pyidevice)`,
       );
       return null;
     } finally {

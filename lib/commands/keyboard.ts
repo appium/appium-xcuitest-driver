@@ -23,10 +23,7 @@ export async function hideKeyboard(
  *
  * @param keys - Array of key names to use for dismissing the keyboard
  */
-export async function mobileHideKeyboard(
-  this: XCUITestDriver,
-  keys: string[] = [],
-): Promise<void> {
+export async function mobileHideKeyboard(this: XCUITestDriver, keys: string[] = []): Promise<void> {
   await this.proxyCommand('/wda/keyboard/dismiss', 'POST', {
     keyNames: keys.includes('done') ? keys : [...keys, 'done'],
   });
@@ -65,6 +62,5 @@ export async function mobileKeys(
   elementId: string | null = null,
 ): Promise<void> {
   const url = `/wda/element/${elementId || 0}/keyboardInput`;
-  await this.proxyCommand(url, 'POST', { keys });
+  await this.proxyCommand(url, 'POST', {keys});
 }
-

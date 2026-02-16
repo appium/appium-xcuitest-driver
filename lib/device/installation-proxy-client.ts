@@ -43,7 +43,7 @@ interface LookupApplicationOptions {
 export class InstallationProxyClient {
   private constructor(
     private readonly service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
-    private readonly remoteXPCConnection?: RemoteXpcConnection
+    private readonly remoteXPCConnection?: RemoteXpcConnection,
   ) {}
 
   //#region Public Methods
@@ -59,7 +59,8 @@ export class InstallationProxyClient {
     if (useRemoteXPC) {
       const client = await InstallationProxyClient.withRemoteXpcConnection(async () => {
         const Services = await getRemoteXPCServices();
-        const {installationProxyService, remoteXPC} = await Services.startInstallationProxyService(udid);
+        const {installationProxyService, remoteXPC} =
+          await Services.startInstallationProxyService(udid);
         return {
           service: installationProxyService,
           connection: remoteXPC,
@@ -123,10 +124,10 @@ export class InstallationProxyClient {
     }
 
     const bundleIds = Array.isArray(opts.bundleIds) ? opts.bundleIds : [opts.bundleIds];
-    return await this.remoteXPCService.lookup(bundleIds, {
+    return (await this.remoteXPCService.lookup(bundleIds, {
       returnAttributes: opts.returnAttributes,
       applicationType: opts.applicationType,
-    }) as AppInfoMapping;
+    })) as AppInfoMapping;
   }
 
   /**
@@ -140,18 +141,14 @@ export class InstallationProxyClient {
   async installApplication(
     path: string,
     clientOptions?: Record<string, any>,
-    timeoutMs?: number
+    timeoutMs?: number,
   ): Promise<ProgressResponse[]> {
     if (!this.isRemoteXPC) {
       return await this.iosDeviceService.installApplication(path, clientOptions, timeoutMs);
     }
 
-    return await this.executeWithProgressCollection(
-      (progressHandler) => this.remoteXPCService.install(
-        path,
-        {...clientOptions, timeoutMs},
-        progressHandler
-      )
+    return await this.executeWithProgressCollection((progressHandler) =>
+      this.remoteXPCService.install(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
 
@@ -166,18 +163,14 @@ export class InstallationProxyClient {
   async upgradeApplication(
     path: string,
     clientOptions?: Record<string, any>,
-    timeoutMs?: number
+    timeoutMs?: number,
   ): Promise<ProgressResponse[]> {
     if (!this.isRemoteXPC) {
       return await this.iosDeviceService.upgradeApplication(path, clientOptions, timeoutMs);
     }
 
-    return await this.executeWithProgressCollection(
-      (progressHandler) => this.remoteXPCService.upgrade(
-        path,
-        {...clientOptions, timeoutMs},
-        progressHandler
-      )
+    return await this.executeWithProgressCollection((progressHandler) =>
+      this.remoteXPCService.upgrade(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
 
@@ -193,12 +186,8 @@ export class InstallationProxyClient {
       return await this.iosDeviceService.uninstallApplication(bundleId, timeoutMs);
     }
 
-    return await this.executeWithProgressCollection(
-      (progressHandler) => this.remoteXPCService.uninstall(
-        bundleId,
-        {timeoutMs},
-        progressHandler
-      )
+    return await this.executeWithProgressCollection((progressHandler) =>
+      this.remoteXPCService.uninstall(bundleId, {timeoutMs}, progressHandler),
     );
   }
 
@@ -253,7 +242,9 @@ export class InstallationProxyClient {
    * @returns Array of progress messages
    */
   private async executeWithProgressCollection(
-    operation: (progressHandler: (percentComplete: number, status: string) => void) => Promise<void>
+    operation: (
+      progressHandler: (percentComplete: number, status: string) => void,
+    ) => Promise<void>,
   ): Promise<ProgressResponse[]> {
     const messages: ProgressResponse[] = [];
     await operation((percentComplete, status) => {
@@ -265,8 +256,10 @@ export class InstallationProxyClient {
   /**
    * Helper to safely execute RemoteXPC operations with connection cleanup
    */
-  private static async withRemoteXpcConnection<T extends RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService>(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>
+  private static async withRemoteXpcConnection<
+    T extends RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
+  >(
+    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
   ): Promise<InstallationProxyClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
@@ -277,7 +270,9 @@ export class InstallationProxyClient {
       succeeded = true;
       return client;
     } catch (err: any) {
-      log.error(`Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
+      log.error(
+        `Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+      );
       return null;
     } finally {
       // Only close connection if we failed (if succeeded, the client owns it)

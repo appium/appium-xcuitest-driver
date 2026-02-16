@@ -1,7 +1,7 @@
 interface BiDiEvent<TParams> {
   method: string;
   params: TParams;
-};
+}
 
 interface LogEntrySource {
   realm: string;

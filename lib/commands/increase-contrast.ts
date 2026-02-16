@@ -1,13 +1,10 @@
 import _ from 'lodash';
 import {requireSimulator} from '../utils';
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {IncreaseContrastAction, IncreaseContrastResult} from './types';
 
-const INCREASE_CONTRAST_CONFIG = [
-    'enabled',
-    'disabled',
-] as const;
+const INCREASE_CONTRAST_CONFIG = ['enabled', 'disabled'] as const;
 
 /**
  * Sets the increase contrast configuration for the given simulator.
@@ -23,12 +20,11 @@ export async function mobileSetIncreaseContrast(
 ): Promise<void> {
   if (!(INCREASE_CONTRAST_CONFIG as readonly string[]).includes(_.lowerCase(increaseContrast))) {
     throw new errors.InvalidArgumentError(
-      `The 'increaseContrast' value is expected to be one of ${INCREASE_CONTRAST_CONFIG.join(',')}`
+      `The 'increaseContrast' value is expected to be one of ${INCREASE_CONTRAST_CONFIG.join(',')}`,
     );
   }
 
-  await requireSimulator(this, 'Setting increase contrast')
-    .setIncreaseContrast(increaseContrast);
+  await requireSimulator(this, 'Setting increase contrast').setIncreaseContrast(increaseContrast);
 }
 
 /**
@@ -42,7 +38,8 @@ export async function mobileSetIncreaseContrast(
 export async function mobileGetIncreaseContrast(
   this: XCUITestDriver,
 ): Promise<IncreaseContrastResult> {
-  return await requireSimulator(this, 'Getting increase contrast')
-    .getIncreaseContrast() as IncreaseContrastResult;
+  return (await requireSimulator(
+    this,
+    'Getting increase contrast',
+  ).getIncreaseContrast()) as IncreaseContrastResult;
 }
-

@@ -1,9 +1,5 @@
 import _ from 'lodash';
-import {
-  SAFARI_CAPS,
-  amendCapabilities,
-  isIosVersionBelow
-} from '../desired';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   openPage,
@@ -17,7 +13,6 @@ import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
-
 
 const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`;
 const GET_ELEM_ASYNC = `arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);`;
@@ -83,7 +78,9 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to open js popup windows', async function () {
-        await driver.updateSettings({autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]'});
+        await driver.updateSettings({
+          autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]',
+        });
 
         await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
         await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.not.be
@@ -94,9 +91,9 @@ describe('safari - windows and frames', function () {
       });
 
       it('should throw nosuchwindow if there is not one', async function () {
-        await expect(driver
-          .switchToWindow('noexistman')
-        ).to.be.rejectedWith(/window could not be found/);
+        await expect(driver.switchToWindow('noexistman')).to.be.rejectedWith(
+          /window could not be found/,
+        );
       });
 
       it('should be able to open and close windows', async function () {
@@ -224,7 +221,9 @@ describe('safari - windows and frames', function () {
 
       it('should execute javascript in frame', async function () {
         await driver.switchToFrame(1);
-        await expect(driver.executeScript(GET_ELEM_SYNC, [])).to.eventually.equal(SUB_FRAME_2_TITLE);
+        await expect(driver.executeScript(GET_ELEM_SYNC, [])).to.eventually.equal(
+          SUB_FRAME_2_TITLE,
+        );
       });
 
       it('should execute async javascript in frame', async function () {
@@ -293,4 +292,3 @@ describe('safari - windows and frames', function () {
     });
   });
 });
-

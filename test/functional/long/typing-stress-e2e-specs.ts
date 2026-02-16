@@ -52,4 +52,3 @@ describe('XCUITestDriver - long tests', function () {
     }
   });
 });
-

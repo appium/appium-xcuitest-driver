@@ -1,6 +1,6 @@
 import {services} from 'appium-ios-device';
-import { LineConsumingLog } from './line-consuming-log';
-import type { AppiumLogger } from '@appium/types';
+import {LineConsumingLog} from './line-consuming-log';
+import type {AppiumLogger} from '@appium/types';
 
 export interface IOSDeviceLogOpts {
   udid: string;

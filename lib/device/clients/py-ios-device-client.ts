@@ -1,10 +1,10 @@
 import {exec, SubProcess} from 'teen_process';
 import {fs, util, tempDir} from 'appium/support';
 import path from 'node:path';
-import { BaseDeviceClient } from './base-device-client';
-import type { BaseDeviceClientOptions, InstallProfileArgs } from './base-device-client';
-import type { TeenProcessExecResult } from 'teen_process';
-import type { CertificateList } from '../../commands/types';
+import {BaseDeviceClient} from './base-device-client';
+import type {BaseDeviceClientOptions, InstallProfileArgs} from './base-device-client';
+import type {TeenProcessExecResult} from 'teen_process';
+import type {CertificateList} from '../../commands/types';
 
 // https://github.com/YueChen-C/py-ios-device
 
@@ -53,7 +53,7 @@ export class Pyidevice extends BaseDeviceClient {
   }
 
   override async listProfiles(): Promise<CertificateList> {
-    const {stdout} = await this.execute(['profiles', 'list']) as TeenProcessExecResult<string>;
+    const {stdout} = (await this.execute(['profiles', 'list'])) as TeenProcessExecResult<string>;
     return JSON.parse(stdout);
   }
 
@@ -87,19 +87,22 @@ export class Pyidevice extends BaseDeviceClient {
 
   override async removeProfile(name: string): Promise<string> {
     return (
-      await this.execute(['profiles', 'remove', '--name', name], {logStdout: true}) as TeenProcessExecResult<string>
+      (await this.execute(['profiles', 'remove', '--name', name], {
+        logStdout: true,
+      })) as TeenProcessExecResult<string>
     ).stdout;
   }
 
   override async listCrashes(): Promise<string[]> {
-    const {stdout} = await this.execute(['crash', 'list']) as TeenProcessExecResult<string>;
+    const {stdout} = (await this.execute(['crash', 'list'])) as TeenProcessExecResult<string>;
     // Example output:
     // ['.', '..', 'SiriSearchFeedback-2023-12-06-144043.ips', '
     // SiriSearchFeedback-2024-05-22-194219.ips', 'JetsamEvent-2024-05-23-225056.ips',
     // 'JetsamEvent-2023-09-18-090920.ips', 'JetsamEvent-2024-05-16-054529.ips',
     // 'Assistant']
-    return JSON.parse(stdout.replace(/'/g, '"'))
-      .filter((x: string) => x.endsWith(CRASH_REPORT_EXT));
+    return JSON.parse(stdout.replace(/'/g, '"')).filter((x: string) =>
+      x.endsWith(CRASH_REPORT_EXT),
+    );
   }
 
   override async exportCrash(name: string, dstFolder: string): Promise<void> {
@@ -111,15 +114,15 @@ export class Pyidevice extends BaseDeviceClient {
   }
 
   override async collectPcap(dstFile: string): Promise<SubProcess> {
-    return await this.execute(['pcapd', dstFile], {
+    return (await this.execute(['pcapd', dstFile], {
       format: null,
       asynchronous: true,
-    }) as SubProcess;
+    })) as SubProcess;
   }
 
   private async execute(
     args: string[],
-    opts: ExecuteOptions = {}
+    opts: ExecuteOptions = {},
   ): Promise<TeenProcessExecResult<string> | SubProcess> {
     await this.assertExists();
     const {cwd, format = 'json', logStdout = false, asynchronous = false} = opts;

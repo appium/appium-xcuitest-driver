@@ -6,14 +6,13 @@ import _pem from 'pem';
 import {amendCapabilities, SAFARI_CAPS} from '../desired';
 import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
-import { waitForCondition } from 'asyncbox';
+import {waitForCondition} from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
 const pem = B.promisifyAll(_pem);
-
 
 let caps;
 let pemCertificate;
@@ -63,10 +62,11 @@ describe('Safari SSL', function () {
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     const assertPageSource = async () => {
       await waitForCondition(
-        async () => (await driver.getPageSource()).includes('Arbitrary text'), {
+        async () => (await driver.getPageSource()).includes('Arbitrary text'),
+        {
           waitMs: 10000,
           intervalMs: 500,
-        }
+        },
       );
     };
 
@@ -150,4 +150,3 @@ describe('Safari SSL', function () {
     });
   });
 });
-

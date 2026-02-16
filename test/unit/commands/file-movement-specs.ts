@@ -7,7 +7,6 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('file-movement', function () {
-
   describe('parseContainerPath', function () {
     let driver;
 
@@ -54,7 +53,8 @@ describe('file-movement', function () {
     });
     it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();
-      await expect(parseContainerPath.bind(driver)('@io.appium.example:documents', mntRoot)).to.be.rejected;
+      await expect(parseContainerPath.bind(driver)('@io.appium.example:documents', mntRoot)).to.be
+        .rejected;
     });
   });
 });

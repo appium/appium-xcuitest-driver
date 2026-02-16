@@ -202,15 +202,15 @@ export const desiredCapConstraints = {
   },
   calendarAccessAuthorized: {
     isBoolean: true,
-    deprecated: true
+    deprecated: true,
   },
   useSimpleBuildTest: {
     isBoolean: true,
-    deprecated: true
+    deprecated: true,
   },
   waitForQuiescence: {
     isBoolean: true,
-    deprecated: true
+    deprecated: true,
   },
   maxTypingFrequency: {
     isNumber: true,
@@ -391,8 +391,8 @@ export const desiredCapConstraints = {
   },
   pageLoadStrategy: {
     isString: true,
-    inclusionCaseInsensitive: ['none', 'eager', 'normal']
-  }
+    inclusionCaseInsensitive: ['none', 'eager', 'normal'],
+  },
 } as const satisfies Constraints;
 
 export type XCUITestDriverConstraints = typeof desiredCapConstraints;

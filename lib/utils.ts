@@ -171,7 +171,9 @@ export async function checkAppPresent(app: string): Promise<void> {
  * @returns The full path to module root
  * @throws If the current module's package.json cannot be determined
  */
-const getModuleManifest = _.memoize(async function getModuleManifest(): Promise<Record<string, any>> {
+const getModuleManifest = _.memoize(async function getModuleManifest(): Promise<
+  Record<string, any>
+> {
   // Start from the directory containing the compiled output (build/lib) or source (lib)
   // and walk up to find package.json
   let currentDir = path.resolve(__dirname, '..');
@@ -218,7 +220,9 @@ export const getDriverInfo = _.memoize(async function getDriverInfo(): Promise<D
   };
 });
 
-export function normalizeCommandTimeouts(value: string | Record<string, number>): Record<string, number> {
+export function normalizeCommandTimeouts(
+  value: string | Record<string, number>,
+): Record<string, number> {
   // The value is normalized already
   if (typeof value !== 'string') {
     return value;
@@ -276,7 +280,7 @@ export async function printUser(): Promise<void> {
  */
 export async function getPIDsListeningOnPort(
   port: string | number,
-  filteringFunc: ((cmdLine: string) => boolean | Promise<boolean>) | null = null
+  filteringFunc: ((cmdLine: string) => boolean | Promise<boolean>) | null = null,
 ): Promise<string[]> {
   const result: string[] = [];
   try {
@@ -333,7 +337,7 @@ export interface UploadOptions {
 export async function encodeBase64OrUpload(
   localPath: string,
   remotePath: string | null = null,
-  uploadOptions: UploadOptions = {}
+  uploadOptions: UploadOptions = {},
 ): Promise<string> {
   if (!(await fs.exists(localPath))) {
     throw log.errorWithException(`The file at '${localPath}' does not exist or is not accessible`);
@@ -414,7 +418,10 @@ export function normalizePlatformVersion(originalVersion: string): string {
  * @param opts the object to check
  * @returns the same given object
  */
-export function requireArgs(argNames: string | string[], opts: Record<string, any> = {}): Record<string, any> {
+export function requireArgs(
+  argNames: string | string[],
+  opts: Record<string, any> = {},
+): Record<string, any> {
   for (const argName of _.isArray(argNames) ? argNames : [argNames]) {
     if (!_.has(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
@@ -466,8 +473,10 @@ export function normalizePlatformName(platformName: string | null | undefined): 
 }
 
 export function shouldSetInitialSafariUrl(opts: XCUITestDriverOpts): boolean {
-  return !(opts.safariInitialUrl === '' || (opts.noReset && _.isNil(opts.safariInitialUrl)))
-    && !opts.initialDeeplinkUrl;
+  return (
+    !(opts.safariInitialUrl === '' || (opts.noReset && _.isNil(opts.safariInitialUrl))) &&
+    !opts.initialDeeplinkUrl
+  );
 }
 
 export function isIos17OrNewer(opts: XCUITestDriverOpts): boolean {

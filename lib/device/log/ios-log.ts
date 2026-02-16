@@ -1,7 +1,7 @@
 import {EventEmitter} from 'node:events';
-import { LRUCache } from 'lru-cache';
-import type { LogEntry } from '../../commands/types';
-import type { AppiumLogger } from '@appium/types';
+import {LRUCache} from 'lru-cache';
+import type {LogEntry} from '../../commands/types';
+import type {AppiumLogger} from '@appium/types';
 import {logger} from 'appium/support';
 
 // We keep only the most recent log entries to avoid out of memory error
@@ -12,10 +12,7 @@ export interface IOSLogOptions {
   log?: AppiumLogger;
 }
 
-export abstract class IOSLog<
-  TRawEntry,
-  TSerializedEntry extends object
-> extends EventEmitter {
+export abstract class IOSLog<TRawEntry, TSerializedEntry extends object> extends EventEmitter {
   private maxBufferSize: number;
   private logs: LRUCache<number, TSerializedEntry>;
   private _log: AppiumLogger;

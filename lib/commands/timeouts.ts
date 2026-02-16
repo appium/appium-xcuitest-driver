@@ -5,10 +5,7 @@ import type {XCUITestDriver} from '../driver';
  *
  * @param ms - Timeout in milliseconds
  */
-export async function pageLoadTimeoutW3C(
-  this: XCUITestDriver,
-  ms: number,
-): Promise<void> {
+export async function pageLoadTimeoutW3C(this: XCUITestDriver, ms: number): Promise<void> {
   await this.setPageLoadTimeout(this.parseTimeoutArgument(ms));
 }
 
@@ -17,10 +14,7 @@ export async function pageLoadTimeoutW3C(
  *
  * @param ms - Timeout in milliseconds
  */
-export async function pageLoadTimeoutMJSONWP(
-  this: XCUITestDriver,
-  ms: number,
-): Promise<void> {
+export async function pageLoadTimeoutMJSONWP(this: XCUITestDriver, ms: number): Promise<void> {
   await this.setPageLoadTimeout(this.parseTimeoutArgument(ms));
 }
 
@@ -29,10 +23,7 @@ export async function pageLoadTimeoutMJSONWP(
  *
  * @param ms - Timeout in milliseconds
  */
-export async function scriptTimeoutW3C(
-  this: XCUITestDriver,
-  ms: number,
-): Promise<void> {
+export async function scriptTimeoutW3C(this: XCUITestDriver, ms: number): Promise<void> {
   // XXX: this is synchronous
   await this.setAsyncScriptTimeout(this.parseTimeoutArgument(ms));
 }
@@ -43,10 +34,7 @@ export async function scriptTimeoutW3C(
  * @param ms - The timeout in milliseconds
  * @deprecated Use {@linkcode XCUITestDriver.scriptTimeoutW3C} instead
  */
-export async function scriptTimeoutMJSONWP(
-  this: XCUITestDriver,
-  ms: number,
-): Promise<void> {
+export async function scriptTimeoutMJSONWP(this: XCUITestDriver, ms: number): Promise<void> {
   await this.asyncScriptTimeout(ms);
 }
 
@@ -56,10 +44,7 @@ export async function scriptTimeoutMJSONWP(
  * @param ms - The timeout in milliseconds
  * @deprecated Use {@linkcode XCUITestDriver.scriptTimeoutW3C} instead
  */
-export async function asyncScriptTimeout(
-  this: XCUITestDriver,
-  ms: number,
-): Promise<void> {
+export async function asyncScriptTimeout(this: XCUITestDriver, ms: number): Promise<void> {
   await this.scriptTimeoutW3C(ms);
 }
 
@@ -68,10 +53,7 @@ export async function asyncScriptTimeout(
  *
  * @param ms - Timeout in milliseconds
  */
-export function setPageLoadTimeout(
-  this: XCUITestDriver,
-  ms: number,
-): void {
+export function setPageLoadTimeout(this: XCUITestDriver, ms: number): void {
   ms = parseInt(String(ms), 10);
   this.pageLoadMs = ms;
   if (this._remote) {
@@ -85,11 +67,7 @@ export function setPageLoadTimeout(
  *
  * @param ms - Timeout in milliseconds
  */
-export function setAsyncScriptTimeout(
-  this: XCUITestDriver,
-  ms: number,
-): void {
+export function setAsyncScriptTimeout(this: XCUITestDriver, ms: number): void {
   this.asyncWaitMs = ms;
   this.log.debug(`Set async script timeout to ${ms}ms`);
 }
-

@@ -11,7 +11,7 @@ describe('pasteboard commands', function () {
     const simctl = new Simctl();
     setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
     getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
-    driver._device = { simctl } as any;
+    driver._device = {simctl} as any;
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
   });
 
@@ -27,12 +27,16 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should not be called', async function () {
-      await expect(driver.mobileSetPasteboard({content: 'bla'} as any)).to.be.rejectedWith(/can only be performed on Simulator/);
+      await expect(driver.mobileSetPasteboard({content: 'bla'} as any)).to.be.rejectedWith(
+        /can only be performed on Simulator/,
+      );
       expect(setPasteboardStub.notCalled).to.be.true;
     });
 
     it('getPasteboard should not be called', async function () {
-      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(/can only be performed on Simulator/);
+      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(
+        /can only be performed on Simulator/,
+      );
       expect(getPasteboardStub.notCalled).to.be.true;
     });
   });
@@ -43,7 +47,9 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
-      await expect(driver.mobileSetPasteboard(undefined as any)).to.be.rejectedWith(/mandatory to set/);
+      await expect(driver.mobileSetPasteboard(undefined as any)).to.be.rejectedWith(
+        /mandatory to set/,
+      );
       expect(setPasteboardStub.notCalled).to.be.true;
     });
 

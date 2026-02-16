@@ -140,7 +140,9 @@ describe('XCUITestDriver - elements -', function () {
       if (wrongTypeEl.error) {
         wrongTypeEl = await driver.$('~UICatalog');
       }
-      await expect(wrongTypeEl.getAttribute('contentSize')).to.eventually.be.rejectedWith(/Can't get content size for type/);
+      await expect(wrongTypeEl.getAttribute('contentSize')).to.eventually.be.rejectedWith(
+        /Can't get content size for type/,
+      );
     });
   });
 
@@ -322,8 +324,8 @@ describe('XCUITestDriver - elements -', function () {
                 {type: 'pause', duration: 0},
                 {type: 'pause', duration: 0},
                 {type: 'pause', duration: 0},
-                {type: 'pause', duration: 0}
-              ]
+                {type: 'pause', duration: 0},
+              ],
             },
             {
               type: 'key',
@@ -380,4 +382,3 @@ describe('XCUITestDriver - elements -', function () {
     });
   });
 });
-

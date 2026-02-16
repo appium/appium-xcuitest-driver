@@ -1,12 +1,9 @@
 import _ from 'lodash';
-import { LineConsumingLog } from './line-consuming-log';
-import { MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT } from './helpers';
-import type { AppiumLogger, StringRecord } from '@appium/types';
+import {LineConsumingLog} from './line-consuming-log';
+import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
+import type {AppiumLogger, StringRecord} from '@appium/types';
 
-const EVENTS_TO_LOG = [
-  'Network.loadingFinished',
-  'Network.loadingFailed',
-];
+const EVENTS_TO_LOG = ['Network.loadingFinished', 'Network.loadingFailed'];
 const MONITORED_EVENTS = [
   'Network.requestWillBeSent',
   'Network.responseReceived',
@@ -41,7 +38,7 @@ export interface SafariNetworkResponse {
   mimeType: string;
   timing: SafariNetworkResponseTiming;
   source: string;
-  security: StringRecord
+  security: StringRecord;
 }
 
 export interface SafariNetworkLogEntryMetrics {
@@ -70,7 +67,7 @@ export interface SafariNetworkLogEntry {
   frameId?: string;
   loaderId?: string;
   documentURL?: string;
-  request?: SafariNetworkRequest
+  request?: SafariNetworkRequest;
   timestamp?: number;
   walltime?: number;
   inititator?: SafariNetworkRequestInitiator;
@@ -112,7 +109,9 @@ export class SafariNetworkLog extends LineConsumingLog {
     const serializedEntry = JSON.stringify({method, event: entry});
     this.broadcast(serializedEntry);
     if (this._showLogs && _.includes(EVENTS_TO_LOG, method)) {
-      this.log.info(`[SafariNetwork] ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);
+      this.log.info(
+        `[SafariNetwork] ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
+      );
     }
   }
 }

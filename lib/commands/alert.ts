@@ -16,10 +16,7 @@ export async function getAlertText(this: XCUITestDriver): Promise<string | null>
  *
  * @param value - The text to set
  */
-export async function setAlertText(
-  this: XCUITestDriver,
-  value: string,
-): Promise<void> {
+export async function setAlertText(this: XCUITestDriver, value: string): Promise<void> {
   await this.proxyCommand('/alert/text', 'POST', {value});
 }
 

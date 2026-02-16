@@ -1,7 +1,11 @@
-import type { LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel } from './types';
-import { NATIVE_WIN } from '../../utils';
-import { CONTEXT_UPDATED_EVENT, CONTEXT_UPDATED_EVENT_OBSOLETE, LOG_ENTRY_ADDED_EVENT } from './constants';
-import type { LogEntry } from '../types';
+import type {LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel} from './types';
+import {NATIVE_WIN} from '../../utils';
+import {
+  CONTEXT_UPDATED_EVENT,
+  CONTEXT_UPDATED_EVENT_OBSOLETE,
+  LOG_ENTRY_ADDED_EVENT,
+} from './constants';
+import type {LogEntry} from '../types';
 import _ from 'lodash';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
@@ -14,18 +18,20 @@ function toContextUpdatedEvent(method: string, contextName: string): ContextUpda
   };
 }
 
-export const makeContextUpdatedEvent = (contextName: string) => toContextUpdatedEvent(
-  CONTEXT_UPDATED_EVENT, contextName
-);
+export const makeContextUpdatedEvent = (contextName: string) =>
+  toContextUpdatedEvent(CONTEXT_UPDATED_EVENT, contextName);
 
 /**
  * @deprecated Use {@link makeContextUpdatedEvent} instead
  */
-export const makeObsoleteContextUpdatedEvent = (contextName: string) => toContextUpdatedEvent(
-  CONTEXT_UPDATED_EVENT_OBSOLETE, contextName
-);
+export const makeObsoleteContextUpdatedEvent = (contextName: string) =>
+  toContextUpdatedEvent(CONTEXT_UPDATED_EVENT_OBSOLETE, contextName);
 
-export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: string): LogEntryAddedEvent {
+export function makeLogEntryAddedEvent(
+  entry: LogEntry,
+  context: string,
+  type: string,
+): LogEntryAddedEvent {
   return {
     context,
     method: LOG_ENTRY_ADDED_EVENT,
@@ -34,7 +40,7 @@ export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: s
       level: adjustLogLevel(entry.level),
       source: {
         realm: '',
-        context
+        context,
       },
       text: entry.message,
       timestamp: entry.timestamp,

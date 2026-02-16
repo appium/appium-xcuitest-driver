@@ -34,9 +34,8 @@ describe('XCUITestDriver - performance', function () {
       expect(
         await driver.execute('mobile: stopPerfRecord', {
           profileName,
-        })
+        }),
       ).to.not.be.empty;
     });
   });
 });
-

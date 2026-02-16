@@ -9,12 +9,8 @@ import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
-import type {
-  AfcService as RemoteXPCAfcService,
-  RemoteXpcConnection,
-} from 'appium-ios-remotexpc';
+import type {AfcService as RemoteXPCAfcService, RemoteXpcConnection} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
-
 
 /**
  * Options for pulling files/folders
@@ -46,7 +42,7 @@ export class AfcClient {
 
   private constructor(
     service: RemoteXPCAfcService | IOSDeviceAfcService,
-    remoteXPCConnection?: RemoteXpcConnection
+    remoteXPCConnection?: RemoteXpcConnection,
   ) {
     this.service = service;
     this.remoteXPCConnection = remoteXPCConnection;
@@ -94,7 +90,7 @@ export class AfcClient {
     udid: string,
     bundleId: string,
     useRemoteXPC: boolean,
-    options?: CreateForAppOptions
+    options?: CreateForAppOptions,
   ): Promise<AfcClient> {
     const {containerType = null, skipDocumentsCheck = false} = options ?? {};
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
@@ -103,7 +99,8 @@ export class AfcClient {
       const client = await AfcClient.withRemoteXpcConnection(async () => {
         const Services = await getRemoteXPCServices();
         const connectionResult = await Services.createRemoteXPCConnection(udid);
-        const {houseArrestService, remoteXPC: houseArrestRemoteXPC} = await Services.startHouseArrestService(udid);
+        const {houseArrestService, remoteXPC: houseArrestRemoteXPC} =
+          await Services.startHouseArrestService(udid);
         const afcService = isDocuments
           ? await houseArrestService.vendDocuments(bundleId)
           : await houseArrestService.vendContainer(bundleId);
@@ -241,11 +238,7 @@ export class AfcClient {
    * @param localPath - Local destination path
    * @param options - Pull options (recursive, overwrite, onEntry)
    */
-  async pull(
-    remotePath: string,
-    localPath: string,
-    options: AfcPullOptions = {}
-  ): Promise<void> {
+  async pull(remotePath: string, localPath: string, options: AfcPullOptions = {}): Promise<void> {
     if (this.isRemoteXPC) {
       // RemoteXPC expects 'callback' property, so map onEntry -> callback
       const remoteXpcOptions = {
@@ -288,7 +281,7 @@ export class AfcClient {
    * @returns AfcClient on success, null on failure
    */
   private static async withRemoteXpcConnection<T extends RemoteXPCAfcService | IOSDeviceAfcService>(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>
+    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
   ): Promise<AfcClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
@@ -299,7 +292,9 @@ export class AfcClient {
       succeeded = true;
       return client;
     } catch (err: any) {
-      log.error(`Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`);
+      log.error(
+        `Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+      );
       return null;
     } finally {
       // Only close connection if we failed (if succeeded, the client owns it)
@@ -330,7 +325,10 @@ export class AfcClient {
   /**
    * Create a read stream for a file (internal use only).
    */
-  private async createReadStream(remotePath: string, options?: {autoDestroy?: boolean}): Promise<Readable> {
+  private async createReadStream(
+    remotePath: string,
+    options?: {autoDestroy?: boolean},
+  ): Promise<Readable> {
     if (this.isRemoteXPC) {
       // Use readToStream which returns a streaming Readable
       return await this.remoteXPCAfcService.readToStream(remotePath);
@@ -345,7 +343,7 @@ export class AfcClient {
   private async pullWithWalkDir(
     remotePath: string,
     localPath: string,
-    options: AfcPullOptions
+    options: AfcPullOptions,
   ): Promise<void> {
     const {recursive = false, overwrite = true, onEntry} = options;
 
@@ -369,7 +367,7 @@ export class AfcClient {
     // Directory pull requires recursive option
     if (!recursive) {
       throw new Error(
-        `Cannot pull directory '${remotePath}' without recursive option. Set recursive: true to pull directories.`
+        `Cannot pull directory '${remotePath}' without recursive option. Set recursive: true to pull directories.`,
       );
     }
 
@@ -389,68 +387,72 @@ export class AfcClient {
     const pullPromises: B<void>[] = [];
 
     // Walk the remote directory and pull files in parallel
-    await this.iosDeviceAfcService.walkDir(remotePath, true, async (entryPath: string, isDirectory: boolean) => {
-      // Calculate relative path from remote root
-      const relativePath = entryPath.startsWith(remotePath + '/')
-        ? entryPath.slice(remotePath.length + 1)
-        : entryPath.slice(remotePath.length);
-      const localEntryPath = path.join(localRootDir, relativePath);
+    await this.iosDeviceAfcService.walkDir(
+      remotePath,
+      true,
+      async (entryPath: string, isDirectory: boolean) => {
+        // Calculate relative path from remote root
+        const relativePath = entryPath.startsWith(remotePath + '/')
+          ? entryPath.slice(remotePath.length + 1)
+          : entryPath.slice(remotePath.length);
+        const localEntryPath = path.join(localRootDir, relativePath);
 
-      if (isDirectory) {
-        await mkdirp(localEntryPath);
-        if (onEntry) {
-          await onEntry(entryPath, localEntryPath, true);
-        }
-      } else {
-        await this.checkOverwrite(localEntryPath, overwrite);
+        if (isDirectory) {
+          await mkdirp(localEntryPath);
+          if (onEntry) {
+            await onEntry(entryPath, localEntryPath, true);
+          }
+        } else {
+          await this.checkOverwrite(localEntryPath, overwrite);
 
-        // Ensure parent directory exists
-        const parentDir = path.dirname(localEntryPath);
-        await mkdirp(parentDir);
+          // Ensure parent directory exists
+          const parentDir = path.dirname(localEntryPath);
+          await mkdirp(parentDir);
 
-        // Start async file pull (non-blocking)
-        const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
-          autoDestroy: true,
-        });
-        const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
+          // Start async file pull (non-blocking)
+          const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
+            autoDestroy: true,
+          });
+          const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
 
-        pullPromises.push(
-          new B<void>((resolve) => {
-            writeStream.on('close', async () => {
-              // Invoke onEntry callback after successful pull
-              if (onEntry) {
-                try {
-                  await onEntry(entryPath, localEntryPath, false);
-                } catch (err: any) {
-                  log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
+          pullPromises.push(
+            new B<void>((resolve) => {
+              writeStream.on('close', async () => {
+                // Invoke onEntry callback after successful pull
+                if (onEntry) {
+                  try {
+                    await onEntry(entryPath, localEntryPath, false);
+                  } catch (err: any) {
+                    log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
+                  }
                 }
-              }
-              resolve();
-            });
-            const onStreamingError = (e: Error) => {
-              readStream.unpipe(writeStream);
-              log.warn(
-                `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
-                  `The file will be skipped. Original error: ${e.message}`
-              );
-              resolve();
-            };
-            writeStream.on('error', onStreamingError);
-            readStream.on('error', onStreamingError);
-          }).timeout(IO_TIMEOUT_MS)
-        );
-        readStream.pipe(writeStream);
+                resolve();
+              });
+              const onStreamingError = (e: Error) => {
+                readStream.unpipe(writeStream);
+                log.warn(
+                  `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
+                    `The file will be skipped. Original error: ${e.message}`,
+                );
+                resolve();
+              };
+              writeStream.on('error', onStreamingError);
+              readStream.on('error', onStreamingError);
+            }).timeout(IO_TIMEOUT_MS),
+          );
+          readStream.pipe(writeStream);
 
-        if (pullPromises.length >= MAX_IO_CHUNK_SIZE) {
-          await B.any(pullPromises);
-          for (let i = pullPromises.length - 1; i >= 0; i--) {
-            if (pullPromises[i].isFulfilled()) {
-              pullPromises.splice(i, 1);
+          if (pullPromises.length >= MAX_IO_CHUNK_SIZE) {
+            await B.any(pullPromises);
+            for (let i = pullPromises.length - 1; i >= 0; i--) {
+              if (pullPromises[i].isFulfilled()) {
+                pullPromises.splice(i, 1);
+              }
             }
           }
         }
-      }
-    });
+      },
+    );
 
     // Wait for remaining files to be pulled
     if (!_.isEmpty(pullPromises)) {
@@ -466,7 +468,7 @@ export class AfcClient {
    * @param overwrite - Whether to allow overwriting existing files
    */
   private async checkOverwrite(localPath: string, overwrite: boolean): Promise<void> {
-    if (!overwrite && await fs.exists(localPath)) {
+    if (!overwrite && (await fs.exists(localPath))) {
       throw new Error(`Local file already exists: ${localPath}`);
     }
   }

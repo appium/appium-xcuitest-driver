@@ -1,3 +1,9 @@
+## [10.21.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.2...v10.21.3) (2026-02-16)
+
+### Bug Fixes
+
+* format ([#2729](https://github.com/appium/appium-xcuitest-driver/issues/2729)) ([e32dd68](https://github.com/appium/appium-xcuitest-driver/commit/e32dd68ed2a255eadd8ae70c2382ba3b3a09a5b7))
+
 ## [10.21.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.1...v10.21.2) (2026-02-10)
 
 ### Bug Fixes

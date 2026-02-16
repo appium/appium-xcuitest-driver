@@ -1,4 +1,4 @@
-import { Pyidevice } from '../device/clients/py-ios-device-client';
+import {Pyidevice} from '../device/clients/py-ios-device-client';
 import {fs, tempDir, util} from 'appium/support';
 import {encodeBase64OrUpload, requireRealDevice} from '../utils';
 import {errors} from 'appium/driver';
@@ -163,4 +163,3 @@ export async function mobileStopPcap(this: XCUITestDriver): Promise<string> {
   }
   return await encodeBase64OrUpload(resultPath);
 }
-

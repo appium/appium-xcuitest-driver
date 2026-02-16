@@ -9,12 +9,12 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [
     {
       displayName: 'iOS',
-      name: 'iphonesimulator'
+      name: 'iphonesimulator',
     },
     {
       displayName: 'tvOS',
-      name: 'appletvsimulator'
-    }
+      name: 'appletvsimulator',
+    },
   ];
 
   async diagnose(): Promise<DoctorCheckResult> {
@@ -23,7 +23,7 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
       await exec('xcrun', ['simctl', 'help']);
     } catch (err) {
       return doctor.nokOptional(
-        `Testing on Simulator is not possible. Cannot run 'xcrun simctl': ${(err as any).stderr || (err as Error).message}`
+        `Testing on Simulator is not possible. Cannot run 'xcrun simctl': ${(err as any).stderr || (err as Error).message}`,
       );
     }
 
@@ -37,9 +37,14 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
 
     return doctor.okOptional(
       `The following Simulator SDKs are installed:\n` +
-      sdks
-        .filter(({platform}) => OptionalSimulatorCheck.SUPPORTED_SIMULATOR_PLATFORMS.some(({name}) => name === platform))
-        .map(({displayName}) => `\t→ ${displayName}`).join('\n')
+        sdks
+          .filter(({platform}) =>
+            OptionalSimulatorCheck.SUPPORTED_SIMULATOR_PLATFORMS.some(
+              ({name}) => name === platform,
+            ),
+          )
+          .map(({displayName}) => `\t→ ${displayName}`)
+          .join('\n'),
     );
   }
 
@@ -64,7 +69,8 @@ export const optionalSimulatorCheck = new OptionalSimulatorCheck();
 
 export class OptionalApplesimutilsCommandCheck implements IDoctorCheck {
   log!: AppiumLogger;
-  static readonly README_LINK = 'https://github.com/appium/appium-xcuitest-driver/blob/master/docs/reference/execute-methods.md#mobile-setpermission';
+  static readonly README_LINK =
+    'https://github.com/appium/appium-xcuitest-driver/blob/master/docs/reference/execute-methods.md#mobile-setpermission';
 
   async diagnose(): Promise<DoctorCheckResult> {
     const applesimutilsPath = await resolveExecutablePath('applesimutils');
@@ -86,7 +92,6 @@ export class OptionalApplesimutilsCommandCheck implements IDoctorCheck {
   }
 }
 export const optionalApplesimutilsCheck = new OptionalApplesimutilsCommandCheck();
-
 
 export class OptionalFfmpegCheck implements IDoctorCheck {
   log!: AppiumLogger;
