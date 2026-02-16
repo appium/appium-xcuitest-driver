@@ -118,6 +118,7 @@
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier -w ./lib",
+    "format:check": "prettier --check ./lib ./test",
     "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",

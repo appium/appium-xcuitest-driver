@@ -127,12 +127,13 @@ export async function mobileGetDeviceTime(
  */
 export async function getWindowRect(this: XCUITestDriver): Promise<Rect> {
   if (this.isWebContext()) {
-    const script = 'return {' +
+    const script =
+      'return {' +
       'x: window.screenX || 0,' +
       'y: window.screenY || 0,' +
       'width: window.innerWidth,' +
       'height: window.innerHeight' +
-    '}';
+      '}';
     return await this.executeAtom('execute_script', [script]);
   }
 
@@ -300,4 +301,3 @@ export async function mobileSiriCommand(this: XCUITestDriver, text: string): Pro
   }
   await this.proxyCommand('/wda/siri/activate', 'POST', {text});
 }
-

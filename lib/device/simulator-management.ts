@@ -5,8 +5,8 @@ import _ from 'lodash';
 import {util, timing} from 'appium/support';
 import {UDID_AUTO, normalizePlatformName} from '../utils';
 import {buildSafariPreferences} from '../app-utils';
-import type { XCUITestDriver } from '../driver';
-import type { DeviceInfo } from 'node-simctl';
+import type {XCUITestDriver} from '../driver';
+import type {DeviceInfo} from 'node-simctl';
 
 const APPIUM_SIM_PREFIX = 'appiumTest';
 
@@ -66,7 +66,7 @@ export async function getExistingSim(this: XCUITestDriver): Promise<Simulator | 
   } = this.opts;
 
   const platform = normalizePlatformName(platformName);
-  const selectSim = async (dev: { udid: string; platform: string; }): Promise<Simulator> =>
+  const selectSim = async (dev: {udid: string; platform: string}): Promise<Simulator> =>
     await getSimulator(dev.udid, {
       platform,
       checkExistence: false,
@@ -131,17 +131,10 @@ export async function shutdownSimulator(this: XCUITestDriver): Promise<void> {
  */
 export async function runSimulatorReset(
   this: XCUITestDriver,
-  enforceSimulatorShutdown: boolean = false
+  enforceSimulatorShutdown: boolean = false,
 ): Promise<void> {
-  const {
-    noReset,
-    fullReset,
-    keychainsExcludePatterns,
-    keepKeyChains,
-    bundleId,
-    app,
-    browserName,
-  } = this.opts;
+  const {noReset, fullReset, keychainsExcludePatterns, keepKeyChains, bundleId, app, browserName} =
+    this.opts;
   if (noReset && !fullReset) {
     // noReset === true && fullReset === false
     this.log.debug('Reset: noReset is on. Leaving simulator as is');
@@ -157,7 +150,8 @@ export async function runSimulatorReset(
   if (fullReset) {
     this.log.debug('Reset: fullReset is on. Cleaning simulator');
     await shutdownSimulator.bind(this)();
-    const isKeychainsBackupSuccessful = (keychainsExcludePatterns || keepKeyChains) && (await device.backupKeychains());
+    const isKeychainsBackupSuccessful =
+      (keychainsExcludePatterns || keepKeyChains) && (await device.backupKeychains());
     await device.clean();
     if (isKeychainsBackupSuccessful) {
       await device.restoreKeychains(keychainsExcludePatterns?.split(',')?.map(_.trim) || []);
@@ -233,7 +227,9 @@ export async function installToSimulator(
   this.log.debug(`Installing '${app}' on Simulator with UUID '${device.udid}'...`);
   const timer = new timing.Timer().start();
   await device.installApp(app);
-  this.log.info(`The app has been successfully installed in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
+  this.log.info(
+    `The app has been successfully installed in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+  );
 }
 
 /**
@@ -245,8 +241,9 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
     devicesSetPath: device.devicesSetPath,
   });
   const allDevices = _.flatMap(_.values(await simctl.getDevices()));
-  const otherBootedDevices = allDevices
-    .filter(({udid, state}) => udid !== device.udid && state === 'Booted');
+  const otherBootedDevices = allDevices.filter(
+    ({udid, state}) => udid !== device.udid && state === 'Booted',
+  );
   if (_.isEmpty(otherBootedDevices)) {
     this.log.info('No other running simulators have been detected');
     return;
@@ -255,7 +252,7 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
     `Detected ${util.pluralize(
       'other running Simulator',
       otherBootedDevices.length,
-      true
+      true,
     )}. Shutting them down...`,
   );
   for (const {udid} of otherBootedDevices) {
@@ -292,7 +289,7 @@ export async function setLocalizationPrefs(this: XCUITestDriver): Promise<boolea
   const {language, locale, calendarFormat, skipSyncUiDialogTranslation} = this.opts;
   const l10nConfig: LocalizationOptions = {};
   if (language) {
-    l10nConfig.language = {name: language, skipSyncUiDialogTranslation };
+    l10nConfig.language = {name: language, skipSyncUiDialogTranslation};
   }
   if (locale) {
     l10nConfig.locale = {name: locale};

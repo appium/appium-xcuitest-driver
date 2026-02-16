@@ -10,13 +10,16 @@ import type {AtomsElement} from './types';
  *
  * @param el - Element or element ID
  */
-export async function elementDisplayed(this: XCUITestDriver, el: Element | string): Promise<boolean> {
+export async function elementDisplayed(
+  this: XCUITestDriver,
+  el: Element | string,
+): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(elementId);
-    return await this.executeAtom('is_displayed', [atomsElement]) as boolean;
+    return (await this.executeAtom('is_displayed', [atomsElement])) as boolean;
   }
-  return await this.proxyCommand(`/element/${elementId}/displayed`, 'GET') as boolean;
+  return (await this.proxyCommand(`/element/${elementId}/displayed`, 'GET')) as boolean;
 }
 
 /**
@@ -28,9 +31,9 @@ export async function elementEnabled(this: XCUITestDriver, el: Element | string)
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(elementId);
-    return await this.executeAtom('is_enabled', [atomsElement]) as boolean;
+    return (await this.executeAtom('is_enabled', [atomsElement])) as boolean;
   }
-  return await this.proxyCommand(`/element/${elementId}/enabled`, 'GET') as boolean;
+  return (await this.proxyCommand(`/element/${elementId}/enabled`, 'GET')) as boolean;
 }
 
 /**
@@ -38,13 +41,16 @@ export async function elementEnabled(this: XCUITestDriver, el: Element | string)
  *
  * @param el - Element or element ID
  */
-export async function elementSelected(this: XCUITestDriver, el: Element | string): Promise<boolean> {
+export async function elementSelected(
+  this: XCUITestDriver,
+  el: Element | string,
+): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(elementId);
-    return await this.executeAtom('is_selected', [atomsElement]) as boolean;
+    return (await this.executeAtom('is_selected', [atomsElement])) as boolean;
   }
-  return await this.proxyCommand(`/element/${elementId}/selected`, 'GET') as boolean;
+  return (await this.proxyCommand(`/element/${elementId}/selected`, 'GET')) as boolean;
 }
 
 /**
@@ -57,9 +63,9 @@ export async function getName(this: XCUITestDriver, el: Element | string): Promi
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(elementId);
     const script = 'return arguments[0].tagName.toLowerCase()';
-    return await this.executeAtom('execute_script', [script, [atomsElement]]) as string;
+    return (await this.executeAtom('execute_script', [script, [atomsElement]])) as string;
   }
-  return await this.proxyCommand(`/element/${elementId}/name`, 'GET') as string;
+  return (await this.proxyCommand(`/element/${elementId}/name`, 'GET')) as string;
 }
 
 /**
@@ -78,7 +84,7 @@ export async function getNativeAttribute(
   }
 
   const elementId = util.unwrapElement(el);
-  let value = await this.proxyCommand(`/element/${elementId}/attribute/${attribute}`, 'GET') as
+  let value = (await this.proxyCommand(`/element/${elementId}/attribute/${attribute}`, 'GET')) as
     | string
     | number
     | null
@@ -106,7 +112,9 @@ export async function getAttribute(
     return await this.getNativeAttribute(attribute, elementId);
   }
   const atomsElement = this.getAtomsElement(elementId);
-  return await this.executeAtom('get_attribute_value', [atomsElement, attribute]) as string | null;
+  return (await this.executeAtom('get_attribute_value', [atomsElement, attribute])) as
+    | string
+    | null;
 }
 
 /**
@@ -125,7 +133,7 @@ export async function getProperty(
     return await this.getNativeAttribute(property, elementId);
   }
   const atomsElement = this.getAtomsElement(elementId);
-  return await this.executeAtom('get_attribute_value', [atomsElement, property]) as string | null;
+  return (await this.executeAtom('get_attribute_value', [atomsElement, property])) as string | null;
 }
 
 /**
@@ -136,10 +144,10 @@ export async function getProperty(
 export async function getText(this: XCUITestDriver, el: Element | string): Promise<string> {
   const elementId = util.unwrapElement(el);
   if (!this.isWebContext()) {
-    return await this.proxyCommand(`/element/${elementId}/text`, 'GET') as string;
+    return (await this.proxyCommand(`/element/${elementId}/text`, 'GET')) as string;
   }
   const atomsElement = this.getAtomsElement(elementId);
-  return await this.executeAtom('get_text', [atomsElement]) as string;
+  return (await this.executeAtom('get_text', [atomsElement])) as string;
 }
 
 /**
@@ -162,17 +170,20 @@ export async function getElementRect(this: XCUITestDriver, el: Element | string)
  *
  * @param elementId - Element or element ID
  */
-export async function getLocation(this: XCUITestDriver, elementId: Element | string): Promise<Position> {
+export async function getLocation(
+  this: XCUITestDriver,
+  elementId: Element | string,
+): Promise<Position> {
   const el = util.unwrapElement(elementId);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(el);
-    const loc = await this.executeAtom('get_top_left_coordinates', [atomsElement]) as Position;
+    const loc = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
     if (this.opts.absoluteWebLocations) {
       const script =
         'return [' +
         'Math.max(window.pageXOffset,document.documentElement.scrollLeft,document.body.scrollLeft),' +
         'Math.max(window.pageYOffset,document.documentElement.scrollTop,document.body.scrollTop)];';
-      const [xOffset, yOffset] = await this.execute(script) as [number, number];
+      const [xOffset, yOffset] = (await this.execute(script)) as [number, number];
       loc.x += xOffset;
       loc.y += yOffset;
     }
@@ -187,7 +198,10 @@ export async function getLocation(this: XCUITestDriver, elementId: Element | str
  *
  * @param elementId - Element or element ID
  */
-export async function getLocationInView(this: XCUITestDriver, elementId: Element | string): Promise<Position> {
+export async function getLocationInView(
+  this: XCUITestDriver,
+  elementId: Element | string,
+): Promise<Position> {
   return await this.getLocation(elementId);
 }
 
@@ -199,7 +213,7 @@ export async function getLocationInView(this: XCUITestDriver, elementId: Element
 export async function getSize(this: XCUITestDriver, el: Element | string): Promise<Size> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.executeAtom('get_size', [this.getAtomsElement(elementId)]) as Size;
+    return (await this.executeAtom('get_size', [this.getAtomsElement(elementId)])) as Size;
   }
   const rect = await this.getElementRect(elementId);
   return {width: rect.width, height: rect.height};
@@ -391,7 +405,7 @@ export async function getContentSize(this: XCUITestDriver, el: Element | string)
  */
 export async function getNativeRect(this: XCUITestDriver, el: Element | string): Promise<Rect> {
   const elementId = util.unwrapElement(el);
-  return await this.proxyCommand(`/element/${elementId}/rect`, 'GET') as Rect;
+  return (await this.proxyCommand(`/element/${elementId}/rect`, 'GET')) as Rect;
 }
 
 function prepareInputValue(inp: string | string[] | number): string[] {

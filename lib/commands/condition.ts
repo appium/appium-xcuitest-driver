@@ -1,6 +1,6 @@
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import _ from 'lodash';
-import { isIos18OrNewer, requireRealDevice } from '../utils';
+import {isIos18OrNewer, requireRealDevice} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {AppiumLogger} from '@appium/types';
 import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
@@ -54,7 +54,7 @@ export interface IConditionInducer {
 export async function listConditionInducers(this: XCUITestDriver): Promise<Condition[]> {
   requireRealDevice(this, 'Condition inducer');
 
-  const facade = this._conditionInducer ?? await createConditionInducer(this);
+  const facade = this._conditionInducer ?? (await createConditionInducer(this));
   return await facade.list();
 }
 
@@ -85,7 +85,7 @@ export async function enableConditionInducer(
 
   if (this._conditionInducer?.isActive()) {
     throw this.log.errorWithException(
-      `Condition inducer is already running. Disable it first in order to call 'enable' again.`
+      `Condition inducer is already running. Disable it first in order to call 'enable' again.`,
     );
   }
 
@@ -100,7 +100,7 @@ export async function enableConditionInducer(
       await facade.close();
     } catch {}
     throw this.log.errorWithException(
-      `Condition inducer '${profileID}' cannot be enabled: '${err.message}'`
+      `Condition inducer '${profileID}' cannot be enabled: '${err.message}'`,
     );
   }
 }
@@ -167,7 +167,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   async enable(conditionID: string, profileID: string): Promise<boolean> {
     if (this.connection) {
       throw new Error(
-        `Condition inducer is already running. Disable it first in order to call 'enable' again.`
+        `Condition inducer is already running. Disable it first in order to call 'enable' again.`,
       );
     }
 
@@ -305,9 +305,7 @@ class InstrumentConditionInducer implements IConditionInducer {
  * Factory function to create the appropriate condition inducer implementation
  * based on the iOS version
  */
-async function createConditionInducer(
-  driver: XCUITestDriver,
-): Promise<IConditionInducer> {
+async function createConditionInducer(driver: XCUITestDriver): Promise<IConditionInducer> {
   if (!isIos18OrNewer(driver.opts)) {
     return new InstrumentConditionInducer(driver.device.udid, driver.log);
   }
@@ -319,10 +317,9 @@ async function createConditionInducer(
   } catch (err: any) {
     driver.log.warn(
       `Unable to use RemoteXPC-based condition inducer for device ${driver.device.udid}, ` +
-      `falling back to the legacy implementation: ${err.message}`
+        `falling back to the legacy implementation: ${err.message}`,
     );
     return new InstrumentConditionInducer(driver.device.udid, driver.log);
   }
   return xpcInducer;
 }
-

@@ -1,6 +1,6 @@
 import {errors} from 'appium/driver';
 import {waitForCondition} from 'asyncbox';
-import { isTvOs } from '../utils';
+import {isTvOs} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Element} from '@appium/types';
 
@@ -125,4 +125,3 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
     this.log.error(`Unable to find navigation bar and back button: ${err.message}`);
   }
 }
-

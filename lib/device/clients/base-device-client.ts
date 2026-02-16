@@ -1,5 +1,5 @@
-import type { AppiumLogger } from '@appium/types';
-import type { SubProcess } from 'teen_process';
+import type {AppiumLogger} from '@appium/types';
+import type {SubProcess} from 'teen_process';
 
 export interface BaseDeviceClientOptions {
   log: AppiumLogger;
@@ -13,7 +13,7 @@ export interface InstallProfileArgs {
 export abstract class BaseDeviceClient {
   private readonly _log: AppiumLogger;
 
-  constructor (opts: BaseDeviceClientOptions) {
+  constructor(opts: BaseDeviceClientOptions) {
     this._log = opts.log;
   }
 

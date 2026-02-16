@@ -1,4 +1,4 @@
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
@@ -29,7 +29,7 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'status_bar',
   'terminate',
   'ui',
-  'uninstall'
+  'uninstall',
 ] as const;
 
 export interface SimctlExecResponse {
@@ -64,18 +64,19 @@ export async function mobileSimctl(
   }
 
   if (!(SUBCOMMANDS_HAS_DEVICE as readonly string[]).includes(command)) {
-    throw new errors.InvalidArgumentError(`The given command '${command}' is not supported. ` +
-      `Available subcommands are ${SUBCOMMANDS_HAS_DEVICE.join(',')}`);
+    throw new errors.InvalidArgumentError(
+      `The given command '${command}' is not supported. ` +
+        `Available subcommands are ${SUBCOMMANDS_HAS_DEVICE.join(',')}`,
+    );
   }
 
-  const result = await simulator.simctl.exec(
-    command as typeof SUBCOMMANDS_HAS_DEVICE[number],
-    {args: [this.opts.udid, ...args], timeout}
-  );
+  const result = await simulator.simctl.exec(command as (typeof SUBCOMMANDS_HAS_DEVICE)[number], {
+    args: [this.opts.udid, ...args],
+    timeout,
+  });
   return {
     stdout: result?.stdout ?? '',
     stderr: result?.stderr ?? '',
-    code: result?.code ?? 0
+    code: result?.code ?? 0,
   };
 }
-

@@ -334,7 +334,7 @@ export const executeMethodMap = {
     },
   },
   'mobile: getIncreaseContrast': {
-    command: 'mobileGetIncreaseContrast'
+    command: 'mobileGetIncreaseContrast',
   },
   'mobile: setIncreaseContrast': {
     command: 'mobileSetIncreaseContrast',
@@ -343,7 +343,7 @@ export const executeMethodMap = {
     },
   },
   'mobile: contentSize': {
-    command: 'mobileGetContentSize'
+    command: 'mobileGetContentSize',
   },
   'mobile: setContentSize': {
     command: 'mobileSetContentSize',

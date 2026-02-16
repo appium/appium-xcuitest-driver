@@ -16,13 +16,14 @@ export async function getPageSource(this: XCUITestDriver): Promise<string> {
     return await this.executeAtom('execute_script', [script, []]);
   }
 
-  const {
-    pageSourceExcludedAttributes: excludedAttributes,
-    useJSONSource
-  } = await this.settings.getSettings();
+  const {pageSourceExcludedAttributes: excludedAttributes, useJSONSource} =
+    await this.settings.getSettings();
   const hasExcludedAttributes = _.isString(excludedAttributes) && !_.isEmpty(excludedAttributes);
   if (useJSONSource) {
-    const srcTree = await this.mobileGetSource('json', hasExcludedAttributes ? excludedAttributes : undefined);
+    const srcTree = await this.mobileGetSource(
+      'json',
+      hasExcludedAttributes ? excludedAttributes : undefined,
+    );
     return getSourceXml(getTreeForXML(srcTree));
   }
 
@@ -52,7 +53,7 @@ export async function mobileGetSource(
   const query = Object.entries(paramsMap)
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
     .join('&');
-  return await this.proxyCommand(`/source?${query}`, 'GET') as string;
+  return (await this.proxyCommand(`/source?${query}`, 'GET')) as string;
 }
 
 /**
@@ -131,4 +132,3 @@ function getSourceXml(jsonSource: any): string {
     prettyPrinting: {indentString: '  '},
   });
 }
-

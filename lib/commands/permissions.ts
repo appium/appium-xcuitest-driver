@@ -58,9 +58,10 @@ export async function mobileGetPermission(
     throw new Error(`The 'service' option is expected to be present`);
   }
 
-  return await requireSimulator(this, 'Getting permission').getPermission(
-    bundleId, String(service)
-  ) as PermissionState;
+  return (await requireSimulator(this, 'Getting permission').getPermission(
+    bundleId,
+    String(service),
+  )) as PermissionState;
 }
 
 /**

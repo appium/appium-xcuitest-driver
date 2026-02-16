@@ -46,9 +46,7 @@ export async function mobileSetAppearance(
  * @since Xcode SDK 11
  * @returns The current appearance style
  */
-export async function mobileGetAppearance(
-  this: XCUITestDriver,
-): Promise<{style: Style}> {
+export async function mobileGetAppearance(this: XCUITestDriver): Promise<{style: Style}> {
   if (util.compareVersions(this.opts.platformVersion as string, '<', '12.0')) {
     return {style: 'unsupported'};
   }
@@ -56,15 +54,17 @@ export async function mobileGetAppearance(
   let style: Style | undefined;
   if (this.isSimulator()) {
     try {
-      style = await (this.device as Simulator).getAppearance() as Style;
+      style = (await (this.device as Simulator).getAppearance()) as Style;
     } catch {}
   }
   if (!style) {
-    const deviceInfo = await this.proxyCommand<any, {userInterfaceStyle?: string}>('/wda/device/info', 'GET');
+    const deviceInfo = await this.proxyCommand<any, {userInterfaceStyle?: string}>(
+      '/wda/device/info',
+      'GET',
+    );
     style = (deviceInfo?.userInterfaceStyle ?? 'unknown') as Style;
   }
   return {
     style: style as Style,
   };
 }
-

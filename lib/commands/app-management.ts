@@ -3,11 +3,7 @@ import {fs, util} from 'appium/support';
 import {errors} from 'appium/driver';
 import path from 'node:path';
 import B from 'bluebird';
-import {
-  SUPPORTED_EXTENSIONS,
-  onPostConfigureApp,
-  onDownloadApp,
-} from '../app-utils';
+import {SUPPORTED_EXTENSIONS, onPostConfigureApp, onDownloadApp} from '../app-utils';
 import {requireRealDevice, isIos18OrNewer} from '../utils';
 import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
@@ -63,13 +59,9 @@ export async function mobileInstallApp(
     }
   }
 
-  await this.device.installApp(
-    srcAppPath,
-    bundleId,
-    {
-      timeoutMs: timeoutMs ?? this.opts.appPushTimeout,
-    },
-  );
+  await this.device.installApp(srcAppPath, bundleId, {
+    timeoutMs: timeoutMs ?? this.opts.appPushTimeout,
+  });
   this.log.info(`Installation of '${srcAppPath}' succeeded`);
 }
 
@@ -96,10 +88,7 @@ export async function mobileIsAppInstalled(
  * @param bundleId - The bundle identifier of the application to be removed
  * @returns `true` if the application has been removed successfully; `false` otherwise
  */
-export async function mobileRemoveApp(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
+export async function mobileRemoveApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   this.log.info(
     `Uninstalling the application with bundle identifier '${bundleId}' ` +
       `from the ${this.isRealDevice() ? 'real device' : 'Simulator'} with UDID '${this.device.udid}'`,
@@ -149,10 +138,7 @@ export async function mobileLaunchApp(
  * @param bundleId - The bundle identifier of the application to be terminated
  * @returns `true` if the app has been terminated successfully; `false` otherwise
  */
-export async function mobileTerminateApp(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
+export async function mobileTerminateApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   return (await this.proxyCommand('/wda/apps/terminate', 'POST', {bundleId})) as boolean;
 }
 
@@ -163,10 +149,7 @@ export async function mobileTerminateApp(
  *
  * @param bundleId - The bundle identifier of the application to be activated
  */
-export async function mobileActivateApp(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<void> {
+export async function mobileActivateApp(this: XCUITestDriver, bundleId: string): Promise<void> {
   await this.proxyCommand('/wda/apps/activate', 'POST', {bundleId});
 }
 
@@ -182,11 +165,11 @@ export async function mobileActivateApp(
  * @returns `true` if the app has been killed successfully; `false` otherwise
  * @group Real Device Only
  */
-export async function mobileKillApp(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
-  return await requireRealDevice(this, 'Killing app').terminateApp(bundleId, String(this.opts.platformVersion));
+export async function mobileKillApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
+  return await requireRealDevice(this, 'Killing app').terminateApp(
+    bundleId,
+    String(this.opts.platformVersion),
+  );
 }
 
 /**
@@ -253,10 +236,7 @@ export async function activateApp(
  * @param bundleId - The bundle identifier of the application to be checked
  * @returns `true` if the application is installed; `false` otherwise
  */
-export async function isAppInstalled(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
+export async function isAppInstalled(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   return await this.mobileIsAppInstalled(bundleId);
 }
 
@@ -270,10 +250,7 @@ export async function isAppInstalled(
  * @param bundleId - The bundle identifier of the application to be terminated
  * @returns `true` if the app has been terminated successfully; `false` otherwise
  */
-export async function terminateApp(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
+export async function terminateApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   return await this.mobileTerminateApp(bundleId);
 }
 
@@ -287,10 +264,7 @@ export async function terminateApp(
  * @returns The actual application state code
  * @see https://developer.apple.com/documentation/xctest/xcuiapplicationstate?language=objc
  */
-export async function queryAppState(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<AppState> {
+export async function queryAppState(this: XCUITestDriver, bundleId: string): Promise<AppState> {
   return await this.mobileQueryAppState(bundleId);
 }
 
@@ -328,10 +302,7 @@ export async function mobileListApps(
  * @param bundleId Application bundle identifier
  * @returns true if any files from the app's data container have been deleted
  */
-export async function mobileClearApp(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
+export async function mobileClearApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   if (this.isRealDevice()) {
     throw new errors.NotImplementedError(
       `This extension is only supported on simulators. ` +
@@ -409,4 +380,3 @@ export async function background(
   }
   return await this.proxyCommand(endpoint, 'POST', params, endpoint !== homescreen);
 }
-

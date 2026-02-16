@@ -92,19 +92,19 @@ export async function proxyCommand<TReq = any, TRes = unknown>(
   }
 
   if (!timeout) {
-    return await proxy.command(url, method, body) as TRes;
+    return (await proxy.command(url, method, body)) as TRes;
   }
 
   this.log.debug(`Setting custom timeout to ${timeout} ms for '${cmdName}' command`);
   try {
-    return await B.resolve(proxy.command(url, method, body)).timeout(timeout) as TRes;
+    return (await B.resolve(proxy.command(url, method, body)).timeout(timeout)) as TRes;
   } catch (e) {
     if (!(e instanceof B.Promise.TimeoutError)) {
       throw e;
     }
     proxy.cancelActiveRequests();
     const error = new errors.TimeoutError(
-      `Appium did not get any response from '${cmdName}' command in ${timeout} ms`
+      `Appium did not get any response from '${cmdName}' command in ${timeout} ms`,
     );
     await this.startUnexpectedShutdown(error);
     throw error;
@@ -116,4 +116,3 @@ function wdaRouteToCommandName(endpoint: string, method: AllowedHttpMethod): str
     return WDA_ROUTES[endpoint as keyof typeof WDA_ROUTES]?.[method];
   }
 }
-

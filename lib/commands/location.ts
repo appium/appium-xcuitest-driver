@@ -2,7 +2,7 @@ import {services} from 'appium-ios-device';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import {AuthorizationStatus} from './enum';
-import { isIos17OrNewer } from '../utils';
+import {isIos17OrNewer} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Location} from '@appium/types';
 import type {LocationWithAltitude, WDALocationInfo} from './types';
@@ -31,12 +31,16 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
   if (isIos17OrNewer(this.opts)) {
     const {latitude, longitude} = await this.mobileGetSimulatedLocation();
     if (latitude && longitude) {
-      this.log.debug('Returning the geolocation that has been previously set by mobile:setSimulatedLocation. ' +
-        'mobile:resetSimulatedLocation can reset the location configuration.');
+      this.log.debug(
+        'Returning the geolocation that has been previously set by mobile:setSimulatedLocation. ' +
+          'mobile:resetSimulatedLocation can reset the location configuration.',
+      );
       return {latitude, longitude, altitude: 0};
     }
 
-    this.log.warn(`No location was set by mobile:setSimulatedLocation. Trying to return the location from the device.`);
+    this.log.warn(
+      `No location was set by mobile:setSimulatedLocation. Trying to return the location from the device.`,
+    );
   }
 
   // Please do not change the way to get the location here with '/wda/simulatedLocation'
@@ -44,7 +48,10 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
   // '/wda/device/location' returns current device location information,
   // but '/wda/simulatedLocation' returns `null` values until the WDA process
   // sets a simulated location. After setting the value, both returns the same values.
-  const {authorizationStatus, latitude, longitude, altitude} = await this.proxyCommand('/wda/device/location', 'GET') as WDALocationInfo;
+  const {authorizationStatus, latitude, longitude, altitude} = (await this.proxyCommand(
+    '/wda/device/location',
+    'GET',
+  )) as WDALocationInfo;
 
   // '3' is 'Always' in the privacy
   // https://developer.apple.com/documentation/corelocation/clauthorizationstatus
@@ -132,4 +139,3 @@ export async function mobileResetLocationService(this: XCUITestDriver): Promise<
     service.close();
   }
 }
-

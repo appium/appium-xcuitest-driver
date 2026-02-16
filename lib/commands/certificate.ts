@@ -16,7 +16,7 @@ import type {CertificateList} from './types';
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];
 const TMPSERVER_STARTUP_TIMEOUT = 5000;
-const Settings = /** @type {const} */ ({
+const Settings = /** @type {const} */ {
   General: {
     type: 'accessibility id',
     value: 'General',
@@ -33,8 +33,8 @@ const Settings = /** @type {const} */ ({
     type: 'accessibility id',
     value: 'Certificate Trust Settings',
   },
-});
-const Button = /** @type {const} */ ({
+};
+const Button = /** @type {const} */ {
   Install: {
     type: 'accessibility id',
     value: 'Install',
@@ -51,14 +51,14 @@ const Button = /** @type {const} */ ({
     type: 'accessibility id',
     value: 'Return to Settings',
   },
-});
-const Alert = /** @type {const} */ ({
+};
+const Alert = /** @type {const} */ {
   Install: {
     type: '-ios class chain',
     value:
       "**/XCUIElementTypeAny[`type == 'XCUIElementTypeAlert' OR type == 'XCUIElementTypeSheet'`]/**/XCUIElementTypeButton[`label == 'Install'`]",
   },
-});
+};
 
 const LIBRE_SSL_PATTERN = /\/CN=([^\/]+)/; // eslint-disable-line no-useless-escape
 const OPEN_SSL_PATTERN = /,\sCN\s=\s([^,]+)/;
@@ -108,9 +108,12 @@ export async function mobileInstallCertificate(
       const methodName: 'addRootCertificate' | 'addCertificate' = isRoot
         ? 'addRootCertificate'
         : 'addCertificate';
-      await (this.device as Simulator).simctl[methodName](Buffer.from(content, 'base64').toString(), {
-        raw: true,
-      });
+      await (this.device as Simulator).simctl[methodName](
+        Buffer.from(content, 'base64').toString(),
+        {
+          raw: true,
+        },
+      );
       return;
     } catch (e) {
       this.log.debug(e);
@@ -146,8 +149,7 @@ export async function mobileInstallCertificate(
       await plist.updatePlistFile(configPath, mobileConfig, false, false);
     } catch (err) {
       throw new Error(
-        `Cannot store the generated config as '${configPath}'. ` +
-          `Original error: ${err.message}`,
+        `Cannot store the generated config as '${configPath}'. ` + `Original error: ${err.message}`,
       );
     }
 
@@ -171,9 +173,7 @@ export async function mobileInstallCertificate(
         );
         this.log.debug(`The temporary web server is running at http://${host}:${tmpPort}`);
       } catch {
-        throw new Error(
-          `The temporary web server cannot be started at http://${host}:${tmpPort}.`,
-        );
+        throw new Error(`The temporary web server cannot be started at http://${host}:${tmpPort}.`);
       }
       if (this.isRealDevice()) {
         try {

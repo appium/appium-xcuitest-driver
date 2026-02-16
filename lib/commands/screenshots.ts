@@ -27,7 +27,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
       default:
         this.log.warn(
           `The webScreenshotMode setting value '${webScreenshotMode}' is not known. ` +
-          `Supported values are: page, viewport and native. Falling back to the native mode.`
+            `Supported values are: page, viewport and native. Falling back to the native mode.`,
         );
         break;
     }
@@ -72,7 +72,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   }
 
   // Retry for real devices only. Fail fast on Simulator if simctl does not work as expected
-  return await retryInterval(2, 1000, getScreenshotFromWDA) as string;
+  return (await retryInterval(2, 1000, getScreenshotFromWDA)) as string;
 }
 
 /**
@@ -140,4 +140,3 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
   this.log.debug(`Calculated viewport rect: ${JSON.stringify(region)}`);
   return await imageUtil.cropBase64Image(screenshot, region);
 }
-

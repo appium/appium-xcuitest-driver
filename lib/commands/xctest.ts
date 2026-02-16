@@ -164,12 +164,9 @@ export async function mobileRunXCTest(
   env?: StringRecord,
   timeout = XCTEST_TIMEOUT,
 ): Promise<RunXCTestResult> {
-  const subproc = await assertIDB.call(this, this.opts).runXCUITest(
-    testRunnerBundleId,
-    appUnderTestBundleId,
-    xcTestBundleId,
-    {env, args, testType},
-  );
+  const subproc = await assertIDB
+    .call(this, this.opts)
+    .runXCUITest(testRunnerBundleId, appUnderTestBundleId, xcTestBundleId, {env, args, testType});
   return await new B((resolve, reject) => {
     let mostRecentLogObject: XCTestResult[] | string[] | null = null;
     let xctestTimeout: NodeJS.Timeout | undefined;
@@ -289,4 +286,3 @@ export async function mobileListXCTestsInTestBundle(
   const idb = assertIDB.call(this, this.opts);
   return await idb.listXCTestsInTestBundle(bundle);
 }
-

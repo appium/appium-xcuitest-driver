@@ -41,9 +41,6 @@ export async function mobileSendBiometricMatch(
  * @throws If the detection fails or the device is not a Simulator.
  * @group Simulator Only
  */
-export async function mobileIsBiometricEnrolled(
-  this: XCUITestDriver,
-): Promise<boolean> {
+export async function mobileIsBiometricEnrolled(this: XCUITestDriver): Promise<boolean> {
   return await requireSimulator(this, 'Checking biometric enrollment').isBiometricEnrolled();
 }
-

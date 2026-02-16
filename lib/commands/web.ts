@@ -77,12 +77,12 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
 
   if (hasElementId(frame)) {
     const atomsElement = this.getAtomsElement(frame);
-    const value = await this.executeAtom('get_frame_window', [atomsElement]) as {WINDOW: string};
+    const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
     this.log.debug(`Entering new web frame: '${value.WINDOW}'`);
     this.curWebFrames.unshift(value.WINDOW);
   } else {
     const atom = _.isNumber(frame) ? 'frame_by_index' : 'frame_by_id_or_name';
-    const value = await this.executeAtom(atom, [frame]) as {WINDOW?: string} | null;
+    const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
     if (_.isNull(value) || _.isUndefined(value.WINDOW)) {
       throw new errors.NoSuchFrameError();
     }
@@ -99,13 +99,20 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context
  */
-export async function getCssProperty(this: XCUITestDriver, propertyName: string, el: Element | string): Promise<string> {
+export async function getCssProperty(
+  this: XCUITestDriver,
+  propertyName: string,
+  el: Element | string,
+): Promise<string> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError();
   }
 
   const atomsElement = this.getAtomsElement(el);
-  return await this.executeAtom('get_value_of_css_property', [atomsElement, propertyName]) as string;
+  return (await this.executeAtom('get_value_of_css_property', [
+    atomsElement,
+    propertyName,
+  ])) as string;
 }
 
 /**
@@ -149,7 +156,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
     throw new errors.NotImplementedError();
   }
 
-  return await this.remote.execute('window.location.href') as string;
+  return (await this.remote.execute('window.location.href')) as string;
 }
 
 /**
@@ -163,7 +170,7 @@ export async function title(this: XCUITestDriver): Promise<string> {
     throw new errors.NotImplementedError();
   }
 
-  return await this.remote.execute('window.document.title') as string;
+  return (await this.remote.execute('window.document.title')) as string;
 }
 
 /**
@@ -298,7 +305,7 @@ export function cacheWebElement(this: XCUITestDriver, el: Element | string): Ele
  * @returns Response with cached element wrappers
  */
 export function cacheWebElements(this: XCUITestDriver, response: any): any {
-  const toCached = (v: any) => (_.isArray(v) || _.isPlainObject(v)) ? this.cacheWebElements(v) : v;
+  const toCached = (v: any) => (_.isArray(v) || _.isPlainObject(v) ? this.cacheWebElements(v) : v);
 
   if (_.isArray(response)) {
     return response.map(toCached);
@@ -320,7 +327,12 @@ export function cacheWebElements(this: XCUITestDriver, response: any): any {
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
  * @privateRemarks This should return `Promise<T>` where `T` extends `unknown`, but that's going to cause a lot of things to break.
  */
-export async function executeAtom(this: XCUITestDriver, atom: string, args: unknown[], alwaysDefaultFrame: boolean = false): Promise<any> {
+export async function executeAtom(
+  this: XCUITestDriver,
+  atom: string,
+  args: unknown[],
+  alwaysDefaultFrame: boolean = false,
+): Promise<any> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   const promise = this.remote.executeAtom(atom, args, frames);
   return await this.waitForAtom(promise);
@@ -332,7 +344,11 @@ export async function executeAtom(this: XCUITestDriver, atom: string, args: unkn
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  */
-export async function executeAtomAsync(this: XCUITestDriver, atom: string, args: any[]): Promise<any> {
+export async function executeAtomAsync(
+  this: XCUITestDriver,
+  atom: string,
+  args: any[],
+): Promise<any> {
   // save the resolve and reject methods of the promise to be waited for
   const promise = new B((resolve, reject) => {
     this.asyncPromise = {resolve, reject};
@@ -349,7 +365,10 @@ export async function executeAtomAsync(this: XCUITestDriver, atom: string, args:
  * @returns Atoms-compatible element object
  * @throws {errors.StaleElementReferenceError} If the element is not in the cache
  */
-export function getAtomsElement<S extends string = string>(this: XCUITestDriver, elOrId: S | Element<S>): AtomsElement<S> {
+export function getAtomsElement<S extends string = string>(
+  this: XCUITestDriver,
+  elOrId: S | Element<S>,
+): AtomsElement<S> {
   const elId = util.unwrapElement(elOrId);
   if (!this.webElementsCache?.has(elId)) {
     throw new errors.StaleElementReferenceError();
@@ -471,7 +490,7 @@ export async function getSafariIsIphone(this: XCUITestDriver): Promise<boolean> 
     return this._isSafariIphone;
   }
   try {
-    const userAgent = await this.execute('return navigator.userAgent') as string;
+    const userAgent = (await this.execute('return navigator.userAgent')) as string;
     this._isSafariIphone = userAgent.toLowerCase().includes('iphone');
   } catch (err: any) {
     this.log.warn(`Unable to find device type from useragent. Assuming iPhone`);
@@ -490,7 +509,7 @@ export async function getSafariIsIphone(this: XCUITestDriver): Promise<boolean> 
 export async function getSafariDeviceSize(this: XCUITestDriver): Promise<Size> {
   const script =
     'return {height: window.screen.availHeight * window.devicePixelRatio, width: window.screen.availWidth * window.devicePixelRatio};';
-  const {width, height} = await this.execute(script) as Size;
+  const {width, height} = (await this.execute(script)) as Size;
   const [normHeight, normWidth] = height > width ? [height, width] : [width, height];
   return {
     width: normWidth,
@@ -518,9 +537,7 @@ export async function getSafariIsNotched(this: XCUITestDriver): Promise<boolean>
       }
     }
   } catch (err: any) {
-    this.log.warn(
-      `Unable to find device type from dimensions. Assuming the device is not notched`,
-    );
+    this.log.warn(`Unable to find device type from dimensions. Assuming the device is not notched`);
     this.log.debug(`Error: ${err.message}`);
   }
   return this._isSafariNotched ?? false;
@@ -551,8 +568,11 @@ export async function getExtraTranslateWebCoordsOffset(
   const {
     nativeWebTapTabBarVisibility,
     nativeWebTapSmartAppBannerVisibility,
-    safariTabBarPosition = util.compareVersions(this.opts.platformVersion as string, '>=', '15.0') &&
-    isIphone
+    safariTabBarPosition = util.compareVersions(
+      this.opts.platformVersion as string,
+      '>=',
+      '15.0',
+    ) && isIphone
       ? TAB_BAR_POSITION_BOTTOM
       : TAB_BAR_POSITION_TOP,
   } = this.settings.getSettings();
@@ -583,7 +603,9 @@ export async function getExtraTranslateWebCoordsOffset(
       : IPHONE_X_NOTCH_OFFSET_IOS
     : 0;
 
-  const isScrolled = await this.execute('return document.documentElement.scrollTop > 0') as boolean;
+  const isScrolled = (await this.execute(
+    'return document.documentElement.scrollTop > 0',
+  )) as boolean;
   if (isScrolled) {
     topOffset = IPHONE_SCROLLED_TOP_BAR_HEIGHT + notchOffset;
 
@@ -652,7 +674,11 @@ export async function getExtraNativeWebTapOffset(
       : IPAD_WEB_COORD_SMART_APP_BANNER_OFFSET;
   } else if (bannerVisibility === DETECT) {
     // try to see if there is an Smart App Banner
-    const banners = await this.findNativeElementOrElements('accessibility id', 'Close app download offer', true) as Element[];
+    const banners = (await this.findNativeElementOrElements(
+      'accessibility id',
+      'Close app download offer',
+      true,
+    )) as Element[];
     if (banners?.length) {
       offset += isIphone
         ? IPHONE_WEB_COORD_SMART_APP_BANNER_OFFSET
@@ -676,17 +702,17 @@ export async function nativeWebTap(this: XCUITestDriver, el: any): Promise<void>
 
   // if strict native tap, do not try to do it with WDA directly
   if (
-    !(this.settings.getSettings()).nativeWebTapStrict &&
+    !this.settings.getSettings().nativeWebTapStrict &&
     (await tapWebElementNatively.bind(this)(atomsElement))
   ) {
     return;
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  const [size, coordinates] = await B.Promise.all([
+  const [size, coordinates] = (await B.Promise.all([
     this.executeAtom('get_size', [atomsElement]),
     this.executeAtom('get_top_left_coordinates', [atomsElement]),
-  ]) as [Size, Position];
+  ])) as [Size, Position];
   const {width, height} = size;
   const {x, y} = coordinates;
   await this.clickWebCoords(x + width / 2, y + height / 2);
@@ -702,18 +728,30 @@ export async function nativeWebTap(this: XCUITestDriver, el: any): Promise<void>
  * @returns Translated position in native coordinates
  * @throws {Error} If no WebView is found or if translation fails
  */
-export async function translateWebCoords(this: XCUITestDriver, x: number, y: number): Promise<Position> {
+export async function translateWebCoords(
+  this: XCUITestDriver,
+  x: number,
+  y: number,
+): Promise<Position> {
   this.log.debug(`Translating web coordinates (${JSON.stringify({x, y})}) to native coordinates`);
 
   if (this.webviewCalibrationResult) {
-    this.log.debug(`Will use the recent calibration result: ${JSON.stringify(this.webviewCalibrationResult)}`);
-    const { offsetX, offsetY, pixelRatioX, pixelRatioY } = this.webviewCalibrationResult;
-    const cmd = '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
+    this.log.debug(
+      `Will use the recent calibration result: ${JSON.stringify(this.webviewCalibrationResult)}`,
+    );
+    const {offsetX, offsetY, pixelRatioX, pixelRatioY} = this.webviewCalibrationResult;
+    const cmd =
+      '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
       'outerWidth: window.outerWidth, outerHeight: window.outerHeight}; })()';
-    const wvDims = await this.remote.execute(cmd) as {innerWidth: number; innerHeight: number; outerWidth: number; outerHeight: number};
+    const wvDims = (await this.remote.execute(cmd)) as {
+      innerWidth: number;
+      innerHeight: number;
+      outerWidth: number;
+      outerHeight: number;
+    };
     // https://tripleodeon.com/2011/12/first-understand-your-screen/
-    const shouldApplyPixelRatio = wvDims.innerWidth > wvDims.outerWidth
-      || wvDims.innerHeight > wvDims.outerHeight;
+    const shouldApplyPixelRatio =
+      wvDims.innerWidth > wvDims.outerWidth || wvDims.innerHeight > wvDims.outerHeight;
     return {
       x: offsetX + x * (shouldApplyPixelRatio ? pixelRatioX : 1),
       y: offsetY + y * (shouldApplyPixelRatio ? pixelRatioY : 1),
@@ -721,19 +759,19 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
   } else {
     this.log.debug(
       `Using the legacy algorithm for coordinates translation. ` +
-      `Invoke 'mobile: calibrateWebToRealCoordinatesTranslation' to change that.`
+        `Invoke 'mobile: calibrateWebToRealCoordinatesTranslation' to change that.`,
     );
   }
 
   // absolutize web coords
   let webview: Element | undefined | string;
   try {
-    webview = await retryInterval(
+    webview = (await retryInterval(
       5,
       100,
       async () =>
         await this.findNativeElementOrElements('class name', 'XCUIElementTypeWebView', false),
-    ) as Element | undefined;
+    )) as Element | undefined;
   } catch {}
 
   if (!webview) {
@@ -742,12 +780,12 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
 
   webview = util.unwrapElement(webview);
 
-  const rect = await this.proxyCommand(`/element/${webview}/rect`, 'GET') as Rect;
+  const rect = (await this.proxyCommand(`/element/${webview}/rect`, 'GET')) as Rect;
   const wvPos = {x: rect.x, y: rect.y};
   const realDims = {w: rect.width, h: rect.height};
 
   const cmd = '(function () { return {w: window.innerWidth, h: window.innerHeight}; })()';
-  const wvDims = await this.remote.execute(cmd) as {w: number; h: number};
+  const wvDims = (await this.remote.execute(cmd)) as {w: number; h: number};
 
   // keep track of implicit wait, and set locally to 0
   // https://github.com/appium/appium/issues/14988
@@ -761,8 +799,8 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
   if (!wvDims || !realDims || !wvPos) {
     throw new Error(
       `Web coordinates ${JSON.stringify({x, y})} cannot be translated into real coordinates. ` +
-      `Try to invoke 'mobile: calibrateWebToRealCoordinatesTranslation' or consider translating the ` +
-      `coordinates from the client code.`
+        `Try to invoke 'mobile: calibrateWebToRealCoordinatesTranslation' or consider translating the ` +
+        `coordinates from the client code.`,
     );
   }
 
@@ -784,9 +822,7 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
   this.log.debug(`    yRatio: ${JSON.stringify(yRatio)}`);
 
   this.log.debug(
-    `Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(
-      newCoords,
-    )}`,
+    `Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`,
   );
   return newCoords;
 }
@@ -811,9 +847,10 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
 export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): Promise<any> {
   const timer = new timing.Timer().start();
 
-  const atomWaitTimeoutMs = _.isNumber(this.opts.webviewAtomWaitTimeout) && this.opts.webviewAtomWaitTimeout > 0
-    ? this.opts.webviewAtomWaitTimeout
-    : ATOM_WAIT_TIMEOUT_MS;
+  const atomWaitTimeoutMs =
+    _.isNumber(this.opts.webviewAtomWaitTimeout) && this.opts.webviewAtomWaitTimeout > 0
+      ? this.opts.webviewAtomWaitTimeout
+      : ATOM_WAIT_TIMEOUT_MS;
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
   const timedAtomPromise = B.resolve(promise).timeout(atomWaitTimeoutMs);
@@ -823,11 +860,9 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
     } catch (err: any) {
       const originalError = err instanceof AggregateError ? err[0] : err;
       this.log.debug(`Error received while executing atom: ${originalError.message}`);
-      throw (
-        originalError instanceof TimeoutError
-          ? (await generateAtomTimeoutError.bind(this)(timer))
-          : originalError
-      );
+      throw originalError instanceof TimeoutError
+        ? await generateAtomTimeoutError.bind(this)(timer)
+        : originalError;
     }
   };
   // if the atom promise is fulfilled within ATOM_INITIAL_WAIT_MS
@@ -868,16 +903,11 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
       onAppCrashCallback = reject;
       this._waitingAtoms.alertNotifier.once(ON_OBSTRUCTING_ALERT_EVENT, onAlertCallback);
       this._waitingAtoms.alertNotifier.once(ON_APP_CRASH_EVENT, onAppCrashCallback);
-      handlePromiseError(timedAtomPromise)
-        .then(resolve)
-        .catch(reject);
+      handlePromiseError(timedAtomPromise).then(resolve).catch(reject);
     });
   } finally {
     if (onAlertCallback) {
-      this._waitingAtoms.alertNotifier.removeListener(
-        ON_OBSTRUCTING_ALERT_EVENT,
-        onAlertCallback,
-      );
+      this._waitingAtoms.alertNotifier.removeListener(ON_OBSTRUCTING_ALERT_EVENT, onAlertCallback);
     }
     if (onAppCrashCallback) {
       this._waitingAtoms.alertNotifier.removeListener(ON_APP_CRASH_EVENT, onAppCrashCallback);
@@ -915,10 +945,10 @@ export function getWdaLocalhostRoot(this: XCUITestDriver): string {
     }
   };
   const remotePort =
-    ((this.isRealDevice() ? this.opts.wdaRemotePort : null)
-      ?? wdaPort()
-      ?? this.opts.wdaLocalPort)
-  || 8100;
+    ((this.isRealDevice() ? this.opts.wdaRemotePort : null) ??
+      wdaPort() ??
+      this.opts.wdaLocalPort) ||
+    8100;
   const remoteIp = this.opts.wdaBindingIP ?? '127.0.0.1';
   return `http://${remoteIp}:${remotePort}`;
 }
@@ -936,14 +966,16 @@ export function getWdaLocalhostRoot(this: XCUITestDriver): string {
  * @returns Calibration data with offset and pixel ratio information
  * @throws {errors.NotImplementedError} If not in a web context
  */
-export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUITestDriver): Promise<CalibrationData> {
+export async function mobileCalibrateWebToRealCoordinatesTranslation(
+  this: XCUITestDriver,
+): Promise<CalibrationData> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError('This API can only be called from a web context');
   }
 
   const currentUrl = await this.getUrl();
   await this.setUrl(`${this.getWdaLocalhostRoot()}/calibrate`);
-  const {width, height} = await this.proxyCommand('/window/rect', 'GET') as Rect;
+  const {width, height} = (await this.proxyCommand('/window/rect', 'GET')) as Rect;
   const [centerX, centerY] = [width / 2, height / 2];
   const errorPrefix = 'Cannot determine web view coordinates offset. Are you in Safari context?';
 
@@ -953,7 +985,9 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
     try {
       const title = await this.title();
       this.log.debug(JSON.stringify(title));
-      result = _.isPlainObject(title) ? title as unknown as Position : JSON.parse(title) as Position;
+      result = _.isPlainObject(title)
+        ? (title as unknown as Position)
+        : (JSON.parse(title) as Position);
     } catch (e: any) {
       throw new Error(`${errorPrefix} Original error: ${e.message}`);
     }
@@ -964,26 +998,24 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
     return result;
   };
 
-  await retryInterval(
-    6,
-    500,
-    async () => {
-      const {x: x0, y: y0} = await performCalibrationTap(
-        centerX - CALIBRATION_TAP_DELTA_PX, centerY - CALIBRATION_TAP_DELTA_PX
-      );
-      const {x: x1, y: y1} = await performCalibrationTap(
-        centerX + CALIBRATION_TAP_DELTA_PX, centerY + CALIBRATION_TAP_DELTA_PX
-      );
-      const pixelRatioX = CALIBRATION_TAP_DELTA_PX * 2 / (x1 - x0);
-      const pixelRatioY = CALIBRATION_TAP_DELTA_PX * 2 / (y1 - y0);
-      this.webviewCalibrationResult = {
-        offsetX: centerX - CALIBRATION_TAP_DELTA_PX - x0 * pixelRatioX,
-        offsetY: centerY - CALIBRATION_TAP_DELTA_PX - y0 * pixelRatioY,
-        pixelRatioX,
-        pixelRatioY,
-      };
-    }
-  );
+  await retryInterval(6, 500, async () => {
+    const {x: x0, y: y0} = await performCalibrationTap(
+      centerX - CALIBRATION_TAP_DELTA_PX,
+      centerY - CALIBRATION_TAP_DELTA_PX,
+    );
+    const {x: x1, y: y1} = await performCalibrationTap(
+      centerX + CALIBRATION_TAP_DELTA_PX,
+      centerY + CALIBRATION_TAP_DELTA_PX,
+    );
+    const pixelRatioX = (CALIBRATION_TAP_DELTA_PX * 2) / (x1 - x0);
+    const pixelRatioY = (CALIBRATION_TAP_DELTA_PX * 2) / (y1 - y0);
+    this.webviewCalibrationResult = {
+      offsetX: centerX - CALIBRATION_TAP_DELTA_PX - x0 * pixelRatioX,
+      offsetY: centerY - CALIBRATION_TAP_DELTA_PX - y0 * pixelRatioY,
+      pixelRatioX,
+      pixelRatioY,
+    };
+  });
 
   if (currentUrl) {
     // restore the previous url
@@ -1013,7 +1045,10 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
  * @throws {Error} If run on a real device
  * @throws {errors.InvalidArgumentError} If the preferences argument is invalid
  */
-export async function mobileUpdateSafariPreferences(this: XCUITestDriver, preferences: Record<string, any>): Promise<void> {
+export async function mobileUpdateSafariPreferences(
+  this: XCUITestDriver,
+  preferences: Record<string, any>,
+): Promise<void> {
   const simulator = requireSimulator(this, 'Updating Safari preferences');
   if (!_.isPlainObject(preferences)) {
     throw new errors.InvalidArgumentError('"preferences" argument must be a valid object');
@@ -1029,24 +1064,23 @@ export async function mobileUpdateSafariPreferences(this: XCUITestDriver, prefer
  * @param timer - Timer instance to get duration from
  * @returns Timeout error with descriptive message
  */
-async function generateAtomTimeoutError(this: XCUITestDriver, timer: timing.Timer): Promise<InstanceType<typeof errors.TimeoutError>> {
-  let message = (
+async function generateAtomTimeoutError(
+  this: XCUITestDriver,
+  timer: timing.Timer,
+): Promise<InstanceType<typeof errors.TimeoutError>> {
+  let message =
     `The remote Safari debugger did not respond to the requested ` +
-    `command after ${timer.getDuration().asMilliSeconds}ms. `
-  );
-  message += (await this._remote?.isJavascriptExecutionBlocked()) ? (
-    `It appears that JavaScript execution is blocked, ` +
-    `which could be caused by either a modal dialog obstructing the current page, ` +
-    `or a JavaScript routine monopolizing the event loop.`
-  ) : (
-    `However, the debugger still responds to JavaScript commands, ` +
-    `which suggests that the provided atom script is taking too long to execute.`
-  );
+    `command after ${timer.getDuration().asMilliSeconds}ms. `;
+  message += (await this._remote?.isJavascriptExecutionBlocked())
+    ? `It appears that JavaScript execution is blocked, ` +
+      `which could be caused by either a modal dialog obstructing the current page, ` +
+      `or a JavaScript routine monopolizing the event loop.`
+    : `However, the debugger still responds to JavaScript commands, ` +
+      `which suggests that the provided atom script is taking too long to execute.`;
   if (_.isUndefined(this.opts.webviewAtomWaitTimeout)) {
-    message += (
+    message +=
       ` You may also consider adjusting the timeout by setting the ` +
-      `'webviewAtomWaitTimeout' driver capability.`
-    );
+      `'webviewAtomWaitTimeout' driver capability.`;
   }
   return new errors.TimeoutError(message);
 }
@@ -1059,38 +1093,49 @@ async function generateAtomTimeoutError(this: XCUITestDriver, timer: timing.Time
  * @param atomsElement - Atoms-compatible element to tap
  * @returns True if the native tap was successful, false otherwise
  */
-async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsElement): Promise<boolean> {
+async function tapWebElementNatively(
+  this: XCUITestDriver,
+  atomsElement: AtomsElement,
+): Promise<boolean> {
   // try to get the text of the element, which will be accessible in the
   // native context
   try {
-    const [text1, text2] = await B.all([
+    const [text1, text2] = (await B.all([
       this.executeAtom('get_text', [atomsElement]),
-      this.executeAtom('get_attribute_value', [atomsElement, 'value'])
-    ]) as [string | null, string | null];
+      this.executeAtom('get_attribute_value', [atomsElement, 'value']),
+    ])) as [string | null, string | null];
     const text = text1 || text2;
     if (!text) {
       return false;
     }
 
-    const els = await this.findNativeElementOrElements('accessibility id', text, true) as Element[];
+    const els = (await this.findNativeElementOrElements(
+      'accessibility id',
+      text,
+      true,
+    )) as Element[];
     if (![1, 2].includes(els.length)) {
       return false;
     }
 
     const el = els[0];
     // use tap because on iOS 11.2 and below `nativeClick` crashes WDA
-    const rect = await this.proxyCommand(
-      `/element/${util.unwrapElement(el)}/rect`, 'GET'
-    ) as Rect;
+    const rect = (await this.proxyCommand(
+      `/element/${util.unwrapElement(el)}/rect`,
+      'GET',
+    )) as Rect;
     if (els.length > 1) {
       const el2 = els[1];
-      const rect2 = await this.proxyCommand(
-        `/element/${util.unwrapElement(el2)}/rect`, 'GET',
-      ) as Rect;
+      const rect2 = (await this.proxyCommand(
+        `/element/${util.unwrapElement(el2)}/rect`,
+        'GET',
+      )) as Rect;
 
       if (
-        rect.x !== rect2.x || rect.y !== rect2.y
-        || rect.width !== rect2.width || rect.height !== rect2.height
+        rect.x !== rect2.x ||
+        rect.y !== rect2.y ||
+        rect.width !== rect2.width ||
+        rect.height !== rect2.height
       ) {
         // These 2 native elements are not referring to the same web element
         return false;
@@ -1133,13 +1178,17 @@ function isValidElementIdentifier(id: any): boolean {
  * @param options - Cookie options (expires, path, domain, secure, httpOnly)
  * @returns Cookie string suitable for document.cookie
  */
-function createJSCookie(key: string, value: string, options: {
-  expires?: string;
-  path?: string;
-  domain?: string;
-  secure?: boolean;
-  httpOnly?: boolean;
-} = {}): string {
+function createJSCookie(
+  key: string,
+  value: string,
+  options: {
+    expires?: string;
+    path?: string;
+    domain?: string;
+    secure?: boolean;
+    httpOnly?: boolean;
+  } = {},
+): string {
   return [
     encodeURIComponent(key),
     '=',
@@ -1160,4 +1209,3 @@ async function _deleteCookie(this: XCUITestDriver, cookie: Cookie): Promise<any>
   const url = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
   return await this.remote.deleteCookie(cookie.name, url);
 }
-

@@ -1,13 +1,13 @@
 import _ from 'lodash';
-import type { AppiumLogger } from '@appium/types';
+import type {AppiumLogger} from '@appium/types';
 import {
   toLogEntry,
   DEFAULT_LOG_LEVEL,
   MAX_JSON_LOG_LENGTH,
-  MAX_BUFFERED_EVENTS_COUNT
+  MAX_BUFFERED_EVENTS_COUNT,
 } from './helpers';
-import { IOSLog } from './ios-log';
-import type { LogEntry } from '../../commands/types';
+import {IOSLog} from './ios-log';
+import type {LogEntry} from '../../commands/types';
 
 const LOG_LEVELS_MAP = {
   error: 'SEVERE',
@@ -96,7 +96,9 @@ export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntr
 
     this.broadcast(entry);
     if (this._showLogs) {
-      this.log.info(`[SafariConsole] ${_.truncate(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`);
+      this.log.info(
+        `[SafariConsole] ${_.truncate(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`,
+      );
     }
   }
 

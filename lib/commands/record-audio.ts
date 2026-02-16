@@ -21,7 +21,12 @@ export class AudioRecorder {
   private readonly opts: AudioRecorderOptions;
   private mainProcess: SubProcess | null;
 
-  constructor(input: string | number, log: any, audioPath: string, opts: AudioRecorderOptions = {} as AudioRecorderOptions) {
+  constructor(
+    input: string | number,
+    log: any,
+    audioPath: string,
+    opts: AudioRecorderOptions = {} as AudioRecorderOptions,
+  ) {
     this.input = input;
     this.log = log;
     this.audioPath = audioPath;
@@ -263,4 +268,3 @@ export async function stopAudioRecording(this: XCUITestDriver): Promise<string> 
   }
   return await encodeBase64OrUpload(resultPath);
 }
-

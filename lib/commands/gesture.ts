@@ -70,7 +70,10 @@ export async function releaseActions(this: XCUITestDriver): Promise<void> {
  * @param actions - Array of action sequences to perform
  * @throws {errors.InvalidArgumentError} If actions contain web elements
  */
-export async function performActions(this: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
+export async function performActions(
+  this: XCUITestDriver,
+  actions: ActionSequence[],
+): Promise<void> {
   this.log.debug(`Received the following W3C actions: ${JSON.stringify(actions, null, '  ')}`);
   assertNoWebElements(actions);
   // This is mandatory, since WDA only supports TOUCH pointer type
@@ -122,11 +125,18 @@ export async function nativeClick(this: XCUITestDriver, el: Element | string): P
  * @throws {errors.InvalidArgumentError} If elementId is not provided
  * @privateRemarks See https://github.com/facebook/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBElementCommands.m for details on WDA gestures API
  */
-export async function mobileScrollToElement(this: XCUITestDriver, elementId: Element | string): Promise<void> {
+export async function mobileScrollToElement(
+  this: XCUITestDriver,
+  elementId: Element | string,
+): Promise<void> {
   if (!elementId) {
     throw new errors.InvalidArgumentError('Element id must be provided');
   }
-  return await this.proxyCommand(`/wda/element/${util.unwrapElement(elementId)}/scrollTo`, 'POST', {});
+  return await this.proxyCommand(
+    `/wda/element/${util.unwrapElement(elementId)}/scrollTo`,
+    'POST',
+    {},
+  );
 }
 
 /**
@@ -189,7 +199,9 @@ export async function mobileScroll(
   if (!_.isNil(distance)) {
     params.distance = distance;
   }
-  const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/scroll` : '/wda/scroll';
+  const endpoint = elementId
+    ? `/wda/element/${util.unwrapElement(elementId)}/scroll`
+    : '/wda/scroll';
   return await this.proxyCommand(endpoint, 'POST', params);
 }
 
@@ -265,7 +277,9 @@ export async function mobileDoubleTap(
   x?: number,
   y?: number,
 ): Promise<void> {
-  const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/doubleTap` : '/wda/doubleTap';
+  const endpoint = elementId
+    ? `/wda/element/${util.unwrapElement(elementId)}/doubleTap`
+    : '/wda/doubleTap';
   await this.proxyCommand(endpoint, 'POST', {x, y});
 }
 
@@ -281,8 +295,13 @@ export async function mobileDoubleTap(
  * ((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap);
  * ```
  */
-export async function mobileTwoFingerTap(this: XCUITestDriver, elementId?: Element | string): Promise<void> {
-  const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/twoFingerTap` : '/wda/twoFingerTap';
+export async function mobileTwoFingerTap(
+  this: XCUITestDriver,
+  elementId?: Element | string,
+): Promise<void> {
+  const endpoint = elementId
+    ? `/wda/element/${util.unwrapElement(elementId)}/twoFingerTap`
+    : '/wda/twoFingerTap';
   await this.proxyCommand(endpoint, 'POST');
 }
 
@@ -309,10 +328,13 @@ export async function mobileTouchAndHold(
   y?: number,
   elementId?: Element | string,
 ): Promise<void> {
-  const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/touchAndHold` : '/wda/touchAndHold';
+  const endpoint = elementId
+    ? `/wda/element/${util.unwrapElement(elementId)}/touchAndHold`
+    : '/wda/touchAndHold';
   await this.proxyCommand(endpoint, 'POST', {
     duration: requireFloat(duration, 'duration'),
-    x, y,
+    x,
+    y,
   });
 }
 
@@ -374,7 +396,11 @@ export async function mobileDragFromToForDuration(
   };
   return elementId
     ? // Drag element
-      await this.proxyCommand(`/wda/element/${util.unwrapElement(elementId)}/dragfromtoforduration`, 'POST', params)
+      await this.proxyCommand(
+        `/wda/element/${util.unwrapElement(elementId)}/dragfromtoforduration`,
+        'POST',
+        params,
+      )
     : // Drag coordinates
       await this.proxyCommand('/wda/dragfromtoforduration', 'POST', params);
 }
@@ -497,7 +523,9 @@ export async function mobileForcePress(
   pressure?: number,
   elementId?: Element | string,
 ): Promise<void> {
-  const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/forceTouch` : `/wda/forceTouch`;
+  const endpoint = elementId
+    ? `/wda/element/${util.unwrapElement(elementId)}/forceTouch`
+    : `/wda/forceTouch`;
   return await this.proxyCommand(endpoint, 'POST', {x, y, duration, pressure});
 }
 
@@ -552,7 +580,11 @@ export async function mobileSelectPickerWheelValue(
   if (!_.isNil(maxAttempts)) {
     params.maxAttempts = maxAttempts;
   }
-  return await this.proxyCommand(`/wda/pickerwheel/${util.unwrapElement(elementId)}/select`, 'POST', params);
+  return await this.proxyCommand(
+    `/wda/pickerwheel/${util.unwrapElement(elementId)}/select`,
+    'POST',
+    params,
+  );
 }
 
 /**
@@ -585,7 +617,9 @@ export async function mobileRotateElement(
     rotation: requireFloat(rotation, 'rotation'),
     velocity: requireFloat(velocity, 'velocity'),
   };
-  const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/rotate` : '/wda/rotate';
+  const endpoint = elementId
+    ? `/wda/element/${util.unwrapElement(elementId)}/rotate`
+    : '/wda/rotate';
   await this.proxyCommand(endpoint, 'POST', params);
 }
 
@@ -597,16 +631,19 @@ export async function mobileRotateElement(
  */
 function assertNoWebElements(actionSeq: ActionSequence[]): void {
   const isOriginWebElement = (gesture: any) =>
-    _.isPlainObject(gesture) && 'origin' in gesture && JSON.stringify(gesture.origin).includes(':wdc:');
-  const hasWebElements = actionSeq
-    .some((action) => (action?.actions || []).some(isOriginWebElement));
+    _.isPlainObject(gesture) &&
+    'origin' in gesture &&
+    JSON.stringify(gesture.origin).includes(':wdc:');
+  const hasWebElements = actionSeq.some((action) =>
+    (action?.actions || []).some(isOriginWebElement),
+  );
   if (hasWebElements) {
     throw new errors.InvalidArgumentError(
       `The XCUITest driver only supports W3C actions execution in the native context. ` +
-      `Although, your W3C action contains one or more web elements, ` +
-      `which cannot be automatically mapped to the native context. ` +
-      `Consider mapping their absolute web coordinates to native context coordinates ` +
-      `and passing them to your gesture instead.`
+        `Although, your W3C action contains one or more web elements, ` +
+        `which cannot be automatically mapped to the native context. ` +
+        `Consider mapping their absolute web coordinates to native context coordinates ` +
+        `and passing them to your gesture instead.`,
     );
   }
 }

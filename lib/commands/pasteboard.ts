@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { requireSimulator } from '../utils';
+import {requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 
 /**
@@ -37,7 +37,5 @@ export async function mobileGetPasteboard(
   this: XCUITestDriver,
   encoding: BufferEncoding = 'utf8',
 ): Promise<string> {
-  return await requireSimulator(this, 'Getting pasteboard content')
-    .simctl.getPasteboard(encoding);
+  return await requireSimulator(this, 'Getting pasteboard content').simctl.getPasteboard(encoding);
 }
-

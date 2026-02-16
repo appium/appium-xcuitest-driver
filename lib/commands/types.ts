@@ -22,7 +22,6 @@ export interface BatteryInfo {
   state: BatteryState;
 }
 
-
 /**
  * Options for `stopRecordingScreen` command
  */
@@ -381,56 +380,50 @@ export type Style = 'dark' | 'light' | 'unsupported' | 'unknown';
 /**
  * Returned in the {@linkcode XCUITest.mobileGetIncreaseContrast mobile: getIncreaseContrast} command response.
  */
-export type IncreaseContrastResult =
-    | 'enabled'
-    | 'disabled'
-    | 'unsupported'
-    | 'unknown';
+export type IncreaseContrastResult = 'enabled' | 'disabled' | 'unsupported' | 'unknown';
 
 /**
  * Argument in the {@linkcode XCUITest.mobileSetIncreaseContrast mobile: setIncreaseContrast} command.
  */
-export type IncreaseContrastAction =
-    | 'enabled'
-    | 'disabled';
+export type IncreaseContrastAction = 'enabled' | 'disabled';
 
 /**
  * Argument in the {@linkcode XCUITest.mobileSetContentSize mobile: setContentSize} command.
  */
 export type ContentSizeAction =
-    | 'extra-small'
-    | 'small'
-    | 'medium'
-    | 'large'
-    | 'extra-large'
-    | 'extra-extra-large'
-    | 'extra-extra-extra-large'
-    | 'accessibility-medium'
-    | 'accessibility-large'
-    | 'accessibility-extra-large'
-    | 'accessibility-extra-extra-large'
-    | 'accessibility-extra-extra-extra-large'
-    | 'increment'
-    | 'decrement';
+  | 'extra-small'
+  | 'small'
+  | 'medium'
+  | 'large'
+  | 'extra-large'
+  | 'extra-extra-large'
+  | 'extra-extra-extra-large'
+  | 'accessibility-medium'
+  | 'accessibility-large'
+  | 'accessibility-extra-large'
+  | 'accessibility-extra-extra-large'
+  | 'accessibility-extra-extra-extra-large'
+  | 'increment'
+  | 'decrement';
 
 /**
  * Returned in the {@linkcode XCUITest.mobileGetContentSize mobile: getContentSize} command response.
  */
 export type ContentSizeResult =
-    | 'extra-small'
-    | 'small'
-    | 'medium'
-    | 'large'
-    | 'extra-large'
-    | 'extra-extra-large'
-    | 'extra-extra-extra-large'
-    | 'accessibility-medium'
-    | 'accessibility-large'
-    | 'accessibility-extra-large'
-    | 'accessibility-extra-extra-large'
-    | 'accessibility-extra-extra-extra-large'
-    | 'unknown'
-    | 'unsupported';
+  | 'extra-small'
+  | 'small'
+  | 'medium'
+  | 'large'
+  | 'extra-large'
+  | 'extra-extra-large'
+  | 'extra-extra-extra-large'
+  | 'accessibility-medium'
+  | 'accessibility-large'
+  | 'accessibility-extra-large'
+  | 'accessibility-extra-extra-large'
+  | 'accessibility-extra-extra-extra-large'
+  | 'unknown'
+  | 'unsupported';
 
 export interface ScreenInfo {
   /**
@@ -664,7 +657,7 @@ export interface KeyboardKey {
 
 export interface LogEntry {
   timestamp: number;
-  level: string,
+  level: string;
   message: string;
 }
 

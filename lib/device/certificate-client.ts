@@ -29,7 +29,7 @@ export class CertificateClient {
   private constructor(
     service: RemoteXPCMobileConfigService | Pyidevice,
     log: AppiumLogger,
-    remoteXPCConnection?: RemoteXpcConnection
+    remoteXPCConnection?: RemoteXpcConnection,
   ) {
     this.service = service;
     this.log = log;
@@ -49,7 +49,7 @@ export class CertificateClient {
   static async create(
     udid: string,
     log: AppiumLogger,
-    useRemoteXPC: boolean
+    useRemoteXPC: boolean,
   ): Promise<CertificateClient> {
     if (useRemoteXPC) {
       const client = await CertificateClient.withRemoteXpcConnection(async () => {
@@ -150,7 +150,7 @@ export class CertificateClient {
    */
   private static async withRemoteXpcConnection<T extends RemoteXPCMobileConfigService | Pyidevice>(
     operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
-    log: AppiumLogger
+    log: AppiumLogger,
   ): Promise<CertificateClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
@@ -162,7 +162,7 @@ export class CertificateClient {
       return client;
     } catch (err: any) {
       log.error(
-        `Failed to create certificate client via RemoteXPC: ${err.message}, falling back to py-ios-device`
+        `Failed to create certificate client via RemoteXPC: ${err.message}, falling back to py-ios-device`,
       );
       return null;
     } finally {

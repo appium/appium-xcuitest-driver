@@ -5,12 +5,12 @@ import {IOSCrashLog} from '../device/log/ios-crash-log';
 import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
 import {IOSDeviceLog} from '../device/log/ios-device-log';
 import WebSocket from 'ws';
-import { SafariConsoleLog } from '../device/log/safari-console-log';
-import { SafariNetworkLog } from '../device/log/safari-network-log';
-import { toLogEntry } from '../device/log/helpers';
-import { NATIVE_WIN, isIos18OrNewer } from '../utils';
-import { BIDI_EVENT_NAME } from './bidi/constants';
-import { makeLogEntryAddedEvent } from './bidi/models';
+import {SafariConsoleLog} from '../device/log/safari-console-log';
+import {SafariNetworkLog} from '../device/log/safari-network-log';
+import {toLogEntry} from '../device/log/helpers';
+import {NATIVE_WIN, isIos18OrNewer} from '../utils';
+import {BIDI_EVENT_NAME} from './bidi/constants';
+import {makeLogEntryAddedEvent} from './bidi/models';
 import type {XCUITestDriver} from '../driver';
 import type {LogEntry, LogListener} from './types';
 import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
@@ -102,11 +102,11 @@ export async function extractLogs(
   if (logType in LOG_NAMES_TO_CAPABILITY_NAMES_MAP) {
     throw new Error(
       `${logType} logs are not enabled. Make sure you've set a proper value ` +
-      `to the 'appium:${LOG_NAMES_TO_CAPABILITY_NAMES_MAP[logType]}' capability.`
+        `to the 'appium:${LOG_NAMES_TO_CAPABILITY_NAMES_MAP[logType]}' capability.`,
     );
   }
   throw new Error(
-    `No logs of type '${logType}' found. Supported log types are: ${_.keys(SUPPORTED_LOG_TYPES)}.`
+    `No logs of type '${logType}' found. Supported log types are: ${_.keys(SUPPORTED_LOG_TYPES)}.`,
   );
 }
 
@@ -126,63 +126,64 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   }
 
   if (_.isUndefined(this.logs.syslog)) {
-    [this.logs.crashlog,] = assignBiDiLogListener.bind(this)(
+    [this.logs.crashlog] = assignBiDiLogListener.bind(this)(
       new IOSCrashLog({
         sim: this.device as Simulator,
         udid: this.isRealDevice() ? this.opts.udid : undefined,
         log: this.log,
         useRemoteXPC: this.isRealDevice() && isIos18OrNewer(this.opts),
-      }), {
+      }),
+      {
         type: 'crashlog',
-      }
+      },
     );
-    [this.logs.syslog,] = assignBiDiLogListener.bind(this)(
+    [this.logs.syslog] = assignBiDiLogListener.bind(this)(
       this.isRealDevice()
         ? new IOSDeviceLog({
-          udid: this.opts.udid as string,
-          showLogs: this.opts.showIOSLog,
-          log: this.log,
-        })
+            udid: this.opts.udid as string,
+            showLogs: this.opts.showIOSLog,
+            log: this.log,
+          })
         : new IOSSimulatorLog({
-          sim: this.device as Simulator,
-          showLogs: this.opts.showIOSLog,
-          iosSimulatorLogsPredicate: this.opts.iosSimulatorLogsPredicate,
-          simulatorLogLevel: this.opts.simulatorLogLevel,
-          log: this.log,
-          iosSyslogFile: this.opts.iosSyslogFile
-        }),
+            sim: this.device as Simulator,
+            showLogs: this.opts.showIOSLog,
+            iosSimulatorLogsPredicate: this.opts.iosSimulatorLogsPredicate,
+            simulatorLogLevel: this.opts.simulatorLogLevel,
+            log: this.log,
+            iosSyslogFile: this.opts.iosSyslogFile,
+          }),
       {
         type: 'syslog',
-      }
+      },
     );
     if (_.isBoolean(this.opts.showSafariConsoleLog)) {
-      [this.logs.safariConsole,] = assignBiDiLogListener.bind(this)(
+      [this.logs.safariConsole] = assignBiDiLogListener.bind(this)(
         new SafariConsoleLog({
           showLogs: this.opts.showSafariConsoleLog,
           log: this.log,
-        }), {
+        }),
+        {
           type: 'safariConsole',
-        }
+        },
       );
     }
     if (_.isBoolean(this.opts.showSafariNetworkLog)) {
-      [this.logs.safariNetwork,] = assignBiDiLogListener.bind(this)(
+      [this.logs.safariNetwork] = assignBiDiLogListener.bind(this)(
         new SafariNetworkLog({
           showLogs: this.opts.showSafariNetworkLog,
           log: this.log,
-        }), {
+        }),
+        {
           type: 'safariNetwork',
-        }
+        },
       );
     }
     if (this.isFeatureEnabled(GET_SERVER_LOGS_FEATURE)) {
-      [, this._bidiServerLogListener] = assignBiDiLogListener.bind(this)(
-        this.log.unwrap(), {
-          type: 'server',
-          srcEventName: 'log',
-          entryTransformer: nativeLogEntryToSeleniumEntry,
-        }
-      );
+      [, this._bidiServerLogListener] = assignBiDiLogListener.bind(this)(this.log.unwrap(), {
+        type: 'server',
+        srcEventName: 'log',
+        entryTransformer: nativeLogEntryToSeleniumEntry,
+      });
     }
   }
 
@@ -217,11 +218,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
  */
 export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
-  if (
-    !_.isEmpty(
-      await (this.server as AppiumServer).getWebSocketHandlers(pathname),
-    )
-  ) {
+  if (!_.isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
     this.log.debug(
       `The system logs broadcasting web socket server is already listening at ${pathname}`,
     );
@@ -238,7 +235,9 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       const remoteIp = _.isEmpty(req.headers['x-forwarded-for'])
         ? req.connection?.remoteAddress
         : req.headers['x-forwarded-for'];
-      this.log.debug(`Established a new system logs listener web socket connection from ${remoteIp}`);
+      this.log.debug(
+        `Established a new system logs listener web socket connection from ${remoteIp}`,
+      );
     } else {
       this.log.debug('Established a new system logs listener web socket connection');
     }
@@ -268,10 +267,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       this.log.debug(closeMsg);
     });
   });
-  await (this.server as AppiumServer).addWebSocketHandler(
-    pathname,
-    wss as WSServer,
-  );
+  await (this.server as AppiumServer).addWebSocketHandler(pathname, wss as WSServer);
 }
 
 /**
@@ -304,12 +300,7 @@ export function assignBiDiLogListener<EE extends EventEmitter>(
   logEmitter: EE,
   properties: BiDiListenerProperties,
 ): [EE, LogListener] {
-  const {
-    type,
-    context = NATIVE_WIN,
-    srcEventName = 'output',
-    entryTransformer,
-  } = properties;
+  const {type, context = NATIVE_WIN, srcEventName = 'output', entryTransformer} = properties;
   const listener: LogListener = (logEntry: LogEntry) => {
     const finalEntry = entryTransformer ? entryTransformer(logEntry) : logEntry;
     this.eventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
@@ -320,9 +311,5 @@ export function assignBiDiLogListener<EE extends EventEmitter>(
 
 function nativeLogEntryToSeleniumEntry(x: any): LogEntry {
   const msg = _.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
-  return toLogEntry(
-    _.replace(msg, COLOR_CODE_PATTERN, ''),
-    x.timestamp ?? Date.now()
-  );
+  return toLogEntry(_.replace(msg, COLOR_CODE_PATTERN, ''), x.timestamp ?? Date.now());
 }
-

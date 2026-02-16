@@ -19,13 +19,10 @@ export async function getStrings(
   stringFile: string | null = null,
 ): Promise<StringRecord<string>> {
   this.log.debug(`Gettings strings for language '${language}' and string file '${stringFile}'`);
-  return await parseLocalizableStrings.bind(this)(
-    {
-      ...this.opts,
-      language,
-      stringFile,
-      strictMode: true,
-    },
-  );
+  return await parseLocalizableStrings.bind(this)({
+    ...this.opts,
+    language,
+    stringFile,
+    strictMode: true,
+  });
 }
-

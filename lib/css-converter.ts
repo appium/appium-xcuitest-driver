@@ -260,7 +260,9 @@ function parseCssRule(cssRule: AstRule): string {
   for (const attr of attributes) {
     attrs.push(parseAttr(attr));
   }
-  const pseudoClasses = cssRule.items.filter(({type}) => type === 'PseudoClass') as AstPseudoClass[];
+  const pseudoClasses = cssRule.items.filter(
+    ({type}) => type === 'PseudoClass',
+  ) as AstPseudoClass[];
   for (const pseudo of pseudoClasses) {
     attrs.push(parsePseudo(pseudo));
   }
@@ -269,9 +271,9 @@ function parseCssRule(cssRule: AstRule): string {
     iosClassChainSelector += `[\`${nonIndexAttrs.join(' AND ')}\`]`;
   }
 
-  const indexAttr = attrs.find(
-    (attr) => _.isObject(attr) && (attr as {index: string}).index
-  ) as {index: string} | undefined;
+  const indexAttr = attrs.find((attr) => _.isObject(attr) && (attr as {index: string}).index) as
+    | {index: string}
+    | undefined;
   if (indexAttr) {
     iosClassChainSelector += `[${indexAttr.index}]`;
   }
