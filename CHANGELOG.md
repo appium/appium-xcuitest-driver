@@ -1,3 +1,9 @@
+## [10.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.3...v10.22.0) (2026-02-16)
+
+### Features
+
+* **process-control:** use remotexpc for `terminateApp` ([#2727](https://github.com/appium/appium-xcuitest-driver/issues/2727)) ([e89b9e3](https://github.com/appium/appium-xcuitest-driver/commit/e89b9e39a72680c27095ab8261fe8337a9cea335))
+
 ## [10.21.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.2...v10.21.3) (2026-02-16)
 
 ### Bug Fixes
