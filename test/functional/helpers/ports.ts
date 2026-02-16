@@ -12,7 +12,7 @@ export async function getFreePort() {
       const address = srv.address();
       let port;
       if (_.has(address, 'port')) {
-        port = /** @type {import('node:net').AddressInfo} */ (address).port;
+        port = /** @type {import('node:net').AddressInfo} */ address.port;
       } else {
         reject(new Error('Cannot determine any free port number'));
       }
@@ -20,4 +20,3 @@ export async function getFreePort() {
     });
   });
 }
-

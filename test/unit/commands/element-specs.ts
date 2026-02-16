@@ -161,7 +161,7 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-      await expect(driver.getContentSize(el)).to.be.rejectedWith(/not yet implemented/);
+        await expect(driver.getContentSize(el)).to.be.rejectedWith(/not yet implemented/);
       });
     });
 
@@ -246,33 +246,43 @@ describe('element commands', function () {
       describe('success', function () {
         it('should proxy string as array of characters', async function () {
           await driver.setValue('hello\uE006', elementId);
-          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
-            value: ['h', 'e', 'l', 'l', 'o', '\n'],
-          })).to.be.true;
+          expect(
+            proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
+              value: ['h', 'e', 'l', 'l', 'o', '\n'],
+            }),
+          ).to.be.true;
         });
         it('should proxy string with smileys as array of characters', async function () {
           await driver.setValue('hello😀😎', elementId);
-          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
-            value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
-          })).to.be.true;
+          expect(
+            proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
+              value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
+            }),
+          ).to.be.true;
         });
         it('should proxy number as array of characters', async function () {
           await driver.setValue(1234.56, elementId);
-          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
-            value: ['1', '2', '3', '4', '.', '5', '6'],
-          })).to.be.true;
+          expect(
+            proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
+              value: ['1', '2', '3', '4', '.', '5', '6'],
+            }),
+          ).to.be.true;
         });
         it('should proxy string array as array of characters', async function () {
           await driver.setValue(['hel', 'lo'], elementId);
-          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
-            value: ['h', 'e', 'l', 'l', 'o'],
-          })).to.be.true;
+          expect(
+            proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
+              value: ['h', 'e', 'l', 'l', 'o'],
+            }),
+          ).to.be.true;
         });
         it('should proxy integer array as array of characters', async function () {
           await driver.setValue([1234], elementId);
-          expect(proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
-            value: ['1', '2', '3', '4'],
-          })).to.be.true;
+          expect(
+            proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
+              value: ['1', '2', '3', '4'],
+            }),
+          ).to.be.true;
         });
       });
 
@@ -314,10 +324,7 @@ describe('element commands', function () {
           await driver.setValue('hello\uE006😀', elementId);
           expect(atomElement.calledOnce).to.be.true;
           expect(executeAtom.calledOnce).to.be.true;
-          expect(setValueWithWebAtom.calledOnceWithExactly(
-            webEl,
-            'hello\uE006😀'
-          )).to.be.true;
+          expect(setValueWithWebAtom.calledOnceWithExactly(webEl, 'hello\uE006😀')).to.be.true;
         });
 
         it('with oneByOne', async function () {

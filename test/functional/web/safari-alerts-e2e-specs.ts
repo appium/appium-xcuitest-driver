@@ -1,9 +1,5 @@
 import {retryInterval} from 'asyncbox';
-import {
-  SAFARI_CAPS,
-  amendCapabilities,
-  isIosVersionBelow
-} from '../desired';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from './helpers';
 import chai, {expect} from 'chai';
@@ -24,7 +20,7 @@ describe('safari - alerts', function () {
 
     if (process.env.CI && isIosVersionBelow('18.0')) {
       this.skip();
-    };
+    }
 
     driver = await initSession(caps);
   });
@@ -64,9 +60,7 @@ describe('safari - alerts', function () {
     const alert = await driver.$('#alert1');
     await alert.click();
     await acceptAlert(driver);
-    await expect(driver
-      .getAlertText()
-    ).to.be.rejectedWith(
+    await expect(driver.getAlertText()).to.be.rejectedWith(
       /An attempt was made to operate on a modal dialog when one was not open/,
     );
   });
@@ -86,4 +80,3 @@ describe('safari - alerts', function () {
     await acceptAlert(driver);
   });
 });
-

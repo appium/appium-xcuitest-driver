@@ -23,7 +23,7 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with null excludedAttributes to WDA', async function () {
-      await driver.updateSettings({'pageSourceExcludedAttributes': null});
+      await driver.updateSettings({pageSourceExcludedAttributes: null});
       await driver.getPageSource();
       expect(proxyStub.calledOnce).to.be.true;
       expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT');
@@ -31,7 +31,7 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with empty excludedAttributes to WDA', async function () {
-      await driver.updateSettings({'pageSourceExcludedAttributes': ''});
+      await driver.updateSettings({pageSourceExcludedAttributes: ''});
       await driver.getPageSource();
       expect(proxyStub.calledOnce).to.be.true;
       expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT');
@@ -39,18 +39,22 @@ describe('source commands', function () {
     });
 
     it('should send translated GET request with single excludedAttributes to WDA', async function () {
-      await driver.updateSettings({'pageSourceExcludedAttributes': 'visible'});
+      await driver.updateSettings({pageSourceExcludedAttributes: 'visible'});
       await driver.getPageSource();
       expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
+      expect(proxyStub.firstCall.args[0]).to.eql(
+        '/source?format=xml&scope=AppiumAUT&excluded_attributes=visible',
+      );
       expect(proxyStub.firstCall.args[1]).to.eql('GET');
     });
 
     it('should send translated GET request with multiple excludedAttributes to WDA', async function () {
-      await driver.updateSettings({'pageSourceExcludedAttributes': 'visible,accessible'});
+      await driver.updateSettings({pageSourceExcludedAttributes: 'visible,accessible'});
       await driver.getPageSource();
       expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible%2Caccessible');
+      expect(proxyStub.firstCall.args[0]).to.eql(
+        '/source?format=xml&scope=AppiumAUT&excluded_attributes=visible%2Caccessible',
+      );
       expect(proxyStub.firstCall.args[1]).to.eql('GET');
     });
   });

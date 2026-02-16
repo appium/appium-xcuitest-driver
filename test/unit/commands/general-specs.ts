@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
 
-
 describe('general commands', function () {
   const driver = new XCUITestDriver({} as any);
 
@@ -19,7 +18,10 @@ describe('general commands', function () {
 
   describe('background', function () {
     it('should deactivate app for the given time if seconds is zero or greater', async function () {
-      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/deactivateApp', 'POST', { duration: 0.5 }, true);
+      mockDriver
+        .expects('proxyCommand')
+        .once()
+        .withExactArgs('/wda/deactivateApp', 'POST', {duration: 0.5}, true);
       await driver.background(0.5);
     });
 
@@ -161,13 +163,16 @@ describe('general commands', function () {
 
   describe('getDevicePixelRatio and getStatusBarHeight', function () {
     before(function () {
-      mockDriver.expects('proxyCommand').withExactArgs('/wda/screen', 'GET').returns({
-        statusBarSize: {
-          width: 100,
-          height: 20,
-        },
-        scale: 3,
-      });
+      mockDriver
+        .expects('proxyCommand')
+        .withExactArgs('/wda/screen', 'GET')
+        .returns({
+          statusBarSize: {
+            width: 100,
+            height: 20,
+          },
+          scale: 3,
+        });
     });
 
     it('should get the pixel ratio from WDA', async function () {

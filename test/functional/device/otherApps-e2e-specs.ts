@@ -32,4 +32,3 @@ describe('OtherApps', function () {
     await expect(driver.isAppInstalled(UICATALOG_BUNDLE_ID)).to.eventually.be.equal(true);
   });
 });
-

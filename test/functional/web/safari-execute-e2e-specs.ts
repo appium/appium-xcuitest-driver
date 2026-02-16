@@ -30,7 +30,8 @@ describe('safari - execute -', function () {
   async function runTests(secure = false) {
     describe('mobile: x methods', function () {
       it('should run in native context', async function () {
-        await expect(driver.executeScript('mobile: scroll', [{direction: 'down'}])).to.not.be.rejected;
+        await expect(driver.executeScript('mobile: scroll', [{direction: 'down'}])).to.not.be
+          .rejected;
       });
     });
 
@@ -69,25 +70,29 @@ describe('safari - execute -', function () {
         });
 
         it('should be able to return multiple elements from javascript', async function () {
-          await expect(driver
-            .executeScript(GET_ELEM_BY_TAGNAME, [])
+          await expect(
+            driver.executeScript(GET_ELEM_BY_TAGNAME, []),
           ).to.eventually.have.length.above(0);
         });
       }
 
       it('should pass along non-element arguments', async function () {
         const arg = 'non-element-argument';
-        await expect(driver
-          .executeScript('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [
-            arg,
-          ])
+        await expect(
+          driver.executeScript(
+            'var args = Array.prototype.slice.call(arguments, 0); return args[0];',
+            [arg],
+          ),
         ).to.eventually.equal(arg);
       });
 
       it('should handle return values correctly', async function () {
         const arg = ['one', 'two', 'three'];
-        await expect(driver
-          .executeScript('var args = Array.prototype.slice.call(arguments, 0); return args;', arg)
+        await expect(
+          driver.executeScript(
+            'var args = Array.prototype.slice.call(arguments, 0); return args;',
+            arg,
+          ),
         ).to.eventually.eql(arg);
       });
     });
@@ -152,4 +157,3 @@ describe('safari - execute -', function () {
     runTests(true);
   });
 });
-

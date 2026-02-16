@@ -1,11 +1,7 @@
 import B from 'bluebird';
 import _ from 'lodash';
 import {retryInterval} from 'asyncbox';
-import {
-  extractCapabilityValue,
-  getUICatalogCaps,
-  PLATFORM_VERSION,
-} from '../desired';
+import {extractCapabilityValue, getUICatalogCaps, PLATFORM_VERSION} from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {util} from 'appium/support';
@@ -79,7 +75,7 @@ describe('XCUITestDriver - find -', function () {
       // we will have the previous elements, so the get command will be fulfilled.
       await B.delay(1000);
 
-      await driver.setTimeout({ implicit: 5000 });
+      await driver.setTimeout({implicit: 5000});
       table = await driver.$('XCUIElementTypeTable');
       const el2 = await driver.$('XCUIElementTypeStaticText');
       const el2Name = await el2.getAttribute('name');
@@ -149,7 +145,7 @@ describe('XCUITestDriver - find -', function () {
       });
 
       it('should respect implicit wait', async function () {
-        await driver.setTimeout({ implicit: 5000 });
+        await driver.setTimeout({implicit: 5000});
 
         const begin = Date.now();
         const el = await driver.$('//something_not_there');
@@ -464,4 +460,3 @@ describe('XCUITestDriver - find -', function () {
     });
   });
 });
-

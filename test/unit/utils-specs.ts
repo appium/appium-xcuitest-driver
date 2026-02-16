@@ -1,8 +1,4 @@
-import {
-  clearSystemFiles,
-  markSystemFilesForCleanup,
-  isLocalHost,
-} from '../../lib/utils';
+import {clearSystemFiles, markSystemFilesForCleanup, isLocalHost} from '../../lib/utils';
 import {createSandbox} from 'sinon';
 import {fs} from 'appium/support';
 import chai, {expect} from 'chai';
@@ -13,7 +9,6 @@ chai.use(chaiAsPromised);
 const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
 
 describe('utils', function () {
-
   describe('clearSystemFiles', function () {
     let sandbox: ReturnType<typeof createSandbox>;
     let mockFs: ReturnType<typeof createSandbox.mock>;
@@ -66,7 +61,6 @@ describe('utils', function () {
       mockFs.verify();
     });
   });
-
 
   describe('isLocalHost', function () {
     it('should be false with invalid input, undefined', function () {

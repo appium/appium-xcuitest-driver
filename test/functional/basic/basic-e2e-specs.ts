@@ -1,10 +1,7 @@
 import B from 'bluebird';
 import util from 'node:util';
 import {retryInterval} from 'asyncbox';
-import {
-  isIosVersionBelow,
-  getUICatalogCaps,
-} from '../desired';
+import {isIosVersionBelow, getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {GUINEA_PIG_PAGE} from '../web/helpers';
 import sharp from 'sharp';
@@ -33,7 +30,7 @@ describe('XCUITestDriver - basics -', function () {
     });
 
     it('should return status immediately if another operation is in progress', async function () {
-      await driver.setTimeout({ implicit: 10000 });
+      await driver.setTimeout({implicit: 10000});
       const findElementPromise = driver.$('#WrongLocator');
       const status = await driver.status();
       expect(status.build.version).to.exist;
@@ -147,7 +144,14 @@ describe('XCUITestDriver - basics -', function () {
     describe('types -', function () {
       it('should get the list of available logs', async function () {
         const actualTypes = await driver.getLogTypes();
-        for (const expectedType of ['syslog', 'crashlog', 'performance', 'safariConsole', 'safariNetwork', 'server']) {
+        for (const expectedType of [
+          'syslog',
+          'crashlog',
+          'performance',
+          'safariConsole',
+          'safariNetwork',
+          'server',
+        ]) {
           expect(actualTypes).to.include(expectedType);
         }
       });
@@ -205,8 +209,9 @@ describe('XCUITestDriver - basics -', function () {
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
       await expect(driver.execute('mobile: getSimulatedLocation')).to.be.fulfilled;
-      await expect(driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'})).to.not.be
-        .rejected;
+      await expect(
+        driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}),
+      ).to.not.be.rejected;
     });
   });
 
@@ -261,4 +266,3 @@ describe('XCUITestDriver - basics -', function () {
     });
   });
 });
-

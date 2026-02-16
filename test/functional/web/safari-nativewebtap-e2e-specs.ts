@@ -8,7 +8,7 @@ import {
   SAFARI_CAPS,
   DEVICE_NAME,
   DEVICE_NAME_FOR_SAFARI_IPAD,
-  isIosVersionAtLeast
+  isIosVersionAtLeast,
 } from '../desired';
 import {
   openPage,
@@ -25,7 +25,6 @@ import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
-
 
 const caps = amendCapabilities(SAFARI_CAPS, {
   'appium:safariInitialUrl': GUINEA_PIG_PAGE,
@@ -74,20 +73,34 @@ describe('Safari - coordinate conversion -', function () {
             type: 'pointer',
             id: 'touch',
             actions: [
-              { type: 'pointerMove', duration: 0, x: windowRect.width / 2, y: windowRect.height * 0.8 },
-              { type: 'pointerDown', button: 0 },
-              { type: 'pause', duration: 500 },
-              { type: 'pointerMove', duration: 0, x: windowRect.width / 2, y: windowRect.height * 0.2 },
-              { type: 'pointerUp', button: 0 },
-            ]
-          }
+              {
+                type: 'pointerMove',
+                duration: 0,
+                x: windowRect.width / 2,
+                y: windowRect.height * 0.8,
+              },
+              {type: 'pointerDown', button: 0},
+              {type: 'pause', duration: 500},
+              {
+                type: 'pointerMove',
+                duration: 0,
+                x: windowRect.width / 2,
+                y: windowRect.height * 0.2,
+              },
+              {type: 'pointerUp', button: 0},
+            ],
+          },
         ];
         await driver.performActions(scrollAction);
-        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`).click();
+        await driver
+          .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`)
+          .click();
         // to check the view transition to be completed
         await driver.$(`-ios predicate string:label='Default Apps'`);
         await driver.performActions(scrollAction);
-        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`).click();
+        await driver
+          .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`)
+          .click();
       };
       const openSafariMenuIOS17AndBelow = async () => {
         await driver
@@ -102,9 +115,10 @@ describe('Safari - coordinate conversion -', function () {
         await driver
           .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`)
           .click();
-        const closeTabEl = await driver
-          .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`);
-        if (await closeTabEl.getValue() === '0') {
+        const closeTabEl = await driver.$(
+          `-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`,
+        );
+        if ((await closeTabEl.getValue()) === '0') {
           await closeTabEl.click();
         }
         await driver
@@ -264,7 +278,10 @@ describe('Safari - coordinate conversion -', function () {
             await loadPage(driver, GUINEA_PIG_PAGE);
 
             // open a new tab and go to it
-            await driver.execute('arguments[0].click();', await driver.$(`=i am a new window link`));
+            await driver.execute(
+              'arguments[0].click();',
+              await driver.$(`=i am a new window link`),
+            );
 
             await retryInterval(10, 1000, async function () {
               await expect(driver.getTitle()).to.eventually.eql('I am another page title');
@@ -351,4 +368,3 @@ describe('Safari - coordinate conversion -', function () {
     // it does not, however, need to actually run. Mocha FTW!
   });
 });
-

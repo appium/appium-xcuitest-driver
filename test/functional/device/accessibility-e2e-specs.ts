@@ -34,19 +34,21 @@ describe('Accessibility', function () {
   });
 
   async function showAccessibilityTab(driver: any) {
-    await driver
-      .$(`${PREDICATE_SEARCH}:name == 'Accessibility'`)
-      .click();
+    await driver.$(`${PREDICATE_SEARCH}:name == 'Accessibility'`).click();
   }
 
   describe('ReduceMotion', function () {
     async function getReduceMotion(driver: any) {
       await showAccessibilityTab(driver);
       await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`)
+        .$(
+          `${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`,
+        )
         .click();
       return await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`)
+        .$(
+          `${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`,
+        )
         .getAttribute('value');
     }
 
@@ -66,13 +68,13 @@ describe('Accessibility', function () {
     async function getReduceTransparency(driver: any) {
       await showAccessibilityTab(driver);
       await driver
-        .$(
-          `${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`,
-        )
+        .$(`${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`)
         .click();
 
       return await driver
-        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Transparency', 'REDUCE_TRANSPARENCY'}`)
+        .$(
+          `${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Transparency', 'REDUCE_TRANSPARENCY'}`,
+        )
         .getAttribute('value');
     }
 
@@ -88,4 +90,3 @@ describe('Accessibility', function () {
     });
   });
 });
-

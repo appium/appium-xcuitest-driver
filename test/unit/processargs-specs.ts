@@ -48,7 +48,6 @@ describe('process args', function () {
     },
   };
 
-
   beforeEach(function () {
     mockDriver = sinon.mock(driver);
   });

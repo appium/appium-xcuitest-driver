@@ -18,7 +18,6 @@ describe('session commands', function () {
     XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance | Status: failed | Duration: 0.033468008041381836 | Failure message: XCTAssertTrue failed - error message here | Location /path/to/XCTesterAppUITests/XCTesterAppUITests.swift:36
   `.trim();
 
-
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {
       const results = parseXCTestStdout(xctestLogs1Success);

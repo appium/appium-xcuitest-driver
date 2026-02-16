@@ -18,14 +18,22 @@ describe('general commands', function () {
      * @param {string|null} modStrategy
      * @param {boolean} mult
      */
-    async function verifyFind(strategy: string, selector: string, modSelector: string, modStrategy: string | null = null, mult = false) {
+    async function verifyFind(
+      strategy: string,
+      selector: string,
+      modSelector: string,
+      modStrategy: string | null = null,
+      mult = false,
+    ) {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
       } catch {}
-      expect(proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
-        using: modStrategy || strategy,
-        value: modSelector,
-      })).to.be.true;
+      expect(
+        proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
+          using: modStrategy || strategy,
+          value: modSelector,
+        }),
+      ).to.be.true;
       proxySpy.reset();
     }
 
@@ -71,13 +79,13 @@ describe('general commands', function () {
 
     it('should reject request for first visible child with no context', async function () {
       await expect(
-        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)
+        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false),
       ).to.be.rejectedWith(/without a context element/);
     });
 
     it('should reject request for multiple first visible children', async function () {
       await expect(
-        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)
+        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true),
       ).to.be.rejectedWith(/Cannot get multiple/);
     });
 
@@ -101,14 +109,18 @@ describe('general commands', function () {
           ELEMENT: 'ctx',
         });
         expect(proxySpy.calledTwice).to.be.true;
-        expect(proxySpy.calledWith('/element/ctx/element', 'POST', {
-          using: 'class chain',
-          value: '*[1]',
-        })).to.be.true;
-        expect(proxySpy.calledWith('/element/ctx/element', 'POST', {
-          using: 'class chain',
-          value: '*[2]',
-        })).to.be.true;
+        expect(
+          proxySpy.calledWith('/element/ctx/element', 'POST', {
+            using: 'class chain',
+            value: '*[1]',
+          }),
+        ).to.be.true;
+        expect(
+          proxySpy.calledWith('/element/ctx/element', 'POST', {
+            using: 'class chain',
+            value: '*[2]',
+          }),
+        ).to.be.true;
         expect(attribSpy.calledTwice).to.be.true;
         expect(el).to.eql({ELEMENT: 2});
         proxySpy.reset();

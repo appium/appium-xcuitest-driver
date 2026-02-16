@@ -117,7 +117,7 @@
     "lint": "eslint .",
     "lint:commit": "commitlint",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier -w ./lib",
+    "format": "prettier -w ./lib ./test",
     "format:check": "prettier --check ./lib ./test",
     "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "npm run rebuild",

@@ -69,9 +69,9 @@ describe('location commands', function () {
     });
 
     it('should fail when location object is wrong', async function () {
-      await expect(
-        driver.setGeoLocation({})
-      ).to.be.rejectedWith('Both latitude and longitude should be set');
+      await expect(driver.setGeoLocation({})).to.be.rejectedWith(
+        'Both latitude and longitude should be set',
+      );
     });
 
     describe('on real device', function () {
@@ -88,7 +88,6 @@ describe('location commands', function () {
         expect(setLocationStub.args[0]).to.eql([1.234, 2.789]);
       });
 
-
       it('should use location service to set a location for lower than platform version 17', async function () {
         driver.opts.platformVersion = '16.4.5';
         await driver.setGeoLocation({latitude: 1.234, longitude: 2.789});
@@ -103,7 +102,7 @@ describe('location commands', function () {
         driver.opts.platformVersion = '17.0.0';
         proxySpy
           .withArgs('/wda/simulatedLocation', 'POST', locationRequest)
-          .resolves({'value': null, 'sessionId': 'session-id'});
+          .resolves({value: null, sessionId: 'session-id'});
 
         const result = await driver.setGeoLocation(locationRequest);
 
@@ -121,7 +120,9 @@ describe('location commands', function () {
           .withArgs('/wda/simulatedLocation', 'POST', locationRequest)
           .throws('An error in proxying the request');
 
-        await expect(driver.setGeoLocation(locationRequest)).to.be.rejectedWith('An error in proxying the request');
+        await expect(driver.setGeoLocation(locationRequest)).to.be.rejectedWith(
+          'An error in proxying the request',
+        );
 
         expect(startSimulateLocationServiceStub.calledOnce).to.be.false;
         expect(proxySpy.firstCall.args[0]).to.eql('/wda/simulatedLocation');

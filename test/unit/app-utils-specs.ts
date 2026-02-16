@@ -1,8 +1,5 @@
-import {
-  unzipStream,
-  unzipFile,
-} from '../../lib/app-utils';
-import { fs, tempDir, zip } from 'appium/support';
+import {unzipStream, unzipFile} from '../../lib/app-utils';
+import {fs, tempDir, zip} from 'appium/support';
 import path from 'node:path';
 import {getUIKitCatalogPath} from '../setup';
 import chai, {expect} from 'chai';
