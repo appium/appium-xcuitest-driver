@@ -445,18 +445,17 @@ export class RealDevice {
 
         const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
         if (!pid) {
-          this.log.info(`The process of the bundle id '${bundleId}' was not running`);
+          this.log.debug(`The process of the bundle id '${bundleId}' was not running`);
           return false;
         }
         this.log.debug(`Found process for '${bundleId}' with PID ${pid} via RemoteXPC`);
         await dvt.processControl.kill(pid);
         return true;
       } catch (err: any) {
-        this.log.error(`Failed to terminate '${bundleId}' via RemoteXPC: ${err.message}`);
+        this.log.warn(`Failed to terminate '${bundleId}' via RemoteXPC: ${err.message}`);
         // Fall through to devicectl/legacy path
       } finally {
         if (remoteXPCConnection) {
-          this.log.info(`Closing remoteXPC connection for device ${this.udid}`);
           await remoteXPCConnection.close();
         }
       }
