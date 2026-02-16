@@ -2,7 +2,7 @@ import _ from 'lodash';
 import B, {TimeoutError} from 'bluebird';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
 import path from 'node:path';
-import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
+import {utilities} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
@@ -22,10 +22,6 @@ export const MAX_IO_CHUNK_SIZE = 8;
 const APPLICATION_INSTALLED_NOTIFICATION = 'com.apple.mobile.application_installed';
 const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';
-
-type TerminateAppResult =
-  | {terminated: true; pid: number}
-  | {terminated: false; reason: 'not_running' | 'error'; detail?: string};
 
 //#region Public File System Functions
 
@@ -783,5 +779,9 @@ export interface ManagementInstallOptions {
   /** Whether to enforce the app uninstallation. e.g. fullReset, or enforceAppInstall is true */
   shouldEnforceUninstall?: boolean;
 }
+
+type TerminateAppResult =
+  | {terminated: true; pid: number}
+  | {terminated: false; reason: 'not_running' | 'error'; detail?: string};
 
 //#endregion
