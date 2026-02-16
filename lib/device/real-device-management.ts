@@ -466,8 +466,7 @@ export class RealDevice {
     let instrumentService: any;
     let installProxyClient: InstallationProxyClient | undefined;
     try {
-      const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-      installProxyClient = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+      installProxyClient = await InstallationProxyClient.create(this.udid, false);
       const apps = await installProxyClient.listApplications({
         returnAttributes: ['CFBundleIdentifier', 'CFBundleExecutable']
       });
