@@ -109,4 +109,3 @@ describe('XCUITestDriver - alerts -', function () {
     );
   });
 });
-

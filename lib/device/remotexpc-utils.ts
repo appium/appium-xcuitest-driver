@@ -53,7 +53,7 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
     throw new Error(
       'Failed to import appium-ios-remotexpc module. ' +
         'This module is required for iOS 18 and above device operations. ' +
-        `Original error: ${error.message}`
+        `Original error: ${error.message}`,
     );
   }
 }

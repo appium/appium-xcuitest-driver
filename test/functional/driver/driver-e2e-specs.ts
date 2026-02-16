@@ -23,11 +23,7 @@ const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 const simctl = new Simctl();
 
 async function createDevice() {
-  return await simctl.createDevice(
-    SIM_DEVICE_NAME,
-    DEVICE_NAME,
-    PLATFORM_VERSION,
-  );
+  return await simctl.createDevice(SIM_DEVICE_NAME, DEVICE_NAME, PLATFORM_VERSION);
 }
 
 async function getNumSims() {
@@ -306,4 +302,3 @@ describe('XCUITestDriver', function () {
     });
   });
 });
-

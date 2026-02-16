@@ -9,7 +9,14 @@ import {spawn} from 'node:child_process';
 import assert from 'node:assert';
 import {isTvOs} from './utils';
 import type {XCUITestDriver, XCUITestDriverOpts} from './driver';
-import type {StringRecord, HTTPHeaders, DownloadAppOptions, PostProcessOptions, PostProcessResult, CachedAppInfo} from '@appium/types';
+import type {
+  StringRecord,
+  HTTPHeaders,
+  DownloadAppOptions,
+  PostProcessOptions,
+  PostProcessResult,
+  CachedAppInfo,
+} from '@appium/types';
 import type {Readable} from 'node:stream';
 
 export const SAFARI_BUNDLE_ID = 'com.apple.mobilesafari';
@@ -77,7 +84,7 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
 
   const executablePath = path.resolve(
     this.opts.app,
-    await this.appInfosCache.extractExecutableName(this.opts.app)
+    await this.appInfosCache.extractExecutableName(this.opts.app),
   );
   const [resFile, resUname] = await B.all([
     exec('lipo', ['-info', executablePath]),
@@ -92,29 +99,28 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
   if (isAppleSiliconCpu && processArch === INTEL_ARCH) {
     this.log.warn(
       `It looks like the Appium server process is running under Rosetta emulation. ` +
-      `This might lead to various performance/compatibility issues while running tests on Simulator. ` +
-      `Consider using binaries compiled natively for the ARM64 architecture to run Appium server ` +
-      `with this driver.`
+        `This might lead to various performance/compatibility issues while running tests on Simulator. ` +
+        `Consider using binaries compiled natively for the ARM64 architecture to run Appium server ` +
+        `with this driver.`,
     );
   }
   if (_.includes(bundleExecutableInfo, processArch)) {
     return;
   }
-  const hasRosetta = isAppleSiliconCpu && await isRosettaInstalled();
+  const hasRosetta = isAppleSiliconCpu && (await isRosettaInstalled());
   const isIntelApp = _.includes(bundleExecutableInfo, INTEL_ARCH);
   // We cannot run Simulator builds compiled for arm64 on Intel machines
   // Rosetta allows only to run Intel ones on arm64
-  if (
-    (isIntelApp && (!isAppleSiliconCpu || hasRosetta)) || (!isIntelApp && isAppleSiliconCpu)
-  ) {
+  if ((isIntelApp && (!isAppleSiliconCpu || hasRosetta)) || (!isIntelApp && isAppleSiliconCpu)) {
     return;
   }
-  const advice = isIntelApp && isAppleSiliconCpu && !hasRosetta
-    ? `Please install Rosetta and try again.`
-    : `Please rebuild your application to support the ${processArch} platform.`;
+  const advice =
+    isIntelApp && isAppleSiliconCpu && !hasRosetta
+      ? `Please install Rosetta and try again.`
+      : `Please rebuild your application to support the ${processArch} platform.`;
   throw new Error(
     `The ${this.opts.bundleId} application does not support the ${processArch} Simulator ` +
-      `architecture:\n${bundleExecutableInfo}\n\n${advice}`
+      `architecture:\n${bundleExecutableInfo}\n\n${advice}`,
   );
 }
 
@@ -123,7 +129,7 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
  */
 export async function parseLocalizableStrings(
   this: XCUITestDriver,
-  opts: LocalizableStringsOptions = {}
+  opts: LocalizableStringsOptions = {},
 ): Promise<StringRecord> {
   const {app, language = 'en', localizableStringsDir, stringFile, strictMode} = opts;
   if (!app) {
@@ -185,14 +191,16 @@ export async function parseLocalizableStrings(
         .map((name) => path.resolve(lprojRoot, name));
       resourcePaths.push(...resourceFiles);
     }
-    this.log.info(`Got ${util.pluralize('resource file', resourcePaths.length, true)} in '${lprojRoot}'`);
+    this.log.info(
+      `Got ${util.pluralize('resource file', resourcePaths.length, true)} in '${lprojRoot}'`,
+    );
 
     if (_.isEmpty(resourcePaths)) {
       return {};
     }
 
     const resultStrings: StringRecord = {};
-    const toAbsolutePath = (p: string) => path.isAbsolute(p) ? p : path.resolve(process.cwd(), p);
+    const toAbsolutePath = (p: string) => (path.isAbsolute(p) ? p : path.resolve(process.cwd(), p));
     for (const resourcePath of resourcePaths) {
       if (!util.isSubPath(toAbsolutePath(resourcePath), toAbsolutePath(bundleRoot))) {
         // security precaution
@@ -200,14 +208,18 @@ export async function parseLocalizableStrings(
       }
       try {
         const data = await readResource(resourcePath);
-        this.log.debug(`Parsed ${util.pluralize('string', _.keys(data).length, true)} from '${resourcePath}'`);
+        this.log.debug(
+          `Parsed ${util.pluralize('string', _.keys(data).length, true)} from '${resourcePath}'`,
+        );
         _.merge(resultStrings, data);
       } catch (e: any) {
         this.log.warn(`Cannot parse '${resourcePath}' resource. Original error: ${e.message}`);
       }
     }
 
-    this.log.info(`Retrieved ${util.pluralize('string', _.keys(resultStrings).length, true)} from '${lprojRoot}'`);
+    this.log.info(
+      `Retrieved ${util.pluralize('string', _.keys(resultStrings).length, true)} from '${lprojRoot}'`,
+    );
     return resultStrings;
   } finally {
     if (tmpRoot) {
@@ -251,14 +263,13 @@ export async function unzipFile(archivePath: string): Promise<UnzipInfo> {
  */
 export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   const tmpRoot = await tempDir.openDir();
-  const bsdtarProcess = spawn(await fs.which('bsdtar'), [
-    '-x',
-    '--exclude', MACOS_RESOURCE_FOLDER,
-    '--exclude', `${MACOS_RESOURCE_FOLDER}/*`,
-    '-',
-  ], {
-    cwd: tmpRoot,
-  });
+  const bsdtarProcess = spawn(
+    await fs.which('bsdtar'),
+    ['-x', '--exclude', MACOS_RESOURCE_FOLDER, '--exclude', `${MACOS_RESOURCE_FOLDER}/*`, '-'],
+    {
+      cwd: tmpRoot,
+    },
+  );
   let archiveSize = 0;
   bsdtarProcess.stderr.on('data', (chunk) => {
     const stderr = chunk.toString();
@@ -329,7 +340,10 @@ export function buildSafariPreferences(opts: XCUITestDriverOpts): StringRecord {
  * .zip and .ipa formats are supported.
  * A .zip archive can contain one or more
  */
-export async function onDownloadApp(this: XCUITestDriver, opts: DownloadAppOptions): Promise<string> {
+export async function onDownloadApp(
+  this: XCUITestDriver,
+  opts: DownloadAppOptions,
+): Promise<string> {
   return this.isRealDevice()
     ? await downloadIpa.bind(this)(opts.stream, opts.headers)
     : await unzipApp.bind(this)(opts.stream);
@@ -337,30 +351,32 @@ export async function onDownloadApp(this: XCUITestDriver, opts: DownloadAppOptio
 
 export async function onPostConfigureApp(
   this: XCUITestDriver,
-  opts: PostProcessOptions
+  opts: PostProcessOptions,
 ): Promise<PostProcessResult | false> {
   // Pick the previously cached entry if its integrity has been preserved
-  const appInfo = _.isPlainObject(opts.cachedAppInfo) ? opts.cachedAppInfo as CachedAppInfo : undefined;
+  const appInfo = _.isPlainObject(opts.cachedAppInfo)
+    ? (opts.cachedAppInfo as CachedAppInfo)
+    : undefined;
   const cachedPath = appInfo ? appInfo.fullPath : undefined;
 
   const shouldUseCachedApp = async () => {
-    if (!appInfo || !cachedPath || !await fs.exists(cachedPath)) {
+    if (!appInfo || !cachedPath || !(await fs.exists(cachedPath))) {
       return false;
     }
 
     const isCachedPathAFile = (await fs.stat(cachedPath)).isFile();
     if (isCachedPathAFile) {
-      return await fs.hash(cachedPath) === (appInfo.integrity as any)?.file;
+      return (await fs.hash(cachedPath)) === (appInfo.integrity as any)?.file;
     }
     // If the cached path is a folder then it is expected to be previously extracted from
     // an archive located under appPath whose hash is stored as `cachedAppInfo.packageHash`
     if (
-      !isCachedPathAFile
-      && opts.cachedAppInfo?.packageHash
-      && opts.appPath
-      && await fs.exists(opts.appPath)
-      && (await fs.stat(opts.appPath)).isFile()
-      && opts.cachedAppInfo.packageHash === await fs.hash(opts.appPath)
+      !isCachedPathAFile &&
+      opts.cachedAppInfo?.packageHash &&
+      opts.appPath &&
+      (await fs.exists(opts.appPath)) &&
+      (await fs.stat(opts.appPath)).isFile() &&
+      opts.cachedAppInfo.packageHash === (await fs.hash(opts.appPath))
     ) {
       const nestedItemsCountInCache = (appInfo.integrity as any)?.folder;
       if (nestedItemsCountInCache !== undefined) {
@@ -384,7 +400,7 @@ export async function onPostConfigureApp(
   }
 
   const isLocalIpa = await isIpaBundle(opts.appPath);
-  const isLocalApp = !isLocalIpa && await isAppBundle(opts.appPath);
+  const isLocalApp = !isLocalIpa && (await isAppBundle(opts.appPath));
   const isPackageReadyForInstall = isLocalApp || (this.isRealDevice() && isLocalIpa);
   if (isPackageReadyForInstall) {
     await this.appInfosCache.put(opts.appPath);
@@ -396,9 +412,7 @@ export async function onPostConfigureApp(
   }
   // Cache the app while unpacking the bundle if necessary
   return {
-    appPath: isPackageReadyForInstall
-      ? opts.appPath
-      : await unzipApp.bind(this)(opts.appPath)
+    appPath: isPackageReadyForInstall ? opts.appPath : await unzipApp.bind(this)(opts.appPath),
   };
 }
 
@@ -456,14 +470,18 @@ function parseFileName(headers: HTTPHeaders): string | null {
 /**
  * Downloads and verifies remote applications for real devices
  */
-async function downloadIpa(this: XCUITestDriver, stream: Readable, headers: HTTPHeaders): Promise<string> {
+async function downloadIpa(
+  this: XCUITestDriver,
+  stream: Readable,
+  headers: HTTPHeaders,
+): Promise<string> {
   const timer = new timing.Timer().start();
 
   const logPerformance = (dstPath: string, fileSize: number, action: string) => {
     const secondsElapsed = timer.getDuration().asSeconds;
     this.log.info(
       `The remote file (${util.toReadableSizeString(fileSize)}) ` +
-      `has been ${action} to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
+        `has been ${action} to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
     );
     if (secondsElapsed >= 1) {
       const bytesPerSec = Math.floor(fileSize / secondsElapsed);
@@ -481,7 +499,7 @@ async function downloadIpa(this: XCUITestDriver, stream: Readable, headers: HTTP
       if (!_.isEmpty(matchedPaths)) {
         this.log.debug(
           `Found ${util.pluralize(`${IPA_EXT} application`, matchedPaths.length, true)} in ` +
-          `'${path.basename(rootDir)}': ${matchedPaths}`
+            `'${path.basename(rootDir)}': ${matchedPaths}`,
         );
       }
       for (const matchedPath of matchedPaths) {
@@ -585,9 +603,10 @@ async function isolateApp(appPath: string): Promise<string> {
 async function unzipApp(
   this: XCUITestDriver,
   appPathOrZipStream: string | Readable,
-  depth: number = 0
+  depth: number = 0,
 ): Promise<string> {
-  const errMsg = `The archive did not have any matching ${APP_EXT} or ${IPA_EXT} ` +
+  const errMsg =
+    `The archive did not have any matching ${APP_EXT} or ${IPA_EXT} ` +
     `bundles. Please make sure the provided package is valid and contains at least one matching ` +
     `application bundle which is not nested.`;
   if (depth > MAX_ARCHIVE_SCAN_DEPTH) {
@@ -608,15 +627,13 @@ async function unzipApp(
     }
   } catch (e: any) {
     this.log.debug(e.stack);
-    throw new Error(
-      `Cannot prepare the application for testing. Original error: ${e.message}`
-    );
+    throw new Error(`Cannot prepare the application for testing. Original error: ${e.message}`);
   }
   const secondsElapsed = timer.getDuration().asSeconds;
   this.log.info(
     `The file (${util.toReadableSizeString(archiveSize)}) ` +
       `has been ${_.isString(appPathOrZipStream) ? 'extracted' : 'downloaded and extracted'} ` +
-      `to '${rootDir}' in ${secondsElapsed.toFixed(3)}s`
+      `to '${rootDir}' in ${secondsElapsed.toFixed(3)}s`,
   );
   // it does not make much sense to approximate the speed for short downloads
   if (secondsElapsed >= 1) {
@@ -635,14 +652,14 @@ async function unzipApp(
     if (this.isSimulator() && !platforms.some((p) => _.includes(p, 'Simulator'))) {
       this.log.info(
         `'${appPath}' does not have Simulator devices in the list of supported platforms ` +
-        `(${platforms.join(',')}). Skipping it`
+          `(${platforms.join(',')}). Skipping it`,
       );
       return false;
     }
     if (this.isRealDevice() && !platforms.some((p) => _.includes(p, 'OS'))) {
       this.log.info(
         `'${appPath}' does not have real devices in the list of supported platforms ` +
-        `(${platforms.join(',')}). Skipping it`
+          `(${platforms.join(',')}). Skipping it`,
       );
       return false;
     }
@@ -662,8 +679,8 @@ async function unzipApp(
     for (const matchedPath of matchedPaths) {
       const fullPath = path.join(rootDir, matchedPath);
       if (
-        (await isAppBundle(fullPath) || (this.isRealDevice() && await isIpaBundle(fullPath)))
-        && await isCompatibleWithCurrentPlatform(fullPath)
+        ((await isAppBundle(fullPath)) || (this.isRealDevice() && (await isIpaBundle(fullPath)))) &&
+        (await isCompatibleWithCurrentPlatform(fullPath))
       ) {
         this.log.debug(`Selecting the application at '${matchedPath}'`);
         return await isolateApp(fullPath);

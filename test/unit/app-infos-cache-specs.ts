@@ -1,7 +1,5 @@
-import {
-  AppInfosCache,
-} from '../../lib/app-infos-cache';
-import { fs, tempDir, zip } from 'appium/support';
+import {AppInfosCache} from '../../lib/app-infos-cache';
+import {fs, tempDir, zip} from 'appium/support';
 import path from 'node:path';
 import {log} from '../../lib/logger';
 import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup';
@@ -11,7 +9,6 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('AppInfosCache', function () {
-
   describe('retrives info from different types of apps', function () {
     let ipaPath;
     let appPath;
@@ -39,7 +36,7 @@ describe('AppInfosCache', function () {
     });
 
     after(async function () {
-      if (ipaPath && await fs.exists(ipaPath)) {
+      if (ipaPath && (await fs.exists(ipaPath))) {
         await fs.rimraf(ipaPath);
         ipaPath = undefined;
       }

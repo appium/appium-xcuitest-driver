@@ -27,7 +27,7 @@ async function retrieveRecodingFromSimulator(this: XCUITestDriver, uuid: string)
   });
   if (_.isEmpty(videoPaths)) {
     throw new Error(
-      `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`
+      `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`,
     );
   }
   const videoPath = videoPaths[0];
@@ -45,7 +45,7 @@ async function retrieveRecodingFromRealDevice(this: XCUITestDriver, uuid: string
   });
   if (!fileNames.includes(uuid)) {
     throw new Error(
-      `Unable to locate XCTest screen recording identified by '${uuid}' for the device ${this.opts.udid}`
+      `Unable to locate XCTest screen recording identified by '${uuid}' for the device ${this.opts.udid}`,
     );
   }
   if (!this.opts.tmpDir) {
@@ -103,7 +103,11 @@ export async function mobileStartXctestScreenRecording(
   if (_.isInteger(fps)) {
     opts.fps = fps;
   }
-  const response = await this.proxyCommand('/wda/video/start', 'POST', opts) as XcTestScreenRecordingInfo;
+  const response = (await this.proxyCommand(
+    '/wda/video/start',
+    'POST',
+    opts,
+  )) as XcTestScreenRecordingInfo;
   this.log.info(`Started a new screen recording: ${JSON.stringify(response)}`);
   return response;
 }
@@ -177,11 +181,15 @@ export async function mobileStopXctestScreenRecording(
   };
   try {
     result.payload = await encodeBase64OrUpload(videoPath, remotePath, {
-      user, pass, headers, fileFieldName, formFields, method
+      user,
+      pass,
+      headers,
+      fileFieldName,
+      formFields,
+      method,
     });
   } finally {
     await fs.rimraf(videoPath);
   }
   return result;
 }
-

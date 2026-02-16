@@ -1,24 +1,24 @@
 import _ from 'lodash';
 import {requireSimulator} from '../utils';
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {ContentSizeAction, ContentSizeResult} from './types';
 
 const CONTENT_SIZE = [
-    'extra-small',
-    'small',
-    'medium',
-    'large',
-    'extra-large',
-    'extra-extra-large',
-    'extra-extra-extra-large',
-    'accessibility-medium',
-    'accessibility-large',
-    'accessibility-extra-large',
-    'accessibility-extra-extra-large',
-    'accessibility-extra-extra-extra-large',
-    'increment',
-    'decrement'
+  'extra-small',
+  'small',
+  'medium',
+  'large',
+  'extra-large',
+  'extra-extra-large',
+  'extra-extra-extra-large',
+  'accessibility-medium',
+  'accessibility-large',
+  'accessibility-extra-large',
+  'accessibility-extra-extra-large',
+  'accessibility-extra-extra-extra-large',
+  'increment',
+  'decrement',
 ] as const;
 
 /**
@@ -38,7 +38,7 @@ export async function mobileSetContentSize(
 ): Promise<void> {
   if (!(CONTENT_SIZE as readonly string[]).includes(_.lowerCase(size))) {
     throw new errors.InvalidArgumentError(
-      `The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`
+      `The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`,
     );
   }
 
@@ -56,10 +56,9 @@ export async function mobileSetContentSize(
  *          accessibility-extra-extra-extra-large,
  *          unknown or unsupported with Xcode 16.2.
  */
-export async function mobileGetContentSize(
-  this: XCUITestDriver,
-): Promise<ContentSizeResult> {
-  return await requireSimulator(this, 'Getting content size')
-    .getContentSize() as ContentSizeResult;
+export async function mobileGetContentSize(this: XCUITestDriver): Promise<ContentSizeResult> {
+  return (await requireSimulator(
+    this,
+    'Getting content size',
+  ).getContentSize()) as ContentSizeResult;
 }
-

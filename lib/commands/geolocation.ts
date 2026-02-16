@@ -15,9 +15,7 @@ export interface GeolocationInfo {
  * @throws If the device under test does not support geolocation simulation.
  * @since 4.18
  */
-export async function mobileGetSimulatedLocation(
-  this: XCUITestDriver,
-): Promise<GeolocationInfo> {
+export async function mobileGetSimulatedLocation(this: XCUITestDriver): Promise<GeolocationInfo> {
   return await this.proxyCommand<any, GeolocationInfo>('/wda/simulatedLocation', 'GET');
 }
 
@@ -47,9 +45,6 @@ export async function mobileSetSimulatedLocation(
  * @throws If the device under test does not support geolocation simulation.
  * @since 4.18
  */
-export async function mobileResetSimulatedLocation(
-  this: XCUITestDriver,
-): Promise<void> {
+export async function mobileResetSimulatedLocation(this: XCUITestDriver): Promise<void> {
   await this.proxyCommand('/wda/simulatedLocation', 'DELETE');
 }
-

@@ -196,4 +196,3 @@ describe('XCUITestDriver - gestures', function () {
     });
   });
 });
-

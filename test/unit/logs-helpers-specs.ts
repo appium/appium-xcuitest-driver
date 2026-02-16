@@ -1,4 +1,4 @@
-import { grepFile } from '../../lib/device/log/helpers';
+import {grepFile} from '../../lib/device/log/helpers';
 import {fs, tempDir} from 'appium/support';
 import path from 'node:path';
 import chai, {expect} from 'chai';
@@ -7,7 +7,6 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('log-helpers', function () {
-
   describe('grepFile', function () {
     let tmpRoot;
 

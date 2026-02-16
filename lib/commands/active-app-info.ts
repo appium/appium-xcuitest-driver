@@ -7,9 +7,6 @@ import type {ActiveAppInfo} from './types';
  * @returns Active app information
  * @throws {Error} if an error raised by command
  */
-export async function mobileGetActiveAppInfo(
-  this: XCUITestDriver,
-): Promise<ActiveAppInfo> {
+export async function mobileGetActiveAppInfo(this: XCUITestDriver): Promise<ActiveAppInfo> {
   return await this.proxyCommand<unknown, ActiveAppInfo>('/wda/activeAppInfo', 'GET');
 }
-

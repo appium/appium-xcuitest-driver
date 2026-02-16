@@ -29,4 +29,3 @@ async function deleteSession() {
 }
 
 export {initSession, deleteSession, HOST, PORT, MOCHA_TIMEOUT};
-

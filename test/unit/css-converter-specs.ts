@@ -5,7 +5,6 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('css-converter.js', function () {
-
   describe('simple cases', function () {
     const simpleCases = [
       ['XCUIElementTypeWindow:nth-child(2)', '**/XCUIElementTypeWindow[2]'],
@@ -48,12 +47,12 @@ describe('css-converter.js', function () {
     }
   });
   describe('unsupported css', function () {
-    const testCases = /** @type {const} */ ([
+    const testCases = /** @type {const} */ [
       '*[visible="ItS ViSiBlE"]',
       '*[foo="bar"]',
       `This isn't valid[ css`,
       'p ~ a',
-    ]);
+    ];
     for (const cssSelector of testCases) {
       it(`should reject '${cssSelector}'`, function () {
         expect(() => CssConverter.toIosClassChainSelector(cssSelector)).to.throw();

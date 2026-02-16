@@ -5,7 +5,6 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('context', function () {
-
   describe('onPageChange', function () {
     const pageChangeNotification = {
       appIdKey: '5191',

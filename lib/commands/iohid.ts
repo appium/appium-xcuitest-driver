@@ -63,4 +63,3 @@ function isHIDPageEvent(value: any): value is HIDPageEvent {
   }
   return value in HIDPageEvent;
 }
-

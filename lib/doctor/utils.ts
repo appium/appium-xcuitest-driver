@@ -15,4 +15,3 @@ export async function resolveExecutablePath(cmd: string): Promise<string | null>
   } catch {}
   return null;
 }
-

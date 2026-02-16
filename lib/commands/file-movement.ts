@@ -263,7 +263,7 @@ function verifyIsSubPath(originalPath: string, root: string): void {
  */
 async function createAfcClient(
   this: XCUITestDriver,
-  opts: CreateAfcClientOptions = {}
+  opts: CreateAfcClientOptions = {},
 ): Promise<AfcClient> {
   const {bundleId, containerType} = opts;
   const udid = this.device.udid as string;
@@ -288,7 +288,8 @@ async function createService(
   remotePath: string,
 ): Promise<CreateServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer, containerType}: ContainerObject = await parseContainerPath.bind(this)(remotePath);
+    const {bundleId, pathInContainer, containerType}: ContainerObject =
+      await parseContainerPath.bind(this)(remotePath);
     const client: AfcClient = await createAfcClient.bind(this)({bundleId, containerType});
     let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
@@ -329,7 +330,9 @@ async function pushFileToSimulator(
         `Will put the data into '${dstPath}'`,
     );
     if (!(await fs.exists(path.dirname(dstPath)))) {
-      this.log.debug(`The destination folder '${path.dirname(dstPath)}' does not exist. Creating...`);
+      this.log.debug(
+        `The destination folder '${path.dirname(dstPath)}' does not exist. Creating...`,
+      );
       await mkdirp(path.dirname(dstPath));
     }
     await fs.writeFile(dstPath, buffer);
@@ -363,7 +366,9 @@ async function pushFileToRealDevice(
     await realDevicePushFile(client, Buffer.from(base64Data, 'base64'), relativePath);
   } catch (e) {
     this.log.debug((e as Error).stack);
-    throw new Error(`Could not push the file to '${remotePath}'. Original error: ${(e as Error).message}`);
+    throw new Error(
+      `Could not push the file to '${remotePath}'. Original error: ${(e as Error).message}`,
+    );
   } finally {
     await client.close();
   }
@@ -532,4 +537,3 @@ async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): P
 }
 
 //#endregion
-

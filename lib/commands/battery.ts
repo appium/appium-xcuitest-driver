@@ -1,4 +1,4 @@
-import { isIos18OrNewer } from '../utils';
+import {isIos18OrNewer} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {BatteryInfo} from './types';
 import {getRemoteXPCServices} from '../device/remotexpc-utils';
@@ -18,7 +18,9 @@ export async function mobileGetBatteryInfo(
     let remoteXPCConnection;
     try {
       const Services = await getRemoteXPCServices();
-      const { diagnosticsService, remoteXPC } = await Services.startDiagnosticsService(this.device.udid);
+      const {diagnosticsService, remoteXPC} = await Services.startDiagnosticsService(
+        this.device.udid,
+      );
       remoteXPCConnection = remoteXPC;
       batteryInfoFromShimService = await diagnosticsService.ioregistry({
         ioClass: 'IOPMPowerSource',
@@ -40,4 +42,3 @@ export async function mobileGetBatteryInfo(
     advanced: batteryInfoFromShimService || {},
   };
 }
-

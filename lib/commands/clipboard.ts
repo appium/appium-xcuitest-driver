@@ -26,12 +26,8 @@ export async function setClipboard(
  * @returns The actual clipboard content encoded into base64 string.
  * An empty string is returned if the clipboard contains no data.
  */
-export async function getClipboard(
-  this: XCUITestDriver,
-  contentType?: string,
-): Promise<string> {
+export async function getClipboard(this: XCUITestDriver, contentType?: string): Promise<string> {
   return await this.proxyCommand<any, string>('/wda/getPasteboard', 'POST', {
     contentType,
   });
 }
-

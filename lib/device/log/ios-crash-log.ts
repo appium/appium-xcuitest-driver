@@ -4,10 +4,10 @@ import path from 'node:path';
 import _ from 'lodash';
 import {CrashReportsClient} from '../crash-reports-client';
 import {IOSLog} from './ios-log';
-import { toLogEntry, grepFile } from './helpers';
-import type { AppiumLogger } from '@appium/types';
-import type { Simulator } from 'appium-ios-simulator';
-import type { LogEntry } from '../../commands/types';
+import {toLogEntry, grepFile} from './helpers';
+import type {AppiumLogger} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
+import type {LogEntry} from '../../commands/types';
 
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
@@ -104,7 +104,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
           } catch (e) {
             this.log.warn(
               `Cannot export the crash report '${fileName}'. Skipping it. ` +
-              `Original error: ${(e as Error).message}`,
+                `Original error: ${(e as Error).message}`,
             );
             return;
           }
@@ -123,21 +123,21 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       try {
         this._realDeviceClient = await CrashReportsClient.create(
           this._udid as string,
-          this._useRemoteXPC
+          this._useRemoteXPC,
         );
       } catch (err) {
         this.log.error(
           `Failed to create crash reports client: ${(err as Error).message}. ` +
-          `Skipping crash logs collection for real devices.`
+            `Skipping crash logs collection for real devices.`,
         );
         return [];
       }
     }
 
-    if (!await this._realDeviceClient.assertExists(strict)) {
+    if (!(await this._realDeviceClient.assertExists(strict))) {
       this.log.info(
         `The ${_.toLower(this._realDeviceClient.constructor.name)} tool is not present in PATH. ` +
-        `Skipping crash logs collection for real devices.`
+          `Skipping crash logs collection for real devices.`,
       );
       return [];
     }

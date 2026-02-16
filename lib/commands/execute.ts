@@ -49,7 +49,10 @@ export async function execute<TReturn = unknown>(
   // TODO: create a type that converts args to the parameters of the associated method using the `command` prop of `executeMethodMap`
   script = script.trim().replace(/^mobile:\s*/, 'mobile: ');
   if (isExecuteMethod(script)) {
-    const executeMethodArgs = preprocessExecuteMethodArgs(script, args as ExecuteMethodArgs | undefined);
+    const executeMethodArgs = preprocessExecuteMethodArgs(
+      script,
+      args as ExecuteMethodArgs | undefined,
+    );
     return await this.executeMethod(script, [executeMethodArgs]);
   } else if (this.isWebContext()) {
     const atomsArgs = this.convertElementsForAtoms(args as readonly any[] | undefined);
@@ -81,7 +84,6 @@ export async function executeAsync(
   );
   return this.cacheWebElements(await this.waitForAtom(promise));
 }
-
 
 /**
  * Checks if script expects a particular parameter (either optional or required).
@@ -154,4 +156,7 @@ function preprocessExecuteMethodArgs(
   return executeMethodArgs;
 }
 
-type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
+type ExecuteMethodArgs =
+  | readonly any[]
+  | readonly [StringRecord<unknown>]
+  | Readonly<StringRecord<unknown>>;

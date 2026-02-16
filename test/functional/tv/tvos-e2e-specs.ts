@@ -10,7 +10,6 @@ chai.use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
-
 const simctl = new Simctl();
 
 describe('tvOS', function () {
@@ -59,4 +58,3 @@ describe('tvOS', function () {
     expect(await driver.$('~General')).to.exist;
   });
 });
-

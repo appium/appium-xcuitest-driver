@@ -6,7 +6,6 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('simulator management', function () {
-
   describe('runSimulatorReset', function () {
     let result;
     let driver;

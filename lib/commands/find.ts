@@ -274,4 +274,3 @@ function rewriteMagicScrollable(mult: boolean, log: AppiumLogger | null = null):
   );
   return [strategy, selector];
 }
-

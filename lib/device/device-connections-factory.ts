@@ -5,7 +5,7 @@ import {logger, util, timing} from 'appium/support';
 import {utilities} from 'appium-ios-device';
 import {checkPortStatus} from 'portscanner';
 import {waitForCondition} from 'asyncbox';
-import type { AppiumLogger } from '@appium/types';
+import type {AppiumLogger} from '@appium/types';
 
 const LOCALHOST = '127.0.0.1';
 
@@ -127,7 +127,7 @@ export class DeviceConnectionsFactory {
   listConnections(
     udid: string | null = null,
     port: string | number | null = null,
-    strict: boolean = false
+    strict: boolean = false,
   ): string[] {
     if (!udid && !port) {
       return [];
@@ -148,7 +148,7 @@ export class DeviceConnectionsFactory {
   async requestConnection(
     udid?: string | null,
     port?: string | number | null,
-    options: RequestConnectionOptions = {}
+    options: RequestConnectionOptions = {},
   ): Promise<void> {
     if (!udid || !port) {
       log.warn('Did not know how to request the connection:');

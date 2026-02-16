@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { errors } from 'appium/driver';
+import {errors} from 'appium/driver';
 import {requireRealDevice} from '../utils';
 import type {XCUITestDriver} from '../driver';
 
@@ -18,7 +18,7 @@ export async function mobileSendMemoryWarning(
   const appInfos = await device.devicectl.listApps(bundleId);
   if (_.isEmpty(appInfos)) {
     throw new errors.InvalidArgumentError(
-      `The application identified by ${bundleId} cannot be found on the device. Is it installed?`
+      `The application identified by ${bundleId} cannot be found on the device. Is it installed?`,
     );
   }
 
@@ -37,10 +37,11 @@ export async function mobileSendMemoryWarning(
     .map(({processIdentifier}) => processIdentifier);
   if (_.isEmpty(pids)) {
     throw new errors.InvalidArgumentError(
-      `The application identified by ${bundleId} must be running in order to simulate the Low Memory warning`
+      `The application identified by ${bundleId} must be running in order to simulate the Low Memory warning`,
     );
   }
-  this.log.info(`Emulating Low Memory warning for the process id ${pids[0]}, bundle id ${bundleId}`);
+  this.log.info(
+    `Emulating Low Memory warning for the process id ${pids[0]}, bundle id ${bundleId}`,
+  );
   await device.devicectl.sendMemoryWarning(pids[0]);
 }
-

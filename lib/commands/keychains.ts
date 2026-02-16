@@ -8,9 +8,6 @@ import type {XCUITestDriver} from '../driver';
  * while clearing keychains.
  * @group Simulator Only
  */
-export async function mobileClearKeychains(
-  this: XCUITestDriver,
-): Promise<void> {
+export async function mobileClearKeychains(this: XCUITestDriver): Promise<void> {
   await requireSimulator(this, 'Keychain modification').clearKeychains();
 }
-

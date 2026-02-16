@@ -35,6 +35,8 @@ jobs:
     - run: sfw npm install --no-package-lock
       name: Install dev dependencies
     - run: npm run lint
-      name: Linter
+      name: Run linter
+    - run: npm run format:check
+      name: Run Prettier check
     - run: npm run test
       name: Unit Tests

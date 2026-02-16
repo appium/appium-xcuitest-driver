@@ -3,13 +3,10 @@ import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
 import _ from 'lodash';
-import { NATIVE_WIN } from '../utils';
-import {
-  makeContextUpdatedEvent,
-  makeObsoleteContextUpdatedEvent,
-} from './bidi/models';
-import { BIDI_EVENT_NAME } from './bidi/constants';
-import { assignBiDiLogListener } from './log';
+import {NATIVE_WIN} from '../utils';
+import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from './bidi/models';
+import {BIDI_EVENT_NAME} from './bidi/constants';
+import {assignBiDiLogListener} from './log';
 import type {XCUITestDriver} from '../driver';
 import type {Page} from '../types';
 import type {ViewContext, FullContext, PageChangeNotification} from './types';
@@ -21,13 +18,15 @@ const DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS = 5000;
 const DEFAULT_LIST_WEB_FRAMES_RETRIES = 20;
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
 
-
 /**
  * Retrieves the list of available contexts and their associated views.
  *
  * @param useUrl - Whether to filter webviews by URL
  */
-export async function getContextsAndViews(this: XCUITestDriver, useUrl: boolean = true): Promise<ViewContext[]> {
+export async function getContextsAndViews(
+  this: XCUITestDriver,
+  useUrl: boolean = true,
+): Promise<ViewContext[]> {
   this.log.debug('Retrieving contexts and views');
   const webviews = await this.listWebFrames(useUrl);
   const ctxs: ViewContext[] = [{id: NATIVE_WIN, view: {}}];
@@ -56,37 +55,41 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
   const timer = new timing.Timer().start();
   const contextId = await this.getRecentWebviewContextId(/.*/, /.*/);
   if (contextId) {
-    this.log.info(`Picking webview '${contextId}' after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
+    this.log.info(
+      `Picking webview '${contextId}' after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+    );
     await this.setContext(contextId);
     return;
   }
   const appDict = this.remote.appDict;
-  const errSuffix = `Make sure your web application is debuggable ` +
+  const errSuffix =
+    `Make sure your web application is debuggable ` +
     `and could be inspected in Safari Web Inspector.`;
   if (_.isEmpty(appDict)) {
     throw new Error(
       `The remote debugger did not return any connected web applications after ` +
-      `${timer.getDuration().asMilliSeconds.toFixed(0)}ms. ` +
-      `${errSuffix} ` +
-      `You may try to change the 'webviewConnectTimeout' capability value to ` +
-      `customize the retrieval timeout.`
+        `${timer.getDuration().asMilliSeconds.toFixed(0)}ms. ` +
+        `${errSuffix} ` +
+        `You may try to change the 'webviewConnectTimeout' capability value to ` +
+        `customize the retrieval timeout.`,
     );
   }
-  const errSuffix2 = `${errSuffix} You may try to change the 'webviewConnectRetries' ` +
+  const errSuffix2 =
+    `${errSuffix} You may try to change the 'webviewConnectRetries' ` +
     `capability value to customize the amount of pages retrieval retries.`;
   const appsWithPages = _.values(appDict).filter(({pageArray}) => !_.isEmpty(pageArray));
   if (appsWithPages.length > 0) {
     throw new Error(
       `The remote debugger returned ${util.pluralize('web application', appsWithPages.length, true)} ` +
-      `with pages after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms, ` +
-      `although none of them matched our page search criteria. ${errSuffix2}`
+        `with pages after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms, ` +
+        `although none of them matched our page search criteria. ${errSuffix2}`,
     );
   } else {
     throw new Error(
       `The remote debugger returned ${util.pluralize('web application', _.size(appDict), true)}, ` +
-      `but none of them had pages after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms. ` +
-      `${errSuffix2} Also, in rare cases the device restart or device OS upgrade may fix this ` +
-      `issue if none of the above advices helps.`
+        `but none of them had pages after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms. ` +
+        `${errSuffix2} Also, in rare cases the device restart or device OS upgrade may fix this ` +
+        `issue if none of the above advices helps.`,
     );
   }
 }
@@ -100,7 +103,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
   const shouldFilterByUrl = useUrl && !this.isRealDevice() && !!this.getCurrentUrl();
   this.log.debug(
     `Selecting by url: ${shouldFilterByUrl}` +
-    (shouldFilterByUrl ? ` (expected url: '${this.getCurrentUrl()}')` : '')
+      (shouldFilterByUrl ? ` (expected url: '${this.getCurrentUrl()}')` : ''),
   );
 
   if (!this._remote) {
@@ -120,7 +123,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
       return pageArray;
     } catch (err: any) {
       this.log.debug(
-        `No available web pages after ${util.pluralize('retry', retries, true)}: ${err.message}`
+        `No available web pages after ${util.pluralize('retry', retries, true)}: ${err.message}`,
       );
       return [];
     }
@@ -131,8 +134,8 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
     : DEFAULT_LIST_WEB_FRAMES_RETRIES;
   this.log.debug(
     `About to select a web application with ${util.pluralize('retry', maxRetriesCount, true)} ` +
-    `and 500ms interval between each retry. Consider customizing the value of 'webviewConnectRetries' ` +
-    `capability to change the amount of retries.`
+      `and 500ms interval between each retry. Consider customizing the value of 'webviewConnectRetries' ` +
+      `capability to change the amount of retries.`,
   );
   return await doListPages(maxRetriesCount);
 }
@@ -161,8 +164,8 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
   if (_.isEmpty(apps)) {
     this.log.info(
       `The remote debugger did not report any active web applications within ${timeoutMs}ms timeout. ` +
-      `Consider increasing the value of 'webviewConnectTimeout' capability to wait longer ` +
-      `on slower devices.`
+        `Consider increasing the value of 'webviewConnectTimeout' capability to wait longer ` +
+        `on slower devices.`,
     );
   }
 }
@@ -182,7 +185,10 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
  * @param waitForWebviewMs - The period to poll for available webview(s) (in ms)
  * @returns The list of available context objects along with their properties.
  */
-export async function mobileGetContexts(this: XCUITestDriver, waitForWebviewMs: number = 0): Promise<FullContext[]> {
+export async function mobileGetContexts(
+  this: XCUITestDriver,
+  waitForWebviewMs: number = 0,
+): Promise<FullContext[]> {
   // make sure it is a number, so the duration check works properly
   if (!_.isNumber(waitForWebviewMs)) {
     waitForWebviewMs = parseInt(String(waitForWebviewMs), 10);
@@ -198,7 +204,7 @@ export async function mobileGetContexts(this: XCUITestDriver, waitForWebviewMs: 
   try {
     let contexts: FullContext[];
     do {
-      contexts = await this.getContexts() as FullContext[];
+      contexts = (await this.getContexts()) as FullContext[];
 
       if (contexts.length >= 2) {
         this.log.debug(
@@ -222,11 +228,12 @@ export async function mobileGetContexts(this: XCUITestDriver, waitForWebviewMs: 
  *
  * @param pageChangeNotification - The notification containing page array and app ID
  */
-export async function onPageChange(this: XCUITestDriver, pageChangeNotification: PageChangeNotification): Promise<void> {
+export async function onPageChange(
+  this: XCUITestDriver,
+  pageChangeNotification: PageChangeNotification,
+): Promise<void> {
   this.log.debug(
-    `Remote debugger notified us of a new page listing: ${JSON.stringify(
-      pageChangeNotification,
-    )}`,
+    `Remote debugger notified us of a new page listing: ${JSON.stringify(pageChangeNotification)}`,
   );
   if (this.selectingNewPage) {
     this.log.debug('We are in the middle of selecting a page, ignoring');
@@ -437,7 +444,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
   const isRealDevice = this.isRealDevice();
   const socketPath = isRealDevice
     ? undefined
-    : (await (this.device as Simulator).getWebInspectorSocket() ?? undefined);
+    : ((await (this.device as Simulator).getWebInspectorSocket()) ?? undefined);
 
   const baseOpts = {
     bundleId: this.opts.bundleId,
@@ -490,104 +497,105 @@ export async function setContext(
   skipReadyCheck: boolean = false,
 ): Promise<void> {
   function alreadyInContext(desired: string | null, current: string | null): boolean {
-      return (
-        desired === current ||
-        (desired === null && current === NATIVE_WIN) ||
-        (desired === NATIVE_WIN && current === null)
-      );
-    }
-    function isNativeContext(context: string | null): boolean {
-      return context === NATIVE_WIN || context === null;
-    }
-
-    // allow the full context list to be passed in
-    const strName = String(typeof name === 'object' && name && 'id' in name ? name.id : name);
-
-    this.log.debug(
-      `Attempting to set context to '${strName || NATIVE_WIN}' from '${
-        this.curContext ? this.curContext : NATIVE_WIN
-      }'`,
+    return (
+      desired === current ||
+      (desired === null && current === NATIVE_WIN) ||
+      (desired === NATIVE_WIN && current === null)
     );
+  }
+  function isNativeContext(context: string | null): boolean {
+    return context === NATIVE_WIN || context === null;
+  }
 
-    if (
-      alreadyInContext(strName, this.curContext) ||
-      alreadyInContext(_.replace(strName, WEBVIEW_BASE, ''), this.curContext)
-    ) {
-      // already in the named context, no need to do anything
-      this.log.debug(`Already in '${strName || NATIVE_WIN}' context. Doing nothing.`);
-      return;
-    }
-    if (isNativeContext(strName)) {
-      // switching into the native context
-      this.curContext = null;
-      await notifyBiDiContextChange.bind(this)();
-      return;
-    }
+  // allow the full context list to be passed in
+  const strName = String(typeof name === 'object' && name && 'id' in name ? name.id : name);
 
-    // switching into a webview context
+  this.log.debug(
+    `Attempting to set context to '${strName || NATIVE_WIN}' from '${
+      this.curContext ? this.curContext : NATIVE_WIN
+    }'`,
+  );
 
-    // if contexts have not already been retrieved, get them
-    if (_.isUndefined(this.contexts)) {
-      await this.getContexts();
-    }
+  if (
+    alreadyInContext(strName, this.curContext) ||
+    alreadyInContext(_.replace(strName, WEBVIEW_BASE, ''), this.curContext)
+  ) {
+    // already in the named context, no need to do anything
+    this.log.debug(`Already in '${strName || NATIVE_WIN}' context. Doing nothing.`);
+    return;
+  }
+  if (isNativeContext(strName)) {
+    // switching into the native context
+    this.curContext = null;
+    await notifyBiDiContextChange.bind(this)();
+    return;
+  }
 
-    let contextId = _.replace(strName, WEBVIEW_BASE, '');
-    if (contextId === '') {
-      // allow user to pass in "WEBVIEW" without an index
-      // the second context will be the first webview as
-      // the first is always NATIVE_APP
-      contextId = (this.contexts as string[])[1];
-    }
-    if (!_.includes(this.contexts, contextId)) {
-      throw new errors.NoSuchContextError();
-    }
+  // switching into a webview context
 
-    const oldContext = this.curContext;
-    this.curContext = this.curWindowHandle = contextId;
+  // if contexts have not already been retrieved, get them
+  if (_.isUndefined(this.contexts)) {
+    await this.getContexts();
+  }
 
-    // `contextId` will be in the form of `appId.pageId` in this case
-    const [appIdKey, pageIdKey] = _.map(contextId.split('.'), (id) => parseInt(id, 10));
-    try {
-      this.selectingNewPage = true;
-      await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
-      await notifyBiDiContextChange.bind(this)();
-    } catch (err) {
-      this.curContext = this.curWindowHandle = oldContext;
-      throw err;
-    } finally {
-      this.selectingNewPage = false;
-    }
+  let contextId = _.replace(strName, WEBVIEW_BASE, '');
+  if (contextId === '') {
+    // allow user to pass in "WEBVIEW" without an index
+    // the second context will be the first webview as
+    // the first is always NATIVE_APP
+    contextId = (this.contexts as string[])[1];
+  }
+  if (!_.includes(this.contexts, contextId)) {
+    throw new errors.NoSuchContextError();
+  }
 
-    // attempt to start performance logging, if requested
-    if (this.opts.enablePerformanceLogging && this._remote) {
-      const context = this.curContext;
-      this.log.debug(`Starting performance log on '${context}'`);
-      [this.logs.performance,] = assignBiDiLogListener.bind(this)(
-        new IOSPerformanceLog({
-          remoteDebugger: this.remote,
-          log: this.log,
-        }), {
-          type: 'performance',
-          context,
-        }
+  const oldContext = this.curContext;
+  this.curContext = this.curWindowHandle = contextId;
+
+  // `contextId` will be in the form of `appId.pageId` in this case
+  const [appIdKey, pageIdKey] = _.map(contextId.split('.'), (id) => parseInt(id, 10));
+  try {
+    this.selectingNewPage = true;
+    await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
+    await notifyBiDiContextChange.bind(this)();
+  } catch (err) {
+    this.curContext = this.curWindowHandle = oldContext;
+    throw err;
+  } finally {
+    this.selectingNewPage = false;
+  }
+
+  // attempt to start performance logging, if requested
+  if (this.opts.enablePerformanceLogging && this._remote) {
+    const context = this.curContext;
+    this.log.debug(`Starting performance log on '${context}'`);
+    [this.logs.performance] = assignBiDiLogListener.bind(this)(
+      new IOSPerformanceLog({
+        remoteDebugger: this.remote,
+        log: this.log,
+      }),
+      {
+        type: 'performance',
+        context,
+      },
+    );
+    await this.logs.performance?.startCapture();
+  }
+
+  // start safari logging if the logs handlers are active
+  if (name && name !== NATIVE_WIN && this.logs) {
+    if (this.logs.safariConsole) {
+      this.remote.startConsole(
+        this.logs.safariConsole.onConsoleLogEvent.bind(this.logs.safariConsole),
       );
-      await this.logs.performance?.startCapture();
     }
-
-    // start safari logging if the logs handlers are active
-    if (name && name !== NATIVE_WIN && this.logs) {
-      if (this.logs.safariConsole) {
-        this.remote.startConsole(
-          this.logs.safariConsole.onConsoleLogEvent.bind(this.logs.safariConsole),
-        );
-      }
-      if (this.logs.safariNetwork) {
-        this.remote.startNetwork(
-          this.logs.safariNetwork.onNetworkEvent.bind(this.logs.safariNetwork),
-        );
-      }
+    if (this.logs.safariNetwork) {
+      this.remote.startNetwork(
+        this.logs.safariNetwork.onNetworkEvent.bind(this.logs.safariNetwork),
+      );
     }
   }
+}
 
 /**
  * Gets the list of available contexts.
@@ -678,11 +686,12 @@ export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> 
       // get rid of the native app context
       .filter((context) => context.id !== NATIVE_WIN)
       // get the `app.id` format expected
-      .map((context) =>
-        // This is non-nullable because the `FullContext` having `id` `NATIVE_WIN`
-        // _looks like_ the only with an empty view.
-        context.view?.id?.toString() ?? ''
-    )
+      .map(
+        (context) =>
+          // This is non-nullable because the `FullContext` having `id` `NATIVE_WIN`
+          // _looks like_ the only with an empty view.
+          context.view?.id?.toString() ?? '',
+      )
   );
 }
 
@@ -729,4 +738,3 @@ export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<voi
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeObsoleteContextUpdatedEvent(name));
 }
-

@@ -129,12 +129,8 @@ export class ScreenRecorder {
       '-reconnect_delay_max',
       `${timeoutMs / 1000 + 1}`,
     ];
-    const {
-      hwaccel,
-      hwaccelOutputFormat,
-      scaleFilterHWAccel,
-      videoTypeHWAccel,
-    } = HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration || ''] ?? {};
+    const {hwaccel, hwaccelOutputFormat, scaleFilterHWAccel, videoTypeHWAccel} =
+      HARDWARE_ACCELERATION_PARAMETERS[hardwareAcceleration || ''] ?? {};
 
     if (hwaccel) {
       args.push('-hwaccel', hwaccel);
