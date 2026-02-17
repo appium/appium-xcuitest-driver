@@ -1,3 +1,9 @@
+## [10.23.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.22.0...v10.23.0) (2026-02-17)
+
+### Features
+
+* Simplify terminateApp logic ([#2730](https://github.com/appium/appium-xcuitest-driver/issues/2730)) ([530a5be](https://github.com/appium/appium-xcuitest-driver/commit/530a5bea43d28d7cf178e4ac6cf343828a4a47ae))
+
 ## [10.22.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.21.3...v10.22.0) (2026-02-16)
 
 ### Features
