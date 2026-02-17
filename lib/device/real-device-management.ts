@@ -584,7 +584,7 @@ export class RealDevice {
         INSTRUMENT_CHANNEL.DEVICE_INFO,
         'runningProcesses',
       );
-      const process = processes.selector.find((process: any) => process.name === executableName);
+      const process = processes.selector.find((proc: any) => proc.name === executableName);
       if (!process) {
         return {terminated: false, reason: 'not_running'};
       }
