@@ -2,7 +2,7 @@ import _ from 'lodash';
 import B, {TimeoutError} from 'bluebird';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
 import path from 'node:path';
-import {utilities} from 'appium-ios-device';
+import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
@@ -551,6 +551,7 @@ export class RealDevice {
   }
 
   private async terminateAppLegacy(bundleId: string): Promise<TerminateAppResult> {
+    let instrumentService: any;
     let installProxyClient: InstallationProxyClient | undefined;
     try {
       installProxyClient = await InstallationProxyClient.create(this.udid, false);
@@ -561,21 +562,48 @@ export class RealDevice {
         return {terminated: false, reason: 'not_running'};
       }
       const executableName = apps[bundleId].CFBundleExecutable;
+      this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
 
-      const pids = (await this.devicectl.listProcesses())
-        .filter(({executable}) => executable.endsWith(`/${executableName}`))
-        .map(({processIdentifier}) => processIdentifier);
-      if (_.isEmpty(pids)) {
+      const platformVersion =
+        this.driverOpts.platformVersion ?? (await this.getPlatformVersion());
+
+      if (util.compareVersions(platformVersion, '>=', '17.0')) {
+        this.log.debug(`Calling devicectl to kill the process`);
+        const pids = (await this.devicectl.listProcesses())
+          .filter(({executable}) => executable.endsWith(`/${executableName}`))
+          .map(({processIdentifier}) => processIdentifier);
+        if (_.isEmpty(pids)) {
+          return {terminated: false, reason: 'not_running'};
+        }
+        await this.devicectl.sendSignalToProcess(pids[0], 2);
+        return {terminated: true, pid: pids[0]};
+      }
+
+      // iOS < 17: use instrument service
+      instrumentService = await services.startInstrumentService(this.udid);
+      const processes = await instrumentService.callChannel(
+        INSTRUMENT_CHANNEL.DEVICE_INFO,
+        'runningProcesses',
+      );
+      const process = processes.selector.find((process: any) => process.name === executableName);
+      if (!process) {
         return {terminated: false, reason: 'not_running'};
       }
-      await this.devicectl.sendSignalToProcess(pids[0], 2);
-      return {terminated: true, pid: pids[0]};
+      await instrumentService.callChannel(
+        INSTRUMENT_CHANNEL.PROCESS_CONTROL,
+        'killPid:',
+        `${process.pid}`,
+      );
+      return {terminated: true, pid: process.pid};
     } catch (err) {
       const detail = (err as any).stderr ?? (err as Error).message;
       return {terminated: false, reason: 'error', detail: String(detail)};
     } finally {
       if (installProxyClient) {
         await installProxyClient.close();
+      }
+      if (instrumentService) {
+        instrumentService.close();
       }
     }
   }
