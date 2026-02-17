@@ -1,3 +1,9 @@
+## [10.23.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.23.0...v10.23.1) (2026-02-17)
+
+### Miscellaneous Chores
+
+* Restore the legacy method of killing a process ([#2731](https://github.com/appium/appium-xcuitest-driver/issues/2731)) ([395e8bc](https://github.com/appium/appium-xcuitest-driver/commit/395e8bc6225742b1b584b4a3341c47a6222158af))
+
 ## [10.23.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.22.0...v10.23.0) (2026-02-17)
 
 ### Features
