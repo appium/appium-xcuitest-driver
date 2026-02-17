@@ -564,8 +564,7 @@ export class RealDevice {
       const executableName = apps[bundleId].CFBundleExecutable;
       this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
 
-      const platformVersion =
-        this.driverOpts.platformVersion ?? (await this.getPlatformVersion());
+      const platformVersion = this.driverOpts.platformVersion ?? (await this.getPlatformVersion());
 
       if (util.compareVersions(platformVersion, '>=', '17.0')) {
         this.log.debug(`Calling devicectl to kill the process`);
