@@ -166,10 +166,7 @@ export async function mobileActivateApp(this: XCUITestDriver, bundleId: string):
  * @group Real Device Only
  */
 export async function mobileKillApp(this: XCUITestDriver, bundleId: string): Promise<boolean> {
-  return await requireRealDevice(this, 'Killing app').terminateApp(
-    bundleId,
-    String(this.opts.platformVersion),
-  );
+  return await requireRealDevice(this, 'Killing app').terminateApp(bundleId);
 }
 
 /**
