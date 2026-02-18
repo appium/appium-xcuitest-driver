@@ -20,7 +20,6 @@ import _ from 'lodash';
 import {LRUCache} from 'lru-cache';
 import EventEmitter from 'node:events';
 import path from 'node:path';
-import url from 'node:url';
 import {
   SUPPORTED_EXTENSIONS,
   SAFARI_BUNDLE_ID,
@@ -616,8 +615,9 @@ export class XCUITestDriver
     }
 
     if (_.isString(caps.webDriverAgentUrl)) {
-      const {protocol, host} = url.parse(caps.webDriverAgentUrl);
-      if (_.isEmpty(protocol) || _.isEmpty(host)) {
+      try {
+        new URL(caps.webDriverAgentUrl);
+      } catch {
         throw this.log.errorWithException(
           `'webDriverAgentUrl' capability is expected to contain a valid WebDriverAgent server URL. ` +
             `'${caps.webDriverAgentUrl}' is given instead`,

@@ -4,7 +4,6 @@ import {SubProcess} from 'teen_process';
 import {encodeBase64OrUpload} from '../utils';
 import {WDA_BASE_URL} from 'appium-webdriveragent';
 import {waitForCondition} from 'asyncbox';
-import url from 'node:url';
 import type {XCUITestDriver} from '../driver';
 import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
 import type {WDASettings} from 'appium-webdriveragent';
@@ -144,8 +143,8 @@ export class ScreenRecorder {
     if ((videoFps && videoType === 'libx264') || videoTypeHWAccel) {
       args.push('-r', String(videoFps));
     }
-    const {protocol, hostname} = url.parse(remoteUrl || '');
-    args.push('-i', `${protocol}//${hostname}:${remotePort}`);
+    const parsed = new URL(remoteUrl || 'http://127.0.0.1');
+    args.push('-i', `${parsed.protocol}//${parsed.hostname}:${remotePort}`);
 
     if (videoFilters || videoScale) {
       args.push('-vf', videoFilters || `${scaleFilterHWAccel || 'scale'}=${videoScale}`);

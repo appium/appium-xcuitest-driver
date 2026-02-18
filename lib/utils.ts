@@ -5,7 +5,6 @@ import B from 'bluebird';
 import _ from 'lodash';
 import os from 'node:os';
 import path from 'node:path';
-import url from 'node:url';
 import * as semver from 'semver';
 import {exec} from 'teen_process';
 import {log} from './logger';
@@ -388,7 +387,7 @@ export async function removeAllSessionWebSocketHandlers(this: XCUITestDriver): P
  */
 export function isLocalHost(urlString: string): boolean {
   try {
-    const hostname = url.parse(urlString).hostname as string;
+    const hostname = new URL(urlString).hostname;
     return ['localhost', '127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(hostname);
   } catch {
     log.warn(`'${urlString}' cannot be parsed as a valid URL`);
