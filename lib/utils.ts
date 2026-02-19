@@ -380,6 +380,14 @@ export async function removeAllSessionWebSocketHandlers(this: XCUITestDriver): P
   }
 }
 
+const LOCALHOST_HOSTNAMES = [
+  'localhost',
+  '127.0.0.1',
+  // WHATWG URL normalizes IPv6 hostnames with brackets and hex (e.g. ::ffff:127.0.0.1 -> ::ffff:7f00:1)
+  '[::1]',
+  '[::ffff:7f00:1]',
+];
+
 /**
  * Returns true if the urlString is localhost
  * @param urlString
@@ -388,7 +396,7 @@ export async function removeAllSessionWebSocketHandlers(this: XCUITestDriver): P
 export function isLocalHost(urlString: string): boolean {
   try {
     const hostname = new URL(urlString).hostname;
-    return ['localhost', '127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(hostname);
+    return LOCALHOST_HOSTNAMES.includes(hostname);
   } catch {
     log.warn(`'${urlString}' cannot be parsed as a valid URL`);
   }
