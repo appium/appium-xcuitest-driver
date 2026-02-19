@@ -85,7 +85,7 @@ export class ScreenRecorder {
   private mainProcess: SubProcess | null;
   private timeoutHandler: NodeJS.Timeout | null;
 
-  constructor(udid: string, log: any, videoPath: string, opts: ScreenRecorderOptions = {}) {
+  constructor(udid: string, log: any, videoPath: string, opts: ScreenRecorderOptions) {
     this.videoPath = videoPath;
     this.log = log;
     this.opts = opts;
@@ -143,7 +143,7 @@ export class ScreenRecorder {
     if ((videoFps && videoType === 'libx264') || videoTypeHWAccel) {
       args.push('-r', String(videoFps));
     }
-    const parsed = new URL(remoteUrl || 'http://127.0.0.1');
+    const parsed = new URL(remoteUrl);
     args.push('-i', `${parsed.protocol}//${parsed.hostname}:${remotePort}`);
 
     if (videoFilters || videoScale) {
@@ -282,10 +282,9 @@ export async function startRecordingScreen(
     suffix: MP4_EXT,
   });
 
-  const wdaBaseUrl = this.opts.wdaBaseUrl || WDA_BASE_URL;
   const screenRecorder = new ScreenRecorder(this.device.udid, this.log, videoPath, {
     remotePort: this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT,
-    remoteUrl: wdaBaseUrl,
+    remoteUrl: this.opts.wdaBaseUrl || WDA_BASE_URL,
     videoType,
     videoFilters,
     videoScale,
@@ -404,8 +403,8 @@ export async function stopRecordingScreen(
 
 interface ScreenRecorderOptions {
   hardwareAcceleration?: string;
-  remotePort?: number;
-  remoteUrl?: string;
+  remotePort: number;
+  remoteUrl: string;
   videoFps?: number;
   videoType?: string;
   videoScale?: string;
