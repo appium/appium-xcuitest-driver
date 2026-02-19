@@ -1,3 +1,9 @@
+## [10.23.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.23.2...v10.23.3) (2026-02-19)
+
+### Bug Fixes
+
+* Replace the deprecated url.parse with `new URL` ([#2735](https://github.com/appium/appium-xcuitest-driver/issues/2735)) ([4ea4537](https://github.com/appium/appium-xcuitest-driver/commit/4ea453728f8a7de1cb82afd406755bdf77229a89))
+
 ## [10.23.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.23.1...v10.23.2) (2026-02-18)
 
 ### Miscellaneous Chores
