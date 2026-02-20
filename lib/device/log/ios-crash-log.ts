@@ -124,6 +124,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
         this._realDeviceClient = await CrashReportsClient.create(
           this._udid as string,
           this._useRemoteXPC,
+          this.log,
         );
       } catch (err) {
         this.log.error(

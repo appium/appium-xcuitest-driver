@@ -1,11 +1,11 @@
 import {getRemoteXPCServices} from './remotexpc-utils';
-import {log} from '../logger';
 import type {
   CrashReportsService as RemoteXPCCrashReportsService,
   RemoteXpcConnection,
 } from 'appium-ios-remotexpc';
 import type {Pyidevice as PyideviceClient} from './clients/py-ios-device-client';
 import {Pyidevice} from './clients/py-ios-device-client';
+import type {AppiumLogger} from '@appium/types';
 
 const CRASH_REPORT_EXTENSIONS = ['.ips'];
 const MAX_FILES_IN_ERROR = 10;
@@ -20,13 +20,16 @@ const MAX_FILES_IN_ERROR = 10;
 export class CrashReportsClient {
   private readonly service: RemoteXPCCrashReportsService | PyideviceClient;
   private readonly remoteXPCConnection?: RemoteXpcConnection;
+  private readonly log: AppiumLogger;
 
   private constructor(
     service: RemoteXPCCrashReportsService | PyideviceClient,
+    log: AppiumLogger,
     remoteXPCConnection?: RemoteXpcConnection,
   ) {
     this.service = service;
     this.remoteXPCConnection = remoteXPCConnection;
+    this.log = log;
   }
 
   //#region Public Static Methods
@@ -38,7 +41,11 @@ export class CrashReportsClient {
    * @param useRemoteXPC - Whether to use remotexpc
    * @returns CrashReportsClient instance
    */
-  static async create(udid: string, useRemoteXPC: boolean): Promise<CrashReportsClient> {
+  static async create(
+    udid: string,
+    useRemoteXPC: boolean,
+    log: AppiumLogger,
+  ): Promise<CrashReportsClient> {
     if (useRemoteXPC) {
       const client = await CrashReportsClient.withRemoteXpcConnection(async () => {
         const Services = await getRemoteXPCServices();
@@ -47,7 +54,7 @@ export class CrashReportsClient {
           service: crashReportsService,
           connection: remoteXPC,
         };
-      });
+      }, log);
       if (client) {
         return client;
       }
@@ -55,7 +62,7 @@ export class CrashReportsClient {
 
     // Fallback to Pyidevice
     const pyideviceClient = new Pyidevice({udid, log});
-    return new CrashReportsClient(pyideviceClient);
+    return new CrashReportsClient(pyideviceClient, log);
   }
 
   //#endregion
@@ -141,7 +148,9 @@ export class CrashReportsClient {
       try {
         await this.remoteXPCConnection.close();
       } catch (err) {
-        log.warn(`Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`);
+        this.log.warn(
+          `Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`,
+        );
       }
     }
   }
@@ -167,13 +176,14 @@ export class CrashReportsClient {
       service: RemoteXPCCrashReportsService;
       connection: RemoteXpcConnection;
     }>,
+    log: AppiumLogger,
   ): Promise<CrashReportsClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
     try {
       const {service, connection} = await operation();
       remoteXPCConnection = connection;
-      const client = new CrashReportsClient(service, remoteXPCConnection);
+      const client = new CrashReportsClient(service, log, remoteXPCConnection);
       succeeded = true;
       return client;
     } catch (err: any) {
