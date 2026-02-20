@@ -43,8 +43,8 @@ export class CrashReportsClient {
    */
   static async create(
     udid: string,
-    useRemoteXPC: boolean,
     log: AppiumLogger,
+    useRemoteXPC: boolean,
   ): Promise<CrashReportsClient> {
     if (useRemoteXPC) {
       const client = await CrashReportsClient.withRemoteXpcConnection(async () => {

@@ -1,7 +1,6 @@
 import {createParser} from 'css-selector-parser';
 import _ from 'lodash';
 import {errors} from 'appium/driver';
-import {log} from './logger';
 import type {
   AstAttribute,
   AstPseudoClass,
@@ -18,7 +17,6 @@ export const CssConverter = {
     try {
       cssObj = parseCssSelector(cssSelector);
     } catch (e: any) {
-      log.debug(e.stack);
       throw new errors.InvalidSelectorError(
         `Invalid CSS selector '${cssSelector}'. Reason: '${e.message}'`,
       );
@@ -26,7 +24,6 @@ export const CssConverter = {
     try {
       return parseCssObject(cssObj);
     } catch (e: any) {
-      log.debug(e.stack);
       throw new errors.InvalidSelectorError(
         `Unsupported CSS selector '${cssSelector}'. Reason: '${e.message}'`,
       );

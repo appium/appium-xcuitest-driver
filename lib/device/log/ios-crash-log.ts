@@ -123,8 +123,8 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       try {
         this._realDeviceClient = await CrashReportsClient.create(
           this._udid as string,
-          this._useRemoteXPC,
           this.log,
+          this._useRemoteXPC,
         );
       } catch (err) {
         this.log.error(
