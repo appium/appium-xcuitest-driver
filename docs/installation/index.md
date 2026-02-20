@@ -97,42 +97,44 @@ should help you decide which driver version to install. If you are upgrading/dow
 existing installation, check that the [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent)
 version on the device under test is also updated accordingly.
 
-For iOS/tvOS support in driver versions older than `4.0.0` (Appium 1), please refer to
-[the Appium 1 changelog](https://github.com/appium/appium/blob/1.x/CHANGELOG.md).
-
-!!! info "Background"
+??? info "Why not support all iOS versions?"
 
     The XCUITest driver depends on the [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent)
     framework, which in turn [relies on Apple's XCTest framework](../overview.md). Changes in the
-    XCTest API are published in new Xcode and Apple device OS versions. These API changes may
-    add new features that the driver must implement in order to support the latest devices, as well
-    as modify or even remove support for existing features that the driver relies on. In both cases,
-    new driver and WDA versions are required.
+    XCTest API are published in new Xcode and Apple device OS versions. These API changes may not
+    only add new features that the driver must implement in order to support the latest devices, but
+    also modify or even remove support for existing features that the driver relies on.
 
 Generally, the driver/WDA aims to support the latest _two_ (2) major Xcode/iOS/iPadOS/tvOS versions,
-but may also work with older versions, unless specified below.
+but may also work with older versions whose support has not been explicitly removed.
 
-The following are the minimum driver/WDA versions required for specific Xcode/iOS versions:
+!!! note
 
-| Xcode/iOS version | Minimum XCUITest driver & WDA version |
-| --- | --- |
-| Xcode 26 / iOS 26 | `9.5.0` (WDA `9.14.1`) |
-| Xcode 16-beta.5 / iOS 18 | `7.24.15` (WDA `8.9.1`) |
-| Xcode 15 / iOS 17 | `4.32.23` (WDA `5.6.0`) |
-| Xcode 14.3 / iOS 16.4 | `4.21.7` (WDA `4.13.1`) |
-| Xcode 14-beta.3 / iOS 16 Beta | `4.7.4` (WDA `4.8.1`) |
+    For iOS/tvOS/Xcode support in driver/WDA versions older than `4.0.0` (Appium 1), please refer to
+    [the Appium 1 changelog](https://github.com/appium/appium/blob/1.x/CHANGELOG.md).
 
-The following are the last driver versions that are compatible with older Xcode versions:
+The following table maps Xcode versions to their supported driver/WDA versions:
 
-| Xcode version | Last supported XCUITest driver version |
-| --- | --- |
-| Xcode 13 | `10.6.0` (WDA `10.2.2`) |
-| Xcode 12 | `4.27.2` (WDA `4.15.1`) |
-| Xcode 11 | `4.2.0` (WDA `4.0.0`) |
+| Xcode version | First supported driver version | Last supported driver version |
+| --- | --- | -- |
+| Xcode 26 | `9.5.0` (WDA `9.14.1`) | Latest |
+| Xcode 16 | `7.24.15` (WDA `8.9.1`) | Latest |
+| Xcode 15 | `4.32.23` (WDA `5.6.0`) | Latest (not tested) |
+| Xcode 14.3 | `4.21.7` (WDA `4.13.1`) | Latest (not tested) |
+| Xcode 14.0 - 14.2 | `4.7.4` (WDA `4.8.1`) | Latest (not tested) |
+| Xcode 13 | Pre-`4.0.0` | `10.6.0` (WDA `10.2.2`) |
+| Xcode 12 | Pre-`4.0.0` | `4.27.2` (WDA `4.15.1`) |
+| Xcode 11 | Pre-`4.0.0` | `4.2.0` (WDA `4.0.0`) |
 
-The following are the last driver versions that are compatible with older iOS versions:
+The following table maps iOS versions to their supported driver/WDA versions:
 
-| iOS version | Last supported XCUITest driver version |
-| --- | --- |
-| iOS 9 - iOS 14 | `4.27.2` (WDA `4.15.1`) |
-| iOS 8 | `4.2.0` (WDA `4.0.0`) |
+| iOS version | First supported driver version | Last supported driver version |
+| --- | --- | -- |
+| iOS 26.4 | `10.23.2` (WDA `11.1.5`) | Latest |
+| iOS 26.0 - 26.3 | `9.5.0` (WDA `9.14.1`) | Latest |
+| iOS 18 | `7.24.15` (WDA `8.9.1`) | Latest |
+| iOS 17 | `4.32.23` (WDA `5.6.0`) | Latest (not tested) |
+| iOS 16.4 | `4.21.7` (WDA `4.13.1`) | Latest (not tested) |
+| iOS 16.0 - 16.3 | `4.7.4` (WDA `4.8.1`) | Latest (not tested) |
+| iOS 15 | Pre-`4.0.0` | Latest (not tested) |
+| iOS 9.3 - 14 | Pre-`4.0.0` | `4.27.2` (WDA `4.15.1`) |
