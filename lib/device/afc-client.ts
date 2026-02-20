@@ -8,9 +8,9 @@ import {fs, mkdirp} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import {getRemoteXPCServices} from './remotexpc-utils';
-import {log} from '../logger';
 import type {AfcService as RemoteXPCAfcService, RemoteXpcConnection} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
+import { AppiumLogger } from '@appium/types';
 
 /**
  * Options for pulling files/folders
@@ -39,13 +39,16 @@ export interface CreateForAppOptions {
 export class AfcClient {
   private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
   private readonly remoteXPCConnection?: RemoteXpcConnection;
+  private readonly log: AppiumLogger;
 
   private constructor(
     service: RemoteXPCAfcService | IOSDeviceAfcService,
+    log: AppiumLogger,
     remoteXPCConnection?: RemoteXpcConnection,
   ) {
     this.service = service;
     this.remoteXPCConnection = remoteXPCConnection;
+    this.log = log;
   }
 
   //#region Public Methods
@@ -57,7 +60,7 @@ export class AfcClient {
    * @param useRemoteXPC - Whether to use remotexpc (use isIos18OrNewer(opts) to determine)
    * @returns AFC client instance
    */
-  static async createForDevice(udid: string, useRemoteXPC: boolean): Promise<AfcClient> {
+  static async createForDevice(udid: string, log: AppiumLogger, useRemoteXPC: boolean): Promise<AfcClient> {
     if (useRemoteXPC) {
       const client = await AfcClient.withRemoteXpcConnection(async () => {
         const Services = await getRemoteXPCServices();
@@ -67,14 +70,14 @@ export class AfcClient {
           service: afcService,
           connection: connectionResult.remoteXPC,
         };
-      });
+      }, log);
       if (client) {
         return client;
       }
     }
 
     const afcService = await services.startAfcService(udid);
-    return new AfcClient(afcService);
+    return new AfcClient(afcService, log);
   }
 
   /**
@@ -89,6 +92,7 @@ export class AfcClient {
   static async createForApp(
     udid: string,
     bundleId: string,
+    log: AppiumLogger,
     useRemoteXPC: boolean,
     options?: CreateForAppOptions,
   ): Promise<AfcClient> {
@@ -110,7 +114,7 @@ export class AfcClient {
           service: afcService,
           connection,
         };
-      });
+      }, log);
       if (client) {
         return client;
       }
@@ -120,7 +124,7 @@ export class AfcClient {
     const afcService = isDocuments
       ? await houseArrestService.vendDocuments(bundleId)
       : await houseArrestService.vendContainer(bundleId);
-    return new AfcClient(afcService);
+    return new AfcClient(afcService, log);
   }
 
   /**
@@ -248,7 +252,7 @@ export class AfcClient {
       delete remoteXpcOptions.onEntry;
       await this.remoteXPCAfcService.pull(remotePath, localPath, remoteXpcOptions);
     } else {
-      await this.pullWithWalkDir(remotePath, localPath, options);
+      await this.pullWithWalkDir(remotePath, localPath, options, this.log);
     }
   }
 
@@ -282,13 +286,14 @@ export class AfcClient {
    */
   private static async withRemoteXpcConnection<T extends RemoteXPCAfcService | IOSDeviceAfcService>(
     operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
+    log: AppiumLogger
   ): Promise<AfcClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
     try {
       const {service, connection} = await operation();
       remoteXPCConnection = connection;
-      const client = new AfcClient(service, remoteXPCConnection);
+      const client = new AfcClient(service, log, remoteXPCConnection);
       succeeded = true;
       return client;
     } catch (err: any) {
@@ -344,6 +349,7 @@ export class AfcClient {
     remotePath: string,
     localPath: string,
     options: AfcPullOptions,
+    log: AppiumLogger,
   ): Promise<void> {
     const {recursive = false, overwrite = true, onEntry} = options;
 

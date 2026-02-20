@@ -283,7 +283,7 @@ export async function mobileListApps(
 ): Promise<AppInfoMapping> {
   const device = requireRealDevice(this, 'Listing apps');
   const useRemoteXPC = isIos18OrNewer(this.opts);
-  const client = await InstallationProxyClient.create(device.udid, useRemoteXPC);
+  const client = await InstallationProxyClient.create(device.udid, this.log, useRemoteXPC);
   try {
     return await client.listApplications({applicationType, returnAttributes});
   } finally {

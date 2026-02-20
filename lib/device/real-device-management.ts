@@ -283,7 +283,7 @@ export class RealDevice {
 
   async remove(bundleId: string): Promise<void> {
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const client = await InstallationProxyClient.create(this.udid, this.log, useRemoteXPC);
     try {
       await client.uninstallApplication(bundleId);
     } finally {
@@ -303,7 +303,7 @@ export class RealDevice {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const afcClient = await AfcClient.createForDevice(this.udid, useRemoteXPC);
+    const afcClient = await AfcClient.createForDevice(this.udid, this.log, useRemoteXPC);
     try {
       let bundlePathOnPhone: string;
       if ((await fs.stat(appPath)).isFile()) {
@@ -346,7 +346,7 @@ export class RealDevice {
     const {isUpgrade, timeout} = opts;
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
     const notificationClient = await NotificationClient.create(this.udid, this.log, useRemoteXPC);
-    const installationClient = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const installationClient = await InstallationProxyClient.create(this.udid, this.log, useRemoteXPC);
     const appInstalledNotification = notificationClient.observeNotification(
       APPLICATION_INSTALLED_NOTIFICATION,
     );
@@ -421,7 +421,7 @@ export class RealDevice {
     returnAttributes: string | string[] = ['CFBundleIdentifier', 'CFBundleVersion'],
   ): Promise<Record<string, any> | undefined> {
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const client = await InstallationProxyClient.create(this.udid, this.log, useRemoteXPC);
     try {
       return (
         await client.lookupApplications({
@@ -483,7 +483,7 @@ export class RealDevice {
    */
   async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const client = await InstallationProxyClient.create(this.udid, this.log, useRemoteXPC);
     try {
       const applications = await client.listApplications({
         applicationType: 'User',
@@ -554,7 +554,7 @@ export class RealDevice {
     let instrumentService: any;
     let installProxyClient: InstallationProxyClient | undefined;
     try {
-      installProxyClient = await InstallationProxyClient.create(this.udid, false);
+      installProxyClient = await InstallationProxyClient.create(this.udid, this.log, false);
       const apps = await installProxyClient.listApplications({
         returnAttributes: ['CFBundleIdentifier', 'CFBundleExecutable'],
       });

@@ -271,13 +271,13 @@ async function createAfcClient(
 
   if (bundleId) {
     const skipDocumentsCheck = this.settings.getSettings().skipDocumentsContainerCheck ?? false;
-    return await AfcClient.createForApp(udid, bundleId, useIos18, {
+    return await AfcClient.createForApp(udid, bundleId, this.log, useIos18, {
       containerType: containerType ?? null,
       skipDocumentsCheck,
     });
   }
 
-  return await AfcClient.createForDevice(udid, useIos18);
+  return await AfcClient.createForDevice(udid, this.log, useIos18);
 }
 
 /**

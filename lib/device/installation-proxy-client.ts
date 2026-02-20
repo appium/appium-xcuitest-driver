@@ -1,5 +1,4 @@
 import {getRemoteXPCServices} from './remotexpc-utils';
-import {log} from '../logger';
 import {services} from 'appium-ios-device';
 import type {InstallationProxyService as IOSDeviceInstallationProxyService} from 'appium-ios-device';
 import type {
@@ -7,6 +6,7 @@ import type {
   RemoteXpcConnection,
 } from 'appium-ios-remotexpc';
 import type {AppInfo, AppInfoMapping} from '../types';
+import { AppiumLogger } from '@appium/types';
 
 /**
  * Progress response structure for installation/uninstallation operations
@@ -43,8 +43,10 @@ interface LookupApplicationOptions {
 export class InstallationProxyClient {
   private constructor(
     private readonly service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
+    private readonly log: AppiumLogger,
     private readonly remoteXPCConnection?: RemoteXpcConnection,
   ) {}
+
 
   //#region Public Methods
 
@@ -55,7 +57,7 @@ export class InstallationProxyClient {
    * @param useRemoteXPC - Whether to use RemoteXPC
    * @returns InstallationProxy client instance
    */
-  static async create(udid: string, useRemoteXPC: boolean): Promise<InstallationProxyClient> {
+  static async create(udid: string, log: AppiumLogger, useRemoteXPC: boolean): Promise<InstallationProxyClient> {
     if (useRemoteXPC) {
       const client = await InstallationProxyClient.withRemoteXpcConnection(async () => {
         const Services = await getRemoteXPCServices();
@@ -65,14 +67,14 @@ export class InstallationProxyClient {
           service: installationProxyService,
           connection: remoteXPC,
         };
-      });
+      }, log);
       if (client) {
         return client;
       }
     }
 
     const service = await services.startInstallationProxyService(udid);
-    return new InstallationProxyClient(service);
+    return new InstallationProxyClient(service, log);
   }
 
   /**
@@ -198,14 +200,14 @@ export class InstallationProxyClient {
     try {
       this.service.close();
     } catch (err: any) {
-      log.debug(`Error closing installation proxy service: ${err.message}`);
+      this.log.debug(`Error closing installation proxy service: ${err.message}`);
     }
 
     if (this.remoteXPCConnection) {
       try {
         await this.remoteXPCConnection.close();
       } catch (err: any) {
-        log.warn(`Error closing RemoteXPC connection: ${err.message}`);
+        this.log.warn(`Error closing RemoteXPC connection: ${err.message}`);
       }
     }
   }
@@ -260,13 +262,14 @@ export class InstallationProxyClient {
     T extends RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
   >(
     operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
+    log: AppiumLogger
   ): Promise<InstallationProxyClient | null> {
     let remoteXPCConnection: RemoteXpcConnection | undefined;
     let succeeded = false;
     try {
       const {service, connection} = await operation();
       remoteXPCConnection = connection;
-      const client = new InstallationProxyClient(service, remoteXPCConnection);
+      const client = new InstallationProxyClient(service, log, remoteXPCConnection);
       succeeded = true;
       return client;
     } catch (err: any) {
