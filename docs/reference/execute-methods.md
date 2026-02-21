@@ -489,12 +489,12 @@ The returned object always includes at least the following entries:
 
 - `level`: Battery level in range [0.0, 1.0], where 1.0 means 100% charge.
 - `state`: Battery state as an integer number. The following values are possible:
-   *   UIDeviceBatteryStateUnknown = 0
-   *   UIDeviceBatteryStateUnplugged = 1  // on battery, discharging
-   *   UIDeviceBatteryStateCharging = 2   // plugged in, less than 100%
-   *   UIDeviceBatteryStateFull = 3       // plugged in, at 100%
+    * UIDeviceBatteryStateUnknown = 0
+    * UIDeviceBatteryStateUnplugged = 1  // on battery, discharging
+    * UIDeviceBatteryStateCharging = 2   // plugged in, less than 100%
+    * UIDeviceBatteryStateFull = 3       // plugged in, at 100%
 
-On iOS 18 and newer real devices, the returned object may also include many additional advanced battery information fields, such as capacity, health metrics, temperature, and more. For a full list of possible advanced fields, see the [BatteryInfo](../../lib/commands/advanced-battery-types.ts).
+On iOS 18 and newer real devices, the returned object may also include many additional advanced battery information fields, such as capacity, health metrics, temperature, and more. For a full list of possible advanced fields, see [`BatteryInfo`](https://github.com/appium/appium-xcuitest-driver/blob/master/lib/commands/advanced-battery-types.ts).
 
 The returned object is a superset of the basic battery info, and may look like:
 
