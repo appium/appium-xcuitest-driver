@@ -94,7 +94,7 @@ If you are running an older version of Appium, make sure to install a supported 
 
 The driver/WDA aims to support the latest _two_ (2) major Xcode/iOS/iPadOS/tvOS versions. Use the
 following tables to decide which driver version to install. Older Xcode/OS versions with the
-'maintenance' label are still likely to work fine with the latest driver, but any fixes for them
+'not tested' label are still likely to work fine with the latest driver, but any fixes for them
 will have lesser priority than for newer Xcode/OS versions, and any major workarounds are unlikely. 
 
 If you are upgrading/downgrading an existing driver installation to adjust its Xcode/OS support
@@ -120,9 +120,9 @@ The following table maps Xcode versions to their supported driver/WDA versions:
 | --- | --- | -- |
 | Xcode 26 | `9.5.0` (WDA `9.14.1`) | Latest |
 | Xcode 16 | `7.24.15` (WDA `8.9.1`) | Latest |
-| Xcode 15 | `4.32.23` (WDA `5.6.0`) | Latest (maintenance) |
-| Xcode 14.3 | `4.21.7` (WDA `4.13.1`) | Latest (maintenance) |
-| Xcode 14.0 - 14.2 | `4.7.4` (WDA `4.8.1`) | Latest (maintenance) |
+| Xcode 15 | `4.32.23` (WDA `5.6.0`) | Latest (not tested) |
+| Xcode 14.3 | `4.21.7` (WDA `4.13.1`) | Latest (not tested) |
+| Xcode 14.0 - 14.2 | `4.7.4` (WDA `4.8.1`) | Latest (not tested) |
 | Xcode 13 | Pre-`4.0.0` | `10.6.0` (WDA `10.2.2`) |
 | Xcode 12 | Pre-`4.0.0` | `4.27.2` (WDA `4.15.1`) |
 | Xcode 11 | Pre-`4.0.0` | `4.2.0` (WDA `4.0.0`) |
@@ -134,8 +134,8 @@ The following table maps iOS versions to their supported driver/WDA versions:
 | iOS 26.4 | `10.23.2` (WDA `11.1.5`) | Latest |
 | iOS 26.0 - 26.3 | `9.5.0` (WDA `9.14.1`) | Latest |
 | iOS 18 | `7.24.15` (WDA `8.9.1`) | Latest |
-| iOS 17 | `4.32.23` (WDA `5.6.0`) | Latest (maintenance) |
-| iOS 16.4 | `4.21.7` (WDA `4.13.1`) | Latest (maintenance) |
-| iOS 16.0 - 16.3 | `4.7.4` (WDA `4.8.1`) | Latest (maintenance) |
-| iOS 15 | Pre-`4.0.0` | Latest (maintenance) |
+| iOS 17 | `4.32.23` (WDA `5.6.0`) | Latest (not tested) |
+| iOS 16.4 | `4.21.7` (WDA `4.13.1`) | Latest (not tested) |
+| iOS 16.0 - 16.3 | `4.7.4` (WDA `4.8.1`) | Latest (not tested) |
+| iOS 15 | Pre-`4.0.0` | Latest (not tested) |
 | iOS 9.3 - 14 | Pre-`4.0.0` | `4.27.2` (WDA `4.15.1`) |
