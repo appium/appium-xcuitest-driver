@@ -11165,13 +11165,15 @@ Read <a href="https://appiumpro.com/editions/55-using-mobile-execution-commands-
 <p>The returned object always includes at least the following entries:</p>
 <ul>
 <li><code>level</code>: Battery level in range [0.0, 1.0], where 1.0 means 100% charge.</li>
-<li><code>state</code>: Battery state as an integer number. The following values are possible:</li>
+<li><code>state</code>: Battery state as an integer number. The following values are possible:<ul>
 <li>UIDeviceBatteryStateUnknown = 0</li>
 <li>UIDeviceBatteryStateUnplugged = 1  // on battery, discharging</li>
 <li>UIDeviceBatteryStateCharging = 2   // plugged in, less than 100%</li>
 <li>UIDeviceBatteryStateFull = 3       // plugged in, at 100%</li>
 </ul>
-<p>On iOS 18 and newer real devices, the returned object may also include many additional advanced battery information fields, such as capacity, health metrics, temperature, and more. For a full list of possible advanced fields, see the <a href="../../lib/commands/advanced-battery-types.ts">BatteryInfo</a>.</p>
+</li>
+</ul>
+<p>On iOS 18 and newer real devices, the returned object may also include many additional advanced battery information fields, such as capacity, health metrics, temperature, and more. For a full list of possible advanced fields, see <a href="https://github.com/appium/appium-xcuitest-driver/blob/master/lib/commands/advanced-battery-types.ts"><code>BatteryInfo</code></a>.</p>
 <p>The returned object is a superset of the basic battery info, and may look like:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.85</span><span class="p">,</span>
@@ -14069,7 +14071,7 @@ Does not work for real devices.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="February 5, 2026 18:02:41 UTC"><span class="timeago" datetime="2026-02-05T18:02:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="February 5, 2026 18:02:41 UTC">2026-02-05</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="February 21, 2026 22:20:45 UTC"><span class="timeago" datetime="2026-02-21T22:20:45+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="February 21, 2026 22:20:45 UTC">2026-02-21</span>
   </span>
 
     
