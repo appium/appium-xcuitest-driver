@@ -309,6 +309,10 @@ export const desiredCapConstraints = {
     // recognize the capability
     // but validate in driver#validateDesiredCaps
   },
+  ignoreWebviewBundleIds: {
+    // recognize the capability
+    // but validate in driver#validateDesiredCaps
+  },
   webviewConnectTimeout: {
     isNumber: true,
   },
