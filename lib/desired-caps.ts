@@ -309,7 +309,7 @@ export const desiredCapConstraints = {
     // recognize the capability
     // but validate in driver#validateDesiredCaps
   },
-  ignoreWebviewBundleIds: {
+  ignoredWebviewBundleIds: {
     // recognize the capability
     // but validate in driver#validateDesiredCaps
   },

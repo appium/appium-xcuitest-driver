@@ -672,10 +672,10 @@ export class XCUITestDriver
       );
     }
 
-    // ignoreWebviewBundleIds is an array, JSON array, or string
-    if (caps.ignoreWebviewBundleIds) {
-      caps.ignoreWebviewBundleIds = this.helpers.parseCapsArray(
-        caps.ignoreWebviewBundleIds as string | string[],
+    // ignoredWebviewBundleIds is an array, JSON array, or string
+    if (caps.ignoredWebviewBundleIds) {
+      caps.ignoredWebviewBundleIds = this.helpers.parseCapsArray(
+        caps.ignoredWebviewBundleIds as string | string[],
       );
     }
 
