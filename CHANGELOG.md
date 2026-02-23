@@ -1,3 +1,9 @@
+## [10.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.24.0...v10.24.1) (2026-02-23)
+
+### Bug Fixes
+
+* make remote debugger options explicit ([#2739](https://github.com/appium/appium-xcuitest-driver/issues/2739)) ([1939ff5](https://github.com/appium/appium-xcuitest-driver/commit/1939ff5b0c34a6842d110c3dccd2a01698bfb686))
+
 ## [10.24.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.23.3...v10.24.0) (2026-02-23)
 
 ### Features
