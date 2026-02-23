@@ -1,4 +1,8 @@
-import {createRemoteDebugger, RemoteDebugger} from 'appium-remote-debugger';
+import {
+  createRemoteDebugger,
+  RemoteDebugger,
+  type RemoteDebuggerOptions,
+} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
@@ -446,7 +450,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     ? undefined
     : ((await (this.device as Simulator).getWebInspectorSocket()) ?? undefined);
 
-  const baseOpts = {
+  const baseOpts: RemoteDebuggerOptions = {
     bundleId: this.opts.bundleId,
     additionalBundleIds: this.opts.additionalWebviewBundleIds as string[] | undefined,
     ignoredBundleIds: this.opts.ignoredWebviewBundleIds as string[] | undefined,
