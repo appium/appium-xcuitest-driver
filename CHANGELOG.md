@@ -1,3 +1,9 @@
+## [10.24.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.23.3...v10.24.0) (2026-02-23)
+
+### Features
+
+* add appium:ignoredWebviewBundleIds capability ([#2734](https://github.com/appium/appium-xcuitest-driver/issues/2734)) ([610ff18](https://github.com/appium/appium-xcuitest-driver/commit/610ff18ef5bd8a3df4aa390f8e2adbfc13aabf1c))
+
 ## [10.23.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.23.2...v10.23.3) (2026-02-19)
 
 ### Bug Fixes
