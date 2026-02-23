@@ -449,6 +449,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
   const baseOpts = {
     bundleId: this.opts.bundleId,
     additionalBundleIds: this.opts.additionalWebviewBundleIds as string[] | undefined,
+    ignoredBundleIds: this.opts.ignoredWebviewBundleIds as string[] | undefined,
     isSafari: this.isSafari(),
     includeSafari: this.opts.includeSafariInWebviews,
     pageLoadMs: this.pageLoadMs,

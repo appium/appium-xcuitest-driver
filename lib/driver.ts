@@ -672,6 +672,13 @@ export class XCUITestDriver
       );
     }
 
+    // ignoredWebviewBundleIds is an array, JSON array, or string
+    if (caps.ignoredWebviewBundleIds) {
+      caps.ignoredWebviewBundleIds = this.helpers.parseCapsArray(
+        caps.ignoredWebviewBundleIds as string | string[],
+      );
+    }
+
     // finally, return true since the superclass check passed, as did this
     return true;
   }
