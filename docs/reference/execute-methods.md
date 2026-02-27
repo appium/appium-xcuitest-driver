@@ -1568,7 +1568,7 @@ toY | number | yes | The y coordinate of ending drag point | 200
 
 #### Reference
 
-[pressForDuration:thenDragToCoordinate:](https://developer.apple.com/documentation/xctest/xcuielement/1618670-pressforduration?language=objc)
+[pressForDuration:thenDragToCoordinate:](https://developer.apple.com/documentation/xcuiautomation/xcuicoordinate/press(forduration:thendragto:)?language=objc)
 
 ### mobile: dragFromToWithVelocity
 
