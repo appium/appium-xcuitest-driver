@@ -364,7 +364,7 @@ export async function mobileTap(
  * @param toX - The _x_ coordinate (float value) of the ending drag point.
  * @param toY - The _y_ coordinate (float value) of the ending drag point.
  * @param elementId - The internal element identifier (as hexadecimal hash string) to drag. If provided, all coordinates will be calculated relative to this element; otherwise they will be calculated relative to the active Application element.
- * @see https://developer.apple.com/documentation/xctest/xcuielement/1500989-clickforduration?language=objc
+ * @see https://developer.apple.com/documentation/xcuiautomation/xcuicoordinate/press(forduration:thendragto:)?language=objc
  * @example
  * ```java
  * JavascriptExecutor js = (JavascriptExecutor) driver;

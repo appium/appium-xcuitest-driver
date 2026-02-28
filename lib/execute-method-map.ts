@@ -72,7 +72,7 @@ export const executeMethodMap = {
       optional: ['x', 'y', 'elementId'],
     },
   },
-  // https://developer.apple.com/documentation/xctest/xcuielement/1618670-pressforduration?language=objc
+  // https://developer.apple.com/documentation/xcuiautomation/xcuicoordinate/press(forduration:thendragto:)?language=objc
   'mobile: dragFromToForDuration': {
     command: 'mobileDragFromToForDuration',
     params: {
