@@ -1,3 +1,9 @@
+## [10.24.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.24.1...v10.24.2) (2026-03-01)
+
+### Bug Fixes
+
+* send mobile scroll distance only for direction strategy ([#2741](https://github.com/appium/appium-xcuitest-driver/issues/2741)) ([ddcf4bc](https://github.com/appium/appium-xcuitest-driver/commit/ddcf4bc8b50ddde369bd3ebc1ec86a7d9a267f81))
+
 ## [10.24.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.24.0...v10.24.1) (2026-02-23)
 
 ### Bug Fixes
