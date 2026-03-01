@@ -184,6 +184,11 @@ export async function mobileScroll(
       );
     }
     params.direction = direction;
+    // we can also optionally pass a distance which appears to be a ratio of
+    // screen height, so 1.0 means a full screen's worth of scrolling
+    if (!_.isNil(distance)) {
+      params.distance = distance;
+    }
   } else if (predicateString) {
     params.predicateString = predicateString;
   } else if (toVisible) {
@@ -193,11 +198,6 @@ export async function mobileScroll(
       'Mobile scroll supports the following strategies: name, direction, predicateString, and toVisible. ' +
         'Specify one of these',
     );
-  }
-  // we can also optionally pass a distance which appears to be a ratio of
-  // screen height, so 1.0 means a full screen's worth of scrolling
-  if (!_.isNil(distance)) {
-    params.distance = distance;
   }
   const endpoint = elementId
     ? `/wda/element/${util.unwrapElement(elementId)}/scroll`
