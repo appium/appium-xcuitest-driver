@@ -184,8 +184,8 @@ export async function mobileScroll(
       );
     }
     params.direction = direction;
-    // `distance` is a ratio of screen height, so 1.0 means a full screen's worth of scrolling.
-    // Only applicable to the direction-based strategy.
+    // we can also optionally pass a distance which appears to be a ratio of
+    // screen height, so 1.0 means a full screen's worth of scrolling
     if (!_.isNil(distance)) {
       params.distance = distance;
     }
