@@ -71,6 +71,28 @@ describe('gesture commands', function () {
           predicateString: 'something',
         });
       });
+      it('should pass distance only for direction strategy', async function () {
+        mockDriver
+          .expects('proxyCommand')
+          .once()
+          .withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down', distance: 0.6});
+        await driver.execute('mobile: scroll', {
+          element: 4,
+          direction: 'down',
+          distance: 0.6,
+        });
+      });
+      it('should ignore distance for non-direction strategy', async function () {
+        mockDriver
+          .expects('proxyCommand')
+          .once()
+          .withExactArgs('/wda/element/4/scroll', 'POST', {name: 'something'});
+        await driver.execute('mobile: scroll', {
+          element: 4,
+          name: 'something',
+          distance: 0.6,
+        });
+      });
     });
 
     describe('swipe', function () {

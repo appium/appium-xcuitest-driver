@@ -1164,6 +1164,7 @@ Name | Type | Required | Description | Example
 elementId ("element" prior to Appium v 1.22) | string | no | The internal element identifier (as hexadecimal hash string) to scroll on (e.g. the container). The active application element will be used instead if this parameter is not provided. | fe50b60b-916d-420b-8728-ee2072ec53eb
 name | string | no | The accessibility id of the child element, to which scrolling is performed. The same result can be achieved by setting _predicateString_ argument to 'name == accessibilityId'. Has no effect if _elementId_ is not a container | cell12
 direction | Either 'up', 'down', 'left' or 'right' | yes | The main difference from [swipe](#mobile-swipe) call with the same argument is that _scroll_ will try to move the current viewport exactly to the next/previous page (the term "page" means the content, which fits into a single device screen) | down
+distance | number | no | A ratio of the screen height. For example, _1.0_ means scrolling one full screen height. Has no effect if _direction_ is not set. | 0.6
 predicateString | string | no | The NSPredicate locator of the child element, to which the scrolling should be performed. Has no effect if _elementId_ is not a container | label == "foo"
 toVisible | boolean | no | If set to _true_ then asks to scroll to the first visible _elementId_ in the parent container. Has no effect if _elementId_ is not set | true
 
