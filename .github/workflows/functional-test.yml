@@ -78,7 +78,7 @@ jobs:
       run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
     - name: Prepare iOS simulator
       id: prepareSimulator
-      uses: futureware-tech/simulator-action@v4
+      uses: futureware-tech/simulator-action@v5
       with:
         model: "${{ matrix.deviceName }}"
         os_version: "${{ matrix.iosVersion }}"
