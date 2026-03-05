@@ -1,3 +1,9 @@
+## [10.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.24.2...v10.25.0) (2026-03-05)
+
+### Features
+
+* add 2 iOS & 6 tvOS buttons for `mobile: pressButton` ([#2744](https://github.com/appium/appium-xcuitest-driver/issues/2744)) ([b591272](https://github.com/appium/appium-xcuitest-driver/commit/b5912728d93eaff6806da1fd87794e2c03bf2e5a))
+
 ## [10.24.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.24.1...v10.24.2) (2026-03-01)
 
 ### Bug Fixes
