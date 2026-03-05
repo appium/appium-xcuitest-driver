@@ -565,15 +565,43 @@ processArguments | map | The map containing actual process arguments. Check the 
 
 ### mobile: pressButton
 
-Emulates press action on the given physical device button. iOS is [pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton), tvOS is [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton) or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
-[mobile: performIoHidEvent](#mobile-performiohidevent) calls a more universal API to perform press with duration on any supported device.
+Emulates a press action on the given physical device button. The iOS implementation is based on
+[pressButton:](https://developer.apple.com/documentation/xctest/xcuidevice/1619052-pressbutton),
+while tvOS can use either [pressButton:](https://developer.apple.com/documentation/xctest/xcuiremote/1627475-pressbutton)
+or [pressButton:forDuration:](https://developer.apple.com/documentation/xctest/xcuiremote/1627476-pressbutton).
+A more universal API can also be used via [`mobile: performIoHidEvent`](#mobile-performiohidevent).
+
+The following values are supported on iOS:
+
+* `home`
+* `volumeup` (real devices only)
+* `volumedown` (real devices only)
+* `action` (Xcode 15+, iOS 16+ supported devices only)
+* `camera` (Xcode 16+, iOS 16+ supported real devices only)
+
+The following values are supported on tvOS:
+
+* `home`
+* `up`
+* `down`
+* `left`
+* `right`
+* `menu`
+* `playpause`
+* `select`
+* `pageup` (Xcode 15+)
+* `pagedown` (Xcode 15+)
+* `guide` (Xcode 15+)
+* `fourcolors` (Xcode 16.3+, tvOS 18.1+)
+* `onetwothree` (Xcode 16.3+, tvOS 18.1+)
+* `tvprovider` (Xcode 16.3+, tvOS 18.1+)
 
 #### Arguments
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-name | string | yes | The name of the button to be pressed. Supported button names for iOS-based devices are (case-insensitive): `home`, `volumeup`, `volumedown`. For tvOS-based devices (case-insensitive): `home`, `up`, `down`, `left`, `right`, `menu`, `playpause`, `select` | home
-durationSeconds | number | no | Duration in float seconds for tvOS-based devices since Appium 1.22.0 | 10
+name | string | yes | The name of the button to be pressed. Must match one of the values listed above (case-insensitive)  | `home`
+durationSeconds | number | no | (tvOS only) Duration to keep the button pressed for, in float seconds | 10
 
 ### mobile: pushNotification
 
@@ -609,6 +637,7 @@ timeoutSeconds | number | no | For how long to wait until the notification is de
 Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
 in [HID Usage Tables](https://developer.apple.com/documentation/hiddriverkit/hid_usage_tables).
 For example, in order to emulate single press on Home button the extension should be called with the following arguments:
+
 - page: `0x0C` (`kHIDPage_Consumer`, select the `Customer` page)
 - usage: `0x40` (`kHIDUsage_Csmr_Menu`, the `Csmr` prefix here means this usage is dedicated to the `Customer` page)
 - durationSeconds: `0.005` (The event duration should be 5 milliseconds to be recognized as a single press by iOS)
