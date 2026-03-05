@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Use Node.js LTS
-        uses: actions/setup-node@v6.2.0
+        uses: actions/setup-node@v6.3.0
         with:
           node-version: lts/*
           check-latest: true
