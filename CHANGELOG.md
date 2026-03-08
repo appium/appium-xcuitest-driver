@@ -1,3 +1,9 @@
+## [10.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.25.0...v10.26.0) (2026-03-08)
+
+### Features
+
+* add snapshotMaxChildren settings ([#2745](https://github.com/appium/appium-xcuitest-driver/issues/2745)) ([7b97129](https://github.com/appium/appium-xcuitest-driver/commit/7b97129bce6eda30c206c812fc46bcfff99e37ce))
+
 ## [10.25.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.24.2...v10.25.0) (2026-03-05)
 
 ### Features
