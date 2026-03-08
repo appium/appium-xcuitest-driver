@@ -127,9 +127,11 @@ advice would be to avoid XPath locators where possible and use locators that are
 supported by XCTest (like predicates or ids) and have better speed ranking.
 If the usage of an XPath locators is a single available option then you may try to apply the following
 suggestions:
-- Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md).
-  This might not help if the destination element is deeply nested -
-  it won't be found if the value of this setting is lower than its nesting level.
+- Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md) or [snapshotMaxChildren setting](../reference/settings.md).
+  `snapshotMaxDepth` limits how deep into the hierarchy WDA will traverse; if the destination
+  element is nested deeper than this value, it will not be present in the snapshot.
+  `snapshotMaxChildren` limits how many child elements are captured for each node; if there are
+  more siblings than this limit, some of them (and any elements under them) will be omitted from the snapshot.
 - Exclude the `visible` and/or `accessible` attributes from your query. These are
   custom attributes exclusive to WDA and their calculation is expensive in comparison
   to other native attributes.
@@ -157,7 +159,7 @@ Location slowness might be observed if:
 
 ### Solutions
 
-- Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md).
+- Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md) or [snapshotMaxChildren setting](../reference/settings.md).
   This might not help if the destination element is deeply nested -
   it won't be found if the value of this setting is lower than its nesting level.
 - Exclude the `visible` and/or `accessible` attributes from your query
@@ -212,7 +214,7 @@ Page source retrieval slowness might be observed if:
 
 ### Solutions
 
-- Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md).
+- Reduce the size of the app hierarchy using the [snapshotMaxDepth setting](../reference/settings.md) or [snapshotMaxChildren setting](../reference/settings.md).
   Note that you won't see nested elements in the source tree whose nesting level is greater than
   the given size.
 - Retrieve the page source without "expensive" attributes using the
