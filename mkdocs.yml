@@ -69,7 +69,6 @@ nav:
           - guides/wda-custom-server.md
       - Driver Actions:
           - guides/audio-capture.md
-          - guides/mjpeg.md
           - guides/file-transfer.md
           - guides/install-certificate.md
           - guides/clipboard.md
@@ -84,6 +83,7 @@ nav:
           - guides/input-events.md
           - guides/capability-sets.md
           - guides/hybrid.md
+          - guides/mjpeg.md
   - contributing.md
 
 plugins:
