@@ -2,7 +2,7 @@ import {getSimulator} from 'appium-ios-simulator';
 import {cleanupSimulator} from '../helpers/simulator';
 import {Simctl} from 'node-simctl';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {TVOS_CAPS} from '../desired';
+import {TVOS_CAPS, extractCapabilityValue} from '../desired';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -21,16 +21,16 @@ describe('tvOS', function () {
   before(async function () {
     udid = await simctl.createDevice(
       SIM_DEVICE_NAME,
-      TVOS_CAPS.deviceName,
-      TVOS_CAPS.platformVersion,
-      {platform: TVOS_CAPS.platformName},
+      extractCapabilityValue(TVOS_CAPS, 'appium:deviceName'),
+      extractCapabilityValue(TVOS_CAPS, 'appium:platformVersion'),
+      {platform: extractCapabilityValue(TVOS_CAPS, 'platformName')},
     );
   });
 
   after(async function () {
     if (udid) {
       const sim = await getSimulator(udid, {
-        platform: TVOS_CAPS.platformName,
+        platform: extractCapabilityValue(TVOS_CAPS, 'platformName'),
         checkExistence: false,
       });
       await cleanupSimulator(sim);
