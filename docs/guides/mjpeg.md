@@ -41,6 +41,9 @@ You can tune how WDA produces the MJPEG stream via the [Settings API](../referen
 | **`mjpegServerFramerate`** | `int` | Maximum screenshots per second sent by the MJPEG broadcaster. Allowed range: **1–60**. | `10` |
 | **`mjpegScalingFactor`** | `float` | Percentage used to downscale MJPEG frames. **1–100**; `100` means no downscaling. | `100` |
 | **`mjpegServerScreenshotQuality`** | `int` | JPEG compression quality for MJPEG frames (1–100). Lower values mean smaller **file size on the wire** (more compression) and lower visual quality; higher values mean larger frames (less compression) and better visual quality. | `25` |
+| **`mjpegFixOrientation`** | `boolean` | Whether to automatically normalize the orientation of MJPEG frames so that they match the current device orientation. Affects only the MJPEG screenshots broadcaster and does not change regular screenshot responses. | `true` |
+
+You can also set initial values for some of these settings via environment variables before WDA starts, namely `MJPEG_SCALING_FACTOR` (for `mjpegScalingFactor`) and `MJPEG_SERVER_SCREENSHOT_QUALITY` (for `mjpegServerScreenshotQuality`). See [Environment variables](../reference/env-vars.md) for details.
 
 Example (via Settings API):
 
