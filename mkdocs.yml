@@ -83,6 +83,7 @@ nav:
           - guides/input-events.md
           - guides/capability-sets.md
           - guides/hybrid.md
+          - guides/mjpeg.md
   - contributing.md
 
 plugins:
