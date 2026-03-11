@@ -95,7 +95,6 @@ plugins:
       'actions.md': 'guides/input-events.md'
       'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
       'audio-capture.md': 'guides/audio-capture.md'
-      'mjpeg.md': 'guides/mjpeg.md'
       'ci-setup.md': 'guides/ci-setup.md'
       'clipboard.md': 'guides/clipboard.md'
       'ios-tvos.md': 'guides/tvos.md'

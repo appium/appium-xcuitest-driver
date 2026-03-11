@@ -19,25 +19,25 @@ Any client that connects to the stream URL and sends a request receives a never-
 
 | Use case | Description |
 |----------|-------------|
-| **Screen recording** | The driver’s [`mobile: startRecordingScreen`](../reference/execute-methods.md#mobile-startrecordingscreen) can use the MJPEG stream as input to **ffmpeg** to produce MP4 (or other) video files. This is the default when using the `mjpeg` video type. |
+| **Screen recording** | The driver’s [`mobile: startRecordingScreen`](../reference/commands.md#startrecordingscreen) can use the MJPEG stream as input to **ffmpeg** to produce MP4 (or other) video files. This is the default when using the `mjpeg` video type. |
 | **Screenshots from stream** | If you set the **`mjpegScreenshotUrl`** capability, the driver uses the **latest frame** from that MJPEG stream when you call the screenshot command instead of calling WDA’s regular screenshot API. |
 | **Live viewing / custom tools** | Any HTTP client (browser, script, or custom app) can connect to the MJPEG URL (after port forwarding for real devices) to view or process the live screen. |
 
 ## Capabilities
 
-| Capability | Description |
+| <div style="width:14em">Capability</div> | Description |
 |------------|-------------|
 | **`appium:mjpegServerPort`** | Port on which WDA broadcasts the MJPEG stream. Default: **9100**. Change this if the default port is already in use (e.g. when running [parallel sessions](parallel-tests.md)); each session must use a unique MJPEG port if you use MJPEG features. |
 | **`appium:mjpegScreenshotUrl`** | URL of a service that provides real-time device screenshots in MJPEG format. If set, the driver uses this stream for the **screenshot** command (returning the latest frame as the screenshot). Appium does **not** set up port forwarding for this URL; you must ensure the URL is reachable (e.g. by using the same port forwarding that `mjpegServerPort` uses, or an external MJPEG server). Example: `http://<host>:9100`. |
 
 For full capability details, see [Capabilities](../reference/capabilities.md).
 
-## Settings (MJPEG broadcaster)
+## Settings
 
-You can tune how WDA produces the MJPEG stream via the [Settings API](../reference/settings.md). These settings affect framerate, scaling, and JPEG quality of the broadcast only (they do not affect the regular WDA screenshot API unless you use `mjpegScreenshotUrl`).
+You can tune how WDA produces the MJPEG stream via the [Settings API](../reference/settings.md). These settings affect framerate, scaling, and JPEG quality of the broadcast only.
 
-| Setting | Type | Description | Default |
-|---------|------|-------------|---------|
+| <div style="width:15em">Setting</div> | Type | Description | Default |
+|------------------------------|------|-------------|---------|
 | **`mjpegServerFramerate`** | `int` | Maximum screenshots per second sent by the MJPEG broadcaster. Allowed range: **1–60**. | `10` |
 | **`mjpegScalingFactor`** | `float` | Percentage used to downscale MJPEG frames. **1–100**; `100` means no downscaling. | `100` |
 | **`mjpegServerScreenshotQuality`** | `int` | JPEG compression quality for MJPEG frames (1–100). Lower values mean smaller **file size on the wire** (more compression) and lower visual quality; higher values mean larger frames (less compression) and better visual quality. | `25` |
@@ -63,14 +63,7 @@ Example (via Settings API):
 
 ### WDA implementation (WebDriverAgentLib)
 
-In [WebDriverAgent](https://github.com/appium/WebDriverAgent):
-
-- **`FBWebServer`** starts a TCP server (screenshots broadcaster) on the port given by `FBConfiguration.mjpegServerPort` (default **9100**). The delegate is **`FBMjpegServer`**.
-- **`FBMjpegServer`**:
-  - Listens for client connections. When a client connects and sends data, the server responds with HTTP `200 OK` and `Content-Type: multipart/x-mixed-replace; boundary=--BoundaryString`.
-  - On a background queue, it repeatedly captures the screen (using `FBScreenshot` with JPEG and the configured quality), optionally scales the image (via `FBImageProcessor` and `mjpegScalingFactor`), then sends each frame as a multipart chunk to **all** connected clients.
-  - When there are no connected clients, it still schedules the next capture tick but does not capture or send frames, to save resources.
-- MJPEG-related options are stored in **`FBConfiguration`** (e.g. `mjpegServerPort`, `mjpegServerFramerate`, `mjpegServerScreenshotQuality`, `mjpegScalingFactor`) and can be overridden at runtime via the **Settings API** (e.g. `FBSessionCommands` applies `mjpegServerScreenshotQuality`, `mjpegServerFramerate`, `mjpegScalingFactor`, and `mjpegFixOrientation` from the settings payload). WDA also reads **environment variables** for some values (e.g. `MJPEG_SERVER_PORT`, `MJPEG_SCALING_FACTOR`, `MJPEG_SERVER_SCREENSHOT_QUALITY`) when the screenshots broadcaster is initialized.
+At a high level, [WebDriverAgent](https://github.com/appium/WebDriverAgent) exposes an HTTP MJPEG endpoint that continuously captures the screen, encodes each frame as JPEG, and streams frames to all connected clients using the `multipart/x-mixed-replace` response format. The capture rate, scaling, quality, and orientation of these frames are controlled by the MJPEG-related [settings](../reference/settings.md) and a few [environment variables](../reference/env-vars.md) that WebDriverAgent reads when the screenshots broadcaster is initialized.
 
 ### Screenshot command and `mjpegScreenshotUrl`
 
@@ -78,7 +71,7 @@ If **`appium:mjpegScreenshotUrl`** is set at session start, the driver starts an
 
 ### Screen recording
 
-For **`mobile: startRecordingScreen`** with video type **`mjpeg`** (the default), the driver uses **ffmpeg** with input `-f mjpeg -i <url>`, where the URL is the MJPEG stream (typically the forwarded `mjpegServerPort`). Frames from the stream are then encoded (e.g. to H.264) and written to an MP4 file. The recording quality and framerate can be aligned with the MJPEG settings (e.g. `mjpegServerFramerate`, `mjpegServerScreenshotQuality`) and with the `videoFps` / `videoQuality` options of the recording API.
+For **`startRecordingScreen`** command with video type **`mjpeg`** (the default), the driver uses **ffmpeg** with input `-f mjpeg -i <url>`, where the URL is the MJPEG stream (typically the forwarded `mjpegServerPort`). Frames from the stream are then encoded (e.g. to H.264) and written to an MP4 file. The recording quality and framerate can be aligned with the MJPEG settings (e.g. `mjpegServerFramerate`, `mjpegServerScreenshotQuality`) and with the `videoFps` / `videoQuality` options of the recording API.
 
 ## Parallel sessions
 
@@ -98,5 +91,5 @@ When running [parallel tests](parallel-tests.md), each session that uses MJPEG (
 | **Default framerate** | 10 fps (`mjpegServerFramerate`) |
 | **Default quality** | 25% JPEG (`mjpegServerScreenshotQuality`) |
 | **Default scaling** | 100% (`mjpegScalingFactor`) |
-| **Related commands** | Screenshot (when `mjpegScreenshotUrl` is set), `mobile: startRecordingScreen` (with MJPEG input) |
+| **Related commands** | Screenshot (when `mjpegScreenshotUrl` is set), `startRecordingScreen` command (with MJPEG input) |
 | **Related reference** | [Capabilities](../reference/capabilities.md), [Settings](../reference/settings.md), [Execute methods](../reference/execute-methods.md) |
