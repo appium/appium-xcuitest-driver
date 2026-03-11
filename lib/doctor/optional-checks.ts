@@ -248,10 +248,10 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
       for (const port of ports) {
         (async () => {
           try {
-            const res = await axios.get(
-              `http://127.0.0.1:${port}/remotexpc/tunnels`,
-              {timeout: 1000, validateStatus: (status) => status === 200},
-            );
+            const res = await axios.get(`http://127.0.0.1:${port}/remotexpc/tunnels`, {
+              timeout: 1000,
+              validateStatus: (status) => status === 200,
+            });
             const data = res.data as any;
             if (!settled && data != null && typeof data === 'object' && data.status === 'OK') {
               settled = true;
@@ -291,7 +291,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
       if (/No devices found/i.test(combinedOutput)) {
         return doctor.okOptional(
           `The Remote XPC tunnel-creation script can be invoked via '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}', ` +
-            `but no real devices are currently connected.`
+            `but no real devices are currently connected.`,
         );
       }
 
