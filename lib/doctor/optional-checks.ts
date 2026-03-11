@@ -1,5 +1,5 @@
 import {resolveExecutablePath} from './utils';
-import {doctor, node} from 'appium/support';
+import {doctor, fs, node} from 'appium/support';
 import axios from 'axios';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
@@ -195,9 +195,59 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
   }
 
   /**
-   * Returns listening TCP ports from netstat (includes root-owned sockets).
+   * Returns listening TCP ports. Uses pure Node on Linux (/proc/net/tcp, tcp6); uses netstat on macOS.
    */
   private async _getListeningTcpPorts(): Promise<number[]> {
+    if (process.platform === 'linux') {
+      return await this._getListeningTcpPortsLinux();
+    }
+    if (process.platform === 'darwin') {
+      return await this._getListeningTcpPortsDarwin();
+    }
+    return [];
+  }
+
+  /**
+   * Linux: parse /proc/net/tcp and /proc/net/tcp6 (pure Node, no exec). State 0A = LISTEN.
+   */
+  private async _getListeningTcpPortsLinux(): Promise<number[]> {
+    const ports = new Set<number>();
+    const files = ['/proc/net/tcp', '/proc/net/tcp6'] as const;
+    for (const file of files) {
+      try {
+        const raw = await fs.readFile(file, 'utf8');
+        const lines = raw.split('\n');
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].trim().split(/\s+/);
+          if (parts.length < 4) {
+            continue;
+          }
+          const state = parts[3];
+          if (state !== '0A') {
+            continue; // 0A = LISTEN
+          }
+          const localAddr = parts[1];
+          const colon = localAddr.lastIndexOf(':');
+          if (colon === -1) {
+            continue;
+          }
+          const portHex = localAddr.slice(colon + 1);
+          const port = Number.parseInt(portHex, 16);
+          if (Number.isInteger(port) && port > 0 && port <= 65535) {
+            ports.add(port);
+          }
+        }
+      } catch {
+        // File missing or unreadable (e.g. not Linux or permissions)
+      }
+    }
+    return Array.from(ports);
+  }
+
+  /**
+   * macOS: netstat -anv -p tcp (Node has no API for system-wide listening ports).
+   */
+  private async _getListeningTcpPortsDarwin(): Promise<number[]> {
     try {
       const {stdout} = await exec('netstat', ['-anv', '-p', 'tcp']);
       const ports = new Set<number>();
@@ -257,7 +307,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
               settled = true;
               resolve(
                 doctor.okOptional(
-                  `Detected an active Remote XPC tunnel registry owned by a Node.js process on port ${port}. ` +
+                  `Detected an active Remote XPC tunnel registry process on port ${port}. ` +
                     `The Remote XPC tunnel infrastructure appears to be available, so Remote XPC-based ` +
                     `features for real devices (iOS/tvOS 18+) should be available.`,
                 ),
