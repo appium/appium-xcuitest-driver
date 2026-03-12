@@ -344,7 +344,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
     const sub = new SubProcess('appium', ['driver', 'run', 'xcuitest', 'tunnel-creation'], {cwd: homeCwd});
     const appendLine = (line: string) => {
       combinedOutput += line + '\n';
-      if (API_READY_PATTERN.test(combinedOutput)) {
+      if (API_READY_PATTERN.test(line)) {
         resolveApiReady();
       }
     };
