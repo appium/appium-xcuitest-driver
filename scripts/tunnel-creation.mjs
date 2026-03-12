@@ -266,6 +266,63 @@ class TunnelCreator {
   }
 }
 
+/**
+ * Sets up signal and error handlers to ensure tunnels are cleaned up exactly once
+ * and an appropriate process exit code is set on shutdown.
+ *
+ * @param {TunnelCreator} tunnelCreator
+ * @returns {() => Promise<void>} cleanup function that can be awaited in a finally block
+ */
+function setupCleanupHandlers(tunnelCreator) {
+  let shuttingDown = false;
+  const cleanupOnce = async () => {
+    if (shuttingDown) {
+      return;
+    }
+    shuttingDown = true;
+    try {
+      await tunnelCreator.cleanup();
+    } catch (err) {
+      log.warn(`Error during tunnel cleanup: ${err?.message ?? err}`);
+    }
+  };
+
+  const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+  for (const signal of shutdownSignals) {
+    process.on(signal, () => {
+      if (process.exitCode == null) {
+        // Follow conventional POSIX exit codes for signals where possible.
+        if (signal === 'SIGINT') {
+          process.exitCode = 130;
+        } else if (signal === 'SIGTERM') {
+          process.exitCode = 143;
+        } else {
+          process.exitCode = 1;
+        }
+      }
+      void cleanupOnce();
+    });
+  }
+
+  process.on('unhandledRejection', (reason) => {
+    log.error('Unhandled promise rejection', reason);
+    if (process.exitCode == null) {
+      process.exitCode = 1;
+    }
+    void cleanupOnce();
+  });
+
+  process.on('uncaughtException', (err) => {
+    log.error('Uncaught exception', err);
+    if (process.exitCode == null) {
+      process.exitCode = 1;
+    }
+    void cleanupOnce();
+  });
+
+  return cleanupOnce;
+}
+
 async function main() {
   const program = new Command();
   program
@@ -303,6 +360,8 @@ async function main() {
   const options = program.opts();
 
   const tunnelCreator = new TunnelCreator();
+  const cleanupOnce = setupCleanupHandlers(tunnelCreator);
+
   try {
     if (options.packetStreamBasePort !== undefined) {
       tunnelCreator.packetStreamBasePort = options.packetStreamBasePort;
@@ -341,7 +400,7 @@ async function main() {
       await usbmux.close();
     }
   } finally {
-    await tunnelCreator.cleanup();
+    await cleanupOnce();
   }
 }
 
