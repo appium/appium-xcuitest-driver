@@ -4,6 +4,7 @@ import axios from 'axios';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
 import {exec, SubProcess} from 'teen_process';
+import memoize from 'lodash/memoize';
 
 export class OptionalSimulatorCheck implements IDoctorCheck {
   log!: AppiumLogger;
@@ -126,36 +127,49 @@ export class OptionalFfmpegCheck implements IDoctorCheck {
 }
 export const optionalFfmpegCheck = new OptionalFfmpegCheck();
 
+const REMOTE_XPC_PACKAGE_NAME = 'appium-ios-remotexpc';
+
+const ensureRemoteXpcDependencyAvailable = memoize(async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
+  try {
+    // We only care that the module can be imported; we don't need to use it here.
+    await import(REMOTE_XPC_PACKAGE_NAME);
+    return true;
+  } catch {
+    return false;
+  }
+});
+
+const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string | null {
+  return node.getModuleRootSync('appium-xcuitest-driver', __filename);
+});
+
 export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
   log!: AppiumLogger;
-  static readonly PACKAGE_NAME = 'appium-ios-remotexpc';
   static readonly README_LINK = 'https://github.com/appium/appium-ios-remotexpc';
 
   async diagnose(): Promise<DoctorCheckResult> {
-    try {
-      // We only care that the module can be imported; we don't need to use it here.
-      await import(OptionalIosRemoteXpcDependencyCheck.PACKAGE_NAME);
+    const available = await ensureRemoteXpcDependencyAvailable();
+    if (available) {
       return doctor.okOptional(
-        `${OptionalIosRemoteXpcDependencyCheck.PACKAGE_NAME} is installed and can be imported. ` +
+        `${REMOTE_XPC_PACKAGE_NAME} is installed and can be imported. ` +
           `Remote XPC-based features are available for real devices (iOS/tvOS 18+).`,
       );
-    } catch {
-      return doctor.nokOptional(
-        `${OptionalIosRemoteXpcDependencyCheck.PACKAGE_NAME} is not installed or cannot be imported. ` +
-          `Install it as an optional dependency if you plan to use Remote XPC-based features ` +
-          `on real devices (iOS/tvOS 18+). Tests may still run without it, but some ` +
-          `advanced functionality might not work or be unavailable.`,
-      );
     }
+    return doctor.nokOptional(
+      `${REMOTE_XPC_PACKAGE_NAME} is not installed or cannot be imported. ` +
+        `Install it as an optional dependency if you plan to use Remote XPC-based features ` +
+        `on real devices (iOS/tvOS 18+). Tests may still run without it, but some ` +
+        `advanced functionality might not work or be unavailable.`,
+    );
   }
 
   async fix(): Promise<string> {
-    const driverRoot = node.getModuleRootSync('appium-xcuitest-driver', __filename);
+    const driverRoot = getXcuitestDriverRoot();
     const locationHint = driverRoot ? `cd "${driverRoot}"; ` : '';
     return (
-      `${`${OptionalIosRemoteXpcDependencyCheck.PACKAGE_NAME}`.bold} provides Remote XPC communication ` +
+      `${`${REMOTE_XPC_PACKAGE_NAME}`.bold} provides Remote XPC communication ` +
       `and tunneling support for real devices (iOS/tvOS 18+). ` +
-      `Run '${locationHint}npm install ${OptionalIosRemoteXpcDependencyCheck.PACKAGE_NAME}'. ` +
+      `Run '${locationHint}npm install ${REMOTE_XPC_PACKAGE_NAME}'. ` +
       `For more information, see ${OptionalIosRemoteXpcDependencyCheck.README_LINK}.`
     );
   }
@@ -179,6 +193,15 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
   static readonly TUNNEL_CREATION_COMMAND = 'appium driver run xcuitest tunnel-creation';
 
   async diagnose(): Promise<DoctorCheckResult> {
+    const remoteXpcAvailable = await ensureRemoteXpcDependencyAvailable();
+    if (!remoteXpcAvailable) {
+      return doctor.nokOptional(
+        `Remote XPC tunnel availability cannot be checked because ` +
+          `${REMOTE_XPC_PACKAGE_NAME} is not installed or cannot be imported. ` +
+          `Install it first using the '${REMOTE_XPC_PACKAGE_NAME}' optional check.`,
+      );
+    }
+
     const platform = process.platform;
     if (platform !== 'darwin' && platform !== 'linux') {
       return doctor.okOptional(
@@ -335,13 +358,16 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
    */
   private async _runTunnelCreationScript(): Promise<DoctorCheckResult> {
     const homeCwd = process.env.HOME || process.cwd();
+    const driverRoot = getXcuitestDriverRoot();
 
     let combinedOutput = '';
     let resolveApiReady: () => void;
     const apiReadyPromise = new Promise<{reason: 'api'}>((resolve) => {
       resolveApiReady = () => resolve({reason: 'api'});
     });
-    const sub = new SubProcess('appium', ['driver', 'run', 'xcuitest', 'tunnel-creation'], {cwd: homeCwd});
+    const sub = driverRoot != null
+      ? new SubProcess(process.execPath, ['./scripts/tunnel-creation.mjs'], {cwd: driverRoot})
+      : new SubProcess('appium', ['driver', 'run', 'xcuitest', 'tunnel-creation'], {cwd: homeCwd});
     const appendLine = (line: string) => {
       combinedOutput += line + '\n';
       if (API_READY_PATTERN.test(line)) {
