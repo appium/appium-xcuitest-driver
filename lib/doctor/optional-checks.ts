@@ -3,7 +3,7 @@ import {doctor, fs, node} from 'appium/support';
 import axios from 'axios';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
-import {exec} from 'teen_process';
+import {exec, SubProcess} from 'teen_process';
 
 export class OptionalSimulatorCheck implements IDoctorCheck {
   log!: AppiumLogger;
@@ -170,6 +170,9 @@ export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
 }
 export const optionalIosRemoteXpcDependencyCheck = new OptionalIosRemoteXpcDependencyCheck();
 
+const TUNNEL_SCRIPT_TIMEOUT_MS = 5000;
+const API_READY_PATTERN = /:\d+\/remotexpc\/tunnels/;
+
 export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
   log!: AppiumLogger;
   static readonly README_LINK = 'https://github.com/appium/appium-ios-tuntap';
@@ -326,50 +329,99 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
   }
 
   /**
-   * Runs the tunnel-creation driver script (no sudo) and returns a doctor result from its output.
+   * Runs the tunnel-creation driver script as a subprocess to avoid blocking doctor if the script hangs.
+   * Waits for exit, TUNNEL_SCRIPT_TIMEOUT_MS (5s), or output string indicating registry is up;
+   * then evaluates or stops the process.
    */
   private async _runTunnelCreationScript(): Promise<DoctorCheckResult> {
+    const homeCwd = process.env.HOME || process.cwd();
+
+    let combinedOutput = '';
+    let resolveApiReady: () => void;
+    const apiReadyPromise = new Promise<{reason: 'api'}>((resolve) => {
+      resolveApiReady = () => resolve({reason: 'api'});
+    });
+    const sub = new SubProcess('appium', ['driver', 'run', 'xcuitest', 'tunnel-creation'], {cwd: homeCwd});
+    const appendLine = (line: string) => {
+      combinedOutput += line + '\n';
+      if (API_READY_PATTERN.test(combinedOutput)) {
+        resolveApiReady();
+      }
+    };
+    sub.on('line-stdout', appendLine);
+    sub.on('line-stderr', appendLine);
+
+    const exitPromise = new Promise<{reason: 'exit'; code?: number; signal?: string}>((resolve) => {
+      sub.once('exit', (code, signal) => resolve({reason: 'exit', code, signal}));
+    });
+    const timeoutPromise = new Promise<{reason: 'timeout'}>((resolve) => {
+      setTimeout(() => resolve({reason: 'timeout'}), TUNNEL_SCRIPT_TIMEOUT_MS);
+    });
+
     try {
-      const homeCwd = process.env.HOME || process.cwd();
-      const {stdout, stderr} = await exec(
-        'appium',
-        ['driver', 'run', 'xcuitest', 'tunnel-creation'],
-        {cwd: homeCwd},
-      );
-      const combinedOutput = `${stdout}\n${stderr}`.trim();
-
-      if (/No devices found/i.test(combinedOutput)) {
-        return doctor.okOptional(
-          `The Remote XPC tunnel-creation script can be invoked via '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}', ` +
-            `but no real devices are currently connected.`,
-        );
-      }
-
-      if (/operation not permitted|permission denied/i.test(combinedOutput)) {
-        return doctor.okOptional(
-          `The tunnel-creation script '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' is available, ` +
-            `but could not create a TUN/TAP interface without elevated privileges (` +
-            `${'Operation not permitted'.bold}). ` +
-            `This is expected when not running with sudo/root. ` +
-            `When you actually need Remote XPC-based functionality for real devices (iOS/tvOS 18+), ` +
-            `run the same command with sufficient privileges to establish the tunnel.`,
-        );
-      }
-
-      return doctor.okOptional(
-        `Successfully ran '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' without sudo. ` +
-          `The Remote XPC tunnel infrastructure should be available for creating tunnels.` +
-          (combinedOutput ? `\nLast output:\n${combinedOutput}` : ''),
-      );
+      await sub.start(0);
     } catch (err) {
       const message = ((err as any).stderr || (err as Error).message || '').toString();
       return doctor.nokOptional(
-        `Failed to verify TUN/TAP tunnel via '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}'. ` +
-          `Without a working tunnel, tests may still run but Remote XPC-based functionality ` +
-          `on real devices (iOS/tvOS 18+) might not work or be unavailable. ` +
+        `Could not start '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}'. ` +
+          `Without a working tunnel, Remote XPC-based functionality on real devices (iOS/tvOS 18+) might not work or be unavailable. ` +
           `Details: ${message}`,
       );
     }
+
+    const winner = await Promise.race([exitPromise, timeoutPromise, apiReadyPromise]);
+
+    if (winner.reason === 'exit') {
+      const code = (winner as {reason: 'exit'; code?: number; signal?: string}).code;
+      return this._evaluateTunnelScriptOutput(combinedOutput.trim(), code);
+    }
+
+    if (sub.isRunning) {
+      try {
+        await sub.stop('SIGTERM', 2000);
+      } catch {
+        // ignore
+      }
+    }
+    return doctor.okOptional(
+      `The tunnel script was started; the registry was detected or the check timed out. ` +
+        `Tunnel infrastructure for real devices (iOS/tvOS 18+) should be available when run with sufficient privileges.`,
+    );
+  }
+
+  /**
+   * Interprets tunnel-creation script stdout+stderr and optional exit code; returns the appropriate doctor result.
+   * Output pattern matches take priority over a non-zero exit code.
+   */
+  private _evaluateTunnelScriptOutput(combinedOutput: string, exitCode?: number | null): DoctorCheckResult {
+    if (/No devices found/i.test(combinedOutput)) {
+      return doctor.okOptional(
+        `The Remote XPC tunnel-creation script can be invoked via '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}', ` +
+          `but no real devices are currently connected.`,
+      );
+    }
+    if (/operation not permitted|permission denied/i.test(combinedOutput)) {
+      return doctor.okOptional(
+        `The tunnel-creation script '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' is available, ` +
+          `but could not create a TUN/TAP interface without elevated privileges (` +
+          `${'Operation not permitted'.bold}). ` +
+          `This is expected when not running with sudo/root. ` +
+          `When you actually need Remote XPC-based functionality for real devices (iOS/tvOS 18+), ` +
+          `run the same command with sufficient privileges to establish the tunnel.`,
+      );
+    }
+    if (exitCode != null && exitCode !== 0) {
+      return doctor.nokOptional(
+        `The tunnel script exited with code ${exitCode}. ` +
+          `Without a working tunnel, Remote XPC-based functionality on real devices (iOS/tvOS 18+) might not work. ` +
+          (combinedOutput ? `Output:\n${combinedOutput}` : ''),
+      );
+    }
+    return doctor.okOptional(
+      `Successfully ran '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' without sudo. ` +
+        `The Remote XPC tunnel infrastructure should be available for creating tunnels.` +
+        (combinedOutput ? `\nLast output:\n${combinedOutput}` : ''),
+    );
   }
 
   async fix(): Promise<string> {
