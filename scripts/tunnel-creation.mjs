@@ -98,45 +98,26 @@ class TunnelCreator {
   }
 
   /**
-   * Setup cleanup handlers for graceful shutdown
+   * Cleanup resources for graceful shutdown
    */
-  setupCleanupHandlers() {
-    const cleanup = async (signal) => {
-      log.warn(`\nReceived ${signal}. Cleaning up...`);
+  async cleanup() {
+    log.warn('Cleaning up tunnel resources...');
 
-      // Close all packet stream servers
-      if (this._packetStreamServers.size > 0) {
-        log.info(`Closing ${this._packetStreamServers.size} packet stream server(s)...`);
-        for (const [udid, server] of this._packetStreamServers) {
-          try {
-            await server.stop();
-            log.info(`Closed packet stream server for device ${udid}`);
-          } catch (err) {
-            log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
-          }
+    // Close all packet stream servers
+    if (this._packetStreamServers.size > 0) {
+      log.info(`Closing ${this._packetStreamServers.size} packet stream server(s)...`);
+      for (const [udid, server] of this._packetStreamServers) {
+        try {
+          await server.stop();
+          log.info(`Closed packet stream server for device ${udid}`);
+        } catch (err) {
+          log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
         }
-        this._packetStreamServers.clear();
       }
+      this._packetStreamServers.clear();
+    }
 
-      log.info('Cleanup completed. Exiting...');
-      process.exit(0);
-    };
-
-    // Handle various termination signals
-    process.on('SIGINT', () => cleanup('SIGINT (Ctrl+C)'));
-    process.on('SIGTERM', () => cleanup('SIGTERM'));
-    process.on('SIGHUP', () => cleanup('SIGHUP'));
-
-    // Handle uncaught exceptions and unhandled rejections
-    process.on('uncaughtException', async (error) => {
-      log.error('Uncaught Exception:', error);
-      await cleanup('Uncaught Exception');
-    });
-
-    process.on('unhandledRejection', async (reason, promise) => {
-      log.error('Unhandled Rejection at:', promise, 'reason:', reason);
-      await cleanup('Unhandled Rejection');
-    });
+    log.info('Cleanup completed.');
   }
 
   /**
@@ -308,15 +289,11 @@ function parseArg(args, flagName) {
   return undefined;
 };
 
-const BOOTSTRAP_PATH = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
-
 /**
  */
 async function main() {
   // Create an instance of TunnelCreator
   const tunnelCreator = new TunnelCreator();
-  tunnelCreator.setupCleanupHandlers();
-
   const args = process.argv.slice(2);
 
   const specificUdid = parseArg(args, '--udid');
@@ -331,34 +308,41 @@ async function main() {
     tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
   }
 
-  if (!BOOTSTRAP_PATH) {
-    throw new Error(`BOOTSTRAP_PATH is null`);
+  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
+  if (!moduleRoot) {
+    throw new Error('Cannot resolve module root for appium-xcuitest-driver');
   }
 
-  const packageInfo = JSON.parse(
-    fs.readFileSync(path.join(BOOTSTRAP_PATH, 'package.json'), 'utf8'),
-  );
-  const box = strongbox(packageInfo.name);
   try {
-    await box.createItemWithValue(TUNNEL_REGISTRY_PORT, String(tunnelCreator.tunnelRegistryPort));
-  } catch (error) {
-    throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
-  }
+    const packageInfo = JSON.parse(
+      fs.readFileSync(path.join(moduleRoot, 'package.json'), 'utf8'),
+    );
+    const box = strongbox(packageInfo.name);
+    try {
+      await box.createItemWithValue(
+        TUNNEL_REGISTRY_PORT,
+        String(tunnelCreator.tunnelRegistryPort),
+      );
+    } catch (error) {
+      throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
+    }
 
-  /** @type {import('tls').ConnectionOptions} */
-  const tlsOptions = {
-    rejectUnauthorized: false,
-    minVersion: 'TLSv1.2',
-  };
+    /** @type {import('tls').ConnectionOptions} */
+    const tlsOptions = {
+      rejectUnauthorized: false,
+      minVersion: 'TLSv1.2',
+    };
 
-  log.info('Connecting to usbmuxd...');
-  const usbmux = await createUsbmux();
-
-  try {
-    await tunnelCreator.setupTunnels(usbmux, specificUdid, tlsOptions);
+    log.info('Connecting to usbmuxd...');
+    const usbmux = await createUsbmux();
+    try {
+      await tunnelCreator.setupTunnels(usbmux, specificUdid, tlsOptions);
+    } finally {
+      await usbmux.close();
+    }
   } finally {
-    await usbmux.close();
+    await tunnelCreator.cleanup();
   }
 }
 
-(async () => await main())();
+await main();
