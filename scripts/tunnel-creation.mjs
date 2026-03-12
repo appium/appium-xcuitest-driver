@@ -288,31 +288,25 @@ function parseArg(args, flagName) {
   return undefined;
 };
 
-/**
- */
 async function main() {
-  // Create an instance of TunnelCreator
-  const tunnelCreator = new TunnelCreator();
   const args = process.argv.slice(2);
-
   const specificUdid = parseArg(args, '--udid');
-
   const packetStreamBasePort = parseArg(args, '--packet-stream-base-port');
-  if (packetStreamBasePort !== undefined) {
-    tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePort, 10);
-  }
-
   const tunnelRegistryPort = parseArg(args, '--tunnel-registry-port');
-  if (tunnelRegistryPort !== undefined) {
-    tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
-  }
 
-  const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
-  if (!moduleRoot) {
-    throw new Error('Cannot resolve module root for appium-xcuitest-driver');
-  }
-
+  const tunnelCreator = new TunnelCreator();
   try {
+    if (packetStreamBasePort !== undefined) {
+      tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePort, 10);
+    }
+    if (tunnelRegistryPort !== undefined) {
+      tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
+    }
+    const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
+    if (!moduleRoot) {
+      throw new Error('Cannot resolve module root for appium-xcuitest-driver');
+    }
+
     const packageJson = await fs.readFile(path.join(moduleRoot, 'package.json'), 'utf8');
     const packageInfo = JSON.parse(packageJson);
     const box = strongbox(packageInfo.name);
