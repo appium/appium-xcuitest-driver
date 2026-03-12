@@ -17,6 +17,7 @@ import {
 
 import {strongbox} from '@appium/strongbox';
 import path from 'node:path';
+import {Command} from 'commander';
 
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
@@ -265,66 +266,49 @@ class TunnelCreator {
   }
 }
 
-/**
- * Helper function to parse string arguments
- * @param {string[]} args - Array of command line arguments
- * @param {string} flagName - Name of the flag to parse (e.g. '--udid')
- * @returns {string|undefined} The value of the flag if found, undefined otherwise
- */
-function parseArg(args, flagName) {
-  const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
-  if (equalsArg) {
-    const value = equalsArg.split('=')[1];
-    log.info(`Using ${flagName.slice(2)}: ${value}`);
-    return value;
-  } else {
-    const flagIndex = args.indexOf(flagName);
-    if (flagIndex !== -1 && flagIndex + 1 < args.length) {
-      const value = args[flagIndex + 1];
-      log.info(`Using ${flagName.slice(2)}: ${value}`);
-      return value;
-    }
-  }
-  return undefined;
-};
-
-/**
- * Parse a valid TCP port from arguments.
- * Returns a number in the range 1–65535, or undefined if not provided.
- * Throws if the value is present but invalid.
- * @param {string[]} args
- * @param {string} flagName
- * @returns {number | undefined}
- */
-function parsePortArg(args, flagName) {
-  const raw = parseArg(args, flagName);
-  if (raw === undefined) {
-    return undefined;
-  }
-
-  const port = Number.parseInt(raw, 10);
-  if (!Number.isFinite(port) || port <= 0 || port > 65535) {
-    throw new Error(
-      `Invalid value for ${flagName}: ${raw}. Expected an integer between 1 and 65535.`,
-    );
-  }
-
-  return port;
-}
-
 async function main() {
-  const args = process.argv.slice(2);
-  const specificUdid = parseArg(args, '--udid');
-  const packetStreamBasePort = parsePortArg(args, '--packet-stream-base-port');
-  const tunnelRegistryPort = parsePortArg(args, '--tunnel-registry-port');
+  const program = new Command();
+  program
+    .name('appium driver run xcuitest tunnel-creation')
+    .description('Create tunnels for connected iOS devices')
+    .option('--udid <udid>', 'UDID of the device to create tunnel for')
+    .option(
+      '--packet-stream-base-port <port>',
+      'Base port for packet stream servers (1-65535)',
+      (value) => {
+        const port = Number.parseInt(value, 10);
+        if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+          throw new Error(
+            `Invalid packet stream base port: ${value}. Expected an integer between 1 and 65535.`,
+          );
+        }
+        return port;
+      },
+    )
+    .option(
+      '--tunnel-registry-port <port>',
+      'Port for the tunnel registry API server (1-65535)',
+      (value) => {
+        const port = Number.parseInt(value, 10);
+        if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+          throw new Error(
+            `Invalid tunnel registry port: ${value}. Expected an integer between 1 and 65535.`,
+          );
+        }
+        return port;
+      },
+    );
+
+  program.parse(process.argv);
+  const options = program.opts();
 
   const tunnelCreator = new TunnelCreator();
   try {
-    if (packetStreamBasePort !== undefined) {
-      tunnelCreator.packetStreamBasePort = packetStreamBasePort;
+    if (options.packetStreamBasePort !== undefined) {
+      tunnelCreator.packetStreamBasePort = options.packetStreamBasePort;
     }
-    if (tunnelRegistryPort !== undefined) {
-      tunnelCreator.tunnelRegistryPort = tunnelRegistryPort;
+    if (options.tunnelRegistryPort !== undefined) {
+      tunnelCreator.tunnelRegistryPort = options.tunnelRegistryPort;
     }
     const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
     if (!moduleRoot) {
@@ -352,7 +336,7 @@ async function main() {
     log.info('Connecting to usbmuxd...');
     const usbmux = await createUsbmux();
     try {
-      await tunnelCreator.setupTunnels(usbmux, specificUdid, tlsOptions);
+      await tunnelCreator.setupTunnels(usbmux, options.udid, tlsOptions);
     } finally {
       await usbmux.close();
     }
