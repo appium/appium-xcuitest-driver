@@ -129,7 +129,7 @@ export const optionalFfmpegCheck = new OptionalFfmpegCheck();
 
 const REMOTE_XPC_PACKAGE_NAME = 'appium-ios-remotexpc';
 
-const ensureRemoteXpcDependencyAvailable = memoize(
+const isRemoteXpcDependencyAvailable = memoize(
   async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
     try {
       // We only care that the module can be imported; we don't need to use it here.
@@ -150,7 +150,7 @@ export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
   static readonly README_LINK = 'https://github.com/appium/appium-ios-remotexpc';
 
   async diagnose(): Promise<DoctorCheckResult> {
-    const available = await ensureRemoteXpcDependencyAvailable();
+    const available = await isRemoteXpcDependencyAvailable();
     if (available) {
       return doctor.okOptional(
         `${REMOTE_XPC_PACKAGE_NAME} is installed and can be imported. ` +
@@ -195,7 +195,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
   static readonly TUNNEL_CREATION_COMMAND = 'appium driver run xcuitest tunnel-creation';
 
   async diagnose(): Promise<DoctorCheckResult> {
-    const remoteXpcAvailable = await ensureRemoteXpcDependencyAvailable();
+    const remoteXpcAvailable = await isRemoteXpcDependencyAvailable();
     if (!remoteXpcAvailable) {
       return doctor.nokOptional(
         `Remote XPC tunnel availability cannot be checked because ` +
