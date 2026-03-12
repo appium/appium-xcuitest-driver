@@ -1,3 +1,9 @@
+## [10.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.26.0...v10.27.0) (2026-03-12)
+
+### Features
+
+* **appium-remote-debugger:** bump appium-remote-debugger to 15.6.0 to add shim web inspector support ([#2750](https://github.com/appium/appium-xcuitest-driver/issues/2750)) ([f0d85ab](https://github.com/appium/appium-xcuitest-driver/commit/f0d85ab5fe38214e33aea5f210d34ee7f4f09ae5))
+
 ## [10.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.25.0...v10.26.0) (2026-03-08)
 
 ### Features
