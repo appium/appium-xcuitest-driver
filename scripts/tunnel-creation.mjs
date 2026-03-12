@@ -3,7 +3,7 @@
  * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
  * This script demonstrates the tunnel creation workflow for all connected devices
  */
-import {logger, node} from 'appium/support.js';
+import {logger, node, fs} from 'appium/support.js';
 import _ from 'lodash';
 
 import {
@@ -17,7 +17,6 @@ import {
 
 import {strongbox} from '@appium/strongbox';
 import path from 'node:path';
-import fs from 'node:fs';
 
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
@@ -314,9 +313,8 @@ async function main() {
   }
 
   try {
-    const packageInfo = JSON.parse(
-      fs.readFileSync(path.join(moduleRoot, 'package.json'), 'utf8'),
-    );
+    const packageJson = await fs.readFile(path.join(moduleRoot, 'package.json'), 'utf8');
+    const packageInfo = JSON.parse(packageJson);
     const box = strongbox(packageInfo.name);
     try {
       await box.createItemWithValue(
