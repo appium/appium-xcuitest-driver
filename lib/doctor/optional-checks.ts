@@ -378,7 +378,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
 
     if (sub.isRunning) {
       try {
-        await sub.stop('SIGTERM', 2000);
+        await sub.stop('SIGTERM', 500);
       } catch {
         // ignore
       }
