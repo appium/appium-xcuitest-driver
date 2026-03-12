@@ -288,19 +288,43 @@ function parseArg(args, flagName) {
   return undefined;
 };
 
+/**
+ * Parse a valid TCP port from arguments.
+ * Returns a number in the range 1–65535, or undefined if not provided.
+ * Throws if the value is present but invalid.
+ * @param {string[]} args
+ * @param {string} flagName
+ * @returns {number | undefined}
+ */
+function parsePortArg(args, flagName) {
+  const raw = parseArg(args, flagName);
+  if (raw === undefined) {
+    return undefined;
+  }
+
+  const port = Number.parseInt(raw, 10);
+  if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+    throw new Error(
+      `Invalid value for ${flagName}: ${raw}. Expected an integer between 1 and 65535.`,
+    );
+  }
+
+  return port;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const specificUdid = parseArg(args, '--udid');
-  const packetStreamBasePort = parseArg(args, '--packet-stream-base-port');
-  const tunnelRegistryPort = parseArg(args, '--tunnel-registry-port');
+  const packetStreamBasePort = parsePortArg(args, '--packet-stream-base-port');
+  const tunnelRegistryPort = parsePortArg(args, '--tunnel-registry-port');
 
   const tunnelCreator = new TunnelCreator();
   try {
     if (packetStreamBasePort !== undefined) {
-      tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePort, 10);
+      tunnelCreator.packetStreamBasePort = packetStreamBasePort;
     }
     if (tunnelRegistryPort !== undefined) {
-      tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
+      tunnelCreator.tunnelRegistryPort = tunnelRegistryPort;
     }
     const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
     if (!moduleRoot) {
