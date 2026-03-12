@@ -129,15 +129,17 @@ export const optionalFfmpegCheck = new OptionalFfmpegCheck();
 
 const REMOTE_XPC_PACKAGE_NAME = 'appium-ios-remotexpc';
 
-const ensureRemoteXpcDependencyAvailable = memoize(async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
-  try {
-    // We only care that the module can be imported; we don't need to use it here.
-    await import(REMOTE_XPC_PACKAGE_NAME);
-    return true;
-  } catch {
-    return false;
-  }
-});
+const ensureRemoteXpcDependencyAvailable = memoize(
+  async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
+    try {
+      // We only care that the module can be imported; we don't need to use it here.
+      await import(REMOTE_XPC_PACKAGE_NAME);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+);
 
 const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string | null {
   return node.getModuleRootSync('appium-xcuitest-driver', __filename);
@@ -365,9 +367,12 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
     const apiReadyPromise = new Promise<{reason: 'api'}>((resolve) => {
       resolveApiReady = () => resolve({reason: 'api'});
     });
-    const sub = driverRoot != null
-      ? new SubProcess(process.execPath, ['./scripts/tunnel-creation.mjs'], {cwd: driverRoot})
-      : new SubProcess('appium', ['driver', 'run', 'xcuitest', 'tunnel-creation'], {cwd: homeCwd});
+    const sub =
+      driverRoot != null
+        ? new SubProcess(process.execPath, ['./scripts/tunnel-creation.mjs'], {cwd: driverRoot})
+        : new SubProcess('appium', ['driver', 'run', 'xcuitest', 'tunnel-creation'], {
+            cwd: homeCwd,
+          });
     const appendLine = (line: string) => {
       combinedOutput += line + '\n';
       if (API_READY_PATTERN.test(line)) {
@@ -419,7 +424,10 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
    * Interprets tunnel-creation script stdout+stderr and optional exit code; returns the appropriate doctor result.
    * Output pattern matches take priority over a non-zero exit code.
    */
-  private _evaluateTunnelScriptOutput(combinedOutput: string, exitCode?: number | null): DoctorCheckResult {
+  private _evaluateTunnelScriptOutput(
+    combinedOutput: string,
+    exitCode?: number | null,
+  ): DoctorCheckResult {
     if (/No devices found/i.test(combinedOutput)) {
       return doctor.okOptional(
         `The Remote XPC tunnel-creation script can be invoked via '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}', ` +
