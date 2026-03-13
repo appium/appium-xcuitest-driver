@@ -62,6 +62,7 @@ nav:
           - guides/parallel-tests.md
           - guides/ci-setup.md
           - guides/multiple-xcode-versions.md
+          - guides/remotexpc-tunnels-real-devices.md
           - Improve Session Startup Performance:
               - guides/run-preinstalled-wda.md
               - guides/run-prebuilt-wda.md
