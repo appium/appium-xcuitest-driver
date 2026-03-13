@@ -3,7 +3,7 @@
  * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
  * This script demonstrates the tunnel creation workflow for all connected devices
  */
-import {logger, node} from 'appium/support.js';
+import {logger, node, fs} from 'appium/support.js';
 import _ from 'lodash';
 
 import {
@@ -17,7 +17,7 @@ import {
 
 import {strongbox} from '@appium/strongbox';
 import path from 'node:path';
-import fs from 'node:fs';
+import {Command} from 'commander';
 
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
@@ -98,45 +98,26 @@ class TunnelCreator {
   }
 
   /**
-   * Setup cleanup handlers for graceful shutdown
+   * Cleanup resources for graceful shutdown
    */
-  setupCleanupHandlers() {
-    const cleanup = async (signal) => {
-      log.warn(`\nReceived ${signal}. Cleaning up...`);
+  async cleanup() {
+    log.warn('Cleaning up tunnel resources...');
 
-      // Close all packet stream servers
-      if (this._packetStreamServers.size > 0) {
-        log.info(`Closing ${this._packetStreamServers.size} packet stream server(s)...`);
-        for (const [udid, server] of this._packetStreamServers) {
-          try {
-            await server.stop();
-            log.info(`Closed packet stream server for device ${udid}`);
-          } catch (err) {
-            log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
-          }
+    // Close all packet stream servers
+    if (this._packetStreamServers.size > 0) {
+      log.info(`Closing ${this._packetStreamServers.size} packet stream server(s)...`);
+      for (const [udid, server] of this._packetStreamServers) {
+        try {
+          await server.stop();
+          log.info(`Closed packet stream server for device ${udid}`);
+        } catch (err) {
+          log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
         }
-        this._packetStreamServers.clear();
       }
+      this._packetStreamServers.clear();
+    }
 
-      log.info('Cleanup completed. Exiting...');
-      process.exit(0);
-    };
-
-    // Handle various termination signals
-    process.on('SIGINT', () => cleanup('SIGINT (Ctrl+C)'));
-    process.on('SIGTERM', () => cleanup('SIGTERM'));
-    process.on('SIGHUP', () => cleanup('SIGHUP'));
-
-    // Handle uncaught exceptions and unhandled rejections
-    process.on('uncaughtException', async (error) => {
-      log.error('Uncaught Exception:', error);
-      await cleanup('Uncaught Exception');
-    });
-
-    process.on('unhandledRejection', async (reason, promise) => {
-      log.error('Unhandled Rejection at:', promise, 'reason:', reason);
-      await cleanup('Unhandled Rejection');
-    });
+    log.info('Cleanup completed.');
   }
 
   /**
@@ -279,86 +260,148 @@ class TunnelCreator {
       log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
       if (successful.length > 0) {
         const firstUdid = successful[0].device.Properties.SerialNumber;
-        log.info(`   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`);
+        log.info(`   curl http://localhost:${this._tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}`);
       }
     }
   }
 }
 
 /**
- * Helper function to parse string arguments
- * @param {string[]} args - Array of command line arguments
- * @param {string} flagName - Name of the flag to parse (e.g. '--udid')
- * @returns {string|undefined} The value of the flag if found, undefined otherwise
+ * Sets up signal and error handlers to ensure tunnels are cleaned up exactly once
+ * and an appropriate process exit code is set on shutdown.
+ *
+ * @param {TunnelCreator} tunnelCreator
+ * @returns {() => Promise<void>} cleanup function that can be awaited in a finally block
  */
-function parseArg(args, flagName) {
-  const equalsArg = args.find((arg) => arg.startsWith(`${flagName}=`));
-  if (equalsArg) {
-    const value = equalsArg.split('=')[1];
-    log.info(`Using ${flagName.slice(2)}: ${value}`);
-    return value;
-  } else {
-    const flagIndex = args.indexOf(flagName);
-    if (flagIndex !== -1 && flagIndex + 1 < args.length) {
-      const value = args[flagIndex + 1];
-      log.info(`Using ${flagName.slice(2)}: ${value}`);
-      return value;
+function setupCleanupHandlers(tunnelCreator) {
+  let shuttingDown = false;
+  const cleanupOnce = async () => {
+    if (shuttingDown) {
+      return;
     }
-  }
-  return undefined;
-};
-
-const BOOTSTRAP_PATH = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
-
-/**
- */
-async function main() {
-  // Create an instance of TunnelCreator
-  const tunnelCreator = new TunnelCreator();
-  tunnelCreator.setupCleanupHandlers();
-
-  const args = process.argv.slice(2);
-
-  const specificUdid = parseArg(args, '--udid');
-
-  const packetStreamBasePort = parseArg(args, '--packet-stream-base-port');
-  if (packetStreamBasePort !== undefined) {
-    tunnelCreator.packetStreamBasePort = parseInt(packetStreamBasePort, 10);
-  }
-
-  const tunnelRegistryPort = parseArg(args, '--tunnel-registry-port');
-  if (tunnelRegistryPort !== undefined) {
-    tunnelCreator.tunnelRegistryPort = parseInt(tunnelRegistryPort, 10);
-  }
-
-  if (!BOOTSTRAP_PATH) {
-    throw new Error(`BOOTSTRAP_PATH is null`);
-  }
-
-  const packageInfo = JSON.parse(
-    fs.readFileSync(path.join(BOOTSTRAP_PATH, 'package.json'), 'utf8'),
-  );
-  const box = strongbox(packageInfo.name);
-  try {
-    await box.createItemWithValue(TUNNEL_REGISTRY_PORT, String(tunnelCreator.tunnelRegistryPort));
-  } catch (error) {
-    throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
-  }
-
-  /** @type {import('tls').ConnectionOptions} */
-  const tlsOptions = {
-    rejectUnauthorized: false,
-    minVersion: 'TLSv1.2',
+    shuttingDown = true;
+    try {
+      await tunnelCreator.cleanup();
+    } catch (err) {
+      log.warn(`Error during tunnel cleanup: ${err?.message ?? err}`);
+    }
   };
 
-  log.info('Connecting to usbmuxd...');
-  const usbmux = await createUsbmux();
+  const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+  for (const signal of shutdownSignals) {
+    process.on(signal, () => {
+      if (process.exitCode == null) {
+        // Follow conventional POSIX exit codes for signals where possible.
+        if (signal === 'SIGINT') {
+          process.exitCode = 130;
+        } else if (signal === 'SIGTERM') {
+          process.exitCode = 143;
+        } else {
+          process.exitCode = 1;
+        }
+      }
+      void cleanupOnce();
+    });
+  }
+
+  process.on('unhandledRejection', (reason) => {
+    log.error('Unhandled promise rejection', reason);
+    if (process.exitCode == null) {
+      process.exitCode = 1;
+    }
+    void cleanupOnce();
+  });
+
+  process.on('uncaughtException', (err) => {
+    log.error('Uncaught exception', err);
+    if (process.exitCode == null) {
+      process.exitCode = 1;
+    }
+    void cleanupOnce();
+  });
+
+  return cleanupOnce;
+}
+
+async function main() {
+  const program = new Command();
+  program
+    .name('appium driver run xcuitest tunnel-creation')
+    .description('Create tunnels for connected iOS devices')
+    .option('--udid <udid>', 'UDID of the device to create tunnel for')
+    .option(
+      '--packet-stream-base-port <port>',
+      'Base port for packet stream servers (1-65535)',
+      (value) => {
+        const port = Number.parseInt(value, 10);
+        if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+          throw new Error(
+            `Invalid packet stream base port: ${value}. Expected an integer between 1 and 65535.`,
+          );
+        }
+        return port;
+      },
+    )
+    .option(
+      '--tunnel-registry-port <port>',
+      'Port for the tunnel registry API server (1-65535)',
+      (value) => {
+        const port = Number.parseInt(value, 10);
+        if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+          throw new Error(
+            `Invalid tunnel registry port: ${value}. Expected an integer between 1 and 65535.`,
+          );
+        }
+        return port;
+      },
+    );
+
+  program.parse(process.argv);
+  const options = program.opts();
+
+  const tunnelCreator = new TunnelCreator();
+  const cleanupOnce = setupCleanupHandlers(tunnelCreator);
 
   try {
-    await tunnelCreator.setupTunnels(usbmux, specificUdid, tlsOptions);
+    if (options.packetStreamBasePort !== undefined) {
+      tunnelCreator.packetStreamBasePort = options.packetStreamBasePort;
+    }
+    if (options.tunnelRegistryPort !== undefined) {
+      tunnelCreator.tunnelRegistryPort = options.tunnelRegistryPort;
+    }
+    const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
+    if (!moduleRoot) {
+      throw new Error('Cannot resolve module root for appium-xcuitest-driver');
+    }
+
+    const packageJson = await fs.readFile(path.join(moduleRoot, 'package.json'), 'utf8');
+    const packageInfo = JSON.parse(packageJson);
+    const box = strongbox(packageInfo.name);
+    try {
+      await box.createItemWithValue(
+        TUNNEL_REGISTRY_PORT,
+        String(tunnelCreator.tunnelRegistryPort),
+      );
+    } catch (error) {
+      throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
+    }
+
+    /** @type {import('tls').ConnectionOptions} */
+    const tlsOptions = {
+      rejectUnauthorized: false,
+      minVersion: 'TLSv1.2',
+    };
+
+    log.info('Connecting to usbmuxd...');
+    const usbmux = await createUsbmux();
+    try {
+      await tunnelCreator.setupTunnels(usbmux, options.udid, tlsOptions);
+    } finally {
+      await usbmux.close();
+    }
   } finally {
-    await usbmux.close();
+    await cleanupOnce();
   }
 }
 
-(async () => await main())();
+await main();

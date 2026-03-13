@@ -3,13 +3,16 @@ import * as xcode from 'appium-xcode';
 import {Simctl} from 'node-simctl';
 import {getSimulator} from 'appium-ios-simulator';
 import {logger} from 'appium/support.js';
-import {parseArgValue} from './utils.js';
+import {Command} from 'commander';
 
 const log = logger.getLogger('WDA');
 
-async function build() {
-  const customDevice = parseArgValue('name');
-  const platformVersion = parseArgValue('sdk') || (await xcode.getMaxIOSSDK());
+/**
+ * @param {BuildOptions} [options]
+ */
+async function build(options) {
+  const customDevice = options?.name ?? null;
+  const platformVersion = options?.sdk || (await xcode.getMaxIOSSDK());
 
   if (!platformVersion) {
     throw new Error(
@@ -45,4 +48,35 @@ async function build() {
   await wda.xcodebuild.start(true);
 }
 
-(async () => await build())();
+async function main() {
+  const program = new Command();
+
+  program
+    .name('appium driver run xcuitest build-wda')
+    .description('Build WebDriverAgent for a target iOS simulator')
+    .option('--name <deviceName>', 'Simulator name to build for (defaults to iPhone*)')
+    .option('--sdk <sdkVersion>', 'iOS SDK / platform version (e.g. 17.2)')
+    .addHelpText(
+      'after',
+      `
+EXAMPLES:
+  # Build WDA for default simulator
+  appium driver run xcuitest build-wda
+
+  # Build WDA for specific simulator and SDK
+  appium driver run xcuitest build-wda --name "iPhone 15" --sdk 17.2`,
+    )
+    .action(async (options) => {
+      await build(options);
+    });
+
+  await program.parseAsync(process.argv);
+}
+
+await main();
+
+/**
+ * @typedef {Object} BuildOptions
+ * @property {string | undefined} [name]
+ * @property {string | undefined} [sdk]
+ */
