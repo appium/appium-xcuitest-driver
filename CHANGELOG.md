@@ -1,3 +1,9 @@
+## [10.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.28.0...v10.28.1) (2026-03-13)
+
+### Bug Fixes
+
+* Update cleanup logic in the tunnel creation script ([#2751](https://github.com/appium/appium-xcuitest-driver/issues/2751)) ([2ba43d4](https://github.com/appium/appium-xcuitest-driver/commit/2ba43d4a8cb16a5a2cedcda642386d8aa6ae418a))
+
 ## [10.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.27.0...v10.28.0) (2026-03-13)
 
 ### Features
