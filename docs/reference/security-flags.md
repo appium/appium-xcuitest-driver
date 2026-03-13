@@ -2,17 +2,21 @@
 hide:
   - toc
 
-title: Security Feature Flags
+title: Insecure Features
 ---
 
-Some insecure driver features are disabled by default. They can be enabled upon launching Appium as follows:
+Some [insecure driver features](https://appium.io/docs/en/latest/guides/security/) are disabled by
+default. They can be enabled upon launching Appium as follows:
 ```
-appium --allow-insecure <feature-name>
+appium --allow-insecure xcuitest:<feature-name>
 ```
 or
 ```
 appium --relaxed-security
 ```
+
+For other insecure feature names recognized by the Appium server, see
+[their Appium docs reference page](https://appium.io/docs/en/latest/reference/cli/insecure-features/).
 
 |Feature Name|Description|
 |------------|-----------|

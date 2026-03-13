@@ -1,12 +1,13 @@
 ---
-title: BiDi Protocol Support
+title: BiDi Events
 ---
 
-XCUITest driver has partial support of the [BiDi Protocol](https://w3c.github.io/webdriver-bidi/) since version 7.26.0.
-Only events and commands mentioned below are supported.
-All other entities described in the spec throw not implemented errors.
+The XCUITest driver has partial support of the [WebDriver BiDi Protocol](https://w3c.github.io/webdriver-bidi/).
+Only the events and commands mentioned below are supported. All other entities described in the
+specification throw not implemented errors.
 
-# Supported Events
+For other BiDi events recognized by the Appium server, see
+[their Appium docs reference page](https://appium.io/docs/en/latest/reference/api/bidi/).
 
 ## log.entryAdded
 
