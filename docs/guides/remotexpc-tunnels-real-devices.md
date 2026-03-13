@@ -172,9 +172,7 @@ tests against iOS/tvOS 18+ real devices using normal capabilities.
      "platformName": "iOS",
      "appium:automationName": "XCUITest",
      "appium:platformVersion": "18.4",
-     "appium:deviceName": "My iPhone",
      "appium:udid": "<device-udid>",
-     "appium:newCommandTimeout": 600
    }
    ```
 
@@ -216,7 +214,7 @@ Appium server as long as:
 2. **Start one Appium server**:
 
    ```bash
-   appium --relaxed-security --port 4723
+   appium --port 4723
    ```
 
 3. **Run tests in parallel**, for example:
