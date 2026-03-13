@@ -85,6 +85,12 @@ for simulator use.
 appium driver run xcuitest download-wda-sim --outdir=/path/to/target/directory
 ```
 
+To see all available options for the script, including flags and defaults, run:
+
+```bash
+appium driver run xcuitest download-wda-sim -- --help
+```
+
 Then, starting a new session with capabilities below:
 
 ```json
