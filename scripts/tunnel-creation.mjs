@@ -260,7 +260,7 @@ class TunnelCreator {
       log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
       if (successful.length > 0) {
         const firstUdid = successful[0].device.Properties.SerialNumber;
-        log.info(`   curl http://localhost:4723/remotexpc/tunnels/${firstUdid}`);
+        log.info(`   curl http://localhost:${this._tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}`);
       }
     }
   }
