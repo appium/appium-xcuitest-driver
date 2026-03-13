@@ -2,8 +2,9 @@
 title: Execute Methods
 ---
 
-In addition to standard W3C APIs, the driver provides many custom command extensions for executing
-platform-specific scenarios. Use the following examples in order to invoke them from your client code:
+In addition to standard W3C APIs, the driver provides many [custom command extensions](https://appium.io/docs/en/latest/guides/execute-methods/)
+for executing platform-specific scenarios. Use the following examples in order to invoke them from
+your client code:
 
 === "Java"
 
