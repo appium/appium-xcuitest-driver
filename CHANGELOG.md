@@ -1,3 +1,9 @@
+## [10.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.27.0...v10.28.0) (2026-03-13)
+
+### Features
+
+* Add doctor checks for remotexpc ([#2748](https://github.com/appium/appium-xcuitest-driver/issues/2748)) ([94c3a19](https://github.com/appium/appium-xcuitest-driver/commit/94c3a197a13ff4a5b33490e0c2ef421f60729c5b))
+
 ## [10.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.26.0...v10.27.0) (2026-03-12)
 
 ### Features
