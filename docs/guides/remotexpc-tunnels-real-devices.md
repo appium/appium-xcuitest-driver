@@ -1,5 +1,5 @@
 ---
-title: Remote XPC tunnels for real iOS/tvOS 18+ devices
+title: Remote XPC Tunnels
 ---
 
 The XCUITest driver can use **Remote XPC** (via `appium-ios-remotexpc`) and an IPv6 tunnel to talk to
@@ -21,36 +21,36 @@ On iOS/tvOS 18+ Apple routes many system services (including XCTest-related ones
 interfaces and Remote XPC endpoints. The XCUITest driver uses:
 
 - `appium-ios-remotexpc` for:
-  - Device lockdown / USBMUX communication
-  - CoreDeviceProxy and Remote XPC connections
-  - High‑level services (installation proxy, AFC, crash reports, DVT instruments, etc.)
+    - Device lockdown / USBMUX communication
+    - CoreDeviceProxy and Remote XPC connections
+    - High‑level services (installation proxy, AFC, crash reports, DVT instruments, etc.)
 - `appium-ios-tuntap` (used internally by `appium-ios-remotexpc`) to:
-  - Create a TUN/TAP virtual network interface
-  - Establish an IPv6 tunnel between the host and the device
+    - Create a TUN/TAP virtual network interface
+    - Establish an IPv6 tunnel between the host and the device
 
 For iOS/tvOS < 18 these tunnels are not required and the driver falls back to legacy transport.
 
 ## Prerequisites
 
 - **Host OS**:
-  - macOS or Linux (tunnels rely on TUN/TAP support)
+    - macOS or Linux (tunnels rely on TUN/TAP support)
 - **Node.js / Appium**:
-  - Node.js compatible with this driver version (see `package.json` or README)
-  - Appium 3.x
+    - Node.js compatible with this driver version (see `package.json` or README)
+    - Appium 3.x
 - **Device setup**:
-  - Real iOS or tvOS device on **18.x or newer**
-  - Device paired and trusted on the host
-  - Developer tools and Xcode installed (for general iOS development and pairing)
+    - Real iOS or tvOS device on **18.x or newer**
+    - Device paired and trusted on the host
+    - Developer tools and Xcode installed (for general iOS development and pairing)
 - **Optional dependency (required for tunnels)**:
-  - The driver declares `appium-ios-remotexpc` as an **optional dependency**, so in a normal
-    installation npm will install it automatically. You only need to install it manually if
-    the optional dependency step failed or you are wiring a custom environment.
-  - For details about Remote XPC and IPv6 tunneling, see the
-    [`appium-ios-remotexpc` README](https://github.com/appium/appium-ios-remotexpc).
+    - The driver declares `appium-ios-remotexpc` as an **optional dependency**, so in a normal
+      installation npm will install it automatically. You only need to install it manually if
+      the optional dependency step failed or you are wiring a custom environment.
+    - For details about Remote XPC and IPv6 tunneling, see the
+      [`appium-ios-remotexpc` README](https://github.com/appium/appium-ios-remotexpc).
 
 - **Privileges**:
-  - **sudo/root is required** to create TUN/TAP interfaces for the tunnel. You should generally run
-    the tunnel script with `sudo` (or an equivalent mechanism, such as a root container).
+    - **sudo/root is required** to create TUN/TAP interfaces for the tunnel. You should generally run
+      the tunnel script with `sudo` (or an equivalent mechanism, such as a root container).
 
 To verify that the optional dependency and tunnel infrastructure are available you can run:
 
@@ -73,14 +73,14 @@ This script:
 
 - Connects to `usbmuxd` and enumerates all connected, trusted iOS/tvOS devices
 - For each device:
-  - Starts a Lockdown session
-  - Starts `com.apple.internal.devicecompute.CoreDeviceProxy` via Remote XPC
-  - Creates an IPv6 tunnel using `TunnelManager.getTunnel(...)`
-  - Starts a packet stream server on a local TCP port (default base: `50000`)
+    - Starts a Lockdown session
+    - Starts `com.apple.internal.devicecompute.CoreDeviceProxy` via Remote XPC
+    - Creates an IPv6 tunnel using `TunnelManager.getTunnel(...)`
+    - Starts a packet stream server on a local TCP port (default base: `50000`)
 - Builds an in‑memory **tunnel registry** containing:
-  - Device UDID and device ID
-  - Tunnel IPv6 address (`Address`) and `RsdPort`
-  - Packet stream port and basic metadata
+    - Device UDID and device ID
+    - Tunnel IPv6 address (`Address`) and `RsdPort`
+    - Packet stream port and basic metadata
 - Starts an HTTP **tunnel registry API server** and prints its address
 - Persists the chosen registry port in a per‑driver strongbox entry so that the driver can find it
 
@@ -110,7 +110,7 @@ The script supports a few options:
 
   The registry API will then be available at:
 
-  - `http://localhost:43000/remotexpc/tunnels`
+    - `http://localhost:43000/remotexpc/tunnels`
 
   The script also stores the chosen port in a strongbox entry for the `appium-xcuitest-driver`
   package so that driver instances can locate the registry automatically.
@@ -180,13 +180,13 @@ tests against iOS/tvOS 18+ real devices using normal capabilities.
 
 4. **How the driver uses tunnels**:
 
-   - When `platformVersion` is **18 or higher** on a **real device**, the driver:
-     - Automatically imports `appium-ios-remotexpc` (via `getRemoteXPCServices`)
-     - Uses Remote XPC services (installation proxy, AFC, diagnostics, DVT instruments, etc.)
-       instead of the legacy paths
-     - Relies on the IPv6 tunnels created by the tunnel registry for connectivity
-   - If `appium-ios-remotexpc` is missing or tunnels are not available, some advanced real‑device
-     features for 18+ may be unavailable or will fall back to slower/less reliable code paths.
+    - When `platformVersion` is **18 or higher** on a **real device**, the driver:
+        - Automatically imports `appium-ios-remotexpc` (via `getRemoteXPCServices`)
+        - Uses Remote XPC services (installation proxy, AFC, diagnostics, DVT instruments, etc.)
+          instead of the legacy paths
+        - Relies on the IPv6 tunnels created by the tunnel registry for connectivity
+    - If `appium-ios-remotexpc` is missing or tunnels are not available, some advanced real‑device
+      features for 18+ may be unavailable or will fall back to slower/less reliable code paths.
 
 No extra capabilities are required to “enable” tunnels; they are automatically used when:
 
@@ -219,9 +219,9 @@ Appium server as long as:
 
 3. **Run tests in parallel**, for example:
 
-   - Session A:
+    - Session A:
 
-     ```json
+      ```json
      {
        "platformName": "iOS",
        "appium:automationName": "XCUITest",
@@ -231,9 +231,9 @@ Appium server as long as:
      }
      ```
 
-   - Session B:
+    - Session B:
 
-     ```json
+      ```json
      {
        "platformName": "tvOS",
        "appium:automationName": "XCUITest",
@@ -245,11 +245,11 @@ Appium server as long as:
 
 4. **Driver behavior**:
 
-   - Each session uses the UDID to pick the appropriate tunnel from the registry.
-   - Underneath, `TunnelManager` maintains a registry of active tunnels and Remote XPC connections
-     keyed by tunnel address and reuses them when possible.
-   - Packet stream servers created by the tunnel script are already bound to distinct TCP ports, so
-     traffic for different devices is isolated.
+    - Each session uses the UDID to pick the appropriate tunnel from the registry.
+    - Underneath, `TunnelManager` maintains a registry of active tunnels and Remote XPC connections
+      keyed by tunnel address and reuses them when possible.
+    - Packet stream servers created by the tunnel script are already bound to distinct TCP ports, so
+      traffic for different devices is isolated.
 
 ### Guidelines for single‑server parallelism
 
@@ -271,10 +271,10 @@ tunnel registry** and tunnel process.
    sudo appium driver run xcuitest tunnel-creation --tunnel-registry-port 43000
    ```
 
-   - Leave this running in the background.
-   - It creates tunnels for all currently connected devices and exposes the registry on `43000`.
-   - The registry port is persisted in a strongbox entry for `appium-xcuitest-driver` so that all
-     driver instances running in the same environment can discover it.
+    - Leave this running in the background.
+    - It creates tunnels for all currently connected devices and exposes the registry on `43000`.
+    - The registry port is persisted in a strongbox entry for `appium-xcuitest-driver` so that all
+      driver instances running in the same environment can discover it.
 
 2. **Start multiple Appium servers**, for example:
 
@@ -288,15 +288,15 @@ tunnel registry** and tunnel process.
 
 3. **Assign devices to servers** via capabilities:
 
-   - Server 1 handles device A (iOS 18.x, UDID `<iphone-udid>`)
-   - Server 2 handles device B (tvOS 18.x, UDID `<appletv-udid>`)
+    - Server 1 handles device A (iOS 18.x, UDID `<iphone-udid>`)
+    - Server 2 handles device B (tvOS 18.x, UDID `<appletv-udid>`)
 
 4. **Run tests in parallel** across servers:
 
-   - Each server behaves as described in the single‑server section, using the shared tunnel
-     registry.
-   - Tunnels are created only once; both servers reuse the same IPv6 tunnel and Remote XPC
-     infrastructure for each device.
+    - Each server behaves as described in the single‑server section, using the shared tunnel
+      registry.
+    - Tunnels are created only once; both servers reuse the same IPv6 tunnel and Remote XPC
+      infrastructure for each device.
 
 ### Alternative: one tunnel process per isolation boundary
 
@@ -314,9 +314,9 @@ TUN/TAP configuration and USBMUX connections.
 
 - **Prefer a single global tunnel process per physical host** and share it between servers.
 - Ensure all Appium servers that should share tunnels:
-  - Run under the same user or environment where the strongbox entry is accessible, or
-  - Are configured to discover the same tunnel registry port (by starting the script with an
-    explicit `--tunnel-registry-port`).
+    - Run under the same user or environment where the strongbox entry is accessible, or
+    - Are configured to discover the same tunnel registry port (by starting the script with an
+      explicit `--tunnel-registry-port`).
 - As with a single server, never assign the **same UDID to multiple concurrent sessions** unless
   your test coordination knows exactly what it is doing.
 
@@ -324,8 +324,8 @@ TUN/TAP configuration and USBMUX connections.
 
 - The tunnel creation and Remote XPC mechanism works the same way for **tvOS 18+** as for iOS 18+.
 - Use:
-  - `"platformName": "tvOS"`
-  - A tvOS 18+ `platformVersion`
-  - The UDID of the Apple TV device
-- Ensure wireless or wired connectivity is stable; Remote XPC and tunnels are sensitive to network
-  drops.
+    - `"platformName": "tvOS"`
+    - A tvOS 18+ `platformVersion`
+    - The UDID of the Apple TV device
+- Only devices connected via USB are currently supported. Support for wirelessly connected TV
+  devices is coming.
