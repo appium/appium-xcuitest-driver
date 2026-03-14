@@ -58,4 +58,4 @@ That document covers:
 - How to put Apple TV into discovery mode
 - PIN verification and error handling
 - Strongbox-backed credential storage details
-- Re-pairing after resetting Apple TV or changing networks.
+- Re-pairing after resetting Apple TV or changing networks
