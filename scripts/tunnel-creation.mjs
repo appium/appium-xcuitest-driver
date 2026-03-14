@@ -84,7 +84,7 @@ class TunnelCreator {
           packetStreamPort: result.packetStreamPort,
           connectionType: result.device.Properties.ConnectionType,
           productId: result.device.Properties.ProductID,
-          createdAt: registry.tunnels[udid]?.createdAt ?? now,
+          createdAt: now,
           lastUpdated: now,
         };
       }
@@ -99,7 +99,7 @@ class TunnelCreator {
         packetStreamPort: entry.packetStreamPort,
         connectionType: 'WiFi',
         productId: 0,
-        createdAt: registry.tunnels[entry.udid]?.createdAt ?? now,
+        createdAt: now,
         lastUpdated: now,
       };
     }
@@ -146,19 +146,9 @@ class TunnelCreator {
       }
       log.info(`Closing ${appletvResources.length} Apple TV tunnel(s)...`);
       await Promise.allSettled(
-        appletvResources.map(async ({tunnel, packetStreamServer, tunnelService, udid}) => {
-          try {
-            await packetStreamServer.stop();
-            if (_.isFunction(tunnel?.closer)) {
-              await tunnel.closer();
-            }
-            if (tunnelService?.disconnect) {
-              tunnelService.disconnect();
-            }
-            log.info(`Closed Apple TV tunnel for ${udid}`);
-          } catch (err) {
-            log.warn(`Failed to close Apple TV tunnel for ${udid}: ${err}`);
-          }
+        appletvResources.map(async (resource) => {
+          await teardownAppleTVTunnelResource(resource, resource.udid);
+          log.info(`Closed Apple TV tunnel for ${resource.udid}`);
         }),
       );
       this._appletvResources.length = 0;
@@ -300,9 +290,16 @@ class TunnelCreator {
   async setupAppleTVTunnels(specificDeviceId) {
     /** @type {AppleTVRegistryEntry[]} */
     const entries = [];
+    /** @type {import('appium-ios-remotexpc').AppleTVTunnelService | null} */
+    let tunnelService = null;
+    /** @type {AppleTVTunnelConnection | null} */
+    let tunnel = null;
+    /** @type {import('appium-ios-remotexpc').PacketStreamServer | null} */
+    let packetStreamServer = null;
+
     try {
       log.info('Starting Apple TV tunnel (WiFi)...');
-      const tunnelService = new AppleTVTunnelService();
+      tunnelService = new AppleTVTunnelService();
       const result = await tunnelService.startTunnel(
         undefined,
         specificDeviceId ?? undefined,
@@ -315,10 +312,10 @@ class TunnelCreator {
       }
 
       log.info(`Creating tunnel for Apple TV: ${deviceInfo.identifier}`);
-      const tunnel = await TunnelManager.getTunnel(tlsSocket);
+      tunnel = await TunnelManager.getTunnel(tlsSocket);
 
       const packetStreamPort = this._packetStreamBasePort++;
-      const packetStreamServer = new PacketStreamServer(packetStreamPort);
+      packetStreamServer = new PacketStreamServer(packetStreamPort);
       await packetStreamServer.start();
 
       const consumer = packetStreamServer.getPacketConsumer();
@@ -341,10 +338,49 @@ class TunnelCreator {
         packetStreamPort,
       });
       log.info(`✅ Apple TV tunnel ready for ${deviceInfo.identifier}`);
+      return entries;
     } catch (err) {
       log.warn('Apple TV tunnel setup failed (ensure device is paired and on same network):', err?.message ?? err);
+      // Clean up partially created resources so we don't leave a lingering WiFi connection
+      if (tunnelService) {
+        await teardownAppleTVTunnelResource(
+          {tunnel, packetStreamServer, tunnelService},
+          'partially created',
+        );
+      }
+      return entries;
     }
-    return entries;
+  }
+}
+
+/**
+ * Tears down a single Apple TV tunnel resource (packet stream server, tunnel, tunnel service).
+ * Each step runs in its own try/catch so one failure does not skip the rest.
+ * @param {AppleTVTunnelTeardownInput} resource
+ * @param {string} [label] - Label for log messages (e.g. device udid or 'partially created')
+ */
+async function teardownAppleTVTunnelResource(resource, label = 'Apple TV') {
+  const {tunnel, packetStreamServer, tunnelService} = resource;
+  try {
+    if (packetStreamServer) {
+      await packetStreamServer.stop();
+    }
+  } catch (err) {
+    log.warn(`Failed to stop packet stream server for ${label}: ${err}`);
+  }
+  try {
+    if (_.isFunction(tunnel?.closer)) {
+      await tunnel.closer();
+    }
+  } catch (err) {
+    log.warn(`Failed to close tunnel for ${label}: ${err}`);
+  }
+  try {
+    if (tunnelService?.disconnect) {
+      tunnelService.disconnect();
+    }
+  } catch (err) {
+    log.warn(`Failed to disconnect tunnel service for ${label}: ${err}`);
   }
 }
 
@@ -436,6 +472,10 @@ async function main() {
         }
         return port;
       },
+    )
+    .option(
+      '--appletv-device-id <identifier>',
+      'Apple TV device identifier to tunnel (from pair-appletv); omit to use first discovered paired device',
     );
 
   program.parse(process.argv);
@@ -486,7 +526,7 @@ async function main() {
 
     // Automatically add paired Apple TV(s) over WiFi when available
     /** @type {AppleTVRegistryEntry[]} */
-    const appletvEntries = await tunnelCreator.setupAppleTVTunnels();
+    const appletvEntries = await tunnelCreator.setupAppleTVTunnels(options.appletvDeviceId);
 
     const registry = await tunnelCreator.updateTunnelRegistry(usbResults, appletvEntries);
     const totalTunnels = Object.keys(registry.tunnels).length;
@@ -538,6 +578,14 @@ await main();
  * @property {number} [RsdPort]
  * @property {(c: unknown) => void} [addPacketConsumer]
  * @property {() => Promise<void>} [closer]
+ */
+
+/**
+ * @typedef {Object} AppleTVTunnelTeardownInput
+ * Input for teardown of an Apple TV tunnel (full or partially created). All fields may be null if not yet created.
+ * @property {AppleTVTunnelConnection | null} [tunnel]
+ * @property {import('appium-ios-remotexpc').PacketStreamServer | null} [packetStreamServer]
+ * @property {import('appium-ios-remotexpc').AppleTVTunnelService | null} [tunnelService]
  */
 
 /**
