@@ -1,3 +1,9 @@
+## [10.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.29.0...v10.30.0) (2026-03-14)
+
+### Features
+
+* Add wireless Apple TV  devices to created tunnels ([#2755](https://github.com/appium/appium-xcuitest-driver/issues/2755)) ([07911a7](https://github.com/appium/appium-xcuitest-driver/commit/07911a72199402f6163df201b909d5f3fc544641))
+
 ## [10.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.28.1...v10.29.0) (2026-03-14)
 
 ### Features
