@@ -296,6 +296,8 @@ class TunnelCreator {
     let tunnel = null;
     /** @type {import('appium-ios-remotexpc').PacketStreamServer | null} */
     let packetStreamServer = null;
+    /** @type {import('node:tls').TLSSocket | null} */
+    let tlsSocket = null;
 
     try {
       log.info('Starting Apple TV tunnel (WiFi)...');
@@ -304,7 +306,8 @@ class TunnelCreator {
         undefined,
         specificDeviceId ?? undefined,
       );
-      const {socket: tlsSocket, device: deviceInfo} = result;
+      tlsSocket = result.socket;
+      const deviceInfo = result.device;
 
       if (!tlsSocket) {
         log.warn('Apple TV TLS socket not established.');
@@ -319,7 +322,7 @@ class TunnelCreator {
       await packetStreamServer.start();
 
       const consumer = packetStreamServer.getPacketConsumer();
-      if (consumer && _.isFunction(tunnel?.addPacketConsumer)) {
+      if (consumer && tunnel?.addPacketConsumer) {
         tunnel.addPacketConsumer(consumer);
       }
       log.info(`Apple TV packet stream server started on port ${packetStreamPort}`);
@@ -329,6 +332,7 @@ class TunnelCreator {
         packetStreamServer,
         tunnelService,
         udid: deviceInfo.identifier,
+        tlsSocket,
       });
 
       entries.push({
@@ -344,7 +348,7 @@ class TunnelCreator {
       // Clean up partially created resources so we don't leave a lingering WiFi connection
       if (tunnelService) {
         await teardownAppleTVTunnelResource(
-          {tunnel, packetStreamServer, tunnelService},
+          {tunnel, packetStreamServer, tunnelService, tlsSocket},
           'partially created',
         );
       }
@@ -360,7 +364,8 @@ class TunnelCreator {
  * @param {string} [label] - Label for log messages (e.g. device udid or 'partially created')
  */
 async function teardownAppleTVTunnelResource(resource, label = 'Apple TV') {
-  const {tunnel, packetStreamServer, tunnelService} = resource;
+  const {tunnel, packetStreamServer, tunnelService, tlsSocket} = resource;
+  // Order aligned with remotexpc start-appletv-tunnel.ts: stop server, close tunnel, destroy socket, disconnect
   try {
     if (packetStreamServer) {
       await packetStreamServer.stop();
@@ -374,6 +379,13 @@ async function teardownAppleTVTunnelResource(resource, label = 'Apple TV') {
     }
   } catch (err) {
     log.warn(`Failed to close tunnel for ${label}: ${err}`);
+  }
+  try {
+    if (tlsSocket && !tlsSocket.destroyed) {
+      tlsSocket.destroy();
+    }
+  } catch (err) {
+    log.warn(`Failed to destroy TLS socket for ${label}: ${err}`);
   }
   try {
     if (tunnelService?.disconnect) {
@@ -586,6 +598,7 @@ await main();
  * @property {AppleTVTunnelConnection | null} [tunnel]
  * @property {import('appium-ios-remotexpc').PacketStreamServer | null} [packetStreamServer]
  * @property {import('appium-ios-remotexpc').AppleTVTunnelService | null} [tunnelService]
+ * @property {import('node:tls').TLSSocket | null} [tlsSocket]
  */
 
 /**
@@ -595,4 +608,5 @@ await main();
  * @property {import('appium-ios-remotexpc').AppleTVTunnelService} tunnelService
  * @property {string} udid
  * @property {AppleTVTunnelConnection} tunnel
+ * @property {import('node:tls').TLSSocket} tlsSocket
  */
