@@ -1,3 +1,9 @@
+## [10.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.28.1...v10.29.0) (2026-03-14)
+
+### Features
+
+* Add script for pairing AppleTV over WiFi ([#2754](https://github.com/appium/appium-xcuitest-driver/issues/2754)) ([1912dd9](https://github.com/appium/appium-xcuitest-driver/commit/1912dd9549c303574100cb43b9732b3ebc84d16a))
+
 ## [10.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.28.0...v10.28.1) (2026-03-13)
 
 ### Bug Fixes

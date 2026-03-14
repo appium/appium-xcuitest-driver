@@ -9,10 +9,8 @@ these commands.
 Please note that most of the driver-specific functionality is available using
 [Execute Methods](./execute-methods.md) instead.
 
-!!! info
-
-    Check the [Appium base driver documentation](https://appium.io/docs/en/latest/reference/commands/base-driver/)
-    for commands inherited by the XCUITest driver
+For other API endpoints recognized by the Appium server and base driver, see
+[their Appium docs reference pages](https://appium.io/docs/en/latest/reference/api/).
 
 ### `getClipboard`
 

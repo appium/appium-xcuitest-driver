@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.28.1",
+  "version": "10.29.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -35,7 +35,8 @@
       "open-wda": "./scripts/open-wda.mjs",
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
-      "image-mounter": "./scripts/image-mounter.mjs"
+      "image-mounter": "./scripts/image-mounter.mjs",
+      "pair-appletv": "./scripts/pair-appletv.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",

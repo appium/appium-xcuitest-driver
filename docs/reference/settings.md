@@ -6,7 +6,7 @@ title: Settings
 ---
 
 The XCUITest driver supports Appium's [Settings API](https://appium.io/docs/en/latest/guides/settings/).
-Along with the common settings, the following driver-specific settings are available:
+The following driver-specific settings are available:
 
 | <div style="width:14em">Name</div> | Type | Description |
 | --- | --- | --- |
