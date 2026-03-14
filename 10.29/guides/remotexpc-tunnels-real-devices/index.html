@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/10.29/guides/capability-sets/">
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/10.29/guides/remotexpc-tunnels-real-devices/">
       
       
-        <link rel="prev" href="../input-events/">
+        <link rel="prev" href="../multiple-xcode-versions/">
       
       
-        <link rel="next" href="../hybrid/">
+        <link rel="next" href="../remotexpc-apple-tv-pairing/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Basic Examples of Session Capability Sets - Appium XCUITest Driver</title>
+        <title>Remote XPC Tunnels - Appium XCUITest Driver</title>
       
     
     
@@ -147,7 +147,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#application-file-real-device" class="md-skip">
+        <a href="#when-you-need-tunnels-and-remote-xpc" class="md-skip">
           Skip to content
         </a>
       
@@ -184,7 +184,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Basic Examples of Session Capability Sets
+              Remote XPC Tunnels
             
           </span>
         </div>
@@ -1607,6 +1607,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1638,11 +1640,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" checked>
         
           
           <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="">
@@ -1663,7 +1665,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1762,10 +1764,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../remotexpc-tunnels-real-devices/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Remote XPC Tunnels
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1781,6 +1808,603 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#when-you-need-tunnels-and-remote-xpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      When you need tunnels and Remote XPC
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#creating-tunnels-with-the-driver-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating tunnels with the driver script
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Creating tunnels with the driver script">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#command-line-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command-line options
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#inspecting-the-tunnel-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspecting the tunnel registry
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#running-tests-on-a-single-appium-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running tests on a single Appium server
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Running tests on a single Appium server">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#recommended-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommended workflow
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#parallel-tests-with-a-single-appium-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parallel tests with a single Appium server
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Parallel tests with a single Appium server">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#example-single-server-multiple-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example: single server, multiple devices
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#guidelines-for-singleserver-parallelism" class="md-nav__link">
+    <span class="md-ellipsis">
+      Guidelines for single‑server parallelism
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#parallel-tests-with-multiple-appium-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parallel tests with multiple Appium servers
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Parallel tests with multiple Appium servers">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#recommended-pattern-one-tunnel-process-many-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommended pattern: one tunnel process, many servers
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#alternative-one-tunnel-process-per-isolation-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alternative: one tunnel process per isolation boundary
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#guidelines-for-multiserver-parallelism" class="md-nav__link">
+    <span class="md-ellipsis">
+      Guidelines for multi‑server parallelism
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#tvosspecific-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      tvOS‑specific notes
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2406,8 +3030,6 @@
                 
   
   
-    
-  
   
   
     
@@ -2435,11 +3057,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
         
           
           <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="">
@@ -2460,7 +3082,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2531,35 +3153,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Basic Examples of Session Capability Sets
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../capability-sets/" class="md-nav__link">
         
   
   
@@ -2575,394 +3172,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#application-file-real-device" class="md-nav__link">
-    <span class="md-ellipsis">
-      Application File (Real Device)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#application-file-simulator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Application File (Simulator)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#safari-real-device" class="md-nav__link">
-    <span class="md-ellipsis">
-      Safari (Real Device)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#safari-simulator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Safari (Simulator)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#pre-installed-app-real-device" class="md-nav__link">
-    <span class="md-ellipsis">
-      Pre-Installed App (Real Device)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#pre-installed-app-simulator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Pre-Installed App (Simulator)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#deeplink-real-device-running-ios-17" class="md-nav__link">
-    <span class="md-ellipsis">
-      Deeplink (Real Device running iOS 17+)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#deeplink-simulator-running-ios-17" class="md-nav__link">
-    <span class="md-ellipsis">
-      Deeplink (Simulator running iOS 17+)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#custom-launch-real-device" class="md-nav__link">
-    <span class="md-ellipsis">
-      Custom Launch (Real Device)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#custom-launch-simulator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Custom Launch (Simulator)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3117,9 +3326,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#application-file-real-device" class="md-nav__link">
+  <a href="#when-you-need-tunnels-and-remote-xpc" class="md-nav__link">
     <span class="md-ellipsis">
-      Application File (Real Device)
+      When you need tunnels and Remote XPC
     </span>
   </a>
 
@@ -3154,9 +3363,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#application-file-simulator" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Application File (Simulator)
+      Prerequisites
     </span>
   </a>
 
@@ -3191,13 +3400,93 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#safari-real-device" class="md-nav__link">
+  <a href="#creating-tunnels-with-the-driver-script" class="md-nav__link">
     <span class="md-ellipsis">
-      Safari (Real Device)
+      Creating tunnels with the driver script
     </span>
   </a>
 
   <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Creating tunnels with the driver script">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#command-line-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command-line options
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#inspecting-the-tunnel-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspecting the tunnel registry
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3228,13 +3517,56 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#safari-simulator" class="md-nav__link">
+  <a href="#running-tests-on-a-single-appium-server" class="md-nav__link">
     <span class="md-ellipsis">
-      Safari (Simulator)
+      Running tests on a single Appium server
     </span>
   </a>
 
   <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Running tests on a single Appium server">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#recommended-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommended workflow
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3265,13 +3597,93 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#pre-installed-app-real-device" class="md-nav__link">
+  <a href="#parallel-tests-with-a-single-appium-server" class="md-nav__link">
     <span class="md-ellipsis">
-      Pre-Installed App (Real Device)
+      Parallel tests with a single Appium server
     </span>
   </a>
 
   <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Parallel tests with a single Appium server">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#example-single-server-multiple-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example: single server, multiple devices
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#guidelines-for-singleserver-parallelism" class="md-nav__link">
+    <span class="md-ellipsis">
+      Guidelines for single‑server parallelism
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3302,13 +3714,130 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#pre-installed-app-simulator" class="md-nav__link">
+  <a href="#parallel-tests-with-multiple-appium-servers" class="md-nav__link">
     <span class="md-ellipsis">
-      Pre-Installed App (Simulator)
+      Parallel tests with multiple Appium servers
     </span>
   </a>
 
   <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Parallel tests with multiple Appium servers">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#recommended-pattern-one-tunnel-process-many-servers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommended pattern: one tunnel process, many servers
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#alternative-one-tunnel-process-per-isolation-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alternative: one tunnel process per isolation boundary
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#guidelines-for-multiserver-parallelism" class="md-nav__link">
+    <span class="md-ellipsis">
+      Guidelines for multi‑server parallelism
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3339,120 +3868,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#deeplink-real-device-running-ios-17" class="md-nav__link">
+  <a href="#tvosspecific-notes" class="md-nav__link">
     <span class="md-ellipsis">
-      Deeplink (Real Device running iOS 17+)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#deeplink-simulator-running-ios-17" class="md-nav__link">
-    <span class="md-ellipsis">
-      Deeplink (Simulator running iOS 17+)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#custom-launch-real-device" class="md-nav__link">
-    <span class="md-ellipsis">
-      Custom Launch (Real Device)
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#custom-launch-simulator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Custom Launch (Simulator)
+      tvOS‑specific notes
     </span>
   </a>
 
@@ -3529,10 +3947,10 @@
     
     
       <li class="md-path__item">
-        <a href="../tvos/" class="md-path__link">
+        <a href="../parallel-tests/" class="md-path__link">
           
   <span class="md-ellipsis">
-    Other
+    Environment Configuration
   </span>
 
         </a>
@@ -3551,7 +3969,7 @@
 
 
   
-    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/guides/capability-sets.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/guides/remotexpc-tunnels-real-devices.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3559,129 +3977,337 @@
   
 
 
-  <h1>Basic Examples of Session Capability Sets</h1>
+  <h1>Remote XPC Tunnels</h1>
 
-<p>This article describes necessary capabilities that must be provided in order
-to implement some common automation testing scenarios.
-It only describes very minimum sets of capabilities required to
-be included. For refined setups more of them might need to be provided. Check the
-<a href="../../reference/capabilities/">Capabilities</a> article for more details
-on each option available for the fine-tuning of XCUITest driver sessions.</p>
-<h3 id="application-file-real-device">Application File (Real Device)<a class="headerlink" href="#application-file-real-device" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Phone_UUID&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/local/package.ipa&quot;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
+<p>The XCUITest driver can use <strong>Remote XPC</strong> (via <code>appium-ios-remotexpc</code>) and an IPv6 tunnel to talk to
+real iOS and tvOS devices on <strong>OS version 18 or newer</strong>. This guide explains how to:</p>
+<ul>
+<li>Create and inspect tunnels using the <code>tunnel-creation</code> script</li>
+<li>Run tests against real devices using those tunnels</li>
+<li>Plan parallel test runs when using a single Appium server or multiple servers</li>
+</ul>
+<p>This guide applies to <strong>real iOS/tvOS devices only</strong>. Simulators do not use this tunnel mechanism.</p>
+<p>At the moment, the tunnel workflow described here supports <strong>devices physically connected via USB</strong>
+to the host running Appium. Support for <strong>wireless tvOS / Apple TV devices</strong> via Remote XPC tunnels
+is planned but not yet available in this driver.</p>
+<h2 id="when-you-need-tunnels-and-remote-xpc">When you need tunnels and Remote XPC<a class="headerlink" href="#when-you-need-tunnels-and-remote-xpc" title="Permanent link">&para;</a></h2>
+<p>On iOS/tvOS 18+ Apple routes many system services (including XCTest-related ones) over IPv6-only
+interfaces and Remote XPC endpoints. The XCUITest driver uses:</p>
+<ul>
+<li><code>appium-ios-remotexpc</code> for:<ul>
+<li>Device lockdown / USBMUX communication</li>
+<li>CoreDeviceProxy and Remote XPC connections</li>
+<li>High‑level services (installation proxy, AFC, crash reports, DVT instruments, etc.)</li>
+</ul>
+</li>
+<li><code>appium-ios-tuntap</code> (used internally by <code>appium-ios-remotexpc</code>) to:<ul>
+<li>Create a TUN/TAP virtual network interface</li>
+<li>Establish an IPv6 tunnel between the host and the device</li>
+</ul>
+</li>
+</ul>
+<p>For iOS/tvOS &lt; 18 these tunnels are not required and the driver falls back to legacy transport.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Host OS</strong>:<ul>
+<li>macOS or Linux (tunnels rely on TUN/TAP support)</li>
+</ul>
+</li>
+<li><strong>Node.js / Appium</strong>:<ul>
+<li>Node.js compatible with this driver version (see <code>package.json</code> or README)</li>
+<li>Appium 3.x</li>
+</ul>
+</li>
+<li><strong>Device setup</strong>:<ul>
+<li>Real iOS or tvOS device on <strong>18.x or newer</strong></li>
+<li>Device paired and trusted on the host</li>
+<li>Developer tools and Xcode installed (for general iOS development and pairing)</li>
+</ul>
+</li>
+<li>
+<p><strong>Optional dependency (required for tunnels)</strong>:</p>
+<ul>
+<li>The driver declares <code>appium-ios-remotexpc</code> as an <strong>optional dependency</strong>, so in a normal
+    installation npm will install it automatically. You only need to install it manually if
+    the optional dependency step failed or you are wiring a custom environment.</li>
+<li>For details about Remote XPC and IPv6 tunneling, see the
+    <a href="https://github.com/appium/appium-ios-remotexpc"><code>appium-ios-remotexpc</code> README</a>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Privileges</strong>:</p>
+<ul>
+<li><strong>sudo/root is required</strong> to create TUN/TAP interfaces for the tunnel. You should generally run
+    the tunnel script with <code>sudo</code> (or an equivalent mechanism, such as a root container).</li>
+</ul>
+</li>
+</ul>
+<p>To verify that the optional dependency and tunnel infrastructure are available you can run:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>doctor<span class="w"> </span>xcuitest
 </span></code></pre></div>
-<p><code>appium:app</code> could also be a remote app or an archive:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>  &quot;appium:app&quot;: &quot;https://example.com/package.ipa&quot;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  &quot;appium:app&quot;: &quot;https://example.com/package.zip&quot;
+<p>Look for the optional checks related to <code>appium-ios-remotexpc</code> and “tunnel availability”.</p>
+<h2 id="creating-tunnels-with-the-driver-script">Creating tunnels with the driver script<a class="headerlink" href="#creating-tunnels-with-the-driver-script" title="Permanent link">&para;</a></h2>
+<p>The XCUITest driver exposes a high‑level convenience script that wraps the lower‑level
+<code>appium-ios-remotexpc</code> tunnel workflow:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation
 </span></code></pre></div>
-<p><code>appium:udid</code> could also be set to <code>auto</code> in order to select the first matched device
-connected to the host (or a single one if only one is connected):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>  &quot;appium:udid&quot;: &quot;auto&quot;
+<p>This script:</p>
+<ul>
+<li>Connects to <code>usbmuxd</code> and enumerates all connected, trusted iOS/tvOS devices</li>
+<li>For each device:<ul>
+<li>Starts a Lockdown session</li>
+<li>Starts <code>com.apple.internal.devicecompute.CoreDeviceProxy</code> via Remote XPC</li>
+<li>Creates an IPv6 tunnel using <code>TunnelManager.getTunnel(...)</code></li>
+<li>Starts a packet stream server on a local TCP port (default base: <code>50000</code>)</li>
+</ul>
+</li>
+<li>Builds an in‑memory <strong>tunnel registry</strong> containing:<ul>
+<li>Device UDID and device ID</li>
+<li>Tunnel IPv6 address (<code>Address</code>) and <code>RsdPort</code></li>
+<li>Packet stream port and basic metadata</li>
+</ul>
+</li>
+<li>Starts an HTTP <strong>tunnel registry API server</strong> and prints its address</li>
+<li>Persists the chosen registry port in a per‑driver strongbox entry so that the driver can find it</li>
+</ul>
+<h3 id="command-line-options">Command-line options<a class="headerlink" href="#command-line-options" title="Permanent link">&para;</a></h3>
+<p>The script supports a few options:</p>
+<ul>
+<li>
+<p><strong>Target a specific device</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--udid<span class="w"> </span>&lt;device-udid&gt;
 </span></code></pre></div>
-<h3 id="application-file-simulator">Application File (Simulator)<a class="headerlink" href="#application-file-simulator" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Simulator_Name&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/local/package.app&quot;</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span>
+</li>
+<li>
+<p><strong>Customize packet stream base port</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--packet-stream-base-port<span class="w"> </span><span class="m">52000</span>
 </span></code></pre></div>
-<p><code>appium:app</code> could also be an archive:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>  &quot;appium:app&quot;: &quot;https://example.com/package.zip&quot;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  &quot;appium:app&quot;: &quot;/path/to/local/package.zip&quot;
+<p>The script will assign <code>52000</code>, <code>52001</code>, <code>52002</code>, … to packet stream servers for each device.</p>
+</li>
+<li>
+<p><strong>Customize tunnel registry port</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--tunnel-registry-port<span class="w"> </span><span class="m">43000</span>
 </span></code></pre></div>
-<h3 id="safari-real-device">Safari (Real Device)<a class="headerlink" href="#safari-real-device" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">&quot;browserName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Safari&quot;</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Phone_UUID&gt;&quot;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
+<p>The registry API will then be available at:</p>
+<ul>
+<li><code>http://localhost:43000/remotexpc/tunnels</code></li>
+</ul>
+<p>The script also stores the chosen port in a strongbox entry for the <code>appium-xcuitest-driver</code>
+package so that driver instances can locate the registry automatically.</p>
+</li>
+</ul>
+<h3 id="inspecting-the-tunnel-registry">Inspecting the tunnel registry<a class="headerlink" href="#inspecting-the-tunnel-registry" title="Permanent link">&para;</a></h3>
+<p>After a successful run you should see log lines similar to:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>📁 Tunnel registry API:
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>   The tunnel registry is now available through the API at:
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>   http://localhost:&lt;port&gt;/remotexpc/tunnels
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>   ...
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>   curl http://localhost:&lt;port&gt;/remotexpc/tunnels/&lt;udid&gt;
 </span></code></pre></div>
-<p>You may also provide <code>appium:safariInitialUrl</code> capability value to navigate
-to the desired page during the session startup:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>  &quot;appium:safariInitialUrl&quot;: &quot;https://server.com/page&quot;
+<p>Useful endpoints:</p>
+<ul>
+<li>
+<p><strong>List all tunnels</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>curl<span class="w"> </span>http://localhost:&lt;port&gt;/remotexpc/tunnels
 </span></code></pre></div>
-<h3 id="safari-simulator">Safari (Simulator)<a class="headerlink" href="#safari-simulator" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">&quot;browserName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Safari&quot;</span><span class="p">,</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Simulator_Name&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+</li>
+<li>
+<p><strong>Get tunnel for a specific UDID</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>curl<span class="w"> </span>http://localhost:&lt;port&gt;/remotexpc/tunnels/&lt;udid&gt;
 </span></code></pre></div>
-<h3 id="pre-installed-app-real-device">Pre-Installed App (Real Device)<a class="headerlink" href="#pre-installed-app-real-device" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Phone_UUID&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="nt">&quot;appium:bundleId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Bundle_ID_Of_Preinstalled_App&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="nt">&quot;appium:noReset&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span>
+</li>
+</ul>
+<p>The response contains the IPv6 <code>address</code>, <code>rsdPort</code>, and other metadata required to establish
+Remote XPC connections.</p>
+<h2 id="running-tests-on-a-single-appium-server">Running tests on a single Appium server<a class="headerlink" href="#running-tests-on-a-single-appium-server" title="Permanent link">&para;</a></h2>
+<p>Once tunnels are running, you can start a standard Appium server with the XCUITest driver and run
+tests against iOS/tvOS 18+ real devices using normal capabilities.</p>
+<h3 id="recommended-workflow">Recommended workflow<a class="headerlink" href="#recommended-workflow" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Start the tunnels (once per host)</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation
 </span></code></pre></div>
-<p>The <code>appium:noReset</code> capability is set to <code>true</code> in order to tell the driver
-the app identified by <code>appium:bundleId</code> is already preinstalled and must not be reset.</p>
-<h3 id="pre-installed-app-simulator">Pre-Installed App (Simulator)<a class="headerlink" href="#pre-installed-app-simulator" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Simulator_Name&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="nt">&quot;appium:bundleId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Bundle_ID_Of_Preinstalled_App&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="nt">&quot;appium:noReset&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="p">}</span>
+<p>Leave this process running in the background while tests execute.</p>
+</li>
+<li>
+<p><strong>Start the Appium server</strong> (in a separate terminal):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>appium
 </span></code></pre></div>
-<h3 id="deeplink-real-device-running-ios-17">Deeplink (Real Device running iOS 17+)<a class="headerlink" href="#deeplink-real-device-running-ios-17" title="Permanent link">&para;</a></h3>
+</li>
+<li>
+<p><strong>Run your tests</strong> using standard XCUITest capabilities:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Phone_UUID&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="nt">&quot;appium:initialDeeplinkUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Deeplink_Url&gt;&quot;</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">}</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;18.4&quot;</span><span class="p">,</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;device-udid&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="deeplink-simulator-running-ios-17">Deeplink (Simulator running iOS 17+)<a class="headerlink" href="#deeplink-simulator-running-ios-17" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Simulator_Name&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">  </span><span class="nt">&quot;appium:initialDeeplinkUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Deeplink_Url&gt;&quot;</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="p">}</span>
+<p>For tvOS, set <code>"platformName": "tvOS"</code> and use the UDID of your Apple TV device.</p>
+</li>
+<li>
+<p><strong>How the driver uses tunnels</strong>:</p>
+<ul>
+<li>When <code>platformVersion</code> is <strong>18 or higher</strong> on a <strong>real device</strong>, the driver:<ul>
+<li>Automatically imports <code>appium-ios-remotexpc</code> (via <code>getRemoteXPCServices</code>)</li>
+<li>Uses Remote XPC services (installation proxy, AFC, diagnostics, DVT instruments, etc.)
+    instead of the legacy paths</li>
+<li>Relies on the IPv6 tunnels created by the tunnel registry for connectivity</li>
+</ul>
+</li>
+<li>If <code>appium-ios-remotexpc</code> is missing or tunnels are not available, some advanced real‑device
+    features for 18+ may be unavailable or will fall back to slower/less reliable code paths.</li>
+</ul>
+</li>
+</ol>
+<p>No extra capabilities are required to “enable” tunnels; they are automatically used when:</p>
+<ul>
+<li><code>appium-ios-remotexpc</code> is installed, <strong>and</strong></li>
+<li>the tunnel registry server is reachable, <strong>and</strong></li>
+<li>the platform is iOS/tvOS 18+ on a real device.</li>
+</ul>
+<h2 id="parallel-tests-with-a-single-appium-server">Parallel tests with a single Appium server<a class="headerlink" href="#parallel-tests-with-a-single-appium-server" title="Permanent link">&para;</a></h2>
+<p>The tunnel creation script is <strong>multi‑device aware</strong>: it creates and registers an independent tunnel
+for each connected device. XCUITest can then run multiple sessions concurrently on a <strong>single</strong>
+Appium server as long as:</p>
+<ul>
+<li>Each session uses a <strong>different real device</strong> (<code>appium:udid</code> is unique per session)</li>
+<li>The tunnels for all those devices are present in the tunnel registry</li>
+</ul>
+<h3 id="example-single-server-multiple-devices">Example: single server, multiple devices<a class="headerlink" href="#example-single-server-multiple-devices" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Create tunnels for all connected devices</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation
 </span></code></pre></div>
-<h3 id="custom-launch-real-device">Custom Launch (Real Device)<a class="headerlink" href="#custom-launch-real-device" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Phone_UUID&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="p">}</span>
+</li>
+<li>
+<p><strong>Start one Appium server</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>appium<span class="w"> </span>--port<span class="w"> </span><span class="m">4723</span>
 </span></code></pre></div>
-<p>This will start your test at the Home screen.
-Afterwards you may use any of the application management
-methods, like <a href="../../reference/execute-methods/#mobile-installapp">mobile: installApp</a>
-or <a href="../../reference/execute-methods/#mobile-activateapp">mobile: activateApp</a>
-to manage the life cycle of your app or switch between contexts to
-manage web pages. Check the full list of
-<a href="../../reference/execute-methods/">mobile: execute methods</a> for more details.</p>
-<h3 id="custom-launch-simulator">Custom Launch (Simulator)<a class="headerlink" href="#custom-launch-simulator" title="Permanent link">&para;</a></h3>
+</li>
+<li>
+<p><strong>Run tests in parallel</strong>, for example:</p>
+<ul>
+<li>
+<p>Session A:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;Simulator_Name&gt;&quot;</span><span class="p">,</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iOS_Version&gt;&quot;</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">}</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;18.1&quot;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;iphone-udid&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/iphone/app.app&quot;</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="p">}</span>
 </span></code></pre></div>
+</li>
+<li>
+<p>Session B:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;18.0&quot;</span><span class="p">,</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;appletv-udid&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/tvos/app.app&quot;</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="p">}</span>
+</span></code></pre></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Driver behavior</strong>:</p>
+<ul>
+<li>Each session uses the UDID to pick the appropriate tunnel from the registry.</li>
+<li>Underneath, <code>TunnelManager</code> maintains a registry of active tunnels and Remote XPC connections
+    keyed by tunnel address and reuses them when possible.</li>
+<li>Packet stream servers created by the tunnel script are already bound to distinct TCP ports, so
+    traffic for different devices is isolated.</li>
+</ul>
+</li>
+</ol>
+<h3 id="guidelines-for-singleserver-parallelism">Guidelines for single‑server parallelism<a class="headerlink" href="#guidelines-for-singleserver-parallelism" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Do not share a UDID across concurrent sessions</strong> on the same server; use one session per device.</li>
+<li>Ensure the <strong>tunnel script is running before</strong> starting parallel tests so that the registry is
+    populated.</li>
+<li>If you frequently add/remove devices, re‑run the tunnel script to refresh the registry.</li>
+</ul>
+<h2 id="parallel-tests-with-multiple-appium-servers">Parallel tests with multiple Appium servers<a class="headerlink" href="#parallel-tests-with-multiple-appium-servers" title="Permanent link">&para;</a></h2>
+<p>You can also run multiple Appium servers in parallel on the same host while <strong>sharing a single
+tunnel registry</strong> and tunnel process.</p>
+<h3 id="recommended-pattern-one-tunnel-process-many-servers">Recommended pattern: one tunnel process, many servers<a class="headerlink" href="#recommended-pattern-one-tunnel-process-many-servers" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Start a single global tunnel process</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--tunnel-registry-port<span class="w"> </span><span class="m">43000</span>
+</span></code></pre></div>
+<ul>
+<li>Leave this running in the background.</li>
+<li>It creates tunnels for all currently connected devices and exposes the registry on <code>43000</code>.</li>
+<li>The registry port is persisted in a strongbox entry for <code>appium-xcuitest-driver</code> so that all
+    driver instances running in the same environment can discover it.</li>
+</ul>
+</li>
+<li>
+<p><strong>Start multiple Appium servers</strong>, for example:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Server 1</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>appium<span class="w"> </span>--port<span class="w"> </span><span class="m">4723</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Server 2</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>appium<span class="w"> </span>--port<span class="w"> </span><span class="m">4725</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><strong>Assign devices to servers</strong> via capabilities:</p>
+<ul>
+<li>Server 1 handles device A (iOS 18.x, UDID <code>&lt;iphone-udid&gt;</code>)</li>
+<li>Server 2 handles device B (tvOS 18.x, UDID <code>&lt;appletv-udid&gt;</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>Run tests in parallel</strong> across servers:</p>
+<ul>
+<li>Each server behaves as described in the single‑server section, using the shared tunnel
+    registry.</li>
+<li>Tunnels are created only once; both servers reuse the same IPv6 tunnel and Remote XPC
+    infrastructure for each device.</li>
+</ul>
+</li>
+</ol>
+<h3 id="alternative-one-tunnel-process-per-isolation-boundary">Alternative: one tunnel process per isolation boundary<a class="headerlink" href="#alternative-one-tunnel-process-per-isolation-boundary" title="Permanent link">&para;</a></h3>
+<p>In more advanced setups (e.g., Docker, multiple hosts, CI agents), you might:</p>
+<ul>
+<li>Run <strong>one tunnel‑creation process per container/VM</strong>, started together with that container’s
+    Appium server(s).</li>
+<li>Use distinct <code>--tunnel-registry-port</code> values for each isolation boundary.</li>
+</ul>
+<p>This keeps tunnel state scoped to each environment, but within that boundary you should still
+avoid running multiple competing tunnel‑creation scripts simultaneously, as they may fight over
+TUN/TAP configuration and USBMUX connections.</p>
+<h3 id="guidelines-for-multiserver-parallelism">Guidelines for multi‑server parallelism<a class="headerlink" href="#guidelines-for-multiserver-parallelism" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Prefer a single global tunnel process per physical host</strong> and share it between servers.</li>
+<li>Ensure all Appium servers that should share tunnels:<ul>
+<li>Run under the same user or environment where the strongbox entry is accessible, or</li>
+<li>Are configured to discover the same tunnel registry port (by starting the script with an
+    explicit <code>--tunnel-registry-port</code>).</li>
+</ul>
+</li>
+<li>As with a single server, never assign the <strong>same UDID to multiple concurrent sessions</strong> unless
+    your test coordination knows exactly what it is doing.</li>
+</ul>
+<h2 id="tvosspecific-notes">tvOS‑specific notes<a class="headerlink" href="#tvosspecific-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The tunnel creation and Remote XPC mechanism works the same way for <strong>tvOS 18+</strong> as for iOS 18+.</li>
+<li>Use:<ul>
+<li><code>"platformName": "tvOS"</code></li>
+<li>A tvOS 18+ <code>platformVersion</code></li>
+<li>The UDID of the Apple TV device</li>
+</ul>
+</li>
+<li>Only devices connected via USB are currently supported. Support for wirelessly connected TV
+    devices is coming.</li>
+</ul>
 
 
 
@@ -3702,7 +4328,7 @@ manage web pages. Check the full list of
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 11, 2024 18:56:54 UTC"><span class="timeago" datetime="2024-06-11T18:56:54+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 11, 2024 18:56:54 UTC">2024-06-11</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 14, 2026 15:01:06 UTC"><span class="timeago" datetime="2026-03-14T15:01:06+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 14, 2026 15:01:06 UTC">2026-03-14</span>
   </span>
 
     
