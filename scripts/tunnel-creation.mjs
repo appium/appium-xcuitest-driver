@@ -7,6 +7,7 @@ import {logger, node, fs} from 'appium/support.js';
 import _ from 'lodash';
 
 import {
+  AppleTVTunnelService,
   PacketStreamServer,
   TunnelManager,
   createLockdownServiceByUDID,
@@ -23,11 +24,14 @@ const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
 
 /**
- * TunnelCreator class for managing tunnel creation and related operations
+ * TunnelCreator class for managing tunnel creation and related operations (USB and optional Apple TV over WiFi).
  */
 class TunnelCreator {
   constructor() {
+    /** @type {Map<string, import('appium-ios-remotexpc').PacketStreamServer>} */
     this._packetStreamServers = new Map();
+    /** @type {AppleTVTunnelResource[]} */
+    this._appletvResources = [];
     // Default port value, will be updated in main() if --packet-stream-base-port is provided
     this._packetStreamBasePort = 50000;
     // Default port value, will be updated in main() if --tunnel-registry-port is provided
@@ -51,15 +55,15 @@ class TunnelCreator {
   }
 
   /**
-   * Update tunnel registry with new tunnel information
-   * @param {import('appium-ios-remotexpc').TunnelResult[]} results - Array of tunnel results
+   * Update tunnel registry with USB and optional Apple TV tunnel entries.
+   * @param {import('appium-ios-remotexpc').TunnelResult[]} usbResults - Array of USB tunnel results
+   * @param {AppleTVRegistryEntry[]} [appletvEntries] - Optional Apple TV tunnel entries
    * @returns {Promise<import('appium-ios-remotexpc').TunnelRegistry>} Updated tunnel registry
    */
-  async updateTunnelRegistry(results) {
+  async updateTunnelRegistry(usbResults, appletvEntries = []) {
     const now = Date.now();
     const nowISOString = new Date().toISOString();
 
-    // Initialize registry if it doesn't exist
     const registry = {
       tunnels: {},
       metadata: {
@@ -69,8 +73,7 @@ class TunnelCreator {
       },
     };
 
-    // Update tunnels
-    for (const result of results) {
+    for (const result of usbResults) {
       if (result.success) {
         const udid = result.device.Properties.SerialNumber;
         registry.tunnels[udid] = {
@@ -81,17 +84,30 @@ class TunnelCreator {
           packetStreamPort: result.packetStreamPort,
           connectionType: result.device.Properties.ConnectionType,
           productId: result.device.Properties.ProductID,
-          createdAt: registry.tunnels[udid]?.createdAt ?? now,
+          createdAt: now,
           lastUpdated: now,
         };
       }
     }
 
-    // Update metadata
+    for (const entry of appletvEntries) {
+      registry.tunnels[entry.udid] = {
+        udid: entry.udid,
+        deviceId: 0,
+        address: entry.address,
+        rsdPort: entry.rsdPort,
+        packetStreamPort: entry.packetStreamPort,
+        connectionType: 'WiFi',
+        productId: 0,
+        createdAt: now,
+        lastUpdated: now,
+      };
+    }
+
     registry.metadata = {
       lastUpdated: nowISOString,
       totalTunnels: Object.keys(registry.tunnels).length,
-      activeTunnels: Object.keys(registry.tunnels).length, // Assuming all are active for now
+      activeTunnels: Object.keys(registry.tunnels).length,
     };
 
     return registry;
@@ -103,19 +119,42 @@ class TunnelCreator {
   async cleanup() {
     log.warn('Cleaning up tunnel resources...');
 
-    // Close all packet stream servers
-    if (this._packetStreamServers.size > 0) {
-      log.info(`Closing ${this._packetStreamServers.size} packet stream server(s)...`);
-      for (const [udid, server] of this._packetStreamServers) {
-        try {
-          await server.stop();
-          log.info(`Closed packet stream server for device ${udid}`);
-        } catch (err) {
-          log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
-        }
+    const usbEntries = [...this._packetStreamServers.entries()];
+    const appletvResources = [...this._appletvResources];
+
+    const closeUsbPacketStreamServers = (async () => {
+      if (usbEntries.length === 0) {
+        return;
       }
+      log.info(`Closing ${usbEntries.length} packet stream server(s)...`);
+      await Promise.allSettled(
+        usbEntries.map(async ([udid, server]) => {
+          try {
+            await server.stop();
+            log.info(`Closed packet stream server for device ${udid}`);
+          } catch (err) {
+            log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
+          }
+        }),
+      );
       this._packetStreamServers.clear();
-    }
+    })();
+
+    const closeAppleTVTunnels = (async () => {
+      if (appletvResources.length === 0) {
+        return;
+      }
+      log.info(`Closing ${appletvResources.length} Apple TV tunnel(s)...`);
+      await Promise.allSettled(
+        appletvResources.map(async (resource) => {
+          await teardownAppleTVTunnelResource(resource, resource.udid);
+          log.info(`Closed Apple TV tunnel for ${resource.udid}`);
+        }),
+      );
+      this._appletvResources.length = 0;
+    })();
+
+    await Promise.allSettled([closeUsbPacketStreamServers, closeAppleTVTunnels]);
 
     log.info('Cleanup completed.');
   }
@@ -190,18 +229,19 @@ class TunnelCreator {
   }
 
   /**
-   * Sets up tunnels for all connected devices.
+   * Sets up tunnels for all connected USB devices. Does not start the registry server.
    * @param {import('appium-ios-remotexpc').Usbmux} usbmux - The usbmux object.
    * @param {string|undefined} specificUdid - A specific UDID to process, or undefined for all devices.
    * @param {import('tls').ConnectionOptions} tlsOptions - TLS options.
+   * @returns {Promise<Array<import('appium-ios-remotexpc').TunnelResult>>} USB tunnel results (may be empty).
    */
   async setupTunnels(usbmux, specificUdid, tlsOptions) {
     log.info('Listing all connected devices...');
     const devices = await usbmux.listDevices();
 
     if (devices.length === 0) {
-      log.warn('No devices found. Make sure iOS devices are connected and trusted.');
-      return;
+      log.info('No USB devices found.');
+      return [];
     }
 
     log.info(`Found ${devices.length} connected device(s):`);
@@ -238,31 +278,121 @@ class TunnelCreator {
       results.push(result);
     }
 
-    log.info('\n=== TUNNEL CREATION SUMMARY ===');
-    const successful = results.filter((r) => r.success);
-    const failed = results.filter((r) => !r.success);
+    return results;
+  }
 
-    log.info(`Total devices processed: ${results.length}`);
-    log.info(`Successful tunnels: ${successful.length}`);
-    log.info(`Failed tunnels: ${failed.length}`);
+  /**
+   * Sets up tunnel(s) for paired Apple TV device(s) over WiFi. Uses a single tunnel when no
+   * API to enumerate paired devices is available. Does not start the registry server.
+   * @param {string|undefined} [specificDeviceId] - Optional Apple TV device identifier to target.
+   * @returns {Promise<AppleTVRegistryEntry[]>} Apple TV registry entries.
+   */
+  async setupAppleTVTunnels(specificDeviceId) {
+    /** @type {AppleTVRegistryEntry[]} */
+    const entries = [];
+    /** @type {import('appium-ios-remotexpc').AppleTVTunnelService | null} */
+    let tunnelService = null;
+    /** @type {AppleTVTunnelConnection | null} */
+    let tunnel = null;
+    /** @type {import('appium-ios-remotexpc').PacketStreamServer | null} */
+    let packetStreamServer = null;
+    /** @type {import('node:tls').TLSSocket | null} */
+    let tlsSocket = null;
 
-    if (successful.length > 0) {
-      log.info('\n✅ Successful tunnels:');
-      const registry = await this.updateTunnelRegistry(results);
-      await startTunnelRegistryServer(registry, this._tunnelRegistryPort);
+    try {
+      log.info('Starting Apple TV tunnel (WiFi)...');
+      tunnelService = new AppleTVTunnelService();
+      const result = await tunnelService.startTunnel(
+        undefined,
+        specificDeviceId ?? undefined,
+      );
+      tlsSocket = result.socket;
+      const deviceInfo = result.device;
 
-      log.info('\n📁 Tunnel registry API:');
-      log.info('   The tunnel registry is now available through the API at:');
-      log.info(`   http://localhost:${this._tunnelRegistryPort}/remotexpc/tunnels`);
-      log.info('\n   Available endpoints:');
-      log.info('   - GET /remotexpc/tunnels - List all tunnels');
-      log.info('   - GET /remotexpc/tunnels/:udid - Get tunnel by UDID');
-      log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
-      if (successful.length > 0) {
-        const firstUdid = successful[0].device.Properties.SerialNumber;
-        log.info(`   curl http://localhost:${this._tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}`);
+      if (!tlsSocket) {
+        log.warn('Apple TV TLS socket not established.');
+        return entries;
       }
+
+      log.info(`Creating tunnel for Apple TV: ${deviceInfo.identifier}`);
+      tunnel = await TunnelManager.getTunnel(tlsSocket);
+
+      const packetStreamPort = this._packetStreamBasePort++;
+      packetStreamServer = new PacketStreamServer(packetStreamPort);
+      await packetStreamServer.start();
+
+      const consumer = packetStreamServer.getPacketConsumer();
+      if (consumer && tunnel?.addPacketConsumer) {
+        tunnel.addPacketConsumer(consumer);
+      }
+      log.info(`Apple TV packet stream server started on port ${packetStreamPort}`);
+
+      this._appletvResources.push({
+        tunnel,
+        packetStreamServer,
+        tunnelService,
+        udid: deviceInfo.identifier,
+        tlsSocket,
+      });
+
+      entries.push({
+        udid: deviceInfo.identifier,
+        address: tunnel.Address,
+        rsdPort: tunnel.RsdPort ?? 0,
+        packetStreamPort,
+      });
+      log.info(`✅ Apple TV tunnel ready for ${deviceInfo.identifier}`);
+      return entries;
+    } catch (err) {
+      log.warn('Apple TV tunnel setup failed (ensure device is paired and on same network):', err?.message ?? err);
+      // Clean up partially created resources so we don't leave a lingering WiFi connection
+      if (tunnelService) {
+        await teardownAppleTVTunnelResource(
+          {tunnel, packetStreamServer, tunnelService, tlsSocket},
+          'partially created',
+        );
+      }
+      return entries;
     }
+  }
+}
+
+/**
+ * Tears down a single Apple TV tunnel resource (packet stream server, tunnel, tunnel service).
+ * Each step runs in its own try/catch so one failure does not skip the rest.
+ * @param {AppleTVTunnelTeardownInput} resource
+ * @param {string} [label] - Label for log messages (e.g. device udid or 'partially created')
+ */
+async function teardownAppleTVTunnelResource(resource, label = 'Apple TV') {
+  const {tunnel, packetStreamServer, tunnelService, tlsSocket} = resource;
+  // Order aligned with remotexpc start-appletv-tunnel.ts: stop server, close tunnel, destroy socket, disconnect
+  try {
+    if (packetStreamServer) {
+      await packetStreamServer.stop();
+    }
+  } catch (err) {
+    log.warn(`Failed to stop packet stream server for ${label}: ${err}`);
+  }
+  try {
+    if (_.isFunction(tunnel?.closer)) {
+      await tunnel.closer();
+    }
+  } catch (err) {
+    log.warn(`Failed to close tunnel for ${label}: ${err}`);
+  }
+  try {
+    if (tlsSocket && !tlsSocket.destroyed) {
+      tlsSocket.destroy();
+    }
+  } catch (err) {
+    log.warn(`Failed to destroy TLS socket for ${label}: ${err}`);
+  }
+  try {
+    if (tunnelService?.disconnect) {
+      tunnelService.disconnect();
+    }
+  } catch (err) {
+    log.warn(`Failed to disconnect tunnel service for ${label}: ${err}`);
   }
 }
 
@@ -354,6 +484,10 @@ async function main() {
         }
         return port;
       },
+    )
+    .option(
+      '--appletv-device-id <identifier>',
+      'Apple TV device identifier to tunnel (from pair-appletv); omit to use first discovered paired device',
     );
 
   program.parse(process.argv);
@@ -394,10 +528,44 @@ async function main() {
 
     log.info('Connecting to usbmuxd...');
     const usbmux = await createUsbmux();
+    /** @type {import('appium-ios-remotexpc').TunnelResult[]} */
+    let usbResults = [];
     try {
-      await tunnelCreator.setupTunnels(usbmux, options.udid, tlsOptions);
+      usbResults = await tunnelCreator.setupTunnels(usbmux, options.udid, tlsOptions);
     } finally {
       await usbmux.close();
+    }
+
+    // Automatically add paired Apple TV(s) over WiFi when available
+    /** @type {AppleTVRegistryEntry[]} */
+    const appletvEntries = await tunnelCreator.setupAppleTVTunnels(options.appletvDeviceId);
+
+    const registry = await tunnelCreator.updateTunnelRegistry(usbResults, appletvEntries);
+    const totalTunnels = Object.keys(registry.tunnels).length;
+
+    if (totalTunnels === 0) {
+      log.warn('No tunnels created (no USB devices and no Apple TV tunnel).');
+      return;
+    }
+
+    await startTunnelRegistryServer(registry, tunnelCreator.tunnelRegistryPort);
+
+    const successfulUsb = usbResults.filter((r) => r.success);
+    log.info('\n=== TUNNEL CREATION SUMMARY ===');
+    log.info(`USB tunnels: ${successfulUsb.length}`);
+    log.info(`Apple TV (WiFi) tunnels: ${appletvEntries.length}`);
+    log.info(`Total tunnels: ${totalTunnels}`);
+
+    log.info('\n📁 Tunnel registry API:');
+    log.info('   The tunnel registry is now available through the API at:');
+    log.info(`   http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels`);
+    log.info('\n   Available endpoints:');
+    log.info('   - GET /remotexpc/tunnels - List all tunnels');
+    log.info('   - GET /remotexpc/tunnels/:udid - Get tunnel by UDID');
+    log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
+    const firstUdid = successfulUsb[0]?.device?.Properties?.SerialNumber ?? appletvEntries[0]?.udid;
+    if (firstUdid) {
+      log.info(`   curl http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}`);
     }
   } finally {
     await cleanupOnce();
@@ -405,3 +573,40 @@ async function main() {
 }
 
 await main();
+
+/**
+ * @typedef {Object} AppleTVRegistryEntry
+ * Tunnel registry entry for an Apple TV (WiFi) device.
+ * @property {string} udid
+ * @property {string} address
+ * @property {number} rsdPort
+ * @property {number} packetStreamPort
+ */
+
+/**
+ * @typedef {Object} AppleTVTunnelConnection
+ * Tunnel connection returned from TunnelManager.getTunnel for an Apple TV (WiFi) socket.
+ * @property {string} Address
+ * @property {number} [RsdPort]
+ * @property {(c: unknown) => void} [addPacketConsumer]
+ * @property {() => Promise<void>} [closer]
+ */
+
+/**
+ * @typedef {Object} AppleTVTunnelTeardownInput
+ * Input for teardown of an Apple TV tunnel (full or partially created). All fields may be null if not yet created.
+ * @property {AppleTVTunnelConnection | null} [tunnel]
+ * @property {import('appium-ios-remotexpc').PacketStreamServer | null} [packetStreamServer]
+ * @property {import('appium-ios-remotexpc').AppleTVTunnelService | null} [tunnelService]
+ * @property {import('node:tls').TLSSocket | null} [tlsSocket]
+ */
+
+/**
+ * @typedef {Object} AppleTVTunnelResource
+ * Resource handle for cleanup of a single Apple TV (WiFi) tunnel.
+ * @property {import('appium-ios-remotexpc').PacketStreamServer} packetStreamServer
+ * @property {import('appium-ios-remotexpc').AppleTVTunnelService} tunnelService
+ * @property {string} udid
+ * @property {AppleTVTunnelConnection} tunnel
+ * @property {import('node:tls').TLSSocket} tlsSocket
+ */
