@@ -254,9 +254,7 @@ export async function pushFolder(
 
  * @param opts - Driver options; used to decide if tunnel registry is used.
  */
-export async function getConnectedDevices(
-  opts: XCUITestDriverOpts,
-): Promise<string[]> {
+export async function getConnectedDevices(opts: XCUITestDriverOpts): Promise<string[]> {
   const client = await ConnectedDevicesClient.create(opts);
   return await client.getConnectedDevices();
 }

@@ -7,7 +7,6 @@ import type {XCUITestDriverOpts} from '../driver';
 
 type RemoteXPCServices = typeof import('appium-ios-remotexpc').Services;
 
-
 export class ConnectedDevicesClient {
   private constructor(private readonly services: RemoteXPCServices | null) {}
 
@@ -23,9 +22,7 @@ export class ConnectedDevicesClient {
         const remotexpcModule = await import('appium-ios-remotexpc');
         services = remotexpcModule.Services;
       } catch {
-        log.warn(
-          'Could not load appium-ios-remotexpc, using legacy devices listing instead',
-        );
+        log.warn('Could not load appium-ios-remotexpc, using legacy devices listing instead');
       }
     }
     return new ConnectedDevicesClient(services);
