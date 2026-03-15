@@ -33,14 +33,32 @@ export class ConnectedDevicesClient {
 
   /**
    * Returns the list of connected real device UDIDs.
-   * Merges tunnel registry (when available) with legacy listing (devicectl or appium-ios-device).
+   * Only considers tunnel registry UDIDs when remotexpc is loaded and tunnels are running;
+   * otherwise returns the legacy list only.
    */
   async getConnectedDevices(): Promise<string[]> {
-    const [tunnelUdids, legacyUdids] = await Promise.all([
-      this.getTunnelRegistryUdids(),
-      this.getLegacyUdids(),
+    const [tunnelSettled, legacySettled] = await Promise.allSettled([
+      this.listUdidsFromTunnelsRegistry(),
+      this.listLegacyUdids(),
     ]);
-    return _.uniq([...tunnelUdids, ...legacyUdids]);
+
+    // Tunnels succeeded → short-circuit: return tunnel UDIDs only (legacy not used)
+    if (tunnelSettled.status === 'fulfilled') {
+      return tunnelSettled.value;
+    }
+
+    // Tunnels rejected (only other status after fulfilled) → use legacy; throw if legacy failed
+    const err = tunnelSettled.reason;
+    log.info(
+      'Tunnel registry unavailable; using legacy devices listing instead. ' +
+        `Original error: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    if (legacySettled.status === 'rejected') {
+      throw legacySettled.reason instanceof Error
+        ? legacySettled.reason
+        : new Error(String(legacySettled.reason));
+    }
+    return legacySettled.value;
   }
 
   private isPreferDevicectlEnabled(): boolean {
@@ -49,22 +67,20 @@ export class ConnectedDevicesClient {
     );
   }
 
-  private async getTunnelRegistryUdids(): Promise<string[]> {
-    if (!this.services?.getAvailableDevices) {
-      return [];
-    }
-    try {
-      return await this.services.getAvailableDevices();
-    } catch (err) {
-      log.warn(
-        'Failed to get tunnel registry device list, using legacy devices listing instead. ' +
-          `Original error: ${(err as Error).message}`,
+  /**
+   * Fetches UDIDs from the tunnel registry.
+   * @throws When remotexpc is not loaded or when the tunnel registry is unreachable.
+   */
+  private async listUdidsFromTunnelsRegistry(): Promise<string[]> {
+    if (!this.services) {
+      throw new Error(
+        'Tunnel registry not available: remotexpc module not loaded',
       );
-      return [];
     }
+    return await this.services.getAvailableDevices();
   }
 
-  private async getLegacyUdids(): Promise<string[]> {
+  private async listLegacyUdids(): Promise<string[]> {
     if (this.isPreferDevicectlEnabled()) {
       return (await new Devicectl('').listDevices())
         .map(({hardwareProperties}) => hardwareProperties?.udid)
