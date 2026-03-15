@@ -510,7 +510,7 @@ async function main() {
       if (item === undefined) {
         await box.createItemWithValue(
           TUNNEL_REGISTRY_PORT,
-          String(options.tunnelRegistryPort),
+          String(tunnelCreator.tunnelRegistryPort),
         );
       } else {
         if (options.tunnelRegistryPort !== undefined) {
