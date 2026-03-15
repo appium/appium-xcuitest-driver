@@ -1371,7 +1371,7 @@ export class XCUITestDriver
         let isRealDeviceUdid = false;
         const shouldCheckAvailableRealDevices = !this.opts.webDriverAgentUrl;
         if (shouldCheckAvailableRealDevices) {
-          const devices = await getConnectedDevices();
+          const devices = await getConnectedDevices(this.opts);
           this.log.debug(`Available real devices: ${devices.join(', ')}`);
           isRealDeviceUdid = devices.includes(this.opts.udid);
         }

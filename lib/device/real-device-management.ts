@@ -9,6 +9,7 @@ import {Devicectl} from 'node-devicectl';
 import type {AppiumLogger} from '@appium/types';
 import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
 import {AfcClient} from './afc-client';
+import {ConnectedDevicesClient} from './connected-devices-client';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {NotificationClient} from './notification-client';
 import {isIos18OrNewer} from '../utils';
@@ -249,15 +250,16 @@ export async function pushFolder(
 //#region Public Device Connection Functions
 
 /**
- * Get list of connected devices
+ * Get list of connected devices.
+ * Delegates to ConnectedDevicesClient, which merges tunnel registry (when available
+ * for iOS/tvOS 18+) with legacy listing (devicectl or appium-ios-device).
+ * @param opts - Driver options; used to decide if tunnel registry is used (isIos18OrNewer).
  */
-export async function getConnectedDevices(): Promise<string[]> {
-  if (isPreferDevicectlEnabled()) {
-    return (await new Devicectl('').listDevices())
-      .map(({hardwareProperties}) => hardwareProperties?.udid)
-      .filter(Boolean);
-  }
-  return await utilities.getConnectedDevices();
+export async function getConnectedDevices(
+  opts: XCUITestDriverOpts,
+): Promise<string[]> {
+  const client = await ConnectedDevicesClient.create(opts);
+  return await client.getConnectedDevices();
 }
 
 //#endregion
@@ -718,7 +720,7 @@ export function applySafariStartupArgs(this: XCUITestDriver): boolean {
  */
 export async function detectUdid(this: XCUITestDriver): Promise<string> {
   this.log.debug('Auto-detecting real device udid...');
-  const udids = await getConnectedDevices();
+  const udids = await getConnectedDevices(this.opts);
   if (_.isEmpty(udids)) {
     throw new Error('No real devices are connected to the host');
   }
