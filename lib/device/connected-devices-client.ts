@@ -73,9 +73,7 @@ export class ConnectedDevicesClient {
    */
   private async listUdidsFromTunnelsRegistry(): Promise<string[]> {
     if (!this.services) {
-      throw new Error(
-        'Tunnel registry not available: remotexpc module not loaded',
-      );
+      throw new Error('appium-ios-remotexpc module cannot be loaded');
     }
     return await this.services.getAvailableDevices();
   }
