@@ -251,9 +251,8 @@ export async function pushFolder(
 
 /**
  * Get list of connected devices.
- * Delegates to ConnectedDevicesClient, which merges tunnel registry (when available
- * for iOS/tvOS 18+) with legacy listing (devicectl or appium-ios-device).
- * @param opts - Driver options; used to decide if tunnel registry is used (isIos18OrNewer).
+
+ * @param opts - Driver options; used to decide if tunnel registry is used.
  */
 export async function getConnectedDevices(
   opts: XCUITestDriverOpts,
