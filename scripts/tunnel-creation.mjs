@@ -518,7 +518,10 @@ async function main() {
           await item.write(String(options.tunnelRegistryPort));
         } else {
           // Otherwise, read the persisted value
-          tunnelCreator.tunnelRegistryPort = Number.parseInt(await item.read(), 10);
+          const persistedPort = Number.parseInt(await item.read(), 10);
+          if (persistedPort > 0 && persistedPort < 65536) {
+            tunnelCreator.tunnelRegistryPort = persistedPort;
+          }
         }
       }
     } catch (error) {
