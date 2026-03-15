@@ -411,7 +411,14 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
       try {
         await sub.stop('SIGTERM', 500);
       } catch {
-        // ignore
+        // Subprocess did not exit within 500ms; force-kill so doctor process can exit
+        if (sub.pid != null) {
+          try {
+            process.kill(sub.pid, 'SIGKILL');
+          } catch {
+            // ignore if already gone
+          }
+        }
       }
     }
     return doctor.okOptional(
