@@ -1,3 +1,9 @@
+## [10.30.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.0...v10.30.1) (2026-03-15)
+
+### Bug Fixes
+
+* force kill tunnells if still running ([#2759](https://github.com/appium/appium-xcuitest-driver/issues/2759)) ([d4e21e6](https://github.com/appium/appium-xcuitest-driver/commit/d4e21e6c9883185f2571fd89fbe58559d4d51c3f))
+
 ## [10.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.29.0...v10.30.0) (2026-03-14)
 
 ### Features
