@@ -500,6 +500,9 @@ async function main() {
     if (options.packetStreamBasePort !== undefined) {
       tunnelCreator.packetStreamBasePort = options.packetStreamBasePort;
     }
+    if (options.tunnelRegistryPort !== undefined) {
+      tunnelCreator.tunnelRegistryPort = options.tunnelRegistryPort;
+    }
 
     const box = strongbox(TUNNEL_CONTAINER_NAME);
     try {
@@ -507,12 +510,11 @@ async function main() {
       if (item === undefined) {
         await box.createItemWithValue(
           TUNNEL_REGISTRY_PORT,
-          String(tunnelCreator.tunnelRegistryPort),
+          String(options.tunnelRegistryPort),
         );
       } else {
         if (options.tunnelRegistryPort !== undefined) {
           // Override the persisted value with the command line option
-          tunnelCreator.tunnelRegistryPort = options.tunnelRegistryPort;
           await item.write(String(options.tunnelRegistryPort));
         } else {
           // Otherwise, read the persisted value
