@@ -102,7 +102,9 @@
     "semver": "^7.5.4",
     "teen_process": "^4.0.4",
     "winston": "^3.17.0",
-    "ws": "^8.13.0",
+    "ws": "^8.13.0"
+  },
+  "optionalDependencies": {
     "appium-ios-remotexpc": "^0.x"
   },
   "scripts": {
