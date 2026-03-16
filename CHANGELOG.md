@@ -1,3 +1,9 @@
+## [10.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.1...v10.31.0) (2026-03-16)
+
+### Features
+
+* Fetch connected devices from tunnels along with the legacy algorithm ([#2758](https://github.com/appium/appium-xcuitest-driver/issues/2758)) ([a4565a8](https://github.com/appium/appium-xcuitest-driver/commit/a4565a860ad9b2890e3716407f6b18ef6203c691))
+
 ## [10.30.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.0...v10.30.1) (2026-03-15)
 
 ### Bug Fixes
