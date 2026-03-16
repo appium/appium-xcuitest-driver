@@ -143,6 +143,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
             udid: this.opts.udid as string,
             showLogs: this.opts.showIOSLog,
             log: this.log,
+            useRemoteXPC: isIos18OrNewer(this.opts),
           })
         : new IOSSimulatorLog({
             sim: this.device as Simulator,
