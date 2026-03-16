@@ -1,3 +1,45 @@
+## [10.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.1...v10.31.0) (2026-03-16)
+
+### Features
+
+* Fetch connected devices from tunnels along with the legacy algorithm ([#2758](https://github.com/appium/appium-xcuitest-driver/issues/2758)) ([a4565a8](https://github.com/appium/appium-xcuitest-driver/commit/a4565a860ad9b2890e3716407f6b18ef6203c691))
+
+## [10.30.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.0...v10.30.1) (2026-03-15)
+
+### Bug Fixes
+
+* force kill tunnells if still running ([#2759](https://github.com/appium/appium-xcuitest-driver/issues/2759)) ([d4e21e6](https://github.com/appium/appium-xcuitest-driver/commit/d4e21e6c9883185f2571fd89fbe58559d4d51c3f))
+
+## [10.30.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.29.0...v10.30.0) (2026-03-14)
+
+### Features
+
+* Add wireless Apple TV  devices to created tunnels ([#2755](https://github.com/appium/appium-xcuitest-driver/issues/2755)) ([07911a7](https://github.com/appium/appium-xcuitest-driver/commit/07911a72199402f6163df201b909d5f3fc544641))
+
+## [10.29.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.28.1...v10.29.0) (2026-03-14)
+
+### Features
+
+* Add script for pairing AppleTV over WiFi ([#2754](https://github.com/appium/appium-xcuitest-driver/issues/2754)) ([1912dd9](https://github.com/appium/appium-xcuitest-driver/commit/1912dd9549c303574100cb43b9732b3ebc84d16a))
+
+## [10.28.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.28.0...v10.28.1) (2026-03-13)
+
+### Bug Fixes
+
+* Update cleanup logic in the tunnel creation script ([#2751](https://github.com/appium/appium-xcuitest-driver/issues/2751)) ([2ba43d4](https://github.com/appium/appium-xcuitest-driver/commit/2ba43d4a8cb16a5a2cedcda642386d8aa6ae418a))
+
+## [10.28.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.27.0...v10.28.0) (2026-03-13)
+
+### Features
+
+* Add doctor checks for remotexpc ([#2748](https://github.com/appium/appium-xcuitest-driver/issues/2748)) ([94c3a19](https://github.com/appium/appium-xcuitest-driver/commit/94c3a197a13ff4a5b33490e0c2ef421f60729c5b))
+
+## [10.27.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.26.0...v10.27.0) (2026-03-12)
+
+### Features
+
+* **appium-remote-debugger:** bump appium-remote-debugger to 15.6.0 to add shim web inspector support ([#2750](https://github.com/appium/appium-xcuitest-driver/issues/2750)) ([f0d85ab](https://github.com/appium/appium-xcuitest-driver/commit/f0d85ab5fe38214e33aea5f210d34ee7f4f09ae5))
+
 ## [10.26.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.25.0...v10.26.0) (2026-03-08)
 
 ### Features

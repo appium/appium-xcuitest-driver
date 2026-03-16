@@ -5,6 +5,9 @@ title: Capabilities
 This page lists various capabilities used and implemented by the XCUITest driver. To learn more
 about capabilities, refer to the [Appium documentation](https://appium.io/docs/en/latest/guides/caps/).
 
+For other capabilities recognized by the Appium server, see
+[their Appium docs reference page](https://appium.io/docs/en/latest/reference/session/caps/).
+
 ### General
 
 | <div style="width:10em">Capability</div> | Description |

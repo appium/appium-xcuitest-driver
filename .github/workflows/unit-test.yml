@@ -5,11 +5,13 @@ on:
     paths-ignore:
     - 'docs/**'
     - '*.md'
+    - 'mkdocs.yml'
   push:
     branches: [ master ]
     paths-ignore:
     - 'docs/**'
     - '*.md'
+    - 'mkdocs.yml'
 
 jobs:
   node_matrix:

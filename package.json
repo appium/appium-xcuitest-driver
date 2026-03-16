@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.26.0",
+  "version": "10.31.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -35,7 +35,8 @@
       "open-wda": "./scripts/open-wda.mjs",
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
-      "image-mounter": "./scripts/image-mounter.mjs"
+      "image-mounter": "./scripts/image-mounter.mjs",
+      "pair-appletv": "./scripts/pair-appletv.mjs"
     },
     "schema": {
       "$schema": "http://json-schema.org/draft-07/schema",
@@ -83,11 +84,12 @@
     "appium-idb": "^2.0.0",
     "appium-ios-device": "^3.0.0",
     "appium-ios-simulator": "^8.0.0",
-    "appium-remote-debugger": "^15.5.0",
+    "appium-remote-debugger": "^15.6.0",
     "appium-webdriveragent": "^11.4.0",
     "appium-xcode": "^6.0.2",
     "async-lock": "^1.4.0",
     "asyncbox": "^6.0.1",
+    "axios": "^1.4.0",
     "bluebird": "^3.7.2",
     "commander": "^14.0.1",
     "css-selector-parser": "^3.0.0",
@@ -153,7 +155,6 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^25.0.0",
     "@types/portscanner": "^2.1.1",
-    "axios": "^1.4.0",
     "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
     "conventional-changelog-conventionalcommits": "^9.0.0",

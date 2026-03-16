@@ -41,17 +41,16 @@ nav:
           - preparation/prov-profile-full-manual.md
           - preparation/prov-profile-generic-manual.md
   - Reference:
-      - reference/scripts.md
-      - reference/bidi.md
-      - Server Configuration:
+      - Command Line:
+          - reference/scripts.md
           - reference/server-args.md
-          - reference/security-flags.md
-      - Driver Configuration:
           - reference/env-vars.md
+          - reference/security-flags.md
       - Session Configuration:
           - reference/capabilities.md
           - reference/settings.md
           - reference/commands.md
+          - reference/bidi.md
           - reference/execute-methods.md
       - Element Management:
           - reference/locator-strategies.md
@@ -62,6 +61,8 @@ nav:
           - guides/parallel-tests.md
           - guides/ci-setup.md
           - guides/multiple-xcode-versions.md
+          - guides/remotexpc-tunnels-real-devices.md
+          - guides/remotexpc-apple-tv-pairing.md
           - Improve Session Startup Performance:
               - guides/run-preinstalled-wda.md
               - guides/run-prebuilt-wda.md
