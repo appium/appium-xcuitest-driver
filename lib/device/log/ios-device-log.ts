@@ -72,9 +72,7 @@ export class IOSDeviceLog extends LineConsumingLog {
     const Services = await getRemoteXPCServices();
     const {syslogService, serviceDescriptor} = await Services.startSyslogTextService(this.udid);
     this.syslogService = syslogService;
-    syslogService.on('message', (message: string) => {
-      this.onLog(message);
-    });
+    syslogService.on('message', this.onLog.bind(this));
     syslogService.on('error', (err: Error) => {
       this.log.warn(`Syslog RemoteXPC error: ${err.message}`);
     });
