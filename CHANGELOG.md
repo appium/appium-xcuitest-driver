@@ -1,3 +1,9 @@
+## [10.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.31.0...v10.32.0) (2026-03-16)
+
+### Features
+
+* **device-log:** implement shim syslog ([#2760](https://github.com/appium/appium-xcuitest-driver/issues/2760)) ([3ee206f](https://github.com/appium/appium-xcuitest-driver/commit/3ee206fc3fbf7efe7bfc8a066f8d5cabbea0b6e5))
+
 ## [10.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.1...v10.31.0) (2026-03-16)
 
 ### Features
