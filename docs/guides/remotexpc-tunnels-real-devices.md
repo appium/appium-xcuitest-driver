@@ -202,7 +202,8 @@ device.
 
 High‑level workflow:
 
-1. **Pair the Apple TV using the driver’s pairing script** so that it is registered and has a usable UDID:
+1. **Pair the Apple TV using the driver’s pairing script** so that it is registered and has a usable UDID.
+    See the [Apple TV pairing guide](remotexpc-apple-tv-pairing.md) for details. In short:
 
     ```bash
     appium driver run xcuitest pair-appletv
@@ -222,7 +223,7 @@ High‑level workflow:
     - establish a Remote XPC tunnel to the Apple TV over the network
     - register the Apple TV tunnel in the same tunnel registry used by the `tunnel-creation` script
 
-3. **Start the Appium server** as usual:
+3. **Start the Appium server** in a separate terminal (leave the tunnel script from step 2 running):
 
     ```bash
     appium
