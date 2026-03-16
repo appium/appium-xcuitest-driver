@@ -3,7 +3,7 @@
  * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
  * This script demonstrates the tunnel creation workflow for all connected devices
  */
-import {logger, node, fs} from 'appium/support.js';
+import {logger} from 'appium/support.js';
 import _ from 'lodash';
 
 import {
@@ -14,10 +14,10 @@ import {
   createUsbmux,
   startCoreDeviceProxy,
   startTunnelRegistryServer,
+  TUNNEL_CONTAINER_NAME,
 } from 'appium-ios-remotexpc';
 
 import {strongbox} from '@appium/strongbox';
-import path from 'node:path';
 import {Command} from 'commander';
 
 const log = logger.getLogger('TunnelCreation');
@@ -503,19 +503,27 @@ async function main() {
     if (options.tunnelRegistryPort !== undefined) {
       tunnelCreator.tunnelRegistryPort = options.tunnelRegistryPort;
     }
-    const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
-    if (!moduleRoot) {
-      throw new Error('Cannot resolve module root for appium-xcuitest-driver');
-    }
 
-    const packageJson = await fs.readFile(path.join(moduleRoot, 'package.json'), 'utf8');
-    const packageInfo = JSON.parse(packageJson);
-    const box = strongbox(packageInfo.name);
+    const box = strongbox(TUNNEL_CONTAINER_NAME);
     try {
-      await box.createItemWithValue(
-        TUNNEL_REGISTRY_PORT,
-        String(tunnelCreator.tunnelRegistryPort),
-      );
+      const item = box.getItem(TUNNEL_REGISTRY_PORT);
+      if (item === undefined) {
+        await box.createItemWithValue(
+          TUNNEL_REGISTRY_PORT,
+          String(tunnelCreator.tunnelRegistryPort),
+        );
+      } else {
+        if (options.tunnelRegistryPort !== undefined) {
+          // Override the persisted value with the command line option
+          await item.write(String(options.tunnelRegistryPort));
+        } else {
+          // Otherwise, read the persisted value
+          const persistedPort = Number.parseInt(await item.read(), 10);
+          if (persistedPort > 0 && persistedPort < 65536) {
+            tunnelCreator.tunnelRegistryPort = persistedPort;
+          }
+        }
+      }
     } catch (error) {
       throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
     }
