@@ -17,7 +17,7 @@ import {
   TUNNEL_CONTAINER_NAME,
 } from 'appium-ios-remotexpc';
 
-import {strongbox} from '@appium/strongbox';
+import {strongbox, BaseItem} from '@appium/strongbox';
 import {Command} from 'commander';
 
 const log = logger.getLogger('TunnelCreation');
@@ -500,28 +500,21 @@ async function main() {
     if (options.packetStreamBasePort !== undefined) {
       tunnelCreator.packetStreamBasePort = options.packetStreamBasePort;
     }
-    if (options.tunnelRegistryPort !== undefined) {
+    const isTunnelRegistryPortSet = options.tunnelRegistryPort !== undefined;
+    if (isTunnelRegistryPortSet) {
       tunnelCreator.tunnelRegistryPort = options.tunnelRegistryPort;
     }
 
     const box = strongbox(TUNNEL_CONTAINER_NAME);
+    const item = new BaseItem(TUNNEL_REGISTRY_PORT, box);
     try {
-      const item = box.getItem(TUNNEL_REGISTRY_PORT);
-      if (item === undefined) {
-        await box.createItemWithValue(
-          TUNNEL_REGISTRY_PORT,
-          String(tunnelCreator.tunnelRegistryPort),
-        );
+      const value = await item.read();
+      if (!value || isTunnelRegistryPortSet) {
+        await item.write(String(tunnelCreator.tunnelRegistryPort));
       } else {
-        if (options.tunnelRegistryPort !== undefined) {
-          // Override the persisted value with the command line option
-          await item.write(String(options.tunnelRegistryPort));
-        } else {
-          // Otherwise, read the persisted value
-          const persistedPort = Number.parseInt(await item.read(), 10);
-          if (persistedPort > 0 && persistedPort < 65536) {
-            tunnelCreator.tunnelRegistryPort = persistedPort;
-          }
+        const persistedPort = Number.parseInt(String(value), 10);
+        if (persistedPort > 0 && persistedPort < 65536) {
+          tunnelCreator.tunnelRegistryPort = persistedPort;
         }
       }
     } catch (error) {
