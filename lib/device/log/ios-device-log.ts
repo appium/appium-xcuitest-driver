@@ -38,9 +38,7 @@ export class IOSDeviceLog extends LineConsumingLog {
         this.log.info('Starting RemoteXPC syslog capture');
         return;
       } catch (err: any) {
-        this.log.warn(
-          `RemoteXPC syslog failed, falling back to legacy: ${err.message}`,
-        );
+        this.log.warn(`RemoteXPC syslog failed, falling back to legacy: ${err.message}`);
         await this.stopRemoteXPCCapture();
       }
     }
