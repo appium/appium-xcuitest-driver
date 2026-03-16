@@ -494,14 +494,3 @@ export function isIos18OrNewer(opts: XCUITestDriverOpts): boolean {
   return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '18.0');
 }
 
-/**
- * Returns true if platformVersion is >= 18.0 or not specified.
- * Used for feature detection where the default behaviour for an unknown version
- * is to attempt the newer path and fall back on failure.
- */
-export function isIos18OrNewerOrUnknown(opts: XCUITestDriverOpts): boolean {
-  if (!opts.platformVersion) {
-    return true;
-  }
-  return util.compareVersions(opts.platformVersion, '>=', '18.0');
-}
