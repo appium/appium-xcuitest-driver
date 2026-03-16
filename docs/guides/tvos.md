@@ -36,10 +36,9 @@ You can run tests for tvOS by setting the `platformName` capability to `tvOS`:
     If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
     `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` to verify this.
 
-### Network-Only Real Devices (tvOS < 18)
+### Network-Only Real Devices (tvOS < 18 or missing remotexpc support)
 
-For **tvOS versions earlier than 18**, running tests on network-only Apple TV devices remains
-limited and relies on `xcodebuild` + WebDriverAgent over HTTP:
+To run tests on network-only Apple TV devices, you may need the following:
 
 - Xcode 26.1 or later (to execute `xcodebuild` against such network-only Apple TV devices)
 - Set the `APPIUM_XCUITEST_PREFER_DEVICECTL` environment variable
