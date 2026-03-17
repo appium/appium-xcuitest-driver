@@ -1,3 +1,9 @@
+## [10.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.32.0...v10.32.1) (2026-03-17)
+
+### Bug Fixes
+
+* Strongbox usage in the tunnel creation script ([#2762](https://github.com/appium/appium-xcuitest-driver/issues/2762)) ([3bac69b](https://github.com/appium/appium-xcuitest-driver/commit/3bac69b53ff0a1edf965cbe4144d822204807f27))
+
 ## [10.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.31.0...v10.32.0) (2026-03-16)
 
 ### Features
