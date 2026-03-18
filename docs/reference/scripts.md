@@ -18,7 +18,7 @@ Builds the WebDriverAgent (WDA) project of the installed XCUITest driver for a s
 #### Usage
 
 ```
-appium driver run xcuitest build-wda [script-args]
+appium driver run xcuitest build-wda
 ```
 
 #### Options
@@ -53,16 +53,19 @@ For information about running tests with a prebuilt WDA application, [refer to t
 #### Usage
 
 ```
-appium driver run xcuitest download-wda-sim [script-args]
+appium driver run xcuitest download-wda-sim --outdir=<outdir> --platform=<platform>
 ```
 
-#### Options
-
-|Argument|Description|Type|
+|<div style="width:6em">Argument</div>|Description|Type|
 |--|--|--|
 |`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string|
 |`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string|
-|`-- --help`, `-- -h`|Return help text and exit||
+
+#### Options
+
+|Argument|Description|
+|--|--|
+|`-- --help`, `-- -h`|Return help text and exit|
 
 #### Examples
 
@@ -81,31 +84,48 @@ appium driver run xcuitest download-wda-sim [script-args]
 
 ### `image-mounter`
 
-Mounts or unmounts a Developer Disk image on an iOS device.
+Mounts or unmounts a Developer Disk image on an iOS device, using either the `mount` or `unmount`
+sub-command, respectively. Returns help text when run with no subcommand.
 
-#### Usage
+#### Usage (no subcommand)
 
 ```
-appium driver run xcuitest image-mounter {mount|unmount} [script-args]
+appium driver run xcuitest image-mounter
 ```
 
-#### Options (no subcommand)
+##### Options
 
 |Argument|Description|
 |--|--|
 |`--version`, `-V`|Return the script version and exit|
 |`-- --help`, `-- -h`|Return help text and exit|
 
-#### Options (`mount` subcommand)
+#### Usage (`mount` subcommand)
 
-|<div style="width:9em">Argument</div>|Description|Type|Default|
+```
+appium driver run xcuitest image-mounter mount --image=<image> --manifest=<manifest> --trustcache=<trustcache>
+```
+
+|Argument|Description|Type|
+|--|--|--|
+|`--image`, `-i`|Path to the developer disk image `.dmg` file|string|
+|`--manifest`, `-m`|Path to the `BuildManifest.plist` file|string|
+|`--trustcache`, `-t`|Path to the `.trustcache` file|string|
+
+##### Options
+
+|<div style="width:6em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
-|`--image`, `-i`|Path to the developer disk image `.dmg` file|string||
-|`--manifest`, `-m`|Path to the `BuildManifest.plist` file|string||
-|`--trustcache`, `-t`|Path to the `.trustcache` file|string||
 |`--udid`, `-u`|Identifier of the target device to mount the image to. By default, the first connected iOS device is used.|string|UDID of the first connected device|
 
-#### Options (`unmount` subcommand)
+
+#### Usage (`unmount` subcommand)
+
+```
+appium driver run xcuitest image-mounter unmount
+```
+
+##### Options
 
 |<div style="width:9em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
 |--|--|--|--|
@@ -113,7 +133,6 @@ appium driver run xcuitest image-mounter {mount|unmount} [script-args]
 |`--udid`, `-u`|Identifier of the target device to unmount the image from. By default, the first connected iOS device is used.|string|UDID of the first connected device|
 
 #### Examples
-
 
 - Mount a given image on the device with UDID `00000000-1111-2222-3333-444444444444`:
 
@@ -151,7 +170,7 @@ and [Apple TV pairing](../guides/remotexpc-apple-tv-pairing.md) guides for more 
 #### Usage
 
 ```
-appium driver run xcuitest pair-appletv [script-args]
+appium driver run xcuitest pair-appletv
 ```
 
 #### Options
@@ -176,7 +195,7 @@ returned identifier as `udid` for tvOS sessions.
 #### Usage
 
 ```
-sudo appium driver run xcuitest tunnel-creation [script-args]
+sudo appium driver run xcuitest tunnel-creation
 ```
 
 #### Options
