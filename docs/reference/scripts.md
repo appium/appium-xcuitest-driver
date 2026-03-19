@@ -21,7 +21,7 @@ Builds the WebDriverAgent (WDA) project of the installed XCUITest driver for a s
 appium driver run xcuitest build-wda
 ```
 
-#### Options
+#### Optional Arguments
 
 |Argument|Description|Type|Default|
 |--|--|--|--|
@@ -62,7 +62,7 @@ appium driver run xcuitest download-wda-sim --outdir=<outdir> --platform=<platfo
 |`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string|
 |`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string|
 
-#### Options
+#### Optional Arguments
 
 |Argument|Description|
 |--|--|
@@ -96,7 +96,7 @@ run with no subcommand.
 appium driver run xcuitest image-mounter
 ```
 
-##### Options
+##### Optional Arguments
 
 |Argument|Description|
 |--|--|
@@ -115,7 +115,7 @@ appium driver run xcuitest image-mounter mount --image=<image> --manifest=<manif
 |`--manifest`, `-m`|Path to the `BuildManifest.plist` file|string|
 |`--trustcache`, `-t`|Path to the `.trustcache` file|string|
 
-##### Options
+##### Optional Arguments
 
 |<div style="width:6em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
@@ -128,7 +128,7 @@ appium driver run xcuitest image-mounter mount --image=<image> --manifest=<manif
 appium driver run xcuitest image-mounter unmount
 ```
 
-##### Options
+##### Optional Arguments
 
 |<div style="width:9em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
 |--|--|--|--|
@@ -178,7 +178,7 @@ and [Apple TV pairing](../guides/remotexpc-apple-tv-pairing.md) guides for more 
 appium driver run xcuitest pair-appletv
 ```
 
-#### Options
+#### Optional Arguments
 
 |Argument|Description|Type|
 |--|--|--|
@@ -191,7 +191,7 @@ appium driver run xcuitest pair-appletv
 Creates tunnels for communication with real iOS/tvOS 18+ devices.
 
 Apple TV devices must first be paired using the [`pair-appletv`](#pair-appletv) script; use the
-returned identifier as `udid` for tvOS sessions.
+returned identifier as the value of `--appletv-device-id` for tvOS sessions.
 
 !!! note
 
@@ -211,7 +211,7 @@ returned identifier as `udid` for tvOS sessions.
 sudo appium driver run xcuitest tunnel-creation
 ```
 
-#### Options
+#### Optional Arguments
 
 |<div style="width:14em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
