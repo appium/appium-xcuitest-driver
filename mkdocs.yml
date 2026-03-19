@@ -30,8 +30,10 @@ extra:
 nav:
   - index.md
   - overview.md
-  - Installation:
-      - installation/index.md
+  - Getting Started:
+      - getting-started/index.md
+      - getting-started/system-requirements.md
+      - getting-started/installation.md
   - Device Preparation:
       - preparation/index.md
       - preparation/real-device-config.md
@@ -92,7 +94,7 @@ plugins:
     redirect_maps:
       'device-preparation.md': 'preparation/index.md'
       'real-device-config.md': 'preparation/real-device-config.md'
-      'setup.md': 'installation/index.md'
+      'setup.md': 'getting-started/index.md'
       'actions.md': 'guides/input-events.md'
       'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
       'audio-capture.md': 'guides/audio-capture.md'
@@ -117,4 +119,5 @@ plugins:
       'security-flags.md': 'reference/security-flags.md'
       'server-args.md': 'reference/server-args.md'
       'settings.md': 'reference/settings.md'
-      'installation/requirements.md': 'installation/index.md'
+      'installation/requirements.md': 'getting-started/system-requirements.md'
+      'installation/index.md': 'getting-started/index.md'
