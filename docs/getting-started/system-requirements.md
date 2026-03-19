@@ -122,12 +122,9 @@ and prerequisites of Appium itself can be found in [the Appium documentation](ht
 
 ### Optional Requirements
 
-- [`xcpretty`](https://github.com/supermarin/xcpretty) can be used to make Xcode output easier to
-  read. It can be installed by running `gem install xcpretty`.
 - [`ffmpeg`](https://ffmpeg.org/) is used for test video recording. It can be installed using
   [`brew`](https://brew.sh/): `brew install ffmpeg`
-- [`idb`](https://github.com/facebook/idb), [`go-ios`](https://github.com/danielpaulus/go-ios) and
-  [`tidevice`](https://github.com/alibaba/taobao-iphone-device) can be used to improve device interactions
+- [`go-ios`](https://github.com/danielpaulus/go-ios) can be used to improve device interactions
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) can be used to improve some
   Simulator interactions
 - [`py-ios-device`](https://github.com/YueChen-C/py-ios-device) is required in several `mobile:`
