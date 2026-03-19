@@ -43,6 +43,7 @@ appium driver run xcuitest build-wda
     appium driver run xcuitest build-wda --sdk=17.5 --name="iPhone 15"
     ```
 
+
 ### `download-wda-sim`
 
 Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
@@ -82,10 +83,12 @@ appium driver run xcuitest download-wda-sim --outdir=<outdir> --platform=<platfo
     appium driver run xcuitest download-wda-sim --platform=tvos --outdir=/path/to/dir
     ```
 
+
 ### `image-mounter`
 
-Mounts or unmounts a Developer Disk image on an iOS device, using either the `mount` or `unmount`
-sub-command, respectively. Returns help text when run with no subcommand.
+Mounts or unmounts a Developer Disk Image (DDI) on an iOS device to unlock additional development
+features. The script provides the `mount` and `unmount` sub-commands, and returns help text when
+run with no subcommand.
 
 #### Usage (no subcommand)
 
@@ -146,6 +149,7 @@ appium driver run xcuitest image-mounter unmount
     appium driver run xcuitest image-mounter unmount --udid 00000000-1111-2222-3333-444444444444
     ```
 
+
 ### `open-wda`
 
 Opens the WebDriverAgent (WDA) project of the installed XCUITest driver in Xcode.
@@ -155,6 +159,7 @@ Opens the WebDriverAgent (WDA) project of the installed XCUITest driver in Xcode
 ```
 appium driver run xcuitest open-wda
 ```
+
 
 ### `pair-appletv`
 
@@ -180,6 +185,7 @@ appium driver run xcuitest pair-appletv
 |`-- --device`, `-- -d`|Selector of the Apple TV device. Can be the device name (`"Living Room"`), UDID (`AA:BB:CC:DD:EE:FF`), or index (`0`). If not provided, a prompt for device selection is shown.|string or integer|
 |`-- --help`, `-- -h`|Return help text and exit||
 
+
 ### `tunnel-creation`
 
 Creates tunnels for communication with real iOS/tvOS 18+ devices.
@@ -189,8 +195,15 @@ returned identifier as `udid` for tvOS sessions.
 
 !!! note
 
-    This script must be run in `sudo` mode, and requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
     package to be installed.
+
+!!! note
+
+    This script must be run in `sudo` mode. This is because tunnel creation relies on TUN/TAP
+    interfaces (via [`appium-ios-tuntap`](https://github.com/appium/appium-ios-tuntap/)), and macOS
+    does not allow adding/removing TUN interfaces for non-root users. Xcode/devicectl do not
+    require such privileges, because they interact with trusted system services.
 
 #### Usage
 
