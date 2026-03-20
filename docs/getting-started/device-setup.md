@@ -8,7 +8,7 @@ configuration is required on the device itself.
 ## Automatic Adjustments
 
 The driver automatically adjusts certain device settings. Currently this only applies to
-keyboard-related preferences. Some of these preferences still be adjusted manually via the
+keyboard-related preferences. Some of these preferences can still be adjusted manually via the
 [Settings API](https://appium.io/docs/en/latest/guides/settings/).
 
 - _Settings -> General -> Keyboard -> Auto-Correction_ is turned OFF
