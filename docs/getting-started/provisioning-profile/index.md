@@ -3,8 +3,8 @@ title: Provisioning Profile
 ---
 
 The XCUITest driver communicates with the device under test through the
-`WebDriverAgentRunner-Runner` (WDA) helper application, which the driver automatically builds and
-installs on the device. For real devices, Apple requires all apps to have a valid provisioning
+`WebDriverAgentRunner-Runner` (WDA) helper application, which the driver can automatically build and
+install on the device. For real devices, Apple requires all apps to have a valid provisioning
 profile before they can be installed, which means that the WDA app must first be signed and linked
 to a development team. This guide describes how to accomplish this.
 
@@ -66,11 +66,18 @@ capabilities (for automatic config), or tried to build and install WDA through X
 config). If this did not succeed, you likely have one of the following problems. For issues not
 listed here, please refer to the [Troubleshooting](../../guides/troubleshooting.md) page.
 
-### xcodebuild exited with code 65 / code 70
+### xcodebuild exited with code 65
 
   This can happen during automatic configuration, or when a manually configured provisioning profile
   is revoked (for example, due to expiration). It means that code signing is not set up correctly and
   must be reconfigured. Follow the steps in any of the manual configuration approaches to fix this.
+
+### xcodebuild exited with code 70
+
+  Similarly to the error for code 65, this error can be caused by invalid code signing, but may
+  also be returned in case of invalid `xcodebuild` configuration (for example, wrong platform
+  version). To fix this, check if code signing is set up properly, and verify that any custom build
+  parameters have valid values.
 
 ### Developer App Certificate is not trusted
 
@@ -92,8 +99,9 @@ listed here, please refer to the [Troubleshooting](../../guides/troubleshooting.
 
 Since iOS 16, Apple requires a device to have a live internet connection for validating the code
 signing. It is possible to set up an offline enabled provisioning profile, which allows you to avoid
-the limitation. Please read [this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074)
-regarding detailed configuration steps.
+the limitation, although such profiles are only valid for up to 7 days. Please read
+[this issue](https://github.com/appium/appium/issues/18378#issuecomment-1482678074) regarding
+detailed configuration steps.
 
 ## Improve WebDriverAgent Startup Performance
 
