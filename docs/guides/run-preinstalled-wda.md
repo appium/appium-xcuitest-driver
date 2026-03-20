@@ -38,7 +38,7 @@ Running a test for the WDA package in Xcode is the easiest way to prepare the de
 5. Select _Product -> Test_ to build and install the WDA app
 
 If using a real device, you may need to change your bundle ID. Please check the
-[Full Manual Provisioning Profile setup](../preparation/prov-profile-full-manual.md) for details.
+[Full Manual Provisioning Profile setup](../getting-started/provisioning-profile/full-manual-config.md) for details.
 
 ### Using 3rd Party Tools
 
@@ -53,7 +53,7 @@ XCUITest driver automatically adds the `.xctrunner` suffix to the provided bundl
 If the value is an empty string, then no suffix will be added to the provided bundle identifier.
 
 The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the _derivedDataPath_
-directory, as explained in [Manual Configuration for a Generic Device](../preparation/prov-profile-generic-manual.md).
+directory, as explained in [Manual Configuration for a Generic Device](../getting-started/provisioning-profile/generic-device-config.md).
 The app can then be installed without `xcodebuild` using the 3rd party tools.
 
 ### Additional requirement for iOS 17+/tvOS17+

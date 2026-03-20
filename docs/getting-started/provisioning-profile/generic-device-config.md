@@ -29,7 +29,7 @@ The `WebDriverAgentRunner-Runner.app` can now be installed to any real device as
 provisioning profile.
 
 You can install the package with 3rd party tools and manage it separately as explained in
-[How To Set Up And Customize WebDriverAgent Server](../guides/wda-custom-server.md). Note that if
+[How To Set Up And Customize WebDriverAgent Server](../../guides/wda-custom-server.md). Note that if
 the codesigning was not correct, the installation will fail.
 
 As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do

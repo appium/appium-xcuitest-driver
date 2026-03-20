@@ -23,17 +23,18 @@ The driver supports the following Apple platforms as automation targets:
 |Safari (mobile)|:white_check_mark: [^safari-mob]|:white_check_mark: [^safari-mob]|
 |Safari (desktop)|:x: [^safari-desktop]|:x: [^safari-desktop]|
 
-A detailed breakdown of the supported platform versions can be found in [the Installation page](./installation/index.md#ios-version-support).
+A detailed breakdown of the supported platform versions can be found in [the Installation page](./getting-started/system-requirements.md#driver-version).
 
 ## Contexts
 
 The following application contexts are supported for automation:
 
 - Native applications
-- Webviews based on Safari or Chrome
+- Webviews based on Safari
+- Webviews based on Chrome ([since Chrome 115 & iOS 16.4](https://developer.chrome.com/blog/debugging-chrome-on-ios/))
 - Hybrid applications
 
-Note that [only debuggable webviews](./preparation/index.md#webview-testing) are supported.
+Note that [only debuggable webviews](./guides/troubleshooting.md#unable-to-detect-webview) are supported.
 
 ## Technologies Used
 

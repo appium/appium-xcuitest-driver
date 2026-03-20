@@ -115,7 +115,7 @@ and prerequisites of Appium itself can be found in [the Appium documentation](ht
 ## Other Requirements
 
 - If automating real devices, additional manual configuration is required - please refer to the
-  [Real Device Configuration](../preparation/real-device-config.md) guide.
+  [Real Device Setup](./device-setup.md#real-devices) guide.
 - If testing web or hybrid apps, their webviews must be debuggable. If it is not possible to connect to your
   webview(s) using [Safari remote debugger](https://appletoolbox.com/use-web-inspector-debug-mobile-safari/),
   then the driver will not be able to identify them.
