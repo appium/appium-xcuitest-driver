@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/10.32/reference/scripts/">
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/10.32/getting-started/device-setup/">
       
       
-        <link rel="prev" href="../../getting-started/provisioning-profile/generic-device-config/">
+        <link rel="prev" href="../installation/">
       
       
-        <link rel="next" href="../server-args/">
+        <link rel="next" href="../provisioning-profile/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Scripts - Appium XCUITest Driver</title>
+        <title>Device Preparation - Appium XCUITest Driver</title>
       
     
     
@@ -146,6 +146,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#automatic-adjustments" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -179,7 +184,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Scripts
+              Device Preparation
             
           </span>
         </div>
@@ -336,11 +341,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../getting-started/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -358,8 +365,6 @@
   
   
   
-    
-  
   
     
     
@@ -367,13 +372,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../reference/scripts/" class="md-tabs__link">
           
   
   
@@ -451,8 +454,6 @@
         <div class="md-main__inner md-grid">
           
             
-              
-                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -545,6 +546,8 @@
       
   
   
+    
+  
   
   
     
@@ -566,20 +569,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -597,13 +603,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -623,7 +629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/system-requirements/" class="md-nav__link">
+      <a href="../system-requirements/" class="md-nav__link">
         
   
   
@@ -651,7 +657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../installation/" class="md-nav__link">
         
   
   
@@ -676,10 +682,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../getting-started/device-setup/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Preparation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -695,6 +726,178 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#automatic-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic Adjustments
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#accessibility-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Accessibility Settings
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#real-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real Devices
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Real Devices">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#provisioning-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provisioning Profile
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -727,10 +930,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -738,7 +944,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../getting-started/provisioning-profile/" class="md-nav__link ">
+            <a href="../provisioning-profile/" class="md-nav__link ">
               
   
   
@@ -756,7 +962,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_5" id="__nav_3_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -782,7 +988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/provisioning-profile/auto-config/" class="md-nav__link">
+      <a href="../provisioning-profile/auto-config/" class="md-nav__link">
         
   
   
@@ -810,7 +1016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/provisioning-profile/basic-manual-config/" class="md-nav__link">
+      <a href="../provisioning-profile/basic-manual-config/" class="md-nav__link">
         
   
   
@@ -838,7 +1044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/provisioning-profile/full-manual-config/" class="md-nav__link">
+      <a href="../provisioning-profile/full-manual-config/" class="md-nav__link">
         
   
   
@@ -866,7 +1072,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/provisioning-profile/generic-device-config/" class="md-nav__link">
+      <a href="../provisioning-profile/generic-device-config/" class="md-nav__link">
         
   
   
@@ -906,10 +1112,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -923,22 +1127,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
   
@@ -956,7 +1157,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -971,10 +1172,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -991,21 +1190,18 @@
     
       
       
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
         
           
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
             
   
   
@@ -1023,7 +1219,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1038,17 +1234,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../reference/scripts/" class="md-nav__link">
         
   
   
@@ -1064,7 +1253,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1077,7 +1265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../server-args/" class="md-nav__link">
+      <a href="../../reference/server-args/" class="md-nav__link">
         
   
   
@@ -1105,7 +1293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../env-vars/" class="md-nav__link">
+      <a href="../../reference/env-vars/" class="md-nav__link">
         
   
   
@@ -1133,7 +1321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../security-flags/" class="md-nav__link">
+      <a href="../../reference/security-flags/" class="md-nav__link">
         
   
   
@@ -1187,20 +1375,17 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
         
           
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
             
   
   
@@ -1236,7 +1421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../capabilities/" class="md-nav__link">
+      <a href="../../reference/capabilities/" class="md-nav__link">
         
   
   
@@ -1264,7 +1449,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../settings/" class="md-nav__link">
+      <a href="../../reference/settings/" class="md-nav__link">
         
   
   
@@ -1292,7 +1477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../commands/" class="md-nav__link">
+      <a href="../../reference/commands/" class="md-nav__link">
         
   
   
@@ -1320,7 +1505,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../bidi/" class="md-nav__link">
+      <a href="../../reference/bidi/" class="md-nav__link">
         
   
   
@@ -1348,7 +1533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-methods/" class="md-nav__link">
+      <a href="../../reference/execute-methods/" class="md-nav__link">
         
   
   
@@ -1398,20 +1583,17 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
             
   
   
@@ -1447,7 +1629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../locator-strategies/" class="md-nav__link">
+      <a href="../../reference/locator-strategies/" class="md-nav__link">
         
   
   
@@ -1475,7 +1657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ios-predicate/" class="md-nav__link">
+      <a href="../../reference/ios-predicate/" class="md-nav__link">
         
   
   
@@ -1503,7 +1685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../element-attributes/" class="md-nav__link">
+      <a href="../../reference/element-attributes/" class="md-nav__link">
         
   
   
@@ -2645,9 +2827,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -2656,6 +2836,168 @@
   
   
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#automatic-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic Adjustments
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#accessibility-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Accessibility Settings
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#real-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real Devices
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Real Devices">
+      <ul class="md-nav__list">
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#provisioning-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provisioning Profile
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2667,8 +3009,6 @@
             <div class="md-content" data-md-component="content">
               
                 
-
-  
 
 
 
@@ -2699,37 +3039,11 @@
   
     
     
-      
-  
-  
-    
-    
       <li class="md-path__item">
-        <a href="./" class="md-path__link">
+        <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
-    Reference
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="./" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Command Line
+    Getting Started
   </span>
 
         </a>
@@ -2745,12 +3059,10 @@
               <article class="md-content__inner md-typeset">
                 
                   
-  
-
 
 
   
-    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/reference/scripts.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/getting-started/device-setup.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2758,78 +3070,77 @@
   
 
 
-  <h1>Scripts</h1>
+  <h1>Device Preparation</h1>
 
-<p>Appium drivers can include scripts for executing specific actions. The following table lists the
-scripts bundled with the XCUITest driver. These scripts can be run as follows:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium driver run xcuitest &lt;script-name&gt;
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Script Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>open-wda</code></td>
-<td>Opens the WebDriverAgent project in Xcode</td>
-</tr>
-<tr>
-<td><code>build-wda</code></td>
-<td>Builds the WebDriverAgent project using the first available iPhone simulator and the latest iOS supported by the current Xcode version by default</td>
-</tr>
-<tr>
-<td><code>build-wda --sdk=17.5 --name="iPhone 15"</code></td>
-<td>Builds the WebDriverAgent project using the iPhone 15 simulator with iOS 17.5. If <code>--sdk</code> and <code>--name</code> params are not specified - the latest iOS and the first available iPhone simulator will be used</td>
-</tr>
-<tr>
-<td><code>tunnel-creation</code></td>
-<td>Creates tunnels for connected iOS devices and paired Apple TVs (over WiFi when available), starts CoreDeviceProxy, and sets up a single tunnel registry server. Requires sudo for USB devices. Pair Apple TVs first (see <a href="../../guides/remotexpc-apple-tv-pairing/">Apple TV pairing</a>); use the printed identifier as <code>udid</code> for tvOS sessions.</td>
-</tr>
-<tr>
-<td><code>tunnel-creation --udid=&lt;device-udid&gt;</code> or <code>-u &lt;device-udid&gt;</code></td>
-<td>Creates a tunnel for a specific iOS device with the given UDID</td>
-</tr>
-<tr>
-<td><code>tunnel-creation --packet-stream-base-port=&lt;port&gt;</code></td>
-<td>Specifies the base port for packet stream servers (default: 50000)</td>
-</tr>
-<tr>
-<td><code>tunnel-creation --tunnel-registry-port=&lt;port&gt;</code></td>
-<td>Specifies the port for the tunnel registry server (default: 42314)</td>
-</tr>
-<tr>
-<td><code>tunnel-creation --appletv-device-id=&lt;identifier&gt;</code></td>
-<td>When adding an Apple TV over WiFi, tunnel only this device (use the identifier printed by <code>pair-appletv</code>). Omit to use the first discovered paired device.</td>
-</tr>
-<tr>
-<td><code>download-wda-sim --outdir=/path/to/dir</code></td>
-<td>Download corresponding version's prebuilt WDA for iOS matched with the host machine architecture from <a href="https://github.com/appium/WebDriverAgent/releases">GitHub WebDriver release page</a> into <code>--outdir</code> directory. The downloaded package name will be <code>WebDriverAgentRunner-Runner.app</code>.</td>
-</tr>
-<tr>
-<td><code>download-wda-sim --platform=tvos --outdir=/path/to/dir</code></td>
-<td>Download corresponding version's prebuilt WDA for <code>--platform</code> into <code>--outdir</code> directory. If <code>--platform=tvos</code> is provided, the download module will be for tvOS (<code>WebDriverAgentRunner_tvOS-Runner.app</code>), otherwise the command will download iOS.</td>
-</tr>
-<tr>
-<td><code>image-mounter mount --image &lt;path&gt; --manifest &lt;path&gt; --trustcache &lt;path&gt;</code></td>
-<td>Mount a Personalized Developer Disk Image on an iOS device. Requires paths to the .dmg image file, BuildManifest.plist, and .trustcache file. Requires the <code>appium-ios-remotexpc</code> optional dependency.</td>
-</tr>
-<tr>
-<td><code>image-mounter mount --image &lt;path&gt; --manifest &lt;path&gt; --trustcache &lt;path&gt; --udid &lt;device-udid&gt;</code></td>
-<td>Mount a Developer Disk Image on a specific iOS device with the given UDID</td>
-</tr>
-<tr>
-<td><code>image-mounter unmount</code></td>
-<td>Unmount a Developer Disk Image from the first available iOS device (default mount path: <code>/System/Developer</code>)</td>
-</tr>
-<tr>
-<td><code>image-mounter unmount --udid &lt;device-udid&gt;</code></td>
-<td>Unmount a Developer Disk Image from a specific iOS device with the given UDID</td>
-</tr>
-</tbody>
-</table>
+<p>Before using the XCUITest driver with any device (either simulator or real device), additional
+configuration is required on the device itself.</p>
+<h2 id="automatic-adjustments">Automatic Adjustments<a class="headerlink" href="#automatic-adjustments" title="Permanent link">&para;</a></h2>
+<p>The driver automatically adjusts certain device settings. Currently this only applies to
+keyboard-related preferences. Some of these preferences can still be adjusted manually via the
+<a href="https://appium.io/docs/en/latest/guides/settings/">Settings API</a>.</p>
+<ul>
+<li><em>Settings -&gt; General -&gt; Keyboard -&gt; Auto-Correction</em> is turned OFF</li>
+<li><em>Settings -&gt; General -&gt; Keyboard -&gt; Predictive Text</em> is turned OFF</li>
+<li>The keyboard tutorial is marked as complete</li>
+<li>(Simulator Only) Software keyboard is turned ON</li>
+</ul>
+<h2 id="accessibility-settings">Accessibility Settings<a class="headerlink" href="#accessibility-settings" title="Permanent link">&para;</a></h2>
+<p>Certain accessibility settings may affect the elements shown in the application page source.</p>
+<ul>
+<li>
+<p>Ensure zoom is turned off in order to avoid miscalculation of element coordinates:</p>
+<blockquote>
+<p><em>Settings</em> -&gt; <em>Accessibility</em> -&gt; <em>Zoom</em> -&gt; Turn <em>Zoom</em> OFF</p>
+</blockquote>
+</li>
+<li>
+<p>Other settings may be adjusted depending on your testing requirements:</p>
+<blockquote>
+<p><em>Settings</em> -&gt; <em>Accessibility</em> -&gt; <em>Read &amp; Speak</em> -&gt; <em>Speak Selection</em></p>
+</blockquote>
+</li>
+</ul>
+<h2 id="real-devices">Real Devices<a class="headerlink" href="#real-devices" title="Permanent link">&para;</a></h2>
+<p>In order to communicate with both simulators and real devices, the XCUITest driver must install
+the <code>WebDriverAgentRunner-Runner</code> (WDA) application on the device. Unlike simulators, real devices
+will not allow this by default, and have several security restrictions that need to be manually
+lifted beforehand:</p>
+<ul>
+<li>
+<p>The device <a href="https://developer.apple.com/documentation/xcode/pairing-your-devices-with-xcode#Manage-your-real-devices-in-Xcode">needs to be trusted</a>:</p>
+<ol>
+<li>On your macOS computer, open Xcode</li>
+<li>Physically connect the device to the computer</li>
+<li>On the device, a Trust This Computer popup should appear - accept it</li>
+</ol>
+</li>
+<li>
+<p>The device must have <a href="https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device">Developer Mode enabled</a> (iOS/iPadOS 16+ only):</p>
+<blockquote>
+<p><em>Settings</em> -&gt; <em>Privacy &amp; Security</em> -&gt; <em>Developer Mode</em> -&gt; Turn <em>Developer Mode</em> ON</p>
+</blockquote>
+<p>You can also use the <code>devmodectl streaming</code> CLI on macOS 13+ and install development signed
+apps to enable this mode.</p>
+</li>
+<li>
+<p>UI Automation must be enabled:</p>
+<blockquote>
+<p><em>Settings</em> -&gt; <em>Developer</em> -&gt; Turn <em>Enable UI Automation</em> ON</p>
+</blockquote>
+</li>
+<li>
+<p>For webview testing, Safari automation-related settings must be enabled:</p>
+<blockquote>
+<p><em>Settings</em> -&gt; <em>Apps</em> -&gt; <em>Safari</em> -&gt; <em>Advanced</em> -&gt; Turn <em>Web Inspector</em> ON</p>
+<p><em>Settings</em> -&gt; <em>Apps</em> -&gt; <em>Safari</em> -&gt; <em>Advanced</em> -&gt; Turn <em>Remote Automation</em> ON</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="provisioning-profile">Provisioning Profile<a class="headerlink" href="#provisioning-profile" title="Permanent link">&para;</a></h3>
+<p>In addition to all of the above device configuration, the WDA application must have a valid
+provisioning profile in order for it to be installable on your target device. Refer to
+<a href="../provisioning-profile/">the Provisioning Profile guide</a> for more details on how to
+configure this.</p>
 
 
 
@@ -2850,7 +3161,7 @@ scripts bundled with the XCUITest driver. These scripts can be run as follows:</
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 14, 2026 20:11:40 UTC"><span class="timeago" datetime="2026-03-14T20:11:40+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 14, 2026 20:11:40 UTC">2026-03-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 20, 2026 18:54:08 UTC"><span class="timeago" datetime="2026-03-20T18:54:08+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 20, 2026 18:54:08 UTC">2026-03-20</span>
   </span>
 
     
@@ -2860,8 +3171,6 @@ scripts bundled with the XCUITest driver. These scripts can be run as follows:</
   </aside>
 
 
-
-  
 
 
 
