@@ -46,5 +46,4 @@ and is _not_ recommended:
     * Select your real device in _Product -> Destination_
     * Select _Product -> Test_ to build and install the WDA app
 
-Proceed with [Validating the WDA Install](./real-device-config.md#validating-the-wda-install) for
-the next steps!
+Check [Common Issues](./index.md#common-issues) if you encountered any problems.

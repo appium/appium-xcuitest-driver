@@ -27,8 +27,7 @@ please visit [the Appium documentation](https://appium.io).
 <div class="grid cards" markdown>
 
 -   Check out the [__Overview__](./overview.md) to learn how the driver works
--   Go through the [__Getting Started__](./getting-started/index.md) steps to get set up
--   Follow the [__Device Preparation__](./preparation/index.md) instructions to configure your test device
+-   Go through the [__Getting Started__](./getting-started/index.md) steps to get set up and prepare your test device
 -   Browse the [__Reference__](./reference/scripts.md) documentation for everything exposed by the driver
 -   Read the different [__Guides__](./guides/parallel-tests.md) for a variety of instructions, tips and tricks
 -   For contributions to the driver, refer to the [__Contributing__](./contributing.md) page
