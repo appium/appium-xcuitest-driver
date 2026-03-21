@@ -163,11 +163,10 @@ class RealDevicesLister {
     try {
       raw = await new Devicectl('').listDevices();
     } catch (err) {
-      log.error(
-        `devicectl failed: ${err instanceof Error ? err.message : String(err)}. ` +
-          'Requires Xcode 15+ and `xcrun devicectl list devices`.',
+      throw new Error(
+        `devicectl requires Xcode 15+ and a working \`xcrun devicectl list devices\``,
+        {cause: err},
       );
-      return [];
     }
 
     if (raw.length === 0) {
