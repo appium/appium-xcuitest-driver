@@ -24,14 +24,7 @@ import {Devicectl} from 'node-devicectl';
 import {logger, util} from 'appium/support.js';
 import {Command, Option} from 'commander';
 
-/** @typedef {import('appium-ios-remotexpc').UsbmuxDevice} UsbmuxDevice */
-/** @typedef {import('node-devicectl').DeviceInfo} DeviceInfo */
-
 const log = logger.getLogger('Lister');
-
-/**
- * @typedef {'all' | 'wired' | 'wireless'} ConnectionFilter
- */
 
 class RealDevicesLister {
   /**
@@ -353,3 +346,9 @@ async function main() {
 }
 
 await main();
+
+/**
+ * @typedef {import('appium-ios-remotexpc').UsbmuxDevice} UsbmuxDevice
+ * @typedef {import('node-devicectl').DeviceInfo} DeviceInfo
+ * @typedef {'all' | 'wired' | 'wireless'} ConnectionFilter
+ */
