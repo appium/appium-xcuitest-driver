@@ -27,13 +27,13 @@ import {Command, Option} from 'commander';
 /** @typedef {import('appium-ios-remotexpc').UsbmuxDevice} UsbmuxDevice */
 /** @typedef {import('node-devicectl').DeviceInfo} DeviceInfo */
 
-const log = logger.getLogger('ListRealDevices');
+const log = logger.getLogger('Lister');
 
 /**
  * @typedef {'all' | 'wired' | 'wireless'} ConnectionFilter
  */
 
-class ListRealDevices {
+class RealDevicesLister {
   /**
    * @param {{
    *   devicectl?: boolean,
@@ -328,7 +328,7 @@ class ListRealDevices {
 }
 
 async function main() {
-  const lister = new ListRealDevices();
+  const lister = new RealDevicesLister();
   const program = new Command();
   program
     .name('appium driver run xcuitest list-real-devices')
