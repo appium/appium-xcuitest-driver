@@ -30,16 +30,17 @@ extra:
 nav:
   - index.md
   - overview.md
-  - Installation:
-      - installation/index.md
-  - Device Preparation:
-      - preparation/index.md
-      - preparation/real-device-config.md
-      - Provisioning Profile for Real Devices:
-          - preparation/prov-profile-basic-auto.md
-          - preparation/prov-profile-basic-manual.md
-          - preparation/prov-profile-full-manual.md
-          - preparation/prov-profile-generic-manual.md
+  - Getting Started:
+      - getting-started/index.md
+      - getting-started/system-requirements.md
+      - getting-started/installation.md
+      - getting-started/device-setup.md
+      - Real Device Provisioning Profile:
+          - getting-started/provisioning-profile/index.md
+          - getting-started/provisioning-profile/auto-config.md
+          - getting-started/provisioning-profile/basic-manual-config.md
+          - getting-started/provisioning-profile/full-manual-config.md
+          - getting-started/provisioning-profile/generic-device-config.md
   - Reference:
       - Command Line:
           - reference/scripts.md
@@ -90,9 +91,9 @@ nav:
 plugins:
   redirects:
     redirect_maps:
-      'device-preparation.md': 'preparation/index.md'
-      'real-device-config.md': 'preparation/real-device-config.md'
-      'setup.md': 'installation/index.md'
+      'device-preparation.md': 'getting-started/device-setup.md'
+      'real-device-config.md': 'getting-started/device-setup.md'
+      'setup.md': 'getting-started/index.md'
       'actions.md': 'guides/input-events.md'
       'attach-to-running-wda.md': 'guides/attach-to-running-wda.md'
       'audio-capture.md': 'guides/audio-capture.md'
@@ -117,4 +118,11 @@ plugins:
       'security-flags.md': 'reference/security-flags.md'
       'server-args.md': 'reference/server-args.md'
       'settings.md': 'reference/settings.md'
-      'installation/requirements.md': 'installation/index.md'
+      'installation/requirements.md': 'getting-started/system-requirements.md'
+      'installation/index.md': 'getting-started/index.md'
+      'preparation/index.md': 'getting-started/device-setup.md'
+      'preparation/real-device-config.md': 'getting-started/device-setup.md'
+      'preparation/prov-profile-basic-auto.md': 'getting-started/provisioning-profile/auto-config.md'
+      'preparation/prov-profile-basic-manual.md': 'getting-started/provisioning-profile/basic-manual-config.md'
+      'preparation/prov-profile-full-manual.md': 'getting-started/provisioning-profile/full-manual-config.md'
+      'preparation/prov-profile-generic-manual.md': 'getting-started/provisioning-profile/generic-device-config.md'

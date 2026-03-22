@@ -189,3 +189,15 @@ Please try out iOS 17.6 or a newer version which includes [a possible fix by App
 Frequent Web Inspector debugger disconnection started since iOS 17.2 (or iOS 17.0), that eventually caused `Disconnecting from remote debugger` error.
 It could be improved since iOS 17.6.
 Please check [the corresponding pull request](https://github.com/appium/appium-xcuitest-driver/pull/2334) for more details.
+
+## Unable to Detect Webview
+
+The driver can only detect webviews that are exposed for debugging. This can be configured by the
+application developer as follows:
+
+- On iOS/iPadOS >= 16.4: the destination `WKWebView` and/or `JSContext` component must have the
+  [`isInspectable`](https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable)
+  property set to `true`. Please read [the WebKit documentation page](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/)
+  for more details on this property.
+- On iOS/iPadOS < 16.4: the [`get-task-allow` entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_cs_debugger)
+  must be set to `true` in the application manifest.
