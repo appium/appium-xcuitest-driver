@@ -5,7 +5,7 @@ hide:
 title: Getting Started
 ---
 
-Learn how to set up the driver prerequisites and install it.
+Learn how to set up the driver prerequisites, install it, and prepare your device under test.
 
 <div class="grid cards" markdown>
 
@@ -20,5 +20,17 @@ Learn how to set up the driver prerequisites and install it.
     ---
 
     Install and load the driver 
+
+-   :material-devices: [__Device Setup__](./device-setup.md)
+
+    ---
+
+    Set up your target device for automation 
+
+-   :material-card-account-details: [__Provisioning Profile__](./provisioning-profile/index.md)
+
+    ---
+
+    Configure a provisioning profile for real device testing  
 
 </div>

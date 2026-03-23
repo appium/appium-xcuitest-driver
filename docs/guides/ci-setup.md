@@ -4,7 +4,7 @@ title: Continuous Integration
 
 Setting up the XCUITest driver in an automated environment brings a few challenges with it. Any scenario
 where user interaction is required must be automated or avoided altogether. For real device setup,
-you should first follow the [Real Device Configuration tutorial](../preparation/real-device-config.md).
+you should first follow the [Real Device Setup tutorial](../getting-started/device-setup.md#real-devices).
 
 ### Keychains
 
@@ -39,7 +39,7 @@ least once and do the initial set up and install the suggested extensions.
 
 This only applies for real device set up. Make sure to link your 'Apple Developer Account' in the
 machine's system wide "Account Panel" when using the "Basic Automatic Configuration" described
-[here](../preparation/prov-profile-basic-auto.md).
+[here](../getting-started/provisioning-profile/auto-config.md).
 
 ### Troubleshooting
 

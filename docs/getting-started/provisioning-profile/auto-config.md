@@ -8,7 +8,7 @@ title: Basic Automatic Configuration
 If you have a paid Apple Developer account, the easiest way to create the provisioning profile is
 to use the automatic configuration strategy. There are two ways to do this:
 
-* Use the `xcodeOrgId` and `xcodeSigningId` [capabilities](../reference/capabilities.md):
+* Use the `xcodeOrgId` and `xcodeSigningId` [capabilities](../../reference/capabilities.md):
     ```json
     {
       "appium:xcodeOrgId": "<Team ID>",
@@ -50,5 +50,5 @@ _or_ the combination of `appium:xcodeOrgId` and `appium:xcodeSigningId`.
     * `appium:allowProvisioningDeviceRegistration` lets XCUITest driver set `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flags for the `xcodebuild` command. They will help register the target device to the matched provisioning profile if it still doesn't have the device. Please check `man xcodebuild` output for more details.
 
 Once this configuration is done, you should specify your real device UDID with the `udid` desired
-capability, after which you should be able to start your test. Proceed with
-[Validating the WDA Install](./real-device-config.md#validating-the-wda-install) for the next steps.
+capability, after which you should be able to start your session. Check [Common Issues](./index.md#common-issues)
+if you encountered any problems.

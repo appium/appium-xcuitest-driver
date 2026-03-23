@@ -1,3 +1,9 @@
+## [10.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.32.1...v10.33.0) (2026-03-22)
+
+### Features
+
+* Add a helper script to list connected real devices ([#2769](https://github.com/appium/appium-xcuitest-driver/issues/2769)) ([ea7d11e](https://github.com/appium/appium-xcuitest-driver/commit/ea7d11e05a355d2750b7848f49b52bd9d5af5f07))
+
 ## [10.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.32.0...v10.32.1) (2026-03-17)
 
 ### Bug Fixes

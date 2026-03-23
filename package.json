@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.32.1",
+  "version": "10.33.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -36,6 +36,7 @@
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
       "image-mounter": "./scripts/image-mounter.mjs",
+      "list-real-devices": "./scripts/list-real-devices.mjs",
       "pair-appletv": "./scripts/pair-appletv.mjs"
     },
     "schema": {
