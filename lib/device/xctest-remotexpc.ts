@@ -1,7 +1,7 @@
 import {logger} from 'appium/support';
 import {errors} from 'appium/driver';
 import type {StringRecord} from '@appium/types';
-import type {XCTestEvent, XCTestRunnerOptions} from 'appium-ios-remotexpc';
+import type {XCTestEvent, XCTestRunnerOptions, XCTestRunStage} from 'appium-ios-remotexpc';
 import type {XCTestResult, RunXCTestResult} from '../commands/types';
 import {getXCTestRunnerClass} from './remotexpc-utils';
 import {InstallationProxyClient} from './installation-proxy-client';
@@ -97,8 +97,8 @@ export async function runXCTestViaRemoteXPC(
     }
   });
 
-  runner.on('step', (step: string) => {
-    xctestLog.info(`XCTest step: ${step}`);
+  runner.on('step', (stage: XCTestRunStage) => {
+    xctestLog.info(`XCTest step: ${stage}`);
   });
 
   const runResult = await runner.run();
