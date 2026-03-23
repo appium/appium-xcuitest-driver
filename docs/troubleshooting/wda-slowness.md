@@ -1,5 +1,5 @@
 ---
-title: Diagnosing WebDriverAgent Slowness
+title: WebDriverAgent Slowness
 ---
 
 The XCUITest driver is based on Apple's [XCTest](https://developer.apple.com/documentation/xctest)

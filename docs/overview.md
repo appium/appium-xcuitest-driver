@@ -34,7 +34,7 @@ The following application contexts are supported for automation:
 - Webviews based on Chrome ([since Chrome 115 & iOS 16.4](https://developer.chrome.com/blog/debugging-chrome-on-ios/))
 - Hybrid applications
 
-Note that [only debuggable webviews](./guides/troubleshooting.md#unable-to-detect-webview) are supported.
+Note that [only debuggable webviews](./troubleshooting/index.md#unable-to-detect-webview) are supported.
 
 ## Technologies Used
 
