@@ -64,7 +64,7 @@ Now you can configure the WDA project using one of the manual configuration appr
 At this point you should have either tried to start a session with provisioning profile-related
 capabilities (for automatic config), or tried to build and install WDA through Xcode (for manual
 config). If this did not succeed, you likely have one of the following problems. For issues not
-listed here, please refer to the [Troubleshooting](../../guides/troubleshooting.md) page.
+listed here, please refer to the [Troubleshooting](../../troubleshooting/index.md) page.
 
 ### xcodebuild exited with code 65
 
