@@ -106,7 +106,9 @@ export class LockdownClient {
           lockdown.getDeviceInfo(),
         )) as LockdownInfo;
       case 'remotexpc-tunnel':
-        return (await this.runWithTunnelLockdown((lockdown) => lockdown.getDeviceInfo())) as LockdownInfo;
+        return (await this.runWithTunnelLockdown((lockdown) =>
+          lockdown.getDeviceInfo(),
+        )) as LockdownInfo;
     }
   }
 
@@ -217,9 +219,7 @@ export class LockdownClient {
         lockdown.close();
       }
     } catch (err) {
-      throw new Error(
-        `Tunnel lockdown failed for '${this.udid}': ${(err as Error).message}`,
-      );
+      throw new Error(`Tunnel lockdown failed for '${this.udid}': ${(err as Error).message}`);
     }
   }
 
