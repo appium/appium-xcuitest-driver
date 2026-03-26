@@ -228,7 +228,8 @@ export class LockdownClient {
       return value;
     }
     if (typeof value === 'bigint') {
-      return Number(value);
+      const converted = Number(value);
+      return Number.isFinite(converted) ? converted : undefined;
     }
     if (typeof value === 'string') {
       const parsed = Number(value);
