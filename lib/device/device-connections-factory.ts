@@ -263,15 +263,17 @@ export class DeviceConnectionsFactory {
         jobs.push({key, forwarder});
       }
     }
-    for (const {key, forwarder} of jobs) {
-      this.log.info(`Releasing the listener for '${key}'`);
-      try {
-        await forwarder.stop();
-      } catch (e) {
-        this.log.debug(e);
-      }
-    }
-    return jobs.map((j) => j.key);
+    return Promise.all(
+      jobs.map(async ({key, forwarder}) => {
+        this.log.info(`Releasing the listener for '${key}'`);
+        try {
+          await forwarder.stop();
+        } catch (e) {
+          this.log.debug(e);
+        }
+        return key;
+      }),
+    );
   }
 
   private async _createPortForwarder(
