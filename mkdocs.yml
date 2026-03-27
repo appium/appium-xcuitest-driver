@@ -76,16 +76,16 @@ nav:
           - guides/clipboard.md
           - guides/touch-id.md
           - guides/gestures.md
-      - Troubleshooting:
-          - guides/troubleshooting.md
-          - guides/elements-lookup-troubleshooting.md
-          - guides/wda-slowness.md
       - Other:
           - guides/tvos.md
           - guides/input-events.md
           - guides/capability-sets.md
           - guides/hybrid.md
           - guides/mjpeg.md
+  - Troubleshooting:
+      - troubleshooting/index.md
+      - troubleshooting/element-lookup.md
+      - troubleshooting/wda-slowness.md
   - contributing.md
 
 plugins:
@@ -107,7 +107,6 @@ plugins:
       'run-prebuilt-wda.md': 'guides/run-prebuilt-wda.md'
       'run-preinstalled-wda.md': 'guides/run-preinstalled-wda.md'
       'touch-id.md': 'guides/touch-id.md'
-      'troubleshooting.md': 'guides/troubleshooting.md'
       'wda-custom-server.md': 'guides/wda-custom-server.md'
       'capabilities.md': 'reference/capabilities.md'
       'reference/commands/appium-xcuitest-driver.md': 'reference/commands.md'
@@ -126,3 +125,6 @@ plugins:
       'preparation/prov-profile-basic-manual.md': 'getting-started/provisioning-profile/basic-manual-config.md'
       'preparation/prov-profile-full-manual.md': 'getting-started/provisioning-profile/full-manual-config.md'
       'preparation/prov-profile-generic-manual.md': 'getting-started/provisioning-profile/generic-device-config.md'
+      'guides/troubleshooting.md': 'troubleshooting/index.md'
+      'guides/elements-lookup-troubleshooting.md': 'troubleshooting/element-lookup.md'
+      'guides/wda-slowness.md': 'troubleshooting/wda-slowness.md'

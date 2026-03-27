@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import {errors} from 'appium/driver';
 import moment from 'moment-timezone';
-import {utilities} from 'appium-ios-device';
-import {exec} from 'teen_process';
+import {LockdownClient} from '../device/lockdown-client';
 import type {XCUITestDriver} from '../driver';
 import type {Viewport, ScreenInfo, ButtonName} from './types';
 import type {Size, Rect} from '@appium/types';
@@ -63,43 +62,30 @@ export async function getDeviceTime(
   this: XCUITestDriver,
   format = MOMENT_FORMAT_ISO8601,
 ): Promise<string> {
-  this.log.info('Attempting to capture iOS device date and time');
+  this.log.debug('Attempting to capture iOS device date and time');
   if (!this.isRealDevice()) {
-    this.log.info('On simulator. Assuming device time is the same as host time');
-    const cmd = 'date';
-    const args = ['+%Y-%m-%dT%H:%M:%S%z'];
-    const inputFormat = 'YYYY-MM-DDTHH:mm:ssZZ';
-    const stdout = (await exec(cmd, args)).stdout.trim();
-    this.log.debug(`Got the following output out of '${cmd} ${args.join(' ')}': ${stdout}`);
-    const parsedTimestamp = moment.utc(stdout, inputFormat);
-    if (!parsedTimestamp.isValid()) {
-      this.log.warn(
-        `Cannot parse the timestamp '${stdout}' returned by '${cmd}' command. Returning it as is`,
-      );
-      return stdout;
-    }
-    const tzm = (parsedTimestamp as moment.Moment & {_tzm?: number})._tzm ?? 0;
-    return parsedTimestamp.utcOffset(tzm).format(format);
+    this.log.debug('On simulator. Assuming device time is the same as host time');
+    const hostNow = moment();
+    const utc = moment.unix(hostNow.unix()).utc();
+    return utc.utcOffset(hostNow.utcOffset()).format(format);
   }
 
-  const {timestamp, utcOffset, timeZone} = await utilities.getDeviceTime(this.opts.udid);
-  this.log.debug(`timestamp: ${timestamp}, utcOffset: ${utcOffset}, timeZone: ${timeZone}`);
+  const udid = this.opts.udid;
+  if (!udid) {
+    throw new errors.UnknownError('Device UDID is required to read time on a real device');
+  }
+
+  const lockdown = await LockdownClient.createForDevice(udid, this.opts, this.log);
+  let timestamp: number;
+  let utcOffset: number;
+  try {
+    ({timestamp, utcOffset} = await lockdown.getDeviceTimeFields());
+  } finally {
+    await lockdown.close();
+  }
+  this.log.debug(`timestamp: ${timestamp}, utcOffset: ${utcOffset}`);
   const utc = moment.unix(timestamp).utc();
-  // at some point of time Apple started to return timestamps
-  // in utcOffset instead of actual UTC offsets
-  if (Math.abs(utcOffset) <= 12 * 60) {
-    return utc.utcOffset(utcOffset).format(format);
-  }
-  // timeZone could either be a time zone name or
-  // an UTC offset in seconds
-  if (_.includes(timeZone, '/')) {
-    return utc.tz(timeZone).format(format);
-  }
-  if (Math.abs(timeZone) <= 12 * 60 * 60) {
-    return utc.utcOffset(timeZone / 60).format(format);
-  }
-  this.log.warn('Did not know how to apply the UTC offset. Returning the timestamp without it');
-  return utc.format(format);
+  return utc.utcOffset(utcOffset).format(format);
 }
 
 /**

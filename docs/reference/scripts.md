@@ -1,30 +1,297 @@
 ---
-hide:
-  - toc
-
 title: Scripts
 ---
 
-Appium drivers can include scripts for executing specific actions. The following table lists the
-scripts bundled with the XCUITest driver. These scripts can be run as follows:
+Appium drivers can include scripts for executing specific actions. The scripts included in the
+XCUITest driver can be run as follows:
 
 ```
 appium driver run xcuitest <script-name>
 ```
 
-|Script Name|Description|
-|------------|-----------|
-|`open-wda`|Opens the WebDriverAgent project in Xcode|
-|`build-wda`|Builds the WebDriverAgent project using the first available iPhone simulator and the latest iOS supported by the current Xcode version by default|
-|`build-wda --sdk=17.5 --name="iPhone 15"`|Builds the WebDriverAgent project using the iPhone 15 simulator with iOS 17.5. If `--sdk` and `--name` params are not specified - the latest iOS and the first available iPhone simulator will be used|
-|`tunnel-creation`|Creates tunnels for connected iOS devices and paired Apple TVs (over WiFi when available), starts CoreDeviceProxy, and sets up a single tunnel registry server. Requires sudo for USB devices. Pair Apple TVs first (see [Apple TV pairing](../guides/remotexpc-apple-tv-pairing.md)); use the printed identifier as `udid` for tvOS sessions.|
-|`tunnel-creation --udid=<device-udid>` or `-u <device-udid>`|Creates a tunnel for a specific iOS device with the given UDID|
-|`tunnel-creation --packet-stream-base-port=<port>`|Specifies the base port for packet stream servers (default: 50000)|
-|`tunnel-creation --tunnel-registry-port=<port>`|Specifies the port for the tunnel registry server (default: 42314)|
-|`tunnel-creation --appletv-device-id=<identifier>`|When adding an Apple TV over WiFi, tunnel only this device (use the identifier printed by `pair-appletv`). Omit to use the first discovered paired device.|
-|`download-wda-sim --outdir=/path/to/dir`|Download corresponding version's prebuilt WDA for iOS matched with the host machine architecture from [GitHub WebDriver release page](https://github.com/appium/WebDriverAgent/releases) into `--outdir` directory. The downloaded package name will be `WebDriverAgentRunner-Runner.app`.|
-|`download-wda-sim --platform=tvos --outdir=/path/to/dir`|Download corresponding version's prebuilt WDA for `--platform` into `--outdir` directory. If `--platform=tvos` is provided, the download module will be for tvOS (`WebDriverAgentRunner_tvOS-Runner.app`), otherwise the command will download iOS.|
-|`image-mounter mount --image <path> --manifest <path> --trustcache <path>`|Mount a Personalized Developer Disk Image on an iOS device. Requires paths to the .dmg image file, BuildManifest.plist, and .trustcache file. Requires the `appium-ios-remotexpc` optional dependency.|
-|`image-mounter mount --image <path> --manifest <path> --trustcache <path> --udid <device-udid>`|Mount a Developer Disk Image on a specific iOS device with the given UDID|
-|`image-mounter unmount`|Unmount a Developer Disk Image from the first available iOS device (default mount path: `/System/Developer`)|
-|`image-mounter unmount --udid <device-udid>`|Unmount a Developer Disk Image from a specific iOS device with the given UDID|
+For more information about the `appium driver run` command, refer to [the Appium docs](https://appium.io/docs/en/latest/reference/cli/extensions/#run).
+
+!!! note
+
+    Script arguments should be provided after an additional double dash (`--`), to ensure they are
+    passed to the script itself, instead of the `appium driver run` command.
+
+### `build-wda`
+
+Builds the WebDriverAgent (WDA) project of the installed XCUITest driver for a simulator device.
+
+#### Usage
+
+```
+appium driver run xcuitest build-wda
+```
+
+##### Optional Arguments
+
+|<div style="width:6em">Argument</div>|Description|Type|Default|
+|--|--|--|--|
+|`--name`|Name of the simulator device for which WDA should be built. By default, the first available iPhone simulator is used.|string|`iPhone`|
+|`--sdk`|iOS/tvOS version for which WDA should be built. By default, the latest installed iPhone SDK is used (note that this may be different from the latest installed simulator OS version).|string|Result of `xcrun --sdk iphonesimulator --show-sdk-version`|
+|`--help`, `-h`|Return help text and exit|||
+
+#### Examples
+
+- Build WebDriverAgentRunner for the first iPhone simulator using the latest installed SDK:
+
+    ```
+    appium driver run xcuitest build-wda
+    ```
+
+- Build WebDriverAgentRunner for an iPhone 15 simulator with iOS 17.5:
+
+    ```
+    appium driver run xcuitest build-wda -- --sdk=17.5 --name="iPhone 15"
+    ```
+
+
+### `download-wda-sim`
+
+Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
+for use in a simulator device.
+
+For information about running tests with a prebuilt WDA application, [refer to this guide](../guides/run-prebuilt-wda.md).
+
+#### Usage
+
+```
+appium driver run xcuitest download-wda-sim -- --outdir=<outdir> --platform=<platform>
+```
+
+|<div style="width:6em">Argument</div>|Description|Type|
+|--|--|--|
+|`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string|
+|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string|
+
+##### Optional Arguments
+
+|Argument|Description|
+|--|--|
+|`--help`, `-h`|Return help text and exit|
+
+#### Examples
+
+- Download the iOS version of the WDA app (`WebDriverAgentRunner-Runner.app`) into the `wda`
+  subdirectory of the XCUITest driver's install directory:
+
+    ```
+    appium driver run xcuitest download-wda-sim -- --platform=ios --outdir=wda
+    ```
+
+- Download the tvOS version of the WDA app (`WebDriverAgentRunner_tvOS-Runner.app`) into `/path/to/dir`:
+
+    ```
+    appium driver run xcuitest download-wda-sim -- --platform=tvos --outdir=/path/to/dir
+    ```
+
+
+### `image-mounter`
+
+Mounts or unmounts a Developer Disk Image (DDI) on an iOS device to unlock additional development
+features. The script provides the `mount` and `unmount` sub-commands, and returns help text when
+run with no subcommand.
+
+#### Usage (no subcommand)
+
+```
+appium driver run xcuitest image-mounter
+```
+
+##### Optional Arguments
+
+|Argument|Description|
+|--|--|
+|`--version`, `-V`|Return the script version and exit|
+|`--help`, `-h`|Return help text and exit|
+
+#### Usage (`mount` subcommand)
+
+```
+appium driver run xcuitest image-mounter mount -- --image=<image> --manifest=<manifest> --trustcache=<trustcache>
+```
+
+|Argument|Description|Type|
+|--|--|--|
+|`--image`, `-i`|Path to the developer disk image `.dmg` file|string|
+|`--manifest`, `-m`|Path to the `BuildManifest.plist` file|string|
+|`--trustcache`, `-t`|Path to the `.trustcache` file|string|
+
+##### Optional Arguments
+
+|<div style="width:6em">Argument</div>|Description|Type|Default|
+|--|--|--|--|
+|`--udid`, `-u`|Identifier of the target device to mount the image to. By default, the first connected iOS device is used.|string|UDID of the first connected device|
+
+
+#### Usage (`unmount` subcommand)
+
+```
+appium driver run xcuitest image-mounter unmount
+```
+
+##### Optional Arguments
+
+|<div style="width:9em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
+|--|--|--|--|
+|`--mount-path`, `-p`|Path to unmount|string|`/System/Developer`|
+|`--udid`, `-u`|Identifier of the target device to unmount the image from. By default, the first connected iOS device is used.|string|UDID of the first connected device|
+
+#### Examples
+
+- Mount a given image on the first connected device:
+
+    ```
+    appium driver run xcuitest image-mounter mount -- --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
+    ```
+
+- Unmount the image at the default mount path of the device with UDID `00000000-1111-2222-3333-444444444444`:
+
+    ```
+    appium driver run xcuitest image-mounter unmount -- --udid 00000000-1111-2222-3333-444444444444
+    ```
+
+
+### `list-real-devices`
+
+Lists all connected real devices. By default, devices are discovered using `usbmuxd`, which finds
+both wired _and_ wireless devices, with the exception of wireless tvOS devices, which require using
+the `--devicectl` flag.
+
+!!! note
+
+    Device discovery over `usbmuxd` requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    package to be installed.
+
+#### Usage
+
+```
+appium driver run xcuitest list-real-devices
+```
+
+##### Optional Arguments
+
+|<div style="width:7em">Argument</div>|Description|Type|Default|
+|--|--|--|--|
+|`--devicectl`|Whether to use the `devicectl` service instead of `usbmuxd` for device discovery. Primarily used for tvOS devices.|boolean|`false`|
+|`--connection`|Filter returned devices by connection type. Supported values are `all`, `wired`, and `wireless`|string|`all`|
+
+#### Examples
+
+- List connected devices using `devicectl` (such as tvOS devices):
+
+    ```
+    appium driver run xcuitest list-real-devices -- --devicectl
+    ```
+
+- List all devices connected over a wired connection:
+
+    ```
+    appium driver run xcuitest list-real-devices -- --connection wired
+    ```
+
+
+### `open-wda`
+
+Opens the WebDriverAgent (WDA) project of the installed XCUITest driver in Xcode.
+
+#### Usage
+
+```
+appium driver run xcuitest open-wda
+```
+
+
+### `pair-appletv`
+
+Pairs wireless Apple TV devices for use in Remote XPC tunneling, which is used by the driver to
+communicate with the device. See [the Remote XPC Tunnels](../guides/remotexpc-tunnels-real-devices.md)
+and [Apple TV pairing](../guides/remotexpc-apple-tv-pairing.md) guides for more details.
+
+!!! note
+
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    package to be installed.
+
+#### Usage
+
+```
+appium driver run xcuitest pair-appletv
+```
+
+##### Optional Arguments
+
+|<div style="width:7em">Argument</div>|Description|Type|
+|--|--|--|
+|`--device`, `-d`|Selector of the Apple TV device. Can be the device name (`"Living Room"`), UDID (`AA:BB:CC:DD:EE:FF`), or index (`0`). If not provided, a prompt for device selection is shown.|string or integer|
+|`--help`, `-h`|Return help text and exit||
+
+#### Examples
+
+- Select a device to pair from a list of discovered devices:
+
+    ```
+    appium driver run xcuitest pair-appletv
+    ```
+
+- Pair the device with the name "Conference Room":
+
+    ```
+    appium driver run xcuitest pair-appletv -- --device "Conference Room"
+    ```
+
+
+### `tunnel-creation`
+
+Creates tunnels for communication with real iOS/tvOS 18+ devices. Apple TV devices must first be
+paired using the [`pair-appletv`](#pair-appletv) script.
+
+!!! note
+
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    package to be installed.
+
+!!! note
+
+    This script must be run in `sudo` mode. This is because tunnel creation relies on TUN/TAP
+    interfaces (via [`appium-ios-tuntap`](https://github.com/appium/appium-ios-tuntap/)), and macOS
+    does not allow adding/removing TUN interfaces for non-root users. Xcode/devicectl do not
+    require such privileges, because they interact with trusted system services.
+
+#### Usage
+
+```
+sudo appium driver run xcuitest tunnel-creation
+```
+
+##### Optional Arguments
+
+|<div style="width:14em">Argument</div>|Description|Type|Default|
+|--|--|--|--|
+|`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. By default, the tunnel is created for the first discovered paired device. Only needed if using `appium-ios-remotexpc` versions `0.33.0`-`0.36.0`.|string||
+|`--packet-stream-base-port`|Base port for packet stream servers|integer|50000|
+|`--tunnel-registry-port`|Port of the tunnel registry server|integer|42314|
+|`--udid`, `-u`|Identifier of a specific device to create the tunnel for. By default, the tunnel is created for all connected devices.|string||
+
+#### Examples
+
+- Create a tunnel for all connected devices:
+
+    ```
+    appium driver run xcuitest tunnel-creation
+    ```
+
+- Create a tunnel for all connected devices using custom ports:
+
+    ```
+    appium driver run xcuitest tunnel-creation -- --packet-stream-base-port 51000 --tunnel-registry-port 43000
+    ```
+
+- Create a tunnel for a device with the UDID `00000000-1111-2222-3333-444444444444`:
+
+    ```
+    appium driver run xcuitest tunnel-creation -- --udid 00000000-1111-2222-3333-444444444444
+    ```
