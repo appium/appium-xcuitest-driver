@@ -189,9 +189,7 @@ export async function mobileRunXCTest(
       if (err instanceof errors.TimeoutError) {
         throw err;
       }
-      xctestLog.warn(
-        `Failed to run XCTest via RemoteXPC, falling back to IDB: ${err.message}`,
-      );
+      xctestLog.warn(`Failed to run XCTest via RemoteXPC, falling back to IDB: ${err.message}`);
     }
   }
 

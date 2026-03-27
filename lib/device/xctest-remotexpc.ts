@@ -48,7 +48,7 @@ export async function runXCTestViaRemoteXPC(
     launchEnvironment: env as Record<string, string>,
     launchArguments: args,
     killExisting: true,
-    testType,  // Already narrowed to 'ui' | 'app' after the logic-test guard above
+    testType, // Already narrowed to 'ui' | 'app' after the logic-test guard above
   };
 
   const runner = new XCTestRunnerClass(runnerOptions);
@@ -140,10 +140,7 @@ export async function listXCTestBundlesViaRemoteXPC(udid: string): Promise<strin
     const bundles: string[] = [];
     for (const [bundleId, info] of Object.entries(apps)) {
       // Match xctrunner bundles or apps whose path contains .xctest
-      if (
-        bundleId.endsWith('.xctrunner') ||
-        (info.Path && String(info.Path).includes('.xctest'))
-      ) {
+      if (bundleId.endsWith('.xctrunner') || (info.Path && String(info.Path).includes('.xctest'))) {
         bundles.push(bundleId);
       }
     }
