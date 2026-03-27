@@ -65,7 +65,9 @@ export async function getDeviceTime(
   this.log.debug('Attempting to capture iOS device date and time');
   if (!this.isRealDevice()) {
     this.log.debug('On simulator. Assuming device time is the same as host time');
-    return moment().format(format);
+    const hostNow = moment();
+    const utc = moment.unix(hostNow.unix()).utc();
+    return utc.utcOffset(hostNow.utcOffset()).format(format);
   }
 
   const udid = this.opts.udid;
