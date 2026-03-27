@@ -98,18 +98,13 @@ export class LockdownClient {
    * Full lockdown `GetValue` payload (`GetValue` with no key/domain).
    */
   async getDeviceInfo(): Promise<LockdownInfo> {
-    switch (this.strategy) {
-      case 'ios-device':
-        return await utilities.getDeviceInfo(this.udid);
-      case 'remotexpc-usbmux':
-        return (await this.runWithRemotexpcUsbmuxLockdown((lockdown) =>
-          lockdown.getDeviceInfo(),
-        )) as LockdownInfo;
-      case 'remotexpc-tunnel':
-        return (await this.runWithTunnelLockdown((lockdown) =>
-          lockdown.getDeviceInfo(),
-        )) as LockdownInfo;
+    if (this.strategy === 'ios-device') {
+      return await utilities.getDeviceInfo(this.udid);
     }
+    return (await this.runWithRemotexpcLockdownRequiringValue(
+      (lockdown) => lockdown.getDeviceInfo(),
+      'device info payload',
+    )) as LockdownInfo;
   }
 
   /**
@@ -119,28 +114,13 @@ export class LockdownClient {
    * If a RemoteXPC lockdown payload does not include ProductVersion, throws.
    */
   async getOSVersion(): Promise<string> {
-    switch (this.strategy) {
-      case 'ios-device':
-        return await utilities.getOSVersion(this.udid);
-      case 'remotexpc-usbmux': {
-        const value = await this.runWithRemotexpcUsbmuxLockdown((lockdown) =>
-          lockdown.getProductVersion(),
-        );
-        if (!value) {
-          throw new Error(`RemoteXPC USB lockdown did not return ProductVersion for '${this.udid}'.`);
-        }
-        return value;
-      }
-      case 'remotexpc-tunnel': {
-        const value = await this.runWithTunnelLockdown((lockdown) => lockdown.getProductVersion());
-        if (!value) {
-          throw new Error(
-            `RemoteXPC tunnel lockdown did not return ProductVersion for '${this.udid}'.`,
-          );
-        }
-        return value;
-      }
+    if (this.strategy === 'ios-device') {
+      return await utilities.getOSVersion(this.udid);
     }
+    return await this.runWithRemotexpcLockdownRequiringValue(
+      (lockdown) => lockdown.getProductVersion(),
+      'ProductVersion',
+    );
   }
 
   /**
@@ -167,24 +147,12 @@ export class LockdownClient {
           utcOffset: this.normalizeUtcOffsetMinutes(utcOffset, timeZone),
         };
       }
-      case 'remotexpc-usbmux': {
-        const value = await this.runWithRemotexpcUsbmuxLockdown(readTimeFromLockdown);
-        if (!value) {
-          throw new Error(
-            `RemoteXPC USB lockdown did not return device time fields for '${this.udid}'.`,
-          );
-        }
-        return value;
-      }
-      case 'remotexpc-tunnel': {
-        const value = await this.runWithTunnelLockdown(readTimeFromLockdown);
-        if (!value) {
-          throw new Error(
-            `RemoteXPC tunnel lockdown did not return device time fields for '${this.udid}'.`,
-          );
-        }
-        return value;
-      }
+      case 'remotexpc-usbmux':
+      case 'remotexpc-tunnel':
+        return await this.runWithRemotexpcLockdownRequiringValue(
+          readTimeFromLockdown,
+          'device time fields',
+        );
     }
   }
 
@@ -228,6 +196,36 @@ export class LockdownClient {
           `${(err as Error).message}`,
       );
     }
+  }
+
+  private async runWithRemotexpcLockdown<T>(
+    fn: (lockdown: LockdownServiceInstance) => Promise<T | undefined>,
+  ): Promise<T | undefined> {
+    switch (this.strategy) {
+      case 'remotexpc-usbmux':
+        return await this.runWithRemotexpcUsbmuxLockdown(fn);
+      case 'remotexpc-tunnel':
+        return await this.runWithTunnelLockdown(fn);
+      default:
+        throw new Error(`RemoteXPC lockdown is not active for '${this.udid}'.`);
+    }
+  }
+
+  private async runWithRemotexpcLockdownRequiringValue<T>(
+    fn: (lockdown: LockdownServiceInstance) => Promise<T | undefined>,
+    valueName: string,
+  ): Promise<T> {
+    const value = await this.runWithRemotexpcLockdown(fn);
+    if (!value) {
+      throw new Error(
+        `RemoteXPC ${this.getRemotexpcLockdownLabel()} lockdown did not return ${valueName} for '${this.udid}'.`,
+      );
+    }
+    return value;
+  }
+
+  private getRemotexpcLockdownLabel(): 'USB' | 'tunnel' {
+    return this.strategy === 'remotexpc-usbmux' ? 'USB' : 'tunnel';
   }
 
   /**
