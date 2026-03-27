@@ -5,6 +5,7 @@ import type {LockdownInfo} from '../commands/types';
 import type {XCUITestDriverOpts} from '../driver';
 import {log as defaultLogger} from '../logger';
 import {isIos18OrNewer} from '../utils';
+import {isDeviceListedInUsbmux} from './usbmux-utils';
 
 /**
  * Shape returned by {@linkcode utilities.getDeviceTime} in appium-ios-device.
@@ -71,14 +72,7 @@ export class LockdownClient {
       return new LockdownClient(udid, log, null, 'ios-device', null);
     }
 
-    let listedByUsbmux = false;
-    const usbmux = await remotexpc.createUsbmux();
-    try {
-      const devices = await usbmux.listDevices();
-      listedByUsbmux = devices.some((x) => x.Properties?.SerialNumber === udid);
-    } finally {
-      await usbmux.close();
-    }
+    const listedByUsbmux = await isDeviceListedInUsbmux(remotexpc, udid, log);
 
     if (listedByUsbmux) {
       return new LockdownClient(udid, log, remotexpc, 'remotexpc-usbmux', null);

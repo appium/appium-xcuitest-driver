@@ -75,7 +75,7 @@ import * as xctestCommands from './commands/xctest';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
-import {DEVICE_CONNECTIONS_FACTORY} from './device/device-connections-factory';
+import {DeviceConnectionsFactory} from './device/device-connections-factory';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
 import {Pyidevice} from './device/clients/py-ios-device-client';
@@ -291,8 +291,12 @@ export class XCUITestDriver
   landscapeWebCoordsOffset: number;
   mjpegStream?: mjpeg.MJpegStream;
 
+  readonly deviceConnectionsFactory: DeviceConnectionsFactory;
+
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
+
+    this.deviceConnectionsFactory = new DeviceConnectionsFactory(this.log);
 
     this.locatorStrategies = [
       'xpath',
@@ -778,13 +782,14 @@ export class XCUITestDriver
   }
 
   async allocateMjpegServerPort(): Promise<void> {
-    const mjpegServerPort = this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT;
+    const mjpegServerPort = Number(this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT);
     this.log.debug(
       `Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`,
     );
     try {
-      await DEVICE_CONNECTIONS_FACTORY.requestConnection(this.opts.udid, mjpegServerPort, {
+      await this.deviceConnectionsFactory.requestConnection(this.opts.udid, mjpegServerPort, {
         devicePort: mjpegServerPort,
+        platformVersion: this.opts.platformVersion,
         usePortForwarding: this.isRealDevice(),
       });
     } catch (error) {
@@ -1038,7 +1043,7 @@ export class XCUITestDriver
         await this.wda.quit();
       }
     }
-    DEVICE_CONNECTIONS_FACTORY.releaseConnection(this.opts.udid);
+    this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
   async initSimulator(): Promise<void> {
@@ -1097,10 +1102,15 @@ export class XCUITestDriver
 
     const usePortForwarding =
       this.isRealDevice() && !this.wda.webDriverAgentUrl && isLocalHost(this.wda.wdaBaseUrl);
-    await DEVICE_CONNECTIONS_FACTORY.requestConnection(this.opts.udid, this.wda.url.port, {
-      devicePort: usePortForwarding ? this.wda.wdaRemotePort : null,
-      usePortForwarding,
-    });
+    await this.deviceConnectionsFactory.requestConnection(
+      this.opts.udid,
+      Number(this.wda.url.port),
+      {
+        devicePort: usePortForwarding ? this.wda.wdaRemotePort : null,
+        platformVersion: this.opts.platformVersion,
+        usePortForwarding,
+      },
+    );
 
     // Let multiple WDA binaries with different derived data folders be built in parallel
     // Concurrent WDA builds from the same source will cause xcodebuild synchronization errors
