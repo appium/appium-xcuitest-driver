@@ -10,175 +10,8 @@ import type {DevicePortForwarder} from 'appium-ios-remotexpc';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 
 const LOCALHOST = '127.0.0.1';
-
-/** Module shape for `await import('appium-ios-remotexpc')` (lazy load; optional at runtime). */
-type RemotexpcModuleLike = typeof import('appium-ios-remotexpc');
-
-interface PortForwarder {
-  start(): Promise<void>;
-  stop(): Promise<void>;
-}
-
-class LegacyPortForwarder implements PortForwarder {
-  private readonly localport: number;
-  private readonly deviceport: number;
-  private readonly udid: string;
-  private localServer: net.Server | null;
-  private readonly log: AppiumLogger;
-  private onBeforeProcessExit: (() => void) | null;
-
-  constructor(udid: string, localport: number, deviceport: number, log: AppiumLogger) {
-    this.localport = localport;
-    this.deviceport = deviceport;
-    this.udid = udid;
-    this.localServer = null;
-    this.log = log;
-    this.onBeforeProcessExit = null;
-  }
-
-  async start(): Promise<void> {
-    if (this.localServer) {
-      return;
-    }
-
-    this.localServer = net.createServer(async (localSocket: net.Socket) => {
-      let remoteSocket: any;
-      try {
-        // We can only connect to the remote socket after the local socket connection succeeds
-        remoteSocket = await utilities.connectPort(this.udid, this.deviceport);
-      } catch (e) {
-        this.log.debug((e as Error).message);
-        localSocket.destroy();
-        return;
-      }
-
-      const destroyCommChannel = () => {
-        remoteSocket.unpipe(localSocket);
-        localSocket.unpipe(remoteSocket);
-      };
-      remoteSocket.once('close', () => {
-        destroyCommChannel();
-        localSocket.destroy();
-      });
-      // not all remote socket errors are critical for the user
-      remoteSocket.on('error', (e: Error) => this.log.debug(e));
-      localSocket.once('end', destroyCommChannel);
-      localSocket.once('close', () => {
-        destroyCommChannel();
-        remoteSocket.destroy();
-      });
-      localSocket.on('error', (e: Error) => this.log.warn(e.message));
-      localSocket.pipe(remoteSocket);
-      remoteSocket.pipe(localSocket);
-    });
-    const listeningPromise = new B<void>((resolve, reject) => {
-      if (this.localServer) {
-        this.localServer.once('listening', resolve);
-        this.localServer.once('error', reject);
-      } else {
-        reject(new Error('Local server is not initialized'));
-      }
-    });
-    this.localServer.listen(this.localport);
-    try {
-      await listeningPromise;
-    } catch (e) {
-      this.localServer = null;
-      throw e;
-    }
-    this.localServer.on('error', (e: Error) => this.log.warn(e.message));
-    this.localServer.once('close', (e?: Error) => {
-      if (e) {
-        this.log.info(`The connection has been closed with error ${e.message}`);
-      } else {
-        this.log.info(`The connection has been closed`);
-      }
-      this.localServer = null;
-    });
-
-    this.onBeforeProcessExit = this._closeLocalServer.bind(this);
-    // Make sure we free up the socket on process exit
-    if (this.onBeforeProcessExit) {
-      process.on('beforeExit', this.onBeforeProcessExit);
-    }
-  }
-
-  async stop(): Promise<void> {
-    if (this.onBeforeProcessExit) {
-      process.off('beforeExit', this.onBeforeProcessExit);
-      this.onBeforeProcessExit = null;
-    }
-
-    this._closeLocalServer();
-  }
-
-  private _closeLocalServer(): void {
-    if (!this.localServer) {
-      return;
-    }
-
-    this.log.debug(`Closing the connection`);
-    this.localServer.close();
-    this.localServer = null;
-  }
-}
-
-class RemotexpcForwarder implements PortForwarder {
-  private readonly onUpstreamConnectError: (err: unknown) => void;
-  private onBeforeProcessExit: (() => void) | null = null;
-
-  constructor(
-    private readonly forwarder: DevicePortForwarder,
-    private readonly log: AppiumLogger,
-    private readonly localPort: number,
-    private readonly devicePort: number,
-  ) {
-    // DevicePortForwarder also emits `error` with the same payload; subscribe to one to avoid duplicates.
-    this.onUpstreamConnectError = (err: unknown) => {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.log.debug(
-        `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
-      );
-    };
-  }
-
-  async start(): Promise<void> {
-    this.forwarder.on('upstreamConnectError', this.onUpstreamConnectError);
-    try {
-      await this.forwarder.start();
-    } catch (e) {
-      this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
-      throw e;
-    }
-
-    this.onBeforeProcessExit = this._stopForwarderOnProcessExit.bind(this);
-    // Make sure we free up the socket on process exit
-    if (this.onBeforeProcessExit) {
-      process.on('beforeExit', this.onBeforeProcessExit);
-    }
-  }
-
-  async stop(): Promise<void> {
-    if (this.onBeforeProcessExit) {
-      process.off('beforeExit', this.onBeforeProcessExit);
-      this.onBeforeProcessExit = null;
-    }
-
-    this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
-    await this.forwarder.stop();
-  }
-
-  private _stopForwarderOnProcessExit(): void {
-    void (async () => {
-      try {
-        await this.forwarder.stop();
-      } catch (err: unknown) {
-        this.log.debug(err);
-      }
-    })();
-  }
-}
-
+const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
+const terminationCallbacks = new Set<() => void>();
 const PORT_CLOSE_TIMEOUT = 15 * 1000; // 15 seconds
 const SPLITTER = ':';
 
@@ -462,7 +295,7 @@ export class DeviceConnectionsFactory {
     const listedByUsbmux = await isDeviceListedInUsbmux(remotexpc, udid, this.log);
     if (listedByUsbmux) {
       this.log.debug(`Using appium-ios-remotexpc usbmux strategy for '${udid}'`);
-      return new RemotexpcForwarder(
+      return new RemotexpcPortForwarder(
         new remotexpc.DevicePortForwarder(localPort, devicePort, {
           primaryConnector: () => remotexpc.connectViaUsbmux(udid, devicePort),
         }),
@@ -481,7 +314,7 @@ export class DeviceConnectionsFactory {
     this.log.debug(
       `Using appium-ios-remotexpc tunnel strategy for '${udid}' through '${tunnelHost}'`,
     );
-    return new RemotexpcForwarder(
+    return new RemotexpcPortForwarder(
       new remotexpc.DevicePortForwarder(localPort, devicePort, {
         primaryConnector: () => remotexpc.connectViaTunnel(tunnelHost, devicePort),
       }),
@@ -490,6 +323,198 @@ export class DeviceConnectionsFactory {
       devicePort,
     );
   }
+}
+
+/** Holds a slot in the shared SIGINT/SIGTERM dispatch; {@link dispose} unregisters the callback. */
+class TerminationSubscription {
+  private unsubscribe: (() => void) | null = null;
+
+  subscribe(onTerminate: () => void): void {
+    this.dispose();
+    this.unsubscribe = registerTerminationCallback(onTerminate);
+  }
+
+  dispose(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+  }
+}
+
+class LegacyPortForwarder implements PortForwarder {
+  private readonly localport: number;
+  private readonly deviceport: number;
+  private readonly udid: string;
+  private localServer: net.Server | null;
+  private readonly log: AppiumLogger;
+  private readonly termination = new TerminationSubscription();
+
+  constructor(udid: string, localport: number, deviceport: number, log: AppiumLogger) {
+    this.localport = localport;
+    this.deviceport = deviceport;
+    this.udid = udid;
+    this.localServer = null;
+    this.log = log;
+  }
+
+  async start(): Promise<void> {
+    if (this.localServer) {
+      return;
+    }
+
+    this.localServer = net.createServer(async (localSocket: net.Socket) => {
+      let remoteSocket: any;
+      try {
+        // We can only connect to the remote socket after the local socket connection succeeds
+        remoteSocket = await utilities.connectPort(this.udid, this.deviceport);
+      } catch (e) {
+        this.log.debug((e as Error).message);
+        localSocket.destroy();
+        return;
+      }
+
+      const destroyCommChannel = () => {
+        remoteSocket.unpipe(localSocket);
+        localSocket.unpipe(remoteSocket);
+      };
+      remoteSocket.once('close', () => {
+        destroyCommChannel();
+        localSocket.destroy();
+      });
+      // not all remote socket errors are critical for the user
+      remoteSocket.on('error', (e: Error) => this.log.debug(e));
+      localSocket.once('end', destroyCommChannel);
+      localSocket.once('close', () => {
+        destroyCommChannel();
+        remoteSocket.destroy();
+      });
+      localSocket.on('error', (e: Error) => this.log.warn(e.message));
+      localSocket.pipe(remoteSocket);
+      remoteSocket.pipe(localSocket);
+    });
+    const listeningPromise = new B<void>((resolve, reject) => {
+      if (this.localServer) {
+        this.localServer.once('listening', resolve);
+        this.localServer.once('error', reject);
+      } else {
+        reject(new Error('Local server is not initialized'));
+      }
+    });
+    this.localServer.listen(this.localport);
+    try {
+      await listeningPromise;
+    } catch (e) {
+      this.localServer = null;
+      throw e;
+    }
+    this.localServer.on('error', (e: Error) => this.log.warn(e.message));
+    this.localServer.once('close', (e?: Error) => {
+      if (e) {
+        this.log.info(`The connection has been closed with error ${e.message}`);
+      } else {
+        this.log.info(`The connection has been closed`);
+      }
+      this.localServer = null;
+    });
+
+    this.termination.subscribe(() => this._closeLocalServer());
+  }
+
+  async stop(): Promise<void> {
+    this.termination.dispose();
+    this._closeLocalServer();
+  }
+
+  private _closeLocalServer(): void {
+    if (!this.localServer) {
+      return;
+    }
+
+    this.log.debug(`Closing the connection`);
+    this.localServer.close();
+    this.localServer = null;
+  }
+}
+
+class RemotexpcPortForwarder implements PortForwarder {
+  private readonly onUpstreamConnectError: (err: unknown) => void;
+  private readonly termination = new TerminationSubscription();
+
+  constructor(
+    private readonly forwarder: DevicePortForwarder,
+    private readonly log: AppiumLogger,
+    private readonly localPort: number,
+    private readonly devicePort: number,
+  ) {
+    // DevicePortForwarder also emits `error` with the same payload; subscribe to one to avoid duplicates.
+    this.onUpstreamConnectError = (err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.log.debug(
+        `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
+      );
+    };
+  }
+
+  async start(): Promise<void> {
+    this.forwarder.on('upstreamConnectError', this.onUpstreamConnectError);
+    try {
+      await this.forwarder.start();
+    } catch (e) {
+      this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
+      throw e;
+    }
+
+    this.termination.subscribe(() => this._scheduleEmergencyStop());
+  }
+
+  async stop(): Promise<void> {
+    this.termination.dispose();
+    this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
+    await this.forwarder.stop();
+  }
+
+  /** Best-effort stop when the process receives SIGINT/SIGTERM (errors are logged, not thrown). */
+  private _scheduleEmergencyStop(): void {
+    void (async () => {
+      try {
+        await this.forwarder.stop();
+      } catch (err: unknown) {
+        this.log.debug(err);
+      }
+    })();
+  }
+}
+
+function dispatchProcessTermination(): void {
+  for (const fn of [...terminationCallbacks]) {
+    try {
+      fn();
+    } catch {
+      // isolate callbacks so one failure does not skip the rest
+    }
+  }
+}
+
+/**
+ * Registers a callback to run on SIGINT/SIGTERM. Uses one shared listener per signal for the
+ * whole process; returns an unsubscribe that removes this callback from the dispatch set.
+ */
+function registerTerminationCallback(onTerminate: () => void): () => void {
+  terminationCallbacks.add(onTerminate);
+  if (terminationCallbacks.size === 1) {
+    for (const sig of TERMINATION_SIGNALS) {
+      process.on(sig, dispatchProcessTermination);
+    }
+  }
+  return () => {
+    terminationCallbacks.delete(onTerminate);
+    if (terminationCallbacks.size === 0) {
+      for (const sig of TERMINATION_SIGNALS) {
+        process.off(sig, dispatchProcessTermination);
+      }
+    }
+  };
 }
 
 interface ConnectionMapping {
@@ -503,4 +528,12 @@ interface RequestConnectionOptions {
   usePortForwarding?: boolean;
   devicePort?: number | null;
   platformVersion?: string | null;
+}
+
+/** Module shape for `await import('appium-ios-remotexpc')` (lazy load; optional at runtime). */
+type RemotexpcModuleLike = typeof import('appium-ios-remotexpc');
+
+interface PortForwarder {
+  start(): Promise<void>;
+  stop(): Promise<void>;
 }
