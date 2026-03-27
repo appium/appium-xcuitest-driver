@@ -255,14 +255,12 @@ export class DeviceConnectionsFactory {
    * so `releaseConnection` can delete mapping entries only after stops complete (no stale reads).
    */
   private async _releaseProxiedConnections(connectionKeys: string[]): Promise<string[]> {
-    const jobs: {key: string; forwarder: PortForwarder}[] = [];
-    for (const key of connectionKeys) {
-      const entry = DeviceConnectionsFactory._connectionsMapping[key];
-      const forwarder = entry?.portForwarder;
-      if (forwarder) {
-        jobs.push({key, forwarder});
-      }
-    }
+    const jobs = connectionKeys
+      .map((key) => {
+        const forwarder = DeviceConnectionsFactory._connectionsMapping[key]?.portForwarder;
+        return forwarder ? {key, forwarder} : null;
+      })
+      .filter((job): job is {key: string; forwarder: PortForwarder} => job != null);
     return Promise.all(
       jobs.map(async ({key, forwarder}) => {
         this.log.info(`Releasing the listener for '${key}'`);
