@@ -2,7 +2,7 @@ import _ from 'lodash';
 import B, {TimeoutError} from 'bluebird';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
 import path from 'node:path';
-import {services, utilities, INSTRUMENT_CHANNEL} from 'appium-ios-device';
+import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
@@ -12,6 +12,7 @@ import {AfcClient} from './afc-client';
 import {ConnectedDevicesClient} from './connected-devices-client';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {NotificationClient} from './notification-client';
+import {LockdownClient} from './lockdown-client';
 import {isIos18OrNewer} from '../utils';
 import {getRemoteXPCServices} from './remotexpc-utils';
 
@@ -504,7 +505,12 @@ export class RealDevice {
   }
 
   async getPlatformVersion(): Promise<string> {
-    return await utilities.getOSVersion(this.udid);
+    const lockdown = await LockdownClient.createForDevice(this.udid, this.driverOpts, this.log);
+    try {
+      return await lockdown.getOSVersion();
+    } finally {
+      await lockdown.close();
+    }
   }
 
   async reset(opts: {bundleId?: string; fullReset?: boolean}): Promise<void> {
