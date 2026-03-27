@@ -268,5 +268,4 @@ export class LockdownClient {
     }
     return undefined;
   }
-
 }
