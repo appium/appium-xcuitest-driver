@@ -127,7 +127,7 @@ export class DeviceConnectionsFactory {
    * @param udid - If set, only connections for this device; use with `port` for a single exact key
    * @param port - If set, only connections on this local port
    */
-  releaseConnection(udid: string | null = null, port: number | null = null): void {
+  async releaseConnection(udid: string | null = null, port: number | null = null): Promise<void> {
     if (!udid && !port) {
       this.log.warn(
         'Neither device UDID nor local port is set. ' +
@@ -145,7 +145,7 @@ export class DeviceConnectionsFactory {
       return;
     }
     this.log.info(`Found cached connections to release: ${JSON.stringify(keys)}`);
-    void this._releaseProxiedConnections(keys);
+    await this._releaseProxiedConnections(keys);
     for (const key of keys) {
       delete DeviceConnectionsFactory._connectionsMapping[key];
     }
@@ -250,19 +250,28 @@ export class DeviceConnectionsFactory {
     return `${util.hasValue(udid) ? udid : ''}${SPLITTER}${util.hasValue(port) ? port : ''}`;
   }
 
+  /**
+   * Stops forwarders for the given keys. Snapshots `portForwarder` references before any `await`
+   * so `releaseConnection` can delete mapping entries only after stops complete (no stale reads).
+   */
   private async _releaseProxiedConnections(connectionKeys: string[]): Promise<string[]> {
-    const keys = connectionKeys.filter((k) =>
-      _.has(DeviceConnectionsFactory._connectionsMapping[k], 'portForwarder'),
-    );
-    for (const key of keys) {
+    const jobs: {key: string; forwarder: PortForwarder}[] = [];
+    for (const key of connectionKeys) {
+      const entry = DeviceConnectionsFactory._connectionsMapping[key];
+      const forwarder = entry?.portForwarder;
+      if (forwarder) {
+        jobs.push({key, forwarder});
+      }
+    }
+    for (const {key, forwarder} of jobs) {
       this.log.info(`Releasing the listener for '${key}'`);
       try {
-        await DeviceConnectionsFactory._connectionsMapping[key].portForwarder?.stop();
+        await forwarder.stop();
       } catch (e) {
         this.log.debug(e);
       }
     }
-    return keys;
+    return jobs.map((j) => j.key);
   }
 
   private async _createPortForwarder(

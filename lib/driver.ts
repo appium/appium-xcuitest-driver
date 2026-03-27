@@ -1043,7 +1043,7 @@ export class XCUITestDriver
         await this.wda.quit();
       }
     }
-    this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
+    await this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
   async initSimulator(): Promise<void> {
