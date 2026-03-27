@@ -352,20 +352,15 @@ class TerminationSubscription {
 }
 
 class LegacyPortForwarder implements PortForwarder {
-  private readonly localport: number;
-  private readonly deviceport: number;
-  private readonly udid: string;
-  private localServer: net.Server | null;
-  private readonly log: AppiumLogger;
+  private localServer: net.Server | null = null;
   private readonly termination = new TerminationSubscription();
 
-  constructor(udid: string, localport: number, deviceport: number, log: AppiumLogger) {
-    this.localport = localport;
-    this.deviceport = deviceport;
-    this.udid = udid;
-    this.localServer = null;
-    this.log = log;
-  }
+  constructor(
+    private readonly udid: string,
+    private readonly localport: number,
+    private readonly deviceport: number,
+    private readonly log: AppiumLogger,
+  ) {}
 
   async start(): Promise<void> {
     if (this.localServer) {
@@ -447,23 +442,21 @@ class LegacyPortForwarder implements PortForwarder {
 }
 
 class RemotexpcPortForwarder implements PortForwarder {
-  private readonly onUpstreamConnectError: (err: unknown) => void;
   private readonly termination = new TerminationSubscription();
+  // DevicePortForwarder also emits `error` with the same payload; subscribe to one to avoid duplicates.
+  private readonly onUpstreamConnectError = (err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err);
+    this.log.debug(
+      `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
+    );
+  };
 
   constructor(
     private readonly forwarder: DevicePortForwarder,
     private readonly log: AppiumLogger,
     private readonly localPort: number,
     private readonly devicePort: number,
-  ) {
-    // DevicePortForwarder also emits `error` with the same payload; subscribe to one to avoid duplicates.
-    this.onUpstreamConnectError = (err: unknown) => {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.log.debug(
-        `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
-      );
-    };
-  }
+  ) {}
 
   async start(): Promise<void> {
     this.forwarder.on('upstreamConnectError', this.onUpstreamConnectError);
