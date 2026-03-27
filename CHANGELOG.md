@@ -1,3 +1,9 @@
+## [10.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.34.0...v10.35.0) (2026-03-27)
+
+### Features
+
+* Retrieve platform version from remotexpc ([#2774](https://github.com/appium/appium-xcuitest-driver/issues/2774)) ([b65ff7f](https://github.com/appium/appium-xcuitest-driver/commit/b65ff7f3a9116e8b9bb94a6de68d4d325709697a))
+
 ## [10.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.33.0...v10.34.0) (2026-03-27)
 
 ### Features
