@@ -1,3 +1,9 @@
+## [10.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.33.0...v10.34.0) (2026-03-27)
+
+### Features
+
+* Use remote-xpc for fetching device info ([#2773](https://github.com/appium/appium-xcuitest-driver/issues/2773)) ([4258b5a](https://github.com/appium/appium-xcuitest-driver/commit/4258b5ab2cbe9d1c10569866e60b1f2603a46c60))
+
 ## [10.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.32.1...v10.33.0) (2026-03-22)
 
 ### Features
