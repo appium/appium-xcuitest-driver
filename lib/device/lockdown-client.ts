@@ -113,6 +113,37 @@ export class LockdownClient {
   }
 
   /**
+   * Device ProductVersion from lockdown.
+   *
+   * Uses the same lockdown selection strategy as {@linkcode getDeviceInfo}.
+   * If a RemoteXPC lockdown payload does not include ProductVersion, throws.
+   */
+  async getOSVersion(): Promise<string> {
+    switch (this.strategy) {
+      case 'ios-device':
+        return await utilities.getOSVersion(this.udid);
+      case 'remotexpc-usbmux': {
+        const value = await this.runWithRemotexpcUsbmuxLockdown((lockdown) =>
+          lockdown.getProductVersion(),
+        );
+        if (!value) {
+          throw new Error(`RemoteXPC USB lockdown did not return ProductVersion for '${this.udid}'.`);
+        }
+        return value;
+      }
+      case 'remotexpc-tunnel': {
+        const value = await this.runWithTunnelLockdown((lockdown) => lockdown.getProductVersion());
+        if (!value) {
+          throw new Error(
+            `RemoteXPC tunnel lockdown did not return ProductVersion for '${this.udid}'.`,
+          );
+        }
+        return value;
+      }
+    }
+  }
+
+  /**
    * Fields needed to format device local time (same contract as {@linkcode utilities.getDeviceTime}).
    */
   async getDeviceTimeFields(): Promise<DeviceTimeLockdownFields> {
@@ -239,4 +270,5 @@ export class LockdownClient {
     }
     return undefined;
   }
+
 }
