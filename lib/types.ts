@@ -1,7 +1,21 @@
+import type {Condition} from './commands/types';
+
 export interface Page {
   id: number | string;
   isKey?: boolean;
   url: string;
+}
+
+/**
+ * Facade for condition-inducer operations (RemoteXPC on iOS 18+ vs legacy instrument service).
+ * Constructed by `createConditionInducer` in `device/condition-inducer-client`.
+ */
+export interface IConditionInducer {
+  list(): Promise<Condition[]>;
+  enable(conditionID: string, profileID: string): Promise<boolean>;
+  disable(): Promise<boolean>;
+  close(): Promise<void>;
+  isActive(): boolean;
 }
 
 export interface AsyncPromise {

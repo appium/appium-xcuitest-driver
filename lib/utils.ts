@@ -490,6 +490,10 @@ export function isIos17OrNewer(opts: XCUITestDriverOpts): boolean {
   return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '17.0');
 }
 
+export function isIos18OrNewerPlatform(platformVersion?: string | null): boolean {
+  return !!platformVersion && util.compareVersions(platformVersion, '>=', '18.0');
+}
+
 export function isIos18OrNewer(opts: XCUITestDriverOpts): boolean {
-  return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '18.0');
+  return isIos18OrNewerPlatform(opts.platformVersion);
 }
