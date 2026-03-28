@@ -114,12 +114,7 @@ import {
 } from './utils';
 import {AppInfosCache} from './app-infos-cache';
 import {notifyBiDiContextChange} from './commands/context';
-import type {
-  AsyncPromise,
-  CalibrationData,
-  IConditionInducer,
-  LifecycleData,
-} from './types';
+import type {AsyncPromise, CalibrationData, IConditionInducer, LifecycleData} from './types';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
 import type {PerfRecorder} from './commands/performance';
 import type {AudioRecorder} from './commands/record-audio';

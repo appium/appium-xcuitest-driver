@@ -129,9 +129,7 @@ class InstrumentConditionInducer implements IConditionInducer {
   ) {}
 
   async list(): Promise<Condition[]> {
-    const service = (await services.startInstrumentService(
-      this.udid,
-    )) as InstrumentService;
+    const service = (await services.startInstrumentService(this.udid)) as InstrumentService;
     try {
       const ret = await service.callChannel(
         INSTRUMENT_CHANNEL.CONDITION_INDUCER,
@@ -202,11 +200,7 @@ class InstrumentConditionInducer implements IConditionInducer {
 }
 
 type InstrumentService = {
-  callChannel(
-    channel: string,
-    method: string,
-    ...args: any[]
-  ): Promise<{selector: any}>;
+  callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;
   close(): void;
   _socketClient: {destroyed: boolean};
 };
