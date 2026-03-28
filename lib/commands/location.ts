@@ -110,8 +110,8 @@ export async function setGeoLocation(
  * - Real device, older iOS: legacy simulate-location session over lockdown (UDID required).
  * - Simulator, older iOS: not supported.
  *
- * @throws {import('appium/driver').errors.NotImplementedError} When the target is a simulator on iOS &lt; 17.
- * @throws {import('appium/driver').errors.InvalidArgumentError} When the legacy path runs without a UDID.
+ * @throws {errors.NotImplementedError} When the target is a simulator on iOS &lt; 17.
+ * @throws {errors.InvalidArgumentError} When the legacy path runs without a UDID.
  * @throws {Error} When the underlying reset fails.
  */
 export async function mobileResetLocationService(this: XCUITestDriver): Promise<void> {
