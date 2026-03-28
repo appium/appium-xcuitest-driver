@@ -80,6 +80,11 @@ export async function setGeoLocation(
     if (!util.hasValue(location[name as keyof typeof location])) {
       throw new errors.InvalidArgumentError(`${name} should be set`);
     }
+    if (!Number.isFinite(Number(location[name as keyof typeof location]))) {
+      throw new errors.InvalidArgumentError(
+        `${name} must be a number, got '${location[name as keyof typeof location]}' instead`,
+      );
+    }
   }
   const [latitudeNumber, longitudeNumber] = [Number(location.latitude), Number(location.longitude)];
 
@@ -110,7 +115,7 @@ export async function setGeoLocation(
  * - Real device, older iOS: legacy simulate-location session over lockdown (UDID required).
  * - Simulator, older iOS: not supported.
  *
- * @throws {errors.NotImplementedError} When the target is a simulator on iOS &lt; 17.
+ * @throws {errors.NotImplementedError} When the target is a simulator on iOS < 17.
  * @throws {errors.InvalidArgumentError} When the legacy path runs without a UDID.
  * @throws {Error} When the underlying reset fails.
  */

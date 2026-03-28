@@ -1,7 +1,7 @@
 import {services} from 'appium-ios-device';
 
 /**
- * A simulate-location session over lockdown/USB (legacy path for real devices on iOS &lt; 17).
+ * A simulate-location session over lockdown/USB (legacy path for real devices on iOS < 17).
  * Callers must invoke {@link SimulateLocationSession#close | close()} when finished (typically in `finally`).
  */
 export interface SimulateLocationSession {
