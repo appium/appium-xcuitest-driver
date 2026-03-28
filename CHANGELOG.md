@@ -1,3 +1,9 @@
+## [10.36.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.0...v10.36.1) (2026-03-28)
+
+### Miscellaneous Chores
+
+* Refactor location helpers to isolate appium-ios-device usage ([#2777](https://github.com/appium/appium-xcuitest-driver/issues/2777)) ([9499e2c](https://github.com/appium/appium-xcuitest-driver/commit/9499e2c38100e302e07a5a8d493164c0452fc6dd))
+
 ## [10.36.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.35.0...v10.36.0) (2026-03-28)
 
 ### Features
