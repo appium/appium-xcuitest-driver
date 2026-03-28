@@ -1,9 +1,34 @@
-import type {Condition} from './commands/types';
-
 export interface Page {
   id: number | string;
   isKey?: boolean;
   url: string;
+}
+
+/**
+ * Condition inducer profile configuration
+ */
+export interface Profile {
+  name: string;
+  /** The property is profileID used in {@linkcode XCUITestDriver.enableConditionInducer} */
+  identifier: string;
+  /** Configuration details */
+  description: string;
+}
+
+/**
+ * We can use the returned data to determine whether the Condition is enabled and the currently enabled configuration information
+ */
+export interface Condition {
+  profiles: Profile[];
+  /** The property is conditionID used in {@linkcode XCUITestDriver.enableConditionInducer} */
+  identifier: string;
+  profilesSorted: boolean;
+  isDestructive: boolean;
+  isInternal: boolean;
+  /** `true` if this condition identifier is enabled */
+  isActive: boolean;
+  /** Enabled profiles identifier */
+  activeProfile: string;
 }
 
 /**

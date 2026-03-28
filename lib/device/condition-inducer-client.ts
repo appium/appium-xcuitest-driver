@@ -2,8 +2,7 @@ import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
 import {isIos18OrNewerPlatform} from '../utils';
 import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
-import type {Condition} from '../commands/types';
-import type {IConditionInducer} from '../types';
+import type {Condition, IConditionInducer} from '../types';
 import {getRemoteXPCServices} from './remotexpc-utils';
 
 /**
