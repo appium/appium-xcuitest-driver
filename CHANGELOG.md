@@ -1,3 +1,9 @@
+## [10.36.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.35.0...v10.36.0) (2026-03-28)
+
+### Features
+
+* Prefer remotexpc for port forwarding ([#2776](https://github.com/appium/appium-xcuitest-driver/issues/2776)) ([717c9d6](https://github.com/appium/appium-xcuitest-driver/commit/717c9d6a2ad9154186b9e532460f44233ad643a5))
+
 ## [10.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.34.0...v10.35.0) (2026-03-27)
 
 ### Features
