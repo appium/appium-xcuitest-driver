@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {logger} from 'appium/support';
 import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -6,26 +7,24 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
 describe('DeviceConnectionsFactory', function () {
-  let devConFactory;
+  let devConFactory: DeviceConnectionsFactory;
 
   beforeEach(function () {
-    devConFactory = new DeviceConnectionsFactory();
-  });
-
-  afterEach(function () {
-    devConFactory = null;
+    devConFactory = new DeviceConnectionsFactory(logger.getLogger('DevCon Factory test'));
+    (DeviceConnectionsFactory as any)._connectionsMapping = {};
   });
 
   it('should properly transform udid/part pairs to keys', function () {
-    expect(devConFactory._toKey('udid', 1234)).to.eql('udid:1234');
-    expect(devConFactory._toKey('udid', 0)).to.eql('udid:0');
-    expect(devConFactory._toKey('udid')).to.eql('udid:');
-    expect(devConFactory._toKey(null, 456)).to.eql(':456');
-    expect(devConFactory._toKey()).to.eql(':');
+    const f = devConFactory as any;
+    expect(f._toKey('udid', 1234)).to.eql('udid:1234');
+    expect(f._toKey('udid', 0)).to.eql('udid:0');
+    expect(f._toKey('udid')).to.eql('udid:');
+    expect(f._toKey(null, 456)).to.eql(':456');
+    expect(f._toKey()).to.eql(':');
   });
 
   it('should properly list connections by udid/port', function () {
-    devConFactory._connectionsMapping = {
+    (DeviceConnectionsFactory as any)._connectionsMapping = {
       'udid:1234': {},
       'udid2:5678': {},
       'udid4:5678': {},
@@ -45,15 +44,18 @@ describe('DeviceConnectionsFactory', function () {
     expect(devConFactory.listConnections(null, 23424)).to.eql([]);
   });
 
-  it('should properly release proxied connections', function () {
-    devConFactory._connectionsMapping = {
-      'udid:1234': {iproxy: {stop: () => {}}},
+  it('should properly release proxied connections', async function () {
+    (DeviceConnectionsFactory as any)._connectionsMapping = {
+      'udid:1234': {portForwarder: {stop: () => {}}},
       'udid:5678': {},
-      'udid4:6545': {iproxy: {stop: () => {}}},
+      'udid4:6545': {portForwarder: {stop: () => {}}},
     };
 
+    const f = devConFactory as any;
     expect(
-      devConFactory._releaseProxiedConnections(_.keys(devConFactory._connectionsMapping)),
+      await f._releaseProxiedConnections(
+        _.keys((DeviceConnectionsFactory as any)._connectionsMapping),
+      ),
     ).to.eql(['udid:1234', 'udid4:6545']);
   });
 });
