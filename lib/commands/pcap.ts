@@ -8,6 +8,11 @@ import type {SubProcess} from 'teen_process';
 const MAX_CAPTURE_TIME_SEC = 60 * 60 * 12;
 const DEFAULT_EXT = '.pcap';
 
+/**
+ * @deprecated Scheduled for removal in the next **major** driver release. Use `mobile: startNetworkMonitor`
+ * / `mobile: stopNetworkMonitor` with BiDi `appium:xcuitest.networkMonitor` events (iOS/tvOS 18+,
+ * appium-ios-remotexpc) instead of py-ios-device `.pcap` capture.
+ */
 export class TrafficCapture {
   private mainProcess: SubProcess | null = null;
   private readonly udid: string;
@@ -76,6 +81,9 @@ export class TrafficCapture {
 /**
  * Records the given network traffic capture into a .pcap file.
  *
+ * @deprecated Scheduled for removal in the next **major** driver release. Prefer `mobile: startNetworkMonitor`
+ * and BiDi `appium:xcuitest.networkMonitor` on iOS/tvOS 18+.
+ *
  * @param timeLimitSec - The maximum recording time, in seconds. The maximum value is `43200` (12 hours).
  * @param forceRestart - Whether to restart traffic capture process forcefully when startPcap is called (`true`) or ignore the call until the current traffic capture is completed (`false`, the default value).
  * @throws {Error} If network traffic capture has failed to start.
@@ -131,6 +139,8 @@ export async function mobileStartPcap(
 
 /**
  * Stops network traffic capture.
+ *
+ * @deprecated Scheduled for removal in the next **major** driver release. Prefer `mobile: stopNetworkMonitor`.
  *
  * If no traffic capture process is running, then the endpoint will try to get the recently recorded file.
  *

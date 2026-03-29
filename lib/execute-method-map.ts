@@ -474,6 +474,12 @@ export const executeMethodMap = {
   'mobile: stopPcap': {
     command: 'mobileStopPcap',
   },
+  'mobile: startNetworkMonitor': {
+    command: 'mobileStartNetworkMonitor',
+  },
+  'mobile: stopNetworkMonitor': {
+    command: 'mobileStopNetworkMonitor',
+  },
   'mobile: listConditionInducers': {
     command: 'listConditionInducers',
   },
