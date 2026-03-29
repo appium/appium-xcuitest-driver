@@ -72,7 +72,7 @@ listed here, please refer to the [Troubleshooting](../../troubleshooting/index.m
   is revoked (for example, due to expiration). It means that code signing is not set up correctly and
   must be reconfigured. Follow the steps in any of the manual configuration approaches to fix this.
 
-  The [appium:allowProvisioningDeviceRegistration](../../../docs/reference/capabilities.md) capability
+  The [appium:allowProvisioningDeviceRegistration](../../reference/capabilities.md) capability
   enables automatic device registration with the specified account and works for both paid and free accounts.
 
 ### xcodebuild exited with code 70
