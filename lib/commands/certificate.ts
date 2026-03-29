@@ -8,7 +8,7 @@ import http from 'node:http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {CertificateClient} from '../device/certificate-client';
-import {requireRealDevice, isIos18OrNewer} from '../utils';
+import {isIos18OrNewer, requireRealDevice} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
@@ -295,7 +295,8 @@ async function withCertificateClient<T>(
 /**
  * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
  * Uses the same certificate client path as mobile certificate commands (Remote XPC on iOS/tvOS 18+
- * when available; py-ios-device otherwise).
+ * when available; py-ios-device otherwise). `start()` has already set `platformVersion` from the
+ * device when the capability was omitted.
  */
 export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {
   const pem = this.opts.customSSLCert;

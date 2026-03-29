@@ -43,7 +43,7 @@ export class CertificateClient {
    *
    * @param udid - Device UDID
    * @param log - Appium logger instance
-   * @param useRemoteXPC - Whether to use remotexpc (use isIos18OrNewer(opts) to determine)
+   * @param useRemoteXPC - Whether to use remotexpc (callers use `isIos18OrNewer(opts)` after session `start()`)
    * @returns Certificate client instance
    */
   static async create(
