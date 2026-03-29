@@ -75,6 +75,9 @@ listed here, please refer to the [Troubleshooting](../../troubleshooting/index.m
   `appium:allowProvisioningDeviceRegistration` capability would help with the automatic configuration
   to register the device to the given account. This works for both paid and free accounts.
 
+  The [appium:allowProvisioningDeviceRegistration](../../../docs/reference/capabilities.md) capability enables automatic 
+  device registration with the specified account and works for both paid and free accounts.
+
 ### xcodebuild exited with code 70
 
   Similarly to the error for code 65, this error can be caused by invalid code signing, but may
