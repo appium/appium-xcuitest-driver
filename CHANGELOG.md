@@ -1,3 +1,9 @@
+## [10.36.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.1...v10.36.2) (2026-03-29)
+
+### Miscellaneous Chores
+
+* Isolate internal condition inducer client logic ([#2778](https://github.com/appium/appium-xcuitest-driver/issues/2778)) ([38f9f9c](https://github.com/appium/appium-xcuitest-driver/commit/38f9f9c9dea45e5dda0990f985fc7235dad9f187))
+
 ## [10.36.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.0...v10.36.1) (2026-03-28)
 
 ### Miscellaneous Chores
