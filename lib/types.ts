@@ -4,6 +4,45 @@ export interface Page {
   url: string;
 }
 
+/**
+ * Condition inducer profile configuration
+ */
+export interface Profile {
+  name: string;
+  /** The property is profileID used in {@linkcode XCUITestDriver.enableConditionInducer} */
+  identifier: string;
+  /** Configuration details */
+  description: string;
+}
+
+/**
+ * We can use the returned data to determine whether the Condition is enabled and the currently enabled configuration information
+ */
+export interface Condition {
+  profiles: Profile[];
+  /** The property is conditionID used in {@linkcode XCUITestDriver.enableConditionInducer} */
+  identifier: string;
+  profilesSorted: boolean;
+  isDestructive: boolean;
+  isInternal: boolean;
+  /** `true` if this condition identifier is enabled */
+  isActive: boolean;
+  /** Enabled profiles identifier */
+  activeProfile: string;
+}
+
+/**
+ * Facade for condition-inducer operations (RemoteXPC on iOS 18+ vs legacy instrument service).
+ * Constructed by `createConditionInducer` in `device/condition-inducer-client`.
+ */
+export interface IConditionInducer {
+  list(): Promise<Condition[]>;
+  enable(conditionID: string, profileID: string): Promise<boolean>;
+  disable(): Promise<boolean>;
+  close(): Promise<void>;
+  isActive(): boolean;
+}
+
 export interface AsyncPromise {
   resolve: (value: any) => void;
   reject: (reason: any) => void;

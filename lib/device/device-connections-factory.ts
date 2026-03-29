@@ -8,6 +8,7 @@ import {waitForCondition} from 'asyncbox';
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
+import {isIos18OrNewerPlatform} from '../utils';
 
 const LOCALHOST = '127.0.0.1';
 const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
@@ -280,7 +281,7 @@ export class DeviceConnectionsFactory {
     devicePort: number,
     platformVersion?: string | null,
   ): Promise<PortForwarder> {
-    if (!platformVersion || !util.compareVersions(platformVersion, '>=', '18.0')) {
+    if (!isIos18OrNewerPlatform(platformVersion)) {
       this.log.debug(
         `Device '${udid}' is running iOS below 18 (platformVersion='${platformVersion ?? 'unknown'}'). ` +
           `Using appium-ios-device port forwarding fallback.`,

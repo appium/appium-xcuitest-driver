@@ -38,7 +38,6 @@ import * as biometricCommands from './commands/biometric';
 import * as certificateCommands from './commands/certificate';
 import * as clipboardCommands from './commands/clipboard';
 import * as conditionCommands from './commands/condition';
-import type {IConditionInducer} from './commands/condition';
 import * as contentSizeCommands from './commands/content-size';
 import * as contextCommands from './commands/context';
 import * as deviceInfoCommands from './commands/device-info';
@@ -115,7 +114,7 @@ import {
 } from './utils';
 import {AppInfosCache} from './app-infos-cache';
 import {notifyBiDiContextChange} from './commands/context';
-import type {CalibrationData, AsyncPromise, LifecycleData} from './types';
+import type {AsyncPromise, CalibrationData, IConditionInducer, LifecycleData} from './types';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
 import type {PerfRecorder} from './commands/performance';
 import type {AudioRecorder} from './commands/record-audio';
