@@ -6,11 +6,20 @@ import type {BaseDeviceClientOptions, InstallProfileArgs} from './base-device-cl
 import type {TeenProcessExecResult} from 'teen_process';
 import type {CertificateList} from '../../commands/types';
 
-// https://github.com/YueChen-C/py-ios-device
+/**
+ * Wraps the `pyidevice` CLI from [py-ios-device](https://github.com/YueChen-C/py-ios-device).
+ *
+ * @deprecated This client is **scheduled for removal** once the XCUITest driver supports only
+ * iOS/tvOS **18+** (no pre-18 real-device paths).
+ * Prefer appium-ios-remotexpc for new work on current OS versions.
+ *
+ * @see https://github.com/appium/appium-ios-remotexpc
+ */
 
 const BINARY_NAME = 'pyidevice';
 const CRASH_REPORT_EXT = '.ips';
 
+/** @deprecated Scheduled for removal with pre-iOS 18 support; see module doc above. */
 export interface PyideviceOptions extends BaseDeviceClientOptions {
   udid: string;
 }
@@ -22,6 +31,7 @@ interface ExecuteOptions {
   asynchronous?: boolean;
 }
 
+/** @deprecated See module deprecation. */
 export class Pyidevice extends BaseDeviceClient {
   private readonly _udid: string;
   private _binaryPath: string | null;
