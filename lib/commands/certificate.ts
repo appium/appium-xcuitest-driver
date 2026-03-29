@@ -293,6 +293,24 @@ async function withCertificateClient<T>(
 }
 
 /**
+ * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
+ * Uses the same certificate client path as mobile certificate commands (Remote XPC on iOS/tvOS 18+
+ * when available; py-ios-device otherwise).
+ */
+export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {
+  const pem = this.opts.customSSLCert;
+  if (!pem) {
+    return;
+  }
+  requireRealDevice(this, 'install customSSLCert capability');
+  await withCertificateClient(this, async (client) => {
+    await client.installCertificate({
+      payload: Buffer.from(pem, 'utf8'),
+    });
+  });
+}
+
+/**
  * Extracts the common name of the certificate from the given buffer.
  *
  * @param {Buffer} certBuffer
