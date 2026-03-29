@@ -7,7 +7,14 @@ import type {XCTestResult, RunXCTestResult} from './types';
 import type {StringRecord} from '@appium/types';
 import type IDB from 'appium-idb';
 
-const XCTEST_TIMEOUT = 360000; // 60 minute timeout
+import {
+  runXCTestViaRemoteXPC,
+  listXCTestBundlesViaRemoteXPC,
+  installXCTestBundleViaRemoteXPC,
+} from '../device/xctest-remotexpc';
+import {isIos18OrNewer} from '../utils';
+
+const XCTEST_TIMEOUT = 360000; // 6 minute timeout
 
 const xctestLog = logger.getLogger('XCTest');
 
@@ -164,6 +171,28 @@ export async function mobileRunXCTest(
   env?: StringRecord,
   timeout = XCTEST_TIMEOUT,
 ): Promise<RunXCTestResult> {
+  // RemoteXPC is the primary path — IDB is only used as fallback when RemoteXPC is unavailable.
+  if (this.isRealDevice() && isIos18OrNewer(this.opts) && testType !== 'logic') {
+    try {
+      return await runXCTestViaRemoteXPC(
+        this.device.udid,
+        testRunnerBundleId,
+        appUnderTestBundleId,
+        xcTestBundleId,
+        testType,
+        args,
+        env,
+        timeout,
+      );
+    } catch (err: any) {
+      // Timeout errors should not be retried via IDB
+      if (err instanceof errors.TimeoutError) {
+        throw err;
+      }
+      xctestLog.warn(`Failed to run XCTest via RemoteXPC, falling back to IDB: ${err.message}`);
+    }
+  }
+
   const subproc = await assertIDB
     .call(this, this.opts)
     .runXCUITest(testRunnerBundleId, appUnderTestBundleId, xcTestBundleId, {env, args, testType});
@@ -249,8 +278,20 @@ export async function mobileInstallXCTestBundle(
     );
   }
   xctestLog.info(`Installing bundle '${xctestApp}'`);
-  const idb = assertIDB.call(this, this.opts);
   const res = await this.helpers.configureApp(xctestApp, '.xctest');
+
+  if (this.isRealDevice() && isIos18OrNewer(this.opts)) {
+    try {
+      await installXCTestBundleViaRemoteXPC(this.device.udid, res);
+      return;
+    } catch (err: any) {
+      xctestLog.warn(
+        `Failed to install XCTest bundle via RemoteXPC, falling back to IDB: ${err.message}`,
+      );
+    }
+  }
+
+  const idb = assertIDB.call(this, this.opts);
   await idb.installXCTestBundle(res);
 }
 
@@ -262,6 +303,16 @@ export async function mobileInstallXCTestBundle(
  * @returns List of XCTest bundles (e.g.: `XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance`)
  */
 export async function mobileListXCTestBundles(this: XCUITestDriver): Promise<string[]> {
+  if (this.isRealDevice() && isIos18OrNewer(this.opts)) {
+    try {
+      return await listXCTestBundlesViaRemoteXPC(this.device.udid);
+    } catch (err: any) {
+      xctestLog.warn(
+        `Failed to list XCTest bundles via RemoteXPC, falling back to IDB: ${err.message}`,
+      );
+    }
+  }
+
   return await assertIDB.call(this, this.opts).listXCTestBundles();
 }
 

@@ -1,12 +1,17 @@
 import {node} from 'appium/support';
 import path from 'node:path';
 import {readFileSync} from 'node:fs';
-import type {Services} from 'appium-ios-remotexpc';
+import type {Services, XCTestRunner} from 'appium-ios-remotexpc';
 
 /**
  * Cached RemoteXPC Services module
  */
 let cachedRemoteXPCServices: typeof Services | null = null;
+
+/**
+ * Cached XCTestRunner class
+ */
+let cachedXCTestRunnerClass: typeof XCTestRunner | null = null;
 
 /**
  * Module root and version cached at initialization
@@ -53,6 +58,37 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
     throw new Error(
       'Failed to import appium-ios-remotexpc module. ' +
         'This module is required for iOS 18 and above device operations. ' +
+        `Original error: ${error.message}`,
+    );
+  }
+}
+
+/**
+ * Get the XCTestRunner class dynamically from appium-ios-remotexpc
+ *
+ * @returns The XCTestRunner class
+ * @throws {Error} If the module cannot be imported
+ */
+export async function getXCTestRunnerClass(): Promise<typeof XCTestRunner> {
+  if (cachedXCTestRunnerClass) {
+    return cachedXCTestRunnerClass;
+  }
+
+  try {
+    const remotexpcModule = await import('appium-ios-remotexpc');
+    const XCTestRunnerClass = remotexpcModule.XCTestRunner;
+    if (typeof XCTestRunnerClass !== 'function') {
+      throw new Error(
+        'XCTestRunner is not exported from appium-ios-remotexpc. ' +
+          'The installed version may be incompatible.',
+      );
+    }
+    cachedXCTestRunnerClass = XCTestRunnerClass;
+    return cachedXCTestRunnerClass;
+  } catch (err) {
+    const error = err as Error;
+    throw new Error(
+      'Failed to import XCTestRunner from appium-ios-remotexpc. ' +
         `Original error: ${error.message}`,
     );
   }
