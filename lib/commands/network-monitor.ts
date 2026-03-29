@@ -26,6 +26,9 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
     this.log.info(`DVT network monitor is already active; continuing`);
     return;
   }
+  if (this._networkMonitorSession) {
+    this._networkMonitorSession = null;
+  }
 
   const session = new NetworkMonitorSession(this.log, this.device.udid);
   try {

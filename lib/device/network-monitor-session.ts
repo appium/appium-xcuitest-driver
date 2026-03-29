@@ -22,9 +22,9 @@ export class NetworkMonitorSession {
     private readonly udid: string,
   ) {}
 
-
   /**
-   * @returns `true` while a DVT connection is held and the event loop may still be active.
+   * @returns `true` only while the consume loop may still be receiving events (`this.dvt` is set).
+   * After normal completion, error, or {@link interrupt}, this becomes `false`.
    */
   isRunning(): boolean {
     return this.dvt !== null;
@@ -49,20 +49,22 @@ export class NetworkMonitorSession {
    * then awaits the background consume loop. Safe to call more than once.
    */
   async interrupt(): Promise<void> {
-    if (!this.dvt) {
+    if (this.stopped) {
       return;
     }
 
     this.stopped = true;
-    const dvt = this.dvt;
-    this.dvt = null;
-    // Same as other `startDVTService` paths in this driver (condition inducer, terminateAppRemoteXPC):
-    // close RemoteXPC only. Remotexpc's DVT integration tests often call `dvtService.close()` first for
-    // explicit channel teardown; we can add that if shutdown issues show up in the field.
-    try {
-      await dvt.remoteXPC.close();
-    } catch (err: any) {
-      this.log.debug(`Error closing RemoteXPC for network monitor: ${err?.message ?? err}`);
+    if (this.dvt) {
+      const dvt = this.dvt;
+      this.dvt = null;
+      // Same as other `startDVTService` paths in this driver (condition inducer, terminateAppRemoteXPC):
+      // close RemoteXPC only. Remotexpc's DVT integration tests often call `dvtService.close()` first for
+      // explicit channel teardown; we can add that if shutdown issues show up in the field.
+      try {
+        await dvt.remoteXPC.close();
+      } catch (err: any) {
+        this.log.debug(`Error closing RemoteXPC for network monitor: ${err?.message ?? err}`);
+      }
     }
     if (this.runPromise) {
       await this.runPromise.catch(() => {});
@@ -81,6 +83,19 @@ export class NetworkMonitorSession {
     } catch (err: any) {
       if (!this.stopped) {
         this.log.warn(`Network monitor stream ended: ${err?.message ?? err}`);
+      }
+    } finally {
+      this.stopped = true;
+      if (this.dvt === dvt) {
+        this.dvt = null;
+      }
+      this.runPromise = null;
+      if (!this.stopped) {
+        try {
+          await dvt.remoteXPC.close();
+        } catch {
+          // ignore
+        }
       }
     }
   }

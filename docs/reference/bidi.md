@@ -174,9 +174,12 @@ Field names and semantics match [`appium-ios-remotexpc`’s `NetworkEvent` types
 
 ### CDDL (shape)
 
+Matches the object emitted on the driver event bus (same top-level fields as the JSON examples above), including `context`.
+
 ```cddl
 appium:xcuitest.networkMonitor = {
   method: "appium:xcuitest.networkMonitor",
+  context: text,
   params: {
     event: {
       type: 0 / 1 / 2,
