@@ -1,3 +1,9 @@
+## [10.36.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.2...v10.36.3) (2026-03-30)
+
+### Bug Fixes
+
+* Install certificate using remotexpc as the main option ([#2780](https://github.com/appium/appium-xcuitest-driver/issues/2780)) ([42fba35](https://github.com/appium/appium-xcuitest-driver/commit/42fba35c54ab8be55d6faf40231389d938042311))
+
 ## [10.36.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.1...v10.36.2) (2026-03-29)
 
 ### Miscellaneous Chores
