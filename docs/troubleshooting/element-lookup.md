@@ -48,7 +48,9 @@ Read [Automating Hybrid Apps](../guides/hybrid.md) for more details there.
 A side note here is [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label)
 and [`role`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles) attributes are known to expose
 web elements in the accessibility tree as [accessibilityLabel](https://developer.apple.com/documentation/objectivec/nsobject/1615181-accessibilitylabel)
-in `WKWebView`. If you have a hybrid or Web application and want to make sure the desired element is
+in `WKWebView`. The primary purpose of these attributes is to make web elements accessible for accessibility tools such as VoiceOver,
+but they also make them visible in the `NATIVE_APP` context.
+If you have a hybrid or Web application and want to make sure the desired element is
 visible in the `NATIVE_APP` context then consider adding these attributes to it.
 
 ### Make sure the application accessibility tree is not too deep
