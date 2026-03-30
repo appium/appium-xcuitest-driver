@@ -449,6 +449,8 @@ function setupCleanupHandlers(tunnelCreator) {
     }
     void cleanupOnce();
   });
+
+  return cleanupOnce;
 }
 
 async function main() {
