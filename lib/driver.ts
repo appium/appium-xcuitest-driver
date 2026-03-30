@@ -77,7 +77,6 @@ import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-c
 import {DeviceConnectionsFactory} from './device/device-connections-factory';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
-import {Pyidevice} from './device/clients/py-ios-device-client';
 import {
   installToRealDevice,
   runRealDeviceReset,
@@ -937,10 +936,7 @@ export class XCUITestDriver
         await startLogCapture();
       }
     } else if (this.opts.customSSLCert) {
-      await new Pyidevice({
-        udid,
-        log: this.log,
-      }).installProfile({payload: this.opts.customSSLCert});
+      await certificateCommands.installCustomSslCertFromCapability.bind(this)();
       this.logEvent('customCertInstalled');
     }
 
