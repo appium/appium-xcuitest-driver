@@ -72,6 +72,9 @@ listed here, please refer to the [Troubleshooting](../../troubleshooting/index.m
   is revoked (for example, due to expiration). It means that code signing is not set up correctly and
   must be reconfigured. Follow the steps in any of the manual configuration approaches to fix this.
 
+  The [appium:allowProvisioningDeviceRegistration](../../reference/capabilities.md) capability
+  enables automatic device registration with the specified account and works for both paid and free accounts.
+
 ### xcodebuild exited with code 70
 
   Similarly to the error for code 65, this error can be caused by invalid code signing, but may

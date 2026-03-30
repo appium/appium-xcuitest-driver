@@ -568,7 +568,8 @@ async function main() {
     if (firstUdid) {
       log.info(`   curl http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}`);
     }
-  } finally {
+  } catch (err) {
+    log.error('Error during tunnel setup:', err);
     await cleanupOnce();
   }
 }
