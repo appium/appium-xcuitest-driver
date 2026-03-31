@@ -391,7 +391,6 @@ class TunnelCreator {
   async setupAppleTVTunnels(specificDeviceId, prefetchedDeviceIds = null) {
     /** @type {AppleTVRegistryEntry[]} */
     const entries = [];
-    const tunnelService = new AppleTVTunnelService();
 
     try {
       log.info('Starting Apple TV tunnel (WiFi)...');
@@ -416,6 +415,8 @@ class TunnelCreator {
       }
 
       for (const deviceId of targetDeviceIds) {
+        /** @type {import('appium-ios-remotexpc').AppleTVTunnelService | null} */
+        let tunnelService = null;
         /** @type {AppleTVTunnelConnection | null} */
         let tunnel = null;
         /** @type {import('appium-ios-remotexpc').PacketStreamServer | null} */
@@ -423,6 +424,7 @@ class TunnelCreator {
         /** @type {import('node:tls').TLSSocket | null} */
         let tlsSocket = null;
         try {
+          tunnelService = new AppleTVTunnelService();
           const result = await tunnelService.startTunnel(undefined, deviceId);
           tlsSocket = result.socket;
           const deviceInfo = result.device;
@@ -684,7 +686,6 @@ class TunnelCreator {
       tunnel.addPacketConsumer(consumer);
     }
 
-    this._packetStreamServers.set(udid, packetStreamServer);
     this._appletvResources.push({
       tunnel,
       packetStreamServer,
@@ -1047,7 +1048,11 @@ async function main() {
         udid: resource.udid,
         socket: resource.tlsSocket,
       };
-      if (resource.tunnel?.Address && typeof resource.tunnel?.RsdPort === 'number') {
+      if (
+        resource.tunnel?.Address
+        && typeof resource.tunnel?.RsdPort === 'number'
+        && resource.tunnel.RsdPort > 0
+      ) {
         watch.rsdProbe = {
           host: resource.tunnel.Address,
           port: resource.tunnel.RsdPort,
