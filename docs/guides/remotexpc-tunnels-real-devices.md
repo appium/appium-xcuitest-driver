@@ -115,6 +115,17 @@ The script supports a few options:
     The script also stores the chosen port in a strongbox entry for the `appium-xcuitest-driver`
     package so that driver instances can locate the registry automatically.
 
+- **Enable retries after unexpected disconnects**:
+
+    ```bash
+    sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 5 --disconnect-retry-interval-ms 1000
+    ```
+
+    - If `--disconnect-retry-max-attempts` is omitted, retries are disabled and a lost tunnel is
+      removed from the registry API.
+    - Set `--disconnect-retry-max-attempts 0` for unlimited retries.
+    - `--disconnect-retry-interval-ms` controls delay between attempts and defaults to `1000`.
+
 ### Inspecting the tunnel registry
 
 After a successful run you should see log lines similar to:

@@ -271,7 +271,9 @@ sudo appium driver run xcuitest tunnel-creation
 
 |<div style="width:14em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
-|`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. By default, the tunnel is created for the first discovered paired device. Only needed if using `appium-ios-remotexpc` versions `0.33.0`-`0.36.0`.|string||
+|`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. If omitted, the script creates one tunnel per discovered paired Apple TV device.|string||
+|`--disconnect-retry-max-attempts`|Maximum number of tunnel recreation attempts after an unexpected disconnect. Set to `0` for unlimited retries. If omitted, retries are disabled and the tunnel is removed from registry.|integer|disabled|
+|`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds.|integer|1000|
 |`--packet-stream-base-port`|Base port for packet stream servers|integer|50000|
 |`--tunnel-registry-port`|Port of the tunnel registry server|integer|42314|
 |`--udid`, `-u`|Identifier of a specific device to create the tunnel for. By default, the tunnel is created for all connected devices.|string||
@@ -294,4 +296,10 @@ sudo appium driver run xcuitest tunnel-creation
 
     ```
     appium driver run xcuitest tunnel-creation -- --udid 00000000-1111-2222-3333-444444444444
+    ```
+
+- Recreate tunnel up to 10 times on disconnect with 2s interval:
+
+    ```
+    appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 10 --disconnect-retry-interval-ms 2000
     ```

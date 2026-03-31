@@ -71,12 +71,11 @@
   "files": [
     "lib",
     "scripts",
-    "build",
+    "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
     "LICENSE",
-    "npm-shrinkwrap.json",
-    "!build/test"
+    "npm-shrinkwrap.json"
   ],
   "types": "./build/lib/index.d.ts",
   "dependencies": {
