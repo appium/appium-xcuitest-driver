@@ -283,7 +283,7 @@ sudo appium driver run xcuitest tunnel-creation
 - Create a tunnel for all connected devices:
 
     ```
-    appium driver run xcuitest tunnel-creation
+    sudo appium driver run xcuitest tunnel-creation
     ```
 
 - Create a tunnel for all connected devices using custom ports:
