@@ -217,7 +217,7 @@ High‑level workflow:
     See the [Apple TV pairing guide](remotexpc-apple-tv-pairing.md) for details. In short:
 
     ```bash
-    appium driver run xcuitest pair-appletv
+    sudo appium driver run xcuitest pair-appletv
     ```
 
     This script configures the Apple TV pairing state for use with `appium-ios-remotexpc` and the tunnel
@@ -227,7 +227,7 @@ High‑level workflow:
     Use the UDID that the pairing script (step 1) printed:
 
     ```bash
-    sudo appium driver run xcuitest tunnel-creation --udid <udid-from-pairing-script>
+    sudo appium driver run xcuitest tunnel-creation --appletv-device-id <udid-from-pairing-script>
     ```
 
     This will:
