@@ -42,7 +42,9 @@ export class AppTerminationClient {
         this.log.info(`The process of '${bundleId}' app was not running`);
         break;
       case 'error':
-        this.log.warn(`Failed to kill '${bundleId}'. Original error: ${result.detail ?? 'unknown'}`);
+        this.log.warn(
+          `Failed to kill '${bundleId}'. Original error: ${result.detail ?? 'unknown'}`,
+        );
         break;
     }
     return false;
@@ -120,5 +122,4 @@ export class AppTerminationClient {
       }
     }
   }
-
 }

@@ -517,7 +517,6 @@ export class RealDevice {
     }
     this.log.debug(`Reset: removed '${bundleId}'`);
   }
-
 }
 
 //#endregion
