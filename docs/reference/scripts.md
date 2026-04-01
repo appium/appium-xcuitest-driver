@@ -216,10 +216,14 @@ and [Apple TV pairing](../guides/remotexpc-apple-tv-pairing.md) guides for more 
     This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
     package to be installed.
 
+!!! note
+
+    This script must be run in `sudo` mode (as root), like [`tunnel-creation`](#tunnel-creation).
+
 #### Usage
 
 ```
-appium driver run xcuitest pair-appletv
+sudo appium driver run xcuitest pair-appletv
 ```
 
 ##### Optional Arguments
@@ -234,13 +238,13 @@ appium driver run xcuitest pair-appletv
 - Select a device to pair from a list of discovered devices:
 
     ```
-    appium driver run xcuitest pair-appletv
+    sudo appium driver run xcuitest pair-appletv
     ```
 
 - Pair the device with the name "Conference Room":
 
     ```
-    appium driver run xcuitest pair-appletv -- --device "Conference Room"
+    sudo appium driver run xcuitest pair-appletv -- --device "Conference Room"
     ```
 
 

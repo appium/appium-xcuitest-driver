@@ -9,7 +9,7 @@
  *
  * Usage (from Appium CLI):
  *
- *   appium driver run xcuitest pair-appletv -- [options]
+ *   sudo appium driver run xcuitest pair-appletv -- [options]
  *
  * Options:
  *   -d, --device <selector>   Device selector:
@@ -24,7 +24,19 @@ import {AppleTVPairingService, UserInputService} from 'appium-ios-remotexpc';
 
 const log = logger.getLogger('AppleTVPairing');
 
+function assertRoot() {
+  if (typeof process.getuid !== 'function') {
+    return;
+  }
+  if (process.getuid() !== 0) {
+    throw new Error(
+      'This script must be run as root (e.g. sudo appium driver run xcuitest pair-appletv ...).',
+    );
+  }
+}
+
 async function main() {
+  assertRoot();
   const program = new Command();
   program
     .name('appium driver run xcuitest pair-appletv')
