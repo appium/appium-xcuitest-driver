@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
- * This script demonstrates the tunnel creation workflow for all connected devices
+ * This script demonstrates the tunnel creation workflow for all connected devices.
+ *
+ * Must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation).
  */
 import {logger} from 'appium/support.js';
 import _ from 'lodash';
@@ -393,11 +395,11 @@ class TunnelCreator {
     const entries = [];
 
     try {
-      log.info('Starting Apple TV tunnel (WiFi)...');
       if (!specificDeviceId && prefetchedDeviceIds === null) {
         log.warn('Skipping Apple TV tunnel setup because discovery prefetch did not return device IDs.');
         return entries;
       }
+      log.info('Starting Apple TV tunnel (WiFi)...');
       const discoveredDeviceIds = specificDeviceId
         ? [specificDeviceId]
         : /** @type {string[]} */ (prefetchedDeviceIds);
@@ -933,7 +935,19 @@ function setupCleanupHandlers(tunnelCreator) {
   return cleanupOnce;
 }
 
+function assertRoot() {
+  if (typeof process.getuid !== 'function') {
+    return;
+  }
+  if (process.getuid() !== 0) {
+    throw new Error(
+      'This script must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation ...).',
+    );
+  }
+}
+
 async function main() {
+  assertRoot();
   const program = new Command();
   program
     .name('appium driver run xcuitest tunnel-creation')
