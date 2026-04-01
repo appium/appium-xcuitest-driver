@@ -2445,9 +2445,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#network-only-real-devices" class="md-nav__link">
+  <a href="#network-only-real-devices-tvos-18-or-missing-remotexpc-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Network-Only Real Devices
+      Network-Only Real Devices (tvOS &lt; 18 or missing remotexpc support)
     </span>
   </a>
 
@@ -2994,9 +2994,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#network-only-real-devices" class="md-nav__link">
+  <a href="#network-only-real-devices-tvos-18-or-missing-remotexpc-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Network-Only Real Devices
+      Network-Only Real Devices (tvOS &lt; 18 or missing remotexpc support)
     </span>
   </a>
 
@@ -3262,9 +3262,13 @@
 <p><img src="https://user-images.githubusercontent.com/5511591/55161297-876e0200-51a8-11e9-8313-8d9f15a0db9d.gif" width=50%></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Support for network-only Apple TV devices is limited.
-This is because <a href="https://github.com/appium/appium-ios-device"><code>appium-ios-device</code></a>,
+<p>For tvOS &lt; 18, support for network-only Apple TV devices is limited because
+<a href="https://github.com/appium/appium-ios-device"><code>appium-ios-device</code></a>,
 which handles low-level communication with devices, only supports USB-connected devices.</p>
+<p>For tvOS 18 and newer, you can run tests against <strong>wireless Apple TV devices</strong> over Remote XPC
+tunnels when using <code>appium-ios-remotexpc</code> and the tunnel registry. See
+<a href="../remotexpc-tunnels-real-devices/#wireless-apple-tv--tvos-devices">Remote XPC Tunnels</a> for a
+step‑by‑step guide.</p>
 </div>
 <h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
 <p>You can run tests for tvOS by setting the <code>platformName</code> capability to <code>tvOS</code>:</p>
@@ -3281,7 +3285,7 @@ which handles low-level communication with devices, only supports USB-connected 
 <p>If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
 <code>xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"</code> to verify this.</p>
 </div>
-<h3 id="network-only-real-devices">Network-Only Real Devices<a class="headerlink" href="#network-only-real-devices" title="Permanent link">&para;</a></h3>
+<h3 id="network-only-real-devices-tvos-18-or-missing-remotexpc-support">Network-Only Real Devices (tvOS &lt; 18 or missing remotexpc support)<a class="headerlink" href="#network-only-real-devices-tvos-18-or-missing-remotexpc-support" title="Permanent link">&para;</a></h3>
 <p>To run tests on network-only Apple TV devices, you may need the following:</p>
 <ul>
 <li>Xcode 26.1 or later (to execute <code>xcodebuild</code> against such network-only Apple TV devices)</li>
@@ -3392,7 +3396,7 @@ so you should not care about which keys should be pressed to reach an arbitrary 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="December 14, 2025 21:21:32 UTC"><span class="timeago" datetime="2025-12-14T21:21:32+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="December 14, 2025 21:21:32 UTC">2025-12-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 1, 2026 16:24:53 UTC"><span class="timeago" datetime="2026-04-01T16:24:53+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 1, 2026 16:24:53 UTC">2026-04-01</span>
   </span>
 
     
