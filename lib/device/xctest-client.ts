@@ -14,10 +14,6 @@ import {isIos18OrNewerPlatform} from '../utils';
 export class XCTestClient {
   private constructor(private readonly deps: XCTestClientDeps) {}
 
-  static create(deps: XCTestClientDeps): XCTestClient {
-    return new XCTestClient(deps);
-  }
-
   static fromDriver(driver: XCUITestDriver): XCTestClient {
     return new XCTestClient({
       udid: driver.device.udid,
