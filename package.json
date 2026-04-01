@@ -8,7 +8,7 @@
     "xcuitest",
     "xctest"
   ],
-  "version": "10.31.0",
+  "version": "10.39.0",
   "author": "Appium Contributors",
   "license": "Apache-2.0",
   "repository": {
@@ -36,6 +36,7 @@
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
       "image-mounter": "./scripts/image-mounter.mjs",
+      "list-real-devices": "./scripts/list-real-devices.mjs",
       "pair-appletv": "./scripts/pair-appletv.mjs"
     },
     "schema": {
@@ -70,12 +71,11 @@
   "files": [
     "lib",
     "scripts",
-    "build",
+    "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
     "LICENSE",
-    "npm-shrinkwrap.json",
-    "!build/test"
+    "npm-shrinkwrap.json"
   ],
   "types": "./build/lib/index.d.ts",
   "dependencies": {

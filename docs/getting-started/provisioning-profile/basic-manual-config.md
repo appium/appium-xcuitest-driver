@@ -37,4 +37,4 @@ Or by going into your account preferences and seeing the provisioning profile:
 
 At this point you have a valid provisioning profile. Make note of the bundle identifier
 you associated with it, and add that in the `updatedWDABundleId` capability for your tests.
-Then follow the [initial instructions for automatic configuration](./prov-profile-basic-auto.md).
+Then follow the [initial instructions for automatic configuration](./auto-config.md).

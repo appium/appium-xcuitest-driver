@@ -38,7 +38,6 @@ import * as biometricCommands from './commands/biometric';
 import * as certificateCommands from './commands/certificate';
 import * as clipboardCommands from './commands/clipboard';
 import * as conditionCommands from './commands/condition';
-import type {IConditionInducer} from './commands/condition';
 import * as contentSizeCommands from './commands/content-size';
 import * as contextCommands from './commands/context';
 import * as deviceInfoCommands from './commands/device-info';
@@ -60,6 +59,7 @@ import * as memoryCommands from './commands/memory';
 import * as navigationCommands from './commands/navigation';
 import * as notificationsCommands from './commands/notifications';
 import * as pasteboardCommands from './commands/pasteboard';
+import * as networkMonitorCommands from './commands/network-monitor';
 import * as pcapCommands from './commands/pcap';
 import * as performanceCommands from './commands/performance';
 import * as permissionsCommands from './commands/permissions';
@@ -75,10 +75,9 @@ import * as xctestCommands from './commands/xctest';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
-import {DEVICE_CONNECTIONS_FACTORY} from './device/device-connections-factory';
+import {DeviceConnectionsFactory} from './device/device-connections-factory';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
-import {Pyidevice} from './device/clients/py-ios-device-client';
 import {
   installToRealDevice,
   runRealDeviceReset,
@@ -115,10 +114,11 @@ import {
 } from './utils';
 import {AppInfosCache} from './app-infos-cache';
 import {notifyBiDiContextChange} from './commands/context';
-import type {CalibrationData, AsyncPromise, LifecycleData} from './types';
+import type {AsyncPromise, CalibrationData, IConditionInducer, LifecycleData} from './types';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
 import type {PerfRecorder} from './commands/performance';
 import type {AudioRecorder} from './commands/record-audio';
+import type {NetworkMonitorSession} from './device/network-monitor-session';
 import type {TrafficCapture} from './commands/pcap';
 import type {ScreenRecorder} from './commands/recordscreen';
 import type {IOSDeviceLog} from './device/log/ios-device-log';
@@ -270,7 +270,13 @@ export class XCUITestDriver
 
   _audioRecorder: AudioRecorder | null;
   xcodeVersion: XcodeVersion | undefined;
+  /**
+   * @deprecated Tied to deprecated `mobileStartPcap` / `mobileStopPcap` (py-ios-device `.pcap`). Use
+   * {@link XCUITestDriver._networkMonitorSession | `_networkMonitorSession`} and BiDi
+   * `appium:xcuitest.networkMonitor` on iOS/tvOS 18+ instead; scheduled for removal with those commands.
+   */
   _trafficCapture: TrafficCapture | null;
+  _networkMonitorSession: NetworkMonitorSession | null;
   _recentScreenRecorder: ScreenRecorder | null;
   _device: Simulator | RealDevice;
   _iosSdkVersion: string | null;
@@ -291,8 +297,12 @@ export class XCUITestDriver
   landscapeWebCoordsOffset: number;
   mjpegStream?: mjpeg.MJpegStream;
 
+  readonly deviceConnectionsFactory: DeviceConnectionsFactory;
+
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
+
+    this.deviceConnectionsFactory = new DeviceConnectionsFactory(this.log);
 
     this.locatorStrategies = [
       'xpath',
@@ -327,6 +337,7 @@ export class XCUITestDriver
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
     this.logs = {};
     this._trafficCapture = null;
+    this._networkMonitorSession = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
       this[fn] = _.memoize(this[fn]);
@@ -433,6 +444,8 @@ export class XCUITestDriver
       await recorder.interrupt(true);
       await recorder.cleanup();
     }
+    await this._networkMonitorSession?.interrupt();
+    this._networkMonitorSession = null;
 
     if (!_.isEmpty(this._perfRecorders)) {
       await B.all(this._perfRecorders.map((x) => x.stop(true)));
@@ -778,13 +791,14 @@ export class XCUITestDriver
   }
 
   async allocateMjpegServerPort(): Promise<void> {
-    const mjpegServerPort = this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT;
+    const mjpegServerPort = Number(this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT);
     this.log.debug(
       `Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`,
     );
     try {
-      await DEVICE_CONNECTIONS_FACTORY.requestConnection(this.opts.udid, mjpegServerPort, {
+      await this.deviceConnectionsFactory.requestConnection(this.opts.udid, mjpegServerPort, {
         devicePort: mjpegServerPort,
+        platformVersion: this.opts.platformVersion,
         usePortForwarding: this.isRealDevice(),
       });
     } catch (error) {
@@ -933,10 +947,7 @@ export class XCUITestDriver
         await startLogCapture();
       }
     } else if (this.opts.customSSLCert) {
-      await new Pyidevice({
-        udid,
-        log: this.log,
-      }).installProfile({payload: this.opts.customSSLCert});
+      await certificateCommands.installCustomSslCertFromCapability.bind(this)();
       this.logEvent('customCertInstalled');
     }
 
@@ -1038,7 +1049,7 @@ export class XCUITestDriver
         await this.wda.quit();
       }
     }
-    DEVICE_CONNECTIONS_FACTORY.releaseConnection(this.opts.udid);
+    await this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
   async initSimulator(): Promise<void> {
@@ -1097,10 +1108,15 @@ export class XCUITestDriver
 
     const usePortForwarding =
       this.isRealDevice() && !this.wda.webDriverAgentUrl && isLocalHost(this.wda.wdaBaseUrl);
-    await DEVICE_CONNECTIONS_FACTORY.requestConnection(this.opts.udid, this.wda.url.port, {
-      devicePort: usePortForwarding ? this.wda.wdaRemotePort : null,
-      usePortForwarding,
-    });
+    await this.deviceConnectionsFactory.requestConnection(
+      this.opts.udid,
+      Number(this.wda.url.port),
+      {
+        devicePort: usePortForwarding ? this.wda.wdaRemotePort : null,
+        platformVersion: this.opts.platformVersion,
+        usePortForwarding,
+      },
+    );
 
     // Let multiple WDA binaries with different derived data folders be built in parallel
     // Concurrent WDA builds from the same source will cause xcodebuild synchronization errors
@@ -2119,6 +2135,13 @@ export class XCUITestDriver
 
   mobileStartPcap = pcapCommands.mobileStartPcap;
   mobileStopPcap = pcapCommands.mobileStopPcap;
+
+  /*------------------+
+   | NETWORK MONITOR |
+   +------------------+*/
+
+  mobileStartNetworkMonitor = networkMonitorCommands.mobileStartNetworkMonitor;
+  mobileStopNetworkMonitor = networkMonitorCommands.mobileStopNetworkMonitor;
 
   /*-------------+
    | PERFORMANCE |

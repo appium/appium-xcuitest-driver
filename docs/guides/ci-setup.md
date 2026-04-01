@@ -4,7 +4,7 @@ title: Continuous Integration
 
 Setting up the XCUITest driver in an automated environment brings a few challenges with it. Any scenario
 where user interaction is required must be automated or avoided altogether. For real device setup,
-you should first follow the [Real Device Configuration tutorial](../preparation/real-device-config.md).
+you should first follow the [Real Device Setup tutorial](../getting-started/device-setup.md#real-devices).
 
 ### Keychains
 
@@ -14,7 +14,7 @@ There are multiple possible solutions for this:
 1. Keychains can be set to have no timeout and be unlocked manually once. This can be done using the
    keychain access application. Sometimes keychains still lock themselves though and this approach
    is not recommended.
-2. [It is possible to create a second keychain](../guides/troubleshooting.md#real-device-security-settings),
+2. [It is possible to create a second keychain](../troubleshooting/index.md#real-device-security-settings),
    which just stores the required certificate to sign the WebDriverAgent. The issue with this
    approach is that Codesign wants to unlock all listed keychains regardless of the specified
    keychain, thus leading to a password prompt. This can be avoided by setting the default keychain
@@ -39,7 +39,7 @@ least once and do the initial set up and install the suggested extensions.
 
 This only applies for real device set up. Make sure to link your 'Apple Developer Account' in the
 machine's system wide "Account Panel" when using the "Basic Automatic Configuration" described
-[here](../preparation/prov-profile-basic-auto.md).
+[here](../getting-started/provisioning-profile/auto-config.md).
 
 ### Troubleshooting
 

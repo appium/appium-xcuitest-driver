@@ -1,3 +1,81 @@
+## [10.39.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.38.0...v10.39.0) (2026-04-01)
+
+### Features
+
+* **xctest:** use remotexpc for xctest bundle execution ([#2775](https://github.com/appium/appium-xcuitest-driver/issues/2775)) ([1bb39ec](https://github.com/appium/appium-xcuitest-driver/commit/1bb39ec82da3da7d82a477819aa9447098c9a2b6))
+
+## [10.38.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.37.0...v10.38.0) (2026-04-01)
+
+### Features
+
+* Add watchdog logic to the tunnel creation script ([#2785](https://github.com/appium/appium-xcuitest-driver/issues/2785)) ([8c3cf6b](https://github.com/appium/appium-xcuitest-driver/commit/8c3cf6bb527d69488f2ef53175b1a374c4b77c9f))
+
+## [10.37.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.4...v10.37.0) (2026-04-01)
+
+### Features
+
+* Add extensions for listening to device network events ([#2781](https://github.com/appium/appium-xcuitest-driver/issues/2781)) ([68ce1ee](https://github.com/appium/appium-xcuitest-driver/commit/68ce1eea2d13e2f093f1e5c99cc081e04ca8b17d))
+
+## [10.36.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.3...v10.36.4) (2026-03-30)
+
+### Bug Fixes
+
+* fix cleanup immediately at the end of tunnel-creation ([#2784](https://github.com/appium/appium-xcuitest-driver/issues/2784)) ([9a42781](https://github.com/appium/appium-xcuitest-driver/commit/9a42781a6f25ac4396bfc31c8bc60c7b0b95b6ac))
+
+## [10.36.3](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.2...v10.36.3) (2026-03-30)
+
+### Bug Fixes
+
+* Install certificate using remotexpc as the main option ([#2780](https://github.com/appium/appium-xcuitest-driver/issues/2780)) ([42fba35](https://github.com/appium/appium-xcuitest-driver/commit/42fba35c54ab8be55d6faf40231389d938042311))
+
+## [10.36.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.1...v10.36.2) (2026-03-29)
+
+### Miscellaneous Chores
+
+* Isolate internal condition inducer client logic ([#2778](https://github.com/appium/appium-xcuitest-driver/issues/2778)) ([38f9f9c](https://github.com/appium/appium-xcuitest-driver/commit/38f9f9c9dea45e5dda0990f985fc7235dad9f187))
+
+## [10.36.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.0...v10.36.1) (2026-03-28)
+
+### Miscellaneous Chores
+
+* Refactor location helpers to isolate appium-ios-device usage ([#2777](https://github.com/appium/appium-xcuitest-driver/issues/2777)) ([9499e2c](https://github.com/appium/appium-xcuitest-driver/commit/9499e2c38100e302e07a5a8d493164c0452fc6dd))
+
+## [10.36.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.35.0...v10.36.0) (2026-03-28)
+
+### Features
+
+* Prefer remotexpc for port forwarding ([#2776](https://github.com/appium/appium-xcuitest-driver/issues/2776)) ([717c9d6](https://github.com/appium/appium-xcuitest-driver/commit/717c9d6a2ad9154186b9e532460f44233ad643a5))
+
+## [10.35.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.34.0...v10.35.0) (2026-03-27)
+
+### Features
+
+* Retrieve platform version from remotexpc ([#2774](https://github.com/appium/appium-xcuitest-driver/issues/2774)) ([b65ff7f](https://github.com/appium/appium-xcuitest-driver/commit/b65ff7f3a9116e8b9bb94a6de68d4d325709697a))
+
+## [10.34.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.33.0...v10.34.0) (2026-03-27)
+
+### Features
+
+* Use remote-xpc for fetching device info ([#2773](https://github.com/appium/appium-xcuitest-driver/issues/2773)) ([4258b5a](https://github.com/appium/appium-xcuitest-driver/commit/4258b5ab2cbe9d1c10569866e60b1f2603a46c60))
+
+## [10.33.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.32.1...v10.33.0) (2026-03-22)
+
+### Features
+
+* Add a helper script to list connected real devices ([#2769](https://github.com/appium/appium-xcuitest-driver/issues/2769)) ([ea7d11e](https://github.com/appium/appium-xcuitest-driver/commit/ea7d11e05a355d2750b7848f49b52bd9d5af5f07))
+
+## [10.32.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.32.0...v10.32.1) (2026-03-17)
+
+### Bug Fixes
+
+* Strongbox usage in the tunnel creation script ([#2762](https://github.com/appium/appium-xcuitest-driver/issues/2762)) ([3bac69b](https://github.com/appium/appium-xcuitest-driver/commit/3bac69b53ff0a1edf965cbe4144d822204807f27))
+
+## [10.32.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.31.0...v10.32.0) (2026-03-16)
+
+### Features
+
+* **device-log:** implement shim syslog ([#2760](https://github.com/appium/appium-xcuitest-driver/issues/2760)) ([3ee206f](https://github.com/appium/appium-xcuitest-driver/commit/3ee206fc3fbf7efe7bfc8a066f8d5cabbea0b6e5))
+
 ## [10.31.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.30.1...v10.31.0) (2026-03-16)
 
 ### Features

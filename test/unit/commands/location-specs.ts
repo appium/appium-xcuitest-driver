@@ -69,9 +69,7 @@ describe('location commands', function () {
     });
 
     it('should fail when location object is wrong', async function () {
-      await expect(driver.setGeoLocation({})).to.be.rejectedWith(
-        'Both latitude and longitude should be set',
-      );
+      await expect(driver.setGeoLocation({})).to.be.rejectedWith('latitude should be set');
     });
 
     describe('on real device', function () {

@@ -1,5 +1,5 @@
 ---
-title: Elements Lookup Troubleshooting
+title: Element Lookup Issues
 ---
 
 This article helps to resolve possible issues that may pop up while looking up for elements with XCUITest driver,
@@ -43,7 +43,15 @@ into native mobile applications. Applications might contain native views mixed w
 application UI might be just a single web view. And while the built-in web view engine allows limited accessibility
 interactions via [ARIA](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) attributes, consider
 switching a driver context instead in order to get full native access to the page DOM.
-Read [Automating Hybrid Apps](./hybrid.md) for more details there.
+Read [Automating Hybrid Apps](../guides/hybrid.md) for more details there.
+
+A side note here is [`aria-label`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label)
+and [`role`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles) attributes are known to expose
+web elements in the accessibility tree as [accessibilityLabel](https://developer.apple.com/documentation/objectivec/nsobject/1615181-accessibilitylabel)
+in `WKWebView`. The primary purpose of these attributes is to make web elements accessible for accessibility tools such as VoiceOver,
+but they also make them visible in the `NATIVE_APP` context.
+If you have a hybrid or Web application and want to make sure the desired element is
+visible in the `NATIVE_APP` context then consider adding these attributes to it.
 
 ### Make sure the application accessibility tree is not too deep
 
@@ -75,7 +83,7 @@ It is possible to switch between applications in runtime using
 [mobile: activateApp](../reference/execute-methods.md#mobile-activateapp) API or
 to provide a hint for WebDriverAgent on which application to prefer if multiple apps are running
 using the [defaultActiveApplication setting](../reference/settings.md).
-Check the [Troubleshooting guide](./troubleshooting.md) and/or
+Check the main [Troubleshooting guide](./index.md) and/or
 [Switching Between iOS Apps During a Test](https://appiumpro.com/editions/13-switching-between-ios-apps-during-a-test)
 article for more details on how to make such elements available.
 

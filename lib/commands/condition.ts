@@ -1,49 +1,7 @@
-import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
-import _ from 'lodash';
-import {isIos18OrNewer, requireRealDevice} from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {AppiumLogger} from '@appium/types';
-import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
-import type {Condition} from './types';
-import {getRemoteXPCServices} from '../device/remotexpc-utils';
-
-/**
- * Abstract interface for condition inducer implementations.
- * This facade hides the differences between RemoteXPC and Instrument Service implementations.
- */
-export interface IConditionInducer {
-  /**
-   * Lists all available condition inducers
-   * @returns Array of available condition inducers
-   */
-  list(): Promise<Condition[]>;
-
-  /**
-   * Enables a condition inducer with the given profile
-   * @param conditionID - The condition identifier (only used by Instrument Service)
-   * @param profileID - The profile identifier
-   * @returns `true` if enabling succeeded
-   * @throws {Error} If a condition is already active
-   */
-  enable(conditionID: string, profileID: string): Promise<boolean>;
-
-  /**
-   * Disables the currently active condition inducer
-   * @returns `true` if disabling succeeded
-   */
-  disable(): Promise<boolean>;
-
-  /**
-   * Closes any open connections/resources
-   */
-  close(): Promise<void>;
-
-  /**
-   * Checks if a condition inducer is currently active
-   * @returns `true` if a condition is active
-   */
-  isActive(): boolean;
-}
+import {createConditionInducer} from '../device/condition-inducer-client';
+import type {Condition} from '../types';
+import {requireRealDevice} from '../utils';
 
 /**
  * Get all available ConditionInducer configuration information, which can be used with
@@ -54,7 +12,13 @@ export interface IConditionInducer {
 export async function listConditionInducers(this: XCUITestDriver): Promise<Condition[]> {
   requireRealDevice(this, 'Condition inducer');
 
-  const facade = this._conditionInducer ?? (await createConditionInducer(this));
+  const facade =
+    this._conditionInducer ??
+    (await createConditionInducer({
+      udid: this.device.udid,
+      log: this.log,
+      platformVersion: this.opts.platformVersion,
+    }));
   return await facade.list();
 }
 
@@ -89,7 +53,11 @@ export async function enableConditionInducer(
     );
   }
 
-  const facade = await createConditionInducer(this);
+  const facade = await createConditionInducer({
+    udid: this.device.udid,
+    log: this.log,
+    platformVersion: this.opts.platformVersion,
+  });
   this._conditionInducer = facade;
 
   try {
@@ -132,194 +100,4 @@ export async function disableConditionInducer(this: XCUITestDriver): Promise<boo
     } catch {}
     this._conditionInducer = null;
   }
-}
-
-// Private implementation classes and factory function
-
-/**
- * RemoteXPC-based implementation for iOS 18+
- */
-class RemoteXPCConditionInducer implements IConditionInducer {
-  private connection: DVTServiceWithConnection | null = null;
-
-  constructor(
-    private readonly udid: string,
-    private readonly log: AppiumLogger,
-  ) {}
-
-  async list(): Promise<Condition[]> {
-    let connection: DVTServiceWithConnection | null = null;
-    try {
-      connection = await this.startConnection();
-      const result = await connection.conditionInducer.list();
-      return result as Condition[];
-    } catch (err: any) {
-      this.log.error(`Failed to list condition inducers via RemoteXPC: ${err.message}`);
-      throw err;
-    } finally {
-      if (connection) {
-        this.log.info(`Closing remoteXPC connection for device ${this.udid}`);
-        await connection.remoteXPC.close();
-      }
-    }
-  }
-
-  async enable(conditionID: string, profileID: string): Promise<boolean> {
-    if (this.connection) {
-      throw new Error(
-        `Condition inducer is already running. Disable it first in order to call 'enable' again.`,
-      );
-    }
-
-    try {
-      this.connection = await this.startConnection();
-      await this.connection.conditionInducer.set(profileID);
-      this.log.info(`Successfully enabled condition profile: ${profileID}`);
-      return true;
-    } catch (err: any) {
-      await this.close();
-      this.log.error(`Condition inducer '${profileID}' cannot be enabled: '${err.message}'`);
-      throw err;
-    }
-  }
-
-  async disable(): Promise<boolean> {
-    if (!this.connection) {
-      this.log.warn('Condition inducer connection is not active');
-      return false;
-    }
-
-    try {
-      await this.connection.conditionInducer.disable();
-      this.log.info('Successfully disabled condition inducer');
-      return true;
-    } catch (err: any) {
-      this.log.warn(`Failed to disable condition inducer via RemoteXPC: ${err.message}`);
-      return false;
-    } finally {
-      this.log.info(`Closing remoteXPC connection for device ${this.udid}`);
-      await this.close();
-    }
-  }
-
-  async close(): Promise<void> {
-    if (this.connection) {
-      await this.connection.remoteXPC.close();
-      this.connection = null;
-    }
-  }
-
-  isActive(): boolean {
-    return this.connection !== null;
-  }
-
-  public async startConnection(): Promise<DVTServiceWithConnection> {
-    const Services = await getRemoteXPCServices();
-    return Services.startDVTService(this.udid);
-  }
-}
-
-/**
- * Instrument Service-based implementation for iOS < 18
- */
-class InstrumentConditionInducer implements IConditionInducer {
-  private service: any | null = null; // InstrumentService type from appium-ios-device
-
-  constructor(
-    private readonly udid: string,
-    private readonly log: AppiumLogger,
-  ) {}
-
-  async list(): Promise<Condition[]> {
-    const service = await services.startInstrumentService(this.udid);
-    try {
-      const ret = await service.callChannel(
-        INSTRUMENT_CHANNEL.CONDITION_INDUCER,
-        'availableConditionInducers',
-      );
-      return ret.selector;
-    } finally {
-      service.close();
-    }
-  }
-
-  async enable(conditionID: string, profileID: string): Promise<boolean> {
-    if (this.service && !this.service._socketClient.destroyed) {
-      throw new Error(`Condition inducer has been started. A condition is already active.`);
-    }
-
-    this.service = await services.startInstrumentService(this.udid);
-    const ret = await this.service.callChannel(
-      INSTRUMENT_CHANNEL.CONDITION_INDUCER,
-      'enableConditionWithIdentifier:profileIdentifier:',
-      conditionID,
-      profileID,
-    );
-
-    if (!_.isBoolean(ret.selector)) {
-      this.service.close();
-      this.service = null;
-      throw new Error(`Enable condition inducer error: '${JSON.stringify(ret.selector)}'`);
-    }
-
-    return ret.selector;
-  }
-
-  async disable(): Promise<boolean> {
-    if (!this.service) {
-      this.log.warn('Condition inducer server has not started');
-      return false;
-    }
-
-    try {
-      const ret = await this.service.callChannel(
-        INSTRUMENT_CHANNEL.CONDITION_INDUCER,
-        'disableActiveCondition',
-      );
-      if (!_.isBoolean(ret.selector)) {
-        this.log.warn(`Disable condition inducer error: '${JSON.stringify(ret.selector)}'`);
-        return false;
-      }
-      return ret.selector;
-    } finally {
-      if (this.service) {
-        this.service.close();
-        this.service = null;
-      }
-    }
-  }
-
-  async close(): Promise<void> {
-    if (this.service) {
-      this.service.close();
-      this.service = null;
-    }
-  }
-
-  isActive(): boolean {
-    return this.service !== null && !this.service._socketClient.destroyed;
-  }
-}
-
-/**
- * Factory function to create the appropriate condition inducer implementation
- * based on the iOS version
- */
-async function createConditionInducer(driver: XCUITestDriver): Promise<IConditionInducer> {
-  if (!isIos18OrNewer(driver.opts)) {
-    return new InstrumentConditionInducer(driver.device.udid, driver.log);
-  }
-
-  const xpcInducer = new RemoteXPCConditionInducer(driver.device.udid, driver.log);
-  try {
-    const connection = await xpcInducer.startConnection();
-    await connection.remoteXPC.close();
-  } catch (err: any) {
-    driver.log.warn(
-      `Unable to use RemoteXPC-based condition inducer for device ${driver.device.udid}, ` +
-        `falling back to the legacy implementation: ${err.message}`,
-    );
-    return new InstrumentConditionInducer(driver.device.udid, driver.log);
-  }
-  return xpcInducer;
 }

@@ -190,7 +190,7 @@ Either `true` or `false`
 Removes the given application from the device under test.
 [Offloaded application](https://discussions.apple.com/thread/254887240) can also be removed.
 
-For real devices, please also check [how to explicitly clear the application local data](../guides/troubleshooting.md#leftover-application-data-on-real-devices).
+For real devices, please also check [how to explicitly clear the application local data](../troubleshooting/index.md#leftover-application-data-on-real-devices).
 
 #### Arguments
 
@@ -972,7 +972,23 @@ Stops recording of the audio input. If no audio recording process is running the
 
 Base64-encoded content of the recorded media file or an empty string if no audio recording has been started before.
 
+### mobile: startNetworkMonitor
+
+Starts streaming DVT networking instrument events from the device. Each sample is published on the WebDriver BiDi bus as **`appium:xcuitest.networkMonitor`** with a `params.event` object (discriminated by `event.type`: interface `0`, new connection `1`, per-flow stats `2`). This is **not** a Wireshark-style PCAP; see [BiDi: networkMonitor](./bidi.md#appiumxcuitestnetworkmonitor) for full examples and field meanings.
+
+Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+
+If a monitor is already running, the call does nothing so the existing stream continues.
+
+### mobile: stopNetworkMonitor
+
+Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tears down the underlying Remote XPC / DVT connection.
+
 ### mobile: startPcap
+
+!!! warning "Deprecated"
+
+    Scheduled for removal. Use `mobile: startNetworkMonitor` and BiDi `appium:xcuitest.networkMonitor` on iOS/tvOS 18+ instead.
 
 Start mobile device network traffic capture. This extension only works if [py-ios-device](https://github.com/YueChen-C/py-ios-device) utility is installed on the server machine and only supports
 real iOS devices.
@@ -985,6 +1001,10 @@ timeLimitSec | string or int | no | The maximum recording time, in seconds. The 
 forceRestart | boolean | no | Whether to restart traffic capture process forcefully when startPcap is called (`true`) or ignore the call until the current traffic capture is completed (`false`, the default value). | true
 
 ### mobile: stopPcap
+
+!!! warning "Deprecated"
+
+    Scheduled for removal. Use `mobile: stopNetworkMonitor` instead when using the DVT network monitor flow.
 
 Stops network traffic capture. If no traffic capture process is running then the endpoint will try to get the recently recorded file. If no previously recorded file is found and no active traffic capture processes are running then the method returns an empty string.
 

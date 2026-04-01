@@ -664,33 +664,6 @@ export interface LogEntry {
 export type LogListener = (logEntry: LogEntry) => any;
 
 /**
- * Condition inducer profile configuration
- */
-export interface Profile {
-  name: string;
-  /** The property is profileID used in {@linkcode XCUITestDriver.enableConditionInducer} */
-  identifier: string;
-  /** Configuration details */
-  description: string;
-}
-
-/**
- * We can use the returned data to determine whether the Condition is enabled and the currently enabled configuration information
- */
-export interface Condition {
-  profiles: Profile[];
-  /** The property is conditionID used in {@linkcode XCUITestDriver.enableConditionInducer} */
-  identifier: string;
-  profilesSorted: boolean;
-  isDestructive: boolean;
-  isInternal: boolean;
-  /** `true` if this condition identifier is enabled */
-  isActive: boolean;
-  /** Enabled profiles identifier */
-  activeProfile: string;
-}
-
-/**
  * Information about an XCTest screen recording session
  */
 export interface XcTestScreenRecordingInfo {

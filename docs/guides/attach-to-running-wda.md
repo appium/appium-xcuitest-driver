@@ -15,7 +15,7 @@ is for real devices.
 2. Start an XCUITest driver session with `appium:webDriverAgentUrl` capability
 
 Please read [Manage WebDriverAgent by Yourself](./wda-custom-server.md) and
-[Real Device Configuration](../preparation/real-device-config.md) about how to prepare WDA for a
+[Real Device Setup](../getting-started/device-setup.md#real-devices) about how to prepare WDA for a
 real device.
 
 The `appium:webDriverAgentUrl` value should be the WDA URL: `http://<reachable ip address for the device>:8100`.
