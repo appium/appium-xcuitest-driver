@@ -1,10 +1,8 @@
 import _ from 'lodash';
 import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
-import {util} from 'appium/support';
 import type {AppiumLogger} from '@appium/types';
 import type {Devicectl} from 'node-devicectl';
-import type {XCUITestDriverOpts} from '../driver';
-import {isIos18OrNewer} from '../utils';
+import {isIos17OrNewerPlatform, isIos18OrNewerPlatform} from '../utils';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {getRemoteXPCServices} from './remotexpc-utils';
 
@@ -15,14 +13,14 @@ type TerminateAppResult =
 export class AppTerminationClient {
   constructor(
     private readonly udid: string,
-    private readonly driverOpts: XCUITestDriverOpts,
+    private readonly platformVersion: string,
     private readonly devicectl: Devicectl,
     private readonly log: AppiumLogger,
   ) {}
 
   async terminate(bundleId: string): Promise<boolean> {
     let result: TerminateAppResult;
-    if (isIos18OrNewer(this.driverOpts)) {
+    if (isIos18OrNewerPlatform(this.platformVersion)) {
       try {
         result = await this.terminateRemoteXPC(bundleId);
       } catch (err: any) {
@@ -79,10 +77,7 @@ export class AppTerminationClient {
       }
       const executableName = apps[bundleId].CFBundleExecutable;
       this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
-
-      const platformVersion = this.driverOpts.platformVersion as string;
-
-      if (util.compareVersions(platformVersion, '>=', '17.0')) {
+      if (isIos17OrNewerPlatform(this.platformVersion)) {
         this.log.debug(`Calling devicectl to kill the process`);
         const pids = (await this.devicectl.listProcesses())
           .filter(({executable}) => executable.endsWith(`/${executableName}`))

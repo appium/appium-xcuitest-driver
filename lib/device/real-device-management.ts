@@ -444,9 +444,10 @@ export class RealDevice {
    * @returns `true` if the app was running and was terminated, `false` otherwise
    */
   async terminateApp(bundleId: string): Promise<boolean> {
+    const platformVersion = this.driverOpts.platformVersion ?? (await this.getPlatformVersion());
     const terminationClient = new AppTerminationClient(
       this.udid,
-      this.driverOpts,
+      platformVersion,
       this.devicectl,
       this.log,
     );
