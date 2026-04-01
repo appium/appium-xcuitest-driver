@@ -271,12 +271,12 @@ sudo appium driver run xcuitest tunnel-creation
 
 |<div style="width:14em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
-|`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. Repeat this argument to target multiple paired Apple TV devices. If omitted, the script creates one tunnel per discovered paired Apple TV device. If this is provided without `--udid`, USB tunnel setup is skipped.|string (repeatable)||
+|`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. Repeat this argument to target multiple paired Apple TV devices. If omitted, the script creates one tunnel per discovered paired Apple TV device. If this is provided without `--udid`, setup of non-Apple TV devices is skipped.|string (repeatable)||
 |`--disconnect-retry-max-attempts`|Maximum number of tunnel recreation attempts after an unexpected disconnect. Set to `0` for unlimited retries. If omitted, retries are disabled and the tunnel is removed from registry.|integer||
 |`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds.|integer|1000|
 |`--packet-stream-base-port`|Base port for packet stream servers|integer|50000|
 |`--tunnel-registry-port`|Port of the tunnel registry server|integer|42314|
-|`--udid`|Identifier of a specific device to create the tunnel for. Repeat this argument to target multiple specific devices. By default, the tunnel is created for all connected devices. If this is provided without `--appletv-device-id`, Apple TV discovery/setup is skipped.|string (repeatable)||
+|`--udid`|Identifier of a specific non-Apple TV device to create the tunnel for. Repeat this argument to target multiple specific devices. By default, the tunnel is created for all connected devices. If this is provided without `--appletv-device-id`, Apple TV discovery/setup is skipped.|string (repeatable)||
 
 #### Examples
 
