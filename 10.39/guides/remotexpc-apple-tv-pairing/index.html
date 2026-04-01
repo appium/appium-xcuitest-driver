@@ -3118,13 +3118,14 @@ wrapper script around that functionality.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
 <li>An Apple TV device that you want to automate</li>
+<li>The pairing script must be run with <code>sudo</code> (as root), like the <code>tunnel-creation</code> script</li>
 <li>The XCUITest driver and its optional dependency <code>appium-ios-remotexpc</code> installed</li>
 <li>Your Apple TV and the host machine on the <strong>same network segment</strong></li>
 <li>Apple TV in pairing / discovery mode (see external guide below)</li>
 </ul>
 <h2 id="pairing-via-the-xcuitest-driver">Pairing via the XCUITest driver<a class="headerlink" href="#pairing-via-the-xcuitest-driver" title="Permanent link">&para;</a></h2>
 <p>Use the driver-level script to run the pairing flow:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--
 </span></code></pre></div>
 <p>This will:</p>
 <ul>
@@ -3137,9 +3138,9 @@ wrapper script around that functionality.</p>
 identifier later as the <code>appium:udid</code> when WiFi tvOS tunnels are enabled.</p>
 <h3 id="targeting-a-specific-apple-tv">Targeting a specific Apple TV<a class="headerlink" href="#targeting-a-specific-apple-tv" title="Permanent link">&para;</a></h3>
 <p>You can skip interactive selection by using the <code>--device</code> option:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--<span class="w"> </span>--device<span class="w"> </span><span class="s2">&quot;Living Room&quot;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--<span class="w"> </span>--device<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--<span class="w"> </span>--device<span class="w"> </span>AA:BB:CC:DD:EE:FF
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--<span class="w"> </span>--device<span class="w"> </span><span class="s2">&quot;Living Room&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--<span class="w"> </span>--device<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv<span class="w"> </span>--<span class="w"> </span>--device<span class="w"> </span>AA:BB:CC:DD:EE:FF
 </span></code></pre></div>
 <h2 id="detailed-pairing-behavior-external-docs">Detailed pairing behavior (external docs)<a class="headerlink" href="#detailed-pairing-behavior-external-docs" title="Permanent link">&para;</a></h2>
 <p>For a deep dive into how Apple TV pairing works (discovery, PIN entry, cryptography,
@@ -3176,7 +3177,7 @@ documentation:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="March 14, 2026 07:33:21 UTC"><span class="timeago" datetime="2026-03-14T07:33:21+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="March 14, 2026 07:33:21 UTC">2026-03-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 1, 2026 20:39:18 UTC"><span class="timeago" datetime="2026-04-01T20:39:18+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 1, 2026 20:39:18 UTC">2026-04-01</span>
   </span>
 
     
