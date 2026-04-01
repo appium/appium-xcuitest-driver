@@ -1,3 +1,9 @@
+## [10.39.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.38.0...v10.39.0) (2026-04-01)
+
+### Features
+
+* **xctest:** use remotexpc for xctest bundle execution ([#2775](https://github.com/appium/appium-xcuitest-driver/issues/2775)) ([1bb39ec](https://github.com/appium/appium-xcuitest-driver/commit/1bb39ec82da3da7d82a477819aa9447098c9a2b6))
+
 ## [10.38.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.37.0...v10.38.0) (2026-04-01)
 
 ### Features
