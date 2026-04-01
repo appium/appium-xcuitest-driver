@@ -37,7 +37,7 @@ export async function mobileRunXCTest(
   env?: StringRecord,
   timeout = XCTEST_TIMEOUT,
 ): Promise<RunXCTestResult> {
-  return await XCTestClient.fromDriver(this).run(
+  return await XCTestClient.fromDriver(this).run({
     testRunnerBundleId,
     appUnderTestBundleId,
     xcTestBundleId,
@@ -45,7 +45,7 @@ export async function mobileRunXCTest(
     testType,
     env,
     timeout,
-  );
+  });
 }
 
 /**

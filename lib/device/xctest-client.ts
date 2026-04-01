@@ -29,15 +29,15 @@ export class XCTestClient {
     });
   }
 
-  async run(
-    testRunnerBundleId: string,
-    appUnderTestBundleId: string,
-    xcTestBundleId: string,
-    args: string[] = [],
-    testType: 'app' | 'ui' | 'logic' = 'ui',
-    env?: StringRecord,
+  async run({
+    testRunnerBundleId,
+    appUnderTestBundleId,
+    xcTestBundleId,
+    args = [],
+    testType = 'ui',
+    env,
     timeout = 360000,
-  ): Promise<RunXCTestResult> {
+  }: RunXCTestOptions): Promise<RunXCTestResult> {
     if (this.shouldUseRemoteXPC && testType !== 'logic') {
       try {
         return await runXCTestViaRemoteXPC(
@@ -282,4 +282,14 @@ interface LegacyXCTestRunner {
   installXCTestBundle(xctestAppPath: string): Promise<void>;
   listXCTestBundles(): Promise<string[]>;
   listXCTestsInTestBundle(bundle: string): Promise<string[]>;
+}
+
+interface RunXCTestOptions {
+  testRunnerBundleId: string;
+  appUnderTestBundleId: string;
+  xcTestBundleId: string;
+  args?: string[];
+  testType?: 'app' | 'ui' | 'logic';
+  env?: StringRecord;
+  timeout?: number;
 }
