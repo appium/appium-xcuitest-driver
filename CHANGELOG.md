@@ -1,3 +1,9 @@
+## [10.38.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.37.0...v10.38.0) (2026-04-01)
+
+### Features
+
+* Add watchdog logic to the tunnel creation script ([#2785](https://github.com/appium/appium-xcuitest-driver/issues/2785)) ([8c3cf6b](https://github.com/appium/appium-xcuitest-driver/commit/8c3cf6bb527d69488f2ef53175b1a374c4b77c9f))
+
 ## [10.37.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.4...v10.37.0) (2026-04-01)
 
 ### Features
