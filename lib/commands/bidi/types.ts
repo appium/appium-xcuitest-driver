@@ -30,3 +30,17 @@ interface ContentUpdatedParams {
 
 // https://github.com/appium/appium/issues/20741
 export interface ContextUpdatedEvent extends BiDiEvent<ContentUpdatedParams> {}
+
+export interface NetworkMonitorEventParams {
+  /** DVT networking instrument payload (interface / connection detection / connection update). */
+  event: Record<string, unknown>;
+}
+
+/**
+ * BiDi event emitted for each DVT NetworkMonitor sample while `mobile: startNetworkMonitor` is active.
+ *
+ * @see https://github.com/appium/appium-ios-remotexpc
+ */
+export interface NetworkMonitorBiDiEvent extends BiDiEvent<NetworkMonitorEventParams> {
+  context: string;
+}

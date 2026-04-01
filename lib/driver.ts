@@ -59,6 +59,7 @@ import * as memoryCommands from './commands/memory';
 import * as navigationCommands from './commands/navigation';
 import * as notificationsCommands from './commands/notifications';
 import * as pasteboardCommands from './commands/pasteboard';
+import * as networkMonitorCommands from './commands/network-monitor';
 import * as pcapCommands from './commands/pcap';
 import * as performanceCommands from './commands/performance';
 import * as permissionsCommands from './commands/permissions';
@@ -117,6 +118,7 @@ import type {AsyncPromise, CalibrationData, IConditionInducer, LifecycleData} fr
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
 import type {PerfRecorder} from './commands/performance';
 import type {AudioRecorder} from './commands/record-audio';
+import type {NetworkMonitorSession} from './device/network-monitor-session';
 import type {TrafficCapture} from './commands/pcap';
 import type {ScreenRecorder} from './commands/recordscreen';
 import type {IOSDeviceLog} from './device/log/ios-device-log';
@@ -268,7 +270,13 @@ export class XCUITestDriver
 
   _audioRecorder: AudioRecorder | null;
   xcodeVersion: XcodeVersion | undefined;
+  /**
+   * @deprecated Tied to deprecated `mobileStartPcap` / `mobileStopPcap` (py-ios-device `.pcap`). Use
+   * {@link XCUITestDriver._networkMonitorSession | `_networkMonitorSession`} and BiDi
+   * `appium:xcuitest.networkMonitor` on iOS/tvOS 18+ instead; scheduled for removal with those commands.
+   */
   _trafficCapture: TrafficCapture | null;
+  _networkMonitorSession: NetworkMonitorSession | null;
   _recentScreenRecorder: ScreenRecorder | null;
   _device: Simulator | RealDevice;
   _iosSdkVersion: string | null;
@@ -329,6 +337,7 @@ export class XCUITestDriver
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
     this.logs = {};
     this._trafficCapture = null;
+    this._networkMonitorSession = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
       this[fn] = _.memoize(this[fn]);
@@ -435,6 +444,8 @@ export class XCUITestDriver
       await recorder.interrupt(true);
       await recorder.cleanup();
     }
+    await this._networkMonitorSession?.interrupt();
+    this._networkMonitorSession = null;
 
     if (!_.isEmpty(this._perfRecorders)) {
       await B.all(this._perfRecorders.map((x) => x.stop(true)));
@@ -2124,6 +2135,13 @@ export class XCUITestDriver
 
   mobileStartPcap = pcapCommands.mobileStartPcap;
   mobileStopPcap = pcapCommands.mobileStopPcap;
+
+  /*------------------+
+   | NETWORK MONITOR |
+   +------------------+*/
+
+  mobileStartNetworkMonitor = networkMonitorCommands.mobileStartNetworkMonitor;
+  mobileStopNetworkMonitor = networkMonitorCommands.mobileStopNetworkMonitor;
 
   /*-------------+
    | PERFORMANCE |

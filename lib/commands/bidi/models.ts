@@ -1,9 +1,15 @@
-import type {LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel} from './types';
+import type {
+  LogEntryAddedEvent,
+  ContextUpdatedEvent,
+  BiDiLogLevel,
+  NetworkMonitorBiDiEvent,
+} from './types';
 import {NATIVE_WIN} from '../../utils';
 import {
   CONTEXT_UPDATED_EVENT,
   CONTEXT_UPDATED_EVENT_OBSOLETE,
   LOG_ENTRY_ADDED_EVENT,
+  NETWORK_MONITOR_EVENT,
 } from './constants';
 import type {LogEntry} from '../types';
 import _ from 'lodash';
@@ -26,6 +32,21 @@ export const makeContextUpdatedEvent = (contextName: string) =>
  */
 export const makeObsoleteContextUpdatedEvent = (contextName: string) =>
   toContextUpdatedEvent(CONTEXT_UPDATED_EVENT_OBSOLETE, contextName);
+
+/**
+ * Builds a BiDi event for a single DVT NetworkMonitor instrument payload.
+ * Clones the payload with `structuredClone` so subscribers get a plain snapshot (safe if anything
+ * downstream mutates) without the lossiness of `JSON.stringify` (e.g. `NaN`, `undefined` handling).
+ */
+export function makeNetworkMonitorEvent(event: object): NetworkMonitorBiDiEvent {
+  return {
+    context: NATIVE_WIN,
+    method: NETWORK_MONITOR_EVENT,
+    params: {
+      event: structuredClone(event) as Record<string, unknown>,
+    },
+  };
+}
 
 export function makeLogEntryAddedEvent(
   entry: LogEntry,
