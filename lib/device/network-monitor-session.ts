@@ -45,8 +45,8 @@ export class NetworkMonitorSession {
   }
 
   /**
-   * Stops monitoring: closes Remote XPC (same pattern as other `startDVTService` call sites in this driver),
-   * then awaits the background consume loop. Safe to call more than once.
+   * Stops monitoring: closes Remote XPC (same pattern as other `startDVTService` call sites in this driver).
+   * Safe to call more than once.
    */
   async interrupt(): Promise<void> {
     if (this.stopped) {
@@ -57,6 +57,11 @@ export class NetworkMonitorSession {
     if (this.dvt) {
       const dvt = this.dvt;
       this.dvt = null;
+      try {
+        await dvt.networkMonitor.stop();
+      } catch (err: any) {
+        this.log.debug(`Error stopping network monitor: ${err?.message ?? err}`);
+      }
       // Same as other `startDVTService` paths in this driver (condition inducer, terminateAppRemoteXPC):
       // close RemoteXPC only. Remotexpc's DVT integration tests often call `dvtService.close()` first for
       // explicit channel teardown; we can add that if shutdown issues show up in the field.
@@ -67,7 +72,6 @@ export class NetworkMonitorSession {
       }
     }
     if (this.runPromise) {
-      await this.runPromise.catch(() => {});
       this.runPromise = null;
     }
   }
@@ -82,20 +86,7 @@ export class NetworkMonitorSession {
       }
     } catch (err: any) {
       if (!this.stopped) {
-        this.log.warn(`Network monitor stream ended: ${err?.message ?? err}`);
-      }
-    } finally {
-      this.stopped = true;
-      if (this.dvt === dvt) {
-        this.dvt = null;
-      }
-      this.runPromise = null;
-      if (!this.stopped) {
-        try {
-          await dvt.remoteXPC.close();
-        } catch {
-          // ignore
-        }
+        this.log.error('Network monitor stream ended unexpectedly', err);
       }
     }
   }
