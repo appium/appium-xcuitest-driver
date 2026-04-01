@@ -1,3 +1,9 @@
+## [10.37.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.4...v10.37.0) (2026-04-01)
+
+### Features
+
+* Add extensions for listening to device network events ([#2781](https://github.com/appium/appium-xcuitest-driver/issues/2781)) ([68ce1ee](https://github.com/appium/appium-xcuitest-driver/commit/68ce1eea2d13e2f093f1e5c99cc081e04ca8b17d))
+
 ## [10.36.4](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.3...v10.36.4) (2026-03-30)
 
 ### Bug Fixes
