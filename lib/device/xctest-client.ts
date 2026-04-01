@@ -66,6 +66,7 @@ export class XCTestClient {
 
     return await new B((resolve, reject) => {
       let mostRecentLogObject: XCTestResult[] | string[] | null = null;
+      let mostRecentParsedResults: XCTestResult[] = [];
       let xctestTimeout: NodeJS.Timeout | undefined;
       let lastErrorMessage: string | null = null;
 
@@ -85,6 +86,9 @@ export class XCTestClient {
         if (stdout) {
           try {
             mostRecentLogObject = parseLegacyXCTestStdout(stdout);
+            if (isXCTestResultsArray(mostRecentLogObject)) {
+              mostRecentParsedResults = mostRecentLogObject;
+            }
           } catch (err: any) {
             this.deps.log.warn(`Failed to parse logs from test output: '${stdout}'`);
             this.deps.log.debug(err.stack);
@@ -114,15 +118,15 @@ export class XCTestClient {
           if (signal != null) {
             err.signal = signal;
           }
-          if (mostRecentLogObject) {
-            err.result = mostRecentLogObject as XCTestResult[];
+          if (mostRecentParsedResults.length > 0) {
+            err.result = mostRecentParsedResults;
           }
           return reject(err);
         }
         resolve({
           code: code ?? 0,
           signal: signal ?? null,
-          results: mostRecentLogObject as XCTestResult[],
+          results: mostRecentParsedResults,
           passed: true,
         });
       });
@@ -253,6 +257,10 @@ export function parseLegacyXCTestStdout(stdout: string): XCTestResult[] | string
     results.push(output);
   }
   return results;
+}
+
+function isXCTestResultsArray(value: XCTestResult[] | string[]): value is XCTestResult[] {
+  return value.length === 0 || _.isPlainObject(value[0]);
 }
 
 interface XCTestClientDeps {
