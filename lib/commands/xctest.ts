@@ -15,7 +15,9 @@ const xctestLog = logger.getLogger('XCTest');
  *
  * Launches a subprocess that runs the XC Test and blocks until it is completed. Parses the stdout of the process and returns its result as an array.
  *
- * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** to run such tests; see [the idb docs](https://fbidb.io/docs/test-execution/) for reference.
+ * Uses RemoteXPC on iOS/tvOS 18+ real devices (except logic tests), and falls back to
+ * **Facebook's [IDB](https://github.com/facebook/idb)** when RemoteXPC is unavailable.
+ * IDB is required for non-RemoteXPC execution paths.
  *
  * @param testRunnerBundleId - Test app bundle (e.g.: `io.appium.XCTesterAppUITests.xctrunner`)
  * @param appUnderTestBundleId - App-under-test bundle
@@ -51,7 +53,9 @@ export async function mobileRunXCTest(
 /**
  * Installs an XCTest bundle to the device under test.
  *
- * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** for this command to work.
+ * Uses RemoteXPC on iOS/tvOS 18+ real devices and falls back to
+ * **Facebook's [IDB](https://github.com/facebook/idb)** when needed.
+ * IDB is required for fallback/legacy execution paths.
  *
  * @param xctestApp - Path of the XCTest app (URL or filename with extension `.app`)
  */
@@ -73,7 +77,9 @@ export async function mobileInstallXCTestBundle(
 /**
  * List XCTest bundles that are installed on the device.
  *
- * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** for this command to work.
+ * Uses RemoteXPC on iOS/tvOS 18+ real devices and falls back to
+ * **Facebook's [IDB](https://github.com/facebook/idb)** when needed.
+ * IDB is required for fallback/legacy execution paths.
  *
  * @returns List of XCTest bundles (e.g.: `XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance`)
  */
@@ -84,7 +90,9 @@ export async function mobileListXCTestBundles(this: XCUITestDriver): Promise<str
 /**
  * List XCTests in a test bundle.
  *
- * **Facebook's [IDB](https://github.com/facebook/idb) tool is required** for this command to work.
+ * This command currently uses the legacy
+ * **Facebook's [IDB](https://github.com/facebook/idb)** path.
+ * IDB is required.
  *
  * @param bundle - Bundle ID of the XCTest
  * @returns The list of xctests in the test bundle (e.g., `['XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance']`)
