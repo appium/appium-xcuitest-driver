@@ -8,9 +8,14 @@ The XCUITest driver supports automation of the tvOS platform.
 
 !!! warning
 
-    Support for network-only Apple TV devices is limited.
-    This is because [`appium-ios-device`](https://github.com/appium/appium-ios-device),
+    For tvOS < 18, support for network-only Apple TV devices is limited because
+    [`appium-ios-device`](https://github.com/appium/appium-ios-device),
     which handles low-level communication with devices, only supports USB-connected devices.
+
+    For tvOS 18 and newer, you can run tests against **wireless Apple TV devices** over Remote XPC
+    tunnels when using `appium-ios-remotexpc` and the tunnel registry. See
+    [Remote XPC Tunnels](./remotexpc-tunnels-real-devices.md#wireless-apple-tv--tvos-devices) for a
+    step‑by‑step guide.
 
 ## Setup
 
@@ -31,7 +36,7 @@ You can run tests for tvOS by setting the `platformName` capability to `tvOS`:
     If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
     `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` to verify this.
 
-### Network-Only Real Devices
+### Network-Only Real Devices (tvOS < 18 or missing remotexpc support)
 
 To run tests on network-only Apple TV devices, you may need the following:
 
