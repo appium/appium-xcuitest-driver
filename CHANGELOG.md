@@ -1,3 +1,9 @@
+## [10.40.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.39.2...v10.40.0) (2026-04-02)
+
+### Features
+
+* Add a possibility to request multiple tunnels at once ([#2786](https://github.com/appium/appium-xcuitest-driver/issues/2786)) ([e9682ee](https://github.com/appium/appium-xcuitest-driver/commit/e9682eea5578d7c4c1d586f2fc18211b68cdeb46))
+
 ## [10.39.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.39.1...v10.39.2) (2026-04-01)
 
 ### Miscellaneous Chores
