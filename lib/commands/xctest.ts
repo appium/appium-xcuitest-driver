@@ -96,6 +96,7 @@ export async function mobileListXCTestBundles(this: XCUITestDriver): Promise<str
  *
  * @param bundle - Bundle ID of the XCTest
  * @returns The list of xctests in the test bundle (e.g., `['XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance']`)
+ * @deprecated Scheduled for removal together with the IDB client.
  */
 export async function mobileListXCTestsInTestBundle(
   this: XCUITestDriver,

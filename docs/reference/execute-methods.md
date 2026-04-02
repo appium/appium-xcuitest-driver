@@ -1073,7 +1073,11 @@ Array of XCTest bundles (e.g.: ["XCTesterAppUITests.XCTesterAppUITests/testLaunc
 
 ### mobile: listXCTestsInTestBundle
 
-List XCTests in a test bundle. Facebook's [IDB](https://github.com/facebook/idb) tool is required to for this API to work.
+!!! warning "Deprecated"
+
+    Scheduled for removal together with the Facebook [IDB](https://github.com/facebook/idb) client.
+
+List XCTests in a test bundle. Facebook's [IDB](https://github.com/facebook/idb) tool is required for this API to work.
 
 #### Arguments
 
