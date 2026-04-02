@@ -418,6 +418,8 @@ export const executeMethodMap = {
   },
   'mobile: listXCTestsInTestBundle': {
     command: 'mobileListXCTestsInTestBundle',
+    deprecated: true,
+    info: 'Scheduled for removal together with the IDB client.',
     params: {
       required: ['bundle'],
     },
