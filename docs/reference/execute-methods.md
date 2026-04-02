@@ -1014,7 +1014,13 @@ Base64-encoded content of the traffic capture file (.pcap) or an empty string if
 
 ### mobile: runXCTest
 
-Run a native XCTest script. Launches a subprocess that runs the XC Test and blocks until it is completed. Parses the stdout of the process and returns its result as an array. Facebook's [IDB](https://github.com/facebook/idb) tool is required to run such tests.
+Runs a native XCTest suite on the device under test.
+
+On **iOS/tvOS 18+ real devices**, `ui` and `app` test types are executed via **RemoteXPC** (see optional dependency `appium-ios-remotexpc`). If RemoteXPC fails, execution falls back to the legacy path below (timeout errors are not retried via IDB).
+
+**Logic tests** (`testType`: `logic`) always use the legacy path, because RemoteXPC does not support them.
+
+The **legacy path** uses Facebook's [IDB](https://github.com/facebook/idb): it launches IDB's XCTest subprocess and parses stdout. That path requires IDB to be installed and the session to be started with `appium:launchWithIDB` set to `true`.
 
 #### Arguments
 
@@ -1032,7 +1038,7 @@ timeout | string or int | no | Timeout if session doesn't complete after given t
 
 The API calls returns a map with the following entries:
 
-- results: The array of test results. Each item in this array conists of the following entries:
+- results: The array of test results (may be empty if no structured results were produced on the legacy path). Each item in this array consists of the following entries:
    * testName: Name of the test (e.g.: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample')
    * passed: Did the tests pass?
    * crashed: Did the tests crash?
@@ -1045,7 +1051,9 @@ The API calls returns a map with the following entries:
 
 ### mobile: installXCTestBundle
 
-Installs an XCTest bundle to the device under test. Facebook's [IDB](https://github.com/facebook/idb) tool is required to for this API to work.
+Installs an XCTest bundle (`.app` or `.ipa`) on the device under test.
+
+On **iOS/tvOS 18+ real devices**, installation is attempted via **RemoteXPC** first. If that fails or the artifact cannot be handled that way (for example a bare `.xctest` bundle), the driver falls back to Facebook's [IDB](https://github.com/facebook/idb). The legacy path requires IDB and `appium:launchWithIDB` set to `true`.
 
 #### Arguments
 
@@ -1055,7 +1063,9 @@ xctestBundle | string | yes | Path to your xctest .app bundle. Could be an URL |
 
 ### mobile: listXCTestBundles
 
-List XCTest bundles that are installed on device. Facebook's [IDB](https://github.com/facebook/idb) tool is required to for this API to work.
+Lists XCTest-related bundles installed on the device.
+
+On **iOS/tvOS 18+ real devices**, listing uses **RemoteXPC** first, with fallback to Facebook's [IDB](https://github.com/facebook/idb) if RemoteXPC fails. The legacy path requires IDB and `appium:launchWithIDB` set to `true`.
 
 #### Returned Result
 
