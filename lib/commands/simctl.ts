@@ -8,6 +8,7 @@ import type {Simulator} from 'appium-ios-simulator';
  * They accept 'device' target.
  */
 const SUBCOMMANDS_HAS_DEVICE = [
+  'appinfo',
   'boot',
   'get_app_container',
   'getenv',
@@ -17,6 +18,7 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'io',
   'keychain',
   'launch',
+  'listapps',
   'location',
   'logverbose',
   'openurl',
