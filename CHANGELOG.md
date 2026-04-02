@@ -1,3 +1,9 @@
+## [10.40.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.40.1...v10.40.2) (2026-04-02)
+
+### Miscellaneous Chores
+
+* Mark `mobile: listXCTestsInTestBundle` as deprecated ([#2791](https://github.com/appium/appium-xcuitest-driver/issues/2791)) ([ad926eb](https://github.com/appium/appium-xcuitest-driver/commit/ad926eb8fdfd8f8e1550a1cf6d12fa8bb335e21c))
+
 ## [10.40.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.40.0...v10.40.1) (2026-04-02)
 
 ### Miscellaneous Chores
