@@ -487,7 +487,11 @@ export function shouldSetInitialSafariUrl(opts: XCUITestDriverOpts): boolean {
 }
 
 export function isIos17OrNewer(opts: XCUITestDriverOpts): boolean {
-  return !!opts.platformVersion && util.compareVersions(opts.platformVersion, '>=', '17.0');
+  return isIos17OrNewerPlatform(opts.platformVersion);
+}
+
+export function isIos17OrNewerPlatform(platformVersion?: string | null): boolean {
+  return !!platformVersion && util.compareVersions(platformVersion, '>=', '17.0');
 }
 
 export function isIos18OrNewerPlatform(platformVersion?: string | null): boolean {
