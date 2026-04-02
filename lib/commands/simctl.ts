@@ -29,8 +29,6 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'openurl',
   'pbcopy',
   'pbpaste',
-  'pbsync',
-  'personalization',
   'privacy',
   'push',
   'shutdown',
