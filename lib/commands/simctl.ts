@@ -37,6 +37,7 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'status_bar',
   'terminate',
   'ui',
+  'upgrade',
   'uninstall',
 ] as const;
 
