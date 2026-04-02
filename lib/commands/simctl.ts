@@ -8,7 +8,13 @@ import type {Simulator} from 'appium-ios-simulator';
  * They accept 'device' target.
  */
 const SUBCOMMANDS_HAS_DEVICE = [
+  'addmedia',
+  'appinfo',
   'boot',
+  'clone',
+  'create',
+  'delete',
+  'erase',
   'get_app_container',
   'getenv',
   'icloud_sync',
@@ -17,11 +23,14 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'io',
   'keychain',
   'launch',
+  'listapps',
   'location',
   'logverbose',
   'openurl',
   'pbcopy',
   'pbpaste',
+  'pbsync',
+  'personalization',
   'privacy',
   'push',
   'shutdown',

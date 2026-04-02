@@ -2247,7 +2247,7 @@ Does not work for real devices.
 #### Arguments
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-command | string | yes | a subcommand for the `simctl`. Available commands are boot, get_app_container, getenv, icloud_sync, install, install_app_data, io, keychain, launch, location, logverbose, openurl, pbcopy, pbpaste, privacy, push, shutdown, spawn, status_bar, terminate, ui, and uninstall. Please check each usage details with `xcrun simctl help`. | `'getenv'`
+command | string | yes | a subcommand for the `simctl`. Available commands are addmedia, appinfo, boot, clone, create, delete, erase, get_app_container, getenv, icloud_sync, install, install_app_data, io, keychain, launch, listapps, location, logverbose, openurl, pbcopy, pbpaste, pbsync, personalization, privacy, push, shutdown, spawn, status_bar, terminate, ui and uninstall. Please check each usage details with `xcrun simctl help`. | `'getenv'`
 args | array | no | array of string as arguments for the command after `<device>`. For example `getenv` subcommand accept `simctl getenv <device> <variable name>`. The `<device>` will be filled out automatically. This `args` should be the ` <variable name>` part only. | `['HOME']`
 timeout | number | no | Command timeout in milliseconds. If the command blocks for longer than this timeout then an exception is going to be thrown. The default timeout is `600000` ms. | `10000`
 
