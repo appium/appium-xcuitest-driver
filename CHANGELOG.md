@@ -1,3 +1,9 @@
+## [10.41.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.40.2...v10.41.0) (2026-04-02)
+
+### Features
+
+* add appinfo and  for listapps `mobile: simctl` ([#2790](https://github.com/appium/appium-xcuitest-driver/issues/2790)) ([7fd8677](https://github.com/appium/appium-xcuitest-driver/commit/7fd867786a0209e87fe637c5fdc8c8b7016d1783))
+
 ## [10.40.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.40.1...v10.40.2) (2026-04-02)
 
 ### Miscellaneous Chores
