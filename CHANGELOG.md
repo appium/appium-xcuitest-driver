@@ -1,3 +1,9 @@
+## [10.40.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.40.0...v10.40.1) (2026-04-02)
+
+### Miscellaneous Chores
+
+* Isolate legacy idb xctest helpers ([#2788](https://github.com/appium/appium-xcuitest-driver/issues/2788)) ([9ea03d5](https://github.com/appium/appium-xcuitest-driver/commit/9ea03d53815e2071610ec655b6db0a2b51961efe))
+
 ## [10.40.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.39.2...v10.40.0) (2026-04-02)
 
 ### Features
