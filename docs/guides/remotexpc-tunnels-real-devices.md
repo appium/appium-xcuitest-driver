@@ -246,7 +246,7 @@ High‑level workflow:
     {
       "platformName": "tvOS",
       "appium:automationName": "XCUITest",
-      "appium:platformVersion": "18.0",
+      "appium:platformVersion": "26.3",
       "appium:udid": "<appletv-udid>",
       "appium:app": "/path/to/tvos/app.app"
     }
