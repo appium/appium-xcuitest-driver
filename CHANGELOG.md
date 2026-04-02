@@ -1,3 +1,27 @@
+## [10.39.2](https://github.com/appium/appium-xcuitest-driver/compare/v10.39.1...v10.39.2) (2026-04-01)
+
+### Miscellaneous Chores
+
+* Ensure pairing and tunnel creation scripts are running as root ([#2789](https://github.com/appium/appium-xcuitest-driver/issues/2789)) ([f252d91](https://github.com/appium/appium-xcuitest-driver/commit/f252d91d7b8ec2fae95dde4003bf504cf1a0de86))
+
+## [10.39.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.39.0...v10.39.1) (2026-04-01)
+
+### Miscellaneous Chores
+
+* Isolate app termination logic for real devices ([#2787](https://github.com/appium/appium-xcuitest-driver/issues/2787)) ([ffbf88b](https://github.com/appium/appium-xcuitest-driver/commit/ffbf88bad32d4c84e1186a5c2dba33d69940c062))
+
+## [10.39.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.38.0...v10.39.0) (2026-04-01)
+
+### Features
+
+* **xctest:** use remotexpc for xctest bundle execution ([#2775](https://github.com/appium/appium-xcuitest-driver/issues/2775)) ([1bb39ec](https://github.com/appium/appium-xcuitest-driver/commit/1bb39ec82da3da7d82a477819aa9447098c9a2b6))
+
+## [10.38.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.37.0...v10.38.0) (2026-04-01)
+
+### Features
+
+* Add watchdog logic to the tunnel creation script ([#2785](https://github.com/appium/appium-xcuitest-driver/issues/2785)) ([8c3cf6b](https://github.com/appium/appium-xcuitest-driver/commit/8c3cf6bb527d69488f2ef53175b1a374c4b77c9f))
+
 ## [10.37.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.36.4...v10.37.0) (2026-04-01)
 
 ### Features

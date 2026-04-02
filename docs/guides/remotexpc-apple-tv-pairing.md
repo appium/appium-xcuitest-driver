@@ -12,6 +12,7 @@ wrapper script around that functionality.
 ## Prerequisites
 
 - An Apple TV device that you want to automate
+- The pairing script must be run with `sudo` (as root), like the `tunnel-creation` script
 - The XCUITest driver and its optional dependency `appium-ios-remotexpc` installed
 - Your Apple TV and the host machine on the **same network segment**
 - Apple TV in pairing / discovery mode (see external guide below)
@@ -21,7 +22,7 @@ wrapper script around that functionality.
 Use the driver-level script to run the pairing flow:
 
 ```bash
-appium driver run xcuitest pair-appletv --
+sudo appium driver run xcuitest pair-appletv --
 ```
 
 This will:
@@ -39,9 +40,9 @@ identifier later as the `appium:udid` when WiFi tvOS tunnels are enabled.
 You can skip interactive selection by using the `--device` option:
 
 ```bash
-appium driver run xcuitest pair-appletv -- --device "Living Room"
-appium driver run xcuitest pair-appletv -- --device 0
-appium driver run xcuitest pair-appletv -- --device AA:BB:CC:DD:EE:FF
+sudo appium driver run xcuitest pair-appletv -- --device "Living Room"
+sudo appium driver run xcuitest pair-appletv -- --device 0
+sudo appium driver run xcuitest pair-appletv -- --device AA:BB:CC:DD:EE:FF
 ```
 
 ## Detailed pairing behavior (external docs)

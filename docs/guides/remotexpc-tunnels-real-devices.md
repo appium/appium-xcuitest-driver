@@ -11,9 +11,9 @@ real iOS and tvOS devices on **OS version 18 or newer**. This guide explains how
 
 This guide applies to **real iOS/tvOS devices only**. Simulators do not use this tunnel mechanism.
 
-At the moment, the tunnel workflow described here supports **devices physically connected via USB**
-to the host running Appium. Support for **wireless tvOS / Apple TV devices** via Remote XPC tunnels
-is planned but not yet available in this driver.
+Starting with tvOS 18, the tunnel workflow also supports **wireless Apple TV / tvOS devices** when
+used together with `appium-ios-remotexpc`'s Apple TV tunnel support. The sections below describe
+both USB‑connected iOS/tvOS devices and wireless Apple TV setups.
 
 ## When you need tunnels and Remote XPC
 
@@ -204,6 +204,57 @@ No extra capabilities are required to “enable” tunnels; they are automatical
 - `appium-ios-remotexpc` is installed, **and**
 - the tunnel registry server is reachable, **and**
 - the platform is iOS/tvOS 18+ on a real device.
+
+### Wireless Apple TV / tvOS devices
+
+For **wireless Apple TV** running tvOS 18+ you can run tests over Remote XPC tunnels without a USB
+cable, as long as the device has been paired and appears in Xcode / `xcodebuild` as a network
+device.
+
+High‑level workflow:
+
+1. **Pair the Apple TV using the driver’s pairing script** so that it is registered and has a usable UDID.
+    See the [Apple TV pairing guide](remotexpc-apple-tv-pairing.md) for details. In short:
+
+    ```bash
+    sudo appium driver run xcuitest pair-appletv
+    ```
+
+    This script configures the Apple TV pairing state for use with `appium-ios-remotexpc` and the tunnel
+    services.
+
+2. **Start the Apple TV tunnel** using the same tunnel‑creation script the driver uses for USB devices.
+    Use the UDID that the pairing script (step 1) printed:
+
+    ```bash
+    sudo appium driver run xcuitest tunnel-creation --appletv-device-id <udid-from-pairing-script>
+    ```
+
+    This will:
+    - establish a Remote XPC tunnel to the Apple TV over the network
+    - register the Apple TV tunnel in the same tunnel registry used by the `tunnel-creation` script
+
+3. **Start the Appium server** in a separate terminal (leave the tunnel script from step 2 running):
+
+    ```bash
+    appium
+    ```
+
+4. **Run your tvOS tests** using the Apple TV UDID:
+
+    ```json
+    {
+      "platformName": "tvOS",
+      "appium:automationName": "XCUITest",
+      "appium:platformVersion": "26.3",
+      "appium:udid": "<appletv-udid>",
+      "appium:app": "/path/to/tvos/app.app"
+    }
+    ```
+
+When the Apple TV tunnel is running and registered, the driver uses the tunnel and Remote XPC in the
+same way as for USB‑connected devices: no additional capabilities are required beyond providing the
+correct `appium:udid`.
 
 ## Parallel tests with a single Appium server
 
