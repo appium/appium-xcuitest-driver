@@ -1,4 +1,4 @@
-import {parseXCTestStdout} from '../../../lib/commands/xctest';
+import {parseLegacyXCTestStdout} from '../../../lib/device/xctest-client';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -20,7 +20,7 @@ describe('session commands', function () {
 
   describe('xctest', function () {
     it('should parse successful test logs - old version', function () {
-      const results = parseXCTestStdout(xctestLogs1Success);
+      const results = parseLegacyXCTestStdout(xctestLogs1Success);
       expect(results.length).to.equal(2);
       expect(results[0]).to.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
@@ -44,7 +44,7 @@ describe('session commands', function () {
     });
 
     it('should parse successful test logs', function () {
-      const results = parseXCTestStdout(xctestLogs2Success);
+      const results = parseLegacyXCTestStdout(xctestLogs2Success);
       expect(results.length).to.equal(2);
       expect(results[0]).to.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',
@@ -64,7 +64,7 @@ describe('session commands', function () {
     });
 
     it('should parse unsuccessful test logs', function () {
-      const results = parseXCTestStdout(xctestLogs2Failure);
+      const results = parseLegacyXCTestStdout(xctestLogs2Failure);
       expect(results.length).to.equal(2);
       expect(results[0]).to.eql({
         testName: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample',

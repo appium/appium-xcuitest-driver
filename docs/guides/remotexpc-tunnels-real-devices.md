@@ -24,6 +24,7 @@ interfaces and Remote XPC endpoints. The XCUITest driver uses:
     - Device lockdown / USBMUX communication
     - CoreDeviceProxy and Remote XPC connections
     - High‑level services (installation proxy, AFC, crash reports, DVT instruments, etc.)
+    - XCTest execution and related `mobile:` commands on real devices (see [Execute methods](../reference/execute-methods.md) for `mobile: runXCTest`, `mobile: installXCTestBundle`, and `mobile: listXCTestBundles`)
 - `appium-ios-tuntap` (used internally by `appium-ios-remotexpc`) to:
     - Create a TUN/TAP virtual network interface
     - Establish an IPv6 tunnel between the host and the device
