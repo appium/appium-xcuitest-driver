@@ -31,6 +31,7 @@ const SUBCOMMANDS_HAS_DEVICE = [
   'pbpaste',
   'privacy',
   'push',
+  'rename',
   'shutdown',
   'spawn',
   'status_bar',
