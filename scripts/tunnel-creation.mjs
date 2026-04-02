@@ -66,6 +66,16 @@ function parsePositiveIntegerOption(value, label) {
 }
 
 /**
+ * @param {string} value
+ * @param {string[]} previous
+ * @returns {string[]}
+ */
+function collectStringValues(value, previous = []) {
+  previous.push(value);
+  return previous;
+}
+
+/**
  * TunnelCreator class for managing tunnel creation and related operations (USB and optional Apple TV over WiFi).
  */
 class TunnelCreator {
@@ -332,11 +342,11 @@ class TunnelCreator {
   /**
    * Sets up tunnels for all connected USB devices. Does not start the registry server.
    * @param {import('appium-ios-remotexpc').Usbmux} usbmux - The usbmux object.
-   * @param {string|undefined} specificUdid - A specific UDID to process, or undefined for all devices.
+   * @param {string[]|undefined} specificUdids - Specific UDIDs to process, or undefined for all devices.
    * @param {import('tls').ConnectionOptions} tlsOptions - TLS options.
    * @returns {Promise<Array<import('appium-ios-remotexpc').TunnelResult>>} USB tunnel results (may be empty).
    */
-  async setupTunnels(usbmux, specificUdid, tlsOptions) {
+  async setupUsbmuxTunnels(usbmux, specificUdids, tlsOptions) {
     log.info('Listing all connected devices...');
     const devices = this._dedupeUsbmuxDevicesByUdid(await usbmux.listDevices());
 
@@ -354,18 +364,26 @@ class TunnelCreator {
     });
 
     let devicesToProcess = devices;
-    if (specificUdid) {
+    const requestedUdids = specificUdids && specificUdids.length > 0 ? [...new Set(specificUdids)] : null;
+    if (requestedUdids) {
+      const requestedUdidSet = new Set(requestedUdids);
       devicesToProcess = devices.filter(
-        (device) => device.Properties.SerialNumber === specificUdid,
+        (device) => requestedUdidSet.has(device.Properties.SerialNumber),
       );
 
       if (devicesToProcess.length === 0) {
-        log.error(`Device with UDID ${specificUdid} not found in connected devices.`);
+        log.error(`None of the requested UDID(s) were found: ${requestedUdids.join(', ')}`);
         log.error('Available devices:');
         devices.forEach((device) => {
           log.error(`  - ${device.Properties.SerialNumber}`);
         });
         process.exit(1);
+      }
+
+      const foundUdidSet = new Set(devicesToProcess.map((device) => device.Properties.SerialNumber));
+      const missingUdids = requestedUdids.filter((udid) => !foundUdidSet.has(udid));
+      if (missingUdids.length > 0) {
+        log.warn(`Some requested UDID(s) were not found and will be skipped: ${missingUdids.join(', ')}`);
       }
     }
 
@@ -386,23 +404,23 @@ class TunnelCreator {
    * Sets up tunnel(s) for paired Apple TV device(s) over WiFi.
    * If no specific device identifier is provided, a tunnel is created for each discovered device.
    * Does not start the registry server.
-   * @param {string|undefined} [specificDeviceId] - Optional Apple TV device identifier to target.
-   * @param {string[] | null} [prefetchedDeviceIds] - Optional prefetched Apple TV identifiers.
+   * @param {string[]|undefined} [specificDeviceIds] - Optional Apple TV device identifiers to target.
+   * @param {string[]|null} [prefetchedDeviceIds] - Optional prefetched Apple TV identifiers.
    * @returns {Promise<AppleTVRegistryEntry[]>} Apple TV registry entries.
    */
-  async setupAppleTVTunnels(specificDeviceId, prefetchedDeviceIds = null) {
+  async setupAppleTVTunnels(specificDeviceIds, prefetchedDeviceIds = null) {
     /** @type {AppleTVRegistryEntry[]} */
     const entries = [];
 
     try {
-      if (!specificDeviceId && prefetchedDeviceIds === null) {
+      if ((!specificDeviceIds || specificDeviceIds.length === 0) && prefetchedDeviceIds === null) {
         log.warn('Skipping Apple TV tunnel setup because discovery prefetch did not return device IDs.');
         return entries;
       }
-      log.info('Starting Apple TV tunnel (WiFi)...');
-      const discoveredDeviceIds = specificDeviceId
-        ? [specificDeviceId]
+      const discoveredDeviceIds = specificDeviceIds && specificDeviceIds.length > 0
+        ? [...new Set(specificDeviceIds)]
         : /** @type {string[]} */ (prefetchedDeviceIds);
+      log.info('Starting Apple TV tunnel (WiFi)...');
       const usbDiscoveredUdidSet = new Set(this._usbDevices.keys());
       const targetDeviceIds = discoveredDeviceIds.filter((udid) => !usbDiscoveredUdidSet.has(udid));
       if (targetDeviceIds.length < discoveredDeviceIds.length) {
@@ -476,6 +494,29 @@ class TunnelCreator {
     } catch (err) {
       log.warn('Apple TV tunnel setup failed (ensure device is paired and on same network):', err?.message ?? err);
       return entries;
+    }
+  }
+
+  /**
+   * @param {string[] | undefined} specificDeviceIds
+   * @returns {Promise<string[] | null>}
+   */
+  async prefetchAppleTVDeviceIds(specificDeviceIds) {
+    if (specificDeviceIds && specificDeviceIds.length > 0) {
+      return [...new Set(specificDeviceIds)];
+    }
+    const tunnelService = new AppleTVTunnelService();
+    try {
+      log.info('Prefetching paired Apple TV devices in parallel...');
+      const devices = await tunnelService.discoverDevices();
+      return devices.map((d) => d.identifier);
+    } catch (err) {
+      log.warn(`Apple TV discovery prefetch failed: ${err?.message ?? err}`);
+      return null;
+    } finally {
+      try {
+        tunnelService.disconnect();
+      } catch {}
     }
   }
 
@@ -814,29 +855,6 @@ class TunnelCreator {
       activeTunnels: total,
     };
   }
-
-  /**
-   * @param {string | undefined} specificDeviceId
-   * @returns {Promise<string[] | null>}
-   */
-  async _prefetchAppleTVDeviceIds(specificDeviceId) {
-    if (specificDeviceId) {
-      return [specificDeviceId];
-    }
-    const tunnelService = new AppleTVTunnelService();
-    try {
-      log.info('Prefetching paired Apple TV devices in parallel...');
-      const devices = await tunnelService.discoverDevices();
-      return devices.map((d) => d.identifier);
-    } catch (err) {
-      log.warn(`Apple TV discovery prefetch failed: ${err?.message ?? err}`);
-      return null;
-    } finally {
-      try {
-        tunnelService.disconnect();
-      } catch {}
-    }
-  }
 }
 
 /**
@@ -952,7 +970,13 @@ async function main() {
   program
     .name('appium driver run xcuitest tunnel-creation')
     .description('Create tunnels for connected iOS devices')
-    .option('--udid <udid>', 'UDID of the device to create tunnel for')
+    .option(
+      '--udid <udid>',
+      'UDID of the device to create tunnel for (repeatable). ' +
+      'If omitted, tunnels are created for all connected devices.',
+      collectStringValues,
+      [],
+    )
     .option(
       '--packet-stream-base-port <port>',
       'Base port for packet stream servers (1-65535)',
@@ -965,7 +989,10 @@ async function main() {
     )
     .option(
       '--appletv-device-id <identifier>',
-      'Apple TV device identifier to tunnel (from pair-appletv); omit to tunnel all discovered paired devices',
+      'Apple TV device identifier to tunnel (repeatable, from pair-appletv; ' +
+      'omit to tunnel all discovered paired Apple TVs)',
+      collectStringValues,
+      [],
     )
     .option(
       '--disconnect-retry-max-attempts <count>',
@@ -981,6 +1008,12 @@ async function main() {
 
   program.parse(process.argv);
   const options = program.opts();
+  const requestedUdids = _.uniq([...(options.udid ?? [])]);
+  const requestedAppleTVIds = _.uniq([...(options.appletvDeviceId ?? [])]);
+  const hasRequestedUdids = requestedUdids.length > 0;
+  const hasRequestedAppleTVIds = requestedAppleTVIds.length > 0;
+  const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;
+  const shouldRunAppleTVFlow = !hasRequestedUdids || hasRequestedAppleTVIds;
 
   const tunnelCreator = new TunnelCreator();
   const cleanupOnce = setupCleanupHandlers(tunnelCreator);
@@ -1020,27 +1053,36 @@ async function main() {
       options.disconnectRetryMaxAttempts ?? null,
       options.disconnectRetryIntervalMs,
     );
-    const prefetchedAppleTVDeviceIdsPromise = tunnelCreator._prefetchAppleTVDeviceIds(
-      options.appletvDeviceId,
-    );
+    const prefetchedAppleTVDeviceIdsPromise = shouldRunAppleTVFlow
+      ? tunnelCreator.prefetchAppleTVDeviceIds(requestedAppleTVIds)
+      : Promise.resolve(null);
 
-    log.info('Connecting to usbmuxd...');
     const usbmux = await createUsbmux();
     /** @type {import('appium-ios-remotexpc').TunnelResult[]} */
     let usbResults = [];
     try {
-      usbResults = await tunnelCreator.setupTunnels(usbmux, options.udid, tlsOptions);
+      if (shouldRunUsbFlow) {
+        log.info('Connecting to usbmuxd...');
+        usbResults = await tunnelCreator.setupUsbmuxTunnels(usbmux, requestedUdids, tlsOptions);
+      } else {
+        log.info('Skipping USB tunnel setup because only --appletv-device-id was provided.');
+      }
     } finally {
       await usbmux.close();
     }
 
     // Automatically add paired Apple TV(s) over WiFi when available
-    const prefetchedAppleTVDeviceIds = await prefetchedAppleTVDeviceIdsPromise;
     /** @type {AppleTVRegistryEntry[]} */
-    const appletvEntries = await tunnelCreator.setupAppleTVTunnels(
-      options.appletvDeviceId,
-      prefetchedAppleTVDeviceIds,
-    );
+    let appletvEntries = [];
+    if (shouldRunAppleTVFlow) {
+      const prefetchedAppleTVDeviceIds = await prefetchedAppleTVDeviceIdsPromise;
+      appletvEntries = await tunnelCreator.setupAppleTVTunnels(
+        requestedAppleTVIds,
+        prefetchedAppleTVDeviceIds,
+      );
+    } else {
+      log.info('Skipping Apple TV tunnel setup because only --udid was provided.');
+    }
 
     const registry = await tunnelCreator.updateTunnelRegistry(usbResults, appletvEntries);
     tunnelCreator.registry = registry;
