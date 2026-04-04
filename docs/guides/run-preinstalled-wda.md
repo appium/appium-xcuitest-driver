@@ -44,8 +44,7 @@ If using a real device, you may need to change your bundle ID. Please check the
 
 Some 3rd party tools such as [pymobiledevice3](https://github.com/doronz88/pymobiledevice3),
 [ios-deploy](https://github.com/ios-control/ios-deploy), [go-ios](https://github.com/danielpaulus/go-ios) and
-[tidevice](https://github.com/alibaba/taobao-iphone-device), [ios-app-signer](https://github.com/DanTheMan827/ios-app-signer)
-can install the WebDriverAgent package.
+[tidevice](https://github.com/alibaba/taobao-iphone-device) can install the WebDriverAgent package.
 
 Some tools let you set an arbitrary bundle identifier (`CFBundleIdentifier` for the `Info.plist`) and sign it with the bundle identifier.
 It may not have `.xctrunner` as the bundle identifier.
@@ -70,7 +69,6 @@ Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xco
     You can also remove `Frameworks/Testing.framework` and `Frameworks/libXCTestSwiftSupport.dylib` to reduce the package size
     because WebDriverAgent doesn't need both. Then, the total size of the WebDriverAgent runner app can be 3MB or less.
     `Testing.framework` is almost 6MB and `libXCTestSwiftSupport.dylib` is 2.6MB with Xcode 16 build.
-    
 
 ## Launch the Session
 

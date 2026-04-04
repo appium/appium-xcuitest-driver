@@ -37,13 +37,30 @@ As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOW
 by yourself. This would make the device management more flexible, but you would need to know about
 advanced codesign usage scenarios.
 
-!!! note
+The Appium team distributes generic builds with `CODE_SIGNING_ALLOWED=NO` at
+[WebDriverAgent package releases](https://github.com/appium/WebDriverAgent/releases).
+It is recommended to sign packages with a wildcard (`*`) provisioning profile,
+although such profiles require a paid Apple Developer account.
+For example, if you're preparing such a provisioning profile for `io.appium.WebDriverAgentRunner.xctrunner`, it will be for `io.appium.*`, `io.appium.WebDriverAgentRunner.*` or `*`.
 
-    The Appium team distributes generic builds with `CODE_SIGNING_ALLOWED=NO` at
-    [WebDriverAgent package releases](https://github.com/appium/WebDriverAgent/releases).
-    It is recommended to sign packages with a wildcard (`*`) provisioning profile,
-    although such profiles require a paid Apple Developer account.
-    For example, if you're preparing such a provisioning profile for `io.appium.WebDriverAgentRunner.xctrunner`, it will be for `io.appium.*`, `io.appium.WebDriverAgentRunner.*` or `*`.
-    In case of a free account, you may need to update the bundle id before building
-    the WebDriverAgent package to prepare a properly signed WebDriverAgent package
-    by `xcodebuild`.
+In case of a free account or paid account without `*` provisioning profile,
+you may need to update the bundle id before building so `xcodebuild` can produce
+a properly signed WebDriverAgent package. Another option is to re-sign an existing
+package and remap its bundle ids with 3rd party tools such as [resigner](https://github.com/KazuCocoa/resigner).
+The tool can remap the bundle ids to values allowed by the free provisioning profile and
+then sign the package with that profile.
+
+Please check the tool's readme for details, but in short, you can use the following command to
+re-sign the package with bundle id remapping:
+
+```
+resigner \
+  --p12-file "<path to p12 file>" \
+  --p12-password "<password of p12>" \
+  --profile "<path to provisioning profiles>" \
+  --force \
+  --bundle-id-remap "com.facebook.WebDriverAgentRunner=<valid bundle id for the profile>" \
+  --bundle-id-remap "com.facebook.WebDriverAgentRunner.xctrunner=<valid bundle id for the profile>" \
+  --bundle-id-remap "com.facebook.WebDriverAgentLib=<valid bundle id for the profile>" \
+  /path/to/WebDriverAgentRunner-Runner.app
+```
