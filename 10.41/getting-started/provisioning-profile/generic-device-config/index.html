@@ -2771,17 +2771,29 @@ the codesigning was not correct, the installation will fail.</p>
 <a href="https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format"><code>codesign</code></a>
 by yourself. This would make the device management more flexible, but you would need to know about
 advanced codesign usage scenarios.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
 <p>The Appium team distributes generic builds with <code>CODE_SIGNING_ALLOWED=NO</code> at
 <a href="https://github.com/appium/WebDriverAgent/releases">WebDriverAgent package releases</a>.
 It is recommended to sign packages with a wildcard (<code>*</code>) provisioning profile,
 although such profiles require a paid Apple Developer account.
-For example, if you're preparing such a provisioning profile for <code>io.appium.WebDriverAgentRunner.xctrunner</code>, it will be for <code>io.appium.*</code>, <code>io.appium.WebDriverAgentRunner.*</code> or <code>*</code>.
-In case of a free account, you may need to update the bundle id before building
-the WebDriverAgent package to prepare a properly signed WebDriverAgent package
-by <code>xcodebuild</code>.</p>
-</div>
+For example, if you're preparing such a provisioning profile for <code>io.appium.WebDriverAgentRunner.xctrunner</code>, it will be for <code>io.appium.*</code>, <code>io.appium.WebDriverAgentRunner.*</code> or <code>*</code>.</p>
+<p>In case of a free account or paid account without <code>*</code> provisioning profile,
+you may need to update the bundle id before building so <code>xcodebuild</code> can produce
+a properly signed WebDriverAgent package. Another option is to re-sign an existing
+package and remap its bundle ids with 3rd party tools such as <a href="https://github.com/KazuCocoa/resigner">resigner</a>.
+The tool can remap the bundle ids to values allowed by the free provisioning profile and
+then sign the package with that profile.</p>
+<p>Please check the tool's readme for details, but in short, you can use the following command to
+re-sign the package with bundle id remapping:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>resigner \
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  --p12-file &quot;&lt;path to p12 file&gt;&quot; \
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  --p12-password &quot;&lt;password of p12&gt;&quot; \
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  --profile &quot;&lt;path to provisioning profiles&gt;&quot; \
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  --force \
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  --bundle-id-remap &quot;com.facebook.WebDriverAgentRunner=&lt;valid bundle id for the profile&gt;&quot; \
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  --bundle-id-remap &quot;com.facebook.WebDriverAgentRunner.xctrunner=&lt;valid bundle id for the profile&gt;&quot; \
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  --bundle-id-remap &quot;com.facebook.WebDriverAgentLib=&lt;valid bundle id for the profile&gt;&quot; \
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  /path/to/WebDriverAgentRunner-Runner.app
+</span></code></pre></div>
 
 
 
@@ -2802,7 +2814,7 @@ by <code>xcodebuild</code>.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 25, 2024 08:35:59 UTC"><span class="timeago" datetime="2024-11-25T08:35:59+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 25, 2024 08:35:59 UTC">2024-11-25</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 4, 2026 16:02:59 UTC"><span class="timeago" datetime="2026-04-04T16:02:59+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 4, 2026 16:02:59 UTC">2026-04-04</span>
   </span>
 
     
