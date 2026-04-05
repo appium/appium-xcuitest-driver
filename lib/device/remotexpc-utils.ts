@@ -3,6 +3,14 @@ import path from 'node:path';
 import {readFileSync} from 'node:fs';
 import type {Services, XCTestRunner} from 'appium-ios-remotexpc';
 
+type RemotexpcEsmModule = typeof import('appium-ios-remotexpc');
+
+/**
+ * Full ESM namespace after a successful `import('appium-ios-remotexpc')` (e.g. **XCTestAttachment**).
+ * Set together with {@link cachedRemoteXPCServices}.
+ */
+let cachedRemotexpcFullModule: RemotexpcEsmModule | null = null;
+
 /**
  * Cached RemoteXPC Services module
  */
@@ -60,6 +68,13 @@ function throwRemoteXPCImportError(err: Error): never {
  */
 export async function getRemoteXPCServices(): Promise<typeof Services> {
   if (cachedRemoteXPCServices) {
+    if (!cachedRemotexpcFullModule) {
+      try {
+        cachedRemotexpcFullModule = (await import('appium-ios-remotexpc')) as RemotexpcEsmModule;
+      } catch (err) {
+        throwRemoteXPCImportError(err as Error);
+      }
+    }
     return cachedRemoteXPCServices;
   }
   if (remoteXpcModuleUnavailable && lastRemoteXpcImportError) {
@@ -67,7 +82,8 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
   }
 
   try {
-    const remotexpcModule = await import('appium-ios-remotexpc');
+    const remotexpcModule = (await import('appium-ios-remotexpc')) as RemotexpcEsmModule;
+    cachedRemotexpcFullModule = remotexpcModule;
     cachedRemoteXPCServices = remotexpcModule.Services;
     return cachedRemoteXPCServices;
   } catch (err) {
@@ -81,6 +97,13 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
  */
 export async function tryGetRemoteXPCServices(): Promise<typeof Services | null> {
   if (cachedRemoteXPCServices) {
+    if (!cachedRemotexpcFullModule) {
+      try {
+        cachedRemotexpcFullModule = (await import('appium-ios-remotexpc')) as RemotexpcEsmModule;
+      } catch {
+        /* ignore: tryGetRemotexpcModule may still return null for XCTestAttachment callers */
+      }
+    }
     return cachedRemoteXPCServices;
   }
   if (remoteXpcModuleUnavailable) {
@@ -88,7 +111,8 @@ export async function tryGetRemoteXPCServices(): Promise<typeof Services | null>
   }
 
   try {
-    const remotexpcModule = await import('appium-ios-remotexpc');
+    const remotexpcModule = (await import('appium-ios-remotexpc')) as RemotexpcEsmModule;
+    cachedRemotexpcFullModule = remotexpcModule;
     cachedRemoteXPCServices = remotexpcModule.Services;
     return cachedRemoteXPCServices;
   } catch (err) {
@@ -96,6 +120,15 @@ export async function tryGetRemoteXPCServices(): Promise<typeof Services | null>
     remoteXpcModuleUnavailable = true;
     return null;
   }
+}
+
+/**
+ * Full **appium-ios-remotexpc** module after a successful optional load (same `import()` as
+ * {@link tryGetRemoteXPCServices}). Returns `null` if the package is missing or failed to load.
+ */
+export async function tryGetRemotexpcModule(): Promise<RemotexpcEsmModule | null> {
+  await tryGetRemoteXPCServices();
+  return cachedRemotexpcFullModule;
 }
 
 /**
@@ -109,8 +142,9 @@ export async function getXCTestRunnerClass(): Promise<typeof XCTestRunner> {
     return cachedXCTestRunnerClass;
   }
 
+  await getRemoteXPCServices();
+  const remotexpcModule = cachedRemotexpcFullModule!;
   try {
-    const remotexpcModule = await import('appium-ios-remotexpc');
     const XCTestRunnerClass = remotexpcModule.XCTestRunner;
     if (typeof XCTestRunnerClass !== 'function') {
       throw new Error(

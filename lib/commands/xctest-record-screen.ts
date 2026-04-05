@@ -96,6 +96,8 @@ export async function mobileStartXctestScreenRecording(
     const canDeleteAfterStop = await XctestAttachmentDeletionClient.isDeletionAvailable(
       this.opts.udid ?? '',
       this.opts.platformVersion ?? '',
+      undefined,
+      this.log,
     );
     if (!canDeleteAfterStop) {
       this.assertFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE);
@@ -203,6 +205,8 @@ export async function mobileStopXctestScreenRecording(
     const canDelete = await XctestAttachmentDeletionClient.isDeletionAvailable(
       this.opts.udid,
       this.opts.platformVersion ?? '',
+      undefined,
+      this.log,
     );
     if (canDelete) {
       const deletionClient = await XctestAttachmentDeletionClient.create(

@@ -5,6 +5,10 @@ import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
+function mockLog() {
+  return {warn: sinon.stub(), debug: sinon.stub(), info: sinon.stub(), error: sinon.stub()} as any;
+}
+
 describe('XctestAttachmentDeletionClient', function () {
   it('isDeletionAvailable is false on iOS 17', async function () {
     expect(await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '17.0')).to.equal(
@@ -21,9 +25,12 @@ describe('XctestAttachmentDeletionClient', function () {
   });
 
   it('isDeletionAvailable is false when module lacks XCTestAttachment', async function () {
-    expect(await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '18.0', {})).to.equal(
-      false,
-    );
+    const log = mockLog();
+    expect(
+      await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '18.0', {}, log),
+    ).to.equal(false);
+    expect(log.warn.callCount).to.equal(1);
+    expect(String(log.warn.firstCall.args[0])).to.match(/appium-ios-remotexpc/i);
   });
 
   it('rejects create on iOS 17', async function () {
