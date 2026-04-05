@@ -142,7 +142,9 @@ export async function mobileGetXctestScreenRecordingInfo(
  * On **real devices**, after a successful pull the driver removes the XCTest attachment via
  * **appium-ios-remotexpc** when the same conditions hold as for starting without
  * `xctest_screen_record` (iOS 18+, package present, **XCTestAttachment** export). Otherwise
- * device-side delete is skipped.
+ * device-side delete is skipped. That deletion runs even if Base64 encoding or remote upload
+ * fails afterward (the original encode/upload error is still thrown); if both fail, delete errors
+ * are logged as warnings so the encode/upload failure remains primary.
  *
  * @since Xcode 15/iOS 17
  * @param remotePath - The path to the remote location, where the resulting video should be
@@ -188,6 +190,8 @@ export async function mobileStopXctestScreenRecording(
     ...screenRecordingInfo,
     payload: '', // Will be set below
   };
+  let encodeOrUploadError: unknown;
+  let attachmentDeleteError: unknown;
   try {
     result.payload = await encodeBase64OrUpload(videoPath, remotePath, {
       user,
@@ -197,28 +201,48 @@ export async function mobileStopXctestScreenRecording(
       formFields,
       method,
     });
+  } catch (err) {
+    encodeOrUploadError = err;
   } finally {
     await fs.rimraf(videoPath);
+    if (this.isRealDevice() && this.opts.udid) {
+      try {
+        const canDelete = await XctestAttachmentDeletionClient.isDeletionAvailable(
+          this.opts.udid,
+          this.opts.platformVersion ?? '',
+          undefined,
+          this.log,
+        );
+        if (canDelete) {
+          const deletionClient = await XctestAttachmentDeletionClient.create(
+            this.opts.udid,
+            this.opts.platformVersion ?? '',
+          );
+          await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
+        } else {
+          this.log.debug(
+            'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
+          );
+        }
+      } catch (deleteErr: any) {
+        if (encodeOrUploadError === undefined) {
+          attachmentDeleteError = deleteErr;
+        } else {
+          this.log.warn(
+            `Could not delete XCTest attachment on device after stop (encode/upload had already failed): ${
+              deleteErr?.message ?? deleteErr
+            }`,
+          );
+        }
+      }
+    }
   }
 
-  if (this.isRealDevice() && this.opts.udid) {
-    const canDelete = await XctestAttachmentDeletionClient.isDeletionAvailable(
-      this.opts.udid,
-      this.opts.platformVersion ?? '',
-      undefined,
-      this.log,
-    );
-    if (canDelete) {
-      const deletionClient = await XctestAttachmentDeletionClient.create(
-        this.opts.udid,
-        this.opts.platformVersion ?? '',
-      );
-      await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
-    } else {
-      this.log.debug(
-        'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
-      );
-    }
+  if (encodeOrUploadError !== undefined) {
+    throw encodeOrUploadError;
+  }
+  if (attachmentDeleteError !== undefined) {
+    throw attachmentDeleteError;
   }
 
   return result;

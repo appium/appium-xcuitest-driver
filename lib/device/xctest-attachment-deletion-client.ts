@@ -1,5 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
-import {tryGetRemotexpcModule} from './remotexpc-utils';
+import {tryGetRemoteXPCModule} from './remotexpc-utils';
 import {isIos18OrNewerPlatform} from '../utils';
 
 const REMOTEXPC_UPGRADE_HINT =
@@ -46,7 +46,7 @@ export class XctestAttachmentDeletionClient implements IXctestAttachmentDeletion
     }
     let mod: RemotexpcAttachmentModule | null | undefined = remotexpcModule;
     if (mod === undefined) {
-      mod = (await tryGetRemotexpcModule()) as RemotexpcAttachmentModule | null;
+      mod = (await tryGetRemoteXPCModule()) as RemotexpcAttachmentModule | null;
       if (!mod) {
         return false;
       }
@@ -83,7 +83,7 @@ export class XctestAttachmentDeletionClient implements IXctestAttachmentDeletion
 
     let mod: RemotexpcAttachmentModule | null | undefined = remotexpcModule;
     if (mod === undefined) {
-      mod = (await tryGetRemotexpcModule()) as RemotexpcAttachmentModule | null;
+      mod = (await tryGetRemoteXPCModule()) as RemotexpcAttachmentModule | null;
       if (!mod) {
         throw new Error(
           'appium-ios-remotexpc must be installed to use XCTest screen recording on a real device. ' +

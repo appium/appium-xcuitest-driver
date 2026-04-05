@@ -2182,7 +2182,12 @@ Since this feature is based on the native implementation provided by Apple
 it provides the best quality for the least performance penalty in comparison
 to alternative implementations.
 
-On **real devices**, if **iOS 18+** and a new enough **appium-ios-remotexpc** (exports **XCTestAttachment**) are present, **start** does not require an insecure feature and **stop** deletes the attachment after a successful pull. If that deletion path is **not** available (older iOS, missing package, or package too old), you must enable the `xctest_screen_record` insecure feature to **start** recording; **stop** then skips device-side delete. Simulators are unchanged.
+Real devices have additional requirements to ensure that the recorded video can be automatically deleted from the device itself:
+
+- iOS 18+
+- appium-ios-remotexpc >= 0.44.0
+
+Devices not meeting these requirements must use the __xctest_screen_record__ security flag in order to guard against internal storage overload. Simulators are not affected.
 
 If the screen recording is already running this API is a noop.
 
@@ -2226,7 +2231,7 @@ a remote location if corresponding options have been provided.
 
 The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY** (host temp copy).
 
-On **real devices**, after a successful pull the driver deletes the attachment via **appium-ios-remotexpc** (`_IDE_deleteAttachmentsWithUUIDs:` on testmanagerd) only when the same deletion support is available as for **start** without `xctest_screen_record`. If the session relied on that insecure feature, device-side delete is skipped. If delete fails when it does run, the command throws (after the response payload is ready).
+On **real devices**, after a successful pull the driver deletes the attachment via **appium-ios-remotexpc** (`_IDE_deleteAttachmentsWithUUIDs:` on testmanagerd) only when the same deletion support is available as for **start** without `xctest_screen_record`. If the session relied on that insecure feature, device-side delete is skipped. Device-side delete is attempted even when Base64 encoding or remote upload fails (so storage is still reclaimed); the encode/upload error is thrown afterward. If delete fails when encoding/upload already failed, the failure is logged as a warning and the encode/upload error remains the one thrown. If encoding/upload succeeded and delete fails, the command throws the delete error.
 
 #### Arguments
 
