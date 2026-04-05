@@ -15,9 +15,9 @@ describe('XctestAttachmentDeletionClient', function () {
   it('isDeletionAvailable is true when XCTestAttachment is injected', async function () {
     const MockAtt = class {};
     const mod = {XCTestAttachment: MockAtt} as any;
-    expect(
-      await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '18.0', mod),
-    ).to.equal(true);
+    expect(await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '18.0', mod)).to.equal(
+      true,
+    );
   });
 
   it('isDeletionAvailable is false when module lacks XCTestAttachment', async function () {
