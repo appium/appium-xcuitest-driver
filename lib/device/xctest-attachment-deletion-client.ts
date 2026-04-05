@@ -1,0 +1,102 @@
+import {isIos18OrNewerPlatform} from '../utils';
+
+type XCTestAttachmentCtor = new (udid: string) => {delete(uuids: string[]): Promise<unknown>};
+
+/** Subset of appium-ios-remotexpc exports used here (types may lag the runtime package). */
+export type RemotexpcAttachmentModule = {
+  XCTestAttachment?: XCTestAttachmentCtor;
+};
+
+export interface IXctestAttachmentDeletionClient {
+  deleteAttachmentsByUuid(uuids: string[]): Promise<void>;
+}
+
+/**
+ * Deletes XCTest screen-recording attachments on a real device via appium-ios-remotexpc
+ * (testmanagerd). Use {@link isDeletionAvailable} to see whether start/stop can perform cleanup
+ * without the `xctest_screen_record` insecure feature; {@link create} throws if deletion is not
+ * supported.
+ */
+export class XctestAttachmentDeletionClient implements IXctestAttachmentDeletionClient {
+  private constructor(
+    private readonly udid: string,
+    private readonly XCTestAttachment: XCTestAttachmentCtor,
+  ) {}
+
+  /**
+   * Whether attachment deletion can run: **iOS 18+**, **appium-ios-remotexpc** loadable, and
+   * **XCTestAttachment** exported (new enough package).
+   *
+   * @param remotexpcModule - optional pre-loaded module (for unit tests)
+   */
+  static async isDeletionAvailable(
+    udid: string,
+    platformVersion: string,
+    remotexpcModule?: RemotexpcAttachmentModule | null,
+  ): Promise<boolean> {
+    if (!udid?.trim() || !isIos18OrNewerPlatform(platformVersion)) {
+      return false;
+    }
+    let mod: RemotexpcAttachmentModule | null | undefined = remotexpcModule;
+    if (mod === undefined) {
+      try {
+        mod = (await import('appium-ios-remotexpc')) as RemotexpcAttachmentModule;
+      } catch {
+        return false;
+      }
+    }
+    return typeof mod?.XCTestAttachment === 'function';
+  }
+
+  /**
+   * @param remotexpcModule - optional pre-loaded module (for unit tests)
+   * @throws {Error} If real-device XCTest attachment deletion is not supported
+   */
+  static async create(
+    udid: string,
+    platformVersion: string,
+    remotexpcModule?: RemotexpcAttachmentModule | null,
+  ): Promise<XctestAttachmentDeletionClient> {
+    if (!udid?.trim()) {
+      throw new Error(
+        'A device UDID is required for XCTest screen recording on a real device so attachments can be removed after stop.',
+      );
+    }
+    if (!isIos18OrNewerPlatform(platformVersion)) {
+      throw new Error(
+        'XCTest screen recording on a real device requires iOS 18 or newer. ' +
+          'The driver removes recordings from the device after stop using appium-ios-remotexpc, which is only supported on iOS 18+.',
+      );
+    }
+
+    let mod: RemotexpcAttachmentModule | null | undefined = remotexpcModule;
+    if (mod === undefined) {
+      try {
+        mod = (await import('appium-ios-remotexpc')) as RemotexpcAttachmentModule;
+      } catch (err: any) {
+        throw new Error(
+          'appium-ios-remotexpc must be installed to use XCTest screen recording on a real device. ' +
+            `It is used to delete screen-recording attachments after stop. Original error: ${err?.message ?? err}`,
+        );
+      }
+    }
+
+    const XCTestAttachment = mod?.XCTestAttachment;
+    if (!mod || typeof XCTestAttachment !== 'function') {
+      throw new Error(
+        'The installed appium-ios-remotexpc package must export XCTestAttachment for real-device XCTest screen recording. ' +
+          'Upgrade appium-ios-remotexpc to a version that supports attachment deletion.',
+      );
+    }
+
+    return new XctestAttachmentDeletionClient(udid, XCTestAttachment as XCTestAttachmentCtor);
+  }
+
+  async deleteAttachmentsByUuid(uuids: string[]): Promise<void> {
+    if (!uuids.length) {
+      return;
+    }
+    const attachment = new this.XCTestAttachment(this.udid);
+    await attachment.delete(uuids);
+  }
+}

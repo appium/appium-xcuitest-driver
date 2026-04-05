@@ -2182,11 +2182,7 @@ Since this feature is based on the native implementation provided by Apple
 it provides the best quality for the least performance penalty in comparison
 to alternative implementations.
 
-Even though the feature is available for real devices
-there is no possibility to delete video files stored on the device yet,
-which may lead to internal storage overload.
-That is why it was put under the `xctest_screen_record` security
-feature flag if executed from a real device test.
+On **real devices**, if **iOS 18+** and a new enough **appium-ios-remotexpc** (exports **XCTestAttachment**) are present, **start** does not require an insecure feature and **stop** deletes the attachment after a successful pull. If that deletion path is **not** available (older iOS, missing package, or package too old), you must enable the `xctest_screen_record` insecure feature to **start** recording; **stop** then skips device-side delete. Simulators are unchanged.
 
 If the screen recording is already running this API is a noop.
 
@@ -2228,10 +2224,9 @@ An error is thrown if no screen recording is running.
 The resulting movie is returned as base-64 string or is uploaded to
 a remote location if corresponding options have been provided.
 
-The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY**.
-In order to clean it up from a real device it is necessary to properly
-shut down XCTest by calling `GET /wda/shutdown` API to the WebDriverAgent server running
-on the device directly or by doing device factory reset.
+The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY** (host temp copy).
+
+On **real devices**, after a successful pull the driver deletes the attachment via **appium-ios-remotexpc** (`_IDE_deleteAttachmentsWithUUIDs:` on testmanagerd) only when the same deletion support is available as for **start** without `xctest_screen_record`. If the session relied on that insecure feature, device-side delete is skipped. If delete fails when it does run, the command throws (after the response payload is ready).
 
 #### Arguments
 
