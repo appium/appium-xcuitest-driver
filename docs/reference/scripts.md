@@ -48,6 +48,7 @@ appium driver run xcuitest build-wda
     appium driver run xcuitest build-wda -- --sdk=17.5 --name="iPhone 15"
     ```
 
+
 ### `cleanup-videos`
 
 Deletes old video recording files created via [`mobile: startXCTestScreenRecording`](./execute-methods.md#mobile-startxctestscreenrecording).
@@ -91,6 +92,7 @@ appium driver run xcuitest cleanup-videos -- --udid=<udid>
     ```
     appium driver run xcuitest cleanup-videos -- --udid=00000000-1111-2222-3333-444444444444 --dry-run
     ```
+
 
 ### `download-wda-sim`
 
