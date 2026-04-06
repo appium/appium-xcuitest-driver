@@ -1,3 +1,9 @@
+## [10.42.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.41.0...v10.42.0) (2026-04-06)
+
+### Features
+
+* Use remotexpc to delete stale native video recordings ([#2795](https://github.com/appium/appium-xcuitest-driver/issues/2795)) ([2efb765](https://github.com/appium/appium-xcuitest-driver/commit/2efb7656cce9fb5e625b2076ca834b021996d87a))
+
 ## [10.41.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.40.2...v10.41.0) (2026-04-02)
 
 ### Features
