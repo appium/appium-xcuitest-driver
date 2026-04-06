@@ -1,3 +1,9 @@
+## [10.43.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.42.0...v10.43.0) (2026-04-06)
+
+### Features
+
+* Add a dedicated script for stale native videos cleanup on real devices ([#2796](https://github.com/appium/appium-xcuitest-driver/issues/2796)) ([2711d09](https://github.com/appium/appium-xcuitest-driver/commit/2711d09171dacb7325e41dc53accdbf51b8438ba))
+
 ## [10.42.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.41.0...v10.42.0) (2026-04-06)
 
 ### Features
