@@ -37,6 +37,7 @@
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
       "image-mounter": "./scripts/image-mounter.mjs",
       "list-real-devices": "./scripts/list-real-devices.mjs",
+      "cleanup-videos": "./scripts/cleanup-videos.mjs",
       "pair-appletv": "./scripts/pair-appletv.mjs"
     },
     "schema": {
