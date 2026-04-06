@@ -61,7 +61,8 @@ if automatic deletion failed for any reason.
 !!! note
 
     This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
-    package to be installed.
+    package to be installed, as well as a running RemoteXPC tunnel (which can be created using the
+    [`tunnel-creation`](#tunnel-creation) script)
 
 #### Usage
 
