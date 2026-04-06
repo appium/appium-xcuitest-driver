@@ -7,9 +7,11 @@ import type {Simulator} from 'appium-ios-simulator';
 import type {RealDevice} from '../device/real-device-management';
 import type {HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
+import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
 
 const MOV_EXT = '.mov';
-const FEATURE_NAME = 'xctest_screen_record';
+/** Insecure feature when real-device XCTest recording is used without RemoteXPC attachment deletion. */
+const XCTEST_SCREEN_RECORD_FEATURE = 'xctest_screen_record';
 const DOMAIN_IDENTIFIER = 'com.apple.testmanagerd';
 const DOMAIN_TYPE = 'appDataContainer';
 const USERNAME = 'mobile';
@@ -71,10 +73,11 @@ async function retrieveXcTestScreenRecording(this: XCUITestDriver, uuid: string)
 /**
  * Start a new screen recording via XCTest.
  *
- * Even though the feature is available for real devices
- * there is no possibility to delete stored video files yet,
- * which may lead to internal storage overload.
- * That is why it was put under a security feature flag.
+ * On **real devices**, if **iOS 18+** and a new enough **appium-ios-remotexpc** (with
+ * **XCTestAttachment**) are present, the attachment is removed after stop and the
+ * `xctest_screen_record` insecure feature is **not** required.
+ * If deletion cannot be performed (older iOS, package missing, or too old), you must enable
+ * the `xctest_screen_record` insecure feature to start recording.
  *
  * If the recording is already running this API is a noop.
  *
@@ -90,10 +93,15 @@ export async function mobileStartXctestScreenRecording(
   codec?: number,
 ): Promise<XcTestScreenRecordingInfo> {
   if (this.isRealDevice()) {
-    // This feature might be used to abuse real devices as there is no
-    // reliable way (yet) to cleanup video recordings stored there
-    // by the testmanagerd daemon
-    this.assertFeatureEnabled(FEATURE_NAME);
+    const canDeleteAfterStop = await XctestAttachmentDeletionClient.isDeletionAvailable(
+      this.opts.udid ?? '',
+      this.opts.platformVersion ?? '',
+      undefined,
+      this.log,
+    );
+    if (!canDeleteAfterStop) {
+      this.assertFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE);
+    }
   }
 
   const opts: {codec?: number; fps?: number} = {};
@@ -130,10 +138,13 @@ export async function mobileGetXctestScreenRecordingInfo(
  * The resulting movie is returned as base-64 string or is uploaded to
  * a remote location if corresponding options have been provided.
  *
- * The resulting movie is automatically deleted FOR SIMULATORS ONLY.
- * In order to clean it up from a real device it is necessary to properly
- * shut down XCTest by calling `GET /wda/shutdown` API to the WebDriverAgent server running
- * on the device directly or by doing factory reset.
+ * The resulting movie is automatically deleted from the host temp file FOR SIMULATORS ONLY.
+ * On **real devices**, after a successful pull the driver removes the XCTest attachment via
+ * **appium-ios-remotexpc** when the same conditions hold as for starting without
+ * `xctest_screen_record` (iOS 18+, package present, **XCTestAttachment** export). Otherwise
+ * device-side delete is skipped. That deletion runs even if Base64 encoding or remote upload
+ * fails afterward (the original encode/upload error is still thrown); if both fail, delete errors
+ * are logged as warnings so the encode/upload failure remains primary.
  *
  * @since Xcode 15/iOS 17
  * @param remotePath - The path to the remote location, where the resulting video should be
@@ -179,6 +190,8 @@ export async function mobileStopXctestScreenRecording(
     ...screenRecordingInfo,
     payload: '', // Will be set below
   };
+  let encodeOrUploadError: unknown;
+  let attachmentDeleteError: unknown;
   try {
     result.payload = await encodeBase64OrUpload(videoPath, remotePath, {
       user,
@@ -188,8 +201,49 @@ export async function mobileStopXctestScreenRecording(
       formFields,
       method,
     });
+  } catch (err) {
+    encodeOrUploadError = err;
   } finally {
     await fs.rimraf(videoPath);
+    if (this.isRealDevice() && this.opts.udid) {
+      try {
+        const canDelete = await XctestAttachmentDeletionClient.isDeletionAvailable(
+          this.opts.udid,
+          this.opts.platformVersion ?? '',
+          undefined,
+          this.log,
+        );
+        if (canDelete) {
+          const deletionClient = await XctestAttachmentDeletionClient.create(
+            this.opts.udid,
+            this.opts.platformVersion ?? '',
+          );
+          await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
+        } else {
+          this.log.debug(
+            'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
+          );
+        }
+      } catch (deleteErr: any) {
+        if (encodeOrUploadError === undefined) {
+          attachmentDeleteError = deleteErr;
+        } else {
+          this.log.warn(
+            `Could not delete XCTest attachment on device after stop (encode/upload had already failed): ${
+              deleteErr?.message ?? deleteErr
+            }`,
+          );
+        }
+      }
+    }
   }
+
+  if (encodeOrUploadError !== undefined) {
+    throw encodeOrUploadError;
+  }
+  if (attachmentDeleteError !== undefined) {
+    throw attachmentDeleteError;
+  }
+
   return result;
 }

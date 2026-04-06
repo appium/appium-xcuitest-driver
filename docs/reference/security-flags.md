@@ -25,4 +25,4 @@ For other insecure feature names recognized by the Appium server, see
 |`get_server_logs`|Allow retrieving Appium server logs using [the `getLogEvents` endpoint](https://appium.io/docs/en/latest/reference/api/appium/#getlogevents)|
 |`perf_record`|Allow recording system performance and other metrics using [`mobile: startPerfRecord`](./execute-methods.md#mobile-startperfrecord). Only required for simulators.|
 |`shutdown_other_sims`|Allow shutdown of any running simulators on the host using the `appium:shutdownOtherSimulators` capability|
-|`xctest_record_screen`|Allow screen recording via XCTest using [`mobile: startXCTestScreenRecording`](./execute-methods.md#mobile-startxctestscreenrecording). Only required for real devices due to the inability to programmatically delete the recorded videos.|
+|`xctest_screen_record`|Allow screen recording via XCTest using [`mobile: startXCTestScreenRecording`](./execute-methods.md#mobile-startxctestscreenrecording). Only required for real devices on iOS 17 or older, or if appium-ios-remotexpc >= 0.44.0 is not installed, due to the inability to programmatically delete recorded videos.|

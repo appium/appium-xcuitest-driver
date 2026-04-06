@@ -2182,11 +2182,12 @@ Since this feature is based on the native implementation provided by Apple
 it provides the best quality for the least performance penalty in comparison
 to alternative implementations.
 
-Even though the feature is available for real devices
-there is no possibility to delete video files stored on the device yet,
-which may lead to internal storage overload.
-That is why it was put under the `xctest_screen_record` security
-feature flag if executed from a real device test.
+Real devices have additional requirements to ensure that the recorded video can be automatically deleted from the device itself:
+
+- iOS 18+
+- appium-ios-remotexpc >= 0.44.0
+
+Devices not meeting these requirements must use the __xctest_screen_record__ security flag in order to guard against internal storage overload. Simulators are not affected.
 
 If the screen recording is already running this API is a noop.
 
@@ -2228,10 +2229,9 @@ An error is thrown if no screen recording is running.
 The resulting movie is returned as base-64 string or is uploaded to
 a remote location if corresponding options have been provided.
 
-The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY**.
-In order to clean it up from a real device it is necessary to properly
-shut down XCTest by calling `GET /wda/shutdown` API to the WebDriverAgent server running
-on the device directly or by doing device factory reset.
+The resulting movie is automatically deleted from the local file system **FOR SIMULATORS ONLY** (host temp copy).
+
+On **real devices**, after a successful pull the driver deletes the attachment via **appium-ios-remotexpc** (`_IDE_deleteAttachmentsWithUUIDs:` on testmanagerd) only when the same deletion support is available as for **start** without `xctest_screen_record`. If the session relied on that insecure feature, device-side delete is skipped. Device-side delete is attempted even when Base64 encoding or remote upload fails (so storage is still reclaimed); the encode/upload error is thrown afterward. If delete fails when encoding/upload already failed, the failure is logged as a warning and the encode/upload error remains the one thrown. If encoding/upload succeeded and delete fails, the command throws the delete error.
 
 #### Arguments
 
