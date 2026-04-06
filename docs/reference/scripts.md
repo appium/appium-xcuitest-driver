@@ -48,6 +48,49 @@ appium driver run xcuitest build-wda
     appium driver run xcuitest build-wda -- --sdk=17.5 --name="iPhone 15"
     ```
 
+### `cleanup-videos`
+
+Deletes old video recording files created via [`mobile: startXCTestScreenRecording`](./execute-methods.md#mobile-startxctestscreenrecording).
+Only supported for real devices running iOS 18+.
+
+While `mobile: stopXCTestScreenRecording` does support automatic deletion of the recorded video
+for iOS 18+, this script is complementary and can be used to delete previously recorded videos, or
+if automatic deletion failed for any reason.
+
+!!! note
+
+    This script requires the [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc)
+    package to be installed.
+
+#### Usage
+
+```
+appium driver run xcuitest cleanup-videos -- --udid=<udid>
+```
+
+|Argument|Description|Type|
+|--|--|--|
+|`--udid`|Identifier of the target device|string|
+
+##### Optional Arguments
+
+|Argument|Description|Type|Default|
+|--|--|--|--|
+|`--dry-run`|List the discovered video recording file UUIDs without deletion|boolean|`false`|
+
+#### Examples
+
+- Delete all XCTest recording files for the device with UDID `00000000-1111-2222-3333-444444444444`:
+
+    ```
+    appium driver run xcuitest cleanup-videos -- --udid=00000000-1111-2222-3333-444444444444
+    ```
+
+- List all XCTest recording file UUIDs for the device with UDID `00000000-1111-2222-3333-444444444444`:
+
+    ```
+    appium driver run xcuitest cleanup-videos -- --udid=00000000-1111-2222-3333-444444444444 --dry-run
+    ```
 
 ### `download-wda-sim`
 
