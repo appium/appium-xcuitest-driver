@@ -2,11 +2,11 @@ import {node} from 'appium/support';
 import path from 'node:path';
 import {readFileSync} from 'node:fs';
 import type {AppiumLogger} from '@appium/types';
-import type {Services, XCTestRunner} from 'appium-ios-remotexpc';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 
 export type RemoteXPCEsmModule = typeof import('appium-ios-remotexpc');
 export type RemoteXPCServices = typeof import('appium-ios-remotexpc').Services;
+export type RemoteXPCTestRunner = RemoteXPCEsmModule['XCTestRunner'];
 
 /**
  * Full ESM namespace after a successful `import('appium-ios-remotexpc')` (e.g. **XCTestAttachment**).
@@ -17,7 +17,7 @@ let cachedRemoteXPCFullModule: RemoteXPCEsmModule | null = null;
 /**
  * Cached RemoteXPC Services module
  */
-let cachedRemoteXPCServices: typeof Services | null = null;
+let cachedRemoteXPCServices: RemoteXPCServices | null = null;
 
 /**
  * Set when **appium-ios-remotexpc** resolution failed in a way that is unlikely to succeed on
@@ -37,7 +37,7 @@ let lastTryGetRemoteXPCImportError: Error | null = null;
 /**
  * Cached XCTestRunner class
  */
-let cachedXCTestRunnerClass: typeof XCTestRunner | null = null;
+let cachedXCTestRunnerClass: RemoteXPCTestRunner | null = null;
 
 /**
  * Module root and version cached at initialization
@@ -89,7 +89,7 @@ function throwRemoteXPCImportError(err: Error): never {
  * @returns The Services export from appium-ios-remotexpc
  * @throws {Error} If the module cannot be imported
  */
-export async function getRemoteXPCServices(): Promise<typeof Services> {
+export async function getRemoteXPCServices(): Promise<RemoteXPCServices> {
   if (cachedRemoteXPCServices) {
     if (!cachedRemoteXPCFullModule) {
       try {
@@ -124,7 +124,7 @@ export async function getRemoteXPCServices(): Promise<typeof Services> {
  * calls return `null` without re-importing. Other import failures are recorded via
  * {@link getLastRemoteXPCOptionalImportError} and **do not** permanently disable retries.
  */
-export async function tryGetRemoteXPCServices(): Promise<typeof Services | null> {
+export async function tryGetRemoteXPCServices(): Promise<RemoteXPCServices | null> {
   if (cachedRemoteXPCServices) {
     if (!cachedRemoteXPCFullModule) {
       try {
@@ -212,7 +212,7 @@ export async function tryGetRemoteXPCUsbMuxStrategy(
  * @returns The XCTestRunner class
  * @throws {Error} If the module cannot be imported
  */
-export async function getXCTestRunnerClass(): Promise<typeof XCTestRunner> {
+export async function getXCTestRunnerClass(): Promise<RemoteXPCTestRunner> {
   if (cachedXCTestRunnerClass) {
     return cachedXCTestRunnerClass;
   }
