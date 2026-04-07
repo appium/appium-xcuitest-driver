@@ -1,7 +1,9 @@
 import {node} from 'appium/support';
 import path from 'node:path';
 import {readFileSync} from 'node:fs';
+import type {AppiumLogger} from '@appium/types';
 import type {Services, XCTestRunner} from 'appium-ios-remotexpc';
+import {isDeviceListedInUsbmux} from './usbmux-utils';
 
 export type RemoteXPCEsmModule = typeof import('appium-ios-remotexpc');
 
@@ -181,6 +183,26 @@ export function getLastRemoteXPCOptionalImportError(): Error | null {
 export async function tryGetRemoteXPCModule(): Promise<RemoteXPCEsmModule | null> {
   await tryGetRemoteXPCServices();
   return cachedRemoteXPCFullModule;
+}
+
+/**
+ * Optional load of **appium-ios-remotexpc** (shared cache) plus the USBMUX vs tunnel branch hint:
+ * whether `udid` appears in the usbmux device list. Used by lockdown and port forwarding so they
+ * do not duplicate `import()` + {@link isDeviceListedInUsbmux}.
+ *
+ * @returns `null` if the module is not available; otherwise the module and whether to use the
+ *   USBMUX-oriented APIs (`createLockdownServiceByUDID`, `connectViaUsbmux`, …).
+ */
+export async function tryGetRemotexpcUsbMuxStrategy(
+  udid: string,
+  log: AppiumLogger,
+): Promise<{remotexpc: RemoteXPCEsmModule; useUsbMuxPath: boolean} | null> {
+  const remotexpc = await tryGetRemoteXPCModule();
+  if (!remotexpc) {
+    return null;
+  }
+  const useUsbMuxPath = await isDeviceListedInUsbmux(remotexpc, udid, log);
+  return {remotexpc, useUsbMuxPath};
 }
 
 /**
