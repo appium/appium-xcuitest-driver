@@ -6,6 +6,7 @@ import type {Services, XCTestRunner} from 'appium-ios-remotexpc';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 
 export type RemoteXPCEsmModule = typeof import('appium-ios-remotexpc');
+export type RemoteXPCServices = typeof import('appium-ios-remotexpc').Services;
 
 /**
  * Full ESM namespace after a successful `import('appium-ios-remotexpc')` (e.g. **XCTestAttachment**).
@@ -193,7 +194,7 @@ export async function tryGetRemoteXPCModule(): Promise<RemoteXPCEsmModule | null
  * @returns `null` if the module is not available; otherwise the module and whether to use the
  *   USBMUX-oriented APIs (`createLockdownServiceByUDID`, `connectViaUsbmux`, …).
  */
-export async function tryGetRemotexpcUsbMuxStrategy(
+export async function tryGetRemoteXPCUsbMuxStrategy(
   udid: string,
   log: AppiumLogger,
 ): Promise<{remotexpc: RemoteXPCEsmModule; useUsbMuxPath: boolean} | null> {

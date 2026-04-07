@@ -5,7 +5,7 @@ import {log} from '../logger';
 import {isIos18OrNewer} from '../utils';
 import type {XCUITestDriverOpts} from '../driver';
 import {tryGetRemoteXPCServices} from './remotexpc-utils';
-import type {Services} from 'appium-ios-remotexpc';
+import type {RemoteXPCServices} from './remotexpc-utils';
 
 export class ConnectedDevicesClient {
   private constructor(private readonly services: RemoteXPCServices | null) {}
@@ -82,5 +82,3 @@ export class ConnectedDevicesClient {
     return await utilities.getConnectedDevices();
   }
 }
-
-type RemoteXPCServices = typeof Services;

@@ -9,7 +9,7 @@ import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
 import {
   getLastRemoteXPCOptionalImportError,
-  tryGetRemotexpcUsbMuxStrategy,
+  tryGetRemoteXPCUsbMuxStrategy,
 } from './remotexpc-utils';
 import {isIos18OrNewerPlatform} from '../utils';
 
@@ -292,7 +292,7 @@ export class DeviceConnectionsFactory {
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
 
-    const resolved = await tryGetRemotexpcUsbMuxStrategy(udid, this.log);
+    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, this.log);
     if (!resolved) {
       this.log.debug(
         `appium-ios-remotexpc is unavailable. Falling back to appium-ios-device port forwarding. ` +

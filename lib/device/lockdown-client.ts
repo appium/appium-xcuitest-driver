@@ -7,7 +7,7 @@ import {log as defaultLogger} from '../logger';
 import {isIos18OrNewer} from '../utils';
 import {
   getLastRemoteXPCOptionalImportError,
-  tryGetRemotexpcUsbMuxStrategy,
+  tryGetRemoteXPCUsbMuxStrategy,
   type RemoteXPCEsmModule,
 } from './remotexpc-utils';
 
@@ -64,7 +64,7 @@ export class LockdownClient {
     if (!isIos18OrNewer(opts)) {
       return new LockdownClient(udid, log, null, 'ios-device', null);
     }
-    const resolved = await tryGetRemotexpcUsbMuxStrategy(udid, log);
+    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, log);
     if (!resolved) {
       const err = getLastRemoteXPCOptionalImportError();
       log.warn(
