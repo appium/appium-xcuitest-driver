@@ -7,7 +7,10 @@ import {checkPortStatus} from 'portscanner';
 import {waitForCondition} from 'asyncbox';
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
-import {isDeviceListedInUsbmux} from './usbmux-utils';
+import {
+  getLastRemoteXPCOptionalImportError,
+  tryGetRemoteXPCUsbMuxStrategy,
+} from './remotexpc-utils';
 import {isIos18OrNewerPlatform} from '../utils';
 
 const LOCALHOST = '127.0.0.1';
@@ -289,21 +292,17 @@ export class DeviceConnectionsFactory {
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
 
-    let remotexpc: RemotexpcModuleLike | null = null;
-    try {
-      remotexpc = (await import('appium-ios-remotexpc')) as RemotexpcModuleLike;
-    } catch (err) {
+    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, this.log);
+    if (!resolved) {
       this.log.debug(
         `appium-ios-remotexpc is unavailable. Falling back to appium-ios-device port forwarding. ` +
-          `Original error: ${(err as Error).message}`,
+          `Original error: ${getLastRemoteXPCOptionalImportError()?.message ?? 'unknown'}`,
       );
-    }
-    if (!remotexpc) {
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
+    const {remotexpc, useUsbMuxPath} = resolved;
 
-    const listedByUsbmux = await isDeviceListedInUsbmux(remotexpc, udid, this.log);
-    if (listedByUsbmux) {
+    if (useUsbMuxPath) {
       this.log.debug(`Using appium-ios-remotexpc usbmux strategy for '${udid}'`);
       return new RemotexpcPortForwarder(
         new remotexpc.DevicePortForwarder(localPort, devicePort, {
@@ -536,9 +535,6 @@ interface RequestConnectionOptions {
   devicePort?: number | null;
   platformVersion?: string | null;
 }
-
-/** Module shape for `await import('appium-ios-remotexpc')` (lazy load; optional at runtime). */
-type RemotexpcModuleLike = typeof import('appium-ios-remotexpc');
 
 interface PortForwarder {
   start(): Promise<void>;

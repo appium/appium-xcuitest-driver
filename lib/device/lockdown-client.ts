@@ -5,7 +5,11 @@ import type {LockdownInfo} from '../commands/types';
 import type {XCUITestDriverOpts} from '../driver';
 import {log as defaultLogger} from '../logger';
 import {isIos18OrNewer} from '../utils';
-import {isDeviceListedInUsbmux} from './usbmux-utils';
+import {
+  getLastRemoteXPCOptionalImportError,
+  tryGetRemoteXPCUsbMuxStrategy,
+  type RemoteXPCEsmModule,
+} from './remotexpc-utils';
 
 /**
  * Shape returned by {@linkcode utilities.getDeviceTime} in appium-ios-device.
@@ -17,9 +21,8 @@ export interface DeviceTimeLockdownFields {
   utcOffset: number;
 }
 
-type RemotexpcModuleLike = typeof import('appium-ios-remotexpc');
 type LockdownServiceInstance = Awaited<
-  ReturnType<RemotexpcModuleLike['createLockdownServiceByTunnel']>
+  ReturnType<RemoteXPCEsmModule['createLockdownServiceByTunnel']>
 >;
 
 /**
@@ -33,7 +36,7 @@ export class LockdownClient {
   private constructor(
     private readonly udid: string,
     private readonly log: AppiumLogger,
-    private readonly remotexpc: RemotexpcModuleLike | null,
+    private readonly remotexpc: RemoteXPCEsmModule | null,
     private readonly strategy: 'ios-device' | 'remotexpc-usbmux' | 'remotexpc-tunnel',
     private readonly remoteXpcConnection: RemoteXpcConnection | null,
   ) {}
@@ -61,20 +64,18 @@ export class LockdownClient {
     if (!isIos18OrNewer(opts)) {
       return new LockdownClient(udid, log, null, 'ios-device', null);
     }
-    let remotexpc: RemotexpcModuleLike;
-    try {
-      remotexpc = (await import('appium-ios-remotexpc')) as RemotexpcModuleLike;
-    } catch (err) {
+    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, log);
+    if (!resolved) {
+      const err = getLastRemoteXPCOptionalImportError();
       log.warn(
-        `appium-ios-remotexpc unavailable for lockdown on '${udid}': ${(err as Error).message}. ` +
+        `appium-ios-remotexpc unavailable for lockdown on '${udid}': ${err?.message ?? 'unknown'}. ` +
           `Using appium-ios-device lockdown (legacy fallback).`,
       );
       return new LockdownClient(udid, log, null, 'ios-device', null);
     }
+    const {remotexpc, useUsbMuxPath} = resolved;
 
-    const listedByUsbmux = await isDeviceListedInUsbmux(remotexpc, udid, log);
-
-    if (listedByUsbmux) {
+    if (useUsbMuxPath) {
       return new LockdownClient(udid, log, remotexpc, 'remotexpc-usbmux', null);
     }
 
