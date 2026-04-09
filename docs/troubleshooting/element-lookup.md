@@ -2,9 +2,12 @@
 title: Element Lookup Issues
 ---
 
-This article helps to resolve possible issues that may arise during element lookup, where the
-desired element is either not found or has unexpected property values. Such issues can manifest
-with several symptoms.
+This article helps to resolve possible _functional_ issues that may arise during element lookup,
+where the desired element is either not found or has unexpected property values. Such issues can
+manifest with several symptoms.
+
+For _non-functional_ issues, such as slow performance during element lookup, please refer to the
+[WebDriverAgent Slowness](./wda-slowness.md) guide.
 
 ## No Element in Page Source
 
@@ -103,80 +106,97 @@ Check the main [Troubleshooting guide](./index.md) and/or
 [Switching Between iOS Apps During a Test](https://appiumpro.com/editions/13-switching-between-ios-apps-during-a-test)
 article for more details on how to make such elements available.
 
-## Symptom #2
 
-The desired element is shown in the page tree, but cannot be found if looked up from an automated test.
+## Test Cannot Find a Known Element
 
-## Resolutions To Symptom #2
+The desired element is shown in the page tree, but cannot be found using an automated test.
 
-### Make sure there is no race condition
+### Check for race conditions
 
-Sometimes the automation might too fast or too slow depending on in which state the UI is while the lookup is being
-executed. If it is too fast then consider using lookup timers, e.g. repeat the `findElement` more than once until
-either the element is found or the timeout occurs. All clients have convenience wrappers for such timers in form of
-expected conditions.
-If the automation is too slow, e.g. the desired element disappears faster than `findElement` could detect its presence
-then make sure your script is optimized for the maximum performance, e.g. optimal/fast element locators are used,
-the application itself and driver settings are [adjusted](./wda-slowness.md) to perform optimally, etc.
-There might be situations where the automation framework is already optimized, although the desired element is
-a short-living one, for example some notification popup that only appears for a second and then is immediately hidden.
-For such "special" elements consider using approaches different from `findElement`, for example post-test video recording analysis (video FPS should usually be enough to catch all short-living elements), or introducing special
-application debug settings to change the behavior for such elements and make them stay visible for longer time, or
-using non-UI-related assertions, like logs analysis or direct API calls.
+Sometimes automation might run too quickly or too slowly depending on the application's UI state.
+This means lookup may fail before the element has appeared, or after it has already disappeared.
 
-### Make sure the debug environment matches to the testing one
+- If lookup is too fast: consider using timers, e.g. repeat the `findElement` action multiple times
+  until either the element is found or the timeout occurs. All clients have convenience wrappers
+  for such timers in form of expected conditions.
+- If lookup is too slow: try to optimize your script for the maximum performance, e.g. use
+  optimal/fast element locators, adjust the application and driver settings to perform optimally,
+  etc.
 
-There are known cases where application interface/behavior might differ in simulators and real devices. It might even differ
-if the screen size or device model/OS version/system setting differs. That is why always make sure your debug
-environment, for example one where Appium Inspector is used,
-is as close as possible to the environment where automated tests are being executed.
+You may also encounter situations where the automation framework is already optimized, but the
+target element disappears quickly by design, for example, a notification popup that only appears
+for a second and then is immediately hidden. For such "special" elements, consider using approaches
+different from `findElement`:
+
+- Post-test video recording analysis (video FPS should usually be enough to catch all short-living
+  elements)
+- Work with application developers to introduce a debug setting to change the behavior for such
+  elements and make them stay visible for longer time
+- Use non-UI-related assertions, like log analysis or direct API calls
+
+### Check for environment mismatches
+
+There are known cases where the application interface/behavior might differ in simulators and real
+devices. It might even differ if the screen size or device model/OS version/system setting differs.
+That is why always make sure that your test development environment, such as one where Appium
+Inspector is used, is as close as possible to the environment where automated tests are run.
 
 
-## Symptom #3
+## Incorrect Element Property Value
 
-The desired element is shown in the page tree, but its property value is not as expected, for example, it
-is shown as visible while one does not see it in the application interface or vice versa.
+The desired element is shown in the page tree, but the value of a certain element property is not
+as expected. For example, the element's `visible` property may be set to `true`, even though the
+element is not actually shown in the application interface, or vice versa.
 
-## Resolutions To Symptom #3
+### The driver has minimum influence to attribute values
 
-### XCUITest driver has minimum influence to attribute values
+This is a simple and at the same time complicated topic.
 
-This is a simple and at the same time complicated topic. Since XCUITest driver is based on Apple's XCTest,
-all attribute values are retrieved from the latter. Standard attributes provided by XCTest could be found in
-[XCUIElementAttributes](https://developer.apple.com/documentation/xctest/xcuielementattributes?language=objc)
-protocol reference. The full list of attributes supported by XCUITest driver's WebElement
-could be found in the [Element Attributes](../reference/element-attributes.md) document.
-Most of the above attributes are simple compilations of standard attributes, for example, `elementType` is
-translated to `type` by matching the corresponding
-[enum](https://developer.apple.com/documentation/xctest/xcuielementtype?language=objc) value to a string representation, `name` is compiled from original element's identifier and label depending on what is
-present first. The full list of mapping rules between standard and XCUITest attribute values could be found in
-[WebDriverAgent sources](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m).
-Although, some attributes there, like `visible` or `accessible` have no direct mapping in XCTest
-and are retrieved directly from the accessibility framework ~~using dark magic~~.
-This means the actual value of these attributes only depends on accessibility internals and is there
-mostly due to ~~legacy~~ convenience purposes, as the original XCTest does not even expose them.
-We'd love to deprecate and remove this legacy burden and only rely on officially supported attributes,
-although historically many people rely on them, so we keep it, even though their values might
-be not reliable and there is no good way to debug this behavior or somehow influence it.
-The final recommendation there would be:
-- If the value of an attribute that directly or indirectly relies on a public XCUIElement attribute
-  is different from what you expect then run a vanilla XCTest with the same app and make sure
-  it's not the same as you see in the XCUITest driver. If it is then the only place to complain
-  would be the Apple support forum or a XCTest bug tracker. If you can confirm the issue lies in
-  WebDriverAgent's mapping logic then feel free to raise an
-  [issue](https://github.com/appium/WebDriverAgent/issues) to its maintainers.
-- If the value of an attribute that is a "custom" XCUITest attribute, like `visible` or `accessible`,
-  is different from what you expect then we, most likely, won't be able to help you. You may try
-  to improve the corresponding WebDriverAgent sources, but keep in mind there are many automation
-  tests around that rely on the current way these attributes are calculated, and we probably don't
-  want to break them.
+Since the XCUITest driver is based on Apple's XCTest, where possible, attribute values are
+retrieved from the latter. The standard attributes provided by XCTest can be found in [XCUIElementAttributes](https://developer.apple.com/documentation/xctest/xcuielementattributes?language=objc)
+protocol reference, while the full list of attributes supported by XCUITest driver's WebElement can
+be found in the [Element Attributes](../reference/element-attributes.md) document.
 
-## Symptom #4
+Most of the supported driver attributes are simple compilations of standard XCTest attributes. For
+example, `elementType` is translated to `type` by matching the corresponding [enum](https://developer.apple.com/documentation/xctest/xcuielementtype?language=objc)
+value to a string representation, while `name` is compiled from the original element's identifier
+and label, depending on what is present first. The full list of mapping rules between standard and
+XCUITest attribute values can be found in [WebDriverAgent sources](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIElement%2BFBWebDriverAttributes.m).
 
-The desired element is shown in the page tree, but the content of its `value` property is cut off. For example, the actual size of the element's `value` attribute is above 512 bytes, while the size in the XML page source is always limited to 512 bytes.
+Still, some supported driver attributes, like `visible` or `accessible`, have no direct mapping in
+XCTest and are retrieved directly from the accessibility framework ~~using dark magic~~.
+This means that the actual value of these attributes depends on accessibility internals, and is
+available mostly due to ~~legacy~~ convenience purposes, since XCTest does not even expose them.
+We'd love to deprecate and remove this legacy burden and only rely on officially supported
+attributes, but historically many people rely on these attributes, even though their values might
+be not reliable, and there is no good way to debug this behavior or somehow influence it.
 
-## Resolutions To Symptom #4
+The final recommendation here would be:
 
-Retrieve the element's `value` using the corresponding API ([Get Element Attribute](https://www.w3.org/TR/webdriver1/#get-element-attribute) / [Get Element Text](https://www.w3.org/TR/webdriver1/#dfn-get-element-text)) to get the full/uncut content. Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and [this PR](https://github.com/appium/WebDriverAgent/pull/1007) for more details.
+- If the problematic attribute is based on a public XCUIElement attribute, try to run a vanilla
+  XCTest test with the same app, and compare the attribute value to the one you see in the XCUITest
+  driver. If XCTest returns a correct value, then feel free to raise an [issue](https://github.com/appium/WebDriverAgent/issues)
+  to the Appium team. However, if the XCTest value is still incorrect, then the only place to
+  complain would be the Apple support forum or an XCTest bug tracker.
+- If the problematic attribute is a "custom" driver attribute, like `visible` or `accessible`,
+  then we, most likely, won't be able to help you. You may try to contribute to the corresponding
+  WebDriverAgent sources, but keep in mind that many automation tests rely on the current way
+  these attributes are calculated, and we probably don't want to break them.
 
-XCTest framework cuts off long element values in snapshots to achieve the best performance and to reduce the memory footprint. If an element was inspected via [debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription) in XCTest for UI (not Appium XCUITest driver), it prints the value partially while the [value](https://developer.apple.com/documentation/xctest/xcuielementattributes/value) attribute like `element.value` prints the entire value.
+
+## Long Element Property Value is Truncated
+
+The desired element is shown in the page tree, but the value of a certain long element property is
+truncated and not fully shown.
+
+### Use value retrieval methods
+
+The XCTest framework limits element property values to 512 bytes in snapshots for performance reasons.
+Such behavior can primarily be observed when retrieving the full page source using the driver, or via
+[debugDescription](https://developer.apple.com/documentation/xctest/xcuielement/1500909-debugdescription)
+in XCTest directly.
+
+The solution here is to retrieve the property value using the corresponding API (such as
+[Get Element Attribute](https://www.w3.org/TR/webdriver1/#get-element-attribute) / [Get Element Text](https://www.w3.org/TR/webdriver1/#dfn-get-element-text)).
+Please see [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2552) and
+[this PR](https://github.com/appium/WebDriverAgent/pull/1007) for more details.
