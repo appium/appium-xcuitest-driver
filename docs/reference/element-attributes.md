@@ -155,10 +155,3 @@ This attribute is not included in the default page source due to performance rea
 can be added by changing the [`includeCustomActionsInPageSource`](./settings.md) setting to `true`, or
 retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
 API.
-
-## bundleId
-
-> Example: `com.apple.springboard`
-
-Returns the bundle ID of the currently active application. Only available for the root
-`XCUIElementTypeApplication` element.
