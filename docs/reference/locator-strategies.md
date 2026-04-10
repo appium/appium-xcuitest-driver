@@ -13,7 +13,7 @@ article.
 |---|---|---|
 |`className`|⭐⭐⭐⭐⭐|`XCUIElementTypeButton`|
 
-Performs search using the element's `type` [attribute](element-attributes.md). The full list of
+This strategy is mapped to the element's `type` [attribute](element-attributes.md). The full list of
 supported XCUIElement type names can be found in the [XCTest documentation on `XCUIElementType`](https://developer.apple.com/documentation/xcuiautomation/xcuielement/elementtype).
 
 !!! info "When to Use"
@@ -30,13 +30,14 @@ supported XCUIElement type names can be found in the [XCTest documentation on `X
 |---|---|---|
 |`name`|⭐⭐⭐⭐⭐|`my name`|
 
-Performs search using the element's `name` [attribute](element-attributes.md).
+This strategy is mapped to the element's `name` [attribute](element-attributes.md).
 
 !!! info "When to Use"
 
-    Use this strategy for elements whose `name` attribute value is not directly visible in the
-    application GUI, as otherwise this value is likely to be linked to the application language,
-    and will change accordingly.
+    Use this strategy for elements that can be identified using their `name` attribute value.
+    
+    Note that the value of this attribute is commonly rendered in the application GUI, which means
+    it is likely to change depending on the application language.
 
 ## Id
 
@@ -66,8 +67,8 @@ can be used in these expressions.
 
 !!! info "When to Use"
 
-    Use this strategy for elements that can be uniquely identified only using one or more of their
-    own attributes - that is, without utilizing their parent, child or sibling elements.
+    Use this strategy for elements that can be identified only using one or more of their own
+    attributes - that is, without utilizing their parent, descendant, or sibling elements.
 
 ## Class Chain
 
@@ -82,9 +83,9 @@ for more details on how to build such locators.
 
 !!! info "When to Use"
 
-    Use this strategy for elements that _cannot_ be uniquely identified only using their own
-    attributes, but _can_ be identified upon additionally using their index, their parent
-    element(s), and/or their descendant element attribute(s).
+    Use this strategy for elements that _cannot_ be identified only using their own attributes,
+    but _can_ be identified upon additionally using their index, their parent element(s), and/or
+    their descendant element attribute(s).
 
 ## XPath
 
