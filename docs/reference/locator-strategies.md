@@ -84,8 +84,8 @@ for more details on how to build such locators.
 !!! info "When to Use"
 
     Use this strategy for elements that _cannot_ be identified only using their own attributes,
-    but _can_ be identified upon additionally using their index, their parent element(s), and/or
-    their descendant element attribute(s).
+    but _can_ be identified upon additionally using their parent element(s) and/or their
+    descendant element attribute(s).
 
 ## XPath
 
