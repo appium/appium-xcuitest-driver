@@ -1,3 +1,13 @@
+## [10.43.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.43.0...v10.43.1) (2026-04-10)
+
+### Miscellaneous Chores
+
+* **deps-dev:** bump typescript from 5.9.3 to 6.0.2 ([#2772](https://github.com/appium/appium-xcuitest-driver/issues/2772)) ([8fd6509](https://github.com/appium/appium-xcuitest-driver/commit/8fd6509b097373393b5b1c14d49fe9dda8e1ffd1))
+
+### Code Refactoring
+
+* Reduce unnecessary duplication in remotexpc utils ([#2798](https://github.com/appium/appium-xcuitest-driver/issues/2798)) ([3514d30](https://github.com/appium/appium-xcuitest-driver/commit/3514d305f57c78c997de0e115444f1dca5d477fa))
+
 ## [10.43.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.42.0...v10.43.0) (2026-04-06)
 
 ### Features
