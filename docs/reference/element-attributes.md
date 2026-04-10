@@ -147,7 +147,7 @@ constants.
 > Example: `Action 1,Action 2`
 
 Returns a comma-separated string of custom accessibility actions attached to the element. Based on
-the element's[`accessibilityAction`](https://developer.apple.com/documentation/swiftui/view/accessibilityaction(_:_:))
+the element's [`accessibilityAction`](https://developer.apple.com/documentation/swiftui/view/accessibilityaction(_:_:))
 and [`UIAccessibilityCustomAction`](https://developer.apple.com/documentation/uikit/uiaccessibilitycustomaction)
 values.
 
