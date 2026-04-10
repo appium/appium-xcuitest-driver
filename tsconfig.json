@@ -6,6 +6,12 @@
     "types": ["node", "mocha"],
     "checkJs": true
   },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "rootDir": "."
+    }
+  },
   "include": [
     "lib",
     "test",
