@@ -61,7 +61,7 @@ deeply nested views may therefore result in tree structures of large depth. For 
 the XCUITest driver sets the maximum nesting level to `50`, which means that elements of depth `51`
 or greater will not be visible at all.
 
-The driver allows to increase this limit using the [`snapshotMaxDepth`](../reference/settings.md)
+The driver allows to increase this limit using the [`snapshotMaxDepth`](../reference/settings.md#snapshotmaxdepth)
 setting, but only to a maximum value of `62`. This is due to an Apple limitation, where XCTest
 cannot return any elements located at depth `63` or greater. This limitation is linked to the
 operation of `NSDictionary` and cannot be worked around.
@@ -98,9 +98,9 @@ the active app:
 
 - The [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp) execute method
   allows to explicitly change the currently active application
-- The [`defaultActiveApplication`](../reference/settings.md) setting allows to set the preferred
-  active application. This means that if WebDriverAgent detects multiple applications, it will
-  attempt to automatically set the preferred application as active.
+- The [`defaultActiveApplication`](../reference/settings.md#defaultactiveapplication) setting allows
+  to set the preferred active application. This means that if WebDriverAgent detects multiple
+  applications, it will attempt to automatically set the preferred application as active.
 
 Check the main [Troubleshooting guide](./index.md) and/or
 [Switching Between iOS Apps During a Test](https://appiumpro.com/editions/13-switching-between-ios-apps-during-a-test)
