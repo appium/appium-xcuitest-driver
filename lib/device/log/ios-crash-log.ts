@@ -142,7 +142,9 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
 
   /**
    * Lazily creates a {@link CrashReportsClient} and lists `.ips` basenames on the device.
-   * @returns Empty array if RemoteXPC setup fails (logged); never throws to callers.
+   *
+   * @returns Empty array if RemoteXPC setup or listing fails (logged). The client is reset after
+   *   listing errors so a later poll can recreate it. Never throws to callers.
    */
   private async _gatherFromRealDevice(): Promise<string[]> {
     if (!this._realDeviceClient) {
@@ -160,7 +162,24 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       }
     }
 
-    return await this._realDeviceClient.listCrashes();
+    try {
+      return await this._realDeviceClient.listCrashes();
+    } catch (err) {
+      this.log.error(
+        `Failed to list crash reports on device: ${(err as Error).message}. ` +
+          `Skipping this poll; the next poll will attempt to reconnect.`,
+      );
+      const client = this._realDeviceClient;
+      this._realDeviceClient = null;
+      if (client) {
+        try {
+          await client.close();
+        } catch {
+          // ignore secondary teardown errors
+        }
+      }
+      return [];
+    }
   }
 
   /** Glob diagnostic reports and keep files whose content references the simulator UDID. */

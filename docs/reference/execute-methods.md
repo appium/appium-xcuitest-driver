@@ -401,9 +401,11 @@ The resulting file in .trace format can be either returned directly as base64-en
 
 ### mobile: installCertificate
 
-Installs a custom certificate onto the device. Since Xcode SDK 11.4 Apple has added a dedicated simctl subcommand to quickly handle certificates on Simulator over CLI.
-On real devices running **iOS/tvOS 18+**, profile-based installation may use [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) when that package is installed.
-On simulators before Xcode 11.4 SDK Apple provides no official way to do it via the command line. In such case (and also as a fallback if CLI setup fails) this method tries to wrap the certificate into .mobileconfig format and then deploys the wrapped file to the internal HTTP server, so one can open it via mobile Safari. Then the algorithm goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
+Installs a custom certificate onto the device.
+
+On **real devices** running iOS/tvOS 18+, [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required: profile installation goes through RemoteXPC only, and the driver throws if the package cannot be loaded or RemoteXPC setup fails.
+
+On **Simulator** only: if the Xcode/SDK version predates 11.4, Apple provides no official CLI path. In that situation (and as a Simulator fallback when simctl-based installation fails) this method wraps the certificate into a .mobileconfig, serves it from the internal HTTP server for mobile Safari to open, and drives the profile installation UI with WebDriverAgent.
 
 #### Arguments
 
@@ -419,7 +421,7 @@ The content of the generated .mobileconfig file as base64-encoded string. This c
 
 ### mobile: removeCertificate
 
-Removes an installed certificate profile on real devices running **iOS/tvOS 18+** with [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) installed (since driver v11).
+Removes an installed certificate profile on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required** (since driver v11).
 
 #### Arguments
 
@@ -433,7 +435,7 @@ Returns the string `Acknowledged` when the profile is removed successfully.
 
 ### mobile: listCertificates
 
-Lists installed certificate profiles on real devices running **iOS/tvOS 18+** with [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) installed (since driver v11).
+Lists installed certificate profiles on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required** (since driver v11).
 
 #### Returned Result
 
