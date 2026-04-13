@@ -43,11 +43,6 @@ export interface IConditionInducer {
   isActive(): boolean;
 }
 
-export interface AsyncPromise {
-  resolve: (value: any) => void;
-  reject: (reason: any) => void;
-}
-
 export interface LifecycleData {
   createSim?: boolean;
 }

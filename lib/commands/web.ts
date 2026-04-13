@@ -349,11 +349,7 @@ export async function executeAtomAsync(
   atom: string,
   args: any[],
 ): Promise<any> {
-  // save the resolve and reject methods of the promise to be waited for
-  const promise = new B((resolve, reject) => {
-    this.asyncPromise = {resolve, reject};
-  });
-  await this.remote.executeAtomAsync(atom, args, this.curWebFrames);
+  const promise = this.remote.executeAtomAsync(atom, args, this.curWebFrames);
   return await this.waitForAtom(promise);
 }
 

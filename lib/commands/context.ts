@@ -8,7 +8,7 @@ import {util, timing} from 'appium/support';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
 import _ from 'lodash';
 import {NATIVE_WIN} from '../utils';
-import {makeContextUpdatedEvent, makeObsoleteContextUpdatedEvent} from './bidi/models';
+import {makeContextUpdatedEvent} from './bidi/models';
 import {BIDI_EVENT_NAME} from './bidi/constants';
 import {assignBiDiLogListener} from './log';
 import type {XCUITestDriver} from '../driver';
@@ -40,13 +40,6 @@ export async function getContextsAndViews(
     this.contexts.push(view.id.toString());
   }
   return ctxs;
-}
-
-/**
- * @deprecated This method is not used anywhere and will be removed in the future
- */
-export function useNewSafari(this: XCUITestDriver): boolean {
-  return this.isSimulator() && this.isSafari();
 }
 
 /**
@@ -741,5 +734,4 @@ function isUrlIgnored(url: string, safariIgnoreWebHostnames?: string): boolean {
 export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<void> {
   const name = await this.getCurrentContext();
   this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
-  this.eventEmitter.emit(BIDI_EVENT_NAME, makeObsoleteContextUpdatedEvent(name));
 }

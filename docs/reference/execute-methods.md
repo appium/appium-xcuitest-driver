@@ -167,7 +167,6 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 app | string | yes | See the description of the `appium:app` capability | /path/to/my.app
 timeoutMs | number | no | The maximum time to wait until app install is finished in milliseconds on real devices. If not provided then the value of `appium:appPushTimeout` capability is used. If the capability is not provided then equals to 240000ms | 500000
-**Deprecated** **Not Used since v7.15.0** strategy | string | no | One of possible app installation strategies on real devices. This argument is ignored on simulators. If not provided then the value of `appium:appInstallStrategy` is used. If the latter is also not provided then `serial` is used. See the description of `appium:appInstallStrategy` capability for more details on available values. | parallel
 checkVersion | bool | no | If set to `true`, it will make xcuitest driver to verify whether the app version currently installed on the device under test is older than the one, which is provided as `app` value. No app install is going to happen if the candidate app has the same or older version number than the already installed copy of it. The version number used for comparison must be provided as [CFBundleVersion](https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleversion) [Semantic Versioning](https://semver.org/)-compatible value in the application's `Info.plist`. No validation is performed and the `app` is installed if `checkVersion` was not provided or `false`, which is default behavior. | true
 
 ### mobile: isAppInstalled
@@ -286,9 +285,6 @@ Either `true` if the app was successfully terminated, otherwise `false`
 Kill the given app on the real device under test by instruments service.
 If the app is not running or failed to kill, then nothing is done.
 
-XCUITest driver 4.4 and higher does not require [py-ios-device](https://github.com/YueChen-C/py-ios-device).
-XCUITest driver 4.3 requires [py-ios-device](https://github.com/YueChen-C/py-ios-device).
-
 #### Arguments
 
 Name | Type | Required | Description | Example
@@ -406,7 +402,7 @@ The resulting file in .trace format can be either returned directly as base64-en
 ### mobile: installCertificate
 
 Installs a custom certificate onto the device. Since Xcode SDK 11.4 Apple has added a dedicated simctl subcommand to quickly handle certificates on Simulator over CLI.
-On real devices the certificate could be installed via CLI if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine.
+On real devices running **iOS/tvOS 18+**, profile-based installation may use [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) when that package is installed (driver v11 removed the previous `py-ios-device` CLI path).
 On simulators before Xcode 11.4 SDK Apple provides no official way to do it via the command line. In such case (and also as a fallback if CLI setup fails) this method tries to wrap the certificate into .mobileconfig format and then deploys the wrapped file to the internal HTTP server, so one can open it via mobile Safari. Then the algorithm goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
 
 #### Arguments
@@ -423,7 +419,7 @@ The content of the generated .mobileconfig file as base64-encoded string. This c
 
 ### mobile: removeCertificate
 
-Removes installed certificate for real devices only if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine since driver version 4.19.2.
+Removes an installed certificate profile on real devices running **iOS/tvOS 18+** with [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) installed (since driver v11).
 
 #### Arguments
 
@@ -433,11 +429,11 @@ name | string | yes | Name of the profile  | com.orgname.profile.mdmprofile
 
 #### Returned Result
 
-Returns status acknowledgment `{'Status': 'Acknowledged'}` if successfully removed certificate or `None` if unable to remove certificate.
+Returns the string `Acknowledged` when the profile is removed successfully.
 
 ### mobile: listCertificates
 
-Lists installed certificates for real devices only if [py-ios-device](https://github.com/YueChen-C/py-ios-device) tool is available on the server machine since driver version 4.10.0.
+Lists installed certificate profiles on real devices running **iOS/tvOS 18+** with [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) installed (since driver v11).
 
 #### Returned Result
 
@@ -984,43 +980,11 @@ If a monitor is already running, the call does nothing so the existing stream co
 
 Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tears down the underlying Remote XPC / DVT connection.
 
-### mobile: startPcap
-
-!!! warning "Deprecated"
-
-    Scheduled for removal. Use `mobile: startNetworkMonitor` and BiDi `appium:xcuitest.networkMonitor` on iOS/tvOS 18+ instead.
-
-Start mobile device network traffic capture. This extension only works if [py-ios-device](https://github.com/YueChen-C/py-ios-device) utility is installed on the server machine and only supports
-real iOS devices.
-
-#### Arguments
-
-Name | Type | Required | Description | Example
---- | --- | --- | --- | ---
-timeLimitSec | string or int | no | The maximum recording time, in seconds. The default value is `180`, the maximum value is `43200` (12 hours). | 60
-forceRestart | boolean | no | Whether to restart traffic capture process forcefully when startPcap is called (`true`) or ignore the call until the current traffic capture is completed (`false`, the default value). | true
-
-### mobile: stopPcap
-
-!!! warning "Deprecated"
-
-    Scheduled for removal. Use `mobile: stopNetworkMonitor` instead when using the DVT network monitor flow.
-
-Stops network traffic capture. If no traffic capture process is running then the endpoint will try to get the recently recorded file. If no previously recorded file is found and no active traffic capture processes are running then the method returns an empty string.
-
-#### Returned Result
-
-Base64-encoded content of the traffic capture file (.pcap) or an empty string if no traffic capture has been started before. Network capture files could be opened in [Wireshark](https://www.wireshark.org/) application.
-
 ### mobile: runXCTest
 
 Runs a native XCTest suite on the device under test.
 
-On **iOS/tvOS 18+ real devices**, `ui` and `app` test types are executed via **RemoteXPC** (see optional dependency `appium-ios-remotexpc`). If RemoteXPC fails, execution falls back to the legacy path below (timeout errors are not retried via IDB).
-
-**Logic tests** (`testType`: `logic`) always use the legacy path, because RemoteXPC does not support them.
-
-The **legacy path** uses Facebook's [IDB](https://github.com/facebook/idb): it launches IDB's XCTest subprocess and parses stdout. That path requires IDB to be installed and the session to be started with `appium:launchWithIDB` set to `true`.
+Supported only on **real devices** running **iOS/tvOS 18+** with the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package. `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported** (they previously depended on Facebook IDB, removed in driver v11). Simulator XCTest via IDB was also removed in v11.
 
 #### Arguments
 
@@ -1038,7 +1002,7 @@ timeout | string or int | no | Timeout if session doesn't complete after given t
 
 The API calls returns a map with the following entries:
 
-- results: The array of test results (may be empty if no structured results were produced on the legacy path). Each item in this array consists of the following entries:
+- results: The array of test results. Each item in this array consists of the following entries:
    * testName: Name of the test (e.g.: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample')
    * passed: Did the tests pass?
    * crashed: Did the tests crash?
@@ -1053,7 +1017,7 @@ The API calls returns a map with the following entries:
 
 Installs an XCTest bundle (`.app` or `.ipa`) on the device under test.
 
-On **iOS/tvOS 18+ real devices**, installation is attempted via **RemoteXPC** first. If that fails or the artifact cannot be handled that way (for example a bare `.xctest` bundle), the driver falls back to Facebook's [IDB](https://github.com/facebook/idb). The legacy path requires IDB and `appium:launchWithIDB` set to `true`.
+Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Installation uses **RemoteXPC**. Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead. Facebook IDB fallback was removed in driver v11.
 
 #### Arguments
 
@@ -1065,29 +1029,11 @@ xctestBundle | string | yes | Path to your xctest .app bundle. Could be an URL |
 
 Lists XCTest-related bundles installed on the device.
 
-On **iOS/tvOS 18+ real devices**, listing uses **RemoteXPC** first, with fallback to Facebook's [IDB](https://github.com/facebook/idb) if RemoteXPC fails. The legacy path requires IDB and `appium:launchWithIDB` set to `true`.
+Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Listing uses **RemoteXPC** only (IDB fallback removed in driver v11).
 
 #### Returned Result
 
 Array of XCTest bundles (e.g.: ["XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance"])
-
-### mobile: listXCTestsInTestBundle
-
-!!! warning "Deprecated"
-
-    Scheduled for removal together with the Facebook [IDB](https://github.com/facebook/idb) client.
-
-List XCTests in a test bundle. Facebook's [IDB](https://github.com/facebook/idb) tool is required for this API to work.
-
-#### Arguments
-
-Name | Type | Required | Description | Example
---- | --- | --- | --- | ---
-bundle | string | yes | Bundle ID of the XCTest | 'com.bundle.myapp'
-
-#### Returned Result
-
-Array of xctests in the test bundle (e.g.: `[ 'XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance' ]`)
 
 ### mobile: viewportRect
 

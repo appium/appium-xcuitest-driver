@@ -1,4 +1,3 @@
-import IDB from 'appium-idb';
 import {getSimulator} from 'appium-ios-simulator';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import {BaseDriver, DeviceSettings, errors} from 'appium/driver';
@@ -60,7 +59,6 @@ import * as navigationCommands from './commands/navigation';
 import * as notificationsCommands from './commands/notifications';
 import * as pasteboardCommands from './commands/pasteboard';
 import * as networkMonitorCommands from './commands/network-monitor';
-import * as pcapCommands from './commands/pcap';
 import * as performanceCommands from './commands/performance';
 import * as permissionsCommands from './commands/permissions';
 import * as proxyHelperCommands from './commands/proxy-helper';
@@ -114,12 +112,11 @@ import {
 } from './utils';
 import {AppInfosCache} from './app-infos-cache';
 import {notifyBiDiContextChange} from './commands/context';
-import type {AsyncPromise, CalibrationData, IConditionInducer, LifecycleData} from './types';
+import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
 import type {PerfRecorder} from './commands/performance';
 import type {AudioRecorder} from './commands/record-audio';
 import type {NetworkMonitorSession} from './device/network-monitor-session';
-import type {TrafficCapture} from './commands/pcap';
 import type {ScreenRecorder} from './commands/recordscreen';
 import type {IOSDeviceLog} from './device/log/ios-device-log';
 import type {IOSSimulatorLog} from './device/log/ios-simulator-log';
@@ -208,7 +205,6 @@ const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
   ['POST', /execute/],
   ['POST', /keys/],
   ['POST', /log/],
-  ['POST', /receive_async_response/], // always, in case context switches while waiting
   ['POST', /session\/[^\/]+\/location/], // geo location, but not element location
   ['POST', /shake/],
   ['POST', /timeouts/],
@@ -256,7 +252,6 @@ export class XCUITestDriver
   curWebFrames: string[];
 
   webviewCalibrationResult: CalibrationData | null;
-  asyncPromise: AsyncPromise | undefined;
   asyncWaitMs: number | undefined;
   _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null;
   _perfRecorders: PerfRecorder[];
@@ -270,12 +265,6 @@ export class XCUITestDriver
 
   _audioRecorder: AudioRecorder | null;
   xcodeVersion: XcodeVersion | undefined;
-  /**
-   * @deprecated Tied to deprecated `mobileStartPcap` / `mobileStopPcap` (py-ios-device `.pcap`). Use
-   * {@link XCUITestDriver._networkMonitorSession | `_networkMonitorSession`} and BiDi
-   * `appium:xcuitest.networkMonitor` on iOS/tvOS 18+ instead; scheduled for removal with those commands.
-   */
-  _trafficCapture: TrafficCapture | null;
   _networkMonitorSession: NetworkMonitorSession | null;
   _recentScreenRecorder: ScreenRecorder | null;
   _device: Simulator | RealDevice;
@@ -336,7 +325,6 @@ export class XCUITestDriver
     this.resetIos();
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
     this.logs = {};
-    this._trafficCapture = null;
     this._networkMonitorSession = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
@@ -436,11 +424,7 @@ export class XCUITestDriver
   override async deleteSession(sessionId?: string): Promise<void> {
     await removeAllSessionWebSocketHandlers.bind(this)();
 
-    for (const recorder of _.compact([
-      this._recentScreenRecorder,
-      this._audioRecorder,
-      this._trafficCapture,
-    ])) {
+    for (const recorder of _.compact([this._recentScreenRecorder, this._audioRecorder])) {
       await recorder.interrupt(true);
       await recorder.cleanup();
     }
@@ -522,9 +506,6 @@ export class XCUITestDriver
   override async executeCommand(cmd: string, ...args: any[]): Promise<any> {
     this.log.debug(`Executing command '${cmd}'`);
 
-    if (cmd === 'receiveAsyncResponse') {
-      return await this.receiveAsyncResponse(args[0], args[1]);
-    }
     // TODO: once this fix gets into base driver remove from here
     if (cmd === 'getStatus') {
       return await this.getStatus();
@@ -977,18 +958,6 @@ export class XCUITestDriver
           );
         }
       }
-
-      // TODO: Deprecate and remove this block together with calendarAccessAuthorized capability
-      if (_.isBoolean(this.opts.calendarAccessAuthorized)) {
-        this.log.warn(
-          `The 'calendarAccessAuthorized' capability is deprecated and will be removed soon. ` +
-            `Consider using 'permissions' one instead with 'calendar' key`,
-        );
-        const methodName = `${
-          this.opts.calendarAccessAuthorized ? 'enable' : 'disable'
-        }CalendarAccess`;
-        await this.device[methodName](this.opts.bundleId);
-      }
     }
 
     await this.startWda();
@@ -1083,19 +1052,6 @@ export class XCUITestDriver
         return device[`set${_.upperFirst(optName)}`](this.opts[optName]);
       });
     await B.all(promises);
-
-    if (this.opts.launchWithIDB) {
-      try {
-        const idb = new IDB({udid: this.opts.udid});
-        await idb.connect();
-        (device as Simulator & {idb?: IDB}).idb = idb;
-      } catch (e) {
-        this.log.debug(e.stack);
-        this.log.warn(
-          `idb will not be used for Simulator interaction. Original error: ${e.message}`,
-        );
-      }
-    }
 
     this.logEvent('simStarted');
   }
@@ -1527,7 +1483,7 @@ export class XCUITestDriver
       arguments: args,
       environment: env,
       eventloopIdleDelaySec: this.opts.wdaEventloopIdleDelay ?? 0,
-      shouldWaitForQuiescence: this.opts.waitForQuiescence ?? true,
+      shouldWaitForQuiescence: true,
       shouldUseTestManagerForVisibilityDetection: this.opts.simpleIsVisibleCheck ?? false,
       maxTypingFrequency: this.opts.maxTypingFrequency ?? 60,
       shouldUseSingletonTestManager: this.opts.shouldUseSingletonTestManager ?? true,
@@ -1922,7 +1878,6 @@ export class XCUITestDriver
   listWebFrames = contextCommands.listWebFrames;
   mobileGetContexts = contextCommands.mobileGetContexts;
   onPageChange = contextCommands.onPageChange;
-  useNewSafari = contextCommands.useNewSafari;
   getCurrentUrl = contextCommands.getCurrentUrl;
   getNewRemoteDebugger = contextCommands.getNewRemoteDebugger;
   getRecentWebviewContextId = contextCommands.getRecentWebviewContextId;
@@ -1966,7 +1921,6 @@ export class XCUITestDriver
    | EXECUTE |
    +---------+*/
 
-  receiveAsyncResponse = executeCommands.receiveAsyncResponse;
   execute = executeCommands.execute;
   executeAsync = executeCommands.executeAsync;
   // Note: executeMobile is handled internally via execute method
@@ -2133,9 +2087,6 @@ export class XCUITestDriver
    | PCAP |
    +------+*/
 
-  mobileStartPcap = pcapCommands.mobileStartPcap;
-  mobileStopPcap = pcapCommands.mobileStopPcap;
-
   /*------------------+
    | NETWORK MONITOR |
    +------------------+*/
@@ -2247,7 +2198,6 @@ export class XCUITestDriver
   mobileRunXCTest = xctestCommands.mobileRunXCTest;
   mobileInstallXCTestBundle = xctestCommands.mobileInstallXCTestBundle;
   mobileListXCTestBundles = xctestCommands.mobileListXCTestBundles;
-  mobileListXCTestsInTestBundle = xctestCommands.mobileListXCTestsInTestBundle;
 
   /*----------------------+
    | XCTEST SCREEN RECORD |

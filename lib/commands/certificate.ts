@@ -234,14 +234,12 @@ export async function mobileInstallCertificate(
 /**
  * Removes installed certificates.
  *
- * This only works _if and only if_ `py-ios-device` is installed on the same machine Appium is running on.
+ * Requires a real device running iOS/tvOS 18+ with the optional appium-ios-remotexpc package.
  *
- * @see https://github.com/YueChen-C/py-ios-device
  * @since 4.19.2
  * @param name - Name of the profile
- * @returns Status acknowledgment if
- * the certificate is successfully removed or 'None' (forwards pyidevice output)
- * @throws {Error} If attempting to remove certificates for a simulated device or if `py-ios-device` is not installed
+ * @returns Status acknowledgment when the certificate is successfully removed
+ * @throws {Error} If attempting to remove certificates for a simulated device or if RemoteXPC setup fails
  * @group Real Device Only
  */
 export async function mobileRemoveCertificate(this: XCUITestDriver, name: string): Promise<string> {
@@ -252,11 +250,10 @@ export async function mobileRemoveCertificate(this: XCUITestDriver, name: string
 /**
  * Returns map of certificates installed on the real device.
  *
- * This only works _if and only if_ `py-ios-device` is installed on the same machine Appium is running on.
+ * Requires a real device running iOS/tvOS 18+ with the optional appium-ios-remotexpc package.
  * @since 4.10.0
- * @see https://github.com/YueChen-C/py-ios-device
  * @returns An object describing the certificates installed on the real device.
- * @throws {Error} If attempting to list certificates for a simulated device or if `py-ios-device` is not installed
+ * @throws {Error} If attempting to list certificates for a simulated device or if RemoteXPC setup fails
  */
 export async function mobileListCertificates(this: XCUITestDriver): Promise<CertificateList> {
   requireRealDevice(this, 'Listing certificates');
@@ -294,9 +291,8 @@ async function withCertificateClient<T>(
 
 /**
  * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
- * Uses the same certificate client path as mobile certificate commands (Remote XPC on iOS/tvOS 18+
- * when available; py-ios-device otherwise). `start()` has already set `platformVersion` from the
- * device when the capability was omitted.
+ * Uses the same certificate client path as mobile certificate commands (RemoteXPC on iOS/tvOS 18+).
+ * `start()` has already set `platformVersion` from the device when the capability was omitted.
  */
 export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {
   const pem = this.opts.customSSLCert;

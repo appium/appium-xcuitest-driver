@@ -1,40 +1,8 @@
 import _ from 'lodash';
 import {XCUITestDriver} from '../driver';
-import {errors, errorFromCode, errorFromW3CJsonCode} from 'appium/driver';
+import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import type {Element, StringRecord} from '@appium/types';
-
-/**
- * Collect the response of an async script execution
- * @deprecated
- * @privateRemarks It's unclear what this is for. Don't use it.
- */
-export async function receiveAsyncResponse(
-  this: XCUITestDriver,
-  status: number | null | undefined,
-  value: any,
-): Promise<void> {
-  this.log.debug(`Received async response: ${JSON.stringify(value)}`);
-  if (!util.hasValue(this.asyncPromise)) {
-    this.log.warn(
-      `Received async response when we were not expecting one! ` +
-        `Response was: ${JSON.stringify(value)}`,
-    );
-    return;
-  }
-
-  if (util.hasValue(status) && status !== 0) {
-    // MJSONWP
-    return this.asyncPromise.reject(errorFromCode(status, value.message));
-  }
-  if (!util.hasValue(status) && value && _.isString(value.error)) {
-    // W3C
-    return this.asyncPromise.reject(
-      errorFromW3CJsonCode(value.error, value.message, value.stacktrace),
-    );
-  }
-  return this.asyncPromise.resolve(value);
-}
 
 /**
  * @template TReturn

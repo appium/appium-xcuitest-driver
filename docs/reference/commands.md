@@ -361,26 +361,6 @@ Send keys to the app
 
 ``null``
 
-### `receiveAsyncResponse`
-
-!!! warning "Deprecated"
-
-    This method is deprecated. Please use the [Execute Async Script](https://www.w3.org/TR/webdriver1/#dfn-execute-async-script) instead
-
-`POST` **`/session/:sessionId/appium/receive_async_response`**
-
-Collect the response of an async script execution
-
-#### Arguments
-
-| Name | Type |
-| :------ | :------ |
-| `response` | `any` |
-
-#### Returned Result
-
-``null``
-
 ### `toggleEnrollTouchId`
 
 !!! warning "Deprecated"

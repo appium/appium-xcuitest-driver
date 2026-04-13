@@ -156,10 +156,6 @@ export const desiredCapConstraints = {
   derivedDataPath: {
     isString: true,
   },
-  launchWithIDB: {
-    isBoolean: true,
-    deprecated: true,
-  },
   useNewWDA: {
     isBoolean: true,
   },
@@ -199,18 +195,6 @@ export const desiredCapConstraints = {
   },
   simulatorDevicesSetPath: {
     isString: true,
-  },
-  calendarAccessAuthorized: {
-    isBoolean: true,
-    deprecated: true,
-  },
-  useSimpleBuildTest: {
-    isBoolean: true,
-    deprecated: true,
-  },
-  waitForQuiescence: {
-    isBoolean: true,
-    deprecated: true,
   },
   maxTypingFrequency: {
     isNumber: true,
@@ -366,11 +350,6 @@ export const desiredCapConstraints = {
   },
   useNativeCachingStrategy: {
     isBoolean: true,
-  },
-  appInstallStrategy: {
-    deprecated: true,
-    isString: true,
-    inclusionCaseInsensitive: ['serial', 'parallel', 'ios-deploy'],
   },
   enforceAppInstall: {
     isBoolean: true,

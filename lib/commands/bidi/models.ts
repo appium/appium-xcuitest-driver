@@ -5,12 +5,7 @@ import type {
   NetworkMonitorBiDiEvent,
 } from './types';
 import {NATIVE_WIN} from '../../utils';
-import {
-  CONTEXT_UPDATED_EVENT,
-  CONTEXT_UPDATED_EVENT_OBSOLETE,
-  LOG_ENTRY_ADDED_EVENT,
-  NETWORK_MONITOR_EVENT,
-} from './constants';
+import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants';
 import type {LogEntry} from '../types';
 import _ from 'lodash';
 
@@ -26,12 +21,6 @@ function toContextUpdatedEvent(method: string, contextName: string): ContextUpda
 
 export const makeContextUpdatedEvent = (contextName: string) =>
   toContextUpdatedEvent(CONTEXT_UPDATED_EVENT, contextName);
-
-/**
- * @deprecated Use {@link makeContextUpdatedEvent} instead
- */
-export const makeObsoleteContextUpdatedEvent = (contextName: string) =>
-  toContextUpdatedEvent(CONTEXT_UPDATED_EVENT_OBSOLETE, contextName);
 
 /**
  * Builds a BiDi event for a single DVT NetworkMonitor instrument payload.

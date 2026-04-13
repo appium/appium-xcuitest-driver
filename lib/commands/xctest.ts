@@ -13,11 +13,9 @@ const xctestLog = logger.getLogger('XCTest');
 /**
  * Run a native XCTest script.
  *
- * Launches a subprocess that runs the XC Test and blocks until it is completed. Parses the stdout of the process and returns its result as an array.
- *
- * Uses RemoteXPC on iOS/tvOS 18+ real devices (except logic tests), and falls back to
- * **Facebook's [IDB](https://github.com/facebook/idb)** when RemoteXPC is unavailable.
- * IDB is required for non-RemoteXPC execution paths.
+ * Supported only on **real devices** running **iOS/tvOS 18+** with the optional **appium-ios-remotexpc**
+ * package installed. UI and app test types use RemoteXPC. Logic tests are not supported (they depended on
+ * removed Facebook IDB integration). Simulator XCTest via IDB was removed in driver v11.
  *
  * @param testRunnerBundleId - Test app bundle (e.g.: `io.appium.XCTesterAppUITests.xctrunner`)
  * @param appUnderTestBundleId - App-under-test bundle
@@ -53,9 +51,8 @@ export async function mobileRunXCTest(
 /**
  * Installs an XCTest bundle to the device under test.
  *
- * Uses RemoteXPC on iOS/tvOS 18+ real devices and falls back to
- * **Facebook's [IDB](https://github.com/facebook/idb)** when needed.
- * IDB is required for fallback/legacy execution paths.
+ * Supported only on real devices running iOS/tvOS 18+ with appium-ios-remotexpc. Use a `.app` or `.ipa`;
+ * bare `.xctest` bundles are not supported via RemoteXPC.
  *
  * @param xctestApp - Path of the XCTest app (URL or filename with extension `.app`)
  */
@@ -77,36 +74,10 @@ export async function mobileInstallXCTestBundle(
 /**
  * List XCTest bundles that are installed on the device.
  *
- * Uses RemoteXPC on iOS/tvOS 18+ real devices and falls back to
- * **Facebook's [IDB](https://github.com/facebook/idb)** when needed.
- * IDB is required for fallback/legacy execution paths.
+ * Supported only on real devices running iOS/tvOS 18+ with appium-ios-remotexpc.
  *
  * @returns List of XCTest bundles (e.g.: `XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance`)
  */
 export async function mobileListXCTestBundles(this: XCUITestDriver): Promise<string[]> {
   return await XCTestClient.fromDriver(this).listBundles();
-}
-
-/**
- * List XCTests in a test bundle.
- *
- * This command currently uses the legacy
- * **Facebook's [IDB](https://github.com/facebook/idb)** path.
- * IDB is required.
- *
- * @param bundle - Bundle ID of the XCTest
- * @returns The list of xctests in the test bundle (e.g., `['XCTesterAppUITests.XCTesterAppUITests/testExample', 'XCTesterAppUITests.XCTesterAppUITests/testLaunchPerformance']`)
- * @deprecated Scheduled for removal together with the IDB client.
- */
-export async function mobileListXCTestsInTestBundle(
-  this: XCUITestDriver,
-  bundle: string,
-): Promise<string[]> {
-  if (!_.isString(bundle)) {
-    throw new errors.InvalidArgumentError(
-      `'bundle' is a required parameter for 'listXCTestsInTestBundle' and ` +
-        `must be a string. Found '${bundle}'`,
-    );
-  }
-  return await XCTestClient.fromDriver(this).listTestsInBundle(bundle);
 }

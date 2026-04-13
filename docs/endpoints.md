@@ -73,8 +73,6 @@
 | GET    | /context                                 | | |
 | POST   | /context                                 | name | |
 | GET    | /contexts                                | | |
-| POST   | /receive_async_response                  | status, value | |
-
 
 ### Appium-specific commands
 
@@ -95,4 +93,3 @@
 | POST   | /appium/app/background                   | seconds | |
 | POST   | /appium/app/strings                      | | language, stringFile |
 | POST   | /appium/element/:elementId/value         | value | |
-| POST   | /appium/receive_async_response           | response | |

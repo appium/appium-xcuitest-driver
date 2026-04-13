@@ -82,7 +82,6 @@
   "dependencies": {
     "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
-    "appium-idb": "^2.0.0",
     "appium-ios-device": "^3.0.0",
     "appium-ios-simulator": "^8.0.0",
     "appium-remote-debugger": "^15.6.0",
