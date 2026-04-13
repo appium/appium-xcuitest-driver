@@ -14,8 +14,8 @@ const xctestLog = logger.getLogger('XCTest');
  * Run a native XCTest script.
  *
  * Supported only on **real devices** running **iOS/tvOS 18+** with the optional **appium-ios-remotexpc**
- * package installed. UI and app test types use RemoteXPC. Logic tests are not supported (they depended on
- * removed Facebook IDB integration). Simulator XCTest via IDB was removed in driver v11.
+ * package installed. UI and app test types use RemoteXPC. Logic tests are not supported. This API does
+ * not run XCTest bundles on simulators.
  *
  * @param testRunnerBundleId - Test app bundle (e.g.: `io.appium.XCTesterAppUITests.xctrunner`)
  * @param appUnderTestBundleId - App-under-test bundle

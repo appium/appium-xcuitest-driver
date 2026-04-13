@@ -51,7 +51,7 @@ export class CertificateClient {
     if (!useRemoteXPC) {
       throw new Error(
         'Real device SSL/certificate operations require iOS/tvOS 18 or newer with the optional ' +
-          'appium-ios-remotexpc package. Support for py-ios-device was removed in driver v11.',
+          'appium-ios-remotexpc package installed.',
       );
     }
 

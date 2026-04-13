@@ -24,12 +24,6 @@ export class XCTestClient {
     });
   }
 
-  private assertRealDeviceRemoteXpc(): void {
-    if (!this.deps.isRealDevice || !isIos18OrNewerPlatform(this.deps.platformVersion)) {
-      throw new Error(XCTEST_REAL_DEVICE_MSG);
-    }
-  }
-
   async run({
     testRunnerBundleId,
     appUnderTestBundleId,
@@ -63,6 +57,12 @@ export class XCTestClient {
   async listBundles(): Promise<string[]> {
     this.assertRealDeviceRemoteXpc();
     return await listXCTestBundlesViaRemoteXPC(this.deps.udid);
+  }
+
+  private assertRealDeviceRemoteXpc(): void {
+    if (!this.deps.isRealDevice || !isIos18OrNewerPlatform(this.deps.platformVersion)) {
+      throw new Error(XCTEST_REAL_DEVICE_MSG);
+    }
   }
 }
 

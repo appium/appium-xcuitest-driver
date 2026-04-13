@@ -402,7 +402,7 @@ The resulting file in .trace format can be either returned directly as base64-en
 ### mobile: installCertificate
 
 Installs a custom certificate onto the device. Since Xcode SDK 11.4 Apple has added a dedicated simctl subcommand to quickly handle certificates on Simulator over CLI.
-On real devices running **iOS/tvOS 18+**, profile-based installation may use [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) when that package is installed (driver v11 removed the previous `py-ios-device` CLI path).
+On real devices running **iOS/tvOS 18+**, profile-based installation may use [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) when that package is installed.
 On simulators before Xcode 11.4 SDK Apple provides no official way to do it via the command line. In such case (and also as a fallback if CLI setup fails) this method tries to wrap the certificate into .mobileconfig format and then deploys the wrapped file to the internal HTTP server, so one can open it via mobile Safari. Then the algorithm goes through the profile installation procedure by clicking the necessary buttons using WebDriverAgent.
 
 #### Arguments
@@ -984,7 +984,7 @@ Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tear
 
 Runs a native XCTest suite on the device under test.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package. `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported** (they previously depended on Facebook IDB, removed in driver v11). Simulator XCTest via IDB was also removed in v11.
+Supported only on **real devices** running **iOS/tvOS 18+** with the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package. `ui` and `app` test types run via **RemoteXPC**. **Logic tests** (`testType`: `logic`) are **not supported**. This extension does not run XCTest bundles on simulators.
 
 #### Arguments
 
@@ -1017,7 +1017,7 @@ The API calls returns a map with the following entries:
 
 Installs an XCTest bundle (`.app` or `.ipa`) on the device under test.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Installation uses **RemoteXPC**. Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead. Facebook IDB fallback was removed in driver v11.
+Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Installation uses **RemoteXPC**. Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead.
 
 #### Arguments
 
@@ -1029,7 +1029,7 @@ xctestBundle | string | yes | Path to your xctest .app bundle. Could be an URL |
 
 Lists XCTest-related bundles installed on the device.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Listing uses **RemoteXPC** only (IDB fallback removed in driver v11).
+Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Listing uses **RemoteXPC** only.
 
 #### Returned Result
 

@@ -15,7 +15,7 @@ This event is emitted if the driver retrieves a new entry for any of the below l
 
 ### crashlog
 
-Events are emitted for both emulator and real devices. On real devices, crash logs require **iOS/tvOS 18+** and the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package (driver v11 removed the previous `py-ios-device` integration). Each event contains a particular device crash report entry.
+Events are emitted for both emulator and real devices. On real devices, crash logs require **iOS/tvOS 18+** and the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package. Each event contains a particular device crash report entry.
 Events are always emitted with the `NATIVE_APP` context.
 
 ### syslog

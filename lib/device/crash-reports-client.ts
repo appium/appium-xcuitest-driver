@@ -36,8 +36,8 @@ export class CrashReportsClient {
   static async create(udid: string, useRemoteXPC: boolean): Promise<CrashReportsClient> {
     if (!useRemoteXPC) {
       throw new Error(
-        'Real device crash report access requires iOS/tvOS 18 or newer with appium-ios-remotexpc. ' +
-          'Support for py-ios-device was removed in driver v11.',
+        'Real device crash report access requires iOS/tvOS 18 or newer with the appium-ios-remotexpc ' +
+          'package installed.',
       );
     }
 
@@ -64,16 +64,6 @@ export class CrashReportsClient {
         }
       }
     }
-  }
-
-  /**
-   * No-op compatibility hook: RemoteXPC clients are considered available once {@link CrashReportsClient.create} succeeds.
-   *
-   * @param _isStrict - Ignored (legacy callers passed strict mode for a CLI binary check)
-   * @returns Always `true` after a successful `create`
-   */
-  async assertExists(_isStrict: boolean = true): Promise<boolean> {
-    return true;
   }
 
   /**

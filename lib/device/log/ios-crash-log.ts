@@ -70,7 +70,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
 
   /** Records the current crash file snapshot so only new reports appear in {@link IOSCrashLog.getLogs}. */
   override async startCapture(): Promise<void> {
-    this._recentCrashFiles = await this._listCrashFiles(false);
+    this._recentCrashFiles = await this._listCrashFiles();
     this._started = true;
   }
 
@@ -92,7 +92,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
    * @returns New crash log entries since the last successful poll (bounded by {@link MAX_RECENT_ITEMS}).
    */
   override async getLogs(): Promise<LogEntry[]> {
-    const crashFiles = (await this._listCrashFiles(true)).slice(-MAX_RECENT_ITEMS);
+    const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
     const diffFiles = _.difference(crashFiles, this._recentCrashFiles);
     if (_.isEmpty(diffFiles)) {
       return [];
@@ -144,7 +144,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
    * Lazily creates a {@link CrashReportsClient} and lists `.ips` basenames on the device.
    * @returns Empty array if RemoteXPC setup fails (logged); never throws to callers.
    */
-  private async _gatherFromRealDevice(strict: boolean): Promise<string[]> {
+  private async _gatherFromRealDevice(): Promise<string[]> {
     if (!this._realDeviceClient) {
       try {
         this._realDeviceClient = await CrashReportsClient.create(
@@ -159,8 +159,6 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
         return [];
       }
     }
-
-    await this._realDeviceClient.assertExists(strict);
 
     return await this._realDeviceClient.listCrashes();
   }
@@ -189,9 +187,9 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   }
 
   /** Dispatches to real-device RemoteXPC listing or simulator filesystem globbing. */
-  private async _listCrashFiles(strict: boolean): Promise<string[]> {
+  private async _listCrashFiles(): Promise<string[]> {
     return this._isRealDevice()
-      ? await this._gatherFromRealDevice(strict)
+      ? await this._gatherFromRealDevice()
       : await this._gatherFromSimulator();
   }
 
