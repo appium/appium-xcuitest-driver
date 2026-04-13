@@ -421,7 +421,7 @@ The content of the generated .mobileconfig file as base64-encoded string. This c
 
 ### mobile: removeCertificate
 
-Removes an installed certificate profile on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required** (since driver v11).
+Removes an installed certificate profile on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required**.
 
 #### Arguments
 
@@ -435,7 +435,7 @@ Returns the string `Acknowledged` when the profile is removed successfully.
 
 ### mobile: listCertificates
 
-Lists installed certificate profiles on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required** (since driver v11).
+Lists installed certificate profiles on real devices running **iOS/tvOS 18+**; **[`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) is required**.
 
 #### Returned Result
 
