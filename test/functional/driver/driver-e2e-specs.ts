@@ -72,12 +72,6 @@ describe('XCUITestDriver', function () {
     expect(els.length).to.be.at.least(1);
   });
 
-  it('should start and stop a session doing simple build-test', async function () {
-    driver = await initSession(amendCapabilities(baseCaps, {'appium:useSimpleBuildTest': true}));
-    const els = await driver.$$('XCUIElementTypeWindow');
-    expect(els.length).to.be.at.least(1);
-  });
-
   it('should start and stop a session with only bundle id', async function () {
     const localCaps = amendCapabilities(caps, {
       'appium:bundleId': UICATALOG_BUNDLE_ID,

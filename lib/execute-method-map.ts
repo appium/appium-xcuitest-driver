@@ -416,14 +416,6 @@ export const executeMethodMap = {
   'mobile: listXCTestBundles': {
     command: 'mobileListXCTestBundles',
   },
-  'mobile: listXCTestsInTestBundle': {
-    command: 'mobileListXCTestsInTestBundle',
-    deprecated: true,
-    info: 'Scheduled for removal together with the IDB client.',
-    params: {
-      required: ['bundle'],
-    },
-  },
   'mobile: startXCTestScreenRecording': {
     command: 'mobileStartXctestScreenRecording',
     params: {
@@ -466,15 +458,6 @@ export const executeMethodMap = {
   },
   'mobile: resetLocationService': {
     command: 'mobileResetLocationService',
-  },
-  'mobile: startPcap': {
-    command: 'mobileStartPcap',
-    params: {
-      optional: ['timeLimitSec', 'forceRestart'],
-    },
-  },
-  'mobile: stopPcap': {
-    command: 'mobileStopPcap',
   },
   'mobile: startNetworkMonitor': {
     command: 'mobileStartNetworkMonitor',

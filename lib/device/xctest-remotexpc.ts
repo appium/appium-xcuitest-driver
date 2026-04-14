@@ -153,18 +153,15 @@ export async function listXCTestBundlesViaRemoteXPC(udid: string): Promise<strin
 
 /**
  * Install an XCTest bundle via RemoteXPC.
- * Only supports .ipa and .app bundles. Throws for bare .xctest bundles
- * to trigger IDB fallback.
+ * Only supports .ipa and .app bundles (not bare .xctest directories).
  */
 export async function installXCTestBundleViaRemoteXPC(
   udid: string,
   xctestApp: string,
 ): Promise<void> {
-  // Only support .ipa and .app — bare .xctest requires IDB
   if (xctestApp.endsWith('.xctest')) {
     throw new Error(
-      'Bare .xctest bundles cannot be installed via RemoteXPC. ' +
-        'Falling back to IDB for installation.',
+      'Bare .xctest bundles cannot be installed via RemoteXPC. Provide a .app or .ipa instead.',
     );
   }
 

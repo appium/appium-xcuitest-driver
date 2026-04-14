@@ -4,92 +4,73 @@ import type {
   CrashReportsService as RemoteXPCCrashReportsService,
   RemoteXpcConnection,
 } from 'appium-ios-remotexpc';
-import type {Pyidevice as PyideviceClient} from './clients/py-ios-device-client';
-import {Pyidevice} from './clients/py-ios-device-client';
 
 const CRASH_REPORT_EXTENSIONS = ['.ips'];
 const MAX_FILES_IN_ERROR = 10;
 
 /**
- * Unified Crash Reports Client
+ * Lists and exports device crash reports (`.ips`) on real hardware over RemoteXPC.
  *
- * Provides a unified interface for crash report operations on iOS devices,
- * automatically handling the differences between iOS < 18 (py-ios-device via Pyidevice)
- * and iOS 18+ (appium-ios-remotexpc).
+ * Requires **iOS/tvOS 18+** and the optional **`appium-ios-remotexpc`** package.
+ * Used by {@link IOSCrashLog} for BiDi / `crashlog` collection on real devices.
  */
 export class CrashReportsClient {
-  private readonly service: RemoteXPCCrashReportsService | PyideviceClient;
-  private readonly remoteXPCConnection?: RemoteXpcConnection;
+  private readonly crashReportsService: RemoteXPCCrashReportsService;
+  private readonly remoteXPCConnection: RemoteXpcConnection;
 
   private constructor(
-    service: RemoteXPCCrashReportsService | PyideviceClient,
-    remoteXPCConnection?: RemoteXpcConnection,
+    crashReportsService: RemoteXPCCrashReportsService,
+    remoteXPCConnection: RemoteXpcConnection,
   ) {
-    this.service = service;
+    this.crashReportsService = crashReportsService;
     this.remoteXPCConnection = remoteXPCConnection;
   }
 
-  //#region Public Static Methods
-
   /**
-   * Create a crash reports client for device
+   * Opens a RemoteXPC crash-reports service for the given UDID.
    *
-   * @param udid - Device UDID
-   * @param useRemoteXPC - Whether to use remotexpc
-   * @returns CrashReportsClient instance
+   * @param udid - Real device UDID
+   * @param useRemoteXPC - Must be `true`; callers derive this from `isIos18OrNewer` / session options
+   * @throws {Error} If `useRemoteXPC` is false, or RemoteXPC setup fails
    */
   static async create(udid: string, useRemoteXPC: boolean): Promise<CrashReportsClient> {
-    if (useRemoteXPC) {
-      const client = await CrashReportsClient.withRemoteXpcConnection(async () => {
-        const Services = await getRemoteXPCServices();
-        const {crashReportsService, remoteXPC} = await Services.startCrashReportsService(udid);
-        return {
-          service: crashReportsService,
-          connection: remoteXPC,
-        };
-      });
-      if (client) {
-        return client;
+    if (!useRemoteXPC) {
+      throw new Error(
+        'Real device crash report access requires iOS/tvOS 18 or newer with the appium-ios-remotexpc ' +
+          'package installed.',
+      );
+    }
+
+    let remoteXPCConnection: RemoteXpcConnection | undefined;
+    let succeeded = false;
+    try {
+      const Services = await getRemoteXPCServices();
+      const {crashReportsService, remoteXPC} = await Services.startCrashReportsService(udid);
+      remoteXPCConnection = remoteXPC;
+      const client = new CrashReportsClient(crashReportsService, remoteXPCConnection);
+      succeeded = true;
+      return client;
+    } catch (err: any) {
+      throw new Error(
+        `Failed to create crash reports client via RemoteXPC: ${err.message}. ` +
+          'Ensure appium-ios-remotexpc is installed and the device is supported.',
+      );
+    } finally {
+      if (remoteXPCConnection && !succeeded) {
+        try {
+          await remoteXPCConnection.close();
+        } catch {
+          // ignore
+        }
       }
     }
-
-    // Fallback to Pyidevice
-    const pyideviceClient = new Pyidevice({udid, log});
-    return new CrashReportsClient(pyideviceClient);
-  }
-
-  //#endregion
-
-  //#region Public Instance Methods
-
-  /**
-   * Check if the crash reports tool exists
-   *
-   * @param isStrict - If true, throws an error when tool is not found
-   * @returns True if the tool exists, false otherwise
-   */
-  async assertExists(isStrict: boolean = true): Promise<boolean> {
-    if (this.isRemoteXPC) {
-      // RemoteXPC is already connected, so it exists
-      return true;
-    }
-
-    // Pyidevice: check if binary exists
-    return await this.pyideviceClient.assertExists(isStrict);
   }
 
   /**
-   * List crash report files on the device
-   *
-   * @returns Array of crash report file names (e.g., ['crash1.ips', 'crash2.crash'])
+   * @returns Basenames of crash report files on the device (e.g. `MyApp-2024-01-01-120000.ips`)
    */
   async listCrashes(): Promise<string[]> {
-    if (!this.isRemoteXPC) {
-      return await this.pyideviceClient.listCrashes();
-    }
-
-    // RemoteXPC: ls returns full paths, filter and extract filenames
-    const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
+    const allFiles = await this.crashReportsService.ls('/', -1);
     return allFiles
       .filter((filePath) => CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext)))
       .map((filePath) => {
@@ -99,18 +80,14 @@ export class CrashReportsClient {
   }
 
   /**
-   * Export a crash report file from the device to local directory
+   * Pulls a single crash report off the device into a local folder.
    *
-   * @param name - Name of the crash report file (e.g., 'crash.ips')
-   * @param dstFolder - Local destination folder path
+   * @param name - Crash file basename as returned by {@link CrashReportsClient.listCrashes}
+   * @param dstFolder - Existing local directory to write into
+   * @throws {Error} If the named report is not found on the device
    */
   async exportCrash(name: string, dstFolder: string): Promise<void> {
-    if (!this.isRemoteXPC) {
-      return await this.pyideviceClient.exportCrash(name, dstFolder);
-    }
-
-    // RemoteXPC: need to find full path first, then pull
-    const allFiles = await this.remoteXPCCrashReportsService.ls('/', -1);
+    const allFiles = await this.crashReportsService.ls('/', -1);
     const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
 
     if (!fullPath) {
@@ -122,91 +99,19 @@ export class CrashReportsClient {
       );
     }
 
-    await this.remoteXPCCrashReportsService.pull(dstFolder, fullPath);
+    await this.crashReportsService.pull(dstFolder, fullPath);
   }
 
   /**
-   * Close the crash reports service and release resources
-   *
-   * Only RemoteXPC clients need explicit cleanup; Pyidevice is stateless
+   * Tears down the crash-reports service and closes the RemoteXPC connection.
    */
   async close(): Promise<void> {
-    if (!this.isRemoteXPC) {
-      return;
-    }
+    this.crashReportsService.close();
 
-    this.remoteXPCCrashReportsService.close();
-
-    if (this.remoteXPCConnection) {
-      try {
-        await this.remoteXPCConnection.close();
-      } catch (err) {
-        log.warn(`Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`);
-      }
-    }
-  }
-
-  //#endregion
-
-  //#region Private Methods
-
-  /**
-   * Check if this client is using RemoteXPC
-   */
-  private get isRemoteXPC(): boolean {
-    return !!this.remoteXPCConnection;
-  }
-
-  /**
-   * Helper to safely execute remoteXPC operations with connection cleanup
-   * @param operation - Async operation that returns service and connection
-   * @returns CrashReportsClient on success, null on failure
-   */
-  private static async withRemoteXpcConnection(
-    operation: () => Promise<{
-      service: RemoteXPCCrashReportsService;
-      connection: RemoteXpcConnection;
-    }>,
-  ): Promise<CrashReportsClient | null> {
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
     try {
-      const {service, connection} = await operation();
-      remoteXPCConnection = connection;
-      const client = new CrashReportsClient(service, remoteXPCConnection);
-      succeeded = true;
-      return client;
-    } catch (err: any) {
-      log.error(
-        `Failed to create crash reports client via RemoteXPC: ${err.message}. ` +
-          `Falling back to py-ios-device (pyidevice)`,
-      );
-      return null;
-    } finally {
-      // Only close connection if we failed (if succeeded, the client owns it)
-      if (remoteXPCConnection && !succeeded) {
-        try {
-          await remoteXPCConnection.close();
-        } catch {
-          // Ignore cleanup errors
-        }
-      }
+      await this.remoteXPCConnection.close();
+    } catch (err) {
+      log.warn(`Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`);
     }
   }
-
-  /**
-   * Get service as RemoteXPC crash reports service
-   */
-  private get remoteXPCCrashReportsService(): RemoteXPCCrashReportsService {
-    return this.service as RemoteXPCCrashReportsService;
-  }
-
-  /**
-   * Get service as Pyidevice client
-   */
-  private get pyideviceClient(): PyideviceClient {
-    return this.service as PyideviceClient;
-  }
-
-  //#endregion
 }

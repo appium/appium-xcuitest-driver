@@ -16,7 +16,6 @@ describe('process args', function () {
     shouldUseCompactResponses: undefined,
     waitForIdleTimeout: undefined,
     shouldWaitForQuiescence: true,
-    shouldUseTestManagerForVisibilityDetection: false,
     maxTypingFrequency: 60,
     forceAppLaunch: true,
     forceSimulatorSoftwareKeyboardPresence: true,

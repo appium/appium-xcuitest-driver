@@ -17,16 +17,29 @@ const MAX_RECENT_ITEMS = 20;
 
 type TSerializedEntry = [string, number];
 
+/**
+ * Options for {@link IOSCrashLog}.
+ */
 export interface IOSCrashLogOptions {
-  /** UDID of a real device */
+  /** UDID of a real device (omit with `sim` for Simulator crash logs). */
   udid?: string;
-  /** Simulator instance */
+  /** Simulator instance; required for simulator-side collection. */
   sim?: Simulator;
   log: AppiumLogger;
-  /** Whether to use RemoteXPC for crash reports (iOS 18+). */
+  /**
+   * For real devices: must reflect **iOS/tvOS 18+** so {@link CrashReportsClient} can be used.
+   * Typically matches `isIos18OrNewer` from the active session.
+   */
   useRemoteXPC?: boolean;
 }
 
+/**
+ * Collects iOS/tvOS crash logs for BiDi `log.entryAdded` / classic log APIs.
+ *
+ * - **Simulator:** reads `~/Library/Logs/DiagnosticReports` and filters by simulator UDID.
+ * - **Real device:** uses RemoteXPC (`appium-ios-remotexpc`) when `useRemoteXPC` is true; if the client
+ *   cannot be created, collection is skipped and errors are logged (no session failure).
+ */
 export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private readonly _udid: string | undefined;
   private readonly _useRemoteXPC: boolean;
@@ -36,6 +49,9 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private _recentCrashFiles: string[];
   private _started: boolean;
 
+  /**
+   * @param opts - Provide `udid` for a real device or `sim` for a Simulator (mutually exclusive by usage).
+   */
   constructor(opts: IOSCrashLogOptions) {
     super({
       log: opts.log,
@@ -52,11 +68,13 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     this._started = false;
   }
 
+  /** Records the current crash file snapshot so only new reports appear in {@link IOSCrashLog.getLogs}. */
   override async startCapture(): Promise<void> {
-    this._recentCrashFiles = await this._listCrashFiles(false);
+    this._recentCrashFiles = await this._listCrashFiles();
     this._started = true;
   }
 
+  /** Stops polling and closes any real-device {@link CrashReportsClient}. */
   override async stopCapture(): Promise<void> {
     this._started = false;
     // Clean up the client connection
@@ -70,8 +88,11 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     return this._started;
   }
 
+  /**
+   * @returns New crash log entries since the last successful poll (bounded by {@link MAX_RECENT_ITEMS}).
+   */
   override async getLogs(): Promise<LogEntry[]> {
-    const crashFiles = (await this._listCrashFiles(true)).slice(-MAX_RECENT_ITEMS);
+    const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
     const diffFiles = _.difference(crashFiles, this._recentCrashFiles);
     if (_.isEmpty(diffFiles)) {
       return [];
@@ -92,6 +113,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     return toLogEntry(message, timestamp);
   }
 
+  /** Reads crash file contents and {@link IOSLog.broadcast}s them as `[text, mtime]` tuples. */
   private async _serializeCrashes(paths: string[]): Promise<void> {
     const tmpRoot = await tempDir.openDir();
     try {
@@ -118,7 +140,13 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     }
   }
 
-  private async _gatherFromRealDevice(strict: boolean): Promise<string[]> {
+  /**
+   * Lazily creates a {@link CrashReportsClient} and lists `.ips` basenames on the device.
+   *
+   * @returns Empty array if RemoteXPC setup or listing fails (logged). The client is reset after
+   *   listing errors so a later poll can recreate it. Never throws to callers.
+   */
+  private async _gatherFromRealDevice(): Promise<string[]> {
     if (!this._realDeviceClient) {
       try {
         this._realDeviceClient = await CrashReportsClient.create(
@@ -134,17 +162,27 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       }
     }
 
-    if (!(await this._realDeviceClient.assertExists(strict))) {
-      this.log.info(
-        `The ${_.toLower(this._realDeviceClient.constructor.name)} tool is not present in PATH. ` +
-          `Skipping crash logs collection for real devices.`,
+    try {
+      return await this._realDeviceClient.listCrashes();
+    } catch (err) {
+      this.log.error(
+        `Failed to list crash reports on device: ${(err as Error).message}. ` +
+          `Skipping this poll; the next poll will attempt to reconnect.`,
       );
+      const client = this._realDeviceClient;
+      this._realDeviceClient = null;
+      if (client) {
+        try {
+          await client.close();
+        } catch {
+          // ignore secondary teardown errors
+        }
+      }
       return [];
     }
-
-    return await this._realDeviceClient.listCrashes();
   }
 
+  /** Glob diagnostic reports and keep files whose content references the simulator UDID. */
   private async _gatherFromSimulator(): Promise<string[]> {
     if (!this._logDir || !this._sim || !(await fs.exists(this._logDir))) {
       this.log.debug(`Crash reports root '${this._logDir}' does not exist. Got nothing to gather.`);
@@ -167,9 +205,10 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
   }
 
-  private async _listCrashFiles(strict: boolean): Promise<string[]> {
+  /** Dispatches to real-device RemoteXPC listing or simulator filesystem globbing. */
+  private async _listCrashFiles(): Promise<string[]> {
     return this._isRealDevice()
-      ? await this._gatherFromRealDevice(strict)
+      ? await this._gatherFromRealDevice()
       : await this._gatherFromSimulator();
   }
 

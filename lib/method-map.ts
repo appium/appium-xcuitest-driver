@@ -150,13 +150,6 @@ export const newMethodMap = {
       deprecated: true,
     },
   },
-  '/session/:sessionId/appium/receive_async_response': {
-    POST: {
-      command: 'receiveAsyncResponse',
-      payloadParams: {required: ['response']},
-      deprecated: true,
-    },
-  },
   '/session/:sessionId/appium/device/get_clipboard': {
     POST: {
       command: 'getClipboard',

@@ -158,9 +158,6 @@ export async function mobileActivateApp(this: XCUITestDriver, bundleId: string):
  *
  * If the app is not running or kill failed, then nothing is done.
  *
- * @remarks `appium-xcuitest-driver` v4.4 does not require `py-ios-device` to be installed.
- * @privateRemarks See implementation at https://github.com/YueChen-C/py-ios-device/blob/51f4683c5c3c385a015858ada07a5f1c62d3cf57/ios_device/cli/base.py#L220
- * @see https://github.com/YueChen-C/py-ios-device
  * @param bundleId - The bundle identifier of the application to be killed
  * @returns `true` if the app has been killed successfully; `false` otherwise
  * @group Real Device Only

@@ -156,21 +156,6 @@ source XML tree.
 Whether the [`minValue`](./element-attributes.md#minvalue) and [`maxValue`](./element-attributes.md#maxvalue)
 attributes should be included in the page source XML tree.
 
-## includeNonModalElements
-
-| Type | Default |
-| -- | -- |
-| `boolean` | `false` |
-
-Whether to include non-modal dialogs in the page source on iOS 13.0 to 13.2 (Xcode 11.0 to 11.2).
-It fixes [a known issue](https://github.com/appium/appium/issues/13227), but it might make
-visibility attributes unreliable. You could also enable `shouldUseTestManagerForVisibilityDetection`
-setting (defaults to `false`) or [`appium:simpleIsVisibleCheck`](./capabilities.md) capability to
-improve the visibility detection.
-
-Newer iOS/Xcode versions do not have this issue, and Appium/WebDriverAgent returns all elements
-without this setting.
-
 ## keyboardAutocorrection
 
 | Type | Default |

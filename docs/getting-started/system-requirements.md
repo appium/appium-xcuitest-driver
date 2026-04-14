@@ -72,7 +72,7 @@ versions, but _may_ still fully or partially work with certain older versions.
 
 The following tables map Xcode/OS versions to their supported driver versions. Versions with the
 'not tested' label are still likely to work fine with the latest driver, but any fixes for them will
-have lesser priority than for newer Xcode/OS versions, and any major workarounds are unlikely. 
+have lesser priority than for newer Xcode/OS versions, and any major workarounds are unlikely.
 
 If you are downgrading an existing driver installation to adjust its Xcode/OS support range, ensure that
 the version of the [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent) server
@@ -127,7 +127,5 @@ and prerequisites of Appium itself can be found in [the Appium documentation](ht
 - [`go-ios`](https://github.com/danielpaulus/go-ios) can be used to improve device interactions
 - [WIX AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils) can be used to improve some
   Simulator interactions
-- [`py-ios-device`](https://github.com/YueChen-C/py-ios-device) is required in several `mobile:`
-  extensions, and can improve the general testing experience for real devices
 
 [^xcode-macos]: Refer to this [StackOverflow post](https://stackoverflow.com/questions/78996419/xcode-15-is-not-running-in-macos-sequoia)
