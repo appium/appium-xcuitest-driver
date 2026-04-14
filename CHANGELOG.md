@@ -1,3 +1,27 @@
+## [11.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.43.1...v11.0.0) (2026-04-14)
+
+### ⚠ BREAKING CHANGES
+
+* Drop appium-idb and the py-ios-device client. Remove
+appium:launchWithIDB, mobile:startPcap / mobile:stopPcap, and
+mobile:listXCTestsInTestBundle. XCTest mobile helpers are limited to real
+devices on iOS/tvOS 18+ with appium-ios-remotexpc; logic XCTests and bare
+.xctest install via old stacks are unsupported. Certificate and crash-report
+paths on real devices require the same RemoteXPC setup.
+* Remove capabilities appInstallStrategy, calendarAccessAuthorized,
+useSimpleBuildTest, and waitForQuiescence (WDA quiescence is fixed; tune idle
+behavior with appium:waitForIdleTimeout).
+* Remove POST .../receive_async_response and the JWP-style
+async callback flow. Async atoms use the remote debugger promise + waitForAtom
+only; drop AsyncPromise from driver state.
+* Stop emitting the legacy BiDi method appium.contextUpdated;
+only appium:xcuitest.contextUpdated is emitted on context changes.
+* Removed support for appium:simpleIsVisibleCheck and related WDA visibility-detection wiring because WebDriverAgent v12 no longer supports shouldUseTestManagerForVisibilityDetection/includeNonModalElements.
+
+### Features
+
+* Deprecate legacy features ([#2805](https://github.com/appium/appium-xcuitest-driver/issues/2805)) ([238552b](https://github.com/appium/appium-xcuitest-driver/commit/238552bf15a91bf51bcf3cc0674af9b6a331cc5f))
+
 ## [10.43.1](https://github.com/appium/appium-xcuitest-driver/compare/v10.43.0...v10.43.1) (2026-04-10)
 
 ### Miscellaneous Chores
