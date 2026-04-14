@@ -1002,7 +1002,7 @@ timeout | string or int | no | Timeout if session doesn't complete after given t
 
 #### Returned Result
 
-The API calls returns a map with the following entries:
+The API call returns a map with the following entries:
 
 - results: The array of test results. Each item in this array consists of the following entries:
    * testName: Name of the test (e.g.: 'XCTesterAppUITests - XCTesterAppUITests.XCTesterAppUITests/testExample')
