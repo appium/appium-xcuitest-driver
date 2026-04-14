@@ -1019,7 +1019,7 @@ The API calls returns a map with the following entries:
 
 Installs an XCTest bundle (`.app` or `.ipa`) on the device under test.
 
-Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Installation uses **RemoteXPC**. Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead.
+Supported only on **real devices** running **iOS/tvOS 18+** with `appium-ios-remotexpc`. Bare `.xctest` bundles are not supported—provide a `.app` or `.ipa` instead.
 
 #### Arguments
 

@@ -292,7 +292,7 @@ async function withCertificateClient<T>(
 /**
  * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
  * On iOS/tvOS 18+ this requires `appium-ios-remotexpc` (same RemoteXPC certificate client as mobile
- * certificate commands); setup throws if RemoteXPC is unavailable.
+ * certificate commands); setup throws if RemoteXPC is unavailable or iOS version is less than 18.
  * `start()` has already set `platformVersion` from the device when the capability was omitted.
  */
 export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {

@@ -2083,10 +2083,6 @@ export class XCUITestDriver
   mobileSetPasteboard = pasteboardCommands.mobileSetPasteboard;
   mobileGetPasteboard = pasteboardCommands.mobileGetPasteboard;
 
-  /*------+
-   | PCAP |
-   +------+*/
-
   /*------------------+
    | NETWORK MONITOR |
    +------------------+*/
