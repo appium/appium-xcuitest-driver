@@ -16,7 +16,6 @@ describe('language and locale', function () {
     shouldUseCompactResponses: undefined,
     waitForIdleTimeout: undefined,
     shouldWaitForQuiescence: true,
-    shouldUseTestManagerForVisibilityDetection: false,
     maxTypingFrequency: 60,
     shouldTerminateApp: true,
     forceAppLaunch: true,

@@ -202,9 +202,6 @@ export const desiredCapConstraints = {
   nativeTyping: {
     isBoolean: true,
   },
-  simpleIsVisibleCheck: {
-    isBoolean: true,
-  },
   shouldUseSingletonTestManager: {
     isBoolean: true,
   },

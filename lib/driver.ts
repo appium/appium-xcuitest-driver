@@ -1484,7 +1484,6 @@ export class XCUITestDriver
       environment: env,
       eventloopIdleDelaySec: this.opts.wdaEventloopIdleDelay ?? 0,
       shouldWaitForQuiescence: true,
-      shouldUseTestManagerForVisibilityDetection: this.opts.simpleIsVisibleCheck ?? false,
       maxTypingFrequency: this.opts.maxTypingFrequency ?? 60,
       shouldUseSingletonTestManager: this.opts.shouldUseSingletonTestManager ?? true,
       waitForIdleTimeout: this.opts.waitForIdleTimeout,
