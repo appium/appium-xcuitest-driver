@@ -95,8 +95,8 @@ the app could be interacted with (a.k.a. best effort strategy).
 You may try to tune the following capabilities and settings to influence the above timeout:
 
 - [`appium:waitForIdleTimeout`](../reference/capabilities.md) capability
-- [`waitForIdleTimeout`](../reference/settings.md) setting
-- [`animationCoolOffTimeout`](../reference/settings.md) setting
+- [`waitForIdleTimeout`](../reference/settings.md#waitforidletimeout) setting
+- [`animationCoolOffTimeout`](../reference/settings.md#animationcoolofftimeout) setting
 
 Still, there are known cases where the application under test is constantly running something on
 the main thread in an endless loop. Most likely, such apps are not automatable at all, or hardly
@@ -121,14 +121,14 @@ the slowness are commonly the following:
 
 ### Solutions
 
-- Reduce the size of the app hierarchy using the [`snapshotMaxDepth`](../reference/settings.md)
-  and/or [`snapshotMaxChildren`](../reference/settings.md) settings. The former setting limits how
+- Reduce the size of the app hierarchy using the [`snapshotMaxDepth`](../reference/settings.md#snapshotmaxdepth)
+  and/or [`snapshotMaxChildren`](../reference/settings.md#snapshotmaxchildren) settings. The former setting limits how
   deep into the hierarchy WDA will traverse; if the destination element is nested deeper than this
   value, it will not be present in the snapshot. The latter setting limits how many child elements
   are captured for each node; if there are more siblings than this limit, some of them (and any
   elements under them) will be omitted from the snapshot.
 - Retrieve the page source without "expensive" attributes using the [`mobile: source`](../reference/execute-methods.md#mobile-source)
-  method with the appropriate `excludedAttributes` argument value, or the [`pageSourceExcludedAttributes` setting](../reference/settings.md)
+  method with the appropriate `excludedAttributes` argument value, or the [`pageSourceExcludedAttributes` setting](../reference/settings.md#pagesourceexcludedattributes)
 - Retrieve the native XCTest page source using the [`mobile: source`](../reference/execute-methods.md#mobile-source)
   method with the `format=description` argument value. The returned page source will be
   poorly-formatted text, but its retrieval should be fast (at least not slower than XCTest).
@@ -161,10 +161,10 @@ In general, the common advice would be to avoid XPath locators where possible, a
 that are natively supported by XCTest (such as `id` or `predicate`), which are also more performant.
 If using XPath locators is the only option, then the following suggestions may help:
 
-- Reduce the size of the app hierarchy using the [`snapshotMaxDepth`](../reference/settings.md)
-  and/or [`snapshotMaxChildren`](../reference/settings.md) settings
+- Reduce the size of the app hierarchy using the [`snapshotMaxDepth`](../reference/settings.md#snapshotmaxdepth)
+  and/or [`snapshotMaxChildren`](../reference/settings.md#snapshotmaxchildren) settings
 - Retrieve the page source without the `visible` and/or `accessible` attributes, using the [`mobile: source`](../reference/execute-methods.md#mobile-source)
-  method with the appropriate `excludedAttributes` argument value, or the [`pageSourceExcludedAttributes` setting](../reference/settings.md)
+  method with the appropriate `excludedAttributes` argument value, or the [`pageSourceExcludedAttributes` setting](../reference/settings.md#pagesourceexcludedattributes)
 - Reduce various timeouts, same as for the [Slow Application Startup pattern](#solutions)
 - Adjust the source code of the application under test to reduce the amount of accessible elements
   on a single screen

@@ -56,8 +56,8 @@ value.
 Returns the element's minimum allowed value, typically for controls like sliders or progress indicators.
 
 This attribute is not included in the default page source due to performance reasons, but it
-can be added by changing the [`includeMinMaxValueInPageSource`](./settings.md) setting to `true`, or
-retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
+can be added by changing the [`includeMinMaxValueInPageSource`](./settings.md#includeminmaxvalueinpagesource)
+setting to `true`, or retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
 API.
 
 ## maxValue
@@ -67,8 +67,8 @@ API.
 Returns the element's maximum allowed value, typically for controls like sliders or progress indicators.
 
 This attribute is not included in the default page source due to performance reasons, but it
-can be added by changing the [`includeMinMaxValueInPageSource`](./settings.md) setting to `true`, or
-retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
+can be added by changing the [`includeMinMaxValueInPageSource`](./settings.md#includeminmaxvalueinpagesource)
+setting to `true`, or retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
 API.
 
 ## enabled
@@ -100,8 +100,8 @@ Corresponds to the element's XCTest [`isHittable`](https://developer.apple.com/d
 value.
 
 This attribute is not included in the default page source due to performance reasons, but it can be
-added by changing the [`includeHittableInPageSource`](./settings.md) setting to `true`, or
-retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
+added by changing the [`includeHittableInPageSource`](./settings.md#includehittableinpagesource)
+setting to `true`, or retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
 API.
 
 Note that `isHittable` requires an element to have the [`isAccessibilityElement`](https://developer.apple.com/documentation/objectivec/nsobject-swift.class/isaccessibilityelement)
@@ -152,6 +152,6 @@ and [`UIAccessibilityCustomAction`](https://developer.apple.com/documentation/ui
 values.
 
 This attribute is not included in the default page source due to performance reasons, but it
-can be added by changing the [`includeCustomActionsInPageSource`](./settings.md) setting to `true`, or
-retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
+can be added by changing the [`includeCustomActionsInPageSource`](./settings.md#includecustomactionsinpagesource)
+setting to `true`, or retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
 API.

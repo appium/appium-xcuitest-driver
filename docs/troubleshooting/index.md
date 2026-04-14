@@ -23,16 +23,16 @@ do not require such adjustment.
 
 XCUITest driver offers a couple of approaches to handle them:
 
-- Set the [respectSystemAlerts setting](../reference/settings.md) to `true`. It enforces the active application
-  detection algorithm to check a presence of system alerts and to return the Springboard app if this check succeeds.
-  Such approach emulates the driver behavior prior to version 6 of XCUITest driver, although it might slightly
-  slow down your scripts because each attempt to detect an active app would require to also query for alerts
-  presence.
+- Set the [respectSystemAlerts setting](../reference/settings.md#respectsystemalerts) to `true`. It
+  enforces the active application detection algorithm to check a presence of system alerts and to
+  return the Springboard app if this check succeeds. Such approach emulates the driver behavior
+  prior to version 6 of XCUITest driver, although it might slightly slow down your scripts because
+  each attempt to detect an active app would require to also query for alerts presence.
 - Start a session without `appium:app` nor `appium:bundleId`. Then XCUITest driver attempts to get the current active application. This requires you to start an application after a new session request with [`mobile: installApp`](../reference/execute-methods.md#mobile-installapp) to install an app if needed and [`mobile: launchApp`](../reference/execute-methods.md#mobile-launchapp)/[`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), but it could automatically change the active application with `com.apple.springboard` or activate an application at the foreground. (Note that the automatic app detection might be lengthy, thus each action could take more time.)
     - When a permission alert exists at the foreground, it could select the `com.apple.springboard`
     - When another application is at the foreground by accepting/denying the system alert, or [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp), the application would be selected as an active application.
 - [`mobile: alert`](../reference/execute-methods.md#mobile-alert)
-- `defaultActiveApplication` setting in [Settings](../reference/settings.md).
+- `defaultActiveApplication` setting in [Settings](../reference/settings.md#defaultactiveapplication).
     - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
         ```ruby
         # Interacting with the test target
@@ -44,7 +44,8 @@ XCUITest driver offers a couple of approaches to handle them:
         ```
 - Enable `appium:autoAcceptAlerts`/`appium:autoDismissAlerts`, or interact with alerts via [User Prompts](https://www.w3.org/TR/webdriver1/#user-prompts) in WebDriver endpoints
     - e.g. `driver.switch_to.alert.accept` with the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
-    - It might be necessary to coordinate element selection via `acceptAlertButtonSelector`/`dismissAlertButtonSelector` settings in [Settings](../reference/settings.md)
+    - It might be necessary to coordinate element selection via [`acceptAlertButtonSelector`](../reference/settings.md#acceptalertbuttonselector)
+      or [`dismissAlertButtonSelector`](../reference/settings.md#dismissalertbuttonselector) settings
 - Activate `com.apple.springboard` with [`mobile: activateApp`](../reference/execute-methods.md#mobile-activateapp) before interacting with dialogs
 
 [`mobile: activeAppInfo`](../reference/execute-methods.md#mobile-activeappinfo) helps to understand what application (bundleId) is considered as active for the XCUITest driver.
@@ -54,7 +55,7 @@ XCUITest driver offers a couple of approaches to handle them:
 iOS 18 introduced a new process named `com.apple.ContactsUI.LimitedAccessPromptView`. See [this issue](https://github.com/appium/appium/issues/20591) for more details.
 As of XCUITest driver v7.26.4, the only workaround to interact with views available through the process is the below method:
 
-- `defaultActiveApplication` setting in [Settings](../reference/settings.md).
+- `defaultActiveApplication` setting in [Settings](../reference/settings.md#defaultactiveapplication).
     - e.g. With the [Appium Ruby client](https://github.com/appium/ruby_lib_core)
         ```ruby
         # Interacting with the test target
