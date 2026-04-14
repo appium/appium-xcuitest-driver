@@ -90,7 +90,7 @@
     "appium-xcode": "^6.0.2",
     "async-lock": "^1.4.0",
     "asyncbox": "^6.0.1",
-    "axios": "^1.4.0",
+    "axios": "^1.15.0",
     "bluebird": "^3.7.2",
     "commander": "^14.0.1",
     "css-selector-parser": "^3.0.0",
