@@ -19,7 +19,7 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
 (non-exhaustive list):
 
 - General communication with wireless Apple TV devices
-- Retrieval of crash logs
+- Retrieval of various logs
 - Network monitoring
 - Certificate management
 - Execution of native XCTest test suites
@@ -28,6 +28,8 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
 
 - macOS or Linux host
 - Real device running iOS/tvOS 18 or later, paired and trusted on its host
+    - The driver supports devices connected via `usbmuxd` (wired and wireless), as well as
+      wireless tvOS devices (must be paired first, [see section below](#wireless-apple-tv-devices))
 - `appium-ios-remotexpc` installed
     - The driver declares this package as an **optional dependency**, so in a normal
       installation npm will install it automatically. You only need to install it manually if
@@ -54,11 +56,14 @@ The XCUITest driver exposes a high‑level convenience script that wraps the low
 sudo appium driver run xcuitest tunnel-creation
 ```
 
-Refer to [the script reference page](../reference/scripts.md#tunnel-creation) for a list of additional options.
+Refer to [the script reference page](../reference/scripts.md#tunnel-creation) for a list of
+additional options.
 
 The script executes the following actions:
 
-- Connects to `usbmuxd` and enumerates all connected, trusted iOS/tvOS devices
+- Enumerates all connected and trusted iOS/tvOS devices
+    - The list of available devices can also be retrieved using the [`list-real-devices`](../reference/scripts.md#list-real-devices)
+      script
 - For each device:
     - Starts a Lockdown session
     - Starts `com.apple.internal.devicecompute.CoreDeviceProxy` via Remote XPC
@@ -104,8 +109,16 @@ Remote XPC connections.
 
 1. Start the tunnels (once per host):
 
+    Create a tunnel for each discovered device:
+
     ```bash
     sudo appium driver run xcuitest tunnel-creation
+    ```
+
+    Create a tunnel for a specific device:
+
+    ```bash
+    sudo appium driver run xcuitest tunnel-creation -- --udid <udid>
     ```
 
     Leave this process running in the background while tests execute.
@@ -178,14 +191,16 @@ correct `appium:udid`.
 ### Multiple Sessions
 
 The tunnel creation script is multi‑device aware: it creates and registers an independent tunnel
-for each connected device. XCUITest can then run multiple sessions concurrently on a single
-Appium server as long as:
+for each connected device. It can also be limited to specific devices by passing `--udid`/`--appletv-device-id`
+multiple times. The driver can then run multiple sessions concurrently on a single Appium server
+as long as:
 
 - Each session uses a different real device (`appium:udid` is unique per session)
 - The tunnels for all those devices are present in the tunnel registry
 
 If you frequently add/remove devices, consider occasionally re‑running the tunnel script to refresh
-the registry.
+the registry, or use the `--disconnect-retry-max-attempts`/`--disconnect-retry-interval-ms` options
+to configure automatic reconnection.
 
 ### Multiple Appium Servers
 
@@ -204,4 +219,4 @@ In more advanced setups (e.g., Docker, multiple hosts, CI agents), you may want 
 tunnel‑creation process per container/VM. In such cases, use distinct `--tunnel-registry-port`
 values for each isolation boundary. This keeps tunnel state scoped to each environment, but within
 that boundary you should still avoid running multiple competing tunnel‑creation scripts
-simultaneously, as they may fight over TUN/TAP configuration and USBMUX connections.
+simultaneously, as they may fight over TUN/TAP configuration and `usbmuxd` connections.
