@@ -109,13 +109,13 @@ Remote XPC connections.
 
 1. Start the tunnels (once per host):
 
-    Create a tunnel for each discovered device:
+    You can automatically create an individual tunnel for each discovered device:
 
     ```bash
     sudo appium driver run xcuitest tunnel-creation
     ```
 
-    Create a tunnel for a specific device:
+    Or you can create a tunnel for a specific device:
 
     ```bash
     sudo appium driver run xcuitest tunnel-creation -- --udid <udid>
@@ -149,17 +149,7 @@ No extra capabilities are required to “enable” tunnels; they are automatical
 
 ### Wireless Apple TV devices
 
-Wireless Apple TV devices running tvOS 18+ must first be paired in order to have them appear in
-Xcode / `xcodebuild` as a network device.
-
-1. Pair the Apple TV so that it is registered and has a usable UDID. The driver provides a separate
-   script for this purpose:
-
-    ```bash
-    sudo appium driver run xcuitest pair-appletv
-    ```
-
-    See the [Apple TV pairing guide](remotexpc-apple-tv-pairing.md) for more details.
+1. Ensure the Apple TV is paired (see the [Apple TV pairing guide](remotexpc-apple-tv-pairing.md) for details)
 
 2. Start the Apple TV tunnel using the UDID returned by the pairing script (step 1):
 
@@ -173,14 +163,14 @@ Xcode / `xcodebuild` as a network device.
     appium
     ```
 
-4. Run your tests using standard capabilities:
+4. Run your tests using standard capabilities, including the same UDID from step 1:
 
     ```json
     {
       "platformName": "tvOS",
       "appium:automationName": "XCUITest",
       "appium:platformVersion": "26.3",
-      "appium:udid": "<appletv-udid>"
+      "appium:udid": "<udid-from-pairing-script>"
     }
     ```
 
