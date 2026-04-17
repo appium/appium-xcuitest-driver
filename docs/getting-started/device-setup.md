@@ -48,22 +48,16 @@ The device [needs to be trusted in order to appear as a run destination in Xcode
 #### Wireless tvOS Devices
 
 Communication with wireless tvOS devices is more complex than for wired devices, resulting in
-additional requirements that depend on the tvOS version of the device under test.
+additional requirements that depend on the tvOS version of the device under test:
 
-| tvOS version | Required XCUITest driver version |
+| <div style="width:6em">tvOS Version</div> | Additional Requirements |
 | --- | --- |
-| >= 18 | >= 10.30.0 |
-| >= 17 | >= 10.10.0 |
-| <= 16 | [Same as common requirements](./system-requirements.md#driver-version) |
+| >= 18 | XCUITest driver version must be >= 10.30.0, and the device must be explicitly paired (see [wireless tvOS pairing](./wireless-tvos-pairing.md) guide) |
+| 17 | XCUITest driver version must be >= 10.10.0 |
+| <= 16 | No additional requirements ([common requirements still apply](./system-requirements.md#driver-version)) |
 
-Devices running tvOS >= 17 rely on `devicectl` instead of the default `usbmuxd`. This requires
-running the Appium server with the `APPIUM_XCUITEST_PREFER_DEVICECTL=1` flag. Refer to the
-[Environment Variables document](../reference/env-vars.md) for more details.
-
-Devices running tvOS >= 18 rely on RemoteXPC communication, and such devices must be explicitly
-paired first. Refer to the [wireless tvOS pairing](./wireless-tvos-pairing.md) guide for
-details. While the above `devicectl` approach may also work, it has some limitations, so it is
-recommended to use the RemoteXPC pairing approach if possible.
+These are only the prerequisites for pairing the physical tvOS device. In order to actually run
+tests, other requirements may exist - refer to [the full tvOS guide](../guides/tvos.md) for details.
 
 ### Required Settings
 

@@ -2,8 +2,8 @@
 title: Wireless tvOS Device Pairing
 ---
 
-This guide explains how to pair tvOS (Apple TV HD/4K) devices over WiFi, so that they can be
-recognized and automated by the XCUITest driver.
+This guide explains how to pair tvOS (Apple TV HD/4K) devices over WiFi, so that these devices can
+be recognized and automated by the XCUITest driver.
 
 All pairing-related functionality (pairing protocol, discovery, and credential storage) is
 implemented in the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/)

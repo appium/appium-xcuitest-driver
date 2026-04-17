@@ -1,23 +1,28 @@
 ---
-title: tvOS Support
+title: tvOS Automation
 ---
 
-The XCUITest driver supports automation of the tvOS platform.
+The XCUITest driver supports automation of the tvOS platform. The driver is compatible not only
+with simulators, but also with real wired and wireless devices.
 
-<img src="https://user-images.githubusercontent.com/5511591/55161297-876e0200-51a8-11e9-8313-8d9f15a0db9d.gif" width=50%>
+## Real Device Setup
 
-!!! warning
+Similarly to real iOS/iPadOS devices, real tvOS devices also have several additional prerequisites.
+Refer to the [Real Device Setup](../getting-started/device-setup.md#real-devices) document for
+details.
 
-    For tvOS < 18, support for network-only Apple TV devices is limited because
-    [`appium-ios-device`](https://github.com/appium/appium-ios-device),
-    which handles low-level communication with devices, only supports USB-connected devices.
+## Environment Setup
 
-    For tvOS 18 and newer, you can run tests against **wireless Apple TV devices** over Remote XPC
-    tunnels when using `appium-ios-remotexpc` and the tunnel registry. See
-    [Remote XPC Tunnels](./remotexpc-tunnels-real-devices.md#wireless-apple-tv--tvos-devices) for a
-    step‑by‑step guide.
+Real wireless devices have a few environment requirements that depend on the tvOS version. These
+requirements do not apply to simulators and real wired devices.
 
-## Setup
+| <div style="width:6em">tvOS Version</div> | Requirements |
+| --- | --- |
+| >= 18 | The device must have an active RemoteXPC tunnel (see [RemoteXPC guide](./remotexpc-tunnels-real-devices.md) for details) |
+| 17 | The Appium server must be launched with the `APPIUM_XCUITEST_PREFER_DEVICECTL=1` flag (see [Environment Variables](../reference/env-vars.md) for more details). This may not be needed if your environment exposes the `usbmuxd` interface to Appium via third-party tools. |
+| <= 16 | No additional requirements |
+
+## Session Creation
 
 You can run tests for tvOS by setting the `platformName` capability to `tvOS`:
 
@@ -25,40 +30,32 @@ You can run tests for tvOS by setting the `platformName` capability to `tvOS`:
 {
     "platformName": "tvOS", // here
     "appium:automationName": "XCUITest",
-    "appium:platformVersion": "12.2",
+    "appium:platformVersion": "18.5",
     "appium:deviceName": "Apple TV",
     ...
 }
 ```
 
-!!! note
+Real wireless devices running tvOS 17 must also pass the `appium:wdaBaseUrl` capability, which must
+be set to the Apple TV's IP address:
 
-    If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
-    `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` to verify this.
+```json
+{
+    "platformName": "tvOS",
+    "appium:automationName": "XCUITest",
+    "appium:platformVersion": "17.4",
+    "appium:deviceName": "Apple TV",
+    "appium:wdaBaseUrl": "http://<apple-tv-ip-address>",
+    ...
+}
+```
 
-### Network-Only Real Devices (tvOS < 18 or missing remotexpc support)
+## Session Actions
 
-To run tests on network-only Apple TV devices, you may need the following:
-
-- Xcode 26.1 or later (to execute `xcodebuild` against such network-only Apple TV devices)
-- Set the `APPIUM_XCUITEST_PREFER_DEVICECTL` environment variable
-- Provide the `appium:wdaBaseUrl` capability; it must be `http://<the Apple TV's IP address>`
-
-!!! note
-
-    If you provide `appium:webDriverAgentUrl` to manage WebDriverAgent process by yourself,
-    only `APPIUM_XCUITEST_PREFER_DEVICECTL` might be sufficient.
-
-    If your environment exposes the `usbmuxd` interface to Appium via third-party tools,
-    `APPIUM_XCUITEST_PREFER_DEVICECTL` may not be needed.
-    This environment variable could cause conflicts in several behaviors.
-
-## Basic Actions
-
-tvOS provides [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/)
+tvOS supports [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/)
 based actions. The XCUITest driver implements these actions using the
-[`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton) extension, with the
-following button values: `menu`, `up/down/left/right`, `home`, `playpause` and `select`.
+[`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton) extension, with support
+for over 10 different buttons. The `menu` button functions as a back button in the iOS context.
 
 All actions are performed on the _focused_ element (which has the `focus` attribute set). The
 focused element is automatically changed after using `mobile: pressButton`.
@@ -67,14 +64,17 @@ It is also possible to use the standard `findElement` and `click` methods. The X
 automatically calculate the necessary sequence of `up/down/left/right` and `select` button presses,
 so you should not care about which keys should be pressed to reach an arbitrary element every time.
 
+You may want to consider using `wait` methods, since tvOS also has animation.
+
+Here are a few example action sequences in different client languages:
+
 === "Java"
 
     ```java
     WebElement element = driver.findElementByAccessibilityId("element on the app");
-    element.getAttribute("focused"); // => 'true'
-    // Appium moves the focus to the element by pressing the corresponding keys and clicking the element
+    element.getAttribute("focused");
     element.click();
-    driver.queryAppState("test.package.name"); // => :running_in_foreground
+    driver.queryAppState("test.package.name");
     driver.executeScript("mobile: pressButton", ImmutableMap.of("name", "Home"));
     driver.executeScript("mobile: pressButton", ImmutableMap.of("name", "Up"));
     element = driver.switchTo().activeElement();
@@ -84,9 +84,10 @@ so you should not care about which keys should be pressed to reach an arbitrary 
 === "JS (WebdriverIO)"
 
     ```javascript
-    const element = $('~SomeAccessibilityId');
+    const element = $('element on the app');
     element.getAttribute('focused');
     element.click();
+    driver.queryAppState("test.package.name");
     driver.execute('mobile: pressButton', {name: 'Home'});
     driver.execute('mobile: pressButton', {name: 'Up'});
     const activeElement = driver.getActiveElement();
@@ -119,14 +120,10 @@ so you should not care about which keys should be pressed to reach an arbitrary 
     element.label
     ```
 
-## More Actions
-
-* Consider using `wait` methods, since tvOS also has animation
-* The `menu` button works as _back_ for iOS context in tvOS
-
 ## Known Limitations
 
-* Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.
+* Gesture commands do not work
+* Certain commands such as pasteboard do not work
 
 ## Related Tickets
 
