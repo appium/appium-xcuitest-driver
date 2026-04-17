@@ -325,7 +325,7 @@ sudo appium driver run xcuitest tunnel-creation
 |`--disconnect-retry-max-attempts`|Maximum number of tunnel recreation attempts after an unexpected disconnect. Set to `0` for unlimited retries. If omitted, retries are disabled and the tunnel is removed from registry.|integer||
 |`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds.|integer|1000|
 |`--packet-stream-base-port`|Base port for packet stream servers|integer|50000|
-|`--tunnel-registry-port`|Port of the tunnel registry server|integer|42314|
+|`--tunnel-registry-port`|Port of the tunnel registry server, hosted at `http://localhost:<port>/remotexpc/tunnels`|integer|42314|
 |`--udid`|Identifier of a specific non-Apple TV device to create the tunnel for. Repeat this argument to target multiple specific devices. By default, the tunnel is created for all connected devices. If this is provided without `--appletv-device-id`, Apple TV discovery/setup is skipped.|string (repeatable)||
 
 #### Examples
