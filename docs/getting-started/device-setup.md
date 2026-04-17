@@ -33,13 +33,39 @@ Certain accessibility settings may affect the elements shown in the application 
 In order to communicate with both simulators and real devices, the XCUITest driver must install
 the `WebDriverAgentRunner-Runner` (WDA) application on the device. Unlike simulators, real devices
 will not allow this by default, and have several security restrictions that need to be manually
-lifted beforehand:
+lifted beforehand.
 
-- The device [needs to be trusted](https://developer.apple.com/documentation/xcode/pairing-your-devices-with-xcode#Manage-your-real-devices-in-Xcode):
+### Trusting the Device
 
-    1. On your macOS computer, open Xcode
-    2. Physically connect the device to the computer
-    3. On the device, a Trust This Computer popup should appear - accept it
+The device [needs to be trusted in order to appear as a run destination in Xcode](https://developer.apple.com/documentation/xcode/pairing-your-devices-with-xcode#Manage-your-real-devices-in-Xcode).
+
+#### Wired Devices
+
+1. On your macOS computer, open Xcode
+2. Physically connect the device to the computer
+3. On the device, a _Trust This Computer_ popup should appear - accept it
+
+#### Wireless tvOS Devices
+
+Communication with wireless tvOS devices is more complex than for wired devices, resulting in
+additional requirements that depend on the tvOS version of the device under test.
+
+| tvOS version | Required XCUITest driver version |
+| --- | --- |
+| >= 18 | >= 10.30.0 |
+| >= 17 | >= 10.10.0 |
+| <= 16 | [Same as common requirements](./system-requirements.md#driver-version) |
+
+Devices running tvOS >= 17 rely on `devicectl` instead of the default `usbmuxd`. This requires
+running the Appium server with the `APPIUM_XCUITEST_PREFER_DEVICECTL=1` flag. Refer to the
+[Environment Variables document](../reference/env-vars.md) for more details.
+
+Devices running tvOS >= 18 rely on RemoteXPC communication, and such devices must be explicitly
+paired first. Refer to the [Apple TV Pairing](../guides/remotexpc-apple-tv-pairing.md) guide for
+details. While the above `devicectl` approach may also work, it has some limitations, so it is
+recommended to use the RemoteXPC pairing approach if possible.
+
+### Required Settings
 
 - The device must have [Developer Mode enabled](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device) (iOS/iPadOS 16+ only):
 
