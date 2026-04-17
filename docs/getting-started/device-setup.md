@@ -61,7 +61,7 @@ running the Appium server with the `APPIUM_XCUITEST_PREFER_DEVICECTL=1` flag. Re
 [Environment Variables document](../reference/env-vars.md) for more details.
 
 Devices running tvOS >= 18 rely on RemoteXPC communication, and such devices must be explicitly
-paired first. Refer to the [Apple TV Pairing](../guides/remotexpc-apple-tv-pairing.md) guide for
+paired first. Refer to the [wireless tvOS pairing](./wireless-tvos-pairing.md) guide for
 details. While the above `devicectl` approach may also work, it has some limitations, so it is
 recommended to use the RemoteXPC pairing approach if possible.
 

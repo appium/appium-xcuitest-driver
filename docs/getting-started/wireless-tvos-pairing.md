@@ -1,5 +1,5 @@
 ---
-title: Apple TV Pairing
+title: Wireless tvOS Device Pairing
 ---
 
 This guide explains how to pair Apple TV / tvOS devices over WiFi so that they can be used

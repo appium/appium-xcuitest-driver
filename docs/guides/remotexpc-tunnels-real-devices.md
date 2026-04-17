@@ -215,7 +215,7 @@ device.
 High‑level workflow:
 
 1. **Pair the Apple TV using the driver’s pairing script** so that it is registered and has a usable UDID.
-    See the [Apple TV pairing guide](remotexpc-apple-tv-pairing.md) for details. In short:
+    See the [wireless tvOS pairing guide](../getting-started/wireless-tvos-pairing.md) for details. In short:
 
     ```bash
     sudo appium driver run xcuitest pair-appletv
