@@ -33,26 +33,20 @@ jobs:
         # - driver
         - web
         - long
-        xcodeVersion: ['16.4', '15.4']
+        xcodeVersion: ['26.4', '16.4']
         include:
-        # iOS 26 env fails to start simulators frequently. We should revisit enabling iOS 26 env later
-        # - xcodeVersion: '26.0'
-        #   iosVersion: '26.0'
-        #   deviceName: 'iPhone 17'
-        #   tvosVersion: '26.0'
-        #   tvosDeviceName: 'Apple TV'
-        #   platform: macos-26
+        - xcodeVersion: '26.4'
+          iosVersion: '26.4'
+          deviceName: 'iPhone 17'
+          tvosVersion: '26.4'
+          tvosDeviceName: 'Apple TV'
+          platform: macos-26
         - xcodeVersion: '16.4'
           iosVersion: '18.5'
           deviceName: 'iPhone 16'
           tvosVersion: '18.5'
           tvosDeviceName: 'Apple TV'
           platform: macos-15
-        - xcodeVersion: '15.4'
-          iosVersion: '17.5'
-          deviceName: 'iPhone 15'
-          skipTvOs: true
-          platform: macos-14
       fail-fast: false
 
     runs-on: ${{ matrix.platform }}
