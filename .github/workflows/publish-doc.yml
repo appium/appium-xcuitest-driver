@@ -23,7 +23,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
     - name: Use Node.js LTS
-      uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v3
+      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v3
       with:
         node-version: lts/*
     - run: npm install
