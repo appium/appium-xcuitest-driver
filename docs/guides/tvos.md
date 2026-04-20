@@ -71,8 +71,8 @@ library. You can also forego this Remote XPC approach and use the solutions desc
     Refer to the [Remote XPC guide](./remotexpc-tunnels-real-devices.md) and [Scripts reference page](../reference/scripts.md#tunnel-creation)
     for more details.
 
-5. Launch the Appium server (in a separate process from the Remote XPC tunnel), then start a sesion
-   as normal, making sure to use the UDID from step 3:
+5. Launch the Appium server (in a separate process from the Remote XPC tunnel), then start a
+   session as normal, making sure to use the UDID from step 3:
 
     ```json
     {
