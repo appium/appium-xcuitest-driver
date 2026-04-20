@@ -31,8 +31,8 @@ For wireless devices, configuration is highly dependent on your tvOS version.
 
 Devices running tvOS 18 or later use Remote XPC services for pairing and communication. This
 functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/)
-library. You can also forego this Remote XPC approach and use the solutions described in the tvOS
-17 section, though they are limited and less reliable compared to Remote XPC.
+library. You can also skip this Remote XPC approach and use the solutions described in the tvOS 17
+section, though they are limited and less reliable compared to Remote XPC.
 
 1. Ensure you are using XCUITest driver `>= 10.30.0`, and have installed `appium-ios-remotexpc >= 0.13.0`
 
