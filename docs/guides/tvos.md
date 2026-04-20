@@ -5,54 +5,164 @@ title: tvOS Automation
 The XCUITest driver supports automation of the tvOS platform. The driver is compatible not only
 with simulators, but also with real wired and wireless devices.
 
-## Real Device Setup
+All tvOS sessions must set their `platformName` capability to `tvOS` (instead of `iOS`).
 
-Similarly to real iOS/iPadOS devices, real tvOS devices also have several additional prerequisites.
-Refer to the [Real Device Setup](../getting-started/device-setup.md#real-devices) document for
-details.
+## Simulator Setup
 
-## Environment Setup
-
-Real wireless devices have a few environment requirements that depend on the tvOS version. These
-requirements do not apply to simulators and real wired devices.
-
-| <div style="width:6em">tvOS Version</div> | Requirements |
-| --- | --- |
-| >= 18 | The device must have an active RemoteXPC tunnel (see [RemoteXPC guide](./remotexpc-tunnels-real-devices.md) for details) |
-| 17 | The Appium server must be launched with the `APPIUM_XCUITEST_PREFER_DEVICECTL=1` flag (see [Environment Variables](../reference/env-vars.md) for more details). This may not be needed if your environment exposes the `usbmuxd` interface to Appium via third-party tools. |
-| <= 16 | No additional requirements |
-
-## Session Creation
-
-You can run tests for tvOS by setting the `platformName` capability to `tvOS`:
-
-```json
-{
-    "platformName": "tvOS", // here
-    "appium:automationName": "XCUITest",
-    "appium:platformVersion": "18.5",
-    "appium:deviceName": "Apple TV",
-    ...
-}
-```
-
-Real wireless devices running tvOS 17 must also pass the `appium:wdaBaseUrl` capability, which must
-be set to the Apple TV's IP address:
+Apart from installing the simulator itself, no additional configuration is needed - you can start a
+session right away. Make sure to provide the simulator's `deviceName` and `platformVersion`:
 
 ```json
 {
     "platformName": "tvOS",
     "appium:automationName": "XCUITest",
-    "appium:platformVersion": "17.4",
-    "appium:deviceName": "Apple TV",
-    "appium:wdaBaseUrl": "http://<apple-tv-ip-address>",
+    "appium:deviceName": "<apple-tv-simulator-name>",
+    "appium:platformVersion": "<tvos-version>",
+    ...
+}
+```
+
+## Real Device Setup
+
+Similarly to real iOS/iPadOS devices, real tvOS devices also have several additional prerequisites.
+For wireless devices, configuration is highly dependent on your tvOS version.
+
+### Wireless tvOS 18 or Later
+
+Devices running tvOS 18 or later use Remote XPC services for pairing and communication. This
+functionality is provided by the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/)
+library. You can also forego this Remote XPC approach and use the solutions described in the tvOS
+17 section, though they are limited and less reliable compared to Remote XPC.
+
+1. Ensure you are using XCUITest driver `>= 10.30.0`, and have installed `appium-ios-remotexpc >= 0.13.0`
+
+2. Set up the common configuration described in the [Real Device Setup](../getting-started/device-setup.md#real-devices)
+   document, including the provisioning profile
+
+3. Pair your Apple TV device to the driver, similarly to how it was paired to Xcode in step 2:
+
+    1. Enable discovery mode in _Settings_ -> _Remotes and Devices_ -> _Remote App and Device_
+    2. Run the dedicated driver script for pairing (`sudo` required):
+
+        ```bash
+        sudo appium driver run xcuitest pair-appletv
+        ```
+
+        The above command will return a prompt for selecting a specific device. You can also skip
+        interactive selection by using the `--device` option. See [the Scripts reference page](../reference/scripts.md#pair-appletv)
+        for more information.
+
+    3. When prompted, enter the PIN that appears on the Apple TV
+        
+    If successful, the script will print an identifier for the paired Apple TV device. This
+    identifier _is different from the device's standard UDID_, and should be used _instead of
+    the standard UDID_ for all future actions.
+
+    For additional details on this procedure (discovery, cryptography, credential storage,
+    troubleshooting), refer to [the full pairing guide](https://github.com/appium/appium-ios-remotexpc/blob/main/docs/apple-tv-pairing-guide.md)
+    in the `appium-ios-remotexpc` project.
+
+4. Start a Remote XPC tunnel for your Apple TV, using another driver script (`sudo` required):
+
+    ```bash
+    sudo appium driver run xcuitest tunnel-creation -- --appletv-device-id <udid-from-pairing-script>
+    ```
+
+    Refer to the [Remote XPC guide](./remotexpc-tunnels-real-devices.md) and [Scripts reference page](../reference/scripts.md#tunnel-creation)
+    for more details.
+
+5. Launch the Appium server (in a separate process from the Remote XPC tunnel), then start a sesion
+   as normal, making sure to use the UDID from step 3:
+
+    ```json
+    {
+        "platformName": "tvOS",
+        "appium:automationName": "XCUITest",
+        "appium:udid": "<udid-from-pairing-script>",
+        "appium:platformVersion": "<tvos-version>",
+        ...
+    }
+    ```
+
+### Wireless tvOS 17 or Later
+
+For devices running tvOS 17, the approach slightly differs depending on your Xcode version. It also
+works for devices running tvOS 18 or later, but is discouraged in favor of [the aforementioned Remote XPC approach](#wireless-tvos-18-or-later).
+
+1. Ensure you are using XCUITest driver `>= 10.10.0`
+
+2. Set up the common configuration described in the [Real Device Setup](../getting-started/device-setup.md#real-devices)
+   document, including the provisioning profile
+
+3. Launch the Appium server with the `APPIUM_XCUITEST_PREFER_DEVICECTL` flag:
+
+    ```sh
+    APPIUM_XCUITEST_PREFER_DEVICECTL=1 appium
+    ```
+
+4. If running Xcode `>= 26.1`:
+
+    1. Start a session with the additional `appium:wdaBaseUrl` capability, which must be set to the
+       IP address of the Apple TV:
+
+        ```json
+        {
+            "platformName": "tvOS",
+            "appium:automationName": "XCUITest",
+            "appium:udid": "<apple-tv-udid>",
+            "appium:platformVersion": "<tvos-version>",
+            "appium:wdaBaseUrl": "http://<apple-tv-ip-address>",
+            ...
+        }
+        ```
+
+        You can omit this capability if using [the Preinstalled WDA approach](./run-preinstalled-wda.md).
+
+5. If running Xcode `<= 26.0.1`:
+
+    1. Manually build and launch WebDriverAgentRunner (WDA) yourself. This can be done through the
+       Xcode GUI or otherwise. You can also refer to the steps in the [Run Preinstalled WDA](./run-preinstalled-wda.md#install-webdriveragent)
+       guide.
+    
+    2. Follow the [Attach to Running WDA](./attach-to-running-wda.md) guide and start a session
+       with the `appium:webDriverAgentUrl` capability.
+
+### Wireless tvOS 16 or Earlier
+
+Such devices have not been officially tested, but [user reports](https://github.com/appium/appium/issues/19343)
+have shown that they are discoverable and automatable with the same real device requirements as
+iOS/iPadOS. You can therefore follow the [Real Device Setup](../getting-started/device-setup.md#real-devices)
+document, then start a session as normal:
+
+```json
+{
+    "platformName": "tvOS",
+    "appium:automationName": "XCUITest",
+    "appium:udid": "<apple-tv-udid>",
+    "appium:platformVersion": "<tvos-version>",
+    ...
+}
+```
+
+### Wired
+
+Wired tvOS devices (Apple TV HD) use the same approach as iOS/iPadOS devices. Simply follow the
+[Real Device Setup](../getting-started/device-setup.md#real-devices) document, then start a session
+as normal:
+
+```json
+{
+    "platformName": "tvOS",
+    "appium:automationName": "XCUITest",
+    "appium:udid": "<apple-tv-udid>",
+    "appium:platformVersion": "<tvos-version",
     ...
 }
 ```
 
 ## Session Actions
 
-tvOS supports [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/)
+Unlike iOS/iPadOS, interactions with tvOS use [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/)
 based actions. The XCUITest driver implements these actions using the
 [`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton) extension, with support
 for over 10 different buttons. The `menu` button functions as a back button in the iOS context.

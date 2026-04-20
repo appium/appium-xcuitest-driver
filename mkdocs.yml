@@ -35,7 +35,6 @@ nav:
       - getting-started/system-requirements.md
       - getting-started/installation.md
       - getting-started/device-setup.md
-      - getting-started/wireless-tvos-pairing.md
       - Real Device Provisioning Profile:
           - getting-started/provisioning-profile/index.md
           - getting-started/provisioning-profile/auto-config.md
@@ -128,4 +127,4 @@ plugins:
       'guides/troubleshooting.md': 'troubleshooting/index.md'
       'guides/elements-lookup-troubleshooting.md': 'troubleshooting/element-lookup.md'
       'guides/wda-slowness.md': 'troubleshooting/wda-slowness.md'
-      'guides/remotexpc-apple-tv-pairing.md': 'getting-started/wireless-tvos-pairing.md'
+      'guides/remotexpc-apple-tv-pairing.md': 'guides/tvos.md'

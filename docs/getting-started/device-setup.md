@@ -47,21 +47,17 @@ The device [needs to be trusted in order to appear as a run destination in Xcode
 
 #### Wireless tvOS Devices
 
-Communication with wireless tvOS devices is more complex than for wired devices, resulting in
-additional requirements that depend on the tvOS version of the device under test:
-
-| <div style="width:6em">tvOS Version</div> | Additional Requirements |
-| --- | --- |
-| >= 18 | XCUITest driver version must be >= 10.30.0, and the device must be explicitly paired (see [wireless tvOS pairing](./wireless-tvos-pairing.md) guide) |
-| 17 | XCUITest driver version must be >= 10.10.0 |
-| <= 16 | No additional requirements ([common requirements still apply](./system-requirements.md#driver-version)) |
-
-These are only the prerequisites for pairing the physical tvOS device. In order to actually run
-tests, other requirements may exist - refer to [the full tvOS guide](../guides/tvos.md) for details.
+1. On your macOS computer, open Xcode
+2. Ensure the Apple TV is on the same network as the macOS host (no firewall blocking)
+3. On the Apple TV, enable discovery mode in _Settings_ -> _Remotes and Devices_ -> _Remote App and Device_
+4. In Xcode, open _Window_ -> _Devices and Simulators_ - the Apple TV should appear
+5. Click _Pair_, enter the PIN that appears on the Apple TV, then click _Connect_
+6. On the Apple TV, a _Trust This Computer_ popup should appear - accept it
 
 ### Required Settings
 
-- The device must have [Developer Mode enabled](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device) (iOS/iPadOS 16+ only):
+- The device must have [Developer Mode enabled](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device)
+  (iOS/iPadOS/tvOS 16+ only):
 
     > _Settings_ -> _Privacy & Security_ -> _Developer Mode_ -> Turn _Developer Mode_ ON
 
