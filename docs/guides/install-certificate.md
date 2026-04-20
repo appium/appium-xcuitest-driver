@@ -13,7 +13,8 @@ certificates, by simply downloading specially prepared configuration files with 
 browser. After the configuration is downloaded it can be installed and trusted by going through
 several simple wizard steps.
 
-You can use the following extension methods to assist with this:
+You can use the following extension methods to assist with this. Please note that on real devices,
+this functionality is only supported starting from iOS/tvOS 18.
 
 * [`mobile: installCertificate`](../reference/execute-methods.md#mobile-installcertificate)
 * [`mobile: removeCertificate`](../reference/execute-methods.md#mobile-removecertificate)
