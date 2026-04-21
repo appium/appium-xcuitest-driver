@@ -52,7 +52,6 @@ The device [needs to be trusted in order to appear as a run destination in Xcode
 3. On the Apple TV, enable discovery mode in _Settings_ -> _Remotes and Devices_ -> _Remote App and Device_
 4. In Xcode, open _Window_ -> _Devices and Simulators_ - the Apple TV should appear
 5. Click _Pair_, enter the PIN that appears on the Apple TV, then click _Connect_
-6. On the Apple TV, a _Trust This Computer_ popup should appear - accept it
 
 ### Required Settings
 
