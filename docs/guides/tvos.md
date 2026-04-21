@@ -55,8 +55,8 @@ section, though they are limited and less reliable compared to Remote XPC.
     3. When prompted, enter the PIN that appears on the Apple TV
         
     If successful, the script will print an identifier for the paired Apple TV device. This
-    identifier _is different from the device's standard UDID_, and should be used _instead of
-    the standard UDID_ for all future actions.
+    identifier _may_ be different from the device's standard UDID - in such cases it should replace
+    the standard UDID in all future actions.
 
     For additional details on this procedure (discovery, cryptography, credential storage,
     troubleshooting), refer to [the full pairing guide](https://github.com/appium/appium-ios-remotexpc/blob/main/docs/apple-tv-pairing-guide.md)
@@ -68,8 +68,9 @@ section, though they are limited and less reliable compared to Remote XPC.
     sudo appium driver run xcuitest tunnel-creation -- --appletv-device-id <udid-from-pairing-script>
     ```
 
-    Refer to the [Remote XPC guide](./remotexpc-tunnels-real-devices.md) and [Scripts reference page](../reference/scripts.md#tunnel-creation)
-    for more details.
+    It is also recommended to set the `--disconnect-retry-max-attempts` flag to `3` or more, as
+    disconnects are likely to occur. Refer to the [Remote XPC guide](./remotexpc-tunnels-real-devices.md)
+    and [Scripts reference page](../reference/scripts.md#tunnel-creation) for more details.
 
 5. Launch the Appium server (in a separate process from the Remote XPC tunnel), then start a
    session as normal, making sure to use the UDID from step 3:

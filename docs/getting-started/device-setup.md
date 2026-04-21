@@ -57,7 +57,7 @@ The device [needs to be trusted in order to appear as a run destination in Xcode
 ### Required Settings
 
 - The device must have [Developer Mode enabled](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device)
-  (iOS/iPadOS/tvOS 16+ only):
+  (iOS/iPadOS 16+ only):
 
     > _Settings_ -> _Privacy & Security_ -> _Developer Mode_ -> Turn _Developer Mode_ ON
 
