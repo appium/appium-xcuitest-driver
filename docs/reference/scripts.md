@@ -255,7 +255,7 @@ appium driver run xcuitest open-wda
 
 Pairs wireless Apple TV devices for use in Remote XPC tunneling, which is used by the driver to
 communicate with the device. See [the Remote XPC Tunnels](../guides/remotexpc-tunnels-real-devices.md)
-and [Apple TV pairing](../guides/remotexpc-apple-tv-pairing.md) guides for more details.
+and [tvOS automation](../guides/tvos.md) guides for more details.
 
 !!! note
 

@@ -33,15 +33,30 @@ Certain accessibility settings may affect the elements shown in the application 
 In order to communicate with both simulators and real devices, the XCUITest driver must install
 the `WebDriverAgentRunner-Runner` (WDA) application on the device. Unlike simulators, real devices
 will not allow this by default, and have several security restrictions that need to be manually
-lifted beforehand:
+lifted beforehand.
 
-- The device [needs to be trusted](https://developer.apple.com/documentation/xcode/pairing-your-devices-with-xcode#Manage-your-real-devices-in-Xcode):
+### Trusting the Device
 
-    1. On your macOS computer, open Xcode
-    2. Physically connect the device to the computer
-    3. On the device, a Trust This Computer popup should appear - accept it
+The device [needs to be trusted in order to appear as a run destination in Xcode](https://developer.apple.com/documentation/xcode/pairing-your-devices-with-xcode#Manage-your-real-devices-in-Xcode).
 
-- The device must have [Developer Mode enabled](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device) (iOS/iPadOS 16+ only):
+#### Wired Devices
+
+1. On your macOS computer, open Xcode
+2. Physically connect the device to the computer
+3. On the device, a _Trust This Computer_ popup should appear - accept it
+
+#### Wireless tvOS Devices
+
+1. On your macOS computer, open Xcode
+2. Ensure the Apple TV is on the same network as the macOS host (no firewall blocking)
+3. On the Apple TV, enable discovery mode in _Settings_ -> _Remotes and Devices_ -> _Remote App and Device_
+4. In Xcode, open _Window_ -> _Devices and Simulators_ - the Apple TV should appear
+5. Click _Pair_, enter the PIN that appears on the Apple TV, then click _Connect_
+
+### Required Settings
+
+- The device must have [Developer Mode enabled](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device)
+  (iOS/iPadOS 16+ only):
 
     > _Settings_ -> _Privacy & Security_ -> _Developer Mode_ -> Turn _Developer Mode_ ON
 

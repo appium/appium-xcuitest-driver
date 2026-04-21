@@ -6,14 +6,6 @@ The XCUITest driver can be configured to launch an already-installed `WebDriverA
 application (WDA) on a real device and a simulator. This allows you to start a session without the `xcodebuild`
 command execution, improving the session startup performance.
 
-!!! warning
-
-    iOS/tvOS 17+ specific:
-
-    This method currently works over `devicectl` for iOS 17+ with Xcode 15+ environment since XCUITest driver v7.5.0.
-    This may not work for tvOS 17+.
-    iOS/tvOS 16 and lower ones work over [appium-ios-device](https://github.com/appium/appium-ios-device) directly.
-
 ## Capabilities
 
 - Required
@@ -21,7 +13,6 @@ command execution, improving the session startup performance.
 - Optional
     - [`appium:updatedWDABundleId`](../reference/capabilities.md#webdriveragent)
     - [`appium:updatedWDABundleIdSuffix`](../reference/capabilities.md#webdriveragent)
-        - Since XCUITest driver v7.6.0
     - [`appium:prebuiltWDAPath`](../reference/capabilities.md#webdriveragent)
 
 ## Install WebDriverAgent
@@ -30,8 +21,7 @@ command execution, improving the session startup performance.
 
 Running a test for the WDA package in Xcode is the easiest way to prepare the device environment:
 
-1. Open WebDriverAgent project in Xcode
-    - You can run `appium driver run xcuitest open-wda` if using XCUITest driver 4.13 or newer
+1. Open WebDriverAgent project in Xcode via `appium driver run xcuitest open-wda`
 2. Select the _WebDriverAgentRunner_ scheme
 3. Select the scheme as _Product -> Scheme -> WebDriverAgentRunner_ (or _WebDriverAgentRunner\_tvOS_ for tvOS)
 4. Select your device in _Product -> Destination_
@@ -55,7 +45,7 @@ The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the 
 directory, as explained in [Manual Configuration for a Generic Device](../getting-started/provisioning-profile/generic-device-config.md).
 The app can then be installed without `xcodebuild` using the 3rd party tools.
 
-### Additional requirement for iOS 17+/tvOS17+
+### Additional requirement for iOS/tvOS 17+
 
 To launch the WebDriverAgentRunner package with `xcrun devicectl device process launch` for real devices it should not have `Frameworks/XC**` files.
 
