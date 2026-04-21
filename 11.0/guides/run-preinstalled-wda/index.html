@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/11.0/guides/run-preinstalled-wda/">
       
       
-        <link rel="prev" href="../remotexpc-apple-tv-pairing/">
+        <link rel="prev" href="../remotexpc-tunnels-real-devices/">
       
       
         <link rel="next" href="../run-prebuilt-wda/">
@@ -1628,8 +1628,6 @@
       
         
       
-        
-      
     
     
     
@@ -1794,34 +1792,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../remotexpc-apple-tv-pairing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Apple TV Pairing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1848,10 +1818,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5_1_6" id="__nav_5_1_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1_5" id="__nav_5_1_5_label" tabindex="0">
             
   
   
@@ -1869,8 +1839,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5_1_6">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2118,9 +2088,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#additional-requirement-for-ios-17tvos17" class="md-nav__link">
+  <a href="#additional-requirement-for-iostvos-17" class="md-nav__link">
     <span class="md-ellipsis">
-      Additional requirement for iOS 17+/tvOS17+
+      Additional requirement for iOS/tvOS 17+
     </span>
   </a>
 
@@ -2642,7 +2612,7 @@
   <span class="md-ellipsis">
     
   
-    tvOS Support
+    tvOS Automation
   
 
     
@@ -3144,9 +3114,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#additional-requirement-for-ios-17tvos17" class="md-nav__link">
+  <a href="#additional-requirement-for-iostvos-17" class="md-nav__link">
     <span class="md-ellipsis">
-      Additional requirement for iOS 17+/tvOS17+
+      Additional requirement for iOS/tvOS 17+
     </span>
   </a>
 
@@ -3355,13 +3325,6 @@
 <p>The XCUITest driver can be configured to launch an already-installed <code>WebDriverAgentRunner-Runner</code>
 application (WDA) on a real device and a simulator. This allows you to start a session without the <code>xcodebuild</code>
 command execution, improving the session startup performance.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>iOS/tvOS 17+ specific:</p>
-<p>This method currently works over <code>devicectl</code> for iOS 17+ with Xcode 15+ environment since XCUITest driver v7.5.0.
-This may not work for tvOS 17+.
-iOS/tvOS 16 and lower ones work over <a href="https://github.com/appium/appium-ios-device">appium-ios-device</a> directly.</p>
-</div>
 <h2 id="capabilities">Capabilities<a class="headerlink" href="#capabilities" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Required<ul>
@@ -3370,10 +3333,7 @@ iOS/tvOS 16 and lower ones work over <a href="https://github.com/appium/appium-i
 </li>
 <li>Optional<ul>
 <li><a href="../../reference/capabilities/#webdriveragent"><code>appium:updatedWDABundleId</code></a></li>
-<li><a href="../../reference/capabilities/#webdriveragent"><code>appium:updatedWDABundleIdSuffix</code></a><ul>
-<li>Since XCUITest driver v7.6.0</li>
-</ul>
-</li>
+<li><a href="../../reference/capabilities/#webdriveragent"><code>appium:updatedWDABundleIdSuffix</code></a></li>
 <li><a href="../../reference/capabilities/#webdriveragent"><code>appium:prebuiltWDAPath</code></a></li>
 </ul>
 </li>
@@ -3382,10 +3342,7 @@ iOS/tvOS 16 and lower ones work over <a href="https://github.com/appium/appium-i
 <h3 id="using-xcode">Using Xcode<a class="headerlink" href="#using-xcode" title="Permanent link">&para;</a></h3>
 <p>Running a test for the WDA package in Xcode is the easiest way to prepare the device environment:</p>
 <ol>
-<li>Open WebDriverAgent project in Xcode<ul>
-<li>You can run <code>appium driver run xcuitest open-wda</code> if using XCUITest driver 4.13 or newer</li>
-</ul>
-</li>
+<li>Open WebDriverAgent project in Xcode via <code>appium driver run xcuitest open-wda</code></li>
 <li>Select the <em>WebDriverAgentRunner</em> scheme</li>
 <li>Select the scheme as <em>Product -&gt; Scheme -&gt; WebDriverAgentRunner</em> (or <em>WebDriverAgentRunner_tvOS</em> for tvOS)</li>
 <li>Select your device in <em>Product -&gt; Destination</em></li>
@@ -3404,7 +3361,7 @@ If the value is an empty string, then no suffix will be added to the provided bu
 <p>The WDA app package (<code>WebDriverAgentRunner-Runner.app</code>) can be generated in the <em>derivedDataPath</em>
 directory, as explained in <a href="../../getting-started/provisioning-profile/generic-device-config/">Manual Configuration for a Generic Device</a>.
 The app can then be installed without <code>xcodebuild</code> using the 3rd party tools.</p>
-<h3 id="additional-requirement-for-ios-17tvos17">Additional requirement for iOS 17+/tvOS17+<a class="headerlink" href="#additional-requirement-for-ios-17tvos17" title="Permanent link">&para;</a></h3>
+<h3 id="additional-requirement-for-iostvos-17">Additional requirement for iOS/tvOS 17+<a class="headerlink" href="#additional-requirement-for-iostvos-17" title="Permanent link">&para;</a></h3>
 <p>To launch the WebDriverAgentRunner package with <code>xcrun devicectl device process launch</code> for real devices it should not have <code>Frameworks/XC**</code> files.</p>
 <p>For example, after building the WebDriverAgent with Xcode with proper sign, it generates <code>/Users/&lt;user&gt;/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app</code>.
 Then you can remove <code>Frameworks/XC**</code> in <code>WebDriverAgentRunner-Runner.app</code> like <code>rm Frameworks/WebDriverAgentRunner-Runner.app/XC**</code>.</p>
@@ -3519,7 +3476,7 @@ The WDA package itself is available from <a href="https://github.com/appium/WebD
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 4, 2026 16:02:59 UTC"><span class="timeago" datetime="2026-04-04T16:02:59+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 4, 2026 16:02:59 UTC">2026-04-04</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 21, 2026 08:26:21 UTC"><span class="timeago" datetime="2026-04-21T08:26:21+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 21, 2026 08:26:21 UTC">2026-04-21</span>
   </span>
 
     

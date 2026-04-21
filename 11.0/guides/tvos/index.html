@@ -27,7 +27,7 @@
     
     
       
-        <title>tvOS Support - Appium XCUITest Driver</title>
+        <title>tvOS Automation - Appium XCUITest Driver</title>
       
     
     
@@ -147,7 +147,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#setup" class="md-skip">
+        <a href="#simulator-setup" class="md-skip">
           Skip to content
         </a>
       
@@ -184,7 +184,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              tvOS Support
+              tvOS Automation
             
           </span>
         </div>
@@ -1626,8 +1626,6 @@
       
         
       
-        
-      
     
     
     
@@ -1794,34 +1792,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../remotexpc-apple-tv-pairing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Apple TV Pairing
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     
     
       
@@ -1844,10 +1814,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_5" >
         
           
-          <label class="md-nav__link" for="__nav_5_1_6" id="__nav_5_1_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1_5" id="__nav_5_1_5_label" tabindex="0">
             
   
   
@@ -1865,8 +1835,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_1_6">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2339,7 +2309,7 @@
   <span class="md-ellipsis">
     
   
-    tvOS Support
+    tvOS Automation
   
 
     
@@ -2357,7 +2327,7 @@
   <span class="md-ellipsis">
     
   
-    tvOS Support
+    tvOS Automation
   
 
     
@@ -2407,15 +2377,52 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
+  <a href="#simulator-setup" class="md-nav__link">
     <span class="md-ellipsis">
-      Setup
+      Simulator Setup
     </span>
   </a>
 
   <!-- Table of contents list -->
   
-    <nav class="md-nav" aria-label="Setup">
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#real-device-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real Device Setup
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Real Device Setup">
       <ul class="md-nav__list">
         
           <!--
@@ -2445,9 +2452,120 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#network-only-real-devices-tvos-18-or-missing-remotexpc-support" class="md-nav__link">
+  <a href="#wireless-tvos-18-or-later" class="md-nav__link">
     <span class="md-ellipsis">
-      Network-Only Real Devices (tvOS &lt; 18 or missing remotexpc support)
+      Wireless tvOS 18 or Later
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#wireless-tvos-17-or-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wireless tvOS 17 or Later
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#wireless-tvos-16-or-earlier" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wireless tvOS 16 or Earlier
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#wired" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wired
     </span>
   </a>
 
@@ -2487,46 +2605,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#basic-actions" class="md-nav__link">
+  <a href="#session-actions" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Actions
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#more-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      More Actions
+      Session Actions
     </span>
   </a>
 
@@ -2956,15 +3037,52 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
+  <a href="#simulator-setup" class="md-nav__link">
     <span class="md-ellipsis">
-      Setup
+      Simulator Setup
     </span>
   </a>
 
   <!-- Table of contents list -->
   
-    <nav class="md-nav" aria-label="Setup">
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#real-device-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real Device Setup
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+    <nav class="md-nav" aria-label="Real Device Setup">
       <ul class="md-nav__list">
         
           <!--
@@ -2994,9 +3112,120 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#network-only-real-devices-tvos-18-or-missing-remotexpc-support" class="md-nav__link">
+  <a href="#wireless-tvos-18-or-later" class="md-nav__link">
     <span class="md-ellipsis">
-      Network-Only Real Devices (tvOS &lt; 18 or missing remotexpc support)
+      Wireless tvOS 18 or Later
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#wireless-tvos-17-or-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wireless tvOS 17 or Later
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#wireless-tvos-16-or-earlier" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wireless tvOS 16 or Earlier
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#wired" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wired
     </span>
   </a>
 
@@ -3036,46 +3265,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#basic-actions" class="md-nav__link">
+  <a href="#session-actions" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Actions
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#more-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      More Actions
+      Session Actions
     </span>
   </a>
 
@@ -3256,116 +3448,221 @@
   
 
 
-  <h1>tvOS Support</h1>
+  <h1>tvOS Automation</h1>
 
-<p>The XCUITest driver supports automation of the tvOS platform.</p>
-<p><img src="https://user-images.githubusercontent.com/5511591/55161297-876e0200-51a8-11e9-8313-8d9f15a0db9d.gif" width=50%></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>For tvOS &lt; 18, support for network-only Apple TV devices is limited because
-<a href="https://github.com/appium/appium-ios-device"><code>appium-ios-device</code></a>,
-which handles low-level communication with devices, only supports USB-connected devices.</p>
-<p>For tvOS 18 and newer, you can run tests against <strong>wireless Apple TV devices</strong> over Remote XPC
-tunnels when using <code>appium-ios-remotexpc</code> and the tunnel registry. See
-<a href="../remotexpc-tunnels-real-devices/#wireless-apple-tv--tvos-devices">Remote XPC Tunnels</a> for a
-step‑by‑step guide.</p>
-</div>
-<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
-<p>You can run tests for tvOS by setting the <code>platformName</code> capability to <code>tvOS</code>:</p>
+<p>The XCUITest driver supports automation of the tvOS platform. The driver is compatible not only
+with simulators, but also with real wired and wireless devices.</p>
+<p>All tvOS sessions must set their <code>platformName</code> capability to <code>tvOS</code> (instead of <code>iOS</code>).</p>
+<h2 id="simulator-setup">Simulator Setup<a class="headerlink" href="#simulator-setup" title="Permanent link">&para;</a></h2>
+<p>Apart from installing the simulator itself, no additional configuration is needed - you can start a
+session right away. Make sure to provide the simulator's <code>deviceName</code> and <code>platformVersion</code>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// here</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;12.2&quot;</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Apple TV&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;apple-tv-simulator-name&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;tvos-version&gt;&quot;</span><span class="p">,</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="err">...</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If using a simulator, make sure the tvOS simulator exists in your simulator list. You can run
-<code>xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"</code> to verify this.</p>
-</div>
-<h3 id="network-only-real-devices-tvos-18-or-missing-remotexpc-support">Network-Only Real Devices (tvOS &lt; 18 or missing remotexpc support)<a class="headerlink" href="#network-only-real-devices-tvos-18-or-missing-remotexpc-support" title="Permanent link">&para;</a></h3>
-<p>To run tests on network-only Apple TV devices, you may need the following:</p>
-<ul>
-<li>Xcode 26.1 or later (to execute <code>xcodebuild</code> against such network-only Apple TV devices)</li>
-<li>Set the <code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> environment variable</li>
-<li>Provide the <code>appium:wdaBaseUrl</code> capability; it must be <code>http://&lt;the Apple TV's IP address&gt;</code></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you provide <code>appium:webDriverAgentUrl</code> to manage WebDriverAgent process by yourself,
-only <code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> might be sufficient.</p>
-<p>If your environment exposes the <code>usbmuxd</code> interface to Appium via third-party tools,
-<code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> may not be needed.
-This environment variable could cause conflicts in several behaviors.</p>
-</div>
-<h2 id="basic-actions">Basic Actions<a class="headerlink" href="#basic-actions" title="Permanent link">&para;</a></h2>
-<p>tvOS provides <a href="https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/">remote controller</a>
+<h2 id="real-device-setup">Real Device Setup<a class="headerlink" href="#real-device-setup" title="Permanent link">&para;</a></h2>
+<p>Similarly to real iOS/iPadOS devices, real tvOS devices also have several additional prerequisites.
+For wireless devices, configuration is highly dependent on your tvOS version.</p>
+<h3 id="wireless-tvos-18-or-later">Wireless tvOS 18 or Later<a class="headerlink" href="#wireless-tvos-18-or-later" title="Permanent link">&para;</a></h3>
+<p>Devices running tvOS 18 or later use Remote XPC services for pairing and communication. This
+functionality is provided by the optional <a href="https://github.com/appium/appium-ios-remotexpc/"><code>appium-ios-remotexpc</code></a>
+library. You can also skip this Remote XPC approach and use the solutions described in the tvOS 17
+section, though they are limited and less reliable compared to Remote XPC.</p>
+<ol>
+<li>
+<p>Ensure you are using XCUITest driver <code>&gt;= 10.30.0</code>, and have installed <code>appium-ios-remotexpc &gt;= 0.13.0</code></p>
+</li>
+<li>
+<p>Set up the common configuration described in the <a href="../../getting-started/device-setup/#real-devices">Real Device Setup</a>
+   document, including the provisioning profile</p>
+</li>
+<li>
+<p>Pair your Apple TV device to the driver, similarly to how it was paired to Xcode in step 2:</p>
+<ol>
+<li>Enable discovery mode in <em>Settings</em> -&gt; <em>Remotes and Devices</em> -&gt; <em>Remote App and Device</em></li>
+<li>
+<p>Run the dedicated driver script for pairing (<code>sudo</code> required):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>pair-appletv
+</span></code></pre></div>
+<p>The above command will return a prompt for selecting a specific device. You can also skip
+interactive selection by using the <code>--device</code> option. See <a href="../../reference/scripts/#pair-appletv">the Scripts reference page</a>
+for more information.</p>
+</li>
+<li>
+<p>When prompted, enter the PIN that appears on the Apple TV</p>
+</li>
+</ol>
+<p>If successful, the script will print an identifier for the paired Apple TV device. This
+identifier <em>may</em> be different from the device's standard UDID - in such cases it should replace
+the standard UDID in all future actions.</p>
+<p>For additional details on this procedure (discovery, cryptography, credential storage,
+troubleshooting), refer to <a href="https://github.com/appium/appium-ios-remotexpc/blob/main/docs/apple-tv-pairing-guide.md">the full pairing guide</a>
+in the <code>appium-ios-remotexpc</code> project.</p>
+</li>
+<li>
+<p>Start a Remote XPC tunnel for your Apple TV, using another driver script (<code>sudo</code> required):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--<span class="w"> </span>--appletv-device-id<span class="w"> </span>&lt;udid-from-pairing-script&gt;
+</span></code></pre></div>
+<p>It is also recommended to set the <code>--disconnect-retry-max-attempts</code> flag to <code>3</code> or more, as
+disconnects are likely to occur. Refer to the <a href="../remotexpc-tunnels-real-devices/">Remote XPC guide</a>
+and <a href="../../reference/scripts/#tunnel-creation">Scripts reference page</a> for more details.</p>
+</li>
+<li>
+<p>Launch the Appium server (in a separate process from the Remote XPC tunnel), then start a
+   session as normal, making sure to use the UDID from step 3:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;udid-from-pairing-script&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;tvos-version&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="err">...</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span>
+</span></code></pre></div>
+</li>
+</ol>
+<h3 id="wireless-tvos-17-or-later">Wireless tvOS 17 or Later<a class="headerlink" href="#wireless-tvos-17-or-later" title="Permanent link">&para;</a></h3>
+<p>For devices running tvOS 17, the approach slightly differs depending on your Xcode version. It also
+works for devices running tvOS 18 or later, but is discouraged in favor of <a href="#wireless-tvos-18-or-later">the aforementioned Remote XPC approach</a>.</p>
+<ol>
+<li>
+<p>Ensure you are using XCUITest driver <code>&gt;= 10.10.0</code></p>
+</li>
+<li>
+<p>Set up the common configuration described in the <a href="../../getting-started/device-setup/#real-devices">Real Device Setup</a>
+   document, including the provisioning profile</p>
+</li>
+<li>
+<p>Launch the Appium server with the <code>APPIUM_XCUITEST_PREFER_DEVICECTL</code> flag:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">APPIUM_XCUITEST_PREFER_DEVICECTL</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>appium
+</span></code></pre></div>
+</li>
+<li>
+<p>If running Xcode <code>&gt;= 26.1</code>:</p>
+<ol>
+<li>
+<p>Start a session with the additional <code>appium:wdaBaseUrl</code> capability, which must be set to the
+   IP address of the Apple TV:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;apple-tv-udid&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;tvos-version&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="nt">&quot;appium:wdaBaseUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://&lt;apple-tv-ip-address&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="err">...</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>You can omit this capability if using <a href="../run-preinstalled-wda/">the Preinstalled WDA approach</a>.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>If running Xcode <code>&lt;= 26.0.1</code>:</p>
+<ol>
+<li>
+<p>Manually build and launch WebDriverAgentRunner (WDA) yourself. This can be done through the
+   Xcode GUI or otherwise. You can also refer to the steps in the <a href="../run-preinstalled-wda/#install-webdriveragent">Run Preinstalled WDA</a>
+   guide.</p>
+</li>
+<li>
+<p>Follow the <a href="../attach-to-running-wda/">Attach to Running WDA</a> guide and start a session
+   with the <code>appium:webDriverAgentUrl</code> capability.</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="wireless-tvos-16-or-earlier">Wireless tvOS 16 or Earlier<a class="headerlink" href="#wireless-tvos-16-or-earlier" title="Permanent link">&para;</a></h3>
+<p>Such devices have not been officially tested, but <a href="https://github.com/appium/appium/issues/19343">user reports</a>
+have shown that they are discoverable and automatable with the same real device requirements as
+iOS/iPadOS. You can therefore follow the <a href="../../getting-started/device-setup/#real-devices">Real Device Setup</a>
+document, then start a session as normal:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;apple-tv-udid&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;tvos-version&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="err">...</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="wired">Wired<a class="headerlink" href="#wired" title="Permanent link">&para;</a></h3>
+<p>Wired tvOS devices (Apple TV HD) use the same approach as iOS/iPadOS devices. Simply follow the
+<a href="../../getting-started/device-setup/#real-devices">Real Device Setup</a> document, then start a session
+as normal:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tvOS&quot;</span><span class="p">,</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">&quot;appium:udid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;apple-tv-udid&gt;&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;tvos-version&quot;</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="err">...</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="session-actions">Session Actions<a class="headerlink" href="#session-actions" title="Permanent link">&para;</a></h2>
+<p>Unlike iOS/iPadOS, interactions with tvOS use <a href="https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/">remote controller</a>
 based actions. The XCUITest driver implements these actions using the
-<a href="../../reference/execute-methods/#mobile-pressbutton"><code>mobile: pressButton</code></a> extension, with the
-following button values: <code>menu</code>, <code>up/down/left/right</code>, <code>home</code>, <code>playpause</code> and <code>select</code>.</p>
+<a href="../../reference/execute-methods/#mobile-pressbutton"><code>mobile: pressButton</code></a> extension, with support
+for over 10 different buttons. The <code>menu</code> button functions as a back button in the iOS context.</p>
 <p>All actions are performed on the <em>focused</em> element (which has the <code>focus</code> attribute set). The
 focused element is automatically changed after using <code>mobile: pressButton</code>.</p>
 <p>It is also possible to use the standard <code>findElement</code> and <code>click</code> methods. The XCUITest driver will
 automatically calculate the necessary sequence of <code>up/down/left/right</code> and <code>select</code> button presses,
 so you should not care about which keys should be pressed to reach an arbitrary element every time.</p>
+<p>You may want to consider using <code>wait</code> methods, since tvOS also has animation.</p>
+<p>Here are a few example action sequences in different client languages:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Java</label><label for="__tabbed_1_2">JS (WebdriverIO)</label><label for="__tabbed_1_3">Python</label><label for="__tabbed_1_4">Ruby</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">WebElement</span><span class="w"> </span><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElementByAccessibilityId</span><span class="p">(</span><span class="s">&quot;element on the app&quot;</span><span class="p">);</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">element</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;focused&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// =&gt; &#39;true&#39;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">// Appium moves the focus to the element by pressing the corresponding keys and clicking the element</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">element</span><span class="p">.</span><span class="na">click</span><span class="p">();</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">driver</span><span class="p">.</span><span class="na">queryAppState</span><span class="p">(</span><span class="s">&quot;test.package.name&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// =&gt; :running_in_foreground</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">driver</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;mobile: pressButton&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ImmutableMap</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Home&quot;</span><span class="p">));</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">driver</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;mobile: pressButton&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ImmutableMap</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Up&quot;</span><span class="p">));</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">activeElement</span><span class="p">();</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">element</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;label&quot;</span><span class="p">);</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">WebElement</span><span class="w"> </span><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElementByAccessibilityId</span><span class="p">(</span><span class="s">&quot;element on the app&quot;</span><span class="p">);</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">element</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;focused&quot;</span><span class="p">);</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">element</span><span class="p">.</span><span class="na">click</span><span class="p">();</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">driver</span><span class="p">.</span><span class="na">queryAppState</span><span class="p">(</span><span class="s">&quot;test.package.name&quot;</span><span class="p">);</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">driver</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;mobile: pressButton&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ImmutableMap</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Home&quot;</span><span class="p">));</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">driver</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;mobile: pressButton&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ImmutableMap</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Up&quot;</span><span class="p">));</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">activeElement</span><span class="p">();</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">element</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;label&quot;</span><span class="p">);</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-javascript highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;~SomeAccessibilityId&#39;</span><span class="p">);</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nx">element</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;focused&#39;</span><span class="p">);</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nx">element</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="p">});</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Up&#39;</span><span class="p">});</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="kd">const</span><span class="w"> </span><span class="nx">activeElement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">getActiveElement</span><span class="p">();</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="nx">activeElement</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">);</span>
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;element on the app&#39;</span><span class="p">);</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nx">element</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;focused&#39;</span><span class="p">);</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nx">element</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">queryAppState</span><span class="p">(</span><span class="s2">&quot;test.package.name&quot;</span><span class="p">);</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="p">});</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">execute</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Up&#39;</span><span class="p">});</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="kd">const</span><span class="w"> </span><span class="nx">activeElement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">getActiveElement</span><span class="p">();</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="nx">activeElement</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">);</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-Python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_accessibility_id</span><span class="p">(</span><span class="s1">&#39;element on the app&#39;</span><span class="p">)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">element</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;focused&#39;</span><span class="p">)</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">element</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">driver</span><span class="o">.</span><span class="n">query_app_state</span><span class="p">(</span><span class="s1">&#39;test.package.name&#39;</span><span class="p">)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Home&#39;</span> <span class="p">})</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Up&#39;</span> <span class="p">})</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">active_element</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">element</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
+<div class="language-Python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element_by_accessibility_id</span><span class="p">(</span><span class="s1">&#39;element on the app&#39;</span><span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">element</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;focused&#39;</span><span class="p">)</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">element</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">driver</span><span class="o">.</span><span class="n">query_app_state</span><span class="p">(</span><span class="s1">&#39;test.package.name&#39;</span><span class="p">)</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Home&#39;</span> <span class="p">})</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Up&#39;</span> <span class="p">})</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">active_element</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">element</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-ruby highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vi">@driver</span><span class="o">.</span><span class="n">find_element</span><span class="w"> </span><span class="ss">:accessibility_id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;element on the app&#39;</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">element</span><span class="o">.</span><span class="n">focused</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">element</span><span class="o">.</span><span class="n">click</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">app_state</span><span class="p">(</span><span class="s1">&#39;test.package.name&#39;</span><span class="p">)</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Up&#39;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vi">@driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">active_element</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">element</span><span class="o">.</span><span class="n">label</span>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vi">@driver</span><span class="o">.</span><span class="n">find_element</span><span class="w"> </span><span class="ss">:accessibility_id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;element on the app&#39;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">element</span><span class="o">.</span><span class="n">focused</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">element</span><span class="o">.</span><span class="n">click</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">app_state</span><span class="p">(</span><span class="s1">&#39;test.package.name&#39;</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Home&#39;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: pressButton&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Up&#39;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="vi">@driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">active_element</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="n">element</span><span class="o">.</span><span class="n">label</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
-<h2 id="more-actions">More Actions<a class="headerlink" href="#more-actions" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Consider using <code>wait</code> methods, since tvOS also has animation</li>
-<li>The <code>menu</code> button works as <em>back</em> for iOS context in tvOS</li>
-</ul>
 <h2 id="known-limitations">Known Limitations<a class="headerlink" href="#known-limitations" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.</li>
+<li>Gesture commands do not work</li>
+<li>Certain commands such as pasteboard do not work</li>
 </ul>
 <h2 id="related-tickets">Related Tickets<a class="headerlink" href="#related-tickets" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3396,7 +3693,7 @@ so you should not care about which keys should be pressed to reach an arbitrary 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 1, 2026 16:24:53 UTC"><span class="timeago" datetime="2026-04-01T16:24:53+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 1, 2026 16:24:53 UTC">2026-04-01</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 21, 2026 08:26:21 UTC"><span class="timeago" datetime="2026-04-21T08:26:21+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 21, 2026 08:26:21 UTC">2026-04-21</span>
   </span>
 
     
