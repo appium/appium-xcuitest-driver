@@ -1,5 +1,5 @@
 ---
-title: Manage WebDriverAgent by Yourself
+title: Manage WDA by Yourself
 ---
 
 The XCUITest driver uses [WebDriverAgent](https://github.com/appium/WebDriverAgent) (WDA) as the

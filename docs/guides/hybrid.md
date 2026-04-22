@@ -1,5 +1,5 @@
 ---
-title: Automating Hybrid Apps
+title: Hybrid Apps
 ---
 
 One of the core principles of XCUITest driver is that you shouldn't have to change your

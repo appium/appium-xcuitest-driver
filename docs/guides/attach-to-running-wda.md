@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: Attach to a Running WebDriverAgent
+title: Attach to a Running WDA
 ---
 
 The XCUITest driver provides the __`appium:webDriverAgentUrl`__ capability to attach to a running

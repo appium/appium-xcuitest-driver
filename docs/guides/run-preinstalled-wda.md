@@ -1,5 +1,5 @@
 ---
-title: Run Preinstalled WebDriverAgentRunner
+title: Run Preinstalled WDA
 ---
 
 The XCUITest driver can be configured to launch an already-installed `WebDriverAgentRunner-Runner`
