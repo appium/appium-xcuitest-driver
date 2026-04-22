@@ -1,5 +1,5 @@
 ---
-title: About iOS Input Events
+title: iOS Input Events
 ---
 
 ## What Are Input Events

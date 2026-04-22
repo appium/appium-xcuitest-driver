@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: Testing in Parallel
+title: Running Tests in Parallel
 ---
 
 It is possible to execute tests in parallel using XCUITest driver. Appium allows to do this on a

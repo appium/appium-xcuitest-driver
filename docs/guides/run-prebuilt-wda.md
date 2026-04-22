@@ -1,5 +1,5 @@
 ---
-title: Run Prebuilt WebDriverAgentRunner
+title: Run Prebuilt WDA
 ---
 
 The XCUITest driver runs `xcodebuild` to build and install the WebDriverAgentRunner (WDA) app on the

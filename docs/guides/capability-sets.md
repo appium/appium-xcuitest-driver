@@ -1,5 +1,5 @@
 ---
-title: Basic Examples of Session Capability Sets
+title: Capability Set Examples
 ---
 
 This article describes necessary capabilities that must be provided in order

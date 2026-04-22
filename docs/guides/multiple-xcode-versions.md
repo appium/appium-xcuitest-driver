@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: Managing Multiple Xcodes
+title: Multiple Xcode Installs
 ---
 
 If you have multiple Xcode installations, you may choose which toolset Appium should use with one

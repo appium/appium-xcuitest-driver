@@ -59,15 +59,19 @@ nav:
           - reference/element-attributes.md
   - Guides:
       - Environment Configuration:
-          - guides/parallel-tests.md
           - guides/ci-setup.md
           - guides/multiple-xcode-versions.md
           - guides/remotexpc-tunnels-real-devices.md
-          - Improve Session Startup Performance:
+          - Tune WebDriverAgent Startup Performance:
               - guides/run-preinstalled-wda.md
               - guides/run-prebuilt-wda.md
               - guides/attach-to-running-wda.md
-          - guides/wda-custom-server.md
+              - guides/wda-custom-server.md
+      - Session Configuration:
+          - guides/capability-sets.md
+          - guides/parallel-tests.md
+          - guides/hybrid.md
+          - guides/mjpeg.md
       - Driver Actions:
           - guides/audio-capture.md
           - guides/file-transfer.md
@@ -78,9 +82,6 @@ nav:
       - Other:
           - guides/tvos.md
           - guides/input-events.md
-          - guides/capability-sets.md
-          - guides/hybrid.md
-          - guides/mjpeg.md
   - Troubleshooting:
       - troubleshooting/index.md
       - troubleshooting/element-lookup.md
