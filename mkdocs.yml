@@ -73,7 +73,7 @@ nav:
           - guides/file-transfer.md
           - guides/install-certificate.md
           - guides/clipboard.md
-          - guides/touch-id.md
+          - guides/biometric-auth.md
           - guides/gestures.md
       - Other:
           - guides/tvos.md
@@ -105,7 +105,7 @@ plugins:
       'parallel-tests.md': 'guides/parallel-tests.md'
       'run-prebuilt-wda.md': 'guides/run-prebuilt-wda.md'
       'run-preinstalled-wda.md': 'guides/run-preinstalled-wda.md'
-      'touch-id.md': 'guides/touch-id.md'
+      'touch-id.md': 'guides/biometric-auth.md'
       'wda-custom-server.md': 'guides/wda-custom-server.md'
       'capabilities.md': 'reference/capabilities.md'
       'reference/commands/appium-xcuitest-driver.md': 'reference/commands.md'
@@ -128,3 +128,4 @@ plugins:
       'guides/elements-lookup-troubleshooting.md': 'troubleshooting/element-lookup.md'
       'guides/wda-slowness.md': 'troubleshooting/wda-slowness.md'
       'guides/remotexpc-apple-tv-pairing.md': 'guides/tvos.md'
+      'guides/touch-id.md': 'guides/biometric-auth.md'
