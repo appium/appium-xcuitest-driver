@@ -65,6 +65,10 @@
          <lastmod>2026-04-22</lastmod>
     </url>
     <url>
+         <loc>https://appium.github.io/appium-xcuitest-driver/11.0/guides/biometric-auth/</loc>
+         <lastmod>2026-04-22</lastmod>
+    </url>
+    <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/11.0/guides/capability-sets/</loc>
          <lastmod>2026-04-22</lastmod>
     </url>
@@ -118,10 +122,6 @@
     </url>
     <url>
          <loc>https://appium.github.io/appium-xcuitest-driver/11.0/guides/run-preinstalled-wda/</loc>
-         <lastmod>2026-04-22</lastmod>
-    </url>
-    <url>
-         <loc>https://appium.github.io/appium-xcuitest-driver/11.0/guides/touch-id/</loc>
          <lastmod>2026-04-22</lastmod>
     </url>
     <url>
