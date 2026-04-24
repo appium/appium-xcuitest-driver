@@ -1,3 +1,9 @@
+## [11.0.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.0.0...v11.0.1) (2026-04-24)
+
+### Miscellaneous Chores
+
+* Bump remotexpc version to ^1.0.0 ([#2818](https://github.com/appium/appium-xcuitest-driver/issues/2818)) ([63a02b8](https://github.com/appium/appium-xcuitest-driver/commit/63a02b87c7390fee0f98a9f4fcda81bf002cc3c1))
+
 ## [11.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v10.43.1...v11.0.0) (2026-04-14)
 
 ### ⚠ BREAKING CHANGES
