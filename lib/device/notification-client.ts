@@ -50,8 +50,6 @@ export class NotificationClient {
     return this.service as IOSDeviceNotificationProxy;
   }
 
-  //#region Public Methods
-
   /**
    * Create a notification client for device
    *
@@ -157,10 +155,4 @@ export class NotificationClient {
       }
     }
   }
-
-  //#endregion
-
-  //#region Private Methods
-
-  //#endregion
 }

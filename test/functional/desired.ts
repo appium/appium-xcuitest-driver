@@ -15,7 +15,6 @@ export function extractCapabilityValue(caps, capName) {
 
 // translate integer environment variable to a boolean 0=false, !0=true
 function checkFeatureInEnv(envArg) {
-  /** @type {string|number} */
   let feature: string | number = parseInt(String(process.env[envArg]), 10);
   if (isNaN(feature)) {
     feature = String(process.env[envArg]);

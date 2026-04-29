@@ -39,7 +39,6 @@ describe('context', function () {
       const driver = new XCUITestDriver({} as any);
       driver.curContext = '5191.5';
       driver.contexts = ['5191.5', '5191.3', '5191.4'];
-      /** @type {undefined|(string|number)[]} */
       let selectPageArgs: (string | number)[] | undefined;
       const remoteMock = {
         isConnected: true,
