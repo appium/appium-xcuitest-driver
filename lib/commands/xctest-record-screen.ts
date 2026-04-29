@@ -7,7 +7,10 @@ import type {Simulator} from 'appium-ios-simulator';
 import type {RealDevice} from '../device/real-device-management';
 import type {HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
-import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
+import {
+  isTunnelAvailabilityError,
+  XctestAttachmentDeletionClient,
+} from '../device/xctest-attachment-deletion-client';
 
 const MOV_EXT = '.mov';
 /** Insecure feature when real-device XCTest recording is used without RemoteXPC attachment deletion. */
@@ -185,7 +188,7 @@ export async function mobileStopXctestScreenRecording(
 
   this.log.debug(`Stopping the active screen recording: ${JSON.stringify(screenRecordingInfo)}`);
   await this.proxyCommand('/wda/video/stop', 'POST', {});
-  const videoPath = await retrieveXcTestScreenRecording.call(this, screenRecordingInfo.uuid);
+  const videoPath: string = await retrieveXcTestScreenRecording.call(this, screenRecordingInfo.uuid);
   const result: XcTestScreenRecording = {
     ...screenRecordingInfo,
     payload: '', // Will be set below
@@ -226,10 +229,21 @@ export async function mobileStopXctestScreenRecording(
         }
       } catch (deleteErr: any) {
         if (encodeOrUploadError === undefined) {
-          attachmentDeleteError = deleteErr;
+          if (
+            this.isFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE) &&
+            isTunnelAvailabilityError(deleteErr)
+          ) {
+            this.log.warn(
+              `Could not delete XCTest attachment on device: ${
+                deleteErr?.message ?? deleteErr
+              }`,
+            );
+          } else {
+            attachmentDeleteError = deleteErr;
+          }
         } else {
           this.log.warn(
-            `Could not delete XCTest attachment on device after stop (encode/upload had already failed): ${
+            `Could not delete XCTest attachment on device (encode/upload had already failed): ${
               deleteErr?.message ?? deleteErr
             }`,
           );
