@@ -18,17 +18,6 @@ export interface IXctestAttachmentDeletionClient {
 }
 
 /**
- * Whether the given error means RemoteXPC tunnel infrastructure is unavailable.
- */
-export function isTunnelAvailabilityError(err: unknown): boolean {
-  if (!err) {
-    return false;
-  }
-  const name = (err as any)?.name ?? (err as any)?.constructor?.name;
-  return name === 'TunnelAvailabilityError';
-}
-
-/**
  * Deletes XCTest screen-recording attachments on a real device via appium-ios-remotexpc
  * (testmanagerd). Use {@link isDeletionAvailable} before start; {@link create} returns a client
  * ready to delete (or throws if deletion cannot run).

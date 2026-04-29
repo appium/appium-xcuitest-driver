@@ -7,10 +7,8 @@ import type {Simulator} from 'appium-ios-simulator';
 import type {RealDevice} from '../device/real-device-management';
 import type {HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
-import {
-  isTunnelAvailabilityError,
-  XctestAttachmentDeletionClient,
-} from '../device/xctest-attachment-deletion-client';
+import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
+import {isTunnelAvailabilityError} from '../device/remotexpc-utils';
 
 const MOV_EXT = '.mov';
 /** Insecure feature when real-device XCTest recording is used without RemoteXPC attachment deletion. */

@@ -9,6 +9,17 @@ export type RemoteXPCServices = typeof import('appium-ios-remotexpc').Services;
 export type RemoteXPCTestRunner = RemoteXPCEsmModule['XCTestRunner'];
 
 /**
+ * Whether the given error means RemoteXPC tunnel infrastructure is unavailable.
+ */
+export function isTunnelAvailabilityError(err: unknown): boolean {
+  if (!err) {
+    return false;
+  }
+  const name = (err as any)?.name ?? (err as any)?.constructor?.name;
+  return name === 'TunnelAvailabilityError';
+}
+
+/**
  * Full ESM namespace after a successful `import('appium-ios-remotexpc')` (e.g. **XCTestAttachment**).
  * Set together with {@link cachedRemoteXPCServices}.
  */
