@@ -277,6 +277,11 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
       log.warn(stderr);
     }
   });
+  bsdtarProcess.stdin.on('error', (e) => {
+    if (!(typeof e === 'object' && e && 'code' in e && e.code === 'EPIPE')) {
+      log.warn(`Error occurred while writing to bsdtar stdin: ${e.message}`);
+    }
+  });
   zipStream.on('data', (chunk) => {
     archiveSize += _.size(chunk);
   });
