@@ -186,7 +186,10 @@ export async function mobileStopXctestScreenRecording(
 
   this.log.debug(`Stopping the active screen recording: ${JSON.stringify(screenRecordingInfo)}`);
   await this.proxyCommand('/wda/video/stop', 'POST', {});
-  const videoPath: string = await retrieveXcTestScreenRecording.call(this, screenRecordingInfo.uuid);
+  const videoPath: string = await retrieveXcTestScreenRecording.call(
+    this,
+    screenRecordingInfo.uuid,
+  );
   const result: XcTestScreenRecording = {
     ...screenRecordingInfo,
     payload: '', // Will be set below
@@ -232,9 +235,7 @@ export async function mobileStopXctestScreenRecording(
             isTunnelAvailabilityError(deleteErr)
           ) {
             this.log.warn(
-              `Could not delete XCTest attachment on device: ${
-                deleteErr?.message ?? deleteErr
-              }`,
+              `Could not delete XCTest attachment on device: ${deleteErr?.message ?? deleteErr}`,
             );
           } else {
             attachmentDeleteError = deleteErr;
