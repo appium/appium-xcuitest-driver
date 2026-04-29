@@ -3,12 +3,12 @@ import type {AppiumLogger} from '@appium/types';
 import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
 import {LineConsumingLog} from './line-consuming-log';
 
-type PerformanceLogEntry = object;
 export interface IOSPerformanceLogOptions {
   remoteDebugger: any;
   maxEvents?: number;
   log: AppiumLogger;
 }
+type PerformanceLogEntry = object;
 
 export class IOSPerformanceLog extends LineConsumingLog {
   private readonly remoteDebugger: any;
@@ -23,6 +23,10 @@ export class IOSPerformanceLog extends LineConsumingLog {
     this._started = false;
   }
 
+  override get isCapturing(): boolean {
+    return this._started;
+  }
+
   override async startCapture(): Promise<void> {
     this.log.debug('Starting performance (Timeline) log capture');
     this._clearEntries();
@@ -34,10 +38,6 @@ export class IOSPerformanceLog extends LineConsumingLog {
     this.log.debug('Stopping performance (Timeline) log capture');
     await this.remoteDebugger.stopTimeline();
     this._started = false;
-  }
-
-  override get isCapturing(): boolean {
-    return this._started;
   }
 
   private onTimelineEvent(event: PerformanceLogEntry): void {

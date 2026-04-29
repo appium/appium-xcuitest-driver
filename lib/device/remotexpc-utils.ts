@@ -45,41 +45,6 @@ let cachedXCTestRunnerClass: RemoteXPCTestRunner | null = null;
 const {moduleRoot, remoteXpcVersion} = fetchInstallInfo();
 
 /**
- * Whether `err` indicates the **appium-ios-remotexpc** package is not installed / not resolvable,
- * as opposed to a transient or corrupt-install failure that may succeed on a later attempt.
- */
-function isAppiumIosRemotexpcPackageMissingError(err: Error): boolean {
-  const msg = err.message;
-  return (
-    (msg.includes('Cannot find module') && msg.includes('appium-ios-remotexpc')) ||
-    (msg.includes('Cannot find package') && msg.includes('appium-ios-remotexpc'))
-  );
-}
-
-function throwRemoteXPCImportError(err: Error): never {
-  if (err.message.includes('Cannot find module')) {
-    let errorMessage =
-      'Failed to import appium-ios-remotexpc module. ' +
-      'This module is required for iOS 18 and above device operations.';
-
-    if (moduleRoot && remoteXpcVersion) {
-      errorMessage +=
-        ' Please install it by running: ' +
-        `cd "${moduleRoot}" && npm install "appium-ios-remotexpc@${remoteXpcVersion}".`;
-    }
-
-    errorMessage += ` Original error: ${err.message}`;
-    throw new Error(errorMessage);
-  }
-
-  throw new Error(
-    'Failed to import appium-ios-remotexpc module. ' +
-      'This module is required for iOS 18 and above device operations. ' +
-      `Original error: ${err.message}`,
-  );
-}
-
-/**
  * Get the RemoteXPC Services module dynamically
  *
  * This helper centralizes the import of appium-ios-remotexpc to:
@@ -241,6 +206,41 @@ export async function getXCTestRunnerClass(): Promise<RemoteXPCTestRunner> {
         `Original error: ${error.message}`,
     );
   }
+}
+
+/**
+ * Whether `err` indicates the **appium-ios-remotexpc** package is not installed / not resolvable,
+ * as opposed to a transient or corrupt-install failure that may succeed on a later attempt.
+ */
+function isAppiumIosRemotexpcPackageMissingError(err: Error): boolean {
+  const msg = err.message;
+  return (
+    (msg.includes('Cannot find module') && msg.includes('appium-ios-remotexpc')) ||
+    (msg.includes('Cannot find package') && msg.includes('appium-ios-remotexpc'))
+  );
+}
+
+function throwRemoteXPCImportError(err: Error): never {
+  if (err.message.includes('Cannot find module')) {
+    let errorMessage =
+      'Failed to import appium-ios-remotexpc module. ' +
+      'This module is required for iOS 18 and above device operations.';
+
+    if (moduleRoot && remoteXpcVersion) {
+      errorMessage +=
+        ' Please install it by running: ' +
+        `cd "${moduleRoot}" && npm install "appium-ios-remotexpc@${remoteXpcVersion}".`;
+    }
+
+    errorMessage += ` Original error: ${err.message}`;
+    throw new Error(errorMessage);
+  }
+
+  throw new Error(
+    'Failed to import appium-ios-remotexpc module. ' +
+      'This module is required for iOS 18 and above device operations. ' +
+      `Original error: ${err.message}`,
+  );
 }
 
 /**

@@ -4,6 +4,11 @@ import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import type {Element, StringRecord} from '@appium/types';
 
+type ExecuteMethodArgs =
+  | readonly any[]
+  | readonly [StringRecord<unknown>]
+  | Readonly<StringRecord<unknown>>;
+
 /**
  * @template TReturn
  * @param script - Either a script to run, or in the case of an Execute Method, the name of the script to execute.
@@ -123,8 +128,3 @@ function preprocessExecuteMethodArgs(
 
   return executeMethodArgs;
 }
-
-type ExecuteMethodArgs =
-  | readonly any[]
-  | readonly [StringRecord<unknown>]
-  | Readonly<StringRecord<unknown>>;

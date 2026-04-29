@@ -6,8 +6,6 @@ const REMOTEXPC_UPGRADE_HINT =
   'Upgrade appium-ios-remotexpc to a version that exports XCTestAttachment ' +
   '(XCTest screen recording attachment deletion on real devices).';
 
-type XCTestAttachmentCtor = new (udid: string) => {delete(uuids: string[]): Promise<unknown>};
-
 /** Subset of appium-ios-remotexpc exports used here (types may lag the runtime package). */
 export type RemotexpcAttachmentModule = {
   XCTestAttachment?: XCTestAttachmentCtor;
@@ -16,6 +14,8 @@ export type RemotexpcAttachmentModule = {
 export interface IXctestAttachmentDeletionClient {
   deleteAttachmentsByUuid(uuids: string[]): Promise<void>;
 }
+
+type XCTestAttachmentCtor = new (udid: string) => {delete(uuids: string[]): Promise<unknown>};
 
 /**
  * Deletes XCTest screen-recording attachments on a real device via appium-ios-remotexpc

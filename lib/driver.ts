@@ -237,6 +237,27 @@ const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScr
 // Capabilities that do not have xcodebuild process
 const CAP_NAMES_NO_XCODEBUILD_REQUIRED = ['webDriverAgentUrl', 'usePreinstalledWDA'];
 
+export type AutInstallationStateOptions = Pick<
+  XCUITestDriverOpts,
+  'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'
+>;
+
+export interface AutInstallationState {
+  install: boolean; // If the given app should install, or not need to install.
+  skipUninstall: boolean; // If the installed app should be uninstalled, or not.
+}
+
+export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
+
+export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
+export interface DriverLogs {
+  syslog?: IOSDeviceLog | IOSSimulatorLog;
+  crashlog?: IOSCrashLog;
+  safariConsole?: SafariConsoleLog;
+  safariNetwork?: SafariNetworkLog;
+  performance?: IOSPerformanceLog;
+}
+
 export class XCUITestDriver
   extends BaseDriver<XCUITestDriverConstraints, StringRecord>
   implements ExternalDriver<XCUITestDriverConstraints, FullContext | string, StringRecord>
@@ -288,6 +309,444 @@ export class XCUITestDriver
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
+  /*---------------+
+   | ACTIVEAPPINFO |
+   +---------------+*/
+
+  mobileGetActiveAppInfo = activeAppInfoCommands.mobileGetActiveAppInfo;
+
+  /*-------+
+   | ALERT |
+   +-------+*/
+  getAlertText = alertCommands.getAlertText;
+  setAlertText = alertCommands.setAlertText;
+  postAcceptAlert = alertCommands.postAcceptAlert;
+  postDismissAlert = alertCommands.postDismissAlert;
+  getAlertButtons = alertCommands.getAlertButtons;
+  mobileHandleAlert = alertCommands.mobileHandleAlert;
+
+  /*---------------+
+   | APPMANAGEMENT |
+   +---------------+*/
+
+  mobileInstallApp = appManagementCommands.mobileInstallApp;
+  mobileIsAppInstalled = appManagementCommands.mobileIsAppInstalled;
+  mobileRemoveApp = appManagementCommands.mobileRemoveApp;
+  mobileLaunchApp = appManagementCommands.mobileLaunchApp;
+  mobileTerminateApp = appManagementCommands.mobileTerminateApp;
+  mobileActivateApp = appManagementCommands.mobileActivateApp;
+  mobileKillApp = appManagementCommands.mobileKillApp;
+  mobileQueryAppState = appManagementCommands.mobileQueryAppState;
+  installApp = appManagementCommands.installApp;
+  activateApp = appManagementCommands.activateApp;
+  isAppInstalled = appManagementCommands.isAppInstalled;
+  terminateApp = appManagementCommands.terminateApp;
+  queryAppState = appManagementCommands.queryAppState;
+  mobileListApps = appManagementCommands.mobileListApps;
+  mobileClearApp = appManagementCommands.mobileClearApp;
+
+  /*------------+
+   | APPEARANCE |
+   +------------+*/
+
+  mobileSetAppearance = appearanceCommands.mobileSetAppearance;
+  mobileGetAppearance = appearanceCommands.mobileGetAppearance;
+
+  /*------------+
+   | INCREASE CONTRAST |
+   +------------+*/
+
+  mobileSetIncreaseContrast = increaseContrastCommands.mobileSetIncreaseContrast;
+  mobileGetIncreaseContrast = increaseContrastCommands.mobileGetIncreaseContrast;
+
+  /*------------+
+   | CONTENT SIZE |
+   +------------+*/
+
+  mobileSetContentSize = contentSizeCommands.mobileSetContentSize;
+  mobileGetContentSize = contentSizeCommands.mobileGetContentSize;
+
+  /*------------+
+   | AUDIT      |
+   +------------+*/
+
+  mobilePerformAccessibilityAudit = auditCommands.mobilePerformAccessibilityAudit;
+
+  /*---------+
+   | BATTERY |
+   +---------+*/
+  mobileGetBatteryInfo = batteryCommands.mobileGetBatteryInfo;
+
+  /*-----------+
+   | BIOMETRIC |
+   +-----------+*/
+
+  mobileEnrollBiometric = biometricCommands.mobileEnrollBiometric;
+  mobileSendBiometricMatch = biometricCommands.mobileSendBiometricMatch;
+  mobileIsBiometricEnrolled = biometricCommands.mobileIsBiometricEnrolled;
+
+  /*-------------+
+   | CERTIFICATE |
+   +-------------+*/
+  mobileInstallCertificate = certificateCommands.mobileInstallCertificate;
+  mobileListCertificates = certificateCommands.mobileListCertificates;
+  mobileRemoveCertificate = certificateCommands.mobileRemoveCertificate;
+
+  /*-----------+
+   | CLIPBOARD |
+   +-----------+*/
+
+  setClipboard = clipboardCommands.setClipboard;
+  getClipboard = clipboardCommands.getClipboard;
+
+  /*-----------+
+   | CONDITION |
+   +-----------+*/
+
+  listConditionInducers = conditionCommands.listConditionInducers;
+  enableConditionInducer = conditionCommands.enableConditionInducer;
+  disableConditionInducer = conditionCommands.disableConditionInducer;
+
+  /*---------+
+   | CONTEXT |
+   +---------+*/
+
+  getContexts = contextCommands.getContexts;
+  getCurrentContext = contextCommands.getCurrentContext;
+  getWindowHandle = contextCommands.getWindowHandle;
+  getWindowHandles = contextCommands.getWindowHandles;
+  setContext = contextCommands.setContext;
+  setWindow = contextCommands.setWindow;
+  activateRecentWebview = contextCommands.activateRecentWebview;
+  connectToRemoteDebugger = contextCommands.connectToRemoteDebugger;
+  getContextsAndViews = contextCommands.getContextsAndViews;
+  listWebFrames = contextCommands.listWebFrames;
+  mobileGetContexts = contextCommands.mobileGetContexts;
+  onPageChange = contextCommands.onPageChange;
+  getCurrentUrl = contextCommands.getCurrentUrl;
+  getNewRemoteDebugger = contextCommands.getNewRemoteDebugger;
+  getRecentWebviewContextId = contextCommands.getRecentWebviewContextId;
+  isWebContext = contextCommands.isWebContext;
+  isWebview = contextCommands.isWebview;
+  setCurrentUrl = contextCommands.setCurrentUrl;
+  stopRemote = contextCommands.stopRemote;
+
+  /*------------+
+   | DEVICEINFO |
+   +------------+*/
+
+  mobileGetDeviceInfo = deviceInfoCommands.mobileGetDeviceInfo;
+
+  /*---------+
+   | ELEMENT |
+   +---------+*/
+
+  elementDisplayed = elementCommands.elementDisplayed;
+  elementEnabled = elementCommands.elementEnabled;
+  elementSelected = elementCommands.elementSelected;
+  getName = elementCommands.getName;
+  getNativeAttribute = elementCommands.getNativeAttribute;
+  getAttribute = elementCommands.getAttribute;
+  getProperty = elementCommands.getProperty;
+  getText = elementCommands.getText;
+  getElementRect = elementCommands.getElementRect;
+  getLocation = elementCommands.getLocation;
+  getLocationInView = elementCommands.getLocationInView;
+  getSize = elementCommands.getSize;
+  /** @deprecated */
+  setValueImmediate = elementCommands.setValueImmediate;
+  setValue = elementCommands.setValue;
+  setValueWithWebAtom = elementCommands.setValueWithWebAtom;
+  keys = elementCommands.keys;
+  clear = elementCommands.clear;
+  getContentSize = elementCommands.getContentSize;
+  getNativeRect = elementCommands.getNativeRect;
+
+  /*---------+
+   | EXECUTE |
+   +---------+*/
+
+  execute = executeCommands.execute;
+  executeAsync = executeCommands.executeAsync;
+  // Note: executeMobile is handled internally via execute method
+  mobileSimctl = simctlCommands.mobileSimctl;
+
+  /*--------------+
+   | FILEMOVEMENT |
+   +--------------+*/
+
+  pushFile = fileMovementCommands.pushFile;
+  mobilePushFile = fileMovementCommands.mobilePushFile;
+  pullFile = fileMovementCommands.pullFile;
+  mobilePullFile = fileMovementCommands.mobilePullFile;
+  mobileDeleteFolder = fileMovementCommands.mobileDeleteFolder;
+  mobileDeleteFile = fileMovementCommands.mobileDeleteFile;
+  pullFolder = fileMovementCommands.pullFolder;
+  mobilePullFolder = fileMovementCommands.mobilePullFolder;
+
+  /*--------+
+   | MEMORY |
+   +--------+*/
+
+  mobileSendMemoryWarning = memoryCommands.mobileSendMemoryWarning;
+
+  /*------+
+   | FIND |
+   +------+*/
+
+  findElOrEls = findCommands.findElOrEls;
+  findNativeElementOrElements = findCommands.findNativeElementOrElements;
+  doNativeFind = findCommands.doNativeFind;
+  getFirstVisibleChild = findCommands.getFirstVisibleChild;
+
+  /*---------+
+   | GENERAL |
+   +---------+*/
+
+  active = generalCommands.active;
+  background = appManagementCommands.background;
+  touchId = generalCommands.touchId;
+  toggleEnrollTouchId = generalCommands.toggleEnrollTouchId;
+  getWindowSize = generalCommands.getWindowSize;
+  getDeviceTime = generalCommands.getDeviceTime;
+  mobileGetDeviceTime = generalCommands.mobileGetDeviceTime;
+  getWindowRect = generalCommands.getWindowRect;
+  getStrings = appStringsCommands.getStrings;
+  removeApp = generalCommands.removeApp;
+  launchApp = generalCommands.launchApp;
+  closeApp = generalCommands.closeApp;
+  setUrl = generalCommands.setUrl;
+  getViewportRect = generalCommands.getViewportRect;
+  getScreenInfo = generalCommands.getScreenInfo;
+  getStatusBarHeight = generalCommands.getStatusBarHeight;
+  getDevicePixelRatio = generalCommands.getDevicePixelRatio;
+  mobilePressButton = generalCommands.mobilePressButton;
+  mobileSiriCommand = generalCommands.mobileSiriCommand;
+
+  /*-------------+
+   | GEOLOCATION |
+   +-------------+*/
+  mobileGetSimulatedLocation = geolocationCommands.mobileGetSimulatedLocation;
+  mobileSetSimulatedLocation = geolocationCommands.mobileSetSimulatedLocation;
+  mobileResetSimulatedLocation = geolocationCommands.mobileResetSimulatedLocation;
+
+  /*---------+
+   | GESTURE |
+   +---------+*/
+  mobileShake = gestureCommands.mobileShake;
+  click = gestureCommands.click;
+  releaseActions = gestureCommands.releaseActions;
+  performActions = gestureCommands.performActions;
+  nativeClick = gestureCommands.nativeClick;
+  mobileScrollToElement = gestureCommands.mobileScrollToElement;
+  mobileScroll = gestureCommands.mobileScroll;
+  mobileSwipe = gestureCommands.mobileSwipe;
+  mobilePinch = gestureCommands.mobilePinch;
+  mobileDoubleTap = gestureCommands.mobileDoubleTap;
+  mobileTwoFingerTap = gestureCommands.mobileTwoFingerTap;
+  mobileTouchAndHold = gestureCommands.mobileTouchAndHold;
+  mobileTap = gestureCommands.mobileTap;
+  mobileDragFromToForDuration = gestureCommands.mobileDragFromToForDuration;
+  mobileDragFromToWithVelocity = gestureCommands.mobileDragFromToWithVelocity;
+  mobileTapWithNumberOfTaps = gestureCommands.mobileTapWithNumberOfTaps;
+  mobileForcePress = gestureCommands.mobileForcePress;
+  mobileSelectPickerWheelValue = gestureCommands.mobileSelectPickerWheelValue;
+  mobileRotateElement = gestureCommands.mobileRotateElement;
+
+  /*-------+
+   | IOHID |
+   +-------+*/
+  mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
+
+  /*-----------+
+   | KEYCHAINS |
+   +-----------+*/
+
+  mobileClearKeychains = keychainsCommands.mobileClearKeychains;
+
+  /*----------+
+   | KEYBOARD |
+   +----------+*/
+
+  hideKeyboard = keyboardCommands.hideKeyboard;
+  mobileHideKeyboard = keyboardCommands.mobileHideKeyboard;
+  isKeyboardShown = keyboardCommands.isKeyboardShown;
+  mobileKeys = keyboardCommands.mobileKeys;
+
+  /*--------------+
+   | LOCALIZATION |
+   +--------------+*/
+
+  mobileConfigureLocalization = localizationCommands.mobileConfigureLocalization;
+
+  /*----------+
+   | LOCATION |
+   +----------+*/
+
+  getGeoLocation = locationCommands.getGeoLocation;
+  setGeoLocation = locationCommands.setGeoLocation;
+  mobileResetLocationService = locationCommands.mobileResetLocationService;
+
+  /*------+
+   | LOCK |
+   +------+*/
+  lock = lockCommands.lock;
+  unlock = lockCommands.unlock;
+  isLocked = lockCommands.isLocked;
+
+  /*-----+
+   | LOG |
+   +-----+*/
+
+  extractLogs = logCommands.extractLogs;
+  supportedLogTypes = logCommands.supportedLogTypes;
+  startLogCapture = logCommands.startLogCapture;
+  mobileStartLogsBroadcast = logCommands.mobileStartLogsBroadcast;
+  mobileStopLogsBroadcast = logCommands.mobileStopLogsBroadcast;
+
+  /*------------+
+   | NAVIGATION |
+   +------------+*/
+
+  back = navigationCommands.back;
+  forward = navigationCommands.forward;
+  closeWindow = navigationCommands.closeWindow;
+  nativeBack = navigationCommands.nativeBack;
+  mobileDeepLink = navigationCommands.mobileDeepLink;
+
+  /*---------------+
+   | NOTIFICATIONS |
+   +---------------+*/
+
+  mobilePushNotification = notificationsCommands.mobilePushNotification;
+  mobileExpectNotification = notificationsCommands.mobileExpectNotification;
+
+  /*------------+
+   | PASTEBOARD |
+   +------------+*/
+
+  mobileSetPasteboard = pasteboardCommands.mobileSetPasteboard;
+  mobileGetPasteboard = pasteboardCommands.mobileGetPasteboard;
+
+  /*------------------+
+   | NETWORK MONITOR |
+   +------------------+*/
+
+  mobileStartNetworkMonitor = networkMonitorCommands.mobileStartNetworkMonitor;
+  mobileStopNetworkMonitor = networkMonitorCommands.mobileStopNetworkMonitor;
+
+  /*-------------+
+   | PERFORMANCE |
+   +-------------+*/
+  mobileStartPerfRecord = performanceCommands.mobileStartPerfRecord;
+  mobileStopPerfRecord = performanceCommands.mobileStopPerfRecord;
+
+  /*-------------+
+   | PERMISSIONS |
+   +-------------+*/
+
+  mobileResetPermission = permissionsCommands.mobileResetPermission;
+  mobileGetPermission = permissionsCommands.mobileGetPermission;
+  mobileSetPermissions = permissionsCommands.mobileSetPermissions;
+
+  /*-------------+
+   | PROXYHELPER |
+   +-------------+*/
+
+  proxyCommand = proxyHelperCommands.proxyCommand;
+
+  /*-------------+
+   | RECORDAUDIO |
+   +-------------+*/
+
+  startAudioRecording = recordAudioCommands.startAudioRecording;
+  stopAudioRecording = recordAudioCommands.stopAudioRecording;
+
+  /*--------------+
+   | RECORDSCREEN |
+   +--------------+*/
+
+  // Note: _recentScreenRecorder is a property, not a function, so it's handled internally in recordscreen.js
+  startRecordingScreen = recordScreenCommands.startRecordingScreen;
+  stopRecordingScreen = recordScreenCommands.stopRecordingScreen;
+
+  /*-------------+
+   | SCREENSHOTS |
+   +-------------+*/
+  getScreenshot = screenshotCommands.getScreenshot;
+  getElementScreenshot = screenshotCommands.getElementScreenshot;
+  getViewportScreenshot = screenshotCommands.getViewportScreenshot;
+
+  /*--------+
+   | SOURCE |
+   +--------+*/
+  getPageSource = sourceCommands.getPageSource;
+  mobileGetSource = sourceCommands.mobileGetSource;
+
+  /*----------+
+   | TIMEOUTS |
+   +----------+*/
+
+  pageLoadTimeoutW3C = timeoutCommands.pageLoadTimeoutW3C;
+  pageLoadTimeoutMJSONWP = timeoutCommands.pageLoadTimeoutMJSONWP;
+  scriptTimeoutW3C = timeoutCommands.scriptTimeoutW3C;
+  scriptTimeoutMJSONWP = timeoutCommands.scriptTimeoutMJSONWP;
+  asyncScriptTimeout = timeoutCommands.asyncScriptTimeout;
+  setPageLoadTimeout = timeoutCommands.setPageLoadTimeout;
+  setAsyncScriptTimeout = timeoutCommands.setAsyncScriptTimeout;
+
+  /*-----+
+   | WEB |
+   +-----+*/
+  setFrame = webCommands.setFrame;
+  getCssProperty = webCommands.getCssProperty;
+  submit = webCommands.submit;
+  refresh = webCommands.refresh;
+  getUrl = webCommands.getUrl;
+  title = webCommands.title;
+  getCookies = webCommands.getCookies;
+  setCookie = webCommands.setCookie;
+  deleteCookie = webCommands.deleteCookie;
+  deleteCookies = webCommands.deleteCookies;
+  cacheWebElement = webCommands.cacheWebElement;
+  cacheWebElements = webCommands.cacheWebElements;
+  executeAtom = webCommands.executeAtom;
+  executeAtomAsync = webCommands.executeAtomAsync;
+  getAtomsElement = webCommands.getAtomsElement;
+  convertElementsForAtoms = webCommands.convertElementsForAtoms;
+  getElementId = webCommands.getElementId;
+  hasElementId = webCommands.hasElementId;
+  findWebElementOrElements = webCommands.findWebElementOrElements;
+  clickWebCoords = webCommands.clickWebCoords;
+  getSafariIsIphone = webCommands.getSafariIsIphone;
+  getSafariDeviceSize = webCommands.getSafariDeviceSize;
+  getSafariIsNotched = webCommands.getSafariIsNotched;
+  getExtraTranslateWebCoordsOffset = webCommands.getExtraTranslateWebCoordsOffset;
+  getExtraNativeWebTapOffset = webCommands.getExtraNativeWebTapOffset;
+  nativeWebTap = webCommands.nativeWebTap;
+  translateWebCoords = webCommands.translateWebCoords;
+  checkForAlert = webCommands.checkForAlert;
+  waitForAtom = webCommands.waitForAtom;
+  mobileWebNav = webCommands.mobileWebNav;
+  getWdaLocalhostRoot = webCommands.getWdaLocalhostRoot;
+  mobileCalibrateWebToRealCoordinatesTranslation =
+    webCommands.mobileCalibrateWebToRealCoordinatesTranslation;
+  mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
+
+  /*--------+
+   | XCTEST |
+   +--------+*/
+  mobileRunXCTest = xctestCommands.mobileRunXCTest;
+  mobileInstallXCTestBundle = xctestCommands.mobileInstallXCTestBundle;
+  mobileListXCTestBundles = xctestCommands.mobileListXCTestBundles;
+
+  /*----------------------+
+   | XCTEST SCREEN RECORD |
+   +---------------------+*/
+  mobileStartXctestScreenRecording = xctestRecordScreenCommands.mobileStartXctestScreenRecording;
+  mobileGetXctestScreenRecordingInfo =
+    xctestRecordScreenCommands.mobileGetXctestScreenRecordingInfo;
+  mobileStopXctestScreenRecording = xctestRecordScreenCommands.mobileStopXctestScreenRecording;
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
@@ -336,6 +795,30 @@ export class XCUITestDriver
     this._remote = null;
     this.doesSupportBidi = true;
     this._wda = null;
+  }
+
+  // Getter methods
+  get wda(): WebDriverAgent {
+    if (!this._wda) {
+      throw new Error('WebDriverAgent is not initialized');
+    }
+    return this._wda;
+  }
+
+  get remote(): RemoteDebugger {
+    if (!this._remote) {
+      throw new Error('Remote debugger is not initialized');
+    }
+    return this._remote;
+  }
+
+  get driverData(): Record<string, any> {
+    // TODO fill out resource info here
+    return {};
+  }
+
+  get device(): Simulator | RealDevice {
+    return this._device;
   }
 
   // Override methods from BaseDriver
@@ -677,30 +1160,6 @@ export class XCUITestDriver
     return true;
   }
 
-  // Getter methods
-  get wda(): WebDriverAgent {
-    if (!this._wda) {
-      throw new Error('WebDriverAgent is not initialized');
-    }
-    return this._wda;
-  }
-
-  get remote(): RemoteDebugger {
-    if (!this._remote) {
-      throw new Error('Remote debugger is not initialized');
-    }
-    return this._remote;
-  }
-
-  get driverData(): Record<string, any> {
-    // TODO fill out resource info here
-    return {};
-  }
-
-  get device(): Simulator | RealDevice {
-    return this._device;
-  }
-
   // Utility methods
   isSafari(): boolean {
     return !!this.safari;
@@ -892,7 +1351,7 @@ export class XCUITestDriver
     // Derived data path retrieval is an expensive operation
     // We could start that now in background and get the cached result
     // whenever it is needed
-    (async () => {
+    void (async () => {
       try {
         await this.wda.retrieveDerivedDataPath();
       } catch (e) {
@@ -1763,465 +2222,6 @@ export class XCUITestDriver
     }
   }
 
-  /*---------------+
-   | ACTIVEAPPINFO |
-   +---------------+*/
-
-  mobileGetActiveAppInfo = activeAppInfoCommands.mobileGetActiveAppInfo;
-
-  /*-------+
-   | ALERT |
-   +-------+*/
-  getAlertText = alertCommands.getAlertText;
-  setAlertText = alertCommands.setAlertText;
-  postAcceptAlert = alertCommands.postAcceptAlert;
-  postDismissAlert = alertCommands.postDismissAlert;
-  getAlertButtons = alertCommands.getAlertButtons;
-  mobileHandleAlert = alertCommands.mobileHandleAlert;
-
-  /*---------------+
-   | APPMANAGEMENT |
-   +---------------+*/
-
-  mobileInstallApp = appManagementCommands.mobileInstallApp;
-  mobileIsAppInstalled = appManagementCommands.mobileIsAppInstalled;
-  mobileRemoveApp = appManagementCommands.mobileRemoveApp;
-  mobileLaunchApp = appManagementCommands.mobileLaunchApp;
-  mobileTerminateApp = appManagementCommands.mobileTerminateApp;
-  mobileActivateApp = appManagementCommands.mobileActivateApp;
-  mobileKillApp = appManagementCommands.mobileKillApp;
-  mobileQueryAppState = appManagementCommands.mobileQueryAppState;
-  installApp = appManagementCommands.installApp;
-  activateApp = appManagementCommands.activateApp;
-  isAppInstalled = appManagementCommands.isAppInstalled;
-  terminateApp = appManagementCommands.terminateApp;
-  queryAppState = appManagementCommands.queryAppState;
-  mobileListApps = appManagementCommands.mobileListApps;
-  mobileClearApp = appManagementCommands.mobileClearApp;
-
-  /*------------+
-   | APPEARANCE |
-   +------------+*/
-
-  mobileSetAppearance = appearanceCommands.mobileSetAppearance;
-  mobileGetAppearance = appearanceCommands.mobileGetAppearance;
-
-  /*------------+
-   | INCREASE CONTRAST |
-   +------------+*/
-
-  mobileSetIncreaseContrast = increaseContrastCommands.mobileSetIncreaseContrast;
-  mobileGetIncreaseContrast = increaseContrastCommands.mobileGetIncreaseContrast;
-
-  /*------------+
-   | CONTENT SIZE |
-   +------------+*/
-
-  mobileSetContentSize = contentSizeCommands.mobileSetContentSize;
-  mobileGetContentSize = contentSizeCommands.mobileGetContentSize;
-
-  /*------------+
-   | AUDIT      |
-   +------------+*/
-
-  mobilePerformAccessibilityAudit = auditCommands.mobilePerformAccessibilityAudit;
-
-  /*---------+
-   | BATTERY |
-   +---------+*/
-  mobileGetBatteryInfo = batteryCommands.mobileGetBatteryInfo;
-
-  /*-----------+
-   | BIOMETRIC |
-   +-----------+*/
-
-  mobileEnrollBiometric = biometricCommands.mobileEnrollBiometric;
-  mobileSendBiometricMatch = biometricCommands.mobileSendBiometricMatch;
-  mobileIsBiometricEnrolled = biometricCommands.mobileIsBiometricEnrolled;
-
-  /*-------------+
-   | CERTIFICATE |
-   +-------------+*/
-  mobileInstallCertificate = certificateCommands.mobileInstallCertificate;
-  mobileListCertificates = certificateCommands.mobileListCertificates;
-  mobileRemoveCertificate = certificateCommands.mobileRemoveCertificate;
-
-  /*-----------+
-   | CLIPBOARD |
-   +-----------+*/
-
-  setClipboard = clipboardCommands.setClipboard;
-  getClipboard = clipboardCommands.getClipboard;
-
-  /*-----------+
-   | CONDITION |
-   +-----------+*/
-
-  listConditionInducers = conditionCommands.listConditionInducers;
-  enableConditionInducer = conditionCommands.enableConditionInducer;
-  disableConditionInducer = conditionCommands.disableConditionInducer;
-
-  /*---------+
-   | CONTEXT |
-   +---------+*/
-
-  getContexts = contextCommands.getContexts;
-  getCurrentContext = contextCommands.getCurrentContext;
-  getWindowHandle = contextCommands.getWindowHandle;
-  getWindowHandles = contextCommands.getWindowHandles;
-  setContext = contextCommands.setContext;
-  setWindow = contextCommands.setWindow;
-  activateRecentWebview = contextCommands.activateRecentWebview;
-  connectToRemoteDebugger = contextCommands.connectToRemoteDebugger;
-  getContextsAndViews = contextCommands.getContextsAndViews;
-  listWebFrames = contextCommands.listWebFrames;
-  mobileGetContexts = contextCommands.mobileGetContexts;
-  onPageChange = contextCommands.onPageChange;
-  getCurrentUrl = contextCommands.getCurrentUrl;
-  getNewRemoteDebugger = contextCommands.getNewRemoteDebugger;
-  getRecentWebviewContextId = contextCommands.getRecentWebviewContextId;
-  isWebContext = contextCommands.isWebContext;
-  isWebview = contextCommands.isWebview;
-  setCurrentUrl = contextCommands.setCurrentUrl;
-  stopRemote = contextCommands.stopRemote;
-
-  /*------------+
-   | DEVICEINFO |
-   +------------+*/
-
-  mobileGetDeviceInfo = deviceInfoCommands.mobileGetDeviceInfo;
-
-  /*---------+
-   | ELEMENT |
-   +---------+*/
-
-  elementDisplayed = elementCommands.elementDisplayed;
-  elementEnabled = elementCommands.elementEnabled;
-  elementSelected = elementCommands.elementSelected;
-  getName = elementCommands.getName;
-  getNativeAttribute = elementCommands.getNativeAttribute;
-  getAttribute = elementCommands.getAttribute;
-  getProperty = elementCommands.getProperty;
-  getText = elementCommands.getText;
-  getElementRect = elementCommands.getElementRect;
-  getLocation = elementCommands.getLocation;
-  getLocationInView = elementCommands.getLocationInView;
-  getSize = elementCommands.getSize;
-  /** @deprecated */
-  setValueImmediate = elementCommands.setValueImmediate;
-  setValue = elementCommands.setValue;
-  setValueWithWebAtom = elementCommands.setValueWithWebAtom;
-  keys = elementCommands.keys;
-  clear = elementCommands.clear;
-  getContentSize = elementCommands.getContentSize;
-  getNativeRect = elementCommands.getNativeRect;
-
-  /*---------+
-   | EXECUTE |
-   +---------+*/
-
-  execute = executeCommands.execute;
-  executeAsync = executeCommands.executeAsync;
-  // Note: executeMobile is handled internally via execute method
-  mobileSimctl = simctlCommands.mobileSimctl;
-
-  /*--------------+
-   | FILEMOVEMENT |
-   +--------------+*/
-
-  pushFile = fileMovementCommands.pushFile;
-  mobilePushFile = fileMovementCommands.mobilePushFile;
-  pullFile = fileMovementCommands.pullFile;
-  mobilePullFile = fileMovementCommands.mobilePullFile;
-  mobileDeleteFolder = fileMovementCommands.mobileDeleteFolder;
-  mobileDeleteFile = fileMovementCommands.mobileDeleteFile;
-  pullFolder = fileMovementCommands.pullFolder;
-  mobilePullFolder = fileMovementCommands.mobilePullFolder;
-
-  /*--------+
-   | MEMORY |
-   +--------+*/
-
-  mobileSendMemoryWarning = memoryCommands.mobileSendMemoryWarning;
-
-  /*------+
-   | FIND |
-   +------+*/
-
-  findElOrEls = findCommands.findElOrEls;
-  findNativeElementOrElements = findCommands.findNativeElementOrElements;
-  doNativeFind = findCommands.doNativeFind;
-  getFirstVisibleChild = findCommands.getFirstVisibleChild;
-
-  /*---------+
-   | GENERAL |
-   +---------+*/
-
-  active = generalCommands.active;
-  background = appManagementCommands.background;
-  touchId = generalCommands.touchId;
-  toggleEnrollTouchId = generalCommands.toggleEnrollTouchId;
-  getWindowSize = generalCommands.getWindowSize;
-  getDeviceTime = generalCommands.getDeviceTime;
-  mobileGetDeviceTime = generalCommands.mobileGetDeviceTime;
-  getWindowRect = generalCommands.getWindowRect;
-  getStrings = appStringsCommands.getStrings;
-  removeApp = generalCommands.removeApp;
-  launchApp = generalCommands.launchApp;
-  closeApp = generalCommands.closeApp;
-  setUrl = generalCommands.setUrl;
-  getViewportRect = generalCommands.getViewportRect;
-  getScreenInfo = generalCommands.getScreenInfo;
-  getStatusBarHeight = generalCommands.getStatusBarHeight;
-  getDevicePixelRatio = generalCommands.getDevicePixelRatio;
-  mobilePressButton = generalCommands.mobilePressButton;
-  mobileSiriCommand = generalCommands.mobileSiriCommand;
-
-  /*-------------+
-   | GEOLOCATION |
-   +-------------+*/
-  mobileGetSimulatedLocation = geolocationCommands.mobileGetSimulatedLocation;
-  mobileSetSimulatedLocation = geolocationCommands.mobileSetSimulatedLocation;
-  mobileResetSimulatedLocation = geolocationCommands.mobileResetSimulatedLocation;
-
-  /*---------+
-   | GESTURE |
-   +---------+*/
-  mobileShake = gestureCommands.mobileShake;
-  click = gestureCommands.click;
-  releaseActions = gestureCommands.releaseActions;
-  performActions = gestureCommands.performActions;
-  nativeClick = gestureCommands.nativeClick;
-  mobileScrollToElement = gestureCommands.mobileScrollToElement;
-  mobileScroll = gestureCommands.mobileScroll;
-  mobileSwipe = gestureCommands.mobileSwipe;
-  mobilePinch = gestureCommands.mobilePinch;
-  mobileDoubleTap = gestureCommands.mobileDoubleTap;
-  mobileTwoFingerTap = gestureCommands.mobileTwoFingerTap;
-  mobileTouchAndHold = gestureCommands.mobileTouchAndHold;
-  mobileTap = gestureCommands.mobileTap;
-  mobileDragFromToForDuration = gestureCommands.mobileDragFromToForDuration;
-  mobileDragFromToWithVelocity = gestureCommands.mobileDragFromToWithVelocity;
-  mobileTapWithNumberOfTaps = gestureCommands.mobileTapWithNumberOfTaps;
-  mobileForcePress = gestureCommands.mobileForcePress;
-  mobileSelectPickerWheelValue = gestureCommands.mobileSelectPickerWheelValue;
-  mobileRotateElement = gestureCommands.mobileRotateElement;
-
-  /*-------+
-   | IOHID |
-   +-------+*/
-  mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
-
-  /*-----------+
-   | KEYCHAINS |
-   +-----------+*/
-
-  mobileClearKeychains = keychainsCommands.mobileClearKeychains;
-
-  /*----------+
-   | KEYBOARD |
-   +----------+*/
-
-  hideKeyboard = keyboardCommands.hideKeyboard;
-  mobileHideKeyboard = keyboardCommands.mobileHideKeyboard;
-  isKeyboardShown = keyboardCommands.isKeyboardShown;
-  mobileKeys = keyboardCommands.mobileKeys;
-
-  /*--------------+
-   | LOCALIZATION |
-   +--------------+*/
-
-  mobileConfigureLocalization = localizationCommands.mobileConfigureLocalization;
-
-  /*----------+
-   | LOCATION |
-   +----------+*/
-
-  getGeoLocation = locationCommands.getGeoLocation;
-  setGeoLocation = locationCommands.setGeoLocation;
-  mobileResetLocationService = locationCommands.mobileResetLocationService;
-
-  /*------+
-   | LOCK |
-   +------+*/
-  lock = lockCommands.lock;
-  unlock = lockCommands.unlock;
-  isLocked = lockCommands.isLocked;
-
-  /*-----+
-   | LOG |
-   +-----+*/
-
-  extractLogs = logCommands.extractLogs;
-  supportedLogTypes = logCommands.supportedLogTypes;
-  startLogCapture = logCommands.startLogCapture;
-  mobileStartLogsBroadcast = logCommands.mobileStartLogsBroadcast;
-  mobileStopLogsBroadcast = logCommands.mobileStopLogsBroadcast;
-
-  /*------------+
-   | NAVIGATION |
-   +------------+*/
-
-  back = navigationCommands.back;
-  forward = navigationCommands.forward;
-  closeWindow = navigationCommands.closeWindow;
-  nativeBack = navigationCommands.nativeBack;
-  mobileDeepLink = navigationCommands.mobileDeepLink;
-
-  /*---------------+
-   | NOTIFICATIONS |
-   +---------------+*/
-
-  mobilePushNotification = notificationsCommands.mobilePushNotification;
-  mobileExpectNotification = notificationsCommands.mobileExpectNotification;
-
-  /*------------+
-   | PASTEBOARD |
-   +------------+*/
-
-  mobileSetPasteboard = pasteboardCommands.mobileSetPasteboard;
-  mobileGetPasteboard = pasteboardCommands.mobileGetPasteboard;
-
-  /*------------------+
-   | NETWORK MONITOR |
-   +------------------+*/
-
-  mobileStartNetworkMonitor = networkMonitorCommands.mobileStartNetworkMonitor;
-  mobileStopNetworkMonitor = networkMonitorCommands.mobileStopNetworkMonitor;
-
-  /*-------------+
-   | PERFORMANCE |
-   +-------------+*/
-  mobileStartPerfRecord = performanceCommands.mobileStartPerfRecord;
-  mobileStopPerfRecord = performanceCommands.mobileStopPerfRecord;
-
-  /*-------------+
-   | PERMISSIONS |
-   +-------------+*/
-
-  mobileResetPermission = permissionsCommands.mobileResetPermission;
-  mobileGetPermission = permissionsCommands.mobileGetPermission;
-  mobileSetPermissions = permissionsCommands.mobileSetPermissions;
-
-  /*-------------+
-   | PROXYHELPER |
-   +-------------+*/
-
-  proxyCommand = proxyHelperCommands.proxyCommand;
-
-  /*-------------+
-   | RECORDAUDIO |
-   +-------------+*/
-
-  startAudioRecording = recordAudioCommands.startAudioRecording;
-  stopAudioRecording = recordAudioCommands.stopAudioRecording;
-
-  /*--------------+
-   | RECORDSCREEN |
-   +--------------+*/
-
-  // Note: _recentScreenRecorder is a property, not a function, so it's handled internally in recordscreen.js
-  startRecordingScreen = recordScreenCommands.startRecordingScreen;
-  stopRecordingScreen = recordScreenCommands.stopRecordingScreen;
-
-  /*-------------+
-   | SCREENSHOTS |
-   +-------------+*/
-  getScreenshot = screenshotCommands.getScreenshot;
-  getElementScreenshot = screenshotCommands.getElementScreenshot;
-  getViewportScreenshot = screenshotCommands.getViewportScreenshot;
-
-  /*--------+
-   | SOURCE |
-   +--------+*/
-  getPageSource = sourceCommands.getPageSource;
-  mobileGetSource = sourceCommands.mobileGetSource;
-
-  /*----------+
-   | TIMEOUTS |
-   +----------+*/
-
-  pageLoadTimeoutW3C = timeoutCommands.pageLoadTimeoutW3C;
-  pageLoadTimeoutMJSONWP = timeoutCommands.pageLoadTimeoutMJSONWP;
-  scriptTimeoutW3C = timeoutCommands.scriptTimeoutW3C;
-  scriptTimeoutMJSONWP = timeoutCommands.scriptTimeoutMJSONWP;
-  asyncScriptTimeout = timeoutCommands.asyncScriptTimeout;
-  setPageLoadTimeout = timeoutCommands.setPageLoadTimeout;
-  setAsyncScriptTimeout = timeoutCommands.setAsyncScriptTimeout;
-
-  /*-----+
-   | WEB |
-   +-----+*/
-  setFrame = webCommands.setFrame;
-  getCssProperty = webCommands.getCssProperty;
-  submit = webCommands.submit;
-  refresh = webCommands.refresh;
-  getUrl = webCommands.getUrl;
-  title = webCommands.title;
-  getCookies = webCommands.getCookies;
-  setCookie = webCommands.setCookie;
-  deleteCookie = webCommands.deleteCookie;
-  deleteCookies = webCommands.deleteCookies;
-  cacheWebElement = webCommands.cacheWebElement;
-  cacheWebElements = webCommands.cacheWebElements;
-  executeAtom = webCommands.executeAtom;
-  executeAtomAsync = webCommands.executeAtomAsync;
-  getAtomsElement = webCommands.getAtomsElement;
-  convertElementsForAtoms = webCommands.convertElementsForAtoms;
-  getElementId = webCommands.getElementId;
-  hasElementId = webCommands.hasElementId;
-  findWebElementOrElements = webCommands.findWebElementOrElements;
-  clickWebCoords = webCommands.clickWebCoords;
-  getSafariIsIphone = webCommands.getSafariIsIphone;
-  getSafariDeviceSize = webCommands.getSafariDeviceSize;
-  getSafariIsNotched = webCommands.getSafariIsNotched;
-  getExtraTranslateWebCoordsOffset = webCommands.getExtraTranslateWebCoordsOffset;
-  getExtraNativeWebTapOffset = webCommands.getExtraNativeWebTapOffset;
-  nativeWebTap = webCommands.nativeWebTap;
-  translateWebCoords = webCommands.translateWebCoords;
-  checkForAlert = webCommands.checkForAlert;
-  waitForAtom = webCommands.waitForAtom;
-  mobileWebNav = webCommands.mobileWebNav;
-  getWdaLocalhostRoot = webCommands.getWdaLocalhostRoot;
-  mobileCalibrateWebToRealCoordinatesTranslation =
-    webCommands.mobileCalibrateWebToRealCoordinatesTranslation;
-  mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
-
-  /*--------+
-   | XCTEST |
-   +--------+*/
-  mobileRunXCTest = xctestCommands.mobileRunXCTest;
-  mobileInstallXCTestBundle = xctestCommands.mobileInstallXCTestBundle;
-  mobileListXCTestBundles = xctestCommands.mobileListXCTestBundles;
-
-  /*----------------------+
-   | XCTEST SCREEN RECORD |
-   +---------------------+*/
-  mobileStartXctestScreenRecording = xctestRecordScreenCommands.mobileStartXctestScreenRecording;
-  mobileGetXctestScreenRecordingInfo =
-    xctestRecordScreenCommands.mobileGetXctestScreenRecordingInfo;
-  mobileStopXctestScreenRecording = xctestRecordScreenCommands.mobileStopXctestScreenRecording;
 }
 
 export default XCUITestDriver;
-
-export type AutInstallationStateOptions = Pick<
-  XCUITestDriverOpts,
-  'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'
->;
-
-export interface AutInstallationState {
-  install: boolean; // If the given app should install, or not need to install.
-  skipUninstall: boolean; // If the installed app should be uninstalled, or not.
-}
-
-export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
-export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
-
-export interface DriverLogs {
-  syslog?: IOSDeviceLog | IOSSimulatorLog;
-  crashlog?: IOSCrashLog;
-  safariConsole?: SafariConsoleLog;
-  safariNetwork?: SafariNetworkLog;
-  performance?: IOSPerformanceLog;
-}

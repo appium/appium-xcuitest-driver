@@ -94,11 +94,11 @@ export class SafariNetworkLog extends LineConsumingLog {
     this._showLogs = opts.showLogs;
   }
 
-  override async startCapture(): Promise<void> {}
-  override async stopCapture(): Promise<void> {}
   override get isCapturing(): boolean {
     return true;
   }
+  override async startCapture(): Promise<void> {}
+  override async stopCapture(): Promise<void> {}
 
   onNetworkEvent(err?: Error, entry?: SafariNetworkLogEntry, method?: string): void {
     if (!_.includes(MONITORED_EVENTS, method)) {

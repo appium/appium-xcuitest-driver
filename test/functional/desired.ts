@@ -2,16 +2,6 @@ import _ from 'lodash';
 import {util, node} from 'appium/support';
 import {getUIKitCatalogPath, getTestAppPath} from '../setup';
 
-// translate integer environment variable to a boolean 0=false, !0=true
-function checkFeatureInEnv(envArg) {
-  /** @type {string|number} */
-  let feature: string | number = parseInt(String(process.env[envArg]), 10);
-  if (isNaN(feature)) {
-    feature = String(process.env[envArg]);
-  }
-  return !!feature;
-}
-
 export function amendCapabilities(baseCaps, ...newCaps) {
   return node.deepFreeze({
     alwaysMatch: _.cloneDeep(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
@@ -21,6 +11,16 @@ export function amendCapabilities(baseCaps, ...newCaps) {
 
 export function extractCapabilityValue(caps, capName) {
   return caps?.alwaysMatch?.[capName];
+}
+
+// translate integer environment variable to a boolean 0=false, !0=true
+function checkFeatureInEnv(envArg) {
+  /** @type {string|number} */
+  let feature: string | number = parseInt(String(process.env[envArg]), 10);
+  if (isNaN(feature)) {
+    feature = String(process.env[envArg]);
+  }
+  return !!feature;
 }
 
 export const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '17.4';

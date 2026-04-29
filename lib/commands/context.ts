@@ -694,6 +694,16 @@ export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> 
 }
 
 /**
+ * Notifies BiDi clients about context changes.
+ *
+ * @see https://github.com/appium/appium/issues/20741
+ */
+export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<void> {
+  const name = await this.getCurrentContext();
+  this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
+}
+
+/**
  * Checks if a URL is blacklisted in the 'safariIgnoreWebHostnames' capability.
  *
  * @param url - The URL to check
@@ -724,14 +734,4 @@ function isUrlIgnored(url: string, safariIgnoreWebHostnames?: string): boolean {
     }
   }
   return false;
-}
-
-/**
- * Notifies BiDi clients about context changes.
- *
- * @see https://github.com/appium/appium/issues/20741
- */
-export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<void> {
-  const name = await this.getCurrentContext();
-  this.eventEmitter.emit(BIDI_EVENT_NAME, makeContextUpdatedEvent(name));
 }

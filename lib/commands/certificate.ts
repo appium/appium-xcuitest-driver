@@ -261,6 +261,25 @@ export async function mobileListCertificates(this: XCUITestDriver): Promise<Cert
 }
 
 /**
+ * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
+ * On iOS/tvOS 18+ this requires `appium-ios-remotexpc` (same RemoteXPC certificate client as mobile
+ * certificate commands); setup throws if RemoteXPC is unavailable or iOS version is less than 18.
+ * `start()` has already set `platformVersion` from the device when the capability was omitted.
+ */
+export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {
+  const pem = this.opts.customSSLCert;
+  if (!pem) {
+    return;
+  }
+  requireRealDevice(this, 'install customSSLCert capability');
+  await withCertificateClient(this, async (client) => {
+    await client.installCertificate({
+      payload: Buffer.from(pem, 'utf8'),
+    });
+  });
+}
+
+/**
  * Helper function to create a CertificateClient, execute an operation, and ensure cleanup.
  *
  * @param driver - The XCUITestDriver instance
@@ -287,25 +306,6 @@ async function withCertificateClient<T>(
       await client.close();
     }
   }
-}
-
-/**
- * Installs PEM content from `appium:customSSLCert` on the paired real device (session startup).
- * On iOS/tvOS 18+ this requires `appium-ios-remotexpc` (same RemoteXPC certificate client as mobile
- * certificate commands); setup throws if RemoteXPC is unavailable or iOS version is less than 18.
- * `start()` has already set `platformVersion` from the device when the capability was omitted.
- */
-export async function installCustomSslCertFromCapability(this: XCUITestDriver): Promise<void> {
-  const pem = this.opts.customSSLCert;
-  if (!pem) {
-    return;
-  }
-  requireRealDevice(this, 'install customSSLCert capability');
-  await withCertificateClient(this, async (client) => {
-    await client.installCertificate({
-      payload: Buffer.from(pem, 'utf8'),
-    });
-  });
 }
 
 /**

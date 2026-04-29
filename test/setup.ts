@@ -19,6 +19,36 @@ export const TESTAPP_BUNDLE_ID = 'org.reactjs.native.example.VodQAReactNative';
 const downloadPromises = new Map<string, Promise<string>>();
 
 /**
+ * Downloads and extracts the UIKitCatalog app from GitHub if it doesn't already exist locally.
+ * This function handles concurrent requests by reusing the same download promise.
+ *
+ * @returns {Promise<string>} The path to the cached app directory
+ * @throws {Error} If the download or extraction fails
+ */
+export async function getUIKitCatalogPath(): Promise<string> {
+  return downloadAndExtractApp(
+    UICATALOG_URL,
+    UICATALOG_CACHE_PATH,
+    'UIKitCatalog-iphonesimulator.zip',
+  );
+}
+
+/**
+ * Downloads and extracts the VodQAReactNative (TestApp) app from GitHub if it doesn't already exist locally.
+ * This function handles concurrent requests by reusing the same download promise.
+ *
+ * @returns {Promise<string>} The path to the cached app directory
+ * @throws {Error} If the download or extraction fails
+ */
+export async function getTestAppPath(): Promise<string> {
+  return downloadAndExtractApp(
+    TESTAPP_URL,
+    TESTAPP_CACHE_PATH,
+    'VodQAReactNative-simulator-release.zip',
+  );
+}
+
+/**
  * Finds .app bundles in a directory (similar to findApps in app-utils.js)
  * @param {string} searchPath Directory to search in
  * @returns {Promise<string[]>} Array of relative paths to .app bundles
@@ -109,34 +139,4 @@ async function downloadAndExtractApp(
 
   downloadPromises.set(cachePath, downloadPromise);
   return downloadPromise;
-}
-
-/**
- * Downloads and extracts the UIKitCatalog app from GitHub if it doesn't already exist locally.
- * This function handles concurrent requests by reusing the same download promise.
- *
- * @returns {Promise<string>} The path to the cached app directory
- * @throws {Error} If the download or extraction fails
- */
-export async function getUIKitCatalogPath(): Promise<string> {
-  return downloadAndExtractApp(
-    UICATALOG_URL,
-    UICATALOG_CACHE_PATH,
-    'UIKitCatalog-iphonesimulator.zip',
-  );
-}
-
-/**
- * Downloads and extracts the VodQAReactNative (TestApp) app from GitHub if it doesn't already exist locally.
- * This function handles concurrent requests by reusing the same download promise.
- *
- * @returns {Promise<string>} The path to the cached app directory
- * @throws {Error} If the download or extraction fails
- */
-export async function getTestAppPath(): Promise<string> {
-  return downloadAndExtractApp(
-    TESTAPP_URL,
-    TESTAPP_CACHE_PATH,
-    'VodQAReactNative-simulator-release.zip',
-  );
 }

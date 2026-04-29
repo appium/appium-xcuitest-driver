@@ -7,6 +7,10 @@ export const DEFAULT_LOG_LEVEL = 'ALL';
 export const MAX_JSON_LOG_LENGTH = 200;
 export const MAX_BUFFERED_EVENTS_COUNT = 5000;
 
+export interface GrepOptions {
+  caseInsensitive?: boolean;
+}
+
 export function toLogEntry(
   message: string,
   timestamp: number,
@@ -17,10 +21,6 @@ export function toLogEntry(
     level,
     message,
   };
-}
-
-export interface GrepOptions {
-  caseInsensitive?: boolean;
 }
 
 export async function grepFile(

@@ -2,6 +2,10 @@ import type {XCUITestDriver} from '../driver';
 
 export type AlertAction = 'accept' | 'dismiss' | 'getButtons';
 
+interface AlertOptions {
+  buttonLabel?: string;
+}
+
 /**
  * Gets the text of the currently displayed alert.
  *
@@ -88,8 +92,4 @@ function toAlertParams(opts: AlertOptions = {}): {name?: string} {
     params.name = opts.buttonLabel;
   }
   return params;
-}
-
-interface AlertOptions {
-  buttonLabel?: string;
 }

@@ -60,9 +60,9 @@ export class XcodeToolsCheck implements IDoctorCheck {
 export const xcodeToolsCheck = new XcodeToolsCheck();
 
 class EnvVarAndPathCheck implements IDoctorCheck {
-  log!: AppiumLogger;
   static readonly ENVIRONMENT_VARS_TUTORIAL_URL =
     'https://github.com/appium/java-client/blob/master/docs/environment.md';
+  log!: AppiumLogger;
 
   constructor(
     private readonly varName: string,

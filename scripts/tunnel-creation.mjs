@@ -27,55 +27,6 @@ const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
 
 /**
- * @param {string} value
- * @param {string} label
- * @returns {number}
- */
-function parsePortOption(value, label) {
-  const port = Number.parseInt(value, 10);
-  if (!Number.isFinite(port) || port <= 0 || port > 65535) {
-    throw new Error(`Invalid ${label}: ${value}. Expected an integer between 1 and 65535.`);
-  }
-  return port;
-}
-
-/**
- * @param {string} value
- * @param {string} label
- * @returns {number}
- */
-function parseNonNegativeIntegerOption(value, label) {
-  const count = Number.parseInt(value, 10);
-  if (!Number.isFinite(count) || count < 0) {
-    throw new Error(`Invalid ${label}: ${value}. Expected an integer >= 0.`);
-  }
-  return count;
-}
-
-/**
- * @param {string} value
- * @param {string} label
- * @returns {number}
- */
-function parsePositiveIntegerOption(value, label) {
-  const num = Number.parseInt(value, 10);
-  if (!Number.isFinite(num) || num <= 0) {
-    throw new Error(`Invalid ${label}: ${value}. Expected a positive integer.`);
-  }
-  return num;
-}
-
-/**
- * @param {string} value
- * @param {string[]} previous
- * @returns {string[]}
- */
-function collectStringValues(value, previous = []) {
-  previous.push(value);
-  return previous;
-}
-
-/**
  * TunnelCreator class for managing tunnel creation and related operations (USB and optional Apple TV over WiFi).
  */
 class TunnelCreator {
@@ -112,20 +63,24 @@ class TunnelCreator {
     return this._packetStreamBasePort;
   }
 
-  set packetStreamBasePort(port) {
-    this._packetStreamBasePort = port;
-  }
-
   get tunnelRegistryPort() {
     return this._tunnelRegistryPort;
   }
 
-  set tunnelRegistryPort(port) {
-    this._tunnelRegistryPort = port;
-  }
-
   get tlsOptions() {
     return this._tlsOptions;
+  }
+
+  get registry() {
+    return this._registry;
+  }
+
+  set packetStreamBasePort(port) {
+    this._packetStreamBasePort = port;
+  }
+
+  set tunnelRegistryPort(port) {
+    this._tunnelRegistryPort = port;
   }
 
   /**
@@ -133,10 +88,6 @@ class TunnelCreator {
    */
   set tlsOptions(value) {
     this._tlsOptions = value;
-  }
-
-  get registry() {
-    return this._registry;
   }
 
   /**
@@ -855,6 +806,55 @@ class TunnelCreator {
       activeTunnels: total,
     };
   }
+}
+
+/**
+ * @param {string} value
+ * @param {string} label
+ * @returns {number}
+ */
+function parsePortOption(value, label) {
+  const port = Number.parseInt(value, 10);
+  if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+    throw new Error(`Invalid ${label}: ${value}. Expected an integer between 1 and 65535.`);
+  }
+  return port;
+}
+
+/**
+ * @param {string} value
+ * @param {string} label
+ * @returns {number}
+ */
+function parseNonNegativeIntegerOption(value, label) {
+  const count = Number.parseInt(value, 10);
+  if (!Number.isFinite(count) || count < 0) {
+    throw new Error(`Invalid ${label}: ${value}. Expected an integer >= 0.`);
+  }
+  return count;
+}
+
+/**
+ * @param {string} value
+ * @param {string} label
+ * @returns {number}
+ */
+function parsePositiveIntegerOption(value, label) {
+  const num = Number.parseInt(value, 10);
+  if (!Number.isFinite(num) || num <= 0) {
+    throw new Error(`Invalid ${label}: ${value}. Expected a positive integer.`);
+  }
+  return num;
+}
+
+/**
+ * @param {string} value
+ * @param {string[]} previous
+ * @returns {string[]}
+ */
+function collectStringValues(value, previous = []) {
+  previous.push(value);
+  return previous;
 }
 
 /**

@@ -132,7 +132,7 @@ export async function clearSystemFiles(wda: any): Promise<void> {
             }
             const fileName = path.basename(itemPath);
             if (XCTEST_LOG_FILES_PATTERNS.some((p) => p.test(fileName))) {
-              fs.rimraf(itemPath);
+              void fs.rimraf(itemPath);
             }
           });
         } catch (e: any) {
@@ -219,6 +219,21 @@ export const getDriverInfo = _.memoize(async function getDriverInfo(): Promise<D
   };
 });
 
+export type UploadOptions = {
+  /** The name of the user for remote authentication (only when `remotePath` is provided). */
+  user?: string;
+  /** The password for remote authentication (only when `remotePath` is provided). */
+  pass?: string;
+  /** Multipart upload HTTP method. Defaults to `PUT`. */
+  method?: Method;
+  /** Additional headers mapping for multipart HTTP(S) uploads. */
+  headers?: HTTPHeaders;
+  /** The form field name that receives the file blob in multipart uploads. */
+  fileFieldName?: string;
+  /** Additional form fields for multipart HTTP(S) uploads. */
+  formFields?: Record<string, any> | [string, any][];
+};
+
 export function normalizeCommandTimeouts(
   value: string | Record<string, number>,
 ): Record<string, number> {
@@ -297,28 +312,6 @@ export async function getPIDsListeningOnPort(
     const {stdout} = await exec('ps', ['-p', x, '-o', 'command']);
     return await filteringFunc(stdout);
   });
-}
-
-/**
- * @typedef {Object} UploadOptions
- *
- * @property {string} [user] - The name of the user for the remote authentication. Only works if `remotePath` is provided.
- * @property {string} [pass] - The password for the remote authentication. Only works if `remotePath` is provided.
- * @property {import('axios').Method} [method] - The http multipart upload method name. The 'PUT' one is used by default.
- *                              Only works if `remotePath` is provided.
- * @property {import('@appium/types').HTTPHeaders} [headers] - Additional headers mapping for multipart http(s) uploads
- * @property {string} [fileFieldName] [file] - The name of the form field, where the file content BLOB should be stored for
- *                                            http(s) uploads
- * @property {Record<string, any> | [string, any][]} [formFields] - Additional form fields for multipart http(s) uploads
- */
-
-export interface UploadOptions {
-  user?: string;
-  pass?: string;
-  method?: Method;
-  headers?: HTTPHeaders;
-  fileFieldName?: string;
-  formFields?: Record<string, any> | [string, any][];
 }
 
 /**

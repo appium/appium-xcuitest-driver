@@ -324,7 +324,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
       };
 
       for (const port of ports) {
-        (async () => {
+        void (async () => {
           try {
             const res = await axios.get(`http://127.0.0.1:${port}/remotexpc/tunnels`, {
               timeout: 1000,

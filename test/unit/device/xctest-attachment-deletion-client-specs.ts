@@ -48,8 +48,8 @@ describe('XctestAttachmentDeletionClient', function () {
   it('invokes XCTestAttachment.delete when remotexpc module is injected', async function () {
     const deleteStub = sinon.stub().resolves();
     const MockAtt = class {
-      constructor(public udid: string) {}
       delete = deleteStub;
+      constructor(public udid: string) {}
     };
     const mod = {XCTestAttachment: MockAtt} as any;
     const client = await XctestAttachmentDeletionClient.create('my-udid', '18.0', mod);

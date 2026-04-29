@@ -12,6 +12,22 @@ const XCTEST_REAL_DEVICE_MSG =
   'This XCTest operation is only supported on real devices running iOS/tvOS 18 or newer with the ' +
   'appium-ios-remotexpc package.';
 
+interface XCTestClientDeps {
+  udid: string;
+  isRealDevice: boolean;
+  platformVersion?: string | null;
+}
+
+interface RunXCTestOptions {
+  testRunnerBundleId: string;
+  appUnderTestBundleId: string;
+  xcTestBundleId: string;
+  args?: string[];
+  testType?: 'app' | 'ui' | 'logic';
+  env?: StringRecord;
+  timeout?: number;
+}
+
 export class XCTestClient {
   private constructor(private readonly deps: XCTestClientDeps) {}
 
@@ -63,20 +79,4 @@ export class XCTestClient {
       throw new Error(XCTEST_REAL_DEVICE_MSG);
     }
   }
-}
-
-interface XCTestClientDeps {
-  udid: string;
-  isRealDevice: boolean;
-  platformVersion?: string | null;
-}
-
-interface RunXCTestOptions {
-  testRunnerBundleId: string;
-  appUnderTestBundleId: string;
-  xcTestBundleId: string;
-  args?: string[];
-  testType?: 'app' | 'ui' | 'logic';
-  env?: StringRecord;
-  timeout?: number;
 }

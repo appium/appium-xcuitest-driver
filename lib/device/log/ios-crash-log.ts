@@ -15,8 +15,6 @@ const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
 // Thus we do not want to store too many items in the memory at once.
 const MAX_RECENT_ITEMS = 20;
 
-type TSerializedEntry = [string, number];
-
 /**
  * Options for {@link IOSCrashLog}.
  */
@@ -32,6 +30,8 @@ export interface IOSCrashLogOptions {
    */
   useRemoteXPC?: boolean;
 }
+
+type TSerializedEntry = [string, number];
 
 /**
  * Collects iOS/tvOS crash logs for BiDi `log.entryAdded` / classic log APIs.
@@ -68,6 +68,10 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     this._started = false;
   }
 
+  override get isCapturing(): boolean {
+    return this._started;
+  }
+
   /** Records the current crash file snapshot so only new reports appear in {@link IOSCrashLog.getLogs}. */
   override async startCapture(): Promise<void> {
     this._recentCrashFiles = await this._listCrashFiles();
@@ -82,10 +86,6 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       await this._realDeviceClient.close();
       this._realDeviceClient = null;
     }
-  }
-
-  override get isCapturing(): boolean {
-    return this._started;
   }
 
   /**

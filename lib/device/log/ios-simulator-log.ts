@@ -41,6 +41,10 @@ export class IOSSimulatorLog extends LineConsumingLog {
     this.syslogLogger = null;
   }
 
+  override get isCapturing(): boolean {
+    return Boolean(this.proc?.isRunning);
+  }
+
   override async startCapture(): Promise<void> {
     if (_.isUndefined(this.sim.udid)) {
       throw new Error(`Log capture requires a sim udid`);
@@ -93,10 +97,6 @@ export class IOSSimulatorLog extends LineConsumingLog {
     await this.killLogSubProcess();
     this.proc = null;
     this.shutdownSyslogger();
-  }
-
-  override get isCapturing(): boolean {
-    return Boolean(this.proc?.isRunning);
   }
 
   private async clearExistingSyslog(): Promise<void> {

@@ -5,33 +5,11 @@ import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
 import type {Condition, IConditionInducer} from '../types';
 import {getRemoteXPCServices} from './remotexpc-utils';
 
-/**
- * Picks RemoteXPC when the platform is iOS/tvOS 18+ and probe succeeds; otherwise legacy instrument service.
- */
-export async function createConditionInducer(params: {
-  udid: string;
-  log: AppiumLogger;
-  platformVersion?: string;
-}): Promise<IConditionInducer> {
-  const {udid, log, platformVersion} = params;
-
-  if (!isIos18OrNewerPlatform(platformVersion)) {
-    return new InstrumentConditionInducer(udid, log);
-  }
-
-  const xpcInducer = new RemoteXPCConditionInducer(udid, log);
-  try {
-    const connection = await xpcInducer.startConnection();
-    await connection.remoteXPC.close();
-  } catch (err: any) {
-    log.warn(
-      `Unable to use RemoteXPC-based condition inducer for device ${udid}, ` +
-        `falling back to the legacy implementation: ${err.message}`,
-    );
-    return new InstrumentConditionInducer(udid, log);
-  }
-  return xpcInducer;
-}
+type InstrumentService = {
+  callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;
+  close(): void;
+  _socketClient: {destroyed: boolean};
+};
 
 /**
  * RemoteXPC-based implementation for iOS 18+.
@@ -198,8 +176,30 @@ class InstrumentConditionInducer implements IConditionInducer {
   }
 }
 
-type InstrumentService = {
-  callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;
-  close(): void;
-  _socketClient: {destroyed: boolean};
-};
+/**
+ * Picks RemoteXPC when the platform is iOS/tvOS 18+ and probe succeeds; otherwise legacy instrument service.
+ */
+export async function createConditionInducer(params: {
+  udid: string;
+  log: AppiumLogger;
+  platformVersion?: string;
+}): Promise<IConditionInducer> {
+  const {udid, log, platformVersion} = params;
+
+  if (!isIos18OrNewerPlatform(platformVersion)) {
+    return new InstrumentConditionInducer(udid, log);
+  }
+
+  const xpcInducer = new RemoteXPCConditionInducer(udid, log);
+  try {
+    const connection = await xpcInducer.startConnection();
+    await connection.remoteXPC.close();
+  } catch (err: any) {
+    log.warn(
+      `Unable to use RemoteXPC-based condition inducer for device ${udid}, ` +
+        `falling back to the legacy implementation: ${err.message}`,
+    );
+    return new InstrumentConditionInducer(udid, log);
+  }
+  return xpcInducer;
+}

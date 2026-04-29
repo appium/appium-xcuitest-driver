@@ -27,6 +27,10 @@ export class IOSDeviceLog extends LineConsumingLog {
     this.useRemoteXPC = opts.useRemoteXPC ?? false;
   }
 
+  override get isCapturing(): boolean {
+    return !!this.syslogService || !!this.legacyService;
+  }
+
   override async startCapture(): Promise<void> {
     if (this.isCapturing) {
       return;
@@ -44,10 +48,6 @@ export class IOSDeviceLog extends LineConsumingLog {
     }
 
     await this.startLegacyCapture();
-  }
-
-  override get isCapturing(): boolean {
-    return !!this.syslogService || !!this.legacyService;
   }
 
   override async stopCapture(): Promise<void> {

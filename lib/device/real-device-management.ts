@@ -24,250 +24,45 @@ const APPLICATION_INSTALLED_NOTIFICATION = 'com.apple.mobile.application_install
 const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';
 
-//#region Public File System Functions
 
-/**
- * Retrieve a file from a real device
- *
- * @param client AFC client instance
- * @param remotePath Relative path to the file on the device
- * @returns The file content as a buffer
- */
-export async function pullFile(client: AfcClient, remotePath: string): Promise<Buffer> {
-  return await B.resolve(client.getFileContents(remotePath)).timeout(
-    IO_TIMEOUT_MS,
-    `Timed out after ${IO_TIMEOUT_MS}ms while pulling file from '${remotePath}'`,
-  );
+export interface PushFileOptions {
+  /** The maximum count of milliceconds to wait until file push is completed. Cannot be lower than 60000ms */
+  timeoutMs?: number;
 }
 
-/**
- * Retrieve a folder from a real device
- *
- * @param client AFC client instance
- * @param remoteRootPath Relative path to the folder on the device
- * @returns The folder content as a zipped base64-encoded buffer
- */
-export async function pullFolder(client: AfcClient, remoteRootPath: string): Promise<Buffer> {
-  const tmpFolder = await tempDir.openDir();
-  try {
-    let localTopItem: string | null = null;
-    let countFilesSuccess = 0;
-    let countFolders = 0;
-
-    await client.pull(remoteRootPath, tmpFolder, {
-      recursive: true,
-      overwrite: true,
-      onEntry: async (remotePath: string, localPath: string, isDirectory: boolean) => {
-        if (
-          !localTopItem ||
-          localPath.split(path.sep).length < localTopItem.split(path.sep).length
-        ) {
-          localTopItem = localPath;
-        }
-        if (isDirectory) {
-          ++countFolders;
-        } else {
-          ++countFilesSuccess;
-        }
-      },
-    });
-
-    defaultLogger.info(
-      `Pulled ${util.pluralize('file', countFilesSuccess, true)} and ${util.pluralize(
-        'folder',
-        countFolders,
-        true,
-      )} from '${remoteRootPath}'`,
-    );
-    return await zip.toInMemoryZip(localTopItem ? path.dirname(localTopItem) : tmpFolder, {
-      encodeToBase64: true,
-    });
-  } finally {
-    await fs.rimraf(tmpFolder);
-  }
+export interface PushFolderOptions {
+  /** The maximum timeout to wait until a single file is copied */
+  timeoutMs?: number;
+  /** Whether to push files in parallel. This usually gives better performance, but might sometimes be less stable. */
+  enableParallelPush?: boolean;
 }
 
-/**
- * Pushes a file to a real device
- *
- * @param client AFC client instance
- * @param localPathOrPayload Either full path to the source file
- * or a buffer payload to be written into the remote destination
- * @param remotePath Relative path to the file on the device. The remote
- * folder structure is created automatically if necessary.
- * @param opts Push file options
- */
-export async function pushFile(
-  client: AfcClient,
-  localPathOrPayload: string | Buffer,
-  remotePath: string,
-  opts: PushFileOptions = {},
-): Promise<void> {
-  const {timeoutMs = IO_TIMEOUT_MS} = opts;
-  const timer = new timing.Timer().start();
-  await remoteMkdirp(client, path.dirname(remotePath));
-
-  // AfcClient handles the branching internally
-  const pushPromise = Buffer.isBuffer(localPathOrPayload)
-    ? client.setFileContents(remotePath, localPathOrPayload)
-    : client.writeFromStream(
-        remotePath,
-        fs.createReadStream(localPathOrPayload, {autoClose: true}),
-      );
-
-  // Wrap with timeout
-  const actualTimeout = Math.max(timeoutMs, 60000);
-  await B.resolve(pushPromise).timeout(
-    actualTimeout,
-    `Timed out after ${actualTimeout}ms while pushing file to '${remotePath}'`,
-  );
-
-  const fileSize = Buffer.isBuffer(localPathOrPayload)
-    ? localPathOrPayload.length
-    : (await fs.stat(localPathOrPayload)).size;
-  defaultLogger.debug(
-    `Successfully pushed the file payload (${util.toReadableSizeString(fileSize)}) ` +
-      `to the remote location '${remotePath}' in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-  );
+export interface RealDeviceInstallOptions {
+  /** Application installation timeout in milliseconds */
+  timeoutMs?: number;
 }
 
-/**
- * Pushes a folder to a real device
- *
- * @param client AFC client instance
- * @param srcRootPath The full path to the source folder
- * @param dstRootPath The relative path to the destination folder. The folder
- * will be deleted if already exists.
- * @param opts Push folder options
- */
-export async function pushFolder(
-  client: AfcClient,
-  srcRootPath: string,
-  dstRootPath: string,
-  opts: PushFolderOptions = {},
-): Promise<void> {
-  const {timeoutMs = IO_TIMEOUT_MS, enableParallelPush = false} = opts;
-
-  const timer = new timing.Timer().start();
-  const allItems =
-    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (await fs.glob('**', {
-      cwd: srcRootPath,
-      withFileTypes: true,
-    })) as any[];
-  defaultLogger.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
-  // top-level folders go first
-  const foldersToPush: string[] = allItems
-    .filter((x) => x.isDirectory())
-    .map((x) => x.relative())
-    .sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
-  // larger files go first
-  const filesToPush: string[] = allItems
-    .filter((x) => !x.isDirectory())
-    .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
-    .map((x) => x.relative());
-  defaultLogger.debug(
-    `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
-      `${util.pluralize('file', filesToPush.length, true)} to push`,
-  );
-  // Create the folder structure
-  try {
-    await client.deleteDirectory(dstRootPath);
-  } catch {}
-
-  await client.createDirectory(dstRootPath);
-  for (const relativeFolderPath of foldersToPush) {
-    const absoluteFolderPath = _.trimEnd(path.join(dstRootPath, relativeFolderPath), path.sep);
-    if (absoluteFolderPath) {
-      await client.createDirectory(absoluteFolderPath);
-    }
-  }
-  // do not forget about the root folder
-  defaultLogger.debug(
-    `Successfully created the remote folder structure ` +
-      `(${util.pluralize('item', foldersToPush.length + 1, true)})`,
-  );
-
-  const _pushFile = async (relativePath: string): Promise<void> => {
-    const absoluteSourcePath = path.join(srcRootPath, relativePath);
-    const readStream = fs.createReadStream(absoluteSourcePath, {autoClose: true});
-    const absoluteDestinationPath = path.join(dstRootPath, relativePath);
-
-    const pushPromise = client.writeFromStream(absoluteDestinationPath, readStream);
-    const actualTimeout = Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000);
-    await B.resolve(pushPromise).timeout(
-      actualTimeout,
-      `Timed out after ${actualTimeout}ms while pushing '${relativePath}' to '${absoluteDestinationPath}'`,
-    );
-  };
-
-  if (enableParallelPush) {
-    defaultLogger.debug(`Proceeding to parallel files push (max ${MAX_IO_CHUNK_SIZE} writers)`);
-    const pushPromises: B<void>[] = [];
-    for (const relativeFilePath of filesToPush) {
-      pushPromises.push(B.resolve(_pushFile(relativeFilePath)));
-      // keep the push queue filled
-      if (pushPromises.length >= MAX_IO_CHUNK_SIZE) {
-        await B.any(pushPromises);
-        const elapsedMs = timer.getDuration().asMilliSeconds;
-        if (elapsedMs > timeoutMs) {
-          throw new TimeoutError(`Timed out after ${elapsedMs} ms`);
-        }
-      }
-      for (let i = pushPromises.length - 1; i >= 0; i--) {
-        if (pushPromises[i].isFulfilled()) {
-          pushPromises.splice(i, 1);
-        }
-      }
-    }
-    if (!_.isEmpty(pushPromises)) {
-      const remainingPromises = pushPromises.filter((p) => !p.isFulfilled());
-      if (remainingPromises.length > 0) {
-        await B.all(remainingPromises).timeout(
-          Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000),
-        );
-      }
-    }
-  } else {
-    defaultLogger.debug(`Proceeding to serial files push`);
-    for (const relativeFilePath of filesToPush) {
-      await _pushFile(relativeFilePath);
-      const elapsedMs = timer.getDuration().asMilliSeconds;
-      if (elapsedMs > timeoutMs) {
-        throw new TimeoutError(`Timed out after ${elapsedMs} ms`);
-      }
-    }
-  }
-
-  defaultLogger.debug(
-    `Successfully pushed ${util.pluralize('folder', foldersToPush.length, true)} ` +
-      `and ${util.pluralize('file', filesToPush.length, true)} ` +
-      `within ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-  );
+export interface InstallOrUpgradeOptions {
+  /** Install/upgrade timeout in milliseconds */
+  timeout: number;
+  /** Whether it is an app upgrade or a new install */
+  isUpgrade: boolean;
 }
 
-//#endregion
-
-//#region Public Device Connection Functions
-
-/**
- * Get list of connected devices.
-
- * @param opts - Driver options; used to decide if tunnel registry is used.
- */
-export async function getConnectedDevices(opts: XCUITestDriverOpts): Promise<string[]> {
-  const client = await ConnectedDevicesClient.create(opts);
-  return await client.getConnectedDevices();
+export interface ManagementInstallOptions {
+  /** Whether to skip app uninstall before installing it */
+  skipUninstall?: boolean;
+  /** App install timeout */
+  timeout?: number;
+  /** Whether to enforce the app uninstallation. e.g. fullReset, or enforceAppInstall is true */
+  shouldEnforceUninstall?: boolean;
 }
-
-//#endregion
-
-//#region Public Real Device Class
 
 export class RealDevice {
   readonly udid: string;
-  private readonly _log: AppiumLogger;
   readonly devicectl: Devicectl;
   readonly driverOpts: XCUITestDriverOpts;
+  private readonly _log: AppiumLogger;
 
   constructor(udid: string, driverOpts: XCUITestDriverOpts, logger?: AppiumLogger) {
     this.udid = udid;
@@ -520,9 +315,234 @@ export class RealDevice {
   }
 }
 
-//#endregion
+/**
+ * Retrieve a file from a real device
+ *
+ * @param client AFC client instance
+ * @param remotePath Relative path to the file on the device
+ * @returns The file content as a buffer
+ */
+export async function pullFile(client: AfcClient, remotePath: string): Promise<Buffer> {
+  return await B.resolve(client.getFileContents(remotePath)).timeout(
+    IO_TIMEOUT_MS,
+    `Timed out after ${IO_TIMEOUT_MS}ms while pulling file from '${remotePath}'`,
+  );
+}
 
-//#region Public Device Management Functions
+/**
+ * Retrieve a folder from a real device
+ *
+ * @param client AFC client instance
+ * @param remoteRootPath Relative path to the folder on the device
+ * @returns The folder content as a zipped base64-encoded buffer
+ */
+export async function pullFolder(client: AfcClient, remoteRootPath: string): Promise<Buffer> {
+  const tmpFolder = await tempDir.openDir();
+  try {
+    let localTopItem: string | null = null;
+    let countFilesSuccess = 0;
+    let countFolders = 0;
+
+    await client.pull(remoteRootPath, tmpFolder, {
+      recursive: true,
+      overwrite: true,
+      onEntry: async (remotePath: string, localPath: string, isDirectory: boolean) => {
+        if (
+          !localTopItem ||
+          localPath.split(path.sep).length < localTopItem.split(path.sep).length
+        ) {
+          localTopItem = localPath;
+        }
+        if (isDirectory) {
+          ++countFolders;
+        } else {
+          ++countFilesSuccess;
+        }
+      },
+    });
+
+    defaultLogger.info(
+      `Pulled ${util.pluralize('file', countFilesSuccess, true)} and ${util.pluralize(
+        'folder',
+        countFolders,
+        true,
+      )} from '${remoteRootPath}'`,
+    );
+    return await zip.toInMemoryZip(localTopItem ? path.dirname(localTopItem) : tmpFolder, {
+      encodeToBase64: true,
+    });
+  } finally {
+    await fs.rimraf(tmpFolder);
+  }
+}
+
+/**
+ * Pushes a file to a real device
+ *
+ * @param client AFC client instance
+ * @param localPathOrPayload Either full path to the source file
+ * or a buffer payload to be written into the remote destination
+ * @param remotePath Relative path to the file on the device. The remote
+ * folder structure is created automatically if necessary.
+ * @param opts Push file options
+ */
+export async function pushFile(
+  client: AfcClient,
+  localPathOrPayload: string | Buffer,
+  remotePath: string,
+  opts: PushFileOptions = {},
+): Promise<void> {
+  const {timeoutMs = IO_TIMEOUT_MS} = opts;
+  const timer = new timing.Timer().start();
+  await remoteMkdirp(client, path.dirname(remotePath));
+
+  // AfcClient handles the branching internally
+  const pushPromise = Buffer.isBuffer(localPathOrPayload)
+    ? client.setFileContents(remotePath, localPathOrPayload)
+    : client.writeFromStream(
+        remotePath,
+        fs.createReadStream(localPathOrPayload, {autoClose: true}),
+      );
+
+  // Wrap with timeout
+  const actualTimeout = Math.max(timeoutMs, 60000);
+  await B.resolve(pushPromise).timeout(
+    actualTimeout,
+    `Timed out after ${actualTimeout}ms while pushing file to '${remotePath}'`,
+  );
+
+  const fileSize = Buffer.isBuffer(localPathOrPayload)
+    ? localPathOrPayload.length
+    : (await fs.stat(localPathOrPayload)).size;
+  defaultLogger.debug(
+    `Successfully pushed the file payload (${util.toReadableSizeString(fileSize)}) ` +
+      `to the remote location '${remotePath}' in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+  );
+}
+
+/**
+ * Pushes a folder to a real device
+ *
+ * @param client AFC client instance
+ * @param srcRootPath The full path to the source folder
+ * @param dstRootPath The relative path to the destination folder. The folder
+ * will be deleted if already exists.
+ * @param opts Push folder options
+ */
+export async function pushFolder(
+  client: AfcClient,
+  srcRootPath: string,
+  dstRootPath: string,
+  opts: PushFolderOptions = {},
+): Promise<void> {
+  const {timeoutMs = IO_TIMEOUT_MS, enableParallelPush = false} = opts;
+
+  const timer = new timing.Timer().start();
+  const allItems =
+    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (await fs.glob('**', {
+      cwd: srcRootPath,
+      withFileTypes: true,
+    })) as any[];
+  defaultLogger.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
+  // top-level folders go first
+  const foldersToPush: string[] = allItems
+    .filter((x) => x.isDirectory())
+    .map((x) => x.relative())
+    .sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
+  // larger files go first
+  const filesToPush: string[] = allItems
+    .filter((x) => !x.isDirectory())
+    .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
+    .map((x) => x.relative());
+  defaultLogger.debug(
+    `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
+      `${util.pluralize('file', filesToPush.length, true)} to push`,
+  );
+  // Create the folder structure
+  try {
+    await client.deleteDirectory(dstRootPath);
+  } catch {}
+
+  await client.createDirectory(dstRootPath);
+  for (const relativeFolderPath of foldersToPush) {
+    const absoluteFolderPath = _.trimEnd(path.join(dstRootPath, relativeFolderPath), path.sep);
+    if (absoluteFolderPath) {
+      await client.createDirectory(absoluteFolderPath);
+    }
+  }
+  // do not forget about the root folder
+  defaultLogger.debug(
+    `Successfully created the remote folder structure ` +
+      `(${util.pluralize('item', foldersToPush.length + 1, true)})`,
+  );
+
+  const _pushFile = async (relativePath: string): Promise<void> => {
+    const absoluteSourcePath = path.join(srcRootPath, relativePath);
+    const readStream = fs.createReadStream(absoluteSourcePath, {autoClose: true});
+    const absoluteDestinationPath = path.join(dstRootPath, relativePath);
+
+    const pushPromise = client.writeFromStream(absoluteDestinationPath, readStream);
+    const actualTimeout = Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000);
+    await B.resolve(pushPromise).timeout(
+      actualTimeout,
+      `Timed out after ${actualTimeout}ms while pushing '${relativePath}' to '${absoluteDestinationPath}'`,
+    );
+  };
+
+  if (enableParallelPush) {
+    defaultLogger.debug(`Proceeding to parallel files push (max ${MAX_IO_CHUNK_SIZE} writers)`);
+    const pushPromises: B<void>[] = [];
+    for (const relativeFilePath of filesToPush) {
+      pushPromises.push(B.resolve(_pushFile(relativeFilePath)));
+      // keep the push queue filled
+      if (pushPromises.length >= MAX_IO_CHUNK_SIZE) {
+        await B.any(pushPromises);
+        const elapsedMs = timer.getDuration().asMilliSeconds;
+        if (elapsedMs > timeoutMs) {
+          throw new TimeoutError(`Timed out after ${elapsedMs} ms`);
+        }
+      }
+      for (let i = pushPromises.length - 1; i >= 0; i--) {
+        if (pushPromises[i].isFulfilled()) {
+          pushPromises.splice(i, 1);
+        }
+      }
+    }
+    if (!_.isEmpty(pushPromises)) {
+      const remainingPromises = pushPromises.filter((p) => !p.isFulfilled());
+      if (remainingPromises.length > 0) {
+        await B.all(remainingPromises).timeout(
+          Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000),
+        );
+      }
+    }
+  } else {
+    defaultLogger.debug(`Proceeding to serial files push`);
+    for (const relativeFilePath of filesToPush) {
+      await _pushFile(relativeFilePath);
+      const elapsedMs = timer.getDuration().asMilliSeconds;
+      if (elapsedMs > timeoutMs) {
+        throw new TimeoutError(`Timed out after ${elapsedMs} ms`);
+      }
+    }
+  }
+
+  defaultLogger.debug(
+    `Successfully pushed ${util.pluralize('folder', foldersToPush.length, true)} ` +
+      `and ${util.pluralize('file', filesToPush.length, true)} ` +
+      `within ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+  );
+}
+
+/**
+ * Get list of connected devices.
+
+ * @param opts - Driver options; used to decide if tunnel registry is used.
+ */
+export async function getConnectedDevices(opts: XCUITestDriverOpts): Promise<string[]> {
+  const client = await ConnectedDevicesClient.create(opts);
+  return await client.getConnectedDevices();
+}
 
 /**
  * Install app to real device
@@ -645,9 +665,7 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
   return udid;
 }
 
-//#endregion
-
-//#region Private Helper Functions
+// #region Private Helper Functions
 
 /**
  * If the environment variable enables APPIUM_XCUITEST_PREFER_DEVICECTL.
@@ -682,41 +700,4 @@ async function remoteMkdirp(client: AfcClient, remoteRoot: string): Promise<void
   await client.createDirectory(remoteRoot);
 }
 
-//#endregion
-
-//#region Type Definitions
-
-export interface PushFileOptions {
-  /** The maximum count of milliceconds to wait until file push is completed. Cannot be lower than 60000ms */
-  timeoutMs?: number;
-}
-
-export interface PushFolderOptions {
-  /** The maximum timeout to wait until a single file is copied */
-  timeoutMs?: number;
-  /** Whether to push files in parallel. This usually gives better performance, but might sometimes be less stable. */
-  enableParallelPush?: boolean;
-}
-
-export interface RealDeviceInstallOptions {
-  /** Application installation timeout in milliseconds */
-  timeoutMs?: number;
-}
-
-export interface InstallOrUpgradeOptions {
-  /** Install/upgrade timeout in milliseconds */
-  timeout: number;
-  /** Whether it is an app upgrade or a new install */
-  isUpgrade: boolean;
-}
-
-export interface ManagementInstallOptions {
-  /** Whether to skip app uninstall before installing it */
-  skipUninstall?: boolean;
-  /** App install timeout */
-  timeout?: number;
-  /** Whether to enforce the app uninstallation. e.g. fullReset, or enforceAppInstall is true */
-  shouldEnforceUninstall?: boolean;
-}
-
-//#endregion
+// #endregion Private Helper Functions

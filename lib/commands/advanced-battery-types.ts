@@ -1,3 +1,7 @@
+export enum Type {
+  Buffer = 'Buffer',
+}
+
 export interface BatteryInfo {
   level: number;
   state: number;
@@ -381,10 +385,6 @@ export interface LifetimeData {
 export interface ChargerStatus {
   type: Type;
   data: number[];
-}
-
-export enum Type {
-  Buffer = 'Buffer',
 }
 
 export interface CarrierMode {

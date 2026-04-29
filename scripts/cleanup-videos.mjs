@@ -34,47 +34,6 @@ const SUBDIRECTORY = 'Attachments';
 /** Attachment entries are UUID-shaped file names (no extension in this listing). */
 const UUID_NAME_RE = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i;
 
-/**
- * Reads the device OS version from `xcrun devicectl list devices` (via **node-devicectl**) and
- * throws unless it is **iOS 18+** (attachment deletion is only supported there).
- *
- * @param {string} udid
- * @returns {Promise<void>}
- */
-async function requirePlatformVersion(udid) {
-  let devices;
-  try {
-    devices = await new Devicectl('').listDevices();
-  } catch (err) {
-    throw new Error(
-      `Could not list devices via devicectl. Ensure Xcode 15+ and a working \`xcrun devicectl list devices\`.`,
-      {cause: err},
-    );
-  }
-  const d = devices.find(
-    (x) => x.hardwareProperties?.udid === udid || x.identifier === udid,
-  );
-  const platformVersion = d?.deviceProperties?.osVersionNumber;
-  if (!platformVersion) {
-    throw new Error(
-      `Device '${udid}' was not found in devicectl output, or OS version is missing.`,
-    );
-  }
-  if (!util.compareVersions(platformVersion, '>=', '18.0')) {
-    throw new Error(
-      `Attachment deletion requires iOS 18+. Device reports '${platformVersion}' (from devicectl).`,
-    );
-  }
-}
-
-/**
- * @param {string[]} names
- * @returns {string[]}
- */
-function filterAttachmentUuids(names) {
-  return names.filter((n) => typeof n === 'string' && UUID_NAME_RE.test(n.trim()));
-}
-
 class CleanupVideos {
   /**
    * @param {CleanupVideosOpts} opts
@@ -125,6 +84,47 @@ class CleanupVideos {
     await attachment.delete(uuids);
     log.info(`Deleted ${util.pluralize('attachment', uuids.length, true)}.`);
   }
+}
+
+/**
+ * Reads the device OS version from `xcrun devicectl list devices` (via **node-devicectl**) and
+ * throws unless it is **iOS 18+** (attachment deletion is only supported there).
+ *
+ * @param {string} udid
+ * @returns {Promise<void>}
+ */
+async function requirePlatformVersion(udid) {
+  let devices;
+  try {
+    devices = await new Devicectl('').listDevices();
+  } catch (err) {
+    throw new Error(
+      `Could not list devices via devicectl. Ensure Xcode 15+ and a working \`xcrun devicectl list devices\`.`,
+      {cause: err},
+    );
+  }
+  const d = devices.find(
+    (x) => x.hardwareProperties?.udid === udid || x.identifier === udid,
+  );
+  const platformVersion = d?.deviceProperties?.osVersionNumber;
+  if (!platformVersion) {
+    throw new Error(
+      `Device '${udid}' was not found in devicectl output, or OS version is missing.`,
+    );
+  }
+  if (!util.compareVersions(platformVersion, '>=', '18.0')) {
+    throw new Error(
+      `Attachment deletion requires iOS 18+. Device reports '${platformVersion}' (from devicectl).`,
+    );
+  }
+}
+
+/**
+ * @param {string[]} names
+ * @returns {string[]}
+ */
+function filterAttachmentUuids(names) {
+  return names.filter((n) => typeof n === 'string' && UUID_NAME_RE.test(n.trim()));
 }
 
 async function main() {

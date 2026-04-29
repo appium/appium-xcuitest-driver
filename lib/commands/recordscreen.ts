@@ -77,6 +77,17 @@ const HARDWARE_ACCELERATION_PARAMETERS: Record<
 
 const CAPTURE_START_MARKER = /^\s*frame=/;
 
+interface ScreenRecorderOptions {
+  hardwareAcceleration?: string;
+  remotePort: number;
+  remoteUrl: string;
+  videoFps?: number;
+  videoType?: string;
+  videoScale?: string;
+  videoFilters?: string;
+  pixelFormat?: string;
+}
+
 export class ScreenRecorder {
   private readonly videoPath: string;
   private readonly log: any;
@@ -399,15 +410,4 @@ export async function stopRecordingScreen(
     await this._recentScreenRecorder.cleanup();
     this._recentScreenRecorder = null;
   }
-}
-
-interface ScreenRecorderOptions {
-  hardwareAcceleration?: string;
-  remotePort: number;
-  remoteUrl: string;
-  videoFps?: number;
-  videoType?: string;
-  videoScale?: string;
-  videoFilters?: string;
-  pixelFormat?: string;
 }

@@ -17,59 +17,6 @@ const DOMAIN_TYPE = 'appDataContainer';
 const USERNAME = 'mobile';
 const SUBDIRECTORY = 'Attachments';
 
-async function retrieveRecodingFromSimulator(this: XCUITestDriver, uuid: string): Promise<string> {
-  const device = this.device as Simulator;
-  const dataRoot = device.getDir();
-  // On Simulators the path looks like
-  // $HOME/Library/Developer/CoreSimulator/Devices/F8E1968A-8443-4A9A-AB86-27C54C36A2F6/data/Containers/Data/InternalDaemon/4E3FE8DF-AD0A-41DA-B6EC-C35E5798C219/Attachments/A044DAF7-4A58-4CD5-95C3-29B4FE80C377
-  const internalDaemonRoot = path.resolve(dataRoot, 'Containers', 'Data', 'InternalDaemon');
-  const videoPaths = await fs.glob(`*/Attachments/${uuid}`, {
-    cwd: internalDaemonRoot,
-    absolute: true,
-  });
-  if (_.isEmpty(videoPaths)) {
-    throw new Error(
-      `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`,
-    );
-  }
-  const videoPath = videoPaths[0];
-  const {size} = await fs.stat(videoPath);
-  this.log.debug(`Located the video at '${videoPath}' (${util.toReadableSizeString(size)})`);
-  return videoPath;
-}
-
-async function retrieveRecodingFromRealDevice(this: XCUITestDriver, uuid: string): Promise<string> {
-  const device = this.device as RealDevice;
-
-  const fileNames = await device.devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
-    username: USERNAME,
-    subdirectory: SUBDIRECTORY,
-  });
-  if (!fileNames.includes(uuid)) {
-    throw new Error(
-      `Unable to locate XCTest screen recording identified by '${uuid}' for the device ${this.opts.udid}`,
-    );
-  }
-  if (!this.opts.tmpDir) {
-    throw new Error('tmpDir is not set in driver options');
-  }
-  const videoPath = path.join(this.opts.tmpDir, `${uuid}${MOV_EXT}`);
-  await device.devicectl.pullFile(`${SUBDIRECTORY}/${uuid}`, videoPath, {
-    username: USERNAME,
-    domainIdentifier: DOMAIN_IDENTIFIER,
-    domainType: DOMAIN_TYPE,
-  });
-  const {size} = await fs.stat(videoPath);
-  this.log.debug(`Pulled the video to '${videoPath}' (${util.toReadableSizeString(size)})`);
-  return videoPath;
-}
-
-async function retrieveXcTestScreenRecording(this: XCUITestDriver, uuid: string): Promise<string> {
-  return this.isRealDevice()
-    ? await retrieveRecodingFromRealDevice.call(this, uuid)
-    : await retrieveRecodingFromSimulator.call(this, uuid);
-}
-
 /**
  * Start a new screen recording via XCTest.
  *
@@ -246,4 +193,57 @@ export async function mobileStopXctestScreenRecording(
   }
 
   return result;
+}
+
+async function retrieveRecodingFromSimulator(this: XCUITestDriver, uuid: string): Promise<string> {
+  const device = this.device as Simulator;
+  const dataRoot = device.getDir();
+  // On Simulators the path looks like
+  // $HOME/Library/Developer/CoreSimulator/Devices/F8E1968A-8443-4A9A-AB86-27C54C36A2F6/data/Containers/Data/InternalDaemon/4E3FE8DF-AD0A-41DA-B6EC-C35E5798C219/Attachments/A044DAF7-4A58-4CD5-95C3-29B4FE80C377
+  const internalDaemonRoot = path.resolve(dataRoot, 'Containers', 'Data', 'InternalDaemon');
+  const videoPaths = await fs.glob(`*/Attachments/${uuid}`, {
+    cwd: internalDaemonRoot,
+    absolute: true,
+  });
+  if (_.isEmpty(videoPaths)) {
+    throw new Error(
+      `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`,
+    );
+  }
+  const videoPath = videoPaths[0];
+  const {size} = await fs.stat(videoPath);
+  this.log.debug(`Located the video at '${videoPath}' (${util.toReadableSizeString(size)})`);
+  return videoPath;
+}
+
+async function retrieveRecodingFromRealDevice(this: XCUITestDriver, uuid: string): Promise<string> {
+  const device = this.device as RealDevice;
+
+  const fileNames = await device.devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
+    username: USERNAME,
+    subdirectory: SUBDIRECTORY,
+  });
+  if (!fileNames.includes(uuid)) {
+    throw new Error(
+      `Unable to locate XCTest screen recording identified by '${uuid}' for the device ${this.opts.udid}`,
+    );
+  }
+  if (!this.opts.tmpDir) {
+    throw new Error('tmpDir is not set in driver options');
+  }
+  const videoPath = path.join(this.opts.tmpDir, `${uuid}${MOV_EXT}`);
+  await device.devicectl.pullFile(`${SUBDIRECTORY}/${uuid}`, videoPath, {
+    username: USERNAME,
+    domainIdentifier: DOMAIN_IDENTIFIER,
+    domainType: DOMAIN_TYPE,
+  });
+  const {size} = await fs.stat(videoPath);
+  this.log.debug(`Pulled the video to '${videoPath}' (${util.toReadableSizeString(size)})`);
+  return videoPath;
+}
+
+async function retrieveXcTestScreenRecording(this: XCUITestDriver, uuid: string): Promise<string> {
+  return this.isRealDevice()
+    ? await retrieveRecodingFromRealDevice.call(this, uuid)
+    : await retrieveRecodingFromSimulator.call(this, uuid);
 }

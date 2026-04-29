@@ -8,6 +8,14 @@ import type {Direction} from './types';
 
 const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
 
+interface WdaScrollParams {
+  name?: string;
+  direction?: Direction;
+  predicateString?: string;
+  toVisible?: boolean;
+  distance?: number;
+}
+
 /**
  * Shakes the device.
  *
@@ -664,12 +672,4 @@ function requireFloat(value: any, paramName: string): number {
     );
   }
   return num;
-}
-
-interface WdaScrollParams {
-  name?: string;
-  direction?: Direction;
-  predicateString?: string;
-  toVisible?: boolean;
-  distance?: number;
 }

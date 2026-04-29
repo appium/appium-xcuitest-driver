@@ -24,137 +24,10 @@ const INSTRUMENTS = 'instruments';
 const XCTRACE = 'xctrace';
 const XCRUN = 'xcrun';
 
-/**
- * Starts performance profiling for the device under test.
- *
- * Relaxing security is mandatory for simulators. It can always work for real devices.
- *
- * Since XCode 12 the method tries to use `xctrace` tool to record performance stats.
- *
- * The `instruments` developer utility is used as a fallback for this purpose if `xctrace` is not available.
- *
- * It is possible to record multiple profiles at the same time.
- *
- * Read [Recording, Pausing, and Stopping Traces](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Recording,Pausing,andStoppingTraces.html) for more details.
- *
- * @param timeout - The maximum count of milliseconds to record the profiling information.
- * @param profileName - The name of existing performance profile to apply. Can also contain the full path to the chosen template on the server file system. Note: not all profiles are supported on mobile devices.
- * @param pid - The ID of the process to measure the performance for. Set it to `current` in order to measure the performance of the process, which belongs to the currently active application. All processes running on the device are measured if `pid` is unset (the default setting).
- */
-export async function mobileStartPerfRecord(
-  this: XCUITestDriver,
-  timeout = DEFAULT_TIMEOUT_MS,
-  profileName = DEFAULT_PROFILE_NAME,
-  pid?: number | 'current',
-): Promise<void> {
-  if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
-    throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
-  }
-
-  if (!_.isEmpty(this._perfRecorders)) {
-    for (const recorder of this._perfRecorders.filter((x) => x.profileName === profileName)) {
-      if (recorder.isRunning()) {
-        this.log.debug(
-          `Performance recorder for '${profileName}' on device '${this.device.udid}' ` +
-            ` is already running. Doing nothing`,
-        );
-        return;
-      }
-      _.pull(this._perfRecorders, recorder);
-      await recorder.stop(true);
-    }
-  }
-
-  let realPid: number | undefined;
-  if (pid) {
-    if (_.toLower(String(pid)) === DEFAULT_PID) {
-      const appInfo = (await this.proxyCommand('/wda/activeAppInfo', 'GET')) as ActiveAppInfo;
-      realPid = appInfo.pid;
-    } else {
-      realPid = pid as number;
-    }
-  }
-  const recorder = new PerfRecorder(await tempDir.openDir(), this.device.udid, {
-    timeout: parseInt(String(timeout), 10),
-    profileName,
-    pid: realPid,
-  });
-  await recorder.start();
-  this._perfRecorders = [...(this._perfRecorders || []), recorder];
-}
-
-/**
- * Stops performance recording operation previously started by {@linkcode XCUITestDriver.mobileStartPerfRecord mobile: startPerfRecord}.
- *
- * If the previous call has already been completed due to the timeout, then its result is returned immediately. An error is thrown if the performance recording failed to start.
- *
- * The resulting file in `.trace` format can be either returned directly as base64-encoded zip archive or uploaded to a remote location (such files can be pretty large). Afterwards it is possible to unarchive and open such files with Xcode Dev Tools.
- *
- * @param remotePath - The path to the remote location, where the resulting zipped `.trace` file should be uploaded. The following protocols are supported: `http`, `https`, `ftp`. Null or empty string value (the default setting) means the content of resulting file should be zipped, encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated file is too big to fit into the available process memory.
- * @param user - The name of the user for the remote authentication. Only works if `remotePath` is provided.
- * @param pass - The password for the remote authentication. Only works if `remotePath` is provided.
- * @param method - The http multipart upload method name. Only works if `remotePath` is provided. Defaults to `PUT`
- * @param profileName - The name of existing performance profile to stop the recording for. Multiple recorders for different profile names could be executed at the same time.
- * @param headers - Additional headers mapping for multipart http(s) uploads
- * @param fileFieldName - The name of the form field, where the file content BLOB should be stored for http(s) uploads. Defaults to `file`
- * @param formFields - Additional form fields for multipart http(s) uploads
- * @returns The resulting file in `.trace` format. This file can either be returned directly as base64-encoded `.zip` archive or uploaded to a remote location (note that such files may be large), _depending on the `remotePath` argument value._ Thereafter, the file may be unarchived and opened with Xcode Developer Tools.
- * @throws {Error} If no performance recording with given profile name/device udid combination
- * has been started before or the resulting .trace file has not been generated properly.
- */
-export async function mobileStopPerfRecord(
-  this: XCUITestDriver,
-  remotePath?: string,
-  user?: string,
-  pass?: string,
-  method?: Method,
-  profileName = DEFAULT_PROFILE_NAME,
-  headers?: Record<string, any>,
-  fileFieldName?: string,
-  formFields?: Record<string, any> | [string, any][],
-): Promise<string> {
-  if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
-    throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
-  }
-
-  if (_.isEmpty(this._perfRecorders)) {
-    this.log.info('No performance recorders have been started. Doing nothing');
-    return '';
-  }
-
-  const recorders = this._perfRecorders.filter((x) => x.profileName === profileName);
-  if (_.isEmpty(recorders)) {
-    throw this.log.errorWithException(
-      `There are no records for performance profile '${profileName}' ` +
-        `and device ${this.device.udid}. Have you started the profiling before?`,
-    );
-  }
-
-  const recorder = _.first(recorders);
-  if (!recorder) {
-    throw this.log.errorWithException(
-      `No recorder found for performance profile '${profileName}' and device ${this.device.udid}`,
-    );
-  }
-  const resultPath = await recorder.stop();
-  if (!(await fs.exists(resultPath))) {
-    throw this.log.errorWithException(
-      `There is no ${DEFAULT_EXT} file found for performance profile '${profileName}' ` +
-        `and device ${this.device.udid}. Make sure the selected profile is supported on this device`,
-    );
-  }
-
-  const result = await encodeBase64OrUpload(resultPath, remotePath, {
-    user,
-    pass,
-    method,
-    headers,
-    fileFieldName,
-    formFields,
-  });
-  _.pull(this._perfRecorders, recorder);
-  await fs.rimraf(resultPath);
-  return result;
+interface PerfRecorderOptions {
+  timeout?: number;
+  profileName?: string;
+  pid?: number;
 }
 
 export class PerfRecorder {
@@ -352,32 +225,159 @@ export class PerfRecorder {
       }
     }
     this._process = null;
-    const performCleanup = async () => {
-      try {
-        await B.all(
-          [this._zippedReportPath, path.dirname(this._reportPath)]
-            .filter(Boolean)
-            .map((x) => fs.rimraf(x)),
-        );
-      } catch (e: any) {
-        this._logger.warn(e.message);
-      }
-    };
     if (this._archivePromise) {
-      (async () => {
-        try {
-          await this._archivePromise;
-        } catch {
-          // Ignore errors
-        } finally {
-          await performCleanup();
-          this._archivePromise = null;
-        }
-      })();
+      try {
+        await this._archivePromise;
+      } catch {
+        // Ignore errors
+      } finally {
+        this._archivePromise = null;
+      }
     }
-    await performCleanup();
+    try {
+      await B.all(
+        [this._zippedReportPath, path.dirname(this._reportPath)]
+          .filter(Boolean)
+          .map((x) => fs.rimraf(x)),
+      );
+    } catch (e: any) {
+      this._logger.warn(e.message);
+    }
     return '';
   }
+}
+
+/**
+ * Starts performance profiling for the device under test.
+ *
+ * Relaxing security is mandatory for simulators. It can always work for real devices.
+ *
+ * Since XCode 12 the method tries to use `xctrace` tool to record performance stats.
+ *
+ * The `instruments` developer utility is used as a fallback for this purpose if `xctrace` is not available.
+ *
+ * It is possible to record multiple profiles at the same time.
+ *
+ * Read [Recording, Pausing, and Stopping Traces](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Recording,Pausing,andStoppingTraces.html) for more details.
+ *
+ * @param timeout - The maximum count of milliseconds to record the profiling information.
+ * @param profileName - The name of existing performance profile to apply. Can also contain the full path to the chosen template on the server file system. Note: not all profiles are supported on mobile devices.
+ * @param pid - The ID of the process to measure the performance for. Set it to `current` in order to measure the performance of the process, which belongs to the currently active application. All processes running on the device are measured if `pid` is unset (the default setting).
+ */
+export async function mobileStartPerfRecord(
+  this: XCUITestDriver,
+  timeout = DEFAULT_TIMEOUT_MS,
+  profileName = DEFAULT_PROFILE_NAME,
+  pid?: number | 'current',
+): Promise<void> {
+  if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
+    throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
+  }
+
+  if (!_.isEmpty(this._perfRecorders)) {
+    for (const recorder of this._perfRecorders.filter((x) => x.profileName === profileName)) {
+      if (recorder.isRunning()) {
+        this.log.debug(
+          `Performance recorder for '${profileName}' on device '${this.device.udid}' ` +
+            ` is already running. Doing nothing`,
+        );
+        return;
+      }
+      _.pull(this._perfRecorders, recorder);
+      await recorder.stop(true);
+    }
+  }
+
+  let realPid: number | undefined;
+  if (pid) {
+    if (_.toLower(String(pid)) === DEFAULT_PID) {
+      const appInfo = (await this.proxyCommand('/wda/activeAppInfo', 'GET')) as ActiveAppInfo;
+      realPid = appInfo.pid;
+    } else {
+      realPid = pid as number;
+    }
+  }
+  const recorder = new PerfRecorder(await tempDir.openDir(), this.device.udid, {
+    timeout: parseInt(String(timeout), 10),
+    profileName,
+    pid: realPid,
+  });
+  await recorder.start();
+  this._perfRecorders = [...(this._perfRecorders || []), recorder];
+}
+
+/**
+ * Stops performance recording operation previously started by {@linkcode XCUITestDriver.mobileStartPerfRecord mobile: startPerfRecord}.
+ *
+ * If the previous call has already been completed due to the timeout, then its result is returned immediately. An error is thrown if the performance recording failed to start.
+ *
+ * The resulting file in `.trace` format can be either returned directly as base64-encoded zip archive or uploaded to a remote location (such files can be pretty large). Afterwards it is possible to unarchive and open such files with Xcode Dev Tools.
+ *
+ * @param remotePath - The path to the remote location, where the resulting zipped `.trace` file should be uploaded. The following protocols are supported: `http`, `https`, `ftp`. Null or empty string value (the default setting) means the content of resulting file should be zipped, encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated file is too big to fit into the available process memory.
+ * @param user - The name of the user for the remote authentication. Only works if `remotePath` is provided.
+ * @param pass - The password for the remote authentication. Only works if `remotePath` is provided.
+ * @param method - The http multipart upload method name. Only works if `remotePath` is provided. Defaults to `PUT`
+ * @param profileName - The name of existing performance profile to stop the recording for. Multiple recorders for different profile names could be executed at the same time.
+ * @param headers - Additional headers mapping for multipart http(s) uploads
+ * @param fileFieldName - The name of the form field, where the file content BLOB should be stored for http(s) uploads. Defaults to `file`
+ * @param formFields - Additional form fields for multipart http(s) uploads
+ * @returns The resulting file in `.trace` format. This file can either be returned directly as base64-encoded `.zip` archive or uploaded to a remote location (note that such files may be large), _depending on the `remotePath` argument value._ Thereafter, the file may be unarchived and opened with Xcode Developer Tools.
+ * @throws {Error} If no performance recording with given profile name/device udid combination
+ * has been started before or the resulting .trace file has not been generated properly.
+ */
+export async function mobileStopPerfRecord(
+  this: XCUITestDriver,
+  remotePath?: string,
+  user?: string,
+  pass?: string,
+  method?: Method,
+  profileName = DEFAULT_PROFILE_NAME,
+  headers?: Record<string, any>,
+  fileFieldName?: string,
+  formFields?: Record<string, any> | [string, any][],
+): Promise<string> {
+  if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
+    throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
+  }
+
+  if (_.isEmpty(this._perfRecorders)) {
+    this.log.info('No performance recorders have been started. Doing nothing');
+    return '';
+  }
+
+  const recorders = this._perfRecorders.filter((x) => x.profileName === profileName);
+  if (_.isEmpty(recorders)) {
+    throw this.log.errorWithException(
+      `There are no records for performance profile '${profileName}' ` +
+        `and device ${this.device.udid}. Have you started the profiling before?`,
+    );
+  }
+
+  const recorder = _.first(recorders);
+  if (!recorder) {
+    throw this.log.errorWithException(
+      `No recorder found for performance profile '${profileName}' and device ${this.device.udid}`,
+    );
+  }
+  const resultPath = await recorder.stop();
+  if (!(await fs.exists(resultPath))) {
+    throw this.log.errorWithException(
+      `There is no ${DEFAULT_EXT} file found for performance profile '${profileName}' ` +
+        `and device ${this.device.udid}. Make sure the selected profile is supported on this device`,
+    );
+  }
+
+  const result = await encodeBase64OrUpload(resultPath, remotePath, {
+    user,
+    pass,
+    method,
+    headers,
+    fileFieldName,
+    formFields,
+  });
+  _.pull(this._perfRecorders, recorder);
+  await fs.rimraf(resultPath);
+  return result;
 }
 
 async function requireXctrace(): Promise<string> {
@@ -413,10 +413,4 @@ async function requireXcrun(): Promise<string> {
         `Please make sure XCode development tools are installed`,
     );
   }
-}
-
-interface PerfRecorderOptions {
-  timeout?: number;
-  profileName?: string;
-  pid?: number;
 }
