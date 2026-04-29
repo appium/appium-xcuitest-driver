@@ -26,12 +26,12 @@ export abstract class IOSLog<TRawEntry, TSerializedEntry extends object> extends
     this._log = opts.log ?? logger.getLogger(this.constructor.name);
   }
 
-  abstract get isCapturing(): boolean;
-  abstract startCapture(): Promise<void>;
-  abstract stopCapture(): Promise<void>;
-
   get log(): AppiumLogger {
     return this._log;
+  }
+
+  get isCapturing(): boolean {
+    throw new Error('Subclasses must implement isCapturing');
   }
 
   async getLogs(): Promise<LogEntry[]> {
@@ -41,6 +41,14 @@ export abstract class IOSLog<TRawEntry, TSerializedEntry extends object> extends
     }
     this._clearEntries();
     return result;
+  }
+
+  async startCapture(): Promise<void> {
+    throw new Error('Subclasses must implement startCapture');
+  }
+
+  async stopCapture(): Promise<void> {
+    throw new Error('Subclasses must implement stopCapture');
   }
 
   protected _clearEntries() {

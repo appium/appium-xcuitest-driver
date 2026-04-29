@@ -11,6 +11,7 @@ export interface GrepOptions {
   caseInsensitive?: boolean;
 }
 
+/** Converts raw log message fields into a WebDriver-style log entry. */
 export function toLogEntry(
   message: string,
   timestamp: number,
@@ -23,6 +24,7 @@ export function toLogEntry(
   };
 }
 
+/** Returns true if the file contains the provided string. */
 export async function grepFile(
   fullPath: string,
   str: string,

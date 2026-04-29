@@ -146,14 +146,6 @@ class LegacyPortForwarder implements PortForwarder {
 
 class RemotexpcPortForwarder implements PortForwarder {
   private readonly termination = new TerminationSubscription();
-  /** Same payload as `upstreamConnectError`; absorbed so Node does not throw on unhandled `error`. */
-  private readonly onAbsorbForwarderError = (): void => {};
-  private readonly onUpstreamConnectError = (err: unknown) => {
-    const msg = err instanceof Error ? err.message : String(err);
-    this.log.debug(
-      `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
-    );
-  };
 
   constructor(
     private readonly forwarder: DevicePortForwarder,
@@ -182,6 +174,15 @@ class RemotexpcPortForwarder implements PortForwarder {
     this.forwarder.off('error', this.onAbsorbForwarderError);
     await this.forwarder.stop();
   }
+
+  /** Same payload as `upstreamConnectError`; absorbed so Node does not throw on unhandled `error`. */
+  private readonly onAbsorbForwarderError = (): void => {};
+  private readonly onUpstreamConnectError = (err: unknown) => {
+    const msg = err instanceof Error ? err.message : String(err);
+    this.log.debug(
+      `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
+    );
+  };
 
   /** Best-effort stop when the process receives SIGINT/SIGTERM (errors are logged, not thrown). */
   private _scheduleEmergencyStop(): void {

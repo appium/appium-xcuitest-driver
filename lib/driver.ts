@@ -2221,7 +2221,6 @@ export class XCUITestDriver
       return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
     }
   }
-
 }
 
 export default XCUITestDriver;

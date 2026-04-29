@@ -284,7 +284,6 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
   }
 }
 
-
 /**
  * Configures Safari options based on the given session capabilities
  *
@@ -326,4 +325,3 @@ export async function setLocalizationPrefs(this: XCUITestDriver): Promise<boolea
   await (this.device as Simulator).configureLocalization(l10nConfig);
   return true;
 }
-

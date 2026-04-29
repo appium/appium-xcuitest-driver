@@ -7,7 +7,6 @@ import {exec, SubProcess} from 'teen_process';
 import memoize from 'lodash/memoize';
 
 export class OptionalSimulatorCheck implements IDoctorCheck {
-  log!: AppiumLogger;
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [
     {
       displayName: 'iOS',
@@ -18,6 +17,7 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
       name: 'appletvsimulator',
     },
   ];
+  log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
     try {
@@ -72,9 +72,9 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
 export const optionalSimulatorCheck = new OptionalSimulatorCheck();
 
 export class OptionalApplesimutilsCommandCheck implements IDoctorCheck {
-  log!: AppiumLogger;
   static readonly README_LINK =
     'https://github.com/appium/appium-xcuitest-driver/blob/master/docs/reference/execute-methods.md#mobile-setpermission';
+  log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
     const applesimutilsPath = await resolveExecutablePath('applesimutils');
@@ -98,9 +98,9 @@ export class OptionalApplesimutilsCommandCheck implements IDoctorCheck {
 export const optionalApplesimutilsCheck = new OptionalApplesimutilsCommandCheck();
 
 export class OptionalFfmpegCheck implements IDoctorCheck {
-  log!: AppiumLogger;
   static readonly FFMPEG_BINARY = 'ffmpeg';
   static readonly FFMPEG_INSTALL_LINK = 'https://www.ffmpeg.org/download.html';
+  log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
     const ffmpegPath = await resolveExecutablePath(OptionalFfmpegCheck.FFMPEG_BINARY);
@@ -146,8 +146,8 @@ const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string |
 });
 
 export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
-  log!: AppiumLogger;
   static readonly README_LINK = 'https://github.com/appium/appium-ios-remotexpc';
+  log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
     const available = await isRemoteXpcDependencyAvailable();
@@ -190,9 +190,9 @@ const TUNNEL_SCRIPT_TIMEOUT_MS = 5000;
 const API_READY_PATTERN = /:\d+\/remotexpc\/tunnels/;
 
 export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
-  log!: AppiumLogger;
   static readonly README_LINK = 'https://github.com/appium/appium-ios-tuntap';
   static readonly TUNNEL_CREATION_COMMAND = 'sudo appium driver run xcuitest tunnel-creation';
+  log!: AppiumLogger;
 
   async diagnose(): Promise<DoctorCheckResult> {
     const remoteXpcAvailable = await isRemoteXpcDependencyAvailable();
@@ -220,6 +220,24 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
     }
 
     return await this._runTunnelCreationScript();
+  }
+
+  async fix(): Promise<string> {
+    return (
+      `The Remote XPC tunnel infrastructure is used for IPv6 tunneling when testing against real ` +
+      `devices (iOS/tvOS 18+). ` +
+      `To explicitly start or verify tunnels when needed, run ` +
+      `'${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' with sudo/root privileges. ` +
+      `See ${OptionalTunnelAvailabilityCheck.README_LINK} for more details about tunnel usage.`
+    );
+  }
+
+  hasAutofix(): boolean {
+    return false;
+  }
+
+  isOptional(): boolean {
+    return true;
   }
 
   /**
@@ -462,24 +480,6 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
         `The Remote XPC tunnel infrastructure should be available for creating tunnels.` +
         (combinedOutput ? `\nLast output:\n${combinedOutput}` : ''),
     );
-  }
-
-  async fix(): Promise<string> {
-    return (
-      `The Remote XPC tunnel infrastructure is used for IPv6 tunneling when testing against real ` +
-      `devices (iOS/tvOS 18+). ` +
-      `To explicitly start or verify tunnels when needed, run ` +
-      `'${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}' with sudo/root privileges. ` +
-      `See ${OptionalTunnelAvailabilityCheck.README_LINK} for more details about tunnel usage.`
-    );
-  }
-
-  hasAutofix(): boolean {
-    return false;
-  }
-
-  isOptional(): boolean {
-    return true;
   }
 }
 export const optionalTunnelAvailabilityCheck = new OptionalTunnelAvailabilityCheck();

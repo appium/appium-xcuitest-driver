@@ -48,6 +48,27 @@ export class AfcClient {
     this.remoteXPCConnection = remoteXPCConnection;
   }
 
+  /**
+   * Check if this client is using RemoteXPC
+   */
+  private get isRemoteXPC(): boolean {
+    return !!this.remoteXPCConnection;
+  }
+
+  /**
+   * Get service as RemoteXPC AFC service
+   */
+  private get remoteXPCAfcService(): RemoteXPCAfcService {
+    return this.service as RemoteXPCAfcService;
+  }
+
+  /**
+   * Get service as iOS Device AFC service
+   */
+  private get iosDeviceAfcService(): IOSDeviceAfcService {
+    return this.service as IOSDeviceAfcService;
+  }
+
   //#region Public Methods
 
   /**
@@ -121,6 +142,39 @@ export class AfcClient {
       ? await houseArrestService.vendDocuments(bundleId)
       : await houseArrestService.vendContainer(bundleId);
     return new AfcClient(afcService);
+  }
+
+  /**
+   * Helper to safely execute remoteXPC operations with connection cleanup
+   * @param operation - Async operation that returns an AfcClient
+   * @returns AfcClient on success, null on failure
+   */
+  private static async withRemoteXpcConnection<T extends RemoteXPCAfcService | IOSDeviceAfcService>(
+    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
+  ): Promise<AfcClient | null> {
+    let remoteXPCConnection: RemoteXpcConnection | undefined;
+    let succeeded = false;
+    try {
+      const {service, connection} = await operation();
+      remoteXPCConnection = connection;
+      const client = new AfcClient(service, remoteXPCConnection);
+      succeeded = true;
+      return client;
+    } catch (err: any) {
+      log.error(
+        `Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+      );
+      return null;
+    } finally {
+      // Only close connection if we failed (if succeeded, the client owns it)
+      if (remoteXPCConnection && !succeeded) {
+        try {
+          await remoteXPCConnection.close();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+    }
   }
 
   /**
@@ -267,60 +321,6 @@ export class AfcClient {
   //#endregion
 
   //#region Private Methods
-
-  /**
-   * Check if this client is using RemoteXPC
-   */
-  private get isRemoteXPC(): boolean {
-    return !!this.remoteXPCConnection;
-  }
-
-  /**
-   * Helper to safely execute remoteXPC operations with connection cleanup
-   * @param operation - Async operation that returns an AfcClient
-   * @returns AfcClient on success, null on failure
-   */
-  private static async withRemoteXpcConnection<T extends RemoteXPCAfcService | IOSDeviceAfcService>(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
-  ): Promise<AfcClient | null> {
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
-    try {
-      const {service, connection} = await operation();
-      remoteXPCConnection = connection;
-      const client = new AfcClient(service, remoteXPCConnection);
-      succeeded = true;
-      return client;
-    } catch (err: any) {
-      log.error(
-        `Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-      );
-      return null;
-    } finally {
-      // Only close connection if we failed (if succeeded, the client owns it)
-      if (remoteXPCConnection && !succeeded) {
-        try {
-          await remoteXPCConnection.close();
-        } catch {
-          // Ignore cleanup errors
-        }
-      }
-    }
-  }
-
-  /**
-   * Get service as RemoteXPC AFC service
-   */
-  private get remoteXPCAfcService(): RemoteXPCAfcService {
-    return this.service as RemoteXPCAfcService;
-  }
-
-  /**
-   * Get service as iOS Device AFC service
-   */
-  private get iosDeviceAfcService(): IOSDeviceAfcService {
-    return this.service as IOSDeviceAfcService;
-  }
 
   /**
    * Create a read stream for a file (internal use only).

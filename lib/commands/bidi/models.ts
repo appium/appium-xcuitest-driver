@@ -37,6 +37,7 @@ export function makeNetworkMonitorEvent(event: object): NetworkMonitorBiDiEvent 
   };
 }
 
+/** Builds the BiDi log.entryAdded payload from an internal log entry. */
 export function makeLogEntryAddedEvent(
   entry: LogEntry,
   context: string,

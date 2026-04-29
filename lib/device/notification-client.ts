@@ -29,6 +29,27 @@ export class NotificationClient {
     this.remoteXPCConnection = remoteXPCConnection;
   }
 
+  /**
+   * Check if this client is using RemoteXPC
+   */
+  private get isRemoteXPC(): boolean {
+    return !!this.remoteXPCConnection;
+  }
+
+  /**
+   * Get service as RemoteXPC NotificationProxyService
+   */
+  private get remoteXPCNotificationProxy(): RemoteXPCNotificationProxyService {
+    return this.service as RemoteXPCNotificationProxyService;
+  }
+
+  /**
+   * Get service as iOS Device NotificationProxy
+   */
+  private get iosDeviceNotificationProxy(): IOSDeviceNotificationProxy {
+    return this.service as IOSDeviceNotificationProxy;
+  }
+
   //#region Public Methods
 
   /**
@@ -62,6 +83,43 @@ export class NotificationClient {
     // Fallback to appium-ios-device
     const notificationProxy = await services.startNotificationProxyService(udid);
     return new NotificationClient(notificationProxy, log);
+  }
+
+  /**
+   * Helper to safely execute remoteXPC operations with connection cleanup
+   * @param operation - Async operation that returns service and connection
+   * @param log - Logger instance
+   * @returns NotificationClient on success, null on failure
+   */
+  private static async withRemoteXpcConnection<
+    T extends RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy,
+  >(
+    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
+    log: AppiumLogger,
+  ): Promise<NotificationClient | null> {
+    let remoteXPCConnection: RemoteXpcConnection | undefined;
+    let succeeded = false;
+    try {
+      const {service, connection} = await operation();
+      remoteXPCConnection = connection;
+      const client = new NotificationClient(service, log, remoteXPCConnection);
+      succeeded = true;
+      return client;
+    } catch (err: any) {
+      log.error(
+        `Failed to create notification client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+      );
+      return null;
+    } finally {
+      // Only close connection if we failed (if succeeded, the client owns it)
+      if (remoteXPCConnection && !succeeded) {
+        try {
+          await remoteXPCConnection.close();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+    }
   }
 
   /**
@@ -103,64 +161,6 @@ export class NotificationClient {
   //#endregion
 
   //#region Private Methods
-
-  /**
-   * Check if this client is using RemoteXPC
-   */
-  private get isRemoteXPC(): boolean {
-    return !!this.remoteXPCConnection;
-  }
-
-  /**
-   * Helper to safely execute remoteXPC operations with connection cleanup
-   * @param operation - Async operation that returns service and connection
-   * @param log - Logger instance
-   * @returns NotificationClient on success, null on failure
-   */
-  private static async withRemoteXpcConnection<
-    T extends RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy,
-  >(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
-    log: AppiumLogger,
-  ): Promise<NotificationClient | null> {
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
-    try {
-      const {service, connection} = await operation();
-      remoteXPCConnection = connection;
-      const client = new NotificationClient(service, log, remoteXPCConnection);
-      succeeded = true;
-      return client;
-    } catch (err: any) {
-      log.error(
-        `Failed to create notification client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-      );
-      return null;
-    } finally {
-      // Only close connection if we failed (if succeeded, the client owns it)
-      if (remoteXPCConnection && !succeeded) {
-        try {
-          await remoteXPCConnection.close();
-        } catch {
-          // Ignore cleanup errors
-        }
-      }
-    }
-  }
-
-  /**
-   * Get service as RemoteXPC NotificationProxyService
-   */
-  private get remoteXPCNotificationProxy(): RemoteXPCNotificationProxyService {
-    return this.service as RemoteXPCNotificationProxyService;
-  }
-
-  /**
-   * Get service as iOS Device NotificationProxy
-   */
-  private get iosDeviceNotificationProxy(): IOSDeviceNotificationProxy {
-    return this.service as IOSDeviceNotificationProxy;
-  }
 
   //#endregion
 }

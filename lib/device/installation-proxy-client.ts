@@ -46,6 +46,27 @@ export class InstallationProxyClient {
     private readonly remoteXPCConnection?: RemoteXpcConnection,
   ) {}
 
+  /**
+   * Check if this client is using RemoteXPC
+   */
+  private get isRemoteXPC(): boolean {
+    return !!this.remoteXPCConnection;
+  }
+
+  /**
+   * Get the RemoteXPC service (throws if not RemoteXPC)
+   */
+  private get remoteXPCService(): RemoteXPCInstallationProxyService {
+    return this.service as RemoteXPCInstallationProxyService;
+  }
+
+  /**
+   * Get the ios-device service (throws if not ios-device)
+   */
+  private get iosDeviceService(): IOSDeviceInstallationProxyService {
+    return this.service as IOSDeviceInstallationProxyService;
+  }
+
   //#region Public Methods
 
   /**
@@ -73,6 +94,39 @@ export class InstallationProxyClient {
 
     const service = await services.startInstallationProxyService(udid);
     return new InstallationProxyClient(service);
+  }
+
+  /**
+   * Helper to safely execute RemoteXPC operations with connection cleanup
+   */
+  private static async withRemoteXpcConnection<
+    T extends RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
+  >(
+    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
+  ): Promise<InstallationProxyClient | null> {
+    let remoteXPCConnection: RemoteXpcConnection | undefined;
+    let succeeded = false;
+    try {
+      const {service, connection} = await operation();
+      remoteXPCConnection = connection;
+      const client = new InstallationProxyClient(service, remoteXPCConnection);
+      succeeded = true;
+      return client;
+    } catch (err: any) {
+      log.error(
+        `Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+      );
+      return null;
+    } finally {
+      // Only close connection if we failed (if succeeded, the client owns it)
+      if (!succeeded && remoteXPCConnection) {
+        try {
+          await remoteXPCConnection.close();
+        } catch (closeErr: any) {
+          log.debug(`Error closing RemoteXPC connection during cleanup: ${closeErr.message}`);
+        }
+      }
+    }
   }
 
   /**
@@ -215,27 +269,6 @@ export class InstallationProxyClient {
   //#region Private Methods
 
   /**
-   * Check if this client is using RemoteXPC
-   */
-  private get isRemoteXPC(): boolean {
-    return !!this.remoteXPCConnection;
-  }
-
-  /**
-   * Get the RemoteXPC service (throws if not RemoteXPC)
-   */
-  private get remoteXPCService(): RemoteXPCInstallationProxyService {
-    return this.service as RemoteXPCInstallationProxyService;
-  }
-
-  /**
-   * Get the ios-device service (throws if not ios-device)
-   */
-  private get iosDeviceService(): IOSDeviceInstallationProxyService {
-    return this.service as IOSDeviceInstallationProxyService;
-  }
-
-  /**
    * Execute a RemoteXPC operation and collect progress messages to match ios-device behavior
    *
    * @param operation - Function that executes the RemoteXPC operation with a progress handler
@@ -251,39 +284,6 @@ export class InstallationProxyClient {
       messages.push({PercentComplete: percentComplete, Status: status});
     });
     return messages;
-  }
-
-  /**
-   * Helper to safely execute RemoteXPC operations with connection cleanup
-   */
-  private static async withRemoteXpcConnection<
-    T extends RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
-  >(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
-  ): Promise<InstallationProxyClient | null> {
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
-    try {
-      const {service, connection} = await operation();
-      remoteXPCConnection = connection;
-      const client = new InstallationProxyClient(service, remoteXPCConnection);
-      succeeded = true;
-      return client;
-    } catch (err: any) {
-      log.error(
-        `Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-      );
-      return null;
-    } finally {
-      // Only close connection if we failed (if succeeded, the client owns it)
-      if (!succeeded && remoteXPCConnection) {
-        try {
-          await remoteXPCConnection.close();
-        } catch (closeErr: any) {
-          log.debug(`Error closing RemoteXPC connection during cleanup: ${closeErr.message}`);
-        }
-      }
-    }
   }
 
   //#endregion

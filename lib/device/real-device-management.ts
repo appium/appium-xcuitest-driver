@@ -24,7 +24,6 @@ const APPLICATION_INSTALLED_NOTIFICATION = 'com.apple.mobile.application_install
 const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';
 
-
 export interface PushFileOptions {
   /** The maximum count of milliceconds to wait until file push is completed. Cannot be lower than 60000ms */
   timeoutMs?: number;

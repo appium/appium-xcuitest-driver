@@ -349,6 +349,7 @@ export async function onDownloadApp(
     : await unzipApp.bind(this)(opts.stream);
 }
 
+/** Post-processes configured apps and reuses a valid cache entry when possible. */
 export async function onPostConfigureApp(
   this: XCUITestDriver,
   opts: PostProcessOptions,

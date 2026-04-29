@@ -41,16 +41,6 @@ export class LockdownClient {
     private readonly remoteXpcConnection: RemoteXpcConnection | null,
   ) {}
 
-  async close(): Promise<void> {
-    if (this.remoteXpcConnection) {
-      try {
-        await this.remoteXpcConnection.close();
-      } catch {
-        // ignore
-      }
-    }
-  }
-
   /**
    * @param udid - Device UDID
    * @param opts - Driver options (used for iOS version gating)
@@ -87,6 +77,33 @@ export class LockdownClient {
     }
     const {remoteXPC} = await remotexpc.Services.createRemoteXPCConnection(udid);
     return new LockdownClient(udid, log, remotexpc, 'remotexpc-tunnel', remoteXPC);
+  }
+
+  private static coerceFiniteNumber(value: unknown): number | undefined {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+    if (typeof value === 'bigint') {
+      const converted = Number(value);
+      return Number.isFinite(converted) ? converted : undefined;
+    }
+    if (typeof value === 'string') {
+      const parsed = Number(value);
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+    return undefined;
+  }
+
+  async close(): Promise<void> {
+    if (this.remoteXpcConnection) {
+      try {
+        await this.remoteXpcConnection.close();
+      } catch {
+        // ignore
+      }
+    }
   }
 
   /**
@@ -245,22 +262,5 @@ export class LockdownClient {
     } catch (err) {
       throw new Error(`Tunnel lockdown failed for '${this.udid}': ${(err as Error).message}`);
     }
-  }
-
-  private static coerceFiniteNumber(value: unknown): number | undefined {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return value;
-    }
-    if (typeof value === 'bigint') {
-      const converted = Number(value);
-      return Number.isFinite(converted) ? converted : undefined;
-    }
-    if (typeof value === 'string') {
-      const parsed = Number(value);
-      if (Number.isFinite(parsed)) {
-        return parsed;
-      }
-    }
-    return undefined;
   }
 }
