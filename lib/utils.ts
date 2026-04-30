@@ -130,6 +130,7 @@ export async function clearSystemFiles(wda: any): Promise<void> {
     const promises: Promise<void>[] = [];
     for (const dstFolder of dstFolders) {
       const promise = (async () => {
+        const deletionPromises: Promise<void>[] = [];
         try {
           await fs.walkDir(dstFolder, true, (itemPath, isDir) => {
             if (isDir) {
@@ -137,9 +138,12 @@ export async function clearSystemFiles(wda: any): Promise<void> {
             }
             const fileName = path.basename(itemPath);
             if (XCTEST_LOG_FILES_PATTERNS.some((p) => p.test(fileName))) {
-              void fs.rimraf(itemPath);
+              deletionPromises.push(fs.rimraf(itemPath));
             }
           });
+          if (deletionPromises.length) {
+            await B.all(deletionPromises);
+          }
         } catch (e: any) {
           log.debug(e.stack);
           log.info(e.message);
