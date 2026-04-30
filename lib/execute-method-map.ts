@@ -1,4 +1,8 @@
 import {ExecuteMethodMap} from '@appium/types';
+import {
+  START_SCREEN_RECORDING_EXECUTE_OPTIONALS,
+  STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS,
+} from './commands/recordscreen';
 import {XCUITestDriver} from './driver';
 
 export const executeMethodMap = {
@@ -514,6 +518,18 @@ export const executeMethodMap = {
   },
   'mobile: shake': {
     command: 'mobileShake',
+  },
+  'mobile: startScreenRecording': {
+    command: 'mobileStartScreenRecording',
+    params: {
+      optional: [...START_SCREEN_RECORDING_EXECUTE_OPTIONALS],
+    },
+  },
+  'mobile: stopScreenRecording': {
+    command: 'mobileStopScreenRecording',
+    params: {
+      optional: [...STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS],
+    },
   },
   'mobile: startAudioRecording': {
     command: 'startAudioRecording',

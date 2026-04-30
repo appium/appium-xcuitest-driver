@@ -19,7 +19,7 @@ Any client that connects to the stream URL and sends a request receives a never-
 
 | Use case | Description |
 |----------|-------------|
-| **Screen recording** | The driver’s [`mobile: startRecordingScreen`](../reference/commands.md#startrecordingscreen) can use the MJPEG stream as input to **ffmpeg** to produce MP4 (or other) video files. This is the default when using the `mjpeg` video type. |
+| **Screen recording** | The driver’s [`mobile: startScreenRecording`](../reference/execute-methods.md#mobile-startscreenrecording) (or [`startRecordingScreen`](../reference/commands.md#startrecordingscreen) over HTTP) can use the MJPEG stream as input to **ffmpeg** to produce MP4 (or other) video files. This is the default when using the `mjpeg` video type. |
 | **Screenshots from stream** | If you set the **`mjpegScreenshotUrl`** capability, the driver uses the **latest frame** from that MJPEG stream when you call the screenshot command instead of calling WDA’s regular screenshot API. |
 | **Live viewing / custom tools** | Any HTTP client (browser, script, or custom app) can connect to the MJPEG URL (after port forwarding for real devices) to view or process the live screen. |
 
@@ -74,7 +74,7 @@ If **`appium:mjpegScreenshotUrl`** is set at session start, the driver starts an
 
 ### Screen recording
 
-For **`startRecordingScreen`** command with video type **`mjpeg`** (the default), the driver uses **ffmpeg** with input `-f mjpeg -i <url>`, where the URL is the MJPEG stream (typically the forwarded `mjpegServerPort`). Frames from the stream are then encoded (e.g. to H.264) and written to an MP4 file. The recording quality and framerate can be aligned with the MJPEG settings (e.g. `mjpegServerFramerate`, `mjpegServerScreenshotQuality`) and with the `videoFps` / `videoQuality` options of the recording API.
+For **`mobile: startScreenRecording`** / **`startRecordingScreen`** (HTTP) with video type **`mjpeg`** (the default), the driver uses **ffmpeg** with input `-f mjpeg -i <url>`, where the URL is the MJPEG stream (typically the forwarded `mjpegServerPort`). Frames from the stream are then encoded (e.g. to H.264) and written to an MP4 file. The recording quality and framerate can be aligned with the MJPEG settings (e.g. `mjpegServerFramerate`, `mjpegServerScreenshotQuality`) and with the `videoFps` / `videoQuality` options of the recording API.
 
 ## Parallel sessions
 
@@ -94,5 +94,5 @@ When running [parallel tests](parallel-tests.md), each session that uses MJPEG (
 | **Default framerate** | 10 fps (`mjpegServerFramerate`) |
 | **Default quality** | 25% JPEG (`mjpegServerScreenshotQuality`) |
 | **Default scaling** | 100% (`mjpegScalingFactor`) |
-| **Related commands** | Screenshot (when `mjpegScreenshotUrl` is set), `startRecordingScreen` command (with MJPEG input) |
+| **Related commands** | Screenshot (when `mjpegScreenshotUrl` is set), `mobile: startScreenRecording` / `startRecordingScreen` (HTTP) (with MJPEG input) |
 | **Related reference** | [Capabilities](../reference/capabilities.md), [Settings](../reference/settings.md), [Execute methods](../reference/execute-methods.md) |

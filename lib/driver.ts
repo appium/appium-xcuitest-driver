@@ -669,6 +669,8 @@ export class XCUITestDriver
   // Note: _recentScreenRecorder is a property, not a function, so it's handled internally in recordscreen.js
   startRecordingScreen = recordScreenCommands.startRecordingScreen;
   stopRecordingScreen = recordScreenCommands.stopRecordingScreen;
+  mobileStartScreenRecording = recordScreenCommands.mobileStartScreenRecording;
+  mobileStopScreenRecording = recordScreenCommands.mobileStopScreenRecording;
 
   /*-------------+
    | SCREENSHOTS |

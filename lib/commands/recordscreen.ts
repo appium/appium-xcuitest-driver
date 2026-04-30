@@ -9,6 +9,43 @@ import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './ty
 import type {WDASettings} from 'appium-webdriveragent';
 
 /**
+ * Optional execute-script keys for `mobile: startScreenRecording`, in Appium flattened-arg order.
+ * Keep in sync with `lib/execute-method-map.ts` (`mobile: startScreenRecording` optional keys).
+ */
+export const START_SCREEN_RECORDING_EXECUTE_OPTIONALS = [
+  'videoType',
+  'videoQuality',
+  'videoFps',
+  'videoFilters',
+  'videoScale',
+  'pixelFormat',
+  'forceRestart',
+  'timeLimit',
+  'hardwareAcceleration',
+  'remotePath',
+  'user',
+  'pass',
+  'headers',
+  'fileFieldName',
+  'formFields',
+  'method',
+] as const satisfies ReadonlyArray<keyof StartRecordingScreenOptions>;
+
+/**
+ * Optional execute-script keys for `mobile: stopScreenRecording`, in Appium flattened-arg order.
+ * Keep in sync with `lib/execute-method-map.ts` (`mobile: stopScreenRecording` optional keys).
+ */
+export const STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS = [
+  'remotePath',
+  'user',
+  'pass',
+  'headers',
+  'fileFieldName',
+  'formFields',
+  'method',
+] as const satisfies ReadonlyArray<keyof StopRecordingScreenOptions>;
+
+/**
  * Set max timeout for 'reconnect_delay_max' ffmpeg argument usage.
  * It could have [0-4294] range limitation, thus this value should be less than that right now
  * to return a better error message.
@@ -410,4 +447,49 @@ export async function stopRecordingScreen(
     await this._recentScreenRecorder.cleanup();
     this._recentScreenRecorder = null;
   }
+}
+
+/**
+ * Execute-script entry for `mobile: startScreenRecording`. Appium passes one positional argument
+ * per optional key (see `START_SCREEN_RECORDING_EXECUTE_OPTIONALS`); this wrapper collapses
+ * them into the options object for `startRecordingScreen`.
+ */
+export async function mobileStartScreenRecording(
+  this: XCUITestDriver,
+  ...args: unknown[]
+): Promise<string> {
+  const options = optionsFromFlattenedExecuteArgs<StartRecordingScreenOptions>(
+    [...START_SCREEN_RECORDING_EXECUTE_OPTIONALS],
+    args,
+  );
+  return await this.startRecordingScreen(options);
+}
+
+/**
+ * Execute-script entry for `mobile: stopScreenRecording`. Collapses flattened args into the
+ * options object for `stopRecordingScreen`.
+ */
+export async function mobileStopScreenRecording(
+  this: XCUITestDriver,
+  ...args: unknown[]
+): Promise<string | null> {
+  const options = optionsFromFlattenedExecuteArgs<StopRecordingScreenOptions>(
+    [...STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS],
+    args,
+  );
+  return await this.stopRecordingScreen(options);
+}
+
+function optionsFromFlattenedExecuteArgs<T extends object>(
+  keys: readonly string[],
+  args: readonly unknown[],
+): T {
+  const out: Record<string, unknown> = {};
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (key !== undefined && args[i] !== undefined) {
+      out[key] = args[i];
+    }
+  }
+  return out as T;
 }

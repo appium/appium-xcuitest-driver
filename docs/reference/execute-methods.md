@@ -2122,6 +2122,48 @@ elementAttributes | dict | JSON object containing various attributes of the elem
 }
 ```
 
+### mobile: startScreenRecording
+
+Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the WebDriverAgent **MJPEG** stream. Equivalent to [`startRecordingScreen`](./commands.md#startrecordingscreen) over HTTP. Requires `ffmpeg` on `PATH`. Audio is not recorded.
+
+#### Arguments
+
+Pass the same fields as for HTTP [`startRecordingScreen`](./commands.md#startrecordingscreen) `options`, as **top-level** keys on the execute argument object (they are forwarded into one options object server-side). Example:
+
+```js
+await driver.execute('mobile: startScreenRecording', {
+  timeLimit: 120,
+  videoType: 'libx264',
+  videoFps: 10,
+  videoScale: '720:1280',
+  pixelFormat: 'yuv420p',
+});
+```
+
+See [`startRecordingScreen`](./commands.md#startrecordingscreen) for all supported fields.
+
+#### Returned Result
+
+Same as [`startRecordingScreen`](./commands.md#startrecordingscreen): base64-encoded media if a recording was already running and was stopped, otherwise an empty string.
+
+### mobile: stopScreenRecording
+
+Stops MJPEG/ffmpeg screen recording started with `mobile: startScreenRecording`. Equivalent to [`stopRecordingScreen`](./commands.md#stoprecordingscreen) over HTTP.
+
+#### Arguments
+
+Same fields as HTTP [`stopRecordingScreen`](./commands.md#stoprecordingscreen) `options`, as top-level keys (often an empty object when returning base64 inline). Example:
+
+```js
+await driver.execute('mobile: stopScreenRecording', {});
+```
+
+See [`stopRecordingScreen`](./commands.md#stoprecordingscreen) for supported fields (e.g. remote upload).
+
+#### Returned Result
+
+Same as [`stopRecordingScreen`](./commands.md#stoprecordingscreen): base64-encoded MP4 when returning inline media, or an empty string when uploaded remotely or nothing is available.
+
 ### mobile: startXCTestScreenRecording
 
 Start a new screen recording via XCTest.
