@@ -4,7 +4,6 @@ import {fs, zip, logger, util, tempDir} from 'appium/support';
 import {SubProcess, exec} from 'teen_process';
 import {encodeBase64OrUpload} from '../utils';
 import {waitForCondition} from 'asyncbox';
-import B from 'bluebird';
 import type {XCUITestDriver} from '../driver';
 import type {ActiveAppInfo} from './types';
 import type {Method} from 'axios';
@@ -235,7 +234,7 @@ export class PerfRecorder {
       }
     }
     try {
-      await B.all(
+      await Promise.all(
         [this._zippedReportPath, path.dirname(this._reportPath)]
           .filter(Boolean)
           .map((x) => fs.rimraf(x)),

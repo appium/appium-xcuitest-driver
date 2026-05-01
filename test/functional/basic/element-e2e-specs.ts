@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {retryInterval} from 'asyncbox';
 import {extractCapabilityValue, getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
@@ -151,7 +151,7 @@ describe('XCUITestDriver - elements -', function () {
       await retryInterval(10, 500, async function () {
         const el = await driver.$('~Buttons');
         await el.click();
-        await B.delay(1000);
+        await delay(1000);
         expect(await driver.$$('XCUIElementTypeButton')).to.have.length.above(4);
         await driver.back();
       });

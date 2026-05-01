@@ -2,8 +2,7 @@ import type {Readable} from 'node:stream';
 import {Readable as ReadableStream} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import path from 'node:path';
-import _ from 'lodash';
-import B from 'bluebird';
+import {asyncmap} from 'asyncbox';
 import {fs, mkdirp} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
@@ -11,6 +10,7 @@ import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 import type {AfcService as RemoteXPCAfcService, RemoteXpcConnection} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
+import {withTimeout} from '../utils';
 
 /**
  * Options for pulling files/folders
@@ -384,7 +384,7 @@ export class AfcClient {
       await onEntry(remotePath, localRootDir, true);
     }
 
-    const pullPromises: B<void>[] = [];
+    const fileEntriesToPull: Array<{entryPath: string; localEntryPath: string}> = [];
 
     // Walk the remote directory and pull files in parallel
     await this.iosDeviceAfcService.walkDir(
@@ -408,56 +408,48 @@ export class AfcClient {
           // Ensure parent directory exists
           const parentDir = path.dirname(localEntryPath);
           await mkdirp(parentDir);
-
-          // Start async file pull (non-blocking)
-          const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
-            autoDestroy: true,
-          });
-          const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
-
-          pullPromises.push(
-            new B<void>((resolve) => {
-              writeStream.on('close', async () => {
-                // Invoke onEntry callback after successful pull
-                if (onEntry) {
-                  try {
-                    await onEntry(entryPath, localEntryPath, false);
-                  } catch (err: any) {
-                    log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
-                  }
-                }
-                resolve();
-              });
-              const onStreamingError = (e: Error) => {
-                readStream.unpipe(writeStream);
-                log.warn(
-                  `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
-                    `The file will be skipped. Original error: ${e.message}`,
-                );
-                resolve();
-              };
-              writeStream.on('error', onStreamingError);
-              readStream.on('error', onStreamingError);
-            }).timeout(IO_TIMEOUT_MS),
-          );
-          readStream.pipe(writeStream);
-
-          if (pullPromises.length >= MAX_IO_CHUNK_SIZE) {
-            await B.any(pullPromises);
-            for (let i = pullPromises.length - 1; i >= 0; i--) {
-              if (pullPromises[i].isFulfilled()) {
-                pullPromises.splice(i, 1);
-              }
-            }
-          }
+          fileEntriesToPull.push({entryPath, localEntryPath});
         }
       },
     );
 
-    // Wait for remaining files to be pulled
-    if (!_.isEmpty(pullPromises)) {
-      await B.all(pullPromises);
-    }
+    await asyncmap(
+      fileEntriesToPull,
+      async ({entryPath, localEntryPath}) => {
+        const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
+          autoDestroy: true,
+        });
+        const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
+        await withTimeout(
+          new Promise<void>((resolve) => {
+            writeStream.on('close', async () => {
+              // Invoke onEntry callback after successful pull
+              if (onEntry) {
+                try {
+                  await onEntry(entryPath, localEntryPath, false);
+                } catch (err: any) {
+                  log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
+                }
+              }
+              resolve();
+            });
+            const onStreamingError = (e: Error) => {
+              readStream.unpipe(writeStream);
+              log.warn(
+                `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
+                  `The file will be skipped. Original error: ${e.message}`,
+              );
+              resolve();
+            };
+            writeStream.on('error', onStreamingError);
+            readStream.on('error', onStreamingError);
+            readStream.pipe(writeStream);
+          }),
+          IO_TIMEOUT_MS,
+        );
+      },
+      {concurrency: MAX_IO_CHUNK_SIZE},
+    );
   }
 
   /**

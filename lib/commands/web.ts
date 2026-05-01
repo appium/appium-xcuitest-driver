@@ -1,9 +1,9 @@
 import {errors, isErrorType} from 'appium/driver';
 import {timing, util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
-import B, {TimeoutError, AggregateError} from 'bluebird';
 import _ from 'lodash';
-import {requireSimulator} from '../utils';
+import {setTimeout as delay} from 'node:timers/promises';
+import {withTimeout, TimeoutError, requireSimulator} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Element, Cookie, Size, Position, Rect} from '@appium/types';
 import type {AtomsElement} from './types';
@@ -274,7 +274,7 @@ export async function deleteCookies(this: XCUITestDriver): Promise<void> {
   }
 
   const cookies = await this.getCookies();
-  await B.all(cookies.map((cookie) => _deleteCookie.bind(this)(cookie)));
+  await Promise.all(cookies.map((cookie) => _deleteCookie.bind(this)(cookie)));
 }
 
 /**
@@ -705,7 +705,7 @@ export async function nativeWebTap(this: XCUITestDriver, el: any): Promise<void>
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  const [size, coordinates] = (await B.Promise.all([
+  const [size, coordinates] = (await Promise.all([
     this.executeAtom('get_size', [atomsElement]),
     this.executeAtom('get_top_left_coordinates', [atomsElement]),
   ])) as [Size, Position];
@@ -849,23 +849,40 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
       : ATOM_WAIT_TIMEOUT_MS;
   // need to check for alert while the atom is being executed.
   // so notify ourselves when it happens
-  const timedAtomPromise = B.resolve(promise).timeout(atomWaitTimeoutMs);
+  const timedAtomPromise = withTimeout(
+    promise,
+    atomWaitTimeoutMs,
+    `The atom execution has timed out after ${atomWaitTimeoutMs}ms`,
+  );
   const handlePromiseError = async (p: Promise<any>) => {
     try {
       return await p;
     } catch (err: any) {
-      const originalError = err instanceof AggregateError ? err[0] : err;
-      this.log.debug(`Error received while executing atom: ${originalError.message}`);
-      throw originalError instanceof TimeoutError
-        ? await generateAtomTimeoutError.bind(this)(timer)
-        : originalError;
+      this.log.debug(`Error received while executing atom: ${err.message}`);
+      throw err instanceof TimeoutError ? await generateAtomTimeoutError.bind(this)(timer) : err;
     }
   };
   // if the atom promise is fulfilled within ATOM_INITIAL_WAIT_MS
   // then we don't need to check for an alert presence
-  await handlePromiseError(B.any([B.delay(ATOM_INITIAL_WAIT_MS), timedAtomPromise]));
-  if (timedAtomPromise.isFulfilled()) {
-    return await timedAtomPromise;
+  let didTimedAtomPromiseSettle = false;
+  const trackedTimedAtomPromise = (async () => {
+    try {
+      return await timedAtomPromise;
+    } finally {
+      didTimedAtomPromiseSettle = true;
+    }
+  })();
+  try {
+    await withTimeout(trackedTimedAtomPromise, ATOM_INITIAL_WAIT_MS);
+  } catch (err) {
+    // Ignore the initial wait timeout and continue with alert monitoring.
+    // Any atom promise rejection should still be handled and normalized below.
+    if (!(err instanceof TimeoutError) || didTimedAtomPromiseSettle) {
+      return await handlePromiseError(trackedTimedAtomPromise);
+    }
+  }
+  if (didTimedAtomPromiseSettle) {
+    return await handlePromiseError(trackedTimedAtomPromise);
   }
 
   // ...otherwise make sure there is no unexpected alert covering the element
@@ -875,9 +892,9 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
   let onAppCrashCallback: ((err: any) => void) | undefined;
   try {
     // only restart the monitor if it is not running already
-    if (this._waitingAtoms.alertMonitor.isResolved()) {
-      this._waitingAtoms.alertMonitor = B.resolve(
-        (async () => {
+    if (!this._waitingAtoms.alertMonitor) {
+      this._waitingAtoms.alertMonitor = (async () => {
+        try {
           while (this._waitingAtoms.count > 0) {
             try {
               if (await this.checkForAlert()) {
@@ -888,13 +905,15 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
                 this._waitingAtoms.alertNotifier.emit(ON_APP_CRASH_EVENT, err);
               }
             }
-            await B.delay(OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS);
+            await delay(OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS);
           }
-        })(),
-      );
+        } finally {
+          this._waitingAtoms.alertMonitor = undefined;
+        }
+      })();
     }
 
-    return await new B((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       onAlertCallback = () => reject(new errors.UnexpectedAlertOpenError());
       onAppCrashCallback = reject;
       this._waitingAtoms.alertNotifier.once(ON_OBSTRUCTING_ALERT_EVENT, onAlertCallback);
@@ -1096,7 +1115,7 @@ async function tapWebElementNatively(
   // try to get the text of the element, which will be accessible in the
   // native context
   try {
-    const [text1, text2] = (await B.all([
+    const [text1, text2] = (await Promise.all([
       this.executeAtom('get_text', [atomsElement]),
       this.executeAtom('get_attribute_value', [atomsElement, 'value']),
     ])) as [string | null, string | null];

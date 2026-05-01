@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
@@ -73,7 +73,7 @@ describe('Safari - basics -', function () {
 
     describe('context', function () {
       it('should be able to get current context initially', async function () {
-        await B.delay(500);
+        await delay(500);
         await expect(driver.getContext()).to.eventually.be.ok;
       });
       it('should get full context list through mobile: getContexts', async function () {
@@ -163,7 +163,7 @@ describe('Safari - basics -', function () {
         await el.click();
 
         // allow the click to happen
-        await B.delay(500);
+        await delay(500);
 
         await expect(driver.getUrl()).to.eventually.contain('#anchor');
         await expect(driver.getWindowHandles()).to.eventually.be.ok;
@@ -269,7 +269,7 @@ describe('Safari - basics -', function () {
         await el.click();
 
         // let the click happen
-        await B.delay(500);
+        await delay(500);
 
         const url = await driver.getUrl();
         await openPage(driver, url);

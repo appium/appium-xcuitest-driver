@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import net from 'node:net';
-import B from 'bluebird';
 import {util, timing} from 'appium/support';
 import {utilities} from 'appium-ios-device';
 import {checkPortStatus} from 'portscanner';
@@ -100,7 +99,7 @@ class LegacyPortForwarder implements PortForwarder {
       localSocket.pipe(remoteSocket);
       remoteSocket.pipe(localSocket);
     });
-    const listeningPromise = new B<void>((resolve, reject) => {
+    const listeningPromise = new Promise<void>((resolve, reject) => {
       if (this.localServer) {
         this.localServer.once('listening', resolve);
         this.localServer.once('error', reject);

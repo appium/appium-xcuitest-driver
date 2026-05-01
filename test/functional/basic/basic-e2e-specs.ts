@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import util from 'node:util';
 import {retryInterval} from 'asyncbox';
 import {isIosVersionBelow, getUICatalogCaps} from '../desired';
@@ -102,7 +102,7 @@ describe('XCUITestDriver - basics -', function () {
       } catch {}
       // take a little pause while it orients, otherwise you get the screenshot
       // on an angle
-      await B.delay(500);
+      await delay(500);
 
       const screenshot2 = await driver.takeScreenshot();
       expect(screenshot2).to.exist;
