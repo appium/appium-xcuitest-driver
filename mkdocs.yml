@@ -30,7 +30,6 @@ extra:
 nav:
   - index.md
   - overview.md
-  - architecture.md
   - Getting Started:
       - getting-started/index.md
       - getting-started/system-requirements.md
