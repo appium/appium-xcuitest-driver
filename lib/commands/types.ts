@@ -169,6 +169,7 @@ export interface WaitingAtoms {
   count: number;
   alertNotifier: EventEmitter;
   alertMonitor?: Promise<void>;
+  alertMonitorAbortController?: AbortController;
 }
 
 export interface ContainerObject {

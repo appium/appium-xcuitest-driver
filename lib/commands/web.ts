@@ -893,24 +893,9 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
   try {
     // only restart the monitor if it is not running already
     if (!this._waitingAtoms.alertMonitor) {
-      this._waitingAtoms.alertMonitor = (async () => {
-        try {
-          while (this._waitingAtoms.count > 0) {
-            try {
-              if (await this.checkForAlert()) {
-                this._waitingAtoms.alertNotifier.emit(ON_OBSTRUCTING_ALERT_EVENT);
-              }
-            } catch (err: any) {
-              if (isErrorType(err, errors.InvalidElementStateError)) {
-                this._waitingAtoms.alertNotifier.emit(ON_APP_CRASH_EVENT, err);
-              }
-            }
-            await delay(OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS);
-          }
-        } finally {
-          this._waitingAtoms.alertMonitor = undefined;
-        }
-      })();
+      this._waitingAtoms.alertMonitorAbortController ??= new AbortController();
+      this._waitingAtoms.alertMonitor = startAlertMonitor
+        .bind(this)(this._waitingAtoms.alertMonitorAbortController);
     }
 
     return await new Promise((resolve, reject) => {
@@ -927,7 +912,16 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
     if (onAppCrashCallback) {
       this._waitingAtoms.alertNotifier.removeListener(ON_APP_CRASH_EVENT, onAppCrashCallback);
     }
-    this._waitingAtoms.count--;
+    this._waitingAtoms.count = Math.max(0, this._waitingAtoms.count - 1);
+    if (this._waitingAtoms.count <= 0) {
+      const monitorPromise = this._waitingAtoms.alertMonitor;
+      this._waitingAtoms.alertMonitorAbortController?.abort();
+      if (monitorPromise) {
+        try {
+          await monitorPromise;
+        } catch {}
+      }
+    }
   }
 }
 
@@ -1098,6 +1092,51 @@ async function generateAtomTimeoutError(
       `'webviewAtomWaitTimeout' driver capability.`;
   }
   return new errors.TimeoutError(message);
+}
+
+/**
+ * Starts alert monitoring loop for outstanding atom waits.
+ * The loop keeps running while there are waiters and self-handoffs if new ones
+ * appear while it is winding down.
+ */
+async function startAlertMonitor(
+  this: XCUITestDriver,
+  abortController: AbortController,
+): Promise<void> {
+  try {
+    while (this._waitingAtoms.count > 0) {
+      try {
+        if (await this.checkForAlert()) {
+          this._waitingAtoms.alertNotifier.emit(ON_OBSTRUCTING_ALERT_EVENT);
+        }
+      } catch (err: any) {
+        if (isErrorType(err, errors.InvalidElementStateError)) {
+          this._waitingAtoms.alertNotifier.emit(ON_APP_CRASH_EVENT, err);
+        }
+      }
+      try {
+        await delay(OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS, undefined, {
+          signal: abortController.signal,
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          throw err;
+        }
+        break;
+      }
+    }
+  } finally {
+    if (this._waitingAtoms.count <= 0) {
+      this._waitingAtoms.count = 0;
+      this._waitingAtoms.alertMonitor = undefined;
+      if (this._waitingAtoms.alertMonitorAbortController === abortController) {
+        this._waitingAtoms.alertMonitorAbortController = undefined;
+      }
+    } else {
+      // A new atom started while this monitor was winding down.
+      this._waitingAtoms.alertMonitor = startAlertMonitor.bind(this)(abortController);
+    }
+  }
 }
 
 /**

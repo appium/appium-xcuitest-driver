@@ -780,6 +780,7 @@ export class XCUITestDriver
       count: 0,
       alertNotifier: new EventEmitter(),
       alertMonitor: undefined,
+      alertMonitorAbortController: undefined,
     };
     this.resetIos();
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
@@ -2210,6 +2211,7 @@ export class XCUITestDriver
       count: 0,
       alertNotifier: new EventEmitter(),
       alertMonitor: undefined,
+      alertMonitorAbortController: undefined,
     };
   }
 
