@@ -3,12 +3,13 @@ import {JWProxy} from 'appium/driver';
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {XCUITestDriver, XCUITestDriverOpts} from '../../lib/driver';
-import * as utils from '../../lib/utils';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
 import {RealDevice} from '../../lib/device/real-device-management';
 import net from 'node:net';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import * as validationUtils from '../../lib/utils/validation';
+import * as xcodeUtils from '../../lib/utils/xcode';
 
 chai.use(chaiAsPromised);
 
@@ -138,8 +139,8 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'installAUT');
         sandbox.stub(driver, 'connectToRemoteDebugger');
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
-        sandbox.stub(utils, 'checkAppPresent');
-        sandbox.stub(utils, 'getAndCheckXcodeVersion').resolves({
+        sandbox.stub(validationUtils, 'checkAppPresent');
+        sandbox.stub(xcodeUtils, 'getAndCheckXcodeVersion').resolves({
           versionString: '20.0',
           versionFloat: 20.0,
           major: 20,
