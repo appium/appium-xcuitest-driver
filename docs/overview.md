@@ -76,26 +76,40 @@ flowchart TD
   subgraph ServerHost["Automation Host"]
     AS["Appium Server"]
     XD["XCUITest Driver<br/>(appium-xcuitest-driver)"]
-    HW["WebDriverAgent Management"]
+    HWS["WDA Management (Simulator)"]
+    HWR["WDA Management (Real Device)"]
   end
 
-  subgraph Target["Simulator / Real Device"]
+  subgraph SimulatorTarget["Simulator"]
     WDAS["WebDriverAgent Server"]
-    XCT["XCTest Runtime"]
-    AUT["Application Under Test"]
+    XCTS["XCTest Runtime"]
+    AUTS["Application Under Test"]
+  end
+
+  subgraph RealDeviceTarget["Real Device"]
+    WDAR["WebDriverAgent Server"]
+    XCTR["XCTest Runtime"]
+    AUTR["Application Under Test"]
   end
 
   T --> CL
   CL -->|"W3C WebDriver over HTTP"| AS
   AS -->|"Routes iOS commands"| XD
-  XD -->|"Starts/monitors WDA, proxies commands"| HW
-  HW -->|"Xcodebuild / deployment / launch"| WDAS
-  WDAS -->|"XCTest automation APIs"| XCT
-  XCT -->|"UI interactions + assertions"| AUT
+  XD -->|"Starts/monitors WDA, proxies commands"| HWS
+  XD -->|"Starts/monitors WDA, proxies commands"| HWR
+  HWS -->|"xcrun simctl + CoreSimulator tooling"| WDAS
+  HWR -->|"usbmux / Remote XPC / xcrun devicectl"| WDAR
+  WDAS -->|"XCTest automation APIs"| XCTS
+  WDAR -->|"XCTest automation APIs"| XCTR
+  XCTS -->|"UI interactions + assertions"| AUTS
+  XCTR -->|"UI interactions + assertions"| AUTR
 
-  AUT -->|"UI state/result"| XCT
-  XCT --> WDAS
+  AUTS -->|"UI state/result"| XCTS
+  AUTR -->|"UI state/result"| XCTR
+  XCTS --> WDAS
+  XCTR --> WDAR
   WDAS --> XD
+  WDAR --> XD
   XD --> AS
   AS --> CL
   CL --> T
@@ -106,7 +120,7 @@ flowchart TD
 1. The test sends a command via a client library (for example `findElement`, `click`, or `executeScript`).
 2. The Appium server forwards the command to this driver based on the active session.
 3. The XCUITest driver translates/proxies the command to [WebDriverAgent (WDA)](https://github.com/appium/WebDriverAgent), and manages WDA lifecycle when needed.
-4. WDA uses [XCTest](https://developer.apple.com/documentation/xctest) internals to drive the app UI on simulator or real device.
+4. WDA uses [XCTest](https://developer.apple.com/documentation/xctest?language=objc) internals to drive the app UI on simulator or real device.
 5. The result comes back through the same chain to the client.
 
 ### Transport and Responsibilities
@@ -114,7 +128,9 @@ flowchart TD
 - Client library to Appium server: W3C WebDriver HTTP protocol.
 - Appium server to this driver: in-process driver command dispatch.
 - This driver to [WDA](https://github.com/appium/WebDriverAgent): HTTP proxying to the WDA REST API.
-- [WDA](https://github.com/appium/WebDriverAgent) to [XCTest](https://developer.apple.com/documentation/xctest): native Apple automation stack.
+- [WDA](https://github.com/appium/WebDriverAgent) to [XCTest](https://developer.apple.com/documentation/xctest?language=objc): native Apple automation stack.
+- This driver to real devices: host-device communication uses `usbmux`-based transport, Remote XPC tunneling, and `xcrun devicectl` depending on iOS/tvOS version and environment setup.
+- This driver to simulators: host-simulator communication uses `xcrun simctl` (plus related CoreSimulator tooling).
 
 [^macos]: Supported by the [Appium Mac2 driver](https://github.com/appium/appium-mac2-driver)
 [^safari-mob]: Also supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
