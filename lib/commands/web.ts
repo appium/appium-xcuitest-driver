@@ -894,8 +894,9 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
     // only restart the monitor if it is not running already
     if (!this._waitingAtoms.alertMonitor) {
       this._waitingAtoms.alertMonitorAbortController ??= new AbortController();
-      this._waitingAtoms.alertMonitor = startAlertMonitor
-        .bind(this)(this._waitingAtoms.alertMonitorAbortController);
+      this._waitingAtoms.alertMonitor = startAlertMonitor.bind(this)(
+        this._waitingAtoms.alertMonitorAbortController,
+      );
     }
 
     return await new Promise((resolve, reject) => {
