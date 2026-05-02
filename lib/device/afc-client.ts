@@ -379,8 +379,11 @@ export class AfcClient {
       waitForPullSlot,
     };
 
-    await this.iosDeviceAfcService.walkDir(remotePath, true, async (entryPath, isDirectory) =>
-      await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
+    await this.iosDeviceAfcService.walkDir(
+      remotePath,
+      true,
+      async (entryPath, isDirectory) =>
+        await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
     );
 
     if (activePulls.length > 0) {
@@ -467,9 +470,7 @@ export class AfcClient {
     await this.checkOverwrite(localEntryPath, overwrite);
     await mkdirp(path.dirname(localEntryPath));
     await waitForPullSlot();
-    activePulls.push(
-      this.pullRemoteFileToLocalViaStreams(entryPath, localEntryPath, onEntry),
-    );
+    activePulls.push(this.pullRemoteFileToLocalViaStreams(entryPath, localEntryPath, onEntry));
   }
 
   /**
