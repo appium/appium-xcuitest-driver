@@ -100,18 +100,16 @@ export async function proxyCommand<TReq = any, TRes = unknown>(
     return (await withTimeout(
       proxy.command(url, method, body),
       timeout,
-      `Appium did not get any response from '${cmdName}' command in ${timeout} ms`,
+      `The driver did not receive any response from the '${cmdName}' command within ${timeout} ms`,
     )) as TRes;
   } catch (e) {
     if (!(e instanceof TimeoutError)) {
       throw e;
     }
     proxy.cancelActiveRequests();
-    const error = new errors.TimeoutError(
-      `Appium did not get any response from '${cmdName}' command in ${timeout} ms`,
-    );
-    await this.startUnexpectedShutdown(error);
-    throw error;
+    const domainError = new errors.TimeoutError(e.message);
+    await this.startUnexpectedShutdown(domainError);
+    throw domainError;
   }
 }
 
