@@ -891,13 +891,7 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
   let onAlertCallback: (() => void) | undefined;
   let onAppCrashCallback: ((err: any) => void) | undefined;
   try {
-    // only restart the monitor if it is not running already
-    if (!this._waitingAtoms.alertMonitor) {
-      this._waitingAtoms.alertMonitorAbortController ??= new AbortController();
-      this._waitingAtoms.alertMonitor = startAlertMonitor.bind(this)(
-        this._waitingAtoms.alertMonitorAbortController,
-      );
-    }
+    startAlertMonitorIfNeeded.call(this);
 
     return await new Promise((resolve, reject) => {
       onAlertCallback = () => reject(new errors.UnexpectedAlertOpenError());
@@ -1096,36 +1090,29 @@ async function generateAtomTimeoutError(
 }
 
 /**
- * Starts alert monitoring loop for outstanding atom waits.
- * The loop keeps running while there are waiters and self-handoffs if new ones
- * appear while it is winding down.
+ * Starts the shared alert monitor when no instance is running (caller / waitForAtom side).
  */
-async function startAlertMonitor(
+function startAlertMonitorIfNeeded(this: XCUITestDriver): void {
+  if (this._waitingAtoms.alertMonitor) {
+    return;
+  }
+  let controller = this._waitingAtoms.alertMonitorAbortController;
+  if (!controller || controller.signal.aborted) {
+    controller = new AbortController();
+    this._waitingAtoms.alertMonitorAbortController = controller;
+  }
+  this._waitingAtoms.alertMonitor = runAlertMonitorSession.call(this, controller);
+}
+
+/**
+ * One monitor session: runs the poll loop, then tears down or hands off on the caller side.
+ */
+async function runAlertMonitorSession(
   this: XCUITestDriver,
   abortController: AbortController,
 ): Promise<void> {
   try {
-    while (this._waitingAtoms.count > 0) {
-      try {
-        if (await this.checkForAlert()) {
-          this._waitingAtoms.alertNotifier.emit(ON_OBSTRUCTING_ALERT_EVENT);
-        }
-      } catch (err: any) {
-        if (isErrorType(err, errors.InvalidElementStateError)) {
-          this._waitingAtoms.alertNotifier.emit(ON_APP_CRASH_EVENT, err);
-        }
-      }
-      try {
-        await delay(OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS, undefined, {
-          signal: abortController.signal,
-        });
-      } catch (err) {
-        if ((err as Error).name !== 'AbortError') {
-          throw err;
-        }
-        break;
-      }
-    }
+    await alertMonitorLoop.call(this, abortController);
   } finally {
     if (this._waitingAtoms.count <= 0) {
       this._waitingAtoms.count = 0;
@@ -1135,7 +1122,40 @@ async function startAlertMonitor(
       }
     } else {
       // A new atom started while this monitor was winding down.
-      this._waitingAtoms.alertMonitor = startAlertMonitor.bind(this)(abortController);
+      let nextController = this._waitingAtoms.alertMonitorAbortController;
+      if (!nextController || nextController.signal.aborted) {
+        nextController = new AbortController();
+        this._waitingAtoms.alertMonitorAbortController = nextController;
+      }
+      this._waitingAtoms.alertMonitor = runAlertMonitorSession.call(this, nextController);
+    }
+  }
+}
+
+/** Polls for obstructing alerts while there are waiting atoms. */
+async function alertMonitorLoop(
+  this: XCUITestDriver,
+  abortController: AbortController,
+): Promise<void> {
+  while (this._waitingAtoms.count > 0) {
+    try {
+      if (await this.checkForAlert()) {
+        this._waitingAtoms.alertNotifier.emit(ON_OBSTRUCTING_ALERT_EVENT);
+      }
+    } catch (err: any) {
+      if (isErrorType(err, errors.InvalidElementStateError)) {
+        this._waitingAtoms.alertNotifier.emit(ON_APP_CRASH_EVENT, err);
+      }
+    }
+    try {
+      await delay(OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS, undefined, {
+        signal: abortController.signal,
+      });
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        throw err;
+      }
+      break;
     }
   }
 }

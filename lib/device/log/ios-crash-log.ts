@@ -1,5 +1,5 @@
 import {fs, tempDir, util} from 'appium/support';
-import {asyncFilter} from '../../utils';
+import {asyncfilter} from 'asyncbox';
 import path from 'node:path';
 import _ from 'lodash';
 import {CrashReportsClient} from '../crash-reports-client';
@@ -195,7 +195,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
     const simUdid = (this._sim as Simulator).udid;
     // For Simulator only include files, that contain current UDID
-    return await asyncFilter(foundFiles, async (filePath) => {
+    return await asyncfilter(foundFiles, async (filePath) => {
       try {
         return await grepFile(filePath, simUdid, {caseInsensitive: true});
       } catch (err) {

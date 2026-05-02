@@ -26,12 +26,3 @@ export async function withTimeout<T>(
     }
   }
 }
-
-/** Filters an array using an async predicate while preserving order. */
-export async function asyncFilter<T>(
-  items: T[],
-  predicate: (item: T) => boolean | Promise<boolean>,
-): Promise<T[]> {
-  const flags = await Promise.all(items.map((item) => predicate(item)));
-  return items.filter((_, idx) => Boolean(flags[idx]));
-}

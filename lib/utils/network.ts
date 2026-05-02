@@ -1,5 +1,5 @@
 import {fs, net, util} from 'appium/support';
-import {asyncFilter} from './async';
+import {asyncfilter} from 'asyncbox';
 import _ from 'lodash';
 import {exec} from 'teen_process';
 import type {HTTPHeaders} from '@appium/types';
@@ -42,7 +42,7 @@ export async function getPIDsListeningOnPort(
   if (!_.isFunction(filteringFunc)) {
     return result;
   }
-  return await asyncFilter(result, async (x) => {
+  return await asyncfilter(result, async (x) => {
     const {stdout} = await exec('ps', ['-p', x, '-o', 'command']);
     return await filteringFunc(stdout);
   });
