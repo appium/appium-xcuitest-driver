@@ -2,7 +2,6 @@ import type {Readable} from 'node:stream';
 import {Readable as ReadableStream} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import path from 'node:path';
-import {asyncmap} from 'asyncbox';
 import {fs, mkdirp} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
@@ -27,6 +26,16 @@ export interface AfcPullOptions {
 export interface CreateForAppOptions {
   containerType?: string | null;
   skipDocumentsCheck?: boolean;
+}
+
+/** Context for bounded concurrent pull during ios-device walkDir. */
+interface WalkDirPullWalkContext {
+  remoteTreeRoot: string;
+  localRootDir: string;
+  overwrite: boolean;
+  onEntry?: AfcPullOptions['onEntry'];
+  activePulls: Promise<void>[];
+  waitForPullSlot: () => Promise<void>;
 }
 
 /**
@@ -347,108 +356,160 @@ export class AfcClient {
   ): Promise<void> {
     const {recursive = false, overwrite = true, onEntry} = options;
 
-    const isDir = await this.isDirectory(remotePath);
-
-    if (!isDir) {
-      // Single file pull
-      const localFilePath = (await this.isLocalDirectory(localPath))
-        ? path.join(localPath, path.posix.basename(remotePath))
-        : localPath;
-
-      await this.checkOverwrite(localFilePath, overwrite);
-      await this.pullSingleFile(remotePath, localFilePath);
-
-      if (onEntry) {
-        await onEntry(remotePath, localFilePath, false);
-      }
+    if (!(await this.isDirectory(remotePath))) {
+      await this.pullWalkDirSingleFile(remotePath, localPath, overwrite, onEntry);
       return;
     }
 
-    // Directory pull requires recursive option
     if (!recursive) {
       throw new Error(
         `Cannot pull directory '${remotePath}' without recursive option. Set recursive: true to pull directories.`,
       );
     }
 
-    // Determine local root directory
+    const localRootDir = await this.prepareWalkPullDirectoryRoot(remotePath, localPath, onEntry);
+    const activePulls: Promise<void>[] = [];
+    const waitForPullSlot = this.createBoundedPullSlotWaiter(activePulls);
+    const ctx: WalkDirPullWalkContext = {
+      remoteTreeRoot: remotePath,
+      localRootDir,
+      overwrite,
+      onEntry,
+      activePulls,
+      waitForPullSlot,
+    };
+
+    await this.iosDeviceAfcService.walkDir(remotePath, true, async (entryPath, isDirectory) =>
+      await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
+    );
+
+    if (activePulls.length > 0) {
+      await Promise.all(activePulls);
+    }
+  }
+
+  /** Pull a single remote file when walkDir target is not a directory. */
+  private async pullWalkDirSingleFile(
+    remotePath: string,
+    localPath: string,
+    overwrite: boolean,
+    onEntry?: AfcPullOptions['onEntry'],
+  ): Promise<void> {
+    const localFilePath = (await this.isLocalDirectory(localPath))
+      ? path.join(localPath, path.posix.basename(remotePath))
+      : localPath;
+
+    await this.checkOverwrite(localFilePath, overwrite);
+    await this.pullSingleFile(remotePath, localFilePath);
+
+    if (onEntry) {
+      await onEntry(remotePath, localFilePath, false);
+    }
+  }
+
+  /** Creates local root folder and notifies onEntry for the directory root. */
+  private async prepareWalkPullDirectoryRoot(
+    remotePath: string,
+    localPath: string,
+    onEntry?: AfcPullOptions['onEntry'],
+  ): Promise<string> {
     const localDstIsDirectory = await this.isLocalDirectory(localPath);
     const localRootDir = localDstIsDirectory
       ? path.join(localPath, path.posix.basename(remotePath))
       : localPath;
 
-    // Create the root directory
     await mkdirp(localRootDir);
 
     if (onEntry) {
       await onEntry(remotePath, localRootDir, true);
     }
+    return localRootDir;
+  }
 
-    const fileEntriesToPull: Array<{entryPath: string; localEntryPath: string}> = [];
-
-    // Walk the remote directory and pull files in parallel
-    await this.iosDeviceAfcService.walkDir(
-      remotePath,
-      true,
-      async (entryPath: string, isDirectory: boolean) => {
-        // Calculate relative path from remote root
-        const relativePath = entryPath.startsWith(remotePath + '/')
-          ? entryPath.slice(remotePath.length + 1)
-          : entryPath.slice(remotePath.length);
-        const localEntryPath = path.join(localRootDir, relativePath);
-
-        if (isDirectory) {
-          await mkdirp(localEntryPath);
-          if (onEntry) {
-            await onEntry(entryPath, localEntryPath, true);
-          }
-        } else {
-          await this.checkOverwrite(localEntryPath, overwrite);
-
-          // Ensure parent directory exists
-          const parentDir = path.dirname(localEntryPath);
-          await mkdirp(parentDir);
-          fileEntriesToPull.push({entryPath, localEntryPath});
+  /**
+   * Returns a waiter that blocks until fewer than MAX_IO_CHUNK_SIZE pulls are in flight.
+   * Uses Promise.race over in-flight pull completions to free a slot.
+   */
+  private createBoundedPullSlotWaiter(activePulls: Promise<void>[]): () => Promise<void> {
+    return async (): Promise<void> => {
+      while (activePulls.length >= MAX_IO_CHUNK_SIZE) {
+        const indexed: Promise<number>[] = [];
+        for (let i = 0; i < activePulls.length; i++) {
+          indexed.push(racePullCompletionIndex(activePulls[i], i));
         }
-      },
-    );
+        const doneIndex = await Promise.race(indexed);
+        // The raced pull has already settled; removing it from the pool is bookkeeping only.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises -- false positive: splice drops a completed task reference
+        activePulls.splice(doneIndex, 1);
+      }
+    };
+  }
 
-    await asyncmap(
-      fileEntriesToPull,
-      async ({entryPath, localEntryPath}) => {
-        const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
-          autoDestroy: true,
+  private async processWalkDirPullEntry(
+    ctx: WalkDirPullWalkContext,
+    entryPath: string,
+    isDirectory: boolean,
+  ): Promise<void> {
+    const {remoteTreeRoot, localRootDir, overwrite, onEntry, activePulls, waitForPullSlot} = ctx;
+    const relativePath = entryPath.startsWith(remoteTreeRoot + '/')
+      ? entryPath.slice(remoteTreeRoot.length + 1)
+      : entryPath.slice(remoteTreeRoot.length);
+    const localEntryPath = path.join(localRootDir, relativePath);
+
+    if (isDirectory) {
+      await mkdirp(localEntryPath);
+      if (onEntry) {
+        await onEntry(entryPath, localEntryPath, true);
+      }
+      return;
+    }
+
+    await this.checkOverwrite(localEntryPath, overwrite);
+    await mkdirp(path.dirname(localEntryPath));
+    await waitForPullSlot();
+    activePulls.push(
+      this.pullRemoteFileToLocalViaStreams(entryPath, localEntryPath, onEntry),
+    );
+  }
+
+  /**
+   * Pull one remote file to a local path using streams (ios-device AFC only).
+   * Resolves when the write stream closes or when streaming is skipped after an error.
+   */
+  private async pullRemoteFileToLocalViaStreams(
+    entryPath: string,
+    localEntryPath: string,
+    onEntry: AfcPullOptions['onEntry'],
+  ): Promise<void> {
+    const readStream = await this.iosDeviceAfcService.createReadStream(entryPath, {
+      autoDestroy: true,
+    });
+    const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
+    await withTimeout(
+      new Promise<void>((resolve) => {
+        writeStream.on('close', async () => {
+          if (onEntry) {
+            try {
+              await onEntry(entryPath, localEntryPath, false);
+            } catch (err: any) {
+              log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
+            }
+          }
+          resolve();
         });
-        const writeStream = fs.createWriteStream(localEntryPath, {autoClose: true});
-        await withTimeout(
-          new Promise<void>((resolve) => {
-            writeStream.on('close', async () => {
-              // Invoke onEntry callback after successful pull
-              if (onEntry) {
-                try {
-                  await onEntry(entryPath, localEntryPath, false);
-                } catch (err: any) {
-                  log.warn(`onEntry callback failed for '${entryPath}': ${err.message}`);
-                }
-              }
-              resolve();
-            });
-            const onStreamingError = (e: Error) => {
-              readStream.unpipe(writeStream);
-              log.warn(
-                `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
-                  `The file will be skipped. Original error: ${e.message}`,
-              );
-              resolve();
-            };
-            writeStream.on('error', onStreamingError);
-            readStream.on('error', onStreamingError);
-            readStream.pipe(writeStream);
-          }),
-          IO_TIMEOUT_MS,
-        );
-      },
-      {concurrency: MAX_IO_CHUNK_SIZE},
+        const onStreamingError = (e: Error) => {
+          readStream.unpipe(writeStream);
+          log.warn(
+            `Cannot pull '${entryPath}' to '${localEntryPath}'. ` +
+              `The file will be skipped. Original error: ${e.message}`,
+          );
+          resolve();
+        };
+        writeStream.on('error', onStreamingError);
+        readStream.on('error', onStreamingError);
+        readStream.pipe(writeStream);
+      }),
+      IO_TIMEOUT_MS,
     );
   }
 
@@ -494,4 +555,14 @@ export class AfcClient {
   }
 
   //#endregion
+}
+
+/** Resolves with index `i` after pull `p` settles (success or failure). */
+async function racePullCompletionIndex(p: Promise<void>, i: number): Promise<number> {
+  try {
+    await p;
+  } catch {
+    // A failed pull still frees a concurrency slot.
+  }
+  return i;
 }
