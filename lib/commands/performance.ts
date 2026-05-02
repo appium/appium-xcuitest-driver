@@ -2,12 +2,10 @@ import _ from 'lodash';
 import path from 'node:path';
 import {fs, zip, logger, util, tempDir} from 'appium/support';
 import {SubProcess, exec} from 'teen_process';
-import {encodeBase64OrUpload} from '../utils';
+import {encodeBase64OrUpload, type UploadOptions} from '../utils';
 import {waitForCondition} from 'asyncbox';
 import type {XCUITestDriver} from '../driver';
 import type {ActiveAppInfo} from './types';
-import type {Method} from 'axios';
-
 const PERF_RECORD_FEAT_NAME = 'perf_record';
 const PERF_RECORD_SECURITY_MESSAGE =
   'Performance measurement requires relaxing security for simulator. ' +
@@ -329,7 +327,7 @@ export async function mobileStopPerfRecord(
   remotePath?: string,
   user?: string,
   pass?: string,
-  method?: Method,
+  method?: UploadOptions['method'],
   profileName = DEFAULT_PROFILE_NAME,
   headers?: Record<string, any>,
   fileFieldName?: string,
