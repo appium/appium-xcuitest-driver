@@ -6,6 +6,7 @@ import {encodeBase64OrUpload, type UploadOptions} from '../utils';
 import {waitForCondition} from 'asyncbox';
 import type {XCUITestDriver} from '../driver';
 import type {ActiveAppInfo} from './types';
+
 const PERF_RECORD_FEAT_NAME = 'perf_record';
 const PERF_RECORD_SECURITY_MESSAGE =
   'Performance measurement requires relaxing security for simulator. ' +
