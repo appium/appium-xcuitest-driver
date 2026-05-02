@@ -34,6 +34,7 @@ interface WalkDirPullWalkContext {
   localRootDir: string;
   overwrite: boolean;
   onEntry?: AfcPullOptions['onEntry'];
+  /** In-flight pulls only; entries removed when a slot frees. */
   activePulls: Promise<void>[];
   waitForPullSlot: () => Promise<void>;
 }
@@ -77,8 +78,6 @@ export class AfcClient {
   private get iosDeviceAfcService(): IOSDeviceAfcService {
     return this.service as IOSDeviceAfcService;
   }
-
-  //#region Public Methods
 
   /**
    * Create an AFC client for device
@@ -327,10 +326,6 @@ export class AfcClient {
     }
   }
 
-  //#endregion
-
-  //#region Private Methods
-
   /**
    * Create a read stream for a file (internal use only).
    */
@@ -369,7 +364,8 @@ export class AfcClient {
 
     const localRootDir = await this.prepareWalkPullDirectoryRoot(remotePath, localPath, onEntry);
     const activePulls: Promise<void>[] = [];
-    const waitForPullSlot = this.createBoundedPullSlotWaiter(activePulls);
+    const pullRejections: unknown[] = [];
+    const waitForPullSlot = this.createBoundedPullSlotWaiter(activePulls, pullRejections);
     const ctx: WalkDirPullWalkContext = {
       remoteTreeRoot: remotePath,
       localRootDir,
@@ -388,6 +384,12 @@ export class AfcClient {
 
     if (activePulls.length > 0) {
       await Promise.all(activePulls);
+    }
+    if (pullRejections.length > 0) {
+      const [first, ...rest] = pullRejections;
+      throw rest.length === 0
+        ? first
+        : new AggregateError(pullRejections, `${pullRejections.length} pulls failed`);
     }
   }
 
@@ -433,12 +435,15 @@ export class AfcClient {
    * Returns a waiter that blocks until fewer than MAX_IO_CHUNK_SIZE pulls are in flight.
    * Uses Promise.race over in-flight pull completions to free a slot.
    */
-  private createBoundedPullSlotWaiter(activePulls: Promise<void>[]): () => Promise<void> {
+  private createBoundedPullSlotWaiter(
+    activePulls: Promise<void>[],
+    pullRejections: unknown[],
+  ): () => Promise<void> {
     return async (): Promise<void> => {
       while (activePulls.length >= MAX_IO_CHUNK_SIZE) {
         const indexed: Promise<number>[] = [];
         for (let i = 0; i < activePulls.length; i++) {
-          indexed.push(racePullCompletionIndex(activePulls[i], i));
+          indexed.push(racePullCompletionIndex(activePulls[i], i, pullRejections));
         }
         const doneIndex = await Promise.race(indexed);
         // The raced pull has already settled; removing it from the pool is bookkeeping only.
@@ -554,16 +559,21 @@ export class AfcClient {
       return false;
     }
   }
-
-  //#endregion
 }
 
-/** Resolves with index `i` after pull `p` settles (success or failure). */
-async function racePullCompletionIndex(p: Promise<void>, i: number): Promise<number> {
+/**
+ * Resolves with slot index `i` when pull `p` settles. On rejection, records the reason in
+ * `pullRejections` (bounded list) so failures are not lost when `p` is spliced out of `activePulls`.
+ */
+async function racePullCompletionIndex(
+  p: Promise<void>,
+  i: number,
+  pullRejections: unknown[],
+): Promise<number> {
   try {
     await p;
-  } catch {
-    // A failed pull still frees a concurrency slot.
+  } catch (reason) {
+    pullRejections.push(reason);
   }
   return i;
 }
