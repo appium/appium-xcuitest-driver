@@ -3,7 +3,6 @@ import {asyncfilter} from 'asyncbox';
 import _ from 'lodash';
 import {exec} from 'teen_process';
 import type {HTTPHeaders} from '@appium/types';
-import type {Method} from 'axios';
 import {log} from '../logger';
 
 export type UploadOptions = {
@@ -12,7 +11,7 @@ export type UploadOptions = {
   /** The password for remote authentication (only when `remotePath` is provided). */
   pass?: string;
   /** Multipart upload HTTP method. Defaults to `PUT`. */
-  method?: Method;
+  method?: net.HttpUploadOptions['method'];
   /** Additional headers mapping for multipart HTTP(S) uploads. */
   headers?: HTTPHeaders;
   /** The form field name that receives the file blob in multipart uploads. */
@@ -70,7 +69,7 @@ export async function encodeBase64OrUpload(
 
   const {user, pass, method, headers, fileFieldName, formFields} = uploadOptions;
   const options: net.HttpUploadOptions & net.NetOptions = {
-    method: method || 'PUT',
+    method: method ?? 'PUT',
     headers,
     fileFieldName,
     formFields,
