@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {fs, tempDir, mkdirp, zip, util} from 'appium/support';
+import {fs, tempDir, zip, util} from 'appium/support';
 import path from 'node:path';
 import {
   pullFile as realDevicePullFile,
@@ -333,7 +333,7 @@ async function pushFileToSimulator(
       this.log.debug(
         `The destination folder '${path.dirname(dstPath)}' does not exist. Creating...`,
       );
-      await mkdirp(path.dirname(dstPath));
+      await fs.mkdirp(path.dirname(dstPath));
     }
     await fs.writeFile(dstPath, buffer);
     return;

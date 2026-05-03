@@ -2,7 +2,7 @@ import type {Readable} from 'node:stream';
 import {Readable as ReadableStream} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import path from 'node:path';
-import {fs, mkdirp} from 'appium/support';
+import {fs, util} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import {getRemoteXPCServices} from './remotexpc-utils';
@@ -389,7 +389,10 @@ export class AfcClient {
       const [first, ...rest] = pullRejections;
       throw rest.length === 0
         ? first
-        : new AggregateError(pullRejections, `${pullRejections.length} pulls failed`);
+        : new AggregateError(
+            pullRejections,
+            `${util.pluralize('pull', pullRejections.length, true)} failed`,
+          );
     }
   }
 
@@ -423,7 +426,7 @@ export class AfcClient {
       ? path.join(localPath, path.posix.basename(remotePath))
       : localPath;
 
-    await mkdirp(localRootDir);
+    await fs.mkdirp(localRootDir);
 
     if (onEntry) {
       await onEntry(remotePath, localRootDir, true);
@@ -465,7 +468,7 @@ export class AfcClient {
     const localEntryPath = path.join(localRootDir, relativePath);
 
     if (isDirectory) {
-      await mkdirp(localEntryPath);
+      await fs.mkdirp(localEntryPath);
       if (onEntry) {
         await onEntry(entryPath, localEntryPath, true);
       }
@@ -473,7 +476,7 @@ export class AfcClient {
     }
 
     await this.checkOverwrite(localEntryPath, overwrite);
-    await mkdirp(path.dirname(localEntryPath));
+    await fs.mkdirp(path.dirname(localEntryPath));
     await waitForPullSlot();
     activePulls.push(this.pullRemoteFileToLocalViaStreams(entryPath, localEntryPath, onEntry));
   }
