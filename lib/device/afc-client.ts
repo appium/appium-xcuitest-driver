@@ -562,8 +562,9 @@ export class AfcClient {
 }
 
 /**
- * Resolves with slot index `i` when pull `p` settles. On rejection, records the reason in
- * `pullRejections` (bounded list) so failures are not lost when `p` is spliced out of `activePulls`.
+ * Resolves with slot index `i` when pull `p` settles. On rejection, appends the reason to
+ * `pullRejections` (failed pulls only; length scales with how many such rejects occurred during the
+ * walk) so failures are not lost when `p` is spliced out of `activePulls`.
  */
 async function racePullCompletionIndex(
   p: Promise<void>,
