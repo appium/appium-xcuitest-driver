@@ -1,3 +1,4 @@
+import {isIPv6} from 'node:net';
 import {fs, net, util} from 'appium/support';
 import {asyncfilter} from 'asyncbox';
 import _ from 'lodash';
@@ -84,18 +85,34 @@ export async function encodeBase64OrUpload(
 const LOCALHOST_HOSTNAMES = [
   'localhost',
   '127.0.0.1',
-  // WHATWG URL normalizes IPv6 hostnames with brackets and hex (e.g. ::ffff:127.0.0.1 -> ::ffff:7f00:1)
-  '[::1]',
-  '[::ffff:7f00:1]',
+  // IPv6 loopback in the form WHATWG URL uses in `hostname` (no `[`/`]` delimiters), e.g. `::1`,
+  // and IPv4-mapped 127.0.0.1 as serialized by the URL parser (e.g. `::ffff:7f00:1`).
+  '::1',
+  '::ffff:7f00:1',
 ];
 
 /** Returns true if the given URL host resolves to localhost. */
 export function isLocalHost(urlString: string): boolean {
+  const hostname = canonicalHostnameForLocalhost(urlString);
+  return Boolean(hostname && LOCALHOST_HOSTNAMES.includes(hostname));
+}
+
+/**
+ * `URL#hostname` for IPv6 may be unbracketed (`::1`) or bracketed (`[::1]`) depending on the
+ * runtime. If the host is bracketed and the inner value is IPv6, strip brackets so we can compare
+ * against unbracketed literals in {@link LOCALHOST_HOSTNAMES}.
+ */
+function canonicalHostnameForLocalhost(urlString: string): string | null {
   try {
-    const hostname = new URL(urlString).hostname;
-    return LOCALHOST_HOSTNAMES.includes(hostname);
+    const {hostname} = new URL(urlString);
+    if (hostname.startsWith('[') && hostname.endsWith(']') && hostname.length > 2) {
+      const inner = hostname.slice(1, -1);
+      if (isIPv6(inner)) {
+        return inner;
+      }
+    }
+    return hostname;
   } catch {
-    log.warn(`'${urlString}' cannot be parsed as a valid URL`);
+    return null;
   }
-  return false;
 }
