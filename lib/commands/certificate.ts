@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {fs, plist, tempDir, util} from 'appium/support';
 import {retryInterval, retry, waitForCondition} from 'asyncbox';
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
@@ -401,7 +401,7 @@ async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean
     timeout: 15000,
   });
   // Wait until Preferences are opened
-  await B.delay(2000);
+  await delay(2000);
 
   // Go through Preferences wizard
   if (
@@ -413,7 +413,7 @@ async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean
   }
   // We need to click Install button on two different tabs
   // The second one confirms the previous
-  await B.delay(1500);
+  await delay(1500);
   await clickElement(driver, Button.Install);
   // Accept alert
   await clickElement(driver, Alert.Install);
@@ -467,7 +467,7 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
     timeout: 15000,
   });
   // Wait for the second alert
-  await B.delay(2000);
+  await delay(2000);
 
   await driver.postAcceptAlert();
   await driver.activateApp('com.apple.Preferences');
@@ -512,7 +512,7 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
   ) {
     return false;
   }
-  await B.delay(1500);
+  await delay(1500);
   // Confirm untrusted cert install
   await clickElement(driver, Button.Install);
   // Accept alert

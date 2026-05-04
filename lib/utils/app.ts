@@ -1,14 +1,13 @@
 import _ from 'lodash';
 import path from 'node:path';
 import {plist, fs, util, tempDir, zip, timing} from 'appium/support';
-import {log} from './logger';
+import {log} from '../logger';
 import os from 'node:os';
 import {exec} from 'teen_process';
-import B from 'bluebird';
 import {spawn} from 'node:child_process';
 import assert from 'node:assert';
-import {isTvOs} from './utils';
-import type {XCUITestDriver, XCUITestDriverOpts} from './driver';
+import {isTvOs} from './driver';
+import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
 import type {
   StringRecord,
   HTTPHeaders,
@@ -86,7 +85,7 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
     this.opts.app,
     await this.appInfosCache.extractExecutableName(this.opts.app),
   );
-  const [resFile, resUname] = await B.all([
+  const [resFile, resUname] = await Promise.all([
     exec('lipo', ['-info', executablePath]),
     exec('uname', ['-m']),
   ]);
@@ -285,7 +284,7 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   });
   zipStream.pipe(bsdtarProcess.stdin);
   try {
-    await new B((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       zipStream.once('error', reject);
       bsdtarProcess.once('exit', (code, signal) => {
         zipStream.unpipe(bsdtarProcess.stdin);
@@ -532,7 +531,7 @@ async function downloadIpa(
     const writer = fs.createWriteStream(ipaPath);
     stream.pipe(writer);
 
-    await new B((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       stream.once('error', reject);
       writer.once('finish', resolve);
       writer.once('error', (e) => {

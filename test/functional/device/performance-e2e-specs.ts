@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import chai, {expect} from 'chai';
@@ -30,7 +30,7 @@ describe('XCUITestDriver - performance', function () {
       await driver.execute('mobile: startPerfRecord', {
         profileName,
       });
-      await B.delay(5000);
+      await delay(5000);
       expect(
         await driver.execute('mobile: stopPerfRecord', {
           profileName,

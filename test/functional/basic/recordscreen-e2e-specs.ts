@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {expect} from 'chai';
 import {fs, tempDir} from 'appium/support';
 import {exec} from 'teen_process';
@@ -38,7 +38,7 @@ describe('XCUITestDriver - simulator screen recording (MJPEG + ffmpeg)', functio
       forceRestart: true,
     });
 
-    await B.delay(3000);
+    await delay(3000);
 
     const b64 = (await driver.execute('mobile: stopScreenRecording', {})) as unknown as string;
     expect(b64, 'stopScreenRecording should return base64 payload')

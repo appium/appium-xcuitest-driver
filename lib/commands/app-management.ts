@@ -2,9 +2,13 @@ import _ from 'lodash';
 import {fs, util} from 'appium/support';
 import {errors} from 'appium/driver';
 import path from 'node:path';
-import B from 'bluebird';
-import {SUPPORTED_EXTENSIONS, onPostConfigureApp, onDownloadApp} from '../app-utils';
-import {requireRealDevice, isIos18OrNewer} from '../utils';
+import {
+  SUPPORTED_EXTENSIONS,
+  onPostConfigureApp,
+  onDownloadApp,
+  requireRealDevice,
+  isIos18OrNewer,
+} from '../utils';
 import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
 import type {AppState} from './enum';
@@ -318,7 +322,7 @@ export async function mobileClearApp(this: XCUITestDriver, bundleId: string): Pr
     return false;
   }
 
-  await B.all(items.map((item) => fs.rimraf(path.join(dataRoot, item))));
+  await Promise.all(items.map((item) => fs.rimraf(path.join(dataRoot, item))));
   this.log.info(
     `Cleaned up ${util.pluralize('item', items.length, true)} from ${bundleId}'s data container`,
   );

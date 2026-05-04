@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import B from 'bluebird';
 import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
 import {IOSCrashLog} from '../device/log/ios-crash-log';
 import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
@@ -200,9 +199,9 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         this.log.warn(`Continuing without capturing device logs: ${err.message}`);
       }
     })(),
-    this.logs.crashlog?.startCapture() ?? B.resolve(),
+    this.logs.crashlog?.startCapture() ?? Promise.resolve(),
   ];
-  await B.all(promises);
+  await Promise.all(promises);
 
   return didStartSyslog;
 }

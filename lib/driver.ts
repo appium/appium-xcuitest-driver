@@ -14,18 +14,32 @@ import type {
 } from '@appium/types';
 import AsyncLock from 'async-lock';
 import {retryInterval} from 'asyncbox';
-import B from 'bluebird';
 import _ from 'lodash';
 import {LRUCache} from 'lru-cache';
 import EventEmitter from 'node:events';
 import path from 'node:path';
+import {setTimeout as delay} from 'node:timers/promises';
 import {
   SUPPORTED_EXTENSIONS,
   SAFARI_BUNDLE_ID,
   onPostConfigureApp,
   onDownloadApp,
   verifyApplicationPlatform,
-} from './app-utils';
+  DEFAULT_TIMEOUT_KEY,
+  UDID_AUTO,
+  checkAppPresent,
+  clearSystemFiles,
+  getAndCheckIosSdkVersion,
+  getAndCheckXcodeVersion,
+  getDriverInfo,
+  isLocalHost,
+  markSystemFilesForCleanup,
+  normalizeCommandTimeouts,
+  normalizePlatformVersion,
+  printUser,
+  removeAllSessionWebSocketHandlers,
+  shouldSetInitialSafariUrl,
+} from './utils';
 import * as activeAppInfoCommands from './commands/active-app-info';
 import * as alertCommands from './commands/alert';
 import * as appManagementCommands from './commands/app-management';
@@ -94,22 +108,6 @@ import {
   shutdownOtherSimulators,
   shutdownSimulator,
 } from './device/simulator-management';
-import {
-  DEFAULT_TIMEOUT_KEY,
-  UDID_AUTO,
-  checkAppPresent,
-  clearSystemFiles,
-  getAndCheckIosSdkVersion,
-  getAndCheckXcodeVersion,
-  getDriverInfo,
-  isLocalHost,
-  markSystemFilesForCleanup,
-  normalizeCommandTimeouts,
-  normalizePlatformVersion,
-  printUser,
-  removeAllSessionWebSocketHandlers,
-  shouldSetInitialSafariUrl,
-} from './utils';
 import {AppInfosCache} from './app-infos-cache';
 import {notifyBiDiContextChange} from './commands/context';
 import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
@@ -781,7 +779,8 @@ export class XCUITestDriver
     this._waitingAtoms = {
       count: 0,
       alertNotifier: new EventEmitter(),
-      alertMonitor: B.resolve(),
+      alertMonitor: undefined,
+      alertMonitorAbortController: undefined,
     };
     this.resetIos();
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
@@ -917,7 +916,7 @@ export class XCUITestDriver
     this._networkMonitorSession = null;
 
     if (!_.isEmpty(this._perfRecorders)) {
-      await B.all(this._perfRecorders.map((x) => x.stop(true)));
+      await Promise.all(this._perfRecorders.map((x) => x.stop(true)));
       this._perfRecorders = [];
     }
 
@@ -1512,7 +1511,7 @@ export class XCUITestDriver
         this.log.info(`Setting ${optName} to ${this.opts[optName]}`);
         return device[`set${_.upperFirst(optName)}`](this.opts[optName]);
       });
-    await B.all(promises);
+    await Promise.all(promises);
 
     this.logEvent('simStarted');
   }
@@ -2087,7 +2086,7 @@ export class XCUITestDriver
         // https://github.com/appium/appium/issues/6889
         const pauseMs = this.opts.iosInstallPause;
         this.log.debug(`iosInstallPause set. Pausing ${pauseMs} ms before continuing`);
-        await B.delay(pauseMs);
+        await delay(pauseMs);
       }
       this.logEvent('appInstalled');
     }
@@ -2105,7 +2104,7 @@ export class XCUITestDriver
       return;
     }
 
-    const appPaths: string[] = await B.all(
+    const appPaths: string[] = await Promise.all(
       appsList.map((app) =>
         this.helpers.configureApp(app, {
           onPostProcess: onPostConfigureApp.bind(this),
@@ -2114,7 +2113,7 @@ export class XCUITestDriver
         }),
       ),
     );
-    const appIds: string[] = await B.all(
+    const appIds: string[] = await Promise.all(
       appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)),
     );
     for (const [appId, appPath] of _.zip(appIds, appPaths)) {
@@ -2211,7 +2210,8 @@ export class XCUITestDriver
     this._waitingAtoms = {
       count: 0,
       alertNotifier: new EventEmitter(),
-      alertMonitor: B.resolve(),
+      alertMonitor: undefined,
+      alertMonitorAbortController: undefined,
     };
   }
 

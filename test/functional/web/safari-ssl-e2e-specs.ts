@@ -1,5 +1,6 @@
-import B from 'bluebird';
 import https from 'node:https';
+import {promisify} from 'node:util';
+import {setTimeout as delay} from 'node:timers/promises';
 import {getFreePort} from '../helpers/ports';
 import os from 'node:os';
 import _pem from 'pem';
@@ -12,7 +13,8 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
-const pem = B.promisifyAll(_pem);
+const createPrivateKeyAsync = promisify(_pem.createPrivateKey);
+const createCertificateAsync = promisify(_pem.createCertificate);
 
 let caps;
 let pemCertificate;
@@ -28,8 +30,8 @@ describe('Safari SSL', function () {
 
   before(async function () {
     // Create a random pem certificate
-    const privateKey = await pem.createPrivateKeyAsync();
-    const keys = await pem.createCertificateAsync({
+    const privateKey = await createPrivateKeyAsync();
+    const keys = await createCertificateAsync({
       days: 1,
       selfSigned: true,
       serviceKey: privateKey.key,
@@ -77,7 +79,7 @@ describe('Safari SSL', function () {
       await deleteSession();
     }
 
-    await B.delay(100);
+    await delay(100);
 
     // Now do another session using the same cert to verify that it still works
     try {

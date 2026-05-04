@@ -1,8 +1,14 @@
 import _ from 'lodash';
-import B, {TimeoutError} from 'bluebird';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
+import {asyncmap} from 'asyncbox';
 import path from 'node:path';
-import {buildSafariPreferences, SAFARI_BUNDLE_ID} from '../app-utils';
+import {
+  buildSafariPreferences,
+  SAFARI_BUNDLE_ID,
+  isIos18OrNewer,
+  withTimeout,
+  TimeoutError,
+} from '../utils';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
 import type {AppiumLogger} from '@appium/types';
@@ -12,7 +18,6 @@ import {ConnectedDevicesClient} from './connected-devices-client';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {NotificationClient} from './notification-client';
 import {LockdownClient} from './lockdown-client';
-import {isIos18OrNewer} from '../utils';
 import {AppTerminationClient} from './app-termination-client';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
@@ -159,7 +164,8 @@ export class RealDevice {
         await installationClient.installApplication(bundlePathOnPhone, clientOptions, timeout);
       }
       try {
-        await B.resolve(appInstalledNotification).timeout(
+        await withTimeout(
+          appInstalledNotification,
           APPLICATION_NOTIFICATION_TIMEOUT_MS,
           `Could not get the application installed notification within ` +
             `${APPLICATION_NOTIFICATION_TIMEOUT_MS}ms but we will continue`,
@@ -322,7 +328,8 @@ export class RealDevice {
  * @returns The file content as a buffer
  */
 export async function pullFile(client: AfcClient, remotePath: string): Promise<Buffer> {
-  return await B.resolve(client.getFileContents(remotePath)).timeout(
+  return await withTimeout(
+    client.getFileContents(remotePath),
     IO_TIMEOUT_MS,
     `Timed out after ${IO_TIMEOUT_MS}ms while pulling file from '${remotePath}'`,
   );
@@ -405,7 +412,8 @@ export async function pushFile(
 
   // Wrap with timeout
   const actualTimeout = Math.max(timeoutMs, 60000);
-  await B.resolve(pushPromise).timeout(
+  await withTimeout(
+    pushPromise,
     actualTimeout,
     `Timed out after ${actualTimeout}ms while pushing file to '${remotePath}'`,
   );
@@ -482,7 +490,8 @@ export async function pushFolder(
 
     const pushPromise = client.writeFromStream(absoluteDestinationPath, readStream);
     const actualTimeout = Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000);
-    await B.resolve(pushPromise).timeout(
+    await withTimeout(
+      pushPromise,
       actualTimeout,
       `Timed out after ${actualTimeout}ms while pushing '${relativePath}' to '${absoluteDestinationPath}'`,
     );
@@ -490,31 +499,20 @@ export async function pushFolder(
 
   if (enableParallelPush) {
     defaultLogger.debug(`Proceeding to parallel files push (max ${MAX_IO_CHUNK_SIZE} writers)`);
-    const pushPromises: B<void>[] = [];
-    for (const relativeFilePath of filesToPush) {
-      pushPromises.push(B.resolve(_pushFile(relativeFilePath)));
-      // keep the push queue filled
-      if (pushPromises.length >= MAX_IO_CHUNK_SIZE) {
-        await B.any(pushPromises);
-        const elapsedMs = timer.getDuration().asMilliSeconds;
-        if (elapsedMs > timeoutMs) {
-          throw new TimeoutError(`Timed out after ${elapsedMs} ms`);
-        }
-      }
-      for (let i = pushPromises.length - 1; i >= 0; i--) {
-        if (pushPromises[i].isFulfilled()) {
-          pushPromises.splice(i, 1);
-        }
-      }
-    }
-    if (!_.isEmpty(pushPromises)) {
-      const remainingPromises = pushPromises.filter((p) => !p.isFulfilled());
-      if (remainingPromises.length > 0) {
-        await B.all(remainingPromises).timeout(
-          Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000),
-        );
-      }
-    }
+    await withTimeout(
+      asyncmap(
+        filesToPush,
+        async (relativeFilePath) => {
+          await _pushFile(relativeFilePath);
+          const elapsedMs = timer.getDuration().asMilliSeconds;
+          if (elapsedMs > timeoutMs) {
+            throw new TimeoutError(`Timed out after ${elapsedMs} ms`);
+          }
+        },
+        {concurrency: MAX_IO_CHUNK_SIZE},
+      ),
+      Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000),
+    );
   } else {
     defaultLogger.debug(`Proceeding to serial files push`);
     for (const relativeFilePath of filesToPush) {

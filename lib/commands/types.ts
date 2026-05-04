@@ -1,5 +1,4 @@
 import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
-import type B from 'bluebird';
 import type {EventEmitter} from 'node:events';
 import type {Page} from '../types';
 import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
@@ -169,7 +168,8 @@ export type ContainerRootSupplier = (
 export interface WaitingAtoms {
   count: number;
   alertNotifier: EventEmitter;
-  alertMonitor: B<void>;
+  alertMonitor?: Promise<void>;
+  alertMonitorAbortController?: AbortController;
 }
 
 export interface ContainerObject {
