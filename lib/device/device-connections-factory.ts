@@ -158,6 +158,8 @@ class RemotexpcPortForwarder implements PortForwarder {
     this.forwarder.on('upstreamConnectError', this.onUpstreamConnectError);
     this.forwarder.on('clientDisconnected', this.onClientDisconnected);
     this.forwarder.on('upstreamDisconnected', this.onUpstreamDisconnected);
+    this.forwarder.on('clientConnected', this.onClientConnected);
+    this.forwarder.on('upstreamConnected', this.onUpstreamConnected);
     try {
       await this.forwarder.start();
     } catch (e) {
@@ -181,7 +183,29 @@ class RemotexpcPortForwarder implements PortForwarder {
     this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
     this.forwarder.off('clientDisconnected', this.onClientDisconnected);
     this.forwarder.off('upstreamDisconnected', this.onUpstreamDisconnected);
+    this.forwarder.off('clientConnected', this.onClientConnected);
+    this.forwarder.off('upstreamConnected', this.onUpstreamConnected);
   }
+
+  private adjustSocketOptions(socket: Socket): void {
+    socket.setTimeout(0);
+    socket.setNoDelay(true);
+    socket.setKeepAlive(true, 30_000);
+  }
+
+  private readonly onClientConnected = (socket: Socket) => {
+    this.log.debug(
+      `RemoteXPC downstream socket connected (local ${this.localPort} -> device ${this.devicePort})`,
+    );
+    this.adjustSocketOptions(socket);
+  };
+
+  private readonly onUpstreamConnected = (socket: Socket) => {
+    this.log.debug(
+      `RemoteXPC upstream socket connected (local ${this.localPort} -> device ${this.devicePort})`,
+    );
+    this.adjustSocketOptions(socket);
+  };
 
   private readonly onUpstreamConnectError = (err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err);
