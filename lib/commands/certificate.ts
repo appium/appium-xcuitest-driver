@@ -385,6 +385,9 @@ async function clickElement(
       lookupDelay,
       () => driver.findNativeElementOrElements(locator.type, locator.value, false),
     );
+    if (!element) {
+      throw new Error(`Cannot find ${JSON.stringify(locator)} within ${timeout}ms timeout`);
+    }
     await driver.nativeClick(element);
     return true;
   } catch {
