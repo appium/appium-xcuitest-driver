@@ -185,7 +185,7 @@ class RemotexpcPortForwarder implements PortForwarder {
 
   private readonly onUpstreamConnectError = (err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err);
-    this.log.info(
+    this.log.warn(
       `RemoteXPC upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
     );
   };
