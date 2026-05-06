@@ -11,6 +11,7 @@ import {
   tryGetRemoteXPCUsbMuxStrategy,
 } from './remotexpc-utils';
 import {isIos18OrNewerPlatform} from '../utils';
+import type {Socket} from 'node:net';
 
 const LOCALHOST = '127.0.0.1';
 const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
@@ -155,12 +156,12 @@ class RemotexpcPortForwarder implements PortForwarder {
 
   async start(): Promise<void> {
     this.forwarder.on('upstreamConnectError', this.onUpstreamConnectError);
-    this.forwarder.on('error', this.onAbsorbForwarderError);
+    this.forwarder.on('clientDisconnected', this.onClientDisconnected);
+    this.forwarder.on('upstreamDisconnected', this.onUpstreamDisconnected);
     try {
       await this.forwarder.start();
     } catch (e) {
-      this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
-      this.forwarder.off('error', this.onAbsorbForwarderError);
+      this.cleanupForwarder();
       throw e;
     }
 
@@ -169,18 +170,48 @@ class RemotexpcPortForwarder implements PortForwarder {
 
   async stop(): Promise<void> {
     this.termination.dispose();
-    this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
-    this.forwarder.off('error', this.onAbsorbForwarderError);
-    await this.forwarder.stop();
+    try {
+      await this.forwarder.stop();
+    } finally {
+      this.cleanupForwarder();
+    }
   }
 
-  /** Same payload as `upstreamConnectError`; absorbed so Node does not throw on unhandled `error`. */
-  private readonly onAbsorbForwarderError = (): void => {};
+  private cleanupForwarder(): void {
+    this.forwarder.off('upstreamConnectError', this.onUpstreamConnectError);
+    this.forwarder.off('clientDisconnected', this.onClientDisconnected);
+    this.forwarder.off('upstreamDisconnected', this.onUpstreamDisconnected);
+  }
+
   private readonly onUpstreamConnectError = (err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err);
-    this.log.debug(
-      `RemoteXPC port forwarder upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
+    this.log.info(
+      `RemoteXPC upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
     );
+  };
+
+  private readonly onClientDisconnected = (_socket: Socket, err?: Error): void => {
+    if (err) {
+      this.log.warn(
+        `RemoteXPC downstream socket error (local ${this.localPort} -> device ${this.devicePort}): ${err.message}`,
+      );
+    } else {
+      this.log.debug(
+        `RemoteXPC downstream socket disconnected (local ${this.localPort} -> device ${this.devicePort})`,
+      );
+    }
+  };
+
+  private readonly onUpstreamDisconnected = (_socket: Socket, err?: Error): void => {
+    if (err) {
+      this.log.warn(
+        `RemoteXPC upstream socket error (local ${this.localPort} -> device ${this.devicePort}): ${err.message}`,
+      );
+    } else {
+      this.log.debug(
+        `RemoteXPC upstream socket disconnected (local ${this.localPort} -> device ${this.devicePort})`,
+      );
+    }
   };
 
   /** Best-effort stop when the process receives SIGINT/SIGTERM (errors are logged, not thrown). */
