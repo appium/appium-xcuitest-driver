@@ -12,6 +12,7 @@ import {isIos18OrNewer, requireRealDevice} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
+import type {Element} from '@appium/types';
 
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];
@@ -379,23 +380,27 @@ async function clickElement(
 ): Promise<boolean> {
   const {timeout = 5000, skipIfInvisible = false} = options;
   const lookupDelay = 500;
+  let element: Element | null;
   try {
-    const element = await retryInterval(
+    element = await retryInterval(
       timeout < lookupDelay ? 1 : timeout / lookupDelay,
       lookupDelay,
       () => driver.findNativeElementOrElements(locator.type, locator.value, false),
     );
-    if (!element) {
-      throw new Error(`Cannot find ${JSON.stringify(locator)} within ${timeout}ms timeout`);
-    }
-    await driver.nativeClick(element);
-    return true;
   } catch {
     if (skipIfInvisible) {
       return false;
     }
     throw new Error(`Cannot find ${JSON.stringify(locator)} within ${timeout}ms timeout`);
   }
+  if (!element) {
+    if (skipIfInvisible) {
+      return false;
+    }
+    throw new Error(`Cannot find ${JSON.stringify(locator)} within ${timeout}ms timeout`);
+  }
+  await driver.nativeClick(element);
+  return true;
 }
 
 async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean> {
