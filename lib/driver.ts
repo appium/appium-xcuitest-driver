@@ -1255,6 +1255,7 @@ export class XCUITestDriver
           `Cannot ensure MJPEG broadcast functionality by forwarding the local port ${mjpegServerPort} ` +
             `requested by the 'mjpegServerPort' capability to the device port ${mjpegServerPort}. ` +
             `Original error: ${error}`,
+          {cause: error},
         );
       }
     }
@@ -1660,7 +1661,7 @@ export class XCUITestDriver
             if (this.isRealDevice()) {
               errorMsg += ` ${WDA_REAL_DEV_TUTORIAL_URL} may help to complete the preparation.`;
             }
-            throw new Error(errorMsg);
+            throw new Error(errorMsg, {cause: err});
           } else {
             await quitAndUninstall(errorMsg);
           }
@@ -1688,7 +1689,7 @@ export class XCUITestDriver
           if (this.isRealDevice() && _.includes(err.message, 'xcodebuild')) {
             errorMsg += ` Make sure you follow the tutorial at ${WDA_REAL_DEV_TUTORIAL_URL}.`;
           }
-          throw new Error(errorMsg);
+          throw new Error(errorMsg, {cause: err});
         }
 
         if (this.opts.clearSystemFiles && this.isXcodebuildNeeded()) {

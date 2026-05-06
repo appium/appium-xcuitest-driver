@@ -128,7 +128,7 @@ export class RealDevice {
         errMessage += `. Consider increasing the value of 'appPushTimeout' capability (the current value equals to ${timeoutMs}ms)`;
       }
       errMessage += `. Original error: ${(err as Error).message}`;
-      throw new Error(errMessage);
+      throw new Error(errMessage, {cause: err});
     } finally {
       await afcClient.close();
     }

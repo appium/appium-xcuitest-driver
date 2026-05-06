@@ -368,6 +368,7 @@ async function pushFileToRealDevice(
     this.log.debug((e as Error).stack);
     throw new Error(
       `Could not push the file to '${remotePath}'. Original error: ${(e as Error).message}`,
+      {cause: e},
     );
   } finally {
     await client.close();
@@ -528,7 +529,7 @@ async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): P
     await client.deleteDirectory(relativePath);
   } catch (e) {
     if ((e as Error).message.includes(OBJECT_NOT_FOUND_ERROR_MESSAGE)) {
-      throw new Error(`Path '${remotePath}' does not exist on the device`);
+      throw new Error(`Path '${remotePath}' does not exist on the device`, {cause: e});
     }
     throw e;
   } finally {

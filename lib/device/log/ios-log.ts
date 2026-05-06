@@ -46,13 +46,10 @@ export abstract class IOSLog<TRawEntry, TSerializedEntry extends object> extends
   }
 
   protected broadcast(entry: TRawEntry): void {
-    let recentIndex = -1;
-    for (const key of this.logs.keys()) {
-      recentIndex = key;
-      break;
-    }
+    const firstKey = this.logs.keys().next().value;
+    const recentIndex = typeof firstKey === 'number' ? firstKey : -1;
     const serializedEntry = this._serializeEntry(entry);
-    this.logs.set(++recentIndex, serializedEntry);
+    this.logs.set(recentIndex + 1, serializedEntry);
     if (this.listenerCount('output')) {
       this.emit('output', this._deserializeEntry(serializedEntry));
     }

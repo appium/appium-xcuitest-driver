@@ -66,7 +66,7 @@ describe('XCUITestDriver - find -', function () {
     });
 
     it('should not allow found elements to be mixed up', async function () {
-      let table = await driver.$('XCUIElementTypeTable');
+      const table = await driver.$('XCUIElementTypeTable');
       const el1 = await table.$('XCUIElementTypeStaticText');
       const el1Name = await el1.getAttribute('name');
       await el1.click();
@@ -76,7 +76,6 @@ describe('XCUITestDriver - find -', function () {
       await delay(1000);
 
       await driver.setTimeout({implicit: 5000});
-      table = await driver.$('XCUIElementTypeTable');
       const el2 = await driver.$('XCUIElementTypeStaticText');
       const el2Name = await el2.getAttribute('name');
       expect(el1).to.not.equal(el2);

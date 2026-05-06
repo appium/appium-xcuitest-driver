@@ -68,6 +68,7 @@ export class CertificateClient {
       throw new Error(
         `Failed to start RemoteXPC mobile config service for certificate operations: ${err.message}. ` +
           'Ensure appium-ios-remotexpc is installed and the device is supported.',
+        {cause: err},
       );
     } finally {
       if (remoteXPCConnection && !succeeded) {

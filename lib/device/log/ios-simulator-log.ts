@@ -1,8 +1,10 @@
 import _ from 'lodash';
-import {SubProcess, exec} from 'teen_process';
+import {exec} from 'teen_process';
 import {util} from 'appium/support';
 import {LineConsumingLog} from './line-consuming-log';
-import {transports, createLogger, format, Logger} from 'winston';
+import {transports, createLogger, format} from 'winston';
+import type {SubProcess} from 'teen_process';
+import type {Logger} from 'winston';
 import type {Simulator} from 'appium-ios-simulator';
 import type {AppiumLogger} from '@appium/types';
 import fs from 'node:fs/promises';
@@ -86,7 +88,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       await this.finishStartingLogCapture();
     } catch (e) {
       this.shutdownSyslogger();
-      throw new Error(`Simulator log capture failed. Original error: ${e.message}`);
+      throw new Error(`Simulator log capture failed. Original error: ${e.message}`, {cause: e});
     }
   }
 

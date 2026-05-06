@@ -303,7 +303,7 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   } catch (err: any) {
     bsdtarProcess.kill(9);
     await fs.rimraf(tmpRoot);
-    throw new Error(`The response data cannot be unzipped: ${err.message}`);
+    throw new Error(`The response data cannot be unzipped: ${err.message}`, {cause: err});
   } finally {
     bsdtarProcess.removeAllListeners();
     zipStream.removeAllListeners();
@@ -540,7 +540,7 @@ async function downloadIpa(
       });
     });
   } catch (err: any) {
-    throw new Error(`Cannot fetch the remote file: ${err.message}`);
+    throw new Error(`Cannot fetch the remote file: ${err.message}`, {cause: err});
   }
   const {size} = await fs.stat(ipaPath);
   logPerformance(ipaPath, size, 'downloaded');
@@ -630,7 +630,9 @@ async function unzipApp(
     }
   } catch (e: any) {
     this.log.debug(e.stack);
-    throw new Error(`Cannot prepare the application for testing. Original error: ${e.message}`);
+    throw new Error(`Cannot prepare the application for testing. Original error: ${e.message}`, {
+      cause: e,
+    });
   }
   const secondsElapsed = timer.getDuration().asSeconds;
   this.log.info(

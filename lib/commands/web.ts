@@ -554,7 +554,7 @@ export async function getExtraTranslateWebCoordsOffset(
   wvPos: {x: number; y: number},
   realDims: {w: number; h: number},
 ): Promise<void> {
-  let topOffset = 0;
+  let topOffset: number;
   let bottomOffset = 0;
 
   const isIphone = await this.getSafariIsIphone();
@@ -993,7 +993,7 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(
         ? (title as unknown as Position)
         : (JSON.parse(title) as Position);
     } catch (e: any) {
-      throw new Error(`${errorPrefix} Original error: ${e.message}`);
+      throw new Error(`${errorPrefix} Original error: ${e.message}`, {cause: e});
     }
     const {x, y} = result;
     if (!_.isInteger(x) || !_.isInteger(y)) {

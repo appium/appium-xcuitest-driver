@@ -150,6 +150,7 @@ export async function mobileInstallCertificate(
     } catch (err) {
       throw new Error(
         `Cannot store the generated config as '${configPath}'. ` + `Original error: ${err.message}`,
+        {cause: err},
       );
     }
 
@@ -327,6 +328,7 @@ async function extractCommonName(certBuffer: Buffer): Promise<string> {
     throw new Error(
       `Cannot parse common name value from the certificate. Is it valid and base64-encoded? ` +
         `Original error: ${err.message}`,
+      {cause: err},
     );
   } finally {
     await fs.rimraf(tempCert.path);
@@ -375,23 +377,22 @@ async function clickElement(
   locator: {type: string; value: string},
   options: {timeout?: number; skipIfInvisible?: boolean} = {},
 ): Promise<boolean> {
-  let element: any = null;
   const {timeout = 5000, skipIfInvisible = false} = options;
   const lookupDelay = 500;
   try {
-    element = await retryInterval(
+    const element = await retryInterval(
       timeout < lookupDelay ? 1 : timeout / lookupDelay,
       lookupDelay,
       () => driver.findNativeElementOrElements(locator.type, locator.value, false),
     );
+    await driver.nativeClick(element);
+    return true;
   } catch {
     if (skipIfInvisible) {
       return false;
     }
     throw new Error(`Cannot find ${JSON.stringify(locator)} within ${timeout}ms timeout`);
   }
-  await driver.nativeClick(element);
-  return true;
 }
 
 async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean> {

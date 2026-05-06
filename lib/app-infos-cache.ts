@@ -136,6 +136,7 @@ export class AppInfosCache {
       this.log.debug(e.stack);
       throw new Error(
         `Cannot find ${MANIFEST_FILE_NAME} in '${ipaPath}'. Is it a valid application bundle?`,
+        {cause: e},
       );
     }
     if (!manifestPayload) {
@@ -184,6 +185,7 @@ export class AppInfosCache {
       this.log.debug(e.stack);
       throw new Error(
         `Cannot parse ${MANIFEST_FILE_NAME} of '${bundlePath}'. Is it a valid application bundle?`,
+        {cause: e},
       );
     }
   }

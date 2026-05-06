@@ -57,12 +57,8 @@ export async function markSystemFilesForCleanup(wda: any): Promise<void> {
   }
 
   const logsRoot = path.resolve(await wda.retrieveDerivedDataPath(), 'Logs');
-  let markersCount = 0;
-  const existingCount = derivedDataCleanupMarkers.get(logsRoot);
-  if (existingCount !== undefined) {
-    markersCount = existingCount;
-  }
-  derivedDataCleanupMarkers.set(logsRoot, ++markersCount);
+  const markersCount = derivedDataCleanupMarkers.get(logsRoot) ?? 0;
+  derivedDataCleanupMarkers.set(logsRoot, markersCount + 1);
 }
 
 /** Cleans per-session WDA logs and stale XCTest temporary logs. */

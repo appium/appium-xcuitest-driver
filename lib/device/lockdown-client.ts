@@ -206,6 +206,7 @@ export class LockdownClient {
       throw new Error(
         `Failed to read lockdown via appium-ios-remotexpc USBMUX path for '${this.udid}': ` +
           `${(err as Error).message}`,
+        {cause: err},
       );
     }
   }
@@ -260,7 +261,9 @@ export class LockdownClient {
         lockdown.close();
       }
     } catch (err) {
-      throw new Error(`Tunnel lockdown failed for '${this.udid}': ${(err as Error).message}`);
+      throw new Error(`Tunnel lockdown failed for '${this.udid}': ${(err as Error).message}`, {
+        cause: err,
+      });
     }
   }
 }

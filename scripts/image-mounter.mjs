@@ -49,7 +49,7 @@ class ImageMounter {
       return absolutePath;
     } catch (error) {
       if (error.code === 'ENOENT') {
-        throw new Error(`${fileType} file not found: ${absolutePath}`);
+        throw new Error(`${fileType} file not found: ${absolutePath}`, {cause: error});
       }
       throw error;
     }

@@ -386,6 +386,7 @@ async function requireXctrace(): Promise<string> {
     throw new Error(
       `${XCTRACE} is not available for the active Xcode version. ` +
         `Please make sure XCode is up to date. Original error: ${e.stderr || e.message}`,
+      {cause: e},
     );
   }
   return xcrunPath;

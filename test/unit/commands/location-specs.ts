@@ -1,5 +1,6 @@
 import sinon from 'sinon';
-import {XCUITestDriver, XCUITestDriverOpts} from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver';
+import type {XCUITestDriverOpts} from '../../../lib/driver';
 import {services} from 'appium-ios-device';
 import {RealDevice} from '../../../lib/device/real-device-management';
 import {expect} from 'chai';
