@@ -76,14 +76,6 @@ async function downloadResigner(destDir) {
 
     log.info(`Extracting resigner from ${resignerArchive}`);
 
-    // Extract based on archive type
-    if (archiveName.endsWith('.zip')) {
-      await zip.extractAllTo(resignerArchive, destDir);
-    } else {
-      await exec('tar', ['xzf', resignerArchive, '-C', destDir]);
-    }
-
-    // Determine binary path based on platform
     const platform = process.platform;
     const arch = os.arch();
     const archDir = arch === 'arm64' ? 'arm64' : 'amd64';
