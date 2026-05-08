@@ -184,19 +184,27 @@ class TunnelCreator {
   async cleanup() {
     this._isCleaningUp = true;
     log.warn('Cleaning up tunnel resources...');
+    /** @type {Error[]} */
+    const cleanupErrors = [];
+    const recordCleanupError = (message, err) => {
+      const wrapped = err instanceof Error ? err : new Error(String(err));
+      cleanupErrors.push(new Error(message, {cause: wrapped}));
+      log.warn(`${message}: ${wrapped.message}`);
+    };
+
     while (this._registryWatcherStops.length > 0) {
       const stop = this._registryWatcherStops.pop();
       try {
         await stop?.();
       } catch (err) {
-        log.warn(`Failed to stop tunnel registry watcher: ${err}`);
+        recordCleanupError('Failed to stop tunnel registry watcher', err);
       }
     }
     if (this._registryServer) {
       try {
         await this._registryServer.stop();
       } catch (err) {
-        log.warn(`Failed to stop tunnel registry server: ${err}`);
+        recordCleanupError('Failed to stop tunnel registry server', err);
       } finally {
         this._registryServer = null;
       }
@@ -216,7 +224,7 @@ class TunnelCreator {
             await server.stop();
             log.info(`Closed packet stream server for device ${udid}`);
           } catch (err) {
-            log.warn(`Failed to close packet stream server for device ${udid}: ${err}`);
+            recordCleanupError(`Failed to close packet stream server for device ${udid}`, err);
           }
         }),
       );
@@ -241,11 +249,14 @@ class TunnelCreator {
     try {
       await TunnelManager.closeAllTunnels();
     } catch (err) {
-      log.warn(`Failed to close managed tunnel(s): ${err}`);
+      recordCleanupError('Failed to close managed tunnel(s)', err);
     }
     await Promise.allSettled([...this._reconnectTasks.values()]);
 
     log.info('Cleanup completed.');
+    if (cleanupErrors.length > 0) {
+      throw new AggregateError(cleanupErrors, 'Tunnel cleanup encountered errors');
+    }
   }
 
   /**
