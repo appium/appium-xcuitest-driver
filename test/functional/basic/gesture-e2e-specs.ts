@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {retryInterval} from 'asyncbox';
 import {getUICatalogCaps} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
@@ -33,7 +33,7 @@ describe('XCUITestDriver - gestures', function () {
     });
     afterEach(async function () {
       // wait a moment to allow anything to happen
-      await B.delay(500);
+      await delay(500);
     });
 
     describe('tap, press, longpress', function () {
@@ -108,12 +108,12 @@ describe('XCUITestDriver - gestures', function () {
       const steppers = await driver.$('~Steppers');
       await steppers.click();
 
-      await B.delay(1000);
+      await delay(1000);
       const stepper = await driver.$('~Increment');
       await driver.action('pointer').move({origin: stepper}).down().pause(500).up().perform();
       await driver.action('pointer').move({origin: stepper}).down().pause(500).up().perform();
 
-      await B.delay(1000);
+      await delay(1000);
       const num = await driver.$('~2');
       await expect(num.isExisting()).to.eventually.be.true;
     });

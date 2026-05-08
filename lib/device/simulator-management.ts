@@ -3,8 +3,7 @@ import {Simctl} from 'node-simctl';
 import {resetTestProcesses} from 'appium-webdriveragent';
 import _ from 'lodash';
 import {util, timing} from 'appium/support';
-import {UDID_AUTO, normalizePlatformName} from '../utils';
-import {buildSafariPreferences} from '../app-utils';
+import {UDID_AUTO, normalizePlatformName, buildSafariPreferences} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {DeviceInfo} from 'node-simctl';
 

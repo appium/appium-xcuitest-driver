@@ -19,7 +19,7 @@ import {
   GUINEA_PIG_APP_BANNER_PAGE,
 } from './helpers';
 import {retryInterval} from 'asyncbox';
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -349,7 +349,7 @@ describe('Safari - coordinate conversion -', function () {
               }
 
               // time for things to happen
-              await B.delay(500);
+              await delay(500);
             } finally {
               await driver.switchContext(ctx);
             }

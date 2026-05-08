@@ -1,5 +1,5 @@
 import {errors, routeToCommandName} from 'appium/driver';
-import B from 'bluebird';
+import {withTimeout, TimeoutError} from '../utils';
 import type {XCUITestDriver} from '../driver';
 
 const GET = 'GET';
@@ -97,17 +97,19 @@ export async function proxyCommand<TReq = any, TRes = unknown>(
 
   this.log.debug(`Setting custom timeout to ${timeout} ms for '${cmdName}' command`);
   try {
-    return (await B.resolve(proxy.command(url, method, body)).timeout(timeout)) as TRes;
+    return (await withTimeout(
+      proxy.command(url, method, body),
+      timeout,
+      `The driver did not receive any response from the '${cmdName}' command within ${timeout} ms`,
+    )) as TRes;
   } catch (e) {
-    if (!(e instanceof B.Promise.TimeoutError)) {
+    if (!(e instanceof TimeoutError)) {
       throw e;
     }
     proxy.cancelActiveRequests();
-    const error = new errors.TimeoutError(
-      `Appium did not get any response from '${cmdName}' command in ${timeout} ms`,
-    );
-    await this.startUnexpectedShutdown(error);
-    throw error;
+    const domainError = new errors.TimeoutError(e.message);
+    await this.startUnexpectedShutdown(domainError);
+    throw domainError;
   }
 }
 

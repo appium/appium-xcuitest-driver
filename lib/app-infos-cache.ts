@@ -2,7 +2,6 @@ import _ from 'lodash';
 import path from 'node:path';
 import {plist, fs, tempDir, zip} from 'appium/support';
 import {LRUCache} from 'lru-cache';
-import B from 'bluebird';
 import type {AppiumLogger, StringRecord} from '@appium/types';
 
 const MANIFEST_CACHE = new LRUCache<string, StringRecord>({
@@ -137,6 +136,7 @@ export class AppInfosCache {
       this.log.debug(e.stack);
       throw new Error(
         `Cannot find ${MANIFEST_FILE_NAME} in '${ipaPath}'. Is it a valid application bundle?`,
+        {cause: e},
       );
     }
     if (!manifestPayload) {
@@ -160,7 +160,7 @@ export class AppInfosCache {
     if (cached) {
       return cached;
     }
-    const [payload, stat] = await B.all([
+    const [payload, stat] = await Promise.all([
       this._readPlist(manifestPath, appPath),
       fs.stat(manifestPath),
     ]);
@@ -185,6 +185,7 @@ export class AppInfosCache {
       this.log.debug(e.stack);
       throw new Error(
         `Cannot parse ${MANIFEST_FILE_NAME} of '${bundlePath}'. Is it a valid application bundle?`,
+        {cause: e},
       );
     }
   }

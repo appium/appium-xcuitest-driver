@@ -2,7 +2,7 @@ import {retryInterval} from 'asyncbox';
 import {getSimulator} from 'appium-ios-simulator';
 import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
 import {Simctl} from 'node-simctl';
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
 import {
   getUICatalogSimCaps,
@@ -219,7 +219,7 @@ describe('XCUITestDriver', function () {
       await sim.run();
 
       try {
-        await B.delay(2000);
+        await delay(2000);
 
         // test
         const uiCatalogSimCaps = await getUICatalogSimCaps();
@@ -272,7 +272,7 @@ describe('XCUITestDriver', function () {
 
       try {
         // some systems require a pause before initializing.
-        await B.delay(2000);
+        await delay(2000);
 
         // test
         const uiCatalogSimCaps = await getUICatalogSimCaps();

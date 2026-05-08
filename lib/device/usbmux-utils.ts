@@ -1,7 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
 import type {Usbmux} from 'appium-ios-remotexpc';
+import type * as RemoteXPCModule from 'appium-ios-remotexpc';
 
-type RemotexpcUsbmuxModuleLike = Pick<typeof import('appium-ios-remotexpc'), 'createUsbmux'>;
+type RemotexpcUsbmuxModuleLike = Pick<typeof RemoteXPCModule, 'createUsbmux'>;
 
 /**
  * Returns true when the given UDID is present in usbmux device listing.

@@ -54,6 +54,7 @@ export class CrashReportsClient {
       throw new Error(
         `Failed to create crash reports client via RemoteXPC: ${err.message}. ` +
           'Ensure appium-ios-remotexpc is installed and the device is supported.',
+        {cause: err},
       );
     } finally {
       if (remoteXPCConnection && !succeeded) {

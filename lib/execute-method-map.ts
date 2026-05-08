@@ -1,9 +1,9 @@
-import {ExecuteMethodMap} from '@appium/types';
+import type {ExecuteMethodMap} from '@appium/types';
 import {
   START_SCREEN_RECORDING_EXECUTE_OPTIONALS,
   STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS,
 } from './commands/recordscreen';
-import {XCUITestDriver} from './driver';
+import type {XCUITestDriver} from './driver';
 
 export const executeMethodMap = {
   'mobile: tap': {

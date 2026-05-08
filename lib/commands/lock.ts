@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import type {XCUITestDriver} from '../driver';
 
 /**
@@ -18,7 +18,7 @@ export async function lock(this: XCUITestDriver, seconds?: number | string): Pro
     return;
   }
 
-  await B.delay(floatSeconds * 1000);
+  await delay(floatSeconds * 1000);
   await this.proxyCommand('/wda/unlock', 'POST');
 }
 

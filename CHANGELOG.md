@@ -1,3 +1,31 @@
+## [11.2.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.2.2...v11.2.3) (2026-05-07)
+
+### Miscellaneous Chores
+
+* Bump appium-ios-device ([#2833](https://github.com/appium/appium-xcuitest-driver/issues/2833)) ([b3549bc](https://github.com/appium/appium-xcuitest-driver/commit/b3549bcc5e5e6809b0e7c1f19604c5a2d71693ad))
+
+## [11.2.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.2.1...v11.2.2) (2026-05-07)
+
+### Bug Fixes
+
+* linter ([#2832](https://github.com/appium/appium-xcuitest-driver/issues/2832)) ([0c88d79](https://github.com/appium/appium-xcuitest-driver/commit/0c88d79db9b835891edc7dc21ef6109dc266a95d))
+
+### Miscellaneous Chores
+
+* Improve logging in RemotexpcPortForwarder ([#2830](https://github.com/appium/appium-xcuitest-driver/issues/2830)) ([c0369db](https://github.com/appium/appium-xcuitest-driver/commit/c0369dbfcc16b18e396e65816fe76344c4ce39f0))
+
+## [11.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.2.0...v11.2.1) (2026-05-04)
+
+### Miscellaneous Chores
+
+* bump remotexpc to 1.1.2 ([#2828](https://github.com/appium/appium-xcuitest-driver/issues/2828)) ([aac9442](https://github.com/appium/appium-xcuitest-driver/commit/aac94425a032f8b6df757d112f11e249f375aca8))
+
+## [11.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.1.0...v11.2.0) (2026-05-04)
+
+### Features
+
+* Drop bluebird usage ([#2827](https://github.com/appium/appium-xcuitest-driver/issues/2827)) ([2a10f32](https://github.com/appium/appium-xcuitest-driver/commit/2a10f32682ac562a321cd44ca366b4425c9b04f6))
+
 ## [11.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.0.4...v11.1.0) (2026-05-01)
 
 ### Features

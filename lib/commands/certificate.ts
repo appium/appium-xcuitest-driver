@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {fs, plist, tempDir, util} from 'appium/support';
 import {retryInterval, retry, waitForCondition} from 'asyncbox';
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
@@ -12,6 +12,7 @@ import {isIos18OrNewer, requireRealDevice} from '../utils';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
+import type {Element} from '@appium/types';
 
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];
@@ -150,6 +151,7 @@ export async function mobileInstallCertificate(
     } catch (err) {
       throw new Error(
         `Cannot store the generated config as '${configPath}'. ` + `Original error: ${err.message}`,
+        {cause: err},
       );
     }
 
@@ -327,6 +329,7 @@ async function extractCommonName(certBuffer: Buffer): Promise<string> {
     throw new Error(
       `Cannot parse common name value from the certificate. Is it valid and base64-encoded? ` +
         `Original error: ${err.message}`,
+      {cause: err},
     );
   } finally {
     await fs.rimraf(tempCert.path);
@@ -375,9 +378,9 @@ async function clickElement(
   locator: {type: string; value: string},
   options: {timeout?: number; skipIfInvisible?: boolean} = {},
 ): Promise<boolean> {
-  let element: any = null;
   const {timeout = 5000, skipIfInvisible = false} = options;
   const lookupDelay = 500;
+  let element: Element | null;
   try {
     element = await retryInterval(
       timeout < lookupDelay ? 1 : timeout / lookupDelay,
@@ -385,6 +388,12 @@ async function clickElement(
       () => driver.findNativeElementOrElements(locator.type, locator.value, false),
     );
   } catch {
+    if (skipIfInvisible) {
+      return false;
+    }
+    throw new Error(`Cannot find ${JSON.stringify(locator)} within ${timeout}ms timeout`);
+  }
+  if (!element) {
     if (skipIfInvisible) {
       return false;
     }
@@ -401,7 +410,7 @@ async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean
     timeout: 15000,
   });
   // Wait until Preferences are opened
-  await B.delay(2000);
+  await delay(2000);
 
   // Go through Preferences wizard
   if (
@@ -413,7 +422,7 @@ async function installPre122Certificate(driver: XCUITestDriver): Promise<boolean
   }
   // We need to click Install button on two different tabs
   // The second one confirms the previous
-  await B.delay(1500);
+  await delay(1500);
   await clickElement(driver, Button.Install);
   // Accept alert
   await clickElement(driver, Alert.Install);
@@ -467,7 +476,7 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
     timeout: 15000,
   });
   // Wait for the second alert
-  await B.delay(2000);
+  await delay(2000);
 
   await driver.postAcceptAlert();
   await driver.activateApp('com.apple.Preferences');
@@ -512,7 +521,7 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
   ) {
     return false;
   }
-  await B.delay(1500);
+  await delay(1500);
   // Confirm untrusted cert install
   await clickElement(driver, Button.Install);
   // Accept alert

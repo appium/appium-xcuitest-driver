@@ -1,4 +1,4 @@
-import {parseLocalizableStrings} from '../app-utils';
+import {parseLocalizableStrings} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {StringRecord} from '@appium/types';
 

@@ -170,7 +170,7 @@ export async function doNativeFind(
   mult: boolean,
   context?: any,
 ): Promise<Element | Element[]> {
-  const ctx = util.unwrapElement(context ?? null);
+  const ctx = context ? util.unwrapElement(context) : null;
   const endpoint = `/element${ctx ? `/${ctx}/element` : ''}${mult ? 's' : ''}`;
 
   const body = {
@@ -181,15 +181,20 @@ export async function doNativeFind(
   const method: AllowedHttpMethod = 'POST';
 
   let els: Element[] | Element = [];
+  const performLookup = async () => {
+    try {
+      els = (await this.proxyCommand(endpoint, method, body)) as Element[] | Element;
+    } catch {
+      els = [] as Element[];
+    }
+    return !_.isEmpty(els as Element[]);
+  };
   try {
-    await this.implicitWaitForCondition(async () => {
-      try {
-        els = (await this.proxyCommand(endpoint, method, body)) as Element[] | Element;
-      } catch {
-        els = [] as Element[];
-      }
-      return !_.isEmpty(els as any[]);
-    });
+    if (!this.sessionId) {
+      await performLookup();
+    } else {
+      await this.implicitWaitForCondition(performLookup);
+    }
   } catch (err: any) {
     if (err.message?.match(/Condition unmet/)) {
       els = [] as Element[];

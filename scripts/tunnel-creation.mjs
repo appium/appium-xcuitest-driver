@@ -1040,7 +1040,7 @@ async function main() {
         }
       }
     } catch (error) {
-      throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`);
+      throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`, {cause: error});
     }
 
     /** @type {import('tls').ConnectionOptions} */

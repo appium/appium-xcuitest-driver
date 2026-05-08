@@ -1,14 +1,13 @@
 import _ from 'lodash';
 import path from 'node:path';
 import {plist, fs, util, tempDir, zip, timing} from 'appium/support';
-import {log} from './logger';
+import {log} from '../logger';
 import os from 'node:os';
 import {exec} from 'teen_process';
-import B from 'bluebird';
 import {spawn} from 'node:child_process';
 import assert from 'node:assert';
-import {isTvOs} from './utils';
-import type {XCUITestDriver, XCUITestDriverOpts} from './driver';
+import {isTvOs} from './driver';
+import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
 import type {
   StringRecord,
   HTTPHeaders,
@@ -86,7 +85,7 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
     this.opts.app,
     await this.appInfosCache.extractExecutableName(this.opts.app),
   );
-  const [resFile, resUname] = await B.all([
+  const [resFile, resUname] = await Promise.all([
     exec('lipo', ['-info', executablePath]),
     exec('uname', ['-m']),
   ]);
@@ -285,7 +284,7 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   });
   zipStream.pipe(bsdtarProcess.stdin);
   try {
-    await new B((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       zipStream.once('error', reject);
       bsdtarProcess.once('exit', (code, signal) => {
         zipStream.unpipe(bsdtarProcess.stdin);
@@ -304,7 +303,7 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   } catch (err: any) {
     bsdtarProcess.kill(9);
     await fs.rimraf(tmpRoot);
-    throw new Error(`The response data cannot be unzipped: ${err.message}`);
+    throw new Error(`The response data cannot be unzipped: ${err.message}`, {cause: err});
   } finally {
     bsdtarProcess.removeAllListeners();
     zipStream.removeAllListeners();
@@ -532,7 +531,7 @@ async function downloadIpa(
     const writer = fs.createWriteStream(ipaPath);
     stream.pipe(writer);
 
-    await new B((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       stream.once('error', reject);
       writer.once('finish', resolve);
       writer.once('error', (e) => {
@@ -541,7 +540,7 @@ async function downloadIpa(
       });
     });
   } catch (err: any) {
-    throw new Error(`Cannot fetch the remote file: ${err.message}`);
+    throw new Error(`Cannot fetch the remote file: ${err.message}`, {cause: err});
   }
   const {size} = await fs.stat(ipaPath);
   logPerformance(ipaPath, size, 'downloaded');
@@ -631,7 +630,9 @@ async function unzipApp(
     }
   } catch (e: any) {
     this.log.debug(e.stack);
-    throw new Error(`Cannot prepare the application for testing. Original error: ${e.message}`);
+    throw new Error(`Cannot prepare the application for testing. Original error: ${e.message}`, {
+      cause: e,
+    });
   }
   const secondsElapsed = timer.getDuration().asSeconds;
   this.log.info(

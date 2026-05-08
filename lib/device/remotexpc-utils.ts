@@ -2,10 +2,11 @@ import {node} from 'appium/support';
 import path from 'node:path';
 import {readFileSync} from 'node:fs';
 import type {AppiumLogger} from '@appium/types';
+import type * as RemoteXPCModule from 'appium-ios-remotexpc';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 
-export type RemoteXPCEsmModule = typeof import('appium-ios-remotexpc');
-export type RemoteXPCServices = typeof import('appium-ios-remotexpc').Services;
+export type RemoteXPCEsmModule = typeof RemoteXPCModule;
+export type RemoteXPCServices = RemoteXPCEsmModule['Services'];
 export type RemoteXPCTestRunner = RemoteXPCEsmModule['XCTestRunner'];
 
 /**
@@ -211,10 +212,10 @@ export async function getXCTestRunnerClass(): Promise<RemoteXPCTestRunner> {
     cachedXCTestRunnerClass = XCTestRunnerClass;
     return cachedXCTestRunnerClass;
   } catch (err) {
-    const error = err as Error;
     throw new Error(
       'Failed to import XCTestRunner from appium-ios-remotexpc. ' +
-        `Original error: ${error.message}`,
+        `Original error: ${(err as Error).message}`,
+      {cause: err},
     );
   }
 }

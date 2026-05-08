@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import _ from 'lodash';
 import {retryInterval} from 'asyncbox';
 import {extractCapabilityValue, getUICatalogCaps, PLATFORM_VERSION} from '../desired';
@@ -66,17 +66,16 @@ describe('XCUITestDriver - find -', function () {
     });
 
     it('should not allow found elements to be mixed up', async function () {
-      let table = await driver.$('XCUIElementTypeTable');
+      const table = await driver.$('XCUIElementTypeTable');
       const el1 = await table.$('XCUIElementTypeStaticText');
       const el1Name = await el1.getAttribute('name');
       await el1.click();
 
       // we need a hard pause, because if we haven't shifted views yet
       // we will have the previous elements, so the get command will be fulfilled.
-      await B.delay(1000);
+      await delay(1000);
 
       await driver.setTimeout({implicit: 5000});
-      table = await driver.$('XCUIElementTypeTable');
       const el2 = await driver.$('XCUIElementTypeStaticText');
       const el2Name = await el2.getAttribute('name');
       expect(el1).to.not.equal(el2);
@@ -174,7 +173,7 @@ describe('XCUITestDriver - find -', function () {
       });
       it('should search an extended path by child', async function () {
         // pause a moment or the next command gets stuck getting the xpath :(
-        await B.delay(TEST_PAUSE_DURATION);
+        await delay(TEST_PAUSE_DURATION);
 
         let el;
         try {
@@ -186,7 +185,7 @@ describe('XCUITestDriver - find -', function () {
       });
       it('should search an extended path by descendant', async function () {
         const els = await driver.$$('//XCUIElementTypeTable//XCUIElementTypeButton');
-        const texts = await B.all(_.map(els, (el) => el.getAttribute('name')));
+        const texts = await Promise.all(_.map(els, (el) => el.getAttribute('name')));
         expect(texts).to.not.include('UICatalog');
         expect(texts).to.not.include('UIKitCatalog');
         expect(texts).to.include('X Button');
@@ -338,7 +337,7 @@ describe('XCUITestDriver - find -', function () {
   describe('by predicate string', function () {
     before(async function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
-      await B.delay(TEST_PAUSE_DURATION);
+      await delay(TEST_PAUSE_DURATION);
     });
     it('should find invisible elements', async function () {
       const selector = 'visible = 0';
@@ -374,7 +373,7 @@ describe('XCUITestDriver - find -', function () {
   describe('by class chain', function () {
     before(async function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
-      await B.delay(TEST_PAUSE_DURATION);
+      await delay(TEST_PAUSE_DURATION);
     });
     it('should find elements', async function () {
       const selector = 'XCUIElementTypeWindow';
@@ -403,7 +402,7 @@ describe('XCUITestDriver - find -', function () {
   describe('by css selector', function () {
     before(async function () {
       // if we don't pause, WDA freaks out sometimes, especially on fast systems
-      await B.delay(TEST_PAUSE_DURATION);
+      await delay(TEST_PAUSE_DURATION);
     });
     it('should find cell types', async function () {
       const cellEls = await driver.$$('cell');

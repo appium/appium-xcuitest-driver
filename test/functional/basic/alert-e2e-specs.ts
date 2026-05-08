@@ -1,4 +1,4 @@
-import B from 'bluebird';
+import {setTimeout as delay} from 'node:timers/promises';
 import {retryInterval} from 'asyncbox';
 import {getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
@@ -38,7 +38,7 @@ describe('XCUITestDriver - alerts -', function () {
   it('should detect Simple', async function () {
     const el = await driver.$('~Simple');
     await el.click();
-    await B.delay(2000);
+    await delay(2000);
 
     expect(await driver.getAlertText()).to.include('A Short Title Is Best');
     await driver.dismissAlert();
@@ -49,7 +49,7 @@ describe('XCUITestDriver - alerts -', function () {
     await el.click();
 
     // small pause for alert to open
-    await B.delay(1000);
+    await delay(1000);
 
     expect(await driver.getAlertText()).to.include('A Short Title Is Best');
     await driver.acceptAlert();
@@ -60,7 +60,7 @@ describe('XCUITestDriver - alerts -', function () {
     await el.click();
 
     // small pause for alert to open
-    await B.delay(1000);
+    await delay(1000);
 
     expect(await driver.getAlertText()).to.include('A Short Title Is Best');
     await driver.dismissAlert();
@@ -89,7 +89,7 @@ describe('XCUITestDriver - alerts -', function () {
         await el.click();
 
         // small pause for alert to open
-        await B.delay(1000);
+        await delay(1000);
 
         await driver.sendAlertText(test.text);
 
