@@ -95,7 +95,50 @@ appium driver run xcuitest cleanup-videos -- --udid=<udid>
     ```
 
 
+### `download-wda`
+
+Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
+for use in a real device.
+
+For information about running tests with a prebuilt WDA application, [refer to this guide](../guides/run-prebuilt-wda.md).
+
+#### Usage
+
+```
+appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platform> --kind=<real|sim>
+```
+
+|<div style="width:6em">Argument</div>|Description|Type|Default|
+|--|--|--|--|
+|`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string|`./wda`|
+|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string|`ios`|
+|`--kind`|Kind of the WDA app to download. Supported values are `real` and `sim`. Note that the same WDA app builds can be used for both real devices and simulators, so this argument is only used for filtering the available assets on the GitHub Releases page.|string|`real`|
+
+##### Optional Arguments
+
+|Argument|Description|
+|--|--|
+|`--help`, `-h`|Return help text and exit|
+
+#### Examples
+
+- Download the iOS version of the WDA app (`WebDriverAgentRunner-Runner.app`) into the `wda`
+    subdirectory of the XCUITest driver's install directory:
+
+        ```
+        appium driver run xcuitest download-wda -- --platform=ios --outdir=wda
+        ```
+
+- Download the tvOS version of the WDA app (`WebDriverAgentRunner_tvOS-Runner.app`) into `/path/to/dir`:
+
+        ```
+        appium driver run xcuitest download-wda -- --platform=tvos --outdir=/path/to/dir
+        ```
+
+
 ### `download-wda-sim`
+
+**Deprecated in favor of `download-wda` since the same WDA app builds can be used for both real devices and simulators.**
 
 Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
 for use in a simulator device.
