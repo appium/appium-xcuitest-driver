@@ -946,11 +946,12 @@ function setupCleanupHandlers(tunnelCreator) {
 
   const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
   for (const signal of shutdownSignals) {
-    process.once(signal, () => {
+    process.on(signal, () => {
       if (process.exitCode == null) {
         // Follow conventional POSIX exit codes for signals where possible.
         if (signal === 'SIGINT') {
-          process.exitCode = 130;
+          // SIGINT is typically sent by Ctrl+C, so we exit with code 0 to indicate success.
+          process.exitCode = 0;
         } else if (signal === 'SIGTERM') {
           process.exitCode = 143;
         } else {
