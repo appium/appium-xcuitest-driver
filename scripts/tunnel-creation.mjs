@@ -941,6 +941,9 @@ function setupCleanupHandlers(tunnelCreator) {
       await tunnelCreator.cleanup();
     } catch (err) {
       log.warn(`Error during tunnel cleanup: ${err?.message ?? err}`);
+      if (!process.exitCode) {
+        process.exitCode = 1;
+      }
     }
   };
 
