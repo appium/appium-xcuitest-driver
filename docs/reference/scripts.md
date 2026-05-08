@@ -98,7 +98,7 @@ appium driver run xcuitest cleanup-videos -- --udid=<udid>
 ### `download-wda`
 
 Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
-for use in a real device.
+for use with real devices or simulators.
 
 For information about running tests with a prebuilt WDA application, [refer to this guide](../guides/run-prebuilt-wda.md).
 
