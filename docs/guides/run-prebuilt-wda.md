@@ -82,7 +82,7 @@ The `download-wda` command helps to download the proper version of WDA for your 
 for simulator use.
 
 ```bash
-appium driver run xcuitest download-wda -- --outdir=/path/to/target/directory --kind=sim
+appium driver run xcuitest download-wda -- --outdir=/path/to/target/directory --kind=sim --platform=ios
 ```
 
 To see all available options for the script, including flags and defaults, run:
