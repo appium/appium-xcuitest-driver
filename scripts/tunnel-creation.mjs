@@ -253,9 +253,10 @@ class TunnelCreator {
     }
     await Promise.allSettled([...this._reconnectTasks.values()]);
 
-    log.info('Cleanup completed.');
     if (cleanupErrors.length > 0) {
       throw new AggregateError(cleanupErrors, 'Tunnel cleanup encountered errors');
+    } else {
+      log.info('Cleanup completed.');
     }
   }
 
