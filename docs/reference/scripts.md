@@ -138,7 +138,7 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
 
 ### `download-wda-sim`
 
-**Deprecated in favor of `download-wda` since the same WDA app builds can be used for both real devices and simulators.**
+**Deprecated in favor of `download-wda`; use `download-wda` with the appropriate build kind for simulator or real-device usage.**
 
 Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
 for use in a simulator device.
