@@ -110,8 +110,8 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
 
 |<div style="width:6em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
-|`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string|`./wda`|
-|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string|`ios`|
+|`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string| - |
+|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string| - |
 |`--kind`|Kind of the WDA app to download. Supported values are `real` and `sim`. Note that the same WDA app builds can be used for both real devices and simulators, so this argument is only used for filtering the available assets on the GitHub Releases page.|string|`real`|
 
 ##### Optional Arguments
