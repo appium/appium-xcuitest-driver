@@ -110,10 +110,10 @@ async function main() {
       `
 EXAMPLES:
   # Download WDA for iOS real device (default)
-  appium driver run xcuitest download-wda --outdir ./wda-real --platform iOS
+  appium driver run xcuitest download-wda -- --outdir ./wda-real --platform iOS
 
   # Download WDA for tvOS simulator
-  appium driver run xcuitest download-wda --outdir ./wda-sim-tvos --platform tvOS --kind sim`,
+  appium driver run xcuitest download-wda -- --outdir ./wda-sim-tvos --platform tvOS --kind sim`,
     )
     .action(async (options) => {
       await getWDAPrebuiltPackage({
