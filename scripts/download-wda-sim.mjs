@@ -29,6 +29,7 @@ EXAMPLES:
   appium driver run xcuitest download-wda-sim --outdir ./wda-sim-tvos --platform tvOS`,
     )
     .action(async (options) => {
+      // eslint-disable-next-line no-console
       console.warn(DEPRECATION_MESSAGE);
       await getWDAPrebuiltPackage({...options, kind: 'sim'});
     });

@@ -12,6 +12,31 @@ const wdaUrl = (/** @type {string} */ version, /** @type {string} */ zipFileName
   `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
 
 /**
+ * @param {DownloadOptions} options
+ */
+export async function getWDAPrebuiltPackage(options) {
+  const kind = normalizeKind(options.kind);
+  const destDir = await prepareRootDir(options.outdir);
+  const zipFileName = destZip(options.platform, kind);
+  const wdaVersion = await webdriveragentPkgVersion();
+  const urlToDownload = wdaUrl(wdaVersion, zipFileName);
+  const downloadedZipFile = path.join(destDir, zipFileName);
+  try {
+    log.info(`Downloading ${urlToDownload}`);
+    await net.downloadFile(urlToDownload, downloadedZipFile);
+
+    log.info(`Unpacking ${downloadedZipFile} into ${destDir}`);
+    await zip.extractAllTo(downloadedZipFile, destDir);
+
+    log.info(`Deleting ${downloadedZipFile}`);
+  } finally {
+    if (await fs.exists(downloadedZipFile)) {
+      await fs.unlink(downloadedZipFile);
+    }
+  }
+}
+
+/**
  * @param {string | undefined} kind
  * @returns {'real' | 'sim'}
  */
@@ -62,31 +87,6 @@ async function prepareRootDir(outdir) {
   }
   await fs.mkdir(destDir, {recursive: true});
   return destDir;
-}
-
-/**
- * @param {DownloadOptions} options
- */
-export async function getWDAPrebuiltPackage(options) {
-  const kind = normalizeKind(options.kind);
-  const destDir = await prepareRootDir(options.outdir);
-  const zipFileName = destZip(options.platform, kind);
-  const wdaVersion = await webdriveragentPkgVersion();
-  const urlToDownload = wdaUrl(wdaVersion, zipFileName);
-  const downloadedZipFile = path.join(destDir, zipFileName);
-  try {
-    log.info(`Downloading ${urlToDownload}`);
-    await net.downloadFile(urlToDownload, downloadedZipFile);
-
-    log.info(`Unpacking ${downloadedZipFile} into ${destDir}`);
-    await zip.extractAllTo(downloadedZipFile, destDir);
-
-    log.info(`Deleting ${downloadedZipFile}`);
-  } finally {
-    if (await fs.exists(downloadedZipFile)) {
-      await fs.unlink(downloadedZipFile);
-    }
-  }
 }
 
 async function main() {
