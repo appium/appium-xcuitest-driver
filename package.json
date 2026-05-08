@@ -36,6 +36,7 @@
       "tunnel-creation": "./scripts/tunnel-creation.mjs",
       "download-wda": "./scripts/download-wda.mjs",
       "download-wda-sim": "./scripts/download-wda-sim.mjs",
+      "sign-wda": "./scripts/sign-wda.mjs",
       "image-mounter": "./scripts/image-mounter.mjs",
       "list-real-devices": "./scripts/list-real-devices.mjs",
       "cleanup-videos": "./scripts/cleanup-videos.mjs",
