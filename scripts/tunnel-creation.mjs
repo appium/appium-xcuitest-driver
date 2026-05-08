@@ -41,6 +41,8 @@ class TunnelCreator {
     this._tunnelRegistryPort = 42314;
     /** @type {import('appium-ios-remotexpc').TunnelRegistry | null} */
     this._registry = null;
+    /** @type {import('appium-ios-remotexpc').TunnelRegistryServer | null} */
+    this._registryServer = null;
     /** @type {Map<string, import('appium-ios-remotexpc').UsbmuxDevice>} */
     this._usbDevices = new Map();
     /** @type {Map<string, Promise<void>>} */
@@ -75,6 +77,10 @@ class TunnelCreator {
     return this._registry;
   }
 
+  get registryServer() {
+    return this._registryServer;
+  }
+
   set packetStreamBasePort(port) {
     this._packetStreamBasePort = port;
   }
@@ -95,6 +101,13 @@ class TunnelCreator {
    */
   set registry(value) {
     this._registry = value;
+  }
+
+  /**
+   * @param {import('appium-ios-remotexpc').TunnelRegistryServer | null} value
+   */
+  set registryServer(value) {
+    this._registryServer = value;
   }
 
   /**
@@ -179,6 +192,15 @@ class TunnelCreator {
         log.warn(`Failed to stop tunnel registry watcher: ${err}`);
       }
     }
+    if (this._registryServer) {
+      try {
+        await this._registryServer.stop();
+      } catch (err) {
+        log.warn(`Failed to stop tunnel registry server: ${err}`);
+      } finally {
+        this._registryServer = null;
+      }
+    }
 
     const usbEntries = [...this._packetStreamServers.entries()];
     const appletvResources = [...this._appletvResources];
@@ -216,6 +238,11 @@ class TunnelCreator {
     })();
 
     await Promise.allSettled([closeUsbPacketStreamServers, closeAppleTVTunnels]);
+    try {
+      await TunnelManager.closeAllTunnels();
+    } catch (err) {
+      log.warn(`Failed to close managed tunnel(s): ${err}`);
+    }
     await Promise.allSettled([...this._reconnectTasks.values()]);
 
     log.info('Cleanup completed.');
@@ -919,7 +946,7 @@ function setupCleanupHandlers(tunnelCreator) {
 
   const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
   for (const signal of shutdownSignals) {
-    process.on(signal, () => {
+    process.once(signal, () => {
       if (process.exitCode == null) {
         // Follow conventional POSIX exit codes for signals where possible.
         if (signal === 'SIGINT') {
@@ -1093,7 +1120,10 @@ async function main() {
       return;
     }
 
-    await startTunnelRegistryServer(registry, tunnelCreator.tunnelRegistryPort);
+    tunnelCreator.registryServer = await startTunnelRegistryServer(
+      registry,
+      tunnelCreator.tunnelRegistryPort,
+    );
     tunnelCreator._attachTunnelRegistryLifecycleWatch(watchTunnelRegistrySockets, usbResults, {
       onTunnelDead: async ({udid}) => {
         tunnelCreator._reconnectTunnelByUdid(udid);
