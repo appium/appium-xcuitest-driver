@@ -1,4 +1,5 @@
 import {fs, logger, zip, net, node} from 'appium/support.js';
+import {constants as fsConstants, promises as fsPromises} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
@@ -12,13 +13,15 @@ const wdaUrl = (/** @type {string} */ version, /** @type {string} */ zipFileName
   `https://github.com/appium/WebDriverAgent/releases/download/v${version}/${zipFileName}`;
 
 /**
+ * Download and unpack a prebuilt WDA package for the given platform and kind.
  * @param {DownloadOptions} options
+ * @returns {Promise<void>}
  */
 export async function getWDAPrebuiltPackage(options) {
   const kind = normalizeKind(options.kind);
   const destDir = await prepareRootDir(options.outdir);
   const zipFileName = destZip(options.platform, kind);
-  const wdaVersion = await webdriveragentPkgVersion();
+  const wdaVersion = await getWebdriveragentPkgVersion();
   const urlToDownload = wdaUrl(wdaVersion, zipFileName);
   const downloadedZipFile = path.join(destDir, zipFileName);
   try {
@@ -36,19 +39,7 @@ export async function getWDAPrebuiltPackage(options) {
   }
 }
 
-/**
- * @param {string | undefined} kind
- * @returns {'real' | 'sim'}
- */
-function normalizeKind(kind) {
-  const normalized = String(kind || WDA_KIND_REAL).toLowerCase();
-  if (normalized !== WDA_KIND_REAL && normalized !== WDA_KIND_SIM) {
-    throw new Error(`Unsupported kind '${kind}'. Supported values are '${WDA_KIND_REAL}' and '${WDA_KIND_SIM}'`);
-  }
-  return /** @type {'real' | 'sim'} */ (normalized);
-}
-
-const destZip = (/** @type {string} */ platform, /** @type {'real' | 'sim'} */ kind) => {
+const destZip = (/** @type {string} */ platform, /** @type {WDAKind} */ kind) => {
   const scheme = `WebDriverAgentRunner${String(platform).toLowerCase() === 'tvos' ? '_tvOS' : ''}`;
   if (kind === WDA_KIND_SIM) {
     return `${scheme}-Build-Sim-${os.arch() === 'arm64' ? 'arm64' : 'x86_64'}.zip`;
@@ -58,10 +49,23 @@ const destZip = (/** @type {string} */ platform, /** @type {'real' | 'sim'} */ k
 
 
 /**
+ * Normalize the kind value, ensuring it is either 'real' or 'sim'. Default to 'real' if undefined.
+ * @param {string | undefined} kind
+ * @returns {WDAKind}
+ */
+function normalizeKind(kind) {
+  const normalized = String(kind || WDA_KIND_REAL).toLowerCase();
+  if (![WDA_KIND_REAL, WDA_KIND_SIM].includes(normalized)) {
+    throw new Error(`Unsupported kind '${kind}'. Supported values are '${WDA_KIND_REAL}' and '${WDA_KIND_SIM}'`);
+  }
+  return /** @type {WDAKind} */ (normalized);
+}
+
+/**
  * Return installed appium-webdriveragent package version
  * @returns {Promise<string>}
  */
-async function webdriveragentPkgVersion() {
+async function getWebdriveragentPkgVersion() {
   const moduleRoot = node.getModuleRootSync('appium-xcuitest-driver', import.meta.url);
   if (!moduleRoot) {
     throw new Error('Cannot resolve module root for appium-xcuitest-driver');
@@ -86,7 +90,24 @@ async function prepareRootDir(outdir) {
   if (await fs.exists(destDir)) {
     throw new Error(`${destDir} already exists`);
   }
-  await fs.mkdir(destDir, {recursive: true});
+
+  const parentDir = path.dirname(destDir);
+  try {
+    await fsPromises.access(parentDir, fsConstants.W_OK);
+  } catch (err) {
+    throw new Error(`Parent directory '${parentDir}' is not writable`, {
+      cause: err,
+    });
+  }
+
+  try {
+    await fs.mkdir(destDir, {recursive: true});
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Cannot create directory '${destDir}': ${message}`, {
+      cause: err,
+    });
+  }
   return destDir;
 }
 
@@ -104,18 +125,18 @@ async function main() {
     )
     .option(
       '--kind <kind>',
-      `Target package type: ${WDA_KIND_REAL} (real devices) or ${WDA_KIND_SIM} (simulators)`
+      `Target package type: ${WDA_KIND_REAL} (real devices) or ${WDA_KIND_SIM} (simulators). Default: ${WDA_KIND_REAL}`,
     )
     .addHelpText(
       'after',
       `
 EXAMPLES:
   # Download WDA for iOS real device (default)
-  appium driver run xcuitest download-wda --outdir ./wda-real --platform iOS
+  appium driver run xcuitest download-wda -- --outdir ./wda-real --platform iOS
 
 
   # Download WDA for tvOS simulator
-  appium driver run xcuitest download-wda --outdir ./wda-sim-tvos --platform tvOS --kind sim`,
+  appium driver run xcuitest download-wda -- --outdir ./wda-sim-tvos --platform tvOS --kind sim`,
     )
     .action(async (options) => {
       await getWDAPrebuiltPackage({
@@ -134,8 +155,12 @@ if (isMainModule) {
 }
 
 /**
+ * @typedef {'real' | 'sim'} WDAKind
+ */
+
+/**
  * @typedef {Object} DownloadOptions
  * @property {string} outdir
  * @property {string} platform
- * @property {string | undefined} [kind]
+ * @property {WDAKind | undefined} [kind]
  */

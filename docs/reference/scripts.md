@@ -98,7 +98,7 @@ appium driver run xcuitest cleanup-videos -- --udid=<udid>
 ### `download-wda`
 
 Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
-for use in a real device.
+for use with real devices or simulators.
 
 For information about running tests with a prebuilt WDA application, [refer to this guide](../guides/run-prebuilt-wda.md).
 
@@ -110,9 +110,9 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
 
 |<div style="width:6em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
-|`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string|`./wda`|
-|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string|`ios`|
-|`--kind`|Kind of the WDA app to download. Supported values are `real` and `sim`. Note that the same WDA app builds can be used for both real devices and simulators, so this argument is only used for filtering the available assets on the GitHub Releases page.|string|`real`|
+|`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string| - |
+|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string| - |
+|`--kind`|Kind of the WDA app to download. Supported values are `real` and `sim`.|string|`real`|
 
 ##### Optional Arguments
 
@@ -138,7 +138,7 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
 
 ### `download-wda-sim`
 
-**Deprecated in favor of `download-wda` since the same WDA app builds can be used for both real devices and simulators.**
+**Deprecated in favor of `download-wda`; use `download-wda` with the appropriate build kind for simulator or real-device usage.**
 
 Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's [GitHub Releases page](https://github.com/appium/WebDriverAgent/releases)
 for use in a simulator device.
