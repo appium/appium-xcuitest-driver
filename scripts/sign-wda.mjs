@@ -87,10 +87,11 @@ async function downloadResigner(destDir) {
 
     log.info(`Extracting resigner from ${resignerArchive}`);
 
-    // Extract based on archive type
     if (archiveName.endsWith('.zip')) {
+      // Windows releases are zip files
       await zip.extractAllTo(resignerArchive, destDir);
     } else {
+      // macOS and Linux releases are tar.gz
       await exec('tar', ['xzf', resignerArchive, '-C', destDir]);
     }
 
