@@ -102,7 +102,7 @@ async function getLatestResignerVersion() {
   }
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch latest resigner version: ${response.statusText}`);
+    throw new Error(`Failed to fetch latest resigner version: ${await response.text()}`);
   }
   const data = /** @type {{tag_name: string}} */ (await response.json());
   return data.tag_name;
