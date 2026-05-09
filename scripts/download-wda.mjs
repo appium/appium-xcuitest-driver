@@ -47,7 +47,6 @@ const destZip = (/** @type {string} */ platform, /** @type {WDAKind} */ kind) =>
   return `${scheme}-Runner.zip`;
 };
 
-
 /**
  * Normalize the kind value, ensuring it is either 'real' or 'sim'. Default to 'real' if undefined.
  * @param {string | undefined} kind
@@ -133,7 +132,6 @@ async function main() {
 EXAMPLES:
   # Download WDA for iOS real device (default)
   appium driver run xcuitest download-wda -- --outdir ./wda-real --platform iOS
-
 
   # Download WDA for tvOS simulator
   appium driver run xcuitest download-wda -- --outdir ./wda-sim-tvos --platform tvOS --kind sim`,
