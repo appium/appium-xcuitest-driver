@@ -89,7 +89,13 @@ async function getLatestResignerVersion() {
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   let response;
   try {
-    response = await fetch(apiUrl, {signal: controller.signal});
+    response = await fetch(apiUrl, {
+      signal: controller.signal,
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'sign-wda',
+      },
+    });
   } catch (err) {
     if (err instanceof Error && err.name === 'AbortError') {
       throw new Error(`Failed to fetch latest resigner version: request timed out after ${FETCH_TIMEOUT_MS}ms`, {
@@ -340,7 +346,7 @@ async function main() {
 EXAMPLES:
   # Sign downloaded WDA with certificate and provisioning profile
   appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
-    --p12-file ~/sign.p12 --p12-password mypassword \\
+    --p12-file ~/sign.p12 --p12-password mypassword
 
   # Sign WDA and remap bundle ID
   appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
