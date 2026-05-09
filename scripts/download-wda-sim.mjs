@@ -1,5 +1,6 @@
 import {getWDAPrebuiltPackage} from './download-wda.mjs';
 import {Command} from 'commander';
+import { deprecate } from 'node:util';
 
 const DEPRECATION_MESSAGE =
   "[DEPRECATED] 'download-wda-sim' is deprecated. " +
@@ -7,6 +8,13 @@ const DEPRECATION_MESSAGE =
 
 async function main() {
   const program = new Command();
+
+  const oldHandler = deprecate(
+    async (options) => {
+      await getWDAPrebuiltPackage({...options, kind: 'sim'});
+    },
+    DEPRECATION_MESSAGE
+  );
 
   program
     .name('appium driver run xcuitest download-wda-sim')
@@ -23,16 +31,12 @@ async function main() {
       `
 EXAMPLES:
   # Download WDA for iOS simulator
-  appium driver run xcuitest download-wda-sim --outdir ./wda-sim --platform iOS
+  appium driver run xcuitest download-wda-sim -- --outdir ./wda-sim --platform iOS
 
   # Download WDA for tvOS simulator
-  appium driver run xcuitest download-wda-sim --outdir ./wda-sim-tvos --platform tvOS`,
+  appium driver run xcuitest download-wda-sim -- --outdir ./wda-sim-tvos --platform tvOS`,
     )
-    .action(async (options) => {
-      // eslint-disable-next-line no-console
-      console.warn(DEPRECATION_MESSAGE);
-      await getWDAPrebuiltPackage({...options, kind: 'sim'});
-    });
+    .action(oldHandler);
 
   await program.parseAsync(process.argv);
 }
