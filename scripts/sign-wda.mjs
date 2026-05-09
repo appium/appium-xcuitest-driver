@@ -160,25 +160,54 @@ async function resolveResignerBinary(tempDir) {
 }
 
 /**
+ * Validate a provisioning profile directory.
+ * @param {string} dir
+ * @param {string} source
+ * @returns {Promise<string>}
+ */
+async function validateProfileDir(dir, source) {
+  if (!(await fs.exists(dir))) {
+    throw new Error(`${source} provisioning profile directory does not exist: ${dir}`);
+  }
+
+  let entries;
+  try {
+    entries = await fs.readdir(dir);
+  } catch {
+    throw new Error(`${source} provisioning profile directory is not a readable directory: ${dir}`);
+  }
+
+  if (!entries.some((name) => name.toLowerCase().endsWith('.mobileprovision'))) {
+    throw new Error(
+      `${source} provisioning profile directory does not contain any .mobileprovision files: ${dir}`
+    );
+  }
+
+  return dir;
+}
+
+/**
  * Resolve the provisioning profile directory.
- * If user provided --profile-dir, use it directly.
+ * If user provided --profile-dir, validate and use it.
  * Otherwise discover from known defaults in priority order.
  * @param {string | undefined} profileDir
  * @returns {Promise<string>}
  */
 async function resolveProfileDir(profileDir) {
   if (profileDir) {
-    return profileDir;
+    return await validateProfileDir(profileDir, 'Provided');
   }
 
   for (const candidate of DEFAULT_PROFILE_DIR_CANDIDATES) {
     if (!(await fs.exists(candidate))) {
       continue;
     }
-    const entries = await fs.readdir(candidate);
-    if (entries.some((name) => name.toLowerCase().endsWith('.mobileprovision'))) {
+    try {
+      await validateProfileDir(candidate, 'Discovered');
       log.info(`Using discovered provisioning profile directory: ${candidate}`);
       return candidate;
+    } catch {
+      continue;
     }
   }
 
