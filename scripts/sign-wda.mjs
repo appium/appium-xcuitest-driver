@@ -76,10 +76,12 @@ function getResignerArchiveName() {
  * @returns {Promise<string>} Path to resigner binary
  */
 async function downloadResigner(destDir) {
+  let archiveName;
   try {
     log.info('Downloading resigner...');
+    archiveName = getResignerArchiveName();
+
     const version = await getLatestResignerVersion();
-    const archiveName = getResignerArchiveName();
     const resignerUrl = `https://github.com/${RESIGNER_REPO}/releases/download/${version}/${archiveName}`;
     const resignerArchive = path.join(destDir, archiveName);
 
@@ -94,8 +96,6 @@ async function downloadResigner(destDir) {
       // macOS and Linux releases are tar.gz
       await exec('tar', ['xzf', resignerArchive, '-C', destDir]);
     }
-
-    log.info(`Extracting resigner from ${resignerArchive}`);
 
     const platform = process.platform;
     const arch = os.arch();
@@ -116,12 +116,10 @@ async function downloadResigner(destDir) {
     }
 
     const resignerPath = path.join(destDir, resignerDir, binaryName);
-
     if (!(await fs.exists(resignerPath))) {
       throw new Error(`Resigner binary not found at ${resignerPath}`);
     }
 
-    // Ensure the binary is executable on Unix-like systems
     if (platform !== 'win32') {
       await fs.chmod(resignerPath, 0o755);
     }
@@ -129,10 +127,11 @@ async function downloadResigner(destDir) {
     log.info(`Resigner ready at ${resignerPath}`);
     return resignerPath;
   } finally {
-    const archiveName = getResignerArchiveName();
-    const resignerArchive = path.join(destDir, archiveName);
-    if (await fs.exists(resignerArchive)) {
-      await fs.unlink(resignerArchive);
+    if (archiveName) {
+      const resignerArchive = path.join(destDir, archiveName);
+      if (await fs.exists(resignerArchive)) {
+        await fs.unlink(resignerArchive);
+      }
     }
   }
 }
