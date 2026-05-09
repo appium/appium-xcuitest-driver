@@ -237,7 +237,7 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
 
 |Argument|Description|Type|
 |--|--|--|
-|`--bundle-id`|Remap the WDA bundle ID (e.g. `com.example.wda`). Useful when your provisioning profile is tied to a specific bundle ID.|string|
+|`--bundle-id`|Remap the default WebDriverAgent bundle IDs with the specified bundle ID. It is useful when your provisioning profile is tied to a specific bundle ID.|string|
 |`--inspect`|Run `resigner --inspect` only. In this mode, signing options (`--p12-file`, `--p12-password`, `--profile-dir`) are not required.|boolean|
 
 #### Examples
