@@ -76,7 +76,10 @@ async function getWebdriveragentPkgVersion() {
     'package.json'
   );
   const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
-  return String(pkg.version);
+  if (!pkg.version || typeof pkg.version !== 'string') {
+    throw new Error(`Cannot find version in ${pkgPath}`);
+  }
+  return pkg.version;
 };
 
 /**
