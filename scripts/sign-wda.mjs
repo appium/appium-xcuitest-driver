@@ -7,6 +7,11 @@ import {Command} from 'commander';
 
 const log = logger.getLogger('sign-wda');
 const RESIGNER_REPO = 'KazuCocoa/resigner';
+const FETCH_TIMEOUT_MS = 15_000;
+const DEFAULT_PROFILE_DIR_CANDIDATES = [
+  path.join(os.homedir(), 'Library', 'Developer', 'Xcode', 'UserData', 'Provisioning Profiles'),
+  path.join(os.homedir(), 'Library', 'MobileDevice', 'Provisioning Profiles'),
+];
 
 /**
  * Get the latest resigner release version
@@ -14,7 +19,22 @@ const RESIGNER_REPO = 'KazuCocoa/resigner';
  */
 async function getLatestResignerVersion() {
   const apiUrl = `https://api.github.com/repos/${RESIGNER_REPO}/releases/latest`;
-  const response = await fetch(apiUrl);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  let response;
+  try {
+    response = await fetch(apiUrl, {signal: controller.signal});
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error(`Failed to fetch latest resigner version: request timed out after ${FETCH_TIMEOUT_MS}ms`, {
+        cause: err,
+      });
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+
   if (!response.ok) {
     throw new Error(`Failed to fetch latest resigner version: ${response.statusText}`);
   }
@@ -117,6 +137,57 @@ async function downloadResigner(destDir) {
 }
 
 /**
+ * Resolve resigner binary from PATH, or download it if unavailable.
+ * @param {string} tempDir
+ * @returns {Promise<{resignerPath: string, downloaded: boolean}>}
+ */
+async function resolveResignerBinary(tempDir) {
+  try {
+    await exec('resigner', ['--help']);
+    log.info('Using resigner binary from PATH');
+    return {
+      resignerPath: 'resigner',
+      downloaded: false,
+    };
+  } catch {
+    const resignerPath = await downloadResigner(tempDir);
+    return {
+      resignerPath,
+      downloaded: true,
+    };
+  }
+}
+
+/**
+ * Resolve the provisioning profile directory.
+ * If user provided --profile-dir, use it directly.
+ * Otherwise discover from known defaults in priority order.
+ * @param {string | undefined} profileDir
+ * @returns {Promise<string>}
+ */
+async function resolveProfileDir(profileDir) {
+  if (profileDir) {
+    return profileDir;
+  }
+
+  for (const candidate of DEFAULT_PROFILE_DIR_CANDIDATES) {
+    if (!(await fs.exists(candidate))) {
+      continue;
+    }
+    const entries = await fs.readdir(candidate);
+    if (entries.some((name) => name.toLowerCase().endsWith('.mobileprovision'))) {
+      log.info(`Using discovered provisioning profile directory: ${candidate}`);
+      return candidate;
+    }
+  }
+
+  throw new Error(
+    `No provisioning profile directory could be discovered. ` +
+      `Please provide --profile-dir explicitly. Checked: ${DEFAULT_PROFILE_DIR_CANDIDATES.join(', ')}`
+  );
+}
+
+/**
  * Run resigner to sign WDA
  * @param {string} resignerPath
  * @param {string} wdaPath
@@ -145,7 +216,49 @@ async function signWDAWithResigner(resignerPath, wdaPath, options) {
 }
 
 /**
+ * Run resigner inspect on the signed WDA and return the output.
+ * @param {string} resignerPath
+ * @param {string} wdaPath
+ * @returns {Promise<string>}
+ */
+async function inspectWDAWithResigner(resignerPath, wdaPath) {
+  log.info(`Inspecting signed WDA at ${wdaPath}`);
+  const {stdout} = await exec(resignerPath, ['--inspect', wdaPath]);
+  return String(stdout || '').trim();
+}
+
+/**
+ * @param {InspectWDAOptions} options
+ * @return {Promise<void>}
+ */
+export async function inspectWDA(options) {
+  if (!(await fs.exists(options.wdaPath))) {
+    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
+  }
+
+  const tempDir = path.join(os.tmpdir(), `inspect-wda-${Date.now()}`);
+  await fs.mkdir(tempDir, {recursive: true});
+  let downloadedResigner = false;
+
+  try {
+    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
+    downloadedResigner = downloaded;
+    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
+    if (inspectResult) {
+      log.info(`Resigner inspect result:\n${inspectResult}`);
+    } else {
+      log.info('Resigner inspect finished, but no output was returned.');
+    }
+  } finally {
+    if (downloadedResigner && (await fs.exists(tempDir))) {
+      await fs.rimraf(tempDir);
+    }
+  }
+}
+
+/**
  * @param {SignWDAOptions} options
+ * @return {Promise<void>}
  */
 export async function signWDA(options) {
   if (!(await fs.exists(options.wdaPath))) {
@@ -153,18 +266,28 @@ export async function signWDA(options) {
   }
 
   const tempDir = path.join(os.tmpdir(), `sign-wda-${Date.now()}`);
+  const resolvedProfileDir = await resolveProfileDir(options.profileDir);
   await fs.mkdir(tempDir, {recursive: true});
+  let downloadedResigner = false;
 
   try {
-    const resignerPath = await downloadResigner(tempDir);
+    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
+    downloadedResigner = downloaded;
     await signWDAWithResigner(resignerPath, options.wdaPath, {
       p12File: options.p12File,
       p12Password: options.p12Password,
-      profileDir: options.profileDir,
+      profileDir: resolvedProfileDir,
       bundleId: options.bundleId,
     });
+
+    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
+    if (inspectResult) {
+      log.info(`Resigner inspect result:\n${inspectResult}`);
+    } else {
+      log.info('Resigner inspect finished, but no output was returned.');
+    }
   } finally {
-    if (await fs.exists(tempDir)) {
+    if (downloadedResigner && (await fs.exists(tempDir))) {
       await fs.rimraf(tempDir);
     }
   }
@@ -177,26 +300,45 @@ async function main() {
     .name('appium driver run xcuitest sign-wda')
     .description('Sign a WebDriverAgentRunner app bundle with code signing certificate')
     .requiredOption('--wda-path <path>', 'Path to the WebDriverAgentRunner.app bundle to sign')
-    .requiredOption('--p12-file <path>', 'Path to the .p12 signing certificate file')
-    .requiredOption('--p12-password <password>', 'Password for the .p12 certificate')
-    .requiredOption('--profile-dir <path>', 'Directory containing provisioning profiles')
+    .option('--inspect', 'Run resigner inspect only (no signing)')
+    .option('--p12-file <path>', 'Path to the .p12 signing certificate file')
+    .option('--p12-password <password>', 'Password for the .p12 certificate')
+    .option('--profile-dir <path>', 'Directory containing provisioning profiles (auto-discovered if omitted)')
     .option('--bundle-id <id>', 'Target bundle ID for remapping (e.g., com.example.wda)')
     .addHelpText(
       'after',
       `
 EXAMPLES:
   # Sign downloaded WDA with certificate and provisioning profile
-  appium driver run xcuitest sign-wda --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
+  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
     --p12-file ~/sign.p12 --p12-password mypassword \\
     --profile-dir ~/Library/MobileDevice/Provisioning\\ Profiles
 
   # Sign WDA and remap bundle ID
-  appium driver run xcuitest sign-wda --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
+  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
     --p12-file ~/sign.p12 --p12-password mypassword \\
-    --profile-dir ~/Library/MobileDevice/Provisioning\\ Profiles \\
-    --bundle-id com.example.wda`,
+    --profile-dir ~/Library/Developer/Xcode/UserData/Provisioning\\ Profiles \\
+    --bundle-id com.example.wda
+
+  # Inspect a WDA app without signing
+  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app --inspect`,
     )
     .action(async (options) => {
+      if (options.inspect) {
+        await inspectWDA({
+          wdaPath: options.wdaPath,
+        });
+        return;
+      }
+
+      const missingSigningOptions = ['p12File', 'p12Password']
+        .filter((name) => !options[name]);
+      if (missingSigningOptions.length) {
+        throw new Error(
+          `Missing required options for signing mode: ${missingSigningOptions.map((name) => `--${name.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}`).join(', ')}`
+        );
+      }
+
       await signWDA({
         wdaPath: options.wdaPath,
         p12File: options.p12File,
@@ -228,6 +370,11 @@ if (isMainModule) {
  * @property {string} wdaPath
  * @property {string} p12File
  * @property {string} p12Password
- * @property {string} profileDir
+ * @property {string | undefined} [profileDir]
  * @property {string | undefined} [bundleId]
+ */
+
+/**
+ * @typedef {Object} InspectWDAOptions
+ * @property {string} wdaPath
  */

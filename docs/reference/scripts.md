@@ -178,6 +178,89 @@ appium driver run xcuitest download-wda-sim -- --outdir=<outdir> --platform=<pla
     ```
 
 
+### `sign-wda`
+
+Signs or inspects a downloaded WebDriverAgent (WDA) app bundle using
+[`resigner`](https://github.com/KazuCocoa/resigner).
+
+By default, it signs the app using a `.p12` certificate and provisioning profiles. With
+`--inspect`, it runs inspect-only mode and prints bundle/signing details without modifying the app.
+
+#### Generating a `.p12` Certificate
+
+Before signing, you need a `.p12` file containing your Apple distribution or development
+certificate and its private key.
+
+**Export from Keychain Access (macOS):**
+
+1. Open **Keychain Access** → **My Certificates**.
+2. Find your iOS development or distribution certificate (e.g. `Apple Development: ...`).
+3. Right-click → **Export** → choose **Personal Information Exchange (.p12)**.
+4. Set a password — this becomes your `--p12-password`.
+
+**Generate via command line (if you have a `.cer` and `.key` file):**
+
+```bash
+# Convert Apple-issued .cer to .pem
+openssl x509 -in certificate.cer -inform DER -out certificate.pem
+
+# Combine certificate and private key into a .p12
+openssl pkcs12 -export \
+  -in certificate.pem \
+  -inkey private.key \
+  -out sign.p12 \
+  -passout pass:mypassword
+```
+
+#### Usage
+
+```
+appium driver run xcuitest sign-wda -- --wda-path=<path> --p12-file=<path> --p12-password=<password> --profile-dir=<path>
+```
+
+#### Usage (inspect-only)
+
+```
+appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
+```
+
+|<div style="width:8em">Argument</div>|Description|Type|
+|--|--|--|
+|`--wda-path`|Path to the `WebDriverAgentRunner-Runner.app` bundle to sign|string|
+|`--p12-file`|Path to the `.p12` signing certificate file|string|
+|`--p12-password`|Password for the `.p12` certificate|string|
+|`--profile-dir`|Directory containing provisioning profiles (`.mobileprovision` files)|string|
+
+##### Optional Arguments
+
+|Argument|Description|Type|
+|--|--|--|
+|`--bundle-id`|Remap the WDA bundle ID (e.g. `com.example.wda`). Useful when your provisioning profile is tied to a specific bundle ID.|string|
+|`--inspect`|Run `resigner --inspect` only. In this mode, signing options (`--p12-file`, `--p12-password`, `--profile-dir`) are not required.|boolean|
+|`--help`, `-h`|Return help text and exit||
+
+#### Examples
+
+- Sign WDA and remap the bundle ID to a custom one:
+
+    ```
+    appium driver run xcuitest sign-wda -- \
+      --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+      --p12-file=~/sign.p12 \
+      --p12-password=mypassword \
+      --profile-dir=~/Library/MobileDevice/Provisioning\ Profiles \
+      --bundle-id=com.example.wda
+    ```
+
+- Inspect a WDA app without signing:
+
+    ```
+    appium driver run xcuitest sign-wda -- \
+        --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+        --inspect
+    ```
+
+
 ### `image-mounter`
 
 Mounts or unmounts a Developer Disk Image (DDI) on an iOS device to unlock additional development
