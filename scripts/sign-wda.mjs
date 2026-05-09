@@ -298,7 +298,6 @@ async function resolveProfileDir(profileDir) {
 async function signWDAWithResigner(resignerPath, wdaPath, options) {
   const args = [
     '--p12-file', options.p12File,
-    '--p12-password', options.p12Password,
     '--profile', options.profileDir,
     '--force',
   ];
@@ -312,7 +311,12 @@ async function signWDAWithResigner(resignerPath, wdaPath, options) {
   args.push(wdaPath);
 
   log.info(`Running resigner to sign ${wdaPath}`);
-  await exec(resignerPath, args);
+  await exec(resignerPath, args, {
+    env: {
+      ...process.env,
+      P12_PASSWORD: options.p12Password,
+    },
+  });
   log.info('WDA signed successfully');
 }
 
@@ -337,7 +341,7 @@ async function main() {
     .requiredOption('--wda-path <path>', 'Path to the WebDriverAgentRunner.app bundle to sign')
     .option('--inspect', 'Run resigner inspect only (no signing)')
     .option('--p12-file <path>', 'Path to the .p12 signing certificate file')
-    .option('--p12-password <password>', 'Password for the .p12 certificate')
+    .option('--p12-password <password>', 'Password for the .p12 certificate (or use P12_PASSWORD env var)')
     .option('--profile-dir <path>', 'Directory containing provisioning profiles (auto-discovered if omitted)')
     .option('--bundle-id <id>', 'Target bundle ID for remapping (e.g., com.example.wda)')
     .addHelpText(
@@ -370,18 +374,22 @@ EXAMPLES:
         return;
       }
 
-      const missingSigningOptions = ['p12File', 'p12Password']
-        .filter((name) => !options[name]);
+      const p12Password = options.p12Password ?? process.env.P12_PASSWORD;
+
+      const missingSigningOptions = [
+        !options.p12File ? '--p12-file' : null,
+        !p12Password ? '--p12-password (or P12_PASSWORD env var)' : null,
+      ].filter(Boolean);
       if (missingSigningOptions.length) {
         throw new Error(
-          `Missing required options for signing mode: ${missingSigningOptions.map((name) => `--${name.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}`).join(', ')}`
+          `Missing required options for signing mode: ${missingSigningOptions.join(', ')}`
         );
       }
 
       await signWDA({
         wdaPath: options.wdaPath,
         p12File: options.p12File,
-        p12Password: options.p12Password,
+        p12Password,
         profileDir: options.profileDir,
         bundleId: options.bundleId,
       });

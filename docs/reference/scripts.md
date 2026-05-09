@@ -196,7 +196,7 @@ certificate and its private key.
 1. Open **Keychain Access** → **My Certificates**.
 2. Find your iOS development or distribution certificate (e.g. `Apple Development: ...`).
 3. Right-click → **Export** → choose **Personal Information Exchange (.p12)**.
-4. Set a password — this becomes your `--p12-password`.
+4. Set a password — this becomes your `--p12-password` (or `P12_PASSWORD` env var).
 
 **Generate via command line (if you have a `.cer` and `.key` file):**
 
@@ -218,6 +218,12 @@ openssl pkcs12 -export \
 appium driver run xcuitest sign-wda -- --wda-path=<path> --p12-file=<path> --p12-password=<password>
 ```
 
+You can also provide the password via environment variable:
+
+```
+P12_PASSWORD=<password> appium driver run xcuitest sign-wda -- --wda-path=<path> --p12-file=<path>
+```
+
 #### Usage (inspect-only)
 
 ```
@@ -235,10 +241,10 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
 |Argument|Description|Type|
 |--|--|--|
 |`--p12-file`|Path to the `.p12` signing certificate file|string|
-|`--p12-password`|Password for the `.p12` certificate|string|
+|`--p12-password`|Password for the `.p12` certificate. Optional if `P12_PASSWORD` env var is set.|string|
 |`--profile-dir`|Directory containing provisioning profiles (`.mobileprovision` files.) Default is auto-discovered from default locations `~/Library/Developer/Xcode/UserData/Provisioning Profiles` and `~/Library/MobileDevice/Provisioning Profiles`.|string|
 |`--bundle-id`|Remap the default WebDriverAgent bundle IDs with the specified bundle ID. It is useful when your provisioning profile is tied to a specific bundle ID.|string|
-|`--inspect`|Run `resigner --inspect` only. In this mode, signing options (`--p12-file`, `--p12-password`, `--profile-dir`) are not required.|boolean|
+|`--inspect`|Run `resigner --inspect` only. In this mode, signing options (`--p12-file`, `--p12-password`/`P12_PASSWORD`, `--profile-dir`) are not required.|boolean|
 
 #### Examples
 
@@ -251,6 +257,15 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
       --p12-password=mypassword \
       --bundle-id=com.example.wda
     ```
+
+- Sign WDA using `P12_PASSWORD` env var instead of `--p12-password`:
+
+        ```
+        P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- \
+            --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+            --p12-file=~/sign.p12 \
+            --bundle-id=com.example.wda
+        ```
 
 - Inspect a WDA app without signing:
 
