@@ -341,12 +341,16 @@ EXAMPLES:
   # Sign downloaded WDA with certificate and provisioning profile
   appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
     --p12-file ~/sign.p12 --p12-password mypassword \\
-    --profile-dir ~/Library/MobileDevice/Provisioning\\ Profiles
 
   # Sign WDA and remap bundle ID
   appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
     --p12-file ~/sign.p12 --p12-password mypassword \\
-    --profile-dir ~/Library/Developer/Xcode/UserData/Provisioning\\ Profiles \\
+    --bundle-id com.example.wda
+
+  # Sign WDA and remap bundle ID with a specified provisioning profile directory
+  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
+    --p12-file ~/sign.p12 --p12-password mypassword \\
+    --profile-dir /path/to/your/provisioning/profiles \\
     --bundle-id com.example.wda
 
   # Inspect a WDA app without signing

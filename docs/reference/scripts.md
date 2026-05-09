@@ -215,7 +215,7 @@ openssl pkcs12 -export \
 #### Usage
 
 ```
-appium driver run xcuitest sign-wda -- --wda-path=<path> --p12-file=<path> --p12-password=<password> --profile-dir=<path>
+appium driver run xcuitest sign-wda -- --wda-path=<path> --p12-file=<path> --p12-password=<password>
 ```
 
 #### Usage (inspect-only)
@@ -224,19 +224,19 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --p12-file=<path> --p12
 appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
 ```
 
-##### Arguments
+##### Required Arguments
 
 |<div style="width:8em">Argument</div>|Description|Type|
 |--|--|--|
 |`--wda-path`|Path to the `WebDriverAgentRunner-Runner.app` bundle to sign|string|
-|`--p12-file`|Path to the `.p12` signing certificate file|string|
-|`--p12-password`|Password for the `.p12` certificate|string|
-|`--profile-dir`|Directory containing provisioning profiles (`.mobileprovision` files)|string|
 
 ##### Optional Arguments
 
 |Argument|Description|Type|
 |--|--|--|
+|`--p12-file`|Path to the `.p12` signing certificate file|string|
+|`--p12-password`|Password for the `.p12` certificate|string|
+|`--profile-dir`|Directory containing provisioning profiles (`.mobileprovision` files.) Default is auto-discovered from default locations `~/Library/Developer/Xcode/UserData/Provisioning Profiles` and `~/Library/MobileDevice/Provisioning Profiles`.|string|
 |`--bundle-id`|Remap the default WebDriverAgent bundle IDs with the specified bundle ID. It is useful when your provisioning profile is tied to a specific bundle ID.|string|
 |`--inspect`|Run `resigner --inspect` only. In this mode, signing options (`--p12-file`, `--p12-password`, `--profile-dir`) are not required.|boolean|
 
@@ -249,7 +249,6 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
       --wda-path=./wda/WebDriverAgentRunner-Runner.app \
       --p12-file=~/sign.p12 \
       --p12-password=mypassword \
-      --profile-dir=~/Library/MobileDevice/Provisioning\ Profiles \
       --bundle-id=com.example.wda
     ```
 
