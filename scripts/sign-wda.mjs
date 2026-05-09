@@ -14,6 +14,72 @@ const DEFAULT_PROFILE_DIR_CANDIDATES = [
 ];
 
 /**
+ * @param {InspectWDAOptions} options
+ * @return {Promise<void>}
+ */
+export async function inspectWDA(options) {
+  if (!(await fs.exists(options.wdaPath))) {
+    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
+  }
+
+  const tempDir = path.join(os.tmpdir(), `inspect-wda-${Date.now()}`);
+  await fs.mkdir(tempDir, {recursive: true});
+  let downloadedResigner = false;
+
+  try {
+    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
+    downloadedResigner = downloaded;
+    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
+    if (inspectResult) {
+      log.info(`Resigner inspect result:\n${inspectResult}`);
+    } else {
+      log.info('Resigner inspect finished, but no output was returned.');
+    }
+  } finally {
+    if (downloadedResigner && (await fs.exists(tempDir))) {
+      await fs.rimraf(tempDir);
+    }
+  }
+}
+
+/**
+ * @param {SignWDAOptions} options
+ * @return {Promise<void>}
+ */
+export async function signWDA(options) {
+  if (!(await fs.exists(options.wdaPath))) {
+    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
+  }
+
+  const tempDir = path.join(os.tmpdir(), `sign-wda-${Date.now()}`);
+  const resolvedProfileDir = await resolveProfileDir(options.profileDir);
+  await fs.mkdir(tempDir, {recursive: true});
+  let downloadedResigner = false;
+
+  try {
+    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
+    downloadedResigner = downloaded;
+    await signWDAWithResigner(resignerPath, options.wdaPath, {
+      p12File: options.p12File,
+      p12Password: options.p12Password,
+      profileDir: resolvedProfileDir,
+      bundleId: options.bundleId,
+    });
+
+    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
+    if (inspectResult) {
+      log.info(`Resigner inspect result:\n${inspectResult}`);
+    } else {
+      log.info('Resigner inspect finished, but no output was returned.');
+    }
+  } finally {
+    if (downloadedResigner && (await fs.exists(tempDir))) {
+      await fs.rimraf(tempDir);
+    }
+  }
+}
+
+/**
  * Get the latest resigner release version
  * @returns {Promise<string>}
  */
@@ -254,72 +320,6 @@ async function inspectWDAWithResigner(resignerPath, wdaPath) {
   log.info(`Inspecting signed WDA at ${wdaPath}`);
   const {stdout} = await exec(resignerPath, ['--inspect', wdaPath]);
   return String(stdout || '').trim();
-}
-
-/**
- * @param {InspectWDAOptions} options
- * @return {Promise<void>}
- */
-export async function inspectWDA(options) {
-  if (!(await fs.exists(options.wdaPath))) {
-    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
-  }
-
-  const tempDir = path.join(os.tmpdir(), `inspect-wda-${Date.now()}`);
-  await fs.mkdir(tempDir, {recursive: true});
-  let downloadedResigner = false;
-
-  try {
-    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
-    downloadedResigner = downloaded;
-    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
-    if (inspectResult) {
-      log.info(`Resigner inspect result:\n${inspectResult}`);
-    } else {
-      log.info('Resigner inspect finished, but no output was returned.');
-    }
-  } finally {
-    if (downloadedResigner && (await fs.exists(tempDir))) {
-      await fs.rimraf(tempDir);
-    }
-  }
-}
-
-/**
- * @param {SignWDAOptions} options
- * @return {Promise<void>}
- */
-export async function signWDA(options) {
-  if (!(await fs.exists(options.wdaPath))) {
-    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
-  }
-
-  const tempDir = path.join(os.tmpdir(), `sign-wda-${Date.now()}`);
-  const resolvedProfileDir = await resolveProfileDir(options.profileDir);
-  await fs.mkdir(tempDir, {recursive: true});
-  let downloadedResigner = false;
-
-  try {
-    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
-    downloadedResigner = downloaded;
-    await signWDAWithResigner(resignerPath, options.wdaPath, {
-      p12File: options.p12File,
-      p12Password: options.p12Password,
-      profileDir: resolvedProfileDir,
-      bundleId: options.bundleId,
-    });
-
-    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
-    if (inspectResult) {
-      log.info(`Resigner inspect result:\n${inspectResult}`);
-    } else {
-      log.info('Resigner inspect finished, but no output was returned.');
-    }
-  } finally {
-    if (downloadedResigner && (await fs.exists(tempDir))) {
-      await fs.rimraf(tempDir);
-    }
-  }
 }
 
 async function main() {
