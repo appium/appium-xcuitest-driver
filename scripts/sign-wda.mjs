@@ -199,16 +199,6 @@ async function downloadResigner(destDir) {
 }
 
 /**
- * Return temp dir path.
- * @returns {Promise<string>}
- */
-async function getTempDir() {
-  const tempDir = path.join(os.tmpdir(), `${SCRIPT_NAME}-${Date.now()}`);
-  await fs.mkdir(tempDir, {recursive: true});
-  return tempDir;
-}
-
-/**
  * Return Trule if the local environment has the resigner binary already.
  * @returns
  */
@@ -223,6 +213,9 @@ async function hasResignerBinary() {
 
 /**
  * Resolve resigner binary from PATH, or download it if unavailable.
+ * It returns the command name, 'resigner', if it existed in the PATH,
+ * otherwise it returns the path to 'resigner' after downloading it
+ * from the github.
  * @returns {Promise<{resignerPath: string, downloadedDir: string | undefined}>}
  */
 async function resolveResignerBinary() {
@@ -232,7 +225,8 @@ async function resolveResignerBinary() {
       downloadedDir: undefined,
     };
   }
-  const tempDir = await getTempDir();
+  const tempDir = path.join(os.tmpdir(), `${SCRIPT_NAME}-${Date.now()}`);
+  await fs.mkdir(tempDir, {recursive: true});
   const resignerPath = await downloadResigner(tempDir);
   return {
     resignerPath,
