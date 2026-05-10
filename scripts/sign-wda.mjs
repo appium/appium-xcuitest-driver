@@ -199,9 +199,9 @@ async function downloadResigner(destDir) {
 }
 
 /**
- * Return Trule if the local environment has the resigner binary already.
- * @returns
- */
+ * Return true if the local environment already has the resigner binary.
+ * @returns {Promise<boolean>} Whether the resigner binary is available in the local environment
+*/
 async function hasResignerBinary() {
   try {
     await exec('resigner', ['--help']);
@@ -215,7 +215,7 @@ async function hasResignerBinary() {
  * Resolve resigner binary from PATH, or download it if unavailable.
  * It returns the command name, 'resigner', if it existed in the PATH,
  * otherwise it returns the path to 'resigner' after downloading it
- * from the github.
+ * from GitHub Releases.
  * @returns {Promise<{resignerPath: string, downloadedDir: string | undefined}>}
  */
 async function resolveResignerBinary() {

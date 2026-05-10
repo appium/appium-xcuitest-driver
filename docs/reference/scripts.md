@@ -183,6 +183,10 @@ appium driver run xcuitest download-wda-sim -- --outdir=<outdir> --platform=<pla
 Signs or inspects a downloaded WebDriverAgent (WDA) app bundle using
 [`resigner`](https://github.com/KazuCocoa/resigner).
 
+If `resigner` is available on your `PATH`, the script uses it directly. Otherwise, it
+automatically downloads a platform-specific `resigner` binary from GitHub Releases.
+This requires network access, and the downloaded binary is stored in a temporary directory that is cleaned up after the command completes.
+
 By default, it signs the app using a `.p12` certificate and provisioning profiles. With
 `--inspect`, it runs inspect-only mode and prints bundle/signing details without modifying the app.
 
@@ -232,7 +236,7 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
 
 ##### Required Arguments
 
-|<div style="width:8em">Argument</div>|Description|Type|
+|Argument|Description|Type|
 |--|--|--|
 |`--wda-path`|Path to the `WebDriverAgentRunner-Runner.app` bundle to sign|string|
 
@@ -240,8 +244,8 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
 
 |Argument|Description|Type|
 |--|--|--|
-|`--p12-file`|Path to the `.p12` signing certificate file|string|
-|`--p12-password`|Password for the `.p12` certificate. Optional if `P12_PASSWORD` env var is set.|string|
+|`--p12-file`|Path to the `.p12` signing certificate file. Required unless `--inspect` is set.|string|
+|`--p12-password`|Password for the `.p12` certificate. Optional if `P12_PASSWORD` env var is set. Required unless `--inspect` is set.|string|
 |`--profile-dir`|Directory containing provisioning profiles (`.mobileprovision` files.) Default is auto-discovered from default locations `~/Library/Developer/Xcode/UserData/Provisioning Profiles` and `~/Library/MobileDevice/Provisioning Profiles`.|string|
 |`--bundle-id`|Remap the default WebDriverAgent bundle IDs with the specified bundle ID. It is useful when your provisioning profile is tied to a specific bundle ID.|string|
 |`--inspect`|Run `resigner --inspect` only. In this mode, signing options (`--p12-file`, `--p12-password`/`P12_PASSWORD`, `--profile-dir`) are not required.|boolean|
@@ -260,12 +264,12 @@ appium driver run xcuitest sign-wda -- --wda-path=<path> --inspect
 
 - Sign WDA using `P12_PASSWORD` env var instead of `--p12-password`:
 
-        ```
-        P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- \
-            --wda-path=./wda/WebDriverAgentRunner-Runner.app \
-            --p12-file=~/sign.p12 \
-            --bundle-id=com.example.wda
-        ```
+    ```
+    P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- \
+        --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+        --p12-file=~/sign.p12 \
+        --bundle-id=com.example.wda
+    ```
 
 - Inspect a WDA app without signing:
 
