@@ -5,7 +5,8 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {Command} from 'commander';
 
-const log = logger.getLogger('sign-wda');
+const SCRIPT_NAME = 'sign-wda';
+const log = logger.getLogger(SCRIPT_NAME);
 const RESIGNER_REPO = 'KazuCocoa/resigner';
 const FETCH_TIMEOUT_MS = 15_000;
 const DEFAULT_PROFILE_DIR_CANDIDATES = [
@@ -61,13 +62,6 @@ export async function signWDA(options) {
       profileDir: resolvedProfileDir,
       bundleId: options.bundleId,
     });
-
-    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
-    if (inspectResult) {
-      log.info(`Resigner inspect result:\n${inspectResult}`);
-    } else {
-      log.info('Resigner inspect finished, but no output was returned.');
-    }
   } finally {
     if (downloadedDir && (await fs.exists(downloadedDir))) {
       await fs.rimraf(downloadedDir);
@@ -89,7 +83,7 @@ async function getLatestResignerVersion() {
       signal: controller.signal,
       headers: {
         Accept: 'application/vnd.github+json',
-        'User-Agent': 'sign-wda',
+        'User-Agent': SCRIPT_NAME,
       },
     });
   } catch (err) {
@@ -205,10 +199,11 @@ async function downloadResigner(destDir) {
 }
 
 /**
+ * Return temp dir path.
  * @returns {Promise<string>}
  */
 async function getTempDir() {
-  const tempDir = path.join(os.tmpdir(), `sign-wda-${Date.now()}`);
+  const tempDir = path.join(os.tmpdir(), `${SCRIPT_NAME}-${Date.now()}`);
   await fs.mkdir(tempDir, {recursive: true});
   return tempDir;
 }
