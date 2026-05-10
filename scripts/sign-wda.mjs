@@ -22,13 +22,11 @@ export async function inspectWDA(options) {
     throw new Error(`WDA path does not exist: ${options.wdaPath}`);
   }
 
-  const tempDir = path.join(os.tmpdir(), `inspect-wda-${Date.now()}`);
-  await fs.mkdir(tempDir, {recursive: true});
-  let downloadedResigner = false;
-
+  const {
+    resignerPath,
+    downloadedDir
+  } = await resolveResignerBinary();
   try {
-    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
-    downloadedResigner = downloaded;
     const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
     if (inspectResult) {
       log.info(`Resigner inspect result:\n${inspectResult}`);
@@ -36,8 +34,8 @@ export async function inspectWDA(options) {
       log.info('Resigner inspect finished, but no output was returned.');
     }
   } finally {
-    if (downloadedResigner && (await fs.exists(tempDir))) {
-      await fs.rimraf(tempDir);
+    if (downloadedDir && (await fs.exists(downloadedDir))) {
+      await fs.rimraf(downloadedDir);
     }
   }
 }
@@ -51,14 +49,12 @@ export async function signWDA(options) {
     throw new Error(`WDA path does not exist: ${options.wdaPath}`);
   }
 
-  const tempDir = path.join(os.tmpdir(), `sign-wda-${Date.now()}`);
+  const {
+    resignerPath,
+    downloadedDir
+  } = await resolveResignerBinary();
   const resolvedProfileDir = await resolveProfileDir(options.profileDir);
-  await fs.mkdir(tempDir, {recursive: true});
-  let downloadedResigner = false;
-
   try {
-    const {resignerPath, downloaded} = await resolveResignerBinary(tempDir);
-    downloadedResigner = downloaded;
     await signWDAWithResigner(resignerPath, options.wdaPath, {
       p12File: options.p12File,
       p12Password: options.p12Password,
@@ -73,8 +69,8 @@ export async function signWDA(options) {
       log.info('Resigner inspect finished, but no output was returned.');
     }
   } finally {
-    if (downloadedResigner && (await fs.exists(tempDir))) {
-      await fs.rimraf(tempDir);
+    if (downloadedDir && (await fs.exists(downloadedDir))) {
+      await fs.rimraf(downloadedDir);
     }
   }
 }
@@ -209,25 +205,44 @@ async function downloadResigner(destDir) {
 }
 
 /**
- * Resolve resigner binary from PATH, or download it if unavailable.
- * @param {string} tempDir
- * @returns {Promise<{resignerPath: string, downloaded: boolean}>}
+ * @returns {Promise<string>}
  */
-async function resolveResignerBinary(tempDir) {
+async function getTempDir() {
+  const tempDir = path.join(os.tmpdir(), `sign-wda-${Date.now()}`);
+  await fs.mkdir(tempDir, {recursive: true});
+  return tempDir;
+}
+
+/**
+ * Return Trule if the local environment has the resigner binary already.
+ * @returns
+ */
+async function hasResignerBinary() {
   try {
     await exec('resigner', ['--help']);
-    log.info('Using resigner binary from PATH');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Resolve resigner binary from PATH, or download it if unavailable.
+ * @returns {Promise<{resignerPath: string, downloadedDir: string | undefined}>}
+ */
+async function resolveResignerBinary() {
+  if (await hasResignerBinary()) {
     return {
       resignerPath: 'resigner',
-      downloaded: false,
-    };
-  } catch {
-    const resignerPath = await downloadResigner(tempDir);
-    return {
-      resignerPath,
-      downloaded: true,
+      downloadedDir: undefined,
     };
   }
+  const tempDir = await getTempDir();
+  const resignerPath = await downloadResigner(tempDir);
+  return {
+    resignerPath,
+    downloadedDir: tempDir,
+  };
 }
 
 /**
@@ -303,6 +318,8 @@ async function signWDAWithResigner(resignerPath, wdaPath, options) {
   ];
 
   if (options.bundleId) {
+    // To re-apply the same mapping again for past failure case
+    args.push('--bundle-id-remap', `${options.bundleId}=${options.bundleId}`);
     args.push('--bundle-id-remap', `com.facebook.WebDriverAgentRunner=${options.bundleId}`);
     args.push('--bundle-id-remap', `com.facebook.WebDriverAgentRunner.xctrunner=${options.bundleId}`);
     args.push('--bundle-id-remap', `com.facebook.WebDriverAgentLib=${options.bundleId}`);
