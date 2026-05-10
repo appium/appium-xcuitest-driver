@@ -30,7 +30,7 @@ export async function inspectWDA(options) {
   try {
     const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
     if (inspectResult) {
-      log.info(`Resigner inspect result:\n${inspectResult}`);
+      log.info(`Resigner inspect result:\n---\n${inspectResult}`);
     } else {
       log.info('Resigner inspect finished, but no output was returned.');
     }
@@ -307,7 +307,7 @@ async function signWDAWithResigner(resignerPath, wdaPath, options) {
   ];
 
   if (options.bundleId) {
-    // To re-apply the same mapping again for past failure case
+    // To re-apply the same mapping again for past failure cases for safe.
     args.push('--bundle-id-remap', `${options.bundleId}=${options.bundleId}`);
     args.push('--bundle-id-remap', `com.facebook.WebDriverAgentRunner=${options.bundleId}`);
     args.push('--bundle-id-remap', `com.facebook.WebDriverAgentRunner.xctrunner=${options.bundleId}`);
