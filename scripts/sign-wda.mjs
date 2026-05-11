@@ -1,4 +1,4 @@
-import {fs, logger, net, zip} from 'appium/support.js';
+import {fs, logger} from 'appium/support.js';
 import {exec} from 'teen_process';
 import os from 'node:os';
 import path from 'node:path';
@@ -6,9 +6,8 @@ import {pathToFileURL} from 'node:url';
 import {Command} from 'commander';
 
 const SCRIPT_NAME = 'sign-wda';
+const RESIGNER_BINARY_NAME = 'resigner';
 const log = logger.getLogger(SCRIPT_NAME);
-const RESIGNER_REPO = 'KazuCocoa/resigner';
-const FETCH_TIMEOUT_MS = 15_000;
 const DEFAULT_PROFILE_DIR_CANDIDATES = [
   path.join(os.homedir(), 'Library', 'Developer', 'Xcode', 'UserData', 'Provisioning Profiles'),
   path.join(os.homedir(), 'Library', 'MobileDevice', 'Provisioning Profiles'),
@@ -22,22 +21,12 @@ export async function inspectWDA(options) {
   if (!(await fs.exists(options.wdaPath))) {
     throw new Error(`WDA path does not exist: ${options.wdaPath}`);
   }
-
-  const {
-    resignerPath,
-    downloadedDir
-  } = await resolveResignerBinary();
-  try {
-    const inspectResult = await inspectWDAWithResigner(resignerPath, options.wdaPath);
-    if (inspectResult) {
-      log.info(`Resigner inspect result:\n---\n${inspectResult}`);
-    } else {
-      log.info('Resigner inspect finished, but no output was returned.');
-    }
-  } finally {
-    if (downloadedDir && (await fs.exists(downloadedDir))) {
-      await fs.rimraf(downloadedDir);
-    }
+  await requireResignerBinary();
+  const inspectResult = await inspectWDAWithResigner(options.wdaPath);
+  if (inspectResult) {
+    log.info(`Resigner inspect result:\n---\n${inspectResult}`);
+  } else {
+    log.info('Resigner inspect finished, but no output was returned.');
   }
 }
 
@@ -49,189 +38,26 @@ export async function signWDA(options) {
   if (!(await fs.exists(options.wdaPath))) {
     throw new Error(`WDA path does not exist: ${options.wdaPath}`);
   }
-
-  const {
-    resignerPath,
-    downloadedDir
-  } = await resolveResignerBinary();
+  await requireResignerBinary();
   const resolvedProfileDir = await resolveProfileDir(options.profileDir);
-  try {
-    await signWDAWithResigner(resignerPath, options.wdaPath, {
-      p12File: options.p12File,
-      p12Password: options.p12Password,
-      profileDir: resolvedProfileDir,
-      bundleId: options.bundleId,
-    });
-  } finally {
-    if (downloadedDir && (await fs.exists(downloadedDir))) {
-      await fs.rimraf(downloadedDir);
-    }
-  }
+  await signWDAWithResigner(options.wdaPath, {
+    p12File: options.p12File,
+    p12Password: options.p12Password,
+    profileDir: resolvedProfileDir,
+    bundleId: options.bundleId,
+  });
 }
 
 /**
- * Get the latest resigner release version
- * @returns {Promise<string>}
- */
-async function getLatestResignerVersion() {
-  const apiUrl = `https://api.github.com/repos/${RESIGNER_REPO}/releases/latest`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-  let response;
-  try {
-    response = await fetch(apiUrl, {
-      signal: controller.signal,
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': SCRIPT_NAME,
-      },
-    });
-  } catch (err) {
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error(`Failed to fetch latest resigner version: request timed out after ${FETCH_TIMEOUT_MS}ms`, {
-        cause: err,
-      });
-    }
-    throw err;
-  } finally {
-    clearTimeout(timeout);
-  }
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch latest resigner version: ${await response.text()}`);
-  }
-  const data = /** @type {{tag_name: string}} */ (await response.json());
-  return data.tag_name;
-}
-
-/**
- * Get resigner archive filename based on platform and architecture
- * @returns {string}
- */
-function getResignerArchiveName() {
-  const arch = os.arch();
-  const platform = process.platform;
-
-  let archSuffix;
-  if (arch === 'arm64') {
-    archSuffix = 'arm64';
-  } else if (arch === 'x64') {
-    archSuffix = 'amd64';
-  } else {
-    throw new Error(`Unsupported architecture: ${arch}`);
-  }
-
-  if (platform === 'darwin') {
-    return `darwin-${archSuffix}.tar.gz`;
-  } else if (platform === 'linux') {
-    return `linux-${archSuffix}.tar.gz`;
-  } else if (platform === 'win32') {
-    return `windows-${archSuffix}.zip`;
-  } else {
-    throw new Error(`Unsupported platform: ${platform}`);
-  }
-}
-
-/**
- * Download and extract resigner tool
- * @param {string} destDir
- * @returns {Promise<string>} Path to resigner binary
- */
-async function downloadResigner(destDir) {
-  let archiveName;
-  try {
-    log.info('Downloading resigner...');
-    archiveName = getResignerArchiveName();
-
-    const version = await getLatestResignerVersion();
-    const resignerUrl = `https://github.com/${RESIGNER_REPO}/releases/download/${version}/${archiveName}`;
-    const resignerArchive = path.join(destDir, archiveName);
-
-    await net.downloadFile(resignerUrl, resignerArchive);
-
-    log.info(`Extracting resigner from ${resignerArchive}`);
-
-    if (archiveName.endsWith('.zip')) {
-      // Windows releases are zip files
-      await zip.extractAllTo(resignerArchive, destDir);
-    } else {
-      // macOS and Linux releases are tar.gz
-      await exec('tar', ['xzf', resignerArchive, '-C', destDir]);
-    }
-
-    const platform = process.platform;
-    const arch = os.arch();
-    const archDir = arch === 'arm64' ? 'arm64' : 'amd64';
-
-    let resignerDir, binaryName;
-    if (platform === 'darwin') {
-      resignerDir = `darwin-${archDir}`;
-      binaryName = 'resigner';
-    } else if (platform === 'linux') {
-      resignerDir = `linux-${archDir}`;
-      binaryName = 'resigner';
-    } else if (platform === 'win32') {
-      resignerDir = `windows-${archDir}`;
-      binaryName = 'resigner.exe';
-    } else {
-      throw new Error(`Unsupported platform: ${platform}`);
-    }
-
-    const resignerPath = path.join(destDir, resignerDir, binaryName);
-    if (!(await fs.exists(resignerPath))) {
-      throw new Error(`Resigner binary not found at ${resignerPath}`);
-    }
-
-    if (platform !== 'win32') {
-      await fs.chmod(resignerPath, 0o755);
-    }
-
-    log.info(`Resigner ready at ${resignerPath}`);
-    return resignerPath;
-  } finally {
-    if (archiveName) {
-      const resignerArchive = path.join(destDir, archiveName);
-      if (await fs.exists(resignerArchive)) {
-        await fs.unlink(resignerArchive);
-      }
-    }
-  }
-}
-
-/**
- * Return true if the local environment already has the resigner binary.
- * @returns {Promise<boolean>} Whether the resigner binary is available in the local environment
+ * Check if the resginer binary is available in the PATH.
+ * @returns {Promise<void>} Whether the resigner binary is available in the local environment
 */
-async function hasResignerBinary() {
+async function requireResignerBinary() {
   try {
-    await exec('resigner', ['--help']);
-    return true;
+    await exec(RESIGNER_BINARY_NAME, ['--help']);
   } catch {
-    return false;
+    throw new Error('Resigner binary is not available in the PATH.');
   }
-}
-
-/**
- * Resolve resigner binary from PATH, or download it if unavailable.
- * It returns the command name, 'resigner', if it existed in the PATH,
- * otherwise it returns the path to 'resigner' after downloading it
- * from GitHub Releases.
- * @returns {Promise<{resignerPath: string, downloadedDir: string | undefined}>}
- */
-async function resolveResignerBinary() {
-  if (await hasResignerBinary()) {
-    return {
-      resignerPath: 'resigner',
-      downloadedDir: undefined,
-    };
-  }
-  const tempDir = path.join(os.tmpdir(), `${SCRIPT_NAME}-${Date.now()}`);
-  await fs.mkdir(tempDir, {recursive: true});
-  const resignerPath = await downloadResigner(tempDir);
-  return {
-    resignerPath,
-    downloadedDir: tempDir,
-  };
 }
 
 /**
@@ -294,12 +120,11 @@ async function resolveProfileDir(profileDir) {
 
 /**
  * Run resigner to sign WDA
- * @param {string} resignerPath
  * @param {string} wdaPath
  * @param {SignOptions} options
  * @returns {Promise<void>}
  */
-async function signWDAWithResigner(resignerPath, wdaPath, options) {
+async function signWDAWithResigner(wdaPath, options) {
   const args = [
     '--p12-file', options.p12File,
     '--profile', options.profileDir,
@@ -317,7 +142,7 @@ async function signWDAWithResigner(resignerPath, wdaPath, options) {
   args.push(wdaPath);
 
   log.info(`Running resigner to sign ${wdaPath}`);
-  await exec(resignerPath, args, {
+  await exec(RESIGNER_BINARY_NAME, args, {
     env: {
       ...process.env,
       P12_PASSWORD: options.p12Password,
@@ -328,13 +153,12 @@ async function signWDAWithResigner(resignerPath, wdaPath, options) {
 
 /**
  * Run resigner inspect on the signed WDA and return the output.
- * @param {string} resignerPath
  * @param {string} wdaPath
  * @returns {Promise<string>}
  */
-async function inspectWDAWithResigner(resignerPath, wdaPath) {
+async function inspectWDAWithResigner(wdaPath) {
   log.info(`Inspecting signed WDA at ${wdaPath}`);
-  const {stdout} = await exec(resignerPath, ['--inspect', wdaPath]);
+  const {stdout} = await exec(RESIGNER_BINARY_NAME, ['--inspect', wdaPath]);
   return String(stdout || '').trim();
 }
 
