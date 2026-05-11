@@ -182,10 +182,7 @@ appium driver run xcuitest download-wda-sim -- --outdir=<outdir> --platform=<pla
 
 Signs or inspects a downloaded WebDriverAgent (WDA) app bundle using
 [`resigner`](https://github.com/KazuCocoa/resigner).
-
-If `resigner` is available on your `PATH`, the script uses it directly. Otherwise, it
-automatically downloads a platform-specific `resigner` binary from GitHub Releases.
-This requires network access, and the downloaded binary is stored in a temporary directory that is cleaned up after the command completes.
+The `resigner` tool must be available on your `PATH`.
 
 By default, it signs the app using a `.p12` certificate and provisioning profiles. With
 `--inspect`, it runs inspect-only mode and prints bundle/signing details without modifying the app.
