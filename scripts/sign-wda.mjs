@@ -7,11 +7,18 @@ import {Command} from 'commander';
 
 const SCRIPT_NAME = 'sign-wda';
 const RESIGNER_BINARY_NAME = 'resigner';
-const log = logger.getLogger(SCRIPT_NAME);
+const MOBILEPROVISION_EXTENSION = '.mobileprovision';
 const DEFAULT_PROFILE_DIR_CANDIDATES = [
   path.join(os.homedir(), 'Library', 'Developer', 'Xcode', 'UserData', 'Provisioning Profiles'),
   path.join(os.homedir(), 'Library', 'MobileDevice', 'Provisioning Profiles'),
 ];
+const DEFAULT_WDA_BUNDLE_IDS = [
+  'com.facebook.WebDriverAgentRunner',
+  'com.facebook.WebDriverAgentRunner.xctrunner',
+  'com.facebook.WebDriverAgentLib',
+];
+
+const log = logger.getLogger(SCRIPT_NAME);
 
 /**
  * @param {InspectWDAOptions} options
@@ -78,9 +85,9 @@ async function validateProfileDir(dir, source) {
     throw new Error(`${source} provisioning profile directory is not a readable directory: ${dir}`);
   }
 
-  if (!entries.some((name) => name.toLowerCase().endsWith('.mobileprovision'))) {
+  if (!entries.some((name) => name.toLowerCase().endsWith(MOBILEPROVISION_EXTENSION))) {
     throw new Error(
-      `${source} provisioning profile directory does not contain any .mobileprovision files: ${dir}`
+      `${source} provisioning profile directory does not contain any ${MOBILEPROVISION_EXTENSION} files: ${dir}`
     );
   }
 
@@ -132,11 +139,16 @@ async function signWDAWithResigner(wdaPath, options) {
   ];
 
   if (options.bundleId) {
-    // To re-apply the same mapping again for past failure cases for safe.
-    args.push('--bundle-id-remap', `${options.bundleId}=${options.bundleId}`);
-    args.push('--bundle-id-remap', `com.facebook.WebDriverAgentRunner=${options.bundleId}`);
-    args.push('--bundle-id-remap', `com.facebook.WebDriverAgentRunner.xctrunner=${options.bundleId}`);
-    args.push('--bundle-id-remap', `com.facebook.WebDriverAgentLib=${options.bundleId}`);
+    args.push(
+      ...[
+      // To re-apply the same mapping again for past failure cases for safe.
+      options.bundleId,
+      ...DEFAULT_WDA_BUNDLE_IDS,
+    ].flatMap((bundleId) => [
+        '--bundle-id-remap',
+        `${bundleId}=${options.bundleId}`,
+      ])
+    );
   }
 
   args.push(wdaPath);
