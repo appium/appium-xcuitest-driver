@@ -20,50 +20,59 @@ const DEFAULT_WDA_BUNDLE_IDS = [
 
 const log = logger.getLogger(SCRIPT_NAME);
 
-/**
- * @param {InspectWDAOptions} options
- * @return {Promise<void>}
- */
-async function inspectWDA(options) {
-  if (!(await fs.exists(options.wdaPath))) {
-    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
-  }
-  await requireResignerBinary();
-  const inspectResult = await inspectWDAWithResigner(options.wdaPath);
-  if (inspectResult) {
-    log.info(`Resigner inspect result:\n---\n${inspectResult}`);
-  } else {
-    log.info('Resigner inspect finished, but no output was returned.');
+
+class RunCmd {
+  /**
+   * Check if the resginer binary is available in the PATH.
+   * @returns {Promise<void>} Whether the resigner binary is available in the local environment
+  */
+  async requireResignerBinary() {
+    try {
+      await fs.which(RESIGNER_BINARY_NAME);
+    } catch {
+      throw new Error('Resigner binary is not available in the PATH.');
+    }
   }
 }
 
-/**
- * @param {SignWDAOptions} options
- * @return {Promise<void>}
- */
-async function signWDA(options) {
-  if (!(await fs.exists(options.wdaPath))) {
-    throw new Error(`WDA path does not exist: ${options.wdaPath}`);
+class RunInspectWDA extends RunCmd {
+  /**
+   * Run resigner inspect on the signed WDA and return the output.
+   * @param {InspectWDAOptions} options
+   * @returns {Promise<void>}
+   */
+  async inspect(options) {
+    if (!(await fs.exists(options.wdaPath))) {
+      throw new Error(`WDA path does not exist: ${options.wdaPath}`);
+    }
+    await this.requireResignerBinary();
+    const inspectResult = await inspectWDAWithResigner(options.wdaPath);
+    if (inspectResult) {
+      log.info(`Resigner inspect result:\n---\n${inspectResult}`);
+    } else {
+      log.info('Resigner inspect finished, but no output was returned.');
+    }
   }
-  await requireResignerBinary();
-  const resolvedProfileDir = await resolveProfileDir(options.profileDir);
-  await signWDAWithResigner(options.wdaPath, {
-    p12File: options.p12File,
-    p12Password: options.p12Password,
-    profileDir: resolvedProfileDir,
-    bundleId: options.bundleId,
-  });
 }
 
-/**
- * Check if the resginer binary is available in the PATH.
- * @returns {Promise<void>} Whether the resigner binary is available in the local environment
-*/
-async function requireResignerBinary() {
-  try {
-    await fs.which(RESIGNER_BINARY_NAME);
-  } catch {
-    throw new Error('Resigner binary is not available in the PATH.');
+class RunSignWDA extends RunCmd {
+  /**
+   * Run resigner to sign the WDA.
+   * @param {SignWDAOptions} options
+   * @returns {Promise<void>}
+   */
+  async sign(options) {
+    if (!(await fs.exists(options.wdaPath))) {
+      throw new Error(`WDA path does not exist: ${options.wdaPath}`);
+    }
+    await this.requireResignerBinary();
+    const resolvedProfileDir = await resolveProfileDir(options.profileDir);
+    await signWDAWithResigner(options.wdaPath, {
+      p12File: options.p12File,
+      p12Password: options.p12Password,
+      profileDir: resolvedProfileDir,
+      bundleId: options.bundleId,
+    });
   }
 }
 
@@ -210,7 +219,7 @@ EXAMPLES:
     )
     .action(async (options) => {
       if (options.inspect) {
-        await inspectWDA({
+        new RunInspectWDA().inspect({
           wdaPath: options.wdaPath,
         });
         return;
@@ -228,7 +237,7 @@ EXAMPLES:
         );
       }
 
-      await signWDA({
+      await new RunSignWDA().sign({
         wdaPath: options.wdaPath,
         p12File: options.p12File,
         p12Password,
