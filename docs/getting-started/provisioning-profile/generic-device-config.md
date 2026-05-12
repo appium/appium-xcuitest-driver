@@ -64,3 +64,14 @@ resigner \
   --bundle-id-remap "com.facebook.WebDriverAgentLib=<valid bundle id for the profile>" \
   /path/to/WebDriverAgentRunner-Runner.app
 ```
+
+Or
+
+```
+appium driver run xcuitest sign-wda -- \
+  --wda-path=<path> \
+  --p12-file=<path> \
+  --p12-password=<password of p12> \
+  --profile-dir=<path to provisioning profiles> \
+  --bundle-id=<valid bundle id for the profile>
+```
