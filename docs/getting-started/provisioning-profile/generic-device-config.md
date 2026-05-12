@@ -46,7 +46,7 @@ For example, if you're preparing such a provisioning profile for `io.appium.WebD
 In case of a free account or paid account without `*` provisioning profile,
 you may need to update the bundle id before building so `xcodebuild` can produce
 a properly signed WebDriverAgent package. Another option is to re-sign an existing
-package and remap its bundle ids with 3rd party tools such as [resigner](https://github.com/KazuCocoa/resigner).
+package and remap its bundle ids with 3rd party tools such as [resigner](https://github.com/appium/resigner).
 The tool can remap the bundle ids to values allowed by the free provisioning profile and
 then sign the package with that profile.
 

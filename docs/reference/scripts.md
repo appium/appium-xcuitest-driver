@@ -181,7 +181,7 @@ appium driver run xcuitest download-wda-sim -- --outdir=<outdir> --platform=<pla
 ### `sign-wda`
 
 Signs or inspects a downloaded WebDriverAgent (WDA) app bundle using
-[`resigner`](https://github.com/KazuCocoa/resigner).
+[`resigner`](https://github.com/appium/resigner).
 The `resigner` tool must be available on your `PATH`.
 
 By default, it signs the app using a `.p12` certificate and provisioning profiles. With
@@ -199,7 +199,7 @@ certificate and its private key.
 3. Right-click → **Export** → choose **Personal Information Exchange (.p12)**.
 4. Set a password — this becomes your `--p12-password` (or `P12_PASSWORD` env var).
 
-**Generate via command line (if you have a `.cer` and `.key` file):**
+**Generate via command line (if you have a `.cer` and `.key` file by downloading it from Apple Developer portal):**
 
 ```bash
 # Convert Apple-issued .cer to .pem
@@ -212,6 +212,8 @@ openssl pkcs12 -export \
   -out sign.p12 \
   -passout pass:mypassword
 ```
+
+Please refer to the resigner's documentation for more details on generating signing certificates and provisioning profiles.
 
 #### Usage
 

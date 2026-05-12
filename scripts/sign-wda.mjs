@@ -24,7 +24,7 @@ const log = logger.getLogger(SCRIPT_NAME);
  * @param {InspectWDAOptions} options
  * @return {Promise<void>}
  */
-export async function inspectWDA(options) {
+async function inspectWDA(options) {
   if (!(await fs.exists(options.wdaPath))) {
     throw new Error(`WDA path does not exist: ${options.wdaPath}`);
   }
@@ -41,7 +41,7 @@ export async function inspectWDA(options) {
  * @param {SignWDAOptions} options
  * @return {Promise<void>}
  */
-export async function signWDA(options) {
+async function signWDA(options) {
   if (!(await fs.exists(options.wdaPath))) {
     throw new Error(`WDA path does not exist: ${options.wdaPath}`);
   }
@@ -61,7 +61,7 @@ export async function signWDA(options) {
 */
 async function requireResignerBinary() {
   try {
-    await exec(RESIGNER_BINARY_NAME, ['--help']);
+    await fs.which(RESIGNER_BINARY_NAME);
   } catch {
     throw new Error('Resigner binary is not available in the PATH.');
   }
