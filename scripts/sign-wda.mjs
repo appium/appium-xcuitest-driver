@@ -192,7 +192,6 @@ async function main() {
     .requiredOption('--wda-path <path>', 'Path to the WebDriverAgentRunner.app bundle to sign')
     .option('--inspect', 'Run resigner inspect only (no signing)')
     .option('--p12-file <path>', 'Path to the .p12 signing certificate file')
-    .option('--p12-password <password>', 'Password for the .p12 certificate (or use P12_PASSWORD env var)')
     .option('--profile-dir <path>', 'Directory containing provisioning profiles (auto-discovered if omitted)')
     .option('--bundle-id <id>', 'Target bundle ID for remapping (e.g., com.example.wda)')
     .addHelpText(
@@ -200,17 +199,17 @@ async function main() {
       `
 EXAMPLES:
   # Sign downloaded WDA with certificate and provisioning profile
-  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
-    --p12-file ~/sign.p12 --p12-password mypassword
+  P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \
+    --p12-file ~/sign.p12
 
   # Sign WDA and remap bundle ID
-  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
-    --p12-file ~/sign.p12 --p12-password mypassword \\
+  P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \
+    --p12-file ~/sign.p12 \
     --bundle-id com.example.wda
 
   # Sign WDA and remap bundle ID with a specified provisioning profile directory
-  appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \\
-    --p12-file ~/sign.p12 --p12-password mypassword \\
+  P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- --wda-path ./wda-real/WebDriverAgentRunner-Runner.app \
+    --p12-file ~/sign.p12 \
     --profile-dir /path/to/your/provisioning/profiles \\
     --bundle-id com.example.wda
 
@@ -225,15 +224,13 @@ EXAMPLES:
         return;
       }
 
-      const p12Password = options.p12Password ?? process.env.P12_PASSWORD;
-
-      const missingSigningOptions = [
-        !options.p12File ? '--p12-file' : null,
-        !p12Password ? '--p12-password (or P12_PASSWORD env var)' : null,
-      ].filter(Boolean);
-      if (missingSigningOptions.length) {
+      const p12Password = process.env.P12_PASSWORD;
+      if (!options.p12File || !p12Password) {
+        const missing = [];
+        if (!options.p12File) {missing.push('--p12-file');}
+        if (!p12Password) {missing.push('P12_PASSWORD env var');}
         throw new Error(
-          `Missing required options for signing mode: ${missingSigningOptions.join(', ')}`
+          `Missing required options for signing mode: ${missing.join(', ')}`
         );
       }
 
