@@ -54,9 +54,8 @@ Please check the tool's readme for details, but in short, you can use the follow
 re-sign the package with bundle id remapping:
 
 ```
-resigner \
+P12_PASSWORD="<password of p12>" resigner \
   --p12-file "<path to p12 file>" \
-  --p12-password "<password of p12>" \
   --profile "<path to provisioning profiles>" \
   --force \
   --bundle-id-remap "com.facebook.WebDriverAgentRunner=<valid bundle id for the profile>" \
@@ -68,10 +67,9 @@ resigner \
 Or
 
 ```
-appium driver run xcuitest sign-wda -- \
+P12_PASSWORD="<password of p12>" appium driver run xcuitest sign-wda -- \
   --wda-path=<path> \
   --p12-file=<path> \
-  --p12-password=<password of p12> \
   --profile-dir=<path to provisioning profiles> \
   --bundle-id=<valid bundle id for the profile>
 ```
