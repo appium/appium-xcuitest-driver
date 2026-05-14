@@ -50,22 +50,13 @@ interface WalkDirPullWalkContext {
 export class AfcClient {
   private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
   private readonly _isRemoteXPC: boolean;
-  /**
-   * Optional discovery RemoteXPC connection retained for ownership/cleanup.
-   * Only set when a service-vending RSD must outlive its discovery call
-   * (currently: none — both creation paths close the discovery RSD eagerly,
-   * matching the go-ios pattern of "probe once, close immediately").
-   */
-  private readonly remoteXPCConnection?: RemoteXpcConnection;
 
   private constructor(
     service: RemoteXPCAfcService | IOSDeviceAfcService,
     isRemoteXPC: boolean = false,
-    remoteXPCConnection?: RemoteXpcConnection,
   ) {
     this.service = service;
     this._isRemoteXPC = isRemoteXPC;
-    this.remoteXPCConnection = remoteXPCConnection;
   }
 
   /**
@@ -306,15 +297,10 @@ export class AfcClient {
   }
 
   /**
-   * Close the AFC service connection and remoteXPC connection if present
+   * Close the AFC service connection
    */
   async close(): Promise<void> {
     this.service.close();
-    if (this.remoteXPCConnection) {
-      try {
-        await this.remoteXPCConnection.close();
-      } catch {}
-    }
   }
 
   /**
