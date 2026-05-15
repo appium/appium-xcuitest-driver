@@ -74,7 +74,7 @@ class Resigner {
     if (options.bundleId) {
       args.push(
         ...[
-          // To re-apply the same mapping again for past failure cases for safe.
+          // To re-apply the same mapping again for past failure cases for safety.
           options.bundleId,
           ...DEFAULT_WDA_BUNDLE_IDS,
         ].flatMap((bundleId) => [
