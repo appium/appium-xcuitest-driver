@@ -2,10 +2,7 @@ import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 import {services} from 'appium-ios-device';
 import type {InstallationProxyService as IOSDeviceInstallationProxyService} from 'appium-ios-device';
-import type {
-  InstallationProxyService as RemoteXPCInstallationProxyService,
-  RemoteXpcConnection,
-} from 'appium-ios-remotexpc';
+import type {InstallationProxyService as RemoteXPCInstallationProxyService} from 'appium-ios-remotexpc';
 import type {AppInfo, AppInfoMapping} from '../types';
 
 /**
@@ -43,14 +40,14 @@ interface LookupApplicationOptions {
 export class InstallationProxyClient {
   private constructor(
     private readonly service: RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
-    private readonly remoteXPCConnection?: RemoteXpcConnection,
+    private readonly _isRemoteXPC: boolean,
   ) {}
 
   /**
    * Check if this client is using RemoteXPC
    */
   private get isRemoteXPC(): boolean {
-    return !!this.remoteXPCConnection;
+    return this._isRemoteXPC;
   }
 
   /**
@@ -78,55 +75,19 @@ export class InstallationProxyClient {
    */
   static async create(udid: string, useRemoteXPC: boolean): Promise<InstallationProxyClient> {
     if (useRemoteXPC) {
-      const client = await InstallationProxyClient.withRemoteXpcConnection(async () => {
+      try {
         const Services = await getRemoteXPCServices();
-        const {installationProxyService, remoteXPC} =
-          await Services.startInstallationProxyService(udid);
-        return {
-          service: installationProxyService,
-          connection: remoteXPC,
-        };
-      });
-      if (client) {
-        return client;
+        const installationProxyService = await Services.startInstallationProxyService(udid);
+        return new InstallationProxyClient(installationProxyService, true);
+      } catch (err: any) {
+        log.error(
+          `Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+        );
       }
     }
 
     const service = await services.startInstallationProxyService(udid);
-    return new InstallationProxyClient(service);
-  }
-
-  /**
-   * Helper to safely execute RemoteXPC operations with connection cleanup
-   */
-  private static async withRemoteXpcConnection<
-    T extends RemoteXPCInstallationProxyService | IOSDeviceInstallationProxyService,
-  >(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
-  ): Promise<InstallationProxyClient | null> {
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
-    try {
-      const {service, connection} = await operation();
-      remoteXPCConnection = connection;
-      const client = new InstallationProxyClient(service, remoteXPCConnection);
-      succeeded = true;
-      return client;
-    } catch (err: any) {
-      log.error(
-        `Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-      );
-      return null;
-    } finally {
-      // Only close connection if we failed (if succeeded, the client owns it)
-      if (!succeeded && remoteXPCConnection) {
-        try {
-          await remoteXPCConnection.close();
-        } catch (closeErr: any) {
-          log.debug(`Error closing RemoteXPC connection during cleanup: ${closeErr.message}`);
-        }
-      }
-    }
+    return new InstallationProxyClient(service, false);
   }
 
   /**
@@ -253,14 +214,6 @@ export class InstallationProxyClient {
       this.service.close();
     } catch (err: any) {
       log.debug(`Error closing installation proxy service: ${err.message}`);
-    }
-
-    if (this.remoteXPCConnection) {
-      try {
-        await this.remoteXPCConnection.close();
-      } catch (err: any) {
-        log.warn(`Error closing RemoteXPC connection: ${err.message}`);
-      }
     }
   }
 

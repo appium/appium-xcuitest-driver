@@ -1,7 +1,7 @@
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
 import {isIos18OrNewerPlatform} from '../utils';
-import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
+import type {DVTInstruments} from 'appium-ios-remotexpc';
 import type {Condition, IConditionInducer} from '../types';
 import {getRemoteXPCServices} from './remotexpc-utils';
 
@@ -15,7 +15,7 @@ type InstrumentService = {
  * RemoteXPC-based implementation for iOS 18+.
  */
 class RemoteXPCConditionInducer implements IConditionInducer {
-  private connection: DVTServiceWithConnection | null = null;
+  private connection: DVTInstruments | null = null;
 
   constructor(
     private readonly udid: string,
@@ -23,7 +23,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   ) {}
 
   async list(): Promise<Condition[]> {
-    let connection: DVTServiceWithConnection | null = null;
+    let connection: DVTInstruments | null = null;
     try {
       connection = await this.startConnection();
       const result = await connection.conditionInducer.list();
@@ -33,8 +33,8 @@ class RemoteXPCConditionInducer implements IConditionInducer {
       throw err;
     } finally {
       if (connection) {
-        this.log.info(`Closing remoteXPC connection for device ${this.udid}`);
-        await connection.remoteXPC.close();
+        this.log.info(`Closing DVT service connection for device ${this.udid}`);
+        await connection.dvtService.close();
       }
     }
   }
@@ -72,14 +72,14 @@ class RemoteXPCConditionInducer implements IConditionInducer {
       this.log.warn(`Failed to disable condition inducer via RemoteXPC: ${err.message}`);
       return false;
     } finally {
-      this.log.info(`Closing remoteXPC connection for device ${this.udid}`);
+      this.log.info(`Closing DVT service connection for device ${this.udid}`);
       await this.close();
     }
   }
 
   async close(): Promise<void> {
     if (this.connection) {
-      await this.connection.remoteXPC.close();
+      await this.connection.dvtService.close();
       this.connection = null;
     }
   }
@@ -88,7 +88,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
     return this.connection !== null;
   }
 
-  async startConnection(): Promise<DVTServiceWithConnection> {
+  async startConnection(): Promise<DVTInstruments> {
     const Services = await getRemoteXPCServices();
     return Services.startDVTService(this.udid);
   }
@@ -193,7 +193,7 @@ export async function createConditionInducer(params: {
   const xpcInducer = new RemoteXPCConditionInducer(udid, log);
   try {
     const connection = await xpcInducer.startConnection();
-    await connection.remoteXPC.close();
+    await connection.dvtService.close();
   } catch (err: any) {
     log.warn(
       `Unable to use RemoteXPC-based condition inducer for device ${udid}, ` +

@@ -1,10 +1,7 @@
 import type {AppiumLogger} from '@appium/types';
 import {getRemoteXPCServices} from './remotexpc-utils';
 import type {CertificateList} from '../commands/types';
-import type {
-  MobileConfigService as RemoteXPCMobileConfigService,
-  RemoteXpcConnection,
-} from 'appium-ios-remotexpc';
+import type {MobileConfigService as RemoteXPCMobileConfigService} from 'appium-ios-remotexpc';
 
 /**
  * Options for installing a certificate
@@ -22,17 +19,11 @@ export interface InstallCertificateOptions {
  */
 export class CertificateClient {
   private readonly mobileConfigService: RemoteXPCMobileConfigService;
-  private readonly remoteXPCConnection: RemoteXpcConnection;
   private readonly log: AppiumLogger;
 
-  private constructor(
-    mobileConfigService: RemoteXPCMobileConfigService,
-    log: AppiumLogger,
-    remoteXPCConnection: RemoteXpcConnection,
-  ) {
+  private constructor(mobileConfigService: RemoteXPCMobileConfigService, log: AppiumLogger) {
     this.mobileConfigService = mobileConfigService;
     this.log = log;
-    this.remoteXPCConnection = remoteXPCConnection;
   }
 
   /**
@@ -55,29 +46,16 @@ export class CertificateClient {
       );
     }
 
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
     try {
       const Services = await getRemoteXPCServices();
-      const {mobileConfigService, remoteXPC} = await Services.startMobileConfigService(udid);
-      remoteXPCConnection = remoteXPC;
-      const client = new CertificateClient(mobileConfigService, log, remoteXPCConnection);
-      succeeded = true;
-      return client;
+      const mobileConfigService = await Services.startMobileConfigService(udid);
+      return new CertificateClient(mobileConfigService, log);
     } catch (err: any) {
       throw new Error(
         `Failed to start RemoteXPC mobile config service for certificate operations: ${err.message}. ` +
           'Ensure appium-ios-remotexpc is installed and the device is supported.',
         {cause: err},
       );
-    } finally {
-      if (remoteXPCConnection && !succeeded) {
-        try {
-          await remoteXPCConnection.close();
-        } catch {
-          // ignore
-        }
-      }
     }
   }
 
@@ -108,14 +86,7 @@ export class CertificateClient {
   }
 
   /**
-   * Closes the underlying RemoteXPC connection. Safe to call more than once (errors are logged at debug level).
+   * No-op: discovery RSD is closed by remotexpc before the service is returned.
    */
-  async close(): Promise<void> {
-    try {
-      this.log.debug(`Closing remoteXPC connection`);
-      await this.remoteXPCConnection.close();
-    } catch (err: any) {
-      this.log.debug(`Error closing remoteXPC connection: ${err.message}`);
-    }
-  }
+  async close(): Promise<void> {}
 }

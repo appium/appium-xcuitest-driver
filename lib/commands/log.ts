@@ -188,20 +188,17 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   }
 
   let didStartSyslog = false;
-  const promises: Promise<any>[] = [
-    (async () => {
-      try {
-        await this.logs.syslog?.startCapture();
-        didStartSyslog = true;
-        this.eventEmitter.emit('syslogStarted', this.logs.syslog);
-      } catch (err: any) {
-        this.log.debug(err.stack);
-        this.log.warn(`Continuing without capturing device logs: ${err.message}`);
-      }
-    })(),
-    this.logs.crashlog?.startCapture() ?? Promise.resolve(),
-  ];
-  await Promise.all(promises);
+  if (this.logs.syslog) {
+    try {
+      await this.logs.syslog.startCapture();
+      didStartSyslog = true;
+      this.eventEmitter.emit('syslogStarted', this.logs.syslog);
+    } catch (err: any) {
+      this.log.debug(err.stack);
+      this.log.warn(`Continuing without capturing device logs: ${err.message}`);
+    }
+  }
+  await this.logs.crashlog?.startCapture();
 
   return didStartSyslog;
 }
