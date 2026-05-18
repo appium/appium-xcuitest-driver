@@ -1,8 +1,5 @@
 import type {Constraints} from '@appium/types';
-
-// These platform names should be valid in simulator name
-export const PLATFORM_NAME_IOS = 'iOS';
-export const PLATFORM_NAME_TVOS = 'tvOS';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from './utils';
 
 export const desiredCapConstraints = {
   platformName: {

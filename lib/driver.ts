@@ -17,13 +17,15 @@ import {LRUCache} from 'lru-cache';
 import EventEmitter from 'node:events';
 import {setTimeout as delay} from 'node:timers/promises';
 import {
-  SUPPORTED_EXTENSIONS,
-  SAFARI_BUNDLE_ID,
-  onPostConfigureApp,
   onDownloadApp,
+  onPostConfigureApp,
   verifyApplicationPlatform,
+} from './commands/app-install';
+import {SUPPORTED_EXTENSIONS, UDID_AUTO} from './commands/constants';
+import {removeAllSessionWebSocketHandlers, shouldSetInitialSafariUrl} from './commands/session';
+import {
+  SAFARI_BUNDLE_ID,
   DEFAULT_TIMEOUT_KEY,
-  UDID_AUTO,
   checkAppPresent,
   getAndCheckIosSdkVersion,
   getAndCheckXcodeVersion,
@@ -31,8 +33,6 @@ import {
   normalizeCommandTimeouts,
   normalizePlatformVersion,
   printUser,
-  removeAllSessionWebSocketHandlers,
-  shouldSetInitialSafariUrl,
 } from './utils';
 import * as activeAppInfoCommands from './commands/active-app-info';
 import * as alertCommands from './commands/alert';
