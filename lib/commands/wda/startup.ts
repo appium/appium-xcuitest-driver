@@ -7,7 +7,7 @@ import path from 'node:path';
 import {installToRealDevice} from '../../device/real-device-management';
 import {installToSimulator} from '../../device/simulator-management';
 import type {XCUITestDriver} from '../../driver';
-import {isLocalHost} from '../../utils';
+import {isLocalHost, isIos17OrNewerPlatform} from '../../utils';
 import {markSystemFilesForCleanup} from './cleanup';
 import {
   CAP_NAMES_NO_XCODEBUILD_REQUIRED,
@@ -34,6 +34,7 @@ export async function start(this: XCUITestDriver): Promise<void> {
   await setupConnection(this);
   const synchronizationKey = await getSynchronizationKey(this);
   logSynchronizationDetails(this, synchronizationKey);
+  assertUsePreinstalledWdaSupported(this);
   await assertPrebuiltPathExists(this);
   return await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
     await startUnderSynchronizationLock(this);
@@ -144,6 +145,22 @@ function logSynchronizationDetails(driver: XCUITestDriver, synchronizationKey: s
     driver.log.debug(
       `Consider setting a unique 'derivedDataPath' capability value for each parallel driver instance ` +
         `to avoid conflicts and speed up the building process`,
+    );
+  }
+}
+
+function assertUsePreinstalledWdaSupported(driver: XCUITestDriver): void {
+  if (!driver.opts.usePreinstalledWDA) {
+    return;
+  }
+
+  const {platformVersion} = driver.opts;
+  if (!isIos17OrNewerPlatform(platformVersion)) {
+    throw new Error(
+      `The 'usePreinstalledWDA' capability is only supported on iOS/tvOS 17.0 and newer ` +
+        `(the current 'platformVersion' capability value is '${platformVersion}'). ` +
+        `WebDriverAgent v13 no longer uses the legacy XCTest launch path that was required on iOS 16 and below. ` +
+        `Use the default xcodebuild flow or provide 'webDriverAgentUrl' instead.`,
     );
   }
 }

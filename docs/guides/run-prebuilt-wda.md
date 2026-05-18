@@ -63,11 +63,17 @@ xcodebuild test-without-building \
 This approach allows the XCUITest driver to start WDA without running `xcodebuild` by using prebuilt WDA packages.
 We recommend this method if you don't need to modify the WDA source code.
 
+!!! warning "iOS/tvOS 17+ required for `usePreinstalledWDA`"
+
+    With WebDriverAgent v13+, `appium:usePreinstalledWDA` and `appium:prebuiltWDAPath` require **iOS/tvOS 17.0 or newer**.
+    They are **not supported on iOS 16 and below**. See [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md)
+    for details and alternatives (`xcodebuild` or `appium:webDriverAgentUrl`).
+
 [The Appium WebDriverAgent GitHub page](https://github.com/appium/WebDriverAgent/releases) provides
 downloads for WebDriverAgent packages for real devices and simulators.
 WebDriverAgent packages for real devices do not have embedded XCTest frameworks so that
 they can run on iOS 17+ devices. Please read [Run Preinstalled WebDriverAgentRunner](./run-preinstalled-wda.md)
-for more details about running on real devices. Understanding app signing is also important when working with real devices.
+for more details about running on real devices and simulators. Understanding app signing is also important when working with real devices.
 Simulators need everything, so WDA package sizes for simulators are greater than for real devices.
 The [Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml) and
 [Building WebDriverAgent](https://github.com/appium/WebDriverAgent/actions/workflows/wda-package.yml)
