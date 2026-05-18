@@ -1,6 +1,124 @@
-import {parseLocalizableStrings} from '../utils';
-import type {XCUITestDriver} from '../driver';
+import _ from 'lodash';
+import path from 'node:path';
+import {plist, fs, util, tempDir, zip} from 'appium/support';
 import type {StringRecord} from '@appium/types';
+import type {XCUITestDriver} from '../driver';
+import {findApps} from '../utils/app';
+import {APP_EXT} from './constants';
+
+const STRINGSDICT_RESOURCE = '.stringsdict';
+const STRINGS_RESOURCE = '.strings';
+
+export interface LocalizableStringsOptions {
+  app?: string;
+  language?: string;
+  localizableStringsDir?: string;
+  stringFile?: string;
+  strictMode?: boolean;
+}
+
+/**
+ * Extracts string resources from an app
+ */
+export async function parseLocalizableStrings(
+  this: XCUITestDriver,
+  opts: LocalizableStringsOptions = {},
+): Promise<StringRecord> {
+  const {app, language = 'en', localizableStringsDir, stringFile, strictMode} = opts;
+  if (!app) {
+    const message = `Strings extraction is not supported if 'app' capability is not set`;
+    if (strictMode) {
+      throw new Error(message);
+    }
+    this.log.info(message);
+    return {};
+  }
+
+  let bundleRoot = app;
+  const isArchive = (await fs.stat(app)).isFile();
+  let tmpRoot: string | undefined;
+  try {
+    if (isArchive) {
+      tmpRoot = await tempDir.openDir();
+      this.log.info(`Extracting '${app}' into a temporary location to parse its resources`);
+      await zip.extractAllTo(app, tmpRoot);
+      const relativeBundleRoot = _.first(await findApps(tmpRoot, [APP_EXT])) as string;
+      this.log.info(`Selecting '${relativeBundleRoot}'`);
+      bundleRoot = path.join(tmpRoot, relativeBundleRoot);
+    }
+
+    let lprojRoot: string | undefined;
+    for (const subfolder of [`${language}.lproj`, localizableStringsDir, ''].filter(_.isString)) {
+      lprojRoot = path.resolve(bundleRoot, subfolder as string);
+      if (await fs.exists(lprojRoot)) {
+        break;
+      }
+      const message = `No '${lprojRoot}' resources folder has been found`;
+      if (strictMode) {
+        throw new Error(message);
+      }
+      this.log.debug(message);
+    }
+    if (!lprojRoot) {
+      return {};
+    }
+
+    this.log.info(`Retrieving resource strings from '${lprojRoot}'`);
+    const resourcePaths: string[] = [];
+    if (stringFile) {
+      const dstPath = path.resolve(lprojRoot, stringFile);
+      if (await fs.exists(dstPath)) {
+        resourcePaths.push(dstPath);
+      } else {
+        const message = `No '${dstPath}' resource file has been found for '${app}'`;
+        if (strictMode) {
+          throw new Error(message);
+        }
+        this.log.info(message);
+      }
+    }
+
+    if (_.isEmpty(resourcePaths) && lprojRoot && (await fs.exists(lprojRoot))) {
+      const resourceFiles = (await fs.readdir(lprojRoot))
+        .filter((name) => _.some([STRINGS_RESOURCE, STRINGSDICT_RESOURCE], (x) => name.endsWith(x)))
+        .map((name) => path.resolve(lprojRoot, name));
+      resourcePaths.push(...resourceFiles);
+    }
+    this.log.info(
+      `Got ${util.pluralize('resource file', resourcePaths.length, true)} in '${lprojRoot}'`,
+    );
+
+    if (_.isEmpty(resourcePaths)) {
+      return {};
+    }
+
+    const resultStrings: StringRecord = {};
+    const toAbsolutePath = (p: string) => (path.isAbsolute(p) ? p : path.resolve(process.cwd(), p));
+    for (const resourcePath of resourcePaths) {
+      if (!util.isSubPath(toAbsolutePath(resourcePath), toAbsolutePath(bundleRoot))) {
+        throw new Error(`'${resourcePath}' is expected to be located under '${bundleRoot}'`);
+      }
+      try {
+        const data = await readResource(resourcePath);
+        this.log.debug(
+          `Parsed ${util.pluralize('string', _.keys(data).length, true)} from '${resourcePath}'`,
+        );
+        _.merge(resultStrings, data);
+      } catch (e: any) {
+        this.log.warn(`Cannot parse '${resourcePath}' resource. Original error: ${e.message}`);
+      }
+    }
+
+    this.log.info(
+      `Retrieved ${util.pluralize('string', _.keys(resultStrings).length, true)} from '${lprojRoot}'`,
+    );
+    return resultStrings;
+  } finally {
+    if (tmpRoot) {
+      await fs.rimraf(tmpRoot);
+    }
+  }
+}
 
 /**
  * Return the language-specific strings for an app
@@ -25,4 +143,12 @@ export async function getStrings(
     stringFile,
     strictMode: true,
   });
+}
+
+async function readResource(resourcePath: string): Promise<StringRecord> {
+  const data = await plist.parsePlistFile(resourcePath);
+  return _.toPairs(data).reduce((result, [key, value]) => {
+    result[key] = _.isString(value) ? value : JSON.stringify(value);
+    return result;
+  }, {} as StringRecord);
 }

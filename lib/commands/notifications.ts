@@ -1,6 +1,6 @@
 import {errors} from 'appium/driver';
 import _ from 'lodash';
-import {requireSimulator} from '../utils';
+import {requireSimulator} from './guards';
 import type {XCUITestDriver} from '../driver';
 import type {PushPayload, NotificationType} from './types';
 

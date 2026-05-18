@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {errors} from 'appium/driver';
-import {requireRealDevice} from '../utils';
+import {requireRealDevice} from './guards';
 import type {XCUITestDriver} from '../driver';
 
 /**
