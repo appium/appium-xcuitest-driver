@@ -16,11 +16,7 @@ import _ from 'lodash';
 import {LRUCache} from 'lru-cache';
 import EventEmitter from 'node:events';
 import {setTimeout as delay} from 'node:timers/promises';
-import {
-  onDownloadApp,
-  onPostConfigureApp,
-  verifyApplicationPlatform,
-} from './commands/app-install';
+import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install';
 import {SUPPORTED_EXTENSIONS, UDID_AUTO} from './commands/constants';
 import {removeAllSessionWebSocketHandlers, shouldSetInitialSafariUrl} from './commands/session';
 import {
