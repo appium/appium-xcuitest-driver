@@ -3515,12 +3515,12 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
 </tr>
 <tr>
 <td><code>appium:prebuiltWDAPath</code></td>
-<td>The full path to the prebuilt WebDriverAgent-Runner application package to be installed if <code>appium:usePreinstalledWDA</code> capability is enabled. The package's bundle identifier could be customized via <code>appium:updatedWDABundleId</code> capability.</td>
+<td>The full path to the prebuilt WebDriverAgent-Runner application package to be installed when <code>appium:usePreinstalledWDA</code> is enabled. Requires <strong>iOS/tvOS 17.0+</strong> with WebDriverAgent v13+ (launched via <code>devicectl</code>, not supported on iOS 16 and below). The package's bundle identifier can be customized via <code>appium:updatedWDABundleId</code>.</td>
 <td><code>/path/to/WebDriverAgentRunner-Runner.app</code></td>
 </tr>
 <tr>
 <td><code>appium:usePreinstalledWDA</code></td>
-<td>Whether to launch a preinstalled WebDriverAgentRunner application using a custom XCTest API client (via <code>com.apple.instruments</code> service) instead of running <code>xcodebuild</code> for real devices or simulators via simctl tool (since driver version 7.4.0). If <code>appium:prebuiltWDAPath</code> is provided, XCUITest driver will install WebDriverAgent-Runner app from the given path before launching the application. The preinstalled WebDriverAgent package must be built by Xcode 12+. The default target bundle identifier is <code>com.facebook.WebDriverAgentRunner.xctrunner</code>, although it could be customized by providing the <code>appium:updatedWDABundleId</code> capability value (the <code>.xctrunner</code> suffix is added automatically). Please read <a href="../../guides/run-preinstalled-wda/">Run Preinstalled WebDriverAgentRunner</a> for more details. Defaults to <code>false</code>.</td>
+<td>Whether to launch a preinstalled WebDriverAgentRunner application without running <code>xcodebuild</code> (since driver version 7.4.0). With WebDriverAgent v13+, the runner is started via <code>devicectl</code> on <strong>iOS/tvOS 17.0+ only</strong>; the legacy Instruments / <code>appium-ios-device</code> launch path used on iOS 16 and below is no longer available. If <code>appium:prebuiltWDAPath</code> is provided, the driver installs that <code>.app</code> bundle before launch. The default bundle identifier is <code>com.facebook.WebDriverAgentRunner.xctrunner</code> (customizable via <code>appium:updatedWDABundleId</code>; the <code>.xctrunner</code> suffix is added automatically unless overridden by <code>appium:updatedWDABundleIdSuffix</code>). Please read <a href="../../guides/run-preinstalled-wda/">Run Preinstalled WebDriverAgentRunner</a>. Defaults to <code>false</code>.</td>
 <td><code>true</code> or <code>false</code></td>
 </tr>
 <tr>
@@ -3976,7 +3976,7 @@ about capabilities, refer to the <a href="https://appium.io/docs/en/latest/guide
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 14, 2026 20:44:41 UTC"><span class="timeago" datetime="2026-04-14T20:44:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 14, 2026 20:44:41 UTC">2026-04-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 19, 2026 19:42:09 UTC"><span class="timeago" datetime="2026-05-19T19:42:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 19, 2026 19:42:09 UTC">2026-05-19</span>
   </span>
 
     
