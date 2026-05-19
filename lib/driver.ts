@@ -1,7 +1,7 @@
 import {getSimulator} from 'appium-ios-simulator';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
-import {BaseDriver, DeviceSettings, errors} from 'appium/driver';
-import {fs, mjpeg, util, timing} from 'appium/support';
+import {BaseDriver, DeviceSettings} from 'appium/driver';
+import {mjpeg, util} from 'appium/support';
 import type {
   RouteMatcher,
   DefaultCreateSessionResult,
@@ -12,33 +12,23 @@ import type {
   DriverCaps,
   DriverOpts,
 } from '@appium/types';
-import AsyncLock from 'async-lock';
-import {retryInterval} from 'asyncbox';
 import _ from 'lodash';
 import {LRUCache} from 'lru-cache';
 import EventEmitter from 'node:events';
-import path from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
+import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install';
+import {SUPPORTED_EXTENSIONS, UDID_AUTO} from './commands/constants';
+import {removeAllSessionWebSocketHandlers, shouldSetInitialSafariUrl} from './commands/session';
 import {
-  SUPPORTED_EXTENSIONS,
   SAFARI_BUNDLE_ID,
-  onPostConfigureApp,
-  onDownloadApp,
-  verifyApplicationPlatform,
   DEFAULT_TIMEOUT_KEY,
-  UDID_AUTO,
   checkAppPresent,
-  clearSystemFiles,
   getAndCheckIosSdkVersion,
   getAndCheckXcodeVersion,
   getDriverInfo,
-  isLocalHost,
-  markSystemFilesForCleanup,
   normalizeCommandTimeouts,
   normalizePlatformVersion,
   printUser,
-  removeAllSessionWebSocketHandlers,
-  shouldSetInitialSafariUrl,
 } from './utils';
 import * as activeAppInfoCommands from './commands/active-app-info';
 import * as alertCommands from './commands/alert';
@@ -83,6 +73,7 @@ import * as sourceCommands from './commands/source';
 import * as simctlCommands from './commands/simctl';
 import * as timeoutCommands from './commands/timeouts';
 import * as webCommands from './commands/web';
+import * as wdaCommands from './commands/wda';
 import * as xctestCommands from './commands/xctest';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
@@ -108,6 +99,7 @@ import {
   shutdownOtherSimulators,
   shutdownSimulator,
 } from './device/simulator-management';
+import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants';
 import {AppInfosCache} from './app-infos-cache';
 import {notifyBiDiContextChange} from './commands/context';
 import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
@@ -127,7 +119,6 @@ import type {XcodeVersion} from 'appium-xcode';
 import type {Simulator} from 'appium-ios-simulator';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
-const CUSTOMIZE_RESULT_BUNDLE_PATH = 'customize_result_bundle_path';
 
 const defaultServerCaps = {
   webStorageEnabled: false,
@@ -139,11 +130,6 @@ const defaultServerCaps = {
   takesScreenshot: true,
   networkConnectionEnabled: false,
 };
-const WDA_SIM_STARTUP_RETRIES = 2;
-const WDA_REAL_DEV_STARTUP_RETRIES = 1;
-const WDA_REAL_DEV_TUTORIAL_URL =
-  'https://appium.github.io/appium-xcuitest-driver/latest/preparation/real-device-config/';
-const WDA_STARTUP_RETRY_INTERVAL = 10000;
 const DEFAULT_SETTINGS = {
   nativeWebTap: false,
   nativeWebTapStrict: false,
@@ -162,7 +148,6 @@ const DEFAULT_SETTINGS = {
 };
 // This lock assures, that each driver session does not
 // affect shared resources of the other parallel sessions
-const SHARED_RESOURCES_GUARD = new AsyncLock();
 const WEB_ELEMENTS_CACHE_SIZE = 500;
 const SUPPORTED_ORIENATIONS = ['LANDSCAPE', 'PORTRAIT'];
 const DEFAULT_MJPEG_SERVER_PORT = 9100;
@@ -231,9 +216,6 @@ const NO_PROXY_WEB_LIST: RouteMatcher[] = [
 /* eslint-enable no-useless-escape */
 
 const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
-
-// Capabilities that do not have xcodebuild process
-const CAP_NAMES_NO_XCODEBUILD_REQUIRED = ['webDriverAgentUrl', 'usePreinstalledWDA'];
 
 export type AutInstallationStateOptions = Pick<
   XCUITestDriverOpts,
@@ -734,6 +716,16 @@ export class XCUITestDriver
   mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
 
   /*--------+
+   | WDA    |
+   +--------*/
+  startWda = wdaCommands.start;
+  /**
+   * @deprecated This method should be made protected/private.
+   */
+  startWdaSession = wdaCommands.startWdaSession;
+  stopWda = wdaCommands.stop;
+
+  /*--------+
    | XCTEST |
    +--------+*/
   mobileRunXCTest = xctestCommands.mobileRunXCTest;
@@ -929,21 +921,6 @@ export class XCUITestDriver
     }
 
     await this.stop();
-
-    if (this._wda && this.isXcodebuildNeeded()) {
-      if (this.opts.clearSystemFiles) {
-        let synchronizationKey = XCUITestDriver.name;
-        const derivedDataPath = await this.wda.retrieveDerivedDataPath();
-        if (derivedDataPath) {
-          synchronizationKey = path.normalize(derivedDataPath);
-        }
-        await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
-          await clearSystemFiles(this.wda);
-        });
-      } else {
-        this.log.debug('Not clearing log files. Use `clearSystemFiles` capability to turn on.');
-      }
-    }
 
     if (this._remote) {
       this.log.debug('Found a remote debugger session. Removing...');
@@ -1175,7 +1152,7 @@ export class XCUITestDriver
   }
 
   isXcodebuildNeeded(): boolean {
-    return !CAP_NAMES_NO_XCODEBUILD_REQUIRED.some((x) => Boolean(this.opts[x]));
+    return isWdaXcodebuildNeeded(this.opts);
   }
 
   // Core driver methods
@@ -1195,13 +1172,13 @@ export class XCUITestDriver
   }
 
   async getStatus(): Promise<Record<string, any>> {
-    const status = {
+    const status: Record<string, any> = {
       ready: true,
       message: 'The driver is ready to accept new connections',
       build: await getDriverInfo(),
     };
     if (this.cachedWdaStatus) {
-      (status as any).wda = this.cachedWdaStatus;
+      status.wda = this.cachedWdaStatus;
     }
     return status;
   }
@@ -1463,22 +1440,7 @@ export class XCUITestDriver
     this.jwpProxyActive = false;
     this.proxyReqRes = null;
 
-    if (this._wda?.fullyStarted) {
-      if (this.wda.jwproxy) {
-        try {
-          await this.proxyCommand(`/session/${this.sessionId}`, 'DELETE');
-        } catch (err) {
-          // an error here should not short-circuit the rest of clean up
-          this.log.debug(`Unable to DELETE session on WDA: '${err.message}'. Continuing shutdown.`);
-        }
-      }
-      // The former could cache the xcodebuild, so should not quit the process.
-      // If the session skipped the xcodebuild (this.wda.canSkipXcodebuild), the this.wda instance
-      // should quit properly.
-      if ((!this.wda.webDriverAgentUrl && this.opts.useNewWDA) || this.wda.canSkipXcodebuild) {
-        await this.wda.quit();
-      }
-    }
+    await this.stopWda();
     await this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
@@ -1515,207 +1477,6 @@ export class XCUITestDriver
     await Promise.all(promises);
 
     this.logEvent('simStarted');
-  }
-
-  async startWda(): Promise<void> {
-    // Don't cleanup the processes if webDriverAgentUrl is set
-    if (!util.hasValue(this.wda.webDriverAgentUrl)) {
-      await this.wda.cleanupObsoleteProcesses();
-    }
-
-    const usePortForwarding =
-      this.isRealDevice() && !this.wda.webDriverAgentUrl && isLocalHost(this.wda.wdaBaseUrl);
-    await this.deviceConnectionsFactory.requestConnection(
-      this.opts.udid,
-      Number(this.wda.url.port),
-      {
-        devicePort: usePortForwarding ? this.wda.wdaRemotePort : null,
-        platformVersion: this.opts.platformVersion,
-        usePortForwarding,
-      },
-    );
-
-    // Let multiple WDA binaries with different derived data folders be built in parallel
-    // Concurrent WDA builds from the same source will cause xcodebuild synchronization errors
-    let synchronizationKey = XCUITestDriver.name;
-    if (this.opts.useXctestrunFile || !(await this.wda.isSourceFresh())) {
-      // First-time compilation is an expensive operation, which is done faster if executed
-      // sequentially. Xcodebuild spreads the load caused by the clang compiler to all available CPU cores
-      const derivedDataPath = await this.wda.retrieveDerivedDataPath();
-      if (derivedDataPath) {
-        synchronizationKey = path.normalize(derivedDataPath);
-      }
-    }
-    this.log.debug(
-      `Starting WebDriverAgent initialization with the synchronization key '${synchronizationKey}'`,
-    );
-    if (SHARED_RESOURCES_GUARD.isBusy() && !this.opts.derivedDataPath && !this.opts.bootstrapPath) {
-      this.log.debug(
-        `Consider setting a unique 'derivedDataPath' capability value for each parallel driver instance ` +
-          `to avoid conflicts and speed up the building process`,
-      );
-    }
-
-    if (
-      this.opts.usePreinstalledWDA &&
-      this.opts.prebuiltWDAPath &&
-      !(await fs.exists(this.opts.prebuiltWDAPath))
-    ) {
-      throw new Error(
-        `The prebuilt WebDriverAgent app at '${this.opts.prebuiltWDAPath}' provided as 'prebuiltWDAPath' ` +
-          `capability value does not exist or is not accessible`,
-      );
-    }
-
-    return await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
-      if (this.opts.useNewWDA) {
-        this.log.debug(`Capability 'useNewWDA' set to true, so uninstalling WDA before proceeding`);
-        await this.wda.quitAndUninstall();
-        this.logEvent('wdaUninstalled');
-      } else if (!util.hasValue(this.wda.webDriverAgentUrl) && this.isXcodebuildNeeded()) {
-        await this.wda.setupCaching();
-      }
-
-      // local helper for the two places we need to uninstall wda and re-start it
-      const quitAndUninstall = async (msg) => {
-        this.log.debug(msg);
-        if (!this.isXcodebuildNeeded()) {
-          this.log.debug(
-            `Not quitting/uninstalling WebDriverAgent since at least one of ${CAP_NAMES_NO_XCODEBUILD_REQUIRED} capabilities is provided`,
-          );
-          throw new Error(msg);
-        }
-        this.log.warn('Quitting and uninstalling WebDriverAgent');
-        await this.wda.quitAndUninstall();
-
-        throw new Error(msg);
-      };
-
-      // Used in the following WDA build
-      if (this.opts.resultBundlePath) {
-        this.assertFeatureEnabled(CUSTOMIZE_RESULT_BUNDLE_PATH);
-      }
-
-      let startupRetries =
-        this.opts.wdaStartupRetries ||
-        (this.isRealDevice() ? WDA_REAL_DEV_STARTUP_RETRIES : WDA_SIM_STARTUP_RETRIES);
-      const startupRetryInterval = this.opts.wdaStartupRetryInterval || WDA_STARTUP_RETRY_INTERVAL;
-
-      // These values help only xcodebuild.
-      if (this.isXcodebuildNeeded()) {
-        this.log.debug(
-          `Trying to start WebDriverAgent ${startupRetries} times with ${startupRetryInterval}ms interval`,
-        );
-        if (
-          !util.hasValue(this.opts.wdaStartupRetries) &&
-          !util.hasValue(this.opts.wdaStartupRetryInterval)
-        ) {
-          this.log.debug(
-            `These values can be customized by changing wdaStartupRetries/wdaStartupRetryInterval capabilities`,
-          );
-        }
-      } else {
-        // The startup retry will be one time if the session does not need WDA build
-        this.log.debug(
-          `Trying to start WebDriverAgent once since at least one of ${CAP_NAMES_NO_XCODEBUILD_REQUIRED} capabilities is provided`,
-        );
-        startupRetries = 1;
-      }
-
-      let shortCircuitError: Error | null = null;
-      let retryCount = 0;
-      await retryInterval(startupRetries, startupRetryInterval, async () => {
-        this.logEvent('wdaStartAttempted');
-        if (retryCount > 0) {
-          this.log.info(`Retrying WDA startup (${retryCount + 1} of ${startupRetries})`);
-        }
-        try {
-          if (this.opts.usePreinstalledWDA) {
-            await this.preparePreinstalledWda();
-          }
-
-          if (!this.sessionId) {
-            throw new Error('Session ID is required but was not set');
-          }
-          this.cachedWdaStatus = await this.wda.launch(this.sessionId);
-        } catch (err) {
-          this.logEvent('wdaStartFailed');
-          this.log.debug(err.stack);
-          retryCount++;
-          let errorMsg = `Unable to launch WebDriverAgent. Original error: ${err.message}`;
-          if (this.isRealDevice()) {
-            errorMsg += `. Make sure you follow the tutorial at ${WDA_REAL_DEV_TUTORIAL_URL}`;
-          }
-          if (this.opts.usePreinstalledWDA) {
-            try {
-              // In case the bundle id process start got failed because of
-              // auth popup in the device. Then, the bundle id process itself started. It is safe to stop it here.
-              await this.mobileKillApp(this.wda.bundleIdForXctest);
-            } catch {}
-            // Mostly it failed to start the WDA process as no the bundle id
-            // e.g. '<bundle id of WDA> not found on device <udid>'
-
-            errorMsg =
-              `Unable to launch WebDriverAgent. Original error: ${err.message}. ` +
-              `Make sure the application ${this.wda.bundleIdForXctest} exists and it is launchable.`;
-            if (this.isRealDevice()) {
-              errorMsg += ` ${WDA_REAL_DEV_TUTORIAL_URL} may help to complete the preparation.`;
-            }
-            throw new Error(errorMsg, {cause: err});
-          } else {
-            await quitAndUninstall(errorMsg);
-          }
-        }
-
-        this.proxyReqRes = this.wda.proxyReqRes.bind(this.wda);
-        this.jwpProxyActive = true;
-
-        try {
-          this.logEvent('wdaSessionAttempted');
-          this.log.debug('Sending createSession command to WDA');
-          this.cachedWdaStatus =
-            this.cachedWdaStatus || (await this.proxyCommand('/status', 'GET'));
-          await this.startWdaSession(this.opts.bundleId, this.opts.processArguments);
-          this.logEvent('wdaSessionStarted');
-        } catch (err) {
-          this.logEvent('wdaSessionFailed');
-          this.log.debug(err.stack);
-          if (err instanceof errors.TimeoutError) {
-            // Session startup timed out. There is no point to retry
-            shortCircuitError = err;
-            return;
-          }
-          let errorMsg = `Unable to start WebDriverAgent session. Original error: ${err.message}`;
-          if (this.isRealDevice() && _.includes(err.message, 'xcodebuild')) {
-            errorMsg += ` Make sure you follow the tutorial at ${WDA_REAL_DEV_TUTORIAL_URL}.`;
-          }
-          throw new Error(errorMsg, {cause: err});
-        }
-
-        if (this.opts.clearSystemFiles && this.isXcodebuildNeeded()) {
-          await markSystemFilesForCleanup(this.wda);
-        }
-
-        // We don't restrict the version, but show what version of WDA is running on the device for debugging purposes.
-        if (this.cachedWdaStatus?.build) {
-          this.log.info(`WebDriverAgent version: '${this.cachedWdaStatus.build.version}'`);
-        } else {
-          this.log.warn(
-            `WebDriverAgent does not provide any version information. ` +
-              `This might indicate either a custom or an outdated build.`,
-          );
-        }
-
-        // we expect certain socket errors until this point, but now
-        // mark things as fully working
-        this.wda.fullyStarted = true;
-        this.logEvent('wdaStarted');
-      });
-
-      if (shortCircuitError) {
-        throw shortCircuitError;
-      }
-    });
   }
 
   async configureApp(): Promise<void> {
@@ -1901,84 +1662,6 @@ export class XCUITestDriver
     return sim;
   }
 
-  async startWdaSession(bundleId?: string, processArguments?: any): Promise<void> {
-    const args = processArguments ? _.cloneDeep(processArguments.args) || [] : [];
-    if (!_.isArray(args)) {
-      throw new Error(
-        `processArguments.args capability is expected to be an array. ` +
-          `${JSON.stringify(args)} is given instead`,
-      );
-    }
-    const env = processArguments ? _.cloneDeep(processArguments.env) || {} : {};
-    if (!_.isPlainObject(env)) {
-      throw new Error(
-        `processArguments.env capability is expected to be a dictionary. ` +
-          `${JSON.stringify(env)} is given instead`,
-      );
-    }
-
-    if (util.hasValue(this.opts.language)) {
-      args.push('-AppleLanguages', `(${this.opts.language})`);
-      args.push('-NSLanguages', `(${this.opts.language})`);
-    }
-    if (util.hasValue(this.opts.locale)) {
-      args.push('-AppleLocale', this.opts.locale);
-    }
-
-    if (this.opts.noReset) {
-      if (_.isNil(this.opts.shouldTerminateApp)) {
-        this.opts.shouldTerminateApp = false;
-      }
-      if (_.isNil(this.opts.forceAppLaunch)) {
-        this.opts.forceAppLaunch = false;
-      }
-    }
-
-    if (util.hasValue(this.opts.appTimeZone)) {
-      // https://developer.apple.com/forums/thread/86951?answerId=263395022#263395022
-      env.TZ = this.opts.appTimeZone;
-    }
-
-    const wdaCaps: StringRecord = {
-      bundleId: this.opts.autoLaunch === false ? undefined : bundleId,
-      arguments: args,
-      environment: env,
-      eventloopIdleDelaySec: this.opts.wdaEventloopIdleDelay ?? 0,
-      shouldWaitForQuiescence: true,
-      maxTypingFrequency: this.opts.maxTypingFrequency ?? 60,
-      shouldUseSingletonTestManager: this.opts.shouldUseSingletonTestManager ?? true,
-      waitForIdleTimeout: this.opts.waitForIdleTimeout,
-      shouldUseCompactResponses: (this.opts as StringRecord).shouldUseCompactResponses,
-      elementResponseFields: (this.opts as StringRecord).elementResponseFields,
-      disableAutomaticScreenshots: this.opts.disableAutomaticScreenshots,
-      shouldTerminateApp: this.opts.shouldTerminateApp ?? true,
-      forceAppLaunch: this.opts.forceAppLaunch ?? true,
-      appLaunchStateTimeoutSec: this.opts.appLaunchStateTimeoutSec,
-      useNativeCachingStrategy: this.opts.useNativeCachingStrategy ?? true,
-      forceSimulatorSoftwareKeyboardPresence:
-        this.opts.forceSimulatorSoftwareKeyboardPresence ??
-        (this.opts.connectHardwareKeyboard === true ? false : true),
-    };
-    if (this.opts.autoAcceptAlerts) {
-      wdaCaps.defaultAlertAction = 'accept';
-    } else if (this.opts.autoDismissAlerts) {
-      wdaCaps.defaultAlertAction = 'dismiss';
-    }
-    if (this.opts.initialDeeplinkUrl) {
-      this.log.info(`The deeplink URL will be set to ${this.opts.initialDeeplinkUrl}`);
-      wdaCaps.initialUrl = this.opts.initialDeeplinkUrl;
-    }
-
-    const timer = new timing.Timer().start();
-    await this.proxyCommand('/session', 'POST', {
-      capabilities: {
-        firstMatch: [wdaCaps],
-        alwaysMatch: {},
-      },
-    });
-    this.log.info(`WDA session startup took ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
-  }
-
   async checkAutInstallationState(
     opts?: AutInstallationStateOptions,
   ): Promise<AutInstallationState> {
@@ -2154,35 +1837,6 @@ export class XCUITestDriver
       `The reset API has been deprecated and is not supported anymore. ` +
         `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
     );
-  }
-
-  async preparePreinstalledWda(): Promise<void> {
-    if (this.isRealDevice()) {
-      // Stop the existing process before starting a new one to start a fresh WDA process every session.
-      await this.mobileKillApp(this.wda.bundleIdForXctest);
-    }
-
-    if (!this.opts.prebuiltWDAPath) {
-      return;
-    }
-
-    const candidateBundleId = await this.appInfosCache.extractBundleId(this.opts.prebuiltWDAPath);
-    this.wda.updatedWDABundleId = candidateBundleId.replace('.xctrunner', '');
-    this.log.info(
-      `Installing prebuilt WDA at '${this.opts.prebuiltWDAPath}'. ` +
-        `Bundle identifier: ${candidateBundleId}.`,
-    );
-
-    // Note: The CFBundleVersion in the test bundle was always 1.
-    // It may not be able to compare with the installed version.
-    if (this.isRealDevice()) {
-      await installToRealDevice.bind(this)(this.opts.prebuiltWDAPath, candidateBundleId, {
-        skipUninstall: true,
-        timeout: this.opts.appPushTimeout,
-      });
-    } else {
-      await installToSimulator.bind(this)(this.opts.prebuiltWDAPath, candidateBundleId);
-    }
   }
 
   resetIos(): void {

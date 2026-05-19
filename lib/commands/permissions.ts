@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {PermissionService} from './enum';
-import {requireSimulator} from '../utils';
+import {requireSimulator} from './guards';
 import type {XCUITestDriver} from '../driver';
 import type {PermissionState} from './types';
 

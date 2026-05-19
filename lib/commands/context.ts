@@ -7,7 +7,7 @@ import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
 import _ from 'lodash';
-import {NATIVE_WIN} from '../utils';
+import {NATIVE_WIN} from './constants';
 import {makeContextUpdatedEvent} from './bidi/models';
 import {BIDI_EVENT_NAME} from './bidi/constants';
 import {assignBiDiLogListener} from './log';

@@ -2,13 +2,10 @@ import _ from 'lodash';
 import {fs, util} from 'appium/support';
 import {errors} from 'appium/driver';
 import path from 'node:path';
-import {
-  SUPPORTED_EXTENSIONS,
-  onPostConfigureApp,
-  onDownloadApp,
-  requireRealDevice,
-  isIos18OrNewer,
-} from '../utils';
+import {isIos18OrNewer} from '../utils';
+import {SUPPORTED_EXTENSIONS} from './constants';
+import {onDownloadApp, onPostConfigureApp} from './app-install';
+import {requireRealDevice} from './guards';
 import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
 import type {AppState} from './enum';
