@@ -3,7 +3,7 @@ import path from 'node:path';
 import {plist, fs, util, tempDir, zip} from 'appium/support';
 import type {StringRecord} from '@appium/types';
 import type {XCUITestDriver} from '../driver';
-import {findApps} from '../utils/app';
+import {findApps} from '../utils';
 import {APP_EXT} from './constants';
 
 const STRINGSDICT_RESOURCE = '.stringsdict';
