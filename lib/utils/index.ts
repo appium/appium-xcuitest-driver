@@ -13,11 +13,7 @@ export type {PlatformVersionOpts} from './platform';
 
 export {TimeoutError, withTimeout} from './async';
 
-export {
-  getPIDsListeningOnPort,
-  encodeBase64OrUpload,
-  isLocalHost,
-} from './network';
+export {getPIDsListeningOnPort, encodeBase64OrUpload, isLocalHost} from './network';
 export type {UploadOptions} from './network';
 
 export {getDriverInfo, printUser} from './runtime';
@@ -32,11 +28,5 @@ export {
 
 export {getAndCheckXcodeVersion, getAndCheckIosSdkVersion} from './xcode';
 
-export {
-  SAFARI_BUNDLE_ID,
-  unzipFile,
-  unzipStream,
-  buildSafariPreferences,
-  findApps,
-} from './app';
+export {SAFARI_BUNDLE_ID, unzipFile, unzipStream, buildSafariPreferences, findApps} from './app';
 export type {UnzipInfo} from './app';
