@@ -1,3 +1,9 @@
+## [11.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.5.0...v11.5.1) (2026-05-20)
+
+### Bug Fixes
+
+* barrel export loop ([#2844](https://github.com/appium/appium-xcuitest-driver/issues/2844)) ([d3a7576](https://github.com/appium/appium-xcuitest-driver/commit/d3a7576c2a1fc06a1cfbea219fa9d7b1220f26c6))
+
 ## [11.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.4.2...v11.5.0) (2026-05-19)
 
 ### Features
