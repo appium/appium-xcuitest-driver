@@ -255,7 +255,7 @@ export class RealDevice {
   }
 
   /**
-   * ! This method is used by appium-webdriveragent package
+   * Used to locate duplicate WebDriverAgent runner apps.
    *
    * @param bundleName The name of CFBundleName in Info.plist
    * @returns A list of User level apps' bundle ids which has

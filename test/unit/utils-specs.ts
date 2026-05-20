@@ -1,4 +1,5 @@
-import {clearSystemFiles, markSystemFilesForCleanup, isLocalHost} from '../../lib/utils';
+import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup';
+import {isLocalHost} from '../../lib/utils';
 import {createSandbox} from 'sinon';
 import {fs} from 'appium/support';
 import chai, {expect} from 'chai';
@@ -23,41 +24,29 @@ describe('utils', function () {
     });
 
     it('should delete logs', async function () {
-      const wda = {
-        retrieveDerivedDataPath() {
-          return DERIVED_DATA_ROOT;
-        },
-      };
+      const retrieveDerivedDataPath = async () => DERIVED_DATA_ROOT;
       mockFs.expects('glob').once().returns([]);
       mockFs.expects('exists').atLeast(1).returns(true);
       mockFs.expects('rimraf').once().withExactArgs(`${DERIVED_DATA_ROOT}/Logs`).resolves();
-      await clearSystemFiles(wda);
+      await clearSystemFiles(retrieveDerivedDataPath);
       mockFs.verify();
     });
 
     it('should only delete logs once if the same folder was marked twice for deletion', async function () {
-      const wda = {
-        retrieveDerivedDataPath() {
-          return DERIVED_DATA_ROOT;
-        },
-      };
+      const retrieveDerivedDataPath = async () => DERIVED_DATA_ROOT;
       mockFs.expects('glob').once().returns([]);
       mockFs.expects('exists').atLeast(1).returns(true);
       mockFs.expects('rimraf').once().withExactArgs(`${DERIVED_DATA_ROOT}/Logs`).resolves();
-      await markSystemFilesForCleanup(wda);
-      await markSystemFilesForCleanup(wda);
-      await clearSystemFiles(wda);
-      await clearSystemFiles(wda);
+      await markSystemFilesForCleanup(retrieveDerivedDataPath);
+      await markSystemFilesForCleanup(retrieveDerivedDataPath);
+      await clearSystemFiles(retrieveDerivedDataPath);
+      await clearSystemFiles(retrieveDerivedDataPath);
       mockFs.verify();
     });
     it('should do nothing if no derived data path is found', async function () {
-      const wda = {
-        retrieveDerivedDataPath() {
-          return null;
-        },
-      };
+      const retrieveDerivedDataPath = async () => undefined;
       mockFs.expects('rimraf').never();
-      await clearSystemFiles(wda);
+      await clearSystemFiles(retrieveDerivedDataPath);
       mockFs.verify();
     });
   });

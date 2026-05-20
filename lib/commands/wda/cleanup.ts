@@ -3,7 +3,9 @@ import _ from 'lodash';
 import os from 'node:os';
 import path from 'node:path';
 import {exec} from 'teen_process';
-import {log} from '../logger';
+import type {XCUITestDriver} from '../../driver';
+import {log} from '../../logger';
+import {isXcodebuildNeeded, SHARED_RESOURCES_GUARD, XCUITEST_DRIVER_SYNC_NAME} from './constants';
 
 const XCTEST_LOG_FILES_PATTERNS = [
   /^Session-WebDriverAgentRunner.*\.log$/i,
@@ -16,60 +18,36 @@ const XCTEST_LOGS_CACHE_FOLDER_PREFIX = 'com.apple.dt.XCTest';
 // folder has been scheduled for removal
 const derivedDataCleanupMarkers = new Map<string, number>();
 
-/** Deletes the provided filesystem locations, logging reclaimed size when available. */
-export async function clearLogs(locations: string[]): Promise<void> {
-  log.debug('Clearing log files');
-  const cleanupPromises: Promise<void>[] = [];
-  for (const location of locations) {
-    if (!(await fs.exists(location))) {
-      continue;
-    }
-
-    cleanupPromises.push(
-      (async () => {
-        let size: string | undefined;
-        try {
-          const {stdout} = await exec('du', ['-sh', location]);
-          size = stdout.trim().split(/\s+/)[0];
-        } catch {}
-        try {
-          log.debug(`Deleting '${location}'. ${size ? `Freeing ${size}.` : ''}`);
-          await fs.rimraf(location);
-        } catch (err: any) {
-          log.warn(`Unable to delete '${location}': ${err.message}`);
-        }
-      })(),
-    );
-  }
-  if (!_.isEmpty(cleanupPromises)) {
-    await Promise.all(cleanupPromises);
-  }
-  log.debug('Finished clearing log files');
-}
+export type RetrieveDerivedDataPath = () => Promise<string | undefined>;
 
 /** Marks WDA logs folder for deferred cleanup across parallel sessions. */
-export async function markSystemFilesForCleanup(wda: any): Promise<void> {
-  if (!wda || !(await wda.retrieveDerivedDataPath())) {
+export async function markSystemFilesForCleanup(
+  retrieveDerivedDataPath: RetrieveDerivedDataPath,
+): Promise<void> {
+  const derivedDataPath = await retrieveDerivedDataPath();
+  if (!derivedDataPath) {
     log.warn(
       'No WebDriverAgent derived data available, so unable to mark system files for cleanup',
     );
     return;
   }
 
-  const logsRoot = path.resolve(await wda.retrieveDerivedDataPath(), 'Logs');
+  const logsRoot = path.resolve(derivedDataPath, 'Logs');
   const markersCount = derivedDataCleanupMarkers.get(logsRoot) ?? 0;
   derivedDataCleanupMarkers.set(logsRoot, markersCount + 1);
 }
 
 /** Cleans per-session WDA logs and stale XCTest temporary logs. */
-export async function clearSystemFiles(wda: any): Promise<void> {
-  // only want to clear the system files for the particular WDA xcode run
-  if (!wda || !(await wda.retrieveDerivedDataPath())) {
+export async function clearSystemFiles(
+  retrieveDerivedDataPath: RetrieveDerivedDataPath,
+): Promise<void> {
+  const derivedDataPath = await retrieveDerivedDataPath();
+  if (!derivedDataPath) {
     log.warn('No WebDriverAgent derived data available, so unable to clear system files');
     return;
   }
 
-  const logsRoot = path.resolve(await wda.retrieveDerivedDataPath(), 'Logs');
+  const logsRoot = path.resolve(derivedDataPath, 'Logs');
   const existingCount = derivedDataCleanupMarkers.get(logsRoot);
   if (existingCount !== undefined) {
     let markersCount = existingCount;
@@ -89,7 +67,6 @@ export async function clearSystemFiles(wda: any): Promise<void> {
   if (_.isEmpty(dstFolders)) {
     log.debug(`Did not find the temporary XCTest logs root at '${globPattern}'`);
   } else {
-    // perform the cleanup asynchronously
     const promises: Promise<void>[] = [];
     for (const dstFolder of dstFolders) {
       const promise = (async () => {
@@ -126,4 +103,58 @@ export async function clearSystemFiles(wda: any): Promise<void> {
     return;
   }
   log.info(`There is no ${logsRoot} folder, so not cleaning files`);
+}
+
+/**
+ * Clears WebDriverAgent system files after session teardown when enabled via capability.
+ */
+export async function cleanup(driver: XCUITestDriver): Promise<void> {
+  if (!driver._wda || !isXcodebuildNeeded(driver.opts)) {
+    return;
+  }
+
+  if (!driver.opts.clearSystemFiles) {
+    driver.log.debug('Not clearing log files. Use `clearSystemFiles` capability to turn on.');
+    return;
+  }
+
+  let synchronizationKey = XCUITEST_DRIVER_SYNC_NAME;
+  const derivedDataPath = await driver.wda.retrieveDerivedDataPath();
+  if (derivedDataPath) {
+    synchronizationKey = path.normalize(derivedDataPath);
+  }
+  await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
+    await clearSystemFiles(() => driver.wda.retrieveDerivedDataPath());
+  });
+}
+
+/** Deletes the provided filesystem locations, logging reclaimed size when available. */
+async function clearLogs(locations: string[]): Promise<void> {
+  log.debug('Clearing log files');
+  const cleanupPromises: Promise<void>[] = [];
+  for (const location of locations) {
+    if (!(await fs.exists(location))) {
+      continue;
+    }
+
+    cleanupPromises.push(
+      (async () => {
+        let size: string | undefined;
+        try {
+          const {stdout} = await exec('du', ['-sh', location]);
+          size = stdout.trim().split(/\s+/)[0];
+        } catch {}
+        try {
+          log.debug(`Deleting '${location}'. ${size ? `Freeing ${size}.` : ''}`);
+          await fs.rimraf(location);
+        } catch (err: any) {
+          log.warn(`Unable to delete '${location}': ${err.message}`);
+        }
+      })(),
+    );
+  }
+  if (!_.isEmpty(cleanupPromises)) {
+    await Promise.all(cleanupPromises);
+  }
+  log.debug('Finished clearing log files');
 }

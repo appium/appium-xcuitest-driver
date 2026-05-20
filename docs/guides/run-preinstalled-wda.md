@@ -6,6 +6,16 @@ The XCUITest driver can be configured to launch an already-installed `WebDriverA
 application (WDA) on a real device and a simulator. This allows you to start a session without the `xcodebuild`
 command execution, improving the session startup performance.
 
+!!! warning "iOS/tvOS 17+ required (WebDriverAgent v13+)"
+
+    Bundled WebDriverAgent v13+ (see [appium/WebDriverAgent#1137](https://github.com/appium/WebDriverAgent/pull/1137))
+    launches preinstalled WDA with `devicectl` only. The legacy launch path through `appium-ios-device` /
+    Instruments is no longer available.
+
+    As a result, `appium:usePreinstalledWDA` and `appium:prebuiltWDAPath` work on **iOS/tvOS 17.0 and newer only**.
+    They are **not supported on iOS 16 and below**. For older OS versions, use the default `xcodebuild` flow or
+    provide `appium:webDriverAgentUrl` if you already have a running WDA server.
+
 ## Capabilities
 
 - Required
@@ -45,9 +55,10 @@ The WDA app package (`WebDriverAgentRunner-Runner.app`) can be generated in the 
 directory, as explained in [Manual Configuration for a Generic Device](../getting-started/provisioning-profile/generic-device-config.md).
 The app can then be installed without `xcodebuild` using the 3rd party tools.
 
-### Additional requirement for iOS/tvOS 17+
+### Additional requirement for real devices on iOS/tvOS 17+
 
-To launch the WebDriverAgentRunner package with `xcrun devicectl device process launch` for real devices it should not have `Frameworks/XC**` files.
+Preinstalled WDA on real devices is started with `xcrun devicectl device process launch`. The runner app should not
+include embedded `Frameworks/XC**` copies (use the device's local XCTest frameworks instead).
 
 For example, after building the WebDriverAgent with Xcode with proper sign, it generates `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app`.
 Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm Frameworks/WebDriverAgentRunner-Runner.app/XC**`.

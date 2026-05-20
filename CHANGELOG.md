@@ -1,3 +1,9 @@
+## [11.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.4.2...v11.5.0) (2026-05-19)
+
+### Features
+
+* Bump WDA to ^13.0.0 ([#2842](https://github.com/appium/appium-xcuitest-driver/issues/2842)) ([49b90f2](https://github.com/appium/appium-xcuitest-driver/commit/49b90f2f4734050260c7a1bab9f455a8d564346f))
+
 ## [11.4.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.4.1...v11.4.2) (2026-05-15)
 
 ### Miscellaneous Chores

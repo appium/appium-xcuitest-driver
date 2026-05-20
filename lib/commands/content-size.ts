@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {requireSimulator} from '../utils';
+import {requireSimulator} from './guards';
 import {errors} from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {ContentSizeAction, ContentSizeResult} from './types';
