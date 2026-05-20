@@ -13,8 +13,7 @@ import type {
 } from '@appium/types';
 import type {Readable} from 'node:stream';
 import type {XCUITestDriver} from '../driver';
-import {isTvOs} from '../utils/platform';
-import {unzipFile, unzipStream} from '../utils/app';
+import {isTvOs, unzipFile, unzipStream} from '../utils';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants';
 
 const ZIP_EXT = '.zip';
