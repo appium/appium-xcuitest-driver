@@ -117,6 +117,7 @@ import type {IOSPerformanceLog} from './device/log/ios-performance-log';
 import type {RemoteDebugger} from 'appium-remote-debugger';
 import type {XcodeVersion} from 'appium-xcode';
 import type {Simulator} from 'appium-ios-simulator';
+import type {IOSLog} from './device/log/ios-log';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
@@ -947,7 +948,11 @@ export class XCUITestDriver
       }
     }
 
-    await this.logs.syslog?.stopCapture();
+    await Promise.all(
+      _.values(this.logs).map(async (logObj) => {
+        await (logObj as IOSLog<any, any>).stopCapture();
+      }),
+    );
     _.values(this.logs).forEach((x: any) => x?.removeAllListeners?.());
     if (this._bidiServerLogListener) {
       this.log.unwrap().off('log', this._bidiServerLogListener);

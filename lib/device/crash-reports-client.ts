@@ -50,13 +50,11 @@ export class CrashReportsClient {
    * @returns Basenames of crash report files on the device (e.g. `MyApp-2024-01-01-120000.ips`)
    */
   async listCrashes(): Promise<string[]> {
-    const allFiles = await this.crashReportsService.ls('/', -1);
-    return allFiles
-      .filter((filePath) => CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext)))
-      .map((filePath) => {
-        const parts = filePath.split('/');
-        return parts[parts.length - 1];
-      });
+    const allFiles = await this._listCrashReportPaths();
+    return allFiles.map((filePath) => {
+      const parts = filePath.split('/');
+      return parts[parts.length - 1];
+    });
   }
 
   /**
@@ -67,7 +65,7 @@ export class CrashReportsClient {
    * @throws {Error} If the named report is not found on the device
    */
   async exportCrash(name: string, dstFolder: string): Promise<void> {
-    const allFiles = await this.crashReportsService.ls('/', -1);
+    const allFiles = await this._listCrashReportPaths();
     const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
 
     if (!fullPath) {
@@ -90,6 +88,41 @@ export class CrashReportsClient {
       this.crashReportsService.close();
     } catch (err) {
       log.warn(`Error closing crash reports service: ${(err as Error).message}`);
+    }
+  }
+
+  /**
+   * Walk the crash-reports tree and collect `.ips` paths without listing the full tree upfront.
+   */
+  private async _listCrashReportPaths(): Promise<string[]> {
+    const results: string[] = [];
+    await this._collectCrashReportPaths('/', results);
+    return results;
+  }
+
+  private async _collectCrashReportPaths(
+    dirPath: string,
+    results: string[],
+  ): Promise<void> {
+    let children: string[];
+    try {
+      children = await this.crashReportsService.ls(dirPath, 1);
+    } catch {
+      return;
+    }
+
+    for (const entryPath of children) {
+      const basename = entryPath.split('/').pop() ?? entryPath;
+      if (CRASH_REPORT_EXTENSIONS.some((ext) => basename.endsWith(ext))) {
+        results.push(entryPath);
+        continue;
+      }
+
+      try {
+        await this._collectCrashReportPaths(entryPath, results);
+      } catch {
+        // Skip entries we can't access or that aren't directories
+      }
     }
   }
 }
