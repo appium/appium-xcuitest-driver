@@ -1137,13 +1137,13 @@ async function main() {
       onTunnelDead: async ({udid}) => {
         tunnelCreator._reconnectTunnelByUdid(udid);
       },
-    }, tunnelCreator._appletvResources.map((resource) => {
+    }, tunnelCreator._appletvResources.map((resource) =>
       /** @type {TunnelSocketWatch} */
-      return {
+       ({
         udid: resource.udid,
         socket: resource.tlsSocket,
-      };
-    }));
+      })
+    ));
 
     const successfulUsb = usbResults.filter((r) => r.success);
     log.info('\n=== TUNNEL CREATION SUMMARY ===');

@@ -100,10 +100,7 @@ export class CrashReportsClient {
     return results;
   }
 
-  private async _collectCrashReportPaths(
-    dirPath: string,
-    results: string[],
-  ): Promise<void> {
+  private async _collectCrashReportPaths(dirPath: string, results: string[]): Promise<void> {
     let children: string[];
     try {
       children = await this.crashReportsService.ls(dirPath, 1);
