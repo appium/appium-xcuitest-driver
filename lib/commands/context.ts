@@ -6,6 +6,8 @@ import {
 import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
+import type {SafariConsoleLog} from '../device/log/safari-console-log';
+import type {SafariNetworkLog} from '../device/log/safari-network-log';
 import _ from 'lodash';
 import {NATIVE_WIN} from './constants';
 import {makeContextUpdatedEvent} from './bidi/models';
@@ -582,15 +584,14 @@ export async function setContext(
 
   // start safari logging if the logs handlers are active
   if (name && name !== NATIVE_WIN && this.logs) {
-    if (this.logs.safariConsole) {
-      this.remote.startConsole(
-        this.logs.safariConsole.onConsoleLogEvent.bind(this.logs.safariConsole),
-      );
+    const {safariConsole, safariNetwork} = this.logs;
+    if (safariConsole) {
+      const consoleLog = safariConsole as SafariConsoleLog;
+      this.remote.startConsole(consoleLog.onConsoleLogEvent.bind(consoleLog));
     }
-    if (this.logs.safariNetwork) {
-      this.remote.startNetwork(
-        this.logs.safariNetwork.onNetworkEvent.bind(this.logs.safariNetwork),
-      );
+    if (safariNetwork) {
+      const networkLog = safariNetwork as SafariNetworkLog;
+      this.remote.startNetwork(networkLog.onNetworkEvent.bind(networkLog));
     }
   }
 }

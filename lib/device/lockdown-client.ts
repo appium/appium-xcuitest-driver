@@ -150,10 +150,6 @@ export class LockdownClient {
     }
   }
 
-  /**
-   * Legacy ios-device can provide inconsistent offset payloads. Normalize to a final offset in
-   * minutes for consumers.
-   */
   private async requireRemotexpcModule(): Promise<RemoteXPCEsmModule> {
     const remotexpc = await tryGetRemoteXPCModule();
     if (!remotexpc) {
@@ -162,6 +158,10 @@ export class LockdownClient {
     return remotexpc;
   }
 
+  /**
+   * Legacy ios-device can provide inconsistent offset payloads. Normalize to a final offset in
+   * minutes for consumers.
+   */
   private normalizeUtcOffsetMinutes(utcOffset: number, timeZone: string | number): number {
     // Normal/expected: offset already in minutes.
     if (Math.abs(utcOffset) <= 12 * 60) {
