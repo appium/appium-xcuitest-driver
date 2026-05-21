@@ -1,3 +1,9 @@
+## [11.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.5.1...v11.6.0) (2026-05-21)
+
+### Features
+
+* Incorporate RSD isolation after remotexpc bump ([#2841](https://github.com/appium/appium-xcuitest-driver/issues/2841)) ([d1abfa0](https://github.com/appium/appium-xcuitest-driver/commit/d1abfa08c7c3f056183cdaa669167f6d0644def6))
+
 ## [11.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.5.0...v11.5.1) (2026-05-20)
 
 ### Bug Fixes
