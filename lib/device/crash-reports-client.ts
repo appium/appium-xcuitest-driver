@@ -1,9 +1,6 @@
 import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
-import type {
-  CrashReportsService as RemoteXPCCrashReportsService,
-  RemoteXpcConnection,
-} from 'appium-ios-remotexpc';
+import type {CrashReportsService as RemoteXPCCrashReportsService} from 'appium-ios-remotexpc';
 
 const CRASH_REPORT_EXTENSIONS = ['.ips'];
 const MAX_FILES_IN_ERROR = 10;
@@ -16,14 +13,9 @@ const MAX_FILES_IN_ERROR = 10;
  */
 export class CrashReportsClient {
   private readonly crashReportsService: RemoteXPCCrashReportsService;
-  private readonly remoteXPCConnection: RemoteXpcConnection;
 
-  private constructor(
-    crashReportsService: RemoteXPCCrashReportsService,
-    remoteXPCConnection: RemoteXpcConnection,
-  ) {
+  private constructor(crashReportsService: RemoteXPCCrashReportsService) {
     this.crashReportsService = crashReportsService;
-    this.remoteXPCConnection = remoteXPCConnection;
   }
 
   /**
@@ -41,29 +33,16 @@ export class CrashReportsClient {
       );
     }
 
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
     try {
       const Services = await getRemoteXPCServices();
-      const {crashReportsService, remoteXPC} = await Services.startCrashReportsService(udid);
-      remoteXPCConnection = remoteXPC;
-      const client = new CrashReportsClient(crashReportsService, remoteXPCConnection);
-      succeeded = true;
-      return client;
+      const crashReportsService = await Services.startCrashReportsService(udid);
+      return new CrashReportsClient(crashReportsService);
     } catch (err: any) {
       throw new Error(
         `Failed to create crash reports client via RemoteXPC: ${err.message}. ` +
           'Ensure appium-ios-remotexpc is installed and the device is supported.',
         {cause: err},
       );
-    } finally {
-      if (remoteXPCConnection && !succeeded) {
-        try {
-          await remoteXPCConnection.close();
-        } catch {
-          // ignore
-        }
-      }
     }
   }
 
@@ -71,13 +50,11 @@ export class CrashReportsClient {
    * @returns Basenames of crash report files on the device (e.g. `MyApp-2024-01-01-120000.ips`)
    */
   async listCrashes(): Promise<string[]> {
-    const allFiles = await this.crashReportsService.ls('/', -1);
-    return allFiles
-      .filter((filePath) => CRASH_REPORT_EXTENSIONS.some((ext) => filePath.endsWith(ext)))
-      .map((filePath) => {
-        const parts = filePath.split('/');
-        return parts[parts.length - 1];
-      });
+    const allFiles = await this._listCrashReportPaths();
+    return allFiles.map((filePath) => {
+      const parts = filePath.split('/');
+      return parts[parts.length - 1];
+    });
   }
 
   /**
@@ -88,7 +65,7 @@ export class CrashReportsClient {
    * @throws {Error} If the named report is not found on the device
    */
   async exportCrash(name: string, dstFolder: string): Promise<void> {
-    const allFiles = await this.crashReportsService.ls('/', -1);
+    const allFiles = await this._listCrashReportPaths();
     const fullPath = allFiles.find((p) => p.endsWith(`/${name}`) || p === `/${name}`);
 
     if (!fullPath) {
@@ -104,15 +81,45 @@ export class CrashReportsClient {
   }
 
   /**
-   * Tears down the crash-reports service and closes the RemoteXPC connection.
+   * Tears down the crash-reports service.
    */
   async close(): Promise<void> {
-    this.crashReportsService.close();
-
     try {
-      await this.remoteXPCConnection.close();
+      this.crashReportsService.close();
     } catch (err) {
-      log.warn(`Error closing RemoteXPC connection for crash reports: ${(err as Error).message}`);
+      log.warn(`Error closing crash reports service: ${(err as Error).message}`);
+    }
+  }
+
+  /**
+   * Walk the crash-reports tree and collect `.ips` paths without listing the full tree upfront.
+   */
+  private async _listCrashReportPaths(): Promise<string[]> {
+    const results: string[] = [];
+    await this._collectCrashReportPaths('/', results);
+    return results;
+  }
+
+  private async _collectCrashReportPaths(dirPath: string, results: string[]): Promise<void> {
+    let children: string[];
+    try {
+      children = await this.crashReportsService.ls(dirPath, 1);
+    } catch {
+      return;
+    }
+
+    for (const entryPath of children) {
+      const basename = entryPath.split('/').pop() ?? entryPath;
+      if (CRASH_REPORT_EXTENSIONS.some((ext) => basename.endsWith(ext))) {
+        results.push(entryPath);
+        continue;
+      }
+
+      try {
+        await this._collectCrashReportPaths(entryPath, results);
+      } catch {
+        // Skip entries we can't access or that aren't directories
+      }
     }
   }
 }

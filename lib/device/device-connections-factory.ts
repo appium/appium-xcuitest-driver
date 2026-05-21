@@ -545,12 +545,8 @@ export class DeviceConnectionsFactory {
       );
     }
 
-    const {remoteXPC, tunnelConnection} = await remotexpc.Services.createRemoteXPCConnection(udid);
+    const tunnelConnection = await remotexpc.Services.getTunnelForDevice(udid);
     const tunnelHost = tunnelConnection.host;
-    // `remoteXPC` is only the RSD RemoteXPC session (handshake on tunnelConnection.port). The
-    // forwarder opens its own TCP sockets via connectViaTunnel(tunnelHost, devicePort) per
-    // client; it does not multiplex over this connection, so we close it to avoid leaking it.
-    await remoteXPC.close().catch(() => {});
     this.log.debug(
       `Using appium-ios-remotexpc tunnel strategy for '${udid}' through '${tunnelHost}'`,
     );

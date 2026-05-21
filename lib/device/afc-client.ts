@@ -7,7 +7,7 @@ import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
-import type {AfcService as RemoteXPCAfcService, RemoteXpcConnection} from 'appium-ios-remotexpc';
+import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
 import {withTimeout} from '../utils';
 
@@ -130,33 +130,17 @@ export class AfcClient {
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
     if (useRemoteXPC) {
-      // Best-practice pattern (matches go-ios `defer rsd.Close()`): one RSD
-      // probe via `startHouseArrestService`, vend the AFC service, then
-      // release the discovery RSD eagerly. The vended AfcService has its
-      // own dedicated socket so it does not need the discovery RSD to
-      // remain open. Avoids the prior pattern of overlapping RSD probes
-      // that triggered ECONNRESETs from the on-device `remoted` daemon.
-      let houseArrestRemoteXPC: RemoteXpcConnection | undefined;
       try {
         const Services = await getRemoteXPCServices();
-        const result = await Services.startHouseArrestService(udid);
-        houseArrestRemoteXPC = result.remoteXPC;
+        const houseArrestService = await Services.startHouseArrestService(udid);
         const afcService = isDocuments
-          ? await result.houseArrestService.vendDocuments(bundleId)
-          : await result.houseArrestService.vendContainer(bundleId);
+          ? await houseArrestService.vendDocuments(bundleId)
+          : await houseArrestService.vendContainer(bundleId);
         return new AfcClient(afcService, true);
       } catch (err: any) {
         log.error(
           `Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
         );
-      } finally {
-        if (houseArrestRemoteXPC) {
-          try {
-            await houseArrestRemoteXPC.close();
-          } catch {
-            // ignore cleanup errors
-          }
-        }
       }
     }
 

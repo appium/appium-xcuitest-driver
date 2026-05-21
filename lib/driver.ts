@@ -108,15 +108,10 @@ import type {PerfRecorder} from './commands/performance';
 import type {AudioRecorder} from './commands/record-audio';
 import type {NetworkMonitorSession} from './device/network-monitor-session';
 import type {ScreenRecorder} from './commands/recordscreen';
-import type {IOSDeviceLog} from './device/log/ios-device-log';
-import type {IOSSimulatorLog} from './device/log/ios-simulator-log';
-import type {IOSCrashLog} from './device/log/ios-crash-log';
-import type {SafariConsoleLog} from './device/log/safari-console-log';
-import type {SafariNetworkLog} from './device/log/safari-network-log';
-import type {IOSPerformanceLog} from './device/log/ios-performance-log';
 import type {RemoteDebugger} from 'appium-remote-debugger';
 import type {XcodeVersion} from 'appium-xcode';
 import type {Simulator} from 'appium-ios-simulator';
+import type {DriverLogs} from './commands/log';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
@@ -230,14 +225,6 @@ export interface AutInstallationState {
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
 export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
-export interface DriverLogs {
-  syslog?: IOSDeviceLog | IOSSimulatorLog;
-  crashlog?: IOSCrashLog;
-  safariConsole?: SafariConsoleLog;
-  safariNetwork?: SafariNetworkLog;
-  performance?: IOSPerformanceLog;
-}
-
 export class XCUITestDriver
   extends BaseDriver<XCUITestDriverConstraints, StringRecord>
   implements ExternalDriver<XCUITestDriverConstraints, FullContext | string, StringRecord>
@@ -776,7 +763,7 @@ export class XCUITestDriver
     };
     this.resetIos();
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
-    this.logs = {};
+    this.logs = {} as DriverLogs;
     this._networkMonitorSession = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
@@ -947,12 +934,18 @@ export class XCUITestDriver
       }
     }
 
-    await this.logs.syslog?.stopCapture();
-    _.values(this.logs).forEach((x: any) => x?.removeAllListeners?.());
+    await Promise.all(
+      Object.values(this.logs).map(async (logObj) => {
+        try {
+          await logObj?.stopCapture();
+        } catch {}
+        logObj?.removeAllListeners();
+      }),
+    );
     if (this._bidiServerLogListener) {
       this.log.unwrap().off('log', this._bidiServerLogListener);
     }
-    this.logs = {};
+    this.logs = {} as DriverLogs;
 
     if (this.mjpegStream) {
       this.log.info('Closing MJPEG stream');

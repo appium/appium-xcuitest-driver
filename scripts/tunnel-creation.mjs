@@ -578,10 +578,6 @@ class TunnelCreator {
           udid: r.device.Properties.SerialNumber,
           socket: /** @type {any} */ (r).socket,
         };
-        const {Address, RsdPort} = r.tunnel;
-        if (Address && typeof RsdPort === 'number' && RsdPort > 0) {
-          watch.rsdProbe = {host: Address, port: RsdPort};
-        }
         return watch;
       });
     watches.push(...manualWatches);
@@ -733,9 +729,6 @@ class TunnelCreator {
       udid,
       socket: result.socket,
     };
-    if (tunnel?.Address && typeof tunnel?.RsdPort === 'number' && tunnel.RsdPort > 0) {
-      watch.rsdProbe = {host: tunnel.Address, port: tunnel.RsdPort};
-    }
 
     return {
       entry: {
@@ -1144,24 +1137,13 @@ async function main() {
       onTunnelDead: async ({udid}) => {
         tunnelCreator._reconnectTunnelByUdid(udid);
       },
-    }, tunnelCreator._appletvResources.map((resource) => {
+    }, tunnelCreator._appletvResources.map((resource) =>
       /** @type {TunnelSocketWatch} */
-      const watch = {
+       ({
         udid: resource.udid,
         socket: resource.tlsSocket,
-      };
-      if (
-        resource.tunnel?.Address
-        && typeof resource.tunnel?.RsdPort === 'number'
-        && resource.tunnel.RsdPort > 0
-      ) {
-        watch.rsdProbe = {
-          host: resource.tunnel.Address,
-          port: resource.tunnel.RsdPort,
-        };
-      }
-      return watch;
-    }));
+      })
+    ));
 
     const successfulUsb = usbResults.filter((r) => r.success);
     log.info('\n=== TUNNEL CREATION SUMMARY ===');
@@ -1230,7 +1212,6 @@ await main();
  * Watch descriptor consumed by watchTunnelRegistrySockets.
  * @property {string} udid
  * @property {any} socket
- * @property {{host: string; port: number}} [rsdProbe]
  */
 
 /**

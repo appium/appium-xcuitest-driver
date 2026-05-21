@@ -1,9 +1,6 @@
 import type {AppiumLogger} from '@appium/types';
 import {getRemoteXPCServices} from './remotexpc-utils';
-import type {
-  NotificationProxyService as RemoteXPCNotificationProxyService,
-  RemoteXpcConnection,
-} from 'appium-ios-remotexpc';
+import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 import {services} from 'appium-ios-device';
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
 
@@ -16,24 +13,24 @@ import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-d
  */
 export class NotificationClient {
   private readonly service: RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy;
-  private readonly remoteXPCConnection?: RemoteXpcConnection;
+  private readonly _isRemoteXPC: boolean;
   private readonly log: AppiumLogger;
 
   private constructor(
     service: RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy,
     log: AppiumLogger,
-    remoteXPCConnection?: RemoteXpcConnection,
+    isRemoteXPC: boolean,
   ) {
     this.service = service;
     this.log = log;
-    this.remoteXPCConnection = remoteXPCConnection;
+    this._isRemoteXPC = isRemoteXPC;
   }
 
   /**
    * Check if this client is using RemoteXPC
    */
   private get isRemoteXPC(): boolean {
-    return !!this.remoteXPCConnection;
+    return this._isRemoteXPC;
   }
 
   /**
@@ -64,60 +61,20 @@ export class NotificationClient {
     useRemoteXPC: boolean,
   ): Promise<NotificationClient> {
     if (useRemoteXPC) {
-      const client = await NotificationClient.withRemoteXpcConnection(async () => {
+      try {
         const Services = await getRemoteXPCServices();
-        const {notificationProxyService, remoteXPC} =
-          await Services.startNotificationProxyService(udid);
-        return {
-          service: notificationProxyService,
-          connection: remoteXPC,
-        };
-      }, log);
-      if (client) {
-        return client;
+        const notificationProxyService = await Services.startNotificationProxyService(udid);
+        return new NotificationClient(notificationProxyService, log, true);
+      } catch (err: any) {
+        log.error(
+          `Failed to create notification client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+        );
       }
     }
 
     // Fallback to appium-ios-device
     const notificationProxy = await services.startNotificationProxyService(udid);
-    return new NotificationClient(notificationProxy, log);
-  }
-
-  /**
-   * Helper to safely execute remoteXPC operations with connection cleanup
-   * @param operation - Async operation that returns service and connection
-   * @param log - Logger instance
-   * @returns NotificationClient on success, null on failure
-   */
-  private static async withRemoteXpcConnection<
-    T extends RemoteXPCNotificationProxyService | IOSDeviceNotificationProxy,
-  >(
-    operation: () => Promise<{service: T; connection: RemoteXpcConnection}>,
-    log: AppiumLogger,
-  ): Promise<NotificationClient | null> {
-    let remoteXPCConnection: RemoteXpcConnection | undefined;
-    let succeeded = false;
-    try {
-      const {service, connection} = await operation();
-      remoteXPCConnection = connection;
-      const client = new NotificationClient(service, log, remoteXPCConnection);
-      succeeded = true;
-      return client;
-    } catch (err: any) {
-      log.error(
-        `Failed to create notification client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-      );
-      return null;
-    } finally {
-      // Only close connection if we failed (if succeeded, the client owns it)
-      if (remoteXPCConnection && !succeeded) {
-        try {
-          await remoteXPCConnection.close();
-        } catch {
-          // Ignore cleanup errors
-        }
-      }
-    }
+    return new NotificationClient(notificationProxy, log, false);
   }
 
   /**
@@ -140,19 +97,9 @@ export class NotificationClient {
   }
 
   /**
-   * Close the notification service connection and remoteXPC connection if present
+   * Close the notification service connection
    */
   async close(): Promise<void> {
-    // Close the service first
     this.service.close();
-    // Then close RemoteXPC connection if present
-    if (this.remoteXPCConnection) {
-      try {
-        this.log.debug(`Closing remoteXPC connection`);
-        await this.remoteXPCConnection.close();
-      } catch (err: any) {
-        this.log.debug(`Error closing remoteXPC connection: ${err.message}`);
-      }
-    }
   }
 }

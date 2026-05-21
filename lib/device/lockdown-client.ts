@@ -1,12 +1,13 @@
 import type {AppiumLogger} from '@appium/types';
 import {utilities} from 'appium-ios-device';
-import type {RemoteXpcConnection} from 'appium-ios-remotexpc';
+import type {LockdownService} from 'appium-ios-remotexpc';
 import type {LockdownInfo} from '../commands/types';
 import type {XCUITestDriverOpts} from '../driver';
 import {log as defaultLogger} from '../logger';
 import {isIos18OrNewer} from '../utils';
 import {
   getLastRemoteXPCOptionalImportError,
+  tryGetRemoteXPCModule,
   tryGetRemoteXPCUsbMuxStrategy,
   type RemoteXPCEsmModule,
 } from './remotexpc-utils';
@@ -21,24 +22,18 @@ export interface DeviceTimeLockdownFields {
   utcOffset: number;
 }
 
-type LockdownServiceInstance = Awaited<
-  ReturnType<RemoteXPCEsmModule['createLockdownServiceByTunnel']>
->;
-
 /**
  * Unified lockdown access for real devices.
  *
  * On iOS/tvOS 18+ attempts a tunnel registry RemoteXPC connection and lockdown over RSD
- * (`createLockdownServiceByTunnel`). When that path is unavailable, uses
+ * (`createLockdownServiceForTunnel`). When that path is unavailable, uses
  * {@linkcode utilities} from `appium-ios-device` (USB/local usbmux).
  */
 export class LockdownClient {
   private constructor(
     private readonly udid: string,
     private readonly log: AppiumLogger,
-    private readonly remotexpc: RemoteXPCEsmModule | null,
     private readonly strategy: 'ios-device' | 'remotexpc-usbmux' | 'remotexpc-tunnel',
-    private readonly remoteXpcConnection: RemoteXpcConnection | null,
   ) {}
 
   /**
@@ -52,7 +47,7 @@ export class LockdownClient {
     log: AppiumLogger = defaultLogger,
   ): Promise<LockdownClient> {
     if (!isIos18OrNewer(opts)) {
-      return new LockdownClient(udid, log, null, 'ios-device', null);
+      return new LockdownClient(udid, log, 'ios-device');
     }
     const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, log);
     if (!resolved) {
@@ -61,22 +56,15 @@ export class LockdownClient {
         `appium-ios-remotexpc unavailable for lockdown on '${udid}': ${err?.message ?? 'unknown'}. ` +
           `Using appium-ios-device lockdown (legacy fallback).`,
       );
-      return new LockdownClient(udid, log, null, 'ios-device', null);
+      return new LockdownClient(udid, log, 'ios-device');
     }
-    const {remotexpc, useUsbMuxPath} = resolved;
+    const {useUsbMuxPath} = resolved;
 
     if (useUsbMuxPath) {
-      return new LockdownClient(udid, log, remotexpc, 'remotexpc-usbmux', null);
+      return new LockdownClient(udid, log, 'remotexpc-usbmux');
     }
 
-    if (typeof remotexpc.createLockdownServiceByTunnel !== 'function') {
-      throw new Error(
-        `appium-ios-remotexpc does not provide createLockdownServiceByTunnel for tunnel-only ` +
-          `device '${udid}'. Please upgrade appium-ios-remotexpc.`,
-      );
-    }
-    const {remoteXPC} = await remotexpc.Services.createRemoteXPCConnection(udid);
-    return new LockdownClient(udid, log, remotexpc, 'remotexpc-tunnel', remoteXPC);
+    return new LockdownClient(udid, log, 'remotexpc-tunnel');
   }
 
   private static coerceFiniteNumber(value: unknown): number | undefined {
@@ -97,13 +85,7 @@ export class LockdownClient {
   }
 
   async close(): Promise<void> {
-    if (this.remoteXpcConnection) {
-      try {
-        await this.remoteXpcConnection.close();
-      } catch {
-        // ignore
-      }
-    }
+    // Tunnel strategy opens lockdown per operation; nothing to close here.
   }
 
   /**
@@ -140,7 +122,7 @@ export class LockdownClient {
    */
   async getDeviceTimeFields(): Promise<DeviceTimeLockdownFields> {
     const readTimeFromLockdown = async (
-      lockdown: LockdownServiceInstance,
+      lockdown: LockdownService,
     ): Promise<DeviceTimeLockdownFields | undefined> => {
       const info = await lockdown.getDeviceInfo();
       const timestamp = LockdownClient.coerceFiniteNumber(info.TimeIntervalSince1970);
@@ -168,6 +150,14 @@ export class LockdownClient {
     }
   }
 
+  private async requireRemotexpcModule(): Promise<RemoteXPCEsmModule> {
+    const remotexpc = await tryGetRemoteXPCModule();
+    if (!remotexpc) {
+      throw new Error(`appium-ios-remotexpc module is not initialized for '${this.udid}'.`);
+    }
+    return remotexpc;
+  }
+
   /**
    * Legacy ios-device can provide inconsistent offset payloads. Normalize to a final offset in
    * minutes for consumers.
@@ -190,13 +180,11 @@ export class LockdownClient {
   }
 
   private async runWithRemotexpcUsbmuxLockdown<T>(
-    fn: (lockdown: LockdownServiceInstance) => Promise<T | undefined>,
+    fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
-    if (!this.remotexpc) {
-      throw new Error(`appium-ios-remotexpc module is not initialized for '${this.udid}'.`);
-    }
     try {
-      const {lockdownService} = await this.remotexpc.createLockdownServiceByUDID(this.udid);
+      const remotexpc = await this.requireRemotexpcModule();
+      const {lockdownService} = await remotexpc.createLockdownServiceByUDID(this.udid);
       try {
         return await fn(lockdownService);
       } finally {
@@ -212,7 +200,7 @@ export class LockdownClient {
   }
 
   private async runWithRemotexpcLockdown<T>(
-    fn: (lockdown: LockdownServiceInstance) => Promise<T | undefined>,
+    fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
     switch (this.strategy) {
       case 'remotexpc-usbmux':
@@ -225,7 +213,7 @@ export class LockdownClient {
   }
 
   private async runWithRemotexpcLockdownRequiringValue<T>(
-    fn: (lockdown: LockdownServiceInstance) => Promise<T | undefined>,
+    fn: (lockdown: LockdownService) => Promise<T | undefined>,
     valueName: string,
   ): Promise<T> {
     const value = await this.runWithRemotexpcLockdown(fn);
@@ -245,16 +233,11 @@ export class LockdownClient {
    * Runs an operation with lockdown over the RSD tunnel.
    */
   private async runWithTunnelLockdown<T>(
-    fn: (lockdown: LockdownServiceInstance) => Promise<T | undefined>,
+    fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
-    if (!this.remotexpc || !this.remoteXpcConnection) {
-      throw new Error(`RemoteXPC tunnel is not initialized for '${this.udid}'.`);
-    }
     try {
-      const lockdown = await this.remotexpc.createLockdownServiceByTunnel(
-        this.remoteXpcConnection,
-        this.udid,
-      );
+      const remotexpc = await this.requireRemotexpcModule();
+      const lockdown = await remotexpc.createLockdownServiceForTunnel(this.udid);
       try {
         return await fn(lockdown);
       } finally {

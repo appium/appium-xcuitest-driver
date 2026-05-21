@@ -51,7 +51,6 @@ export class AppTerminationClient {
   private async terminateRemoteXPC(bundleId: string): Promise<TerminateAppResult> {
     const Services = await getRemoteXPCServices();
     const dvt = await Services.startDVTService(this.udid);
-    const remoteXPCConnection = dvt.remoteXPC;
     try {
       const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
       if (!pid) {
@@ -60,7 +59,7 @@ export class AppTerminationClient {
       await dvt.processControl.kill(pid);
       return {terminated: true, pid};
     } finally {
-      await remoteXPCConnection.close();
+      await dvt.dvtService.close();
     }
   }
 

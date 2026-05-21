@@ -1,6 +1,6 @@
 import type {AppiumLogger} from '@appium/types';
 import type {EventEmitter} from 'node:events';
-import type {DVTServiceWithConnection} from 'appium-ios-remotexpc';
+import type {DVTInstruments} from 'appium-ios-remotexpc';
 import {makeNetworkMonitorEvent} from '../commands/bidi/models';
 import {BIDI_EVENT_NAME} from '../commands/bidi/constants';
 import {getRemoteXPCServices} from './remotexpc-utils';
@@ -9,7 +9,7 @@ import {getRemoteXPCServices} from './remotexpc-utils';
  * Active DVT NetworkMonitor session: streams instrument events to the driver BiDi event bus.
  */
 export class NetworkMonitorSession {
-  private dvt: DVTServiceWithConnection | null = null;
+  private dvt: DVTInstruments | null = null;
   private runPromise: Promise<void> | null = null;
   private stopped = false;
 
@@ -45,8 +45,9 @@ export class NetworkMonitorSession {
   }
 
   /**
-   * Stops monitoring: closes Remote XPC (same pattern as other `startDVTService` call sites in this driver).
-   * Safe to call more than once.
+   * Stops monitoring and waits for the consume loop to finish. DVT is closed in
+   * {@link consumeEvents} after the network monitor iterator exits (same pattern as
+   * condition inducer `disable()` → `close()`).
    */
   async interrupt(): Promise<void> {
     if (this.stopped) {
@@ -54,32 +55,31 @@ export class NetworkMonitorSession {
     }
 
     this.stopped = true;
-    if (this.dvt) {
-      const dvt = this.dvt;
-      this.dvt = null;
+    const dvt = this.dvt;
+    const runPromise = this.runPromise;
+    this.dvt = null;
+    this.runPromise = null;
+
+    if (dvt) {
       try {
         await dvt.networkMonitor.stop();
       } catch (err: any) {
         this.log.debug(`Error stopping network monitor: ${err?.message ?? err}`);
       }
-      // Same as other `startDVTService` paths in this driver (condition inducer, terminateAppRemoteXPC):
-      // close RemoteXPC only. Remotexpc's DVT integration tests often call `dvtService.close()` first for
-      // explicit channel teardown; we can add that if shutdown issues show up in the field.
-      try {
-        await dvt.remoteXPC.close();
-      } catch (err: any) {
-        this.log.debug(`Error closing RemoteXPC for network monitor: ${err?.message ?? err}`);
-      }
     }
-    if (this.runPromise) {
-      this.runPromise = null;
+
+    if (runPromise) {
+      try {
+        await runPromise;
+      } catch (err: any) {
+        this.log.debug(
+          `Error while finishing network monitor consume loop: ${err?.message ?? err}`,
+        );
+      }
     }
   }
 
-  private async consumeEvents(
-    dvt: DVTServiceWithConnection,
-    eventEmitter: EventEmitter,
-  ): Promise<void> {
+  private async consumeEvents(dvt: DVTInstruments, eventEmitter: EventEmitter): Promise<void> {
     try {
       for await (const event of dvt.networkMonitor.events()) {
         eventEmitter.emit(BIDI_EVENT_NAME, makeNetworkMonitorEvent(event as object));
@@ -88,6 +88,16 @@ export class NetworkMonitorSession {
       if (!this.stopped) {
         this.log.error('Network monitor stream ended unexpectedly', err);
       }
+    } finally {
+      await this.closeDvt(dvt);
+    }
+  }
+
+  private async closeDvt(dvt: DVTInstruments): Promise<void> {
+    try {
+      await dvt.dvtService.close();
+    } catch (err: any) {
+      this.log.debug(`Error closing DVT service for network monitor: ${err?.message ?? err}`);
     }
   }
 }

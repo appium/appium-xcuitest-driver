@@ -106,19 +106,12 @@ class ImageMounter {
       } = remoteXPCModule;
 
       log.info('Starting mobile image mounter service...');
-      const {
-        mobileImageMounterService: imageMounterService,
-        remoteXPC
-      } = await Services.startMobileImageMounterService(deviceUdid);
+      const imageMounterService = await Services.startMobileImageMounterService(deviceUdid);
 
       try {
         return await fn(imageMounterService, deviceUdid);
       } finally {
         await imageMounterService.cleanup();
-        if (remoteXPC) {
-          log.info(`Closing remoteXPC connection for device ${deviceUdid}`);
-          await remoteXPC.close();
-        }
       }
     } finally {
       await usbmux.close();

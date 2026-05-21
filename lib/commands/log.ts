@@ -12,10 +12,16 @@ import {NATIVE_WIN} from './constants';
 import {BIDI_EVENT_NAME} from './bidi/constants';
 import {makeLogEntryAddedEvent} from './bidi/models';
 import type {XCUITestDriver} from '../driver';
+import type {IOSLog} from '../device/log/ios-log';
 import type {LogEntry, LogListener} from './types';
 import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import type {EventEmitter} from 'node:events';
+
+export type DriverLogs = Record<
+  'syslog' | 'crashlog' | 'safariConsole' | 'safariNetwork' | 'performance',
+  IOSLog<any, any> | undefined
+>;
 
 /**
  * Determines the websocket endpoint based on the `sessionId`
@@ -119,7 +125,7 @@ export async function extractLogs(
  * @returns `true` if syslog capture started successfully; `false` otherwise
  */
 export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
-  this.logs = this.logs || {};
+  this.logs ??= {} as DriverLogs;
   if (!_.isUndefined(this.logs.syslog) && this.logs.syslog.isCapturing) {
     this.log.warn('Trying to start iOS log capture but it has already started!');
     return true;
@@ -189,20 +195,17 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   }
 
   let didStartSyslog = false;
-  const promises: Promise<any>[] = [
-    (async () => {
-      try {
-        await this.logs.syslog?.startCapture();
-        didStartSyslog = true;
-        this.eventEmitter.emit('syslogStarted', this.logs.syslog);
-      } catch (err: any) {
-        this.log.debug(err.stack);
-        this.log.warn(`Continuing without capturing device logs: ${err.message}`);
-      }
-    })(),
-    this.logs.crashlog?.startCapture() ?? Promise.resolve(),
-  ];
-  await Promise.all(promises);
+  if (this.logs.syslog) {
+    try {
+      await this.logs.syslog.startCapture();
+      didStartSyslog = true;
+      this.eventEmitter.emit('syslogStarted', this.logs.syslog);
+    } catch (err: any) {
+      this.log.debug(err.stack);
+      this.log.warn(`Continuing without capturing device logs: ${err.message}`);
+    }
+  }
+  await this.logs.crashlog?.startCapture();
 
   return didStartSyslog;
 }
