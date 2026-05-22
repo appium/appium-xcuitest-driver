@@ -5,8 +5,8 @@ export {
   findApps,
   unzipFile,
   unzipStream,
-} from './app-helpers';
-export type {UnzipInfo} from './app-helpers';
+} from './app';
+export type {UnzipInfo} from './app';
 
 export {TimeoutError, withTimeout} from './async';
 
