@@ -48,7 +48,9 @@ export async function createSim(this: XCUITestDriver): Promise<Simulator> {
       const nameMapper = (device: DeviceInfo) => device.name;
       deviceNames = Array.isArray(devices)
         ? devices.map(nameMapper)
-        : Object.values(devices).flatMap((x) => x).map(nameMapper);
+        : Object.values(devices)
+            .flatMap((x) => x)
+            .map(nameMapper);
     } catch {}
     throw new Error(
       `'deviceName' must be provided in order to create a new Simulator for ${platform} platform. ` +

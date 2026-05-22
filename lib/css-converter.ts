@@ -273,9 +273,7 @@ function parseCssRule(cssRule: AstRule): string {
 
   const indexAttr = attrs.find(
     (attr) => typeof attr === 'object' && attr !== null && (attr as {index: string}).index,
-  ) as
-    | {index: string}
-    | undefined;
+  ) as {index: string} | undefined;
   if (indexAttr) {
     iosClassChainSelector += `[${indexAttr.index}]`;
   }

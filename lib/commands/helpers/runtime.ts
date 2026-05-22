@@ -11,9 +11,7 @@ export interface DriverInfo {
   built: string;
 }
 
-const getModuleManifest = memoize(async function getModuleManifest(): Promise<
-  Record<string, any>
-> {
+const getModuleManifest = memoize(async function getModuleManifest(): Promise<Record<string, any>> {
   let currentDir = path.resolve(__dirname);
   let isAtFsRoot = false;
   while (!isAtFsRoot) {

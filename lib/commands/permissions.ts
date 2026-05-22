@@ -23,8 +23,7 @@ export async function mobileResetPermission(
     resource = PermissionService[String(service).toLowerCase() as keyof typeof PermissionService];
     if (!resource) {
       throw new Error(
-        `The 'service' value must be one of ` +
-          `${JSON.stringify(Object.keys(PermissionService))}`,
+        `The 'service' value must be one of ` + `${JSON.stringify(Object.keys(PermissionService))}`,
       );
     }
   } else if (Number.isInteger(service)) {

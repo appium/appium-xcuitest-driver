@@ -76,9 +76,10 @@ export async function parseContainerPath(
     const pathInContainer = relativePath;
     return {bundleId, pathInContainer, containerType};
   }
-  const containerRoot = typeof containerRootSupplier === 'function'
-    ? await containerRootSupplier(bundleId, containerType)
-    : containerRootSupplier;
+  const containerRoot =
+    typeof containerRootSupplier === 'function'
+      ? await containerRootSupplier(bundleId, containerType)
+      : containerRootSupplier;
   const pathInContainer = path.posix.resolve(containerRoot, relativePath);
   verifyIsSubPath(pathInContainer, containerRoot);
   return {bundleId, pathInContainer, containerType};
@@ -242,9 +243,7 @@ async function deleteFileOrFolder(this: XCUITestDriver, remotePath: string): Pro
  * Check if container type refers to documents container
  */
 function isDocumentsContainer(containerType?: string | null): boolean {
-  return (
-    String(containerType ?? '').toLowerCase() === CONTAINER_DOCUMENTS_PATH.toLowerCase()
-  );
+  return String(containerType ?? '').toLowerCase() === CONTAINER_DOCUMENTS_PATH.toLowerCase();
 }
 
 /**

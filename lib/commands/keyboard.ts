@@ -12,7 +12,10 @@ export async function hideKeyboard(
   ...possibleKeys: string[]
 ): Promise<boolean> {
   // last parameter is the session id
-  const keyNames = possibleKeys.slice(0, -1).filter(Boolean).map((x) => `${x}`);
+  const keyNames = possibleKeys
+    .slice(0, -1)
+    .filter(Boolean)
+    .map((x) => `${x}`);
   await this.mobileHideKeyboard(keyNames);
   return true;
 }

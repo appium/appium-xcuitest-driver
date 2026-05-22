@@ -31,8 +31,7 @@ export interface UnzipInfo {
 export async function unzipFile(archivePath: string): Promise<UnzipInfo> {
   const useSystemUnzipEnv = process.env.APPIUM_PREFER_SYSTEM_UNZIP;
   const useSystemUnzip =
-    isEmpty(useSystemUnzipEnv) ||
-    !['0', 'false'].includes(String(useSystemUnzipEnv).toLowerCase());
+    isEmpty(useSystemUnzipEnv) || !['0', 'false'].includes(String(useSystemUnzipEnv).toLowerCase());
   const tmpRoot = await tempDir.openDir();
   try {
     await zip.extractAllTo(archivePath, tmpRoot, {

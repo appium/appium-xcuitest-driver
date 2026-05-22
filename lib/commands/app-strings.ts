@@ -82,9 +82,7 @@ export async function parseLocalizableStrings(
 
     if (isEmpty(resourcePaths) && lprojRoot && (await fs.exists(lprojRoot))) {
       const resourceFiles = (await fs.readdir(lprojRoot))
-        .filter((name) =>
-          [STRINGS_RESOURCE, STRINGSDICT_RESOURCE].some((x) => name.endsWith(x)),
-        )
+        .filter((name) => [STRINGS_RESOURCE, STRINGSDICT_RESOURCE].some((x) => name.endsWith(x)))
         .map((name) => path.resolve(lprojRoot, name));
       resourcePaths.push(...resourceFiles);
     }

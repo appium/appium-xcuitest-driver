@@ -35,8 +35,7 @@ export async function grepFile(
     input.once('error', reject);
     rl.on('line', (line) => {
       if (
-        (opts.caseInsensitive &&
-          line.toLowerCase().includes(String(str).toLowerCase())) ||
+        (opts.caseInsensitive && line.toLowerCase().includes(String(str).toLowerCase())) ||
         (!opts.caseInsensitive && line.includes(str))
       ) {
         resolve(true);

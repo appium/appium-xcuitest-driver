@@ -226,9 +226,10 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
     clonedCookie.path = '/';
   }
   const jsCookie = createJSCookie(clonedCookie.name, clonedCookie.value, {
-    expires: typeof clonedCookie.expiry === 'number'
-      ? new Date(clonedCookie.expiry * 1000).toUTCString()
-      : clonedCookie.expiry,
+    expires:
+      typeof clonedCookie.expiry === 'number'
+        ? new Date(clonedCookie.expiry * 1000).toUTCString()
+        : clonedCookie.expiry,
     path: clonedCookie.path,
     domain: clonedCookie.domain,
     httpOnly: clonedCookie.httpOnly,
@@ -306,7 +307,7 @@ export function cacheWebElement(this: XCUITestDriver, el: Element | string): Ele
  */
 export function cacheWebElements(this: XCUITestDriver, response: any): any {
   const toCached = (v: any) =>
-    (Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v);
+    Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v;
 
   if (Array.isArray(response)) {
     return response.map(toCached);

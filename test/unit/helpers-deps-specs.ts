@@ -30,7 +30,9 @@ async function parseTsFile(file: string): Promise<ts.SourceFile> {
   return ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 }
 
-function moduleSpecifierText(node: ts.ImportDeclaration | ts.ExportDeclaration): string | undefined {
+function moduleSpecifierText(
+  node: ts.ImportDeclaration | ts.ExportDeclaration,
+): string | undefined {
   const specifier = node.moduleSpecifier;
   return specifier && ts.isStringLiteral(specifier) ? specifier.text : undefined;
 }
@@ -150,7 +152,10 @@ async function assertNoCycles(dir: string): Promise<void> {
   const files = await listTsFiles(dir, {excludeIndex: false});
   const graph = await buildIntraDirGraph(files);
   const cycles = findCycles(graph, dir);
-  expect(cycles, `cyclic imports in ${path.relative(process.cwd(), dir)}: ${JSON.stringify(cycles)}`).to.be.empty;
+  expect(
+    cycles,
+    `cyclic imports in ${path.relative(process.cwd(), dir)}: ${JSON.stringify(cycles)}`,
+  ).to.be.empty;
 }
 
 async function listLibTsFiles(dir: string): Promise<string[]> {

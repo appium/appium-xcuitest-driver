@@ -1,11 +1,5 @@
 // Submodules must import siblings directly, never this barrel — avoids cycles.
-export {
-  SAFARI_BUNDLE_ID,
-  buildSafariPreferences,
-  findApps,
-  unzipFile,
-  unzipStream,
-} from './app';
+export {SAFARI_BUNDLE_ID, buildSafariPreferences, findApps, unzipFile, unzipStream} from './app';
 export type {UnzipInfo} from './app';
 
 export {TimeoutError, withTimeout} from './async';

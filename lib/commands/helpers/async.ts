@@ -1,7 +1,4 @@
-import {
-  TimeoutError as AsyncboxTimeoutError,
-  withTimeout as asyncboxWithTimeout,
-} from 'asyncbox';
+import {TimeoutError as AsyncboxTimeoutError, withTimeout as asyncboxWithTimeout} from 'asyncbox';
 
 /** Error thrown by {@link withTimeout} when the deadline is exceeded. */
 export class TimeoutError extends Error {
