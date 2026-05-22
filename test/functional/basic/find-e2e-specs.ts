@@ -184,7 +184,7 @@ describe('XCUITestDriver - find -', function () {
       });
       it('should search an extended path by descendant', async function () {
         const els = await driver.$$('//XCUIElementTypeTable//XCUIElementTypeButton');
-        const texts = await Promise.all(els.map((el) => el.getAttribute('name')));
+        const texts = await Promise.all([...els].map((el) => el.getAttribute('name')));
         expect(texts).to.not.include('UICatalog');
         expect(texts).to.not.include('UIKitCatalog');
         expect(texts).to.include('X Button');
