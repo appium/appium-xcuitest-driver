@@ -3,8 +3,11 @@ import {isEmpty} from '../../utils';
 import {fs, tempDir, zip} from 'appium/support';
 import {log} from '../../logger';
 import {spawn} from 'node:child_process';
-import type {StringRecord} from '@appium/types';
+import type {DriverOpts, StringRecord} from '@appium/types';
 import type {Readable} from 'node:stream';
+import type {XCUITestDriverConstraints} from '../../desired-caps';
+
+type SafariPreferencesOpts = Pick<DriverOpts<XCUITestDriverConstraints>, 'safariGlobalPreferences'>;
 
 export const SAFARI_BUNDLE_ID = 'com.apple.mobilesafari';
 const SAFARI_OPTS_ALIASES_MAP = {
@@ -111,20 +114,18 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
 
 /**
  * Builds Safari preferences object based on the given session capabilities
- *
- * @param opts
- * @return
  */
-export function buildSafariPreferences(opts: StringRecord): StringRecord {
+export function buildSafariPreferences(opts: SafariPreferencesOpts & StringRecord): StringRecord {
   const safariSettings = structuredClone(opts?.safariGlobalPreferences ?? {});
 
   for (const [name, [aliases, valueConverter]] of Object.entries(SAFARI_OPTS_ALIASES_MAP)) {
-    if (!Object.hasOwn(opts, name)) {
+    const optName = name as keyof typeof SAFARI_OPTS_ALIASES_MAP;
+    if (!Object.hasOwn(opts, optName)) {
       continue;
     }
 
     for (const alias of aliases) {
-      safariSettings[alias] = valueConverter((opts as any)[name]);
+      safariSettings[alias] = valueConverter(opts[optName]);
     }
   }
   return safariSettings;
