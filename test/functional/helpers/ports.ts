@@ -1,6 +1,4 @@
 import net from 'node:net';
-import _ from 'lodash';
-
 /**
  *
  * @returns {Promise<number>}
@@ -11,7 +9,7 @@ export async function getFreePort() {
     srv.listen(0, () => {
       const address = srv.address();
       let port;
-      if (_.has(address, 'port')) {
+      if (address && typeof address === 'object' && 'port' in address) {
         port = /** @type {import('node:net').AddressInfo} */ address.port;
       } else {
         reject(new Error('Cannot determine any free port number'));

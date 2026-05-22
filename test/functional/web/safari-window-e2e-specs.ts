@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty} from '../../../lib/utils';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
@@ -146,7 +146,7 @@ describe('safari - windows and frames', function () {
         const waitUntilNotExist = async (locator: string, timeout = 5000) => {
           await driver.setTimeout({implicit: 0});
           try {
-            await waitForCondition(async () => _.isEmpty(await driver.$$(locator)), {
+            await waitForCondition(async () => isEmpty(await driver.$$(locator)), {
               waitMs: timeout,
               intervalMs: 300,
             });
@@ -208,7 +208,7 @@ describe('safari - windows and frames', function () {
         await expect(h1.getText()).to.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        expect(_.isEmpty(await driver.$$('<frameset />'))).to.be.false;
+        expect(isEmpty(await driver.$$('<frameset />'))).to.be.false;
       });
 
       it('should switch to child frames', async function () {
@@ -216,7 +216,7 @@ describe('safari - windows and frames', function () {
         await expect(driver.getTitle()).to.eventually.equal(FRAMESET_TITLE);
 
         await driver.switchToFrame(await driver.$('[name="childframe"]'));
-        expect(_.isEmpty(await driver.$$('#only_on_page_2'))).to.be.false;
+        expect(isEmpty(await driver.$$('#only_on_page_2'))).to.be.false;
       });
 
       it('should execute javascript in frame', async function () {
@@ -277,7 +277,7 @@ describe('safari - windows and frames', function () {
         await expect(h1.getText()).to.eventually.equal(SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        expect(_.size(await driver.$$('<iframe />'))).to.eql(3);
+        expect((await driver.$$('<iframe />')).length).to.eql(3);
       });
 
       it('should get source within an iframe', async function () {

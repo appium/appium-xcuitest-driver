@@ -1,6 +1,6 @@
 import {errors} from 'appium/driver';
 import {waitForCondition} from 'asyncbox';
-import {isTvOs} from '../utils';
+import {isTvOs} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {Element} from '@appium/types';
 

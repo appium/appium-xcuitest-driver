@@ -1,8 +1,8 @@
-import _ from 'lodash';
 import path from 'node:path';
 import {fs, zip, logger, util, tempDir} from 'appium/support';
 import {SubProcess, exec} from 'teen_process';
-import {encodeBase64OrUpload, type UploadOptions} from '../utils';
+import {encodeBase64OrUpload, type UploadOptions} from './helpers';
+import {isEmpty, truncateString} from '../utils';
 import {waitForCondition} from 'asyncbox';
 import type {XCUITestDriver} from '../driver';
 import type {ActiveAppInfo} from './types';
@@ -51,7 +51,7 @@ export class PerfRecorder {
     this._pid = opts.pid;
     this._udid = udid;
     this._logger = logger.getLogger(
-      `${_.truncate(this._profileName, {length: 10})}@${this._udid.substring(0, 8)}`,
+      `${truncateString(this._profileName, {length: 10})}@${this._udid.substring(0, 8)}`,
     );
     this._archivePromise = null;
   }
@@ -272,7 +272,7 @@ export async function mobileStartPerfRecord(
     throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
   }
 
-  if (!_.isEmpty(this._perfRecorders)) {
+  if (!isEmpty(this._perfRecorders)) {
     for (const recorder of this._perfRecorders.filter((x) => x.profileName === profileName)) {
       if (recorder.isRunning()) {
         this.log.debug(
@@ -281,14 +281,17 @@ export async function mobileStartPerfRecord(
         );
         return;
       }
-      _.pull(this._perfRecorders, recorder);
+      const recorderIndex = this._perfRecorders.indexOf(recorder);
+      if (recorderIndex >= 0) {
+        this._perfRecorders.splice(recorderIndex, 1);
+      }
       await recorder.stop(true);
     }
   }
 
   let realPid: number | undefined;
   if (pid) {
-    if (_.toLower(String(pid)) === DEFAULT_PID) {
+    if (String(pid).toLowerCase() === DEFAULT_PID) {
       const appInfo = (await this.proxyCommand('/wda/activeAppInfo', 'GET')) as ActiveAppInfo;
       realPid = appInfo.pid;
     } else {
@@ -338,20 +341,20 @@ export async function mobileStopPerfRecord(
     throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
   }
 
-  if (_.isEmpty(this._perfRecorders)) {
+  if (isEmpty(this._perfRecorders)) {
     this.log.info('No performance recorders have been started. Doing nothing');
     return '';
   }
 
   const recorders = this._perfRecorders.filter((x) => x.profileName === profileName);
-  if (_.isEmpty(recorders)) {
+  if (isEmpty(recorders)) {
     throw this.log.errorWithException(
       `There are no records for performance profile '${profileName}' ` +
         `and device ${this.device.udid}. Have you started the profiling before?`,
     );
   }
 
-  const recorder = _.first(recorders);
+  const recorder = recorders[0];
   if (!recorder) {
     throw this.log.errorWithException(
       `No recorder found for performance profile '${profileName}' and device ${this.device.udid}`,
@@ -373,7 +376,10 @@ export async function mobileStopPerfRecord(
     fileFieldName,
     formFields,
   });
-  _.pull(this._perfRecorders, recorder);
+  const recorderIndex = this._perfRecorders.indexOf(recorder);
+  if (recorderIndex >= 0) {
+    this._perfRecorders.splice(recorderIndex, 1);
+  }
   await fs.rimraf(resultPath);
   return result;
 }

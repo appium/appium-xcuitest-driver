@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty} from '../utils';
 import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
 import {IOSCrashLog} from '../device/log/ios-crash-log';
 import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
@@ -7,7 +7,7 @@ import WebSocket from 'ws';
 import {SafariConsoleLog} from '../device/log/safari-console-log';
 import {SafariNetworkLog} from '../device/log/safari-network-log';
 import {toLogEntry} from '../device/log/helpers';
-import {isIos18OrNewer} from '../utils';
+import {isIos18OrNewer} from './helpers';
 import {NATIVE_WIN} from './constants';
 import {BIDI_EVENT_NAME} from './bidi/constants';
 import {makeLogEntryAddedEvent} from './bidi/models';
@@ -96,7 +96,7 @@ export async function extractLogs(
 ): Promise<any> {
   // make sure that we have logs at all
   // otherwise it's not been initialized
-  if (_.isEmpty(logsContainer)) {
+  if (isEmpty(logsContainer)) {
     throw new Error('No logs currently available. Is the device/simulator started?');
   }
 
@@ -112,7 +112,7 @@ export async function extractLogs(
     );
   }
   throw new Error(
-    `No logs of type '${logType}' found. Supported log types are: ${_.keys(SUPPORTED_LOG_TYPES)}.`,
+    `No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES)}.`,
   );
 }
 
@@ -126,12 +126,12 @@ export async function extractLogs(
  */
 export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   this.logs ??= {} as DriverLogs;
-  if (!_.isUndefined(this.logs.syslog) && this.logs.syslog.isCapturing) {
+  if (this.logs.syslog !== undefined && this.logs.syslog.isCapturing) {
     this.log.warn('Trying to start iOS log capture but it has already started!');
     return true;
   }
 
-  if (_.isUndefined(this.logs.syslog)) {
+  if (this.logs.syslog === undefined) {
     [this.logs.crashlog] = assignBiDiLogListener.bind(this)(
       new IOSCrashLog({
         sim: this.device as Simulator,
@@ -163,7 +163,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         type: 'syslog',
       },
     );
-    if (_.isBoolean(this.opts.showSafariConsoleLog)) {
+    if (typeof this.opts.showSafariConsoleLog === 'boolean') {
       [this.logs.safariConsole] = assignBiDiLogListener.bind(this)(
         new SafariConsoleLog({
           showLogs: this.opts.showSafariConsoleLog,
@@ -174,7 +174,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         },
       );
     }
-    if (_.isBoolean(this.opts.showSafariNetworkLog)) {
+    if (typeof this.opts.showSafariNetworkLog === 'boolean') {
       [this.logs.safariNetwork] = assignBiDiLogListener.bind(this)(
         new SafariNetworkLog({
           showLogs: this.opts.showSafariNetworkLog,
@@ -222,7 +222,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
  */
 export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
-  if (!_.isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
+  if (!isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
     this.log.debug(
       `The system logs broadcasting web socket server is already listening at ${pathname}`,
     );
@@ -236,7 +236,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
   });
   wss.on('connection', (ws, req) => {
     if (req) {
-      const remoteIp = _.isEmpty(req.headers['x-forwarded-for'])
+      const remoteIp = isEmpty(req.headers['x-forwarded-for'])
         ? req.connection?.remoteAddress
         : req.headers['x-forwarded-for'];
       this.log.debug(
@@ -246,7 +246,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       this.log.debug('Established a new system logs listener web socket connection');
     }
 
-    if (_.isEmpty(this._syslogWebsocketListener)) {
+    if (!this._syslogWebsocketListener) {
       this._syslogWebsocketListener = (logRecord: {message: string}) => {
         if (ws?.readyState === WebSocket.OPEN) {
           ws.send(logRecord.message);
@@ -256,16 +256,16 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
     this.logs.syslog?.on('output', this._syslogWebsocketListener);
 
     ws.on('close', (code: number, reason: Buffer) => {
-      if (!_.isEmpty(this._syslogWebsocketListener)) {
+      if (this._syslogWebsocketListener) {
         this.logs.syslog?.removeListener('output', this._syslogWebsocketListener);
         this._syslogWebsocketListener = null;
       }
 
       let closeMsg = 'System logs listener web socket is closed.';
-      if (!_.isEmpty(code)) {
+      if (!isEmpty(code)) {
         closeMsg += ` Code: ${code}.`;
       }
-      if (!_.isEmpty(reason)) {
+      if (!isEmpty(reason)) {
         closeMsg += ` Reason: ${reason.toString()}.`;
       }
       this.log.debug(closeMsg);
@@ -281,7 +281,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
  */
 export async function mobileStopLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
-  if (_.isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
+  if (isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
     return;
   }
 
@@ -314,6 +314,6 @@ export function assignBiDiLogListener<EE extends EventEmitter>(
 }
 
 function nativeLogEntryToSeleniumEntry(x: any): LogEntry {
-  const msg = _.isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
-  return toLogEntry(_.replace(msg, COLOR_CODE_PATTERN, ''), x.timestamp ?? Date.now());
+  const msg = isEmpty(x.prefix) ? x.message : `[${x.prefix}] ${x.message}`;
+  return toLogEntry(msg.replace(COLOR_CODE_PATTERN, ''), x.timestamp ?? Date.now());
 }

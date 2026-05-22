@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {logger} from 'appium/support';
 import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
 import chai, {expect} from 'chai';
@@ -54,7 +53,7 @@ describe('DeviceConnectionsFactory', function () {
     const f = devConFactory as any;
     expect(
       await f._releaseProxiedConnections(
-        _.keys((DeviceConnectionsFactory as any)._connectionsMapping),
+        Object.keys((DeviceConnectionsFactory as any)._connectionsMapping),
       ),
     ).to.eql(['udid:1234', 'udid4:6545']);
   });

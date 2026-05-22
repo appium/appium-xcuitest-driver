@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {truncateString} from '../../utils';
 import type {AppiumLogger} from '@appium/types';
 import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
 import {LineConsumingLog} from './line-consuming-log';
@@ -44,7 +44,7 @@ export class IOSPerformanceLog extends LineConsumingLog {
     const serializedEntry = JSON.stringify(event);
     this.broadcast(serializedEntry);
     this.log.debug(
-      `Received Timeline event: ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
+      `Received Timeline event: ${truncateString(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
     );
   }
 }

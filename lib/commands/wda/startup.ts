@@ -2,12 +2,12 @@ import {errors} from 'appium/driver';
 import {fs, timing, util} from 'appium/support';
 import type {StringRecord} from '@appium/types';
 import {retryInterval} from 'asyncbox';
-import _ from 'lodash';
+import {isPlainObject} from '../../utils';
 import path from 'node:path';
 import {installToRealDevice} from '../../device/real-device-management';
 import {installToSimulator} from '../../device/simulator-management';
 import type {XCUITestDriver} from '../../driver';
-import {isLocalHost, isIos17OrNewerPlatform} from '../../utils';
+import {isIos17OrNewerPlatform, isLocalHost} from '../helpers';
 import {markSystemFilesForCleanup} from './cleanup';
 import {
   CAP_NAMES_NO_XCODEBUILD_REQUIRED,
@@ -334,7 +334,7 @@ async function establishProxySession(
     const cause = err instanceof Error ? err : new Error(String(err));
     driver.log.debug(cause.stack);
     let errorMsg = `Unable to start WebDriverAgent session. Original error: ${cause.message}`;
-    if (driver.isRealDevice() && _.includes(cause.message, 'xcodebuild')) {
+    if (driver.isRealDevice() && cause.message.includes('xcodebuild')) {
       errorMsg += ` Make sure you follow the tutorial at ${WDA_REAL_DEV_TUTORIAL_URL}.`;
     }
     throw new Error(errorMsg, {cause: err});
@@ -364,15 +364,15 @@ async function createWdaSession(
   bundleId?: string,
   processArguments?: any,
 ): Promise<void> {
-  const args = processArguments ? _.cloneDeep(processArguments.args) || [] : [];
-  if (!_.isArray(args)) {
+  const args = processArguments ? structuredClone(processArguments.args) || [] : [];
+  if (!Array.isArray(args)) {
     throw new Error(
       `processArguments.args capability is expected to be an array. ` +
         `${JSON.stringify(args)} is given instead`,
     );
   }
-  const env = processArguments ? _.cloneDeep(processArguments.env) || {} : {};
-  if (!_.isPlainObject(env)) {
+  const env = processArguments ? structuredClone(processArguments.env) || {} : {};
+  if (!isPlainObject(env)) {
     throw new Error(
       `processArguments.env capability is expected to be a dictionary. ` +
         `${JSON.stringify(env)} is given instead`,
@@ -388,10 +388,10 @@ async function createWdaSession(
   }
 
   if (driver.opts.noReset) {
-    if (_.isNil(driver.opts.shouldTerminateApp)) {
+    if (driver.opts.shouldTerminateApp == null) {
       driver.opts.shouldTerminateApp = false;
     }
-    if (_.isNil(driver.opts.forceAppLaunch)) {
+    if (driver.opts.forceAppLaunch == null) {
       driver.opts.forceAppLaunch = false;
     }
   }

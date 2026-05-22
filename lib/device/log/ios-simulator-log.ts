@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty} from '../../utils';
 import {exec} from 'teen_process';
 import {util} from 'appium/support';
 import {LineConsumingLog} from './line-consuming-log';
@@ -48,7 +48,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
   }
 
   override async startCapture(): Promise<void> {
-    if (_.isUndefined(this.sim.udid)) {
+    if (this.sim.udid === undefined) {
       throw new Error(`Log capture requires a sim udid`);
     }
     if (!(await this.sim.isRunning())) {
@@ -192,7 +192,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
     const pids = processes
       .filter(({name}) => LOG_STREAMING_PROCESS_NAME_PATTERN.test(name))
       .map(({pid}) => pid);
-    if (_.isEmpty(pids)) {
+    if (isEmpty(pids)) {
       return;
     }
     try {

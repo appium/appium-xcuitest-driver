@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {util} from 'appium/support';
 import type {XCUITestDriver} from '../driver';
 import type {Style} from './types';
@@ -15,7 +14,7 @@ export async function mobileSetAppearance(
   this: XCUITestDriver,
   style: 'dark' | 'light',
 ): Promise<void> {
-  if (!['light', 'dark'].includes(_.toLower(style))) {
+  if (!['light', 'dark'].includes(String(style).toLowerCase())) {
     throw new Error(`The 'style' value is expected to equal either 'light' or 'dark'`);
   }
   if (util.compareVersions(this.opts.platformVersion as string, '<', '12.0')) {
@@ -37,7 +36,9 @@ export async function mobileSetAppearance(
     this.log.debug(e.stack);
   }
   // Fall back to the ugly Siri workaround if the current SDK is too old
-  await this.mobileSiriCommand(`Turn ${_.toLower(style) === 'dark' ? 'on' : 'off'} dark mode`);
+  await this.mobileSiriCommand(
+    `Turn ${String(style).toLowerCase() === 'dark' ? 'on' : 'off'} dark mode`,
+  );
 }
 
 /**

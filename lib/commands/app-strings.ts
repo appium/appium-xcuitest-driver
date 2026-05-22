@@ -1,9 +1,9 @@
-import _ from 'lodash';
 import path from 'node:path';
 import {plist, fs, util, tempDir, zip} from 'appium/support';
 import type {StringRecord} from '@appium/types';
 import type {XCUITestDriver} from '../driver';
-import {findApps} from '../utils';
+import {findApps} from './helpers';
+import {isEmpty, mergeDeep} from '../utils';
 import {APP_EXT} from './constants';
 
 const STRINGSDICT_RESOURCE = '.stringsdict';
@@ -42,13 +42,15 @@ export async function parseLocalizableStrings(
       tmpRoot = await tempDir.openDir();
       this.log.info(`Extracting '${app}' into a temporary location to parse its resources`);
       await zip.extractAllTo(app, tmpRoot);
-      const relativeBundleRoot = _.first(await findApps(tmpRoot, [APP_EXT])) as string;
+      const relativeBundleRoot = (await findApps(tmpRoot, [APP_EXT]))[0] as string;
       this.log.info(`Selecting '${relativeBundleRoot}'`);
       bundleRoot = path.join(tmpRoot, relativeBundleRoot);
     }
 
     let lprojRoot: string | undefined;
-    for (const subfolder of [`${language}.lproj`, localizableStringsDir, ''].filter(_.isString)) {
+    for (const subfolder of [`${language}.lproj`, localizableStringsDir, ''].filter(
+      (x): x is string => typeof x === 'string',
+    )) {
       lprojRoot = path.resolve(bundleRoot, subfolder as string);
       if (await fs.exists(lprojRoot)) {
         break;
@@ -78,9 +80,11 @@ export async function parseLocalizableStrings(
       }
     }
 
-    if (_.isEmpty(resourcePaths) && lprojRoot && (await fs.exists(lprojRoot))) {
+    if (isEmpty(resourcePaths) && lprojRoot && (await fs.exists(lprojRoot))) {
       const resourceFiles = (await fs.readdir(lprojRoot))
-        .filter((name) => _.some([STRINGS_RESOURCE, STRINGSDICT_RESOURCE], (x) => name.endsWith(x)))
+        .filter((name) =>
+          [STRINGS_RESOURCE, STRINGSDICT_RESOURCE].some((x) => name.endsWith(x)),
+        )
         .map((name) => path.resolve(lprojRoot, name));
       resourcePaths.push(...resourceFiles);
     }
@@ -88,7 +92,7 @@ export async function parseLocalizableStrings(
       `Got ${util.pluralize('resource file', resourcePaths.length, true)} in '${lprojRoot}'`,
     );
 
-    if (_.isEmpty(resourcePaths)) {
+    if (isEmpty(resourcePaths)) {
       return {};
     }
 
@@ -101,16 +105,16 @@ export async function parseLocalizableStrings(
       try {
         const data = await readResource(resourcePath);
         this.log.debug(
-          `Parsed ${util.pluralize('string', _.keys(data).length, true)} from '${resourcePath}'`,
+          `Parsed ${util.pluralize('string', Object.keys(data).length, true)} from '${resourcePath}'`,
         );
-        _.merge(resultStrings, data);
+        mergeDeep(resultStrings, data);
       } catch (e: any) {
         this.log.warn(`Cannot parse '${resourcePath}' resource. Original error: ${e.message}`);
       }
     }
 
     this.log.info(
-      `Retrieved ${util.pluralize('string', _.keys(resultStrings).length, true)} from '${lprojRoot}'`,
+      `Retrieved ${util.pluralize('string', Object.keys(resultStrings).length, true)} from '${lprojRoot}'`,
     );
     return resultStrings;
   } finally {
@@ -147,8 +151,8 @@ export async function getStrings(
 
 async function readResource(resourcePath: string): Promise<StringRecord> {
   const data = await plist.parsePlistFile(resourcePath);
-  return _.toPairs(data).reduce((result, [key, value]) => {
-    result[key] = _.isString(value) ? value : JSON.stringify(value);
+  return Object.entries(data).reduce((result, [key, value]) => {
+    result[key] = typeof value === 'string' ? value : JSON.stringify(value);
     return result;
   }, {} as StringRecord);
 }

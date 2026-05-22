@@ -7,7 +7,6 @@ import type {
 import {NATIVE_WIN} from '../constants';
 import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants';
 import type {LogEntry} from '../types';
-import _ from 'lodash';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
@@ -60,7 +59,7 @@ export function makeLogEntryAddedEvent(
 }
 
 function adjustLogLevel(originalLevel: string): BiDiLogLevel {
-  const originalLevelLc = _.toLower(originalLevel);
+  const originalLevelLc = String(originalLevel).toLowerCase();
   switch (originalLevelLc) {
     case 'debug':
     case 'info':

@@ -1,5 +1,5 @@
 import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup';
-import {isLocalHost} from '../../lib/utils';
+import {isLocalHost} from '../../lib/commands/helpers';
 import {createSandbox} from 'sinon';
 import {fs} from 'appium/support';
 import chai, {expect} from 'chai';

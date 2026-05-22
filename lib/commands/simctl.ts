@@ -1,5 +1,5 @@
 import {errors} from 'appium/driver';
-import {requireSimulator} from './guards';
+import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
 

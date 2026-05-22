@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import {fs, util} from 'appium/support';
-import {encodeBase64OrUpload} from '../utils';
+import {encodeBase64OrUpload} from './helpers';
+import {isEmpty} from '../utils';
 import path from 'node:path';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
@@ -53,10 +53,10 @@ export async function mobileStartXctestScreenRecording(
   }
 
   const opts: {codec?: number; fps?: number} = {};
-  if (_.isInteger(codec)) {
+  if (Number.isInteger(codec)) {
     opts.codec = codec;
   }
-  if (_.isInteger(fps)) {
+  if (Number.isInteger(fps)) {
     opts.fps = fps;
   }
   const response = (await this.proxyCommand(
@@ -218,7 +218,7 @@ async function retrieveRecodingFromSimulator(this: XCUITestDriver, uuid: string)
     cwd: internalDaemonRoot,
     absolute: true,
   });
-  if (_.isEmpty(videoPaths)) {
+  if (isEmpty(videoPaths)) {
     throw new Error(
       `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`,
     );

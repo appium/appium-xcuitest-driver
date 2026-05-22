@@ -1,9 +1,9 @@
 import {getSimulator, type Simulator, type LocalizationOptions} from 'appium-ios-simulator';
 import {Simctl} from 'node-simctl';
 import {resetTestProcesses} from 'appium-webdriveragent';
-import _ from 'lodash';
 import {util, timing} from 'appium/support';
-import {buildSafariPreferences, normalizePlatformName} from '../utils';
+import {buildSafariPreferences, normalizePlatformName} from '../commands/helpers';
+import {isEmpty} from '../utils';
 import {UDID_AUTO} from '../commands/constants';
 import type {XCUITestDriver} from '../driver';
 import type {DeviceInfo} from 'node-simctl';
@@ -48,7 +48,7 @@ export async function createSim(this: XCUITestDriver): Promise<Simulator> {
       const nameMapper = (device: DeviceInfo) => device.name;
       deviceNames = Array.isArray(devices)
         ? devices.map(nameMapper)
-        : _.flatMap(_.values(devices)).map(nameMapper);
+        : Object.values(devices).flatMap((x) => x).map(nameMapper);
     } catch {}
     throw new Error(
       `'deviceName' must be provided in order to create a new Simulator for ${platform} platform. ` +
@@ -96,10 +96,10 @@ export async function getExistingSim(this: XCUITestDriver): Promise<Simulator | 
 
   const simctl = new Simctl({devicesSetPath});
   let devicesMap: Record<string, any[]> | undefined;
-  if (udid && _.toLower(udid) !== UDID_AUTO) {
+  if (udid && String(udid).toLowerCase() !== UDID_AUTO) {
     this.log.debug(`Looking for an existing Simulator with UDID '${udid}'`);
     devicesMap = await simctl.getDevices(null, platform);
-    for (const device of _.flatMap(_.values(devicesMap))) {
+    for (const device of Object.values(devicesMap).flatMap((x) => x)) {
       if (device.udid === udid) {
         return await selectSim(device);
       }
@@ -174,7 +174,9 @@ export async function runSimulatorReset(
       (keychainsExcludePatterns || keepKeyChains) && (await device.backupKeychains());
     await device.clean();
     if (isKeychainsBackupSuccessful) {
-      await device.restoreKeychains(keychainsExcludePatterns?.split(',')?.map(_.trim) || []);
+      await device.restoreKeychains(
+        keychainsExcludePatterns?.split(',')?.map((x) => x.trim()) || [],
+      );
       this.log.info(`Successfully restored keychains after full reset`);
     } else if (keychainsExcludePatterns || keepKeyChains) {
       this.log.warn(
@@ -195,7 +197,7 @@ export async function runSimulatorReset(
     if (app) {
       this.log.info('Not scrubbing third party app in anticipation of uninstall');
     } else {
-      const isSafari = _.toLower(browserName) === 'safari';
+      const isSafari = String(browserName).toLowerCase() === 'safari';
       try {
         if (isSafari) {
           await device.scrubSafari(true);
@@ -260,11 +262,11 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
   const simctl = new Simctl({
     devicesSetPath: device.devicesSetPath,
   });
-  const allDevices = _.flatMap(_.values(await simctl.getDevices()));
+  const allDevices = Object.values(await simctl.getDevices()).flatMap((x) => x);
   const otherBootedDevices = allDevices.filter(
     ({udid, state}) => udid !== device.udid && state === 'Booted',
   );
-  if (_.isEmpty(otherBootedDevices)) {
+  if (isEmpty(otherBootedDevices)) {
     this.log.info('No other running simulators have been detected');
     return;
   }
@@ -291,7 +293,7 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
  */
 export async function setSafariPrefs(this: XCUITestDriver): Promise<boolean> {
   const prefs = buildSafariPreferences(this.opts);
-  if (_.isEmpty(prefs)) {
+  if (isEmpty(prefs)) {
     return false;
   }
 
@@ -317,7 +319,7 @@ export async function setLocalizationPrefs(this: XCUITestDriver): Promise<boolea
       l10nConfig.locale.calendar = calendarFormat;
     }
   }
-  if (_.isEmpty(l10nConfig)) {
+  if (isEmpty(l10nConfig)) {
     return false;
   }
 

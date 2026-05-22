@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {Simctl} from 'node-simctl';
 import {retryInterval} from 'asyncbox';
 import {resetTestProcesses} from 'appium-webdriveragent';
@@ -7,7 +6,7 @@ import {killAllSimulators as simKill} from 'appium-ios-simulator';
 
 export async function killAllSimulators() {
   const simctl = new Simctl();
-  const allDevices = _.flatMap(_.values(await simctl.getDevices()));
+  const allDevices = Object.values(await simctl.getDevices()).flat();
   const bootedDevices = allDevices.filter((device) => device.state === 'Booted');
 
   for (const {udid} of bootedDevices) {

@@ -1,5 +1,4 @@
 import {setTimeout as delay} from 'node:timers/promises';
-import _ from 'lodash';
 import {retryInterval} from 'asyncbox';
 import {extractCapabilityValue, getUICatalogCaps, PLATFORM_VERSION} from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
@@ -185,7 +184,7 @@ describe('XCUITestDriver - find -', function () {
       });
       it('should search an extended path by descendant', async function () {
         const els = await driver.$$('//XCUIElementTypeTable//XCUIElementTypeButton');
-        const texts = await Promise.all(_.map(els, (el) => el.getAttribute('name')));
+        const texts = await Promise.all(els.map((el) => el.getAttribute('name')));
         expect(texts).to.not.include('UICatalog');
         expect(texts).to.not.include('UIKitCatalog');
         expect(texts).to.include('X Button');

@@ -1,6 +1,5 @@
 import {retry, retryInterval} from 'asyncbox';
 import {HOST, PORT} from '../helpers/session';
-import _ from 'lodash';
 import chai, {expect} from 'chai';
 
 chai.should();
@@ -41,7 +40,7 @@ function doesNotIncludeCookie(cookies, cookie) {
 async function spinTitle(driver) {
   return await retry(10, async function () {
     const title = await driver.getTitle();
-    if (_.isNil(title)) {
+    if (title == null) {
       throw new Error('Did not get a page title');
     }
     return title;
@@ -52,7 +51,7 @@ async function spinBodyIncludes(driver, expected) {
   return await retry(10, async function () {
     const el = await driver.$('//body');
     const body = await el.getHTML();
-    if (!_.includes(body, expected)) {
+    if (!body.includes(expected)) {
       throw new Error(`Could not find '${expected}' in the page body. Found: '${body}'`);
     }
   });

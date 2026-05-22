@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
-import _ from 'lodash';
-import {requireSimulator} from './guards';
+import {isPlainObject} from '../utils';
+import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {ActionSequence, Element} from '@appium/types';
 import type {Direction} from './types';
@@ -98,7 +98,7 @@ export async function performActions(
         : {}),
     }))
     .map((action) => {
-      const modifiedAction = _.clone(action) || {};
+      const modifiedAction = structuredClone(action) || {};
       // Selenium API unexpectedly inserts zero pauses, which are not supported by WDA
       modifiedAction.actions = (action.actions || []).filter(
         (innerAction) => !(innerAction.type === 'pause' && innerAction.duration === 0),
@@ -186,7 +186,7 @@ export async function mobileScroll(
   if (name) {
     params.name = name;
   } else if (direction) {
-    if (!SUPPORTED_GESTURE_DIRECTIONS.includes(_.toLower(direction) as any)) {
+    if (!SUPPORTED_GESTURE_DIRECTIONS.includes(String(direction).toLowerCase() as any)) {
       throw new errors.InvalidArgumentError(
         `'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`,
       );
@@ -194,7 +194,7 @@ export async function mobileScroll(
     params.direction = direction;
     // we can also optionally pass a distance which appears to be a ratio of
     // screen height, so 1.0 means a full screen's worth of scrolling
-    if (!_.isNil(distance)) {
+    if (distance != null) {
       params.distance = distance;
     }
   } else if (predicateString) {
@@ -227,13 +227,13 @@ export async function mobileSwipe(
   velocity?: number,
   elementId?: Element | string,
 ): Promise<void> {
-  if (!SUPPORTED_GESTURE_DIRECTIONS.includes(_.toLower(direction) as any)) {
+  if (!SUPPORTED_GESTURE_DIRECTIONS.includes(String(direction).toLowerCase() as any)) {
     throw new errors.InvalidArgumentError(
       `'direction' must be one of: ${SUPPORTED_GESTURE_DIRECTIONS}`,
     );
   }
   const params: {direction: Direction; velocity?: number} = {direction};
-  if (!_.isNil(velocity)) {
+  if (velocity != null) {
     params.velocity = velocity;
   }
   const endpoint = elementId ? `/wda/element/${util.unwrapElement(elementId)}/swipe` : '/wda/swipe';
@@ -572,7 +572,7 @@ export async function mobileSelectPickerWheelValue(
       'elementId is expected to be set for selectPickerWheelValue method',
     );
   }
-  if (!_.isString(order) || !['next', 'previous'].includes(order.toLowerCase())) {
+  if (typeof order !== 'string' || !['next', 'previous'].includes(order.toLowerCase())) {
     throw new errors.InvalidArgumentError(
       `The mandatory 'order' parameter is expected to be equal either to 'next' or 'previous'. ` +
         `'${order}' is given instead`,
@@ -582,10 +582,10 @@ export async function mobileSelectPickerWheelValue(
   if (offset) {
     params.offset = requireFloat(offset, 'offset');
   }
-  if (!_.isNil(value)) {
+  if (value != null) {
     params.value = value;
   }
-  if (!_.isNil(maxAttempts)) {
+  if (maxAttempts != null) {
     params.maxAttempts = maxAttempts;
   }
   return await this.proxyCommand(
@@ -639,7 +639,7 @@ export async function mobileRotateElement(
  */
 function assertNoWebElements(actionSeq: ActionSequence[]): void {
   const isOriginWebElement = (gesture: any) =>
-    _.isPlainObject(gesture) &&
+    isPlainObject(gesture) &&
     'origin' in gesture &&
     JSON.stringify(gesture.origin).includes(':wdc:');
   const hasWebElements = actionSeq.some((action) =>

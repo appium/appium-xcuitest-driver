@@ -1,6 +1,6 @@
 import {errors} from 'appium/driver';
-import _ from 'lodash';
-import {requireSimulator} from './guards';
+import {isPlainObject} from '../utils';
+import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {PushPayload, NotificationType} from './types';
 
@@ -27,13 +27,13 @@ export async function mobilePushNotification(
       `'bundleId' argument must be a valid bundle identifier string`,
     );
   }
-  if (!_.isPlainObject(payload)) {
+  if (!isPlainObject(payload)) {
     throw new errors.InvalidArgumentError(
       `The 'payload' argument value must be a valid dictionary. ` +
         `Got ${JSON.stringify(payload)} instead`,
     );
   }
-  if (!_.isPlainObject(payload.aps)) {
+  if (!isPlainObject(payload.aps)) {
     throw new errors.InvalidArgumentError(
       `The 'payload.aps' value must be a valid dictionary. ` +
         `Got ${JSON.stringify(payload.aps)} instead`,

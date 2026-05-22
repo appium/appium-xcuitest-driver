@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {truncateString} from '../../utils';
 import {LineConsumingLog} from './line-consuming-log';
 import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
 import type {AppiumLogger, StringRecord} from '@appium/types';
@@ -101,16 +101,16 @@ export class SafariNetworkLog extends LineConsumingLog {
   override async stopCapture(): Promise<void> {}
 
   onNetworkEvent(err?: Error, entry?: SafariNetworkLogEntry, method?: string): void {
-    if (!_.includes(MONITORED_EVENTS, method)) {
+    if (!method || !MONITORED_EVENTS.includes(method)) {
       this.log.debug(`[SafariNetwork] Ignoring unmonitored event: ${method}`);
       return;
     }
 
     const serializedEntry = JSON.stringify({method, event: entry});
     this.broadcast(serializedEntry);
-    if (this._showLogs && _.includes(EVENTS_TO_LOG, method)) {
+    if (this._showLogs && method && EVENTS_TO_LOG.includes(method)) {
       this.log.info(
-        `[SafariNetwork] ${_.truncate(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
+        `[SafariNetwork] ${truncateString(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
       );
     }
   }

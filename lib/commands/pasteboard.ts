@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import {requireSimulator} from './guards';
+import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
 
 /**
@@ -17,7 +16,7 @@ export async function mobileSetPasteboard(
   encoding: BufferEncoding = 'utf8',
 ): Promise<void> {
   const simulator = requireSimulator(this, 'Setting pasteboard content');
-  if (!_.isString(content)) {
+  if (typeof content !== 'string') {
     // can be empty string
     throw new Error('Pasteboard content is mandatory to set');
   }

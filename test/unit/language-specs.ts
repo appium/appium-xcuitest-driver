@@ -1,5 +1,4 @@
 import sinon from 'sinon';
-import _ from 'lodash';
 import {XCUITestDriver} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -102,7 +101,7 @@ describe('language and locale', function () {
         env: processArguments.env,
       };
 
-      const expectedProcessArguments = _.cloneDeep(processArguments);
+      const expectedProcessArguments = structuredClone(processArguments);
       const expectedWDACapabilities = {
         capabilities: {
           firstMatch: [

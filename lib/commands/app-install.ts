@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty, isPlainObject} from '../utils';
 import path from 'node:path';
 import os from 'node:os';
 import assert from 'node:assert';
@@ -13,7 +13,7 @@ import type {
 } from '@appium/types';
 import type {Readable} from 'node:stream';
 import type {XCUITestDriver} from '../driver';
-import {isTvOs, unzipFile, unzipStream} from '../utils';
+import {findApps, isTvOs, unzipFile, unzipStream} from './helpers';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants';
 
 const ZIP_EXT = '.zip';
@@ -59,9 +59,9 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
     exec('lipo', ['-info', executablePath]),
     exec('uname', ['-m']),
   ]);
-  const bundleExecutableInfo = _.trim(resFile.stdout);
+  const bundleExecutableInfo = resFile.stdout.trim();
   this.log.debug(bundleExecutableInfo);
-  const processArch = _.trim(resUname.stdout);
+  const processArch = resUname.stdout.trim();
   this.log.debug(`Current process architecture: ${processArch}`);
   const isAppleSiliconCpu = isAppleSilicon();
   this.log.debug(`Is Apple Silicon CPU: ${isAppleSiliconCpu}`);
@@ -73,11 +73,11 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
         `with this driver.`,
     );
   }
-  if (_.includes(bundleExecutableInfo, processArch)) {
+  if (bundleExecutableInfo.includes(processArch)) {
     return;
   }
   const hasRosetta = isAppleSiliconCpu && (await isRosettaInstalled());
-  const isIntelApp = _.includes(bundleExecutableInfo, INTEL_ARCH);
+  const isIntelApp = bundleExecutableInfo.includes(INTEL_ARCH);
   // We cannot run Simulator builds compiled for arm64 on Intel machines
   // Rosetta allows only to run Intel ones on arm64
   if ((isIntelApp && (!isAppleSiliconCpu || hasRosetta)) || (!isIntelApp && isAppleSiliconCpu)) {
@@ -115,7 +115,7 @@ export async function onPostConfigureApp(
   opts: PostProcessOptions,
 ): Promise<PostProcessResult | false> {
   // Pick the previously cached entry if its integrity has been preserved
-  const appInfo = _.isPlainObject(opts.cachedAppInfo)
+  const appInfo = isPlainObject(opts.cachedAppInfo)
     ? (opts.cachedAppInfo as CachedAppInfo)
     : undefined;
   const cachedPath = appInfo ? appInfo.fullPath : undefined;
@@ -186,7 +186,7 @@ export async function onPostConfigureApp(
  */
 async function isAppBundle(appPath: string): Promise<boolean> {
   return (
-    _.endsWith(_.toLower(appPath), APP_EXT) &&
+    appPath.toLowerCase().endsWith(APP_EXT) &&
     (await fs.stat(appPath)).isDirectory() &&
     (await fs.exists(path.join(appPath, 'Info.plist')))
   );
@@ -199,7 +199,7 @@ async function isAppBundle(appPath: string): Promise<boolean> {
  * @returns Whether the given path points to an .ipa bundle
  */
 async function isIpaBundle(appPath: string): Promise<boolean> {
-  return _.endsWith(_.toLower(appPath), IPA_EXT) && (await fs.stat(appPath)).isFile();
+  return appPath.toLowerCase().endsWith(IPA_EXT) && (await fs.stat(appPath)).isFile();
 }
 
 /**
@@ -207,7 +207,7 @@ async function isIpaBundle(appPath: string): Promise<boolean> {
  */
 function parseFileName(headers: HTTPHeaders): string | null {
   const contentDisposition = headers['content-disposition'];
-  if (!_.isString(contentDisposition)) {
+  if (typeof contentDisposition !== 'string') {
     return null;
   }
 
@@ -249,7 +249,7 @@ async function downloadIpa(
     logPerformance(rootDir, archiveSize, 'downloaded and unzipped');
     try {
       const matchedPaths = await findApps(rootDir, [IPA_EXT]);
-      if (!_.isEmpty(matchedPaths)) {
+      if (!isEmpty(matchedPaths)) {
         this.log.debug(
           `Found ${util.pluralize(`${IPA_EXT} application`, matchedPaths.length, true)} in ` +
             `'${path.basename(rootDir)}': ${matchedPaths}`,
@@ -304,23 +304,6 @@ async function downloadIpa(
 }
 
 /**
- * Looks for items with given extensions in the given folder
- *
- * @param appPath Full path to an app bundle
- * @param appExtensions List of matching item extensions
- * @returns List of relative paths to matched items
- */
-async function findApps(appPath: string, appExtensions: string[]): Promise<string[]> {
-  const globPattern = `**/*.+(${appExtensions.map((ext) => ext.replace(/^\./, '')).join('|')})`;
-  const sortedBundleItems = (
-    await fs.glob(globPattern, {
-      cwd: appPath,
-    })
-  ).sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
-  return sortedBundleItems;
-}
-
-/**
  * Moves the application bundle to a newly created temporary folder
  *
  * @param appPath Full path to the .app or .ipa bundle
@@ -370,7 +353,7 @@ async function unzipApp(
   let rootDir: string;
   let archiveSize: number;
   try {
-    if (_.isString(appPathOrZipStream)) {
+    if (typeof appPathOrZipStream === 'string') {
       ({rootDir, archiveSize} = await unzipFile(appPathOrZipStream));
     } else {
       if (depth > 0) {
@@ -387,7 +370,7 @@ async function unzipApp(
   const secondsElapsed = timer.getDuration().asSeconds;
   this.log.info(
     `The file (${util.toReadableSizeString(archiveSize)}) ` +
-      `has been ${_.isString(appPathOrZipStream) ? 'extracted' : 'downloaded and extracted'} ` +
+      `has been ${typeof appPathOrZipStream === 'string' ? 'extracted' : 'downloaded and extracted'} ` +
       `to '${rootDir}' in ${secondsElapsed.toFixed(3)}s`,
   );
   // it does not make much sense to approximate the speed for short downloads
@@ -404,14 +387,14 @@ async function unzipApp(
       this.log.info(e.message);
       return false;
     }
-    if (this.isSimulator() && !platforms.some((p) => _.includes(p, 'Simulator'))) {
+    if (this.isSimulator() && !platforms.some((p) => p.includes('Simulator'))) {
       this.log.info(
         `'${appPath}' does not have Simulator devices in the list of supported platforms ` +
           `(${platforms.join(',')}). Skipping it`,
       );
       return false;
     }
-    if (this.isRealDevice() && !platforms.some((p) => _.includes(p, 'OS'))) {
+    if (this.isRealDevice() && !platforms.some((p) => p.includes('OS'))) {
       this.log.info(
         `'${appPath}' does not have real devices in the list of supported platforms ` +
           `(${platforms.join(',')}). Skipping it`,
@@ -422,7 +405,7 @@ async function unzipApp(
   };
 
   const matchedPaths = await findApps(rootDir, SUPPORTED_EXTENSIONS);
-  if (_.isEmpty(matchedPaths)) {
+  if (isEmpty(matchedPaths)) {
     this.log.debug(`'${path.basename(rootDir)}' has no bundles`);
   } else {
     this.log.debug(

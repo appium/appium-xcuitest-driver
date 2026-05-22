@@ -4,7 +4,7 @@ import type {LockdownService} from 'appium-ios-remotexpc';
 import type {LockdownInfo} from '../commands/types';
 import type {XCUITestDriverOpts} from '../driver';
 import {log as defaultLogger} from '../logger';
-import {isIos18OrNewer} from '../utils';
+import {isIos18OrNewer} from '../commands/helpers';
 import {
   getLastRemoteXPCOptionalImportError,
   tryGetRemoteXPCModule,

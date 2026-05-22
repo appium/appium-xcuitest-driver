@@ -1,8 +1,8 @@
-import _ from 'lodash';
+import {isEmpty} from '../utils';
 import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
 import type {Devicectl} from 'node-devicectl';
-import {isIos17OrNewerPlatform, isIos18OrNewerPlatform} from '../utils';
+import {isIos17OrNewerPlatform, isIos18OrNewerPlatform} from '../commands/helpers';
 import {InstallationProxyClient} from './installation-proxy-client';
 import {getRemoteXPCServices} from './remotexpc-utils';
 
@@ -81,7 +81,7 @@ export class AppTerminationClient {
         const pids = (await this.devicectl.listProcesses())
           .filter(({executable}) => executable.endsWith(`/${executableName}`))
           .map(({processIdentifier}) => processIdentifier);
-        if (_.isEmpty(pids)) {
+        if (isEmpty(pids)) {
           return {terminated: false, reason: 'not_running'};
         }
         await this.devicectl.sendSignalToProcess(pids[0], 2);

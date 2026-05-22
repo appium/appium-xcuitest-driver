@@ -1,4 +1,4 @@
-import {requireSimulator} from './guards';
+import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {BiometricFeature} from './types';
 

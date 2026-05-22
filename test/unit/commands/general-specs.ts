@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import _ from 'lodash';
+import {mergeDeep} from '../../../lib/utils';
 import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
 
@@ -141,7 +141,7 @@ describe('general commands', function () {
       await driver.createSession(
         null,
         null,
-        _.merge({}, baseCaps, {
+        mergeDeep({}, structuredClone(baseCaps), {
           alwaysMatch: {
             'appium:nativeWebTap': true,
           },

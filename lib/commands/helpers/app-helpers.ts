@@ -1,10 +1,9 @@
-import _ from 'lodash';
 import path from 'node:path';
+import {isEmpty} from '../../utils';
 import {fs, tempDir, zip} from 'appium/support';
-import {log} from '../logger';
+import {log} from '../../logger';
 import {spawn} from 'node:child_process';
 import type {StringRecord} from '@appium/types';
-import type {XCUITestDriverOpts} from '../driver';
 import type {Readable} from 'node:stream';
 
 export const SAFARI_BUNDLE_ID = 'com.apple.mobilesafari';
@@ -32,7 +31,8 @@ export interface UnzipInfo {
 export async function unzipFile(archivePath: string): Promise<UnzipInfo> {
   const useSystemUnzipEnv = process.env.APPIUM_PREFER_SYSTEM_UNZIP;
   const useSystemUnzip =
-    _.isEmpty(useSystemUnzipEnv) || !['0', 'false'].includes(_.toLower(useSystemUnzipEnv));
+    isEmpty(useSystemUnzipEnv) ||
+    !['0', 'false'].includes(String(useSystemUnzipEnv).toLowerCase());
   const tmpRoot = await tempDir.openDir();
   try {
     await zip.extractAllTo(archivePath, tmpRoot, {
@@ -68,7 +68,7 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
   let archiveSize = 0;
   bsdtarProcess.stderr.on('data', (chunk) => {
     const stderr = chunk.toString();
-    if (_.trim(stderr)) {
+    if (stderr.trim()) {
       log.warn(stderr);
     }
   });
@@ -76,7 +76,7 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
     log.warn(`Error occurred while writing to bsdtar stdin: ${e.message}`);
   });
   zipStream.on('data', (chunk) => {
-    archiveSize += _.size(chunk);
+    archiveSize += chunk.length;
   });
   zipStream.pipe(bsdtarProcess.stdin);
   try {
@@ -116,11 +116,11 @@ export async function unzipStream(zipStream: Readable): Promise<UnzipInfo> {
  * @param opts
  * @return
  */
-export function buildSafariPreferences(opts: XCUITestDriverOpts): StringRecord {
-  const safariSettings = _.cloneDeep(opts?.safariGlobalPreferences ?? {});
+export function buildSafariPreferences(opts: StringRecord): StringRecord {
+  const safariSettings = structuredClone(opts?.safariGlobalPreferences ?? {});
 
-  for (const [name, [aliases, valueConverter]] of _.toPairs(SAFARI_OPTS_ALIASES_MAP)) {
-    if (!_.has(opts, name)) {
+  for (const [name, [aliases, valueConverter]] of Object.entries(SAFARI_OPTS_ALIASES_MAP)) {
+    if (!Object.hasOwn(opts, name)) {
       continue;
     }
 

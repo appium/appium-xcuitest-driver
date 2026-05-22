@@ -1,6 +1,6 @@
 import {fs, tempDir, logger, util} from 'appium/support';
 import {SubProcess} from 'teen_process';
-import {encodeBase64OrUpload} from '../utils';
+import {encodeBase64OrUpload} from './helpers';
 import {waitForCondition} from 'asyncbox';
 import type {XCUITestDriver} from '../driver';
 import type {AudioRecorderOptions} from './types';

@@ -6,7 +6,7 @@ import {
   listXCTestBundlesViaRemoteXPC,
   installXCTestBundleViaRemoteXPC,
 } from './xctest-remotexpc';
-import {isIos18OrNewerPlatform} from '../utils';
+import {isIos18OrNewerPlatform} from '../commands/helpers';
 
 const XCTEST_REAL_DEVICE_MSG =
   'This XCTest operation is only supported on real devices running iOS/tvOS 18 or newer with the ' +

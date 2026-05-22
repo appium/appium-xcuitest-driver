@@ -1,6 +1,6 @@
 /* eslint-disable mocha/no-nested-tests */
 
-import _ from 'lodash';
+import {isEmpty} from '../../../lib/utils';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   amendCapabilities,
@@ -342,7 +342,7 @@ describe('Safari - coordinate conversion -', function () {
 
               // get the reload button, as multi-element find to bypass
               // the implicit wait
-              if (_.isEmpty(await driver.$$('~ReloadButton'))) {
+              if (isEmpty(await driver.$$('~ReloadButton'))) {
                 // when there is no reload button, the URL bar is minimized
                 // so tap on it to bring it up
                 await driver.$('~Address Bar').click();

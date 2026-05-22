@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver';
 import {fs} from 'appium/support';
-import _ from 'lodash';
-import {log} from '../logger';
+import {isPlainObject} from '../../utils';
+import {log} from '../../logger';
 import type {StringRecord} from '@appium/types';
 
 export const DEFAULT_TIMEOUT_KEY = 'default';
@@ -11,8 +11,8 @@ export function requireArgs(
   argNames: string | string[],
   opts: StringRecord<any> = {},
 ): StringRecord<any> {
-  for (const argName of _.isArray(argNames) ? argNames : [argNames]) {
-    if (!_.has(opts, argName)) {
+  for (const argName of Array.isArray(argNames) ? argNames : [argNames]) {
+    if (!Object.hasOwn(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
     }
   }
@@ -40,14 +40,14 @@ export function normalizeCommandTimeouts(
   let result: Record<string, number> = {};
   // Use as default timeout for all commands if a single integer value is provided
   if (!isNaN(Number(value))) {
-    result[DEFAULT_TIMEOUT_KEY] = _.toInteger(value);
+    result[DEFAULT_TIMEOUT_KEY] = Number.parseInt(String(value), 10);
     return result;
   }
 
   // JSON object has been provided. Let's parse it
   try {
     result = JSON.parse(value);
-    if (!_.isPlainObject(result)) {
+    if (!isPlainObject(result)) {
       throw new Error();
     }
   } catch {
@@ -55,8 +55,8 @@ export function normalizeCommandTimeouts(
       `"commandTimeouts" capability should be a valid JSON object. "${value}" was given instead`,
     );
   }
-  for (const [cmd, timeout] of _.toPairs(result)) {
-    if (!_.isInteger(timeout) || timeout <= 0) {
+  for (const [cmd, timeout] of Object.entries(result)) {
+    if (!Number.isInteger(timeout) || timeout <= 0) {
       throw log.errorWithException(
         `The timeout for "${cmd}" should be a valid natural number of milliseconds. "${timeout}" was given instead`,
       );

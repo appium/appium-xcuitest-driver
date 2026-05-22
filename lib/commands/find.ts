@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty} from '../utils';
 import {CssConverter} from '../css-converter';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
@@ -187,7 +187,7 @@ export async function doNativeFind(
     } catch {
       els = [] as Element[];
     }
-    return !_.isEmpty(els as Element[]);
+    return !isEmpty(els as Element[]);
   };
   try {
     if (!this.sessionId) {
@@ -206,7 +206,7 @@ export async function doNativeFind(
     return Array.isArray(els) ? els : [els];
   }
   if (Array.isArray(els)) {
-    if (_.isEmpty(els)) {
+    if (isEmpty(els)) {
       throw new errors.NoSuchElementError();
     }
     return els[0];

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import type {Element, Position, Size, Rect} from '@appium/types';
@@ -93,7 +92,7 @@ export async function getNativeAttribute(
   if ([0, 1].includes(value as number)) {
     value = !!value;
   }
-  return _.isNull(value) || _.isString(value) ? value : JSON.stringify(value);
+  return value === null || typeof value === 'string' ? value : JSON.stringify(value);
 }
 
 /**
@@ -356,14 +355,14 @@ export async function getContentSize(this: XCUITestDriver, el: Element | string)
   } else if (children.length) {
     switch (type) {
       case 'XCUIElementTypeTable': {
-        const firstRect = await this.getElementRect(_.head(children) as Element);
-        const lastRect = await this.getElementRect(_.last(children) as Element);
+        const firstRect = await this.getElementRect(children[0] as Element);
+        const lastRect = await this.getElementRect(children.at(-1) as Element);
         contentHeight = lastRect.y + lastRect.height - firstRect.y;
         break;
       }
       case 'XCUIElementTypeCollectionView': {
         let elsInRow = 1;
-        const firstRect = await this.getElementRect(_.head(children) as Element);
+        const firstRect = await this.getElementRect(children[0] as Element);
         const initialRects = [firstRect];
         for (let i = 1; i < children.length; i++) {
           const rect = await this.getElementRect(children[i] as Element);
@@ -409,16 +408,18 @@ export async function getNativeRect(this: XCUITestDriver, el: Element | string):
 }
 
 function prepareInputValue(inp: string | string[] | number): string[] {
-  if (![_.isArray, _.isString, _.isFinite].some((f) => f(inp))) {
+  if (
+    ![Array.isArray, (x: unknown) => typeof x === 'string', Number.isFinite].some((f) => f(inp))
+  ) {
     throw new Error(
       `Only strings, numbers and arrays are supported as input arguments. ` +
         `Received: ${JSON.stringify(inp)}`,
     );
   }
 
-  if (_.isArray(inp)) {
+  if (Array.isArray(inp)) {
     inp = inp.join('');
-  } else if (_.isFinite(inp)) {
+  } else if (Number.isFinite(inp)) {
     inp = `${inp}`;
   }
   return [...String(inp)].map((k) => {

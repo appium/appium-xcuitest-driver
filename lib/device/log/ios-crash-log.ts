@@ -1,7 +1,7 @@
 import {fs, tempDir, util} from 'appium/support';
 import {asyncfilter} from 'asyncbox';
 import path from 'node:path';
-import _ from 'lodash';
+import {isEmpty} from '../../utils';
 import {CrashReportsClient} from '../crash-reports-client';
 import {IOSLog} from './ios-log';
 import {toLogEntry, grepFile} from './helpers';
@@ -93,8 +93,8 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
    */
   override async getLogs(): Promise<LogEntry[]> {
     const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
-    const diffFiles = _.difference(crashFiles, this._recentCrashFiles);
-    if (_.isEmpty(diffFiles)) {
+    const diffFiles = crashFiles.filter((x) => !this._recentCrashFiles.includes(x));
+    if (isEmpty(diffFiles)) {
       return [];
     }
 

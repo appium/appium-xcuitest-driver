@@ -1,5 +1,4 @@
 import {logger} from 'appium/support';
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {RunXCTestResult} from './types';
@@ -60,7 +59,7 @@ export async function mobileInstallXCTestBundle(
   this: XCUITestDriver,
   xctestApp: string,
 ): Promise<void> {
-  if (!_.isString(xctestApp)) {
+  if (typeof xctestApp !== 'string') {
     throw new errors.InvalidArgumentError(
       `'xctestApp' is a required parameter for 'installXCTestBundle' and ` +
         `must be a string. Found '${xctestApp}'`,

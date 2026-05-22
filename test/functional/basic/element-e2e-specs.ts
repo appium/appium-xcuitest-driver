@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {setTimeout as delay} from 'node:timers/promises';
 import {retryInterval} from 'asyncbox';
 import {extractCapabilityValue, getUICatalogCaps} from '../desired';
@@ -165,7 +164,7 @@ describe('XCUITestDriver - elements -', function () {
       const text1 = 'bunchoftext';
       const text2 = 'differenttext';
       const text3 = 'http://appium.io/';
-      const secureText = _.map(new Array(text1.length), () => '•').join('');
+      const secureText = new Array(text1.length).fill('•').join('');
       const phText = 'Placeholder text';
 
       beforeEach(async function () {

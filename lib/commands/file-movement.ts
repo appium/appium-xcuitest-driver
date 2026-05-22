@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {fs, tempDir, zip, util} from 'appium/support';
 import path from 'node:path';
 import {
@@ -10,7 +9,7 @@ import {errors} from 'appium/driver';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {ContainerObject, ContainerRootSupplier} from './types';
-import {isIos18OrNewer} from '../utils';
+import {isIos18OrNewer} from './helpers';
 import {AfcClient} from '../device/afc-client';
 
 //#region Type Definitions
@@ -73,11 +72,11 @@ export async function parseContainerPath(
     // Always strip the colon and everything after it
     bundleId = bundleId.substring(0, typeSeparatorPos);
   }
-  if (_.isNil(containerRootSupplier)) {
+  if (containerRootSupplier == null) {
     const pathInContainer = relativePath;
     return {bundleId, pathInContainer, containerType};
   }
-  const containerRoot = _.isFunction(containerRootSupplier)
+  const containerRoot = typeof containerRootSupplier === 'function'
     ? await containerRootSupplier(bundleId, containerType)
     : containerRootSupplier;
   const pathInContainer = path.posix.resolve(containerRoot, relativePath);
@@ -108,7 +107,7 @@ export async function pushFile(
     );
   }
   let b64StringData: string;
-  if (_.isArray(base64Data)) {
+  if (Array.isArray(base64Data)) {
     // some clients (ahem) java, send a byte array encoding utf8 characters
     // instead of a string, which would be infinitely better!
     b64StringData = Buffer.from(base64Data).toString('utf8');
@@ -243,7 +242,9 @@ async function deleteFileOrFolder(this: XCUITestDriver, remotePath: string): Pro
  * Check if container type refers to documents container
  */
 function isDocumentsContainer(containerType?: string | null): boolean {
-  return _.toLower(containerType ?? '') === _.toLower(CONTAINER_DOCUMENTS_PATH);
+  return (
+    String(containerType ?? '').toLowerCase() === CONTAINER_DOCUMENTS_PATH.toLowerCase()
+  );
 }
 
 /**

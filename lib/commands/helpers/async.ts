@@ -1,3 +1,8 @@
+import {
+  TimeoutError as AsyncboxTimeoutError,
+  withTimeout as asyncboxWithTimeout,
+} from 'asyncbox';
+
 /** Error thrown by {@link withTimeout} when the deadline is exceeded. */
 export class TimeoutError extends Error {
   constructor(message?: string) {
@@ -12,17 +17,12 @@ export async function withTimeout<T>(
   timeoutMs: number,
   message?: string,
 ): Promise<T> {
-  let timer: NodeJS.Timeout | null = null;
   try {
-    return await Promise.race([
-      promise,
-      new Promise<T>((_resolve, reject) => {
-        timer = setTimeout(() => reject(new TimeoutError(message)), timeoutMs);
-      }),
-    ]);
-  } finally {
-    if (timer) {
-      clearTimeout(timer);
+    return await asyncboxWithTimeout(promise, timeoutMs, message);
+  } catch (err) {
+    if (err instanceof AsyncboxTimeoutError) {
+      throw new TimeoutError(err.message);
     }
+    throw err;
   }
 }

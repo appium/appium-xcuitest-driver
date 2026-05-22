@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import {Devicectl} from 'node-devicectl';
 import {utilities} from 'appium-ios-device';
 import {log} from '../logger';
-import {isIos18OrNewer} from '../utils';
+import {isIos18OrNewer} from '../commands/helpers';
 import type {XCUITestDriverOpts} from '../driver';
 import {tryGetRemoteXPCServices} from './remotexpc-utils';
 import type {RemoteXPCServices} from './remotexpc-utils';
@@ -58,7 +57,7 @@ export class ConnectedDevicesClient {
 
   private isPreferDevicectlEnabled(): boolean {
     return ['yes', 'true', '1'].includes(
-      _.toLower(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL ?? ''),
+      String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL ?? '').toLowerCase(),
     );
   }
 

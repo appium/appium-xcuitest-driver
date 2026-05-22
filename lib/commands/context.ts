@@ -8,7 +8,7 @@ import {util, timing} from 'appium/support';
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
 import type {SafariConsoleLog} from '../device/log/safari-console-log';
 import type {SafariNetworkLog} from '../device/log/safari-network-log';
-import _ from 'lodash';
+import {isEmpty} from '../utils';
 import {NATIVE_WIN} from './constants';
 import {makeContextUpdatedEvent} from './bidi/models';
 import {BIDI_EVENT_NAME} from './bidi/constants';
@@ -64,7 +64,7 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
   const errSuffix =
     `Make sure your web application is debuggable ` +
     `and could be inspected in Safari Web Inspector.`;
-  if (_.isEmpty(appDict)) {
+  if (isEmpty(appDict)) {
     throw new Error(
       `The remote debugger did not return any connected web applications after ` +
         `${timer.getDuration().asMilliSeconds.toFixed(0)}ms. ` +
@@ -76,7 +76,7 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
   const errSuffix2 =
     `${errSuffix} You may try to change the 'webviewConnectRetries' ` +
     `capability value to customize the amount of pages retrieval retries.`;
-  const appsWithPages = _.values(appDict).filter(({pageArray}) => !_.isEmpty(pageArray));
+  const appsWithPages = Object.values(appDict).filter(({pageArray}) => !isEmpty(pageArray));
   if (appsWithPages.length > 0) {
     throw new Error(
       `The remote debugger returned ${util.pluralize('web application', appsWithPages.length, true)} ` +
@@ -85,7 +85,7 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
     );
   } else {
     throw new Error(
-      `The remote debugger returned ${util.pluralize('web application', _.size(appDict), true)}, ` +
+      `The remote debugger returned ${util.pluralize('web application', Object.keys(appDict).length, true)}, ` +
         `but none of them had pages after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms. ` +
         `${errSuffix2} Also, in rare cases the device restart or device OS upgrade may fix this ` +
         `issue if none of the above advices helps.`,
@@ -115,7 +115,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
         retries,
         this.opts.ignoreAboutBlankUrl,
       );
-      if (_.isEmpty(pageArray)) {
+      if (isEmpty(pageArray)) {
         // we have no web frames, but continue anyway
         this.log.debug(`No web frames found after ${util.pluralize('retry', retries, true)}`);
       }
@@ -128,7 +128,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
     }
   };
 
-  const maxRetriesCount = _.isInteger(this.opts.webviewConnectRetries)
+  const maxRetriesCount = Number.isInteger(this.opts.webviewConnectRetries)
     ? Math.max(this.opts.webviewConnectRetries as number, 1)
     : DEFAULT_LIST_WEB_FRAMES_RETRIES;
   this.log.debug(
@@ -147,7 +147,7 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
 
   this.remote.on(RemoteDebugger.EVENT_PAGE_CHANGE, this.onPageChange.bind(this));
   this.remote.on(RemoteDebugger.EVENT_FRAMES_DETACHED, () => {
-    if (!_.isEmpty(this.curWebFrames)) {
+    if (!isEmpty(this.curWebFrames)) {
       const curWebFrames = this.curWebFrames;
       this.log.debug(
         `Clearing ${util.pluralize('frame', curWebFrames.length, true)}: ${curWebFrames.join(
@@ -160,7 +160,7 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
 
   const timeoutMs = this.opts.webviewConnectTimeout ?? DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS;
   const apps = await this.remote.connect(timeoutMs);
-  if (_.isEmpty(apps)) {
+  if (isEmpty(apps)) {
     this.log.info(
       `The remote debugger did not report any active web applications within ${timeoutMs}ms timeout. ` +
         `Consider increasing the value of 'webviewConnectTimeout' capability to wait longer ` +
@@ -189,7 +189,7 @@ export async function mobileGetContexts(
   waitForWebviewMs: number = 0,
 ): Promise<FullContext[]> {
   // make sure it is a number, so the duration check works properly
-  if (!_.isNumber(waitForWebviewMs)) {
+  if (typeof waitForWebviewMs !== 'number') {
     waitForWebviewMs = parseInt(String(waitForWebviewMs), 10);
     if (isNaN(waitForWebviewMs)) {
       waitForWebviewMs = 0;
@@ -257,7 +257,7 @@ export async function onPageChange(
     const contextId = `${appIdKey}.${id}`;
 
     // add if this is a new page
-    if (!_.includes(this.contexts, contextId)) {
+    if (!this.contexts.includes(contextId)) {
       if (isUrlIgnored(page.url, this.opts.safariIgnoreWebHostnames)) {
         this.log.info(
           `Not tracking '${page.url}' page because it is blacklisted. ` +
@@ -289,9 +289,9 @@ export async function onPageChange(
 
   let newPage: string | null = null;
   if (newPages.length) {
-    newPage = _.last(newPages) as string;
+    newPage = newPages.at(-1) as string;
     this.log.debug(`We have new pages, selecting page '${newPage}'`);
-  } else if (!_.includes(newIds, curPageIdKey)) {
+  } else if (!newIds.includes(curPageIdKey)) {
     this.log.debug(
       'New page listing from remote debugger does not contain ' +
         'current window; assuming it is closed',
@@ -315,8 +315,8 @@ export async function onPageChange(
 
   // make sure that the page listing isn't indicating a redirect
   if (util.hasValue(this.curContext)) {
-    const currentPageId = parseInt(String(_.last(this.curContext.split('.'))), 10);
-    const page = _.find(pageArray, (p) => parseInt(String(p.id), 10) === currentPageId);
+    const currentPageId = parseInt(String(this.curContext.split('.').at(-1)), 10);
+    const page = pageArray.find((p) => parseInt(String(p.id), 10) === currentPageId);
     if (page && page.url !== this.getCurrentUrl()) {
       this.log.debug(`Redirected from '${this.getCurrentUrl()}' to '${page.url}'`);
       this.setCurrentUrl(page.url);
@@ -392,14 +392,14 @@ export async function getRecentWebviewContextId(
   titleRegExp: RegExp,
   urlRegExp: RegExp,
 ): Promise<string | undefined> {
-  if (!_.isRegExp(titleRegExp) && !_.isRegExp(urlRegExp)) {
+  if (!(titleRegExp instanceof RegExp) && !(urlRegExp instanceof RegExp)) {
     throw new errors.InvalidArgumentError(
       'A regular expression for either web view title or url must be provided',
     );
   }
 
   const currentUrl = this.getCurrentUrl();
-  const contexts = _.filter(await this.getContextsAndViews(false), 'view');
+  const contexts = (await this.getContextsAndViews(false)).filter((c) => c.view);
   // first try to match by current url
   if (currentUrl) {
     const ctx = contexts.find(({view}) => (view?.url || '') === currentUrl);
@@ -518,7 +518,7 @@ export async function setContext(
 
   if (
     alreadyInContext(strName, this.curContext) ||
-    alreadyInContext(_.replace(strName, WEBVIEW_BASE, ''), this.curContext)
+    alreadyInContext(strName.replace(WEBVIEW_BASE, ''), this.curContext)
   ) {
     // already in the named context, no need to do anything
     this.log.debug(`Already in '${strName || NATIVE_WIN}' context. Doing nothing.`);
@@ -534,18 +534,18 @@ export async function setContext(
   // switching into a webview context
 
   // if contexts have not already been retrieved, get them
-  if (_.isUndefined(this.contexts)) {
+  if (this.contexts === undefined) {
     await this.getContexts();
   }
 
-  let contextId = _.replace(strName, WEBVIEW_BASE, '');
+  let contextId = strName.replace(WEBVIEW_BASE, '');
   if (contextId === '') {
     // allow user to pass in "WEBVIEW" without an index
     // the second context will be the first webview as
     // the first is always NATIVE_APP
     contextId = (this.contexts as string[])[1];
   }
-  if (!_.includes(this.contexts, contextId)) {
+  if (!this.contexts.includes(contextId)) {
     throw new errors.NoSuchContextError();
   }
 
@@ -553,7 +553,7 @@ export async function setContext(
   this.curContext = this.curWindowHandle = contextId;
 
   // `contextId` will be in the form of `appId.pageId` in this case
-  const [appIdKey, pageIdKey] = _.map(contextId.split('.'), (id) => parseInt(id, 10));
+  const [appIdKey, pageIdKey] = contextId.split('.').map((id) => parseInt(id, 10));
   try {
     this.selectingNewPage = true;
     await this.remote.selectPage(appIdKey, pageIdKey, skipReadyCheck);
@@ -639,7 +639,7 @@ export async function setWindow(
     return;
   }
   try {
-    await this.setContext(name, _.noop, skipReadyCheck);
+    await this.setContext(name, () => {}, skipReadyCheck);
   } catch (err) {
     // translate the error in terms of windows
     throw isErrorType(err, errors.NoSuchContextError) ? new errors.NoSuchWindowError() : err;
@@ -712,14 +712,14 @@ export async function notifyBiDiContextChange(this: XCUITestDriver): Promise<voi
  * @returns True if the URL should be ignored
  */
 function isUrlIgnored(url: string, safariIgnoreWebHostnames?: string): boolean {
-  if (!safariIgnoreWebHostnames || _.isEmpty(safariIgnoreWebHostnames)) {
+  if (!safariIgnoreWebHostnames || isEmpty(safariIgnoreWebHostnames)) {
     return false;
   }
 
   const ignoredHosts = safariIgnoreWebHostnames
     .split(',')
     .map((b) => b.trim())
-    .filter((b) => !_.isEmpty(b));
+    .filter((b) => !isEmpty(b));
   for (const ignoredHost of ignoredHosts) {
     if (ignoredHost === 'about:blank' && url === 'about:blank') {
       return true;
