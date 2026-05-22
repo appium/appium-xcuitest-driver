@@ -1,3 +1,9 @@
+## [11.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.6.0...v11.6.1) (2026-05-22)
+
+### Bug Fixes
+
+* Embed app icon into Runner.app error in WDA build ([#2848](https://github.com/appium/appium-xcuitest-driver/issues/2848)) ([c8ce387](https://github.com/appium/appium-xcuitest-driver/commit/c8ce387baa7858edf43e4f06c7cca8f16c07d95c))
+
 ## [11.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.5.1...v11.6.0) (2026-05-21)
 
 ### Features
