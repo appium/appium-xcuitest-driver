@@ -83,7 +83,7 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
   } else {
     const atom = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
     const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
-    if (value === null || value.WINDOW === undefined) {
+    if (value?.WINDOW === undefined) {
       throw new errors.NoSuchFrameError();
     }
     this.log.debug(`Entering new web frame: '${value.WINDOW}'`);

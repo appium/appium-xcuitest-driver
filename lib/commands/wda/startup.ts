@@ -334,7 +334,7 @@ async function establishProxySession(
     const cause = err instanceof Error ? err : new Error(String(err));
     driver.log.debug(cause.stack);
     let errorMsg = `Unable to start WebDriverAgent session. Original error: ${cause.message}`;
-    if (driver.isRealDevice() && cause.message.includes('xcodebuild')) {
+    if (driver.isRealDevice() && cause.message?.includes('xcodebuild')) {
       errorMsg += ` Make sure you follow the tutorial at ${WDA_REAL_DEV_TUTORIAL_URL}.`;
     }
     throw new Error(errorMsg, {cause: err});

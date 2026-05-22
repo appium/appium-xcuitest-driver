@@ -93,7 +93,8 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
    */
   override async getLogs(): Promise<LogEntry[]> {
     const crashFiles = (await this._listCrashFiles()).slice(-MAX_RECENT_ITEMS);
-    const diffFiles = crashFiles.filter((x) => !this._recentCrashFiles.includes(x));
+    const recentCrashFiles = new Set(this._recentCrashFiles);
+    const diffFiles = crashFiles.filter((file) => !recentCrashFiles.has(file));
     if (isEmpty(diffFiles)) {
       return [];
     }
