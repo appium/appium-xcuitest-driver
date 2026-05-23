@@ -66,8 +66,8 @@ async function preparePreinstalled(driver: XCUITestDriver): Promise<void> {
   }
 
   const candidateBundleId = await driver.appInfosCache.extractBundleId(driver.opts.prebuiltWDAPath);
+  await cleanupApps(driver, [candidateBundleId]);
   driver.wda.updatedWDABundleId = candidateBundleId.replace('.xctrunner', '');
-  await cleanupApps(driver, [candidateBundleId, driver.wda.updatedWDABundleId]);
   driver.log.info(
     `Installing prebuilt WDA at '${driver.opts.prebuiltWDAPath}'. Bundle identifier: ${candidateBundleId}.`,
   );
@@ -208,8 +208,21 @@ async function prepareForXcodebuild(driver: XCUITestDriver): Promise<void> {
     return;
   }
 
-  // Cleanup only WDA apps that are not the current one
-  await cleanupApps(driver, [driver.wda.bundleIdForXctest]);
+  // Cleanup only WDA runners whose bundle identifiers are not the current one
+  const bundleIdsToKeep: string[] = [];
+  if (driver.opts.updatedWDABundleId) {
+    bundleIdsToKeep.push(driver.wda.bundleIdForXctest);
+  } else {
+    const currentRunnerBundleId = (
+      await driver.wda.retrieveBuildSettings({
+        scheme: 'WebDriverAgentRunner',
+      })
+    )?.PRODUCT_BUNDLE_IDENTIFIER;
+    if (currentRunnerBundleId) {
+      bundleIdsToKeep.push(`${currentRunnerBundleId}.xctrunner`);
+    }
+  }
+  await cleanupApps(driver, bundleIdsToKeep);
 }
 
 function getStartupRetryOptions(driver: XCUITestDriver): StartupRetryOptions {
