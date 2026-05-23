@@ -1,3 +1,9 @@
+## [11.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.6.1...v11.7.0) (2026-05-23)
+
+### Features
+
+* Ditch lodash ([#2846](https://github.com/appium/appium-xcuitest-driver/issues/2846)) ([daa3eb0](https://github.com/appium/appium-xcuitest-driver/commit/daa3eb0936a6552c0163c6e16065ed400e3a021f))
+
 ## [11.6.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.6.0...v11.6.1) (2026-05-22)
 
 ### Bug Fixes
