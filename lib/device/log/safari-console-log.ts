@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {truncateString} from '../../utils';
 import type {AppiumLogger} from '@appium/types';
 import {
   toLogEntry,
@@ -97,7 +97,7 @@ export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntr
     this.broadcast(entry);
     if (this._showLogs) {
       this.log.info(
-        `[SafariConsole] ${_.truncate(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`,
+        `[SafariConsole] ${truncateString(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`,
       );
     }
   }

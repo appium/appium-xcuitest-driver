@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {errors} from 'appium/driver';
 import moment from 'moment-timezone';
 import {LockdownClient} from '../device/lockdown-client';
@@ -268,7 +267,7 @@ export async function mobilePressButton(
   if (!name) {
     throw new errors.InvalidArgumentError('Button name is mandatory');
   }
-  if (!_.isNil(durationSeconds) && !_.isNumber(durationSeconds)) {
+  if (durationSeconds != null && typeof durationSeconds !== 'number') {
     throw new errors.InvalidArgumentError('durationSeconds should be a number');
   }
   return await this.proxyCommand('/wda/pressButton', 'POST', {name, duration: durationSeconds});

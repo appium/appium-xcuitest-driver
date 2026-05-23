@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import {isPlainObject} from '../utils';
 import {PermissionService} from './enum';
-import {requireSimulator} from './guards';
+import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {PermissionState} from './types';
 
@@ -19,14 +19,14 @@ export async function mobileResetPermission(
     throw new Error(`The 'service' option is expected to be present`);
   }
   let resource: number;
-  if (_.isString(service)) {
-    resource = PermissionService[_.toLower(service) as keyof typeof PermissionService];
+  if (typeof service === 'string') {
+    resource = PermissionService[String(service).toLowerCase() as keyof typeof PermissionService];
     if (!resource) {
       throw new Error(
-        `The 'service' value must be one of ` + `${JSON.stringify(_.keys(PermissionService))}`,
+        `The 'service' value must be one of ` + `${JSON.stringify(Object.keys(PermissionService))}`,
       );
     }
-  } else if (_.isInteger(service)) {
+  } else if (Number.isInteger(service)) {
     resource = service;
   } else {
     throw new Error(
@@ -78,7 +78,7 @@ export async function mobileSetPermissions(
   access: Record<string, PermissionState>,
   bundleId: string,
 ): Promise<void> {
-  if (!_.isPlainObject(access)) {
+  if (!isPlainObject(access)) {
     throw new Error(`The 'access' option is expected to be a map`);
   }
 

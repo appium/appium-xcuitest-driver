@@ -1,10 +1,6 @@
-import _ from 'lodash';
 import {util} from 'appium/support';
 import * as semver from 'semver';
-
-/** Valid values for the `platformName` capability (also used in simulator names). */
-export const PLATFORM_NAME_IOS = 'iOS';
-export const PLATFORM_NAME_TVOS = 'tvOS';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../../constants';
 
 export interface PlatformVersionOpts {
   platformVersion?: string | null;
@@ -12,7 +8,7 @@ export interface PlatformVersionOpts {
 
 /** Check if platform name is the TV OS one. */
 export function isTvOs(platformName: string | null | undefined): boolean {
-  return _.toLower(platformName ?? '') === _.toLower(PLATFORM_NAME_TVOS);
+  return String(platformName ?? '').toLowerCase() === PLATFORM_NAME_TVOS.toLowerCase();
 }
 
 /** Return normalized platform name. */

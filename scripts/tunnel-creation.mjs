@@ -6,7 +6,6 @@
  * Must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation).
  */
 import {logger} from 'appium/support.js';
-import _ from 'lodash';
 
 import {
   AppleTVTunnelService,
@@ -313,7 +312,7 @@ class TunnelCreator {
       log.info(`   Packet Stream Port: ${packetStreamPort}`);
     }
 
-    if (_.isFunction(socket?.setNoDelay)) {
+    if (typeof socket?.setNoDelay === 'function') {
       socket.setNoDelay(true);
     }
 
@@ -419,7 +418,7 @@ class TunnelCreator {
         );
       }
 
-      if (_.isEmpty(targetDeviceIds)) {
+      if (!targetDeviceIds?.length) {
         log.info('No paired Apple TV devices discovered after usbmux deduplication.');
         return entries;
       }
@@ -567,7 +566,7 @@ class TunnelCreator {
     callbacks = {},
     manualWatches = [],
   ) {
-    if (!this._registry || !_.isFunction(watchTunnelRegistrySockets)) {
+    if (!this._registry || typeof watchTunnelRegistrySockets !== 'function') {
       return false;
     }
     this._watchTunnelRegistrySocketsFn = watchTunnelRegistrySockets;
@@ -581,7 +580,7 @@ class TunnelCreator {
         return watch;
       });
     watches.push(...manualWatches);
-    if (_.isEmpty(watches)) {
+    if (!watches?.length) {
       return false;
     }
     const stopHandle = watchTunnelRegistrySockets({
@@ -592,7 +591,7 @@ class TunnelCreator {
         await this._teardownAppleTVByUdid(udid);
       },
       onTunnelDead: async ({udid, address}) => {
-        if (_.isFunction(TunnelManager?.closeTunnelByAddress)) {
+        if (typeof TunnelManager?.closeTunnelByAddress === 'function') {
           await TunnelManager.closeTunnelByAddress(address).catch(() => {});
         }
         if (callbacks.onTunnelDead) {
@@ -600,7 +599,7 @@ class TunnelCreator {
         }
       },
     });
-    const stop = _.isFunction(stopHandle) ? stopHandle : stopHandle?.stop;
+    const stop = typeof stopHandle === 'function' ? stopHandle : stopHandle?.stop;
     if (stop) {
       this._registryWatcherStops.push(stop);
     }
@@ -906,7 +905,7 @@ async function teardownAppleTVTunnelResource(resource, label = 'Apple TV') {
     log.warn(`Failed to stop packet stream server for ${label}: ${err}`);
   }
   try {
-    if (_.isFunction(tunnel?.closer)) {
+    if (typeof tunnel?.closer === 'function') {
       await tunnel.closer();
     }
   } catch (err) {
@@ -1044,8 +1043,8 @@ async function main() {
 
   program.parse(process.argv);
   const options = program.opts();
-  const requestedUdids = _.uniq([...(options.udid ?? [])]);
-  const requestedAppleTVIds = _.uniq([...(options.appletvDeviceId ?? [])]);
+  const requestedUdids = [...new Set([...(options.udid ?? [])])];
+  const requestedAppleTVIds = [...new Set([...(options.appletvDeviceId ?? [])])];
   const hasRequestedUdids = requestedUdids.length > 0;
   const hasRequestedAppleTVIds = requestedAppleTVIds.length > 0;
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;

@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import {requireSimulator} from './guards';
+import {requireSimulator} from './helpers';
 import {errors} from 'appium/driver';
 import type {XCUITestDriver} from '../driver';
 import type {ContentSizeAction, ContentSizeResult} from './types';
@@ -36,7 +35,7 @@ export async function mobileSetContentSize(
   this: XCUITestDriver,
   size: ContentSizeAction,
 ): Promise<void> {
-  if (!(CONTENT_SIZE as readonly string[]).includes(_.lowerCase(size))) {
+  if (!(CONTENT_SIZE as readonly string[]).includes(String(size).toLowerCase())) {
     throw new errors.InvalidArgumentError(
       `The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`,
     );

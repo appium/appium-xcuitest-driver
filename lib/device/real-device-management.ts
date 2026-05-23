@@ -1,14 +1,14 @@
-import _ from 'lodash';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
 import {asyncmap} from 'asyncbox';
 import path from 'node:path';
 import {
   buildSafariPreferences,
-  SAFARI_BUNDLE_ID,
   isIos18OrNewer,
-  withTimeout,
+  SAFARI_BUNDLE_ID,
   TimeoutError,
-} from '../utils';
+  withTimeout,
+} from '../commands/helpers';
+import {isEmpty, isPlainObject} from '../utils';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
 import type {AppiumLogger} from '@appium/types';
@@ -199,7 +199,7 @@ export class RealDevice {
    */
   async isAppInstalled(bundleId: string): Promise<boolean> {
     if (isPreferDevicectlEnabled()) {
-      return _.size(await this.devicectl.listApps(bundleId)) > 0;
+      return (await this.devicectl.listApps(bundleId)).length > 0;
     }
     return Boolean(await this.fetchAppInfo(bundleId));
   }
@@ -269,16 +269,12 @@ export class RealDevice {
         applicationType: 'User',
         returnAttributes: ['CFBundleIdentifier', 'CFBundleName'],
       });
-      return _.reduce(
-        applications,
-        (acc: string[], {CFBundleName}, key: string) => {
-          if (CFBundleName === bundleName) {
-            acc.push(key);
-          }
-          return acc;
-        },
-        [],
-      );
+      return Object.entries(applications).reduce((acc: string[], [key, {CFBundleName}]) => {
+        if (CFBundleName === bundleName) {
+          acc.push(key);
+        }
+        return acc;
+      }, []);
     } finally {
       await client.close();
     }
@@ -472,7 +468,10 @@ export async function pushFolder(
 
   await client.createDirectory(dstRootPath);
   for (const relativeFolderPath of foldersToPush) {
-    const absoluteFolderPath = _.trimEnd(path.join(dstRootPath, relativeFolderPath), path.sep);
+    let absoluteFolderPath = path.join(dstRootPath, relativeFolderPath);
+    while (absoluteFolderPath.endsWith(path.sep)) {
+      absoluteFolderPath = absoluteFolderPath.slice(0, -path.sep.length);
+    }
     if (absoluteFolderPath) {
       await client.createDirectory(absoluteFolderPath);
     }
@@ -624,17 +623,17 @@ export async function runRealDeviceReset(this: XCUITestDriver): Promise<void> {
  */
 export function applySafariStartupArgs(this: XCUITestDriver): boolean {
   const prefs = buildSafariPreferences(this.opts);
-  if (_.isEmpty(prefs)) {
+  if (isEmpty(prefs)) {
     return false;
   }
 
-  const args = _.toPairs(prefs).flatMap(([key, value]) => [
-    _.startsWith(key, '-') ? key : `-${key}`,
+  const args = Object.entries(prefs).flatMap(([key, value]) => [
+    key.startsWith('-') ? key : `-${key}`,
     String(value),
   ]);
   defaultLogger.debug(`Generated Safari command line arguments: ${args.join(' ')}`);
   const processArguments = this.opts.processArguments as {args: string[]} | undefined;
-  if (processArguments && _.isPlainObject(processArguments)) {
+  if (processArguments && isPlainObject(processArguments)) {
     processArguments.args = [...(processArguments.args ?? []), ...args];
   } else {
     this.opts.processArguments = {args};
@@ -648,7 +647,7 @@ export function applySafariStartupArgs(this: XCUITestDriver): boolean {
 export async function detectUdid(this: XCUITestDriver): Promise<string> {
   this.log.debug('Auto-detecting real device udid...');
   const udids = await getConnectedDevices(this.opts);
-  if (_.isEmpty(udids)) {
+  if (isEmpty(udids)) {
     throw new Error('No real devices are connected to the host');
   }
   const udid = udids[udids.length - 1];
@@ -670,7 +669,9 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
  * @returns True if the APPIUM_XCUITEST_PREFER_DEVICECTL is set.
  */
 function isPreferDevicectlEnabled(): boolean {
-  return ['yes', 'true', '1'].includes(_.toLower(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL));
+  return ['yes', 'true', '1'].includes(
+    String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL).toLowerCase(),
+  );
 }
 
 /**

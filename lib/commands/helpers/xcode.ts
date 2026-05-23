@@ -1,5 +1,5 @@
 import * as xcode from 'appium-xcode';
-import {log} from '../logger';
+import {log} from '../../logger';
 import type {XcodeVersion} from 'appium-xcode';
 
 /** Returns installed Xcode version or throws a descriptive error. */

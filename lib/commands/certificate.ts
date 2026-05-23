@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty} from '../utils';
 import {fs, plist, tempDir, util} from 'appium/support';
 import {retryInterval, retry, waitForCondition} from 'asyncbox';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -8,8 +8,7 @@ import http from 'node:http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {CertificateClient} from '../device/certificate-client';
-import {isIos18OrNewer} from '../utils';
-import {requireRealDevice} from './guards';
+import {isIos18OrNewer, requireRealDevice} from './helpers';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
@@ -101,7 +100,7 @@ export async function mobileInstallCertificate(
   commonName?: string,
   isRoot = true,
 ): Promise<string | void> {
-  if (_.isEmpty(content)) {
+  if (isEmpty(content)) {
     throw new Error('Certificate content should not be empty');
   }
 

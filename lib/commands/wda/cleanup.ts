@@ -1,5 +1,5 @@
 import {fs} from 'appium/support';
-import _ from 'lodash';
+import {isEmpty} from '../../utils';
 import os from 'node:os';
 import path from 'node:path';
 import {exec} from 'teen_process';
@@ -64,7 +64,7 @@ export async function clearSystemFiles(
   // Cleaning up big temporary files created by XCTest: https://github.com/appium/appium/issues/9410
   const globPattern = `${os.tmpdir()}/${XCTEST_LOGS_CACHE_FOLDER_PREFIX}*/`;
   const dstFolders = await fs.glob(globPattern);
-  if (_.isEmpty(dstFolders)) {
+  if (isEmpty(dstFolders)) {
     log.debug(`Did not find the temporary XCTest logs root at '${globPattern}'`);
   } else {
     const promises: Promise<void>[] = [];
@@ -153,7 +153,7 @@ async function clearLogs(locations: string[]): Promise<void> {
       })(),
     );
   }
-  if (!_.isEmpty(cleanupPromises)) {
+  if (!isEmpty(cleanupPromises)) {
     await Promise.all(cleanupPromises);
   }
   log.debug('Finished clearing log files');

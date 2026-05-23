@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {XCUITestDriver} from '../driver';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
@@ -80,7 +79,7 @@ function executeMethodExpectsParam<Script extends keyof typeof XCUITestDriver.ex
       optional = execMethodDef.params.optional;
     }
   }
-  const allParams = new Set(_.flatten([...(required ?? []), ...(optional ?? [])]));
+  const allParams = new Set([...(required ?? []), ...(optional ?? [])]);
   return allParams.has(param);
 }
 
@@ -101,8 +100,8 @@ function preprocessExecuteMethodArgs(
   script: keyof typeof XCUITestDriver.executeMethodMap,
   args?: ExecuteMethodArgs,
 ): StringRecord<unknown> {
-  if (_.isArray(args)) {
-    args = _.first(args);
+  if (Array.isArray(args)) {
+    args = args[0];
   }
   const executeMethodArgs = (args ?? {}) as StringRecord<unknown>;
   /**

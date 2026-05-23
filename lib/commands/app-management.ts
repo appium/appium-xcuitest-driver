@@ -1,11 +1,9 @@
-import _ from 'lodash';
 import {fs, util} from 'appium/support';
 import {errors} from 'appium/driver';
 import path from 'node:path';
-import {isIos18OrNewer} from '../utils';
+import {isIos18OrNewer, requireRealDevice} from './helpers';
 import {SUPPORTED_EXTENSIONS} from './constants';
 import {onDownloadApp, onPostConfigureApp} from './app-install';
-import {requireRealDevice} from './guards';
 import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
 import type {AppState} from './enum';
@@ -361,11 +359,11 @@ export async function background(
       }
     }
   };
-  if (seconds && !_.isNumber(seconds) && _.has(seconds, 'timeout')) {
+  if (seconds && typeof seconds !== 'number' && Object.hasOwn(seconds, 'timeout')) {
     const timeout = seconds.timeout;
     selectEndpoint(isNaN(Number(timeout)) ? timeout : parseFloat(String(timeout)) / 1000.0);
   } else {
-    selectEndpoint(_.isNumber(seconds) ? seconds : undefined);
+    selectEndpoint(typeof seconds === 'number' ? seconds : undefined);
   }
   if (!endpoint) {
     throw new errors.InvalidArgumentError(

@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import {escapeRegExp, isEmpty} from '../utils';
 import {errors} from 'appium/driver';
-import {requireRealDevice} from './guards';
+import {requireRealDevice} from './helpers';
 import type {XCUITestDriver} from '../driver';
 
 /**
@@ -16,7 +16,7 @@ export async function mobileSendMemoryWarning(
 ): Promise<void> {
   const device = requireRealDevice(this, 'Memory warning simulation');
   const appInfos = await device.devicectl.listApps(bundleId);
-  if (_.isEmpty(appInfos)) {
+  if (isEmpty(appInfos)) {
     throw new errors.InvalidArgumentError(
       `The application identified by ${bundleId} cannot be found on the device. Is it installed?`,
     );
@@ -31,11 +31,11 @@ export async function mobileSendMemoryWarning(
   // then we only want to match the first one.
   // Unfortunately devicectl does not provide more info which would
   // allow to connect a bundle id to a process id.
-  const pattern = new RegExp(`^${_.escapeRegExp(appInfos[0].url)}[^/]+$`);
+  const pattern = new RegExp(`^${escapeRegExp(appInfos[0].url)}[^/]+$`);
   const pids = (await device.devicectl.listProcesses())
     .filter(({executable}) => pattern.test(executable))
     .map(({processIdentifier}) => processIdentifier);
-  if (_.isEmpty(pids)) {
+  if (isEmpty(pids)) {
     throw new errors.InvalidArgumentError(
       `The application identified by ${bundleId} must be running in order to simulate the Low Memory warning`,
     );

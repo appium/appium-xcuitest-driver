@@ -1,10 +1,9 @@
 import {errors, isErrorType} from 'appium/driver';
 import {timing, util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
-import _ from 'lodash';
 import {setTimeout as delay} from 'node:timers/promises';
-import {withTimeout, TimeoutError} from '../utils';
-import {requireSimulator} from './guards';
+import {requireSimulator, TimeoutError, withTimeout} from './helpers';
+import {isEmpty, isPlainObject} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Element, Cookie, Size, Position, Rect} from '@appium/types';
 import type {AtomsElement} from './types';
@@ -70,7 +69,7 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
     throw new errors.NotImplementedError();
   }
 
-  if (_.isNull(frame)) {
+  if (frame === null) {
     this.curWebFrames = [];
     this.log.debug('Leaving web frame and going back to default content');
     return;
@@ -82,9 +81,9 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
     this.log.debug(`Entering new web frame: '${value.WINDOW}'`);
     this.curWebFrames.unshift(value.WINDOW);
   } else {
-    const atom = _.isNumber(frame) ? 'frame_by_index' : 'frame_by_id_or_name';
+    const atom = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
     const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
-    if (_.isNull(value) || _.isUndefined(value.WINDOW)) {
+    if (value?.WINDOW === undefined) {
       throw new errors.NoSuchFrameError();
     }
     this.log.debug(`Entering new web frame: '${value.WINDOW}'`);
@@ -192,7 +191,7 @@ export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
 
   // the value is URI encoded, so decode it safely
   return cookies.map((cookie) => {
-    if (!_.isEmpty(cookie.value)) {
+    if (!isEmpty(cookie.value)) {
       try {
         cookie.value = decodeURI(cookie.value);
       } catch (error: any) {
@@ -221,15 +220,16 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
     throw new errors.NotImplementedError();
   }
 
-  const clonedCookie = _.clone(cookie);
+  const clonedCookie = structuredClone(cookie);
   // if `path` field is not specified, Safari will not update cookies as expected; eg issue #1708
   if (!clonedCookie.path) {
     clonedCookie.path = '/';
   }
   const jsCookie = createJSCookie(clonedCookie.name, clonedCookie.value, {
-    expires: _.isNumber(clonedCookie.expiry)
-      ? new Date(clonedCookie.expiry * 1000).toUTCString()
-      : clonedCookie.expiry,
+    expires:
+      typeof clonedCookie.expiry === 'number'
+        ? new Date(clonedCookie.expiry * 1000).toUTCString()
+        : clonedCookie.expiry,
     path: clonedCookie.path,
     domain: clonedCookie.domain,
     httpOnly: clonedCookie.httpOnly,
@@ -285,7 +285,7 @@ export async function deleteCookies(this: XCUITestDriver): Promise<void> {
  * @returns The cached element wrapper
  */
 export function cacheWebElement(this: XCUITestDriver, el: Element | string): Element | string {
-  if (!_.isPlainObject(el)) {
+  if (!isPlainObject(el)) {
     return el;
   }
   const elId = util.unwrapElement(el);
@@ -294,7 +294,7 @@ export function cacheWebElement(this: XCUITestDriver, el: Element | string): Ele
   }
   // In newer debugger releases element identifiers look like `:wdc:1628151649325`
   // We assume it is safe to use these to identify cached elements
-  const cacheId = _.includes(elId, ':') ? elId : util.uuidV4();
+  const cacheId = elId.includes(':') ? elId : util.uuidV4();
   this.webElementsCache.set(cacheId, elId);
   return util.wrapElement(cacheId);
 }
@@ -306,13 +306,14 @@ export function cacheWebElement(this: XCUITestDriver, el: Element | string): Ele
  * @returns Response with cached element wrappers
  */
 export function cacheWebElements(this: XCUITestDriver, response: any): any {
-  const toCached = (v: any) => (_.isArray(v) || _.isPlainObject(v) ? this.cacheWebElements(v) : v);
+  const toCached = (v: any) =>
+    Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v;
 
-  if (_.isArray(response)) {
+  if (Array.isArray(response)) {
     return response.map(toCached);
-  } else if (_.isPlainObject(response)) {
-    const result = {...response, ...(this.cacheWebElement(response) as Element)};
-    return _.toPairs(result).reduce((acc, [key, value]) => {
+  } else if (isPlainObject(response)) {
+    const result = {...response, ...(this.cacheWebElement(response as any) as Element)};
+    return Object.entries(result).reduce((acc, [key, value]) => {
       acc[key] = toCached(value);
       return acc;
     }, {} as any);
@@ -391,7 +392,7 @@ export function convertElementsForAtoms(this: XCUITestDriver, args: readonly any
       }
       return arg;
     }
-    return _.isArray(arg) ? this.convertElementsForAtoms(arg) : arg;
+    return Array.isArray(arg) ? this.convertElementsForAtoms(arg) : arg;
   });
 }
 
@@ -435,17 +436,21 @@ export async function findWebElementOrElements(
   many?: boolean,
   ctx?: Element | string | null,
 ): Promise<Element | Element[]> {
-  const contextElement = _.isNil(ctx) ? null : this.getAtomsElement(ctx);
+  const contextElement = ctx == null ? null : this.getAtomsElement(ctx);
   const atomName = many ? 'find_elements' : 'find_element_fragment';
   let element: any;
   const doFind = async () => {
     element = await this.executeAtom(atomName, [strategy, selector, contextElement]);
-    return !_.isNull(element);
+    return element !== null;
   };
   try {
     await this.implicitWaitForCondition(doFind);
   } catch (err: any) {
-    if (err.message && _.isFunction(err.message.match) && err.message.match(/Condition unmet/)) {
+    if (
+      err.message &&
+      typeof err.message.match === 'function' &&
+      err.message.match(/Condition unmet/)
+    ) {
       // condition was not met setting res to empty array
       element = [];
     } else {
@@ -456,7 +461,7 @@ export async function findWebElementOrElements(
   if (many) {
     return this.cacheWebElements(element);
   }
-  if (_.isEmpty(element)) {
+  if (isEmpty(element)) {
     throw new errors.NoSuchElementError();
   }
   return this.cacheWebElements(element);
@@ -483,7 +488,7 @@ export async function clickWebCoords(this: XCUITestDriver, x: number, y: number)
  * @returns True if running on iPhone, false otherwise
  */
 export async function getSafariIsIphone(this: XCUITestDriver): Promise<boolean> {
-  if (_.isBoolean(this._isSafariIphone)) {
+  if (typeof this._isSafariIphone === 'boolean') {
     return this._isSafariIphone;
   }
   try {
@@ -522,7 +527,7 @@ export async function getSafariDeviceSize(this: XCUITestDriver): Promise<Size> {
  * @returns True if device has a notch, false otherwise
  */
 export async function getSafariIsNotched(this: XCUITestDriver): Promise<boolean> {
-  if (_.isBoolean(this._isSafariNotched)) {
+  if (typeof this._isSafariNotched === 'boolean') {
     return this._isSafariNotched;
   }
 
@@ -573,9 +578,9 @@ export async function getExtraTranslateWebCoordsOffset(
       ? TAB_BAR_POSITION_BOTTOM
       : TAB_BAR_POSITION_TOP,
   } = this.settings.getSettings();
-  let tabBarVisibility = _.lowerCase(String(nativeWebTapTabBarVisibility));
-  let bannerVisibility = _.lowerCase(String(nativeWebTapSmartAppBannerVisibility));
-  const tabBarPosition = _.lowerCase(String(safariTabBarPosition));
+  let tabBarVisibility = String(nativeWebTapTabBarVisibility).toLowerCase();
+  let bannerVisibility = String(nativeWebTapSmartAppBannerVisibility).toLowerCase();
+  const tabBarPosition = String(safariTabBarPosition).toLowerCase();
 
   if (!VISIBILITIES.includes(tabBarVisibility as any)) {
     tabBarVisibility = DETECT;
@@ -830,7 +835,7 @@ export async function translateWebCoords(
  * @returns True if an alert is present, false otherwise
  */
 export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
-  return _.isString(await this.getAlertText());
+  return typeof (await this.getAlertText()) === 'string';
 }
 
 /**
@@ -845,7 +850,7 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
   const timer = new timing.Timer().start();
 
   const atomWaitTimeoutMs =
-    _.isNumber(this.opts.webviewAtomWaitTimeout) && this.opts.webviewAtomWaitTimeout > 0
+    typeof this.opts.webviewAtomWaitTimeout === 'number' && this.opts.webviewAtomWaitTimeout > 0
       ? this.opts.webviewAtomWaitTimeout
       : ATOM_WAIT_TIMEOUT_MS;
   // need to check for alert while the atom is being executed.
@@ -990,14 +995,14 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(
     try {
       const title = await this.title();
       this.log.debug(JSON.stringify(title));
-      result = _.isPlainObject(title)
+      result = isPlainObject(title)
         ? (title as unknown as Position)
         : (JSON.parse(title) as Position);
     } catch (e: any) {
       throw new Error(`${errorPrefix} Original error: ${e.message}`, {cause: e});
     }
     const {x, y} = result;
-    if (!_.isInteger(x) || !_.isInteger(y)) {
+    if (!Number.isInteger(x) || !Number.isInteger(y)) {
       throw new Error(errorPrefix);
     }
     return result;
@@ -1055,7 +1060,7 @@ export async function mobileUpdateSafariPreferences(
   preferences: Record<string, any>,
 ): Promise<void> {
   const simulator = requireSimulator(this, 'Updating Safari preferences');
-  if (!_.isPlainObject(preferences)) {
+  if (!isPlainObject(preferences)) {
     throw new errors.InvalidArgumentError('"preferences" argument must be a valid object');
   }
 
@@ -1082,7 +1087,7 @@ async function generateAtomTimeoutError(
       `or a JavaScript routine monopolizing the event loop.`
     : `However, the debugger still responds to JavaScript commands, ` +
       `which suggests that the provided atom script is taking too long to execute.`;
-  if (_.isUndefined(this.opts.webviewAtomWaitTimeout)) {
+  if (this.opts.webviewAtomWaitTimeout === undefined) {
     message +=
       ` You may also consider adjusting the timeout by setting the ` +
       `'webviewAtomWaitTimeout' driver capability.`;
@@ -1234,13 +1239,13 @@ async function tapWebElementNatively(
  * @returns True if the value is a valid element identifier
  */
 function isValidElementIdentifier(id: any): boolean {
-  if (!_.isString(id) && !_.isNumber(id)) {
+  if (typeof id !== 'string' && typeof id !== 'number') {
     return false;
   }
-  if (_.isString(id) && _.isEmpty(id)) {
+  if (typeof id === 'string' && isEmpty(id)) {
     return false;
   }
-  if (_.isNumber(id) && isNaN(id)) {
+  if (typeof id === 'number' && isNaN(id)) {
     return false;
   }
   return true;

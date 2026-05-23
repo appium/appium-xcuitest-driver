@@ -1,5 +1,5 @@
 import {retryInterval} from 'asyncbox';
-import _ from 'lodash';
+import {capitalize} from '../utils';
 import {errors} from 'appium/driver';
 import {util, imageUtil} from 'appium/support';
 import type {XCUITestDriver} from '../driver';
@@ -14,11 +14,11 @@ import type {Element} from '@appium/types';
 export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
     const webScreenshotMode = (await this.settings.getSettings()).webScreenshotMode;
-    switch (_.toLower(webScreenshotMode)) {
+    switch (String(webScreenshotMode).toLowerCase()) {
       case 'page':
       case 'viewport':
         return await this.remote.captureScreenshot({
-          coordinateSystem: _.capitalize(webScreenshotMode) as 'Viewport' | 'Page',
+          coordinateSystem: capitalize(String(webScreenshotMode)) as 'Viewport' | 'Page',
         });
       case 'native':
       case undefined:
@@ -36,7 +36,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   const getScreenshotFromWDA = async (): Promise<string> => {
     this.log.debug(`Taking screenshot with WDA`);
     const data = await this.proxyCommand('/screenshot', 'GET');
-    if (!_.isString(data)) {
+    if (typeof data !== 'string') {
       throw new Error(`Unable to take screenshot. WDA returned '${JSON.stringify(data)}'`);
     }
     return data;
@@ -97,7 +97,7 @@ export async function getElementScreenshot(
   }
 
   const data = await this.proxyCommand(`/element/${el}/screenshot`, 'GET');
-  if (!_.isString(data)) {
+  if (typeof data !== 'string') {
     throw new errors.UnableToCaptureScreen(
       `Unable to take an element screenshot. WDA returned: ${JSON.stringify(data)}`,
     );

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {escapeRegExp, isPlainObject} from './utils';
 import path from 'node:path';
 import {plist, fs, tempDir, zip} from 'appium/support';
 import {LRUCache} from 'lru-cache';
@@ -10,7 +10,7 @@ const MANIFEST_CACHE = new LRUCache<string, StringRecord>({
 });
 const MANIFEST_FILE_NAME = 'Info.plist';
 const IPA_ROOT_PLIST_PATH_PATTERN = new RegExp(
-  `^Payload/[^/]+\\.app/${_.escapeRegExp(MANIFEST_FILE_NAME)}$`,
+  `^Payload/[^/]+\\.app/${escapeRegExp(MANIFEST_FILE_NAME)}$`,
 );
 const MAX_MANIFEST_SIZE = 1024 * 1024; // 1 MiB
 
@@ -117,7 +117,7 @@ export class AppInfosCache {
           await extractEntryTo(tmpRoot);
           const plistPath = path.resolve(tmpRoot, entry.fileName);
           manifestPayload = await this._readPlist(plistPath, ipaPath);
-          if (_.isPlainObject(manifestPayload) && entry.uncompressedSize <= MAX_MANIFEST_SIZE) {
+          if (isPlainObject(manifestPayload) && entry.uncompressedSize <= MAX_MANIFEST_SIZE) {
             this.log.debug(
               `Caching the manifest '${entry.fileName}' for ${manifestPayload?.CFBundleIdentifier} app ` +
                 `from the compressed source using the key '${hash}'`,
@@ -164,7 +164,7 @@ export class AppInfosCache {
       this._readPlist(manifestPath, appPath),
       fs.stat(manifestPath),
     ]);
-    if (stat.size <= MAX_MANIFEST_SIZE && _.isPlainObject(payload)) {
+    if (stat.size <= MAX_MANIFEST_SIZE && isPlainObject(payload)) {
       this.log.debug(
         `Caching the manifest for ${payload.CFBundleIdentifier} app from a file source using the key '${hash}'`,
       );

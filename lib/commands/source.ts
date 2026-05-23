@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isEmpty} from '../utils';
 import js2xml from 'js2xmlparser2';
 import type {XCUITestDriver} from '../driver';
 import type {SourceFormat} from './types';
@@ -18,7 +18,8 @@ export async function getPageSource(this: XCUITestDriver): Promise<string> {
 
   const {pageSourceExcludedAttributes: excludedAttributes, useJSONSource} =
     await this.settings.getSettings();
-  const hasExcludedAttributes = _.isString(excludedAttributes) && !_.isEmpty(excludedAttributes);
+  const hasExcludedAttributes =
+    typeof excludedAttributes === 'string' && !isEmpty(excludedAttributes);
   if (useJSONSource) {
     const srcTree = await this.mobileGetSource(
       'json',

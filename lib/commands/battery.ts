@@ -1,5 +1,5 @@
 import {BatteryInfoClient, type AdvancedBatteryInfo} from '../device/battery-info-client';
-import {isIos18OrNewer} from '../utils';
+import {isIos18OrNewer} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {BatteryInfo} from './types';
 

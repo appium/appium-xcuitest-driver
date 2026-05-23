@@ -4,7 +4,7 @@ import axios from 'axios';
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
 import {exec, SubProcess} from 'teen_process';
-import memoize from 'lodash/memoize';
+import {memoize} from '../utils';
 
 export class OptionalSimulatorCheck implements IDoctorCheck {
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [

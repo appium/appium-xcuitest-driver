@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import {fs, tempDir, logger, util} from 'appium/support';
 import {SubProcess} from 'teen_process';
-import {encodeBase64OrUpload} from '../utils';
+import {encodeBase64OrUpload} from './helpers';
 import {WDA_BASE_URL} from 'appium-webdriveragent';
 import {waitForCondition} from 'asyncbox';
 import type {XCUITestDriver} from '../driver';
@@ -361,13 +360,13 @@ export async function startRecordingScreen(
     'GET',
   )) as WDASettings;
   if (videoQuality) {
-    const quality = _.isInteger(videoQuality)
+    const quality = Number.isInteger(videoQuality)
       ? videoQuality
-      : QUALITY_MAPPING[_.toLower(String(videoQuality))];
+      : QUALITY_MAPPING[String(videoQuality).toLowerCase()];
     if (!quality) {
       throw new Error(
         `videoQuality value should be one of ${JSON.stringify(
-          _.keys(QUALITY_MAPPING),
+          Object.keys(QUALITY_MAPPING),
         )} or a number in range 1..100. ` + `'${videoQuality}' is given instead`,
       );
     }

@@ -1,8 +1,8 @@
-import _ from 'lodash';
 import {fs} from 'appium/support';
+import {memoize} from '../../utils';
 import path from 'node:path';
 import {exec} from 'teen_process';
-import {log} from '../logger';
+import {log} from '../../logger';
 
 const MODULE_NAME = 'appium-xcuitest-driver';
 
@@ -11,10 +11,8 @@ export interface DriverInfo {
   built: string;
 }
 
-const getModuleManifest = _.memoize(async function getModuleManifest(): Promise<
-  Record<string, any>
-> {
-  let currentDir = path.resolve(__dirname, '..');
+const getModuleManifest = memoize(async function getModuleManifest(): Promise<Record<string, any>> {
+  let currentDir = path.resolve(__dirname);
   let isAtFsRoot = false;
   while (!isAtFsRoot) {
     const manifestPath = path.join(currentDir, 'package.json');
@@ -34,9 +32,9 @@ const getModuleManifest = _.memoize(async function getModuleManifest(): Promise<
 });
 
 /** Gets driver build/version metadata from package manifest. */
-export const getDriverInfo = _.memoize(async function getDriverInfo(): Promise<DriverInfo> {
+export const getDriverInfo = memoize(async function getDriverInfo(): Promise<DriverInfo> {
   const [stat, manifest] = await Promise.all([
-    fs.stat(path.resolve(__dirname, '..')),
+    fs.stat(path.resolve(__dirname, '../..')),
     getModuleManifest(),
   ]);
   return {

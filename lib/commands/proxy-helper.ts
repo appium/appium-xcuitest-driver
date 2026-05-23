@@ -1,5 +1,5 @@
 import {errors, routeToCommandName} from 'appium/driver';
-import {withTimeout, TimeoutError} from '../utils';
+import {withTimeout, TimeoutError} from './helpers';
 import type {XCUITestDriver} from '../driver';
 
 const GET = 'GET';

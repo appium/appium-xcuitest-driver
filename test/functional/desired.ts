@@ -1,10 +1,9 @@
-import _ from 'lodash';
 import {util, node} from 'appium/support';
 import {getUIKitCatalogPath, getTestAppPath} from '../setup';
 
 export function amendCapabilities(baseCaps, ...newCaps) {
   return node.deepFreeze({
-    alwaysMatch: _.cloneDeep(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
+    alwaysMatch: structuredClone(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
     firstMatch: [{}],
   });
 }

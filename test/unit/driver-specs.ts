@@ -1,7 +1,7 @@
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
-import _ from 'lodash';
 import {createSandbox} from 'sinon';
+import {mergeDeep} from '../../lib/utils';
 import {XCUITestDriver} from '../../lib/driver';
 import type {XCUITestDriverOpts} from '../../lib/driver';
 import {MOCHA_LONG_TIMEOUT} from './helpers';
@@ -9,8 +9,8 @@ import {RealDevice} from '../../lib/device/real-device-management';
 import net from 'node:net';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import * as validationUtils from '../../lib/utils/validation';
-import * as xcodeUtils from '../../lib/utils/xcode';
+import * as validationUtils from '../../lib/commands/helpers/validation';
+import * as xcodeUtils from '../../lib/commands/helpers/xcode';
 
 chai.use(chaiAsPromised);
 
@@ -112,7 +112,7 @@ describe('XCUITestDriver', function () {
       beforeEach(function () {
         driver = new XCUITestDriver({} as any);
         device = {
-          shutdown: _.noop,
+          shutdown: () => {},
           isRunning() {
             return true;
           },
@@ -122,9 +122,9 @@ describe('XCUITestDriver', function () {
           getWebInspectorSocket() {
             return '/path/to/uds.socket';
           },
-          setReduceTransparency: _.noop,
-          setAutoFillPasswords: _.noop,
-          reset: _.noop,
+          setReduceTransparency: () => {},
+          setAutoFillPasswords: () => {},
+          reset: () => {},
         };
         const cacheMock = sandbox.mock(driver.appInfosCache);
         cacheMock.expects('extractBundleId').once().returns('bundle.id');
@@ -154,7 +154,7 @@ describe('XCUITestDriver', function () {
 
       it('should include server capabilities', async function () {
         this.timeout(MOCHA_LONG_TIMEOUT);
-        const resCaps = await driver.createSession(null, null, _.cloneDeep(caps));
+        const resCaps = await driver.createSession(null, null, structuredClone(caps));
         expect(resCaps[1].javascriptEnabled).to.be.true;
       });
 
@@ -163,7 +163,7 @@ describe('XCUITestDriver', function () {
         const resCaps = await driver.createSession(
           null,
           null,
-          _.merge({}, caps, {
+          mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {
               'appium:skipLogCapture': false,
             },
@@ -177,7 +177,7 @@ describe('XCUITestDriver', function () {
         const resCaps = await driver.createSession(
           null,
           null,
-          _.merge({}, caps, {
+          mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {
               'appium:skipLogCapture': true,
             },
@@ -194,7 +194,7 @@ describe('XCUITestDriver', function () {
         await driver.createSession(
           null,
           null,
-          _.merge({}, caps, {
+          mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:reduceTransparency': true},
           }),
         );
@@ -210,7 +210,7 @@ describe('XCUITestDriver', function () {
         await driver.createSession(
           null,
           null,
-          _.merge({}, caps, {
+          mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:reduceTransparency': true},
           }),
         );
@@ -225,7 +225,7 @@ describe('XCUITestDriver', function () {
         await driver.createSession(
           null,
           null,
-          _.merge({}, caps, {
+          mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:autoFillPasswords': true},
           }),
         );
@@ -240,7 +240,7 @@ describe('XCUITestDriver', function () {
         await driver.createSession(
           null,
           null,
-          _.merge({}, caps, {
+          mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:setAutoFillPasswords': true},
           }),
         );
@@ -261,7 +261,7 @@ describe('XCUITestDriver', function () {
             driver.createSession(
               null,
               null,
-              _.merge({}, caps, {
+              mergeDeep({}, structuredClone(caps), {
                 alwaysMatch: {'appium:mjpegServerPort': 9100},
               }),
             ),

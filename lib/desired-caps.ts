@@ -1,5 +1,5 @@
 import type {Constraints} from '@appium/types';
-import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from './utils';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from './constants';
 
 export const desiredCapConstraints = {
   platformName: {

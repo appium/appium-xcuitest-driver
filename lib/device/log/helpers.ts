@@ -1,7 +1,6 @@
 import type {LogEntry} from '../../commands/types';
 import {fs} from 'appium/support';
 import {createInterface} from 'node:readline';
-import _ from 'lodash';
 
 export const DEFAULT_LOG_LEVEL = 'ALL';
 export const MAX_JSON_LOG_LENGTH = 200;
@@ -36,7 +35,7 @@ export async function grepFile(
     input.once('error', reject);
     rl.on('line', (line) => {
       if (
-        (opts.caseInsensitive && _.toLower(line).includes(_.toLower(str))) ||
+        (opts.caseInsensitive && line.toLowerCase().includes(String(str).toLowerCase())) ||
         (!opts.caseInsensitive && line.includes(str))
       ) {
         resolve(true);

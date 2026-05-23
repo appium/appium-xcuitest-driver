@@ -1,6 +1,6 @@
 import {createParser} from 'css-selector-parser';
-import _ from 'lodash';
 import {errors} from 'appium/driver';
+import {escapeRegExp, isEmpty} from './utils';
 import {log} from './logger';
 import type {
   AstAttribute,
@@ -93,7 +93,7 @@ function toCamelCase(str: string | null | undefined): string {
  */
 function requireBoolean(cssAttr: AstAttribute | AstPseudoClass): string {
   const attrValue = (cssAttr as any).value?.value;
-  const val = _.toLower(attrValue) || 'true'; // an omitted boolean attribute means 'true' (e.g.: input[checked] means checked is true)
+  const val = String(attrValue ?? '').toLowerCase() || 'true'; // an omitted boolean attribute means 'true' (e.g.: input[checked] means checked is true)
   switch (val) {
     case '0':
     case 'false':
@@ -145,7 +145,7 @@ function requireEntityName(cssEntity: AstAttribute | AstPseudoClass): string {
  */
 function parseAttr(cssAttr: AstAttribute): string | {index: string | undefined} {
   const attrValue = (cssAttr as any).value?.value;
-  if (!_.isString(attrValue) && !_.isEmpty(attrValue)) {
+  if (typeof attrValue !== 'string' && !isEmpty(attrValue)) {
     throw new TypeError(
       `'${cssAttr.name}=${attrValue}' is an invalid attribute. ` +
         `Only 'string' and empty attribute types are supported. Found '${attrValue}'`,
@@ -178,7 +178,7 @@ function parseAttr(cssAttr: AstAttribute): string | {index: string | undefined} 
     case '=':
       return `${attrName} == "${value}"`;
     case '*=':
-      return `${attrName} MATCHES "${_.escapeRegExp(value)}"`;
+      return `${attrName} MATCHES "${escapeRegExp(value)}"`;
     case '^=':
       return `${attrName} BEGINSWITH "${value}"`;
     case '$=':
@@ -202,7 +202,7 @@ function parseAttr(cssAttr: AstAttribute): string | {index: string | undefined} 
  */
 function parsePseudo(cssPseudo: AstPseudoClass): string | {index: string | undefined} | undefined {
   const argValue = (cssPseudo as any).argument?.value;
-  if (!_.isString(argValue) && !_.isEmpty(argValue)) {
+  if (typeof argValue !== 'string' && !isEmpty(argValue)) {
     throw new TypeError(
       `'${cssPseudo.name}=${argValue}'. ` +
         `Unsupported css pseudo class value: '${argValue}'. Only 'string' type or empty is supported.`,
@@ -243,7 +243,7 @@ function parseCssRule(cssRule: AstRule): string {
 
   const astTag = cssRule.items.find(({type}) => type === 'TagName') as AstTagName | undefined;
   let tagName = astTag?.name ?? '';
-  if (tagName && tagName !== '*' && !_.startsWith(_.toLower(tagName), 'xcuielementtype')) {
+  if (tagName && tagName !== '*' && !tagName.toLowerCase().startsWith('xcuielementtype')) {
     const capitalizedTagName = tagName.charAt(0).toUpperCase() + tagName.slice(1);
     tagName = `XCUIElementType${capitalizedTagName}`;
   }
@@ -266,14 +266,14 @@ function parseCssRule(cssRule: AstRule): string {
   for (const pseudo of pseudoClasses) {
     attrs.push(parsePseudo(pseudo));
   }
-  const nonIndexAttrs = attrs.filter((attr) => _.isString(attr)) as string[];
-  if (!_.isEmpty(nonIndexAttrs)) {
+  const nonIndexAttrs = attrs.filter((attr) => typeof attr === 'string') as string[];
+  if (!isEmpty(nonIndexAttrs)) {
     iosClassChainSelector += `[\`${nonIndexAttrs.join(' AND ')}\`]`;
   }
 
-  const indexAttr = attrs.find((attr) => _.isObject(attr) && (attr as {index: string}).index) as
-    | {index: string}
-    | undefined;
+  const indexAttr = attrs.find(
+    (attr) => typeof attr === 'object' && attr !== null && (attr as {index: string}).index,
+  ) as {index: string} | undefined;
   if (indexAttr) {
     iosClassChainSelector += `[${indexAttr.index}]`;
   }
@@ -292,7 +292,7 @@ function parseCssRule(cssRule: AstRule): string {
  * @returns The CSS object parsed as a UiSelector
  */
 function parseCssObject(css: AstSelector): string {
-  if (!_.isEmpty(css.rules)) {
+  if (!isEmpty(css.rules)) {
     return parseCssRule(css.rules[0]);
   }
 

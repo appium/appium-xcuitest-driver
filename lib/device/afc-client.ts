@@ -9,7 +9,7 @@ import {getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
-import {withTimeout} from '../utils';
+import {withTimeout} from '../commands/helpers';
 
 /**
  * Options for pulling files/folders

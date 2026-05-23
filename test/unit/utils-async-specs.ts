@@ -1,5 +1,5 @@
 import {createSandbox} from 'sinon';
-import {withTimeout, TimeoutError} from '../../lib/utils/async';
+import {withTimeout, TimeoutError} from '../../lib/commands/helpers';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

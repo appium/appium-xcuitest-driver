@@ -1,10 +1,10 @@
 import {isIPv6} from 'node:net';
 import {fs, net, util} from 'appium/support';
 import {asyncfilter} from 'asyncbox';
-import _ from 'lodash';
+import {isEmpty} from '../../utils';
 import {exec} from 'teen_process';
 import type {HTTPHeaders} from '@appium/types';
-import {log} from '../logger';
+import {log} from '../../logger';
 
 export type UploadOptions = {
   /** The name of the user for remote authentication (only when `remotePath` is provided). */
@@ -39,7 +39,7 @@ export async function getPIDsListeningOnPort(
     return result;
   }
 
-  if (!_.isFunction(filteringFunc)) {
+  if (typeof filteringFunc !== 'function') {
     return result;
   }
   return await asyncfilter(result, async (x) => {
@@ -62,7 +62,7 @@ export async function encodeBase64OrUpload(
     throw log.errorWithException(`The file at '${localPath}' does not exist or is not accessible`);
   }
 
-  if (_.isEmpty(remotePath)) {
+  if (isEmpty(remotePath)) {
     const {size} = await fs.stat(localPath);
     log.debug(`The size of the file is ${util.toReadableSizeString(size)}`);
     return (await util.toInMemoryBase64(localPath)).toString();

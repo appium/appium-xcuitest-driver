@@ -1,0 +1,38 @@
+// Submodules must import siblings directly, never this barrel — avoids cycles.
+export {SAFARI_BUNDLE_ID, buildSafariPreferences, findApps, unzipFile, unzipStream} from './app';
+export type {UnzipInfo} from './app';
+
+export {TimeoutError, withTimeout} from './async';
+
+export {requireRealDevice, requireSimulator} from './guards';
+export type {DeviceGuardDriver} from './guards';
+
+export {encodeBase64OrUpload, getPIDsListeningOnPort, isLocalHost} from './network';
+export type {UploadOptions} from './network';
+
+export {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../../constants';
+export {
+  isIos17OrNewer,
+  isIos17OrNewerPlatform,
+  isIos18OrNewer,
+  isIos18OrNewerPlatform,
+  isTvOs,
+  normalizePlatformName,
+  normalizePlatformVersion,
+} from './platform';
+export type {PlatformVersionOpts} from './platform';
+
+export {getDriverInfo, printUser} from './runtime';
+export type {DriverInfo} from './runtime';
+
+export {getAndCheckIosSdkVersion, getAndCheckXcodeVersion} from './xcode';
+
+export {removeAllSessionWebSocketHandlers, shouldSetInitialSafariUrl} from './session';
+export type {SafariUrlSessionOpts, SessionWebSocketHandlerHost} from './session';
+
+export {
+  DEFAULT_TIMEOUT_KEY,
+  checkAppPresent,
+  normalizeCommandTimeouts,
+  requireArgs,
+} from './validation';
