@@ -1,3 +1,9 @@
+## [11.7.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.0...v11.7.1) (2026-05-24)
+
+### Bug Fixes
+
+* Tune WDA cleanup ([#2849](https://github.com/appium/appium-xcuitest-driver/issues/2849)) ([417f7d4](https://github.com/appium/appium-xcuitest-driver/commit/417f7d473234e629e9e2886f730e945dbf8165fd))
+
 ## [11.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.6.1...v11.7.0) (2026-05-23)
 
 ### Features
