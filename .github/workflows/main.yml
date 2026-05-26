@@ -1,10 +1,10 @@
 name: Build WDA For Windows User
 on:
-  workflow_dispatch: # 允许你手动点击按钮触发编译
+  push: # 重点：只要你点击保存提交代码，流水线立刻雷厉风行地自动开机！
 
 jobs:
   build_ipa:
-    runs-on: macos-14 # 借用 GitHub 官方最新的 macOS 虚拟机
+    runs-on: macos-latest 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
