@@ -1,7 +1,8 @@
 name: Build WDA For Windows User
 on:
-  push: # 重点：只要你点击保存提交代码，流水线立刻雷厉风行地自动开机！
-
+  push:
+    branches:
+      - master
 jobs:
   build_ipa:
     runs-on: macos-latest 
