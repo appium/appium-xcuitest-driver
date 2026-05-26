@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/11.7/troubleshooting/">
+        <link rel="canonical" href="https://appium.github.io/appium-xcuitest-driver/11.7/reference/xpath-extensions/">
       
       
-        <link rel="prev" href="../guides/input-events/">
+        <link rel="prev" href="../locator-strategies/">
       
       
-        <link rel="next" href="element-lookup/">
+        <link rel="next" href="../ios-predicate/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/appium-logo.png">
+      <link rel="icon" href="../../assets/images/appium-logo.png">
       <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
-        <title>Troubleshooting - Appium XCUITest Driver</title>
+        <title>XPath Extension Functions - Appium XCUITest Driver</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
   
@@ -118,11 +118,11 @@
       
     
     
-      <link rel="stylesheet" href="../css/timeago.css">
+      <link rel="stylesheet" href="../../css/timeago.css">
     
-      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -147,7 +147,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#known-problems" class="md-skip">
+        <a href="#quick-examples" class="md-skip">
           Skip to content
         </a>
       
@@ -167,7 +167,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="/appium-xcuitest-driver" title="Appium XCUITest Driver" class="md-header__button md-logo" aria-label="Appium XCUITest Driver" data-md-component="logo">
       
-  <img src="../assets/images/appium-logo-white.png" alt="logo">
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -184,7 +184,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Troubleshooting
+              XPath Extension Functions
             
           </span>
         </div>
@@ -305,7 +305,7 @@
   
   
     <li class="md-tabs__item">
-      <a href=".." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -324,7 +324,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../overview/" class="md-tabs__link">
+      <a href="../../overview/" class="md-tabs__link">
         
   
   
@@ -345,7 +345,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../getting-started/" class="md-tabs__link">
+        <a href="../../getting-started/" class="md-tabs__link">
           
   
   
@@ -363,6 +363,8 @@
   
   
   
+    
+  
   
     
     
@@ -370,11 +372,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../reference/scripts/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../scripts/" class="md-tabs__link">
           
   
   
@@ -406,7 +410,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../guides/ci-setup/" class="md-tabs__link">
+        <a href="../../guides/ci-setup/" class="md-tabs__link">
           
   
   
@@ -427,13 +431,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../troubleshooting/" class="md-tabs__link">
           
   
   
@@ -453,7 +455,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../contributing/" class="md-tabs__link">
+      <a href="../../contributing/" class="md-tabs__link">
         
   
   
@@ -490,7 +492,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="/appium-xcuitest-driver" title="Appium XCUITest Driver" class="md-nav__button md-logo" aria-label="Appium XCUITest Driver" data-md-component="logo">
       
-  <img src="../assets/images/appium-logo-white.png" alt="logo">
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
 
     </a>
     Appium XCUITest Driver
@@ -517,7 +519,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -544,7 +546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overview/" class="md-nav__link">
+      <a href="../../overview/" class="md-nav__link">
         
   
   
@@ -602,7 +604,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../getting-started/" class="md-nav__link ">
+            <a href="../../getting-started/" class="md-nav__link ">
               
   
   
@@ -646,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/system-requirements/" class="md-nav__link">
+      <a href="../../getting-started/system-requirements/" class="md-nav__link">
         
   
   
@@ -674,7 +676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/installation/" class="md-nav__link">
+      <a href="../../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -702,7 +704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/device-setup/" class="md-nav__link">
+      <a href="../../getting-started/device-setup/" class="md-nav__link">
         
   
   
@@ -761,7 +763,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../getting-started/provisioning-profile/" class="md-nav__link ">
+            <a href="../../getting-started/provisioning-profile/" class="md-nav__link ">
               
   
   
@@ -805,7 +807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/provisioning-profile/auto-config/" class="md-nav__link">
+      <a href="../../getting-started/provisioning-profile/auto-config/" class="md-nav__link">
         
   
   
@@ -833,7 +835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/provisioning-profile/basic-manual-config/" class="md-nav__link">
+      <a href="../../getting-started/provisioning-profile/basic-manual-config/" class="md-nav__link">
         
   
   
@@ -861,7 +863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/provisioning-profile/full-manual-config/" class="md-nav__link">
+      <a href="../../getting-started/provisioning-profile/full-manual-config/" class="md-nav__link">
         
   
   
@@ -889,7 +891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/provisioning-profile/generic-device-config/" class="md-nav__link">
+      <a href="../../getting-started/provisioning-profile/generic-device-config/" class="md-nav__link">
         
   
   
@@ -929,8 +931,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -944,19 +948,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -974,7 +981,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1008,17 +1015,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
         
           
-          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="">
             
   
   
@@ -1054,7 +1064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/scripts/" class="md-nav__link">
+      <a href="../scripts/" class="md-nav__link">
         
   
   
@@ -1082,7 +1092,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/server-args/" class="md-nav__link">
+      <a href="../server-args/" class="md-nav__link">
         
   
   
@@ -1110,7 +1120,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/env-vars/" class="md-nav__link">
+      <a href="../env-vars/" class="md-nav__link">
         
   
   
@@ -1138,7 +1148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/security-flags/" class="md-nav__link">
+      <a href="../security-flags/" class="md-nav__link">
         
   
   
@@ -1192,17 +1202,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
         
           
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
             
   
   
@@ -1238,7 +1251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/capabilities/" class="md-nav__link">
+      <a href="../capabilities/" class="md-nav__link">
         
   
   
@@ -1266,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/settings/" class="md-nav__link">
+      <a href="../settings/" class="md-nav__link">
         
   
   
@@ -1294,7 +1307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/commands/" class="md-nav__link">
+      <a href="../commands/" class="md-nav__link">
         
   
   
@@ -1322,7 +1335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/bidi/" class="md-nav__link">
+      <a href="../bidi/" class="md-nav__link">
         
   
   
@@ -1350,7 +1363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/execute-methods/" class="md-nav__link">
+      <a href="../execute-methods/" class="md-nav__link">
         
   
   
@@ -1383,8 +1396,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1401,18 +1416,21 @@
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
             
   
   
@@ -1430,7 +1448,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1448,7 +1466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/locator-strategies/" class="md-nav__link">
+      <a href="../locator-strategies/" class="md-nav__link">
         
   
   
@@ -1473,10 +1491,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../reference/xpath-extensions/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XPath Extension Functions
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1492,6 +1535,357 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#quick-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick examples
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#matches" class="md-nav__link">
+    <span class="md-ellipsis">
+      matches
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#ends-with" class="md-nav__link">
+    <span class="md-ellipsis">
+      ends-with
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#lower-case-upper-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      lower-case / upper-case
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#replace" class="md-nav__link">
+    <span class="md-ellipsis">
+      replace
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#tokenize-and-string-join" class="md-nav__link">
+    <span class="md-ellipsis">
+      tokenize and string-join
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#regular-expression-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Regular expression flags
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error handling
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#more-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      More information
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1504,7 +1898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/ios-predicate/" class="md-nav__link">
+      <a href="../ios-predicate/" class="md-nav__link">
         
   
   
@@ -1532,7 +1926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference/element-attributes/" class="md-nav__link">
+      <a href="../element-attributes/" class="md-nav__link">
         
   
   
@@ -1699,7 +2093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/ci-setup/" class="md-nav__link">
+      <a href="../../guides/ci-setup/" class="md-nav__link">
         
   
   
@@ -1727,7 +2121,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/multiple-xcode-versions/" class="md-nav__link">
+      <a href="../../guides/multiple-xcode-versions/" class="md-nav__link">
         
   
   
@@ -1755,7 +2149,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/remotexpc-tunnels-real-devices/" class="md-nav__link">
+      <a href="../../guides/remotexpc-tunnels-real-devices/" class="md-nav__link">
         
   
   
@@ -1845,7 +2239,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/run-preinstalled-wda/" class="md-nav__link">
+      <a href="../../guides/run-preinstalled-wda/" class="md-nav__link">
         
   
   
@@ -1873,7 +2267,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/run-prebuilt-wda/" class="md-nav__link">
+      <a href="../../guides/run-prebuilt-wda/" class="md-nav__link">
         
   
   
@@ -1901,7 +2295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/attach-to-running-wda/" class="md-nav__link">
+      <a href="../../guides/attach-to-running-wda/" class="md-nav__link">
         
   
   
@@ -1929,7 +2323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/wda-custom-server/" class="md-nav__link">
+      <a href="../../guides/wda-custom-server/" class="md-nav__link">
         
   
   
@@ -2035,7 +2429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/capability-sets/" class="md-nav__link">
+      <a href="../../guides/capability-sets/" class="md-nav__link">
         
   
   
@@ -2063,7 +2457,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/parallel-tests/" class="md-nav__link">
+      <a href="../../guides/parallel-tests/" class="md-nav__link">
         
   
   
@@ -2091,7 +2485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/hybrid/" class="md-nav__link">
+      <a href="../../guides/hybrid/" class="md-nav__link">
         
   
   
@@ -2119,7 +2513,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/mjpeg/" class="md-nav__link">
+      <a href="../../guides/mjpeg/" class="md-nav__link">
         
   
   
@@ -2221,7 +2615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/audio-capture/" class="md-nav__link">
+      <a href="../../guides/audio-capture/" class="md-nav__link">
         
   
   
@@ -2249,7 +2643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/file-transfer/" class="md-nav__link">
+      <a href="../../guides/file-transfer/" class="md-nav__link">
         
   
   
@@ -2277,7 +2671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/install-certificate/" class="md-nav__link">
+      <a href="../../guides/install-certificate/" class="md-nav__link">
         
   
   
@@ -2305,7 +2699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/clipboard/" class="md-nav__link">
+      <a href="../../guides/clipboard/" class="md-nav__link">
         
   
   
@@ -2333,7 +2727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/biometric-auth/" class="md-nav__link">
+      <a href="../../guides/biometric-auth/" class="md-nav__link">
         
   
   
@@ -2361,7 +2755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/gestures/" class="md-nav__link">
+      <a href="../../guides/gestures/" class="md-nav__link">
         
   
   
@@ -2455,7 +2849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/tvos/" class="md-nav__link">
+      <a href="../../guides/tvos/" class="md-nav__link">
         
   
   
@@ -2483,7 +2877,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/input-events/" class="md-nav__link">
+      <a href="../../guides/input-events/" class="md-nav__link">
         
   
   
@@ -2523,8 +2917,6 @@
       
   
   
-    
-  
   
   
     
@@ -2542,23 +2934,20 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../../troubleshooting/" class="md-nav__link ">
               
   
   
@@ -2576,13 +2965,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2602,7 +2991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="element-lookup/" class="md-nav__link">
+      <a href="../../troubleshooting/element-lookup/" class="md-nav__link">
         
   
   
@@ -2630,7 +3019,7 @@
   
   
     <li class="md-nav__item">
-      <a href="wda-slowness/" class="md-nav__link">
+      <a href="../../troubleshooting/wda-slowness/" class="md-nav__link">
         
   
   
@@ -2665,7 +3054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contributing/" class="md-nav__link">
+      <a href="../../contributing/" class="md-nav__link">
         
   
   
@@ -2736,9 +3125,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#known-problems" class="md-nav__link">
+  <a href="#quick-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Known Problems
+      Quick examples
     </span>
   </a>
 
@@ -2773,9 +3162,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#interact-with-dialogs-managed-by-comapplespringboard" class="md-nav__link">
+  <a href="#matches" class="md-nav__link">
     <span class="md-ellipsis">
-      Interact with dialogs managed by com.apple.springboard
+      matches
     </span>
   </a>
 
@@ -2810,9 +3199,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview" class="md-nav__link">
+  <a href="#ends-with" class="md-nav__link">
     <span class="md-ellipsis">
-      Interact with dialogs managed by com.apple.ContactsUI.LimitedAccessPromptView
+      ends-with
     </span>
   </a>
 
@@ -2847,9 +3236,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#leftover-application-data-on-real-devices" class="md-nav__link">
+  <a href="#lower-case-upper-case" class="md-nav__link">
     <span class="md-ellipsis">
-      Leftover Application Data on Real Devices
+      lower-case / upper-case
     </span>
   </a>
 
@@ -2884,126 +3273,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#weird-state" class="md-nav__link">
+  <a href="#replace" class="md-nav__link">
     <span class="md-ellipsis">
-      Weird State
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-    <nav class="md-nav" aria-label="Weird State">
-      <ul class="md-nav__list">
-        
-          <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#real-device-stops-responding" class="md-nav__link">
-    <span class="md-ellipsis">
-      Real Device Stops Responding
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-        
-          <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#command-takes-60-seconds" class="md-nav__link">
-    <span class="md-ellipsis">
-      Command Takes 60+ Seconds
-    </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#real-device-security-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      Real Device Security Settings
+      replace
     </span>
   </a>
 
@@ -3038,9 +3310,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#simulator-resetting" class="md-nav__link">
+  <a href="#tokenize-and-string-join" class="md-nav__link">
     <span class="md-ellipsis">
-      Simulator Resetting
+      tokenize and string-join
     </span>
   </a>
 
@@ -3075,9 +3347,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#caching-issues-during-build" class="md-nav__link">
+  <a href="#regular-expression-flags" class="md-nav__link">
     <span class="md-ellipsis">
-      Caching Issues During Build
+      Regular expression flags
     </span>
   </a>
 
@@ -3112,9 +3384,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#frequent-disconnecting-from-remote-debugger-error-in-ios-17" class="md-nav__link">
+  <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
-      Frequent Disconnecting from remote debugger error in iOS 17
+      Error handling
     </span>
   </a>
 
@@ -3149,9 +3421,9 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
-  <a href="#unable-to-detect-webview" class="md-nav__link">
+  <a href="#more-information" class="md-nav__link">
     <span class="md-ellipsis">
-      Unable to Detect Webview
+      More information
     </span>
   </a>
 
@@ -3184,7 +3456,7 @@
   
   
     <li class="md-path__item">
-      <a href=".." class="md-path__link">
+      <a href="../.." class="md-path__link">
         
   <span class="md-ellipsis">
     Welcome
@@ -3201,11 +3473,37 @@
   
     
     
+      
+  
+  
+    
+    
       <li class="md-path__item">
-        <a href="./" class="md-path__link">
+        <a href="../scripts/" class="md-path__link">
           
   <span class="md-ellipsis">
-    Troubleshooting
+    Reference
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../locator-strategies/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Element Management
   </span>
 
         </a>
@@ -3224,7 +3522,7 @@
 
 
   
-    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/troubleshooting/index.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/appium/appium-xcuitest-driver/edit/master/docs/reference/xpath-extensions.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3232,179 +3530,218 @@
   
 
 
-  <h1>Troubleshooting</h1>
+  <h1>XPath Extension Functions</h1>
 
-<h2 id="known-problems">Known Problems<a class="headerlink" href="#known-problems" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Real devices with iOS/iPadOS 15+ show an overlay with the text <code>Automation Running Hold both
-  volume buttons to stop</code> while WebDriverAgent is running. This is a known limitation of the XCTest
-  framework. Note that screenshotting functionality is not affected (i.e. the overlay is not visible
-  on taken screenshots).</li>
-<li>Real devices with iOS/iPadOS 15+ <a href="https://github.com/appium/appium/issues/15898#issuecomment-927340411">require passcode or Touch ID</a>
-  when starting a new session. A workaround for this is to disable passcode/Touch ID on the device.</li>
-<li>After many failures on a real device, it could transition to a state where connections are no
-  longer being accepted. Rebooting the device can help remedy this problem. Please read
-  <a href="https://github.com/facebook/WebDriverAgent/issues/507">this issue</a> for more details.</li>
-<li><code>shake</code> is implemented via AppleScript and works only on Simulator due to lack of support from Apple</li>
-</ul>
-<h2 id="interact-with-dialogs-managed-by-comapplespringboard">Interact with dialogs managed by <code>com.apple.springboard</code><a class="headerlink" href="#interact-with-dialogs-managed-by-comapplespringboard" title="Permanent link">&para;</a></h2>
-<p>System dialogs, such as permission dialogs, might not be interactable directly when the active application is not <code>com.apple.springboard</code>.
-Despite a similar look, dialogs belonging to the active session application (e.g. initially passed as <code>appium:app</code> or <code>appium:bundleId</code> capability value)
-do not require such adjustment.</p>
-<p>XCUITest driver offers a couple of approaches to handle them:</p>
-<ul>
-<li>Set the <a href="../reference/settings/#respectsystemalerts">respectSystemAlerts setting</a> to <code>true</code>. It
-  enforces the active application detection algorithm to check a presence of system alerts and to
-  return the Springboard app if this check succeeds. Such approach emulates the driver behavior
-  prior to version 6 of XCUITest driver, although it might slightly slow down your scripts because
-  each attempt to detect an active app would require to also query for alerts presence.</li>
-<li>Start a session without <code>appium:app</code> nor <code>appium:bundleId</code>. Then XCUITest driver attempts to get the current active application. This requires you to start an application after a new session request with <a href="../reference/execute-methods/#mobile-installapp"><code>mobile: installApp</code></a> to install an app if needed and <a href="../reference/execute-methods/#mobile-launchapp"><code>mobile: launchApp</code></a>/<a href="../reference/execute-methods/#mobile-activateapp"><code>mobile: activateApp</code></a>, but it could automatically change the active application with <code>com.apple.springboard</code> or activate an application at the foreground. (Note that the automatic app detection might be lengthy, thus each action could take more time.)<ul>
-<li>When a permission alert exists at the foreground, it could select the <code>com.apple.springboard</code></li>
-<li>When another application is at the foreground by accepting/denying the system alert, or <a href="../reference/execute-methods/#mobile-activateapp"><code>mobile: activateApp</code></a>, the application would be selected as an active application.</li>
-</ul>
-</li>
-<li><a href="../reference/execute-methods/#mobile-alert"><code>mobile: alert</code></a></li>
-<li><code>defaultActiveApplication</code> setting in <a href="../reference/settings/#defaultactiveapplication">Settings</a>.<ul>
-<li>e.g. With the <a href="https://github.com/appium/ruby_lib_core">Appium Ruby client</a>
-    <div class="language-ruby highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Interacting with the test target</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">driver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="ss">defaultActiveApplication</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.apple.springboard&quot;</span><span class="p">})</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># to accept the alert</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s2">&quot;accessibility_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Allow Once&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">driver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="ss">defaultActiveApplication</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">})</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># keep interacting with the test target</span>
-</span></code></pre></div></li>
-</ul>
-</li>
-<li>Enable <code>appium:autoAcceptAlerts</code>/<code>appium:autoDismissAlerts</code>, or interact with alerts via <a href="https://www.w3.org/TR/webdriver1/#user-prompts">User Prompts</a> in WebDriver endpoints<ul>
-<li>e.g. <code>driver.switch_to.alert.accept</code> with the <a href="https://github.com/appium/ruby_lib_core">Appium Ruby client</a></li>
-<li>It might be necessary to coordinate element selection via <a href="../reference/settings/#acceptalertbuttonselector"><code>acceptAlertButtonSelector</code></a>
-  or <a href="../reference/settings/#dismissalertbuttonselector"><code>dismissAlertButtonSelector</code></a> settings</li>
-</ul>
-</li>
-<li>Activate <code>com.apple.springboard</code> with <a href="../reference/execute-methods/#mobile-activateapp"><code>mobile: activateApp</code></a> before interacting with dialogs</li>
-</ul>
-<p><a href="../reference/execute-methods/#mobile-activeappinfo"><code>mobile: activeAppInfo</code></a> helps to understand what application (bundleId) is considered as active for the XCUITest driver.</p>
-<h2 id="interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview">Interact with dialogs managed by <code>com.apple.ContactsUI.LimitedAccessPromptView</code><a class="headerlink" href="#interact-with-dialogs-managed-by-comapplecontactsuilimitedaccesspromptview" title="Permanent link">&para;</a></h2>
-<p>iOS 18 introduced a new process named <code>com.apple.ContactsUI.LimitedAccessPromptView</code>. See <a href="https://github.com/appium/appium/issues/20591">this issue</a> for more details.
-As of XCUITest driver v7.26.4, the only workaround to interact with views available through the process is the below method:</p>
-<ul>
-<li><code>defaultActiveApplication</code> setting in <a href="../reference/settings/#defaultactiveapplication">Settings</a>.<ul>
-<li>e.g. With the <a href="https://github.com/appium/ruby_lib_core">Appium Ruby client</a>
-    <div class="language-ruby highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Interacting with the test target</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">driver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="ss">defaultActiveApplication</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.apple.ContactsUI.LimitedAccessPromptView&quot;</span><span class="p">})</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># to accept the alert</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s2">&quot;accessibility_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Select Contacts&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">click</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">driver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="ss">defaultActiveApplication</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">})</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># keep interacting with the test target</span>
-</span></code></pre></div></li>
-</ul>
-</li>
-</ul>
-<p>The <code>com.apple.ContactsUI.LimitedAccessPromptView</code> process can get elements available through <code>com.apple.springboard</code>, such as several system permission dialogs.
-iOS 18+ devices may be possible to use <code>com.apple.ContactsUI.LimitedAccessPromptView</code> to interact with elements managed either by <code>com.apple.ContactsUI.LimitedAccessPromptView</code> or <code>com.apple.springboard</code>.</p>
-<h2 id="leftover-application-data-on-real-devices">Leftover Application Data on Real Devices<a class="headerlink" href="#leftover-application-data-on-real-devices" title="Permanent link">&para;</a></h2>
-<p>There might be a situation where application data is present on the real device, even if the
-application itself is not installed. This could happen if:</p>
-<ul>
-<li>The app is in an <a href="https://discussions.apple.com/thread/254887240">offloaded state</a></li>
-<li>The application state is cached</li>
-<li>There was an unexpected failure while installing the app. An example of such failure is the
-  <code>ApplicationVerificationFailed</code> which happens while installing an app signed with an invalid provisioning profile.</li>
-</ul>
-<p>In the above cases, the application identifier will not be listed in the output of
-<a href="../reference/execute-methods/#mobile-listapps"><code>mobile: listApps</code></a>, and it will not be detected
-by <a href="../reference/execute-methods/#mobile-isappinstalled"><code>mobile: isAppInstalled</code></a>. Setting
-<code>appium:fullReset</code> or <code>appium:enforceAppInstall</code> capabilities to <code>true</code> also will not help clear this data.</p>
-<p>The only way to completely get rid of the cached application data is to call the
-<a href="../reference/execute-methods/#mobile-removeapp"><code>mobile: removeApp</code></a> command with the appropriate
-bundle identifier.</p>
-<p>The driver does automatically try to resolve application installs that failed because of the
-<code>MismatchedApplicationIdentifierEntitlement</code> error. However, in cases when the previously installed
-application's provisioning profile is different from what currently the driver is trying to
-install, and if you explicitly set the driver to <em>not</em> perform application uninstall, then consider
-calling <a href="../reference/execute-methods/#mobile-removeapp"><code>mobile: removeApp</code></a> before the
-<code>MismatchedApplicationIdentifierEntitlement</code> error occurs. Example steps can be as follows:</p>
-<ol>
-<li>Start a session without <code>appium:app</code> and <code>appium:bundleId</code> capabilities</li>
-<li>Call <a href="../reference/execute-methods/#mobile-removeapp"><code>mobile: removeApp</code></a> for the target
-   application's bundle id</li>
-<li>Install the test target with <a href="../reference/execute-methods/#mobile-installapp"><code>mobile: installApp</code></a></li>
-<li>Launch the application with <a href="../reference/execute-methods/#mobile-launchapp"><code>mobile: launchApp</code></a>
-   or <a href="../reference/execute-methods/#mobile-activateapp"><code>mobile: activateApp</code></a></li>
-</ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We observed that iOS 18+ environments can retain the permission preference even after reinstallation.
-Please refer to <a href="https://github.com/appium/appium-xcuitest-driver/issues/2572">this issue</a> for more information about this behavior.</p>
+<p>Starting with <a href="https://github.com/appium/WebDriverAgent/releases/tag/v13.2.0">WebDriverAgent 13.2.0</a>
+(<a href="https://github.com/appium/WebDriverAgent/pull/1144">appium/WebDriverAgent#1144</a>), the XCUITest
+driver's XPath locator strategy supports XPath 2–style <strong>string extension functions</strong> on top of the
+existing XPath 1.0 evaluator. They are evaluated inside WebDriverAgent (libxml2) and work in both
+standalone expressions and predicates inside element queries.</p>
+<div class="admonition info">
+<p class="admonition-title">XPath 1.0 baseline</p>
+<p>The underlying engine is still XPath 1.0. Only the functions listed below are added; full XPath
+2.0 syntax is not supported. See <a href="../locator-strategies/#xpath">Locator Strategies</a> for general
+XPath usage notes and performance guidance.</p>
 </div>
-<h2 id="weird-state">Weird State<a class="headerlink" href="#weird-state" title="Permanent link">&para;</a></h2>
-<h3 id="real-device-stops-responding">Real Device Stops Responding<a class="headerlink" href="#real-device-stops-responding" title="Permanent link">&para;</a></h3>
-<p>Running tests on a real device is particularly flakey. If things stop responding, the only recourse
-is, most often, to restart the device. Logs in the form of the following <em>may</em> start to occur:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>info<span class="w"> </span>JSONWP<span class="w"> </span>Proxy<span class="w"> </span>Proxying<span class="w"> </span><span class="o">[</span>POST<span class="w"> </span>/session<span class="o">]</span><span class="w"> </span>to<span class="w"> </span><span class="o">[</span>POST<span class="w"> </span>http://10.35.4.122:8100/session<span class="o">]</span><span class="w"> </span>with<span class="w"> </span>body:<span class="w"> </span><span class="o">{</span><span class="s2">&quot;desiredCapabilities&quot;</span>:<span class="o">{</span><span class="s2">&quot;ap...&quot;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:20:42<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Listening<span class="w"> </span>on<span class="w"> </span>USB
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:21:42<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>Unable<span class="w"> </span>to<span class="w"> </span>update<span class="w"> </span>application<span class="w"> </span>state<span class="w"> </span>promptly.<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:21:57<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>get<span class="w"> </span>screenshot<span class="w"> </span>within<span class="w"> </span>15s<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>dbug<span class="w"> </span>WebDriverAgent<span class="w"> </span>Device:<span class="w"> </span>Jul<span class="w"> </span><span class="m">26</span><span class="w"> </span><span class="m">13</span>:22:57<span class="w"> </span>iamPhone<span class="w"> </span>XCTRunner<span class="o">[</span><span class="m">240</span><span class="o">]</span><span class="w"> </span>&lt;Warning&gt;:<span class="w"> </span>Enqueue<span class="w"> </span>Failure:<span class="w"> </span>UI<span class="w"> </span>Testing<span class="w"> </span>Failure<span class="w"> </span>-<span class="w"> </span>App<span class="w"> </span>state<span class="w"> </span>of<span class="w"> </span><span class="o">(</span>null<span class="o">)</span><span class="w"> </span>is<span class="w"> </span>still<span class="w"> </span>unknown<span class="w"> </span>&lt;unknown&gt;<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span>
+<div class="admonition warning">
+<p class="admonition-title">WebDriverAgent version</p>
+<p>These functions require WebDriverAgent <strong>13.2.0 or newer</strong>. The driver bundles WDA via the
+<a href="https://www.npmjs.com/package/appium-webdriveragent"><code>appium-webdriveragent</code></a> dependency. If you
+manage WDA yourself (prebuilt, preinstalled, or <code>appium:webDriverAgentUrl</code>), ensure the running
+WDA build includes this release.</p>
+</div>
+<h2 id="quick-examples">Quick examples<a class="headerlink" href="#quick-examples" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Java</label><label for="__tabbed_1_2">JavaScript (WebdriverIO)</label><label for="__tabbed_1_3">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Case-insensitive label match</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="s">&quot;//XCUIElementTypeButton[matches(@label, &#39;^alerts$&#39;, &#39;i&#39;)]&quot;</span><span class="p">));</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// Case-normalized equality</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">AppiumBy</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="s">&quot;//XCUIElementTypeButton[lower-case(@label) = &#39;alerts&#39;]&quot;</span><span class="p">));</span>
 </span></code></pre></div>
-<h3 id="command-takes-60-seconds">Command Takes 60+ Seconds<a class="headerlink" href="#command-takes-60-seconds" title="Permanent link">&para;</a></h3>
-<p>Sometimes it is possible to encounter slowdowns for an additional 60 seconds for a command that
-usually should not take long. This may be caused by a crash in the <code>testmanagerd</code> process on the
-device under test. In such a case, the OS tries to restore the process, then wait for the resurrected
-daemon to connect to the target process, which causes the aforementioned delay.</p>
-<p>This can be fixed by terminating the target application process. For example, if this behavior
-occurs while calling <code>mobile: queryAppState</code>, you can terminate the application once, or restart the
-device entirely. Please check <a href="https://github.com/appium/WebDriverAgent/pull/774">this pull request</a>
-for more details.</p>
-<h2 id="real-device-security-settings">Real Device Security Settings<a class="headerlink" href="#real-device-security-settings" title="Permanent link">&para;</a></h2>
-<p>On some systems, especially CI ones, where tests are executed by command line agents, macOS
-Accessibility restrictions result in the WebDriverAgent process being unable to retrieve the
-development keys from the system keychain. This usually manifests by <code>xcodebuild</code> returning error
-code <code>65</code>. One workaround for this is to use a private key that is not stored on the system
-keychain. See <a href="https://github.com/appium/appium/issues/6955">this issue</a> and
-<a href="http://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails">this Stack Exchange post</a>.</p>
-<p>To export the key, use</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>security create-keychain -p [keychain_password] MyKeychain.keychain
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>security import MyPrivateKey.p12 -t agg -k MyKeychain.keychain -P [p12_Password] -A
+</div>
+<div class="tabbed-block">
+<div class="language-javascript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;//XCUIElementTypeButton[ends-with(@label, &quot;ing&quot;)]&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
 </span></code></pre></div>
-<p>where <code>MyPrivateKey.p12</code> is the private development key exported from the system keychain.</p>
-<p>You can then use the <a href="../reference/capabilities/#webdriveragent"><code>appium:keychainPath</code></a> and
-<a href="../reference/capabilities/#webdriveragent"><code>appium:keychainPassword</code></a> capabilities to pass this
-keychain to WebDriverAgent.</p>
-<h2 id="simulator-resetting">Simulator Resetting<a class="headerlink" href="#simulator-resetting" title="Permanent link">&para;</a></h2>
-<p>When testing on simulators, the driver tries to leave the simulator state as it found it:</p>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">AppiumBy</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s1">&#39;//XCUIElementTypeButton[replace(@label, &quot; &quot;, &quot;&quot;) = &quot;Deadlockapp&quot;]&#39;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="matches"><code>matches</code><a class="headerlink" href="#matches" title="Permanent link">&para;</a></h2>
+<p>Tests whether a string matches a regular expression.</p>
+<p><strong>Signature:</strong> <code>matches(input, pattern)</code> or <code>matches(input, pattern, flags)</code></p>
+<p><strong>Returns:</strong> <code>boolean</code></p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input</code></td>
+<td>String to test (often an attribute, e.g. <code>@label</code>)</td>
+</tr>
+<tr>
+<td><code>pattern</code></td>
+<td>Regular expression (<a href="https://developer.apple.com/documentation/foundation/nsregularexpression"><code>NSRegularExpression</code></a>)</td>
+</tr>
+<tr>
+<td><code>flags</code></td>
+<td>Optional. Supported: <code>i</code> (case-insensitive), <code>m</code>, <code>s</code>, <code>x</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>//XCUIElementTypeButton[matches(@label, &#39;^Alerts$&#39;)]
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>//XCUIElementTypeButton[matches(@label, &#39;^alerts$&#39;, &#39;i&#39;)]
+</span></code></pre></div>
+<h2 id="ends-with"><code>ends-with</code><a class="headerlink" href="#ends-with" title="Permanent link">&para;</a></h2>
+<p>Tests whether a string ends with a given suffix (literal suffix, not a regex).</p>
+<p><strong>Signature:</strong> <code>ends-with(input, suffix)</code></p>
+<p><strong>Returns:</strong> <code>boolean</code></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>//XCUIElementTypeButton[ends-with(@label, &#39;ing&#39;)]
+</span></code></pre></div>
+<h2 id="lower-case-upper-case"><code>lower-case</code> / <code>upper-case</code><a class="headerlink" href="#lower-case-upper-case" title="Permanent link">&para;</a></h2>
+<p>Convert a string to lowercase or uppercase using the system locale rules.</p>
+<p><strong>Signature:</strong> <code>lower-case(input)</code> / <code>upper-case(input)</code></p>
+<p><strong>Returns:</strong> <code>string</code></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>//XCUIElementTypeButton[lower-case(@label) = &#39;alerts&#39;]
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>//XCUIElementTypeButton[upper-case(@label) = &#39;TOUCH&#39;]
+</span></code></pre></div>
+<h2 id="replace"><code>replace</code><a class="headerlink" href="#replace" title="Permanent link">&para;</a></h2>
+<p>Replaces substrings that match a regular expression with a replacement template.</p>
+<p><strong>Signature:</strong> <code>replace(input, pattern, replacement)</code> or <code>replace(input, pattern, replacement, flags)</code></p>
+<p><strong>Returns:</strong> <code>string</code></p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input</code></td>
+<td>Source string</td>
+</tr>
+<tr>
+<td><code>pattern</code></td>
+<td>Regular expression</td>
+</tr>
+<tr>
+<td><code>replacement</code></td>
+<td>Replacement template (same semantics as <code>NSRegularExpression</code> replacement)</td>
+</tr>
+<tr>
+<td><code>flags</code></td>
+<td>Optional. Supported: <code>i</code>, <code>m</code>, <code>s</code>, <code>x</code>, <code>q</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>//XCUIElementTypeButton[replace(@label, &#39; &#39;, &#39;&#39;) = &#39;Deadlockapp&#39;]
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>replace(//XCUIElementTypeOther/@value, &#39;-&#39;, &#39;_&#39;)
+</span></code></pre></div>
+<h2 id="tokenize-and-string-join"><code>tokenize</code> and <code>string-join</code><a class="headerlink" href="#tokenize-and-string-join" title="Permanent link">&para;</a></h2>
+<p>Split a string into parts and join them with a separator. These are intended to be used together:
+<code>tokenize</code> produces an internal token sequence that <code>string-join</code> consumes (this avoids temporary
+XML node-sets in the XPath 1.0 engine).</p>
+<p><strong><code>tokenize</code> signature:</strong> <code>tokenize(input)</code> or <code>tokenize(input, pattern)</code></p>
+<p><strong><code>string-join</code> signature:</strong> <code>string-join(sequence, separator)</code></p>
+<p><strong>Returns:</strong> <code>string</code> (from <code>string-join</code>)</p>
+<table>
+<thead>
+<tr>
+<th><code>tokenize</code> form</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tokenize(input)</code></td>
+<td>Split on whitespace (non-empty tokens)</td>
+</tr>
+<tr>
+<td><code>tokenize(input, '')</code></td>
+<td>Split into Unicode extended grapheme clusters</td>
+</tr>
+<tr>
+<td><code>tokenize(input, pattern)</code></td>
+<td>Split using the regex <code>pattern</code> as delimiter</td>
+</tr>
+</tbody>
+</table>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>string-join(tokenize(//XCUIElementTypeOther/@value, &#39;-&#39;), &#39;|&#39;)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>//XCUIElementTypeButton[string-join(tokenize(@label, &#39; &#39;), &#39;-&#39;) = &#39;Deadlock-app&#39;]
+</span></code></pre></div>
+<h2 id="regular-expression-flags">Regular expression flags<a class="headerlink" href="#regular-expression-flags" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th><code>matches</code></th>
+<th><code>replace</code></th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>i</code></td>
+<td>yes</td>
+<td>yes</td>
+<td>Case-insensitive</td>
+</tr>
+<tr>
+<td><code>m</code></td>
+<td>yes</td>
+<td>yes</td>
+<td>Multiline (<code>^</code> / <code>$</code> match line boundaries)</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td>yes</td>
+<td>yes</td>
+<td>Dot matches newlines</td>
+</tr>
+<tr>
+<td><code>x</code></td>
+<td>yes</td>
+<td>yes</td>
+<td>Ignore whitespace in the pattern</td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>no</td>
+<td>yes</td>
+<td>Quote metacharacters (literal pattern)</td>
+</tr>
+</tbody>
+</table>
+<p>Invalid flag combinations cause the XPath expression to fail evaluation.</p>
+<h2 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <ul>
-<li>If no <code>udid</code> is provided, the driver will create a new iOS simulator, run tests on it, and then
-  delete the simulator</li>
-<li>If a specific <code>udid</code> is provided for a simulator that <em>is not</em> running, the driver will boot the
-  specified simulator, run tests on it, and then shut the simulator down</li>
-<li>If a specific <code>udid</code> is provided for a simulator that <em>is</em> running, the driver will connect to the
-  existing simulator, run tests, and then leave the simulator running</li>
+<li><strong>Invalid arity</strong> (wrong number of arguments) fails the XPath evaluation.</li>
+<li><strong>Invalid regular expressions</strong> or <strong>invalid flags</strong> fail the XPath evaluation.</li>
+<li>When used for element lookup, failures surface as an invalid XPath error from WebDriverAgent
+  (<code>FBInvalidXPathException</code>).</li>
 </ul>
-<p>You can use the <code>appium:noReset</code> capability to adjust this behavior: setting it to <code>true</code> will
-leave the simulator running at the end of a test session.</p>
-<h2 id="caching-issues-during-build">Caching Issues During Build<a class="headerlink" href="#caching-issues-during-build" title="Permanent link">&para;</a></h2>
-<p>Testing on iOS generates files that can sometimes get large. These include logs, temporary files,
-and derived data from Xcode runs, all of which are safe to delete if any issues arise. The files are
-usually found in the following locations, should they need to be deleted:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$HOME/Library/Logs/CoreSimulator/*
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$HOME/Library/Developer/Xcode/DerivedData/*
-</span></code></pre></div>
-<h2 id="frequent-disconnecting-from-remote-debugger-error-in-ios-17">Frequent <code>Disconnecting from remote debugger</code> error in iOS 17<a class="headerlink" href="#frequent-disconnecting-from-remote-debugger-error-in-ios-17" title="Permanent link">&para;</a></h2>
-<p>Please try out iOS 17.6 or a newer version which includes <a href="https://developer.apple.com/documentation/safari-release-notes/safari-17_6-release-notes#Web-Inspector">a possible fix by Apple</a>.</p>
-<p>Frequent Web Inspector debugger disconnection started since iOS 17.2 (or iOS 17.0), that eventually caused <code>Disconnecting from remote debugger</code> error.
-It could be improved since iOS 17.6.
-Please check <a href="https://github.com/appium/appium-xcuitest-driver/pull/2334">the corresponding pull request</a> for more details.</p>
-<h2 id="unable-to-detect-webview">Unable to Detect Webview<a class="headerlink" href="#unable-to-detect-webview" title="Permanent link">&para;</a></h2>
-<p>The driver can only detect webviews that are exposed for debugging. This can be configured by the
-application developer as follows:</p>
+<p>Prefer <a href="../ios-predicate/">predicate string</a> or <a href="../locator-strategies/#class-chain">class chain</a>
+locators when they can express the same condition; XPath remains the slowest strategy, even with
+these helpers.</p>
+<h2 id="more-information">More information<a class="headerlink" href="#more-information" title="Permanent link">&para;</a></h2>
 <ul>
-<li>On iOS/iPadOS &gt;= 16.4: the destination <code>WKWebView</code> and/or <code>JSContext</code> component must have the
-  <a href="https://developer.apple.com/documentation/webkit/wkwebview/4111163-isinspectable"><code>isInspectable</code></a>
-  property set to <code>true</code>. Please read <a href="https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/">the WebKit documentation page</a>
-  for more details on this property.</li>
-<li>On iOS/iPadOS &lt; 16.4: the <a href="https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_cs_debugger"><code>get-task-allow</code> entitlement</a>
-  must be set to <code>true</code> in the application manifest.</li>
+<li><a href="https://github.com/appium/WebDriverAgent/pull/1144">WebDriverAgent PR #1144</a> — implementation and tests</li>
+<li><a href="../locator-strategies/">Locator Strategies</a> — strategy overview and performance notes</li>
+<li><a href="../element-attributes/">Element Attributes</a> — attribute names available in XPath (<code>@label</code>, <code>@name</code>, etc.)</li>
 </ul>
 
 
@@ -3426,7 +3763,7 @@ application developer as follows:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 14, 2026 07:57:55 UTC"><span class="timeago" datetime="2026-04-14T07:57:55+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 14, 2026 07:57:55 UTC">2026-04-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 26, 2026 16:56:06 UTC"><span class="timeago" datetime="2026-05-26T16:56:06+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 26, 2026 16:56:06 UTC">2026-05-26</span>
   </span>
 
     
@@ -3571,14 +3908,14 @@ application developer as follows:</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../js/timeago.min.js"></script>
+        <script src="../../js/timeago.min.js"></script>
       
-        <script src="../js/timeago_mkdocs_material.js"></script>
+        <script src="../../js/timeago_mkdocs_material.js"></script>
       
     
   </body>
