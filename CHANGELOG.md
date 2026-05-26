@@ -1,3 +1,9 @@
+## [11.7.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.2...v11.7.3) (2026-05-26)
+
+### Miscellaneous Chores
+
+* Document new WDA XPath lookup features ([#2852](https://github.com/appium/appium-xcuitest-driver/issues/2852)) ([78c3578](https://github.com/appium/appium-xcuitest-driver/commit/78c3578679cb53316429e16eb207afcb1079f2de))
+
 ## [11.7.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.1...v11.7.2) (2026-05-26)
 
 ### Miscellaneous Chores
