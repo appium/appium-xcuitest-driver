@@ -1,0 +1,30 @@
+name: Build WDA For Windows User
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build_ipa:
+    runs-on: macos-latest 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Appium Dependencies
+        run: npm install
+
+      - name: List directory structure
+        run: |
+          pwd
+          ls -la
+          find . -name "*.xcodeproj" -type d
