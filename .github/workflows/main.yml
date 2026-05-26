@@ -40,8 +40,9 @@ jobs:
           name: WDA-Ready-For-Windows
           path: WebDriverAgentRunner.ipa
 
-   - name: List directory structure
-  run: |
-    pwd
-    ls -la
-    find . -name "*.xcodeproj" -type d
+      - name: List directory structure
+        run: |
+          pwd
+          ls -la
+          find . -name "*.xcodeproj" -type d
+
