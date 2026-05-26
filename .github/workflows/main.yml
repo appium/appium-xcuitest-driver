@@ -8,7 +8,6 @@ on:
       - master
   workflow_dispatch:
 
-  
 jobs:
   build_ipa:
     runs-on: macos-latest 
@@ -24,32 +23,8 @@ jobs:
       - name: Install Appium Dependencies
         run: npm install
 
-      - name: Compile WebDriverAgentRunner
-        run: |
-          xcodebuild build-for-testing \
-            -project WebDriverAgent.xcodeproj \
-            -scheme WebDriverAgentRunner \
-            -destination 'generic/platform=iOS' \
-            -derivedDataPath ./derivedData \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
-
-      - name: Package to IPA
-        run: |
-          mkdir -p Payload
-          cp -r ./derivedData/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app ./Payload/
-          zip -r WebDriverAgentRunner.ipa Payload
-
-      - name: Upload Result
-        uses: actions/upload-artifact@v4
-        with:
-          name: WDA-Ready-For-Windows
-          path: WebDriverAgentRunner.ipa
-
       - name: List directory structure
         run: |
           pwd
           ls -la
           find . -name "*.xcodeproj" -type d
-
