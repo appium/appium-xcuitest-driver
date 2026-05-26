@@ -1,0 +1,41 @@
+name: Build WDA For Windows User
+on:
+  push: # 重点：只要你点击保存提交代码，流水线立刻雷厉风行地自动开机！
+
+jobs:
+  build_ipa:
+    runs-on: macos-latest 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Appium Dependencies
+        run: npm install
+
+      - name: Compile WebDriverAgentRunner
+        run: |
+          xcodebuild build-for-testing \
+            -project WebDriverAgent.xcodeproj \
+            -scheme WebDriverAgentRunner \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath ./derivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Package to IPA
+        run: |
+          mkdir -p Payload
+          cp -r ./derivedData/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app ./Payload/
+          zip -r WebDriverAgentRunner.ipa Payload
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: WDA-Ready-For-Windows
+          path: WebDriverAgentRunner.ipa
