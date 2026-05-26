@@ -55,6 +55,7 @@ nav:
           - reference/execute-methods.md
       - Element Management:
           - reference/locator-strategies.md
+          - reference/xpath-extensions.md
           - reference/ios-predicate.md
           - reference/element-attributes.md
   - Guides:
@@ -114,6 +115,7 @@ plugins:
       'execute-methods.md': 'reference/execute-methods.md'
       'ios-predicate.md': 'reference/ios-predicate.md'
       'locator-strategies.md': 'reference/locator-strategies.md'
+      'xpath-extensions.md': 'reference/xpath-extensions.md'
       'security-flags.md': 'reference/security-flags.md'
       'server-args.md': 'reference/server-args.md'
       'settings.md': 'reference/settings.md'

@@ -97,7 +97,9 @@ This strategy is not natively supported by XCTest, and relies on the XML tree ge
 XCUITest driver's page source API. As a result, such locators can be much slower compared to all
 other ones - sometimes up to 10x slower.
 
-Only XPath 1.0 is supported.
+Only XPath 1.0 is supported. WebDriverAgent 13.2.0+ adds [XPath 2–style string extension
+functions](./xpath-extensions.md) (`matches`, `ends-with`, `lower-case`, `upper-case`, `replace`,
+`tokenize`, `string-join`) for richer string matching in locators.
 
 !!! info "When to Use"
 
