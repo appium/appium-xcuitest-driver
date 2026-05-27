@@ -9,6 +9,7 @@ import {
   getLastRemoteXPCOptionalImportError,
   tryGetRemoteXPCModule,
   tryGetRemoteXPCUsbMuxStrategy,
+  wrapRemoteXPCConnectionError,
   type RemoteXPCEsmModule,
 } from './remotexpc-utils';
 
@@ -244,9 +245,7 @@ export class LockdownClient {
         lockdown.close();
       }
     } catch (err) {
-      throw new Error(`Tunnel lockdown failed for '${this.udid}': ${(err as Error).message}`, {
-        cause: err,
-      });
+      throw wrapRemoteXPCConnectionError(err, `Tunnel lockdown failed for '${this.udid}'`);
     }
   }
 }

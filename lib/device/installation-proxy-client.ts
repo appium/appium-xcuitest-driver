@@ -1,4 +1,4 @@
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 import {services} from 'appium-ios-device';
 import type {InstallationProxyService as IOSDeviceInstallationProxyService} from 'appium-ios-device';
@@ -81,7 +81,7 @@ export class InstallationProxyClient {
         return new InstallationProxyClient(installationProxyService, true);
       } catch (err: any) {
         log.error(
-          `Failed to create InstallationProxy client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
+          formatRemoteXPCFallbackLog('InstallationProxy', err),
         );
       }
     }

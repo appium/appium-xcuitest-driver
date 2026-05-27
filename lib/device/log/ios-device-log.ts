@@ -1,6 +1,6 @@
 import {services} from 'appium-ios-device';
 import {LineConsumingLog} from './line-consuming-log';
-import {getRemoteXPCServices} from '../remotexpc-utils';
+import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from '../remotexpc-utils';
 import type {AppiumLogger} from '@appium/types';
 import type {SyslogService} from 'appium-ios-remotexpc';
 
@@ -42,7 +42,7 @@ export class IOSDeviceLog extends LineConsumingLog {
         this.log.info('Starting RemoteXPC syslog capture');
         return;
       } catch (err: any) {
-        this.log.warn(`RemoteXPC syslog failed, falling back to legacy: ${err.message}`);
+        this.log.warn(formatRemoteXPCFallbackLog('syslog', err));
         await this.stopRemoteXPCCapture();
       }
     }

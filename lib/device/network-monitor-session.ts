@@ -3,7 +3,7 @@ import type {EventEmitter} from 'node:events';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 import {makeNetworkMonitorEvent} from '../commands/bidi/models';
 import {BIDI_EVENT_NAME} from '../commands/bidi/constants';
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {getRemoteXPCServices, wrapRemoteXPCConnectionError} from './remotexpc-utils';
 
 /**
  * Active DVT NetworkMonitor session: streams instrument events to the driver BiDi event bus.
@@ -38,8 +38,16 @@ export class NetworkMonitorSession {
    */
   async start(eventEmitter: EventEmitter): Promise<void> {
     this.stopped = false;
-    const Services = await getRemoteXPCServices();
-    const dvt = await Services.startDVTService(this.udid);
+    let dvt: DVTInstruments;
+    try {
+      const Services = await getRemoteXPCServices();
+      dvt = await Services.startDVTService(this.udid);
+    } catch (err) {
+      throw wrapRemoteXPCConnectionError(
+        err,
+        `Failed to start network monitor via RemoteXPC for '${this.udid}'`,
+      );
+    }
     this.dvt = dvt;
     this.runPromise = this.consumeEvents(dvt, eventEmitter);
   }

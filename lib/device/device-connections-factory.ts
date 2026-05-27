@@ -5,8 +5,9 @@ import {utilities} from 'appium-ios-device';
 import {checkPortStatus} from 'portscanner';
 import {waitForCondition} from 'asyncbox';
 import type {AppiumLogger} from '@appium/types';
-import type {DevicePortForwarder} from 'appium-ios-remotexpc';
+import type {DevicePortForwarder, TunnelEndpoint} from 'appium-ios-remotexpc';
 import {
+  formatRemoteXPCFallbackLog,
   getLastRemoteXPCOptionalImportError,
   tryGetRemoteXPCUsbMuxStrategy,
 } from './remotexpc-utils';
@@ -545,7 +546,16 @@ export class DeviceConnectionsFactory {
       );
     }
 
-    const tunnelConnection = await remotexpc.Services.getTunnelForDevice(udid);
+    let tunnelConnection: TunnelEndpoint;
+    try {
+      tunnelConnection = await remotexpc.Services.getTunnelForDevice(udid);
+    } catch (err) {
+      this.log.warn(
+        `Cannot create port forwarder via RemoteXPC tunnel for '${udid}'. ` +
+          formatRemoteXPCFallbackLog('port forwarding', err),
+      );
+      return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
+    }
     const tunnelHost = tunnelConnection.host;
     this.log.debug(
       `Using appium-ios-remotexpc tunnel strategy for '${udid}' through '${tunnelHost}'`,

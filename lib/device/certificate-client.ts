@@ -1,5 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {getRemoteXPCServices, wrapRemoteXPCConnectionError} from './remotexpc-utils';
 import type {CertificateList} from '../commands/types';
 import type {MobileConfigService as RemoteXPCMobileConfigService} from 'appium-ios-remotexpc';
 
@@ -51,10 +51,9 @@ export class CertificateClient {
       const mobileConfigService = await Services.startMobileConfigService(udid);
       return new CertificateClient(mobileConfigService, log);
     } catch (err: any) {
-      throw new Error(
-        `Failed to start RemoteXPC mobile config service for certificate operations: ${err.message}. ` +
-          'Ensure appium-ios-remotexpc is installed and the device is supported.',
-        {cause: err},
+      throw wrapRemoteXPCConnectionError(
+        err,
+        'Failed to start RemoteXPC mobile config service for certificate operations',
       );
     }
   }

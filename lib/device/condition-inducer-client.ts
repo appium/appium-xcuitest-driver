@@ -3,7 +3,7 @@ import type {AppiumLogger} from '@appium/types';
 import {isIos18OrNewerPlatform} from '../commands/helpers';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 import type {Condition, IConditionInducer} from '../types';
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {getRemoteXPCServices, wrapRemoteXPCConnectionError} from './remotexpc-utils';
 
 type InstrumentService = {
   callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;
@@ -89,8 +89,15 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   }
 
   async startConnection(): Promise<DVTInstruments> {
-    const Services = await getRemoteXPCServices();
-    return Services.startDVTService(this.udid);
+    try {
+      const Services = await getRemoteXPCServices();
+      return await Services.startDVTService(this.udid);
+    } catch (err) {
+      throw wrapRemoteXPCConnectionError(
+        err,
+        `Failed to start RemoteXPC DVT service for condition inducer on '${this.udid}'`,
+      );
+    }
   }
 }
 
