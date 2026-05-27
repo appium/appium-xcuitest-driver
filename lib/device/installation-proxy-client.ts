@@ -80,9 +80,7 @@ export class InstallationProxyClient {
         const installationProxyService = await Services.startInstallationProxyService(udid);
         return new InstallationProxyClient(installationProxyService, true);
       } catch (err: any) {
-        log.error(
-          formatRemoteXPCFallbackLog('InstallationProxy', err),
-        );
+        log.error(formatRemoteXPCFallbackLog('InstallationProxy', err));
       }
     }
 

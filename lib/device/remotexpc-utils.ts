@@ -35,8 +35,7 @@ export function isTunnelAvailabilityError(err: unknown): boolean {
  * User-facing message for tunnel registry / tunnel-entry failures from appium-ios-remotexpc.
  */
 export function formatTunnelAvailabilityMessage(err: unknown): string {
-  const detail =
-    err instanceof Error ? err.message : typeof err === 'string' ? err : String(err);
+  const detail = err instanceof Error ? err.message : typeof err === 'string' ? err : String(err);
   const normalizedDetail = detail.toLowerCase();
   const alreadySuggestsTunnelScript = normalizedDetail.includes('tunnel creation script');
   const setupHint = alreadySuggestsTunnelScript

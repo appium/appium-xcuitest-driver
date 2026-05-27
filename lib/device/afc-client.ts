@@ -101,9 +101,7 @@ export class AfcClient {
         const afcService = await Services.startAfcService(udid);
         return new AfcClient(afcService, true);
       } catch (err: any) {
-        log.error(
-          formatRemoteXPCFallbackLog('AFC', err),
-        );
+        log.error(formatRemoteXPCFallbackLog('AFC', err));
       }
     }
 
@@ -138,9 +136,7 @@ export class AfcClient {
           : await houseArrestService.vendContainer(bundleId);
         return new AfcClient(afcService, true);
       } catch (err: any) {
-        log.error(
-          formatRemoteXPCFallbackLog('AFC', err),
-        );
+        log.error(formatRemoteXPCFallbackLog('AFC', err));
       }
     }
 

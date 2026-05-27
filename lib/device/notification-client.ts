@@ -66,9 +66,7 @@ export class NotificationClient {
         const notificationProxyService = await Services.startNotificationProxyService(udid);
         return new NotificationClient(notificationProxyService, log, true);
       } catch (err: any) {
-        log.error(
-          formatRemoteXPCFallbackLog('notification proxy', err),
-        );
+        log.error(formatRemoteXPCFallbackLog('notification proxy', err));
       }
     }
 
