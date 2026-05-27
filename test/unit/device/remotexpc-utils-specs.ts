@@ -22,6 +22,15 @@ describe('remotexpc-utils tunnel availability', function () {
     expect(msg).to.include(REMOTE_XPC_TUNNEL_SETUP_DOC_LINK);
   });
 
+  it('formatTunnelAvailabilityMessage avoids repeating tunnel script hint', function () {
+    const err = new Error('No tunnel found for device ABC. Please run the tunnel creation script first');
+    err.name = 'TunnelAvailabilityError';
+    const msg = formatTunnelAvailabilityMessage(err);
+    expect(msg).to.include('Please run the tunnel creation script first');
+    expect(msg).to.not.include(TUNNEL_CREATION_COMMAND);
+    expect(msg).to.include(REMOTE_XPC_TUNNEL_SETUP_DOC_LINK);
+  });
+
   it('wrapRemoteXPCConnectionError adds tunnel guidance for tunnel failures', function () {
     const err = new Error('No tunnel found for device ABC');
     err.name = 'TunnelAvailabilityError';

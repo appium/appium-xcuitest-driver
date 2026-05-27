@@ -37,10 +37,12 @@ export function isTunnelAvailabilityError(err: unknown): boolean {
 export function formatTunnelAvailabilityMessage(err: unknown): string {
   const detail =
     err instanceof Error ? err.message : typeof err === 'string' ? err : String(err);
-  return (
-    `${detail} Start tunnels with \`${TUNNEL_CREATION_COMMAND}\` (requires root). ` +
-    `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
-  );
+  const normalizedDetail = detail.toLowerCase();
+  const alreadySuggestsTunnelScript = normalizedDetail.includes('tunnel creation script');
+  const setupHint = alreadySuggestsTunnelScript
+    ? ''
+    : ` Start tunnels with \`${TUNNEL_CREATION_COMMAND}\` (requires root).`;
+  return `${detail}${setupHint} See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`;
 }
 
 /**
