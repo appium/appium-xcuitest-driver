@@ -1,5 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
 import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 import {services} from 'appium-ios-device';
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
@@ -66,9 +66,7 @@ export class NotificationClient {
         const notificationProxyService = await Services.startNotificationProxyService(udid);
         return new NotificationClient(notificationProxyService, log, true);
       } catch (err: any) {
-        log.error(
-          `Failed to create notification client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-        );
+        log.error(formatRemoteXPCFallbackLog('notification proxy', err));
       }
     }
 

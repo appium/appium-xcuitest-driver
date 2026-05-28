@@ -5,7 +5,7 @@ import path from 'node:path';
 import {fs, util} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
 import {log} from '../logger';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
@@ -101,9 +101,7 @@ export class AfcClient {
         const afcService = await Services.startAfcService(udid);
         return new AfcClient(afcService, true);
       } catch (err: any) {
-        log.error(
-          `Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-        );
+        log.error(formatRemoteXPCFallbackLog('AFC', err));
       }
     }
 
@@ -138,9 +136,7 @@ export class AfcClient {
           : await houseArrestService.vendContainer(bundleId);
         return new AfcClient(afcService, true);
       } catch (err: any) {
-        log.error(
-          `Failed to create AFC client via RemoteXPC: ${err.message}, falling back to appium-ios-device`,
-        );
+        log.error(formatRemoteXPCFallbackLog('AFC', err));
       }
     }
 

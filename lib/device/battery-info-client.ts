@@ -1,4 +1,4 @@
-import {getRemoteXPCServices} from './remotexpc-utils';
+import {getRemoteXPCServices, wrapRemoteXPCConnectionError} from './remotexpc-utils';
 
 /**
  * IOPMPowerSource IORegistry payload from the diagnostics relay (RemoteXPC shim).
@@ -17,11 +17,18 @@ export class BatteryInfoClient {
    * Reads IOPMPowerSource data via RemoteXPC diagnostics.
    */
   async getAdvancedInfo(): Promise<AdvancedBatteryInfo> {
-    const Services = await getRemoteXPCServices();
-    const diagnosticsService = await Services.startDiagnosticsService(this.udid);
-    return await diagnosticsService.ioregistry({
-      ioClass: 'IOPMPowerSource',
-      returnRawJson: true,
-    });
+    try {
+      const Services = await getRemoteXPCServices();
+      const diagnosticsService = await Services.startDiagnosticsService(this.udid);
+      return await diagnosticsService.ioregistry({
+        ioClass: 'IOPMPowerSource',
+        returnRawJson: true,
+      });
+    } catch (err) {
+      throw wrapRemoteXPCConnectionError(
+        err,
+        `Failed to read advanced battery info via RemoteXPC for '${this.udid}'`,
+      );
+    }
   }
 }

@@ -8,7 +8,10 @@ import type {RealDevice} from '../device/real-device-management';
 import type {HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
 import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
-import {isTunnelAvailabilityError} from '../device/remotexpc-utils';
+import {
+  formatTunnelAvailabilityMessage,
+  isTunnelAvailabilityError,
+} from '../device/remotexpc-utils';
 
 const MOV_EXT = '.mov';
 /** Insecure feature when real-device XCTest recording is used without RemoteXPC attachment deletion. */
@@ -182,7 +185,7 @@ export async function mobileStopXctestScreenRecording(
             isTunnelAvailabilityError(deleteErr)
           ) {
             this.log.warn(
-              `Could not delete XCTest attachment on device: ${deleteErr?.message ?? deleteErr}`,
+              `Could not delete XCTest attachment on device: ${formatTunnelAvailabilityMessage(deleteErr)}`,
             );
           } else {
             attachmentDeleteError = deleteErr;
