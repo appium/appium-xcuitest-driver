@@ -1,3 +1,9 @@
+## [11.7.4](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.3...v11.7.4) (2026-05-28)
+
+### Miscellaneous Chores
+
+* Tune error handling related to tunnels availability ([#2855](https://github.com/appium/appium-xcuitest-driver/issues/2855)) ([3670647](https://github.com/appium/appium-xcuitest-driver/commit/367064740da5812f3926dedcb9ebad4fd91d5629))
+
 ## [11.7.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.2...v11.7.3) (2026-05-26)
 
 ### Miscellaneous Chores
