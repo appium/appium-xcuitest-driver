@@ -1,3 +1,9 @@
+## [11.7.6](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.5...v11.7.6) (2026-05-31)
+
+### Miscellaneous Chores
+
+* Add performance logging to real device app install ([#2857](https://github.com/appium/appium-xcuitest-driver/issues/2857)) ([3b460e6](https://github.com/appium/appium-xcuitest-driver/commit/3b460e68ba775c09abddbadf51abc61938730c8f))
+
 ## [11.7.5](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.4...v11.7.5) (2026-05-31)
 
 ### Miscellaneous Chores
