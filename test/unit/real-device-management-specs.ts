@@ -1,5 +1,8 @@
 import {createSandbox} from 'sinon';
+import {fs} from 'appium/support';
 import {installToRealDevice, RealDevice} from '../../lib/device/real-device-management';
+import {AfcClient} from '../../lib/device/afc-client';
+import {ZipConduitClient} from '../../lib/device/zip-conduit-client';
 import {XCUITestDriver} from '../../lib/driver';
 import type {XCUITestDriverOpts} from '../../lib/driver';
 import chai, {expect} from 'chai';
@@ -141,5 +144,86 @@ describe('installToRealDevice', function () {
     );
     expect(removeStub.called).to.be.false;
     expect(installStub.calledOnce).to.be.true;
+  });
+});
+
+describe('RealDevice install routing (zip_conduit fast path)', function () {
+  const udid = 'test-udid';
+  const ipaPath = '/path/to/app.ipa';
+  const appDir = '/path/to/app.app';
+  const bundleId = 'test.bundle.id';
+
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  const stubStat = (isFile: boolean) =>
+    sandbox.stub(fs, 'stat').resolves({isFile: () => isFile} as any);
+
+  // The AFC + installation_proxy fallback is exercised elsewhere; here we only
+  // assert routing, so we short-circuit it with a sentinel rejection from the
+  // very first call it makes.
+  const stubAfcSentinel = () =>
+    sandbox.stub(AfcClient, 'createForDevice').rejects(new Error('afc-sentinel')) as SinonStub;
+
+  it('streams an .ipa via zip_conduit on iOS 18+ and skips the AFC path', async function () {
+    const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
+    stubStat(true);
+    const installStub = sandbox.stub().resolves();
+    const closeStub = sandbox.stub().resolves();
+    const createStub = sandbox
+      .stub(ZipConduitClient, 'create')
+      .resolves({install: installStub, close: closeStub} as any) as SinonStub;
+    const afcStub = sandbox.stub(AfcClient, 'createForDevice') as SinonStub;
+
+    await realDevice.install(ipaPath, bundleId);
+
+    expect(createStub.calledOnce).to.be.true;
+    expect(installStub.calledOnceWith(ipaPath)).to.be.true;
+    expect(closeStub.calledOnce).to.be.true;
+    expect(afcStub.called).to.be.false;
+  });
+
+  it('falls back to the legacy AFC path and closes the client when zip_conduit fails', async function () {
+    const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
+    stubStat(true);
+    const closeStub = sandbox.stub().resolves();
+    sandbox.stub(ZipConduitClient, 'create').resolves({
+      install: sandbox.stub().rejects(new Error('stream-failed')),
+      close: closeStub,
+    } as any);
+    const afcStub = stubAfcSentinel();
+
+    await expect(realDevice.install(ipaPath, bundleId)).to.be.rejectedWith(/afc-sentinel/);
+    expect(closeStub.calledOnce).to.be.true;
+    expect(afcStub.calledOnce).to.be.true;
+  });
+
+  it('does not use zip_conduit for unpacked .app bundles', async function () {
+    const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
+    stubStat(false);
+    const createStub = sandbox.stub(ZipConduitClient, 'create') as SinonStub;
+    const afcStub = stubAfcSentinel();
+
+    await expect(realDevice.install(appDir, bundleId)).to.be.rejectedWith(/afc-sentinel/);
+    expect(createStub.called).to.be.false;
+    expect(afcStub.calledOnce).to.be.true;
+  });
+
+  it('does not use zip_conduit on iOS < 18', async function () {
+    const realDevice = new RealDevice(udid, {platformVersion: '17.4'} as XCUITestDriverOpts);
+    stubStat(true);
+    const createStub = sandbox.stub(ZipConduitClient, 'create') as SinonStub;
+    const afcStub = stubAfcSentinel();
+
+    await expect(realDevice.install(ipaPath, bundleId)).to.be.rejectedWith(/afc-sentinel/);
+    expect(createStub.called).to.be.false;
+    expect(afcStub.calledOnce).to.be.true;
   });
 });
