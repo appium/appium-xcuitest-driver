@@ -42,11 +42,12 @@ const OBJECT_NOT_FOUND_ERROR_MESSAGE = 'OBJECT_NOT_FOUND';
 /**
  * Parses the actual path and the bundle identifier from the given path string.
  *
+ * @param driver - The driver instance
  * @param remotePath - Path string matching `CONTAINER_PATH_PATTERN`, e.g. `@bundle.id:container/relative/path`
  * @param containerRootSupplier - Container root path supplier or explicit root
  */
 export async function parseContainerPath(
-  this: XCUITestDriver,
+  driver: XCUITestDriver,
   remotePath: string,
   containerRootSupplier?: ContainerRootSupplier | string,
 ): Promise<ContainerObject> {
@@ -67,7 +68,7 @@ export async function parseContainerPath(
   if (typeSeparatorPos > 0) {
     if (typeSeparatorPos < bundleId.length - 1) {
       containerType = bundleId.substring(typeSeparatorPos + 1);
-      this.log.debug(`Parsed container type: ${containerType}`);
+      driver.log.debug(`Parsed container type: ${containerType}`);
     }
     // Always strip the colon and everything after it
     bundleId = bundleId.substring(0, typeSeparatorPos);
@@ -262,15 +263,15 @@ function verifyIsSubPath(originalPath: string, root: string): void {
  * Create AFC client for file operations
  */
 async function createAfcClient(
-  this: XCUITestDriver,
+  driver: XCUITestDriver,
   opts: CreateAfcClientOptions = {},
 ): Promise<AfcClient> {
   const {bundleId, containerType} = opts;
-  const udid = this.device.udid as string;
-  const useIos18 = isIos18OrNewer(this.opts);
+  const udid = driver.device.udid as string;
+  const useIos18 = isIos18OrNewer(driver.opts);
 
   if (bundleId) {
-    const skipDocumentsCheck = this.settings.getSettings().skipDocumentsContainerCheck ?? false;
+    const skipDocumentsCheck = driver.settings.getSettings().skipDocumentsContainerCheck ?? false;
     return await AfcClient.createForApp(udid, bundleId, useIos18, {
       containerType: containerType ?? null,
       skipDocumentsCheck,
@@ -284,13 +285,15 @@ async function createAfcClient(
  * Create service for file operations
  */
 async function createService(
-  this: XCUITestDriver,
+  driver: XCUITestDriver,
   remotePath: string,
 ): Promise<CreateServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer, containerType}: ContainerObject =
-      await parseContainerPath.bind(this)(remotePath);
-    const client: AfcClient = await createAfcClient.bind(this)({bundleId, containerType});
+    const {bundleId, pathInContainer, containerType}: ContainerObject = await parseContainerPath(
+      driver,
+      remotePath,
+    );
+    const client = await createAfcClient(driver, {bundleId, containerType});
     let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
       : pathInContainer;
@@ -300,7 +303,7 @@ async function createService(
     }
     return {client, relativePath};
   }
-  const client: AfcClient = await createAfcClient.bind(this)({});
+  const client = await createAfcClient(driver, {});
   return {client, relativePath: remotePath};
 }
 
@@ -320,7 +323,8 @@ async function pushFileToSimulator(
   const buffer = Buffer.from(base64Data, 'base64');
   const device = this.device as Simulator;
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer: dstPath} = await parseContainerPath.bind(this)(
+    const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
+      this,
       remotePath,
       async (appBundle, containerType) =>
         await device.simctl.getAppContainer(appBundle, containerType),
@@ -361,9 +365,11 @@ async function pushFileToRealDevice(
   remotePath: string,
   base64Data: string,
 ): Promise<void> {
-  const {client, relativePath} = await createService.bind(this)(remotePath);
+  const {client, relativePath} = await createService(this, remotePath);
   try {
-    await realDevicePushFile(client, Buffer.from(base64Data, 'base64'), relativePath);
+    await realDevicePushFile(client, Buffer.from(base64Data, 'base64'), relativePath, {
+      log: this.log,
+    });
   } catch (e) {
     this.log.debug((e as Error).stack);
     throw new Error(
@@ -393,10 +399,11 @@ async function pullFromSimulator(
   remotePath: string,
   isFile: boolean,
 ): Promise<string> {
-  let pathOnServer;
+  let pathOnServer: string;
   const device = this.device as Simulator;
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer: dstPath} = await parseContainerPath.bind(this)(
+    const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
+      this,
       remotePath,
       async (appBundle, containerType) =>
         await device.simctl.getAppContainer(appBundle, containerType),
@@ -448,7 +455,7 @@ async function pullFromRealDevice(
   remotePath: string,
   isFile: boolean,
 ): Promise<string> {
-  const {client, relativePath} = await createService.bind(this)(remotePath);
+  const {client, relativePath} = await createService(this, remotePath);
   try {
     // Check if path is a directory
     const isDirectory = await client.isDirectory(relativePath);
@@ -461,8 +468,8 @@ async function pullFromRealDevice(
     }
 
     return isDirectory
-      ? (await realDevicePullFolder(client, relativePath)).toString()
-      : (await realDevicePullFile(client, relativePath)).toString('base64');
+      ? (await realDevicePullFolder(client, relativePath, {log: this.log})).toString()
+      : (await realDevicePullFile(client, relativePath, {log: this.log})).toString('base64');
   } finally {
     await client.close();
   }
@@ -483,7 +490,8 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
   let pathOnServer: string;
   const device = this.device as Simulator;
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer: dstPath} = await parseContainerPath.bind(this)(
+    const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
+      this,
       remotePath,
       async (appBundle, containerType) =>
         await device.simctl.getAppContainer(appBundle, containerType),
@@ -524,7 +532,7 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
  * @returns Nothing
  */
 async function deleteFromRealDevice(this: XCUITestDriver, remotePath: string): Promise<void> {
-  const {client, relativePath} = await createService.bind(this)(remotePath);
+  const {client, relativePath} = await createService(this, remotePath);
   try {
     await client.deleteDirectory(relativePath);
   } catch (e) {

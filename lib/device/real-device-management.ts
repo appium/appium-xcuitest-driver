@@ -29,17 +29,25 @@ const APPLICATION_INSTALLED_NOTIFICATION = 'com.apple.mobile.application_install
 const APPLICATION_NOTIFICATION_TIMEOUT_MS = 30 * 1000;
 const INSTALLATION_STAGING_DIR = 'PublicStaging';
 
-export interface PushFileOptions {
+export interface AfcTransferOptions {
+  log?: AppiumLogger;
+}
+
+export interface PushFileOptions extends AfcTransferOptions {
   /** The maximum count of milliseconds to wait until file push is completed. Cannot be lower than 60000ms */
   timeoutMs?: number;
 }
 
-export interface PushFolderOptions {
+export interface PushFolderOptions extends AfcTransferOptions {
   /** The maximum timeout to wait until a single file is copied */
   timeoutMs?: number;
   /** Whether to push files in parallel. This usually gives better performance, but might sometimes be less stable. */
   enableParallelPush?: boolean;
 }
+
+export interface PullFileOptions extends AfcTransferOptions {}
+
+export interface PullFolderOptions extends AfcTransferOptions {}
 
 export interface RealDeviceInstallOptions {
   /** Application installation timeout in milliseconds */
@@ -60,6 +68,11 @@ export interface ManagementInstallOptions {
   timeout?: number;
   /** Whether to enforce the app uninstallation. e.g. fullReset, or enforceAppInstall is true */
   shouldEnforceUninstall?: boolean;
+}
+
+interface AfcTransferStats {
+  fileCount?: number;
+  folderCount?: number;
 }
 
 export class RealDevice {
@@ -109,12 +122,14 @@ export class RealDevice {
         bundlePathOnPhone = `/${path.basename(appPath)}`;
         await pushFile(afcClient, appPath, bundlePathOnPhone, {
           timeoutMs,
+          log: this.log,
         });
       } else {
         bundlePathOnPhone = `${INSTALLATION_STAGING_DIR}/${bundleId}`;
         await pushFolder(afcClient, appPath, bundlePathOnPhone, {
           enableParallelPush: true,
           timeoutMs,
+          log: this.log,
         });
       }
       await this.installOrUpgradeApplication(bundlePathOnPhone, {
@@ -325,14 +340,23 @@ export class RealDevice {
  *
  * @param client AFC client instance
  * @param remotePath Relative path to the file on the device
+ * @param opts Pull file options
  * @returns The file content as a buffer
  */
-export async function pullFile(client: AfcClient, remotePath: string): Promise<Buffer> {
-  return await withTimeout(
+export async function pullFile(
+  client: AfcClient,
+  remotePath: string,
+  opts: PullFileOptions = {},
+): Promise<Buffer> {
+  const log = opts.log ?? defaultLogger;
+  const timer = new timing.Timer().start();
+  const buffer = await withTimeout(
     client.getFileContents(remotePath),
     IO_TIMEOUT_MS,
     `Timed out after ${IO_TIMEOUT_MS}ms while pulling file from '${remotePath}'`,
   );
+  logAfcTransferPerformance(log, 'download', buffer.length, remotePath, timer);
+  return buffer;
 }
 
 /**
@@ -340,10 +364,18 @@ export async function pullFile(client: AfcClient, remotePath: string): Promise<B
  *
  * @param client AFC client instance
  * @param remoteRootPath Relative path to the folder on the device
+ * @param opts Pull folder options
  * @returns The folder content as a zipped base64-encoded buffer
  */
-export async function pullFolder(client: AfcClient, remoteRootPath: string): Promise<Buffer> {
+export async function pullFolder(
+  client: AfcClient,
+  remoteRootPath: string,
+  opts: PullFolderOptions = {},
+): Promise<Buffer> {
+  const log = opts.log ?? defaultLogger;
+  const timer = new timing.Timer().start();
   const tmpFolder = await tempDir.openDir();
+  let totalBytes = 0;
   try {
     let localTopItem: string | null = null;
     let countFilesSuccess = 0;
@@ -352,7 +384,7 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
     await client.pull(remoteRootPath, tmpFolder, {
       recursive: true,
       overwrite: true,
-      onEntry: async (remotePath: string, localPath: string, isDirectory: boolean) => {
+      onEntry: async (_remotePath: string, localPath: string, isDirectory: boolean) => {
         if (
           !localTopItem ||
           localPath.split(path.sep).length < localTopItem.split(path.sep).length
@@ -363,17 +395,15 @@ export async function pullFolder(client: AfcClient, remoteRootPath: string): Pro
           ++countFolders;
         } else {
           ++countFilesSuccess;
+          totalBytes += (await fs.stat(localPath)).size;
         }
       },
     });
 
-    defaultLogger.info(
-      `Pulled ${util.pluralize('file', countFilesSuccess, true)} and ${util.pluralize(
-        'folder',
-        countFolders,
-        true,
-      )} from '${remoteRootPath}'`,
-    );
+    logAfcTransferPerformance(log, 'download', totalBytes, remoteRootPath, timer, {
+      fileCount: countFilesSuccess,
+      folderCount: countFolders,
+    });
     return await zip.toInMemoryZip(localTopItem ? path.dirname(localTopItem) : tmpFolder, {
       encodeToBase64: true,
     });
@@ -398,11 +428,10 @@ export async function pushFile(
   remotePath: string,
   opts: PushFileOptions = {},
 ): Promise<void> {
-  const {timeoutMs = IO_TIMEOUT_MS} = opts;
+  const {timeoutMs = IO_TIMEOUT_MS, log = defaultLogger} = opts;
   const timer = new timing.Timer().start();
   await remoteMkdirp(client, path.dirname(remotePath));
 
-  // AfcClient handles the branching internally
   const pushPromise = Buffer.isBuffer(localPathOrPayload)
     ? client.setFileContents(remotePath, localPathOrPayload)
     : client.writeFromStream(
@@ -410,7 +439,6 @@ export async function pushFile(
         fs.createReadStream(localPathOrPayload, {autoClose: true}),
       );
 
-  // Wrap with timeout
   const actualTimeout = Math.max(timeoutMs, 60000);
   await withTimeout(
     pushPromise,
@@ -421,10 +449,7 @@ export async function pushFile(
   const fileSize = Buffer.isBuffer(localPathOrPayload)
     ? localPathOrPayload.length
     : (await fs.stat(localPathOrPayload)).size;
-  defaultLogger.debug(
-    `Successfully pushed the file payload (${util.toReadableSizeString(fileSize)}) ` +
-      `to the remote location '${remotePath}' in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-  );
+  logAfcTransferPerformance(log, 'upload', fileSize, remotePath, timer);
 }
 
 /**
@@ -442,7 +467,7 @@ export async function pushFolder(
   dstRootPath: string,
   opts: PushFolderOptions = {},
 ): Promise<void> {
-  const {timeoutMs = IO_TIMEOUT_MS, enableParallelPush = false} = opts;
+  const {timeoutMs = IO_TIMEOUT_MS, enableParallelPush = false, log = defaultLogger} = opts;
 
   const timer = new timing.Timer().start();
   const allItems =
@@ -450,7 +475,7 @@ export async function pushFolder(
       cwd: srcRootPath,
       withFileTypes: true,
     })) as any[];
-  defaultLogger.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
+  log.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
   // top-level folders go first
   const foldersToPush: string[] = allItems
     .filter((x) => x.isDirectory())
@@ -461,7 +486,10 @@ export async function pushFolder(
     .filter((x) => !x.isDirectory())
     .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
     .map((x) => x.relative());
-  defaultLogger.debug(
+  const totalBytes = allItems
+    .filter((x) => !x.isDirectory())
+    .reduce((sum, x) => sum + (x.size ?? 0), 0);
+  log.debug(
     `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
       `${util.pluralize('file', filesToPush.length, true)} to push`,
   );
@@ -470,6 +498,7 @@ export async function pushFolder(
     await client.deleteDirectory(dstRootPath);
   } catch {}
 
+  // do not forget about the root folder
   await client.createDirectory(dstRootPath);
   for (const relativeFolderPath of foldersToPush) {
     let absoluteFolderPath = path.join(dstRootPath, relativeFolderPath);
@@ -480,8 +509,7 @@ export async function pushFolder(
       await client.createDirectory(absoluteFolderPath);
     }
   }
-  // do not forget about the root folder
-  defaultLogger.debug(
+  log.debug(
     `Successfully created the remote folder structure ` +
       `(${util.pluralize('item', foldersToPush.length + 1, true)})`,
   );
@@ -501,7 +529,7 @@ export async function pushFolder(
   };
 
   if (enableParallelPush) {
-    defaultLogger.debug(`Proceeding to parallel files push (max ${MAX_IO_CHUNK_SIZE} writers)`);
+    log.debug(`Proceeding to parallel files push (max ${MAX_IO_CHUNK_SIZE} writers)`);
     await withTimeout(
       asyncmap(
         filesToPush,
@@ -517,7 +545,7 @@ export async function pushFolder(
       Math.max(timeoutMs - timer.getDuration().asMilliSeconds, 60000),
     );
   } else {
-    defaultLogger.debug(`Proceeding to serial files push`);
+    log.debug(`Proceeding to serial files push`);
     for (const relativeFilePath of filesToPush) {
       await _pushFile(relativeFilePath);
       const elapsedMs = timer.getDuration().asMilliSeconds;
@@ -527,11 +555,10 @@ export async function pushFolder(
     }
   }
 
-  defaultLogger.debug(
-    `Successfully pushed ${util.pluralize('folder', foldersToPush.length, true)} ` +
-      `and ${util.pluralize('file', filesToPush.length, true)} ` +
-      `within ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-  );
+  logAfcTransferPerformance(log, 'upload', totalBytes, dstRootPath, timer, {
+    fileCount: filesToPush.length,
+    folderCount: foldersToPush.length,
+  });
 }
 
 /**
@@ -666,6 +693,36 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
 }
 
 // #region Private Helper Functions
+
+function logAfcTransferPerformance(
+  log: AppiumLogger,
+  direction: 'upload' | 'download',
+  byteCount: number,
+  remotePath: string,
+  timer: timing.Timer,
+  stats: AfcTransferStats = {},
+): void {
+  const elapsedMs = timer.getDuration().asMilliSeconds;
+  const elapsedSec = elapsedMs / 1000;
+  const preposition = direction === 'upload' ? 'to' : 'from';
+  const {fileCount, folderCount} = stats;
+  const itemSummary =
+    fileCount !== undefined || folderCount !== undefined
+      ? ` (${util.pluralize('file', fileCount ?? 0, true)}` +
+        `${folderCount !== undefined ? ` and ${util.pluralize('folder', folderCount, true)}` : ''})`
+      : '';
+
+  log.debug(
+    `AFC ${direction} of ${util.toReadableSizeString(byteCount)} ${preposition} '${remotePath}'` +
+      `${itemSummary} completed in ${elapsedMs.toFixed(0)}ms`,
+  );
+  if (elapsedSec >= 1 && byteCount > 0) {
+    const bytesPerSec = Math.floor(byteCount / elapsedSec);
+    log.debug(
+      `Approximate average AFC ${direction} speed: ${util.toReadableSizeString(bytesPerSec)}/s`,
+    );
+  }
+}
 
 /**
  * If the environment variable enables APPIUM_XCUITEST_PREFER_DEVICECTL.

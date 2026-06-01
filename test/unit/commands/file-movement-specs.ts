@@ -20,7 +20,8 @@ describe('file-movement', function () {
 
     it('should parse with container', async function () {
       const mntRoot = await tempDir.openDir();
-      const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(driver)(
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath(
+        driver,
         '@io.appium.example:app/Documents/file.txt',
         mntRoot,
       );
@@ -31,7 +32,8 @@ describe('file-movement', function () {
     });
     it('should parse with container root', async function () {
       const mntRoot = await tempDir.openDir();
-      const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(driver)(
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath(
+        driver,
         '@io.appium.example:documents/',
         mntRoot,
       );
@@ -42,7 +44,8 @@ describe('file-movement', function () {
     });
     it('should parse without container', async function () {
       const mntRoot = await tempDir.openDir();
-      const {bundleId, pathInContainer, containerType} = await parseContainerPath.bind(driver)(
+      const {bundleId, pathInContainer, containerType} = await parseContainerPath(
+        driver,
         '@io.appium.example/Documents/file.txt',
         mntRoot,
       );
@@ -53,7 +56,7 @@ describe('file-movement', function () {
     });
     it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();
-      await expect(parseContainerPath.bind(driver)('@io.appium.example:documents', mntRoot)).to.be
+      await expect(parseContainerPath(driver, '@io.appium.example:documents', mntRoot)).to.be
         .rejected;
     });
   });
