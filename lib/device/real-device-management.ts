@@ -9,6 +9,7 @@ import {
   withTimeout,
 } from '../commands/helpers';
 import {isEmpty, isPlainObject} from '../utils';
+import {IPA_EXT} from '../commands/constants';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
 import type {AppiumLogger} from '@appium/types';
@@ -19,6 +20,7 @@ import {InstallationProxyClient} from './installation-proxy-client';
 import {NotificationClient} from './notification-client';
 import {LockdownClient} from './lockdown-client';
 import {AppTerminationClient} from './app-termination-client';
+import {ZipConduitClient} from './zip-conduit-client';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -114,6 +116,16 @@ export class RealDevice {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
     const useRemoteXPC = isIos18OrNewer(this.driverOpts);
+
+    // first try with zip_conduit service for iOS/tvOS 18+ and IPA only
+    // fall through to the AFC + installation_proxy path for other cases/zip_conduit failure
+    if (useRemoteXPC && (await this.installViaZipConduit(appPath, timeoutMs))) {
+      this.log.info(
+        `The installation of '${bundleId}' succeeded after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+      );
+      return;
+    }
+
     const afcClient = await AfcClient.createForDevice(this.udid, useRemoteXPC);
     try {
       let bundlePathOnPhone: string;
@@ -332,6 +344,44 @@ export class RealDevice {
       throw err;
     }
     this.log.debug(`Reset: removed '${bundleId}'`);
+  }
+
+  /**
+   * Attempt a streaming zip_conduit install of an `.ipa` over RemoteXPC.
+   *
+   * @param appPath - Local path to the app package
+   * @param timeoutMs - Overall install timeout in milliseconds
+   * @returns `true` when the app was installed via zip_conduit; `false` when the
+   * package is not an eligible `.ipa`, the service is unavailable, or the
+   * streamed install failed. A `false` result tells the caller to fall back to
+   * the AFC upload + installation_proxy path.
+   */
+  private async installViaZipConduit(appPath: string, timeoutMs: number): Promise<boolean> {
+    // zip_conduit only accepts .ipa archives. Unpacked .app bundles (and any
+    // other non-.ipa package) must use the AFC + installation_proxy
+    // path, so anything that is not a regular .ipa file is skipped here.
+    if (!appPath.toLowerCase().endsWith(IPA_EXT) || !(await fs.stat(appPath)).isFile()) {
+      return false;
+    }
+
+    let client: ZipConduitClient | null = null;
+    try {
+      client = await ZipConduitClient.create(this.udid, this.log);
+      if (!client) {
+        return false;
+      }
+      this.log.debug(`Installing '${path.basename(appPath)}' via streaming zip_conduit`);
+      await client.install(appPath, {timeoutMs});
+      return true;
+    } catch (err) {
+      this.log.warn(
+        `Fast zip_conduit install of '${path.basename(appPath)}' failed; falling back to ` +
+          `AFC upload + installation_proxy. Original error: ${(err as Error).message}`,
+      );
+      return false;
+    } finally {
+      await client?.close();
+    }
   }
 }
 
