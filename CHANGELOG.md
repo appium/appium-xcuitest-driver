@@ -1,3 +1,9 @@
+## [11.7.7](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.6...v11.7.7) (2026-06-01)
+
+### Miscellaneous Chores
+
+* Tune AFC performance logging ([#2858](https://github.com/appium/appium-xcuitest-driver/issues/2858)) ([03a9145](https://github.com/appium/appium-xcuitest-driver/commit/03a91454a8db7571e401bd9dc6d42aae4552133a))
+
 ## [11.7.6](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.5...v11.7.6) (2026-05-31)
 
 ### Miscellaneous Chores
