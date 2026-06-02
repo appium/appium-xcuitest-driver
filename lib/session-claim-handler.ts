@@ -1,5 +1,5 @@
 import type {IAppiumIpc, IIpcSubscription, IpcMessage} from '@appium/types';
-import {util} from 'appium/support';
+import {node, util} from 'appium/support';
 import {waitForCondition} from 'asyncbox';
 import {setTimeout as delay} from 'node:timers/promises';
 import type {XCUITestDriver} from './driver';
@@ -215,7 +215,7 @@ export class SessionClaimHandler {
   }
 
   private getPublisherId(driver: XCUITestDriver): string {
-    return `xcuitest-driver@${driver.sessionId ?? 'unknown'}`;
+    return node.getObjectId(driver);
   }
 
   private isMatchingSessionUdidMessage(

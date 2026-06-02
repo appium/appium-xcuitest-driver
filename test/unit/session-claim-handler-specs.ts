@@ -1,4 +1,5 @@
 import type {IAppiumIpc, IpcData, IpcMessage} from '@appium/types';
+import {node} from 'appium/support';
 import {EventEmitter} from 'node:events';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
@@ -192,7 +193,7 @@ describe('SessionClaimHandler', function () {
 
     expect(publish.firstCall.args).to.eql([
       SESSION_UDID_CLAIMED_IPC_TOPIC,
-      'xcuitest-driver@new-session',
+      node.getObjectId(newDriver),
       {
         udid: 'device-1',
         sessionId: 'new-session',
