@@ -3,6 +3,7 @@ import {node, util} from 'appium/support';
 import {waitForCondition} from 'asyncbox';
 import {setTimeout as delay} from 'node:timers/promises';
 import type {XCUITestDriver} from './driver';
+import {memoize} from './utils';
 
 export type SessionUdidIpcMessage = {
   udid: string;
@@ -227,30 +228,16 @@ export class SessionClaimHandler {
   }
 }
 
-let sharedIpc: IAppiumIpc | undefined;
-let sharedIpcLoaded = false;
-let sharedIpcLoadPromise: Promise<IAppiumIpc | undefined> | undefined;
-
-async function resolveSharedIpc(): Promise<IAppiumIpc | undefined> {
-  if (sharedIpcLoaded) {
-    return sharedIpc;
-  }
-  sharedIpcLoadPromise ??= loadSharedIpc();
-  return sharedIpcLoadPromise;
-}
-
-async function loadSharedIpc(): Promise<IAppiumIpc | undefined> {
+const loadSharedIpc = memoize(async function loadSharedIpc(): Promise<IAppiumIpc | undefined> {
   try {
     const {AppiumIpc} = (await import('appium/driver.js')) as {AppiumIpc?: AppiumIpcConstructor};
-    sharedIpc = AppiumIpc ? new AppiumIpc() : undefined;
+    return AppiumIpc ? new AppiumIpc() : undefined;
   } catch {
-    sharedIpc = undefined;
+    return undefined;
   }
-  sharedIpcLoaded = true;
-  return sharedIpc;
-}
+});
 
-export const sessionClaimHandler = new SessionClaimHandler(resolveSharedIpc);
+export const sessionClaimHandler = new SessionClaimHandler(loadSharedIpc);
 
 export const SESSION_UDID_CLAIMED_IPC_TOPIC = SessionClaimHandler.CLAIMED_TOPIC;
 export const SESSION_UDID_CONTENDED_IPC_TOPIC = SessionClaimHandler.CONTENDED_TOPIC;
@@ -260,9 +247,7 @@ export const SESSION_UDID_RELEASED_IPC_TOPIC = SessionClaimHandler.RELEASED_TOPI
  * @internal Exposed for unit tests.
  */
 export function setSharedIpcForTesting(ipc: IAppiumIpc | undefined): void {
-  sharedIpc = ipc;
-  sharedIpcLoaded = true;
-  sharedIpcLoadPromise = Promise.resolve(ipc);
+  loadSharedIpc.cache.set(undefined, Promise.resolve(ipc));
 }
 
 /**
@@ -270,7 +255,5 @@ export function setSharedIpcForTesting(ipc: IAppiumIpc | undefined): void {
  */
 export function resetDriverInstanceIpcForTesting(): void {
   sessionClaimHandler.resetForTesting();
-  sharedIpc = undefined;
-  sharedIpcLoaded = false;
-  sharedIpcLoadPromise = undefined;
+  loadSharedIpc.cache.clear();
 }
