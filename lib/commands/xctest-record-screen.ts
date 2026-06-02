@@ -310,7 +310,9 @@ export async function mobileStopXctestScreenRecording(
   return result;
 }
 
-function createXcTestScreenRecordingRetriever(driver: XCUITestDriver): XcTestScreenRecordingRetriever {
+function createXcTestScreenRecordingRetriever(
+  driver: XCUITestDriver,
+): XcTestScreenRecordingRetriever {
   if (driver.isRealDevice()) {
     if (!driver.opts.tmpDir) {
       throw new Error('tmpDir is not set in driver options');
