@@ -1,5 +1,6 @@
 import {fs, util} from 'appium/support';
 import {encodeBase64OrUpload} from './helpers';
+import os from 'node:os';
 import path from 'node:path';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
@@ -314,12 +315,9 @@ function createXcTestScreenRecordingRetriever(
   driver: XCUITestDriver,
 ): XcTestScreenRecordingRetriever {
   if (driver.isRealDevice()) {
-    if (!driver.opts.tmpDir) {
-      throw new Error('tmpDir is not set in driver options');
-    }
     return new RealDeviceXcTestScreenRecordingRetriever(
       driver.device as RealDevice,
-      driver.opts.tmpDir,
+      driver.opts.tmpDir ?? os.tmpdir(),
       driver.log,
     );
   }
