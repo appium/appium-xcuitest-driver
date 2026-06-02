@@ -4,7 +4,7 @@ import path from 'node:path';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
 import type {RealDevice} from '../device/real-device-management';
-import type {HTTPHeaders} from '@appium/types';
+import type {AppiumLogger, HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
 import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
 import {
@@ -25,7 +25,101 @@ const XCTEST_SCREEN_RECORD_FEATURE = 'xctest_screen_record';
 const DOMAIN_IDENTIFIER = 'com.apple.testmanagerd';
 const DOMAIN_TYPE = 'appDataContainer';
 const USERNAME = 'mobile';
-const SUBDIRECTORY = 'Attachments';
+/** Legacy layout and Xcode 26.5+ `tmp/Attachments` within testmanagerd's app data container. */
+const REAL_DEVICE_XCTEST_ATTACHMENT_SUBDIRECTORIES = ['Attachments', 'tmp/Attachments'] as const;
+
+abstract class XcTestScreenRecordingRetriever {
+  constructor(protected readonly log: AppiumLogger) {}
+
+  protected static nameMatchesUuid(name: string, uuid: string): boolean {
+    return name.toUpperCase() === uuid.toUpperCase();
+  }
+
+  abstract retrieve(uuid: string): Promise<string>;
+}
+
+class SimulatorXcTestScreenRecordingRetriever extends XcTestScreenRecordingRetriever {
+  constructor(
+    private readonly device: Simulator,
+    log: AppiumLogger,
+  ) {
+    super(log);
+  }
+
+  override async retrieve(uuid: string): Promise<string> {
+    const dataRoot = this.device.getDir();
+    // e.g. .../CoreSimulator/Devices/<udid>/data/Containers/Data/InternalDaemon/<daemon-id>/Attachments/<uuid>
+    // or .../InternalDaemon/<daemon-id>/tmp/Attachments/<uuid> (Xcode 26.5+)
+    const internalDaemonRoot = path.resolve(dataRoot, 'Containers', 'Data', 'InternalDaemon');
+    const attachmentPaths = await fs.glob(SIMULATOR_XCTEST_RECORDING_ATTACHMENT_GLOB, {
+      cwd: internalDaemonRoot,
+      absolute: true,
+    });
+    const videoPath = attachmentPaths.find((fp) =>
+      XcTestScreenRecordingRetriever.nameMatchesUuid(path.basename(fp), uuid),
+    );
+    if (!videoPath) {
+      throw new Error(
+        `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${this.device.udid}`,
+      );
+    }
+    const {size} = await fs.stat(videoPath);
+    this.log.debug(`Located the video at '${videoPath}' (${util.toReadableSizeString(size)})`);
+    return videoPath;
+  }
+}
+
+class RealDeviceXcTestScreenRecordingRetriever extends XcTestScreenRecordingRetriever {
+  constructor(
+    private readonly device: RealDevice,
+    private readonly tmpDir: string,
+    log: AppiumLogger,
+  ) {
+    super(log);
+  }
+
+  override async retrieve(uuid: string): Promise<string> {
+    const attachment = await this.findAttachment(uuid);
+    if (!attachment) {
+      throw new Error(
+        `Unable to locate XCTest screen recording identified by '${uuid}' for the device ${this.device.udid}`,
+      );
+    }
+    const videoPath = path.join(this.tmpDir, `${uuid}${MOV_EXT}`);
+    const {subdirectory, fileName} = attachment;
+    await this.device.devicectl.pullFile(`${subdirectory}/${fileName}`, videoPath, {
+      username: USERNAME,
+      domainIdentifier: DOMAIN_IDENTIFIER,
+      domainType: DOMAIN_TYPE,
+    });
+    const {size} = await fs.stat(videoPath);
+    this.log.debug(`Pulled the video to '${videoPath}' (${util.toReadableSizeString(size)})`);
+    return videoPath;
+  }
+
+  private async findAttachment(
+    uuid: string,
+  ): Promise<{subdirectory: string; fileName: string} | null> {
+    for (const subdirectory of REAL_DEVICE_XCTEST_ATTACHMENT_SUBDIRECTORIES) {
+      let fileNames: string[];
+      try {
+        fileNames = await this.device.devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
+          username: USERNAME,
+          subdirectory,
+        });
+      } catch {
+        continue;
+      }
+      const fileName = fileNames.find((name) =>
+        XcTestScreenRecordingRetriever.nameMatchesUuid(name, uuid),
+      );
+      if (fileName) {
+        return {subdirectory, fileName};
+      }
+    }
+    return null;
+  }
+}
 
 /**
  * Start a new screen recording via XCTest.
@@ -142,8 +236,7 @@ export async function mobileStopXctestScreenRecording(
 
   this.log.debug(`Stopping the active screen recording: ${JSON.stringify(screenRecordingInfo)}`);
   await this.proxyCommand('/wda/video/stop', 'POST', {});
-  const videoPath: string = await retrieveXcTestScreenRecording.call(
-    this,
+  const videoPath = await createXcTestScreenRecordingRetriever(this).retrieve(
     screenRecordingInfo.uuid,
   );
   const result: XcTestScreenRecording = {
@@ -217,59 +310,16 @@ export async function mobileStopXctestScreenRecording(
   return result;
 }
 
-function pathMatchesUuid(fullPath: string, uuid: string): boolean {
-  return path.basename(fullPath).toUpperCase() === uuid.toUpperCase();
-}
-
-async function retrieveRecodingFromSimulator(this: XCUITestDriver, uuid: string): Promise<string> {
-  const device = this.device as Simulator;
-  const dataRoot = device.getDir();
-  // e.g. .../CoreSimulator/Devices/<udid>/data/Containers/Data/InternalDaemon/<daemon-id>/Attachments/<uuid>
-  // or .../InternalDaemon/<daemon-id>/tmp/Attachments/<uuid> (Xcode 26.5+)
-  const internalDaemonRoot = path.resolve(dataRoot, 'Containers', 'Data', 'InternalDaemon');
-  const attachmentPaths = await fs.glob(SIMULATOR_XCTEST_RECORDING_ATTACHMENT_GLOB, {
-    cwd: internalDaemonRoot,
-    absolute: true,
-  });
-  const videoPath = attachmentPaths.find((fp) => pathMatchesUuid(fp, uuid));
-  if (!videoPath) {
-    throw new Error(
-      `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`,
+function createXcTestScreenRecordingRetriever(driver: XCUITestDriver): XcTestScreenRecordingRetriever {
+  if (driver.isRealDevice()) {
+    if (!driver.opts.tmpDir) {
+      throw new Error('tmpDir is not set in driver options');
+    }
+    return new RealDeviceXcTestScreenRecordingRetriever(
+      driver.device as RealDevice,
+      driver.opts.tmpDir,
+      driver.log,
     );
   }
-  const {size} = await fs.stat(videoPath);
-  this.log.debug(`Located the video at '${videoPath}' (${util.toReadableSizeString(size)})`);
-  return videoPath;
-}
-
-async function retrieveRecodingFromRealDevice(this: XCUITestDriver, uuid: string): Promise<string> {
-  const device = this.device as RealDevice;
-
-  const fileNames = await device.devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
-    username: USERNAME,
-    subdirectory: SUBDIRECTORY,
-  });
-  if (!fileNames.includes(uuid)) {
-    throw new Error(
-      `Unable to locate XCTest screen recording identified by '${uuid}' for the device ${this.opts.udid}`,
-    );
-  }
-  if (!this.opts.tmpDir) {
-    throw new Error('tmpDir is not set in driver options');
-  }
-  const videoPath = path.join(this.opts.tmpDir, `${uuid}${MOV_EXT}`);
-  await device.devicectl.pullFile(`${SUBDIRECTORY}/${uuid}`, videoPath, {
-    username: USERNAME,
-    domainIdentifier: DOMAIN_IDENTIFIER,
-    domainType: DOMAIN_TYPE,
-  });
-  const {size} = await fs.stat(videoPath);
-  this.log.debug(`Pulled the video to '${videoPath}' (${util.toReadableSizeString(size)})`);
-  return videoPath;
-}
-
-async function retrieveXcTestScreenRecording(this: XCUITestDriver, uuid: string): Promise<string> {
-  return this.isRealDevice()
-    ? await retrieveRecodingFromRealDevice.call(this, uuid)
-    : await retrieveRecodingFromSimulator.call(this, uuid);
+  return new SimulatorXcTestScreenRecordingRetriever(driver.device as Simulator, driver.log);
 }
