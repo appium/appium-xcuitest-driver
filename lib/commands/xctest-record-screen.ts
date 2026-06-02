@@ -1,6 +1,5 @@
 import {fs, util} from 'appium/support';
 import {encodeBase64OrUpload} from './helpers';
-import {isEmpty} from '../utils';
 import path from 'node:path';
 import type {XCUITestDriver} from '../driver';
 import type {Simulator} from 'appium-ios-simulator';
@@ -14,6 +13,13 @@ import {
 } from '../device/remotexpc-utils';
 
 const MOV_EXT = '.mov';
+/**
+ * On simulators XCTest stores screen recording attachments under
+ * `InternalDaemon/<id>/Attachments/<uuid>` (legacy) or
+ * `InternalDaemon/<id>/tmp/Attachments/<uuid>` (Xcode 26.5+).
+ * Brace `{,tmp/}` matches both in a single glob.
+ */
+const SIMULATOR_XCTEST_RECORDING_ATTACHMENT_GLOB = '*/{,tmp/}Attachments/*';
 /** Insecure feature when real-device XCTest recording is used without RemoteXPC attachment deletion. */
 const XCTEST_SCREEN_RECORD_FEATURE = 'xctest_screen_record';
 const DOMAIN_IDENTIFIER = 'com.apple.testmanagerd';
@@ -211,22 +217,26 @@ export async function mobileStopXctestScreenRecording(
   return result;
 }
 
+function pathMatchesUuid(fullPath: string, uuid: string): boolean {
+  return path.basename(fullPath).toUpperCase() === uuid.toUpperCase();
+}
+
 async function retrieveRecodingFromSimulator(this: XCUITestDriver, uuid: string): Promise<string> {
   const device = this.device as Simulator;
   const dataRoot = device.getDir();
-  // On Simulators the path looks like
-  // $HOME/Library/Developer/CoreSimulator/Devices/F8E1968A-8443-4A9A-AB86-27C54C36A2F6/data/Containers/Data/InternalDaemon/4E3FE8DF-AD0A-41DA-B6EC-C35E5798C219/Attachments/A044DAF7-4A58-4CD5-95C3-29B4FE80C377
+  // e.g. .../CoreSimulator/Devices/<udid>/data/Containers/Data/InternalDaemon/<daemon-id>/Attachments/<uuid>
+  // or .../InternalDaemon/<daemon-id>/tmp/Attachments/<uuid> (Xcode 26.5+)
   const internalDaemonRoot = path.resolve(dataRoot, 'Containers', 'Data', 'InternalDaemon');
-  const videoPaths = await fs.glob(`*/Attachments/${uuid}`, {
+  const attachmentPaths = await fs.glob(SIMULATOR_XCTEST_RECORDING_ATTACHMENT_GLOB, {
     cwd: internalDaemonRoot,
     absolute: true,
   });
-  if (isEmpty(videoPaths)) {
+  const videoPath = attachmentPaths.find((fp) => pathMatchesUuid(fp, uuid));
+  if (!videoPath) {
     throw new Error(
       `Unable to locate XCTest screen recording identified by '${uuid}' for the Simulator ${device.udid}`,
     );
   }
-  const videoPath = videoPaths[0];
   const {size} = await fs.stat(videoPath);
   this.log.debug(`Located the video at '${videoPath}' (${util.toReadableSizeString(size)})`);
   return videoPath;
