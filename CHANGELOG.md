@@ -1,3 +1,9 @@
+## [11.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.7...v11.8.0) (2026-06-02)
+
+### Features
+
+* **app:** use zip_conduit service for IPA installation/upgrade ([#2860](https://github.com/appium/appium-xcuitest-driver/issues/2860)) ([308ccfd](https://github.com/appium/appium-xcuitest-driver/commit/308ccfd1851a7bad1e0ae709aef617b32e07c922))
+
 ## [11.7.7](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.6...v11.7.7) (2026-06-01)
 
 ### Miscellaneous Chores
