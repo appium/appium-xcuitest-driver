@@ -143,14 +143,11 @@
   "peerDependencies": {
     "appium": "^3.0.0-rc.2"
   },
-  "overrides": {
-    "@appium/types": "1.5.0"
-  },
   "devDependencies": {
     "@appium/docutils": "^2.4.0",
     "@appium/eslint-config-appium-ts": "^3.0.0",
     "@appium/tsconfig": "^1.0.0-rc.1",
-    "@appium/types": "1.5.0",
+    "@appium/types": "^1.5.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/mocha": "^10.0.1",
