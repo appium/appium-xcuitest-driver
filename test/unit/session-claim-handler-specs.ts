@@ -168,10 +168,15 @@ describe('SessionClaimHandler', function () {
   });
 
   it('should publish a contended message before terminating an obsolete session', async function () {
+    const callOrder: string[] = [];
     const publish = sandbox.spy(mockIpc, 'publish');
     const oldDriver = makeDriver({
       sessionId: 'old-session',
       opts: {udid: 'device-1'} as any,
+    });
+    oldDriver.deleteSession = sandbox.stub().callsFake(async () => {
+      callOrder.push('deleteSession');
+      sessionClaimHandler.unregisterActiveSession(oldDriver);
     });
     await sessionClaimHandler.registerActiveSession(oldDriver);
 
@@ -179,8 +184,14 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.registerActiveSession(newDriver);
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
-    expect(publish.getCalls().some((call) => call.args[0] === SESSION_UDID_CONTENDED_IPC_TOPIC)).to
-      .be.true;
+    const contendedCallIndex = publish
+      .getCalls()
+      .findIndex((call) => call.args[0] === SESSION_UDID_CONTENDED_IPC_TOPIC);
+    expect(contendedCallIndex).to.be.greaterThan(-1);
+    expect(callOrder).to.eql(['deleteSession']);
+    expect(contendedCallIndex).to.be.lessThan(
+      publish.getCalls().findIndex((call) => call.args[0] === SESSION_UDID_RELEASED_IPC_TOPIC),
+    );
   });
 
   it('should publish the session udid on the shared driver IPC topic', async function () {
@@ -217,5 +228,23 @@ describe('SessionClaimHandler', function () {
 
     sessionClaimHandler.unregisterActiveSession(driver);
     expect(mockIpc.subscriptions[0].isActive).to.be.false;
+  });
+
+  it('should unsubscribe contention listeners when claim publication fails', async function () {
+    sandbox.stub(mockIpc, 'publish').rejects(new Error('publish failed'));
+    const newDriver = makeDriver();
+
+    await sessionClaimHandler.registerActiveSession(newDriver);
+    const activeSubscriptionsBeforeClaim = mockIpc.subscriptions.filter(
+      (subscription) => subscription.isActive,
+    ).length;
+
+    await expect(sessionClaimHandler.claimSessionUdid(newDriver)).to.be.rejectedWith(
+      'publish failed',
+    );
+
+    expect(mockIpc.subscriptions.filter((subscription) => subscription.isActive)).to.have.length(
+      activeSubscriptionsBeforeClaim,
+    );
   });
 });
