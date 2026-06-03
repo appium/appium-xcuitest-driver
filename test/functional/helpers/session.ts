@@ -50,8 +50,7 @@ export async function deleteRemoteSession(sessionDriver?: Browser): Promise<void
   }
   try {
     await sessionDriver.deleteSession();
-  } catch {
-  }
+  } catch {}
 }
 
 export async function deleteSession(): Promise<void> {

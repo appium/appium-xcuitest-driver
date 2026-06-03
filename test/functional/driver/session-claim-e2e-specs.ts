@@ -4,19 +4,11 @@ import {Simctl} from 'node-simctl';
 import type {Browser} from 'webdriverio';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {
-  amendCapabilities,
-  extractCapabilityValue,
-  getUICatalogSimCaps,
-} from '../desired';
+import {amendCapabilities, extractCapabilityValue, getUICatalogSimCaps} from '../desired';
 import {assertSessionClaimIpcTraces, readAppiumLog} from '../helpers/appium-log';
 import {getFreePort} from '../helpers/ports';
 import {cleanupSimulator, deleteDeviceWithRetry} from '../helpers/simulator';
-import {
-  createRemoteSession,
-  deleteRemoteSession,
-  MOCHA_TIMEOUT,
-} from '../helpers/session';
+import {createRemoteSession, deleteRemoteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
