@@ -50,26 +50,25 @@ class CleanupVideos {
 
     const devicectl = new Devicectl(udid);
     const fileNames = [];
-    let listError;
+    const listErrors = [];
+    let anyListSucceeded = false;
     for (const subdirectory of ATTACHMENT_SUBDIRECTORIES) {
       try {
         const names = await devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
           username: USERNAME,
           subdirectory,
         });
+        anyListSucceeded = true;
         fileNames.push(...names);
       } catch (err) {
-        listError = err;
+        listErrors.push(err);
         log.debug(`Could not list ${subdirectory}: ${err.message ?? err}`);
       }
     }
-    if (fileNames.length === 0 && listError) {
-      throw new Error(
-        `Failed to list files in ${DOMAIN_TYPE}/${DOMAIN_IDENTIFIER}/` +
-          `{${ATTACHMENT_SUBDIRECTORIES.join(',')}}. ` +
-          `Ensure a tunnel is up and the device is reachable via devicectl.`,
-        {cause: listError},
-      );
+    if (!anyListSucceeded) {
+      const errorMessage = `Failed to list files in ${DOMAIN_TYPE}/${DOMAIN_IDENTIFIER}/` +
+        `{${ATTACHMENT_SUBDIRECTORIES.join(',')}}`;
+      throw new AggregateError(listErrors, errorMessage);
     }
 
     const uuids = filterAttachmentUuids([...new Set(fileNames)]);

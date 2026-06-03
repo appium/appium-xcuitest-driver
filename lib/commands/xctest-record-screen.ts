@@ -317,7 +317,7 @@ function createXcTestScreenRecordingRetriever(
   if (driver.isRealDevice()) {
     return new RealDeviceXcTestScreenRecordingRetriever(
       driver.device as RealDevice,
-      driver.opts.tmpDir ?? os.tmpdir(),
+      driver.opts.tmpDir || os.tmpdir(),
       driver.log,
     );
   }
