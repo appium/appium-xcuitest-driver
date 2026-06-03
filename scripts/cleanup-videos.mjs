@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Lists XCTest attachment file names (UUIDs) under **testmanagerd**'s app-data `Attachments` folder
+ * Lists XCTest attachment file names (UUIDs) under **testmanagerd**'s app-data `Attachments` and
+ * `tmp/Attachments` folders
  * and deletes them via **appium-ios-remotexpc** (`XCTestAttachment.delete`), the same mechanism the
  * driver uses for real-device XCTest screen recording cleanup.
  *
@@ -29,7 +30,8 @@ const log = logger.getLogger('cleanup-videos');
 const DOMAIN_IDENTIFIER = 'com.apple.testmanagerd';
 const DOMAIN_TYPE = 'appDataContainer';
 const USERNAME = 'mobile';
-const SUBDIRECTORY = 'Attachments';
+/** Legacy layout and Xcode 26.5+ `tmp/Attachments` (same as xctest-record-screen.ts). */
+const ATTACHMENT_SUBDIRECTORIES = ['Attachments', 'tmp/Attachments'];
 
 /** Attachment entries are UUID-shaped file names (no extension in this listing). */
 const UUID_NAME_RE = /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i;
@@ -47,24 +49,32 @@ class CleanupVideos {
     await requirePlatformVersion(udid);
 
     const devicectl = new Devicectl(udid);
-    let fileNames;
-    try {
-      fileNames = await devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
-        username: USERNAME,
-        subdirectory: SUBDIRECTORY,
-      });
-    } catch (err) {
-      throw new Error(
-        `Failed to list files in ${DOMAIN_TYPE}/${DOMAIN_IDENTIFIER}/${SUBDIRECTORY}. ` +
-          `Ensure a tunnel is up and the device is reachable via devicectl.`,
-        {cause: err},
-      );
+    const fileNames = [];
+    const listErrors = [];
+    let anyListSucceeded = false;
+    for (const subdirectory of ATTACHMENT_SUBDIRECTORIES) {
+      try {
+        const names = await devicectl.listFiles(DOMAIN_TYPE, DOMAIN_IDENTIFIER, {
+          username: USERNAME,
+          subdirectory,
+        });
+        anyListSucceeded = true;
+        fileNames.push(...names);
+      } catch (err) {
+        listErrors.push(err);
+        log.debug(`Could not list ${subdirectory}: ${err.message ?? err}`);
+      }
+    }
+    if (!anyListSucceeded) {
+      const errorMessage = `Failed to list files in ${DOMAIN_TYPE}/${DOMAIN_IDENTIFIER}/` +
+        `{${ATTACHMENT_SUBDIRECTORIES.join(',')}}`;
+      throw new AggregateError(listErrors, errorMessage);
     }
 
-    const uuids = filterAttachmentUuids(fileNames);
+    const uuids = filterAttachmentUuids([...new Set(fileNames)]);
     log.info(
       `Found ${util.pluralize('UUID-shaped attachment', uuids.length, true)} ` +
-        `in testmanagerd Attachments (out of ${fileNames.length} listed names).`,
+        `in testmanagerd Attachments and tmp/Attachments (out of ${fileNames.length} listed names).`,
     );
     if (uuids.length > 0) {
       log.info(uuids.join('\n'));
