@@ -114,6 +114,7 @@ import type {RemoteDebugger} from 'appium-remote-debugger';
 import type {XcodeVersion} from 'appium-xcode';
 import type {Simulator} from 'appium-ios-simulator';
 import type {DriverLogs} from './commands/log';
+import {sessionClaimHandler} from './session-claim-handler';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
@@ -794,13 +795,16 @@ export class XCUITestDriver
     return this._remote;
   }
 
-  get driverData(): Record<string, any> {
-    // TODO fill out resource info here
+  override get driverData(): Record<string, any> {
     return {};
   }
 
   get device(): Simulator | RealDevice {
     return this._device;
+  }
+
+  async onIpcInit(): Promise<void> {
+    await sessionClaimHandler.registerActiveSession(this);
   }
 
   // Override methods from BaseDriver
@@ -890,6 +894,8 @@ export class XCUITestDriver
   }
 
   override async deleteSession(sessionId?: string): Promise<void> {
+    sessionClaimHandler.unregisterActiveSession(this);
+
     await removeAllSessionWebSocketHandlers.bind(this)();
 
     for (const recorder of [this._recentScreenRecorder, this._audioRecorder].filter(
@@ -1255,6 +1261,9 @@ export class XCUITestDriver
     );
     this._device = device;
     this.opts.udid = udid;
+
+    await sessionClaimHandler.registerActiveSession(this);
+    await sessionClaimHandler.claimSessionUdid(this);
 
     if (this.opts.simulatorDevicesSetPath) {
       if (realDevice) {
