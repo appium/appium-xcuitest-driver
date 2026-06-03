@@ -1,3 +1,9 @@
+## [11.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.8.1...v11.9.0) (2026-06-03)
+
+### Features
+
+* Automatically terminate obsolete sessions using device id to be claimed by the current one ([#2863](https://github.com/appium/appium-xcuitest-driver/issues/2863)) ([2d82163](https://github.com/appium/appium-xcuitest-driver/commit/2d8216386d40f6c5a4f5382a9179b6306165c1d2))
+
 ## [11.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.8.0...v11.8.1) (2026-06-03)
 
 ### Bug Fixes
