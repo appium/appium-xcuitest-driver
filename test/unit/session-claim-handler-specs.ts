@@ -6,11 +6,9 @@ import type sinon from 'sinon';
 import {expect} from 'chai';
 import {
   resetDriverInstanceIpcForTesting,
+  SessionClaimHandler,
   sessionClaimHandler,
   setSharedIpcForTesting,
-  SESSION_UDID_CLAIMED_IPC_TOPIC,
-  SESSION_UDID_CONTENDED_IPC_TOPIC,
-  SESSION_UDID_RELEASED_IPC_TOPIC,
 } from '../../lib/session-claim-handler';
 import type {XCUITestDriver} from '../../lib/driver';
 
@@ -117,7 +115,7 @@ describe('SessionClaimHandler', function () {
     expect((oldDriver.log.warn as sinon.SinonStub).calledWithMatch(/highly discouraged/)).to.be
       .true;
     expect((newDriver.deleteSession as sinon.SinonStub).called).to.be.false;
-    expect(mockIpc.getMessage(SESSION_UDID_RELEASED_IPC_TOPIC)?.data).to.eql({
+    expect(mockIpc.getMessage(SessionClaimHandler.RELEASED_TOPIC)?.data).to.eql({
       udid: 'device-1',
       sessionId: 'old-session',
     });
@@ -186,11 +184,11 @@ describe('SessionClaimHandler', function () {
 
     const contendedCallIndex = publish
       .getCalls()
-      .findIndex((call) => call.args[0] === SESSION_UDID_CONTENDED_IPC_TOPIC);
+      .findIndex((call) => call.args[0] === SessionClaimHandler.CONTENDED_TOPIC);
     expect(contendedCallIndex).to.be.greaterThan(-1);
     expect(callOrder).to.eql(['deleteSession']);
     expect(contendedCallIndex).to.be.lessThan(
-      publish.getCalls().findIndex((call) => call.args[0] === SESSION_UDID_RELEASED_IPC_TOPIC),
+      publish.getCalls().findIndex((call) => call.args[0] === SessionClaimHandler.RELEASED_TOPIC),
     );
   });
 
@@ -203,7 +201,7 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
     expect(publish.firstCall.args).to.eql([
-      SESSION_UDID_CLAIMED_IPC_TOPIC,
+      SessionClaimHandler.CLAIMED_TOPIC,
       node.getObjectId(newDriver),
       {
         udid: 'device-1',

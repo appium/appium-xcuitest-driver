@@ -270,10 +270,6 @@ const loadSharedIpc = memoize(async function loadSharedIpc(): Promise<IAppiumIpc
 
 export const sessionClaimHandler = new SessionClaimHandler(loadSharedIpc);
 
-export const SESSION_UDID_CLAIMED_IPC_TOPIC = SessionClaimHandler.CLAIMED_TOPIC;
-export const SESSION_UDID_CONTENDED_IPC_TOPIC = SessionClaimHandler.CONTENDED_TOPIC;
-export const SESSION_UDID_RELEASED_IPC_TOPIC = SessionClaimHandler.RELEASED_TOPIC;
-
 /**
  * @internal Exposed for unit tests.
  */
