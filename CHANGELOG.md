@@ -1,3 +1,9 @@
+## [11.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.8.0...v11.8.1) (2026-06-03)
+
+### Bug Fixes
+
+* Video attachments path for Xcode 26.5+ ([#2862](https://github.com/appium/appium-xcuitest-driver/issues/2862)) ([174ff70](https://github.com/appium/appium-xcuitest-driver/commit/174ff707cba80217197d81f9ee917e9abf66f973))
+
 ## [11.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.7.7...v11.8.0) (2026-06-02)
 
 ### Features
