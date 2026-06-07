@@ -1,5 +1,4 @@
 import {errors} from 'appium/driver';
-import {log} from '../logger';
 import {memoize} from '../utils';
 import {CLASS_CHAIN_EMITTER_KEY, WDA_CLASS_CHAIN_STRATEGY} from './constants';
 import {ATTRIBUTE_SCHEMA} from './schema';
@@ -40,16 +39,10 @@ export async function cssToNativeLocator(css: string): Promise<NativeLocator> {
 
 function mapCssError(err: unknown, css: string): Error {
   if (isPackageError(err, 'InvalidSelectorError')) {
-    log.debug(err.stack);
-    return new errors.InvalidSelectorError(
-      `Invalid CSS selector '${css}'. Reason: '${err.message}'`,
-    );
+    return new errors.InvalidSelectorError(`Invalid CSS selector '${css}'`, err);
   }
   if (isPackageError(err, 'UnsupportedSelectorError')) {
-    log.debug(err.stack);
-    return new errors.InvalidSelectorError(
-      `Unsupported CSS selector '${css}'. Reason: '${err.message}'`,
-    );
+    return new errors.InvalidSelectorError(`Unsupported CSS selector '${css}'`, err);
   }
   if (err instanceof Error) {
     return err;
