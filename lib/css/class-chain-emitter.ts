@@ -7,12 +7,7 @@ import type {
   StrategyEmitter,
 } from '@appium/css-locator-to-native';
 
-const BOOLEAN_ATTRS = new Set([
-  'visible',
-  'accessible',
-  'accessibility-container',
-  'enabled',
-]);
+const BOOLEAN_ATTRS = new Set(['visible', 'accessible', 'accessibility-container', 'enabled']);
 
 const STRING_ATTRS = new Set(['label', 'name', 'value', 'type']);
 

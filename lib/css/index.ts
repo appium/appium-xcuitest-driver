@@ -34,24 +34,27 @@ export async function cssToNativeLocator(css: string): Promise<NativeLocator> {
     const transformCss = await getTransformCss();
     return transformCss(css);
   } catch (err) {
-    mapCssError(err, css);
+    throw mapCssError(err, css);
   }
 }
 
-function mapCssError(err: unknown, css: string): never {
+function mapCssError(err: unknown, css: string): Error {
   if (isPackageError(err, 'InvalidSelectorError')) {
     log.debug(err.stack);
-    throw new errors.InvalidSelectorError(
+    return new errors.InvalidSelectorError(
       `Invalid CSS selector '${css}'. Reason: '${err.message}'`,
     );
   }
   if (isPackageError(err, 'UnsupportedSelectorError')) {
     log.debug(err.stack);
-    throw new errors.InvalidSelectorError(
+    return new errors.InvalidSelectorError(
       `Unsupported CSS selector '${css}'. Reason: '${err.message}'`,
     );
   }
-  throw err;
+  if (err instanceof Error) {
+    return err;
+  }
+  return new Error(String(err));
 }
 
 function isPackageError(err: unknown, name: string): err is Error {
