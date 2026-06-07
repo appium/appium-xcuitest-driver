@@ -82,6 +82,7 @@
   ],
   "types": "./build/lib/index.d.ts",
   "dependencies": {
+    "@appium/css-locator-to-native": "^1.0.1",
     "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
     "appium-ios-device": "^3.1.12",
@@ -93,7 +94,6 @@
     "asyncbox": "^6.3.0",
     "axios": "^1.4.0",
     "commander": "^14.0.1",
-    "css-selector-parser": "^3.0.0",
     "js2xmlparser2": "^0.x",
     "lru-cache": "^11.1.0",
     "moment": "^2.29.4",
