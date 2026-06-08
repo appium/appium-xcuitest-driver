@@ -1,5 +1,5 @@
 import {isEmpty} from '../utils';
-import {CssConverter} from '../css-converter';
+import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import type {Element, AppiumLogger} from '@appium/types';
@@ -92,8 +92,7 @@ export async function findNativeElementOrElements(
   } else if (strategy === '-ios class chain') {
     strategy = WDA_CLASS_CHAIN_STRATEGY;
   } else if (strategy === 'css selector') {
-    strategy = WDA_CLASS_CHAIN_STRATEGY;
-    selector = CssConverter.toIosClassChainSelector(selector);
+    ({strategy, selector} = await cssToNativeLocator(selector));
   }
 
   if (strategy === 'class name') {
@@ -248,7 +247,6 @@ export async function getFirstVisibleChild(
 
 const MAGIC_FIRST_VIS_CHILD_SEL = /\/\*\[@firstVisible\s*=\s*('|")true\1\]/;
 const MAGIC_SCROLLABLE_SEL = /\/\/\*\[@scrollable\s*=\s*('|")true\1\]/;
-const WDA_CLASS_CHAIN_STRATEGY = 'class chain';
 
 function stripViewFromSelector(selector: string): string {
   const keepView = [

@@ -1,6 +1,6 @@
-import {CssConverter} from '../../lib/css-converter';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../../lib/css';
 
 chai.use(chaiAsPromised);
 
@@ -41,8 +41,11 @@ describe('css-converter.js', function () {
       ['window > *:nth-child(-1)', '**/XCUIElementTypeWindow/*[-1]'],
     ];
     for (const [cssSelector, iosClassChainSelector] of simpleCases) {
-      it(`should convert '${cssSelector}' to '${iosClassChainSelector}'`, function () {
-        expect(CssConverter.toIosClassChainSelector(cssSelector)).to.equal(iosClassChainSelector);
+      it(`should convert '${cssSelector}' to '${iosClassChainSelector}'`, async function () {
+        await expect(cssToNativeLocator(cssSelector)).to.eventually.deep.equal({
+          strategy: WDA_CLASS_CHAIN_STRATEGY,
+          selector: iosClassChainSelector,
+        });
       });
     }
   });
@@ -54,8 +57,8 @@ describe('css-converter.js', function () {
       'p ~ a',
     ];
     for (const cssSelector of testCases) {
-      it(`should reject '${cssSelector}'`, function () {
-        expect(() => CssConverter.toIosClassChainSelector(cssSelector)).to.throw();
+      it(`should reject '${cssSelector}'`, async function () {
+        await expect(cssToNativeLocator(cssSelector)).to.be.rejected;
       });
     }
   });
