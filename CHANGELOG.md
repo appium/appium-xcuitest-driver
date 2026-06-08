@@ -1,3 +1,9 @@
+## [11.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.9.0...v11.9.1) (2026-06-08)
+
+### Miscellaneous Chores
+
+* Refactor css locator transformer ([#2864](https://github.com/appium/appium-xcuitest-driver/issues/2864)) ([74c6765](https://github.com/appium/appium-xcuitest-driver/commit/74c67655048d15f83053e17736d3f8a459d0cf67))
+
 ## [11.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.8.1...v11.9.0) (2026-06-03)
 
 ### Features
