@@ -81,7 +81,7 @@ application (which the driver installs on the device under test) is also downgra
 
 | iOS/iPadOS/tvOS version | Fully supported driver/WDA versions | Last likely working driver/WDA version |
 | --- | --- | --- |
-| >= 27 | >= [11.10.0](https://github.com/appium/appium-xcuitest-driver/pull/2865) (WDA >= 14.0.0) | Latest |
+| >= 27.0 | >= [11.10.0](https://github.com/appium/appium-xcuitest-driver/pull/2865) (WDA >= 14.0.0) | Latest |
 | >= 26.4 | >= [10.23.2](https://github.com/appium/appium-xcuitest-driver/pull/2733) (WDA >= 11.1.5) | Latest |
 | 26.0 - 26.3 | >= 9.5.0 (WDA >= [9.14.1](https://github.com/appium/WebDriverAgent/pull/1032)) | Latest |
 | 18.0 - 18.7 | >= 7.24.15 (WDA >= [8.9.1](https://github.com/appium/WebDriverAgent/pull/935)) | Latest |
