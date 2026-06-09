@@ -3783,23 +3783,23 @@ for use with real devices or simulators.</p>
 <h4 id="examples_2">Examples<a class="headerlink" href="#examples_2" title="Permanent link">&para;</a></h4>
 <ul>
 <li>
-<p>Download the iOS version of the WDA app (<code>WebDriverAgentRunner-Runner.app</code>) into the <code>wda</code>
-    subdirectory of the XCUITest driver's install directory:</p>
-<div class="language-text highlight"><pre><span></span><code>```
-appium driver run xcuitest download-wda -- --platform=ios --outdir=wda
-```
-</code></pre></div>
+<p>Download the iOS real device version of the WDA app (<code>WebDriverAgentRunner-Runner.app</code>) into the
+  <code>wda</code> subdirectory of the XCUITest driver's install directory:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>appium driver run xcuitest download-wda -- --platform=ios --outdir=wda
+</span></code></pre></div>
 </li>
 <li>
-<p>Download the tvOS version of the WDA app (<code>WebDriverAgentRunner_tvOS-Runner.app</code>) into <code>/path/to/dir</code>:</p>
-<div class="language-text highlight"><pre><span></span><code>```
-appium driver run xcuitest download-wda -- --platform=tvos --outdir=/path/to/dir
-```
-</code></pre></div>
+<p>Download the tvOS simulator version of the WDA app (<code>WebDriverAgentRunner_tvOS-Runner.app</code>) into
+  <code>/path/to/dir</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>appium driver run xcuitest download-wda -- --platform=tvos --outdir=/path/to/dir --kind=sim
+</span></code></pre></div>
 </li>
 </ul>
 <h3 id="download-wda-sim"><code>download-wda-sim</code><a class="headerlink" href="#download-wda-sim" title="Permanent link">&para;</a></h3>
-<p><strong>Deprecated in favor of <code>download-wda</code>; use <code>download-wda</code> with the appropriate build kind for simulator or real-device usage.</strong></p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>Use the <code>download-wda</code> script with the <code>--kind=sim</code> flag instead</p>
+</div>
 <p>Downloads a prebuilt WebDriverAgent (WDA) application from the WDA project's <a href="https://github.com/appium/WebDriverAgent/releases">GitHub Releases page</a>
 for use in a simulator device.</p>
 <p>For information about running tests with a prebuilt WDA application, <a href="../../guides/run-prebuilt-wda/">refer to this guide</a>.</p>
@@ -3857,60 +3857,35 @@ for use in a simulator device.</p>
 </li>
 </ul>
 <h3 id="sign-wda"><code>sign-wda</code><a class="headerlink" href="#sign-wda" title="Permanent link">&para;</a></h3>
-<p>Signs or inspects a downloaded WebDriverAgent (WDA) app bundle using
-<a href="https://github.com/appium/resigner"><code>resigner</code></a>.
-The <code>resigner</code> tool must be available on your <code>PATH</code>.</p>
-<p>By default, it signs the app using a <code>.p12</code> certificate and provisioning profiles. With
-<code>--inspect</code>, it runs inspect-only mode and prints bundle/signing details without modifying the app.</p>
-<h4 id="generating-or-using-a-certificate">Generating or Using a Certificate<a class="headerlink" href="#generating-or-using-a-certificate" title="Permanent link">&para;</a></h4>
-<p>Before signing, you need a signing certificate. You can use certificates in two ways:</p>
-<p><strong>Option 1: Use <code>.cer</code> and <code>.key</code> files directly (recommended — no password needed!)</strong></p>
-<p>If you've downloaded a <code>.cer</code> (certificate) and <code>.key</code> (private key) file from the <a href="https://developer.apple.com/account/resources/certificates/list">Apple Developer portal</a>, you can use them directly without conversion. The script automatically converts them to a temporary <code>.p12</code> file with an auto-generated password — <strong>no need to manage a password yourself!</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>sign-wda<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span>--wda-path<span class="w"> </span>./wda/WebDriverAgentRunner-Runner.app<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span>--p12-cert<span class="w"> </span>~/certificate.cer<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span>--p12-key<span class="w"> </span>~/private.key
-</span></code></pre></div>
-<p><strong>Option 2: Create a <code>.p12</code> file from Keychain (macOS — requires P12_PASSWORD)</strong></p>
-<p>If your certificate is in your macOS Keychain:</p>
+<p>Signs or inspects a downloaded WebDriverAgent (WDA) app bundle using the
+<a href="https://github.com/appium/resigner"><code>resigner</code></a> tool. The tool must be available on your <code>PATH</code>.</p>
+<p>The script supports three modes of operation:</p>
 <ol>
-<li>Open <strong>Keychain Access</strong> → <strong>My Certificates</strong>.</li>
-<li>Find your iOS development or distribution certificate (e.g. <code>Apple Development: ...</code>).</li>
-<li>Right-click → <strong>Export</strong> → choose <strong>Personal Information Exchange (.p12)</strong>.</li>
-<li>Set a password — this becomes your <code>P12_PASSWORD</code> environment variable.</li>
+<li>Sign the app using provided <code>.cer</code> and <code>.key</code> files. This will automatically generate a temporary
+ <code>.p12</code> file with an auto-generated password</li>
+<li>Sign the app using a provided <code>.p12</code> certificate file, along with its password specified in the
+  <code>P12_PASSWORD</code> environment variable</li>
+<li>Inspect the app's bundle/signing details without making any modifications</li>
 </ol>
-<p>Then use it with:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nv">P12_PASSWORD</span><span class="o">=</span>mypassword<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>sign-wda<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>--wda-path<span class="w"> </span>./wda/WebDriverAgentRunner-Runner.app<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>--p12-file<span class="w"> </span>~/sign.p12
+<p>For Mode 1, the <code>.cer</code> and <code>.key</code> files can be downloaded from the <a href="https://developer.apple.com/account/resources/certificates/list">Apple Developer portal</a>.</p>
+<p>In contrast, for Mode 2, the <code>.p12</code> certificate file can be extracted from the macOS Keychain. Find your
+certificate in <em>Keychain Access → My Certificates</em> (it should be named <em>Apple Development: ...</em>),
+then right-click → <em>Export</em> -&gt; <em>Personal Information Exchange (.p12)</em>. You will be prompted to
+enter a password, which you should use as the value for the <code>P12_PASSWORD</code> environment variable.</p>
+<p>You can also manually generate the <code>.p12</code> file from <code>.cer</code> and <code>.key</code> files, though this approach
+still requires you to specify a password:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Convert Apple-issued .cer to .pem</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>certificate.cer<span class="w"> </span>-inform<span class="w"> </span>DER<span class="w"> </span>-out<span class="w"> </span>certificate.pem
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Combine certificate and private key into a .p12</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>openssl<span class="w"> </span>pkcs12<span class="w"> </span>-export<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span>-in<span class="w"> </span>certificate.pem<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span>-inkey<span class="w"> </span>private.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">  </span>-out<span class="w"> </span>sign.p12<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">  </span>-passout<span class="w"> </span>pass:mypassword
 </span></code></pre></div>
-<p><strong>Option 3: Manually convert <code>.cer</code> and <code>.key</code> to <code>.p12</code> (requires P12_PASSWORD)</strong></p>
-<p>If you prefer to create a <code>.p12</code> file manually:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Convert Apple-issued .cer to .pem</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>openssl<span class="w"> </span>x509<span class="w"> </span>-in<span class="w"> </span>certificate.cer<span class="w"> </span>-inform<span class="w"> </span>DER<span class="w"> </span>-out<span class="w"> </span>certificate.pem
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Combine certificate and private key into a .p12</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>openssl<span class="w"> </span>pkcs12<span class="w"> </span>-export<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span>-in<span class="w"> </span>certificate.pem<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">  </span>-inkey<span class="w"> </span>private.key<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">  </span>-out<span class="w"> </span>sign.p12<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">  </span>-passout<span class="w"> </span>pass:mypassword
-</span></code></pre></div>
-<p>Then use the <code>.p12</code> file as in Option 2 with <code>P12_PASSWORD</code> environment variable.</p>
-<div class="admonition note">
-<p class="admonition-title">Certificate Options</p>
-<p>The script supports two mutually exclusive approaches:</p>
-<ul>
-<li><strong><code>--p12-cert</code> + <code>--p12-key</code></strong> (recommended): Automatically converts <code>.cer</code> and <code>.key</code> files to a temporary <code>.p12</code> with an auto-generated password. <strong>No <code>P12_PASSWORD</code> needed!</strong></li>
-<li><strong><code>--p12-file</code></strong>: Uses a preconverted <code>.p12</code> file. <strong>Requires <code>P12_PASSWORD</code> environment variable.</strong></li>
-</ul>
-<p>Choose one approach; you cannot use both in the same command.</p>
-</div>
-<h4 id="usage_4">Usage<a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>P12_PASSWORD=&lt;password&gt; appium driver run xcuitest sign-wda -- --wda-path=&lt;path&gt; --p12-file=&lt;path&gt;
-</span></code></pre></div>
-<h4 id="usage-inspect-only">Usage (inspect-only)<a class="headerlink" href="#usage-inspect-only" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>appium driver run xcuitest sign-wda -- --wda-path=&lt;path&gt; --inspect
+<h4 id="usage-mode-1-cer-and-key-files">Usage (Mode 1 - <code>.cer</code> and <code>.key</code> files)<a class="headerlink" href="#usage-mode-1-cer-and-key-files" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>appium driver run xcuitest sign-wda -- --wda-path=&lt;path&gt; --p12-cert=&lt;path&gt; --p12-key=&lt;path&gt;
 </span></code></pre></div>
 <h5 id="required-arguments">Required Arguments<a class="headerlink" href="#required-arguments" title="Permanent link">&para;</a></h5>
 <table>
@@ -3923,6 +3898,16 @@ The <code>resigner</code> tool must be available on your <code>PATH</code>.</p>
 </thead>
 <tbody>
 <tr>
+<td><code>--p12-cert</code></td>
+<td>Path to the <code>.cer</code> certificate file from Apple Developer portal</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>--p12-key</code></td>
+<td>Path to the <code>.key</code> private key file from Apple Developer portal</td>
+<td>string</td>
+</tr>
+<tr>
 <td><code>--wda-path</code></td>
 <td>Path to the <code>WebDriverAgentRunner-Runner.app</code> bundle to sign</td>
 <td>string</td>
@@ -3933,30 +3918,15 @@ The <code>resigner</code> tool must be available on your <code>PATH</code>.</p>
 <table>
 <thead>
 <tr>
-<th>Argument</th>
+<th><div style="width:8em">Argument</div></th>
 <th>Description</th>
 <th>Type</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>--p12-file</code></td>
-<td>Path to the <code>.p12</code> signing certificate file. <strong>Mutually exclusive with <code>--p12-cert</code> and <code>--p12-key</code>.</strong> Requires <code>P12_PASSWORD</code> environment variable.</td>
-<td>string</td>
-</tr>
-<tr>
-<td><code>--p12-cert</code></td>
-<td>Path to the <code>.cer</code> certificate file from Apple Developer portal. <strong>Mutually exclusive with <code>--p12-file</code>.</strong> Auto-converts to <code>.p12</code> with generated password (no <code>P12_PASSWORD</code> needed). Must be used with <code>--p12-key</code>.</td>
-<td>string</td>
-</tr>
-<tr>
-<td><code>--p12-key</code></td>
-<td>Path to the <code>.key</code> private key file from Apple Developer portal. <strong>Mutually exclusive with <code>--p12-file</code>.</strong> Auto-converts to <code>.p12</code> with generated password (no <code>P12_PASSWORD</code> needed). Must be used with <code>--p12-cert</code>.</td>
-<td>string</td>
-</tr>
-<tr>
 <td><code>--profile-dir</code></td>
-<td>Directory containing provisioning profiles (<code>.mobileprovision</code> files.) Default is auto-discovered from default locations <code>~/Library/Developer/Xcode/UserData/Provisioning Profiles</code> and <code>~/Library/MobileDevice/Provisioning Profiles</code>.</td>
+<td>Directory containing provisioning profiles (<code>.mobileprovision</code> files). Default is auto-discovered from default locations <code>~/Library/Developer/Xcode/UserData/Provisioning Profiles</code> and <code>~/Library/MobileDevice/Provisioning Profiles</code>.</td>
 <td>string</td>
 </tr>
 <tr>
@@ -3964,13 +3934,11 @@ The <code>resigner</code> tool must be available on your <code>PATH</code>.</p>
 <td>Remap the default WebDriverAgent bundle IDs with the specified bundle ID. It is useful when your provisioning profile is tied to a specific bundle ID.</td>
 <td>string</td>
 </tr>
-<tr>
-<td><code>--inspect</code></td>
-<td>Run <code>resigner --inspect</code> only. In this mode, signing options (<code>--p12-file</code>, <code>--p12-cert</code>/<code>--p12-key</code>, <code>P12_PASSWORD</code>, <code>--profile-dir</code>) are not required.</td>
-<td>boolean</td>
-</tr>
 </tbody>
 </table>
+<h4 id="usage-mode-2-p12-file">Usage (Mode 2 - <code>.p12</code> file)<a class="headerlink" href="#usage-mode-2-p12-file" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>P12_PASSWORD=&lt;password&gt; appium driver run xcuitest sign-wda -- --wda-path=&lt;path&gt; --p12-file=&lt;path&gt;
+</span></code></pre></div>
 <h5 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
@@ -3982,51 +3950,137 @@ The <code>resigner</code> tool must be available on your <code>PATH</code>.</p>
 <tbody>
 <tr>
 <td><code>P12_PASSWORD</code></td>
-<td>Password for the <code>.p12</code> signing certificate file. <strong>Required only when using <code>--p12-file</code></strong>. Not needed when using <code>--p12-cert</code> and <code>--p12-key</code> (which auto-generate a password).</td>
+<td>Password for the <code>.p12</code> signing certificate file</td>
+</tr>
+</tbody>
+</table>
+<h5 id="required-arguments_1">Required Arguments<a class="headerlink" href="#required-arguments_1" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>&lt;Argument</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--p12-file</code></td>
+<td>Path to the <code>.p12</code> signing certificate file</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>--wda-path</code></td>
+<td>Path to the <code>WebDriverAgentRunner-Runner.app</code> bundle to sign</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h5 id="optional-arguments_5">Optional Arguments<a class="headerlink" href="#optional-arguments_5" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th><div style="width:8em">Argument</div></th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--profile-dir</code></td>
+<td>Directory containing provisioning profiles (<code>.mobileprovision</code> files). Default is auto-discovered from default locations <code>~/Library/Developer/Xcode/UserData/Provisioning Profiles</code> and <code>~/Library/MobileDevice/Provisioning Profiles</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>--bundle-id</code></td>
+<td>Remap the default WebDriverAgent bundle IDs with the specified bundle ID. It is useful when your provisioning profile is tied to a specific bundle ID.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="usage-mode-3-inspect">Usage (Mode 3 - inspect)<a class="headerlink" href="#usage-mode-3-inspect" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>appium driver run xcuitest sign-wda -- --wda-path=&lt;path&gt; --inspect
+</span></code></pre></div>
+<h5 id="required-arguments_2">Required Arguments<a class="headerlink" href="#required-arguments_2" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--inspect</code></td>
+<td>Instruct the <code>resigner</code> tool to run <code>--inspect</code> only</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>--wda-path</code></td>
+<td>Path to the <code>WebDriverAgentRunner-Runner.app</code> bundle to sign</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h5 id="optional-arguments_6">Optional Arguments<a class="headerlink" href="#optional-arguments_6" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th><div style="width:8em">Argument</div></th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--profile-dir</code></td>
+<td>Directory containing provisioning profiles (<code>.mobileprovision</code> files). Default is auto-discovered from default locations <code>~/Library/Developer/Xcode/UserData/Provisioning Profiles</code> and <code>~/Library/MobileDevice/Provisioning Profiles</code>.</td>
+<td>string</td>
 </tr>
 </tbody>
 </table>
 <h4 id="examples_4">Examples<a class="headerlink" href="#examples_4" title="Permanent link">&para;</a></h4>
 <ul>
 <li>
-<p>Sign WDA with <code>.p12</code> certificate (requires P12_PASSWORD):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- \
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>  --p12-file=~/sign.p12 \
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>  --bundle-id=com.example.wda
-</span></code></pre></div>
-</li>
-<li>
-<p>Sign WDA with <code>.cer</code> and <code>.key</code> files (no password needed — auto-converted!):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>appium driver run xcuitest sign-wda -- \
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>  --p12-cert=~/certificate.cer \
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>  --p12-key=~/private.key
+<p>Sign WDA with <code>.cer</code> and <code>.key</code> files:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>appium driver run xcuitest sign-wda -- \
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>  --p12-cert=~/certificate.cer \
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>  --p12-key=~/private.key
 </span></code></pre></div>
 </li>
 <li>
 <p>Sign WDA with <code>.cer</code> and <code>.key</code> files and remap bundle ID:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>appium driver run xcuitest sign-wda -- \
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>  --p12-cert=~/certificate.cer \
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>  --p12-key=~/private.key \
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>  --bundle-id=com.example.wda
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>appium driver run xcuitest sign-wda -- \
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>  --p12-cert=~/certificate.cer \
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>  --p12-key=~/private.key \
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>  --bundle-id=com.example.wda
 </span></code></pre></div>
 </li>
 <li>
 <p>Sign WDA with specified provisioning profile directory (cert+key approach):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>appium driver run xcuitest sign-wda -- \
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>  --p12-cert=~/certificate.cer \
-</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>  --p12-key=~/private.key \
-</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>  --profile-dir=/path/to/provisioning/profiles
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>appium driver run xcuitest sign-wda -- \
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>  --p12-cert=~/certificate.cer \
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>  --p12-key=~/private.key \
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>  --profile-dir=/path/to/provisioning/profiles
+</span></code></pre></div>
+</li>
+<li>
+<p>Sign WDA with <code>.p12</code> certificate file (requires <code>P12_PASSWORD</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>P12_PASSWORD=mypassword appium driver run xcuitest sign-wda -- \
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>  --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>  --p12-file=~/sign.p12 \
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>  --bundle-id=com.example.wda
 </span></code></pre></div>
 </li>
 <li>
 <p>Inspect a WDA app without signing:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>appium driver run xcuitest sign-wda -- \
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    --wda-path=./wda/WebDriverAgentRunner-Runner.app \
-</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>    --inspect
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>appium driver run xcuitest sign-wda -- \
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    --wda-path=./wda/WebDriverAgentRunner-Runner.app \
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>    --inspect
 </span></code></pre></div>
 </li>
 </ul>
@@ -4035,9 +4089,9 @@ The <code>resigner</code> tool must be available on your <code>PATH</code>.</p>
 features. The script provides the <code>mount</code> and <code>unmount</code> sub-commands, and returns help text when
 run with no subcommand.</p>
 <h4 id="usage-no-subcommand">Usage (no subcommand)<a class="headerlink" href="#usage-no-subcommand" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>appium driver run xcuitest image-mounter
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>appium driver run xcuitest image-mounter
 </span></code></pre></div>
-<h5 id="optional-arguments_5">Optional Arguments<a class="headerlink" href="#optional-arguments_5" title="Permanent link">&para;</a></h5>
+<h5 id="optional-arguments_7">Optional Arguments<a class="headerlink" href="#optional-arguments_7" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
 <tr>
@@ -4057,7 +4111,7 @@ run with no subcommand.</p>
 </tbody>
 </table>
 <h4 id="usage-mount-subcommand">Usage (<code>mount</code> subcommand)<a class="headerlink" href="#usage-mount-subcommand" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>appium driver run xcuitest image-mounter mount -- --image=&lt;image&gt; --manifest=&lt;manifest&gt; --trustcache=&lt;trustcache&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>appium driver run xcuitest image-mounter mount -- --image=&lt;image&gt; --manifest=&lt;manifest&gt; --trustcache=&lt;trustcache&gt;
 </span></code></pre></div>
 <table>
 <thead>
@@ -4085,7 +4139,7 @@ run with no subcommand.</p>
 </tr>
 </tbody>
 </table>
-<h5 id="optional-arguments_6">Optional Arguments<a class="headerlink" href="#optional-arguments_6" title="Permanent link">&para;</a></h5>
+<h5 id="optional-arguments_8">Optional Arguments<a class="headerlink" href="#optional-arguments_8" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
 <tr>
@@ -4105,9 +4159,9 @@ run with no subcommand.</p>
 </tbody>
 </table>
 <h4 id="usage-unmount-subcommand">Usage (<code>unmount</code> subcommand)<a class="headerlink" href="#usage-unmount-subcommand" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>appium driver run xcuitest image-mounter unmount
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>appium driver run xcuitest image-mounter unmount
 </span></code></pre></div>
-<h5 id="optional-arguments_7">Optional Arguments<a class="headerlink" href="#optional-arguments_7" title="Permanent link">&para;</a></h5>
+<h5 id="optional-arguments_9">Optional Arguments<a class="headerlink" href="#optional-arguments_9" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
 <tr>
@@ -4136,12 +4190,12 @@ run with no subcommand.</p>
 <ul>
 <li>
 <p>Mount a given image on the first connected device:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>appium driver run xcuitest image-mounter mount -- --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
+<div class="language-text highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>appium driver run xcuitest image-mounter mount -- --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
 </span></code></pre></div>
 </li>
 <li>
 <p>Unmount the image at the default mount path of the device with UDID <code>00000000-1111-2222-3333-444444444444</code>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>appium driver run xcuitest image-mounter unmount -- --udid 00000000-1111-2222-3333-444444444444
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>appium driver run xcuitest image-mounter unmount -- --udid 00000000-1111-2222-3333-444444444444
 </span></code></pre></div>
 </li>
 </ul>
@@ -4154,10 +4208,10 @@ the <code>--devicectl</code> flag.</p>
 <p>Device discovery over <code>usbmuxd</code> requires the <a href="https://github.com/appium/appium-ios-remotexpc"><code>appium-ios-remotexpc</code></a>
 package to be installed.</p>
 </div>
-<h4 id="usage_5">Usage<a class="headerlink" href="#usage_5" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>appium driver run xcuitest list-real-devices
+<h4 id="usage_4">Usage<a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>appium driver run xcuitest list-real-devices
 </span></code></pre></div>
-<h5 id="optional-arguments_8">Optional Arguments<a class="headerlink" href="#optional-arguments_8" title="Permanent link">&para;</a></h5>
+<h5 id="optional-arguments_10">Optional Arguments<a class="headerlink" href="#optional-arguments_10" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
 <tr>
@@ -4186,19 +4240,19 @@ package to be installed.</p>
 <ul>
 <li>
 <p>List connected devices using <code>devicectl</code> (such as tvOS devices):</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>appium driver run xcuitest list-real-devices -- --devicectl
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>appium driver run xcuitest list-real-devices -- --devicectl
 </span></code></pre></div>
 </li>
 <li>
 <p>List all devices connected over a wired connection:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>appium driver run xcuitest list-real-devices -- --connection wired
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>appium driver run xcuitest list-real-devices -- --connection wired
 </span></code></pre></div>
 </li>
 </ul>
 <h3 id="open-wda"><code>open-wda</code><a class="headerlink" href="#open-wda" title="Permanent link">&para;</a></h3>
 <p>Opens the WebDriverAgent (WDA) project of the installed XCUITest driver in Xcode.</p>
-<h4 id="usage_6">Usage<a class="headerlink" href="#usage_6" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>appium driver run xcuitest open-wda
+<h4 id="usage_5">Usage<a class="headerlink" href="#usage_5" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>appium driver run xcuitest open-wda
 </span></code></pre></div>
 <h3 id="pair-appletv"><code>pair-appletv</code><a class="headerlink" href="#pair-appletv" title="Permanent link">&para;</a></h3>
 <p>Pairs wireless Apple TV devices for use in Remote XPC tunneling, which is used by the driver to
@@ -4213,10 +4267,10 @@ package to be installed.</p>
 <p class="admonition-title">Note</p>
 <p>This script must be run in <code>sudo</code> mode (as root), like <a href="#tunnel-creation"><code>tunnel-creation</code></a>.</p>
 </div>
-<h4 id="usage_7">Usage<a class="headerlink" href="#usage_7" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>sudo appium driver run xcuitest pair-appletv
+<h4 id="usage_6">Usage<a class="headerlink" href="#usage_6" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>sudo appium driver run xcuitest pair-appletv
 </span></code></pre></div>
-<h5 id="optional-arguments_9">Optional Arguments<a class="headerlink" href="#optional-arguments_9" title="Permanent link">&para;</a></h5>
+<h5 id="optional-arguments_11">Optional Arguments<a class="headerlink" href="#optional-arguments_11" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
 <tr>
@@ -4242,12 +4296,12 @@ package to be installed.</p>
 <ul>
 <li>
 <p>Select a device to pair from a list of discovered devices:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>sudo appium driver run xcuitest pair-appletv
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>sudo appium driver run xcuitest pair-appletv
 </span></code></pre></div>
 </li>
 <li>
 <p>Pair the device with the name "Conference Room":</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>sudo appium driver run xcuitest pair-appletv -- --device &quot;Conference Room&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>sudo appium driver run xcuitest pair-appletv -- --device &quot;Conference Room&quot;
 </span></code></pre></div>
 </li>
 </ul>
@@ -4266,10 +4320,10 @@ interfaces (via <a href="https://github.com/appium/appium-ios-tuntap/"><code>app
 does not allow adding/removing TUN interfaces for non-root users. Xcode/devicectl do not
 require such privileges, because they interact with trusted system services.</p>
 </div>
-<h4 id="usage_8">Usage<a class="headerlink" href="#usage_8" title="Permanent link">&para;</a></h4>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>sudo appium driver run xcuitest tunnel-creation
+<h4 id="usage_7">Usage<a class="headerlink" href="#usage_7" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>sudo appium driver run xcuitest tunnel-creation
 </span></code></pre></div>
-<h5 id="optional-arguments_10">Optional Arguments<a class="headerlink" href="#optional-arguments_10" title="Permanent link">&para;</a></h5>
+<h5 id="optional-arguments_12">Optional Arguments<a class="headerlink" href="#optional-arguments_12" title="Permanent link">&para;</a></h5>
 <table>
 <thead>
 <tr>
@@ -4322,27 +4376,27 @@ require such privileges, because they interact with trusted system services.</p>
 <ul>
 <li>
 <p>Create a tunnel for all connected devices:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>sudo appium driver run xcuitest tunnel-creation
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>sudo appium driver run xcuitest tunnel-creation
 </span></code></pre></div>
 </li>
 <li>
 <p>Create a tunnel for all connected devices using custom ports:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>sudo appium driver run xcuitest tunnel-creation -- --packet-stream-base-port 51000 --tunnel-registry-port 43000
+<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>sudo appium driver run xcuitest tunnel-creation -- --packet-stream-base-port 51000 --tunnel-registry-port 43000
 </span></code></pre></div>
 </li>
 <li>
 <p>Create a tunnel for a device with the UDID <code>00000000-1111-2222-3333-444444444444</code>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>sudo appium driver run xcuitest tunnel-creation -- --udid 00000000-1111-2222-3333-444444444444
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>sudo appium driver run xcuitest tunnel-creation -- --udid 00000000-1111-2222-3333-444444444444
 </span></code></pre></div>
 </li>
 <li>
 <p>Create tunnels for multiple usbmux and AppleTV devices:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo appium driver run xcuitest tunnel-creation -- --udid 00000000-1111-2222-3333-444444444444 --udid 55555555-6666-7777-8888-999999999999 --appletv-device-id 00000000-5555-9999-7777-444444444444 --appletv-device-id 00000000-2222-9999-1111-444444444444
+<div class="language-text highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>sudo appium driver run xcuitest tunnel-creation -- --udid 00000000-1111-2222-3333-444444444444 --udid 55555555-6666-7777-8888-999999999999 --appletv-device-id 00000000-5555-9999-7777-444444444444 --appletv-device-id 00000000-2222-9999-1111-444444444444
 </span></code></pre></div>
 </li>
 <li>
 <p>Recreate tunnel up to 10 times on disconnect with 2s interval:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 10 --disconnect-retry-interval-ms 2000
+<div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 10 --disconnect-retry-interval-ms 2000
 </span></code></pre></div>
 </li>
 </ul>
@@ -4366,7 +4420,7 @@ require such privileges, because they interact with trusted system services.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 13, 2026 07:51:03 UTC"><span class="timeago" datetime="2026-05-13T07:51:03+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 13, 2026 07:51:03 UTC">2026-05-13</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 9, 2026 16:05:05 UTC"><span class="timeago" datetime="2026-06-09T16:05:05+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 9, 2026 16:05:05 UTC">2026-06-09</span>
   </span>
 
     

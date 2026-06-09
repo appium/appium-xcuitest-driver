@@ -3424,12 +3424,9 @@ application (WDA) on a real device and a simulator. This allows you to start a s
 command execution, improving the session startup performance.</p>
 <div class="admonition warning">
 <p class="admonition-title">iOS/tvOS 17+ required (WebDriverAgent v13+)</p>
-<p>Bundled WebDriverAgent v13+ (see <a href="https://github.com/appium/WebDriverAgent/pull/1137">appium/WebDriverAgent#1137</a>)
-launches preinstalled WDA with <code>devicectl</code> only. The legacy launch path through <code>appium-ios-device</code> /
-Instruments is no longer available.</p>
-<p>As a result, <code>appium:usePreinstalledWDA</code> and <code>appium:prebuiltWDAPath</code> work on <strong>iOS/tvOS 17.0 and newer only</strong>.
-They are <strong>not supported on iOS 16 and below</strong>. For older OS versions, use the default <code>xcodebuild</code> flow or
-provide <code>appium:webDriverAgentUrl</code> if you already have a running WDA server.</p>
+<p>As of WebDriverAgent v13 (XCUITest driver v11.5.0), this approach is only supported on
+iOS/tvOS 17 and newer. For older OS versions, use the default <code>xcodebuild</code> flow, or provide
+<code>appium:webDriverAgentUrl</code> if you already have a running WDA server.</p>
 </div>
 <h2 id="capabilities">Capabilities<a class="headerlink" href="#capabilities" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3583,7 +3580,7 @@ The WDA package itself is available from <a href="https://github.com/appium/WebD
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="May 19, 2026 19:42:09 UTC"><span class="timeago" datetime="2026-05-19T19:42:09+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="May 19, 2026 19:42:09 UTC">2026-05-19</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 9, 2026 16:05:05 UTC"><span class="timeago" datetime="2026-06-09T16:05:05+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 9, 2026 16:05:05 UTC">2026-06-09</span>
   </span>
 
     
