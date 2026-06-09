@@ -49,8 +49,8 @@ narrowed for XCUITest driver compatibility:
 | 26 | Xcode >= 26 | macOS >= 15.6 |
 | 18 | Xcode >= 16 | macOS >= 14.3 |
 | 17 | Xcode >= 15 | macOS >= 13.3 |
-| 16 | Xcode >= 14 | macOS >= 12.5 |
-| 15 | Xcode >= 13 | macOS >= 11.3 |
+| 16 | Xcode 14 - 26 | macOS 12.5 - 26 |
+| 15 | Xcode 13 - 26 | macOS 11.3 - 26 |
 | 14 | Xcode 12 - 15 (except 13.3 - 13.4.1) | macOS 10.15.4 - 14 |
 | 13 | Xcode 11 - 15 (except 13.3 - 13.4.1) | macOS 10.14.4 - 14 |
 | 12 | Xcode 11 - 15 (except 13.3 - 13.4.1) | macOS 10.14.4 - 14 |
@@ -94,7 +94,7 @@ application (which the driver installs on the device under test) is also downgra
 | Xcode version | Fully supported driver/WDA versions | Last likely working driver/WDA version |
 | --- | --- | --- |
 | Xcode >= 27.0 | >= [11.10.0](https://github.com/appium/appium-xcuitest-driver/pull/2865) (WDA >= [14.0.0](https://github.com/appium/WebDriverAgent/pull/1152)) | Latest |
-| Xcode >= 26.0 | >= 9.5.0 (WDA >= [9.14.1](https://github.com/appium/WebDriverAgent/pull/1032)) | Latest |
+| Xcode 26.0 - 26.6 | >= 9.5.0 (WDA >= [9.14.1](https://github.com/appium/WebDriverAgent/pull/1032)) | Latest |
 | Xcode 16.0 - 16.4 | >= 7.24.15 (WDA >= [8.9.1](https://github.com/appium/WebDriverAgent/pull/935)) | Latest |
 | Xcode 15.0 - 15.4 | [4.32.23](https://github.com/appium/appium-xcuitest-driver/pull/1822) - 10.1.0 (WDA 5.6.0 - 10.1.0) | Latest (not tested) |
 | Xcode 14.3 | 4.21.7 - 7.26.3 (WDA [4.13.1](https://github.com/appium/WebDriverAgent/pull/681) - 8.9.1) | Latest (not tested) |
