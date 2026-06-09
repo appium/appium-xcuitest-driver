@@ -8,13 +8,9 @@ command execution, improving the session startup performance.
 
 !!! warning "iOS/tvOS 17+ required (WebDriverAgent v13+)"
 
-    Bundled WebDriverAgent v13+ (see [appium/WebDriverAgent#1137](https://github.com/appium/WebDriverAgent/pull/1137))
-    launches preinstalled WDA with `devicectl` only. The legacy launch path through `appium-ios-device` /
-    Instruments is no longer available.
-
-    As a result, `appium:usePreinstalledWDA` and `appium:prebuiltWDAPath` work on **iOS/tvOS 17.0 and newer only**.
-    They are **not supported on iOS 16 and below**. For older OS versions, use the default `xcodebuild` flow or
-    provide `appium:webDriverAgentUrl` if you already have a running WDA server.
+    As of WebDriverAgent v13 (XCUITest driver v11.5.0), this approach is only supported on
+    iOS/tvOS 17 and newer. For older OS versions, use the default `xcodebuild` flow, or provide
+    `appium:webDriverAgentUrl` if you already have a running WDA server.
 
 ## Capabilities
 
