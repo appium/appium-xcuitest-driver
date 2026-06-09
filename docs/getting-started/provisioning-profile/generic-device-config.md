@@ -1,12 +1,11 @@
 ---
-hide:
-  - toc
-
 title: Manual Configuration for a Generic Device
 ---
 
-It is possible to build `WebDriverAgentRunner` for a generic iOS/iPadOS/tvOS device, and install the
-generated `.app` package to a real device.
+It is possible to use a version of `WebDriverAgentRunner` built for a generic iOS/iPadOS/tvOS
+device, and install the generated `.app` package to a real device.
+
+## Building WDA Yourself
 
 ```bash
 # iOS/iPadOS
@@ -25,51 +24,34 @@ provided as `derivedDataPath` argument.
     If the build fails, please make sure `WebDriverAgent.xcodeproj` has codesigning properties
     configured properly. For example, you may need to change the bundle id for the provisioning profile.
 
-The `WebDriverAgentRunner-Runner.app` can now be installed to any real device as allowed by the
-provisioning profile.
+As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO`, then
+manually codesign it as described in the [Signing WDA](#signing-wda) section.
 
-You can install the package with 3rd party tools and manage it separately as explained in
-[How To Set Up And Customize WebDriverAgent Server](../../guides/wda-custom-server.md). Note that if
-the codesigning was not correct, the installation will fail.
+You can now use third-party tools to install and manage `WebDriverAgentRunner-Runner.app` as
+explained in [the WDA Custom Server guide](../../guides/wda-custom-server.md). Note that if the
+codesigning was not correct, the installation will fail.
 
-As a more advanced method, you can generate the package with `CODE_SIGNING_ALLOWED=NO` and do
-[`codesign`](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format)
-by yourself. This would make the device management more flexible, but you would need to know about
-advanced codesign usage scenarios.
+## Using Appium-Provided Prebuilt WDA
 
 The Appium team distributes generic builds with `CODE_SIGNING_ALLOWED=NO` at
-[WebDriverAgent package releases](https://github.com/appium/WebDriverAgent/releases).
-It is recommended to sign packages with a wildcard (`*`) provisioning profile,
-although such profiles require a paid Apple Developer account.
-For example, if you're preparing such a provisioning profile for `io.appium.WebDriverAgentRunner.xctrunner`, it will be for `io.appium.*`, `io.appium.WebDriverAgentRunner.*` or `*`.
+[WebDriverAgent package releases](https://github.com/appium/WebDriverAgent/releases). These builds
+must be codesigned first, after which they can be installed as described in the previous section.
 
-In case of a free account or paid account without `*` provisioning profile,
-you may need to update the bundle id before building so `xcodebuild` can produce
-a properly signed WebDriverAgent package. Another option is to re-sign an existing
-package and remap its bundle ids with 3rd party tools such as [resigner](https://github.com/appium/resigner).
-The tool can remap the bundle ids to values allowed by the free provisioning profile and
-then sign the package with that profile.
+## Signing WDA
 
-Please check the tool's readme for details, but in short, you can use the following command to
-re-sign the package with bundle id remapping:
+In most cases, Xcode will automatically codesign your WDA package if you have a valid provisioning
+profile. It is recommended to sign packages with a wildcard (`*`) provisioning profile, although
+such profiles require a paid Apple Developer account. For example, if you're preparing such a
+provisioning profile for `io.appium.WebDriverAgentRunner.xctrunner`, it will be for `io.appium.*`,
+`io.appium.WebDriverAgentRunner.*` or `*`.
 
-```
-P12_PASSWORD="<password of p12>" resigner \
-  --p12-file "<path to p12 file>" \
-  --profile "<path to provisioning profiles>" \
-  --force \
-  --bundle-id-remap "com.facebook.WebDriverAgentRunner=<valid bundle id for the profile>" \
-  --bundle-id-remap "com.facebook.WebDriverAgentRunner.xctrunner=<valid bundle id for the profile>" \
-  --bundle-id-remap "com.facebook.WebDriverAgentLib=<valid bundle id for the profile>" \
-  /path/to/WebDriverAgentRunner-Runner.app
-```
+In case of a free account or paid account without `*` provisioning profile, you may need to update
+the bundle id before building so `xcodebuild` can produce a properly signed WebDriverAgent package.
 
-Or
+For WDA packages built with `CODE_SIGNING_ALLOWED=NO`, manual signing is possible using the macOS
+[`codesign` utility](https://developer.apple.com/documentation/xcode/using-the-latest-code-signature-format).
 
-```
-P12_PASSWORD="<password of p12>" appium driver run xcuitest sign-wda -- \
-  --wda-path=<path> \
-  --p12-file=<path> \
-  --profile-dir=<path to provisioning profiles> \
-  --bundle-id=<valid bundle id for the profile>
-```
+Another option is to use the [`sign-wda` driver script](../../reference/scripts.md#sign-wda) to
+re-sign an existing package and remap its bundle ids. The script itself is based on the
+[`resigner` tool](https://github.com/appium/resigner), which can remap the bundle ids to values
+allowed by the free provisioning profile and then sign the package with that profile.
