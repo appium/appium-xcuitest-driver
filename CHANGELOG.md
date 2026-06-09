@@ -1,3 +1,9 @@
+## [11.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.9.1...v11.10.0) (2026-06-09)
+
+### Features
+
+* bump WDA to 14 for Xcode 27 build support ([#2865](https://github.com/appium/appium-xcuitest-driver/issues/2865)) ([fad5172](https://github.com/appium/appium-xcuitest-driver/commit/fad5172c03565417061dfb1196dc1f2d6270d824))
+
 ## [11.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.9.0...v11.9.1) (2026-06-08)
 
 ### Miscellaneous Chores
