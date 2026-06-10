@@ -156,6 +156,15 @@ source XML tree.
 Whether the [`minValue`](./element-attributes.md#minvalue) and [`maxValue`](./element-attributes.md#maxvalue)
 attributes should be included in the page source XML tree.
 
+## includeNativeAccessibilityElementInPageSource
+
+| Type | Default |
+| -- | -- |
+| `boolean` | `false` |
+
+Whether the [`nativeAccessibilityElement`](./element-attributes.md#nativeaccessibilityelement)
+attribute should be included in the page source XML tree.
+
 ## keyboardAutocorrection
 
 | Type | Default |
