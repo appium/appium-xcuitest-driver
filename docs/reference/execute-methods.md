@@ -2130,7 +2130,7 @@ Requires **iOS/tvOS 27+** (`appium:platformVersion`). The driver rejects the com
 
 > **Warning**
 > Do not forget to call [mobile: disableVoiceOver](#mobile-disablevoiceover) in test teardown.
-> If VoiceOver is not disabled explicitly, it may remain enabled until the device is restarted.
+> If VoiceOver is not disabled explicitly, it may remain enabled until disabled explicitly.
 
 ### mobile: disableVoiceOver
 
