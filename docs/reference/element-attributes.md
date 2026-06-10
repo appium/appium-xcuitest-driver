@@ -122,6 +122,20 @@ from the accessibility layer.
 Returns whether the element is accessible. This value is not available in XCTest and is read
 directly from the accessibility layer.
 
+## nativeAccessibilityElement
+
+> Example: `false`
+
+Corresponds to the element's native [`isAccessibilityElement`](https://developer.apple.com/documentation/objectivec/nsobject-swift.class/isaccessibilityelement)
+value, as reported by the accessibility layer. Unlike [`accessible`](#accessible), which is a value
+computed by WebDriverAgent using additional logic, this attribute returns the raw platform flag
+without any extra processing.
+
+This attribute is not included in the default page source due to performance reasons, but it can be
+added by changing the [`includeNativeAccessibilityElementInPageSource`](./settings.md#includenativeaccessibilityelementinpagesource)
+setting to `true`, or retrieved using the [Get Element Attribute](https://www.w3.org/TR/webdriver2/#get-element-attribute)
+API.
+
 ## index
 
 > Example: `2`
