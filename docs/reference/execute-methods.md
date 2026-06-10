@@ -2122,6 +2122,65 @@ elementAttributes | dict | JSON object containing various attributes of the elem
 }
 ```
 
+### mobile: enableVoiceOver
+
+Enables VoiceOver on the device under test. Wraps WebDriverAgent's `/wda/voiceOver/enable` route, which uses XCTest's `XCUIDevice.voiceOverService`.
+
+Requires **iOS/tvOS 27+** (`appium:platformVersion`). The driver rejects the command on older platform versions before proxying to WDA.
+Requires **WebDriverAgent 14.1.0+** (bundled via `appium-webdriveragent`; a custom WDA build via `appium:webDriverAgentUrl` must include the VoiceOver routes).
+
+> **Warning**
+> Do not forget to call [mobile: disableVoiceOver](#mobile-disablevoiceover) in test teardown.
+> If VoiceOver is not disabled explicitly, it may remain enabled until the device is restarted.
+
+### mobile: disableVoiceOver
+
+Disables VoiceOver on the device under test.
+
+Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**.
+
+### mobile: isVoiceOverEnabled
+
+Returns whether VoiceOver is currently enabled.
+
+Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**.
+
+#### Returned Result
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+enabled | boolean | Whether VoiceOver is enabled | true
+
+### mobile: voiceOverMove
+
+Moves VoiceOver focus in the given direction and returns the utterance spoken after the move.
+
+Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**. On tvOS, only `forward` and `backward` are supported; `in` and `out` are iOS-only.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+direction | string | yes | One of `forward`, `backward`, `in` (iOS only), or `out` (iOS only). Case-insensitive at WDA. | forward
+
+#### Returned Result
+
+Name | Type | Description | Example
+--- | --- | --- | --- |
+utterance | string or null | The spoken utterance after the move, or `null` | Button
+
+### mobile: voiceOverCurrentSpeech
+
+Returns the current VoiceOver utterance without moving focus.
+
+Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**.
+
+#### Returned Result
+
+Name | Type | Description | Example
+--- | --- | --- | ---
+utterance | string or null | The current spoken utterance, or `null` | Button
+
 ### mobile: startScreenRecording
 
 Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the WebDriverAgent **MJPEG** stream. Equivalent to [`startRecordingScreen`](./commands.md#startrecordingscreen) over HTTP. Requires `ffmpeg` on `PATH`. Audio is not recorded.
