@@ -294,12 +294,8 @@ class TunnelCreator {
     let packetStreamPort;
     packetStreamPort = this._packetStreamBasePort++;
     const packetStreamServer = new PacketStreamServer(packetStreamPort);
+    packetStreamServer.bindTunnel(tunnel);
     await packetStreamServer.start();
-
-    const consumer = packetStreamServer.getPacketConsumer();
-    if (consumer) {
-      tunnel.addPacketConsumer(consumer);
-    }
 
     this._packetStreamServers.set(udid, packetStreamServer);
 
@@ -447,12 +443,8 @@ class TunnelCreator {
 
           const packetStreamPort = this._packetStreamBasePort++;
           packetStreamServer = new PacketStreamServer(packetStreamPort);
+          packetStreamServer.bindTunnel(tunnel);
           await packetStreamServer.start();
-
-          const consumer = packetStreamServer.getPacketConsumer();
-          if (consumer && tunnel?.addPacketConsumer) {
-            tunnel.addPacketConsumer(consumer);
-          }
           log.info(`Apple TV packet stream server started on port ${packetStreamPort}`);
 
           this._appletvResources.push({
@@ -708,11 +700,8 @@ class TunnelCreator {
 
     const packetStreamPort = this._packetStreamBasePort++;
     const packetStreamServer = new PacketStreamServer(packetStreamPort);
+    packetStreamServer.bindTunnel(tunnel);
     await packetStreamServer.start();
-    const consumer = packetStreamServer.getPacketConsumer();
-    if (consumer && tunnel?.addPacketConsumer) {
-      tunnel.addPacketConsumer(consumer);
-    }
 
     this._appletvResources.push({
       tunnel,
@@ -1179,12 +1168,8 @@ await main();
  */
 
 /**
- * @typedef {Object} AppleTVTunnelConnection
  * Tunnel connection returned from TunnelManager.getTunnel for an Apple TV (WiFi) socket.
- * @property {string} Address
- * @property {number} [RsdPort]
- * @property {(c: unknown) => void} [addPacketConsumer]
- * @property {() => Promise<void>} [closer]
+ * @typedef {Awaited<ReturnType<typeof TunnelManager.getTunnel>>} AppleTVTunnelConnection
  */
 
 /**
