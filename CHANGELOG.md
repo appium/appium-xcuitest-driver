@@ -1,3 +1,9 @@
+## [11.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.10.0...v11.11.0) (2026-06-10)
+
+### Features
+
+* Add VoiceOver mobile wrappers ([#2869](https://github.com/appium/appium-xcuitest-driver/issues/2869)) ([5c84ae7](https://github.com/appium/appium-xcuitest-driver/commit/5c84ae7e96dc6f68774fbdbf8c196710068af133))
+
 ## [11.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.9.1...v11.10.0) (2026-06-09)
 
 ### Features
