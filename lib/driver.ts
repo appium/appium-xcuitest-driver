@@ -73,6 +73,7 @@ import * as screenshotCommands from './commands/screenshots';
 import * as sourceCommands from './commands/source';
 import * as simctlCommands from './commands/simctl';
 import * as timeoutCommands from './commands/timeouts';
+import * as voiceOverCommands from './commands/voiceover';
 import * as webCommands from './commands/web';
 import {start, startWdaSession} from './commands/wda/startup';
 import {stop} from './commands/wda/stop';
@@ -499,6 +500,15 @@ export class XCUITestDriver
   mobileGetSimulatedLocation = geolocationCommands.mobileGetSimulatedLocation;
   mobileSetSimulatedLocation = geolocationCommands.mobileSetSimulatedLocation;
   mobileResetSimulatedLocation = geolocationCommands.mobileResetSimulatedLocation;
+
+  /*-----------+
+   | VOICEOVER |
+   +-----------+*/
+  mobileEnableVoiceOver = voiceOverCommands.mobileEnableVoiceOver;
+  mobileDisableVoiceOver = voiceOverCommands.mobileDisableVoiceOver;
+  mobileIsVoiceOverEnabled = voiceOverCommands.mobileIsVoiceOverEnabled;
+  mobileVoiceOverMove = voiceOverCommands.mobileVoiceOverMove;
+  mobileVoiceOverCurrentSpeech = voiceOverCommands.mobileVoiceOverCurrentSpeech;
 
   /*---------+
    | GESTURE |

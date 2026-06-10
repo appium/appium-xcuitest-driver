@@ -35,6 +35,11 @@ export function isIos18OrNewerPlatform(platformVersion?: string | null): boolean
   return !!platformVersion && util.compareVersions(platformVersion, '>=', '18.0');
 }
 
+/** Platform-version predicate for iOS 27+. */
+export function isIos27OrNewerPlatform(platformVersion?: string | null): boolean {
+  return !!platformVersion && util.compareVersions(platformVersion, '>=', '27.0');
+}
+
 /** Version-gate helper for iOS 17+ capabilities. */
 export function isIos17OrNewer(opts: PlatformVersionOpts): boolean {
   return isIos17OrNewerPlatform(opts.platformVersion);
@@ -43,4 +48,9 @@ export function isIos17OrNewer(opts: PlatformVersionOpts): boolean {
 /** Version-gate helper for iOS 18+ capabilities. */
 export function isIos18OrNewer(opts: PlatformVersionOpts): boolean {
   return isIos18OrNewerPlatform(opts.platformVersion);
+}
+
+/** Version-gate helper for iOS 27+ capabilities. */
+export function isIos27OrNewer(opts: PlatformVersionOpts): boolean {
+  return isIos27OrNewerPlatform(opts.platformVersion);
 }

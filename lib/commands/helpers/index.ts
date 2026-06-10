@@ -16,6 +16,8 @@ export {
   isIos17OrNewerPlatform,
   isIos18OrNewer,
   isIos18OrNewerPlatform,
+  isIos27OrNewer,
+  isIos27OrNewerPlatform,
   isTvOs,
   normalizePlatformName,
   normalizePlatformVersion,

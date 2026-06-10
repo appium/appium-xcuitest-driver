@@ -516,6 +516,24 @@ export const executeMethodMap = {
   'mobile: resetSimulatedLocation': {
     command: 'mobileResetSimulatedLocation',
   },
+  'mobile: enableVoiceOver': {
+    command: 'mobileEnableVoiceOver',
+  },
+  'mobile: disableVoiceOver': {
+    command: 'mobileDisableVoiceOver',
+  },
+  'mobile: isVoiceOverEnabled': {
+    command: 'mobileIsVoiceOverEnabled',
+  },
+  'mobile: voiceOverMove': {
+    command: 'mobileVoiceOverMove',
+    params: {
+      required: ['direction'],
+    },
+  },
+  'mobile: voiceOverCurrentSpeech': {
+    command: 'mobileVoiceOverCurrentSpeech',
+  },
   'mobile: shake': {
     command: 'mobileShake',
   },
