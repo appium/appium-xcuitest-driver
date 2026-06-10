@@ -10,15 +10,6 @@ export interface VoiceOverEnabledResult {
   enabled: boolean;
 }
 
-function requireIos27VoiceOver(driver: XCUITestDriver, script: string): void {
-  if (!isIos27OrNewer(driver.opts)) {
-    throw new errors.InvalidArgumentError(
-      `${script} requires iOS/tvOS 27 or newer. ` +
-        `The current platformVersion is '${driver.opts.platformVersion ?? 'unknown'}'.`,
-    );
-  }
-}
-
 /**
  * Enables VoiceOver on the device under test.
  *
@@ -80,4 +71,13 @@ export async function mobileVoiceOverCurrentSpeech(
 ): Promise<VoiceOverSpeechResult> {
   requireIos27VoiceOver(this, 'mobile: voiceOverCurrentSpeech');
   return await this.proxyCommand<any, VoiceOverSpeechResult>('/wda/voiceOver/currentSpeech', 'GET');
+}
+
+function requireIos27VoiceOver(driver: XCUITestDriver, script: string): void {
+  if (!isIos27OrNewer(driver.opts)) {
+    throw new errors.InvalidArgumentError(
+      `${script} requires iOS/tvOS 27 or newer. ` +
+        `The current platformVersion is '${driver.opts.platformVersion ?? 'unknown'}'.`,
+    );
+  }
 }
