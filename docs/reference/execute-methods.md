@@ -2127,7 +2127,6 @@ elementAttributes | dict | JSON object containing various attributes of the elem
 Enables VoiceOver on the device under test. Wraps WebDriverAgent's `/wda/voiceOver/enable` route, which uses XCTest's `XCUIDevice.voiceOverService`.
 
 Requires **iOS/tvOS 27+** (`appium:platformVersion`). The driver rejects the command on older platform versions before proxying to WDA.
-Requires **WebDriverAgent 14.1.0+** (bundled via `appium-webdriveragent`; a custom WDA build via `appium:webDriverAgentUrl` must include the VoiceOver routes).
 
 > **Warning**
 > Do not forget to call [mobile: disableVoiceOver](#mobile-disablevoiceover) in test teardown.
@@ -2137,13 +2136,13 @@ Requires **WebDriverAgent 14.1.0+** (bundled via `appium-webdriveragent`; a cust
 
 Disables VoiceOver on the device under test.
 
-Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**.
+Requires **iOS/tvOS 27+** (`appium:platformVersion`).
 
 ### mobile: isVoiceOverEnabled
 
 Returns whether VoiceOver is currently enabled.
 
-Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**.
+Requires **iOS/tvOS 27+** (`appium:platformVersion`).
 
 #### Returned Result
 
@@ -2155,7 +2154,7 @@ enabled | boolean | Whether VoiceOver is enabled | true
 
 Moves VoiceOver focus in the given direction and returns the utterance spoken after the move.
 
-Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**. On tvOS, only `forward` and `backward` are supported; `in` and `out` are iOS-only.
+Requires **iOS/tvOS 27+** (`appium:platformVersion`). On tvOS, only `forward` and `backward` are supported; `in` and `out` are iOS-only.
 
 #### Arguments
 
@@ -2173,7 +2172,7 @@ utterance | string or null | The spoken utterance after the move, or `null` | Bu
 
 Returns the current VoiceOver utterance without moving focus.
 
-Requires **iOS/tvOS 27+** (`appium:platformVersion`) and **WebDriverAgent 14.1.0+**.
+Requires **iOS/tvOS 27+** (`appium:platformVersion`).
 
 #### Returned Result
 
