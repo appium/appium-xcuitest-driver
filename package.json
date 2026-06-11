@@ -86,7 +86,7 @@
     "@appium/strongbox": "^1.0.0-rc.1",
     "@colors/colors": "^1.6.0",
     "appium-ios-device": "^3.1.12",
-    "appium-ios-simulator": "^8.0.0",
+    "appium-ios-simulator": "^8.2.0",
     "appium-remote-debugger": "^15.7.3",
     "appium-webdriveragent": "^14.1.0",
     "appium-xcode": "^6.0.2",
