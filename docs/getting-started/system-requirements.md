@@ -93,7 +93,7 @@ application (which the driver installs on the device under test) is also downgra
 
 | Xcode version | Fully supported driver/WDA versions | Last likely working driver/WDA version |
 | --- | --- | --- |
-| Xcode >= 27.0 | >= 11.11.2 (WDA >= 14.0.0) | Latest |
+| Xcode >= 27.0 | >= [11.11.2](https://github.com/appium/appium-xcuitest-driver/pull/2872) (WDA >= 14.0.0) | Latest |
 | Xcode 26.0 - 26.6 | >= 9.5.0 (WDA >= [9.14.1](https://github.com/appium/WebDriverAgent/pull/1032)) | Latest |
 | Xcode 16.0 - 16.4 | >= 7.24.15 (WDA >= [8.9.1](https://github.com/appium/WebDriverAgent/pull/935)) | Latest |
 | Xcode 15.0 - 15.4 | [4.32.23](https://github.com/appium/appium-xcuitest-driver/pull/1822) - 10.1.0 (WDA 5.6.0 - 10.1.0) | Latest (not tested) |
