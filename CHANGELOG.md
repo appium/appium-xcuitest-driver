@@ -1,3 +1,9 @@
+## [11.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.11.1...v11.11.2) (2026-06-11)
+
+### Miscellaneous Chores
+
+* bump appium-ios-simulator ([#2872](https://github.com/appium/appium-xcuitest-driver/issues/2872)) ([f7f7ae4](https://github.com/appium/appium-xcuitest-driver/commit/f7f7ae492da67a6cbf5cd533b28e87d61b38830c))
+
 ## [11.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.11.0...v11.11.1) (2026-06-10)
 
 ### Miscellaneous Chores
