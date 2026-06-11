@@ -1112,6 +1112,7 @@ velocity | number | no | This argument is optional and is only supported since A
       direction: "down",
       elementId: e.elementId
     }]);
+    ```
 
 === "Python"
 
@@ -1196,6 +1197,7 @@ toVisible | boolean | no | If set to _true_ then asks to scroll to the first vis
     await driver.executeScript('mobile: scroll', [{
       direction: 'down'
     }]);
+    ```
 
 === "Python"
 
@@ -1255,6 +1257,7 @@ velocity | number | yes | The velocity of the pinch in scale factor per second (
       velocity: 1.1,
       elementId: e.elementId
     }]);
+    ```
 
 === "Python"
 
@@ -1323,6 +1326,7 @@ y | number | no | Vertical coordinate offset. | 100
     await driver.executeScript('mobile: doubleTap', [{
       elementId: e.elementId
     }]);
+    ```
 
 === "Python"
 
@@ -1384,6 +1388,7 @@ y | number | no | Vertical coordinate offset. | 100
       elementId: e.elementId,
       duration: 2.0
     }]);
+    ```
 
 === "Python"
 
@@ -1447,6 +1452,7 @@ elementId ("element" prior to Appium v 1.22) | string | no | The internal elemen
     await driver.executeScript('mobile: twoFingerTap', [{
       elementId: e.elementId
     }]);
+    ```
 
 === "Python"
 
@@ -1535,6 +1541,7 @@ toY | number | yes | The y coordinate of ending drag point | 200
       toX: 200,
       toY: 200
     }]);
+    ```
 
 === "Python"
 
