@@ -7,7 +7,7 @@ import {
   TimeoutError,
   withTimeout,
 } from '../commands/helpers';
-import {isEmpty, isIos18OrNewer, isPlainObject} from '../utils';
+import {isEmpty, isPlainObject} from '../utils';
 import {IPA_EXT} from '../commands/constants';
 import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
@@ -119,9 +119,7 @@ export class RealDevice {
   ): Promise<void> {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
-    const useRemoteXPC = this.remoteXPCFacade
-      ? await this.remoteXPCFacade.determineAvailability()
-      : isIos18OrNewer(this.driverOpts);
+    const useRemoteXPC = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
 
     // first try with zip_conduit service for iOS/tvOS 18+ and IPA only
     // fall through to the AFC + installation_proxy path for other cases/zip_conduit failure
@@ -377,7 +375,7 @@ export class RealDevice {
 
     let client: ZipConduitClient | null = null;
     try {
-      client = await ZipConduitClient.create(this.udid, this.remoteXPCFacade, this.log);
+      client = await ZipConduitClient.create(this.udid, this.log, this.remoteXPCFacade);
       if (!client) {
         return false;
       }

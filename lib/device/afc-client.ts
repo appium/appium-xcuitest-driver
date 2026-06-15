@@ -117,14 +117,16 @@ export class AfcClient {
     const {containerType = null, skipDocumentsCheck = false} = options ?? {};
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
-    const houseArrestResult = facade
-      ? await facade.attemptService('AFC', async (Services) => {
-          const houseArrestService = await Services.startHouseArrestService(udid);
-          return isDocuments
-            ? await houseArrestService.vendDocuments(bundleId)
-            : await houseArrestService.vendContainer(bundleId);
-        })
-      : null;
+    let houseArrestResult: RemoteXPCAfcService | null = null;
+    if (facade) {
+      houseArrestResult = await facade.attemptService('AFC', async (Services) => {
+        const houseArrestService = await Services.startHouseArrestService(udid);
+        if (isDocuments) {
+          return await houseArrestService.vendDocuments(bundleId);
+        }
+        return await houseArrestService.vendContainer(bundleId);
+      });
+    }
     if (houseArrestResult) {
       return new AfcClient(houseArrestResult, true);
     }

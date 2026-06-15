@@ -45,22 +45,14 @@ export class RemoteXPCFacade {
     return this.isRealDevice && isIos18OrNewerPlatform(this.platformVersion);
   }
 
-  /**
-   * Tries to fetch the RemoteXPC Services facade.
-   */
-  static async tryGetServicesFacade(
+  static async tryGetServicesStatic(
     platformVersion: string | null | undefined,
-    log: AppiumLogger,
   ): Promise<RemoteXPCServices | null> {
     if (!isIos18OrNewerPlatform(platformVersion)) {
       return null;
     }
     const mod = await tryLoadRemoteXPCModule();
     if (!mod) {
-      const importErr = getLastRemoteXPCImportError();
-      if (importErr) {
-        log.debug(`appium-ios-remotexpc import failed: ${importErr.message}`);
-      }
       return null;
     }
     return mod.Services;

@@ -8,6 +8,7 @@ import type {XCUITestDriverOpts} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {SinonStub} from 'sinon';
+import type {RemoteXPCFacade} from '../../lib/device/remote-xpc';
 
 chai.use(chaiAsPromised);
 
@@ -172,8 +173,15 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
   const stubAfcSentinel = () =>
     sandbox.stub(AfcClient, 'createForDevice').rejects(new Error('afc-sentinel')) as SinonStub;
 
+  const attachAvailableFacade = (realDevice: RealDevice) => {
+    realDevice.attachRemoteXPCFacade({
+      determineAvailability: sandbox.stub().resolves(true),
+    } as RemoteXPCFacade);
+  };
+
   it('streams an .ipa via zip_conduit on iOS 18+ and skips the AFC path', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
+    attachAvailableFacade(realDevice);
     stubStat(true);
     const installStub = sandbox.stub().resolves();
     const closeStub = sandbox.stub().resolves();
@@ -192,6 +200,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
 
   it('falls back to the legacy AFC path and closes the client when zip_conduit fails', async function () {
     const realDevice = new RealDevice(udid, {platformVersion: '18.0'} as XCUITestDriverOpts);
+    attachAvailableFacade(realDevice);
     stubStat(true);
     const closeStub = sandbox.stub().resolves();
     sandbox.stub(ZipConduitClient, 'create').resolves({

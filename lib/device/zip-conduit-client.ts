@@ -36,8 +36,8 @@ export class ZipConduitClient {
    */
   static async create(
     udid: string,
-    facade: RemoteXPCFacade | null,
     logger: AppiumLogger = log,
+    facade: RemoteXPCFacade | null,
   ): Promise<ZipConduitClient | null> {
     const service = facade
       ? await facade.attemptService('zip_conduit', (Services) => {
