@@ -91,12 +91,12 @@ export class RealDevice {
     this.devicectl = new Devicectl(this.udid);
   }
 
-  attachRemoteXPCFacade(facade: RemoteXPCFacade): void {
-    this.remoteXPCFacade = facade;
-  }
-
   get log(): AppiumLogger {
     return this._log;
+  }
+
+  attachRemoteXPCFacade(facade: RemoteXPCFacade): void {
+    this.remoteXPCFacade = facade;
   }
 
   async remove(bundleId: string): Promise<void> {
