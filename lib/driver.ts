@@ -1318,6 +1318,10 @@ export class XCUITestDriver
     }
     this.caps.platformVersion = this.opts.platformVersion;
 
+    if (realDevice) {
+      (device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade(true));
+    }
+
     if (isEmpty(this.xcodeVersion) && (this.isXcodebuildNeeded() || this.isSimulator())) {
       // no `webDriverAgentUrl`, or on a simulator, so we need an Xcode version
       this.xcodeVersion = await getAndCheckXcodeVersion();
@@ -1620,8 +1624,7 @@ export class XCUITestDriver
       }
 
       this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const remoteXPCFacade = this.getOrCreateRemoteXPCFacade(true);
-      const device = new RealDevice(this.opts.udid as string, this.opts, this.log, remoteXPCFacade);
+      const device = new RealDevice(this.opts.udid as string, this.opts, this.log);
       return {device, realDevice: true, udid: this.opts.udid as string};
     }
 

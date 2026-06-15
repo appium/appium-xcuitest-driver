@@ -253,7 +253,7 @@ export async function mobileStopXctestScreenRecording(
     await fs.rimraf(videoPath);
     if (await this.remoteXPCFacade?.determineAvailability()) {
       try {
-        const deletionClient = await XctestAttachmentDeletionClient.create(this.remoteXPCFacade);
+        const deletionClient = new XctestAttachmentDeletionClient(this.remoteXPCFacade);
         await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
       } catch (deleteErr: any) {
         if (encodeOrUploadError === undefined) {

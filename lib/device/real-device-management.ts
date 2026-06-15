@@ -82,17 +82,17 @@ export class RealDevice {
   readonly devicectl: Devicectl;
   readonly driverOpts: XCUITestDriverOpts;
   private readonly _log: AppiumLogger;
+  private remoteXPCFacade: RemoteXPCFacade | null = null;
 
-  constructor(
-    udid: string,
-    driverOpts: XCUITestDriverOpts,
-    logger?: AppiumLogger,
-    private readonly remoteXPCFacade: RemoteXPCFacade | null = null,
-  ) {
+  constructor(udid: string, driverOpts: XCUITestDriverOpts, logger?: AppiumLogger) {
     this.udid = udid;
     this.driverOpts = driverOpts;
     this._log = logger ?? defaultLogger;
     this.devicectl = new Devicectl(this.udid);
+  }
+
+  attachRemoteXPCFacade(facade: RemoteXPCFacade): void {
+    this.remoteXPCFacade = facade;
   }
 
   get log(): AppiumLogger {
