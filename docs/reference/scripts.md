@@ -520,7 +520,6 @@ sudo appium driver run xcuitest tunnel-creation
 |`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. Repeat this argument to target multiple paired Apple TV devices. If omitted, the script creates one tunnel per discovered paired Apple TV device. If this is provided without `--udid`, setup of non-Apple TV devices is skipped.|string (repeatable)||
 |`--disconnect-retry-max-attempts`|Maximum number of tunnel recreation attempts after an unexpected disconnect. Set to `0` for unlimited retries. If omitted, retries are disabled and the tunnel is removed from registry.|integer||
 |`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds.|integer|1000|
-|`--packet-stream-base-port`|Base port for packet stream servers|integer|50000|
 |`--tunnel-registry-port`|Port of the tunnel registry server, hosted at `http://localhost:<port>/remotexpc/tunnels`|integer|42314|
 |`--udid`|Identifier of a specific non-Apple TV device to create the tunnel for. Repeat this argument to target multiple specific devices. By default, the tunnel is created for all connected devices. If this is provided without `--appletv-device-id`, Apple TV discovery/setup is skipped.|string (repeatable)||
 
@@ -532,10 +531,10 @@ sudo appium driver run xcuitest tunnel-creation
     sudo appium driver run xcuitest tunnel-creation
     ```
 
-- Create a tunnel for all connected devices using custom ports:
+- Create a tunnel for all connected devices using a custom registry port:
 
     ```
-    sudo appium driver run xcuitest tunnel-creation -- --packet-stream-base-port 51000 --tunnel-registry-port 43000
+    sudo appium driver run xcuitest tunnel-creation -- --tunnel-registry-port 43000
     ```
 
 - Create a tunnel for a device with the UDID `00000000-1111-2222-3333-444444444444`:

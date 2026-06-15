@@ -76,11 +76,7 @@ export class IOSDeviceLog extends LineConsumingLog {
     syslogService.on('error', (err: Error) => {
       this.log.warn(`Syslog RemoteXPC error: ${err.message}`);
     });
-    await syslogService.start(
-      serviceDescriptor,
-      {addPacketConsumer: () => {}, removePacketConsumer: () => {}},
-      {pid: -1, textMode: true},
-    );
+    await syslogService.start(serviceDescriptor, {pid: -1, textMode: true});
   }
 
   private async stopRemoteXPCCapture(): Promise<void> {
