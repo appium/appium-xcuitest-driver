@@ -817,6 +817,8 @@ export class XCUITestDriver
 
   /**
    * Lazy per-session RemoteXPC facade (tunnel probe + cached fallback state).
+   *
+   * @throws {Error} If this.opts.udid is not set.
    */
   get remoteXPCFacade(): RemoteXPCFacade {
     return this.getOrCreateRemoteXPCFacade(this.isRealDevice());
