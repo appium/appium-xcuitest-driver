@@ -321,7 +321,6 @@ export class RealDevice {
   async getPlatformVersion(): Promise<string> {
     const lockdown = await LockdownClient.createForDevice(
       this.udid,
-      this.driverOpts,
       this.log,
       this.remoteXPCFacade,
     );

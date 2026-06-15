@@ -1,4 +1,5 @@
 import {XctestAttachmentDeletionClient} from '../../../lib/device/xctest-attachment-deletion-client';
+import type {RemoteXPCFacade, RemoteXPCTestAttachment} from '../../../lib/device/remote-xpc';
 import {isTunnelAvailabilityError} from '../../../lib/device/remote-xpc';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -6,54 +7,60 @@ import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
-function mockLog() {
-  return {warn: sinon.stub(), debug: sinon.stub(), info: sinon.stub(), error: sinon.stub()} as any;
+function mockFacade(
+  overrides: {
+    udid?: string;
+    eligible?: boolean;
+    XCTestAttachment?: RemoteXPCTestAttachment;
+    shouldUseRemoteXPC?: RemoteXPCFacade['shouldUseRemoteXPC'];
+    getXCTestAttachment?: RemoteXPCFacade['getXCTestAttachment'];
+  } = {},
+): RemoteXPCFacade {
+  const {
+    udid = 'udid',
+    eligible = true,
+    XCTestAttachment = class {} as unknown as RemoteXPCTestAttachment,
+    shouldUseRemoteXPC = sinon.stub().resolves(true),
+    getXCTestAttachment = sinon.stub().resolves(XCTestAttachment),
+  } = overrides;
+
+  return {
+    udid,
+    get eligible() {
+      return eligible;
+    },
+    shouldUseRemoteXPC,
+    getXCTestAttachment,
+  } as RemoteXPCFacade;
 }
 
 describe('XctestAttachmentDeletionClient', function () {
-  it('isDeletionAvailable is false on iOS 17', async function () {
-    expect(await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '17.0')).to.equal(
-      false,
+  it('rejects create when session is not eligible', async function () {
+    await expect(
+      XctestAttachmentDeletionClient.create(mockFacade({eligible: false})),
+    ).to.be.rejectedWith(/iOS 18/);
+  });
+
+  it('rejects create when remotexpc is unavailable', async function () {
+    const facade = mockFacade({
+      shouldUseRemoteXPC: sinon.stub().resolves(false),
+    });
+    await expect(XctestAttachmentDeletionClient.create(facade)).to.be.rejectedWith(
+      /appium-ios-remotexpc must be installed/,
     );
   });
 
-  it('isDeletionAvailable is true when XCTestAttachment is injected', async function () {
-    const MockAtt = class {};
-    const mod = {XCTestAttachment: MockAtt} as any;
-    expect(await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '18.0', mod)).to.equal(
-      true,
-    );
-  });
-
-  it('isDeletionAvailable is false when module lacks XCTestAttachment', async function () {
-    const log = mockLog();
-    expect(
-      await XctestAttachmentDeletionClient.isDeletionAvailable('udid', '18.0', {}, log),
-    ).to.equal(false);
-    expect(log.warn.callCount).to.equal(1);
-    expect(String(log.warn.firstCall.args[0])).to.match(/appium-ios-remotexpc/i);
-  });
-
-  it('rejects create on iOS 17', async function () {
-    await expect(XctestAttachmentDeletionClient.create('udid', '17.0')).to.be.rejectedWith(
-      /iOS 18/,
-    );
-  });
-
-  it('rejects create when XCTestAttachment is missing from injected module', async function () {
-    await expect(XctestAttachmentDeletionClient.create('udid', '18.0', {})).to.be.rejectedWith(
-      /XCTestAttachment/,
-    );
-  });
-
-  it('invokes XCTestAttachment.delete when remotexpc module is injected', async function () {
+  it('invokes XCTestAttachment.delete when the facade provides the class', async function () {
     const deleteStub = sinon.stub().resolves();
     const MockAtt = class {
       delete = deleteStub;
       constructor(public udid: string) {}
-    };
-    const mod = {XCTestAttachment: MockAtt} as any;
-    const client = await XctestAttachmentDeletionClient.create('my-udid', '18.0', mod);
+    } as unknown as RemoteXPCTestAttachment;
+    const facade = mockFacade({
+      udid: 'my-udid',
+      XCTestAttachment: MockAtt,
+    });
+    const client = await XctestAttachmentDeletionClient.create(facade);
     await client.deleteAttachmentsByUuid(['uuid-1']);
     expect(deleteStub.calledOnce).to.equal(true);
     expect(deleteStub.firstCall.args[0]).to.eql(['uuid-1']);
@@ -63,9 +70,9 @@ describe('XctestAttachmentDeletionClient', function () {
     const deleteStub = sinon.stub().rejects(new Error('delete err'));
     const MockAtt = class {
       delete = deleteStub;
-    };
-    const mod = {XCTestAttachment: MockAtt} as any;
-    const client = await XctestAttachmentDeletionClient.create('udid', '18.0', mod);
+    } as unknown as RemoteXPCTestAttachment;
+    const facade = mockFacade({XCTestAttachment: MockAtt});
+    const client = await XctestAttachmentDeletionClient.create(facade);
     await expect(client.deleteAttachmentsByUuid(['u'])).to.be.rejectedWith('delete err');
   });
 

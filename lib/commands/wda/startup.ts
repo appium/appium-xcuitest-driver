@@ -117,7 +117,6 @@ async function setupConnection(driver: XCUITestDriver): Promise<void> {
     Number(driver.wda.url.port),
     {
       devicePort: usePortForwarding ? driver.wda.wdaRemotePort : null,
-      platformVersion: driver.opts.platformVersion,
       usePortForwarding,
       remoteXPCFacade: driver.remoteXPCFacade,
     },

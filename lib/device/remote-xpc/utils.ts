@@ -3,6 +3,7 @@ import type * as RemoteXPCModule from 'appium-ios-remotexpc';
 export type RemoteXPCEsmModule = typeof RemoteXPCModule;
 export type RemoteXPCServices = RemoteXPCEsmModule['Services'];
 export type RemoteXPCTestRunner = RemoteXPCEsmModule['XCTestRunner'];
+export type RemoteXPCTestAttachment = RemoteXPCEsmModule['XCTestAttachment'];
 
 /** Published driver guide for Remote XPC tunnel setup on real devices (iOS/tvOS 18+). */
 export const REMOTE_XPC_TUNNEL_SETUP_DOC_LINK =

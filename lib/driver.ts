@@ -819,16 +819,7 @@ export class XCUITestDriver
    * Lazy per-session RemoteXPC facade (tunnel probe + cached fallback state).
    */
   get remoteXPCFacade(): RemoteXPCFacade {
-    const udid = this.opts.udid;
-    if (!udid) {
-      throw new Error('Cannot access RemoteXPC session state before device UDID is set');
-    }
-    if (!this._remoteXPCFacade || this._remoteXPCFacade.udid !== udid) {
-      this._remoteXPCFacade = new RemoteXPCFacade(udid, this.opts, this.log, () =>
-        this.isRealDevice(),
-      );
-    }
-    return this._remoteXPCFacade;
+    return this.getOrCreateRemoteXPCFacade(this.isRealDevice());
   }
 
   async onIpcInit(): Promise<void> {
@@ -1252,7 +1243,6 @@ export class XCUITestDriver
     try {
       await this.deviceConnectionsFactory.requestConnection(this.opts.udid, mjpegServerPort, {
         devicePort: mjpegServerPort,
-        platformVersion: this.opts.platformVersion,
         usePortForwarding: this.isRealDevice(),
         remoteXPCFacade: this.isRealDevice() ? this.remoteXPCFacade : null,
       });
@@ -1628,12 +1618,8 @@ export class XCUITestDriver
       }
 
       this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const device = new RealDevice(
-        this.opts.udid as string,
-        this.opts,
-        this.log,
-        this.remoteXPCFacade,
-      );
+      const remoteXPCFacade = this.getOrCreateRemoteXPCFacade(true);
+      const device = new RealDevice(this.opts.udid as string, this.opts, this.log, remoteXPCFacade);
       return {device, realDevice: true, udid: this.opts.udid as string};
     }
 
@@ -1922,6 +1908,22 @@ export class XCUITestDriver
       }
       return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
     }
+  }
+
+  private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {
+    const udid = this.opts.udid;
+    if (!udid) {
+      throw new Error('Cannot access RemoteXPC session state before device UDID is set');
+    }
+    if (!this._remoteXPCFacade || this._remoteXPCFacade.udid !== udid) {
+      this._remoteXPCFacade = new RemoteXPCFacade(
+        udid,
+        this.opts.platformVersion,
+        this.log,
+        isRealDevice,
+      );
+    }
+    return this._remoteXPCFacade;
   }
 }
 

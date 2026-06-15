@@ -12,9 +12,9 @@ describe('RemoteXPCFacade', function () {
   it('returns false when the session is not eligible', async function () {
     const access = new RemoteXPCFacade(
       'udid-1',
-      {platformVersion: '17.0'} as any,
+      '17.0',
       {debug: sinon.stub(), warn: sinon.stub(), info: sinon.stub()} as any,
-      () => true,
+      true,
     );
 
     expect(await access.shouldUseRemoteXPC()).to.equal(false);
@@ -34,9 +34,9 @@ describe('RemoteXPCFacade', function () {
     const warn = sinon.stub();
     const access = new RemoteXPCFacade(
       'udid-1',
-      {platformVersion: '18.0'} as any,
+      '18.0',
       {debug: sinon.stub(), warn, info: sinon.stub()} as any,
-      () => true,
+      true,
     );
 
     expect(await access.shouldUseRemoteXPC()).to.equal(false);
@@ -58,9 +58,9 @@ describe('RemoteXPCFacade', function () {
 
     const access = new RemoteXPCFacade(
       'udid-1',
-      {platformVersion: '18.0'} as any,
+      '18.0',
       {debug: sinon.stub(), warn: sinon.stub(), info: sinon.stub()} as any,
-      () => true,
+      true,
     );
 
     await access.shouldUseRemoteXPC();

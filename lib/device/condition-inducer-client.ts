@@ -1,6 +1,5 @@
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
-import {isIos18OrNewerPlatform} from '../utils';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 import type {Condition, IConditionInducer} from '../types';
 import type {RemoteXPCFacade} from './remote-xpc';
@@ -179,17 +178,16 @@ class InstrumentConditionInducer implements IConditionInducer {
 }
 
 /**
- * Picks RemoteXPC when the platform is iOS/tvOS 18+ and probe succeeds; otherwise legacy instrument service.
+ * Picks RemoteXPC when the session facade is eligible and probe succeeds; otherwise legacy instrument service.
  */
 export async function createConditionInducer(params: {
   udid: string;
   log: AppiumLogger;
-  platformVersion?: string;
   remoteXPCFacade?: RemoteXPCFacade | null;
 }): Promise<IConditionInducer> {
-  const {udid, log, platformVersion, remoteXPCFacade = null} = params;
+  const {udid, log, remoteXPCFacade = null} = params;
 
-  if (!isIos18OrNewerPlatform(platformVersion) || !remoteXPCFacade) {
+  if (!remoteXPCFacade?.eligible) {
     return new InstrumentConditionInducer(udid, log);
   }
 

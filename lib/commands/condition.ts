@@ -17,7 +17,6 @@ export async function listConditionInducers(this: XCUITestDriver): Promise<Condi
     (await createConditionInducer({
       udid: this.device.udid,
       log: this.log,
-      platformVersion: this.opts.platformVersion,
       remoteXPCFacade: this.remoteXPCFacade,
     }));
   return await facade.list();
@@ -57,7 +56,6 @@ export async function enableConditionInducer(
   const facade = await createConditionInducer({
     udid: this.device.udid,
     log: this.log,
-    platformVersion: this.opts.platformVersion,
     remoteXPCFacade: this.remoteXPCFacade,
   });
   this._conditionInducer = facade;

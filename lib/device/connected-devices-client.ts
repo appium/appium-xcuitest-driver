@@ -13,7 +13,7 @@ export class ConnectedDevicesClient {
    * instance for tunnel registry listing; otherwise uses legacy listing only.
    */
   static async create(opts: XCUITestDriverOpts): Promise<ConnectedDevicesClient> {
-    const services = await RemoteXPCFacade.tryGetRegistryServices(opts, log);
+    const services = await RemoteXPCFacade.tryGetRegistryServices(opts.platformVersion, log);
     return new ConnectedDevicesClient(services);
   }
 

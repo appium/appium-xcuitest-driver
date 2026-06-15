@@ -1,6 +1,6 @@
 import type {AppiumLogger} from '@appium/types';
-import type {XCUITestDriverOpts} from '../../driver';
-import {isIos18OrNewer} from '../../utils';
+import type {LockdownService} from 'appium-ios-remotexpc';
+import {isIos18OrNewerPlatform} from '../../utils';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 import {
   formatRemoteXPCFallbackLog,
@@ -8,6 +8,7 @@ import {
   wrapRemoteXPCConnectionError,
   type RemoteXPCEsmModule,
   type RemoteXPCServices,
+  type RemoteXPCTestAttachment,
   type RemoteXPCTestRunner,
 } from './utils';
 import {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader';
@@ -28,27 +29,28 @@ export class RemoteXPCFacade {
   private useUsbMuxPath = false;
   private sessionFallbackLogged = false;
   private cachedXCTestRunner: RemoteXPCTestRunner | null = null;
+  private cachedXCTestAttachment: RemoteXPCTestAttachment | null = null;
   private lastImportError: Error | null = null;
 
   constructor(
     readonly udid: string,
-    private readonly opts: XCUITestDriverOpts,
+    private readonly platformVersion: string | undefined,
     private readonly log: AppiumLogger,
-    private readonly isRealDevice: () => boolean,
+    private readonly isRealDevice: boolean,
   ) {}
 
   get eligible(): boolean {
-    return this.isRealDevice() && isIos18OrNewer(this.opts);
+    return this.isRealDevice && isIos18OrNewerPlatform(this.platformVersion);
   }
 
   /**
    * Services for pre-session tunnel-registry device listing (no per-device session state).
    */
   static async tryGetRegistryServices(
-    opts: XCUITestDriverOpts,
+    platformVersion: string | null | undefined,
     log: AppiumLogger,
   ): Promise<RemoteXPCServices | null> {
-    if (!isIos18OrNewer(opts)) {
+    if (!isIos18OrNewerPlatform(platformVersion)) {
       return null;
     }
     const mod = await tryLoadRemoteXPCModule();
@@ -88,25 +90,6 @@ export class RemoteXPCFacade {
     return this.services;
   }
 
-  async getModule(): Promise<RemoteXPCEsmModule | null> {
-    await this.ensureInitialized();
-    return this.module;
-  }
-
-  /**
-   * Loaded full module export, throwing when import or session setup failed.
-   */
-  async requireModule(): Promise<RemoteXPCEsmModule> {
-    await this.ensureInitialized();
-    if (!this.module) {
-      throw wrapRemoteXPCConnectionError(
-        this.lastImportError ?? new Error('appium-ios-remotexpc is not available'),
-        `RemoteXPC module is not available for '${this.udid}'`,
-      );
-    }
-    return this.module;
-  }
-
   /**
    * XCTestRunner class from the loaded module (session-scoped cache).
    */
@@ -124,6 +107,25 @@ export class RemoteXPCFacade {
     }
     this.cachedXCTestRunner = XCTestRunnerClass;
     return XCTestRunnerClass;
+  }
+
+  /**
+   * XCTestAttachment class from the loaded module (session-scoped cache).
+   */
+  async getXCTestAttachment(): Promise<RemoteXPCTestAttachment> {
+    if (this.cachedXCTestAttachment) {
+      return this.cachedXCTestAttachment;
+    }
+    const mod = await this.requireModule();
+    const XCTestAttachmentClass = mod.XCTestAttachment;
+    if (typeof XCTestAttachmentClass !== 'function') {
+      throw new Error(
+        'XCTestAttachment is not exported from appium-ios-remotexpc. ' +
+          'The installed version may be incompatible.',
+      );
+    }
+    this.cachedXCTestAttachment = XCTestAttachmentClass;
+    return XCTestAttachmentClass;
   }
 
   /**
@@ -145,6 +147,48 @@ export class RemoteXPCFacade {
       return null;
     }
     return {remotexpc: this.module, useUsbMuxPath: this.useUsbMuxPath};
+  }
+
+  /**
+   * Runs a lockdown operation over the usbmux path for this device.
+   */
+  async withUsbMuxLockdown<T>(
+    operation: (lockdown: LockdownService) => Promise<T | undefined>,
+  ): Promise<T | undefined> {
+    try {
+      const mod = await this.requireModule();
+      const {lockdownService} = await mod.createLockdownServiceByUDID(this.udid);
+      try {
+        return await operation(lockdownService);
+      } finally {
+        lockdownService.close();
+      }
+    } catch (err) {
+      throw new Error(
+        `Failed to read lockdown via appium-ios-remotexpc USBMUX path for '${this.udid}': ` +
+          `${(err as Error).message}`,
+        {cause: err},
+      );
+    }
+  }
+
+  /**
+   * Runs a lockdown operation over the RSD tunnel for this device.
+   */
+  async withTunnelLockdown<T>(
+    operation: (lockdown: LockdownService) => Promise<T | undefined>,
+  ): Promise<T | undefined> {
+    try {
+      const mod = await this.requireModule();
+      const lockdown = await mod.createLockdownServiceForTunnel(this.udid);
+      try {
+        return await operation(lockdown);
+      } finally {
+        lockdown.close();
+      }
+    } catch (err) {
+      throw wrapRemoteXPCConnectionError(err, `Tunnel lockdown failed for '${this.udid}'`);
+    }
   }
 
   /**
@@ -208,20 +252,6 @@ export class RemoteXPCFacade {
     }
   }
 
-  private handleServiceError(
-    feature: string,
-    err: unknown,
-    onNonTunnelFailure: 'log' | 'throw',
-  ): void {
-    if (isTunnelAvailabilityError(err)) {
-      this.noteTunnelUnavailable(feature, err);
-      return;
-    }
-    if (onNonTunnelFailure === 'log') {
-      this.log.error(formatRemoteXPCFallbackLog(feature, err));
-    }
-  }
-
   private async ensureInitialized(): Promise<void> {
     if (this.initialized) {
       return;
@@ -259,6 +289,31 @@ export class RemoteXPCFacade {
       this.log.debug(`RemoteXPC enabled for '${this.udid}' (tunnel registry reachable)`);
     } catch (err) {
       this.noteTunnelUnavailable('session initialization', err);
+    }
+  }
+
+  private async requireModule(): Promise<RemoteXPCEsmModule> {
+    await this.ensureInitialized();
+    if (!this.module) {
+      throw wrapRemoteXPCConnectionError(
+        this.lastImportError ?? new Error('appium-ios-remotexpc is not available'),
+        `RemoteXPC module is not available for '${this.udid}'`,
+      );
+    }
+    return this.module;
+  }
+
+  private handleServiceError(
+    feature: string,
+    err: unknown,
+    onNonTunnelFailure: 'log' | 'throw',
+  ): void {
+    if (isTunnelAvailabilityError(err)) {
+      this.noteTunnelUnavailable(feature, err);
+      return;
+    }
+    if (onNonTunnelFailure === 'log') {
+      this.log.error(formatRemoteXPCFallbackLog(feature, err));
     }
   }
 }

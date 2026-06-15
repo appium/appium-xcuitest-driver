@@ -18,7 +18,6 @@ export async function mobileGetDeviceInfo(
   if (this.isRealDevice()) {
     const lockdown = await LockdownClient.createForDevice(
       this.device.udid,
-      this.opts,
       this.log,
       this.remoteXPCFacade,
     );

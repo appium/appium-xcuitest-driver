@@ -142,12 +142,7 @@ export async function mobileStartXctestScreenRecording(
   codec?: number,
 ): Promise<XcTestScreenRecordingInfo> {
   if (this.isRealDevice()) {
-    const canDeleteAfterStop = await XctestAttachmentDeletionClient.isDeletionAvailable(
-      this.opts.udid ?? '',
-      this.opts.platformVersion ?? '',
-      undefined,
-      this.log,
-    );
+    const canDeleteAfterStop = (await this.remoteXPCFacade?.shouldUseRemoteXPC()) ?? false;
     if (!canDeleteAfterStop) {
       this.assertFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE);
     }
@@ -258,17 +253,9 @@ export async function mobileStopXctestScreenRecording(
     await fs.rimraf(videoPath);
     if (this.isRealDevice() && this.opts.udid) {
       try {
-        const canDelete = await XctestAttachmentDeletionClient.isDeletionAvailable(
-          this.opts.udid,
-          this.opts.platformVersion ?? '',
-          undefined,
-          this.log,
-        );
+        const canDelete = (await this.remoteXPCFacade?.shouldUseRemoteXPC()) ?? false;
         if (canDelete) {
-          const deletionClient = await XctestAttachmentDeletionClient.create(
-            this.opts.udid,
-            this.opts.platformVersion ?? '',
-          );
+          const deletionClient = await XctestAttachmentDeletionClient.create(this.remoteXPCFacade);
           await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
         } else {
           this.log.debug(

@@ -6,7 +6,12 @@ export {
   TUNNEL_CREATION_COMMAND,
   wrapRemoteXPCConnectionError,
 } from './utils';
-export type {RemoteXPCEsmModule, RemoteXPCServices, RemoteXPCTestRunner} from './utils';
+export type {
+  RemoteXPCEsmModule,
+  RemoteXPCServices,
+  RemoteXPCTestAttachment,
+  RemoteXPCTestRunner,
+} from './utils';
 export {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader';
 export {RemoteXPCFacade} from './facade';
 export {isDeviceListedInUsbmux} from './usbmux-utils';
