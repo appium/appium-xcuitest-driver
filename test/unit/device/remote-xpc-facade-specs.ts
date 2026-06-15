@@ -20,7 +20,7 @@ describe('RemoteXPCFacade', function () {
     expect(await access.determineAvailability()).to.equal(false);
   });
 
-  it('caches tunnel unavailability for the remainder of the session', async function () {
+  it('caches tunnel unavailability for the remainder of the session when init probe fails', async function () {
     const tunnelErr = new Error('No tunnel found for device udid-1');
     tunnelErr.name = 'TunnelAvailabilityError';
 
@@ -43,6 +43,35 @@ describe('RemoteXPCFacade', function () {
     expect(await access.determineAvailability()).to.equal(false);
     expect(warn.calledOnce).to.be.true;
     expect((moduleLoader.tryLoadRemoteXPCModule as sinon.SinonStub).calledOnce).to.be.true;
+  });
+
+  it('does not disable remotexpc when a later service call hits a tunnel error', async function () {
+    const tunnelErr = new Error('No tunnel found for device udid-1');
+    tunnelErr.name = 'TunnelAvailabilityError';
+    const operation = sinon.stub().rejects(tunnelErr);
+    const services = {operation};
+
+    sinon.stub(moduleLoader, 'tryLoadRemoteXPCModule').resolves({
+      Services: {
+        getTunnelForDevice: sinon.stub().resolves({}),
+        ...services,
+      },
+    } as any);
+    sinon.stub(usbmuxUtils, 'isDeviceListedInUsbmux').resolves(false);
+
+    const warn = sinon.stub();
+    const access = new RemoteXPCFacade(
+      'udid-1',
+      '18.0',
+      {debug: sinon.stub(), warn, info: sinon.stub()} as any,
+      true,
+    );
+
+    expect(await access.determineAvailability()).to.equal(true);
+    expect(await access.attemptService('test feature', operation)).to.equal(null);
+    expect(await access.determineAvailability()).to.equal(true);
+    expect(warn.calledOnce).to.be.true;
+    expect(operation.calledOnce).to.be.true;
   });
 
   it('requireService throws when remotexpc is disabled', async function () {

@@ -18,9 +18,10 @@ const TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS = 3000;
 /**
  * Per-driver-session RemoteXPC availability state.
  *
- * Initialized lazily on the first remotexpc operation. When tunnel registry access fails with
- * {@link isTunnelAvailabilityError}, remotexpc is disabled for the remainder of the session so
- * callers fall back to appium-ios-device without re-probing the tunnel on every service call.
+ * Initialized lazily on the first remotexpc operation. When the initial tunnel registry probe
+ * fails with {@link isTunnelAvailabilityError}, remotexpc is disabled for the remainder of the
+ * session so callers fall back to appium-ios-device without re-probing on every service call.
+ * Later per-operation tunnel failures do not flip that cached state.
  */
 export class RemoteXPCFacade {
   private initPromise: Promise<void> | null = null;
@@ -196,7 +197,8 @@ export class RemoteXPCFacade {
   /**
    * Runs a RemoteXPC service operation when the session allows it.
    *
-   * Tunnel availability failures disable remotexpc for the session and return `null`.
+   * Tunnel availability failures during an operation are logged and return `null` without
+   * disabling remotexpc for the session (unlike the one-time init probe).
    * Other failures are logged per call and also return `null` so callers can fall back once.
    */
   async attemptService<T>(
@@ -238,7 +240,7 @@ export class RemoteXPCFacade {
   }
 
   /**
-   * Disable remotexpc for the remainder of this session after a tunnel registry failure.
+   * Disable remotexpc for the remainder of this session after the initial tunnel registry probe fails.
    */
   noteTunnelUnavailable(feature: string, err: unknown): void {
     if (!isTunnelAvailabilityError(err)) {
@@ -312,12 +314,15 @@ export class RemoteXPCFacade {
     err: unknown,
     onNonTunnelFailure: 'log' | 'throw',
   ): void {
+    const message = formatRemoteXPCFallbackLog(feature, err);
     if (isTunnelAvailabilityError(err)) {
-      this.noteTunnelUnavailable(feature, err);
+      if (onNonTunnelFailure === 'log') {
+        this.log.warn(message);
+      }
       return;
     }
     if (onNonTunnelFailure === 'log') {
-      this.log.error(formatRemoteXPCFallbackLog(feature, err));
+      this.log.error(message);
     }
   }
 }
