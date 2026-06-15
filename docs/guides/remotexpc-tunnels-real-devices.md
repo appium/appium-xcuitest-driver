@@ -66,7 +66,7 @@ The script executes the following actions:
       script
 - For each device:
     - Starts a Lockdown session
-    - Starts `com.apple.internal.devicecompute.CoreDeviceProxy` over plain TCP (TLS handled by the native `appium-ios-tuntap` forwarder)
+    - Starts `com.apple.internal.devicecompute.CoreDeviceProxy`
     - Creates an IPv6 tunnel using `TunnelManager.getTunnel(...)` (or `getTunnelPsk` for Apple TV)
     - Discovers RSD services and publishes a service catalog in the tunnel registry
 - Builds a tunnel registry containing:
