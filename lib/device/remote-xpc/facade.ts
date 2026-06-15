@@ -13,6 +13,8 @@ import {
 } from './utils';
 import {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader';
 
+const TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS = 3000;
+
 /**
  * Per-driver-session RemoteXPC availability state.
  *
@@ -283,7 +285,9 @@ export class RemoteXPCFacade {
     this.useUsbMuxPath = await isDeviceListedInUsbmux(loadedModule, this.udid, this.log);
 
     try {
-      await loadedModule.Services.getTunnelForDevice(this.udid);
+      await loadedModule.Services.getTunnelForDevice(this.udid, {
+        waitMs: TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS,
+      });
       this.services = loadedModule.Services;
       this.enabled = true;
       this.log.debug(`RemoteXPC enabled for '${this.udid}' (tunnel registry reachable)`);
