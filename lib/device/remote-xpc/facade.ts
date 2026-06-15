@@ -47,9 +47,9 @@ export class RemoteXPCFacade {
   }
 
   /**
-   * Services for pre-session tunnel-registry device listing (no per-device session state).
+   * Tries to fetch the RemoteXPC Services facade.
    */
-  static async tryGetRegistryServices(
+  static async tryGetServicesFacade(
     platformVersion: string | null | undefined,
     log: AppiumLogger,
   ): Promise<RemoteXPCServices | null> {
