@@ -26,7 +26,7 @@ export class CrashReportsClient {
    * @throws {Error} If RemoteXPC is disabled for the session or setup fails
    */
   static async create(udid: string, facade: RemoteXPCFacade | null): Promise<CrashReportsClient> {
-    if (!facade || !(await facade.determineAvailability())) {
+    if (!facade) {
       throw new Error(
         'Real device crash report access requires iOS/tvOS 18 or newer with the appium-ios-remotexpc ' +
           'package installed.',
