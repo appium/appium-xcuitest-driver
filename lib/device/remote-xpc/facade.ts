@@ -58,10 +58,10 @@ export class RemoteXPCFacade {
     }
     const mod = await tryLoadRemoteXPCModule();
     if (!mod) {
-      log.warn(
-        `appium-ios-remotexpc unavailable for device listing: ${getLastRemoteXPCImportError()?.message ?? 'unknown'}. ` +
-          `Using legacy devices listing instead.`,
-      );
+      const importErr = getLastRemoteXPCImportError();
+      if (importErr) {
+        log.debug(`appium-ios-remotexpc import failed: ${importErr.message}`);
+      }
       return null;
     }
     return mod.Services;
