@@ -1,4 +1,4 @@
-import {isEmpty} from '../utils';
+import {isEmpty, isIos18OrNewerPlatform} from '../utils';
 import net from 'node:net';
 import {util, timing} from 'appium/support';
 import {utilities} from 'appium-ios-device';
@@ -6,11 +6,7 @@ import {checkPortStatus} from 'portscanner';
 import {waitForCondition} from 'asyncbox';
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
-import {
-  getLastRemoteXPCOptionalImportError,
-  tryGetRemoteXPCUsbMuxStrategy,
-} from './remotexpc-utils';
-import {isIos18OrNewerPlatform} from '../commands/helpers';
+import type {RemoteXPCFacade} from './remote-xpc';
 import type {Socket} from 'node:net';
 
 const LOCALHOST = '127.0.0.1';
@@ -30,6 +26,7 @@ interface RequestConnectionOptions {
   usePortForwarding?: boolean;
   devicePort?: number | null;
   platformVersion?: string | null;
+  remoteXPCFacade?: RemoteXPCFacade | null;
 }
 
 interface PortForwarder {
@@ -349,6 +346,7 @@ export class DeviceConnectionsFactory {
         port,
         Number(devicePort),
         platformVersion,
+        options.remoteXPCFacade ?? null,
       );
     } else {
       DeviceConnectionsFactory._connectionsMapping[currentKey] = {};
@@ -458,8 +456,15 @@ export class DeviceConnectionsFactory {
     port: number,
     devicePort: number,
     platformVersion: string | null | undefined,
+    remoteXPCFacade: RemoteXPCFacade | null,
   ): Promise<void> {
-    const portForwarder = await this._createPortForwarder(udid, port, devicePort, platformVersion);
+    const portForwarder = await this._createPortForwarder(
+      udid,
+      port,
+      devicePort,
+      platformVersion,
+      remoteXPCFacade,
+    );
     try {
       await portForwarder.start();
       DeviceConnectionsFactory._connectionsMapping[currentKey] = {portForwarder};
@@ -513,7 +518,8 @@ export class DeviceConnectionsFactory {
     udid: string,
     localPort: number,
     devicePort: number,
-    platformVersion?: string | null,
+    platformVersion: string | null | undefined,
+    remoteXPCFacade: RemoteXPCFacade | null,
   ): Promise<PortForwarder> {
     if (!isIos18OrNewerPlatform(platformVersion)) {
       this.log.debug(
@@ -523,11 +529,11 @@ export class DeviceConnectionsFactory {
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
 
-    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, this.log);
+    const resolved = remoteXPCFacade ? await remoteXPCFacade.getUsbMuxStrategy() : null;
     if (!resolved) {
       this.log.debug(
         `appium-ios-remotexpc is unavailable. Falling back to appium-ios-device port forwarding. ` +
-          `Original error: ${getLastRemoteXPCOptionalImportError()?.message ?? 'unknown'}`,
+          `Original error: ${remoteXPCFacade?.getImportErrorMessage() ?? 'unknown'}`,
       );
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
@@ -543,6 +549,13 @@ export class DeviceConnectionsFactory {
         localPort,
         devicePort,
       );
+    }
+
+    if (remoteXPCFacade && !(await remoteXPCFacade.shouldUseRemoteXPC())) {
+      this.log.debug(
+        `RemoteXPC tunnel unavailable for '${udid}'. Falling back to appium-ios-device port forwarding.`,
+      );
+      return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
 
     // We cannot use the legacy fallback past this point as the device is not accessible via USB/local usbmux

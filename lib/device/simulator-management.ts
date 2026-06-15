@@ -2,8 +2,8 @@ import {getSimulator, type Simulator, type LocalizationOptions} from 'appium-ios
 import {Simctl} from 'node-simctl';
 import {resetTestProcesses} from 'appium-webdriveragent';
 import {util, timing} from 'appium/support';
-import {buildSafariPreferences, normalizePlatformName} from '../commands/helpers';
-import {isEmpty} from '../utils';
+import {buildSafariPreferences} from '../commands/helpers';
+import {isEmpty, normalizePlatformName} from '../utils';
 import {UDID_AUTO} from '../commands/constants';
 import type {XCUITestDriver} from '../driver';
 import type {DeviceInfo} from 'node-simctl';

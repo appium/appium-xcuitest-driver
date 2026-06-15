@@ -1,4 +1,4 @@
-import {isEmpty, isPlainObject} from '../utils';
+import {isEmpty, isPlainObject, isTvOs} from '../utils';
 import path from 'node:path';
 import os from 'node:os';
 import assert from 'node:assert';
@@ -13,7 +13,7 @@ import type {
 } from '@appium/types';
 import type {Readable} from 'node:stream';
 import type {XCUITestDriver} from '../driver';
-import {findApps, isTvOs, unzipFile, unzipStream} from './helpers';
+import {findApps, unzipFile, unzipStream} from './helpers';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants';
 
 const ZIP_EXT = '.zip';

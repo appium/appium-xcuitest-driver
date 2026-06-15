@@ -1,4 +1,4 @@
-import {tryGetRemoteXPCServices} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import {log} from '../logger';
 import type {AppiumLogger} from '@appium/types';
 import type {ZipConduitService as RemoteXPCZipConduitService} from 'appium-ios-remotexpc';
@@ -34,12 +34,22 @@ export class ZipConduitClient {
    * @param logger - Optional logger
    * @returns A connected client, or `null` when zip_conduit is unavailable
    */
-  static async create(udid: string, logger: AppiumLogger = log): Promise<ZipConduitClient | null> {
-    const Services = await tryGetRemoteXPCServices();
-    if (!Services || typeof Services.startZipConduitService !== 'function') {
+  static async create(
+    udid: string,
+    facade: RemoteXPCFacade | null,
+    logger: AppiumLogger = log,
+  ): Promise<ZipConduitClient | null> {
+    const service = facade
+      ? await facade.attemptService('zip_conduit', (Services) => {
+          if (typeof Services.startZipConduitService !== 'function') {
+            throw new Error('startZipConduitService is not available');
+          }
+          return Services.startZipConduitService(udid);
+        })
+      : null;
+    if (!service) {
       return null;
     }
-    const service = await Services.startZipConduitService(udid);
     return new ZipConduitClient(service, logger);
   }
 

@@ -2,12 +2,12 @@ import {errors} from 'appium/driver';
 import {fs, timing, util} from 'appium/support';
 import type {StringRecord} from '@appium/types';
 import {retryInterval} from 'asyncbox';
-import {isPlainObject} from '../../utils';
+import {isIos17OrNewerPlatform, isPlainObject} from '../../utils';
 import path from 'node:path';
 import {installToRealDevice} from '../../device/real-device-management';
 import {installToSimulator} from '../../device/simulator-management';
 import type {XCUITestDriver} from '../../driver';
-import {isIos17OrNewerPlatform, isLocalHost} from '../helpers';
+import {isLocalHost} from '../helpers';
 import {markSystemFilesForCleanup} from './cleanup';
 import {
   CAP_NAMES_NO_XCODEBUILD_REQUIRED,
@@ -119,6 +119,7 @@ async function setupConnection(driver: XCUITestDriver): Promise<void> {
       devicePort: usePortForwarding ? driver.wda.wdaRemotePort : null,
       platformVersion: driver.opts.platformVersion,
       usePortForwarding,
+      remoteXPCFacade: driver.remoteXPCFacade,
     },
   );
 }

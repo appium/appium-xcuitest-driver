@@ -7,6 +7,7 @@ import {IOSLog} from './ios-log';
 import {toLogEntry, grepFile} from './helpers';
 import type {AppiumLogger} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
+import type {RemoteXPCFacade} from '../remote-xpc';
 import type {LogEntry} from '../../commands/types';
 
 // The file format has been changed from '.crash' to '.ips' since Monterey.
@@ -25,10 +26,9 @@ export interface IOSCrashLogOptions {
   sim?: Simulator;
   log: AppiumLogger;
   /**
-   * For real devices: must reflect **iOS/tvOS 18+** so {@link CrashReportsClient} can be used.
-   * Typically matches `isIos18OrNewer` from the active session.
+   * For real devices: per-session RemoteXPC facade for {@link CrashReportsClient}.
    */
-  useRemoteXPC?: boolean;
+  remoteXPCFacade?: RemoteXPCFacade | null;
 }
 
 type TSerializedEntry = [string, number];
@@ -42,7 +42,7 @@ type TSerializedEntry = [string, number];
  */
 export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private readonly _udid: string | undefined;
-  private readonly _useRemoteXPC: boolean;
+  private readonly _remoteXPCFacade: RemoteXPCFacade | null;
   private _realDeviceClient: CrashReportsClient | null;
   private readonly _logDir: string | null;
   private readonly _sim: Simulator | undefined;
@@ -59,7 +59,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
     });
     this._udid = opts.udid;
     this._sim = opts.sim;
-    this._useRemoteXPC = opts.useRemoteXPC ?? false;
+    this._remoteXPCFacade = opts.remoteXPCFacade ?? null;
     this._realDeviceClient = null;
     this._logDir = this._isRealDevice()
       ? null
@@ -152,7 +152,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       try {
         this._realDeviceClient = await CrashReportsClient.create(
           this._udid as string,
-          this._useRemoteXPC,
+          this._remoteXPCFacade,
         );
       } catch (err) {
         this.log.error(

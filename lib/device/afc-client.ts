@@ -5,7 +5,7 @@ import path from 'node:path';
 import {fs, util} from 'appium/support';
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
-import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import {log} from '../logger';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
 import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
@@ -84,25 +84,15 @@ export class AfcClient {
    * Create an AFC client for device
    *
    * @param udid - Device UDID
-   * @param useRemoteXPC - Whether to use remotexpc (use isIos18OrNewer(opts) to determine)
+   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
    * @returns AFC client instance
    */
-  static async createForDevice(udid: string, useRemoteXPC: boolean): Promise<AfcClient> {
-    if (useRemoteXPC) {
-      // Best-practice pattern (matches go-ios `defer rsd.Close()` and
-      // pymobiledevice3 single-RSD-per-session): perform exactly one RSD
-      // probe via `startAfcService`, which discovers the AFC port, closes
-      // its discovery RSD eagerly, and returns a self-contained AfcService
-      // bound to its own per-service TCP socket. Opening an extra RSD here
-      // would only race with the one inside `startAfcService` and trigger
-      // an ECONNRESET from the on-device `remoted` daemon.
-      try {
-        const Services = await getRemoteXPCServices();
-        const afcService = await Services.startAfcService(udid);
-        return new AfcClient(afcService, true);
-      } catch (err: any) {
-        log.error(formatRemoteXPCFallbackLog('AFC', err));
-      }
+  static async createForDevice(udid: string, facade: RemoteXPCFacade | null): Promise<AfcClient> {
+    const service = facade
+      ? await facade.attemptService('AFC', (Services) => Services.startAfcService(udid))
+      : null;
+    if (service) {
+      return new AfcClient(service, true);
     }
 
     const afcService = await services.startAfcService(udid);
@@ -114,30 +104,29 @@ export class AfcClient {
    *
    * @param udid - Device UDID
    * @param bundleId - App bundle identifier
-   * @param useRemoteXPC - Whether to use remotexpc (use isIos18OrNewer(opts) to determine)
+   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
    * @param options - Optional configuration for container access
    * @returns AFC client instance
    */
   static async createForApp(
     udid: string,
     bundleId: string,
-    useRemoteXPC: boolean,
+    facade: RemoteXPCFacade | null,
     options?: CreateForAppOptions,
   ): Promise<AfcClient> {
     const {containerType = null, skipDocumentsCheck = false} = options ?? {};
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
-    if (useRemoteXPC) {
-      try {
-        const Services = await getRemoteXPCServices();
-        const houseArrestService = await Services.startHouseArrestService(udid);
-        const afcService = isDocuments
-          ? await houseArrestService.vendDocuments(bundleId)
-          : await houseArrestService.vendContainer(bundleId);
-        return new AfcClient(afcService, true);
-      } catch (err: any) {
-        log.error(formatRemoteXPCFallbackLog('AFC', err));
-      }
+    const houseArrestResult = facade
+      ? await facade.attemptService('AFC', async (Services) => {
+          const houseArrestService = await Services.startHouseArrestService(udid);
+          return isDocuments
+            ? await houseArrestService.vendDocuments(bundleId)
+            : await houseArrestService.vendContainer(bundleId);
+        })
+      : null;
+    if (houseArrestResult) {
+      return new AfcClient(houseArrestResult, true);
     }
 
     const houseArrestService = await services.startHouseArrestService(udid);

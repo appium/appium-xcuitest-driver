@@ -4,14 +4,12 @@ import type {LockdownService} from 'appium-ios-remotexpc';
 import type {LockdownInfo} from '../commands/types';
 import type {XCUITestDriverOpts} from '../driver';
 import {log as defaultLogger} from '../logger';
-import {isIos18OrNewer} from '../commands/helpers';
+import {isIos18OrNewer} from '../utils';
 import {
-  getLastRemoteXPCOptionalImportError,
-  tryGetRemoteXPCModule,
-  tryGetRemoteXPCUsbMuxStrategy,
   wrapRemoteXPCConnectionError,
   type RemoteXPCEsmModule,
-} from './remotexpc-utils';
+  type RemoteXPCFacade,
+} from './remote-xpc';
 
 /**
  * Shape returned by {@linkcode utilities.getDeviceTime} in appium-ios-device.
@@ -35,6 +33,7 @@ export class LockdownClient {
     private readonly udid: string,
     private readonly log: AppiumLogger,
     private readonly strategy: 'ios-device' | 'remotexpc-usbmux' | 'remotexpc-tunnel',
+    private readonly remoteXPCFacade: RemoteXPCFacade | null = null,
   ) {}
 
   /**
@@ -46,15 +45,25 @@ export class LockdownClient {
     udid: string,
     opts: XCUITestDriverOpts,
     log: AppiumLogger = defaultLogger,
+    remoteXPCFacade: RemoteXPCFacade | null = null,
   ): Promise<LockdownClient> {
     if (!isIos18OrNewer(opts)) {
       return new LockdownClient(udid, log, 'ios-device');
     }
-    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, log);
-    if (!resolved) {
-      const err = getLastRemoteXPCOptionalImportError();
+    if (!remoteXPCFacade) {
+      return new LockdownClient(udid, log, 'ios-device');
+    }
+    if (!(await remoteXPCFacade.shouldUseRemoteXPC())) {
       log.warn(
-        `appium-ios-remotexpc unavailable for lockdown on '${udid}': ${err?.message ?? 'unknown'}. ` +
+        `RemoteXPC tunnel unavailable for lockdown on '${udid}'. ` +
+          `Using appium-ios-device lockdown (legacy fallback).`,
+      );
+      return new LockdownClient(udid, log, 'ios-device');
+    }
+    const resolved = await remoteXPCFacade.getUsbMuxStrategy();
+    if (!resolved) {
+      log.warn(
+        `appium-ios-remotexpc unavailable for lockdown on '${udid}': ${remoteXPCFacade.getImportErrorMessage()}. ` +
           `Using appium-ios-device lockdown (legacy fallback).`,
       );
       return new LockdownClient(udid, log, 'ios-device');
@@ -62,10 +71,10 @@ export class LockdownClient {
     const {useUsbMuxPath} = resolved;
 
     if (useUsbMuxPath) {
-      return new LockdownClient(udid, log, 'remotexpc-usbmux');
+      return new LockdownClient(udid, log, 'remotexpc-usbmux', remoteXPCFacade);
     }
 
-    return new LockdownClient(udid, log, 'remotexpc-tunnel');
+    return new LockdownClient(udid, log, 'remotexpc-tunnel', remoteXPCFacade);
   }
 
   private static coerceFiniteNumber(value: unknown): number | undefined {
@@ -152,11 +161,10 @@ export class LockdownClient {
   }
 
   private async requireRemotexpcModule(): Promise<RemoteXPCEsmModule> {
-    const remotexpc = await tryGetRemoteXPCModule();
-    if (!remotexpc) {
-      throw new Error(`appium-ios-remotexpc module is not initialized for '${this.udid}'.`);
+    if (!this.remoteXPCFacade) {
+      throw new Error(`RemoteXPC lockdown is not configured for '${this.udid}'.`);
     }
-    return remotexpc;
+    return await this.remoteXPCFacade.requireModule();
   }
 
   /**

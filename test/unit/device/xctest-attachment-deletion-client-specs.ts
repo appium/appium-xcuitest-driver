@@ -1,5 +1,5 @@
 import {XctestAttachmentDeletionClient} from '../../../lib/device/xctest-attachment-deletion-client';
-import {isTunnelAvailabilityError} from '../../../lib/device/remotexpc-utils';
+import {isTunnelAvailabilityError} from '../../../lib/device/remote-xpc';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';

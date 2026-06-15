@@ -5,7 +5,7 @@ import {
 } from '../device/simulate-location-client';
 import {util} from 'appium/support';
 import {AuthorizationStatus} from './enum';
-import {isIos17OrNewer} from './helpers';
+import {isIos17OrNewer} from '../utils';
 import type {XCUITestDriver} from '../driver';
 import type {Location} from '@appium/types';
 import type {LocationWithAltitude, WDALocationInfo} from './types';

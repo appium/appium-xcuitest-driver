@@ -1,4 +1,4 @@
-import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import {log} from '../logger';
 import {services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
@@ -74,26 +74,25 @@ export class InstallationProxyClient {
    * Create an InstallationProxy client for the device
    *
    * @param udid - Device UDID
-   * @param useRemoteXPC - Whether to use RemoteXPC
+   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
    * @returns InstallationProxy client instance
    */
   static async create(
     udid: string,
-    useRemoteXPC: boolean,
+    facade: RemoteXPCFacade | null,
     logger?: AppiumLogger,
   ): Promise<InstallationProxyClient> {
-    if (useRemoteXPC) {
-      try {
-        const Services = await getRemoteXPCServices();
-        const installationProxyService = await Services.startInstallationProxyService(udid);
-        return new InstallationProxyClient(installationProxyService, true, logger);
-      } catch (err: any) {
-        (logger ?? log).error(formatRemoteXPCFallbackLog('InstallationProxy', err));
-      }
+    const service = facade
+      ? await facade.attemptService('InstallationProxy', (Services) =>
+          Services.startInstallationProxyService(udid),
+        )
+      : null;
+    if (service) {
+      return new InstallationProxyClient(service, true, logger);
     }
 
-    const service = await services.startInstallationProxyService(udid);
-    return new InstallationProxyClient(service, false, logger);
+    const legacyService = await services.startInstallationProxyService(udid);
+    return new InstallationProxyClient(legacyService, false, logger);
   }
 
   /**

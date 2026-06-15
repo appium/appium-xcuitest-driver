@@ -1,4 +1,4 @@
-import {getRemoteXPCServices, wrapRemoteXPCConnectionError} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import {log} from '../logger';
 import type {CrashReportsService as RemoteXPCCrashReportsService} from 'appium-ios-remotexpc';
 
@@ -22,27 +22,21 @@ export class CrashReportsClient {
    * Opens a RemoteXPC crash-reports service for the given UDID.
    *
    * @param udid - Real device UDID
-   * @param useRemoteXPC - Must be `true`; callers derive this from `isIos18OrNewer` / session options
-   * @throws {Error} If `useRemoteXPC` is false, or RemoteXPC setup fails
+   * @param facade - Per-session RemoteXPC facade
+   * @throws {Error} If RemoteXPC is disabled for the session or setup fails
    */
-  static async create(udid: string, useRemoteXPC: boolean): Promise<CrashReportsClient> {
-    if (!useRemoteXPC) {
+  static async create(udid: string, facade: RemoteXPCFacade | null): Promise<CrashReportsClient> {
+    if (!facade || !(await facade.shouldUseRemoteXPC())) {
       throw new Error(
         'Real device crash report access requires iOS/tvOS 18 or newer with the appium-ios-remotexpc ' +
           'package installed.',
       );
     }
 
-    try {
-      const Services = await getRemoteXPCServices();
-      const crashReportsService = await Services.startCrashReportsService(udid);
-      return new CrashReportsClient(crashReportsService);
-    } catch (err: any) {
-      throw wrapRemoteXPCConnectionError(
-        err,
-        'Failed to create crash reports client via RemoteXPC',
-      );
-    }
+    const crashReportsService = await facade.requireService('crash reports', (Services) =>
+      Services.startCrashReportsService(udid),
+    );
+    return new CrashReportsClient(crashReportsService);
   }
 
   /**

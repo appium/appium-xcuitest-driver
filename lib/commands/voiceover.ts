@@ -1,5 +1,5 @@
 import {errors} from 'appium/driver';
-import {isIos27OrNewer} from './helpers';
+import {isIos27OrNewer} from '../utils';
 import type {XCUITestDriver} from '../driver';
 
 export interface VoiceOverSpeechResult {

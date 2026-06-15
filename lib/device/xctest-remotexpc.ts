@@ -3,8 +3,8 @@ import {errors} from 'appium/driver';
 import type {StringRecord} from '@appium/types';
 import type {XCTestEvent, XCTestRunnerOptions, XCTestRunStage} from 'appium-ios-remotexpc';
 import type {XCTestResult, RunXCTestResult} from '../commands/types';
-import {getXCTestRunnerClass} from './remotexpc-utils';
 import {InstallationProxyClient} from './installation-proxy-client';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 const xctestLog = logger.getLogger('XCTest:RemoteXPC');
 
@@ -27,6 +27,7 @@ export async function runXCTestViaRemoteXPC(
   testRunnerBundleId: string,
   appUnderTestBundleId: string,
   xctestBundleId: string,
+  facade: RemoteXPCFacade,
   testType: 'app' | 'ui' | 'logic' = 'ui',
   args: string[] = [],
   env?: StringRecord,
@@ -37,7 +38,7 @@ export async function runXCTestViaRemoteXPC(
     throw new Error('Logic tests are not supported via RemoteXPC');
   }
 
-  const XCTestRunnerClass = await getXCTestRunnerClass();
+  const XCTestRunnerClass = await facade.getXCTestRunner();
 
   const runnerOptions: XCTestRunnerOptions = {
     udid,
@@ -129,8 +130,11 @@ export async function runXCTestViaRemoteXPC(
  * List XCTest bundles installed on the device via RemoteXPC.
  * Uses InstallationProxy to browse apps and filter for xctrunner bundles.
  */
-export async function listXCTestBundlesViaRemoteXPC(udid: string): Promise<string[]> {
-  const installProxy = await InstallationProxyClient.create(udid, true);
+export async function listXCTestBundlesViaRemoteXPC(
+  udid: string,
+  facade: RemoteXPCFacade,
+): Promise<string[]> {
+  const installProxy = await InstallationProxyClient.create(udid, facade);
   try {
     const apps = await installProxy.listApplications({
       applicationType: 'User',
@@ -158,6 +162,7 @@ export async function listXCTestBundlesViaRemoteXPC(udid: string): Promise<strin
 export async function installXCTestBundleViaRemoteXPC(
   udid: string,
   xctestApp: string,
+  facade: RemoteXPCFacade,
 ): Promise<void> {
   if (xctestApp.endsWith('.xctest')) {
     throw new Error(
@@ -165,7 +170,7 @@ export async function installXCTestBundleViaRemoteXPC(
     );
   }
 
-  const installProxy = await InstallationProxyClient.create(udid, true);
+  const installProxy = await InstallationProxyClient.create(udid, facade);
   try {
     await installProxy.installApplication(xctestApp);
     xctestLog.info(`Installed XCTest bundle: ${xctestApp}`);

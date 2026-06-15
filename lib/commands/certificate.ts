@@ -8,7 +8,7 @@ import http from 'node:http';
 import {exec} from 'teen_process';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {CertificateClient} from '../device/certificate-client';
-import {isIos18OrNewer, requireRealDevice} from './helpers';
+import {requireRealDevice} from './helpers';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {CertificateList} from './types';
@@ -297,11 +297,7 @@ async function withCertificateClient<T>(
     if (!driver.opts.udid) {
       throw new Error('udid capability is required');
     }
-    client = await CertificateClient.create(
-      driver.opts.udid,
-      driver.log,
-      isIos18OrNewer(driver.opts),
-    );
+    client = await CertificateClient.create(driver.opts.udid, driver.log, driver.remoteXPCFacade);
     return await operation(client);
   } finally {
     if (client) {

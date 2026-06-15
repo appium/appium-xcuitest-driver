@@ -8,10 +8,7 @@ import type {RealDevice} from '../device/real-device-management';
 import type {AppiumLogger, HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
 import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
-import {
-  formatTunnelAvailabilityMessage,
-  isTunnelAvailabilityError,
-} from '../device/remotexpc-utils';
+import {formatTunnelAvailabilityMessage, isTunnelAvailabilityError} from '../device/remote-xpc';
 
 const MOV_EXT = '.mov';
 /**
