@@ -13,6 +13,22 @@ export const REMOTE_XPC_TUNNEL_SETUP_DOC_LINK =
 export const TUNNEL_CREATION_COMMAND = 'sudo appium driver run xcuitest tunnel-creation';
 
 /**
+ * RemoteXPC cannot satisfy the request in a way the caller may handle without treating it as
+ * a hard tunnel/connectivity failure (for example module missing or session ineligible).
+ */
+export class RemoteXPCUnavailableError extends Error {
+  constructor(message = 'RemoteXPC is not available') {
+    super(message);
+    this.name = 'RemoteXPCUnavailableError';
+  }
+}
+
+/** Whether `err` is a {@link RemoteXPCUnavailableError}. */
+export function isRemoteXPCUnavailableError(err: unknown): boolean {
+  return err instanceof RemoteXPCUnavailableError;
+}
+
+/**
  * Whether the given error means RemoteXPC tunnel infrastructure is unavailable.
  */
 export function isTunnelAvailabilityError(err: unknown): boolean {

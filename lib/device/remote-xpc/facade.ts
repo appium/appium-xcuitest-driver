@@ -1,10 +1,11 @@
 import type {AppiumLogger} from '@appium/types';
-import type {LockdownService} from 'appium-ios-remotexpc';
+import type {DevicePortForwarder, LockdownService} from 'appium-ios-remotexpc';
 import {isIos18OrNewerPlatform} from '../../utils';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 import {
   formatRemoteXPCFallbackLog,
   isTunnelAvailabilityError,
+  RemoteXPCUnavailableError,
   wrapRemoteXPCConnectionError,
   type RemoteXPCEsmModule,
   type RemoteXPCServices,
@@ -31,8 +32,6 @@ export class RemoteXPCFacade {
   private services: RemoteXPCServices | null = null;
   private useUsbMuxPath = false;
   private sessionFallbackLogged = false;
-  private cachedXCTestRunner: RemoteXPCTestRunner | null = null;
-  private cachedXCTestAttachment: RemoteXPCTestAttachment | null = null;
   private lastImportError: Error | null = null;
 
   constructor(
@@ -94,62 +93,80 @@ export class RemoteXPCFacade {
   }
 
   /**
-   * XCTestRunner class from the loaded module (session-scoped cache).
+   * XCTestRunner class from the loaded module.
    */
   async getXCTestRunner(): Promise<RemoteXPCTestRunner> {
-    if (this.cachedXCTestRunner) {
-      return this.cachedXCTestRunner;
-    }
-    const mod = await this.requireModule();
-    const XCTestRunnerClass = mod.XCTestRunner;
-    if (typeof XCTestRunnerClass !== 'function') {
-      throw new Error(
-        'XCTestRunner is not exported from appium-ios-remotexpc. ' +
-          'The installed version may be incompatible.',
-      );
-    }
-    this.cachedXCTestRunner = XCTestRunnerClass;
-    return XCTestRunnerClass;
+    return (await this.requireModule()).XCTestRunner;
   }
 
   /**
-   * XCTestAttachment class from the loaded module (session-scoped cache).
+   * XCTestAttachment class from the loaded module.
    */
   async getXCTestAttachment(): Promise<RemoteXPCTestAttachment> {
-    if (this.cachedXCTestAttachment) {
-      return this.cachedXCTestAttachment;
+    return (await this.requireModule()).XCTestAttachment;
+  }
+
+  /**
+   * Resolves which RemoteXPC lockdown connector to use for this device.
+   *
+   * @throws When RemoteXPC lockdown cannot be used
+   */
+  async resolveLockdownStrategy(): Promise<'remotexpc-usbmux' | 'remotexpc-tunnel'> {
+    if (!this.eligible) {
+      throw new RemoteXPCUnavailableError();
     }
-    const mod = await this.requireModule();
-    const XCTestAttachmentClass = mod.XCTestAttachment;
-    if (typeof XCTestAttachmentClass !== 'function') {
-      throw new Error(
-        'XCTestAttachment is not exported from appium-ios-remotexpc. ' +
-          'The installed version may be incompatible.',
+
+    try {
+      await this.requireModule();
+    } catch {
+      throw new RemoteXPCUnavailableError();
+    }
+
+    if (this.useUsbMuxPath) {
+      return 'remotexpc-usbmux';
+    }
+
+    return 'remotexpc-tunnel';
+  }
+
+  /**
+   * Creates a RemoteXPC device port forwarder when eligible and available.
+   *
+   * @throws When RemoteXPC port forwarding cannot be used
+   */
+  async createDevicePortForwarder(
+    localPort: number,
+    devicePort: number,
+  ): Promise<DevicePortForwarder> {
+    if (!this.eligible) {
+      throw new RemoteXPCUnavailableError();
+    }
+
+    let mod: RemoteXPCEsmModule;
+    try {
+      mod = await this.requireModule();
+    } catch {
+      throw new RemoteXPCUnavailableError();
+    }
+
+    if (this.useUsbMuxPath) {
+      this.log.debug(`Using appium-ios-remotexpc usbmux strategy for '${this.udid}'`);
+      return new mod.DevicePortForwarder(localPort, devicePort, {
+        primaryConnector: () => mod.connectViaUsbmux(this.udid, devicePort),
+      });
+    }
+
+    if (!(await this.determineAvailability())) {
+      throw wrapRemoteXPCConnectionError(
+        new Error('RemoteXPC tunnel is not available for this session'),
+        `Cannot create port forwarder via RemoteXPC tunnel for '${this.udid}'`,
       );
     }
-    this.cachedXCTestAttachment = XCTestAttachmentClass;
-    return XCTestAttachmentClass;
-  }
 
-  /**
-   * Human-readable import/init failure for diagnostics when {@link getUsbMuxStrategy} is null.
-   */
-  getImportErrorMessage(): string {
-    return this.lastImportError?.message ?? 'unknown';
-  }
-
-  /**
-   * Module plus usbmux listing hint for lockdown and port-forwarding branch selection.
-   */
-  async getUsbMuxStrategy(): Promise<{
-    remotexpc: RemoteXPCEsmModule;
-    useUsbMuxPath: boolean;
-  } | null> {
-    await this.ensureInitialized();
-    if (!this.module) {
-      return null;
-    }
-    return {remotexpc: this.module, useUsbMuxPath: this.useUsbMuxPath};
+    this.log.debug(`Using appium-ios-remotexpc tunnel strategy for '${this.udid}'`);
+    return new mod.DevicePortForwarder(localPort, devicePort, {
+      primaryConnector: () => mod.connectViaTunnel(this.udid, devicePort),
+    });
   }
 
   /**

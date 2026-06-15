@@ -7,6 +7,7 @@ import {waitForCondition} from 'asyncbox';
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
 import type {RemoteXPCFacade} from './remote-xpc';
+import {isRemoteXPCUnavailableError} from './remote-xpc';
 import type {Socket} from 'node:net';
 
 const LOCALHOST = '127.0.0.1';
@@ -512,51 +513,21 @@ export class DeviceConnectionsFactory {
     remoteXPCFacade: RemoteXPCFacade | null,
   ): Promise<PortForwarder> {
     if (!remoteXPCFacade?.eligible) {
-      this.log.debug(
-        `RemoteXPC is not eligible for '${udid}'. Using appium-ios-device port forwarding fallback.`,
-      );
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
 
-    const resolved = await remoteXPCFacade.getUsbMuxStrategy();
-    if (!resolved) {
+    try {
+      const forwarder = await remoteXPCFacade.createDevicePortForwarder(localPort, devicePort);
+      return new RemotexpcPortForwarder(forwarder, this.log, localPort, devicePort);
+    } catch (err) {
+      if (!isRemoteXPCUnavailableError(err)) {
+        throw err;
+      }
       this.log.debug(
-        `appium-ios-remotexpc is unavailable. Falling back to appium-ios-device port forwarding. ` +
-          `Original error: ${remoteXPCFacade?.getImportErrorMessage() ?? 'unknown'}`,
+        'RemoteXPC port forwarding is not available. Using appium-ios-device port forwarding fallback.',
       );
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
-    const {remotexpc, useUsbMuxPath} = resolved;
-
-    if (useUsbMuxPath) {
-      this.log.debug(`Using appium-ios-remotexpc usbmux strategy for '${udid}'`);
-      return new RemotexpcPortForwarder(
-        new remotexpc.DevicePortForwarder(localPort, devicePort, {
-          primaryConnector: () => remotexpc.connectViaUsbmux(udid, devicePort),
-        }),
-        this.log,
-        localPort,
-        devicePort,
-      );
-    }
-
-    if (!(await remoteXPCFacade.determineAvailability())) {
-      this.log.debug(
-        `RemoteXPC tunnel unavailable for '${udid}'. Falling back to appium-ios-device port forwarding.`,
-      );
-      return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
-    }
-
-    // We cannot use the legacy fallback past this point as the device is not accessible via USB/local usbmux
-    this.log.debug(`Using appium-ios-remotexpc tunnel strategy for '${udid}'`);
-    return new RemotexpcPortForwarder(
-      new remotexpc.DevicePortForwarder(localPort, devicePort, {
-        primaryConnector: () => remotexpc.connectViaTunnel(udid, devicePort),
-      }),
-      this.log,
-      localPort,
-      devicePort,
-    );
   }
 }
 
