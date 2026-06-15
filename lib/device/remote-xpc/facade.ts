@@ -69,13 +69,13 @@ export class RemoteXPCFacade {
   /**
    * Whether remotexpc should be used for service operations in this session.
    */
-  async shouldUseRemoteXPC(): Promise<boolean> {
+  async determineAvailability(): Promise<boolean> {
     await this.ensureInitialized();
     return this.enabled;
   }
 
   /**
-   * Loaded remotexpc Services export when {@link shouldUseRemoteXPC} is true.
+   * Loaded remotexpc Services export when {@link determineAvailability} is true.
    */
   async getServices(): Promise<RemoteXPCServices> {
     await this.ensureInitialized();
@@ -86,7 +86,7 @@ export class RemoteXPCFacade {
   }
 
   async tryGetServices(): Promise<RemoteXPCServices | null> {
-    if (!(await this.shouldUseRemoteXPC())) {
+    if (!(await this.determineAvailability())) {
       return null;
     }
     return this.services;
@@ -203,7 +203,7 @@ export class RemoteXPCFacade {
     feature: string,
     operation: (services: RemoteXPCServices) => Promise<T>,
   ): Promise<T | null> {
-    if (!(await this.shouldUseRemoteXPC())) {
+    if (!(await this.determineAvailability())) {
       return null;
     }
     try {
@@ -223,7 +223,7 @@ export class RemoteXPCFacade {
     feature: string,
     operation: (services: RemoteXPCServices) => Promise<T>,
   ): Promise<T> {
-    if (!(await this.shouldUseRemoteXPC())) {
+    if (!(await this.determineAvailability())) {
       throw wrapRemoteXPCConnectionError(
         this.lastImportError ?? new Error('RemoteXPC is not available for this session'),
         `Failed ${feature} via RemoteXPC for '${this.udid}'`,

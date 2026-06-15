@@ -540,7 +540,7 @@ export class DeviceConnectionsFactory {
       );
     }
 
-    if (!(await remoteXPCFacade.shouldUseRemoteXPC())) {
+    if (!(await remoteXPCFacade.determineAvailability())) {
       this.log.debug(
         `RemoteXPC tunnel unavailable for '${udid}'. Falling back to appium-ios-device port forwarding.`,
       );

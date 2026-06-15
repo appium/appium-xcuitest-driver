@@ -13,7 +13,7 @@ export async function mobileGetBatteryInfo(
   this: XCUITestDriver,
 ): Promise<BatteryInfo & {advanced: AdvancedBatteryInfo}> {
   let batteryInfoFromShimService: AdvancedBatteryInfo = {};
-  if (await this.remoteXPCFacade.shouldUseRemoteXPC()) {
+  if (await this.remoteXPCFacade.determineAvailability()) {
     try {
       batteryInfoFromShimService = await new BatteryInfoClient(
         this.device.udid,

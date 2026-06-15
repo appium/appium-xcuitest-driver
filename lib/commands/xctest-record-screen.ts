@@ -142,7 +142,7 @@ export async function mobileStartXctestScreenRecording(
   codec?: number,
 ): Promise<XcTestScreenRecordingInfo> {
   if (this.isRealDevice()) {
-    const canDeleteAfterStop = (await this.remoteXPCFacade?.shouldUseRemoteXPC()) ?? false;
+    const canDeleteAfterStop = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
     if (!canDeleteAfterStop) {
       this.assertFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE);
     }
@@ -251,17 +251,10 @@ export async function mobileStopXctestScreenRecording(
     encodeOrUploadError = err;
   } finally {
     await fs.rimraf(videoPath);
-    if (this.isRealDevice() && this.opts.udid) {
+    if (await this.remoteXPCFacade?.determineAvailability()) {
       try {
-        const canDelete = (await this.remoteXPCFacade?.shouldUseRemoteXPC()) ?? false;
-        if (canDelete) {
-          const deletionClient = await XctestAttachmentDeletionClient.create(this.remoteXPCFacade);
-          await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
-        } else {
-          this.log.debug(
-            'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
-          );
-        }
+        const deletionClient = await XctestAttachmentDeletionClient.create(this.remoteXPCFacade);
+        await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
       } catch (deleteErr: any) {
         if (encodeOrUploadError === undefined) {
           if (
@@ -282,6 +275,10 @@ export async function mobileStopXctestScreenRecording(
           );
         }
       }
+    } else {
+      this.log.debug(
+        'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
+      );
     }
   }
 

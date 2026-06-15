@@ -17,7 +17,7 @@ describe('RemoteXPCFacade', function () {
       true,
     );
 
-    expect(await access.shouldUseRemoteXPC()).to.equal(false);
+    expect(await access.determineAvailability()).to.equal(false);
   });
 
   it('caches tunnel unavailability for the remainder of the session', async function () {
@@ -39,8 +39,8 @@ describe('RemoteXPCFacade', function () {
       true,
     );
 
-    expect(await access.shouldUseRemoteXPC()).to.equal(false);
-    expect(await access.shouldUseRemoteXPC()).to.equal(false);
+    expect(await access.determineAvailability()).to.equal(false);
+    expect(await access.determineAvailability()).to.equal(false);
     expect(warn.calledOnce).to.be.true;
     expect((moduleLoader.tryLoadRemoteXPCModule as sinon.SinonStub).calledOnce).to.be.true;
   });
@@ -63,7 +63,7 @@ describe('RemoteXPCFacade', function () {
       true,
     );
 
-    await access.shouldUseRemoteXPC();
+    await access.determineAvailability();
     try {
       await access.requireService('test feature', async () => 'ok');
       expect.fail('expected requireService to throw');

@@ -3,7 +3,6 @@ import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
 import type {Devicectl} from 'node-devicectl';
 import {InstallationProxyClient} from './installation-proxy-client';
-import {formatRemoteXPCFallbackLog} from './remote-xpc';
 import type {RemoteXPCFacade} from './remote-xpc';
 
 type TerminateAppResult =
@@ -20,18 +19,22 @@ export class AppTerminationClient {
   ) {}
 
   async terminate(bundleId: string): Promise<boolean> {
-    let result: TerminateAppResult;
-    const remoteXPCFacade = this.remoteXPCFacade;
-    const useRemoteXPC = remoteXPCFacade ? await remoteXPCFacade.shouldUseRemoteXPC() : false;
-    if (useRemoteXPC && remoteXPCFacade) {
-      try {
-        result = await this.terminateRemoteXPC(remoteXPCFacade, bundleId);
-      } catch (err: any) {
-        remoteXPCFacade.noteTunnelUnavailable(`terminate '${bundleId}'`, err);
-        this.log.warn(formatRemoteXPCFallbackLog(`terminate '${bundleId}'`, err));
-        result = await this.terminateLegacy(bundleId);
-      }
-    } else {
+    let result: TerminateAppResult | null =
+      (await this.remoteXPCFacade?.attemptService(`terminate '${bundleId}'`, async (Services) => {
+        const dvt = await Services.startDVTService(this.udid);
+        try {
+          const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
+          if (!pid) {
+            return {terminated: false, reason: 'not_running'} satisfies TerminateAppResult;
+          }
+          await dvt.processControl.kill(pid);
+          return {terminated: true, pid} satisfies TerminateAppResult;
+        } finally {
+          await dvt.dvtService.close();
+        }
+      })) ?? null;
+
+    if (!result) {
       result = await this.terminateLegacy(bundleId);
     }
 
@@ -50,25 +53,6 @@ export class AppTerminationClient {
         break;
     }
     return false;
-  }
-
-  private async terminateRemoteXPC(
-    remoteXPCFacade: RemoteXPCFacade,
-    bundleId: string,
-  ): Promise<TerminateAppResult> {
-    const dvt = await remoteXPCFacade.requireService('terminate', (Services) =>
-      Services.startDVTService(this.udid),
-    );
-    try {
-      const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
-      if (!pid) {
-        return {terminated: false, reason: 'not_running'};
-      }
-      await dvt.processControl.kill(pid);
-      return {terminated: true, pid};
-    } finally {
-      await dvt.dvtService.close();
-    }
   }
 
   private async terminateLegacy(bundleId: string): Promise<TerminateAppResult> {

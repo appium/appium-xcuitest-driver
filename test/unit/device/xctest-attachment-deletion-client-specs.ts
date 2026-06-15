@@ -1,5 +1,6 @@
 import {XctestAttachmentDeletionClient} from '../../../lib/device/xctest-attachment-deletion-client';
-import type {RemoteXPCFacade, RemoteXPCTestAttachment} from '../../../lib/device/remote-xpc';
+import type {RemoteXPCFacade} from '../../../lib/device/remote-xpc';
+import type {RemoteXPCTestAttachment} from '../../../lib/device/remote-xpc/utils';
 import {isTunnelAvailabilityError} from '../../../lib/device/remote-xpc';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -12,7 +13,7 @@ function mockFacade(
     udid?: string;
     eligible?: boolean;
     XCTestAttachment?: RemoteXPCTestAttachment;
-    shouldUseRemoteXPC?: RemoteXPCFacade['shouldUseRemoteXPC'];
+    shouldUseRemoteXPC?: RemoteXPCFacade['determineAvailability'];
     getXCTestAttachment?: RemoteXPCFacade['getXCTestAttachment'];
   } = {},
 ): RemoteXPCFacade {
@@ -29,7 +30,7 @@ function mockFacade(
     get eligible() {
       return eligible;
     },
-    shouldUseRemoteXPC,
+    determineAvailability: shouldUseRemoteXPC,
     getXCTestAttachment,
   } as RemoteXPCFacade;
 }

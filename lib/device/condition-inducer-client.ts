@@ -191,7 +191,7 @@ export async function createConditionInducer(params: {
     return new InstrumentConditionInducer(udid, log);
   }
 
-  if (!(await remoteXPCFacade.shouldUseRemoteXPC())) {
+  if (!(await remoteXPCFacade.determineAvailability())) {
     return new InstrumentConditionInducer(udid, log);
   }
 

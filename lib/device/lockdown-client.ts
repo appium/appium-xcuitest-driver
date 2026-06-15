@@ -42,7 +42,7 @@ export class LockdownClient {
     if (!remoteXPCFacade?.eligible) {
       return new LockdownClient(udid, log, 'ios-device');
     }
-    if (!(await remoteXPCFacade.shouldUseRemoteXPC())) {
+    if (!(await remoteXPCFacade.determineAvailability())) {
       log.warn(
         `RemoteXPC tunnel unavailable for lockdown on '${udid}'. ` +
           `Using appium-ios-device lockdown (legacy fallback).`,

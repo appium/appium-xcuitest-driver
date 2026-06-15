@@ -5,7 +5,7 @@ import {
   REMOTE_XPC_TUNNEL_SETUP_DOC_LINK,
   TUNNEL_CREATION_COMMAND,
   wrapRemoteXPCConnectionError,
-} from '../../../lib/device/remote-xpc';
+} from '../../../lib/device/remote-xpc/utils';
 import {expect} from 'chai';
 
 describe('remotexpc-utils tunnel availability', function () {

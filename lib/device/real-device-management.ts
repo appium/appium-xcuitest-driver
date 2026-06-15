@@ -120,7 +120,7 @@ export class RealDevice {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
     const useRemoteXPC = this.remoteXPCFacade
-      ? await this.remoteXPCFacade.shouldUseRemoteXPC()
+      ? await this.remoteXPCFacade.determineAvailability()
       : isIos18OrNewer(this.driverOpts);
 
     // first try with zip_conduit service for iOS/tvOS 18+ and IPA only

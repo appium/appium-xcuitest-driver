@@ -37,7 +37,7 @@ export class IOSDeviceLog extends LineConsumingLog {
     }
 
     const facade = this.remoteXPCFacade;
-    if (facade && (await facade.shouldUseRemoteXPC())) {
+    if (facade && (await facade.determineAvailability())) {
       const started = await facade.attemptService('syslog', async (Services) => {
         const {syslogService, serviceDescriptor} = await Services.startSyslogTextService(this.udid);
         this.syslogService = syslogService;

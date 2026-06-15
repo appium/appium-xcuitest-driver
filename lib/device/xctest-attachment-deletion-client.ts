@@ -6,7 +6,7 @@ export interface IXctestAttachmentDeletionClient {
 
 /**
  * Deletes XCTest screen-recording attachments on a real device via appium-ios-remotexpc
- * (testmanagerd). Call {@link RemoteXPCFacade.shouldUseRemoteXPC} before start;
+ * (testmanagerd). Call {@link RemoteXPCFacade.determineAvailability} before start;
  * {@link create} returns a client ready to delete (or throws if deletion cannot run).
  */
 export class XctestAttachmentDeletionClient implements IXctestAttachmentDeletionClient {
@@ -28,7 +28,7 @@ export class XctestAttachmentDeletionClient implements IXctestAttachmentDeletion
       );
     }
 
-    if (!(await facade.shouldUseRemoteXPC())) {
+    if (!(await facade.determineAvailability())) {
       throw new Error(
         'appium-ios-remotexpc must be installed to use XCTest screen recording on a real device. ' +
           'It is used to delete screen-recording attachments after stop.',

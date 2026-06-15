@@ -39,7 +39,7 @@ export class CertificateClient {
     log: AppiumLogger,
     facade: RemoteXPCFacade | null,
   ): Promise<CertificateClient> {
-    if (!facade || !(await facade.shouldUseRemoteXPC())) {
+    if (!facade || !(await facade.determineAvailability())) {
       throw new Error(
         'Real device SSL/certificate operations require iOS/tvOS 18 or newer with the optional ' +
           'appium-ios-remotexpc package installed.',
