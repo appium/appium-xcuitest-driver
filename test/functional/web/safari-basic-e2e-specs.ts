@@ -21,12 +21,14 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
-const DEFAULT_CAPS = amendCapabilities(SAFARI_CAPS, {
-  'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-  // 'appium:safariLogAllCommunication': true,
-  // adding 'safariIgnoreWebHostnames' to validate that adding blacklist URL's doesn't break anything
-  'appium:safariIgnoreWebHostnames': 'www.yahoo.com,www.bing.com,www.google.com,about:blank',
-});
+function getDefaultCaps() {
+  return amendCapabilities(SAFARI_CAPS, {
+    'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+    // 'appium:safariLogAllCommunication': true,
+    // adding 'safariIgnoreWebHostnames' to validate that adding blacklist URL's doesn't break anything
+    'appium:safariIgnoreWebHostnames': 'www.yahoo.com,www.bing.com,www.google.com,about:blank',
+  });
+}
 
 describe('Safari - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
@@ -35,7 +37,7 @@ describe('Safari - basics -', function () {
 
   describe('basics', function () {
     before(async function () {
-      const caps = amendCapabilities(DEFAULT_CAPS, {
+      const caps = amendCapabilities(getDefaultCaps(), {
         'appium:safariIgnoreFraudWarning': false,
         'appium:showSafariConsoleLog': true,
       });

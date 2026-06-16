@@ -26,10 +26,12 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
-const caps = amendCapabilities(SAFARI_CAPS, {
-  'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-  'appium:nativeWebTap': true,
-});
+function getCaps() {
+  return amendCapabilities(SAFARI_CAPS, {
+    'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+    'appium:nativeWebTap': true,
+  });
+}
 
 const SPIN_RETRIES = 25;
 
@@ -169,10 +171,10 @@ describe('Safari - coordinate conversion -', function () {
         this.timeout(MOCHA_TIMEOUT * 2);
 
         let driver;
-        const localCaps = amendCapabilities(caps, {'appium:deviceName': deviceName});
         let skipped = false;
 
         before(async function () {
+          const localCaps = amendCapabilities(getCaps(), {'appium:deviceName': deviceName});
           skipped = false;
           try {
             await closeAllTabsViaSettingsApp(deviceName);
