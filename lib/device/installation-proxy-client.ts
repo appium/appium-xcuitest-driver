@@ -281,8 +281,11 @@ export class InstallationProxyClient {
     }
     this._lastLoggedProgress = {percent: percentComplete, status};
 
-    const percentLabel = percentComplete !== undefined ? `${percentComplete}%` : 'unknown progress';
-    this._log.debug(`App install progress: ${percentLabel}${status ? ` (${status})` : ''}`);
+    if (percentComplete !== undefined) {
+      this._log.debug(`App install progress: ${percentComplete}%${status ? ` (${status})` : ''}`);
+    } else if (status) {
+      this._log.debug(`App install progress: ${status}`);
+    }
   }
 
   //#endregion

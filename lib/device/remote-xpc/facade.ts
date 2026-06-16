@@ -142,7 +142,7 @@ export class RemoteXPCFacade {
     }
 
     if (this.useUsbMuxPath) {
-      this.log.debug(`Using appium-ios-remotexpc usbmux strategy for '${this.udid}'`);
+      this.log.debug(`Using RemoteXPC usbmux strategy for '${this.udid}'`);
       return new mod.DevicePortForwarder(localPort, devicePort, {
         primaryConnector: () => mod.connectViaUsbmux(this.udid, devicePort),
       });
@@ -155,7 +155,7 @@ export class RemoteXPCFacade {
       );
     }
 
-    this.log.debug(`Using appium-ios-remotexpc tunnel strategy for '${this.udid}'`);
+    this.log.debug(`Using RemoteXPC tunnel strategy for '${this.udid}'`);
     return new mod.DevicePortForwarder(localPort, devicePort, {
       primaryConnector: () => mod.connectViaTunnel(this.udid, devicePort),
     });

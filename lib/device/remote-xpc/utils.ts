@@ -68,10 +68,10 @@ export function formatTunnelAvailabilityMessage(err: unknown): string {
  */
 export function wrapRemoteXPCConnectionError(err: unknown, context: string): Error {
   if (isTunnelAvailabilityError(err)) {
-    return new Error(`${context}: ${formatTunnelAvailabilityMessage(err)}`, {cause: err});
+    return new Error(`${context} (${formatTunnelAvailabilityMessage(err)})`, {cause: err});
   }
   const detail = err instanceof Error ? err.message : String(err);
-  return new Error(`${context}: ${detail}`, {cause: err});
+  return new Error(`${context} (${detail})`, {cause: err});
 }
 
 /**
