@@ -21,7 +21,7 @@ const TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS = 3000;
  *
  * Initialized lazily on the first remotexpc operation. When the initial tunnel registry probe
  * fails with {@link isTunnelAvailabilityError}, remotexpc is disabled for the remainder of the
- * session so callers fall back to appium-ios-device without re-probing on every service call.
+ * session so callers fall back without re-probing on every service call.
  * Later per-operation tunnel failures do not flip that cached state.
  */
 export class RemoteXPCFacade {
@@ -286,8 +286,7 @@ export class RemoteXPCFacade {
       const err = getLastRemoteXPCImportError();
       this.lastImportError = err;
       this.log.warn(
-        `appium-ios-remotexpc unavailable for '${this.udid}': ${err?.message ?? 'unknown'}. ` +
-          `Using appium-ios-device for this session.`,
+        `appium-ios-remotexpc unavailable for '${this.udid}': ${err?.message ?? 'unknown'}`,
       );
       return;
     }
