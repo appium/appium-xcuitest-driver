@@ -251,7 +251,7 @@ export async function mobileStopXctestScreenRecording(
     encodeOrUploadError = err;
   } finally {
     await fs.rimraf(videoPath);
-    if (await this.remoteXPCFacade?.determineAvailability()) {
+    if (this.remoteXPCFacade?.eligible) {
       try {
         const deletionClient = new XctestAttachmentDeletionClient(this.remoteXPCFacade);
         await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
@@ -275,10 +275,6 @@ export async function mobileStopXctestScreenRecording(
           );
         }
       }
-    } else {
-      this.log.debug(
-        'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
-      );
     }
   }
 
