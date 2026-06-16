@@ -16,6 +16,8 @@ interface ProgressResponse {
   ErrorDescription?: string;
 }
 
+type InstallationProxyProgressOperation = 'install' | 'upgrade' | 'uninstall';
+
 /**
  * Options for listing applications
  */
@@ -168,11 +170,11 @@ export class InstallationProxyClient {
         clientOptions,
         timeoutMs,
       );
-      this.logInstallProgressBatch(messages);
+      this.logProgressBatch('install', messages);
       return;
     }
 
-    await this.executeWithProgressLogging((progressHandler) =>
+    await this.executeWithProgressLogging('install', (progressHandler) =>
       this.remoteXPCService.install(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
@@ -195,11 +197,11 @@ export class InstallationProxyClient {
         clientOptions,
         timeoutMs,
       );
-      this.logInstallProgressBatch(messages);
+      this.logProgressBatch('upgrade', messages);
       return;
     }
 
-    await this.executeWithProgressLogging((progressHandler) =>
+    await this.executeWithProgressLogging('upgrade', (progressHandler) =>
       this.remoteXPCService.upgrade(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
@@ -216,7 +218,7 @@ export class InstallationProxyClient {
       return;
     }
 
-    await this.executeWithProgressLogging((progressHandler) =>
+    await this.executeWithProgressLogging('uninstall', (progressHandler) =>
       this.remoteXPCService.uninstall(bundleId, {timeoutMs}, progressHandler),
     );
   }
@@ -242,27 +244,35 @@ export class InstallationProxyClient {
    * @param operation - Function that executes the RemoteXPC operation with a progress handler
    */
   private async executeWithProgressLogging(
+    progressOperation: InstallationProxyProgressOperation,
     operation: (
       progressHandler: (percentComplete: number, status: string) => void,
     ) => Promise<void>,
   ): Promise<void> {
     this._lastLoggedProgress = undefined;
     await operation((percentComplete, status) => {
-      this.logInstallProgress({PercentComplete: percentComplete, Status: status});
+      this.logProgress(progressOperation, {PercentComplete: percentComplete, Status: status});
     });
   }
 
-  private logInstallProgressBatch(messages: ProgressResponse[]): void {
+  private logProgressBatch(
+    progressOperation: InstallationProxyProgressOperation,
+    messages: ProgressResponse[],
+  ): void {
     this._lastLoggedProgress = undefined;
     for (const message of messages) {
-      this.logInstallProgress(message);
+      this.logProgress(progressOperation, message);
     }
   }
 
-  private logInstallProgress(message: ProgressResponse): void {
+  private logProgress(
+    progressOperation: InstallationProxyProgressOperation,
+    message: ProgressResponse,
+  ): void {
+    const prefix = `App ${progressOperation} progress`;
     if (message.Error) {
       this._log.warn(
-        `App install progress error: ${message.Error}` +
+        `${prefix} error: ${message.Error}` +
           (message.ErrorDescription ? ` (${message.ErrorDescription})` : ''),
       );
       return;
@@ -282,9 +292,9 @@ export class InstallationProxyClient {
     this._lastLoggedProgress = {percent: percentComplete, status};
 
     if (percentComplete !== undefined) {
-      this._log.debug(`App install progress: ${percentComplete}%${status ? ` (${status})` : ''}`);
+      this._log.debug(`${prefix}: ${percentComplete}%${status ? ` (${status})` : ''}`);
     } else if (status) {
-      this._log.debug(`App install progress: ${status}`);
+      this._log.debug(`${prefix}: ${status}`);
     }
   }
 
