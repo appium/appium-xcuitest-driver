@@ -92,9 +92,9 @@ function parseFormBody(body: string): Record<string, string> {
 
 function setGuineaPigCookies(res: http.ServerResponse): void {
   res.setHeader('Set-Cookie', [
-    'guineacookie1=i am a cookie value; Path=/',
-    'guineacookie2=cookié2; Path=/',
-    'guineacookie3=cant access this; Domain=.blargimarg.com; Path=/',
+    `guineacookie1=${encodeURIComponent('i am a cookie value')}; Path=/`,
+    `guineacookie2=${encodeURIComponent('cookié2')}; Path=/`,
+    `guineacookie3=${encodeURIComponent('cant access this')}; Domain=.blargimarg.com; Path=/`,
   ]);
 }
 

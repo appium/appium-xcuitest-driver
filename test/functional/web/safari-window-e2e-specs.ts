@@ -3,6 +3,7 @@ import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   openPage,
+  resetWindows,
   spinTitleEquals,
   GUINEA_PIG_PAGE,
   GUINEA_PIG_FRAME_PAGE,
@@ -74,6 +75,7 @@ describe('safari - windows and frames', function () {
       });
 
       beforeEach(async function () {
+        await resetWindows(driver);
         await openPage(driver, GUINEA_PIG_PAGE);
       });
 
@@ -181,6 +183,7 @@ describe('safari - windows and frames', function () {
 
     describe('frames', function () {
       beforeEach(async function () {
+        await resetWindows(driver);
         await openPage(driver, GUINEA_PIG_FRAME_PAGE);
       });
 
@@ -245,6 +248,7 @@ describe('safari - windows and frames', function () {
 
     describe('iframes', function () {
       beforeEach(async function () {
+        await resetWindows(driver);
         await openPage(driver, GUINEA_PIG_IFRAME_PAGE);
       });
 
