@@ -1,0 +1,17 @@
+Appium commit: 0e524009471ccf555ba5712465b74c7cd75a7bcc
+Source tree: packages/base-driver/test-fixtures/static/
+
+Copied paths:
+  js/jquery.min.js
+  test/guinea-pig.html
+  test/guinea-pig-scrollable.html
+  test/guinea-pig-app-banner.html
+  test/guinea-pig2.html
+  test/guinea-pig3.html
+  test/guinea-pig4.html
+  test/guinea-pig5.html
+  test/frameset.html
+  test/iframes.html
+  test/subframe1.html
+  test/subframe2.html
+  test/subframe3.html

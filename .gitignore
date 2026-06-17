@@ -12,4 +12,5 @@ test-results.xml
 npm-shrinkwrap.json
 package-lock.json*
 site
-test/fixtures/
+# Downloaded e2e app bundles (fetched by test/setup.ts)
+test/fixtures/*.app

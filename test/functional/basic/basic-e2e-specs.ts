@@ -3,7 +3,7 @@ import util from 'node:util';
 import {retryInterval} from 'asyncbox';
 import {isIosVersionBelow, getUICatalogCaps} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {GUINEA_PIG_PAGE} from '../web/helpers';
+import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig';
 import sharp from 'sharp';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -14,6 +14,7 @@ describe('XCUITestDriver - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  const guineaPigServer = createGuineaPigServerSession();
 
   before(async function () {
     const uiCatalogCaps = await getUICatalogCaps();
@@ -21,6 +22,7 @@ describe('XCUITestDriver - basics -', function () {
   });
   after(async function () {
     await deleteSession();
+    await guineaPigServer.teardown();
   });
 
   describe('status -', function () {
@@ -255,7 +257,8 @@ describe('XCUITestDriver - basics -', function () {
       }
 
       await driver.switchContext(contexts[1].id);
-      await driver.navigateTo(GUINEA_PIG_PAGE);
+      const {baseUrl} = await guineaPigServer.setup();
+      await driver.navigateTo(guineaPigPage(baseUrl));
 
       await retryInterval(100, 1000, async function () {
         const title = await driver.getTitle();
