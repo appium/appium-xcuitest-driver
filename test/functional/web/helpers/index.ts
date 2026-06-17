@@ -1,7 +1,5 @@
 export {
-  setupGuineaPigServer,
-  ensureGuineaPigServer,
-  teardownGuineaPigServer,
+  createGuineaPigServerSession,
   buildGuineaPigUrl,
   guineaPigPage,
   guineaPigScrollablePage,

@@ -11,14 +11,13 @@ import {
   isIosVersionAtLeast,
 } from '../desired';
 import {
-  setupGuineaPigServer,
+  createGuineaPigServerSession,
   openPage,
   spinTitleEquals,
   spinTitle,
   guineaPigPage,
   guineaPigScrollablePage,
   guineaPigAppBannerPage,
-  teardownGuineaPigServer,
 } from './helpers';
 import {retryInterval} from 'asyncbox';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -45,14 +44,15 @@ describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
 
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
+  const guineaPigServer = createGuineaPigServerSession();
   let baseUrl;
 
   after(async function () {
-    await teardownGuineaPigServer();
+    await guineaPigServer.teardown();
   });
 
   before(async function () {
-    baseUrl = (await setupGuineaPigServer()).baseUrl;
+    baseUrl = (await guineaPigServer.setup()).baseUrl;
     if (process.env.CI) {
       return this.skip();
     }

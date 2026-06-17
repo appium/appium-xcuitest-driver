@@ -1,7 +1,7 @@
 import {retryInterval} from 'asyncbox';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {setupGuineaPigServer, teardownGuineaPigServer, guineaPigPage} from './helpers';
+import {createGuineaPigServerSession, guineaPigPage} from './helpers';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -11,9 +11,10 @@ describe('safari - alerts', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  const guineaPigServer = createGuineaPigServerSession();
 
   before(async function () {
-    const {baseUrl} = await setupGuineaPigServer();
+    const {baseUrl} = await guineaPigServer.setup();
     const caps = amendCapabilities(SAFARI_CAPS, {
       'appium:safariInitialUrl': guineaPigPage(baseUrl),
       'appium:safariAllowPopups': true,
@@ -27,7 +28,7 @@ describe('safari - alerts', function () {
   });
   after(async function () {
     await deleteSession();
-    await teardownGuineaPigServer();
+    await guineaPigServer.teardown();
   });
 
   async function acceptAlert(driver: any) {

@@ -2,14 +2,13 @@ import {isEmpty} from '../../../lib/utils';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
-  setupGuineaPigServer,
+  createGuineaPigServerSession,
   openPage,
   resetWindows,
   spinTitleEquals,
   guineaPigPage,
   guineaPigFramePage,
   guineaPigIframePage,
-  teardownGuineaPigServer,
 } from './helpers';
 import {waitForCondition} from 'asyncbox';
 import chai, {expect} from 'chai';
@@ -28,14 +27,15 @@ const SUB_FRAME_3_TITLE = 'Sub frame 3';
 const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 
 describe('safari - windows and frames', function () {
+  const guineaPigServer = createGuineaPigServerSession();
   let baseUrl;
 
   before(async function () {
-    baseUrl = (await setupGuineaPigServer()).baseUrl;
+    baseUrl = (await guineaPigServer.setup()).baseUrl;
   });
 
   after(async function () {
-    await teardownGuineaPigServer();
+    await guineaPigServer.teardown();
   });
 
   describe('without safariAllowPopups', function () {

@@ -1,5 +1,9 @@
-import {memoize} from '../../../../lib/utils';
 import {startGuineaPigServer, type GuineaPigServer} from './server';
+
+export type GuineaPigServerSession = {
+  setup: () => Promise<GuineaPigServer>;
+  teardown: () => Promise<void>;
+};
 
 export function buildGuineaPigUrl(baseUrl: string, pathSuffix: string): string {
   return `${baseUrl}${pathSuffix}`;
@@ -25,23 +29,21 @@ export function guineaPigIframePage(baseUrl: string): string {
   return buildGuineaPigUrl(baseUrl, '/test/iframes.html');
 }
 
-export const ensureGuineaPigServer = memoize(
-  async function ensureGuineaPigServer(): Promise<GuineaPigServer> {
-    return await startGuineaPigServer();
-  },
-);
+export function createGuineaPigServerSession(): GuineaPigServerSession {
+  let server: GuineaPigServer | undefined;
 
-export async function setupGuineaPigServer(): Promise<GuineaPigServer> {
-  return await ensureGuineaPigServer();
-}
-
-export async function teardownGuineaPigServer(): Promise<void> {
-  const serverPromise = ensureGuineaPigServer.cache.get(undefined) as
-    | Promise<GuineaPigServer>
-    | undefined;
-  if (serverPromise) {
-    const server = await serverPromise;
-    await server.close();
-  }
-  ensureGuineaPigServer.cache.clear();
+  return {
+    setup: async () => {
+      if (!server) {
+        server = await startGuineaPigServer();
+      }
+      return server;
+    },
+    teardown: async () => {
+      if (server) {
+        await server.close();
+        server = undefined;
+      }
+    },
+  };
 }

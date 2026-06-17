@@ -2,7 +2,7 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
-  setupGuineaPigServer,
+  createGuineaPigServerSession,
   spinTitleEquals,
   spinWait,
   openPage,
@@ -13,7 +13,6 @@ import {
   newCookie,
   oldCookie1,
   oldCookie2,
-  teardownGuineaPigServer,
 } from './helpers';
 import {util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
@@ -36,10 +35,11 @@ describe('Safari - basics -', function () {
 
   let driver;
   let baseUrl;
+  const guineaPigServer = createGuineaPigServerSession();
 
   describe('basics', function () {
     before(async function () {
-      baseUrl = (await setupGuineaPigServer()).baseUrl;
+      baseUrl = (await guineaPigServer.setup()).baseUrl;
       const caps = amendCapabilities(getDefaultCaps(baseUrl), {
         'appium:safariIgnoreFraudWarning': false,
         'appium:showSafariConsoleLog': true,
@@ -48,7 +48,7 @@ describe('Safari - basics -', function () {
     });
     after(async function () {
       await deleteSession();
-      await teardownGuineaPigServer();
+      await guineaPigServer.teardown();
     });
 
     // TODO: in appium-remote-debugger, figure out how to check if a page is loaded
