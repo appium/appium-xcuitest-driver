@@ -2,17 +2,18 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {
+  setupGuineaPigServer,
   spinTitleEquals,
   spinWait,
   openPage,
-  GUINEA_PIG_PAGE,
-  // GUINEA_PIG_SCROLLABLE_PAGE,
-  GUINEA_PIG_IFRAME_PAGE,
+  guineaPigPage,
+  guineaPigIframePage,
   doesIncludeCookie,
   doesNotIncludeCookie,
   newCookie,
   oldCookie1,
   oldCookie2,
+  teardownGuineaPigServer,
 } from './helpers';
 import {util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
@@ -21,9 +22,9 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
-function getDefaultCaps() {
+function getDefaultCaps(baseUrl: string) {
   return amendCapabilities(SAFARI_CAPS, {
-    'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+    'appium:safariInitialUrl': guineaPigPage(baseUrl),
     // 'appium:safariLogAllCommunication': true,
     // adding 'safariIgnoreWebHostnames' to validate that adding blacklist URL's doesn't break anything
     'appium:safariIgnoreWebHostnames': 'www.yahoo.com,www.bing.com,www.google.com,about:blank',
@@ -34,10 +35,12 @@ describe('Safari - basics -', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   let driver;
+  let baseUrl;
 
   describe('basics', function () {
     before(async function () {
-      const caps = amendCapabilities(getDefaultCaps(), {
+      baseUrl = (await setupGuineaPigServer()).baseUrl;
+      const caps = amendCapabilities(getDefaultCaps(baseUrl), {
         'appium:safariIgnoreFraudWarning': false,
         'appium:showSafariConsoleLog': true,
       });
@@ -45,6 +48,7 @@ describe('Safari - basics -', function () {
     });
     after(async function () {
       await deleteSession();
+      await teardownGuineaPigServer();
     });
 
     // TODO: in appium-remote-debugger, figure out how to check if a page is loaded
@@ -52,7 +56,7 @@ describe('Safari - basics -', function () {
       describe('small timeout, slow page load', function () {
         it('should go to the requested page', async function () {
           await driver.setTimeout({pageLoad: 3000});
-          await openPage(driver, `${GUINEA_PIG_PAGE}?delay=30000`);
+          await openPage(driver, `${guineaPigPage(baseUrl)}?delay=30000`);
 
           // the page should not have time to load
           await expect(driver.getPageSource()).to.eventually.include(`Let's browse!`);
@@ -64,7 +68,7 @@ describe('Safari - basics -', function () {
         it('should go to the requested page', async function () {
           // await driver.setCommandTimeout(12000);
           await driver.setTimeout({pageLoad: 0});
-          await openPage(driver, `${GUINEA_PIG_PAGE}?delay=3000`);
+          await openPage(driver, `${guineaPigPage(baseUrl)}?delay=3000`);
 
           // the page should load after 70000
           await expect(driver.getPageSource()).to.eventually.include('I am some page content');
@@ -108,7 +112,7 @@ describe('Safari - basics -', function () {
 
     describe('element handling', function () {
       beforeEach(async function () {
-        await openPage(driver, GUINEA_PIG_PAGE);
+        await openPage(driver, guineaPigPage(baseUrl));
       });
 
       it('should find a web element in the web view', async function () {
@@ -339,7 +343,7 @@ describe('Safari - basics -', function () {
     describe('cookies', function () {
       describe('within iframe webview', function () {
         it('should be able to get cookies for a page with none', async function () {
-          await openPage(driver, GUINEA_PIG_IFRAME_PAGE);
+          await openPage(driver, guineaPigIframePage(baseUrl));
           await driver.deleteAllCookies();
 
           await retryInterval(5, 1000, async function () {
@@ -351,7 +355,7 @@ describe('Safari - basics -', function () {
       describe('within webview', function () {
         describe('insecure', function () {
           beforeEach(async function () {
-            await openPage(driver, GUINEA_PIG_PAGE);
+            await openPage(driver, guineaPigPage(baseUrl));
             await driver.deleteCookie(newCookie.name);
           });
 

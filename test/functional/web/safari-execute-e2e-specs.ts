@@ -1,6 +1,6 @@
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {openPage, GUINEA_PIG_PAGE} from './helpers';
+import {setupGuineaPigServer, teardownGuineaPigServer, openPage, guineaPigPage} from './helpers';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -17,14 +17,16 @@ describe('safari - execute -', function () {
   let driver;
 
   before(async function () {
+    const {baseUrl} = await setupGuineaPigServer();
     const caps = amendCapabilities(SAFARI_CAPS, {
-      'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+      'appium:safariInitialUrl': guineaPigPage(baseUrl),
       'appium:showSafariConsoleLog': true,
     });
     driver = await initSession(caps);
   });
   after(async function () {
     await deleteSession();
+    await teardownGuineaPigServer();
   });
 
   async function runTests(secure = false) {
