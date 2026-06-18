@@ -11,12 +11,13 @@ import {
   isIosVersionAtLeast,
 } from '../desired';
 import {
+  createGuineaPigServerSession,
   openPage,
   spinTitleEquals,
   spinTitle,
-  GUINEA_PIG_PAGE,
-  GUINEA_PIG_SCROLLABLE_PAGE,
-  GUINEA_PIG_APP_BANNER_PAGE,
+  guineaPigPage,
+  guineaPigScrollablePage,
+  guineaPigAppBannerPage,
 } from './helpers';
 import {retryInterval} from 'asyncbox';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -26,10 +27,12 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
-const caps = amendCapabilities(SAFARI_CAPS, {
-  'appium:safariInitialUrl': GUINEA_PIG_PAGE,
-  'appium:nativeWebTap': true,
-});
+function getCaps(baseUrl: string) {
+  return amendCapabilities(SAFARI_CAPS, {
+    'appium:safariInitialUrl': guineaPigPage(baseUrl),
+    'appium:nativeWebTap': true,
+  });
+}
 
 const SPIN_RETRIES = 25;
 
@@ -41,8 +44,15 @@ describe('Safari - coordinate conversion -', function () {
   this.timeout(MOCHA_TIMEOUT * 2);
 
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
+  const guineaPigServer = createGuineaPigServerSession();
+  let baseUrl;
+
+  after(async function () {
+    await guineaPigServer.teardown();
+  });
 
   before(async function () {
+    baseUrl = (await guineaPigServer.setup()).baseUrl;
     if (process.env.CI) {
       return this.skip();
     }
@@ -169,10 +179,10 @@ describe('Safari - coordinate conversion -', function () {
         this.timeout(MOCHA_TIMEOUT * 2);
 
         let driver;
-        const localCaps = amendCapabilities(caps, {'appium:deviceName': deviceName});
         let skipped = false;
 
         before(async function () {
+          const localCaps = amendCapabilities(getCaps(baseUrl), {'appium:deviceName': deviceName});
           skipped = false;
           try {
             await closeAllTabsViaSettingsApp(deviceName);
@@ -201,7 +211,7 @@ describe('Safari - coordinate conversion -', function () {
         });
 
         it('should be able to tap on an element', async function () {
-          await loadPage(driver, GUINEA_PIG_PAGE);
+          await loadPage(driver, guineaPigPage(baseUrl));
 
           await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
@@ -209,7 +219,7 @@ describe('Safari - coordinate conversion -', function () {
         });
 
         it('should be able to tap on an element when the app banner is up', async function () {
-          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+          await loadPage(driver, guineaPigAppBannerPage(baseUrl));
 
           await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
@@ -221,19 +231,19 @@ describe('Safari - coordinate conversion -', function () {
             nativeWebTapStrict: true,
           });
 
-          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+          await loadPage(driver, guineaPigAppBannerPage(baseUrl));
           await spinTitleEquals(driver, 'I am a page title', SPIN_RETRIES);
           await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
 
           await driver.updateSettings({nativeWebTapSmartAppBannerVisibility: 'invisible'});
-          await loadPage(driver, GUINEA_PIG_APP_BANNER_PAGE);
+          await loadPage(driver, guineaPigAppBannerPage(baseUrl));
           await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
           await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
         });
 
         it('should be able to tap on an element after scrolling', async function () {
-          await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
+          await loadPage(driver, guineaPigScrollablePage(baseUrl));
           // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
           // for now we'll just use JS to scroll
           //await driver.execute('mobile: scroll', {direction: 'down'});
@@ -247,7 +257,7 @@ describe('Safari - coordinate conversion -', function () {
         it('should be able to tap on a button', async function () {
           this.retries(5);
 
-          await loadPage(driver, GUINEA_PIG_PAGE);
+          await loadPage(driver, guineaPigPage(baseUrl));
 
           expect(await driver.getPageSource()).to.not.include('Your comments: Hello');
 
@@ -263,7 +273,7 @@ describe('Safari - coordinate conversion -', function () {
         });
 
         it('should be able to handle an alert', async function () {
-          await loadPage(driver, GUINEA_PIG_PAGE);
+          await loadPage(driver, guineaPigPage(baseUrl));
 
           await driver.$('#alert1').click();
           await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
@@ -275,7 +285,7 @@ describe('Safari - coordinate conversion -', function () {
             if (skipped || !deviceName.toLowerCase().includes('ipad')) {
               return this.skip();
             }
-            await loadPage(driver, GUINEA_PIG_PAGE);
+            await loadPage(driver, guineaPigPage(baseUrl));
 
             // open a new tab and go to it
             await driver.execute(
@@ -289,7 +299,7 @@ describe('Safari - coordinate conversion -', function () {
           });
 
           it('should be able to tap on an element', async function () {
-            await loadPage(driver, GUINEA_PIG_PAGE);
+            await loadPage(driver, guineaPigPage(baseUrl));
 
             await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
@@ -308,16 +318,16 @@ describe('Safari - coordinate conversion -', function () {
               nativeWebTapStrict: true,
             });
 
-            await loadPage(driver, GUINEA_PIG_PAGE);
+            await loadPage(driver, guineaPigPage(baseUrl));
             await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
 
             await driver.updateSettings({nativeWebTapTabBarVisibility: 'visible'});
-            await loadPage(driver, GUINEA_PIG_PAGE);
+            await loadPage(driver, guineaPigPage(baseUrl));
             await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
           });
 
           it('should be able to tap on an element after scrolling', async function () {
-            await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
+            await loadPage(driver, guineaPigScrollablePage(baseUrl));
             // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
             // for now we'll just use JS to scroll
             //await driver.execute('mobile: scroll', {direction: 'down'});
@@ -329,7 +339,7 @@ describe('Safari - coordinate conversion -', function () {
           });
 
           it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
-            await loadPage(driver, GUINEA_PIG_SCROLLABLE_PAGE);
+            await loadPage(driver, guineaPigScrollablePage(baseUrl));
             // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
             // for now we'll just use JS to scroll
             //await driver.execute('mobile: scroll', {direction: 'down'});

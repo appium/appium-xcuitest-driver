@@ -2,11 +2,13 @@ import {isEmpty} from '../../../lib/utils';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
+  createGuineaPigServerSession,
   openPage,
+  resetWindows,
   spinTitleEquals,
-  GUINEA_PIG_PAGE,
-  GUINEA_PIG_FRAME_PAGE,
-  GUINEA_PIG_IFRAME_PAGE,
+  guineaPigPage,
+  guineaPigFramePage,
+  guineaPigIframePage,
 } from './helpers';
 import {waitForCondition} from 'asyncbox';
 import chai, {expect} from 'chai';
@@ -25,13 +27,24 @@ const SUB_FRAME_3_TITLE = 'Sub frame 3';
 const DEFAULT_IMPLICIT_TIMEOUT_MS = 1000;
 
 describe('safari - windows and frames', function () {
+  const guineaPigServer = createGuineaPigServerSession();
+  let baseUrl;
+
+  before(async function () {
+    baseUrl = (await guineaPigServer.setup()).baseUrl;
+  });
+
+  after(async function () {
+    await guineaPigServer.teardown();
+  });
+
   describe('without safariAllowPopups', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let driver;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
-        'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+        'appium:safariInitialUrl': guineaPigPage(baseUrl),
         'appium:safariAllowPopups': false,
       });
       driver = await initSession(caps);
@@ -51,10 +64,9 @@ describe('safari - windows and frames', function () {
     this.timeout(MOCHA_TIMEOUT);
 
     let driver;
-
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
-        'appium:safariInitialUrl': GUINEA_PIG_PAGE,
+        'appium:safariInitialUrl': guineaPigPage(baseUrl),
         'appium:safariAllowPopups': true,
         // using JS atoms to open new window will, even if safari does not disable
         // popups, open an alert asking if it is ok.
@@ -74,7 +86,8 @@ describe('safari - windows and frames', function () {
       });
 
       beforeEach(async function () {
-        await openPage(driver, GUINEA_PIG_PAGE);
+        await resetWindows(driver);
+        await openPage(driver, guineaPigPage(baseUrl));
       });
 
       it('should be able to open js popup windows', async function () {
@@ -181,7 +194,8 @@ describe('safari - windows and frames', function () {
 
     describe('frames', function () {
       beforeEach(async function () {
-        await openPage(driver, GUINEA_PIG_FRAME_PAGE);
+        await resetWindows(driver);
+        await openPage(driver, guineaPigFramePage(baseUrl));
       });
 
       it('should switch to frame by index', async function () {
@@ -245,7 +259,8 @@ describe('safari - windows and frames', function () {
 
     describe('iframes', function () {
       beforeEach(async function () {
-        await openPage(driver, GUINEA_PIG_IFRAME_PAGE);
+        await resetWindows(driver);
+        await openPage(driver, guineaPigIframePage(baseUrl));
       });
 
       it('should switch to iframe by index', async function () {
