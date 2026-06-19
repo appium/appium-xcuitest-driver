@@ -1,3 +1,9 @@
+## [11.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.12.1...v11.12.2) (2026-06-19)
+
+### Bug Fixes
+
+* Make sure the tunnel process exits after an unexpected error ([#2878](https://github.com/appium/appium-xcuitest-driver/issues/2878)) ([a31696c](https://github.com/appium/appium-xcuitest-driver/commit/a31696cee1da738c4aff49b6ef2d07c40a8761a1))
+
 ## [11.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.12.0...v11.12.1) (2026-06-19)
 
 ### Miscellaneous Chores
