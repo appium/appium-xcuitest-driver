@@ -1,3 +1,9 @@
+## [11.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.12.0...v11.12.1) (2026-06-19)
+
+### Miscellaneous Chores
+
+* Improve tunnel creation logging ([#2879](https://github.com/appium/appium-xcuitest-driver/issues/2879)) ([85fd331](https://github.com/appium/appium-xcuitest-driver/commit/85fd3317c58d93c3c38d08e6bee6da73ad28c8b7))
+
 ## [11.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.11.2...v11.12.0) (2026-06-19)
 
 ### Features
