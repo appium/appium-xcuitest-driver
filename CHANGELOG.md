@@ -1,3 +1,9 @@
+## [11.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.11.2...v11.12.0) (2026-06-19)
+
+### Features
+
+* Bump appium-ios-remotexpc to ^5.0.0 ([#2874](https://github.com/appium/appium-xcuitest-driver/issues/2874)) ([5b767f3](https://github.com/appium/appium-xcuitest-driver/commit/5b767f3b8bb33a53ef263566bcfba3db04b4e32e))
+
 ## [11.11.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.11.1...v11.11.2) (2026-06-11)
 
 ### Miscellaneous Chores
