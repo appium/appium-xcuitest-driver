@@ -27,6 +27,9 @@ import {Command} from 'commander';
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
 const DEFAULT_TUNNEL_REGISTRY_PORT = 42314;
+const WIRELESS_APPLETV_DISCOVERY_PROGRESS_INTERVAL_MS = 1000;
+const WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS = 10_000;
+const WIRELESS_APPLETV_DISCOVERY_PROGRESS_BAR_WIDTH = 24;
 
 /**
  * TunnelCreator class for managing tunnel creation and related operations (USB and optional Apple TV over WiFi).
@@ -122,7 +125,7 @@ class TunnelCreator {
    */
   async cleanup() {
     this._isCleaningUp = true;
-    log.warn('Cleaning up tunnel resources...');
+    log.info('Cleaning up tunnel resources...');
     /** @type {Error[]} */
     const cleanupErrors = [];
     const recordCleanupError = (message, err) => {
@@ -349,21 +352,24 @@ class TunnelCreator {
   /**
    * Sets up tunnel(s) for paired Apple TV device(s) over WiFi.
    * @param {string[]|undefined} [specificDeviceIds] - Optional Apple TV device identifiers to target.
-   * @param {string[]|null} [prefetchedDeviceIds] - Optional prefetched Apple TV identifiers.
+   * @param {AppleTVDevice[] | null} [prefetchedDevices] - Optional prefetched Apple TV devices.
    * @returns {Promise<AppleTVTunnelResult[]>} Apple TV tunnel results.
    */
-  async setupAppleTVTunnels(specificDeviceIds, prefetchedDeviceIds = null) {
+  async setupAppleTVTunnels(specificDeviceIds, prefetchedDevices = null) {
     /** @type {AppleTVTunnelResult[]} */
     const results = [];
 
     try {
-      if ((!specificDeviceIds || specificDeviceIds.length === 0) && prefetchedDeviceIds === null) {
-        log.warn('Skipping Apple TV tunnel setup because discovery prefetch did not return device IDs.');
+      if ((!specificDeviceIds || specificDeviceIds.length === 0) && prefetchedDevices === null) {
+        log.info('Skipping Apple TV tunnel setup because wireless discovery did not find any devices.');
         return results;
       }
+      const prefetchedDevicesById = new Map(
+        (prefetchedDevices ?? []).map((device) => [device.identifier, device]),
+      );
       const discoveredDeviceIds = specificDeviceIds && specificDeviceIds.length > 0
         ? [...new Set(specificDeviceIds)]
-        : /** @type {string[]} */ (prefetchedDeviceIds);
+        : [...prefetchedDevicesById.keys()];
       log.info('Starting Apple TV tunnel (WiFi)...');
       const usbDiscoveredUdidSet = new Set(this._usbDevicesByUdid.keys());
       const targetDeviceIds = discoveredDeviceIds.filter((udid) => !usbDiscoveredUdidSet.has(udid));
@@ -380,7 +386,10 @@ class TunnelCreator {
 
       for (const deviceId of targetDeviceIds) {
         try {
-          const result = await this._createAppleTVTunnelForUdid(deviceId);
+          const result = await this._createAppleTVTunnelForUdid(
+            deviceId,
+            prefetchedDevicesById.get(deviceId),
+          );
           results.push(result);
           log.info(`✅ Apple TV tunnel ready for ${deviceId}`);
         } catch (err) {
@@ -403,39 +412,50 @@ class TunnelCreator {
 
   /**
    * @param {string[] | undefined} specificDeviceIds
-   * @returns {Promise<string[] | null>}
+   * @returns {{startedAt: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}}
    */
-  async prefetchAppleTVDeviceIds(specificDeviceIds) {
+  prefetchAppleTVDevices(specificDeviceIds) {
+    const startedAt = performance.now();
     if (specificDeviceIds && specificDeviceIds.length > 0) {
-      return [...new Set(specificDeviceIds)];
+      return {
+        startedAt,
+        promise: Promise.resolve({devices: null, error: null}),
+      };
     }
     const tunnelService = new AppleTVTunnelService();
-    try {
-      log.info('Prefetching paired Apple TV devices in parallel...');
-      const devices = await tunnelService.discoverDevices();
-      return devices.map((d) => d.identifier);
-    } catch (err) {
-      log.warn(`Apple TV discovery prefetch failed: ${err?.message ?? err}`);
-      return null;
-    } finally {
+    const promise = (async () => {
       try {
-        tunnelService.disconnect();
-      } catch {}
-    }
+        const devices = await tunnelService.discoverDevices({
+          timeoutMs: WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+        });
+        return {devices, error: null};
+      } catch (err) {
+        return {devices: null, error: err};
+      } finally {
+        try {
+          tunnelService.disconnect();
+        } catch {}
+      }
+    })();
+    return {startedAt, promise};
   }
 
   /**
    * @param {string} udid
+   * @param {AppleTVDevice | undefined} [prefetchedDevice]
    * @returns {Promise<AppleTVTunnelResult>}
    */
-  async _createAppleTVTunnelForUdid(udid) {
+  async _createAppleTVTunnelForUdid(udid, prefetchedDevice) {
     let tunnelService = this._appletvTunnelServicesByUdid.get(udid);
     if (!tunnelService) {
       tunnelService = new AppleTVTunnelService();
       this._appletvTunnelServicesByUdid.set(udid, tunnelService);
     }
 
-    const startResult = await tunnelService.startTunnel(undefined, udid);
+    const startResult = await tunnelService.startTunnel(undefined, udid, {
+      devices: prefetchedDevice ? [prefetchedDevice] : undefined,
+      discoveryTimeoutMs: WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+    });
     if (!startResult.tcpSocket) {
       throw new Error('Apple TV TCP socket to listener port not established');
     }
@@ -712,11 +732,92 @@ function getTunnelUdid(result) {
 }
 
 /**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+function isNoAppleTVDevicesFoundError(err) {
+  return (err instanceof Error ? err.message : String(err)) === 'No devices found via discovery backend';
+}
+
+/**
+ * @param {{startedAt: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}} discovery
+ * @returns {Promise<AppleTVDevice[] | null>}
+ */
+async function waitForAppleTVDiscovery(discovery) {
+  const wirelessDiscoveryProgress = startTimeoutProgressLogger({
+    label: 'Waiting for wireless Apple TV discovery',
+    startedAt: discovery.startedAt,
+    timeoutMs: WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+    barWidth: WIRELESS_APPLETV_DISCOVERY_PROGRESS_BAR_WIDTH,
+    intervalMs: WIRELESS_APPLETV_DISCOVERY_PROGRESS_INTERVAL_MS,
+  });
+  const {devices, error} = await discovery.promise;
+  if (error) {
+    if (isNoAppleTVDevicesFoundError(error)) {
+      wirelessDiscoveryProgress.succeed('No wireless Apple TV devices found');
+    } else {
+      wirelessDiscoveryProgress.fail('Wireless Apple TV discovery failed');
+      log.warn(error);
+    }
+    return null;
+  }
+  wirelessDiscoveryProgress.succeed(
+    `Wireless Apple TV discovery completed: ${devices?.length ?? 0} device(s) found`,
+  );
+  return devices;
+}
+
+/**
  * @param {number} ms
  * @returns {Promise<void>}
  */
 async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Logs a timeout-based progress bar while an operation without native progress callbacks is running.
+ *
+ * @param {{label: string, startedAt: number, timeoutMs: number, barWidth: number, intervalMs: number}} opts
+ * @returns {{succeed: (message?: string) => void, fail: (message?: string) => void}}
+ */
+function startTimeoutProgressLogger({label, startedAt, timeoutMs, barWidth, intervalMs}) {
+  /** @type {NodeJS.Timeout | null} */
+  let timer = null;
+  let isStopped = false;
+
+  const logProgress = (status, isComplete = false) => {
+    const elapsedMs = performance.now() - startedAt;
+    const boundedElapsedMs = Math.min(elapsedMs, timeoutMs);
+    const progress = isComplete ? 1 : boundedElapsedMs / timeoutMs;
+    const filledWidth = Math.round(progress * barWidth);
+    const emptyWidth = barWidth - filledWidth;
+    const bar = `${'#'.repeat(filledWidth)}${'-'.repeat(emptyWidth)}`;
+    log.info(`${label}: [${bar}]${status && status !== 'waiting' ? ` - ${status}` : ''}`);
+  };
+
+  const stop = (status, isComplete = false) => {
+    if (isStopped) {
+      return;
+    }
+    isStopped = true;
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+    logProgress(status, isComplete);
+  };
+
+  logProgress('waiting');
+  timer = setInterval(() => {
+    logProgress('waiting');
+  }, intervalMs);
+  timer.unref?.();
+
+  return {
+    succeed: (message = 'done') => stop(message, true),
+    fail: (message = 'failed') => stop(message),
+  };
 }
 
 /**
@@ -916,9 +1017,12 @@ async function main() {
 
     await tunnelCreator.startRegistryServer();
 
-    const prefetchedAppleTVDeviceIdsPromise = shouldRunAppleTVFlow
-      ? tunnelCreator.prefetchAppleTVDeviceIds(requestedAppleTVIds)
-      : Promise.resolve(null);
+    const appleTVDiscoveryPrefetch = shouldRunAppleTVFlow && !hasRequestedAppleTVIds
+      ? tunnelCreator.prefetchAppleTVDevices(requestedAppleTVIds)
+      : null;
+    if (appleTVDiscoveryPrefetch) {
+      log.info('Prefetching paired Apple TV devices...');
+    }
 
     const usbmux = await createUsbmux();
     /** @type {UsbTunnelResult[]} */
@@ -937,10 +1041,12 @@ async function main() {
     /** @type {AppleTVTunnelResult[]} */
     let appletvResults = [];
     if (shouldRunAppleTVFlow) {
-      const prefetchedAppleTVDeviceIds = await prefetchedAppleTVDeviceIdsPromise;
+      const prefetchedAppleTVDevices = appleTVDiscoveryPrefetch
+        ? await waitForAppleTVDiscovery(appleTVDiscoveryPrefetch)
+        : null;
       appletvResults = await tunnelCreator.setupAppleTVTunnels(
         requestedAppleTVIds,
-        prefetchedAppleTVDeviceIds,
+        prefetchedAppleTVDevices,
       );
     } else {
       log.info('Skipping Apple TV tunnel setup because only --udid was provided.');
@@ -952,7 +1058,8 @@ async function main() {
     ];
 
     if (successfulResults.length === 0) {
-      log.warn('No tunnels created (no USB devices and no Apple TV tunnel).');
+      log.warn('No tunnels created (no USB and no wireless Apple TV devices).');
+      await cleanupOnce();
       return;
     }
 
@@ -1010,6 +1117,10 @@ await main();
  * @typedef {EstablishedTunnel & { kind: 'usb', device: import('appium-ios-remotexpc').UsbmuxDevice, success: true }} UsbTunnelSuccess
  * @typedef {Object & { kind: 'usb', device: import('appium-ios-remotexpc').UsbmuxDevice, success: false, error: string }} UsbTunnelFailure
  * @typedef {UsbTunnelSuccess | UsbTunnelFailure} UsbTunnelResult
+ */
+
+/**
+ * @typedef {Awaited<ReturnType<import('appium-ios-remotexpc').AppleTVTunnelService['discoverDevices']>>[number]} AppleTVDevice
  */
 
 /**
