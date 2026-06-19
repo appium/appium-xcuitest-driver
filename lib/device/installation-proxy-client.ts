@@ -1,4 +1,4 @@
-import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import {log} from '../logger';
 import {services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
@@ -15,6 +15,8 @@ interface ProgressResponse {
   Error?: string;
   ErrorDescription?: string;
 }
+
+type InstallationProxyProgressOperation = 'install' | 'upgrade' | 'uninstall';
 
 /**
  * Options for listing applications
@@ -74,26 +76,25 @@ export class InstallationProxyClient {
    * Create an InstallationProxy client for the device
    *
    * @param udid - Device UDID
-   * @param useRemoteXPC - Whether to use RemoteXPC
+   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
    * @returns InstallationProxy client instance
    */
   static async create(
     udid: string,
-    useRemoteXPC: boolean,
+    facade: RemoteXPCFacade | null,
     logger?: AppiumLogger,
   ): Promise<InstallationProxyClient> {
-    if (useRemoteXPC) {
-      try {
-        const Services = await getRemoteXPCServices();
-        const installationProxyService = await Services.startInstallationProxyService(udid);
-        return new InstallationProxyClient(installationProxyService, true, logger);
-      } catch (err: any) {
-        (logger ?? log).error(formatRemoteXPCFallbackLog('InstallationProxy', err));
-      }
+    const service = facade
+      ? await facade.attemptService('InstallationProxy', (Services) =>
+          Services.startInstallationProxyService(udid),
+        )
+      : null;
+    if (service) {
+      return new InstallationProxyClient(service, true, logger);
     }
 
-    const service = await services.startInstallationProxyService(udid);
-    return new InstallationProxyClient(service, false, logger);
+    const legacyService = await services.startInstallationProxyService(udid);
+    return new InstallationProxyClient(legacyService, false, logger);
   }
 
   /**
@@ -169,11 +170,11 @@ export class InstallationProxyClient {
         clientOptions,
         timeoutMs,
       );
-      this.logInstallProgressBatch(messages);
+      this.logProgressBatch('install', messages);
       return;
     }
 
-    await this.executeWithProgressLogging((progressHandler) =>
+    await this.executeWithProgressLogging('install', (progressHandler) =>
       this.remoteXPCService.install(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
@@ -196,11 +197,11 @@ export class InstallationProxyClient {
         clientOptions,
         timeoutMs,
       );
-      this.logInstallProgressBatch(messages);
+      this.logProgressBatch('upgrade', messages);
       return;
     }
 
-    await this.executeWithProgressLogging((progressHandler) =>
+    await this.executeWithProgressLogging('upgrade', (progressHandler) =>
       this.remoteXPCService.upgrade(path, {...clientOptions, timeoutMs}, progressHandler),
     );
   }
@@ -217,7 +218,7 @@ export class InstallationProxyClient {
       return;
     }
 
-    await this.executeWithProgressLogging((progressHandler) =>
+    await this.executeWithProgressLogging('uninstall', (progressHandler) =>
       this.remoteXPCService.uninstall(bundleId, {timeoutMs}, progressHandler),
     );
   }
@@ -243,27 +244,35 @@ export class InstallationProxyClient {
    * @param operation - Function that executes the RemoteXPC operation with a progress handler
    */
   private async executeWithProgressLogging(
+    progressOperation: InstallationProxyProgressOperation,
     operation: (
       progressHandler: (percentComplete: number, status: string) => void,
     ) => Promise<void>,
   ): Promise<void> {
     this._lastLoggedProgress = undefined;
     await operation((percentComplete, status) => {
-      this.logInstallProgress({PercentComplete: percentComplete, Status: status});
+      this.logProgress(progressOperation, {PercentComplete: percentComplete, Status: status});
     });
   }
 
-  private logInstallProgressBatch(messages: ProgressResponse[]): void {
+  private logProgressBatch(
+    progressOperation: InstallationProxyProgressOperation,
+    messages: ProgressResponse[],
+  ): void {
     this._lastLoggedProgress = undefined;
     for (const message of messages) {
-      this.logInstallProgress(message);
+      this.logProgress(progressOperation, message);
     }
   }
 
-  private logInstallProgress(message: ProgressResponse): void {
+  private logProgress(
+    progressOperation: InstallationProxyProgressOperation,
+    message: ProgressResponse,
+  ): void {
+    const prefix = `App ${progressOperation} progress`;
     if (message.Error) {
       this._log.warn(
-        `App install progress error: ${message.Error}` +
+        `${prefix} error: ${message.Error}` +
           (message.ErrorDescription ? ` (${message.ErrorDescription})` : ''),
       );
       return;
@@ -282,8 +291,11 @@ export class InstallationProxyClient {
     }
     this._lastLoggedProgress = {percent: percentComplete, status};
 
-    const percentLabel = percentComplete !== undefined ? `${percentComplete}%` : 'unknown progress';
-    this._log.debug(`App install progress: ${percentLabel}${status ? ` (${status})` : ''}`);
+    if (percentComplete !== undefined) {
+      this._log.debug(`${prefix}: ${percentComplete}%${status ? ` (${status})` : ''}`);
+    } else if (status) {
+      this._log.debug(`${prefix}: ${status}`);
+    }
   }
 
   //#endregion

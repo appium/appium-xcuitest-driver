@@ -1,7 +1,7 @@
 import {fs, util} from 'appium/support';
 import {errors} from 'appium/driver';
 import path from 'node:path';
-import {isIos18OrNewer, requireRealDevice} from './helpers';
+import {requireRealDevice} from './helpers';
 import {SUPPORTED_EXTENSIONS} from './constants';
 import {onDownloadApp, onPostConfigureApp} from './app-install';
 import {InstallationProxyClient} from '../device/installation-proxy-client';
@@ -278,8 +278,7 @@ export async function mobileListApps(
   returnAttributes?: string[],
 ): Promise<AppInfoMapping> {
   const device = requireRealDevice(this, 'Listing apps');
-  const useRemoteXPC = isIos18OrNewer(this.opts);
-  const client = await InstallationProxyClient.create(device.udid, useRemoteXPC);
+  const client = await InstallationProxyClient.create(device.udid, this.remoteXPCFacade);
   try {
     return await client.listApplications({applicationType, returnAttributes});
   } finally {

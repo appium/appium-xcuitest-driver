@@ -1,5 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
-import {formatRemoteXPCFallbackLog, getRemoteXPCServices} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 import {services} from 'appium-ios-device';
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
@@ -52,22 +52,21 @@ export class NotificationClient {
    *
    * @param udid - Device UDID
    * @param log - Appium logger instance
-   * @param useRemoteXPC - Whether to use remotexpc (use isIos18OrNewer(opts) to determine)
+   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
    * @returns NotificationClient instance
    */
   static async create(
     udid: string,
     log: AppiumLogger,
-    useRemoteXPC: boolean,
+    facade: RemoteXPCFacade | null,
   ): Promise<NotificationClient> {
-    if (useRemoteXPC) {
-      try {
-        const Services = await getRemoteXPCServices();
-        const notificationProxyService = await Services.startNotificationProxyService(udid);
-        return new NotificationClient(notificationProxyService, log, true);
-      } catch (err: any) {
-        log.error(formatRemoteXPCFallbackLog('notification proxy', err));
-      }
+    const service = facade
+      ? await facade.attemptService('notification proxy', (Services) =>
+          Services.startNotificationProxyService(udid),
+        )
+      : null;
+    if (service) {
+      return new NotificationClient(service, log, true);
     }
 
     // Fallback to appium-ios-device

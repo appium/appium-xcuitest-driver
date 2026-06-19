@@ -6,7 +6,8 @@ import {
   listXCTestBundlesViaRemoteXPC,
   installXCTestBundleViaRemoteXPC,
 } from './xctest-remotexpc';
-import {isIos18OrNewerPlatform} from '../commands/helpers';
+import type {RemoteXPCFacade} from './remote-xpc';
+import {isIos18OrNewerPlatform} from '../utils';
 
 const XCTEST_REAL_DEVICE_MSG =
   'This XCTest operation is only supported on real devices running iOS/tvOS 18 or newer with the ' +
@@ -16,6 +17,7 @@ interface XCTestClientDeps {
   udid: string;
   isRealDevice: boolean;
   platformVersion?: string | null;
+  remoteXPCFacade: RemoteXPCFacade;
 }
 
 interface RunXCTestOptions {
@@ -36,6 +38,7 @@ export class XCTestClient {
       udid: driver.device.udid,
       isRealDevice: driver.isRealDevice(),
       platformVersion: driver.opts.platformVersion,
+      remoteXPCFacade: driver.remoteXPCFacade,
     });
   }
 
@@ -57,6 +60,7 @@ export class XCTestClient {
       testRunnerBundleId,
       appUnderTestBundleId,
       xcTestBundleId,
+      this.deps.remoteXPCFacade,
       testType,
       args,
       env,
@@ -66,12 +70,12 @@ export class XCTestClient {
 
   async installBundle(xctestApp: string): Promise<void> {
     this.assertRealDeviceRemoteXpc();
-    await installXCTestBundleViaRemoteXPC(this.deps.udid, xctestApp);
+    await installXCTestBundleViaRemoteXPC(this.deps.udid, xctestApp, this.deps.remoteXPCFacade);
   }
 
   async listBundles(): Promise<string[]> {
     this.assertRealDeviceRemoteXpc();
-    return await listXCTestBundlesViaRemoteXPC(this.deps.udid);
+    return await listXCTestBundlesViaRemoteXPC(this.deps.udid, this.deps.remoteXPCFacade);
   }
 
   private assertRealDeviceRemoteXpc(): void {

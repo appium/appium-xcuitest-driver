@@ -16,7 +16,11 @@ export async function mobileGetDeviceInfo(
   const infoByWda = await this.proxyCommand<unknown, DeviceInfo>('/wda/device/info', 'GET');
 
   if (this.isRealDevice()) {
-    const lockdown = await LockdownClient.createForDevice(this.device.udid, this.opts, this.log);
+    const lockdown = await LockdownClient.createForDevice(
+      this.device.udid,
+      this.log,
+      this.remoteXPCFacade,
+    );
     try {
       const lockdownInfo = await lockdown.getDeviceInfo();
       return {...infoByWda, lockdownInfo};

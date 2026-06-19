@@ -3,7 +3,6 @@ import {asyncmap} from 'asyncbox';
 import path from 'node:path';
 import {
   buildSafariPreferences,
-  isIos18OrNewer,
   SAFARI_BUNDLE_ID,
   TimeoutError,
   withTimeout,
@@ -21,6 +20,7 @@ import {NotificationClient} from './notification-client';
 import {LockdownClient} from './lockdown-client';
 import {AppTerminationClient} from './app-termination-client';
 import {ZipConduitClient} from './zip-conduit-client';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -82,6 +82,7 @@ export class RealDevice {
   readonly devicectl: Devicectl;
   readonly driverOpts: XCUITestDriverOpts;
   private readonly _log: AppiumLogger;
+  private remoteXPCFacade: RemoteXPCFacade | null = null;
 
   constructor(udid: string, driverOpts: XCUITestDriverOpts, logger?: AppiumLogger) {
     this.udid = udid;
@@ -94,9 +95,12 @@ export class RealDevice {
     return this._log;
   }
 
+  attachRemoteXPCFacade(facade: RemoteXPCFacade): void {
+    this.remoteXPCFacade = facade;
+  }
+
   async remove(bundleId: string): Promise<void> {
-    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const client = await InstallationProxyClient.create(this.udid, this.remoteXPCFacade);
     try {
       await client.uninstallApplication(bundleId);
     } finally {
@@ -115,7 +119,7 @@ export class RealDevice {
   ): Promise<void> {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
-    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
+    const useRemoteXPC = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
 
     // first try with zip_conduit service for iOS/tvOS 18+ and IPA only
     // fall through to the AFC + installation_proxy path for other cases/zip_conduit failure
@@ -126,7 +130,7 @@ export class RealDevice {
       return;
     }
 
-    const afcClient = await AfcClient.createForDevice(this.udid, useRemoteXPC);
+    const afcClient = await AfcClient.createForDevice(this.udid, this.remoteXPCFacade);
     try {
       let bundlePathOnPhone: string;
       if ((await fs.stat(appPath)).isFile()) {
@@ -169,11 +173,14 @@ export class RealDevice {
     opts: InstallOrUpgradeOptions,
   ): Promise<void> {
     const {isUpgrade, timeout} = opts;
-    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const notificationClient = await NotificationClient.create(this.udid, this.log, useRemoteXPC);
+    const notificationClient = await NotificationClient.create(
+      this.udid,
+      this.log,
+      this.remoteXPCFacade,
+    );
     const installationClient = await InstallationProxyClient.create(
       this.udid,
-      useRemoteXPC,
+      this.remoteXPCFacade,
       this.log,
     );
     const appInstalledNotification = notificationClient.observeNotification(
@@ -250,8 +257,7 @@ export class RealDevice {
     bundleId: string,
     returnAttributes: string | string[] = ['CFBundleIdentifier', 'CFBundleVersion'],
   ): Promise<Record<string, any> | undefined> {
-    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const client = await InstallationProxyClient.create(this.udid, this.remoteXPCFacade);
     try {
       return (
         await client.lookupApplications({
@@ -267,9 +273,8 @@ export class RealDevice {
 
   /**
    * Terminates the application with the given bundle identifier on the real device.
-   * On iOS 18+ uses RemoteXPC DVT processControl first; on connection/execution error
-   * falls back to the legacy path (InstallationProxy + devicectl). On older iOS uses
-   * the legacy path only.
+   * Uses RemoteXPC DVT processControl when session access allows it; on connection/execution
+   * error falls back to the legacy path (InstallationProxy + devicectl or instrument service).
    *
    * @param bundleId - Bundle identifier of the app to terminate
    * @returns `true` if the app was running and was terminated, `false` otherwise
@@ -281,6 +286,7 @@ export class RealDevice {
       platformVersion,
       this.devicectl,
       this.log,
+      this.remoteXPCFacade,
     );
     return await terminationClient.terminate(bundleId);
   }
@@ -293,8 +299,7 @@ export class RealDevice {
    * 'CFBundleName' attribute as 'bundleName'.
    */
   async getUserInstalledBundleIdsByBundleName(bundleName: string): Promise<string[]> {
-    const useRemoteXPC = isIos18OrNewer(this.driverOpts);
-    const client = await InstallationProxyClient.create(this.udid, useRemoteXPC);
+    const client = await InstallationProxyClient.create(this.udid, this.remoteXPCFacade);
     try {
       const applications = await client.listApplications({
         applicationType: 'User',
@@ -312,7 +317,11 @@ export class RealDevice {
   }
 
   async getPlatformVersion(): Promise<string> {
-    const lockdown = await LockdownClient.createForDevice(this.udid, this.driverOpts, this.log);
+    const lockdown = await LockdownClient.createForDevice(
+      this.udid,
+      this.log,
+      this.remoteXPCFacade,
+    );
     try {
       return await lockdown.getOSVersion();
     } finally {
@@ -366,7 +375,7 @@ export class RealDevice {
 
     let client: ZipConduitClient | null = null;
     try {
-      client = await ZipConduitClient.create(this.udid, this.log);
+      client = await ZipConduitClient.create(this.udid, this.log, this.remoteXPCFacade);
       if (!client) {
         return false;
       }

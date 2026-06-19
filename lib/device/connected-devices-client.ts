@@ -1,10 +1,8 @@
 import {Devicectl} from 'node-devicectl';
 import {utilities} from 'appium-ios-device';
 import {log} from '../logger';
-import {isIos18OrNewer} from '../commands/helpers';
 import type {XCUITestDriverOpts} from '../driver';
-import {formatRemoteXPCFallbackLog, tryGetRemoteXPCServices} from './remotexpc-utils';
-import type {RemoteXPCServices} from './remotexpc-utils';
+import {formatRemoteXPCFallbackLog, RemoteXPCFacade, type RemoteXPCServices} from './remote-xpc';
 
 export class ConnectedDevicesClient {
   private constructor(private readonly services: RemoteXPCServices | null) {}
@@ -15,13 +13,7 @@ export class ConnectedDevicesClient {
    * instance for tunnel registry listing; otherwise uses legacy listing only.
    */
   static async create(opts: XCUITestDriverOpts): Promise<ConnectedDevicesClient> {
-    let services: RemoteXPCServices | null = null;
-    if (isIos18OrNewer(opts)) {
-      services = await tryGetRemoteXPCServices();
-      if (!services) {
-        log.warn('Could not load appium-ios-remotexpc, using legacy devices listing instead');
-      }
-    }
+    const services = await RemoteXPCFacade.tryGetServicesStatic(opts.platformVersion);
     return new ConnectedDevicesClient(services);
   }
 

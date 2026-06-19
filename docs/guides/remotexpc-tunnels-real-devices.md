@@ -66,13 +66,13 @@ The script executes the following actions:
       script
 - For each device:
     - Starts a Lockdown session
-    - Starts `com.apple.internal.devicecompute.CoreDeviceProxy` via Remote XPC
-    - Creates an IPv6 tunnel using `TunnelManager.getTunnel(...)`
-    - Starts a packet stream server on a local TCP port (default base: `50000`)
-- Builds an in‑memory tunnel registry containing:
+    - Starts `com.apple.internal.devicecompute.CoreDeviceProxy`
+    - Creates an IPv6 tunnel using `TunnelManager.getTunnel(...)` (or `getTunnelPsk` for Apple TV)
+    - Discovers RSD services and publishes a service catalog in the tunnel registry
+- Builds a tunnel registry containing:
     - Device UDID and device ID
     - Tunnel IPv6 address (`Address`) and `RsdPort`
-    - Packet stream port and basic metadata
+    - RSD service catalog (`services`) and basic metadata
 - Starts an HTTP tunnel registry API server and prints its address
 - Persists the chosen registry port in a per‑driver strongbox entry so that the driver can find it
 
@@ -94,13 +94,19 @@ You can now use the registry endpoints to retrieve tunnel information:
     curl http://localhost:<port>/remotexpc/tunnels
     ```
 
-- Get tunnel for a specific UDID:
+- Get tunnel for a specific UDID (long-poll until the RSD catalog is ready):
 
     ```bash
-    curl http://localhost:<port>/remotexpc/tunnels/<udid>
+    curl "http://localhost:<port>/remotexpc/tunnels/<udid>?waitMs=15000"
     ```
 
-The response contains the IPv6 `address`, `rsdPort`, and other metadata required to establish
+- Re-discover the RSD service catalog after a Developer Disk Image mount:
+
+    ```bash
+    curl -X POST "http://localhost:<port>/remotexpc/tunnels/<udid>/refresh-services"
+    ```
+
+The response contains the IPv6 `address`, `rsdPort`, `services` catalog, and other metadata required to establish
 Remote XPC connections.
 
 ## Running Tests

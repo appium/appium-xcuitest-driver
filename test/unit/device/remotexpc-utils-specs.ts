@@ -5,7 +5,7 @@ import {
   REMOTE_XPC_TUNNEL_SETUP_DOC_LINK,
   TUNNEL_CREATION_COMMAND,
   wrapRemoteXPCConnectionError,
-} from '../../../lib/device/remotexpc-utils';
+} from '../../../lib/device/remote-xpc/utils';
 import {expect} from 'chai';
 
 describe('remotexpc-utils tunnel availability', function () {
@@ -37,7 +37,7 @@ describe('remotexpc-utils tunnel availability', function () {
     const err = new Error('No tunnel found for device ABC');
     err.name = 'TunnelAvailabilityError';
     const wrapped = wrapRemoteXPCConnectionError(err, 'Failed to start syslog');
-    expect(wrapped.message).to.match(/Failed to start syslog:/);
+    expect(wrapped.message).to.match(/Failed to start syslog \(/);
     expect(wrapped.message).to.include(REMOTE_XPC_TUNNEL_SETUP_DOC_LINK);
     expect(wrapped.cause).to.equal(err);
   });
@@ -45,7 +45,7 @@ describe('remotexpc-utils tunnel availability', function () {
   it('wrapRemoteXPCConnectionError preserves non-tunnel errors', function () {
     const err = new Error('RSD timeout');
     const wrapped = wrapRemoteXPCConnectionError(err, 'Failed to start DVT');
-    expect(wrapped.message).to.equal('Failed to start DVT: RSD timeout');
+    expect(wrapped.message).to.equal('Failed to start DVT (RSD timeout)');
     expect(wrapped.cause).to.equal(err);
   });
 

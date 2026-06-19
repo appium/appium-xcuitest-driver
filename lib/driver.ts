@@ -25,12 +25,11 @@ import {
   getAndCheckXcodeVersion,
   getDriverInfo,
   normalizeCommandTimeouts,
-  normalizePlatformVersion,
   printUser,
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
 } from './commands/helpers';
-import {isEmpty, isPlainObject, memoize, upperFirst} from './utils';
+import {isEmpty, isPlainObject, memoize, normalizePlatformVersion, upperFirst} from './utils';
 import * as activeAppInfoCommands from './commands/active-app-info';
 import * as alertCommands from './commands/alert';
 import * as appManagementCommands from './commands/app-management';
@@ -82,6 +81,7 @@ import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
 import {DeviceConnectionsFactory} from './device/device-connections-factory';
+import {RemoteXPCFacade} from './device/remote-xpc';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
 import {
@@ -258,6 +258,7 @@ export class XCUITestDriver
   _audioRecorder: AudioRecorder | null;
   xcodeVersion: XcodeVersion | undefined;
   _networkMonitorSession: NetworkMonitorSession | null;
+  _remoteXPCFacade: RemoteXPCFacade | null;
   _recentScreenRecorder: ScreenRecorder | null;
   _device: Simulator | RealDevice;
   _iosSdkVersion: string | null;
@@ -778,6 +779,7 @@ export class XCUITestDriver
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
     this.logs = {} as DriverLogs;
     this._networkMonitorSession = null;
+    this._remoteXPCFacade = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
       this[fn] = memoize(this[fn]);
@@ -811,6 +813,15 @@ export class XCUITestDriver
 
   get device(): Simulator | RealDevice {
     return this._device;
+  }
+
+  /**
+   * Lazy per-session RemoteXPC facade (tunnel probe + cached fallback state).
+   *
+   * @throws {Error} If this.opts.udid is not set.
+   */
+  get remoteXPCFacade(): RemoteXPCFacade {
+    return this.getOrCreateRemoteXPCFacade(this.isRealDevice());
   }
 
   async onIpcInit(): Promise<void> {
@@ -976,6 +987,8 @@ export class XCUITestDriver
     }
 
     this.resetIos();
+
+    this._remoteXPCFacade = null;
 
     await super.deleteSession(sessionId);
   }
@@ -1232,8 +1245,8 @@ export class XCUITestDriver
     try {
       await this.deviceConnectionsFactory.requestConnection(this.opts.udid, mjpegServerPort, {
         devicePort: mjpegServerPort,
-        platformVersion: this.opts.platformVersion,
         usePortForwarding: this.isRealDevice(),
+        remoteXPCFacade: this.isRealDevice() ? this.remoteXPCFacade : null,
       });
     } catch (error) {
       if (this.opts.mjpegServerPort === undefined) {
@@ -1304,6 +1317,10 @@ export class XCUITestDriver
       this.opts.platformVersion = normalizedVersion;
     }
     this.caps.platformVersion = this.opts.platformVersion;
+
+    if (realDevice) {
+      (device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade(true));
+    }
 
     if (isEmpty(this.xcodeVersion) && (this.isXcodebuildNeeded() || this.isSimulator())) {
       // no `webDriverAgentUrl`, or on a simulator, so we need an Xcode version
@@ -1896,6 +1913,22 @@ export class XCUITestDriver
       }
       return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
     }
+  }
+
+  private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {
+    const udid = this.opts.udid;
+    if (!udid) {
+      throw new Error('Cannot access RemoteXPC session state before device UDID is set');
+    }
+    if (!this._remoteXPCFacade || this._remoteXPCFacade.udid !== udid) {
+      this._remoteXPCFacade = new RemoteXPCFacade(
+        udid,
+        this.opts.platformVersion,
+        this.log,
+        isRealDevice,
+      );
+    }
+    return this._remoteXPCFacade;
   }
 }
 

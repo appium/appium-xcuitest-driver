@@ -1,5 +1,4 @@
 import {BatteryInfoClient, type AdvancedBatteryInfo} from '../device/battery-info-client';
-import {isIos18OrNewer} from './helpers';
 import type {XCUITestDriver} from '../driver';
 import type {BatteryInfo} from './types';
 
@@ -14,9 +13,12 @@ export async function mobileGetBatteryInfo(
   this: XCUITestDriver,
 ): Promise<BatteryInfo & {advanced: AdvancedBatteryInfo}> {
   let batteryInfoFromShimService: AdvancedBatteryInfo = {};
-  if (isIos18OrNewer(this.opts) && this.isRealDevice()) {
+  if (await this.remoteXPCFacade.determineAvailability()) {
     try {
-      batteryInfoFromShimService = await new BatteryInfoClient(this.device.udid).getAdvancedInfo();
+      batteryInfoFromShimService = await new BatteryInfoClient(
+        this.device.udid,
+        this.remoteXPCFacade,
+      ).getAdvancedInfo();
     } catch (err: any) {
       this.log.error(`Failed to get battery info from DiagnosticsService: ${err.message}`);
     }

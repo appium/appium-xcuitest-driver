@@ -107,7 +107,7 @@
     "ws": "^8.13.0"
   },
   "optionalDependencies": {
-    "appium-ios-remotexpc": "^2.4.0"
+    "appium-ios-remotexpc": "^5.0.0"
   },
   "scripts": {
     "build": "tsc -b",

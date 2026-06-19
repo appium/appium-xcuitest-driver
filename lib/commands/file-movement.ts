@@ -9,7 +9,6 @@ import {errors} from 'appium/driver';
 import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {ContainerObject, ContainerRootSupplier} from './types';
-import {isIos18OrNewer} from './helpers';
 import {AfcClient} from '../device/afc-client';
 
 //#region Type Definitions
@@ -268,17 +267,17 @@ async function createAfcClient(
 ): Promise<AfcClient> {
   const {bundleId, containerType} = opts;
   const udid = driver.device.udid as string;
-  const useIos18 = isIos18OrNewer(driver.opts);
+  const facade = driver.remoteXPCFacade;
 
   if (bundleId) {
     const skipDocumentsCheck = driver.settings.getSettings().skipDocumentsContainerCheck ?? false;
-    return await AfcClient.createForApp(udid, bundleId, useIos18, {
+    return await AfcClient.createForApp(udid, bundleId, facade, {
       containerType: containerType ?? null,
       skipDocumentsCheck,
     });
   }
 
-  return await AfcClient.createForDevice(udid, useIos18);
+  return await AfcClient.createForDevice(udid, facade);
 }
 
 /**

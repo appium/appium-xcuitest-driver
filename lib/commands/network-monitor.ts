@@ -1,6 +1,7 @@
 import {errors} from 'appium/driver';
 import {NetworkMonitorSession} from '../device/network-monitor-session';
-import {isIos18OrNewer, requireRealDevice} from './helpers';
+import {requireRealDevice} from './helpers';
+import {isIos18OrNewer} from '../utils';
 import type {XCUITestDriver} from '../driver';
 
 /**
@@ -30,7 +31,7 @@ export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<v
     this._networkMonitorSession = null;
   }
 
-  const session = new NetworkMonitorSession(this.log, this.device.udid);
+  const session = new NetworkMonitorSession(this.log, this.device.udid, this.remoteXPCFacade);
   try {
     await session.start(this.eventEmitter);
   } catch (e) {

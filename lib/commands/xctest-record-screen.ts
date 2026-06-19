@@ -8,10 +8,7 @@ import type {RealDevice} from '../device/real-device-management';
 import type {AppiumLogger, HTTPHeaders} from '@appium/types';
 import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
 import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
-import {
-  formatTunnelAvailabilityMessage,
-  isTunnelAvailabilityError,
-} from '../device/remotexpc-utils';
+import {formatTunnelAvailabilityMessage, isTunnelAvailabilityError} from '../device/remote-xpc';
 
 const MOV_EXT = '.mov';
 /**
@@ -145,12 +142,7 @@ export async function mobileStartXctestScreenRecording(
   codec?: number,
 ): Promise<XcTestScreenRecordingInfo> {
   if (this.isRealDevice()) {
-    const canDeleteAfterStop = await XctestAttachmentDeletionClient.isDeletionAvailable(
-      this.opts.udid ?? '',
-      this.opts.platformVersion ?? '',
-      undefined,
-      this.log,
-    );
+    const canDeleteAfterStop = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
     if (!canDeleteAfterStop) {
       this.assertFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE);
     }
@@ -259,25 +251,10 @@ export async function mobileStopXctestScreenRecording(
     encodeOrUploadError = err;
   } finally {
     await fs.rimraf(videoPath);
-    if (this.isRealDevice() && this.opts.udid) {
+    if (this.remoteXPCFacade?.eligible) {
       try {
-        const canDelete = await XctestAttachmentDeletionClient.isDeletionAvailable(
-          this.opts.udid,
-          this.opts.platformVersion ?? '',
-          undefined,
-          this.log,
-        );
-        if (canDelete) {
-          const deletionClient = await XctestAttachmentDeletionClient.create(
-            this.opts.udid,
-            this.opts.platformVersion ?? '',
-          );
-          await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
-        } else {
-          this.log.debug(
-            'Skipping XCTest attachment deletion on device (RemoteXPC deletion not available for this session)',
-          );
-        }
+        const deletionClient = new XctestAttachmentDeletionClient(this.remoteXPCFacade);
+        await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
       } catch (deleteErr: any) {
         if (encodeOrUploadError === undefined) {
           if (

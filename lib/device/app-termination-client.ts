@@ -1,15 +1,9 @@
-import {isEmpty} from '../utils';
+import {isEmpty, isIos17OrNewerPlatform} from '../utils';
 import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
 import type {Devicectl} from 'node-devicectl';
-import {isIos17OrNewerPlatform, isIos18OrNewerPlatform} from '../commands/helpers';
 import {InstallationProxyClient} from './installation-proxy-client';
-import type {DVTInstruments} from 'appium-ios-remotexpc';
-import {
-  formatRemoteXPCFallbackLog,
-  getRemoteXPCServices,
-  wrapRemoteXPCConnectionError,
-} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 type TerminateAppResult =
   | {terminated: true; pid: number}
@@ -21,18 +15,26 @@ export class AppTerminationClient {
     private readonly platformVersion: string,
     private readonly devicectl: Devicectl,
     private readonly log: AppiumLogger,
+    private readonly remoteXPCFacade: RemoteXPCFacade | null = null,
   ) {}
 
   async terminate(bundleId: string): Promise<boolean> {
-    let result: TerminateAppResult;
-    if (isIos18OrNewerPlatform(this.platformVersion)) {
-      try {
-        result = await this.terminateRemoteXPC(bundleId);
-      } catch (err: any) {
-        this.log.warn(formatRemoteXPCFallbackLog(`terminate '${bundleId}'`, err));
-        result = await this.terminateLegacy(bundleId);
-      }
-    } else {
+    let result: TerminateAppResult | null =
+      (await this.remoteXPCFacade?.attemptService(`terminate '${bundleId}'`, async (Services) => {
+        const dvt = await Services.startDVTService(this.udid);
+        try {
+          const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
+          if (!pid) {
+            return {terminated: false, reason: 'not_running'} satisfies TerminateAppResult;
+          }
+          await dvt.processControl.kill(pid);
+          return {terminated: true, pid} satisfies TerminateAppResult;
+        } finally {
+          await dvt.dvtService.close();
+        }
+      })) ?? null;
+
+    if (!result) {
       result = await this.terminateLegacy(bundleId);
     }
 
@@ -53,34 +55,11 @@ export class AppTerminationClient {
     return false;
   }
 
-  private async terminateRemoteXPC(bundleId: string): Promise<TerminateAppResult> {
-    let dvt: DVTInstruments;
-    try {
-      const Services = await getRemoteXPCServices();
-      dvt = await Services.startDVTService(this.udid);
-    } catch (err) {
-      throw wrapRemoteXPCConnectionError(
-        err,
-        `Failed to start RemoteXPC DVT service to terminate '${bundleId}'`,
-      );
-    }
-    try {
-      const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
-      if (!pid) {
-        return {terminated: false, reason: 'not_running'};
-      }
-      await dvt.processControl.kill(pid);
-      return {terminated: true, pid};
-    } finally {
-      await dvt.dvtService.close();
-    }
-  }
-
   private async terminateLegacy(bundleId: string): Promise<TerminateAppResult> {
     let instrumentService: any;
     let installProxyClient: InstallationProxyClient | undefined;
     try {
-      installProxyClient = await InstallationProxyClient.create(this.udid, false);
+      installProxyClient = await InstallationProxyClient.create(this.udid, null);
       const apps = await installProxyClient.listApplications({
         returnAttributes: ['CFBundleIdentifier', 'CFBundleExecutable'],
       });

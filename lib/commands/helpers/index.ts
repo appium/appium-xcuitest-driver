@@ -10,20 +10,6 @@ export type {DeviceGuardDriver} from './guards';
 export {encodeBase64OrUpload, getPIDsListeningOnPort, isLocalHost} from './network';
 export type {UploadOptions} from './network';
 
-export {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../../constants';
-export {
-  isIos17OrNewer,
-  isIos17OrNewerPlatform,
-  isIos18OrNewer,
-  isIos18OrNewerPlatform,
-  isIos27OrNewer,
-  isIos27OrNewerPlatform,
-  isTvOs,
-  normalizePlatformName,
-  normalizePlatformVersion,
-} from './platform';
-export type {PlatformVersionOpts} from './platform';
-
 export {getDriverInfo, printUser} from './runtime';
 export type {DriverInfo} from './runtime';
 

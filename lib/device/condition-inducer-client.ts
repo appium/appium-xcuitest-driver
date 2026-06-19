@@ -1,9 +1,8 @@
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
-import {isIos18OrNewerPlatform} from '../commands/helpers';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 import type {Condition, IConditionInducer} from '../types';
-import {getRemoteXPCServices, wrapRemoteXPCConnectionError} from './remotexpc-utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 type InstrumentService = {
   callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;
@@ -20,6 +19,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   constructor(
     private readonly udid: string,
     private readonly log: AppiumLogger,
+    private readonly remoteXPCFacade: RemoteXPCFacade,
   ) {}
 
   async list(): Promise<Condition[]> {
@@ -89,15 +89,9 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   }
 
   async startConnection(): Promise<DVTInstruments> {
-    try {
-      const Services = await getRemoteXPCServices();
-      return await Services.startDVTService(this.udid);
-    } catch (err) {
-      throw wrapRemoteXPCConnectionError(
-        err,
-        `Failed to start RemoteXPC DVT service for condition inducer on '${this.udid}'`,
-      );
-    }
+    return this.remoteXPCFacade.requireService('condition inducer', (Services) =>
+      Services.startDVTService(this.udid),
+    );
   }
 }
 
@@ -184,20 +178,24 @@ class InstrumentConditionInducer implements IConditionInducer {
 }
 
 /**
- * Picks RemoteXPC when the platform is iOS/tvOS 18+ and probe succeeds; otherwise legacy instrument service.
+ * Picks RemoteXPC when the session facade is eligible and probe succeeds; otherwise legacy instrument service.
  */
 export async function createConditionInducer(params: {
   udid: string;
   log: AppiumLogger;
-  platformVersion?: string;
+  remoteXPCFacade?: RemoteXPCFacade | null;
 }): Promise<IConditionInducer> {
-  const {udid, log, platformVersion} = params;
+  const {udid, log, remoteXPCFacade = null} = params;
 
-  if (!isIos18OrNewerPlatform(platformVersion)) {
+  if (!remoteXPCFacade?.eligible) {
     return new InstrumentConditionInducer(udid, log);
   }
 
-  const xpcInducer = new RemoteXPCConditionInducer(udid, log);
+  if (!(await remoteXPCFacade.determineAvailability())) {
+    return new InstrumentConditionInducer(udid, log);
+  }
+
+  const xpcInducer = new RemoteXPCConditionInducer(udid, log, remoteXPCFacade);
   try {
     const connection = await xpcInducer.startConnection();
     await connection.dvtService.close();

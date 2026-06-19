@@ -2,16 +2,8 @@ import type {AppiumLogger} from '@appium/types';
 import {utilities} from 'appium-ios-device';
 import type {LockdownService} from 'appium-ios-remotexpc';
 import type {LockdownInfo} from '../commands/types';
-import type {XCUITestDriverOpts} from '../driver';
 import {log as defaultLogger} from '../logger';
-import {isIos18OrNewer} from '../commands/helpers';
-import {
-  getLastRemoteXPCOptionalImportError,
-  tryGetRemoteXPCModule,
-  tryGetRemoteXPCUsbMuxStrategy,
-  wrapRemoteXPCConnectionError,
-  type RemoteXPCEsmModule,
-} from './remotexpc-utils';
+import {isRemoteXPCUnavailableError, type RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Shape returned by {@linkcode utilities.getDeviceTime} in appium-ios-device.
@@ -35,37 +27,34 @@ export class LockdownClient {
     private readonly udid: string,
     private readonly log: AppiumLogger,
     private readonly strategy: 'ios-device' | 'remotexpc-usbmux' | 'remotexpc-tunnel',
+    private readonly remoteXPCFacade: RemoteXPCFacade | null = null,
   ) {}
 
   /**
    * @param udid - Device UDID
-   * @param opts - Driver options (used for iOS version gating)
    * @param log - Logger
    */
   static async createForDevice(
     udid: string,
-    opts: XCUITestDriverOpts,
     log: AppiumLogger = defaultLogger,
+    remoteXPCFacade: RemoteXPCFacade | null = null,
   ): Promise<LockdownClient> {
-    if (!isIos18OrNewer(opts)) {
+    if (!remoteXPCFacade?.eligible) {
       return new LockdownClient(udid, log, 'ios-device');
     }
-    const resolved = await tryGetRemoteXPCUsbMuxStrategy(udid, log);
-    if (!resolved) {
-      const err = getLastRemoteXPCOptionalImportError();
+
+    try {
+      const strategy = await remoteXPCFacade.resolveLockdownStrategy();
+      return new LockdownClient(udid, log, strategy, remoteXPCFacade);
+    } catch (err) {
+      if (!isRemoteXPCUnavailableError(err)) {
+        throw err;
+      }
       log.warn(
-        `appium-ios-remotexpc unavailable for lockdown on '${udid}': ${err?.message ?? 'unknown'}. ` +
-          `Using appium-ios-device lockdown (legacy fallback).`,
+        'RemoteXPC lockdown is not available. Using appium-ios-device lockdown (legacy fallback).',
       );
       return new LockdownClient(udid, log, 'ios-device');
     }
-    const {useUsbMuxPath} = resolved;
-
-    if (useUsbMuxPath) {
-      return new LockdownClient(udid, log, 'remotexpc-usbmux');
-    }
-
-    return new LockdownClient(udid, log, 'remotexpc-tunnel');
   }
 
   private static coerceFiniteNumber(value: unknown): number | undefined {
@@ -151,12 +140,11 @@ export class LockdownClient {
     }
   }
 
-  private async requireRemotexpcModule(): Promise<RemoteXPCEsmModule> {
-    const remotexpc = await tryGetRemoteXPCModule();
-    if (!remotexpc) {
-      throw new Error(`appium-ios-remotexpc module is not initialized for '${this.udid}'.`);
+  private requireRemoteXPCFacade(): RemoteXPCFacade {
+    if (!this.remoteXPCFacade) {
+      throw new Error(`RemoteXPC lockdown is not configured for '${this.udid}'.`);
     }
-    return remotexpc;
+    return this.remoteXPCFacade;
   }
 
   /**
@@ -183,21 +171,7 @@ export class LockdownClient {
   private async runWithRemotexpcUsbmuxLockdown<T>(
     fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
-    try {
-      const remotexpc = await this.requireRemotexpcModule();
-      const {lockdownService} = await remotexpc.createLockdownServiceByUDID(this.udid);
-      try {
-        return await fn(lockdownService);
-      } finally {
-        lockdownService.close();
-      }
-    } catch (err) {
-      throw new Error(
-        `Failed to read lockdown via appium-ios-remotexpc USBMUX path for '${this.udid}': ` +
-          `${(err as Error).message}`,
-        {cause: err},
-      );
-    }
+    return await this.requireRemoteXPCFacade().withUsbMuxLockdown(fn);
   }
 
   private async runWithRemotexpcLockdown<T>(
@@ -230,22 +204,9 @@ export class LockdownClient {
     return this.strategy === 'remotexpc-usbmux' ? 'USB' : 'tunnel';
   }
 
-  /**
-   * Runs an operation with lockdown over the RSD tunnel.
-   */
   private async runWithTunnelLockdown<T>(
     fn: (lockdown: LockdownService) => Promise<T | undefined>,
   ): Promise<T | undefined> {
-    try {
-      const remotexpc = await this.requireRemotexpcModule();
-      const lockdown = await remotexpc.createLockdownServiceForTunnel(this.udid);
-      try {
-        return await fn(lockdown);
-      } finally {
-        lockdown.close();
-      }
-    } catch (err) {
-      throw wrapRemoteXPCConnectionError(err, `Tunnel lockdown failed for '${this.udid}'`);
-    }
+    return await this.requireRemoteXPCFacade().withTunnelLockdown(fn);
   }
 }
