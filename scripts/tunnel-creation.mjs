@@ -791,6 +791,10 @@ function setupCleanupHandlers(tunnelCreator) {
       }
     }
   };
+  const cleanupAndExit = async () => {
+    await cleanupOnce();
+    process.exit(process.exitCode ?? 1);
+  };
 
   const shutdownSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
   for (const signal of shutdownSignals) {
@@ -813,7 +817,7 @@ function setupCleanupHandlers(tunnelCreator) {
     if (process.exitCode == null) {
       process.exitCode = 1;
     }
-    void cleanupOnce();
+    void cleanupAndExit();
   });
 
   process.on('uncaughtException', (err) => {
@@ -821,7 +825,7 @@ function setupCleanupHandlers(tunnelCreator) {
     if (process.exitCode == null) {
       process.exitCode = 1;
     }
-    void cleanupOnce();
+    void cleanupAndExit();
   });
 
   return cleanupOnce;
@@ -990,7 +994,9 @@ async function main() {
     }
   } catch (err) {
     log.error('Error during tunnel setup:', err);
+    process.exitCode = 1;
     await cleanupOnce();
+    process.exit(process.exitCode);
   }
 }
 
