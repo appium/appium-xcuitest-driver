@@ -26,7 +26,7 @@ jobs:
       matrix:
         node-version: ${{ fromJSON(needs.node_matrix.outputs.versions) }}
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v3
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v3
       with:
