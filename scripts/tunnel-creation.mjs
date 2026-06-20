@@ -24,19 +24,28 @@ import {
 import {strongbox, BaseItem} from '@appium/strongbox';
 import {Command} from 'commander';
 
+import {parsePositiveIntegerOption} from './lib/options.mjs';
+import {startTimeoutProgressLogger} from './lib/progress.mjs';
+import {assertRoot} from './lib/root.mjs';
+
 const log = logger.getLogger('TunnelCreation');
 const TUNNEL_REGISTRY_PORT = 'tunnelRegistryPort';
 const DEFAULT_TUNNEL_REGISTRY_PORT = 42314;
 const WIRELESS_APPLETV_DISCOVERY_PROGRESS_INTERVAL_MS = 1000;
-const WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS = 10_000;
+const DEFAULT_WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS = 10_000;
 const WIRELESS_APPLETV_DISCOVERY_PROGRESS_BAR_WIDTH = 24;
 
 /**
  * TunnelCreator class for managing tunnel creation and related operations (USB and optional Apple TV over WiFi).
  */
 class TunnelCreator {
-  constructor() {
+  /**
+   * @param {{appleTVDiscoveryTimeoutMs?: number}} [opts]
+   */
+  constructor(opts = {}) {
     this._tunnelRegistryPort = DEFAULT_TUNNEL_REGISTRY_PORT;
+    this._appleTVDiscoveryTimeoutMs =
+      opts.appleTVDiscoveryTimeoutMs ?? DEFAULT_WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS;
     /** @type {import('appium-ios-remotexpc').TunnelRegistryServer | null} */
     this._registryServer = null;
     /** @type {import('appium-ios-remotexpc').TunnelReadinessCoordinator} */
@@ -412,13 +421,14 @@ class TunnelCreator {
 
   /**
    * @param {string[] | undefined} specificDeviceIds
-   * @returns {{startedAt: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}}
+   * @returns {{startedAt: number, timeoutMs: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}}
    */
   prefetchAppleTVDevices(specificDeviceIds) {
     const startedAt = performance.now();
     if (specificDeviceIds && specificDeviceIds.length > 0) {
       return {
         startedAt,
+        timeoutMs: this._appleTVDiscoveryTimeoutMs,
         promise: Promise.resolve({devices: null, error: null}),
       };
     }
@@ -426,7 +436,7 @@ class TunnelCreator {
     const promise = (async () => {
       try {
         const devices = await tunnelService.discoverDevices({
-          timeoutMs: WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+          timeoutMs: this._appleTVDiscoveryTimeoutMs,
         });
         return {devices, error: null};
       } catch (err) {
@@ -437,7 +447,7 @@ class TunnelCreator {
         } catch {}
       }
     })();
-    return {startedAt, promise};
+    return {startedAt, timeoutMs: this._appleTVDiscoveryTimeoutMs, promise};
   }
 
   /**
@@ -454,7 +464,7 @@ class TunnelCreator {
 
     const startResult = await tunnelService.startTunnel(undefined, udid, {
       devices: prefetchedDevice ? [prefetchedDevice] : undefined,
-      discoveryTimeoutMs: WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+      discoveryTimeoutMs: this._appleTVDiscoveryTimeoutMs,
     });
     if (!startResult.tcpSocket) {
       throw new Error('Apple TV TCP socket to listener port not established');
@@ -740,14 +750,15 @@ function isNoAppleTVDevicesFoundError(err) {
 }
 
 /**
- * @param {{startedAt: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}} discovery
+ * @param {{startedAt: number, timeoutMs: number, promise: Promise<{devices: AppleTVDevice[] | null, error: unknown | null}>}} discovery
  * @returns {Promise<AppleTVDevice[] | null>}
  */
 async function waitForAppleTVDiscovery(discovery) {
   const wirelessDiscoveryProgress = startTimeoutProgressLogger({
+    log,
     label: 'Waiting for wireless Apple TV discovery',
     startedAt: discovery.startedAt,
-    timeoutMs: WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+    timeoutMs: discovery.timeoutMs,
     barWidth: WIRELESS_APPLETV_DISCOVERY_PROGRESS_BAR_WIDTH,
     intervalMs: WIRELESS_APPLETV_DISCOVERY_PROGRESS_INTERVAL_MS,
   });
@@ -776,51 +787,6 @@ async function sleep(ms) {
 }
 
 /**
- * Logs a timeout-based progress bar while an operation without native progress callbacks is running.
- *
- * @param {{label: string, startedAt: number, timeoutMs: number, barWidth: number, intervalMs: number}} opts
- * @returns {{succeed: (message?: string) => void, fail: (message?: string) => void}}
- */
-function startTimeoutProgressLogger({label, startedAt, timeoutMs, barWidth, intervalMs}) {
-  /** @type {NodeJS.Timeout | null} */
-  let timer = null;
-  let isStopped = false;
-
-  const logProgress = (status, isComplete = false) => {
-    const elapsedMs = performance.now() - startedAt;
-    const boundedElapsedMs = Math.min(elapsedMs, timeoutMs);
-    const progress = isComplete ? 1 : boundedElapsedMs / timeoutMs;
-    const filledWidth = Math.round(progress * barWidth);
-    const emptyWidth = barWidth - filledWidth;
-    const bar = `${'#'.repeat(filledWidth)}${'-'.repeat(emptyWidth)}`;
-    log.info(`${label}: [${bar}]${status && status !== 'waiting' ? ` - ${status}` : ''}`);
-  };
-
-  const stop = (status, isComplete = false) => {
-    if (isStopped) {
-      return;
-    }
-    isStopped = true;
-    if (timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-    logProgress(status, isComplete);
-  };
-
-  logProgress('waiting');
-  timer = setInterval(() => {
-    logProgress('waiting');
-  }, intervalMs);
-  timer.unref?.();
-
-  return {
-    succeed: (message = 'done') => stop(message, true),
-    fail: (message = 'failed') => stop(message),
-  };
-}
-
-/**
  * @param {string} value
  * @param {string} label
  * @returns {number}
@@ -844,19 +810,6 @@ function parseNonNegativeIntegerOption(value, label) {
     throw new Error(`Invalid ${label}: ${value}. Expected an integer >= 0.`);
   }
   return count;
-}
-
-/**
- * @param {string} value
- * @param {string} label
- * @returns {number}
- */
-function parsePositiveIntegerOption(value, label) {
-  const num = Number.parseInt(value, 10);
-  if (!Number.isFinite(num) || num <= 0) {
-    throw new Error(`Invalid ${label}: ${value}. Expected a positive integer.`);
-  }
-  return num;
 }
 
 /**
@@ -932,19 +885,8 @@ function setupCleanupHandlers(tunnelCreator) {
   return cleanupOnce;
 }
 
-function assertRoot() {
-  if (typeof process.getuid !== 'function') {
-    return;
-  }
-  if (process.getuid() !== 0) {
-    throw new Error(
-      'This script must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation ...).',
-    );
-  }
-}
-
 async function main() {
-  assertRoot();
+  assertRoot('tunnel-creation');
   const program = new Command();
   program
     .name('appium driver run xcuitest tunnel-creation')
@@ -969,6 +911,12 @@ async function main() {
       [],
     )
     .option(
+      '--appletv-discovery-timeout-ms <ms>',
+      'Apple TV wireless discovery timeout in milliseconds',
+      (value) => parsePositiveIntegerOption(value, 'Apple TV discovery timeout'),
+      DEFAULT_WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS,
+    )
+    .option(
       '--disconnect-retry-max-attempts <count>',
       'Max tunnel recreation attempts after unexpected disconnect: 0 = unlimited; omit to disable retries',
       (value) => parseNonNegativeIntegerOption(value, 'disconnect retry max attempts'),
@@ -989,7 +937,9 @@ async function main() {
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;
   const shouldRunAppleTVFlow = !hasRequestedUdids || hasRequestedAppleTVIds;
 
-  const tunnelCreator = new TunnelCreator();
+  const tunnelCreator = new TunnelCreator({
+    appleTVDiscoveryTimeoutMs: options.appletvDiscoveryTimeoutMs,
+  });
   const cleanupOnce = setupCleanupHandlers(tunnelCreator);
 
   try {
@@ -1126,7 +1076,7 @@ await main();
  */
 
 /**
- * @typedef {Awaited<ReturnType<import('appium-ios-remotexpc').AppleTVTunnelService['discoverDevices']>>[number]} AppleTVDevice
+ * @typedef {import('appium-ios-remotexpc').AppleTVDevice} AppleTVDevice
  */
 
 /**
