@@ -57,7 +57,8 @@ sudo appium driver run xcuitest tunnel-creation
 ```
 
 Refer to [the script reference page](../reference/scripts.md#tunnel-creation) for a list of
-additional options.
+additional options. If wireless Apple TV devices are slow to appear, increase the discovery
+window with `--appletv-discovery-timeout-ms`.
 
 The script executes the following actions:
 

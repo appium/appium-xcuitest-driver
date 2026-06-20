@@ -49,7 +49,8 @@ section, though they are limited and less reliable compared to Remote XPC.
         ```
 
         The above command will return a prompt for selecting a specific device. You can also skip
-        interactive selection by using the `--device` option. See [the Scripts reference page](../reference/scripts.md#pair-appletv)
+        interactive selection by using the `--device` option, or increase the discovery window with
+        `--discovery-timeout-ms` if the Apple TV is slow to appear. See [the Scripts reference page](../reference/scripts.md#pair-appletv)
         for more information.
 
     3. When prompted, enter the PIN that appears on the Apple TV
@@ -69,7 +70,8 @@ section, though they are limited and less reliable compared to Remote XPC.
     ```
 
     It is also recommended to set the `--disconnect-retry-max-attempts` flag to `3` or more, as
-    disconnects are likely to occur. Refer to the [Remote XPC guide](./remotexpc-tunnels-real-devices.md)
+    disconnects are likely to occur. Use `--appletv-discovery-timeout-ms` to increase the wireless
+    Apple TV discovery window when needed. Refer to the [Remote XPC guide](./remotexpc-tunnels-real-devices.md)
     and [Scripts reference page](../reference/scripts.md#tunnel-creation) for more details.
 
 5. Launch the Appium server (in a separate process from the Remote XPC tunnel), then start a

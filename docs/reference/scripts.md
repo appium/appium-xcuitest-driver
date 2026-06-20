@@ -473,6 +473,7 @@ sudo appium driver run xcuitest pair-appletv
 |<div style="width:7em">Argument</div>|Description|Type|
 |--|--|--|
 |`--device`, `-d`|Selector of the Apple TV device. Can be the device name (`"Living Room"`), UDID (`AA:BB:CC:DD:EE:FF`), or index (`0`). If not provided, a prompt for device selection is shown.|string or integer|
+|`--discovery-timeout-ms`|Apple TV pairing discovery timeout, in milliseconds. Defaults to the `APPLETV_DISCOVERY_TIMEOUT` environment variable value, or `10000` if unset.|integer|
 |`--help`, `-h`|Return help text and exit||
 
 #### Examples
@@ -487,6 +488,12 @@ sudo appium driver run xcuitest pair-appletv
 
     ```
     sudo appium driver run xcuitest pair-appletv -- --device "Conference Room"
+    ```
+
+- Pair with a longer discovery timeout:
+
+    ```
+    sudo appium driver run xcuitest pair-appletv -- --discovery-timeout-ms 30000
     ```
 
 
@@ -518,6 +525,7 @@ sudo appium driver run xcuitest tunnel-creation
 |<div style="width:14em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
 |`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. Repeat this argument to target multiple paired Apple TV devices. If omitted, the script creates one tunnel per discovered paired Apple TV device. If this is provided without `--udid`, setup of non-Apple TV devices is skipped.|string (repeatable)||
+|`--appletv-discovery-timeout-ms`|Apple TV wireless discovery timeout, in milliseconds. Applies to initial discovery and Apple TV tunnel creation/reconnection.|integer|10000|
 |`--disconnect-retry-max-attempts`|Maximum number of tunnel recreation attempts after an unexpected disconnect. Set to `0` for unlimited retries. If omitted, retries are disabled and the tunnel is removed from registry.|integer||
 |`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds.|integer|1000|
 |`--tunnel-registry-port`|Port of the tunnel registry server, hosted at `http://localhost:<port>/remotexpc/tunnels`|integer|42314|
@@ -553,4 +561,10 @@ sudo appium driver run xcuitest tunnel-creation
 
     ```
     sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 10 --disconnect-retry-interval-ms 2000
+    ```
+
+- Create Apple TV tunnels with a longer wireless discovery timeout:
+
+    ```
+    sudo appium driver run xcuitest tunnel-creation -- --appletv-discovery-timeout-ms 30000
     ```
