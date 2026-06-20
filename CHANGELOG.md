@@ -1,3 +1,9 @@
+## [11.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.12.2...v11.13.0) (2026-06-20)
+
+### Features
+
+* Make Apple TV discovery timeout configurable ([#2882](https://github.com/appium/appium-xcuitest-driver/issues/2882)) ([e9e006b](https://github.com/appium/appium-xcuitest-driver/commit/e9e006b5de99930e41602dc5e540ad0d3a375244))
+
 ## [11.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.12.1...v11.12.2) (2026-06-19)
 
 ### Bug Fixes
