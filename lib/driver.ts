@@ -82,6 +82,7 @@ import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
 import {DeviceConnectionsFactory} from './device/device-connections-factory';
 import {RemoteXPCFacade} from './device/remote-xpc';
+import {assertWdaHostPlatformSupported, createWdaHostOps} from './device/wda-host-ops';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
 import {
@@ -1322,6 +1323,8 @@ export class XCUITestDriver
       (device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade(true));
     }
 
+    assertWdaHostPlatformSupported(this);
+
     if (isEmpty(this.xcodeVersion) && (this.isXcodebuildNeeded() || this.isSimulator())) {
       // no `webDriverAgentUrl`, or on a simulator, so we need an Xcode version
       this.xcodeVersion = await getAndCheckXcodeVersion();
@@ -1360,6 +1363,7 @@ export class XCUITestDriver
         realDevice: this.isRealDevice(),
         iosSdkVersion: this._iosSdkVersion ?? undefined,
         reqBasePath: this.basePath,
+        hostOps: createWdaHostOps(this),
       } as WebDriverAgentArgs,
       this.log,
     );

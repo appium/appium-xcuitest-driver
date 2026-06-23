@@ -11,6 +11,7 @@ import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import * as validationUtils from '../../lib/commands/helpers/validation';
 import * as xcodeUtils from '../../lib/commands/helpers/xcode';
+import * as wdaHostOps from '../../lib/device/wda-host-ops';
 
 chai.use(chaiAsPromised);
 
@@ -141,6 +142,7 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'connectToRemoteDebugger');
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
         sandbox.stub(validationUtils, 'checkAppPresent');
+        sandbox.stub(wdaHostOps, 'assertWdaHostPlatformSupported');
         sandbox.stub(xcodeUtils, 'getAndCheckXcodeVersion').resolves({
           versionString: '20.0',
           versionFloat: 20.0,
