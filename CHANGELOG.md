@@ -1,3 +1,9 @@
+## [11.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.13.0...v11.14.0) (2026-06-23)
+
+### Features
+
+* Support platform abstraction in WDA ([#2884](https://github.com/appium/appium-xcuitest-driver/issues/2884)) ([98a585e](https://github.com/appium/appium-xcuitest-driver/commit/98a585eb176640a9ce876c757ae794aab94e236e))
+
 ## [11.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.12.2...v11.13.0) (2026-06-20)
 
 ### Features
