@@ -6,6 +6,8 @@
  * Must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation).
  */
 import {logger} from 'appium/support.js';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 import {
   AppleTVTunnelService,
@@ -886,7 +888,6 @@ function setupCleanupHandlers(tunnelCreator) {
 }
 
 async function main() {
-  assertRoot('tunnel-creation');
   const program = new Command();
   program
     .name('appium driver run xcuitest tunnel-creation')
@@ -936,6 +937,11 @@ async function main() {
   const hasRequestedAppleTVIds = requestedAppleTVIds.length > 0;
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;
   const shouldRunAppleTVFlow = !hasRequestedUdids || hasRequestedAppleTVIds;
+
+  await assertRoot(path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    path.basename(fileURLToPath(import.meta.url))
+  ));
 
   const tunnelCreator = new TunnelCreator({
     appleTVDiscoveryTimeoutMs: options.appletvDiscoveryTimeoutMs,
