@@ -54,10 +54,7 @@ async function main() {
   program.parse(process.argv);
   const options = program.opts();
 
-  await assertRoot(path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    path.basename(fileURLToPath(import.meta.url))
-  ));
+  await assertRoot(path.parse(fileURLToPath(import.meta.url)).name);
 
   const userInput = new UserInputService();
   const pairingService = new AppleTVPairingService(userInput);

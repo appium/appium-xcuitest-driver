@@ -938,10 +938,7 @@ async function main() {
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;
   const shouldRunAppleTVFlow = !hasRequestedUdids || hasRequestedAppleTVIds;
 
-  await assertRoot(path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    path.basename(fileURLToPath(import.meta.url))
-  ));
+  await assertRoot(path.parse(fileURLToPath(import.meta.url)).name);
 
   const tunnelCreator = new TunnelCreator({
     appleTVDiscoveryTimeoutMs: options.appletvDiscoveryTimeoutMs,
