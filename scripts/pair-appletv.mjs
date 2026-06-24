@@ -23,7 +23,8 @@
 import {logger} from 'appium/support.js';
 import {Command} from 'commander';
 import {AppleTVPairingService, UserInputService} from 'appium-ios-remotexpc';
-
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {parsePositiveIntegerOption} from './lib/options.mjs';
 import {startTimeoutProgressLogger} from './lib/progress.mjs';
 import {assertRoot} from './lib/root.mjs';
@@ -35,7 +36,6 @@ const DEFAULT_APPLETV_PAIRING_DISCOVERY_TIMEOUT_MS =
 const APPLETV_PAIRING_DISCOVERY_PROGRESS_BAR_WIDTH = 24;
 
 async function main() {
-  assertRoot('pair-appletv');
   const program = new Command();
   program
     .name('appium driver run xcuitest pair-appletv')
@@ -53,6 +53,8 @@ async function main() {
 
   program.parse(process.argv);
   const options = program.opts();
+
+  await assertRoot(path.parse(fileURLToPath(import.meta.url)).name);
 
   const userInput = new UserInputService();
   const pairingService = new AppleTVPairingService(userInput);
