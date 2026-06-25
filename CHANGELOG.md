@@ -1,3 +1,9 @@
+## [11.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.14.0...v11.14.1) (2026-06-24)
+
+### Bug Fixes
+
+* Only assert root after arguments parsing is finished ([#2886](https://github.com/appium/appium-xcuitest-driver/issues/2886)) ([6d9f317](https://github.com/appium/appium-xcuitest-driver/commit/6d9f317e8864d7161404a15c8a841e1b95815f26))
+
 ## [11.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.13.0...v11.14.0) (2026-06-23)
 
 ### Features
