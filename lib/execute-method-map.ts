@@ -454,6 +454,12 @@ export const executeMethodMap = {
       required: ['page', 'usage', 'durationSeconds'],
     },
   },
+  'mobile: performIndigoHidEvent': {
+    command: 'mobilePerformIndigoHidEvent',
+    params: {
+      optional: ['name', 'page', 'usage', 'durationSeconds', 'pressCount'],
+    },
+  },
   'mobile: configureLocalization': {
     command: 'mobileConfigureLocalization',
     params: {

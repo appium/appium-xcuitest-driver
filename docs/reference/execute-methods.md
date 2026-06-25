@@ -660,6 +660,30 @@ page | int | yes | The event page identifier. Look for constants perfixed with `
 usage | int | yes | The event usage identifier (usages are defined per-page). Look for constants prefixed with `kHIDUsage_` in the table above | 0x40
 durationSeconds | number | yes | The event duration in float seconds. XCTest uses `0.005` for a single press event duration | 2.5
 
+### mobile: performIndigoHidEvent
+
+Emulates triggering of the given low-level IO HID device event. Constants for possible events are defined
+in [HID Usage Tables](https://developer.apple.com/documentation/hiddriverkit/hid_usage_tables).
+Unlike [mobile: performIoHidEvent](#mobile-performiohidevent), this API works only on physical devices
+because it requires the RemoteXPC tunnel interface and iOS 26 or later.
+It also provides more advanced HID event customization options, such as emulating a double button press.
+
+For example, to double press the `Home` button:
+
+- name: `home`
+- durationSeconds: `0.05`
+- pressCount: `2`
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+name | string | no | The name of the button to press. Supported button names are: `home`, `lock`, `volume-up`, `volume-down`, `mute`, `siri`. Either this or `page` and `usage` must be provided. | mute
+page | int | no | The event page identifier. Look for constants perfixed with `kHIDPage_` in the table above. Either this or `name` must be provided. | 0x0C
+usage | int | no | The event usage identifier (usages are defined per-page). Look for constants prefixed with `kHIDUsage_` in the table above. Either this or `name` must be provided. | 0x40
+durationSeconds | number | no | The event duration in float seconds. XCTest uses `0.005` for a single press event duration | 2.5
+pressCount | number | no | The number of times to press the button (default: 1) | 2
+
 ### mobile: enrollBiometric
 
 Enrolls biometric authentication on Simulator.

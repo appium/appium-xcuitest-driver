@@ -539,6 +539,7 @@ export class XCUITestDriver
    | IOHID |
    +-------+*/
   mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
+  mobilePerformIndigoHidEvent = iohidCommands.mobilePerformIndigoHidEvent;
 
   /*-----------+
    | KEYCHAINS |
