@@ -47,7 +47,7 @@ export async function mobilePerformIoHidEvent(
  *
  * Requires **iOS/tvOS 26+**, real device, and a running RemoteXPC tunnel.
  *
- * @param name - The name of the button to press. Either this or `page` and `usage` must be provided.
+ * @param name - The name of the button to press. Either this or both `page` and `usage` must be provided.
  * @param page - The page of the button to press. Either this or `name` must be provided.
  * @param usage - The usage of the button to press. Either this or `name` must be provided.
  * @param durationSeconds - The duration of the button press in float seconds.
@@ -64,7 +64,7 @@ export async function mobilePerformIndigoHidEvent(
   requireRealDevice(this, 'perform IO HID event with HID Indigo RemoteXPC service');
 
   if (name === undefined && (page === undefined || usage === undefined)) {
-    throw new errors.InvalidArgumentError(`'name' or 'page' and 'usage' must be provided`);
+    throw new errors.InvalidArgumentError(`Either 'name' or both 'page' and 'usage' must be provided`);
   }
 
   const getDuration = () => {
