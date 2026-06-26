@@ -679,7 +679,7 @@ For example, to double press the `Home` button:
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 name | string | no | The name of the button to press. Supported button names are: `home`, `lock`, `volume-up`, `volume-down`, `mute`, `siri`. Either this or both `page` and `usage` must be provided. | mute
-page | int | no | The event page identifier. Look for constants perfixed with `kHIDPage_` in the table above. Either this or `name` must be provided. | 0x0C
+page | int | no | The event page identifier. Look for constants prefixed with `kHIDPage_` in the table above. Either this or `name` must be provided. | 0x0C
 usage | int | no | The event usage identifier (usages are defined per-page). Look for constants prefixed with `kHIDUsage_` in the table above. Either this or `name` must be provided. | 0x40
 durationSeconds | number | no | The event duration in float seconds. XCTest uses `0.005` for a single press event duration | 2.5
 pressCount | number | no | The number of times to press the button (default: 1) | 2
