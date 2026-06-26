@@ -209,6 +209,7 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'connectToRemoteDebugger');
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
         sandbox.stub(validationUtils, 'checkAppPresent');
+        sandbox.stub(wdaHostOps, 'assertWdaHostSessionCapsSupported');
         sandbox.stub(wdaHostOps, 'assertWdaHostPlatformSupported');
         sandbox.stub(xcodeUtils, 'getAndCheckXcodeVersion').resolves({
           versionString: '20.0',
