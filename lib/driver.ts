@@ -82,7 +82,12 @@ import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
 import {DeviceConnectionsFactory} from './device/device-connections-factory';
 import {RemoteXPCFacade} from './device/remote-xpc';
-import {assertWdaHostPlatformSupported, createWdaHostOps} from './device/wda-host-ops';
+import {
+  assertWdaHostPlatformSupported,
+  assertWdaHostSessionCapsSupported,
+  createWdaHostOps,
+  isStrictHostUtilityMode,
+} from './device/wda-host-ops';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
 import {
@@ -230,6 +235,13 @@ export interface AutInstallationState {
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
 export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
+
+interface DeviceDetermination {
+  device: Simulator | RealDevice;
+  realDevice: boolean;
+  udid: string;
+}
+
 export class XCUITestDriver
   extends BaseDriver<XCUITestDriverConstraints, StringRecord>
   implements ExternalDriver<XCUITestDriverConstraints, FullContext | string, StringRecord>
@@ -1280,6 +1292,7 @@ export class XCUITestDriver
 
     await printUser();
     this._iosSdkVersion = null; // For WDA and xcodebuild
+    assertWdaHostSessionCapsSupported(this.opts);
     const {device, udid, realDevice} = await this.determineDevice();
     this.log.info(
       `Determining device to run tests on: udid: '${udid}', real device: ${realDevice}`,
@@ -1559,102 +1572,19 @@ export class XCUITestDriver
     });
   }
 
-  async determineDevice(): Promise<{
-    device: Simulator | RealDevice;
-    realDevice: boolean;
-    udid: string;
-  }> {
+  async determineDevice(): Promise<DeviceDetermination> {
     // in the one case where we create a sim, we will set this state
     this.lifecycleData.createSim = false;
-
-    const setupVersionCaps = async () => {
-      this._iosSdkVersion = await getAndCheckIosSdkVersion();
-      this.log.info(`iOS SDK Version set to '${this._iosSdkVersion}'`);
-      if (!this.opts.platformVersion && this._iosSdkVersion) {
-        this.log.info(
-          `No platformVersion specified. Using the latest version Xcode supports: '${this._iosSdkVersion}'. ` +
-            `This may cause problems if a simulator does not exist for this platform version.`,
-        );
-        this.opts.platformVersion = normalizePlatformVersion(this._iosSdkVersion);
-      }
-    };
+    const isStrictHostMode = isStrictHostUtilityMode(this.opts);
 
     if (this.opts.udid) {
       if (this.opts.udid.toLowerCase() === UDID_AUTO) {
-        try {
-          this.opts.udid = await detectUdid.bind(this)();
-        } catch (err) {
-          // Trying to find matching UDID for Simulator
-          this.log.warn(
-            `Cannot detect any connected real devices. Falling back to Simulator. Original error: ${err.message}`,
-          );
-          await setupVersionCaps();
-
-          const device = await getExistingSim.bind(this)();
-          if (!device) {
-            // No matching Simulator is found. Throw an error
-            throw this.log.errorWithException(
-              `Cannot detect udid for ${this.opts.deviceName} Simulator running iOS ${this.opts.platformVersion}`,
-            );
-          }
-          this.opts.udid = device.udid;
-          return {device, realDevice: false, udid: device.udid};
-        }
-      } else {
-        // If the session specified this.opts.webDriverAgentUrl with a real device,
-        // we can assume the user prepared the device properly already.
-        let isRealDeviceUdid = false;
-        const shouldCheckAvailableRealDevices = !this.opts.webDriverAgentUrl;
-        if (shouldCheckAvailableRealDevices) {
-          const devices = await getConnectedDevices(this.opts);
-          this.log.debug(`Available real devices: ${devices.join(', ')}`);
-          isRealDeviceUdid = devices.includes(this.opts.udid);
-        }
-        if (!isRealDeviceUdid) {
-          try {
-            const device = await getSimulator(this.opts.udid, {
-              devicesSetPath: this.opts.simulatorDevicesSetPath,
-              logger: this.log,
-            });
-            return {device, realDevice: false, udid: this.opts.udid};
-          } catch {
-            if (shouldCheckAvailableRealDevices) {
-              throw new Error(`Unknown device or simulator UDID: '${this.opts.udid}'`);
-            }
-            this.log.debug(
-              'Skipping checking of the real devices availability since the session specifies appium:webDriverAgentUrl',
-            );
-          }
-        }
+        return await this.determineDeviceWithAutoUdid(isStrictHostMode);
       }
-
-      this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const device = new RealDevice(this.opts.udid as string, this.opts, this.log);
-      return {device, realDevice: true, udid: this.opts.udid as string};
+      return await this.determineDeviceWithExplicitUdid(isStrictHostMode);
     }
 
-    this.log.info(
-      `No real device udid has been provided in capabilities. ` +
-        `Will select a matching simulator to run the test.`,
-    );
-    await setupVersionCaps();
-    if (this.opts.enforceFreshSimulatorCreation) {
-      this.log.debug(
-        `New simulator is requested. If this is not wanted, set 'enforceFreshSimulatorCreation' capability to false`,
-      );
-    } else {
-      // figure out the correct simulator to use, given the desired capabilities
-      const device = await getExistingSim.bind(this)();
-      // check for an existing simulator
-      if (device) {
-        return {device, realDevice: false, udid: device.udid};
-      }
-    }
-
-    // no device of this type exists, or they request new sim, so create one
-    this.log.info('Using desired caps to create a new simulator');
-    const device = await this.createSim();
-    return {device, realDevice: false, udid: device.udid};
+    return await this.determineSimulatorDevice(isStrictHostMode);
   }
 
   async startSim(): Promise<void> {
@@ -1918,6 +1848,147 @@ export class XCUITestDriver
       }
       return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
     }
+  }
+
+  private async setupSimulatorPlatformVersionCaps(): Promise<void> {
+    this._iosSdkVersion = await getAndCheckIosSdkVersion();
+    this.log.info(`iOS SDK Version set to '${this._iosSdkVersion}'`);
+    if (!this.opts.platformVersion && this._iosSdkVersion) {
+      this.log.info(
+        `No platformVersion specified. Using the latest version Xcode supports: '${this._iosSdkVersion}'. ` +
+          `This may cause problems if a simulator does not exist for this platform version.`,
+      );
+      this.opts.platformVersion = normalizePlatformVersion(this._iosSdkVersion);
+    }
+  }
+
+  private createRealDeviceForUdid(udid: string): DeviceDetermination {
+    this.log.debug(`Creating iDevice object with udid '${udid}'`);
+    const device = new RealDevice(udid, this.opts, this.log);
+    return {device, realDevice: true, udid};
+  }
+
+  private async determineDeviceWithAutoUdid(
+    isStrictHostMode: boolean,
+  ): Promise<DeviceDetermination> {
+    if (isStrictHostMode) {
+      throw new Error(
+        `Automatic device selection requires macOS device discovery utilities. ` +
+          `Set an explicit real-device 'appium:udid' when running from '${process.platform}'.`,
+      );
+    }
+
+    try {
+      const udid = await detectUdid.bind(this)();
+      this.opts.udid = udid;
+      return this.createRealDeviceForUdid(udid);
+    } catch (err) {
+      this.log.warn(
+        `Cannot detect any connected real devices. Falling back to Simulator. Original error: ${
+          (err as Error).message
+        }`,
+      );
+      await this.setupSimulatorPlatformVersionCaps();
+
+      const device = await getExistingSim.bind(this)();
+      if (!device) {
+        throw this.log.errorWithException(
+          `Cannot detect udid for ${this.opts.deviceName} Simulator running iOS ${this.opts.platformVersion}`,
+        );
+      }
+      this.opts.udid = device.udid;
+      return {device, realDevice: false, udid: device.udid};
+    }
+  }
+
+  private async determineDeviceWithExplicitUdid(
+    isStrictHostMode: boolean,
+  ): Promise<DeviceDetermination> {
+    const udid = this.opts.udid as string;
+    let isRealDeviceUdid = false;
+    // If webDriverAgentUrl is set with a real device, assume the user prepared the device.
+    const shouldCheckAvailableRealDevices = !this.opts.webDriverAgentUrl;
+    if (shouldCheckAvailableRealDevices) {
+      if (isStrictHostMode) {
+        isRealDeviceUdid = true;
+      } else {
+        const devices = await getConnectedDevices(this.opts);
+        this.log.debug(`Available real devices: ${devices.join(', ')}`);
+        isRealDeviceUdid = devices.includes(udid);
+      }
+    }
+
+    if (!isRealDeviceUdid) {
+      const simulatorDevice = await this.determineSimulatorWithExplicitUdid(
+        udid,
+        shouldCheckAvailableRealDevices,
+        isStrictHostMode,
+      );
+      if (simulatorDevice) {
+        return simulatorDevice;
+      }
+    }
+
+    return this.createRealDeviceForUdid(udid);
+  }
+
+  private async determineSimulatorWithExplicitUdid(
+    udid: string,
+    shouldCheckAvailableRealDevices: boolean,
+    isStrictHostMode: boolean,
+  ): Promise<DeviceDetermination | null> {
+    if (isStrictHostMode) {
+      this.log.debug(
+        `Skipping Simulator lookup for '${udid}' because the selected session ` +
+          `strategy must not use macOS Simulator utilities`,
+      );
+      return null;
+    }
+
+    try {
+      const device = await getSimulator(udid, {
+        devicesSetPath: this.opts.simulatorDevicesSetPath,
+        logger: this.log,
+      });
+      return {device, realDevice: false, udid};
+    } catch {
+      if (shouldCheckAvailableRealDevices) {
+        throw new Error(`Unknown device or simulator UDID: '${udid}'`);
+      }
+      this.log.debug(
+        'Skipping checking of the real devices availability since the session specifies appium:webDriverAgentUrl',
+      );
+      return null;
+    }
+  }
+
+  private async determineSimulatorDevice(isStrictHostMode: boolean): Promise<DeviceDetermination> {
+    this.log.info(
+      `No real device udid has been provided in capabilities. ` +
+        `Will select a matching simulator to run the test.`,
+    );
+    if (isStrictHostMode) {
+      throw new Error(
+        `A real-device 'appium:udid' is required when running from '${process.platform}' without ` +
+          `macOS Simulator utilities.`,
+      );
+    }
+
+    await this.setupSimulatorPlatformVersionCaps();
+    if (this.opts.enforceFreshSimulatorCreation) {
+      this.log.debug(
+        `New simulator is requested. If this is not wanted, set 'enforceFreshSimulatorCreation' capability to false`,
+      );
+    } else {
+      const device = await getExistingSim.bind(this)();
+      if (device) {
+        return {device, realDevice: false, udid: device.udid};
+      }
+    }
+
+    this.log.info('Using desired caps to create a new simulator');
+    const device = await this.createSim();
+    return {device, realDevice: false, udid: device.udid};
   }
 
   private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {

@@ -74,7 +74,10 @@ export async function getDeviceTime(
     throw new errors.UnknownError('Device UDID is required to read time on a real device');
   }
 
-  const lockdown = await LockdownClient.createForDevice(udid, this.log, this.remoteXPCFacade);
+  const lockdown = await LockdownClient.createForDevice(udid, {
+    facade: this.remoteXPCFacade,
+    logger: this.log,
+  });
   let timestamp: number;
   let utcOffset: number;
   try {

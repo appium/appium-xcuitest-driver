@@ -134,7 +134,11 @@ export async function listXCTestBundlesViaRemoteXPC(
   udid: string,
   facade: RemoteXPCFacade,
 ): Promise<string[]> {
-  const installProxy = await InstallationProxyClient.create(udid, facade);
+  const installProxy = await InstallationProxyClient.create(udid, {
+    facade,
+    logger: xctestLog,
+    allowLegacyFallback: false,
+  });
   try {
     const apps = await installProxy.listApplications({
       applicationType: 'User',
@@ -170,7 +174,11 @@ export async function installXCTestBundleViaRemoteXPC(
     );
   }
 
-  const installProxy = await InstallationProxyClient.create(udid, facade);
+  const installProxy = await InstallationProxyClient.create(udid, {
+    facade,
+    logger: xctestLog,
+    allowLegacyFallback: false,
+  });
   try {
     await installProxy.installApplication(xctestApp);
     xctestLog.info(`Installed XCTest bundle: ${xctestApp}`);

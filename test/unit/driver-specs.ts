@@ -15,6 +15,21 @@ import * as wdaHostOps from '../../lib/device/wda-host-ops';
 
 chai.use(chaiAsPromised);
 
+async function withPlatformAsync(
+  platform: NodeJS.Platform,
+  fn: () => Promise<void>,
+): Promise<void> {
+  const original = Object.getOwnPropertyDescriptor(process, 'platform');
+  Object.defineProperty(process, 'platform', {value: platform});
+  try {
+    await fn();
+  } finally {
+    if (original) {
+      Object.defineProperty(process, 'platform', original);
+    }
+  }
+}
+
 const caps = {
   fistMatch: [{}],
   alwaysMatch: {
@@ -67,6 +82,58 @@ describe('XCUITestDriver', function () {
     it('simulator with ipv6', function () {
       driver.opts.address = '::1';
       expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
+    });
+  });
+
+  describe('determineDevice host utility gating', function () {
+    let driver: XCUITestDriver;
+
+    beforeEach(function () {
+      driver = new XCUITestDriver({} as any);
+    });
+
+    it('rejects strict non-macOS sessions without udid before SDK lookup', async function () {
+      await withPlatformAsync('linux', async () => {
+        driver.opts = {
+          webDriverAgentUrl: 'http://127.0.0.1:8100',
+          deviceName: 'iPhone 15',
+        } as any;
+        driver.lifecycleData = {} as any;
+        const sdkStub = sandbox.stub(xcode, 'getMaxIOSSDK').resolves('18.0');
+
+        await expect(driver.determineDevice()).to.be.rejectedWith(/real-device 'appium:udid'/);
+        expect(sdkStub.notCalled).to.be.true;
+      });
+    });
+
+    it('rejects automatic udid selection in strict non-macOS mode', async function () {
+      await withPlatformAsync('linux', async () => {
+        driver.opts = {
+          usePreinstalledWDA: true,
+          udid: 'auto',
+          platformVersion: '18.0',
+        } as any;
+        driver.lifecycleData = {} as any;
+
+        await expect(driver.determineDevice()).to.be.rejectedWith(/Automatic device selection/);
+      });
+    });
+
+    it('treats explicit udid as a real device in strict non-macOS mode', async function () {
+      await withPlatformAsync('linux', async () => {
+        driver.opts = {
+          usePreinstalledWDA: true,
+          udid: 'device-1',
+          platformVersion: '18.0',
+        } as any;
+        driver.lifecycleData = {} as any;
+
+        const result = await driver.determineDevice();
+
+        expect(result.realDevice).to.be.true;
+        expect(result.udid).to.eql('device-1');
+        expect(result.device).to.be.instanceOf(RealDevice);
+      });
     });
   });
 

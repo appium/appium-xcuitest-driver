@@ -278,7 +278,10 @@ export async function mobileListApps(
   returnAttributes?: string[],
 ): Promise<AppInfoMapping> {
   const device = requireRealDevice(this, 'Listing apps');
-  const client = await InstallationProxyClient.create(device.udid, this.remoteXPCFacade);
+  const client = await InstallationProxyClient.create(device.udid, {
+    facade: this.remoteXPCFacade,
+    logger: this.log,
+  });
   try {
     return await client.listApplications({applicationType, returnAttributes});
   } finally {

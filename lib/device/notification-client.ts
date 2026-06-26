@@ -4,6 +4,12 @@ import type {NotificationProxyService as RemoteXPCNotificationProxyService} from
 import {services} from 'appium-ios-device';
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
 
+interface CreateNotificationClientOptions {
+  allowLegacyFallback?: boolean;
+  facade?: RemoteXPCFacade | null;
+  logger: AppiumLogger;
+}
+
 /**
  * Unified Notification Proxy Client
  *
@@ -51,27 +57,32 @@ export class NotificationClient {
    * Create a notification client for device
    *
    * @param udid - Device UDID
-   * @param log - Appium logger instance
-   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
+   * @param opts - Creation options
    * @returns NotificationClient instance
    */
   static async create(
     udid: string,
-    log: AppiumLogger,
-    facade: RemoteXPCFacade | null,
+    opts: CreateNotificationClientOptions,
   ): Promise<NotificationClient> {
+    const {allowLegacyFallback = true, facade = null, logger} = opts;
     const service = facade
       ? await facade.attemptService('notification proxy', (Services) =>
           Services.startNotificationProxyService(udid),
         )
       : null;
     if (service) {
-      return new NotificationClient(service, log, true);
+      return new NotificationClient(service, logger, true);
+    }
+
+    if (!allowLegacyFallback) {
+      throw new Error(
+        `Notification proxy access via RemoteXPC is required for '${udid}', but it is unavailable.`,
+      );
     }
 
     // Fallback to appium-ios-device
     const notificationProxy = await services.startNotificationProxyService(udid);
-    return new NotificationClient(notificationProxy, log, false);
+    return new NotificationClient(notificationProxy, logger, false);
   }
 
   /**

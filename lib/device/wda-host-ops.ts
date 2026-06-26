@@ -22,6 +22,67 @@ const XCODE_ONLY_CAPS = [
   'resultBundlePath',
 ] as const;
 
+interface HostStrategyCaps {
+  udid?: string;
+  platformVersion?: string;
+  webDriverAgentUrl?: string;
+  usePreinstalledWDA?: boolean;
+  [key: string]: any;
+}
+
+/**
+ * Whether the selected session strategy must avoid host-side Xcode/Simulator utilities.
+ */
+export function isStrictHostUtilityMode(
+  opts: HostStrategyCaps,
+  platform: NodeJS.Platform = process.platform,
+): boolean {
+  return platform !== 'darwin' && Boolean(opts.webDriverAgentUrl || opts.usePreinstalledWDA);
+}
+
+/**
+ * Verifies host-only utility requirements that can be checked before device discovery.
+ */
+export function assertWdaHostSessionCapsSupported(
+  opts: HostStrategyCaps,
+  platform: NodeJS.Platform = process.platform,
+): void {
+  if (platform === 'darwin') {
+    return;
+  }
+
+  if (!opts.webDriverAgentUrl && !opts.usePreinstalledWDA) {
+    throw new Error(
+      `The selected XCUITest session strategy requires macOS with Xcode. ` +
+        `Use 'appium:usePreinstalledWDA' with a signed prebuilt WebDriverAgent or provide ` +
+        `'appium:webDriverAgentUrl' to run from '${platform}'.`,
+    );
+  }
+
+  if (!opts.udid || opts.udid.toLowerCase() === 'auto') {
+    throw new Error(
+      `Running XCUITest from '${platform}' without macOS/Xcode requires an explicit real-device ` +
+        `'appium:udid'. Simulator discovery and automatic device selection require macOS.`,
+    );
+  }
+
+  if (opts.usePreinstalledWDA && !opts.webDriverAgentUrl && !opts.platformVersion) {
+    throw new Error(
+      `Running preinstalled WebDriverAgent from '${platform}' requires 'appium:platformVersion' ` +
+        `so RemoteXPC eligibility can be checked without probing host Xcode or Simulator tools.`,
+    );
+  }
+
+  const xcodeOnlyCaps = XCODE_ONLY_CAPS.filter((capName) => Boolean(opts[capName]));
+  if (opts.usePreinstalledWDA && !opts.webDriverAgentUrl && xcodeOnlyCaps.length > 0) {
+    throw new Error(
+      `The following capabilities require macOS/Xcode and cannot be used with the ` +
+        `RemoteXPC preinstalled WebDriverAgent strategy on '${platform}': ` +
+        xcodeOnlyCaps.join(', '),
+    );
+  }
+}
+
 /**
  * Creates WebDriverAgent host operations provided by the XCUITest driver.
  */
@@ -40,6 +101,8 @@ export function assertWdaHostPlatformSupported(driver: XCUITestDriver): void {
     return;
   }
 
+  assertWdaHostSessionCapsSupported(driver.opts);
+
   if (driver.opts.webDriverAgentUrl) {
     return;
   }
@@ -57,15 +120,6 @@ export function assertWdaHostPlatformSupported(driver: XCUITestDriver): void {
       `The default real-device WebDriverAgent startup strategy requires macOS with Xcode. ` +
         `Use 'appium:usePreinstalledWDA' with a signed prebuilt WebDriverAgent or provide ` +
         `'appium:webDriverAgentUrl' to run from '${process.platform}'.`,
-    );
-  }
-
-  const xcodeOnlyCaps = XCODE_ONLY_CAPS.filter((capName) => Boolean(driver.opts[capName]));
-  if (xcodeOnlyCaps.length > 0) {
-    throw new Error(
-      `The following capabilities require macOS/Xcode and cannot be used with the ` +
-        `RemoteXPC preinstalled WebDriverAgent strategy on '${process.platform}': ` +
-        xcodeOnlyCaps.join(', '),
     );
   }
 

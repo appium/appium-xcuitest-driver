@@ -1,5 +1,6 @@
 import {logger} from 'appium/support';
 import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
+import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -56,5 +57,28 @@ describe('DeviceConnectionsFactory', function () {
         Object.keys((DeviceConnectionsFactory as any)._connectionsMapping),
       ),
     ).to.eql(['udid:1234', 'udid4:6545']);
+  });
+
+  it('should use legacy port forwarding if RemoteXPC is ineligible', async function () {
+    const f = devConFactory as any;
+    const portForwarder = await f._createPortForwarder('udid', 1234, 8100, {eligible: false});
+
+    expect(portForwarder).to.have.property('start').that.is.a('function');
+    expect(portForwarder).to.have.property('stop').that.is.a('function');
+  });
+
+  it('should fall back to legacy port forwarding if RemoteXPC is unavailable', async function () {
+    const f = devConFactory as any;
+    const remoteXPCFacade = {
+      eligible: true,
+      createDevicePortForwarder: async () => {
+        throw new RemoteXPCUnavailableError('No tunnel');
+      },
+    };
+
+    const portForwarder = await f._createPortForwarder('udid', 1234, 8100, remoteXPCFacade);
+
+    expect(portForwarder).to.have.property('start').that.is.a('function');
+    expect(portForwarder).to.have.property('stop').that.is.a('function');
   });
 });

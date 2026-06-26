@@ -24,8 +24,15 @@ export interface AfcPullOptions {
  * Options for creating an AFC client for app container access
  */
 export interface CreateForAppOptions {
+  facade?: RemoteXPCFacade | null;
   containerType?: string | null;
   skipDocumentsCheck?: boolean;
+  allowLegacyFallback?: boolean;
+}
+
+interface CreateClientOptions {
+  allowLegacyFallback?: boolean;
+  facade?: RemoteXPCFacade | null;
 }
 
 /** Context for bounded concurrent pull during ios-device walkDir. */
@@ -84,15 +91,20 @@ export class AfcClient {
    * Create an AFC client for device
    *
    * @param udid - Device UDID
-   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
+   * @param opts - Creation options
    * @returns AFC client instance
    */
-  static async createForDevice(udid: string, facade: RemoteXPCFacade | null): Promise<AfcClient> {
+  static async createForDevice(udid: string, opts: CreateClientOptions = {}): Promise<AfcClient> {
+    const {allowLegacyFallback = true, facade = null} = opts;
     const service = facade
       ? await facade.attemptService('AFC', (Services) => Services.startAfcService(udid))
       : null;
     if (service) {
       return new AfcClient(service, true);
+    }
+
+    if (!allowLegacyFallback) {
+      throw new Error(`AFC access via RemoteXPC is required for '${udid}', but it is unavailable.`);
     }
 
     const afcService = await services.startAfcService(udid);
@@ -104,17 +116,20 @@ export class AfcClient {
    *
    * @param udid - Device UDID
    * @param bundleId - App bundle identifier
-   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
    * @param options - Optional configuration for container access
    * @returns AFC client instance
    */
   static async createForApp(
     udid: string,
     bundleId: string,
-    facade: RemoteXPCFacade | null,
     options?: CreateForAppOptions,
   ): Promise<AfcClient> {
-    const {containerType = null, skipDocumentsCheck = false} = options ?? {};
+    const {
+      facade = null,
+      containerType = null,
+      skipDocumentsCheck = false,
+      allowLegacyFallback = true,
+    } = options ?? {};
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
     let houseArrestResult: RemoteXPCAfcService | null = null;
@@ -129,6 +144,12 @@ export class AfcClient {
     }
     if (houseArrestResult) {
       return new AfcClient(houseArrestResult, true);
+    }
+
+    if (!allowLegacyFallback) {
+      throw new Error(
+        `House Arrest AFC access via RemoteXPC is required for '${udid}', but it is unavailable.`,
+      );
     }
 
     const houseArrestService = await services.startHouseArrestService(udid);
