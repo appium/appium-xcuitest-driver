@@ -1,3 +1,9 @@
+## [11.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.14.1...v11.15.0) (2026-06-26)
+
+### Features
+
+* Add `mobile: performIndigoHidEvent` extension method ([#2887](https://github.com/appium/appium-xcuitest-driver/issues/2887)) ([7293917](https://github.com/appium/appium-xcuitest-driver/commit/7293917f6e7b0b87646b31e30c8944f7a6809489))
+
 ## [11.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.14.0...v11.14.1) (2026-06-24)
 
 ### Bug Fixes
