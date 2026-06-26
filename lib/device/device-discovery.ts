@@ -24,6 +24,11 @@ export interface DeviceDiscoveryOptions {
   createSimulator: (opts: XCUITestDriverOpts) => Promise<Simulator>;
 }
 
+interface DeviceDiscoveryStrategy {
+  isApplicable: (sessionOpts: XCUITestDriverOpts) => boolean;
+  determine: () => Promise<DeviceDiscoveryResult>;
+}
+
 export class DeviceDiscovery {
   private createdSimulator = false;
   private iosSdkVersion: string | null = null;
@@ -53,14 +58,27 @@ export class DeviceDiscovery {
     this.platformVersion = this.sessionOpts.platformVersion;
     const isStrictHostMode = isStrictHostUtilityMode(this.sessionOpts);
 
-    if (this.sessionOpts.udid) {
-      if (this.sessionOpts.udid.toLowerCase() === UDID_AUTO) {
-        return await this.determineDeviceWithAutoUdid(isStrictHostMode);
-      }
-      return await this.determineDeviceWithExplicitUdid(isStrictHostMode);
-    }
+    return await this.selectStrategy(isStrictHostMode).determine();
+  }
 
-    return await this.determineSimulatorDevice(isStrictHostMode);
+  private selectStrategy(isStrictHostMode: boolean): DeviceDiscoveryStrategy {
+    const strategies: DeviceDiscoveryStrategy[] = [
+      {
+        isApplicable: ({udid}) => udid?.toLowerCase() === UDID_AUTO,
+        determine: async () => await this.determineDeviceWithAutoUdid(isStrictHostMode),
+      },
+      {
+        isApplicable: ({udid}) => Boolean(udid),
+        determine: async () => await this.determineDeviceWithExplicitUdid(isStrictHostMode),
+      },
+      {
+        isApplicable: () => true,
+        determine: async () => await this.determineSimulatorDevice(isStrictHostMode),
+      },
+    ];
+    return strategies.find((strategy) =>
+      strategy.isApplicable(this.sessionOpts),
+    ) as DeviceDiscoveryStrategy;
   }
 
   private async setupSimulatorPlatformVersion(): Promise<void> {
