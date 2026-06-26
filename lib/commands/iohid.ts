@@ -64,7 +64,9 @@ export async function mobilePerformIndigoHidEvent(
   requireRealDevice(this, 'perform IO HID event with HID Indigo RemoteXPC service');
 
   if (name === undefined && (page === undefined || usage === undefined)) {
-    throw new errors.InvalidArgumentError(`Either 'name' or both 'page' and 'usage' must be provided`);
+    throw new errors.InvalidArgumentError(
+      `Either 'name' or both 'page' and 'usage' must be provided`,
+    );
   }
 
   const getDuration = () => {
@@ -90,7 +92,7 @@ export async function mobilePerformIndigoHidEvent(
   };
 
   const hidIndigoClient = new HidIndigoClient(this.device.udid, this.remoteXPCFacade);
-  if (name) {
+  if (name !== undefined) {
     await hidIndigoClient.pressButtonByName(name, {
       holdSeconds: getDuration(),
       pressCount: getPressCount(),
