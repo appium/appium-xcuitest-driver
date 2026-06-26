@@ -48,7 +48,7 @@ export class RemoteXPCFacade {
   static async tryGetServicesStatic(
     platformVersion: string | null | undefined,
   ): Promise<RemoteXPCServices | null> {
-    if (!isIos18OrNewerPlatform(platformVersion)) {
+    if (platformVersion && !isIos18OrNewerPlatform(platformVersion)) {
       return null;
     }
     const mod = await tryLoadRemoteXPCModule();

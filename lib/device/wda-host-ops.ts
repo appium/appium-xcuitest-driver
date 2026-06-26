@@ -123,11 +123,11 @@ export function assertWdaHostPlatformSupported(driver: XCUITestDriver): void {
     );
   }
 
-  if (!isIos18OrNewerPlatform(driver.opts.platformVersion)) {
+  if (driver.opts.platformVersion && !isIos18OrNewerPlatform(driver.opts.platformVersion)) {
     throw new Error(
       `Running preinstalled WebDriverAgent from '${process.platform}' requires a real device ` +
         `with RemoteXPC tunnel support. The current platformVersion is ` +
-        `'${driver.opts.platformVersion ?? 'unknown'}'; use iOS/tvOS 18.0 or newer, or provide ` +
+        `'${driver.opts.platformVersion}'; use iOS/tvOS 18.0 or newer, or provide ` +
         `'appium:webDriverAgentUrl' for an externally managed WDA.`,
     );
   }
