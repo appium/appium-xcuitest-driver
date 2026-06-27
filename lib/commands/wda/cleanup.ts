@@ -6,6 +6,7 @@ import {exec} from 'teen_process';
 import type {XCUITestDriver} from '../../driver';
 import {log} from '../../logger';
 import {isXcodebuildNeeded, SHARED_RESOURCES_GUARD, XCUITEST_DRIVER_SYNC_NAME} from './constants';
+import {getDerivedDataPath} from './utils';
 
 const XCTEST_LOG_FILES_PATTERNS = [
   /^Session-WebDriverAgentRunner.*\.log$/i,
@@ -119,12 +120,12 @@ export async function cleanup(driver: XCUITestDriver): Promise<void> {
   }
 
   let synchronizationKey = XCUITEST_DRIVER_SYNC_NAME;
-  const derivedDataPath = await driver.wda.retrieveDerivedDataPath();
+  const derivedDataPath = await getDerivedDataPath(driver.wda);
   if (derivedDataPath) {
     synchronizationKey = path.normalize(derivedDataPath);
   }
   await SHARED_RESOURCES_GUARD.acquire(synchronizationKey, async () => {
-    await clearSystemFiles(() => driver.wda.retrieveDerivedDataPath());
+    await clearSystemFiles(async () => derivedDataPath);
   });
 }
 
