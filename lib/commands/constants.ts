@@ -1,5 +1,4 @@
-/** Capability value that selects an available simulator automatically. */
-export const UDID_AUTO = 'auto';
+export {UDID_AUTO} from '../constants';
 
 /** Native (non-webview) context identifier. */
 export const NATIVE_WIN = 'NATIVE_APP';
