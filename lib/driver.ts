@@ -27,7 +27,7 @@ import {
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
 } from './commands/helpers';
-import {isEmpty, isPlainObject, memoize, normalizePlatformVersion, upperFirst} from './utils';
+import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils';
 import * as activeAppInfoCommands from './commands/active-app-info';
 import * as alertCommands from './commands/alert';
 import * as appManagementCommands from './commands/app-management';
@@ -67,6 +67,7 @@ import * as proxyHelperCommands from './commands/proxy-helper';
 import * as recordAudioCommands from './commands/record-audio';
 import * as recordScreenCommands from './commands/recordscreen';
 import * as screenshotCommands from './commands/screenshots';
+import * as simulatorCommands from './commands/simulator';
 import * as sourceCommands from './commands/source';
 import * as simctlCommands from './commands/simctl';
 import * as timeoutCommands from './commands/timeouts';
@@ -96,13 +97,10 @@ import {
   type RealDevice,
 } from './device/real-device-management';
 import {
-  createSim,
-  getExistingSim,
+  createSim as createSimulator,
+  getExistingSim as getExistingSimulator,
   installToSimulator,
   runSimulatorReset,
-  setLocalizationPrefs,
-  setSafariPrefs,
-  shutdownOtherSimulators,
   shutdownSimulator,
 } from './device/simulator-management';
 import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants';
@@ -119,8 +117,6 @@ import type {XcodeVersion} from 'appium-xcode';
 import type {Simulator} from 'appium-ios-simulator';
 import type {DriverLogs} from './commands/log';
 import {sessionClaimHandler} from './session-claim-handler';
-
-const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
 const defaultServerCaps = {
   webStorageEnabled: false,
@@ -446,6 +442,14 @@ export class XCUITestDriver
   executeAsync = executeCommands.executeAsync;
   // Note: executeMobile is handled internally via execute method
   mobileSimctl = simctlCommands.mobileSimctl;
+
+  /*-----------+
+   | SIMULATOR |
+   +-----------+*/
+
+  initSimulator = simulatorCommands.initSimulator;
+  startSim = simulatorCommands.startSim;
+  createSim = simulatorCommands.createSim;
 
   /*--------------+
    | FILEMOVEMENT |
@@ -1484,41 +1488,6 @@ export class XCUITestDriver
     await this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
-  async initSimulator(): Promise<void> {
-    const device = this.device as Simulator;
-
-    if (this.opts.shutdownOtherSimulators) {
-      this.assertFeatureEnabled(SHUTDOWN_OTHER_FEAT_NAME);
-      await shutdownOtherSimulators.bind(this)();
-    }
-
-    await this.startSim();
-
-    if (this.opts.customSSLCert) {
-      // Simulator must be booted in order to call this helper
-      await (device as Simulator).addCertificate(this.opts.customSSLCert);
-      this.logEvent('customCertInstalled');
-    }
-
-    if (await setSafariPrefs.bind(this)()) {
-      this.log.debug('Safari preferences have been updated');
-    }
-
-    if (await setLocalizationPrefs.bind(this)()) {
-      this.log.debug('Localization preferences have been updated');
-    }
-
-    const promises: Promise<any>[] = ['reduceMotion', 'reduceTransparency', 'autoFillPasswords']
-      .filter((optName) => typeof this.opts[optName] === 'boolean')
-      .map((optName) => {
-        this.log.info(`Setting ${optName} to ${this.opts[optName]}`);
-        return device[`set${upperFirst(optName)}`](this.opts[optName]);
-      });
-    await Promise.all(promises);
-
-    this.logEvent('simStarted');
-  }
-
   async configureApp(): Promise<void> {
     function appIsPackageOrBundle(app) {
       return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
@@ -1563,9 +1532,9 @@ export class XCUITestDriver
       driverOpts: this.opts,
       log: this.log,
       detectUdid: async () => await detectUdid.bind(this)(),
-      getExistingSimulator: async (opts) => await getExistingSim.call(this, opts),
+      getExistingSimulator: async (opts) => await getExistingSimulator.call(this, opts),
       createSimulator: async (opts) => {
-        const sim = await createSim.call(this, opts);
+        const sim = await createSimulator.call(this, opts);
         this.log.info(`Created simulator with udid '${sim.udid}'.`);
         return sim;
       },
@@ -1575,44 +1544,6 @@ export class XCUITestDriver
     this._iosSdkVersion = result.iosSdkVersion;
     this.opts.platformVersion = result.platformVersion;
     return result;
-  }
-
-  async startSim(): Promise<void> {
-    const devicePreferences: any = {};
-    const runOpts: any = {
-      scaleFactor: this.opts.scaleFactor,
-      connectHardwareKeyboard: !!this.opts.connectHardwareKeyboard,
-      pasteboardAutomaticSync: this.opts.simulatorPasteboardAutomaticSync ?? 'off',
-      isHeadless: !!this.opts.isHeadless,
-      tracePointer: this.opts.simulatorTracePointer,
-      devicePreferences,
-    };
-
-    // add the window center, if it is specified
-    if (this.opts.simulatorWindowCenter) {
-      devicePreferences.SimulatorWindowCenter = this.opts.simulatorWindowCenter;
-    }
-
-    if (Number.isInteger(this.opts.simulatorStartupTimeout)) {
-      runOpts.startupTimeout = this.opts.simulatorStartupTimeout;
-    }
-
-    // This is to workaround XCTest bug about changing Simulator
-    // orientation is not synchronized to the actual window orientation
-    const orientation =
-      typeof this.opts.orientation === 'string' && (this.opts.orientation as string).toUpperCase();
-    switch (orientation) {
-      case 'LANDSCAPE':
-        devicePreferences.SimulatorWindowOrientation = 'LandscapeLeft';
-        devicePreferences.SimulatorWindowRotationAngle = 90;
-        break;
-      case 'PORTRAIT':
-        devicePreferences.SimulatorWindowOrientation = 'Portrait';
-        devicePreferences.SimulatorWindowRotationAngle = 0;
-        break;
-    }
-
-    await (this.device as Simulator).run(runOpts);
   }
 
   async checkAutInstallationState(
