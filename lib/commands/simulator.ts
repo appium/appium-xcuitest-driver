@@ -91,6 +91,8 @@ export async function startSim(this: XCUITestDriver): Promise<void> {
 
 /**
  * Creates a new Simulator matching the current session capabilities.
+ *
+ * @deprecated This command is deprecated and will be removed in a future version.
  */
 export async function createSim(this: XCUITestDriver): Promise<Simulator> {
   this.lifecycleData.createSim = true;
