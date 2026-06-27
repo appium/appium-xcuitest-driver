@@ -1,3 +1,13 @@
+## [11.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.0...v11.16.1) (2026-06-27)
+
+### Miscellaneous Chores
+
+* Replace the deprecated getDerivedDataPath usages on wda instance ([#2890](https://github.com/appium/appium-xcuitest-driver/issues/2890)) ([cadd653](https://github.com/appium/appium-xcuitest-driver/commit/cadd653138ed64b464a6f2886aa810c9bdd08aae))
+
+### Code Refactoring
+
+* Reorganize simulator commands into its own module ([#2889](https://github.com/appium/appium-xcuitest-driver/issues/2889)) ([9f894a1](https://github.com/appium/appium-xcuitest-driver/commit/9f894a1d75b9f1ae58d866d9604b0d378569023e))
+
 ## [11.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.15.0...v11.16.0) (2026-06-27)
 
 ### Features
