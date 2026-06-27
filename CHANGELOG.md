@@ -1,3 +1,9 @@
+## [11.16.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.15.0...v11.16.0) (2026-06-27)
+
+### Features
+
+* Tighten driver startup logic based on the host platform ([#2888](https://github.com/appium/appium-xcuitest-driver/issues/2888)) ([47060e1](https://github.com/appium/appium-xcuitest-driver/commit/47060e178d1de55f2ee4a63f5c4786daba7621a8))
+
 ## [11.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.14.1...v11.15.0) (2026-06-26)
 
 ### Features
