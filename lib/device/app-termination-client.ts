@@ -59,7 +59,7 @@ export class AppTerminationClient {
     let instrumentService: any;
     let installProxyClient: InstallationProxyClient | undefined;
     try {
-      installProxyClient = await InstallationProxyClient.create(this.udid, null);
+      installProxyClient = await InstallationProxyClient.create(this.udid);
       const apps = await installProxyClient.listApplications({
         returnAttributes: ['CFBundleIdentifier', 'CFBundleExecutable'],
       });
@@ -69,6 +69,13 @@ export class AppTerminationClient {
       const executableName = apps[bundleId].CFBundleExecutable;
       this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
       if (isIos17OrNewerPlatform(this.platformVersion)) {
+        if (process.platform !== 'darwin') {
+          return {
+            terminated: false,
+            reason: 'error',
+            detail: `devicectl is only available on macOS; cannot terminate '${bundleId}' via devicectl from '${process.platform}'`,
+          };
+        }
         this.log.debug(`Calling devicectl to kill the process`);
         const pids = (await this.devicectl.listProcesses())
           .filter(({executable}) => executable.endsWith(`/${executableName}`))
@@ -86,16 +93,16 @@ export class AppTerminationClient {
         INSTRUMENT_CHANNEL.DEVICE_INFO,
         'runningProcesses',
       );
-      const process = processes.selector.find((proc: any) => proc.name === executableName);
-      if (!process) {
+      const matchingProcess = processes.selector.find((proc: any) => proc.name === executableName);
+      if (!matchingProcess) {
         return {terminated: false, reason: 'not_running'};
       }
       await instrumentService.callChannel(
         INSTRUMENT_CHANNEL.PROCESS_CONTROL,
         'killPid:',
-        `${process.pid}`,
+        `${matchingProcess.pid}`,
       );
-      return {terminated: true, pid: process.pid};
+      return {terminated: true, pid: matchingProcess.pid};
     } catch (err) {
       const detail = (err as any).stderr ?? (err as Error).message;
       return {terminated: false, reason: 'error', detail: String(detail)};

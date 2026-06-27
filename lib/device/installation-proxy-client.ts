@@ -35,6 +35,12 @@ interface LookupApplicationOptions {
   applicationType?: 'User' | 'System';
 }
 
+interface CreateInstallationProxyOptions {
+  allowLegacyFallback?: boolean;
+  facade?: RemoteXPCFacade | null;
+  logger?: AppiumLogger;
+}
+
 /**
  * Unified Installation Proxy Client
  *
@@ -76,14 +82,14 @@ export class InstallationProxyClient {
    * Create an InstallationProxy client for the device
    *
    * @param udid - Device UDID
-   * @param facade - Per-session RemoteXPC facade; when null, uses appium-ios-device only
+   * @param opts - Creation options
    * @returns InstallationProxy client instance
    */
   static async create(
     udid: string,
-    facade: RemoteXPCFacade | null,
-    logger?: AppiumLogger,
+    opts: CreateInstallationProxyOptions = {},
   ): Promise<InstallationProxyClient> {
+    const {allowLegacyFallback = true, facade = null, logger} = opts;
     const service = facade
       ? await facade.attemptService('InstallationProxy', (Services) =>
           Services.startInstallationProxyService(udid),
@@ -91,6 +97,12 @@ export class InstallationProxyClient {
       : null;
     if (service) {
       return new InstallationProxyClient(service, true, logger);
+    }
+
+    if (!allowLegacyFallback) {
+      throw new Error(
+        `InstallationProxy access via RemoteXPC is required for '${udid}', but it is unavailable.`,
+      );
     }
 
     const legacyService = await services.startInstallationProxyService(udid);

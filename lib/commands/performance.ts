@@ -268,6 +268,13 @@ export async function mobileStartPerfRecord(
   profileName = DEFAULT_PROFILE_NAME,
   pid?: number | 'current',
 ): Promise<void> {
+  if (process.platform !== 'darwin') {
+    throw this.log.errorWithException(
+      `Performance recording requires macOS developer tools (${XCRUN} ${XCTRACE} or ${INSTRUMENTS}) ` +
+        `and cannot run from '${process.platform}'.`,
+    );
+  }
+
   if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
     throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
   }

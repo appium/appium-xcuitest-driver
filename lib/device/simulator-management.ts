@@ -5,7 +5,7 @@ import {util, timing} from 'appium/support';
 import {buildSafariPreferences} from '../commands/helpers';
 import {isEmpty, normalizePlatformName} from '../utils';
 import {UDID_AUTO} from '../commands/constants';
-import type {XCUITestDriver} from '../driver';
+import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
 import type {DeviceInfo} from 'node-simctl';
 
 const APPIUM_SIM_PREFIX = 'appiumTest';
@@ -35,9 +35,12 @@ export interface SimulatorInstallOptions {
  *
  * @returns Simulator object associated with the udid passed in.
  */
-export async function createSim(this: XCUITestDriver): Promise<Simulator> {
-  const {simulatorDevicesSetPath: devicesSetPath, deviceName, platformVersion} = this.opts;
-  const platform = normalizePlatformName(this.opts.platformName);
+export async function createSim(
+  this: XCUITestDriver,
+  opts: XCUITestDriverOpts = this.opts,
+): Promise<Simulator> {
+  const {simulatorDevicesSetPath: devicesSetPath, deviceName, platformVersion} = opts;
+  const platform = normalizePlatformName(opts.platformName);
   const simctl = new Simctl({devicesSetPath});
   if (!deviceName) {
     let deviceNames: string[] = [];
@@ -78,14 +81,17 @@ export async function createSim(this: XCUITestDriver): Promise<Simulator> {
  *
  * @returns The matched Simulator instance or `null` if no matching device is found.
  */
-export async function getExistingSim(this: XCUITestDriver): Promise<Simulator | null> {
+export async function getExistingSim(
+  this: XCUITestDriver,
+  opts: XCUITestDriverOpts = this.opts,
+): Promise<Simulator | null> {
   const {
     platformVersion,
     deviceName,
     udid,
     simulatorDevicesSetPath: devicesSetPath,
     platformName,
-  } = this.opts;
+  } = opts;
 
   const platform = normalizePlatformName(platformName);
   const selectSim = async (dev: {udid: string; platform: string}): Promise<Simulator> =>

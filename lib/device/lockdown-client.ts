@@ -15,6 +15,12 @@ export interface DeviceTimeLockdownFields {
   utcOffset: number;
 }
 
+interface CreateLockdownClientOptions {
+  allowLegacyFallback?: boolean;
+  facade?: RemoteXPCFacade | null;
+  logger?: AppiumLogger;
+}
+
 /**
  * Unified lockdown access for real devices.
  *
@@ -32,28 +38,37 @@ export class LockdownClient {
 
   /**
    * @param udid - Device UDID
-   * @param log - Logger
+   * @param opts - Creation options
    */
   static async createForDevice(
     udid: string,
-    log: AppiumLogger = defaultLogger,
-    remoteXPCFacade: RemoteXPCFacade | null = null,
+    opts: CreateLockdownClientOptions = {},
   ): Promise<LockdownClient> {
-    if (!remoteXPCFacade?.eligible) {
-      return new LockdownClient(udid, log, 'ios-device');
+    const {allowLegacyFallback = true, facade = null, logger = defaultLogger} = opts;
+    if (!facade?.eligible) {
+      if (!allowLegacyFallback) {
+        throw new Error(
+          `RemoteXPC lockdown is required for '${udid}', but this session is not eligible ` +
+            `for RemoteXPC.`,
+        );
+      }
+      return new LockdownClient(udid, logger, 'ios-device');
     }
 
     try {
-      const strategy = await remoteXPCFacade.resolveLockdownStrategy();
-      return new LockdownClient(udid, log, strategy, remoteXPCFacade);
+      const strategy = await facade.resolveLockdownStrategy();
+      return new LockdownClient(udid, logger, strategy, facade);
     } catch (err) {
       if (!isRemoteXPCUnavailableError(err)) {
         throw err;
       }
-      log.warn(
+      if (!allowLegacyFallback) {
+        throw err;
+      }
+      logger.warn(
         'RemoteXPC lockdown is not available. Using appium-ios-device lockdown (legacy fallback).',
       );
-      return new LockdownClient(udid, log, 'ios-device');
+      return new LockdownClient(udid, logger, 'ios-device');
     }
   }
 

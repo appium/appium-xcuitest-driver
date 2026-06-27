@@ -12,6 +12,21 @@ import type {RemoteXPCFacade} from '../../lib/device/remote-xpc';
 
 chai.use(chaiAsPromised);
 
+async function withPlatformAsync(
+  platform: NodeJS.Platform,
+  fn: () => Promise<void>,
+): Promise<void> {
+  const original = Object.getOwnPropertyDescriptor(process, 'platform');
+  Object.defineProperty(process, 'platform', {value: platform});
+  try {
+    await fn();
+  } finally {
+    if (original) {
+      Object.defineProperty(process, 'platform', original);
+    }
+  }
+}
+
 describe('installToRealDevice', function () {
   const udid = 'test-udid';
   const app = '/path/to.app';
@@ -234,5 +249,44 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     await expect(realDevice.install(ipaPath, bundleId)).to.be.rejectedWith(/afc-sentinel/);
     expect(createStub.called).to.be.false;
     expect(afcStub.calledOnce).to.be.true;
+  });
+});
+
+describe('RealDevice host utility fallback policy', function () {
+  const udid = 'test-udid';
+
+  let sandbox;
+  let originalPreferDevicectl: string | undefined;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+    originalPreferDevicectl = process.env.APPIUM_XCUITEST_PREFER_DEVICECTL;
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+    if (originalPreferDevicectl === undefined) {
+      delete process.env.APPIUM_XCUITEST_PREFER_DEVICECTL;
+    } else {
+      process.env.APPIUM_XCUITEST_PREFER_DEVICECTL = originalPreferDevicectl;
+    }
+  });
+
+  it('does not use devicectl app lookup on non-macOS hosts', async function () {
+    await withPlatformAsync('linux', async () => {
+      process.env.APPIUM_XCUITEST_PREFER_DEVICECTL = 'true';
+      const realDevice = new RealDevice(udid, {
+        usePreinstalledWDA: true,
+        platformVersion: '18.0',
+      } as XCUITestDriverOpts);
+      const listAppsStub = sandbox.stub(realDevice.devicectl, 'listApps').resolves([]);
+      const fetchAppInfoStub = sandbox.stub(realDevice, 'fetchAppInfo').resolves({
+        CFBundleIdentifier: 'test.bundle.id',
+      });
+
+      expect(await realDevice.isAppInstalled('test.bundle.id')).to.be.true;
+      expect(listAppsStub.notCalled).to.be.true;
+      expect(fetchAppInfoStub.calledOnce).to.be.true;
+    });
   });
 });

@@ -1,4 +1,3 @@
-import {getSimulator} from 'appium-ios-simulator';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import {BaseDriver, DeviceSettings} from 'appium/driver';
 import {mjpeg, util} from 'appium/support';
@@ -16,12 +15,11 @@ import {LRUCache} from 'lru-cache';
 import EventEmitter from 'node:events';
 import {setTimeout as delay} from 'node:timers/promises';
 import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install';
-import {SUPPORTED_EXTENSIONS, UDID_AUTO} from './commands/constants';
+import {SUPPORTED_EXTENSIONS} from './commands/constants';
 import {
   DEFAULT_TIMEOUT_KEY,
   SAFARI_BUNDLE_ID,
   checkAppPresent,
-  getAndCheckIosSdkVersion,
   getAndCheckXcodeVersion,
   getDriverInfo,
   normalizeCommandTimeouts,
@@ -81,8 +79,13 @@ import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
 import {DeviceConnectionsFactory} from './device/device-connections-factory';
+import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery';
 import {RemoteXPCFacade} from './device/remote-xpc';
-import {assertWdaHostPlatformSupported, createWdaHostOps} from './device/wda-host-ops';
+import {
+  assertWdaHostPlatformSupported,
+  assertWdaHostSessionCapsSupported,
+  createWdaHostOps,
+} from './device/wda-host-ops';
 import {executeMethodMap} from './execute-method-map';
 import {newMethodMap} from './method-map';
 import {
@@ -90,8 +93,7 @@ import {
   runRealDeviceReset,
   applySafariStartupArgs,
   detectUdid,
-  RealDevice,
-  getConnectedDevices,
+  type RealDevice,
 } from './device/real-device-management';
 import {
   createSim,
@@ -230,6 +232,7 @@ export interface AutInstallationState {
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
 export type W3CXCUITestDriverCaps = W3CDriverCaps<XCUITestDriverConstraints>;
+
 export class XCUITestDriver
   extends BaseDriver<XCUITestDriverConstraints, StringRecord>
   implements ExternalDriver<XCUITestDriverConstraints, FullContext | string, StringRecord>
@@ -1280,6 +1283,7 @@ export class XCUITestDriver
 
     await printUser();
     this._iosSdkVersion = null; // For WDA and xcodebuild
+    assertWdaHostSessionCapsSupported(this.opts);
     const {device, udid, realDevice} = await this.determineDevice();
     this.log.info(
       `Determining device to run tests on: udid: '${udid}', real device: ${realDevice}`,
@@ -1303,14 +1307,9 @@ export class XCUITestDriver
       }
     }
 
-    // at this point if there is no platformVersion, get it from the device
     if (!this.opts.platformVersion) {
-      this.opts.platformVersion = await this.device.getPlatformVersion();
-      this.log.info(
-        `No platformVersion specified. Using device version: '${this.opts.platformVersion}'`,
-      );
+      throw new Error('Could not determine platformVersion for the selected device');
     }
-
     const normalizedVersion = normalizePlatformVersion(this.opts.platformVersion);
     if (this.opts.platformVersion !== normalizedVersion) {
       this.log.info(
@@ -1559,102 +1558,23 @@ export class XCUITestDriver
     });
   }
 
-  async determineDevice(): Promise<{
-    device: Simulator | RealDevice;
-    realDevice: boolean;
-    udid: string;
-  }> {
-    // in the one case where we create a sim, we will set this state
-    this.lifecycleData.createSim = false;
+  async determineDevice(): Promise<DeviceDiscoveryResult> {
+    const result = await new DeviceDiscovery({
+      driverOpts: this.opts,
+      log: this.log,
+      detectUdid: async () => await detectUdid.bind(this)(),
+      getExistingSimulator: async (opts) => await getExistingSim.call(this, opts),
+      createSimulator: async (opts) => {
+        const sim = await createSim.call(this, opts);
+        this.log.info(`Created simulator with udid '${sim.udid}'.`);
+        return sim;
+      },
+    }).determine();
 
-    const setupVersionCaps = async () => {
-      this._iosSdkVersion = await getAndCheckIosSdkVersion();
-      this.log.info(`iOS SDK Version set to '${this._iosSdkVersion}'`);
-      if (!this.opts.platformVersion && this._iosSdkVersion) {
-        this.log.info(
-          `No platformVersion specified. Using the latest version Xcode supports: '${this._iosSdkVersion}'. ` +
-            `This may cause problems if a simulator does not exist for this platform version.`,
-        );
-        this.opts.platformVersion = normalizePlatformVersion(this._iosSdkVersion);
-      }
-    };
-
-    if (this.opts.udid) {
-      if (this.opts.udid.toLowerCase() === UDID_AUTO) {
-        try {
-          this.opts.udid = await detectUdid.bind(this)();
-        } catch (err) {
-          // Trying to find matching UDID for Simulator
-          this.log.warn(
-            `Cannot detect any connected real devices. Falling back to Simulator. Original error: ${err.message}`,
-          );
-          await setupVersionCaps();
-
-          const device = await getExistingSim.bind(this)();
-          if (!device) {
-            // No matching Simulator is found. Throw an error
-            throw this.log.errorWithException(
-              `Cannot detect udid for ${this.opts.deviceName} Simulator running iOS ${this.opts.platformVersion}`,
-            );
-          }
-          this.opts.udid = device.udid;
-          return {device, realDevice: false, udid: device.udid};
-        }
-      } else {
-        // If the session specified this.opts.webDriverAgentUrl with a real device,
-        // we can assume the user prepared the device properly already.
-        let isRealDeviceUdid = false;
-        const shouldCheckAvailableRealDevices = !this.opts.webDriverAgentUrl;
-        if (shouldCheckAvailableRealDevices) {
-          const devices = await getConnectedDevices(this.opts);
-          this.log.debug(`Available real devices: ${devices.join(', ')}`);
-          isRealDeviceUdid = devices.includes(this.opts.udid);
-        }
-        if (!isRealDeviceUdid) {
-          try {
-            const device = await getSimulator(this.opts.udid, {
-              devicesSetPath: this.opts.simulatorDevicesSetPath,
-              logger: this.log,
-            });
-            return {device, realDevice: false, udid: this.opts.udid};
-          } catch {
-            if (shouldCheckAvailableRealDevices) {
-              throw new Error(`Unknown device or simulator UDID: '${this.opts.udid}'`);
-            }
-            this.log.debug(
-              'Skipping checking of the real devices availability since the session specifies appium:webDriverAgentUrl',
-            );
-          }
-        }
-      }
-
-      this.log.debug(`Creating iDevice object with udid '${this.opts.udid}'`);
-      const device = new RealDevice(this.opts.udid as string, this.opts, this.log);
-      return {device, realDevice: true, udid: this.opts.udid as string};
-    }
-
-    this.log.info(
-      `No real device udid has been provided in capabilities. ` +
-        `Will select a matching simulator to run the test.`,
-    );
-    await setupVersionCaps();
-    if (this.opts.enforceFreshSimulatorCreation) {
-      this.log.debug(
-        `New simulator is requested. If this is not wanted, set 'enforceFreshSimulatorCreation' capability to false`,
-      );
-    } else {
-      // figure out the correct simulator to use, given the desired capabilities
-      const device = await getExistingSim.bind(this)();
-      // check for an existing simulator
-      if (device) {
-        return {device, realDevice: false, udid: device.udid};
-      }
-    }
-
-    // no device of this type exists, or they request new sim, so create one
-    this.log.info('Using desired caps to create a new simulator');
-    const device = await this.createSim();
-    return {device, realDevice: false, udid: device.udid};
+    this.lifecycleData.createSim = result.createdSimulator;
+    this._iosSdkVersion = result.iosSdkVersion;
+    this.opts.platformVersion = result.platformVersion;
+    return result;
   }
 
   async startSim(): Promise<void> {
@@ -1693,14 +1613,6 @@ export class XCUITestDriver
     }
 
     await (this.device as Simulator).run(runOpts);
-  }
-
-  async createSim(): Promise<Simulator> {
-    this.lifecycleData.createSim = true;
-    // create sim for caps
-    const sim = await createSim.bind(this)();
-    this.log.info(`Created simulator with udid '${sim.udid}'.`);
-    return sim;
   }
 
   async checkAutInstallationState(

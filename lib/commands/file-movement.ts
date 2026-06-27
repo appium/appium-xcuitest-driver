@@ -271,13 +271,14 @@ async function createAfcClient(
 
   if (bundleId) {
     const skipDocumentsCheck = driver.settings.getSettings().skipDocumentsContainerCheck ?? false;
-    return await AfcClient.createForApp(udid, bundleId, facade, {
+    return await AfcClient.createForApp(udid, bundleId, {
+      facade,
       containerType: containerType ?? null,
       skipDocumentsCheck,
     });
   }
 
-  return await AfcClient.createForDevice(udid, facade);
+  return await AfcClient.createForDevice(udid, {facade});
 }
 
 /**
