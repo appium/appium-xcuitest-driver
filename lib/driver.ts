@@ -74,6 +74,7 @@ import * as voiceOverCommands from './commands/voiceover';
 import * as webCommands from './commands/web';
 import {start, startWdaSession} from './commands/wda/startup';
 import {stop} from './commands/wda/stop';
+import {getDerivedDataPath} from './commands/wda/utils';
 import * as xctestCommands from './commands/xctest';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
 import * as increaseContrastCommands from './commands/increase-contrast';
@@ -1372,7 +1373,7 @@ export class XCUITestDriver
     // whenever it is needed
     void (async () => {
       try {
-        await this.wda.retrieveDerivedDataPath();
+        await getDerivedDataPath(this.wda);
       } catch (e) {
         this.log.debug(e);
       }

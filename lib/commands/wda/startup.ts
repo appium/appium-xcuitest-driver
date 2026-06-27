@@ -21,6 +21,7 @@ import {
   WDA_STARTUP_RETRY_INTERVAL,
   XCUITEST_DRIVER_SYNC_NAME,
 } from './constants';
+import {getDerivedDataPath} from './utils';
 
 interface StartupRetryOptions {
   startupRetries: number;
@@ -125,7 +126,7 @@ async function setupConnection(driver: XCUITestDriver): Promise<void> {
 
 async function getSynchronizationKey(driver: XCUITestDriver): Promise<string> {
   if (driver.opts.useXctestrunFile || !(await driver.wda.isSourceFresh())) {
-    const derivedDataPath = await driver.wda.retrieveDerivedDataPath();
+    const derivedDataPath = await getDerivedDataPath(driver.wda);
     if (derivedDataPath) {
       return path.normalize(derivedDataPath);
     }
@@ -356,7 +357,7 @@ async function establishProxySession(
 
 async function finalizeSuccessfulStartup(driver: XCUITestDriver): Promise<void> {
   if (driver.opts.clearSystemFiles && isXcodebuildNeeded(driver.opts)) {
-    await markSystemFilesForCleanup(() => driver.wda.retrieveDerivedDataPath());
+    await markSystemFilesForCleanup(() => getDerivedDataPath(driver.wda));
   }
 
   if (driver.cachedWdaStatus?.build) {
