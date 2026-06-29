@@ -1,3 +1,9 @@
+## [11.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.1...v11.16.2) (2026-06-29)
+
+### Miscellaneous Chores
+
+* fix format ([#2893](https://github.com/appium/appium-xcuitest-driver/issues/2893)) ([3eabb5f](https://github.com/appium/appium-xcuitest-driver/commit/3eabb5f5592cdfb077d100b90200c487bf4bbc05))
+
 ## [11.16.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.0...v11.16.1) (2026-06-27)
 
 ### Miscellaneous Chores
