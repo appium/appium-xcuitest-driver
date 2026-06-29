@@ -1,3 +1,9 @@
+## [11.16.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.2...v11.16.3) (2026-06-29)
+
+### Miscellaneous Chores
+
+* **deps-dev:** remove unused mocha-junit-reporter ([#2892](https://github.com/appium/appium-xcuitest-driver/issues/2892)) ([55fb952](https://github.com/appium/appium-xcuitest-driver/commit/55fb952a8999ecaa65ca28c6eec089e11e41f578))
+
 ## [11.16.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.1...v11.16.2) (2026-06-29)
 
 ### Miscellaneous Chores
