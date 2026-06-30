@@ -47,7 +47,7 @@ export async function getClipboard(
   if (mode === 'xpc') {
     requireRealDevice(this, 'Getting clipboard content');
     const pasteboardClient = new PasteboardClient(this.device.udid, this.remoteXPCFacade);
-    return await pasteboardClient.getPasteboard(contentType) ?? '';
+    return (await pasteboardClient.getPasteboard(contentType)) ?? '';
   }
   return await this.proxyCommand<any, string>('/wda/getPasteboard', 'POST', {
     contentType,
