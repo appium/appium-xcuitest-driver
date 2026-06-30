@@ -18,7 +18,7 @@ export async function setClipboard(
   mode?: string,
 ): Promise<void> {
   if (mode === 'xpc') {
-    requireRealDevice(this, 'Setting pasteboard content');
+    requireRealDevice(this, 'Setting clipboard content');
     const pasteboardClient = new PasteboardClient(this.device.udid, this.remoteXPCFacade);
     await pasteboardClient.setPasteboard(content, contentType);
     return;
@@ -45,7 +45,7 @@ export async function getClipboard(
   mode?: string,
 ): Promise<string> {
   if (mode === 'xpc') {
-    requireRealDevice(this, 'Getting pasteboard content');
+    requireRealDevice(this, 'Getting clipboard content');
     const pasteboardClient = new PasteboardClient(this.device.udid, this.remoteXPCFacade);
     return await pasteboardClient.getPasteboard(contentType) ?? '';
   }
