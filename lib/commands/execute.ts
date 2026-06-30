@@ -4,7 +4,9 @@ import {util} from 'appium/support';
 import type {Element, StringRecord} from '@appium/types';
 
 type ExecuteMethodArgs =
-  readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
+  | readonly any[]
+  | readonly [StringRecord<unknown>]
+  | Readonly<StringRecord<unknown>>;
 
 /**
  * @template TReturn
