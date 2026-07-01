@@ -26,7 +26,7 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
 
 ## Prerequisites
 
-- macOS or Linux host
+- macOS, Linux or Windows host
 - Real device running iOS/tvOS 18 or later, paired and trusted on its host
     - The driver supports devices connected via `usbmuxd` (wired and wireless), as well as
       wireless tvOS devices (must be paired first, [see tvOS guide](./tvos.md#wireless-tvos-18-or-later))
@@ -34,6 +34,37 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
     - The driver declares this package as an **optional dependency**, so in a normal
       installation npm will install it automatically. You only need to install it manually if
       the optional dependency step failed or you are wiring a custom environment.
+- On Windows hosts it is mandatory to have Apple Mobile Device drivers installed. These are required for USB
+  communication with iOS devices. Install them through Apple's standalone iTunes package for Windows
+  (the non-Microsoft Store installer already bundles them).
+- On Linux hosts it is necessary to load the TUN/TAP kernel module and give the user permissions to tun devices:
+
+    ```bash
+    # Check if the module is loaded
+    lsmod | grep tun
+
+    # If not loaded, load it
+    sudo modprobe tun
+
+    # To load it automatically at boot
+    echo "tun" | sudo tee -a /etc/modules
+
+    # Add your user to the 'tun' group (if it exists)
+    sudo usermod -a -G tun your-username
+    ```
+
+    Also, the `ip` command is required for configuring interfaces:
+
+    ```bash
+    # Debian/Ubuntu
+    sudo apt install iproute2
+
+    # CentOS/RHEL
+    sudo yum install iproute
+
+    # Arch Linux
+    sudo pacman -S iproute2
+    ```
 
 To verify that the optional dependency and tunnel infrastructure are available, you can run:
 
@@ -153,3 +184,11 @@ tunnel‑creation process per container/VM. In such cases, use distinct `--tunne
 values for each isolation boundary. This keeps tunnel state scoped to each environment, but within
 that boundary you should still avoid running multiple competing tunnel‑creation scripts
 simultaneously, as they may fight over TUN/TAP configuration and `usbmuxd` connections.
+
+### Non-macOS Sessions Limitations
+
+Since neither Linux nor Windows supports deploying Xcode, the only way to run a test session on these
+platforms is if WebDriverAgent is already preinstalled on a real device under test (e.g., when
+the `appium:udid`, `appium:platformVersion`, and either `appium:webDriverAgentUrl` or `appium:usePreinstalledWDA`
+capabilities are provided). Simulator sessions, automatic device selection, and the default xcodebuild
+WebDriverAgent startup strategy all require macOS.
