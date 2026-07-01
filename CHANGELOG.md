@@ -1,3 +1,5 @@
+## [11.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.3...v11.17.0) (2026-07-01)
+
 ## [11.16.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.2...v11.16.3) (2026-06-29)
 
 ### Miscellaneous Chores
