@@ -1,5 +1,9 @@
 ## [11.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.3...v11.17.0) (2026-07-01)
 
+### Features
+
+* Extend `mobile: getClipboard` and `mobile: setClipboard` APIs ([#2895](https://github.com/appium/appium-xcuitest-driver/issues/2895)) ([4505068](https://github.com/appium/appium-xcuitest-driver/commit/450506893aabdb7487e5dd9c6a1bd13fbe9de9a4))
+
 ## [11.16.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.2...v11.16.3) (2026-06-29)
 
 ### Miscellaneous Chores
