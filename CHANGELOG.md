@@ -1,3 +1,9 @@
+## [11.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.0...v11.17.1) (2026-07-01)
+
+### Miscellaneous Chores
+
+* downgrade conventional-changelog-conventionalcommits to v9 ([#2896](https://github.com/appium/appium-xcuitest-driver/issues/2896)) ([f2c0355](https://github.com/appium/appium-xcuitest-driver/commit/f2c0355c0d2c132fb5315c9aa7148584330a44ad))
+
 ## [11.17.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.16.3...v11.17.0) (2026-07-01)
 
 ### Features
