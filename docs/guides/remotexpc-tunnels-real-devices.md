@@ -39,32 +39,32 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
   (the non-Microsoft Store installer already bundles them).
 - On Linux hosts it is necessary to load the TUN/TAP kernel module and give the user permissions to tun devices:
 
-```bash
-# Check if the module is loaded
-lsmod | grep tun
+    ```bash
+    # Check if the module is loaded
+    lsmod | grep tun
 
-# If not loaded, load it
-sudo modprobe tun
+    # If not loaded, load it
+    sudo modprobe tun
 
-# To load it automatically at boot
-echo "tun" | sudo tee -a /etc/modules
+    # To load it automatically at boot
+    echo "tun" | sudo tee -a /etc/modules
 
-# Add your user to the 'tun' group (if it exists)
-sudo usermod -a -G tun your-username
-```
+    # Add your user to the 'tun' group (if it exists)
+    sudo usermod -a -G tun your-username
+    ```
 
-Also, the `ip` command is required for configuring interfaces:
+    Also, the `ip` command is required for configuring interfaces:
 
-```bash
-# Debian/Ubuntu
-sudo apt install iproute2
+    ```bash
+    # Debian/Ubuntu
+    sudo apt install iproute2
 
-# CentOS/RHEL
-sudo yum install iproute
+    # CentOS/RHEL
+    sudo yum install iproute
 
-# Arch Linux
-sudo pacman -S iproute2
-```
+    # Arch Linux
+    sudo pacman -S iproute2
+    ```
 
 To verify that the optional dependency and tunnel infrastructure are available, you can run:
 
