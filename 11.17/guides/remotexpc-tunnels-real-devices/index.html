@@ -2088,6 +2088,43 @@
   
 </li>
         
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#non-macos-sessions-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-macOS Sessions Limitations
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3305,6 +3342,43 @@
   
 </li>
         
+          <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#non-macos-sessions-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Non-macOS Sessions Limitations
+    </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3433,7 +3507,7 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
 </ul>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
-<li>macOS or Linux host</li>
+<li>macOS, Linux or Windows host</li>
 <li>Real device running iOS/tvOS 18 or later, paired and trusted on its host<ul>
 <li>The driver supports devices connected via <code>usbmuxd</code> (wired and wireless), as well as
   wireless tvOS devices (must be paired first, <a href="../tvos/#wireless-tvos-18-or-later">see tvOS guide</a>)</li>
@@ -3445,9 +3519,37 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
   the optional dependency step failed or you are wiring a custom environment.</li>
 </ul>
 </li>
+<li>On Windows hosts it is mandatory to have Apple Mobile Device drivers installed. These are required for USB
+  communication with iOS devices. Install them through Apple's standalone iTunes package for Windows
+  (the non-Microsoft Store installer already bundles them).</li>
+<li>
+<p>On Linux hosts it is necessary to load the TUN/TAP kernel module and give the user permissions to tun devices:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Check if the module is loaded</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>tun
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># If not loaded, load it</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sudo<span class="w"> </span>modprobe<span class="w"> </span>tun
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># To load it automatically at boot</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;tun&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/modules
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Add your user to the &#39;tun&#39; group (if it exists)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>tun<span class="w"> </span>your-username
+</span></code></pre></div>
+<p>Also, the <code>ip</code> command is required for configuring interfaces:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Debian/Ubuntu</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>iproute2
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># CentOS/RHEL</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>iproute
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Arch Linux</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>iproute2
+</span></code></pre></div>
+</li>
 </ul>
 <p>To verify that the optional dependency and tunnel infrastructure are available, you can run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>doctor<span class="w"> </span>xcuitest
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>doctor<span class="w"> </span>xcuitest
 </span></code></pre></div>
 <p>Look for the optional checks related to <code>appium-ios-remotexpc</code> and “tunnel availability”.</p>
 <h2 id="creating-tunnels">Creating Tunnels<a class="headerlink" href="#creating-tunnels" title="Permanent link">&para;</a></h2>
@@ -3457,7 +3559,7 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
 <p class="admonition-title">Warning</p>
 <p>This script must be run as <strong>sudo/root</strong> to create TUN/TAP interfaces for the tunnel.</p>
 </div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation
 </span></code></pre></div>
 <p>Refer to <a href="../../reference/scripts/#tunnel-creation">the script reference page</a> for a list of
 additional options. If wireless Apple TV devices are slow to appear, increase the discovery
@@ -3487,25 +3589,25 @@ window with <code>--appletv-discovery-timeout-ms</code>.</p>
 </ul>
 <h3 id="inspecting-the-tunnel-registry">Inspecting the Tunnel Registry<a class="headerlink" href="#inspecting-the-tunnel-registry" title="Permanent link">&para;</a></h3>
 <p>After a successful script execution, you should see log lines similar to:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>📁 Tunnel registry API:
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>   The tunnel registry is now available through the API at:
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>   http://localhost:&lt;port&gt;/remotexpc/tunnels
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>📁 Tunnel registry API:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>   The tunnel registry is now available through the API at:
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>   http://localhost:&lt;port&gt;/remotexpc/tunnels
 </span></code></pre></div>
 <p>You can now use the registry endpoints to retrieve tunnel information:</p>
 <ul>
 <li>
 <p>List all tunnels:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>http://localhost:&lt;port&gt;/remotexpc/tunnels
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>curl<span class="w"> </span>http://localhost:&lt;port&gt;/remotexpc/tunnels
 </span></code></pre></div>
 </li>
 <li>
 <p>Get tunnel for a specific UDID (long-poll until the RSD catalog is ready):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:&lt;port&gt;/remotexpc/tunnels/&lt;udid&gt;?waitMs=15000&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>curl<span class="w"> </span><span class="s2">&quot;http://localhost:&lt;port&gt;/remotexpc/tunnels/&lt;udid&gt;?waitMs=15000&quot;</span>
 </span></code></pre></div>
 </li>
 <li>
 <p>Re-discover the RSD service catalog after a Developer Disk Image mount:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:&lt;port&gt;/remotexpc/tunnels/&lt;udid&gt;/refresh-services&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:&lt;port&gt;/remotexpc/tunnels/&lt;udid&gt;/refresh-services&quot;</span>
 </span></code></pre></div>
 </li>
 </ul>
@@ -3536,7 +3638,7 @@ to configure automatic reconnection.</p>
 <p>Since the tunnel registry server is running in a separate process, it is not linked to a specific
 Appium server instance, and can be used by multiple Appium servers simultaneously. To ensure that
 all Appium server instances discover the same tunnel registry, you can set a specific port:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--tunnel-registry-port<span class="w"> </span><span class="m">43000</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>run<span class="w"> </span>xcuitest<span class="w"> </span>tunnel-creation<span class="w"> </span>--tunnel-registry-port<span class="w"> </span><span class="m">43000</span>
 </span></code></pre></div>
 <p>Similarly to running multiple sessions on a single server, make sure that each session uses
 a different device UDID.</p>
@@ -3545,6 +3647,12 @@ tunnel‑creation process per container/VM. In such cases, use distinct <code>--
 values for each isolation boundary. This keeps tunnel state scoped to each environment, but within
 that boundary you should still avoid running multiple competing tunnel‑creation scripts
 simultaneously, as they may fight over TUN/TAP configuration and <code>usbmuxd</code> connections.</p>
+<h3 id="non-macos-sessions-limitations">Non-macOS Sessions Limitations<a class="headerlink" href="#non-macos-sessions-limitations" title="Permanent link">&para;</a></h3>
+<p>Since neither Linux nor Windows supports deploying Xcode, the only way to run a test session on these
+platforms is if WebDriverAgent is already preinstalled on a real device under test (e.g., when
+the <code>appium:udid</code>, <code>appium:platformVersion</code>, and either <code>appium:webDriverAgentUrl</code> or <code>appium:usePreinstalledWDA</code>
+capabilities are provided). Simulator sessions, automatic device selection, and the default xcodebuild
+WebDriverAgent startup strategy all require macOS.</p>
 
 
 
@@ -3565,7 +3673,7 @@ simultaneously, as they may fight over TUN/TAP configuration and <code>usbmuxd</
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="June 20, 2026 18:07:46 UTC"><span class="timeago" datetime="2026-06-20T18:07:46+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="June 20, 2026 18:07:46 UTC">2026-06-20</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 1, 2026 20:50:32 UTC"><span class="timeago" datetime="2026-07-01T20:50:32+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 1, 2026 20:50:32 UTC">2026-07-01</span>
   </span>
 
     
