@@ -93,7 +93,7 @@
     "async-lock": "^1.4.0",
     "asyncbox": "^6.3.0",
     "axios": "^1.4.0",
-    "commander": "^14.0.1",
+    "commander": "^15.0.0",
     "js2xmlparser2": "^0.x",
     "lru-cache": "^11.1.0",
     "moment": "^2.29.4",
