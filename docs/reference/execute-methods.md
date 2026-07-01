@@ -863,6 +863,7 @@ Gets the content of the primary clipboard on the device under test.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 contentType | string | no | `plaintext` (default), `image` or `url` | image
+mode | string | no | If set to `xpc`, the clipboard content is retrieved via the RemoteXPC clipboard service rather than the WDA API. This also requires a real device and an active RemoteXPC tunnel. The main advantage of this approach is that clipboard content is retrieved directly, without being constrained by Apple’s security limitations, such as the need to bring WDA to the foreground. Hint: A similar effect on simulators could be achieved by calling the [mobile: getPasteboard](#mobile-getpasteboard) API. | xpc
 
 #### Returned Result
 
@@ -879,6 +880,7 @@ Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 content| string | yes | The content to be set as base64-encoded string. | QXBwaXVt
 contentType | string | no | `plaintext` (default), `image` or `url` | image
+mode | string | no | If set to `xpc`, the clipboard content is set via the RemoteXPC clipboard service rather than the WDA API. This also requires a real device and an active RemoteXPC tunnel. The main advantage of this approach is that clipboard content is applied directly, without being constrained by Apple’s security limitations, such as the need to bring WDA to the foreground. Hint: A similar effect on simulators could be achieved by calling the [mobile: setPasteboard](#mobile-setpasteboard) API. | xpc
 
 ### mobile: siriCommand
 

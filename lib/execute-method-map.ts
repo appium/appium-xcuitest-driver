@@ -358,14 +358,14 @@ export const executeMethodMap = {
   'mobile: getClipboard': {
     command: 'getClipboard',
     params: {
-      optional: ['contentType'],
+      optional: ['contentType', 'mode'],
     },
   },
   'mobile: setClipboard': {
     command: 'setClipboard',
     params: {
       required: ['content'],
-      optional: ['contentType'],
+      optional: ['contentType', 'mode'],
     },
   },
   'mobile: siriCommand': {
