@@ -97,9 +97,7 @@ class RealDeviceXcTestScreenRecordingRetriever extends XcTestScreenRecordingRetr
     return videoPath;
   }
 
-  private async findAttachment(
-    uuid: string,
-  ): Promise<{subdirectory: string; fileName: string} | null> {
+  private async findAttachment(uuid: string): Promise<{subdirectory: string; fileName: string} | null> {
     for (const subdirectory of REAL_DEVICE_XCTEST_ATTACHMENT_SUBDIRECTORIES) {
       let fileNames: string[];
       try {
@@ -110,9 +108,7 @@ class RealDeviceXcTestScreenRecordingRetriever extends XcTestScreenRecordingRetr
       } catch {
         continue;
       }
-      const fileName = fileNames.find((name) =>
-        XcTestScreenRecordingRetriever.nameMatchesUuid(name, uuid),
-      );
+      const fileName = fileNames.find((name) => XcTestScreenRecordingRetriever.nameMatchesUuid(name, uuid));
       if (fileName) {
         return {subdirectory, fileName};
       }
@@ -157,11 +153,7 @@ export async function mobileStartXctestScreenRecording(
   if (Number.isInteger(fps)) {
     opts.fps = fps;
   }
-  const response = (await this.proxyCommand(
-    '/wda/video/start',
-    'POST',
-    opts,
-  )) as XcTestScreenRecordingInfo;
+  const response = (await this.proxyCommand('/wda/video/start', 'POST', opts)) as XcTestScreenRecordingInfo;
   this.log.info(`Started a new screen recording: ${JSON.stringify(response)}`);
   return response;
 }
@@ -231,9 +223,7 @@ export async function mobileStopXctestScreenRecording(
 
   this.log.debug(`Stopping the active screen recording: ${JSON.stringify(screenRecordingInfo)}`);
   await this.proxyCommand('/wda/video/stop', 'POST', {});
-  const videoPath = await createXcTestScreenRecordingRetriever(this).retrieve(
-    screenRecordingInfo.uuid,
-  );
+  const videoPath = await createXcTestScreenRecordingRetriever(this).retrieve(screenRecordingInfo.uuid);
   const result: XcTestScreenRecording = {
     ...screenRecordingInfo,
     payload: '', // Will be set below
@@ -259,10 +249,7 @@ export async function mobileStopXctestScreenRecording(
         await deletionClient.deleteAttachmentsByUuid([screenRecordingInfo.uuid]);
       } catch (deleteErr: any) {
         if (encodeOrUploadError === undefined) {
-          if (
-            this.isFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE) &&
-            isTunnelAvailabilityError(deleteErr)
-          ) {
+          if (this.isFeatureEnabled(XCTEST_SCREEN_RECORD_FEATURE) && isTunnelAvailabilityError(deleteErr)) {
             this.log.warn(
               `Could not delete XCTest attachment on device: ${formatTunnelAvailabilityMessage(deleteErr)}`,
             );
@@ -290,9 +277,7 @@ export async function mobileStopXctestScreenRecording(
   return result;
 }
 
-function createXcTestScreenRecordingRetriever(
-  driver: XCUITestDriver,
-): XcTestScreenRecordingRetriever {
+function createXcTestScreenRecordingRetriever(driver: XCUITestDriver): XcTestScreenRecordingRetriever {
   if (driver.isRealDevice()) {
     return new RealDeviceXcTestScreenRecordingRetriever(
       driver.device as RealDevice,

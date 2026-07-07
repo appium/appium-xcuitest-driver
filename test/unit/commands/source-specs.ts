@@ -43,9 +43,7 @@ describe('source commands', function () {
       await driver.updateSettings({pageSourceExcludedAttributes: 'visible'});
       await driver.getPageSource();
       expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql(
-        '/source?format=xml&scope=AppiumAUT&excluded_attributes=visible',
-      );
+      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
       expect(proxyStub.firstCall.args[1]).to.eql('GET');
     });
 

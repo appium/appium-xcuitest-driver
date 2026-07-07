@@ -126,13 +126,11 @@ describe('XCUITestDriver - gestures', function () {
       const pickerEl = await driver.$('~Picker View');
       const loc = await pickerEl.getLocation();
 
-      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'up'})).to.not.be
-        .rejected;
+      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'up'})).to.not.be.rejected;
       const locMiddle = await pickerEl.getLocation();
       expect(locMiddle.y).to.be.below(loc.y);
 
-      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'down'})).to.not.be
-        .rejected;
+      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'down'})).to.not.be.rejected;
       const locFinal = await pickerEl.getLocation();
       expect(locFinal.y).to.be.above(locMiddle.y);
     });

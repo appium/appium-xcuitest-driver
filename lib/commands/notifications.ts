@@ -24,20 +24,16 @@ export async function mobilePushNotification(
   const simulator = requireSimulator(this, 'Push notification');
 
   if (!bundleId) {
-    throw new errors.InvalidArgumentError(
-      `'bundleId' argument must be a valid bundle identifier string`,
-    );
+    throw new errors.InvalidArgumentError(`'bundleId' argument must be a valid bundle identifier string`);
   }
   if (!isPlainObject(payload)) {
     throw new errors.InvalidArgumentError(
-      `The 'payload' argument value must be a valid dictionary. ` +
-        `Got ${JSON.stringify(payload)} instead`,
+      `The 'payload' argument value must be a valid dictionary. ` + `Got ${JSON.stringify(payload)} instead`,
     );
   }
   if (!isPlainObject(payload.aps)) {
     throw new errors.InvalidArgumentError(
-      `The 'payload.aps' value must be a valid dictionary. ` +
-        `Got ${JSON.stringify(payload.aps)} instead`,
+      `The 'payload.aps' value must be a valid dictionary. ` + `Got ${JSON.stringify(payload.aps)} instead`,
     );
   }
   await simulator.pushNotification({

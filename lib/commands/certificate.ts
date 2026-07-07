@@ -108,21 +108,14 @@ export async function mobileInstallCertificate(
 
   if (this.isSimulator()) {
     try {
-      const methodName: 'addRootCertificate' | 'addCertificate' = isRoot
-        ? 'addRootCertificate'
-        : 'addCertificate';
-      await (this.device as Simulator).simctl[methodName](
-        Buffer.from(content, 'base64').toString(),
-        {
-          raw: true,
-        },
-      );
+      const methodName: 'addRootCertificate' | 'addCertificate' = isRoot ? 'addRootCertificate' : 'addCertificate';
+      await (this.device as Simulator).simctl[methodName](Buffer.from(content, 'base64').toString(), {
+        raw: true,
+      });
       return;
     } catch (e) {
       this.log.debug(e);
-      this.log.info(
-        `The certificate cannot be installed via CLI. ` + `Falling back to UI-based deployment`,
-      );
+      this.log.info(`The certificate cannot be installed via CLI. ` + `Falling back to UI-based deployment`);
     }
   } else {
     try {
@@ -151,10 +144,9 @@ export async function mobileInstallCertificate(
     try {
       await plist.updatePlistFile(configPath, mobileConfig, false, false);
     } catch (err) {
-      throw new Error(
-        `Cannot store the generated config as '${configPath}'. ` + `Original error: ${err.message}`,
-        {cause: err},
-      );
+      throw new Error(`Cannot store the generated config as '${configPath}'. ` + `Original error: ${err.message}`, {
+        cause: err,
+      });
     }
 
     try {
@@ -212,18 +204,14 @@ export async function mobileInstallCertificate(
         }
       }
       if (isCertAlreadyInstalled) {
-        this.log.info(
-          `It looks like the '${cn}' certificate has been already added to the CA root`,
-        );
+        this.log.info(`It looks like the '${cn}' certificate has been already added to the CA root`);
       }
     } finally {
       if (this.opts.bundleId) {
         try {
           await this.activateApp(this.opts.bundleId);
         } catch (e) {
-          this.log.warn(
-            `Cannot restore the application '${this.opts.bundleId}'. Original error: ${e.message}`,
-          );
+          this.log.warn(`Cannot restore the application '${this.opts.bundleId}'. Original error: ${e.message}`);
         }
       }
     }
@@ -380,10 +368,8 @@ async function clickElement(
   const lookupDelay = 500;
   let element: Element | null;
   try {
-    element = await retryInterval(
-      timeout < lookupDelay ? 1 : timeout / lookupDelay,
-      lookupDelay,
-      () => driver.findNativeElementOrElements(locator.type, locator.value, false),
+    element = await retryInterval(timeout < lookupDelay ? 1 : timeout / lookupDelay, lookupDelay, () =>
+      driver.findNativeElementOrElements(locator.type, locator.value, false),
     );
   } catch {
     if (skipIfInvisible) {
@@ -437,11 +423,7 @@ async function trustCertificateInPreferences(driver: XCUITestDriver, name: strin
     value: `**/XCUIElementTypeCell[\`label == '${name}'\`]/**/XCUIElementTypeSwitch`,
   };
   await retry(5, async () => {
-    const tableEl = await driver.findNativeElementOrElements(
-      'class name',
-      'XCUIElementTypeTable',
-      false,
-    );
+    const tableEl = await driver.findNativeElementOrElements('class name', 'XCUIElementTypeTable', false);
     await driver.mobileSwipe('up', undefined, tableEl);
     await clickElement(driver, Settings.Certificate_Trust_Settings, {
       timeout: 500,
@@ -500,11 +482,7 @@ async function installPost122Certificate(driver: XCUITestDriver, name: string): 
       break;
     }
 
-    const tableEl = await driver.findNativeElementOrElements(
-      'class name',
-      'XCUIElementTypeTable',
-      false,
-    );
+    const tableEl = await driver.findNativeElementOrElements('class name', 'XCUIElementTypeTable', false);
     await driver.mobileSwipe('up', undefined, tableEl);
   }
   if (!isCertFound) {

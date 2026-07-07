@@ -42,9 +42,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
 
   async enable(_conditionID: string, profileID: string): Promise<boolean> {
     if (this.connection) {
-      throw new Error(
-        `Condition inducer is already running. Disable it first in order to call 'enable' again.`,
-      );
+      throw new Error(`Condition inducer is already running. Disable it first in order to call 'enable' again.`);
     }
 
     try {
@@ -90,9 +88,7 @@ class RemoteXPCConditionInducer implements IConditionInducer {
   }
 
   async startConnection(): Promise<DVTInstruments> {
-    return this.remoteXPCFacade.requireService('condition inducer', (Services) =>
-      Services.startDVTService(this.udid),
-    );
+    return this.remoteXPCFacade.requireService('condition inducer', (Services) => Services.startDVTService(this.udid));
   }
 }
 
@@ -110,10 +106,7 @@ class InstrumentConditionInducer implements IConditionInducer {
   async list(): Promise<Condition[]> {
     const service = (await services.startInstrumentService(this.udid)) as InstrumentService;
     try {
-      const ret = await service.callChannel(
-        INSTRUMENT_CHANNEL.CONDITION_INDUCER,
-        'availableConditionInducers',
-      );
+      const ret = await service.callChannel(INSTRUMENT_CHANNEL.CONDITION_INDUCER, 'availableConditionInducers');
       return ret.selector;
     } finally {
       service.close();
@@ -149,10 +142,7 @@ class InstrumentConditionInducer implements IConditionInducer {
     }
 
     try {
-      const ret = await this.service.callChannel(
-        INSTRUMENT_CHANNEL.CONDITION_INDUCER,
-        'disableActiveCondition',
-      );
+      const ret = await this.service.callChannel(INSTRUMENT_CHANNEL.CONDITION_INDUCER, 'disableActiveCondition');
       if (typeof ret.selector !== 'boolean') {
         this.log.warn(`Disable condition inducer error: '${JSON.stringify(ret.selector)}'`);
         return false;

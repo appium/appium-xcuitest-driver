@@ -10,10 +10,7 @@ import type {AtomsElement} from './types';
  *
  * @param el - Element or element ID
  */
-export async function elementDisplayed(
-  this: XCUITestDriver,
-  el: Element | string,
-): Promise<boolean> {
+export async function elementDisplayed(this: XCUITestDriver, el: Element | string): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(elementId);
@@ -41,10 +38,7 @@ export async function elementEnabled(this: XCUITestDriver, el: Element | string)
  *
  * @param el - Element or element ID
  */
-export async function elementSelected(
-  this: XCUITestDriver,
-  el: Element | string,
-): Promise<boolean> {
+export async function elementSelected(this: XCUITestDriver, el: Element | string): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(elementId);
@@ -112,9 +106,7 @@ export async function getAttribute(
     return await this.getNativeAttribute(attribute, elementId);
   }
   const atomsElement = this.getAtomsElement(elementId);
-  return (await this.executeAtom('get_attribute_value', [atomsElement, attribute])) as
-    | string
-    | null;
+  return (await this.executeAtom('get_attribute_value', [atomsElement, attribute])) as string | null;
 }
 
 /**
@@ -170,10 +162,7 @@ export async function getElementRect(this: XCUITestDriver, el: Element | string)
  *
  * @param elementId - Element or element ID
  */
-export async function getLocation(
-  this: XCUITestDriver,
-  elementId: Element | string,
-): Promise<Position> {
+export async function getLocation(this: XCUITestDriver, elementId: Element | string): Promise<Position> {
   const el = util.unwrapElement(elementId);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(el);
@@ -198,10 +187,7 @@ export async function getLocation(
  *
  * @param elementId - Element or element ID
  */
-export async function getLocationInView(
-  this: XCUITestDriver,
-  elementId: Element | string,
-): Promise<Position> {
+export async function getLocationInView(this: XCUITestDriver, elementId: Element | string): Promise<Position> {
   return await this.getLocation(elementId);
 }
 
@@ -230,9 +216,7 @@ export async function setValueImmediate(
   value: string | string[] | number,
   el: Element | string,
 ): Promise<void> {
-  this.log.info(
-    'There is currently no way to bypass typing using XCUITest. Setting value through keyboard',
-  );
+  this.log.info('There is currently no way to bypass typing using XCUITest. Setting value through keyboard');
   await this.setValue(value, el);
 }
 
@@ -339,9 +323,7 @@ export async function getContentSize(this: XCUITestDriver, el: Element | string)
   const type = await this.getAttribute('type', el);
 
   if (type !== 'XCUIElementTypeTable' && type !== 'XCUIElementTypeCollectionView') {
-    throw new Error(
-      `Can't get content size for type '${type}', only for tables and collection views`,
-    );
+    throw new Error(`Can't get content size for type '${type}', only for tables and collection views`);
   }
   let locator = '*';
   if (type === 'XCUIElementTypeTable') {
@@ -374,17 +356,13 @@ export async function getContentSize(this: XCUITestDriver, el: Element | string)
           }
         }
         const spaceBetweenEls =
-          initialRects[elsInRow].y -
-          initialRects[elsInRow - 1].y -
-          initialRects[elsInRow - 1].height;
+          initialRects[elsInRow].y - initialRects[elsInRow - 1].y - initialRects[elsInRow - 1].height;
         const numRows = Math.ceil(children.length / elsInRow);
         contentHeight = numRows * firstRect.height + spaceBetweenEls * (numRows - 1);
         break;
       }
       default:
-        throw new Error(
-          `Programming error: type '${type}' was not valid but should have already been rejected`,
-        );
+        throw new Error(`Programming error: type '${type}' was not valid but should have already been rejected`);
     }
   }
   const size = await this.getSize(el);
@@ -409,12 +387,9 @@ export async function getNativeRect(this: XCUITestDriver, el: Element | string):
 }
 
 function prepareInputValue(inp: string | string[] | number): string[] {
-  if (
-    ![Array.isArray, (x: unknown) => typeof x === 'string', Number.isFinite].some((f) => f(inp))
-  ) {
+  if (![Array.isArray, (x: unknown) => typeof x === 'string', Number.isFinite].some((f) => f(inp))) {
     throw new Error(
-      `Only strings, numbers and arrays are supported as input arguments. ` +
-        `Received: ${JSON.stringify(inp)}`,
+      `Only strings, numbers and arrays are supported as input arguments. ` + `Received: ${JSON.stringify(inp)}`,
     );
   }
 

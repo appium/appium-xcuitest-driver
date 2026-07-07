@@ -18,11 +18,7 @@ export async function mobileSetIncreaseContrast(
   this: XCUITestDriver,
   increaseContrast: IncreaseContrastAction,
 ): Promise<void> {
-  if (
-    !(INCREASE_CONTRAST_CONFIG as readonly string[]).includes(
-      String(increaseContrast).toLowerCase(),
-    )
-  ) {
+  if (!(INCREASE_CONTRAST_CONFIG as readonly string[]).includes(String(increaseContrast).toLowerCase())) {
     throw new errors.InvalidArgumentError(
       `The 'increaseContrast' value is expected to be one of ${INCREASE_CONTRAST_CONFIG.join(',')}`,
     );
@@ -39,11 +35,6 @@ export async function mobileSetIncreaseContrast(
  *          Possible return value is 'enabled', 'disabled',
  *          'unsupported' or 'unknown' with Xcode 16.2.
  */
-export async function mobileGetIncreaseContrast(
-  this: XCUITestDriver,
-): Promise<IncreaseContrastResult> {
-  return (await requireSimulator(
-    this,
-    'Getting increase contrast',
-  ).getIncreaseContrast()) as IncreaseContrastResult;
+export async function mobileGetIncreaseContrast(this: XCUITestDriver): Promise<IncreaseContrastResult> {
+  return (await requireSimulator(this, 'Getting increase contrast').getIncreaseContrast()) as IncreaseContrastResult;
 }

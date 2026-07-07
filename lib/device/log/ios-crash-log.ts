@@ -128,8 +128,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
             await (this._realDeviceClient as CrashReportsClient).exportCrash(fileName, tmpRoot);
           } catch (e) {
             this.log.warn(
-              `Cannot export the crash report '${fileName}'. Skipping it. ` +
-                `Original error: ${(e as Error).message}`,
+              `Cannot export the crash report '${fileName}'. Skipping it. ` + `Original error: ${(e as Error).message}`,
             );
             return;
           }
@@ -152,10 +151,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private async _gatherFromRealDevice(): Promise<string[]> {
     if (!this._realDeviceClient) {
       try {
-        this._realDeviceClient = await CrashReportsClient.create(
-          this._udid as string,
-          this._remoteXPCFacade,
-        );
+        this._realDeviceClient = await CrashReportsClient.create(this._udid as string, this._remoteXPCFacade);
       } catch (err) {
         this.log.error(
           `Failed to create crash reports client: ${(err as Error).message}. ` +
@@ -210,9 +206,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
 
   /** Dispatches to real-device RemoteXPC listing or simulator filesystem globbing. */
   private async _listCrashFiles(): Promise<string[]> {
-    return this._isRealDevice()
-      ? await this._gatherFromRealDevice()
-      : await this._gatherFromSimulator();
+    return this._isRealDevice() ? await this._gatherFromRealDevice() : await this._gatherFromSimulator();
   }
 
   private _isRealDevice(): boolean {

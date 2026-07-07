@@ -166,10 +166,7 @@ class RealDevicesLister {
     try {
       raw = await new Devicectl('').listDevices();
     } catch (err) {
-      throw new Error(
-        `devicectl requires Xcode 15+ and a working \`xcrun devicectl list devices\``,
-        {cause: err},
-      );
+      throw new Error(`devicectl requires Xcode 15+ and a working \`xcrun devicectl list devices\``, {cause: err});
     }
 
     if (raw.length === 0) {
@@ -302,12 +299,7 @@ class RealDevicesLister {
     }
     // `JSON.stringify` invokes Buffer#toJSON first, so we see `{ type: 'Buffer', data: [...] }` here.
     const asRecord = /** @type {Record<string, unknown>} */ (value);
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      asRecord.type === 'Buffer' &&
-      Array.isArray(asRecord.data)
-    ) {
+    if (value !== null && typeof value === 'object' && asRecord.type === 'Buffer' && Array.isArray(asRecord.data)) {
       return this._formatBufferForJson(key, Buffer.from(/** @type {number[]} */ (asRecord.data)));
     }
     return value;

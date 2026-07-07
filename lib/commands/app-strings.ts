@@ -88,9 +88,7 @@ export async function parseLocalizableStrings(
         .map((name) => path.resolve(lprojRoot, name));
       resourcePaths.push(...resourceFiles);
     }
-    this.log.info(
-      `Got ${util.pluralize('resource file', resourcePaths.length, true)} in '${lprojRoot}'`,
-    );
+    this.log.info(`Got ${util.pluralize('resource file', resourcePaths.length, true)} in '${lprojRoot}'`);
 
     if (isEmpty(resourcePaths)) {
       return {};
@@ -104,18 +102,14 @@ export async function parseLocalizableStrings(
       }
       try {
         const data = await readResource(resourcePath);
-        this.log.debug(
-          `Parsed ${util.pluralize('string', Object.keys(data).length, true)} from '${resourcePath}'`,
-        );
+        this.log.debug(`Parsed ${util.pluralize('string', Object.keys(data).length, true)} from '${resourcePath}'`);
         mergeDeep(resultStrings, data);
       } catch (e: any) {
         this.log.warn(`Cannot parse '${resourcePath}' resource. Original error: ${e.message}`);
       }
     }
 
-    this.log.info(
-      `Retrieved ${util.pluralize('string', Object.keys(resultStrings).length, true)} from '${lprojRoot}'`,
-    );
+    this.log.info(`Retrieved ${util.pluralize('string', Object.keys(resultStrings).length, true)} from '${lprojRoot}'`);
     return resultStrings;
   } finally {
     if (tmpRoot) {

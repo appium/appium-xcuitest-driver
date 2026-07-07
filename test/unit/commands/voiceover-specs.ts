@@ -51,21 +51,16 @@ describe('voiceover commands', function () {
     });
 
     it('mobileVoiceOverMove should proxy direction as-is to WDA', async function () {
-      proxySpy
-        .withArgs('/wda/voiceOver/move', 'POST', {direction: 'forward'})
-        .resolves({utterance: 'Button'});
+      proxySpy.withArgs('/wda/voiceOver/move', 'POST', {direction: 'forward'}).resolves({utterance: 'Button'});
 
       const result = await driver.mobileVoiceOverMove('forward');
 
-      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/move', 'POST', {direction: 'forward'}))
-        .to.be.true;
+      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/move', 'POST', {direction: 'forward'})).to.be.true;
       expect(result).to.eql({utterance: 'Button'});
     });
 
     it('mobileVoiceOverCurrentSpeech should proxy GET /wda/voiceOver/currentSpeech', async function () {
-      proxySpy
-        .withArgs('/wda/voiceOver/currentSpeech', 'GET')
-        .resolves({utterance: 'Current item'});
+      proxySpy.withArgs('/wda/voiceOver/currentSpeech', 'GET').resolves({utterance: 'Current item'});
 
       const result = await driver.mobileVoiceOverCurrentSpeech();
 
@@ -79,22 +74,15 @@ describe('voiceover commands', function () {
       driver.opts.platformVersion = '26.0';
     });
 
-    const versionGateMessage =
-      /requires iOS\/tvOS 27 or newer.*The current platformVersion is '26\.0'/;
+    const versionGateMessage = /requires iOS\/tvOS 27 or newer.*The current platformVersion is '26\.0'/;
 
     it('mobileEnableVoiceOver should reject without proxying', async function () {
-      await expect(driver.mobileEnableVoiceOver()).to.be.rejectedWith(
-        errors.InvalidArgumentError,
-        versionGateMessage,
-      );
+      await expect(driver.mobileEnableVoiceOver()).to.be.rejectedWith(errors.InvalidArgumentError, versionGateMessage);
       expect(proxySpy.called).to.be.false;
     });
 
     it('mobileDisableVoiceOver should reject without proxying', async function () {
-      await expect(driver.mobileDisableVoiceOver()).to.be.rejectedWith(
-        errors.InvalidArgumentError,
-        versionGateMessage,
-      );
+      await expect(driver.mobileDisableVoiceOver()).to.be.rejectedWith(errors.InvalidArgumentError, versionGateMessage);
       expect(proxySpy.called).to.be.false;
     });
 

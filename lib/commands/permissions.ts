@@ -11,10 +11,7 @@ import type {PermissionState} from './types';
  * @param service - One of the available service names. This could also be an integer protected resource identifier; see [this list](https://developer.apple.com/documentation/xctest/xcuiprotectedresource?language=objc)
  * @throws If permission reset fails on the device.
  */
-export async function mobileResetPermission(
-  this: XCUITestDriver,
-  service: PermissionService | number,
-): Promise<void> {
+export async function mobileResetPermission(this: XCUITestDriver, service: PermissionService | number): Promise<void> {
   if (!service) {
     throw new Error(`The 'service' option is expected to be present`);
   }
@@ -22,17 +19,12 @@ export async function mobileResetPermission(
   if (typeof service === 'string') {
     resource = PermissionService[String(service).toLowerCase() as keyof typeof PermissionService];
     if (!resource) {
-      throw new Error(
-        `The 'service' value must be one of ` + `${JSON.stringify(Object.keys(PermissionService))}`,
-      );
+      throw new Error(`The 'service' value must be one of ` + `${JSON.stringify(Object.keys(PermissionService))}`);
     }
   } else if (Number.isInteger(service)) {
     resource = service;
   } else {
-    throw new Error(
-      `The 'service' value must be either a string or an integer. ` +
-        `'${service}' is passed instead`,
-    );
+    throw new Error(`The 'service' value must be either a string or an integer. ` + `'${service}' is passed instead`);
   }
 
   await this.proxyCommand('/wda/resetAppAuth', 'POST', {resource});

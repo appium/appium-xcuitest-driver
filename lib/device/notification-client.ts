@@ -61,24 +61,17 @@ export class NotificationClient {
    * @param opts - Creation options
    * @returns NotificationClient instance
    */
-  static async create(
-    udid: string,
-    opts: CreateNotificationClientOptions,
-  ): Promise<NotificationClient> {
+  static async create(udid: string, opts: CreateNotificationClientOptions): Promise<NotificationClient> {
     const {allowLegacyFallback = true, facade = null, logger} = opts;
     const service = facade
-      ? await facade.attemptService('notification proxy', (Services) =>
-          Services.startNotificationProxyService(udid),
-        )
+      ? await facade.attemptService('notification proxy', (Services) => Services.startNotificationProxyService(udid))
       : null;
     if (service) {
       return new NotificationClient(service, logger, true);
     }
 
     if (!allowLegacyFallback) {
-      throw new Error(
-        `Notification proxy access via RemoteXPC is required for '${udid}', but it is unavailable.`,
-      );
+      throw new Error(`Notification proxy access via RemoteXPC is required for '${udid}', but it is unavailable.`);
     }
 
     // Fallback to appium-ios-device

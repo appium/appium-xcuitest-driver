@@ -112,9 +112,7 @@ export async function extractLogs(
         `to the 'appium:${LOG_NAMES_TO_CAPABILITY_NAMES_MAP[logType]}' capability.`,
     );
   }
-  throw new Error(
-    `No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES)}.`,
-  );
+  throw new Error(`No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES)}.`);
 }
 
 /**
@@ -224,9 +222,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
 export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
   if (!isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
-    this.log.debug(
-      `The system logs broadcasting web socket server is already listening at ${pathname}`,
-    );
+    this.log.debug(`The system logs broadcasting web socket server is already listening at ${pathname}`);
     return;
   }
 
@@ -240,9 +236,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       const remoteIp = isEmpty(req.headers['x-forwarded-for'])
         ? req.connection?.remoteAddress
         : req.headers['x-forwarded-for'];
-      this.log.debug(
-        `Established a new system logs listener web socket connection from ${remoteIp}`,
-      );
+      this.log.debug(`Established a new system logs listener web socket connection from ${remoteIp}`);
     } else {
       this.log.debug('Established a new system logs listener web socket connection');
     }

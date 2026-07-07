@@ -60,10 +60,7 @@ export class AfcClient {
   private readonly service: RemoteXPCAfcService | IOSDeviceAfcService;
   private readonly _isRemoteXPC: boolean;
 
-  private constructor(
-    service: RemoteXPCAfcService | IOSDeviceAfcService,
-    isRemoteXPC: boolean = false,
-  ) {
+  private constructor(service: RemoteXPCAfcService | IOSDeviceAfcService, isRemoteXPC: boolean = false) {
     this.service = service;
     this._isRemoteXPC = isRemoteXPC;
   }
@@ -98,9 +95,7 @@ export class AfcClient {
    */
   static async createForDevice(udid: string, opts: CreateClientOptions = {}): Promise<AfcClient> {
     const {allowLegacyFallback = true, facade = null} = opts;
-    const service = facade
-      ? await facade.attemptService('AFC', (Services) => Services.startAfcService(udid))
-      : null;
+    const service = facade ? await facade.attemptService('AFC', (Services) => Services.startAfcService(udid)) : null;
     if (service) {
       return new AfcClient(service, true);
     }
@@ -121,17 +116,8 @@ export class AfcClient {
    * @param options - Optional configuration for container access
    * @returns AFC client instance
    */
-  static async createForApp(
-    udid: string,
-    bundleId: string,
-    options?: CreateForAppOptions,
-  ): Promise<AfcClient> {
-    const {
-      facade = null,
-      containerType = null,
-      skipDocumentsCheck = false,
-      allowLegacyFallback = true,
-    } = options ?? {};
+  static async createForApp(udid: string, bundleId: string, options?: CreateForAppOptions): Promise<AfcClient> {
+    const {facade = null, containerType = null, skipDocumentsCheck = false, allowLegacyFallback = true} = options ?? {};
     const isDocuments = !skipDocumentsCheck && containerType?.toLowerCase() === 'documents';
 
     let houseArrestResult: RemoteXPCAfcService | null = null;
@@ -149,9 +135,7 @@ export class AfcClient {
     }
 
     if (!allowLegacyFallback) {
-      throw new Error(
-        `House Arrest AFC access via RemoteXPC is required for '${udid}', but it is unavailable.`,
-      );
+      throw new Error(`House Arrest AFC access via RemoteXPC is required for '${udid}', but it is unavailable.`);
     }
 
     const houseArrestService = await services.startHouseArrestService(udid);
@@ -300,10 +284,7 @@ export class AfcClient {
   /**
    * Create a read stream for a file (internal use only).
    */
-  private async createReadStream(
-    remotePath: string,
-    options?: {autoDestroy?: boolean},
-  ): Promise<Readable> {
+  private async createReadStream(remotePath: string, options?: {autoDestroy?: boolean}): Promise<Readable> {
     if (this.isRemoteXPC) {
       // Use readToStream which returns a streaming Readable
       return await this.remoteXPCAfcService.readToStream(remotePath);
@@ -315,11 +296,7 @@ export class AfcClient {
    * Internal implementation of pull for ios-device using walkDir.
    * Walks the remote directory tree and pulls files to local filesystem.
    */
-  private async pullWithWalkDir(
-    remotePath: string,
-    localPath: string,
-    options: AfcPullOptions,
-  ): Promise<void> {
+  private async pullWithWalkDir(remotePath: string, localPath: string, options: AfcPullOptions): Promise<void> {
     const {recursive = false, overwrite = true, onEntry} = options;
 
     if (!(await this.isDirectory(remotePath))) {
@@ -350,8 +327,7 @@ export class AfcClient {
     await this.iosDeviceAfcService.walkDir(
       remotePath,
       true,
-      async (entryPath, isDirectory) =>
-        await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
+      async (entryPath, isDirectory) => await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
     );
 
     // Rejects still in `activePulls` surface via `Promise.all`. Pulls already spliced out after a
@@ -363,10 +339,7 @@ export class AfcClient {
       const [first, ...rest] = pullRejections;
       throw rest.length === 0
         ? first
-        : new AggregateError(
-            pullRejections,
-            `${util.pluralize('pull', pullRejections.length, true)} failed`,
-          );
+        : new AggregateError(pullRejections, `${util.pluralize('pull', pullRejections.length, true)} failed`);
     }
   }
 
@@ -396,9 +369,7 @@ export class AfcClient {
     onEntry?: AfcPullOptions['onEntry'],
   ): Promise<string> {
     const localDstIsDirectory = await this.isLocalDirectory(localPath);
-    const localRootDir = localDstIsDirectory
-      ? path.join(localPath, path.posix.basename(remotePath))
-      : localPath;
+    const localRootDir = localDstIsDirectory ? path.join(localPath, path.posix.basename(remotePath)) : localPath;
 
     await fs.mkdirp(localRootDir);
 
@@ -432,15 +403,7 @@ export class AfcClient {
     entryPath: string,
     isDirectory: boolean,
   ): Promise<void> {
-    const {
-      remoteTreeRoot,
-      localRootDir,
-      overwrite,
-      onEntry,
-      activePulls,
-      pullRejections,
-      waitForPullSlot,
-    } = ctx;
+    const {remoteTreeRoot, localRootDir, overwrite, onEntry, activePulls, pullRejections, waitForPullSlot} = ctx;
     const relativePath = entryPath.startsWith(remoteTreeRoot + '/')
       ? entryPath.slice(remoteTreeRoot.length + 1)
       : entryPath.slice(remoteTreeRoot.length);

@@ -1,9 +1,4 @@
-import type {
-  ParsedAttribute,
-  ParsedRule,
-  ParsedSelector,
-  StrategyEmitter,
-} from '@appium/css-locator-to-native';
+import type {ParsedAttribute, ParsedRule, ParsedSelector, StrategyEmitter} from '@appium/css-locator-to-native';
 import {errors} from 'appium/driver';
 
 import {escapeRegExp, isEmpty} from '../utils';
@@ -56,8 +51,7 @@ export class ClassChainEmitter implements StrategyEmitter {
     }
 
     const indexAttr = attrs.find(
-      (attr) =>
-        typeof attr === 'object' && attr !== null && (attr as {index: string}).index !== undefined,
+      (attr) => typeof attr === 'object' && attr !== null && (attr as {index: string}).index !== undefined,
     ) as {index: string} | undefined;
     if (indexAttr) {
       classChainSelector += `[${indexAttr.index}]`;
@@ -114,9 +108,7 @@ export class ClassChainEmitter implements StrategyEmitter {
   }
 
   private toCamelCase(str: string): string {
-    const tokens = str
-      .split('-')
-      .map((token) => token.charAt(0).toUpperCase() + token.slice(1).toLowerCase());
+    const tokens = str.split('-').map((token) => token.charAt(0).toUpperCase() + token.slice(1).toLowerCase());
     const out = tokens.join('');
     return out.charAt(0).toLowerCase() + out.slice(1);
   }

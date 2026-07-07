@@ -193,24 +193,18 @@ class RemotexpcPortForwarder implements PortForwarder {
   }
 
   private readonly onClientConnected = (socket: Socket) => {
-    this.log.debug(
-      `RemoteXPC downstream socket connected (local ${this.localPort} -> device ${this.devicePort})`,
-    );
+    this.log.debug(`RemoteXPC downstream socket connected (local ${this.localPort} -> device ${this.devicePort})`);
     this.adjustSocketOptions(socket);
   };
 
   private readonly onUpstreamConnected = (socket: Socket) => {
-    this.log.debug(
-      `RemoteXPC upstream socket connected (local ${this.localPort} -> device ${this.devicePort})`,
-    );
+    this.log.debug(`RemoteXPC upstream socket connected (local ${this.localPort} -> device ${this.devicePort})`);
     this.adjustSocketOptions(socket);
   };
 
   private readonly onUpstreamConnectError = (err: unknown) => {
     const msg = err instanceof Error ? err.message : String(err);
-    this.log.warn(
-      `RemoteXPC upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`,
-    );
+    this.log.warn(`RemoteXPC upstream connect error (local ${this.localPort} -> device ${this.devicePort}): ${msg}`);
   };
 
   private readonly onClientDisconnected = (_socket: Socket, err?: Error): void => {
@@ -219,9 +213,7 @@ class RemotexpcPortForwarder implements PortForwarder {
         `RemoteXPC downstream socket error (local ${this.localPort} -> device ${this.devicePort}): ${err.message}`,
       );
     } else {
-      this.log.debug(
-        `RemoteXPC downstream socket disconnected (local ${this.localPort} -> device ${this.devicePort})`,
-      );
+      this.log.debug(`RemoteXPC downstream socket disconnected (local ${this.localPort} -> device ${this.devicePort})`);
     }
   };
 
@@ -231,9 +223,7 @@ class RemotexpcPortForwarder implements PortForwarder {
         `RemoteXPC upstream socket error (local ${this.localPort} -> device ${this.devicePort}): ${err.message}`,
       );
     } else {
-      this.log.debug(
-        `RemoteXPC upstream socket disconnected (local ${this.localPort} -> device ${this.devicePort})`,
-      );
+      this.log.debug(`RemoteXPC upstream socket disconnected (local ${this.localPort} -> device ${this.devicePort})`);
     }
   };
 
@@ -273,11 +263,7 @@ export class DeviceConnectionsFactory {
    *   otherwise keys matching either filter are included
    * @returns Matching connection keys (empty if both `udid` and `port` are omitted)
    */
-  listConnections(
-    udid: string | null = null,
-    port: number | null = null,
-    strict: boolean = false,
-  ): string[] {
+  listConnections(udid: string | null = null, port: number | null = null, strict: boolean = false): string[] {
     if (!udid && !port) {
       return [];
     }
@@ -289,8 +275,7 @@ export class DeviceConnectionsFactory {
     return Object.keys(DeviceConnectionsFactory._connectionsMapping).filter((key) =>
       strict && udid && port
         ? key === this._toKey(udid, port)
-        : (udid && key.startsWith(this._udidAsToken(udid))) ||
-          (port && key.endsWith(this._portAsToken(port))),
+        : (udid && key.startsWith(this._udidAsToken(udid))) || (port && key.endsWith(this._portAsToken(port))),
     );
   }
 
@@ -323,14 +308,10 @@ export class DeviceConnectionsFactory {
       `Requesting connection for device ${udid} on local port ${port}` +
         (devicePort ? `, device port ${devicePort}` : ''),
     );
-    this.log.debug(
-      `Cached connections count: ${Object.keys(DeviceConnectionsFactory._connectionsMapping).length}`,
-    );
+    this.log.debug(`Cached connections count: ${Object.keys(DeviceConnectionsFactory._connectionsMapping).length}`);
     const connectionsOnPort = this.listConnections(null, port);
     if (!isEmpty(connectionsOnPort)) {
-      this.log.info(
-        `Found cached connections on port #${port}: ${JSON.stringify(connectionsOnPort)}`,
-      );
+      this.log.info(`Found cached connections on port #${port}: ${JSON.stringify(connectionsOnPort)}`);
     }
 
     if (usePortForwarding) {
@@ -363,15 +344,10 @@ export class DeviceConnectionsFactory {
    */
   async releaseConnection(udid: string | null = null, port: number | null = null): Promise<void> {
     if (!udid && !port) {
-      this.log.warn(
-        'Neither device UDID nor local port is set. ' +
-          'Did not know how to release the connection',
-      );
+      this.log.warn('Neither device UDID nor local port is set. ' + 'Did not know how to release the connection');
       return;
     }
-    this.log.info(
-      `Releasing connections for ${udid || 'any'} device on ${port || 'any'} port number`,
-    );
+    this.log.info(`Releasing connections for ${udid || 'any'} device on ${port || 'any'} port number`);
 
     const keys = this.listConnections(udid, port, true);
     if (isEmpty(keys)) {
@@ -383,15 +359,10 @@ export class DeviceConnectionsFactory {
     for (const key of keys) {
       delete DeviceConnectionsFactory._connectionsMapping[key];
     }
-    this.log.debug(
-      `Cached connections count: ${Object.keys(DeviceConnectionsFactory._connectionsMapping).length}`,
-    );
+    this.log.debug(`Cached connections count: ${Object.keys(DeviceConnectionsFactory._connectionsMapping).length}`);
   }
 
-  private _warnMissingRequestConnectionParams(
-    udid: string | null | undefined,
-    port: number | null | undefined,
-  ): void {
+  private _warnMissingRequestConnectionParams(udid: string | null | undefined, port: number | null | undefined): void {
     this.log.warn('Did not know how to request the connection:');
     if (!udid) {
       this.log.warn('- Device UDID is unset');
@@ -401,10 +372,7 @@ export class DeviceConnectionsFactory {
     }
   }
 
-  private async _ensureForwardingPortIsFree(
-    port: number,
-    connectionsOnPort: string[],
-  ): Promise<void> {
+  private async _ensureForwardingPortIsFree(port: number, connectionsOnPort: string[]): Promise<void> {
     let isPortBusy = (await checkPortStatus(port, LOCALHOST)) === 'open';
     if (isPortBusy) {
       this.log.warn(`Port #${port} is busy. Did you quit the previous driver session(s) properly?`);
@@ -436,8 +404,7 @@ export class DeviceConnectionsFactory {
           );
         } catch {
           this.log.warn(
-            `Did not know how to release port #${port} in ` +
-              `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+            `Did not know how to release port #${port} in ` + `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
           );
         }
       }
@@ -525,9 +492,7 @@ export class DeviceConnectionsFactory {
       if (!isRemoteXPCUnavailableError(err)) {
         throw err;
       }
-      this.log.debug(
-        'RemoteXPC port forwarding is not available. Using appium-ios-device port forwarding fallback.',
-      );
+      this.log.debug('RemoteXPC port forwarding is not available. Using appium-ios-device port forwarding fallback.');
       return new LegacyPortForwarder(udid, localPort, devicePort, this.log);
     }
   }

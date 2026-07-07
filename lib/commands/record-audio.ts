@@ -85,22 +85,17 @@ export class AudioRecorder {
         intervalMs: 300,
       });
     } catch {
-      this.log.warn(
-        `Audio recording process did not start within ${PROCESS_STARTUP_TIMEOUT_MS}ms. Continuing anyway`,
-      );
+      this.log.warn(`Audio recording process did not start within ${PROCESS_STARTUP_TIMEOUT_MS}ms. Continuing anyway`);
     }
     if (!this.mainProcess.isRunning) {
       this.mainProcess = null;
       throw new Error(
-        `The audio recording process '${FFMPEG_BINARY}' died unexpectedly. ` +
-          `Check server logs for more details`,
+        `The audio recording process '${FFMPEG_BINARY}' died unexpectedly. ` + `Check server logs for more details`,
       );
     }
     this.log.info(
-      `Starting capture on audio input '${this.input}' with command: '${util.quote([
-        FFMPEG_BINARY,
-        ...args,
-      ])}'. ` + `Will timeout in ${timeoutSeconds}s`,
+      `Starting capture on audio input '${this.input}' with command: '${util.quote([FFMPEG_BINARY, ...args])}'. ` +
+        `Will timeout in ${timeoutSeconds}s`,
     );
     this.mainProcess.once('exit', (code, signal) => {
       // ffmpeg returns code 255 if SIGINT arrives
@@ -108,8 +103,7 @@ export class AudioRecorder {
         this.log.info(`The recording session on audio input '${this.input}' has been finished`);
       } else {
         this.log.debug(
-          `The recording session on audio input '${this.input}' has exited ` +
-            `with code ${code}, signal ${signal}`,
+          `The recording session on audio input '${this.input}' has exited ` + `with code ${code}, signal ${signal}`,
         );
       }
     });
@@ -127,8 +121,7 @@ export class AudioRecorder {
         await interruptPromise;
       } catch (e: any) {
         this.log.warn(
-          `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` +
-            `Original error: ${e.message}`,
+          `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
         );
         return false;
       }
@@ -195,8 +188,7 @@ export async function startAudioRecording(
       await this._audioRecorder.interrupt(true);
     } else {
       this.log.info(
-        `Doing nothing. ` +
-          `Set 'forceRestart' option to true if you'd like to start a new audio recording session`,
+        `Doing nothing. ` + `Set 'forceRestart' option to true if you'd like to start a new audio recording session`,
       );
       return;
     }

@@ -26,9 +26,7 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
       await exec('xcrun', ['simctl', 'help']);
     } catch (err: any) {
       return doctor.nokOptional(
-        `Testing on Simulator is not possible. Cannot run 'xcrun simctl': ${
-          err?.stderr || (err as Error).message
-        }`,
+        `Testing on Simulator is not possible. Cannot run 'xcrun simctl': ${err?.stderr || (err as Error).message}`,
       );
     }
 
@@ -44,9 +42,7 @@ export class OptionalSimulatorCheck implements IDoctorCheck {
       `The following Simulator SDKs are installed:\n` +
         sdks
           .filter(({platform}) =>
-            OptionalSimulatorCheck.SUPPORTED_SIMULATOR_PLATFORMS.some(
-              ({name}) => name === platform,
-            ),
+            OptionalSimulatorCheck.SUPPORTED_SIMULATOR_PLATFORMS.some(({name}) => name === platform),
           )
           .map(({displayName}) => `\t→ ${displayName}`)
           .join('\n'),
@@ -130,17 +126,15 @@ export const optionalFfmpegCheck = new OptionalFfmpegCheck();
 
 const REMOTE_XPC_PACKAGE_NAME = 'appium-ios-remotexpc';
 
-const isRemoteXpcDependencyAvailable = memoize(
-  async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
-    try {
-      // We only care that the module can be imported; we don't need to use it here.
-      await import(REMOTE_XPC_PACKAGE_NAME);
-      return true;
-    } catch {
-      return false;
-    }
-  },
-);
+const isRemoteXpcDependencyAvailable = memoize(async function ensureRemoteXpcDependencyAvailable(): Promise<boolean> {
+  try {
+    // We only care that the module can be imported; we don't need to use it here.
+    await import(REMOTE_XPC_PACKAGE_NAME);
+    return true;
+  } catch {
+    return false;
+  }
+});
 
 const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string | null {
   return node.getModuleRootSync('appium-xcuitest-driver', __filename);
@@ -450,10 +444,7 @@ export class OptionalTunnelAvailabilityCheck implements IDoctorCheck {
    * Interprets tunnel-creation script stdout+stderr and optional exit code; returns the appropriate doctor result.
    * Output pattern matches take priority over a non-zero exit code.
    */
-  private _evaluateTunnelScriptOutput(
-    combinedOutput: string,
-    exitCode?: number | null,
-  ): DoctorCheckResult {
+  private _evaluateTunnelScriptOutput(combinedOutput: string, exitCode?: number | null): DoctorCheckResult {
     if (/No devices found/i.test(combinedOutput)) {
       return doctor.okOptional(
         `The Remote XPC tunnel-creation script can be invoked via '${OptionalTunnelAvailabilityCheck.TUNNEL_CREATION_COMMAND}', ` +

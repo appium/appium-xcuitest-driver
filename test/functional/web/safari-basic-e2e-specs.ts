@@ -87,8 +87,7 @@ describe('Safari - basics -', function () {
       it('should get full context list through mobile: getContexts', async function () {
         const ctxs = await driver.executeScript('mobile: getContexts', []);
         const webviews = ctxs.filter((ctx) => ctx.id !== 'NATIVE_APP');
-        expect(webviews.every((ctx) => util.hasValue(ctx.title) && util.hasValue(ctx.url))).to.be
-          .true;
+        expect(webviews.every((ctx) => util.hasValue(ctx.title) && util.hasValue(ctx.url))).to.be.true;
       });
     });
 
@@ -180,17 +179,13 @@ describe('Safari - basics -', function () {
         const el = await driver.$('#comments');
         await el.clearValue();
         await el.setValue('hello world');
-        expect(['how world', 'hello world']).to.include(
-          (await el.getAttribute('value')).toLowerCase(),
-        );
+        expect(['how world', 'hello world']).to.include((await el.getAttribute('value')).toLowerCase());
       });
       it('should send keystrokes to active element', async function () {
         const el = await driver.$('#comments');
         await el.click();
         await el.setValue('hello world');
-        expect(['how world', 'hello world']).to.include(
-          (await el.getAttribute('value')).toLowerCase(),
-        );
+        expect(['how world', 'hello world']).to.include((await el.getAttribute('value')).toLowerCase());
       });
       it('should clear element', async function () {
         const el = await driver.$('#comments');
@@ -441,9 +436,7 @@ describe('Safari - basics -', function () {
             it('should reject all functions', async function () {
               await expect(driver.addCookie(newCookie)).to.be.rejectedWith(notImplementedRegExp);
               await expect(driver.getAllCookies()).to.be.rejectedWith(notImplementedRegExp);
-              await expect(driver.deleteCookie(newCookie.name)).to.be.rejectedWith(
-                notImplementedRegExp,
-              );
+              await expect(driver.deleteCookie(newCookie.name)).to.be.rejectedWith(notImplementedRegExp);
               await expect(driver.deleteAllCookies()).to.be.rejectedWith(notImplementedRegExp);
             });
           });

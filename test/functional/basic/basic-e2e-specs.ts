@@ -148,14 +148,7 @@ describe('XCUITestDriver - basics -', function () {
     describe('types -', function () {
       it('should get the list of available logs', async function () {
         const actualTypes = await driver.getLogTypes();
-        for (const expectedType of [
-          'syslog',
-          'crashlog',
-          'performance',
-          'safariConsole',
-          'safariNetwork',
-          'server',
-        ]) {
+        for (const expectedType of ['syslog', 'crashlog', 'performance', 'safariConsole', 'safariNetwork', 'server']) {
           expect(actualTypes).to.include(expectedType);
         }
       });
@@ -213,9 +206,8 @@ describe('XCUITestDriver - basics -', function () {
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
       await expect(driver.execute('mobile: getSimulatedLocation')).to.be.fulfilled;
-      await expect(
-        driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}),
-      ).to.not.be.rejected;
+      await expect(driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'})).to.not
+        .be.rejected;
     });
   });
 

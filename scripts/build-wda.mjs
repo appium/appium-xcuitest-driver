@@ -29,9 +29,7 @@ async function build(options) {
     }
     return info;
   };
-  const deviceInfo = verifyDevicePresence(
-    iosDevices.find(({name}) => name.includes(customDevice || 'iPhone')),
-  );
+  const deviceInfo = verifyDevicePresence(iosDevices.find(({name}) => name.includes(customDevice || 'iPhone')));
   const device = await getSimulator(deviceInfo.udid, {
     platform: deviceInfo.platform,
     checkExistence: false,
@@ -42,9 +40,7 @@ async function build(options) {
     showXcodeLog: true,
     device,
   });
-  log.info(
-    `Building WDA for ${deviceInfo.name} ${platformVersion} with udid '${deviceInfo.udid}' Simulator...`,
-  );
+  log.info(`Building WDA for ${deviceInfo.name} ${platformVersion} with udid '${deviceInfo.udid}' Simulator...`);
   await wda.xcodebuild.start(true);
 }
 

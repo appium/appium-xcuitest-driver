@@ -67,8 +67,7 @@ class CleanupVideos {
     }
     if (!anyListSucceeded) {
       const errorMessage =
-        `Failed to list files in ${DOMAIN_TYPE}/${DOMAIN_IDENTIFIER}/` +
-        `{${ATTACHMENT_SUBDIRECTORIES.join(',')}}`;
+        `Failed to list files in ${DOMAIN_TYPE}/${DOMAIN_IDENTIFIER}/` + `{${ATTACHMENT_SUBDIRECTORIES.join(',')}}`;
       throw new AggregateError(listErrors, errorMessage);
     }
 
@@ -117,14 +116,10 @@ async function requirePlatformVersion(udid) {
   const d = devices.find((x) => x.hardwareProperties?.udid === udid || x.identifier === udid);
   const platformVersion = d?.deviceProperties?.osVersionNumber;
   if (!platformVersion) {
-    throw new Error(
-      `Device '${udid}' was not found in devicectl output, or OS version is missing.`,
-    );
+    throw new Error(`Device '${udid}' was not found in devicectl output, or OS version is missing.`);
   }
   if (!util.compareVersions(platformVersion, '>=', '18.0')) {
-    throw new Error(
-      `Attachment deletion requires iOS 18+. Device reports '${platformVersion}' (from devicectl).`,
-    );
+    throw new Error(`Attachment deletion requires iOS 18+. Device reports '${platformVersion}' (from devicectl).`);
   }
 }
 

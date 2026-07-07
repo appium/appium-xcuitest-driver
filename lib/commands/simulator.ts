@@ -74,8 +74,7 @@ export async function startSim(this: XCUITestDriver): Promise<void> {
 
   // This is to workaround XCTest bug about changing Simulator
   // orientation is not synchronized to the actual window orientation
-  const orientation =
-    typeof this.opts.orientation === 'string' && (this.opts.orientation as string).toUpperCase();
+  const orientation = typeof this.opts.orientation === 'string' && (this.opts.orientation as string).toUpperCase();
   switch (orientation) {
     case 'LANDSCAPE':
       devicePreferences.SimulatorWindowOrientation = 'LandscapeLeft';

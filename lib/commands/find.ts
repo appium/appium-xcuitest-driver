@@ -272,9 +272,6 @@ function rewriteMagicScrollable(mult: boolean, log: AppiumLogger | null = null):
   if (!mult) {
     selector += '[1]';
   }
-  log?.info(
-    'Rewrote request for scrollable descendants to class chain ' +
-      `format with selector '${selector}'`,
-  );
+  log?.info('Rewrote request for scrollable descendants to class chain ' + `format with selector '${selector}'`);
   return [strategy, selector];
 }

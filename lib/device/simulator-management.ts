@@ -36,10 +36,7 @@ export interface SimulatorInstallOptions {
  *
  * @returns Simulator object associated with the udid passed in.
  */
-export async function createSim(
-  this: XCUITestDriver,
-  opts: XCUITestDriverOpts = this.opts,
-): Promise<Simulator> {
+export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts = this.opts): Promise<Simulator> {
   const {simulatorDevicesSetPath: devicesSetPath, deviceName, platformVersion} = opts;
   const platform = normalizePlatformName(opts.platformName);
   const simctl = new Simctl({devicesSetPath});
@@ -86,13 +83,7 @@ export async function getExistingSim(
   this: XCUITestDriver,
   opts: XCUITestDriverOpts = this.opts,
 ): Promise<Simulator | null> {
-  const {
-    platformVersion,
-    deviceName,
-    udid,
-    simulatorDevicesSetPath: devicesSetPath,
-    platformName,
-  } = opts;
+  const {platformVersion, deviceName, udid, simulatorDevicesSetPath: devicesSetPath, platformName} = opts;
 
   const platform = normalizePlatformName(platformName);
   const selectSim = async (dev: {udid: string; platform: string}): Promise<Simulator> =>
@@ -117,14 +108,11 @@ export async function getExistingSim(
   }
 
   if (!platformVersion) {
-    this.log.debug(
-      `Provide 'platformVersion' capability if you prefer an existing Simulator to be selected`,
-    );
+    this.log.debug(`Provide 'platformVersion' capability if you prefer an existing Simulator to be selected`);
     return null;
   }
 
-  const devices =
-    devicesMap?.[platformVersion] ?? (await simctl.getDevices(platformVersion, platform));
+  const devices = devicesMap?.[platformVersion] ?? (await simctl.getDevices(platformVersion, platform));
   this.log.debug(
     `Looking for an existing Simulator with platformName: ${platform}, ` +
       `platformVersion: ${platformVersion}, deviceName: ${deviceName}`,
@@ -162,8 +150,7 @@ export async function runSimulatorReset(
   this: XCUITestDriver,
   enforceSimulatorShutdown: boolean = false,
 ): Promise<void> {
-  const {noReset, fullReset, keychainsExcludePatterns, keepKeyChains, bundleId, app, browserName} =
-    this.opts;
+  const {noReset, fullReset, keychainsExcludePatterns, keepKeyChains, bundleId, app, browserName} = this.opts;
   if (noReset && !fullReset) {
     // noReset === true && fullReset === false
     this.log.debug('Reset: noReset is on. Leaving simulator as is');
@@ -179,19 +166,13 @@ export async function runSimulatorReset(
   if (fullReset) {
     this.log.debug('Reset: fullReset is on. Cleaning simulator');
     await shutdownSimulator.bind(this)();
-    const isKeychainsBackupSuccessful =
-      (keychainsExcludePatterns || keepKeyChains) && (await device.backupKeychains());
+    const isKeychainsBackupSuccessful = (keychainsExcludePatterns || keepKeyChains) && (await device.backupKeychains());
     await device.clean();
     if (isKeychainsBackupSuccessful) {
-      await device.restoreKeychains(
-        keychainsExcludePatterns?.split(',')?.map((x) => x.trim()) || [],
-      );
+      await device.restoreKeychains(keychainsExcludePatterns?.split(',')?.map((x) => x.trim()) || []);
       this.log.info(`Successfully restored keychains after full reset`);
     } else if (keychainsExcludePatterns || keepKeyChains) {
-      this.log.warn(
-        'Cannot restore keychains after full reset, because ' +
-          'the backup operation did not succeed',
-      );
+      this.log.warn('Cannot restore keychains after full reset, because ' + 'the backup operation did not succeed');
     }
   } else if (bundleId) {
     // fastReset or noReset
@@ -258,9 +239,7 @@ export async function installToSimulator(
   this.log.debug(`Installing '${app}' on Simulator with UUID '${device.udid}'...`);
   const timer = new timing.Timer().start();
   await device.installApp(app);
-  this.log.info(
-    `The app has been successfully installed in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-  );
+  this.log.info(`The app has been successfully installed in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
 }
 
 /**
@@ -272,19 +251,13 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
     devicesSetPath: device.devicesSetPath,
   });
   const allDevices = Object.values(await simctl.getDevices()).flatMap((x) => x);
-  const otherBootedDevices = allDevices.filter(
-    ({udid, state}) => udid !== device.udid && state === 'Booted',
-  );
+  const otherBootedDevices = allDevices.filter(({udid, state}) => udid !== device.udid && state === 'Booted');
   if (isEmpty(otherBootedDevices)) {
     this.log.info('No other running simulators have been detected');
     return;
   }
   this.log.info(
-    `Detected ${util.pluralize(
-      'other running Simulator',
-      otherBootedDevices.length,
-      true,
-    )}. Shutting them down...`,
+    `Detected ${util.pluralize('other running Simulator', otherBootedDevices.length, true)}. Shutting them down...`,
   );
   for (const {udid} of otherBootedDevices) {
     // It is necessary to stop the corresponding xcodebuild process before killing

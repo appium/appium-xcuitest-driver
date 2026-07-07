@@ -147,9 +147,7 @@ class ProvisioningProfilesHelper {
     try {
       entries = await fs.readdir(dir);
     } catch {
-      throw new Error(
-        `${source} provisioning profile directory is not a readable directory: ${dir}`,
-      );
+      throw new Error(`${source} provisioning profile directory is not a readable directory: ${dir}`);
     }
 
     if (!entries.some((name) => name.toLowerCase().endsWith(MOBILEPROVISION_EXTENSION))) {
@@ -304,11 +302,9 @@ class SignWdaWorkflow extends WdaBundleWorkflow {
   constructor(deps = {}) {
     super();
     this._createResigner = deps.createResigner ?? ((wdaPath) => new Resigner(wdaPath));
-    this._createProvisioning =
-      deps.createProvisioning ?? ((profileDir) => new ProvisioningProfilesHelper(profileDir));
+    this._createProvisioning = deps.createProvisioning ?? ((profileDir) => new ProvisioningProfilesHelper(profileDir));
     this._createP12 =
-      deps.createP12 ??
-      ((certPath, keyPath, p12Password) => new P12Converter(certPath, keyPath, p12Password));
+      deps.createP12 ?? ((certPath, keyPath, p12Password) => new P12Converter(certPath, keyPath, p12Password));
   }
 
   /**
@@ -326,11 +322,7 @@ class SignWdaWorkflow extends WdaBundleWorkflow {
     try {
       if (options.p12Cert && options.p12Key) {
         const generatedPassword = P12Converter.generateRandomPassword();
-        const result = await this._createP12(
-          options.p12Cert,
-          options.p12Key,
-          generatedPassword,
-        ).convert();
+        const result = await this._createP12(options.p12Cert, options.p12Key, generatedPassword).convert();
         p12File = result.p12File;
         tempDir = result.tempDir;
         p12Password = generatedPassword;
@@ -436,10 +428,7 @@ class SignWdaCli {
         '--p12-key <path>',
         'Path to the .key private key file from Apple Developer portal (auto-converted to .p12 with generated password; mutually exclusive with --p12-file; must use with --p12-cert)',
       )
-      .option(
-        '--profile-dir <path>',
-        'Directory containing provisioning profiles (auto-discovered if omitted)',
-      )
+      .option('--profile-dir <path>', 'Directory containing provisioning profiles (auto-discovered if omitted)')
       .option('--bundle-id <id>', 'Target bundle ID for remapping (e.g., com.example.wda)')
       .addHelpText(
         'after',
@@ -511,9 +500,7 @@ EXAMPLES:
     const hasCertAndKey = !!(options.p12Cert && options.p12Key);
 
     if (!hasP12File && !hasCertAndKey) {
-      throw new Error(
-        `Must provide either --p12-file or both --p12-cert and --p12-key for signing mode`,
-      );
+      throw new Error(`Must provide either --p12-file or both --p12-cert and --p12-key for signing mode`);
     }
 
     if (hasP12File && hasCertAndKey) {
@@ -532,8 +519,7 @@ EXAMPLES:
   }
 }
 
-const isMainModule =
-  Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
+const isMainModule = Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMainModule) {
   await new SignWdaCli().run(process.argv);
 }

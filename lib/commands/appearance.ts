@@ -11,10 +11,7 @@ import type {Style} from './types';
  * @param style - The appearance style to set
  * @throws If the current platform does not support UI appearance changes
  */
-export async function mobileSetAppearance(
-  this: XCUITestDriver,
-  style: 'dark' | 'light',
-): Promise<void> {
+export async function mobileSetAppearance(this: XCUITestDriver, style: 'dark' | 'light'): Promise<void> {
   if (!['light', 'dark'].includes(String(style).toLowerCase())) {
     throw new Error(`The 'style' value is expected to equal either 'light' or 'dark'`);
   }
@@ -37,9 +34,7 @@ export async function mobileSetAppearance(
     this.log.debug(e.stack);
   }
   // Fall back to the ugly Siri workaround if the current SDK is too old
-  await this.mobileSiriCommand(
-    `Turn ${String(style).toLowerCase() === 'dark' ? 'on' : 'off'} dark mode`,
-  );
+  await this.mobileSiriCommand(`Turn ${String(style).toLowerCase() === 'dark' ? 'on' : 'off'} dark mode`);
 }
 
 /**
@@ -60,10 +55,7 @@ export async function mobileGetAppearance(this: XCUITestDriver): Promise<{style:
     } catch {}
   }
   if (!style) {
-    const deviceInfo = await this.proxyCommand<any, {userInterfaceStyle?: string}>(
-      '/wda/device/info',
-      'GET',
-    );
+    const deviceInfo = await this.proxyCommand<any, {userInterfaceStyle?: string}>('/wda/device/info', 'GET');
     style = (deviceInfo?.userInterfaceStyle ?? 'unknown') as Style;
   }
   return {

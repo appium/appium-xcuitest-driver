@@ -82,10 +82,7 @@ export class ZipConduitClient {
   }
 
   private logInstallProgress(percent: number, status: string): void {
-    if (
-      percent === this._lastLoggedProgress?.percent &&
-      status === this._lastLoggedProgress?.status
-    ) {
+    if (percent === this._lastLoggedProgress?.percent && status === this._lastLoggedProgress?.status) {
       return;
     }
     this._lastLoggedProgress = {percent, status};

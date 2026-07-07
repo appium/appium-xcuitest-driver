@@ -24,8 +24,7 @@ function checkFeatureInEnv(envArg) {
 
 export const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '17.4';
 export const DEVICE_NAME = process.env.DEVICE_NAME || 'iPhone 15';
-export const DEVICE_NAME_FOR_SAFARI_IPAD =
-  process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
+export const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 
 const initTimeout = 60 * 1000 * 4;

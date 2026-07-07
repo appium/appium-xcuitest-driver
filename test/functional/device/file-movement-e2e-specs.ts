@@ -42,9 +42,7 @@ describe('XCUITestDriver - file movement', function () {
       });
 
       it('should not be able to fetch something that does not exist', async function () {
-        await expect(driver.pullFile('Library/AddressBook/nothere.txt')).to.be.rejectedWith(
-          /does not exist/,
-        );
+        await expect(driver.pullFile('Library/AddressBook/nothere.txt')).to.be.rejectedWith(/does not exist/);
       });
 
       it('should be able to push and pull a file', async function () {

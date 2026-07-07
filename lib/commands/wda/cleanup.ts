@@ -10,10 +10,7 @@ import {isEmpty} from '../../utils';
 import {isXcodebuildNeeded, SHARED_RESOURCES_GUARD, XCUITEST_DRIVER_SYNC_NAME} from './constants';
 import {getDerivedDataPath} from './utils';
 
-const XCTEST_LOG_FILES_PATTERNS = [
-  /^Session-WebDriverAgentRunner.*\.log$/i,
-  /^StandardOutputAndStandardError\.txt$/i,
-];
+const XCTEST_LOG_FILES_PATTERNS = [/^Session-WebDriverAgentRunner.*\.log$/i, /^StandardOutputAndStandardError\.txt$/i];
 const XCTEST_LOGS_CACHE_FOLDER_PREFIX = 'com.apple.dt.XCTest';
 
 // This map contains derived data logs folders as keys
@@ -24,14 +21,10 @@ const derivedDataCleanupMarkers = new Map<string, number>();
 export type RetrieveDerivedDataPath = () => Promise<string | undefined>;
 
 /** Marks WDA logs folder for deferred cleanup across parallel sessions. */
-export async function markSystemFilesForCleanup(
-  retrieveDerivedDataPath: RetrieveDerivedDataPath,
-): Promise<void> {
+export async function markSystemFilesForCleanup(retrieveDerivedDataPath: RetrieveDerivedDataPath): Promise<void> {
   const derivedDataPath = await retrieveDerivedDataPath();
   if (!derivedDataPath) {
-    log.warn(
-      'No WebDriverAgent derived data available, so unable to mark system files for cleanup',
-    );
+    log.warn('No WebDriverAgent derived data available, so unable to mark system files for cleanup');
     return;
   }
 
@@ -41,9 +34,7 @@ export async function markSystemFilesForCleanup(
 }
 
 /** Cleans per-session WDA logs and stale XCTest temporary logs. */
-export async function clearSystemFiles(
-  retrieveDerivedDataPath: RetrieveDerivedDataPath,
-): Promise<void> {
+export async function clearSystemFiles(retrieveDerivedDataPath: RetrieveDerivedDataPath): Promise<void> {
   const derivedDataPath = await retrieveDerivedDataPath();
   if (!derivedDataPath) {
     log.warn('No WebDriverAgent derived data available, so unable to clear system files');
@@ -56,9 +47,7 @@ export async function clearSystemFiles(
     let markersCount = existingCount;
     derivedDataCleanupMarkers.set(logsRoot, --markersCount);
     if (markersCount > 0) {
-      log.info(
-        `Not cleaning '${logsRoot}' folder, because the other session does not expect it to be cleaned`,
-      );
+      log.info(`Not cleaning '${logsRoot}' folder, because the other session does not expect it to be cleaned`);
       return;
     }
   }

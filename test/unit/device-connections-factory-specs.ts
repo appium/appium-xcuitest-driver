@@ -54,9 +54,7 @@ describe('DeviceConnectionsFactory', function () {
 
     const f = devConFactory as any;
     expect(
-      await f._releaseProxiedConnections(
-        Object.keys((DeviceConnectionsFactory as any)._connectionsMapping),
-      ),
+      await f._releaseProxiedConnections(Object.keys((DeviceConnectionsFactory as any)._connectionsMapping)),
     ).to.eql(['udid:1234', 'udid4:6545']);
   });
 

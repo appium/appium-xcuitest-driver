@@ -111,10 +111,7 @@ export async function getCssProperty(
   }
 
   const atomsElement = this.getAtomsElement(el);
-  return (await this.executeAtom('get_value_of_css_property', [
-    atomsElement,
-    propertyName,
-  ])) as string;
+  return (await this.executeAtom('get_value_of_css_property', [atomsElement, propertyName])) as string;
 }
 
 /**
@@ -197,9 +194,7 @@ export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
       try {
         cookie.value = decodeURI(cookie.value);
       } catch (error: any) {
-        this.log.debug(
-          `Cookie ${cookie.name} was not decoded successfully. Cookie value: ${cookie.value}`,
-        );
+        this.log.debug(`Cookie ${cookie.name} was not decoded successfully. Cookie value: ${cookie.value}`);
         this.log.warn(error);
         // Keep the original value
       }
@@ -308,8 +303,7 @@ export function cacheWebElement(this: XCUITestDriver, el: Element | string): Ele
  * @returns Response with cached element wrappers
  */
 export function cacheWebElements(this: XCUITestDriver, response: any): any {
-  const toCached = (v: any) =>
-    Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v;
+  const toCached = (v: any) => (Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v);
 
   if (Array.isArray(response)) {
     return response.map(toCached);
@@ -348,11 +342,7 @@ export async function executeAtom(
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  */
-export async function executeAtomAsync(
-  this: XCUITestDriver,
-  atom: string,
-  args: any[],
-): Promise<any> {
+export async function executeAtomAsync(this: XCUITestDriver, atom: string, args: any[]): Promise<any> {
   const promise = this.remote.executeAtomAsync(atom, args, this.curWebFrames);
   return await this.waitForAtom(promise);
 }
@@ -416,8 +406,7 @@ export function getElementId(element: any): string | undefined {
  */
 export function hasElementId(element: any): element is Element {
   return (
-    util.hasValue(element) &&
-    (util.hasValue(element.ELEMENT) || util.hasValue(element[W3C_WEB_ELEMENT_IDENTIFIER]))
+    util.hasValue(element) && (util.hasValue(element.ELEMENT) || util.hasValue(element[W3C_WEB_ELEMENT_IDENTIFIER]))
   );
 }
 
@@ -448,11 +437,7 @@ export async function findWebElementOrElements(
   try {
     await this.implicitWaitForCondition(doFind);
   } catch (err: any) {
-    if (
-      err.message &&
-      typeof err.message.match === 'function' &&
-      err.message.match(/Condition unmet/)
-    ) {
+    if (err.message && typeof err.message.match === 'function' && err.message.match(/Condition unmet/)) {
       // condition was not met setting res to empty array
       element = [];
     } else {
@@ -572,11 +557,7 @@ export async function getExtraTranslateWebCoordsOffset(
   const {
     nativeWebTapTabBarVisibility,
     nativeWebTapSmartAppBannerVisibility,
-    safariTabBarPosition = util.compareVersions(
-      this.opts.platformVersion as string,
-      '>=',
-      '15.0',
-    ) && isIphone
+    safariTabBarPosition = util.compareVersions(this.opts.platformVersion as string, '>=', '15.0') && isIphone
       ? TAB_BAR_POSITION_BOTTOM
       : TAB_BAR_POSITION_TOP,
   } = this.settings.getSettings();
@@ -607,9 +588,7 @@ export async function getExtraTranslateWebCoordsOffset(
       : IPHONE_X_NOTCH_OFFSET_IOS
     : 0;
 
-  const isScrolled = (await this.execute(
-    'return document.documentElement.scrollTop > 0',
-  )) as boolean;
+  const isScrolled = (await this.execute('return document.documentElement.scrollTop > 0')) as boolean;
   if (isScrolled) {
     topOffset = IPHONE_SCROLLED_TOP_BAR_HEIGHT + notchOffset;
 
@@ -673,9 +652,7 @@ export async function getExtraNativeWebTapOffset(
   let offset = 0;
 
   if (bannerVisibility === VISIBLE) {
-    offset += isIphone
-      ? IPHONE_WEB_COORD_SMART_APP_BANNER_OFFSET
-      : IPAD_WEB_COORD_SMART_APP_BANNER_OFFSET;
+    offset += isIphone ? IPHONE_WEB_COORD_SMART_APP_BANNER_OFFSET : IPAD_WEB_COORD_SMART_APP_BANNER_OFFSET;
   } else if (bannerVisibility === DETECT) {
     // try to see if there is an Smart App Banner
     const banners = (await this.findNativeElementOrElements(
@@ -684,9 +661,7 @@ export async function getExtraNativeWebTapOffset(
       true,
     )) as Element[];
     if (banners?.length) {
-      offset += isIphone
-        ? IPHONE_WEB_COORD_SMART_APP_BANNER_OFFSET
-        : IPAD_WEB_COORD_SMART_APP_BANNER_OFFSET;
+      offset += isIphone ? IPHONE_WEB_COORD_SMART_APP_BANNER_OFFSET : IPAD_WEB_COORD_SMART_APP_BANNER_OFFSET;
     }
   }
 
@@ -705,10 +680,7 @@ export async function nativeWebTap(this: XCUITestDriver, el: any): Promise<void>
   const atomsElement = this.getAtomsElement(el);
 
   // if strict native tap, do not try to do it with WDA directly
-  if (
-    !this.settings.getSettings().nativeWebTapStrict &&
-    (await tapWebElementNatively.bind(this)(atomsElement))
-  ) {
+  if (!this.settings.getSettings().nativeWebTapStrict && (await tapWebElementNatively.bind(this)(atomsElement))) {
     return;
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
@@ -732,17 +704,11 @@ export async function nativeWebTap(this: XCUITestDriver, el: any): Promise<void>
  * @returns Translated position in native coordinates
  * @throws {Error} If no WebView is found or if translation fails
  */
-export async function translateWebCoords(
-  this: XCUITestDriver,
-  x: number,
-  y: number,
-): Promise<Position> {
+export async function translateWebCoords(this: XCUITestDriver, x: number, y: number): Promise<Position> {
   this.log.debug(`Translating web coordinates (${JSON.stringify({x, y})}) to native coordinates`);
 
   if (this.webviewCalibrationResult) {
-    this.log.debug(
-      `Will use the recent calibration result: ${JSON.stringify(this.webviewCalibrationResult)}`,
-    );
+    this.log.debug(`Will use the recent calibration result: ${JSON.stringify(this.webviewCalibrationResult)}`);
     const {offsetX, offsetY, pixelRatioX, pixelRatioY} = this.webviewCalibrationResult;
     const cmd =
       '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
@@ -754,8 +720,7 @@ export async function translateWebCoords(
       outerHeight: number;
     };
     // https://tripleodeon.com/2011/12/first-understand-your-screen/
-    const shouldApplyPixelRatio =
-      wvDims.innerWidth > wvDims.outerWidth || wvDims.innerHeight > wvDims.outerHeight;
+    const shouldApplyPixelRatio = wvDims.innerWidth > wvDims.outerWidth || wvDims.innerHeight > wvDims.outerHeight;
     return {
       x: offsetX + x * (shouldApplyPixelRatio ? pixelRatioX : 1),
       y: offsetY + y * (shouldApplyPixelRatio ? pixelRatioY : 1),
@@ -773,8 +738,7 @@ export async function translateWebCoords(
     webview = (await retryInterval(
       5,
       100,
-      async () =>
-        await this.findNativeElementOrElements('class name', 'XCUIElementTypeWebView', false),
+      async () => await this.findNativeElementOrElements('class name', 'XCUIElementTypeWebView', false),
     )) as Element | undefined;
   } catch {}
 
@@ -825,9 +789,7 @@ export async function translateWebCoords(
   this.log.debug(`    xRatio: ${JSON.stringify(xRatio)}`);
   this.log.debug(`    yRatio: ${JSON.stringify(yRatio)}`);
 
-  this.log.debug(
-    `Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`,
-  );
+  this.log.debug(`Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`);
   return newCoords;
 }
 
@@ -957,10 +919,7 @@ export function getWdaLocalhostRoot(this: XCUITestDriver): string {
     }
   };
   const remotePort =
-    ((this.isRealDevice() ? this.opts.wdaRemotePort : null) ??
-      wdaPort() ??
-      this.opts.wdaLocalPort) ||
-    8100;
+    ((this.isRealDevice() ? this.opts.wdaRemotePort : null) ?? wdaPort() ?? this.opts.wdaLocalPort) || 8100;
   const remoteIp = this.opts.wdaBindingIP ?? '127.0.0.1';
   return `http://${remoteIp}:${remotePort}`;
 }
@@ -978,9 +937,7 @@ export function getWdaLocalhostRoot(this: XCUITestDriver): string {
  * @returns Calibration data with offset and pixel ratio information
  * @throws {errors.NotImplementedError} If not in a web context
  */
-export async function mobileCalibrateWebToRealCoordinatesTranslation(
-  this: XCUITestDriver,
-): Promise<CalibrationData> {
+export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUITestDriver): Promise<CalibrationData> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError('This API can only be called from a web context');
   }
@@ -997,9 +954,7 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(
     try {
       const title = await this.title();
       this.log.debug(JSON.stringify(title));
-      result = isPlainObject(title)
-        ? (title as unknown as Position)
-        : (JSON.parse(title) as Position);
+      result = isPlainObject(title) ? (title as unknown as Position) : (JSON.parse(title) as Position);
     } catch (e: any) {
       throw new Error(`${errorPrefix} Original error: ${e.message}`, {cause: e});
     }
@@ -1091,8 +1046,7 @@ async function generateAtomTimeoutError(
       `which suggests that the provided atom script is taking too long to execute.`;
   if (this.opts.webviewAtomWaitTimeout === undefined) {
     message +=
-      ` You may also consider adjusting the timeout by setting the ` +
-      `'webviewAtomWaitTimeout' driver capability.`;
+      ` You may also consider adjusting the timeout by setting the ` + `'webviewAtomWaitTimeout' driver capability.`;
   }
   return new errors.TimeoutError(message);
 }
@@ -1115,10 +1069,7 @@ function startAlertMonitorIfNeeded(this: XCUITestDriver): void {
 /**
  * One monitor session: runs the poll loop, then tears down or hands off on the caller side.
  */
-async function runAlertMonitorSession(
-  this: XCUITestDriver,
-  abortController: AbortController,
-): Promise<void> {
+async function runAlertMonitorSession(this: XCUITestDriver, abortController: AbortController): Promise<void> {
   try {
     await alertMonitorLoop.call(this, abortController);
   } finally {
@@ -1141,10 +1092,7 @@ async function runAlertMonitorSession(
 }
 
 /** Polls for obstructing alerts while there are waiting atoms. */
-async function alertMonitorLoop(
-  this: XCUITestDriver,
-  abortController: AbortController,
-): Promise<void> {
+async function alertMonitorLoop(this: XCUITestDriver, abortController: AbortController): Promise<void> {
   while (this._waitingAtoms.count > 0) {
     try {
       if (await this.checkForAlert()) {
@@ -1176,10 +1124,7 @@ async function alertMonitorLoop(
  * @param atomsElement - Atoms-compatible element to tap
  * @returns True if the native tap was successful, false otherwise
  */
-async function tapWebElementNatively(
-  this: XCUITestDriver,
-  atomsElement: AtomsElement,
-): Promise<boolean> {
+async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsElement): Promise<boolean> {
   // try to get the text of the element, which will be accessible in the
   // native context
   try {
@@ -1192,34 +1137,19 @@ async function tapWebElementNatively(
       return false;
     }
 
-    const els = (await this.findNativeElementOrElements(
-      'accessibility id',
-      text,
-      true,
-    )) as Element[];
+    const els = (await this.findNativeElementOrElements('accessibility id', text, true)) as Element[];
     if (![1, 2].includes(els.length)) {
       return false;
     }
 
     const el = els[0];
     // use tap because on iOS 11.2 and below `nativeClick` crashes WDA
-    const rect = (await this.proxyCommand(
-      `/element/${util.unwrapElement(el)}/rect`,
-      'GET',
-    )) as Rect;
+    const rect = (await this.proxyCommand(`/element/${util.unwrapElement(el)}/rect`, 'GET')) as Rect;
     if (els.length > 1) {
       const el2 = els[1];
-      const rect2 = (await this.proxyCommand(
-        `/element/${util.unwrapElement(el2)}/rect`,
-        'GET',
-      )) as Rect;
+      const rect2 = (await this.proxyCommand(`/element/${util.unwrapElement(el2)}/rect`, 'GET')) as Rect;
 
-      if (
-        rect.x !== rect2.x ||
-        rect.y !== rect2.y ||
-        rect.width !== rect2.width ||
-        rect.height !== rect2.height
-      ) {
+      if (rect.x !== rect2.x || rect.y !== rect2.y || rect.width !== rect2.width || rect.height !== rect2.height) {
         // These 2 native elements are not referring to the same web element
         return false;
       }

@@ -77,9 +77,7 @@ export class DeviceDiscovery {
         determine: async () => await this.determineSimulatorDevice(isStrictHostMode),
       },
     ];
-    return strategies.find((strategy) =>
-      strategy.isApplicable(this.sessionOpts),
-    ) as DeviceDiscoveryStrategy;
+    return strategies.find((strategy) => strategy.isApplicable(this.sessionOpts)) as DeviceDiscoveryStrategy;
   }
 
   private async setupSimulatorPlatformVersion(): Promise<void> {
@@ -111,9 +109,7 @@ export class DeviceDiscovery {
     return this.toResult({device, realDevice: true, udid});
   }
 
-  private async determineDeviceWithAutoUdid(
-    isStrictHostMode: boolean,
-  ): Promise<DeviceDiscoveryResult> {
+  private async determineDeviceWithAutoUdid(isStrictHostMode: boolean): Promise<DeviceDiscoveryResult> {
     if (isStrictHostMode) {
       throw new Error(
         `Automatic device selection requires macOS device discovery utilities. ` +
@@ -143,9 +139,7 @@ export class DeviceDiscovery {
     }
   }
 
-  private async determineDeviceWithExplicitUdid(
-    isStrictHostMode: boolean,
-  ): Promise<DeviceDiscoveryResult> {
+  private async determineDeviceWithExplicitUdid(isStrictHostMode: boolean): Promise<DeviceDiscoveryResult> {
     const udid = this.sessionOpts.udid as string;
     let isRealDeviceUdid = false;
     // If webDriverAgentUrl is set with a real device, assume the user prepared the device.
@@ -205,12 +199,9 @@ export class DeviceDiscovery {
     }
   }
 
-  private async determineSimulatorDevice(
-    isStrictHostMode: boolean,
-  ): Promise<DeviceDiscoveryResult> {
+  private async determineSimulatorDevice(isStrictHostMode: boolean): Promise<DeviceDiscoveryResult> {
     this.log.info(
-      `No real device udid has been provided in capabilities. ` +
-        `Will select a matching simulator to run the test.`,
+      `No real device udid has been provided in capabilities. ` + `Will select a matching simulator to run the test.`,
     );
     if (isStrictHostMode) {
       throw new Error(
@@ -239,9 +230,7 @@ export class DeviceDiscovery {
     return this.toResult({device, realDevice: false, udid: device.udid});
   }
 
-  private toResult(
-    result: Pick<DeviceDiscoveryResult, 'device' | 'realDevice' | 'udid'>,
-  ): DeviceDiscoveryResult {
+  private toResult(result: Pick<DeviceDiscoveryResult, 'device' | 'realDevice' | 'udid'>): DeviceDiscoveryResult {
     return {
       ...result,
       createdSimulator: this.createdSimulator,

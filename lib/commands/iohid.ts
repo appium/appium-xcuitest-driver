@@ -28,9 +28,7 @@ export async function mobilePerformIoHidEvent(
   durationSeconds: number | string,
 ): Promise<void> {
   if (!isHIDPageEvent(page)) {
-    throw new errors.InvalidArgumentError(
-      `'page' argument must be a valid HIDPageEvent identifier`,
-    );
+    throw new errors.InvalidArgumentError(`'page' argument must be a valid HIDPageEvent identifier`);
   }
   if (!isHIDUsageEvent(usage)) {
     throw new errors.InvalidArgumentError(`'usage' must be a valid HIDUsageEvent identifier`);
@@ -65,9 +63,7 @@ export async function mobilePerformIndigoHidEvent(
   requireRealDevice(this, 'perform IO HID event with HID Indigo RemoteXPC service');
 
   if (name === undefined && (page === undefined || usage === undefined)) {
-    throw new errors.InvalidArgumentError(
-      `Either 'name' or both 'page' and 'usage' must be provided`,
-    );
+    throw new errors.InvalidArgumentError(`Either 'name' or both 'page' and 'usage' must be provided`);
   }
 
   const getDuration = () => {

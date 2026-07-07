@@ -38,17 +38,13 @@ export class ConnectedDevicesClient {
     const err = tunnelSettled.reason;
     log.warn(formatRemoteXPCFallbackLog('devices listing', err));
     if (legacySettled.status === 'rejected') {
-      throw legacySettled.reason instanceof Error
-        ? legacySettled.reason
-        : new Error(String(legacySettled.reason));
+      throw legacySettled.reason instanceof Error ? legacySettled.reason : new Error(String(legacySettled.reason));
     }
     return legacySettled.value;
   }
 
   private isPreferDevicectlEnabled(): boolean {
-    return ['yes', 'true', '1'].includes(
-      String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL ?? '').toLowerCase(),
-    );
+    return ['yes', 'true', '1'].includes(String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL ?? '').toLowerCase());
   }
 
   /**

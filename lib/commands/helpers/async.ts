@@ -9,11 +9,7 @@ export class TimeoutError extends Error {
 }
 
 /** Resolves with `promise` or rejects if it does not settle before `timeoutMs`. */
-export async function withTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  message?: string,
-): Promise<T> {
+export async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message?: string): Promise<T> {
   try {
     return await asyncboxWithTimeout(promise, timeoutMs, message);
   } catch (err) {

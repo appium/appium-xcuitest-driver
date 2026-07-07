@@ -724,8 +724,7 @@ export class XCUITestDriver
   waitForAtom = webCommands.waitForAtom;
   mobileWebNav = webCommands.mobileWebNav;
   getWdaLocalhostRoot = webCommands.getWdaLocalhostRoot;
-  mobileCalibrateWebToRealCoordinatesTranslation =
-    webCommands.mobileCalibrateWebToRealCoordinatesTranslation;
+  mobileCalibrateWebToRealCoordinatesTranslation = webCommands.mobileCalibrateWebToRealCoordinatesTranslation;
   mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
 
   /*--------+
@@ -749,8 +748,7 @@ export class XCUITestDriver
    | XCTEST SCREEN RECORD |
    +---------------------+*/
   mobileStartXctestScreenRecording = xctestRecordScreenCommands.mobileStartXctestScreenRecording;
-  mobileGetXctestScreenRecordingInfo =
-    xctestRecordScreenCommands.mobileGetXctestScreenRecordingInfo;
+  mobileGetXctestScreenRecordingInfo = xctestRecordScreenCommands.mobileGetXctestScreenRecordingInfo;
   mobileStopXctestScreenRecording = xctestRecordScreenCommands.mobileStopXctestScreenRecording;
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -767,13 +765,7 @@ export class XCUITestDriver
       'accessibility id',
       'css selector',
     ];
-    this.webLocatorStrategies = [
-      'link text',
-      'css selector',
-      'tag name',
-      'link text',
-      'partial link text',
-    ];
+    this.webLocatorStrategies = ['link text', 'css selector', 'tag name', 'link text', 'partial link text'];
     this.curWebFrames = [];
     this._perfRecorders = [];
     this.desiredCapConstraints = desiredCapConstraints;
@@ -848,12 +840,7 @@ export class XCUITestDriver
     driverData?: DriverData[],
   ): Promise<DefaultCreateSessionResult<XCUITestDriverConstraints>> {
     try {
-      const [sessionId, initialCaps] = await super.createSession(
-        w3cCaps1,
-        w3cCaps2,
-        w3cCaps3,
-        driverData,
-      );
+      const [sessionId, initialCaps] = await super.createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData);
       let caps = initialCaps;
 
       // merge cli args to opts, and if we did merge any, revalidate opts to ensure the final set
@@ -885,28 +872,16 @@ export class XCUITestDriver
         elementResponseAttributes: DEFAULT_SETTINGS.elementResponseAttributes,
         shouldUseCompactResponses: DEFAULT_SETTINGS.shouldUseCompactResponses,
       };
-      if (
-        'elementResponseAttributes' in this.opts &&
-        typeof this.opts.elementResponseAttributes === 'string'
-      ) {
+      if ('elementResponseAttributes' in this.opts && typeof this.opts.elementResponseAttributes === 'string') {
         wdaSettings.elementResponseAttributes = this.opts.elementResponseAttributes;
       }
-      if (
-        'shouldUseCompactResponses' in this.opts &&
-        typeof this.opts.shouldUseCompactResponses === 'boolean'
-      ) {
+      if ('shouldUseCompactResponses' in this.opts && typeof this.opts.shouldUseCompactResponses === 'boolean') {
         wdaSettings.shouldUseCompactResponses = this.opts.shouldUseCompactResponses;
       }
-      if (
-        'mjpegServerScreenshotQuality' in this.opts &&
-        typeof this.opts.mjpegServerScreenshotQuality === 'number'
-      ) {
+      if ('mjpegServerScreenshotQuality' in this.opts && typeof this.opts.mjpegServerScreenshotQuality === 'number') {
         wdaSettings.mjpegServerScreenshotQuality = this.opts.mjpegServerScreenshotQuality;
       }
-      if (
-        'mjpegServerFramerate' in this.opts &&
-        typeof this.opts.mjpegServerFramerate === 'number'
-      ) {
+      if ('mjpegServerFramerate' in this.opts && typeof this.opts.mjpegServerFramerate === 'number') {
         wdaSettings.mjpegServerFramerate = this.opts.mjpegServerFramerate;
       }
       if (Object.hasOwn(this.opts, 'screenshotQuality')) {
@@ -931,8 +906,8 @@ export class XCUITestDriver
 
     await removeAllSessionWebSocketHandlers.bind(this)();
 
-    for (const recorder of [this._recentScreenRecorder, this._audioRecorder].filter(
-      (r): r is NonNullable<typeof r> => Boolean(r),
+    for (const recorder of [this._recentScreenRecorder, this._audioRecorder].filter((r): r is NonNullable<typeof r> =>
+      Boolean(r),
     )) {
       await recorder.interrupt(true);
       await recorder.cleanup();
@@ -1060,9 +1035,7 @@ export class XCUITestDriver
         throw this.log.errorWithException('processArguments.args must be an array of strings');
       }
       if (env != null && !isPlainObject(env)) {
-        throw this.log.errorWithException(
-          'processArguments.env must be an object <key,value> pair {a:b, c:d}',
-        );
+        throw this.log.errorWithException('processArguments.env must be an object <key,value> pair {a:b, c:d}');
       }
     };
 
@@ -1090,10 +1063,7 @@ export class XCUITestDriver
     }
 
     // there is no point in having `keychainPath` without `keychainPassword`
-    if (
-      (caps.keychainPath && !caps.keychainPassword) ||
-      (!caps.keychainPath && caps.keychainPassword)
-    ) {
+    if ((caps.keychainPath && !caps.keychainPassword) || (!caps.keychainPath && caps.keychainPassword)) {
       throw this.log.errorWithException(
         `If 'keychainPath' is set, 'keychainPassword' must also be set (and vice versa).`,
       );
@@ -1105,9 +1075,7 @@ export class XCUITestDriver
     this.opts.useNewWDA = util.hasValue(this.opts.useNewWDA) ? this.opts.useNewWDA : false;
 
     if (caps.commandTimeouts) {
-      caps.commandTimeouts = normalizeCommandTimeouts(
-        caps.commandTimeouts as string | Record<string, number>,
-      );
+      caps.commandTimeouts = normalizeCommandTimeouts(caps.commandTimeouts as string | Record<string, number>);
     }
 
     if (typeof caps.webDriverAgentUrl === 'string') {
@@ -1123,16 +1091,12 @@ export class XCUITestDriver
 
     if (caps.browserName) {
       if (caps.bundleId) {
-        throw this.log.errorWithException(
-          `'browserName' cannot be set together with 'bundleId' capability`,
-        );
+        throw this.log.errorWithException(`'browserName' cannot be set together with 'bundleId' capability`);
       }
       // warn if the capabilities have both `app` and `browser, although this
       // is common with selenium grid
       if (caps.app) {
-        this.log.warn(
-          `The capabilities should generally not include both an 'app' and a 'browserName'`,
-        );
+        this.log.warn(`The capabilities should generally not include both an 'app' and a 'browserName'`);
       }
     }
 
@@ -1156,8 +1120,7 @@ export class XCUITestDriver
 
     if (caps.platformVersion && !util.coerceVersion(caps.platformVersion, false)) {
       throw this.log.errorWithException(
-        `'platformVersion' must be a valid version number. ` +
-          `'${caps.platformVersion}' is given instead.`,
+        `'platformVersion' must be a valid version number. ` + `'${caps.platformVersion}' is given instead.`,
       );
     }
 
@@ -1170,9 +1133,7 @@ export class XCUITestDriver
 
     // ignoredWebviewBundleIds is an array, JSON array, or string
     if (caps.ignoredWebviewBundleIds) {
-      caps.ignoredWebviewBundleIds = this.helpers.parseCapsArray(
-        caps.ignoredWebviewBundleIds as string | string[],
-      );
+      caps.ignoredWebviewBundleIds = this.helpers.parseCapsArray(caps.ignoredWebviewBundleIds as string | string[]);
     }
 
     // finally, return true since the superclass check passed, as did this
@@ -1229,9 +1190,7 @@ export class XCUITestDriver
     // this.cliArgs should never include anything we do not expect.
     for (const [key, value] of Object.entries(this.cliArgs ?? {})) {
       if (Object.hasOwn(this.opts, key)) {
-        this.log.info(
-          `CLI arg '${key}' with value '${value}' overwrites value '${this.opts[key]}' sent in via caps)`,
-        );
+        this.log.info(`CLI arg '${key}' with value '${value}' overwrites value '${this.opts[key]}' sent in via caps)`);
         didMerge = true;
       }
       this.opts[key] = value;
@@ -1251,9 +1210,7 @@ export class XCUITestDriver
 
   async allocateMjpegServerPort(): Promise<void> {
     const mjpegServerPort = Number(this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT);
-    this.log.debug(
-      `Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`,
-    );
+    this.log.debug(`Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`);
     try {
       await this.deviceConnectionsFactory.requestConnection(this.opts.udid, mjpegServerPort, {
         devicePort: mjpegServerPort,
@@ -1292,9 +1249,7 @@ export class XCUITestDriver
     this._iosSdkVersion = null; // For WDA and xcodebuild
     assertWdaHostSessionCapsSupported(this.opts);
     const {device, udid, realDevice} = await this.determineDevice();
-    this.log.info(
-      `Determining device to run tests on: udid: '${udid}', real device: ${realDevice}`,
-    );
+    this.log.info(`Determining device to run tests on: udid: '${udid}', real device: ${realDevice}`);
     this._device = device;
     this.opts.udid = udid;
 
@@ -1303,13 +1258,9 @@ export class XCUITestDriver
 
     if (this.opts.simulatorDevicesSetPath) {
       if (realDevice) {
-        this.log.info(
-          `The 'simulatorDevicesSetPath' capability is only supported for Simulator devices`,
-        );
+        this.log.info(`The 'simulatorDevicesSetPath' capability is only supported for Simulator devices`);
       } else {
-        this.log.info(
-          `Setting simulator devices set path to '${this.opts.simulatorDevicesSetPath}'`,
-        );
+        this.log.info(`Setting simulator devices set path to '${this.opts.simulatorDevicesSetPath}'`);
         (this.device as Simulator).devicesSetPath = this.opts.simulatorDevicesSetPath;
       }
     }
@@ -1426,21 +1377,14 @@ export class XCUITestDriver
       !this.isSafari() &&
       !(await this.device.isAppInstalled(this.opts.bundleId))
     ) {
-      throw this.log.errorWithException(
-        `App with bundle identifier '${this.opts.bundleId}' unknown`,
-      );
+      throw this.log.errorWithException(`App with bundle identifier '${this.opts.bundleId}' unknown`);
     }
 
     if (this.isSimulator()) {
       if (this.opts.permissions) {
         this.log.debug('Setting the requested permissions before WDA is started');
-        for (const [bundleId, permissionsMapping] of Object.entries(
-          JSON.parse(this.opts.permissions as string),
-        )) {
-          await (this.device as Simulator).setPermissions(
-            bundleId,
-            permissionsMapping as StringRecord,
-          );
+        for (const [bundleId, permissionsMapping] of Object.entries(JSON.parse(this.opts.permissions as string))) {
+          await (this.device as Simulator).setPermissions(bundleId, permissionsMapping as StringRecord);
         }
       }
     }
@@ -1549,9 +1493,7 @@ export class XCUITestDriver
     return result;
   }
 
-  async checkAutInstallationState(
-    opts?: AutInstallationStateOptions,
-  ): Promise<AutInstallationState> {
+  async checkAutInstallationState(opts?: AutInstallationStateOptions): Promise<AutInstallationState> {
     const {enforceAppInstall, fullReset, noReset, bundleId, app} = opts ?? this.opts;
 
     const wasAppInstalled = !!bundleId && (await this.device.isAppInstalled(bundleId));
@@ -1577,9 +1519,7 @@ export class XCUITestDriver
       };
     }
 
-    const candidateBundleVersion = app
-      ? await this.appInfosCache.extractBundleVersion(app)
-      : undefined;
+    const candidateBundleVersion = app ? await this.appInfosCache.extractBundleVersion(app) : undefined;
     this.log.debug(`CFBundleVersion from Info.plist: ${candidateBundleVersion}`);
     if (!candidateBundleVersion) {
       return {
@@ -1684,9 +1624,7 @@ export class XCUITestDriver
         }),
       ),
     );
-    const appIds: string[] = await Promise.all(
-      appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)),
-    );
+    const appIds: string[] = await Promise.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
     for (const [appId, appPath] of appIds.map((v, i) => [v, appPaths[i]] as const)) {
       if (this.isRealDevice()) {
         await installToRealDevice.bind(this)(appPath, appId, {
@@ -1772,12 +1710,7 @@ export class XCUITestDriver
       throw new Error('Cannot access RemoteXPC session state before device UDID is set');
     }
     if (!this._remoteXPCFacade || this._remoteXPCFacade.udid !== udid) {
-      this._remoteXPCFacade = new RemoteXPCFacade(
-        udid,
-        this.opts.platformVersion,
-        this.log,
-        isRealDevice,
-      );
+      this._remoteXPCFacade = new RemoteXPCFacade(udid, this.opts.platformVersion, this.log, isRealDevice);
     }
     return this._remoteXPCFacade;
   }

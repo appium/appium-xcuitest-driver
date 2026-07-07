@@ -406,9 +406,7 @@ describe('element commands', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
-      getNativeRectStub = sandbox
-        .stub(driver, 'getNativeRect')
-        .resolves({x: 0, y: 50, width: 100, height: 200});
+      getNativeRectStub = sandbox.stub(driver, 'getNativeRect').resolves({x: 0, y: 50, width: 100, height: 200});
       getLocationStub = sandbox.stub(driver, 'getLocation').resolves({x: 0, y: 50});
       getSizeStub = sandbox.stub(driver, 'getSize').resolves({width: 100, height: 200});
     });

@@ -79,9 +79,7 @@ export class NetworkMonitorSession {
       try {
         await runPromise;
       } catch (err: any) {
-        this.log.debug(
-          `Error while finishing network monitor consume loop: ${err?.message ?? err}`,
-        );
+        this.log.debug(`Error while finishing network monitor consume loop: ${err?.message ?? err}`);
       }
     }
   }

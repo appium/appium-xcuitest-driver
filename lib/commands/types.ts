@@ -162,10 +162,7 @@ export interface PageChangeNotification {
  * Either a string that contains full path to the mount root for real devices, or a function which accepts two parameters
  * (bundle identifier and optional container type) and returns (or resolves) the full path to the container root folder on the local filesystem.
  */
-export type ContainerRootSupplier = (
-  bundleId: string,
-  containerType: string | null,
-) => string | Promise<string>;
+export type ContainerRootSupplier = (bundleId: string, containerType: string | null) => string | Promise<string>;
 
 export interface WaitingAtoms {
   count: number;
@@ -189,10 +186,7 @@ export interface ContainerObject {
   containerType: string | null;
 }
 
-export type AtomsElement<S extends string = string> = Omit<
-  Element<S>,
-  'element-6066-11e4-a52e-4f735466cecf'
->;
+export type AtomsElement<S extends string = string> = Omit<Element<S>, 'element-6066-11e4-a52e-4f735466cecf'>;
 
 export interface Context {
   /**
@@ -359,16 +353,7 @@ export interface AccessibilityAuditItem {
  * Pressable button names; used by the {@linkcode XCUITest.mobilePressButton mobile: pressButton} command.
  */
 export type ButtonName = AnyCase<
-  | 'home'
-  | 'volumeup'
-  | 'volumedown'
-  | 'up'
-  | 'down'
-  | 'left'
-  | 'right'
-  | 'menu'
-  | 'playpause'
-  | 'select'
+  'home' | 'volumeup' | 'volumedown' | 'up' | 'down' | 'left' | 'right' | 'menu' | 'playpause' | 'select'
 >;
 
 /**

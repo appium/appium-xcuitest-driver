@@ -56,9 +56,7 @@ const destZip = (/** @type {string} */ platform, /** @type {WDAKind} */ kind) =>
 function normalizeKind(kind) {
   const normalized = String(kind || WDA_KIND_REAL).toLowerCase();
   if (![WDA_KIND_REAL, WDA_KIND_SIM].includes(normalized)) {
-    throw new Error(
-      `Unsupported kind '${kind}'. Supported values are '${WDA_KIND_REAL}' and '${WDA_KIND_SIM}'`,
-    );
+    throw new Error(`Unsupported kind '${kind}'. Supported values are '${WDA_KIND_REAL}' and '${WDA_KIND_SIM}'`);
   }
   return /** @type {WDAKind} */ (normalized);
 }
@@ -143,8 +141,7 @@ EXAMPLES:
   await program.parseAsync(process.argv);
 }
 
-const isMainModule =
-  Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
+const isMainModule = Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMainModule) {
   await main();
 }

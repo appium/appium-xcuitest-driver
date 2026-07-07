@@ -19,10 +19,7 @@ describe('general commands', function () {
 
   describe('background', function () {
     it('should deactivate app for the given time if seconds is zero or greater', async function () {
-      mockDriver
-        .expects('proxyCommand')
-        .once()
-        .withExactArgs('/wda/deactivateApp', 'POST', {duration: 0.5}, true);
+      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/deactivateApp', 'POST', {duration: 0.5}, true);
       await driver.background(0.5);
     });
 

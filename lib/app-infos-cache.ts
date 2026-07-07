@@ -11,9 +11,7 @@ const MANIFEST_CACHE = new LRUCache<string, StringRecord>({
   updateAgeOnHas: true,
 });
 const MANIFEST_FILE_NAME = 'Info.plist';
-const IPA_ROOT_PLIST_PATH_PATTERN = new RegExp(
-  `^Payload/[^/]+\\.app/${escapeRegExp(MANIFEST_FILE_NAME)}$`,
-);
+const IPA_ROOT_PLIST_PATH_PATTERN = new RegExp(`^Payload/[^/]+\\.app/${escapeRegExp(MANIFEST_FILE_NAME)}$`);
 const MAX_MANIFEST_SIZE = 1024 * 1024; // 1 MiB
 
 export class AppInfosCache {
@@ -61,9 +59,7 @@ export class AppInfosCache {
   async extractAppPlatforms(bundlePath: string): Promise<string[]> {
     const result = await this.extractManifestProperty(bundlePath, 'CFBundleSupportedPlatforms');
     if (!Array.isArray(result)) {
-      throw new Error(
-        `${path.basename(bundlePath)}': CFBundleSupportedPlatforms is not a valid list`,
-      );
+      throw new Error(`${path.basename(bundlePath)}': CFBundleSupportedPlatforms is not a valid list`);
     }
     return result;
   }
@@ -84,9 +80,7 @@ export class AppInfosCache {
    * @throws If the given app is not a valid bundle
    */
   async put(bundlePath: string): Promise<StringRecord> {
-    return (await fs.stat(bundlePath)).isFile()
-      ? await this._putIpa(bundlePath)
-      : await this._putApp(bundlePath);
+    return (await fs.stat(bundlePath)).isFile() ? await this._putIpa(bundlePath) : await this._putApp(bundlePath);
   }
 
   /**
@@ -136,10 +130,9 @@ export class AppInfosCache {
       });
     } catch (e: any) {
       this.log.debug(e.stack);
-      throw new Error(
-        `Cannot find ${MANIFEST_FILE_NAME} in '${ipaPath}'. Is it a valid application bundle?`,
-        {cause: e},
-      );
+      throw new Error(`Cannot find ${MANIFEST_FILE_NAME} in '${ipaPath}'. Is it a valid application bundle?`, {
+        cause: e,
+      });
     }
     if (!manifestPayload) {
       let errorMessage = `Cannot extract ${MANIFEST_FILE_NAME} from '${ipaPath}'. Is it a valid application bundle?`;
@@ -162,10 +155,7 @@ export class AppInfosCache {
     if (cached) {
       return cached;
     }
-    const [payload, stat] = await Promise.all([
-      this._readPlist(manifestPath, appPath),
-      fs.stat(manifestPath),
-    ]);
+    const [payload, stat] = await Promise.all([this._readPlist(manifestPath, appPath), fs.stat(manifestPath)]);
     if (stat.size <= MAX_MANIFEST_SIZE && isPlainObject(payload)) {
       this.log.debug(
         `Caching the manifest for ${payload.CFBundleIdentifier} app from a file source using the key '${hash}'`,
@@ -185,10 +175,9 @@ export class AppInfosCache {
       return await plist.parsePlistFile(plistPath);
     } catch (e: any) {
       this.log.debug(e.stack);
-      throw new Error(
-        `Cannot parse ${MANIFEST_FILE_NAME} of '${bundlePath}'. Is it a valid application bundle?`,
-        {cause: e},
-      );
+      throw new Error(`Cannot parse ${MANIFEST_FILE_NAME} of '${bundlePath}'. Is it a valid application bundle?`, {
+        cause: e,
+      });
     }
   }
 }

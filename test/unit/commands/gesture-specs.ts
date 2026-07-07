@@ -30,31 +30,19 @@ describe('gesture commands', function () {
         );
       });
       it('should pass through bare element', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
         await driver.execute('mobile: scroll', {element: 4, direction: 'down'});
       });
       it('should unpack element object', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
         await driver.execute('mobile: scroll', {element: {ELEMENT: 4}, direction: 'down'});
       });
       it('should pass name strategy exclusively', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/scroll', 'POST', {name: 'something'});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {name: 'something'});
         await driver.execute('mobile: scroll', {element: 4, direction: 'down', name: 'something'});
       });
       it('should pass direction strategy exclusively', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {direction: 'down'});
         await driver.execute('mobile: scroll', {
           element: 4,
           direction: 'down',
@@ -84,10 +72,7 @@ describe('gesture commands', function () {
         });
       });
       it('should ignore distance for non-direction strategy', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/scroll', 'POST', {name: 'something'});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/scroll', 'POST', {name: 'something'});
         await driver.execute('mobile: scroll', {
           element: 4,
           name: 'something',
@@ -104,15 +89,11 @@ describe('gesture commands', function () {
       });
 
       it('should throw an error if invalid direction', async function () {
-        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'})).to.be
-          .rejected;
+        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'foo'})).to.be.rejected;
       });
 
       it('should proxy a swipe up request through to WDA', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/swipe', 'POST', {direction: 'up'});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/swipe', 'POST', {direction: 'up'});
         await driver.execute(`mobile: ${commandName}`, {element: 4, direction: 'up'});
       });
     });
@@ -121,16 +102,14 @@ describe('gesture commands', function () {
       const commandName = 'pinch';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1})).to.be
-          .rejected;
-        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5})).to.be
-          .rejected;
+        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, scale: 4.1})).to.be.rejected;
+        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, velocity: -0.5})).to.be.rejected;
       });
 
       it('should throw an error if param is invalid', async function () {
-        await expect(
-          driver.execute(`mobile: ${commandName}`, {element: 4, scale: '', velocity: 1}),
-        ).to.be.rejectedWith(/should be a valid number/);
+        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, scale: '', velocity: 1})).to.be.rejectedWith(
+          /should be a valid number/,
+        );
         await expect(
           driver.execute(`mobile: ${commandName}`, {element: 4, scale: 0, velocity: null}),
         ).to.be.rejectedWith(/should be a valid number/);
@@ -154,10 +133,7 @@ describe('gesture commands', function () {
       const commandName = 'doubleTap';
 
       it('should proxy a doubleTap request without element through to WDA', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/doubleTap', 'POST', {x: undefined, y: undefined});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/doubleTap', 'POST', {x: undefined, y: undefined});
         await driver.execute(`mobile: ${commandName}`);
       });
 
@@ -180,10 +156,7 @@ describe('gesture commands', function () {
       const commandName = 'twoFingerTap';
 
       it('should proxy a twoFingerTap request for an element through to WDA', async function () {
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/twoFingerTap', 'POST');
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/twoFingerTap', 'POST');
         await driver.execute(`mobile: ${commandName}`, {element: 4});
       });
     });
@@ -196,9 +169,9 @@ describe('gesture commands', function () {
       });
 
       it('should throw an error if param is invalid', async function () {
-        await expect(
-          driver.execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1}),
-        ).to.be.rejectedWith(/should be a valid number/);
+        await expect(driver.execute(`mobile: ${commandName}`, {duration: '', x: 1, y: 1})).to.be.rejectedWith(
+          /should be a valid number/,
+        );
       });
 
       it('should proxy a touchAndHold request without element through to WDA', async function () {
@@ -218,14 +191,11 @@ describe('gesture commands', function () {
 
       it('should proxy a touchAndHold request for an element through to WDA', async function () {
         const opts = {elementId: 4, duration: 100};
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/touchAndHold', 'POST', {
-            duration: 100,
-            x: undefined,
-            y: undefined,
-          });
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/touchAndHold', 'POST', {
+          duration: 100,
+          x: undefined,
+          y: undefined,
+        });
         await driver.execute(`mobile: ${commandName}`, opts);
       });
 
@@ -241,19 +211,13 @@ describe('gesture commands', function () {
 
       it('should proxy a tap request for an element through to WDA', async function () {
         const opts = {elementId: 4, x: 100, y: 100};
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/tap', 'POST', {x: 100, y: 100});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/tap', 'POST', {x: 100, y: 100});
         await driver.execute(`mobile: ${commandName}`, opts);
       });
 
       it('should proxy a tap request for a coordinate point through to WDA', async function () {
         const opts = {x: 100, y: 100};
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/tap', 'POST', {x: 100, y: 100});
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/tap', 'POST', {x: 100, y: 100});
         await driver.execute(`mobile: ${commandName}`, opts);
       });
     });
@@ -274,9 +238,9 @@ describe('gesture commands', function () {
       });
 
       it('should throw an error if param is invalid', async function () {
-        await expect(
-          driver.execute(`mobile: ${commandName}`, {element: 4, order: 'bla'}),
-        ).to.be.rejectedWith(/is expected to be equal/);
+        await expect(driver.execute(`mobile: ${commandName}`, {element: 4, order: 'bla'})).to.be.rejectedWith(
+          /is expected to be equal/,
+        );
       });
 
       it('should proxy a selectPickerWheel request for an element through to WDA', async function () {
@@ -293,9 +257,7 @@ describe('gesture commands', function () {
       const commandName = 'dragFromToForDuration';
 
       it('should throw an error if no mandatory parameter is specified', async function () {
-        await expect(
-          driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100}),
-        ).to.be.rejected;
+        await expect(driver.execute(`mobile: ${commandName}`, {fromX: 1, fromY: 1, toX: 100, toY: 100})).to.be.rejected;
         await expect(
           driver.execute(`mobile: ${commandName}`, {
             duration: 100,
@@ -380,31 +342,25 @@ describe('gesture commands', function () {
 
       it('should proxy a dragFromToForDuration request for an element through to WDA', async function () {
         const opts = {element: 4, duration: 100, fromX: 1, fromY: 1, toX: 100, toY: 100};
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/element/4/dragfromtoforduration', 'POST', {
-            duration: 100,
-            fromX: 1,
-            fromY: 1,
-            toX: 100,
-            toY: 100,
-          });
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/element/4/dragfromtoforduration', 'POST', {
+          duration: 100,
+          fromX: 1,
+          fromY: 1,
+          toX: 100,
+          toY: 100,
+        });
         await driver.execute(`mobile: ${commandName}`, opts);
       });
 
       it('should proxy a dragFromToForDuration request for a coordinate point through to WDA', async function () {
         const opts = {duration: 100, fromX: 1, fromY: 1, toX: 100, toY: 100};
-        mockDriver
-          .expects('proxyCommand')
-          .once()
-          .withExactArgs('/wda/dragfromtoforduration', 'POST', {
-            duration: 100,
-            fromX: 1,
-            fromY: 1,
-            toX: 100,
-            toY: 100,
-          });
+        mockDriver.expects('proxyCommand').once().withExactArgs('/wda/dragfromtoforduration', 'POST', {
+          duration: 100,
+          fromX: 1,
+          fromY: 1,
+          toX: 100,
+          toY: 100,
+        });
         await driver.execute(`mobile: ${commandName}`, opts);
       });
     });

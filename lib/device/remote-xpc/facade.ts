@@ -46,9 +46,7 @@ export class RemoteXPCFacade {
     return this.isRealDevice && isIos18OrNewerPlatform(this.platformVersion);
   }
 
-  static async tryGetServicesStatic(
-    platformVersion: string | null | undefined,
-  ): Promise<RemoteXPCServices | null> {
+  static async tryGetServicesStatic(platformVersion: string | null | undefined): Promise<RemoteXPCServices | null> {
     if (platformVersion && !isIos18OrNewerPlatform(platformVersion)) {
       return null;
     }
@@ -127,10 +125,7 @@ export class RemoteXPCFacade {
    *
    * @throws When RemoteXPC port forwarding cannot be used
    */
-  async createDevicePortForwarder(
-    localPort: number,
-    devicePort: number,
-  ): Promise<DevicePortForwarder> {
+  async createDevicePortForwarder(localPort: number, devicePort: number): Promise<DevicePortForwarder> {
     if (!this.eligible) {
       throw new RemoteXPCUnavailableError();
     }
@@ -211,10 +206,7 @@ export class RemoteXPCFacade {
    * disabling remotexpc for the session (unlike the one-time init probe).
    * Other failures are logged per call and also return `null` so callers can fall back once.
    */
-  async attemptService<T>(
-    feature: string,
-    operation: (services: RemoteXPCServices) => Promise<T>,
-  ): Promise<T | null> {
+  async attemptService<T>(feature: string, operation: (services: RemoteXPCServices) => Promise<T>): Promise<T | null> {
     if (!(await this.determineAvailability())) {
       return null;
     }
@@ -231,10 +223,7 @@ export class RemoteXPCFacade {
    *
    * @throws When remotexpc is disabled for the session or the operation fails.
    */
-  async requireService<T>(
-    feature: string,
-    operation: (services: RemoteXPCServices) => Promise<T>,
-  ): Promise<T> {
+  async requireService<T>(feature: string, operation: (services: RemoteXPCServices) => Promise<T>): Promise<T> {
     if (!(await this.determineAvailability())) {
       throw wrapRemoteXPCConnectionError(
         this.lastImportError ?? new Error('RemoteXPC is not available for this session'),
@@ -286,9 +275,7 @@ export class RemoteXPCFacade {
     if (!loadedModule) {
       const err = getLastRemoteXPCImportError();
       this.lastImportError = err;
-      this.log.warn(
-        `appium-ios-remotexpc unavailable for '${this.udid}': ${err?.message ?? 'unknown'}`,
-      );
+      this.log.warn(`appium-ios-remotexpc unavailable for '${this.udid}': ${err?.message ?? 'unknown'}`);
       return;
     }
 
@@ -318,11 +305,7 @@ export class RemoteXPCFacade {
     return this.module;
   }
 
-  private handleServiceError(
-    feature: string,
-    err: unknown,
-    onNonTunnelFailure: 'log' | 'throw',
-  ): void {
+  private handleServiceError(feature: string, err: unknown, onNonTunnelFailure: 'log' | 'throw'): void {
     const message = formatRemoteXPCFallbackLog(feature, err);
     if (isTunnelAvailabilityError(err)) {
       if (onNonTunnelFailure === 'log') {

@@ -71,11 +71,7 @@ export async function closeWindow(this: XCUITestDriver): Promise<any> {
  * the application assigned by the operating system to handle URLs of the appropriate type
  * @since 4.17
  */
-export async function mobileDeepLink(
-  this: XCUITestDriver,
-  url: string,
-  bundleId?: string,
-): Promise<void> {
+export async function mobileDeepLink(this: XCUITestDriver, url: string, bundleId?: string): Promise<void> {
   return await this.proxyCommand('/url', 'POST', {
     url,
     bundleId,
@@ -92,11 +88,7 @@ export async function nativeBack(this: XCUITestDriver): Promise<void> {
   }
 
   try {
-    const navBar = await this.findNativeElementOrElements(
-      'class name',
-      'XCUIElementTypeNavigationBar',
-      false,
-    );
+    const navBar = await this.findNativeElementOrElements('class name', 'XCUIElementTypeNavigationBar', false);
     let dstButton: Element<string>;
     const backButtons = await this.findNativeElementOrElements(
       '-ios predicate string',

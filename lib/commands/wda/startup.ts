@@ -47,11 +47,7 @@ export async function start(this: XCUITestDriver): Promise<void> {
 /**
  * Creates a WebDriverAgent session with the given application bundle and process arguments.
  */
-export async function startWdaSession(
-  this: XCUITestDriver,
-  bundleId?: string,
-  processArguments?: any,
-): Promise<void> {
+export async function startWdaSession(this: XCUITestDriver, bundleId?: string, processArguments?: any): Promise<void> {
   return createWdaSession(this, bundleId, processArguments);
 }
 
@@ -92,14 +88,10 @@ async function preparePreinstalled(driver: XCUITestDriver): Promise<void> {
  * @param keepBundleIds - Bundle identifiers to preserve on the device
  */
 async function cleanupApps(driver: XCUITestDriver, keepBundleIds: string[] = []): Promise<void> {
-  const installedBundleIds =
-    await driver.device.getUserInstalledBundleIdsByBundleName(WDA_CF_BUNDLE_NAME);
+  const installedBundleIds = await driver.device.getUserInstalledBundleIdsByBundleName(WDA_CF_BUNDLE_NAME);
   const keep = new Set(keepBundleIds.filter(Boolean));
   for (const bundleId of installedBundleIds.filter((id) => !keep.has(id))) {
-    driver.log.info(
-      `Removing WebDriverAgent runner app '${bundleId}' ` +
-        `(CFBundleName '${WDA_CF_BUNDLE_NAME}')`,
-    );
+    driver.log.info(`Removing WebDriverAgent runner app '${bundleId}' ` + `(CFBundleName '${WDA_CF_BUNDLE_NAME}')`);
     try {
       await driver.device.removeApp(bundleId);
     } catch (e: any) {
@@ -115,15 +107,11 @@ async function setupConnection(driver: XCUITestDriver): Promise<void> {
 
   const usePortForwarding =
     driver.isRealDevice() && !driver.wda.webDriverAgentUrl && isLocalHost(driver.wda.wdaBaseUrl);
-  await driver.deviceConnectionsFactory.requestConnection(
-    driver.opts.udid,
-    Number(driver.wda.url.port),
-    {
-      devicePort: usePortForwarding ? driver.wda.wdaRemotePort : null,
-      usePortForwarding,
-      remoteXPCFacade: driver.remoteXPCFacade,
-    },
-  );
+  await driver.deviceConnectionsFactory.requestConnection(driver.opts.udid, Number(driver.wda.url.port), {
+    devicePort: usePortForwarding ? driver.wda.wdaRemotePort : null,
+    usePortForwarding,
+    remoteXPCFacade: driver.remoteXPCFacade,
+  });
 }
 
 async function getSynchronizationKey(driver: XCUITestDriver): Promise<string> {
@@ -137,14 +125,8 @@ async function getSynchronizationKey(driver: XCUITestDriver): Promise<string> {
 }
 
 function logSynchronizationDetails(driver: XCUITestDriver, synchronizationKey: string): void {
-  driver.log.debug(
-    `Starting WebDriverAgent initialization with the synchronization key '${synchronizationKey}'`,
-  );
-  if (
-    SHARED_RESOURCES_GUARD.isBusy() &&
-    !driver.opts.derivedDataPath &&
-    !driver.opts.bootstrapPath
-  ) {
+  driver.log.debug(`Starting WebDriverAgent initialization with the synchronization key '${synchronizationKey}'`);
+  if (SHARED_RESOURCES_GUARD.isBusy() && !driver.opts.derivedDataPath && !driver.opts.bootstrapPath) {
     driver.log.debug(
       `Consider setting a unique 'derivedDataPath' capability value for each parallel driver instance ` +
         `to avoid conflicts and speed up the building process`,
@@ -198,9 +180,7 @@ async function prepareForXcodebuild(driver: XCUITestDriver): Promise<void> {
   }
 
   if (driver.opts.useNewWDA) {
-    driver.log.debug(
-      `Capability 'useNewWDA' set to true, so quitting and uninstalling WDA before proceeding`,
-    );
+    driver.log.debug(`Capability 'useNewWDA' set to true, so quitting and uninstalling WDA before proceeding`);
     await driver.wda.quit();
     await cleanupApps(driver);
     driver.logEvent('wdaUninstalled');
@@ -230,18 +210,12 @@ async function prepareForXcodebuild(driver: XCUITestDriver): Promise<void> {
 
 function getStartupRetryOptions(driver: XCUITestDriver): StartupRetryOptions {
   let startupRetries =
-    driver.opts.wdaStartupRetries ||
-    (driver.isRealDevice() ? WDA_REAL_DEV_STARTUP_RETRIES : WDA_SIM_STARTUP_RETRIES);
+    driver.opts.wdaStartupRetries || (driver.isRealDevice() ? WDA_REAL_DEV_STARTUP_RETRIES : WDA_SIM_STARTUP_RETRIES);
   const startupRetryInterval = driver.opts.wdaStartupRetryInterval || WDA_STARTUP_RETRY_INTERVAL;
 
   if (isXcodebuildNeeded(driver.opts)) {
-    driver.log.debug(
-      `Trying to start WebDriverAgent ${startupRetries} times with ${startupRetryInterval}ms interval`,
-    );
-    if (
-      !util.hasValue(driver.opts.wdaStartupRetries) &&
-      !util.hasValue(driver.opts.wdaStartupRetryInterval)
-    ) {
+    driver.log.debug(`Trying to start WebDriverAgent ${startupRetries} times with ${startupRetryInterval}ms interval`);
+    if (!util.hasValue(driver.opts.wdaStartupRetries) && !util.hasValue(driver.opts.wdaStartupRetryInterval)) {
       driver.log.debug(
         `These values can be customized by changing wdaStartupRetries/wdaStartupRetryInterval capabilities`,
       );
@@ -327,17 +301,14 @@ async function handleLaunchFailure(driver: XCUITestDriver, err: unknown): Promis
   await quitAndThrow(driver, errorMsg);
 }
 
-async function establishProxySession(
-  driver: XCUITestDriver,
-): Promise<InstanceType<typeof errors.TimeoutError> | null> {
+async function establishProxySession(driver: XCUITestDriver): Promise<InstanceType<typeof errors.TimeoutError> | null> {
   driver.proxyReqRes = driver.wda.proxyReqRes.bind(driver.wda);
   driver.jwpProxyActive = true;
 
   try {
     driver.logEvent('wdaSessionAttempted');
     driver.log.debug('Sending createSession command to WDA');
-    driver.cachedWdaStatus =
-      driver.cachedWdaStatus || (await driver.proxyCommand('/status', 'GET'));
+    driver.cachedWdaStatus = driver.cachedWdaStatus || (await driver.proxyCommand('/status', 'GET'));
     await createWdaSession(driver, driver.opts.bundleId, driver.opts.processArguments);
     driver.logEvent('wdaSessionStarted');
     return null;
@@ -375,23 +346,17 @@ async function finalizeSuccessfulStartup(driver: XCUITestDriver): Promise<void> 
   driver.logEvent('wdaStarted');
 }
 
-async function createWdaSession(
-  driver: XCUITestDriver,
-  bundleId?: string,
-  processArguments?: any,
-): Promise<void> {
+async function createWdaSession(driver: XCUITestDriver, bundleId?: string, processArguments?: any): Promise<void> {
   const args = processArguments ? structuredClone(processArguments.args) || [] : [];
   if (!Array.isArray(args)) {
     throw new Error(
-      `processArguments.args capability is expected to be an array. ` +
-        `${JSON.stringify(args)} is given instead`,
+      `processArguments.args capability is expected to be an array. ` + `${JSON.stringify(args)} is given instead`,
     );
   }
   const env = processArguments ? structuredClone(processArguments.env) || {} : {};
   if (!isPlainObject(env)) {
     throw new Error(
-      `processArguments.env capability is expected to be a dictionary. ` +
-        `${JSON.stringify(env)} is given instead`,
+      `processArguments.env capability is expected to be a dictionary. ` + `${JSON.stringify(env)} is given instead`,
     );
   }
 

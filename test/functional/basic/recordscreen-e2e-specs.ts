@@ -43,9 +43,7 @@ describe('XCUITestDriver - simulator screen recording (MJPEG + ffmpeg)', functio
     await delay(3000);
 
     const b64 = (await driver.execute('mobile: stopScreenRecording', {})) as unknown as string;
-    expect(b64, 'stopScreenRecording should return base64 payload')
-      .to.be.a('string')
-      .and.not.to.equal('');
+    expect(b64, 'stopScreenRecording should return base64 payload').to.be.a('string').and.not.to.equal('');
 
     const videoPath = await tempDir.path({prefix: 'sim-screen-record-', suffix: '.mp4'});
     try {
@@ -53,17 +51,7 @@ describe('XCUITestDriver - simulator screen recording (MJPEG + ffmpeg)', functio
       const {size} = await fs.stat(videoPath);
       expect(size, 'decoded mp4 file should be non-empty').to.be.greaterThan(0);
 
-      await exec(ffmpegPath, [
-        '-hide_banner',
-        '-nostdin',
-        '-v',
-        'error',
-        '-i',
-        videoPath,
-        '-f',
-        'null',
-        '-',
-      ]);
+      await exec(ffmpegPath, ['-hide_banner', '-nostdin', '-v', 'error', '-i', videoPath, '-f', 'null', '-']);
     } finally {
       await fs.rimraf(videoPath).catch(() => {});
     }

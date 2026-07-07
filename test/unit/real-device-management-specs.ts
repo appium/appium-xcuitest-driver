@@ -13,10 +13,7 @@ import type {XCUITestDriverOpts} from '../../lib/driver';
 
 chai.use(chaiAsPromised);
 
-async function withPlatformAsync(
-  platform: NodeJS.Platform,
-  fn: () => Promise<void>,
-): Promise<void> {
+async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');
   Object.defineProperty(process, 'platform', {value: platform});
   try {
@@ -180,8 +177,7 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     sandbox.restore();
   });
 
-  const stubStat = (isFile: boolean) =>
-    sandbox.stub(fs, 'stat').resolves({isFile: () => isFile} as any);
+  const stubStat = (isFile: boolean) => sandbox.stub(fs, 'stat').resolves({isFile: () => isFile} as any);
 
   // The AFC + installation_proxy fallback is exercised elsewhere; here we only
   // assert routing, so we short-circuit it with a sentinel rejection from the

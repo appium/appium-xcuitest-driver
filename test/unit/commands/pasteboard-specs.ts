@@ -35,9 +35,7 @@ describe('pasteboard commands', function () {
     });
 
     it('getPasteboard should not be called', async function () {
-      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(
-        /can only be performed on Simulator/,
-      );
+      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(/can only be performed on Simulator/);
       expect(getPasteboardStub.notCalled).to.be.true;
     });
   });
@@ -48,9 +46,7 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
-      await expect(driver.mobileSetPasteboard(undefined as any)).to.be.rejectedWith(
-        /mandatory to set/,
-      );
+      await expect(driver.mobileSetPasteboard(undefined as any)).to.be.rejectedWith(/mandatory to set/);
       expect(setPasteboardStub.notCalled).to.be.true;
     });
 

@@ -39,9 +39,7 @@ export async function mobileInstallApp(
       `with UDID '${this.device.udid}'`,
   );
   if (!(await fs.exists(srcAppPath))) {
-    throw this.log.errorWithException(
-      `The application at '${srcAppPath}' does not exist or is not accessible`,
-    );
+    throw this.log.errorWithException(`The application at '${srcAppPath}' does not exist or is not accessible`);
   }
 
   const bundleId = await this.appInfosCache.extractBundleId(srcAppPath);
@@ -73,10 +71,7 @@ export async function mobileInstallApp(
  * @param bundleId - The bundle identifier of the application to be checked
  * @returns `true` if the application is installed; `false` otherwise
  */
-export async function mobileIsAppInstalled(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<boolean> {
+export async function mobileIsAppInstalled(this: XCUITestDriver, bundleId: string): Promise<boolean> {
   const installed = await this.device.isAppInstalled(bundleId);
   this.log.info(`App '${bundleId}' is${installed ? '' : ' not'} installed`);
   return installed;
@@ -176,10 +171,7 @@ export async function mobileKillApp(this: XCUITestDriver, bundleId: string): Pro
  * @returns The actual application state code
  * @see https://developer.apple.com/documentation/xctest/xcuiapplicationstate?language=objc
  */
-export async function mobileQueryAppState(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<AppState> {
+export async function mobileQueryAppState(this: XCUITestDriver, bundleId: string): Promise<AppState> {
   return (await this.proxyCommand('/wda/apps/state', 'POST', {bundleId})) as AppState;
 }
 
@@ -322,9 +314,7 @@ export async function mobileClearApp(this: XCUITestDriver, bundleId: string): Pr
   }
 
   await Promise.all(items.map((item) => fs.rimraf(path.join(dataRoot, item))));
-  this.log.info(
-    `Cleaned up ${util.pluralize('item', items.length, true)} from ${bundleId}'s data container`,
-  );
+  this.log.info(`Cleaned up ${util.pluralize('item', items.length, true)} from ${bundleId}'s data container`);
   return true;
 }
 
@@ -341,10 +331,7 @@ export async function mobileClearApp(this: XCUITestDriver, bundleId: string): Pr
  *     - `{timeout: 5000}`: app will be restored after 5 seconds (timeout in milliseconds)
  *     - `{timeout: null}` or `{timeout: -2}`: app will not be restored
  */
-export async function background(
-  this: XCUITestDriver,
-  seconds?: number | {timeout?: number | null},
-): Promise<void> {
+export async function background(this: XCUITestDriver, seconds?: number | {timeout?: number | null}): Promise<void> {
   const homescreen = '/wda/homescreen';
   const deactivateApp = '/wda/deactivateApp';
 
@@ -371,8 +358,7 @@ export async function background(
   }
   if (!endpoint) {
     throw new errors.InvalidArgumentError(
-      `Argument value is expected to be a valid number. ` +
-        `${JSON.stringify(seconds)} has been provided instead`,
+      `Argument value is expected to be a valid number. ` + `${JSON.stringify(seconds)} has been provided instead`,
     );
   }
   return await this.proxyCommand(endpoint, 'POST', params, endpoint !== homescreen);

@@ -17,15 +17,10 @@ export async function getPageSource(this: XCUITestDriver): Promise<string> {
     return await this.executeAtom('execute_script', [script, []]);
   }
 
-  const {pageSourceExcludedAttributes: excludedAttributes, useJSONSource} =
-    await this.settings.getSettings();
-  const hasExcludedAttributes =
-    typeof excludedAttributes === 'string' && !isEmpty(excludedAttributes);
+  const {pageSourceExcludedAttributes: excludedAttributes, useJSONSource} = await this.settings.getSettings();
+  const hasExcludedAttributes = typeof excludedAttributes === 'string' && !isEmpty(excludedAttributes);
   if (useJSONSource) {
-    const srcTree = await this.mobileGetSource(
-      'json',
-      hasExcludedAttributes ? excludedAttributes : undefined,
-    );
+    const srcTree = await this.mobileGetSource('json', hasExcludedAttributes ? excludedAttributes : undefined);
     return getSourceXml(getTreeForXML(srcTree));
   }
 

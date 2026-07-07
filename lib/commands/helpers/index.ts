@@ -18,9 +18,4 @@ export {getAndCheckIosSdkVersion, getAndCheckXcodeVersion} from './xcode';
 export {removeAllSessionWebSocketHandlers, shouldSetInitialSafariUrl} from './session';
 export type {SafariUrlSessionOpts, SessionWebSocketHandlerHost} from './session';
 
-export {
-  DEFAULT_TIMEOUT_KEY,
-  checkAppPresent,
-  normalizeCommandTimeouts,
-  requireArgs,
-} from './validation';
+export {DEFAULT_TIMEOUT_KEY, checkAppPresent, normalizeCommandTimeouts, requireArgs} from './validation';

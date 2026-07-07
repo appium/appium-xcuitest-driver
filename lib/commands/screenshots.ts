@@ -82,10 +82,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
  * @param el - Element to capture
  * @returns Base64-encoded screenshot data
  */
-export async function getElementScreenshot(
-  this: XCUITestDriver,
-  el: Element<string> | string,
-): Promise<string> {
+export async function getElementScreenshot(this: XCUITestDriver, el: Element<string> | string): Promise<string> {
   el = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(el);

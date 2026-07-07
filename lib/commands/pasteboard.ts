@@ -32,9 +32,6 @@ export async function mobileSetPasteboard(
  * @group Simulator Only
  * @returns The pasteboard content string
  */
-export async function mobileGetPasteboard(
-  this: XCUITestDriver,
-  encoding: BufferEncoding = 'utf8',
-): Promise<string> {
+export async function mobileGetPasteboard(this: XCUITestDriver, encoding: BufferEncoding = 'utf8'): Promise<string> {
   return await requireSimulator(this, 'Getting pasteboard content').simctl.getPasteboard(encoding);
 }

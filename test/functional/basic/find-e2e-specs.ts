@@ -197,9 +197,7 @@ describe('XCUITestDriver - find -', function () {
       });
 
       it('should filter by partial text', async function () {
-        const el = await driver.$(
-          `//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`,
-        );
+        const el = await driver.$(`//XCUIElementTypeTable//XCUIElementTypeButton[contains(@name, 'X')]`);
         expect(await el.getAttribute('name')).to.equal('X Button');
       });
     });
@@ -227,10 +225,7 @@ describe('XCUITestDriver - find -', function () {
 
       describe.skip('finding specific path', function () {
         for (let n = 0; n < runs; n++) {
-          describe(
-            `test ${n + 1}`,
-            test('//XCUIElementTypeApplication[0]/XCUIElementTypeWindow[0]', 17),
-          );
+          describe(`test ${n + 1}`, test('//XCUIElementTypeApplication[0]/XCUIElementTypeWindow[0]', 17));
         }
       });
 
@@ -287,10 +282,7 @@ describe('XCUITestDriver - find -', function () {
       it('should find only one textfield', async function () {
         // TODO: this works locally but fails in CI.
         const uiCatalogCaps = await getUICatalogCaps();
-        if (
-          process.env.CI &&
-          extractCapabilityValue(uiCatalogCaps, 'appium:platformVersion') === '10.3'
-        ) {
+        if (process.env.CI && extractCapabilityValue(uiCatalogCaps, 'appium:platformVersion') === '10.3') {
           return this.skip();
         }
 

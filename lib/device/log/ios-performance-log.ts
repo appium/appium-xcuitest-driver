@@ -44,9 +44,7 @@ export class IOSPerformanceLog extends LineConsumingLog {
   private onTimelineEvent(event: PerformanceLogEntry): void {
     const serializedEntry = JSON.stringify(event);
     this.broadcast(serializedEntry);
-    this.log.debug(
-      `Received Timeline event: ${truncateString(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
-    );
+    this.log.debug(`Received Timeline event: ${truncateString(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);
   }
 }
 

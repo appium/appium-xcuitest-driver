@@ -58,10 +58,7 @@ export async function getWindowSize(this: XCUITestDriver): Promise<Size> {
  * @param format - The format specifier string. Read the [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
  * @returns Formatted datetime string or the raw command output (if formatting fails)
  */
-export async function getDeviceTime(
-  this: XCUITestDriver,
-  format = MOMENT_FORMAT_ISO8601,
-): Promise<string> {
+export async function getDeviceTime(this: XCUITestDriver, format = MOMENT_FORMAT_ISO8601): Promise<string> {
   this.log.debug('Attempting to capture iOS device date and time');
   if (!this.isRealDevice()) {
     this.log.debug('On simulator. Assuming device time is the same as host time');
@@ -99,10 +96,7 @@ export async function getDeviceTime(
  * @param format - See {@linkcode getDeviceTime.format}
  * @returns Formatted datetime string or the raw command output if formatting fails
  */
-export async function mobileGetDeviceTime(
-  this: XCUITestDriver,
-  format = MOMENT_FORMAT_ISO8601,
-): Promise<string> {
+export async function mobileGetDeviceTime(this: XCUITestDriver, format = MOMENT_FORMAT_ISO8601): Promise<string> {
   return await this.getDeviceTime(format);
 }
 

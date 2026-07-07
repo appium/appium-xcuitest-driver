@@ -67,9 +67,7 @@ export async function enableConditionInducer(
     try {
       await facade.close();
     } catch {}
-    throw this.log.errorWithException(
-      `Condition inducer '${profileID}' cannot be enabled: '${err.message}'`,
-    );
+    throw this.log.errorWithException(`Condition inducer '${profileID}' cannot be enabled: '${err.message}'`);
   }
 }
 

@@ -2,12 +2,7 @@ import type {AppiumLogger} from '@appium/types';
 
 import type {LogEntry} from '../../commands/types';
 import {truncateString} from '../../utils';
-import {
-  toLogEntry,
-  DEFAULT_LOG_LEVEL,
-  MAX_JSON_LOG_LENGTH,
-  MAX_BUFFERED_EVENTS_COUNT,
-} from './helpers';
+import {toLogEntry, DEFAULT_LOG_LEVEL, MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
 import {IOSLog} from './ios-log';
 
 const LOG_LEVELS_MAP = {
@@ -97,9 +92,7 @@ export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntr
 
     this.broadcast(entry);
     if (this._showLogs) {
-      this.log.info(
-        `[SafariConsole] ${truncateString(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`,
-      );
+      this.log.info(`[SafariConsole] ${truncateString(JSON.stringify(entry), {length: MAX_JSON_LOG_LENGTH})}`);
     }
   }
 

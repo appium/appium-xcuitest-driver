@@ -33,12 +33,7 @@ describe('RemoteXPCFacade', function () {
     sinon.stub(usbmuxUtils, 'isDeviceListedInUsbmux').resolves(false);
 
     const warn = sinon.stub();
-    const access = new RemoteXPCFacade(
-      'udid-1',
-      '18.0',
-      {debug: sinon.stub(), warn, info: sinon.stub()} as any,
-      true,
-    );
+    const access = new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn, info: sinon.stub()} as any, true);
 
     expect(await access.determineAvailability()).to.equal(false);
     expect(await access.determineAvailability()).to.equal(false);
@@ -61,12 +56,7 @@ describe('RemoteXPCFacade', function () {
     sinon.stub(usbmuxUtils, 'isDeviceListedInUsbmux').resolves(false);
 
     const warn = sinon.stub();
-    const access = new RemoteXPCFacade(
-      'udid-1',
-      '18.0',
-      {debug: sinon.stub(), warn, info: sinon.stub()} as any,
-      true,
-    );
+    const access = new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn, info: sinon.stub()} as any, true);
 
     expect(await access.determineAvailability()).to.equal(true);
     expect(await access.attemptService('test feature', operation)).to.equal(null);

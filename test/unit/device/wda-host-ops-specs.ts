@@ -20,10 +20,7 @@ function withPlatform(platform: NodeJS.Platform, fn: () => void): void {
   }
 }
 
-async function withPlatformAsync(
-  platform: NodeJS.Platform,
-  fn: () => Promise<void>,
-): Promise<void> {
+async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');
   Object.defineProperty(process, 'platform', {value: platform});
   try {
@@ -42,8 +39,7 @@ describe('wda host ops', function () {
 
   describe('assertWdaHostPlatformSupported', function () {
     it('identifies strict non-macOS host utility modes', function () {
-      expect(isStrictHostUtilityMode({webDriverAgentUrl: 'http://127.0.0.1:8100'}, 'linux')).to.be
-        .true;
+      expect(isStrictHostUtilityMode({webDriverAgentUrl: 'http://127.0.0.1:8100'}, 'linux')).to.be.true;
       expect(isStrictHostUtilityMode({usePreinstalledWDA: true}, 'win32')).to.be.true;
       expect(isStrictHostUtilityMode({usePreinstalledWDA: true}, 'darwin')).to.be.false;
     });
@@ -54,23 +50,17 @@ describe('wda host ops', function () {
 
     it('rejects non-macOS strict sessions without explicit udid', function () {
       expect(() =>
-        assertWdaHostSessionCapsSupported(
-          {usePreinstalledWDA: true, platformVersion: '18.0'},
-          'linux',
-        ),
+        assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, platformVersion: '18.0'}, 'linux'),
       ).to.throw(/explicit real-device 'appium:udid'/);
       expect(() =>
-        assertWdaHostSessionCapsSupported(
-          {webDriverAgentUrl: 'http://127.0.0.1:8100', udid: 'auto'},
-          'linux',
-        ),
+        assertWdaHostSessionCapsSupported({webDriverAgentUrl: 'http://127.0.0.1:8100', udid: 'auto'}, 'linux'),
       ).to.throw(/explicit real-device 'appium:udid'/);
     });
 
     it('rejects non-macOS preinstalled WDA sessions without platformVersion', function () {
-      expect(() =>
-        assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, udid: 'device-1'}, 'linux'),
-      ).to.throw(/requires 'appium:platformVersion'/);
+      expect(() => assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, udid: 'device-1'}, 'linux')).to.throw(
+        /requires 'appium:platformVersion'/,
+      );
     });
 
     it('allows externally managed WDA on non-macOS hosts', function () {
@@ -155,11 +145,7 @@ describe('wda host ops', function () {
       });
 
       expect(exec.calledOnceWith('launch')).to.be.true;
-      expect(exec.firstCall.args[1].args).to.eql([
-        '--terminate-running-process',
-        'sim-1',
-        'io.appium.wda.xctrunner',
-      ]);
+      expect(exec.firstCall.args[1].args).to.eql(['--terminate-running-process', 'sim-1', 'io.appium.wda.xctrunner']);
       expect(terminateApp.calledOnceWith('io.appium.wda.xctrunner')).to.be.true;
     });
 
@@ -173,9 +159,7 @@ describe('wda host ops', function () {
         dvtService: {close},
       };
       const startDVTService = sinon.stub().resolves(dvt);
-      const requireService = sinon
-        .stub()
-        .callsFake(async (_feature, operation) => await operation({startDVTService}));
+      const requireService = sinon.stub().callsFake(async (_feature, operation) => await operation({startDVTService}));
       const driver = {
         remoteXPCFacade: {requireService},
         log: {info: sinon.stub()},

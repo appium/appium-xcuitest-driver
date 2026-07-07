@@ -56,14 +56,10 @@ export async function mobileRunXCTest(
  *
  * @param xctestApp - Path of the XCTest app (URL or filename with extension `.app`)
  */
-export async function mobileInstallXCTestBundle(
-  this: XCUITestDriver,
-  xctestApp: string,
-): Promise<void> {
+export async function mobileInstallXCTestBundle(this: XCUITestDriver, xctestApp: string): Promise<void> {
   if (typeof xctestApp !== 'string') {
     throw new errors.InvalidArgumentError(
-      `'xctestApp' is a required parameter for 'installXCTestBundle' and ` +
-        `must be a string. Found '${xctestApp}'`,
+      `'xctestApp' is a required parameter for 'installXCTestBundle' and ` + `must be a string. Found '${xctestApp}'`,
     );
   }
   xctestLog.info(`Installing bundle '${xctestApp}'`);

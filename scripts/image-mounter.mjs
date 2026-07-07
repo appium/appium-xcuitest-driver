@@ -83,9 +83,7 @@ class ImageMounter {
       }
     } else {
       if (devices.length > 1) {
-        log.warn(
-          `Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`,
-        );
+        log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
         log.warn('Available devices:');
         devices.forEach((device) => log.warn(`  - ${device.Properties.SerialNumber}`));
         log.warn('Use --udid flag to specify a particular device.');
@@ -139,11 +137,7 @@ class ImageMounter {
         return;
       }
 
-      await imageMounterService.mount(
-        validatedImagePath,
-        validatedManifestPath,
-        validatedTrustCachePath,
-      );
+      await imageMounterService.mount(validatedImagePath, validatedManifestPath, validatedTrustCachePath);
 
       log.info('✅ Image mounted successfully!');
     });
@@ -191,10 +185,7 @@ NOTE:
     .requiredOption('-i, --image <path>', 'Path to the .dmg image file')
     .requiredOption('-m, --manifest <path>', 'Path to the BuildManifest.plist file')
     .requiredOption('-t, --trustcache <path>', 'Path to the .trustcache file')
-    .option(
-      '-u, --udid <udid>',
-      'Target device UDID (optional, uses first device if not specified)',
-    )
+    .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
     .addHelpText(
       'after',
       `
@@ -213,10 +204,7 @@ EXAMPLES:
   program
     .command('unmount')
     .description('Unmount a Developer Disk Image from iOS device')
-    .option(
-      '-u, --udid <udid>',
-      'Target device UDID (optional, uses first device if not specified)',
-    )
+    .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
     .option('-p, --mount-path <path>', 'Mount path to unmount', '/System/Developer')
     .addHelpText(
       'after',

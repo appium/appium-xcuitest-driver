@@ -57,8 +57,7 @@ describe('file-movement', function () {
     });
     it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();
-      await expect(parseContainerPath(driver, '@io.appium.example:documents', mntRoot)).to.be
-        .rejected;
+      await expect(parseContainerPath(driver, '@io.appium.example:documents', mntRoot)).to.be.rejected;
     });
   });
 });

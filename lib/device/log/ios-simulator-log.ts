@@ -67,9 +67,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
         });
         this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
-        this.log.warn(
-          `Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`,
-        );
+        this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`);
         this.syslogLogger = null;
       }
     }
@@ -113,9 +111,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       this.log.debug(`Existing iOS Syslog file: '${this.iosSyslogFile}' deleted.`);
     } catch (unlinkErr) {
       if (unlinkErr.code !== 'ENOENT') {
-        this.log.warn(
-          `Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`,
-        );
+        this.log.warn(`Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`);
       }
     }
   }
@@ -191,18 +187,14 @@ export class IOSSimulatorLog extends LineConsumingLog {
 
   private async cleanupObsoleteLogStreams(): Promise<void> {
     const processes = await this.sim.ps();
-    const pids = processes
-      .filter(({name}) => LOG_STREAMING_PROCESS_NAME_PATTERN.test(name))
-      .map(({pid}) => pid);
+    const pids = processes.filter(({name}) => LOG_STREAMING_PROCESS_NAME_PATTERN.test(name)).map(({pid}) => pid);
     if (isEmpty(pids)) {
       return;
     }
     try {
       await exec('kill', pids.map(String));
     } catch (e) {
-      this.log.warn(
-        `Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`,
-      );
+      this.log.warn(`Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`);
     }
   }
 }
