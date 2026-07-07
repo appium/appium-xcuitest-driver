@@ -1,14 +1,16 @@
-import {fs, util} from 'appium/support';
-import {encodeBase64OrUpload} from './helpers';
 import os from 'node:os';
 import path from 'node:path';
-import type {XCUITestDriver} from '../driver';
-import type {Simulator} from 'appium-ios-simulator';
-import type {RealDevice} from '../device/real-device-management';
+
 import type {AppiumLogger, HTTPHeaders} from '@appium/types';
-import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
-import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
+import type {Simulator} from 'appium-ios-simulator';
+import {fs, util} from 'appium/support';
+
+import type {RealDevice} from '../device/real-device-management';
 import {formatTunnelAvailabilityMessage, isTunnelAvailabilityError} from '../device/remote-xpc';
+import {XctestAttachmentDeletionClient} from '../device/xctest-attachment-deletion-client';
+import type {XCUITestDriver} from '../driver';
+import {encodeBase64OrUpload} from './helpers';
+import type {XcTestScreenRecordingInfo, XcTestScreenRecording} from './types';
 
 const MOV_EXT = '.mov';
 /**

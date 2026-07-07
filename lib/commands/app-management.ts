@@ -1,14 +1,16 @@
-import {fs, util} from 'appium/support';
-import {errors} from 'appium/driver';
 import path from 'node:path';
-import {requireRealDevice} from './helpers';
-import {SUPPORTED_EXTENSIONS} from './constants';
-import {onDownloadApp, onPostConfigureApp} from './app-install';
+
+import type {Simulator} from 'appium-ios-simulator';
+import {errors} from 'appium/driver';
+import {fs, util} from 'appium/support';
+
 import {InstallationProxyClient} from '../device/installation-proxy-client';
 import type {XCUITestDriver} from '../driver';
-import type {AppState} from './enum';
 import type {AppInfoMapping} from '../types';
-import type {Simulator} from 'appium-ios-simulator';
+import {onDownloadApp, onPostConfigureApp} from './app-install';
+import {SUPPORTED_EXTENSIONS} from './constants';
+import type {AppState} from './enum';
+import {requireRealDevice} from './helpers';
 
 /**
  * Installs the given application to the device under test.

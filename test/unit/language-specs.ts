@@ -1,7 +1,8 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../lib/driver';
 
 chai.use(chaiAsPromised);
 

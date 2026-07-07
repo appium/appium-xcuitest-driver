@@ -1,10 +1,12 @@
-import {fs} from 'appium/support';
-import {isEmpty} from '../../utils';
 import os from 'node:os';
 import path from 'node:path';
+
+import {fs} from 'appium/support';
 import {exec} from 'teen_process';
+
 import type {XCUITestDriver} from '../../driver';
 import {log} from '../../logger';
+import {isEmpty} from '../../utils';
 import {isXcodebuildNeeded, SHARED_RESOURCES_GUARD, XCUITEST_DRIVER_SYNC_NAME} from './constants';
 import {getDerivedDataPath} from './utils';
 

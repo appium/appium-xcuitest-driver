@@ -1,13 +1,15 @@
-import {isEmpty} from '../../utils';
-import {exec} from 'teen_process';
-import {util} from 'appium/support';
-import {LineConsumingLog} from './line-consuming-log';
-import {transports, createLogger, format} from 'winston';
-import type {SubProcess} from 'teen_process';
-import type {Logger} from 'winston';
-import type {Simulator} from 'appium-ios-simulator';
-import type {AppiumLogger} from '@appium/types';
 import fs from 'node:fs/promises';
+
+import type {AppiumLogger} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
+import {util} from 'appium/support';
+import {exec} from 'teen_process';
+import type {SubProcess} from 'teen_process';
+import {transports, createLogger, format} from 'winston';
+import type {Logger} from 'winston';
+
+import {isEmpty} from '../../utils';
+import {LineConsumingLog} from './line-consuming-log';
 
 const EXECVP_ERROR_PATTERN = /execvp\(\)/;
 const LOG_STREAMING_PROCESS_NAME_PATTERN = /^com\.apple\.xpc\.launchd\.oneshot\.0x[0-f]+\.log$/;

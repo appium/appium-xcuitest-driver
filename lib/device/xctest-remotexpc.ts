@@ -1,7 +1,8 @@
-import {logger} from 'appium/support';
-import {errors} from 'appium/driver';
 import type {StringRecord} from '@appium/types';
 import type {XCTestEvent, XCTestRunnerOptions, XCTestRunStage} from 'appium-ios-remotexpc';
+import {errors} from 'appium/driver';
+import {logger} from 'appium/support';
+
 import type {XCTestResult, RunXCTestResult} from '../commands/types';
 import {InstallationProxyClient} from './installation-proxy-client';
 import type {RemoteXPCFacade} from './remote-xpc';

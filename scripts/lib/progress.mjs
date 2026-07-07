@@ -4,7 +4,14 @@
  * @param {{log: {info: (message: string) => void}, label: string, startedAt: number, timeoutMs: number, barWidth: number, intervalMs: number}} opts
  * @returns {{succeed: (message?: string) => void, fail: (message?: string) => void}}
  */
-export function startTimeoutProgressLogger({log, label, startedAt, timeoutMs, barWidth, intervalMs}) {
+export function startTimeoutProgressLogger({
+  log,
+  label,
+  startedAt,
+  timeoutMs,
+  barWidth,
+  intervalMs,
+}) {
   /** @type {NodeJS.Timeout | null} */
   let timer = null;
   let isStopped = false;

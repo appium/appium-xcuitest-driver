@@ -1,6 +1,8 @@
-import type {LogEntry} from '../../commands/types';
-import {fs} from 'appium/support';
 import {createInterface} from 'node:readline';
+
+import {fs} from 'appium/support';
+
+import type {LogEntry} from '../../commands/types';
 
 export const DEFAULT_LOG_LEVEL = 'ALL';
 export const MAX_JSON_LOG_LENGTH = 200;

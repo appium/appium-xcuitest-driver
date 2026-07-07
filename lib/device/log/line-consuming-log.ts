@@ -1,6 +1,6 @@
-import {IOSLog} from './ios-log';
-import {toLogEntry} from './helpers';
 import type {LogEntry} from '../../commands/types';
+import {toLogEntry} from './helpers';
+import {IOSLog} from './ios-log';
 
 type TSerializedEntry = [string, number];
 

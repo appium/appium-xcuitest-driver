@@ -1,7 +1,8 @@
-import {escapeRegExp, isEmpty} from '../utils';
 import {errors} from 'appium/driver';
-import {requireRealDevice} from './helpers';
+
 import type {XCUITestDriver} from '../driver';
+import {escapeRegExp, isEmpty} from '../utils';
+import {requireRealDevice} from './helpers';
 
 /**
  * Simulates Low Memory warning on the given application

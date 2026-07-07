@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "trailingComma": "all",
+  "bracketSpacing": false,
+  "sortImports": true,
+
+  "ignorePatterns": ["**/build/**", "**/coverage/**", "**/fixtures/**", "**/*.md"]
+}

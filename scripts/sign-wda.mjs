@@ -1,10 +1,11 @@
-import {fs, logger} from 'appium/support.js';
-import {exec} from 'teen_process';
+import {mkdtemp, rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {mkdtemp, rm} from 'node:fs/promises';
+
+import {fs, logger} from 'appium/support.js';
 import {Command} from 'commander';
+import {exec} from 'teen_process';
 
 const scriptFilePath = fileURLToPath(import.meta.url);
 const SCRIPT_NAME = path.basename(scriptFilePath, path.extname(scriptFilePath));
@@ -65,11 +66,7 @@ class Resigner {
    * @returns {string[]}
    */
   _buildSignArgs(options) {
-    const args = [
-      '--p12-file', options.p12File,
-      '--profile', options.profileDir,
-      '--force',
-    ];
+    const args = ['--p12-file', options.p12File, '--profile', options.profileDir, '--force'];
 
     if (options.bundleId) {
       args.push(
@@ -77,10 +74,7 @@ class Resigner {
           // To re-apply the same mapping again for past failure cases for safety.
           options.bundleId,
           ...DEFAULT_WDA_BUNDLE_IDS,
-        ].flatMap((bundleId) => [
-          '--bundle-id-remap',
-          `${bundleId}=${options.bundleId}`,
-        ])
+        ].flatMap((bundleId) => ['--bundle-id-remap', `${bundleId}=${options.bundleId}`]),
       );
     }
 
@@ -135,7 +129,7 @@ class ProvisioningProfilesHelper {
 
     throw new Error(
       `No provisioning profile directory could be discovered. ` +
-        `Please provide --profile-dir explicitly. Checked: ${DEFAULT_PROFILE_DIR_CANDIDATES.join(', ')}`
+        `Please provide --profile-dir explicitly. Checked: ${DEFAULT_PROFILE_DIR_CANDIDATES.join(', ')}`,
     );
   }
 
@@ -153,12 +147,14 @@ class ProvisioningProfilesHelper {
     try {
       entries = await fs.readdir(dir);
     } catch {
-      throw new Error(`${source} provisioning profile directory is not a readable directory: ${dir}`);
+      throw new Error(
+        `${source} provisioning profile directory is not a readable directory: ${dir}`,
+      );
     }
 
     if (!entries.some((name) => name.toLowerCase().endsWith(MOBILEPROVISION_EXTENSION))) {
       throw new Error(
-        `${source} provisioning profile directory does not contain any ${MOBILEPROVISION_EXTENSION} files: ${dir}`
+        `${source} provisioning profile directory does not contain any ${MOBILEPROVISION_EXTENSION} files: ${dir}`,
       );
     }
 
@@ -244,7 +240,7 @@ class P12Converter {
     } catch {
       throw new Error(
         'OpenSSL binary is not available in the PATH. ' +
-          'It is required to convert .cer and .key files to .p12 format.'
+          'It is required to convert .cer and .key files to .p12 format.',
       );
     }
   }
@@ -256,12 +252,7 @@ class P12Converter {
   async _convertCerToPem(certPemPath) {
     const certPath = this._certPath;
     log.info(`Converting certificate from ${certPath} to PEM format`);
-    await exec('openssl', [
-      'x509',
-      '-in', certPath,
-      '-inform', 'DER',
-      '-out', certPemPath,
-    ]);
+    await exec('openssl', ['x509', '-in', certPath, '-inform', 'DER', '-out', certPemPath]);
   }
 
   /**
@@ -276,10 +267,14 @@ class P12Converter {
     await exec('openssl', [
       'pkcs12',
       '-export',
-      '-in', certPemPath,
-      '-inkey', keyPath,
-      '-out', p12FilePath,
-      '-passout', `pass:${p12Password}`,
+      '-in',
+      certPemPath,
+      '-inkey',
+      keyPath,
+      '-out',
+      p12FilePath,
+      '-passout',
+      `pass:${p12Password}`,
     ]);
   }
 }
@@ -312,7 +307,8 @@ class SignWdaWorkflow extends WdaBundleWorkflow {
     this._createProvisioning =
       deps.createProvisioning ?? ((profileDir) => new ProvisioningProfilesHelper(profileDir));
     this._createP12 =
-      deps.createP12 ?? ((certPath, keyPath, p12Password) => new P12Converter(certPath, keyPath, p12Password));
+      deps.createP12 ??
+      ((certPath, keyPath, p12Password) => new P12Converter(certPath, keyPath, p12Password));
   }
 
   /**
@@ -333,7 +329,7 @@ class SignWdaWorkflow extends WdaBundleWorkflow {
         const result = await this._createP12(
           options.p12Cert,
           options.p12Key,
-          generatedPassword
+          generatedPassword,
         ).convert();
         p12File = result.p12File;
         tempDir = result.tempDir;
@@ -430,17 +426,20 @@ class SignWdaCli {
       .option('--inspect', 'Run resigner inspect only (no signing)')
       .option(
         '--p12-file <path>',
-        'Path to the .p12 signing certificate file (requires P12_PASSWORD env var; mutually exclusive with --p12-cert/--p12-key)'
+        'Path to the .p12 signing certificate file (requires P12_PASSWORD env var; mutually exclusive with --p12-cert/--p12-key)',
       )
       .option(
         '--p12-cert <path>',
-        'Path to the .cer certificate file from Apple Developer portal (auto-converted to .p12 with generated password; mutually exclusive with --p12-file; must use with --p12-key)'
+        'Path to the .cer certificate file from Apple Developer portal (auto-converted to .p12 with generated password; mutually exclusive with --p12-file; must use with --p12-key)',
       )
       .option(
         '--p12-key <path>',
-        'Path to the .key private key file from Apple Developer portal (auto-converted to .p12 with generated password; mutually exclusive with --p12-file; must use with --p12-cert)'
+        'Path to the .key private key file from Apple Developer portal (auto-converted to .p12 with generated password; mutually exclusive with --p12-file; must use with --p12-cert)',
       )
-      .option('--profile-dir <path>', 'Directory containing provisioning profiles (auto-discovered if omitted)')
+      .option(
+        '--profile-dir <path>',
+        'Directory containing provisioning profiles (auto-discovered if omitted)',
+      )
       .option('--bundle-id <id>', 'Target bundle ID for remapping (e.g., com.example.wda)')
       .addHelpText(
         'after',
@@ -513,25 +512,21 @@ EXAMPLES:
 
     if (!hasP12File && !hasCertAndKey) {
       throw new Error(
-        `Must provide either --p12-file or both --p12-cert and --p12-key for signing mode`
+        `Must provide either --p12-file or both --p12-cert and --p12-key for signing mode`,
       );
     }
 
     if (hasP12File && hasCertAndKey) {
-      throw new Error(
-        `Cannot provide both --p12-file and --p12-cert/--p12-key; use one approach`
-      );
+      throw new Error(`Cannot provide both --p12-file and --p12-cert/--p12-key; use one approach`);
     }
 
     if ((options.p12Cert && !options.p12Key) || (!options.p12Cert && options.p12Key)) {
-      throw new Error(
-        `Both --p12-cert and --p12-key must be provided together`
-      );
+      throw new Error(`Both --p12-cert and --p12-key must be provided together`);
     }
 
     if (hasP12File && !p12Password) {
       throw new Error(
-        `Missing required option for signing mode: P12_PASSWORD env var (required when using --p12-file)`
+        `Missing required option for signing mode: P12_PASSWORD env var (required when using --p12-file)`,
       );
     }
   }

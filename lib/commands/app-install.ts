@@ -1,9 +1,8 @@
-import {isEmpty, isPlainObject, isTvOs} from '../utils';
-import path from 'node:path';
-import os from 'node:os';
 import assert from 'node:assert';
-import {fs, util, tempDir, timing} from 'appium/support';
-import {exec} from 'teen_process';
+import os from 'node:os';
+import path from 'node:path';
+import type {Readable} from 'node:stream';
+
 import type {
   CachedAppInfo,
   DownloadAppOptions,
@@ -11,10 +10,13 @@ import type {
   PostProcessOptions,
   PostProcessResult,
 } from '@appium/types';
-import type {Readable} from 'node:stream';
+import {fs, util, tempDir, timing} from 'appium/support';
+import {exec} from 'teen_process';
+
 import type {XCUITestDriver} from '../driver';
-import {findApps, unzipFile, unzipStream} from './helpers';
+import {isEmpty, isPlainObject, isTvOs} from '../utils';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants';
+import {findApps, unzipFile, unzipStream} from './helpers';
 
 const ZIP_EXT = '.zip';
 const SANITIZE_REPLACEMENT = '-';

@@ -1,7 +1,7 @@
+import type {XCUITestDriver} from '../driver';
 import {isPlainObject} from '../utils';
 import {PermissionService} from './enum';
 import {requireSimulator} from './helpers';
-import type {XCUITestDriver} from '../driver';
 import type {PermissionState} from './types';
 
 /**

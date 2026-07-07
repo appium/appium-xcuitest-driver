@@ -3,11 +3,11 @@ name: Functional Tests
 on:
   pull_request:
     branches:
-    - master
+      - master
     paths-ignore:
-    - 'docs/**'
-    - '*.md'
-    - 'mkdocs.yml'
+      - 'docs/**'
+      - '*.md'
+      - 'mkdocs.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -22,158 +22,157 @@ env:
 
 jobs:
   build:
-
     # https://github.com/actions/runner-images/tree/main/images/macos
     strategy:
       matrix:
         e2eRoot:
-        - basic
-        - device
-        # In CI env driver tests are unstable, because it's expensive to start and stop simulators
-        # - driver
-        - web
-        - long
+          - basic
+          - device
+          # In CI env driver tests are unstable, because it's expensive to start and stop simulators
+          # - driver
+          - web
+          - long
         xcodeVersion: ['26.4', '16.4']
         include:
-        - xcodeVersion: '26.4'
-          iosVersion: '26.4'
-          deviceName: 'iPhone 17'
-          tvosVersion: '26.4'
-          tvosDeviceName: 'Apple TV'
-          platform: macos-26
-        - xcodeVersion: '16.4'
-          iosVersion: '18.5'
-          deviceName: 'iPhone 16'
-          tvosVersion: '18.5'
-          tvosDeviceName: 'Apple TV'
-          platform: macos-15
+          - xcodeVersion: '26.4'
+            iosVersion: '26.4'
+            deviceName: 'iPhone 17'
+            tvosVersion: '26.4'
+            tvosDeviceName: 'Apple TV'
+            platform: macos-26
+          - xcodeVersion: '16.4'
+            iosVersion: '18.5'
+            deviceName: 'iPhone 16'
+            tvosVersion: '18.5'
+            tvosDeviceName: 'Apple TV'
+            platform: macos-15
       fail-fast: false
 
     runs-on: ${{ matrix.platform }}
 
     name: e2e
     steps:
-    - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
 
-    - name: Install Node.js
-      uses: actions/setup-node@v6.4.0
-      with:
-        node-version: 'lts/*'
+      - name: Install Node.js
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 'lts/*'
 
-    - name: Select Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: "${{ matrix.xcodeVersion }}"
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '${{ matrix.xcodeVersion }}'
 
-    - run: xcrun simctl list devices available
-      name: List Installed Simulators
-    - run: xcrun simctl list runtimes
-      name: List Runtimes
-    - name: Start iOS Simulator UI
-      run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
-    - name: Prepare iOS simulator
-      id: prepareSimulator
-      uses: futureware-tech/simulator-action@v5
-      with:
-        model: "${{ matrix.deviceName }}"
-        os_version: "${{ matrix.iosVersion }}"
-        shutdown_after_job: false
-        wait_for_boot: true
-    - name: Finalize iOS simulator boot
-      run: xcrun --sdk iphonesimulator --show-sdk-version
+      - run: xcrun simctl list devices available
+        name: List Installed Simulators
+      - run: xcrun simctl list runtimes
+        name: List Runtimes
+      - name: Start iOS Simulator UI
+        run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
+      - name: Prepare iOS simulator
+        id: prepareSimulator
+        uses: futureware-tech/simulator-action@v5
+        with:
+          model: '${{ matrix.deviceName }}'
+          os_version: '${{ matrix.iosVersion }}'
+          shutdown_after_job: false
+          wait_for_boot: true
+      - name: Finalize iOS simulator boot
+        run: xcrun --sdk iphonesimulator --show-sdk-version
 
-    - run: |
-        appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
-        pushd "$(pwd)"
-        cd ~
-        npm install -g "appium@$appium_ver"
-        popd
-      name: Install Appium Server
-    - run: |
-        brew install xq
-        npm install
-        npm install --no-save mjpeg-consumer
-        npm install mocha-multi-reporters --save-dev
-      name: Install dev dependencies
-    - run: |
-        export cwd=$(pwd)
-        pushd "$cwd"
-        cd ~
-        appium driver install --source=local "$cwd"
-        appium driver doctor xcuitest
-        appium driver run xcuitest download-wda -- --platform=ios --outdir=$(dirname "$PREBUILT_WDA_PATH") --kind=sim
-        echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
-        nohup appium server \
-          --port=$APPIUM_TEST_SERVER_PORT \
-          --address=$APPIUM_TEST_SERVER_HOST \
-          --relaxed-security \
-          --log-no-colors \
-          --log-timestamp \
-          --keep-alive-timeout 1200 \
-          2>&1 > "$cwd/appium.log" &
+      - run: |
+          appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
+          pushd "$(pwd)"
+          cd ~
+          npm install -g "appium@$appium_ver"
+          popd
+        name: Install Appium Server
+      - run: |
+          brew install xq
+          npm install
+          npm install --no-save mjpeg-consumer
+          npm install mocha-multi-reporters --save-dev
+        name: Install dev dependencies
+      - run: |
+          export cwd=$(pwd)
+          pushd "$cwd"
+          cd ~
+          appium driver install --source=local "$cwd"
+          appium driver doctor xcuitest
+          appium driver run xcuitest download-wda -- --platform=ios --outdir=$(dirname "$PREBUILT_WDA_PATH") --kind=sim
+          echo "Starting Appium server on $APPIUM_TEST_SERVER_HOST:$APPIUM_TEST_SERVER_PORT"
+          nohup appium server \
+            --port=$APPIUM_TEST_SERVER_PORT \
+            --address=$APPIUM_TEST_SERVER_HOST \
+            --relaxed-security \
+            --log-no-colors \
+            --log-timestamp \
+            --keep-alive-timeout 1200 \
+            2>&1 > "$cwd/appium.log" &
 
-        TIMEOUT_SEC=15
-        INTERVAL_SEC=1
+          TIMEOUT_SEC=15
+          INTERVAL_SEC=1
 
-        start_time=$(date +%s)
-        while true; do
-          current_time=$(date +%s)
-          elapsed=$((current_time - start_time))
+          start_time=$(date +%s)
+          while true; do
+            current_time=$(date +%s)
+            elapsed=$((current_time - start_time))
 
-          if nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
-            echo "Appium server is running after $elapsed seconds"
-            popd
-            cat appium.log
-            exit 0
+            if nc -z $APPIUM_TEST_SERVER_HOST $APPIUM_TEST_SERVER_PORT; then
+              echo "Appium server is running after $elapsed seconds"
+              popd
+              cat appium.log
+              exit 0
+            fi
+
+            if [[ "$elapsed" -ge "$TIMEOUT_SEC" ]]; then
+              echo "${elapsed} seconds timeout reached: Appium server is NOT running"
+              exit 1
+            fi
+
+            echo "Waiting $elapsed seconds for Appium server to start..."
+            sleep "$INTERVAL_SEC"
+          done
+        name: Prepare the server
+
+      - run: |
+          export DEVICE_NAME="${{ matrix.deviceName }}"
+          export PLATFORM_VERSION="${{ matrix.iosVersion }}"
+
+          export RESULTS_XML=test-results.xml
+          echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
+          ARGS=("./test/functional/${{ matrix.e2eRoot }}/**/*-specs.ts" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
+          if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
+            ARGS+=(--grep XCUITestDriver)
           fi
-
-          if [[ "$elapsed" -ge "$TIMEOUT_SEC" ]]; then
-            echo "${elapsed} seconds timeout reached: Appium server is NOT running"
-            exit 1
+          if ! npx mocha "${ARGS[@]}"; then
+            tests=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@tests')
+            errors=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@errors')
+            skipped=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@skipped')
+            failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
+            # Count timeout failures to exclude from CI status
+            # Match failures containing "timeout" (case-insensitive)
+            timeout_failures=$(cat "$RESULTS_XML" | xq --xpath 'count(//testcase[failure[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "timeout")]])')
+            # Subtract timeout failures from total failures
+            non_timeout_failures=$((failures - timeout_failures))
+            threshold=$(( (non_timeout_failures + errors) * 100 / (tests - skipped) ))
+            cat "$RESULTS_XML"
+            if [[ $timeout_failures -gt 0 ]]; then
+              echo "Found $timeout_failures timeout failure(s) - these will not affect CI status"
+            fi
+            if [[ $threshold -gt 0 ]]; then
+              echo "${threshold}% of tests failed (excluding timeouts)"
+              exit 1
+            else
+              echo "${threshold}% of tests failed (excluding timeouts). This is (probably) fine"
+            fi
           fi
+        name: Run functional tests
 
-          echo "Waiting $elapsed seconds for Appium server to start..."
-          sleep "$INTERVAL_SEC"
-        done
-      name: Prepare the server
-
-    - run: |
-        export DEVICE_NAME="${{ matrix.deviceName }}"
-        export PLATFORM_VERSION="${{ matrix.iosVersion }}"
-
-        export RESULTS_XML=test-results.xml
-        echo "{\"reporterEnabled\": \"spec, xunit\", \"xunitReporterOptions\": {\"output\": \"$RESULTS_XML\"}}" > reporter_config.json
-        ARGS=("./test/functional/${{ matrix.e2eRoot }}/**/*-specs.ts" --exit --timeout 10m --reporter mocha-multi-reporters --reporter-options configFile=reporter_config.json)
-        if [[ "${{ matrix.e2eRoot }}" == basic ]]; then
-          ARGS+=(--grep XCUITestDriver)
-        fi
-        if ! npx mocha "${ARGS[@]}"; then
-          tests=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@tests')
-          errors=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@errors')
-          skipped=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@skipped')
-          failures=$(cat "$RESULTS_XML" | xq --xpath '//testsuite/@failures')
-          # Count timeout failures to exclude from CI status
-          # Match failures containing "timeout" (case-insensitive)
-          timeout_failures=$(cat "$RESULTS_XML" | xq --xpath 'count(//testcase[failure[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "timeout")]])')
-          # Subtract timeout failures from total failures
-          non_timeout_failures=$((failures - timeout_failures))
-          threshold=$(( (non_timeout_failures + errors) * 100 / (tests - skipped) ))
-          cat "$RESULTS_XML"
-          if [[ $timeout_failures -gt 0 ]]; then
-            echo "Found $timeout_failures timeout failure(s) - these will not affect CI status"
-          fi
-          if [[ $threshold -gt 0 ]]; then
-            echo "${threshold}% of tests failed (excluding timeouts)"
-            exit 1
-          else
-            echo "${threshold}% of tests failed (excluding timeouts). This is (probably) fine"
-          fi
-        fi
-      name: Run functional tests
-
-    - name: Save server output
-      if: ${{ always() }}
-      uses: actions/upload-artifact@master
-      with:
-        name: appium_e2eRoot_${{ matrix.e2eRoot }}_xCodev${{ matrix.xcodeVersion }}_iOSv${{ matrix.iosVersion }}.log
-        path: appium.log
+      - name: Save server output
+        if: ${{ always() }}
+        uses: actions/upload-artifact@master
+        with:
+          name: appium_e2eRoot_${{ matrix.e2eRoot }}_xCodev${{ matrix.xcodeVersion }}_iOSv${{ matrix.iosVersion }}.log
+          path: appium.log

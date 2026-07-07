@@ -20,11 +20,13 @@
  *                             Apple TV pairing discovery timeout in milliseconds
  */
 
-import {logger} from 'appium/support.js';
-import {Command} from 'commander';
-import {AppleTVPairingService, UserInputService} from 'appium-ios-remotexpc';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+
+import {AppleTVPairingService, UserInputService} from 'appium-ios-remotexpc';
+import {logger} from 'appium/support.js';
+import {Command} from 'commander';
+
 import {parsePositiveIntegerOption} from './lib/options.mjs';
 import {startTimeoutProgressLogger} from './lib/progress.mjs';
 import {assertRoot} from './lib/root.mjs';
@@ -40,10 +42,7 @@ async function main() {
   program
     .name('appium driver run xcuitest pair-appletv')
     .description('Pair Apple TV / tvOS devices over WiFi for Remote XPC tunnels')
-    .option(
-      '-d, --device <selector>',
-      'Apple TV device selector (name, identifier, or index)',
-    )
+    .option('-d, --device <selector>', 'Apple TV device selector (name, identifier, or index)')
     .option(
       '--discovery-timeout-ms <ms>',
       'Apple TV pairing discovery timeout in milliseconds',
@@ -59,10 +58,7 @@ async function main() {
   const userInput = new UserInputService();
   const pairingService = new AppleTVPairingService(userInput);
 
-  const devices = await discoverAppleTVPairingDevices(
-    pairingService,
-    options.discoveryTimeoutMs,
-  );
+  const devices = await discoverAppleTVPairingDevices(pairingService, options.discoveryTimeoutMs);
   if (devices.length === 0) {
     log.info(getNoAppleTVPairingDevicesMessage());
     return;
@@ -83,7 +79,7 @@ async function main() {
 
   log.info(
     'Pairing successful. ' +
-    `Use this identifier as the udid for WiFi tvOS tunnels: ${result.deviceId}`,
+      `Use this identifier as the udid for WiFi tvOS tunnels: ${result.deviceId}`,
   );
 }
 

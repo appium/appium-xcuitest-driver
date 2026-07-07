@@ -1,13 +1,14 @@
 import type {StringRecord} from '@appium/types';
-import type {XCUITestDriver} from '../driver';
+
 import type {RunXCTestResult} from '../commands/types';
+import type {XCUITestDriver} from '../driver';
+import {isIos18OrNewerPlatform} from '../utils';
+import type {RemoteXPCFacade} from './remote-xpc';
 import {
   runXCTestViaRemoteXPC,
   listXCTestBundlesViaRemoteXPC,
   installXCTestBundleViaRemoteXPC,
 } from './xctest-remotexpc';
-import type {RemoteXPCFacade} from './remote-xpc';
-import {isIos18OrNewerPlatform} from '../utils';
 
 const XCTEST_REAL_DEVICE_MSG =
   'This XCTest operation is only supported on real devices running iOS/tvOS 18 or newer with the ' +

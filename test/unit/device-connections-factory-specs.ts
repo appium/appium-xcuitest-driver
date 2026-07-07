@@ -1,8 +1,9 @@
 import {logger} from 'appium/support';
-import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
-import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
+import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils';
 
 chai.use(chaiAsPromised);
 

@@ -1,3 +1,5 @@
+import {expect} from 'chai';
+
 import {
   formatRemoteXPCFallbackLog,
   formatTunnelAvailabilityMessage,
@@ -6,7 +8,6 @@ import {
   TUNNEL_CREATION_COMMAND,
   wrapRemoteXPCConnectionError,
 } from '../../../lib/device/remote-xpc/utils';
-import {expect} from 'chai';
 
 describe('remotexpc-utils tunnel availability', function () {
   it('detects TunnelAvailabilityError by ERR_TUNNEL_AVAILABILITY code', function () {

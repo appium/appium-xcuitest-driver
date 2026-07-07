@@ -1,6 +1,7 @@
-import {requireSimulator} from './helpers';
 import {errors} from 'appium/driver';
+
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 import type {ContentSizeAction, ContentSizeResult} from './types';
 
 const CONTENT_SIZE = [

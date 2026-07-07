@@ -1,10 +1,11 @@
+import type {Size, Rect} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver';
 import moment from 'moment-timezone';
+
 import {LockdownClient} from '../device/lockdown-client';
 import type {XCUITestDriver} from '../driver';
 import type {Viewport, ScreenInfo, ButtonName} from './types';
-import type {Size, Rect} from '@appium/types';
-import type {Simulator} from 'appium-ios-simulator';
 
 const MOMENT_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 

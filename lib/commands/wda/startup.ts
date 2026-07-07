@@ -1,12 +1,14 @@
+import path from 'node:path';
+
+import type {StringRecord} from '@appium/types';
 import {errors} from 'appium/driver';
 import {fs, timing, util} from 'appium/support';
-import type {StringRecord} from '@appium/types';
 import {retryInterval} from 'asyncbox';
-import {isIos17OrNewerPlatform, isPlainObject} from '../../utils';
-import path from 'node:path';
+
 import {installToRealDevice} from '../../device/real-device-management';
 import {installToSimulator} from '../../device/simulator-management';
 import type {XCUITestDriver} from '../../driver';
+import {isIos17OrNewerPlatform, isPlainObject} from '../../utils';
 import {isLocalHost} from '../helpers';
 import {markSystemFilesForCleanup} from './cleanup';
 import {

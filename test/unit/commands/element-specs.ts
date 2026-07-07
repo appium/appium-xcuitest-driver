@@ -1,8 +1,9 @@
-// eslint-disable-next-line
-import sinon, {createSandbox} from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+// eslint-disable-next-line
+import sinon, {createSandbox} from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 chai.use(chaiAsPromised);
 

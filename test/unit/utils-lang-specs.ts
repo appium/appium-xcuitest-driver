@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+
 import {assignDefaults, escapeRegExp, isEmpty, memoize, mergeDeep} from '../../lib/utils';
 
 describe('utils/lang', function () {

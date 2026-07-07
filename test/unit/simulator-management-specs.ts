@@ -1,7 +1,8 @@
-import {runSimulatorReset} from '../../lib/device/simulator-management';
-import {XCUITestDriver} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {runSimulatorReset} from '../../lib/device/simulator-management';
+import {XCUITestDriver} from '../../lib/driver';
 
 chai.use(chaiAsPromised);
 

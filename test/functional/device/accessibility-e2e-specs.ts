@@ -1,8 +1,9 @@
-import {PREDICATE_SEARCH} from '../helpers/element';
-import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {SETTINGS_CAPS, amendCapabilities} from '../desired';
+import {PREDICATE_SEARCH} from '../helpers/element';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

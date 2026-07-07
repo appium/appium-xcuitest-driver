@@ -1,6 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder, LockdownService} from 'appium-ios-remotexpc';
+
 import {isIos18OrNewerPlatform} from '../../utils';
+import {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader';
 import {isDeviceListedInUsbmux} from './usbmux-utils';
 import {
   formatRemoteXPCFallbackLog,
@@ -12,7 +14,6 @@ import {
   type RemoteXPCTestAttachment,
   type RemoteXPCTestRunner,
 } from './utils';
-import {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader';
 
 const TUNNEL_REGISTRY_PORT_PROBE_TIMEOUT_MS = 3000;
 

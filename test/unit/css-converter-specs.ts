@@ -1,5 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../../lib/css';
 
 chai.use(chaiAsPromised);

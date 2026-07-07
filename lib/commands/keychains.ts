@@ -1,5 +1,5 @@
-import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 
 /**
  * Clears keychains on a simulated device.

@@ -1,9 +1,10 @@
+import {services} from 'appium-ios-device';
+import {expect} from 'chai';
 import sinon from 'sinon';
+
+import {RealDevice} from '../../../lib/device/real-device-management';
 import {XCUITestDriver} from '../../../lib/driver';
 import type {XCUITestDriverOpts} from '../../../lib/driver';
-import {services} from 'appium-ios-device';
-import {RealDevice} from '../../../lib/device/real-device-management';
-import {expect} from 'chai';
 
 describe('location commands', function () {
   const udid = '1234';

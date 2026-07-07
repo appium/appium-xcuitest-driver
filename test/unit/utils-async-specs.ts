@@ -1,7 +1,8 @@
-import {createSandbox} from 'sinon';
-import {withTimeout, TimeoutError} from '../../lib/commands/helpers';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
+import {withTimeout, TimeoutError} from '../../lib/commands/helpers';
 
 chai.use(chaiAsPromised);
 

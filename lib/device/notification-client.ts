@@ -1,8 +1,9 @@
 import type {AppiumLogger} from '@appium/types';
-import type {RemoteXPCFacade} from './remote-xpc';
-import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 import {services} from 'appium-ios-device';
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
+import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
+
+import type {RemoteXPCFacade} from './remote-xpc';
 
 interface CreateNotificationClientOptions {
   allowLegacyFallback?: boolean;

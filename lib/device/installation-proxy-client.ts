@@ -1,10 +1,11 @@
-import type {RemoteXPCFacade} from './remote-xpc';
-import {log} from '../logger';
-import {services} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
+import {services} from 'appium-ios-device';
 import type {InstallationProxyService as IOSDeviceInstallationProxyService} from 'appium-ios-device';
 import type {InstallationProxyService as RemoteXPCInstallationProxyService} from 'appium-ios-remotexpc';
+
+import {log} from '../logger';
 import type {AppInfo, AppInfoMapping} from '../types';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Progress response structure for installation/uninstallation operations

@@ -2,14 +2,14 @@ name: Build Docs
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
     paths:
       - 'package*.json'
       - 'docs/**'
       - 'mkdocs.yml'
       - '.github/workflows/docs.yml' # this file
   push:
-    branches: [ master ]
+    branches: [master]
     paths:
       - 'package*.json'
       - 'docs/**'

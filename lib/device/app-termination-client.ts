@@ -1,7 +1,8 @@
-import {isEmpty, isIos17OrNewerPlatform} from '../utils';
-import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
+import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {Devicectl} from 'node-devicectl';
+
+import {isEmpty, isIos17OrNewerPlatform} from '../utils';
 import {InstallationProxyClient} from './installation-proxy-client';
 import type {RemoteXPCFacade} from './remote-xpc';
 

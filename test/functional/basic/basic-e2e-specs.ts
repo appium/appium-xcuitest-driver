@@ -1,12 +1,14 @@
 import {setTimeout as delay} from 'node:timers/promises';
 import util from 'node:util';
+
 import {retryInterval} from 'asyncbox';
-import {isIosVersionBelow, getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig';
-import sharp from 'sharp';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sharp from 'sharp';
+
+import {isIosVersionBelow, getUICatalogCaps} from '../desired';
+import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

@@ -1,8 +1,9 @@
+import type {StringRecord} from '@appium/types';
 import {errors} from 'appium/driver';
 import {fs} from 'appium/support';
-import {isPlainObject} from '../../utils';
+
 import {log} from '../../logger';
-import type {StringRecord} from '@appium/types';
+import {isPlainObject} from '../../utils';
 
 export const DEFAULT_TIMEOUT_KEY = 'default';
 

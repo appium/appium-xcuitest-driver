@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+
 import {expect} from 'chai';
 import ts from 'typescript';
 

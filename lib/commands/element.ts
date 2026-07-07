@@ -1,6 +1,7 @@
+import type {Element, Position, Size, Rect} from '@appium/types';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
-import type {Element, Position, Size, Rect} from '@appium/types';
+
 import type {XCUITestDriver} from '../driver';
 import type {AtomsElement} from './types';
 
@@ -84,7 +85,11 @@ export async function getNativeAttribute(
 
   const elementId = util.unwrapElement(el);
   let value = (await this.proxyCommand(`/element/${elementId}/attribute/${attribute}`, 'GET')) as
-    string | number | null | undefined | boolean;
+    | string
+    | number
+    | null
+    | undefined
+    | boolean;
   if ([0, 1].includes(value as number)) {
     value = !!value;
   }
@@ -108,7 +113,8 @@ export async function getAttribute(
   }
   const atomsElement = this.getAtomsElement(elementId);
   return (await this.executeAtom('get_attribute_value', [atomsElement, attribute])) as
-    string | null;
+    | string
+    | null;
 }
 
 /**

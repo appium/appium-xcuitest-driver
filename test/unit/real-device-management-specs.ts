@@ -1,14 +1,15 @@
-import {createSandbox} from 'sinon';
 import {fs} from 'appium/support';
-import {installToRealDevice, RealDevice} from '../../lib/device/real-device-management';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+import type {SinonStub} from 'sinon';
+
 import {AfcClient} from '../../lib/device/afc-client';
+import {installToRealDevice, RealDevice} from '../../lib/device/real-device-management';
+import type {RemoteXPCFacade} from '../../lib/device/remote-xpc';
 import {ZipConduitClient} from '../../lib/device/zip-conduit-client';
 import {XCUITestDriver} from '../../lib/driver';
 import type {XCUITestDriverOpts} from '../../lib/driver';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import type {SinonStub} from 'sinon';
-import type {RemoteXPCFacade} from '../../lib/device/remote-xpc';
 
 chai.use(chaiAsPromised);
 

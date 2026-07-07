@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
 import {createConditionInducer} from '../device/condition-inducer-client';
+import type {XCUITestDriver} from '../driver';
 import type {Condition} from '../types';
 import {requireRealDevice} from './helpers';
 

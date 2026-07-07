@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
 import {PasteboardClient} from '../device/pasteboard-client';
+import type {XCUITestDriver} from '../driver';
 import {requireRealDevice} from './helpers';
 
 /**

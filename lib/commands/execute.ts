@@ -1,10 +1,13 @@
-import {XCUITestDriver} from '../driver';
+import type {Element, StringRecord} from '@appium/types';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
-import type {Element, StringRecord} from '@appium/types';
+
+import {XCUITestDriver} from '../driver';
 
 type ExecuteMethodArgs =
-  readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
+  | readonly any[]
+  | readonly [StringRecord<unknown>]
+  | Readonly<StringRecord<unknown>>;
 
 /**
  * @template TReturn

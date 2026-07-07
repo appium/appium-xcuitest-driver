@@ -4,9 +4,10 @@
  * This script provides a CLI interface to mount/unmount DDI via remote XPC services
  */
 
-import {logger} from 'appium/support.js';
 import {promises as fs} from 'node:fs';
 import path from 'node:path';
+
+import {logger} from 'appium/support.js';
 import {Command} from 'commander';
 
 const log = logger.getLogger('ImageMounter');
@@ -30,8 +31,8 @@ class ImageMounter {
     } catch {
       throw new Error(
         'appium-ios-remotexpc is not installed. Please install it using:\n' +
-        'npm install appium-ios-remotexpc\n\n' +
-        'Note: This is an optional dependency required for image mounting functionality.'
+          'npm install appium-ios-remotexpc\n\n' +
+          'Note: This is an optional dependency required for image mounting functionality.',
       );
     }
   }
@@ -66,7 +67,7 @@ class ImageMounter {
       await usbmux.close();
       throw new Error(
         'No iOS devices found. Ensure a device is connected, unlocked, and trusted. ' +
-        'See https://appium.github.io/appium-xcuitest-driver/latest/preparation/real-device-config/ for details.'
+          'See https://appium.github.io/appium-xcuitest-driver/latest/preparation/real-device-config/ for details.',
       );
     }
 
@@ -77,16 +78,16 @@ class ImageMounter {
         await usbmux.close();
         throw new Error(
           `Device with UDID ${udid} not found. Available devices:\n` +
-          devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n')
+            devices.map((d) => `  - ${d.Properties.SerialNumber}`).join('\n'),
         );
       }
     } else {
       if (devices.length > 1) {
-        log.warn(`Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`);
+        log.warn(
+          `Multiple devices found. Using first device: ${devices[0].Properties.SerialNumber}`,
+        );
         log.warn('Available devices:');
-        devices.forEach((device) =>
-          log.warn(`  - ${device.Properties.SerialNumber}`
-        ));
+        devices.forEach((device) => log.warn(`  - ${device.Properties.SerialNumber}`));
         log.warn('Use --udid flag to specify a particular device.');
       }
       targetDevice = devices[0];
@@ -101,9 +102,7 @@ class ImageMounter {
 
     try {
       const remoteXPCModule = await this.initializeRemoteXPC();
-      const {
-        Services
-      } = remoteXPCModule;
+      const {Services} = remoteXPCModule;
 
       log.info('Starting mobile image mounter service...');
       const imageMounterService = await Services.startMobileImageMounterService(deviceUdid);
@@ -129,7 +128,7 @@ class ImageMounter {
     const [validatedImagePath, validatedManifestPath, validatedTrustCachePath] = await Promise.all([
       this.validateFile(imagePath, 'Image (.dmg)'),
       this.validateFile(manifestPath, 'Build Manifest (.plist)'),
-      this.validateFile(trustCachePath, 'Trust Cache (.trustcache)')
+      this.validateFile(trustCachePath, 'Trust Cache (.trustcache)'),
     ]);
 
     await this.withImageMounterService(udid, async (imageMounterService, deviceUdid) => {
@@ -143,7 +142,7 @@ class ImageMounter {
       await imageMounterService.mount(
         validatedImagePath,
         validatedManifestPath,
-        validatedTrustCachePath
+        validatedTrustCachePath,
       );
 
       log.info('✅ Image mounted successfully!');
@@ -177,10 +176,13 @@ async function main() {
     .name('appium driver run xcuitest image-mounter')
     .description('Mount and unmount Developer Disk Images on iOS devices')
     .version('1.0.0')
-    .addHelpText('after', `
+    .addHelpText(
+      'after',
+      `
 NOTE:
   This script requires the 'appium-ios-remotexpc' package to be installed.
-  Install it using: npm install appium-ios-remotexpc`);
+  Install it using: npm install appium-ios-remotexpc`,
+    );
 
   // Mount command
   program
@@ -189,41 +191,45 @@ NOTE:
     .requiredOption('-i, --image <path>', 'Path to the .dmg image file')
     .requiredOption('-m, --manifest <path>', 'Path to the BuildManifest.plist file')
     .requiredOption('-t, --trustcache <path>', 'Path to the .trustcache file')
-    .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
-    .addHelpText('after', `
+    .option(
+      '-u, --udid <udid>',
+      'Target device UDID (optional, uses first device if not specified)',
+    )
+    .addHelpText(
+      'after',
+      `
 EXAMPLES:
   # Mount Developer Disk Image
   appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache
 
   # Mount on specific device
-  appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`)
+  appium driver run xcuitest image-mounter mount --image DeveloperDiskImage.dmg --manifest BuildManifest.plist --trustcache DeveloperDiskImage.trustcache --udid <udid>`,
+    )
     .action(async (options) => {
-      await imageMounter.mount(
-        options.image,
-        options.manifest,
-        options.trustcache,
-        options.udid
-      );
+      await imageMounter.mount(options.image, options.manifest, options.trustcache, options.udid);
     });
 
   // Unmount command
   program
     .command('unmount')
     .description('Unmount a Developer Disk Image from iOS device')
-    .option('-u, --udid <udid>', 'Target device UDID (optional, uses first device if not specified)')
+    .option(
+      '-u, --udid <udid>',
+      'Target device UDID (optional, uses first device if not specified)',
+    )
     .option('-p, --mount-path <path>', 'Mount path to unmount', '/System/Developer')
-    .addHelpText('after', `
+    .addHelpText(
+      'after',
+      `
 EXAMPLES:
   # Unmount from default path
   appium driver run xcuitest image-mounter unmount
 
   # Unmount from specific device
-  appium driver run xcuitest image-mounter unmount --udid <udid>`)
+  appium driver run xcuitest image-mounter unmount --udid <udid>`,
+    )
     .action(async (options) => {
-      await imageMounter.unmount(
-        options.udid,
-        options.mountPath
-      );
+      await imageMounter.unmount(options.udid, options.mountPath);
     });
 
   await program.parseAsync(process.argv);

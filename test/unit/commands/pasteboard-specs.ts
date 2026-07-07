@@ -1,7 +1,8 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
-import {Simctl} from 'node-simctl';
 import {expect} from 'chai';
+import {Simctl} from 'node-simctl';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver({} as any);

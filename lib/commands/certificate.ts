@@ -1,18 +1,20 @@
-import {isEmpty} from '../utils';
-import {fs, plist, tempDir, util} from 'appium/support';
-import {retryInterval, retry, waitForCondition} from 'asyncbox';
-import {setTimeout as delay} from 'node:timers/promises';
+import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import http from 'node:http';
-import {exec} from 'teen_process';
-import {findAPortNotInUse, checkPortStatus} from 'portscanner';
-import {CertificateClient} from '../device/certificate-client';
-import {requireRealDevice} from './helpers';
-import type {Simulator} from 'appium-ios-simulator';
-import type {XCUITestDriver} from '../driver';
-import type {CertificateList} from './types';
+import {setTimeout as delay} from 'node:timers/promises';
+
 import type {Element} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
+import {fs, plist, tempDir, util} from 'appium/support';
+import {retryInterval, retry, waitForCondition} from 'asyncbox';
+import {findAPortNotInUse, checkPortStatus} from 'portscanner';
+import {exec} from 'teen_process';
+
+import {CertificateClient} from '../device/certificate-client';
+import type {XCUITestDriver} from '../driver';
+import {isEmpty} from '../utils';
+import {requireRealDevice} from './helpers';
+import type {CertificateList} from './types';
 
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];

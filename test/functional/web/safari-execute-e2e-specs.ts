@@ -1,8 +1,9 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {createGuineaPigServerSession, openPage, guineaPigPage} from './helpers';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 

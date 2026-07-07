@@ -1,10 +1,12 @@
 import path from 'node:path';
+
 import {fs, zip, logger, util, tempDir} from 'appium/support';
-import {SubProcess, exec} from 'teen_process';
-import {encodeBase64OrUpload, type UploadOptions} from './helpers';
-import {isEmpty, truncateString} from '../utils';
 import {waitForCondition} from 'asyncbox';
+import {SubProcess, exec} from 'teen_process';
+
 import type {XCUITestDriver} from '../driver';
+import {isEmpty, truncateString} from '../utils';
+import {encodeBase64OrUpload, type UploadOptions} from './helpers';
 import type {ActiveAppInfo} from './types';
 
 const PERF_RECORD_FEAT_NAME = 'perf_record';

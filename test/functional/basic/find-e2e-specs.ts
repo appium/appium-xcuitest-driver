@@ -1,11 +1,13 @@
 import {setTimeout as delay} from 'node:timers/promises';
+
+import {util} from 'appium/support';
 import {retryInterval} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {extractCapabilityValue, getUICatalogCaps, PLATFORM_VERSION} from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {util} from 'appium/support';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 

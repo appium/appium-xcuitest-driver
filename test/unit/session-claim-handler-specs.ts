@@ -1,16 +1,18 @@
+import {EventEmitter} from 'node:events';
+
 import type {IAppiumIpc, IpcData, IpcMessage} from '@appium/types';
 import {node} from 'appium/support';
-import {EventEmitter} from 'node:events';
+import {expect} from 'chai';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
-import {expect} from 'chai';
+
+import type {XCUITestDriver} from '../../lib/driver';
 import {
   resetDriverInstanceIpcForTesting,
   SessionClaimHandler,
   sessionClaimHandler,
   setSharedIpcForTesting,
 } from '../../lib/session-claim-handler';
-import type {XCUITestDriver} from '../../lib/driver';
 
 class MockIpcSubscription extends EventEmitter {
   isActive = true;

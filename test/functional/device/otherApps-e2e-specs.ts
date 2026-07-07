@@ -1,8 +1,9 @@
-import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {getMultipleApps, amendCapabilities} from '../desired';
-import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup';
+import {getMultipleApps, amendCapabilities} from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

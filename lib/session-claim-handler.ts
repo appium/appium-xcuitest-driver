@@ -1,7 +1,9 @@
+import {setTimeout as delay} from 'node:timers/promises';
+
 import type {AppiumLogger, IAppiumIpc, IIpcSubscription, IpcMessage} from '@appium/types';
 import {node, util} from 'appium/support';
 import {waitForCondition} from 'asyncbox';
-import {setTimeout as delay} from 'node:timers/promises';
+
 import type {XCUITestDriver} from './driver';
 import {memoize} from './utils';
 

@@ -1,8 +1,10 @@
-import {grepFile} from '../../lib/device/log/helpers';
-import {fs, tempDir} from 'appium/support';
 import path from 'node:path';
+
+import {fs, tempDir} from 'appium/support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {grepFile} from '../../lib/device/log/helpers';
 
 chai.use(chaiAsPromised);
 

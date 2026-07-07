@@ -1,8 +1,10 @@
 import {setTimeout as delay} from 'node:timers/promises';
-import {expect} from 'chai';
+
 import {fs, tempDir} from 'appium/support';
+import {expect} from 'chai';
 import {exec} from 'teen_process';
 import type {Browser} from 'webdriverio';
+
 import {getUICatalogCaps} from '../desired';
 import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
 

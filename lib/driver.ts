@@ -1,6 +1,6 @@
-import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
-import {BaseDriver, DeviceSettings} from 'appium/driver';
-import {mjpeg, util} from 'appium/support';
+import EventEmitter from 'node:events';
+import {setTimeout as delay} from 'node:timers/promises';
+
 import type {
   RouteMatcher,
   DefaultCreateSessionResult,
@@ -11,11 +11,39 @@ import type {
   DriverCaps,
   DriverOpts,
 } from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
+import type {RemoteDebugger} from 'appium-remote-debugger';
+import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
+import type {XcodeVersion} from 'appium-xcode';
+import {BaseDriver, DeviceSettings} from 'appium/driver';
+import {mjpeg, util} from 'appium/support';
 import {LRUCache} from 'lru-cache';
-import EventEmitter from 'node:events';
-import {setTimeout as delay} from 'node:timers/promises';
+
+import {AppInfosCache} from './app-infos-cache';
+import * as activeAppInfoCommands from './commands/active-app-info';
+import * as alertCommands from './commands/alert';
 import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install';
+import * as appManagementCommands from './commands/app-management';
+import * as appStringsCommands from './commands/app-strings';
+import * as appearanceCommands from './commands/appearance';
+import * as auditCommands from './commands/audit';
+import * as batteryCommands from './commands/battery';
+import * as biometricCommands from './commands/biometric';
+import * as certificateCommands from './commands/certificate';
+import * as clipboardCommands from './commands/clipboard';
+import * as conditionCommands from './commands/condition';
 import {SUPPORTED_EXTENSIONS} from './commands/constants';
+import * as contentSizeCommands from './commands/content-size';
+import * as contextCommands from './commands/context';
+import {notifyBiDiContextChange} from './commands/context';
+import * as deviceInfoCommands from './commands/device-info';
+import * as elementCommands from './commands/element';
+import * as executeCommands from './commands/execute';
+import * as fileMovementCommands from './commands/file-movement';
+import * as findCommands from './commands/find';
+import * as generalCommands from './commands/general';
+import * as geolocationCommands from './commands/geolocation';
+import * as gestureCommands from './commands/gesture';
 import {
   DEFAULT_TIMEOUT_KEY,
   SAFARI_BUNDLE_ID,
@@ -27,69 +55,46 @@ import {
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
 } from './commands/helpers';
-import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils';
-import * as activeAppInfoCommands from './commands/active-app-info';
-import * as alertCommands from './commands/alert';
-import * as appManagementCommands from './commands/app-management';
-import * as appearanceCommands from './commands/appearance';
-import * as appStringsCommands from './commands/app-strings';
-import * as auditCommands from './commands/audit';
-import * as batteryCommands from './commands/battery';
-import * as biometricCommands from './commands/biometric';
-import * as certificateCommands from './commands/certificate';
-import * as clipboardCommands from './commands/clipboard';
-import * as conditionCommands from './commands/condition';
-import * as contentSizeCommands from './commands/content-size';
-import * as contextCommands from './commands/context';
-import * as deviceInfoCommands from './commands/device-info';
-import * as elementCommands from './commands/element';
-import * as executeCommands from './commands/execute';
-import * as fileMovementCommands from './commands/file-movement';
-import * as findCommands from './commands/find';
-import * as generalCommands from './commands/general';
-import * as geolocationCommands from './commands/geolocation';
-import * as gestureCommands from './commands/gesture';
+import * as increaseContrastCommands from './commands/increase-contrast';
 import * as iohidCommands from './commands/iohid';
-import * as keychainsCommands from './commands/keychains';
 import * as keyboardCommands from './commands/keyboard';
+import * as keychainsCommands from './commands/keychains';
 import * as localizationCommands from './commands/localization';
 import * as locationCommands from './commands/location';
 import * as lockCommands from './commands/lock';
 import * as logCommands from './commands/log';
+import type {DriverLogs} from './commands/log';
 import * as memoryCommands from './commands/memory';
 import * as navigationCommands from './commands/navigation';
+import * as networkMonitorCommands from './commands/network-monitor';
 import * as notificationsCommands from './commands/notifications';
 import * as pasteboardCommands from './commands/pasteboard';
-import * as networkMonitorCommands from './commands/network-monitor';
 import * as performanceCommands from './commands/performance';
+import type {PerfRecorder} from './commands/performance';
 import * as permissionsCommands from './commands/permissions';
 import * as proxyHelperCommands from './commands/proxy-helper';
 import * as recordAudioCommands from './commands/record-audio';
+import type {AudioRecorder} from './commands/record-audio';
 import * as recordScreenCommands from './commands/recordscreen';
+import type {ScreenRecorder} from './commands/recordscreen';
 import * as screenshotCommands from './commands/screenshots';
+import * as simctlCommands from './commands/simctl';
 import * as simulatorCommands from './commands/simulator';
 import * as sourceCommands from './commands/source';
-import * as simctlCommands from './commands/simctl';
 import * as timeoutCommands from './commands/timeouts';
+import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
 import * as voiceOverCommands from './commands/voiceover';
-import * as webCommands from './commands/web';
+import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants';
 import {start, startWdaSession} from './commands/wda/startup';
 import {stop} from './commands/wda/stop';
 import {getDerivedDataPath} from './commands/wda/utils';
+import * as webCommands from './commands/web';
 import * as xctestCommands from './commands/xctest';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
-import * as increaseContrastCommands from './commands/increase-contrast';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
 import {DeviceConnectionsFactory} from './device/device-connections-factory';
 import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery';
-import {RemoteXPCFacade} from './device/remote-xpc';
-import {
-  assertWdaHostPlatformSupported,
-  assertWdaHostSessionCapsSupported,
-  createWdaHostOps,
-} from './device/wda-host-ops';
-import {executeMethodMap} from './execute-method-map';
-import {newMethodMap} from './method-map';
+import type {NetworkMonitorSession} from './device/network-monitor-session';
 import {
   installToRealDevice,
   runRealDeviceReset,
@@ -97,6 +102,7 @@ import {
   detectUdid,
   type RealDevice,
 } from './device/real-device-management';
+import {RemoteXPCFacade} from './device/remote-xpc';
 import {
   createSim as createSimulator,
   getExistingSim as getExistingSimulator,
@@ -104,20 +110,16 @@ import {
   runSimulatorReset,
   shutdownSimulator,
 } from './device/simulator-management';
-import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants';
-import {AppInfosCache} from './app-infos-cache';
-import {notifyBiDiContextChange} from './commands/context';
-import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
-import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
-import type {PerfRecorder} from './commands/performance';
-import type {AudioRecorder} from './commands/record-audio';
-import type {NetworkMonitorSession} from './device/network-monitor-session';
-import type {ScreenRecorder} from './commands/recordscreen';
-import type {RemoteDebugger} from 'appium-remote-debugger';
-import type {XcodeVersion} from 'appium-xcode';
-import type {Simulator} from 'appium-ios-simulator';
-import type {DriverLogs} from './commands/log';
+import {
+  assertWdaHostPlatformSupported,
+  assertWdaHostSessionCapsSupported,
+  createWdaHostOps,
+} from './device/wda-host-ops';
+import {executeMethodMap} from './execute-method-map';
+import {newMethodMap} from './method-map';
 import {sessionClaimHandler} from './session-claim-handler';
+import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
+import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils';
 
 const defaultServerCaps = {
   webStorageEnabled: false,

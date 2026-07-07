@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import {fs, net, tempDir, zip} from 'appium/support';
 
 const UICATALOG_URL =

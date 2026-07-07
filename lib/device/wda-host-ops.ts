@@ -1,13 +1,14 @@
+import type {Simulator} from 'appium-ios-simulator';
 import type {
   RealDevicePreinstalledHostOps,
   SimulatorHostOps,
   WdaHostOps,
   WdaLaunchEnvironment,
 } from 'appium-webdriveragent';
-import type {Simulator} from 'appium-ios-simulator';
-import type {RealDevice} from './real-device-management';
+
 import type {XCUITestDriver} from '../driver';
 import {isIos18OrNewerPlatform} from '../utils';
+import type {RealDevice} from './real-device-management';
 
 const XCODE_ONLY_CAPS = [
   'usePrebuiltWDA',

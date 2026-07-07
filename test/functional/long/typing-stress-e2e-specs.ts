@@ -1,9 +1,10 @@
-import {getUICatalogCaps, amendCapabilities} from '../desired';
-import {PREDICATE_SEARCH} from '../helpers/element';
-import {initSession, deleteSession} from '../helpers/session';
 import {retryInterval} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {getUICatalogCaps, amendCapabilities} from '../desired';
+import {PREDICATE_SEARCH} from '../helpers/element';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

@@ -1,4 +1,5 @@
 import {util, node} from 'appium/support';
+
 import {getUIKitCatalogPath, getTestAppPath} from '../setup';
 
 export function amendCapabilities(baseCaps, ...newCaps) {

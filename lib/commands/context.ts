@@ -1,3 +1,4 @@
+import type {Simulator} from 'appium-ios-simulator';
 import {
   createRemoteDebugger,
   RemoteDebugger,
@@ -5,18 +6,18 @@ import {
 } from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
+
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
 import type {SafariConsoleLog} from '../device/log/safari-console-log';
 import type {SafariNetworkLog} from '../device/log/safari-network-log';
-import {isEmpty} from '../utils';
-import {NATIVE_WIN} from './constants';
-import {makeContextUpdatedEvent} from './bidi/models';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {assignBiDiLogListener} from './log';
 import type {XCUITestDriver} from '../driver';
 import type {Page} from '../types';
+import {isEmpty} from '../utils';
+import {BIDI_EVENT_NAME} from './bidi/constants';
+import {makeContextUpdatedEvent} from './bidi/models';
+import {NATIVE_WIN} from './constants';
+import {assignBiDiLogListener} from './log';
 import type {ViewContext, FullContext, PageChangeNotification} from './types';
-import type {Simulator} from 'appium-ios-simulator';
 
 const WEBVIEW_WIN = 'WEBVIEW';
 const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;

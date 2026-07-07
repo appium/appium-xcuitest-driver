@@ -1,3 +1,7 @@
+import {waitForCondition} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {isEmpty} from '../../../lib/utils';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
@@ -10,9 +14,6 @@ import {
   guineaPigFramePage,
   guineaPigIframePage,
 } from './helpers';
-import {waitForCondition} from 'asyncbox';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 

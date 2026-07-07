@@ -1,17 +1,19 @@
+import net from 'node:net';
+
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
-import {createSandbox} from 'sinon';
-import {mergeDeep} from '../../lib/utils';
-import {XCUITestDriver} from '../../lib/driver';
-import type {XCUITestDriverOpts} from '../../lib/driver';
-import {MOCHA_LONG_TIMEOUT} from './helpers';
-import {RealDevice} from '../../lib/device/real-device-management';
-import net from 'node:net';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
 import * as validationUtils from '../../lib/commands/helpers/validation';
 import * as xcodeUtils from '../../lib/commands/helpers/xcode';
+import {RealDevice} from '../../lib/device/real-device-management';
 import * as wdaHostOps from '../../lib/device/wda-host-ops';
+import {XCUITestDriver} from '../../lib/driver';
+import type {XCUITestDriverOpts} from '../../lib/driver';
+import {mergeDeep} from '../../lib/utils';
+import {MOCHA_LONG_TIMEOUT} from './helpers';
 
 chai.use(chaiAsPromised);
 

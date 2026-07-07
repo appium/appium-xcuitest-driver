@@ -1,15 +1,17 @@
+import path from 'node:path';
 import type {Readable} from 'node:stream';
 import {Readable as ReadableStream} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
-import path from 'node:path';
-import {fs, util} from 'appium/support';
+
 import {services} from 'appium-ios-device';
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
-import type {RemoteXPCFacade} from './remote-xpc';
-import {log} from '../logger';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
-import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
+import {fs, util} from 'appium/support';
+
 import {withTimeout} from '../commands/helpers';
+import {log} from '../logger';
+import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Options for pulling files/folders

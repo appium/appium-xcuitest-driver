@@ -1,7 +1,7 @@
+import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
+import {getPath as getXcodePath} from 'appium-xcode';
 import {fs, doctor} from 'appium/support';
 import {exec} from 'teen_process';
-import {getPath as getXcodePath} from 'appium-xcode';
-import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
 
 export class XcodeCheck implements IDoctorCheck {

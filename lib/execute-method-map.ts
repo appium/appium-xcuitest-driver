@@ -1,4 +1,5 @@
 import type {ExecuteMethodMap} from '@appium/types';
+
 import {
   START_SCREEN_RECORDING_EXECUTE_OPTIONALS,
   STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS,

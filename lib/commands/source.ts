@@ -1,6 +1,7 @@
-import {isEmpty} from '../utils';
 import js2xml from 'js2xmlparser2';
+
 import type {XCUITestDriver} from '../driver';
+import {isEmpty} from '../utils';
 import type {SourceFormat} from './types';
 
 const APPIUM_AUT_TAG = 'AppiumAUT';

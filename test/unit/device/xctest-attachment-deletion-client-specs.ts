@@ -1,10 +1,11 @@
-import {XctestAttachmentDeletionClient} from '../../../lib/device/xctest-attachment-deletion-client';
-import type {RemoteXPCFacade} from '../../../lib/device/remote-xpc';
-import type {RemoteXPCTestAttachment} from '../../../lib/device/remote-xpc/utils';
-import {isTunnelAvailabilityError} from '../../../lib/device/remote-xpc';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+
+import type {RemoteXPCFacade} from '../../../lib/device/remote-xpc';
+import {isTunnelAvailabilityError} from '../../../lib/device/remote-xpc';
+import type {RemoteXPCTestAttachment} from '../../../lib/device/remote-xpc/utils';
+import {XctestAttachmentDeletionClient} from '../../../lib/device/xctest-attachment-deletion-client';
 
 chai.use(chaiAsPromised);
 

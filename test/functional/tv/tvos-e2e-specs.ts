@@ -1,10 +1,11 @@
 import {getSimulator} from 'appium-ios-simulator';
-import {cleanupSimulator} from '../helpers/simulator';
-import {Simctl} from 'node-simctl';
-import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {TVOS_CAPS, extractCapabilityValue} from '../desired';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {Simctl} from 'node-simctl';
+
+import {TVOS_CAPS, extractCapabilityValue} from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+import {cleanupSimulator} from '../helpers/simulator';
 
 chai.use(chaiAsPromised);
 

@@ -1,11 +1,12 @@
-import {fs, tempDir, logger, util} from 'appium/support';
-import {SubProcess} from 'teen_process';
-import {encodeBase64OrUpload} from './helpers';
 import {WDA_BASE_URL} from 'appium-webdriveragent';
-import {waitForCondition} from 'asyncbox';
-import type {XCUITestDriver} from '../driver';
-import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
 import type {WDASettings} from 'appium-webdriveragent';
+import {fs, tempDir, logger, util} from 'appium/support';
+import {waitForCondition} from 'asyncbox';
+import {SubProcess} from 'teen_process';
+
+import type {XCUITestDriver} from '../driver';
+import {encodeBase64OrUpload} from './helpers';
+import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
 
 /**
  * Optional execute-script keys for `mobile: startScreenRecording`, in Appium flattened-arg order.

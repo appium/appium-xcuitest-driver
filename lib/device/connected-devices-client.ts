@@ -1,7 +1,8 @@
-import {Devicectl} from 'node-devicectl';
 import {utilities} from 'appium-ios-device';
-import {log} from '../logger';
+import {Devicectl} from 'node-devicectl';
+
 import type {XCUITestDriverOpts} from '../driver';
+import {log} from '../logger';
 import {formatRemoteXPCFallbackLog, RemoteXPCFacade, type RemoteXPCServices} from './remote-xpc';
 
 export class ConnectedDevicesClient {

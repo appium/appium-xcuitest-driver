@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import sinon from 'sinon';
+
 import {RemoteXPCFacade} from '../../../lib/device/remote-xpc';
 import * as moduleLoader from '../../../lib/device/remote-xpc/module-loader';
 import * as usbmuxUtils from '../../../lib/device/remote-xpc/usbmux-utils';

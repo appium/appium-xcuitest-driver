@@ -1,6 +1,12 @@
 import {setTimeout as delay} from 'node:timers/promises';
-import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+
+import {util} from 'appium/support';
+import {retryInterval} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 import {
   createGuineaPigServerSession,
   spinTitleEquals,
@@ -14,10 +20,6 @@ import {
   oldCookie1,
   oldCookie2,
 } from './helpers';
-import {util} from 'appium/support';
-import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 

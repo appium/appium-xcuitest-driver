@@ -1,9 +1,10 @@
-import {errors} from 'appium/driver';
-import {HIDUsageEvent, HIDPageEvent} from './hid-event';
-import type {XCUITestDriver} from '../driver';
-import {HidIndigoClient} from '../device/hid-indigo-client';
-import {requireRealDevice} from './helpers';
 import type {HidButtonName} from 'appium-ios-remotexpc';
+import {errors} from 'appium/driver';
+
+import {HidIndigoClient} from '../device/hid-indigo-client';
+import type {XCUITestDriver} from '../driver';
+import {requireRealDevice} from './helpers';
+import {HIDUsageEvent, HIDPageEvent} from './hid-event';
 
 /**
  * Emulates triggering of the given low-level IO HID device event.

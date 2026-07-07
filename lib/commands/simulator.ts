@@ -1,12 +1,13 @@
+import type {Simulator} from 'appium-ios-simulator';
+
 import {
   createSim as createSimulator,
   setLocalizationPrefs,
   setSafariPrefs,
   shutdownOtherSimulators,
 } from '../device/simulator-management';
-import {upperFirst} from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {Simulator} from 'appium-ios-simulator';
+import {upperFirst} from '../utils';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 

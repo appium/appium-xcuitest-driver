@@ -1,6 +1,7 @@
-import {XCUITestDriver} from '../../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 chai.use(chaiAsPromised);
 

@@ -20,9 +20,9 @@
  */
 
 import {createUsbmux} from 'appium-ios-remotexpc';
-import {Devicectl} from 'node-devicectl';
 import {logger, util} from 'appium/support.js';
 import {Command, Option} from 'commander';
+import {Devicectl} from 'node-devicectl';
 
 const log = logger.getLogger('Lister');
 
@@ -70,7 +70,10 @@ class RealDevicesLister {
     /** @type {Map<string, Array<UsbmuxDevice | DeviceInfo>>} */
     const map = new Map();
     for (const d of devices) {
-      const udid = source === 'usbmux' ? this._getUsbmuxUdid(/** @type {UsbmuxDevice} */ (d)) : this._getDevicectlUdid(/** @type {DeviceInfo} */ (d));
+      const udid =
+        source === 'usbmux'
+          ? this._getUsbmuxUdid(/** @type {UsbmuxDevice} */ (d))
+          : this._getDevicectlUdid(/** @type {DeviceInfo} */ (d));
       const key = udid ?? 'unknown';
       let bucket = map.get(key);
       if (!bucket) {
@@ -170,7 +173,9 @@ class RealDevicesLister {
     }
 
     if (raw.length === 0) {
-      log.info('No devices reported by devicectl. Pair devices in Xcode / Wireless and ensure Core Device is available.');
+      log.info(
+        'No devices reported by devicectl. Pair devices in Xcode / Wireless and ensure Core Device is available.',
+      );
       return [];
     }
 

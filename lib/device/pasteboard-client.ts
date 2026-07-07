@@ -1,5 +1,6 @@
-import type {RemoteXPCFacade} from './remote-xpc';
 import type {PasteboardService} from 'appium-ios-remotexpc';
+
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Pasteboard service on real hardware.

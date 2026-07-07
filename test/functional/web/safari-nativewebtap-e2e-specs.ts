@@ -1,7 +1,12 @@
 /* eslint-disable mocha/no-nested-tests */
 
+import {setTimeout as delay} from 'node:timers/promises';
+
+import {retryInterval} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {isEmpty} from '../../../lib/utils';
-import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   amendCapabilities,
   SETTINGS_CAPS,
@@ -10,6 +15,8 @@ import {
   DEVICE_NAME_FOR_SAFARI_IPAD,
   isIosVersionAtLeast,
 } from '../desired';
+import {CLASS_CHAIN_SEARCH} from '../helpers/element';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   createGuineaPigServerSession,
   openPage,
@@ -19,11 +26,6 @@ import {
   guineaPigScrollablePage,
   guineaPigAppBannerPage,
 } from './helpers';
-import {retryInterval} from 'asyncbox';
-import {setTimeout as delay} from 'node:timers/promises';
-import {CLASS_CHAIN_SEARCH} from '../helpers/element';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 

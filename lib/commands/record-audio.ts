@@ -1,8 +1,9 @@
 import {fs, tempDir, logger, util} from 'appium/support';
-import {SubProcess} from 'teen_process';
-import {encodeBase64OrUpload} from './helpers';
 import {waitForCondition} from 'asyncbox';
+import {SubProcess} from 'teen_process';
+
 import type {XCUITestDriver} from '../driver';
+import {encodeBase64OrUpload} from './helpers';
 import type {AudioRecorderOptions} from './types';
 
 const MAX_RECORDING_TIME_SEC = 43200;

@@ -1,9 +1,10 @@
-import {logger} from 'appium/support';
+import type {StringRecord} from '@appium/types';
 import {errors} from 'appium/driver';
+import {logger} from 'appium/support';
+
+import {XCTestClient} from '../device/xctest-client';
 import type {XCUITestDriver} from '../driver';
 import type {RunXCTestResult} from './types';
-import type {StringRecord} from '@appium/types';
-import {XCTestClient} from '../device/xctest-client';
 
 const XCTEST_TIMEOUT = 360000; // 6 minute timeout
 

@@ -1,9 +1,10 @@
+import type {CssTransformer, NativeLocator, StrategyKey} from '@appium/css-locator-to-native';
 import {errors} from 'appium/driver';
+
 import {memoize} from '../utils';
+import {ClassChainEmitter} from './class-chain-emitter';
 import {CLASS_CHAIN_EMITTER_KEY, WDA_CLASS_CHAIN_STRATEGY} from './constants';
 import {ATTRIBUTE_SCHEMA} from './schema';
-import {ClassChainEmitter} from './class-chain-emitter';
-import type {CssTransformer, NativeLocator, StrategyKey} from '@appium/css-locator-to-native';
 
 export {WDA_CLASS_CHAIN_STRATEGY} from './constants';
 

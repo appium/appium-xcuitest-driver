@@ -1,10 +1,12 @@
 import path from 'node:path';
-import {plist, fs, util, tempDir, zip} from 'appium/support';
+
 import type {StringRecord} from '@appium/types';
+import {plist, fs, util, tempDir, zip} from 'appium/support';
+
 import type {XCUITestDriver} from '../driver';
-import {findApps} from './helpers';
 import {isEmpty, mergeDeep} from '../utils';
 import {APP_EXT} from './constants';
+import {findApps} from './helpers';
 
 const STRINGSDICT_RESOURCE = '.stringsdict';
 const STRINGS_RESOURCE = '.strings';

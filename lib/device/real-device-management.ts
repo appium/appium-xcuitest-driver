@@ -1,26 +1,28 @@
+import path from 'node:path';
+
+import type {AppiumLogger} from '@appium/types';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
 import {asyncmap} from 'asyncbox';
-import path from 'node:path';
+import {Devicectl} from 'node-devicectl';
+
+import {IPA_EXT} from '../commands/constants';
 import {
   buildSafariPreferences,
   SAFARI_BUNDLE_ID,
   TimeoutError,
   withTimeout,
 } from '../commands/helpers';
-import {isEmpty, isPlainObject} from '../utils';
-import {IPA_EXT} from '../commands/constants';
-import {log as defaultLogger} from '../logger';
-import {Devicectl} from 'node-devicectl';
-import type {AppiumLogger} from '@appium/types';
 import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
+import {log as defaultLogger} from '../logger';
+import {isEmpty, isPlainObject} from '../utils';
 import {AfcClient} from './afc-client';
+import {AppTerminationClient} from './app-termination-client';
 import {ConnectedDevicesClient} from './connected-devices-client';
 import {InstallationProxyClient} from './installation-proxy-client';
-import {NotificationClient} from './notification-client';
 import {LockdownClient} from './lockdown-client';
-import {AppTerminationClient} from './app-termination-client';
-import {ZipConduitClient} from './zip-conduit-client';
+import {NotificationClient} from './notification-client';
 import type {RemoteXPCFacade} from './remote-xpc';
+import {ZipConduitClient} from './zip-conduit-client';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -538,10 +540,12 @@ export async function pushFolder(
 
   const timer = new timing.Timer().start();
   const allItems =
-    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (await fs.glob('**', {
-      cwd: srcRootPath,
-      withFileTypes: true,
-    })) as any[];
+    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (
+      await fs.glob('**', {
+        cwd: srcRootPath,
+        withFileTypes: true,
+      })
+    ) as any[];
   log.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
   // top-level folders go first
   const foldersToPush: string[] = allItems

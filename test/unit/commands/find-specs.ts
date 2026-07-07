@@ -1,6 +1,7 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver({} as any);

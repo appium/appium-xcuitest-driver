@@ -1,5 +1,6 @@
 import {util} from 'appium/support';
 import * as semver from 'semver';
+
 import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../constants';
 
 export interface PlatformVersionOpts {

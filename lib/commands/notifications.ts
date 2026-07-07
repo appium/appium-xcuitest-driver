@@ -1,7 +1,8 @@
 import {errors} from 'appium/driver';
+
+import type {XCUITestDriver} from '../driver';
 import {isPlainObject} from '../utils';
 import {requireSimulator} from './helpers';
-import type {XCUITestDriver} from '../driver';
 import type {PushPayload, NotificationType} from './types';
 
 /**

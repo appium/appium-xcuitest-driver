@@ -1,5 +1,7 @@
-import {truncateString} from '../../utils';
 import type {AppiumLogger} from '@appium/types';
+
+import type {LogEntry} from '../../commands/types';
+import {truncateString} from '../../utils';
 import {
   toLogEntry,
   DEFAULT_LOG_LEVEL,
@@ -7,7 +9,6 @@ import {
   MAX_BUFFERED_EVENTS_COUNT,
 } from './helpers';
 import {IOSLog} from './ios-log';
-import type {LogEntry} from '../../commands/types';
 
 const LOG_LEVELS_MAP = {
   error: 'SEVERE',

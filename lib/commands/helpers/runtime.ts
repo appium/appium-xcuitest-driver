@@ -1,8 +1,10 @@
-import {fs} from 'appium/support';
-import {memoize} from '../../utils';
 import path from 'node:path';
+
+import {fs} from 'appium/support';
 import {exec} from 'teen_process';
+
 import {log} from '../../logger';
+import {memoize} from '../../utils';
 
 const MODULE_NAME = 'appium-xcuitest-driver';
 

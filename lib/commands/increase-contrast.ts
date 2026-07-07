@@ -1,6 +1,7 @@
-import {requireSimulator} from './helpers';
 import {errors} from 'appium/driver';
+
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 import type {IncreaseContrastAction, IncreaseContrastResult} from './types';
 
 const INCREASE_CONTRAST_CONFIG = ['enabled', 'disabled'] as const;

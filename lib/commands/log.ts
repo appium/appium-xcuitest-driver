@@ -1,21 +1,23 @@
-import {isEmpty} from '../utils';
-import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
-import {IOSCrashLog} from '../device/log/ios-crash-log';
-import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
-import {IOSDeviceLog} from '../device/log/ios-device-log';
-import WebSocket from 'ws';
-import {SafariConsoleLog} from '../device/log/safari-console-log';
-import {SafariNetworkLog} from '../device/log/safari-network-log';
-import {toLogEntry} from '../device/log/helpers';
-import {NATIVE_WIN} from './constants';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {makeLogEntryAddedEvent} from './bidi/models';
-import type {XCUITestDriver} from '../driver';
-import type {IOSLog} from '../device/log/ios-log';
-import type {LogEntry, LogListener} from './types';
+import type {EventEmitter} from 'node:events';
+
 import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import type {EventEmitter} from 'node:events';
+import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
+import WebSocket from 'ws';
+
+import {toLogEntry} from '../device/log/helpers';
+import {IOSCrashLog} from '../device/log/ios-crash-log';
+import {IOSDeviceLog} from '../device/log/ios-device-log';
+import type {IOSLog} from '../device/log/ios-log';
+import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
+import {SafariConsoleLog} from '../device/log/safari-console-log';
+import {SafariNetworkLog} from '../device/log/safari-network-log';
+import type {XCUITestDriver} from '../driver';
+import {isEmpty} from '../utils';
+import {BIDI_EVENT_NAME} from './bidi/constants';
+import {makeLogEntryAddedEvent} from './bidi/models';
+import {NATIVE_WIN} from './constants';
+import type {LogEntry, LogListener} from './types';
 
 export type DriverLogs = Record<
   'syslog' | 'crashlog' | 'safariConsole' | 'safariNetwork' | 'performance',

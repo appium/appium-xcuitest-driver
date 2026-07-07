@@ -1,7 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
 import {getSimulator, type Simulator} from 'appium-ios-simulator';
-import {UDID_AUTO} from '../constants';
+
 import {getAndCheckIosSdkVersion} from '../commands/helpers';
+import {UDID_AUTO} from '../constants';
 import type {XCUITestDriverOpts} from '../driver';
 import {normalizePlatformVersion} from '../utils';
 import {getConnectedDevices, RealDevice} from './real-device-management';

@@ -1,5 +1,5 @@
-import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 
 /**
  * Sets the Simulator's pasteboard content to the given value.

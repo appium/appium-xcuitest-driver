@@ -1,4 +1,5 @@
 import type {MethodMap} from '@appium/types';
+
 import type {XCUITestDriver} from './driver';
 
 export const newMethodMap = {

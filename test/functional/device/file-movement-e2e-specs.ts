@@ -1,10 +1,12 @@
-import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {fs, tempDir, zip} from 'appium/support';
 import path from 'node:path';
-import {UICATALOG_BUNDLE_ID} from '../../setup';
+
+import {fs, tempDir, zip} from 'appium/support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {UICATALOG_BUNDLE_ID} from '../../setup';
+import {getUICatalogCaps} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

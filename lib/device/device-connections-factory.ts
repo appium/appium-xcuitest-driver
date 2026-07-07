@@ -1,14 +1,16 @@
-import {isEmpty} from '../utils';
 import net from 'node:net';
-import {util, timing} from 'appium/support';
-import {utilities} from 'appium-ios-device';
-import {checkPortStatus} from 'portscanner';
-import {waitForCondition} from 'asyncbox';
+import type {Socket} from 'node:net';
+
 import type {AppiumLogger} from '@appium/types';
+import {utilities} from 'appium-ios-device';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
+import {util, timing} from 'appium/support';
+import {waitForCondition} from 'asyncbox';
+import {checkPortStatus} from 'portscanner';
+
+import {isEmpty} from '../utils';
 import type {RemoteXPCFacade} from './remote-xpc';
 import {isRemoteXPCUnavailableError} from './remote-xpc';
-import type {Socket} from 'node:net';
 
 const LOCALHOST = '127.0.0.1';
 const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];

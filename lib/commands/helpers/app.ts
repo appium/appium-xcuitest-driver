@@ -1,11 +1,13 @@
-import path from 'node:path';
-import {isEmpty} from '../../utils';
-import {fs, tempDir, zip} from 'appium/support';
-import {log} from '../../logger';
 import {spawn} from 'node:child_process';
-import type {DriverOpts, StringRecord} from '@appium/types';
+import path from 'node:path';
 import type {Readable} from 'node:stream';
+
+import type {DriverOpts, StringRecord} from '@appium/types';
+import {fs, tempDir, zip} from 'appium/support';
+
 import type {XCUITestDriverConstraints} from '../../desired-caps';
+import {log} from '../../logger';
+import {isEmpty} from '../../utils';
 
 type SafariPreferencesOpts = Pick<DriverOpts<XCUITestDriverConstraints>, 'safariGlobalPreferences'>;
 
