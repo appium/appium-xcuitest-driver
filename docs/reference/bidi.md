@@ -1,85 +1,130 @@
 ---
-title: BiDi Events
+title: BiDi Commands and Events
 ---
 
 The XCUITest driver has partial support of the [WebDriver BiDi Protocol](https://w3c.github.io/webdriver-bidi/).
-Only the events and commands mentioned below are supported. All other entities described in the
-specification throw not implemented errors.
+It inherits [the BiDi commands and events supported by the Appium base driver](https://appium.io/docs/en/latest/reference/api/bidi/),
+and additionally defines the events and commands listed below.
 
-For other BiDi events recognized by the Appium server, see
-[their Appium docs reference page](https://appium.io/docs/en/latest/reference/api/bidi/).
+## Events
 
-## log.entryAdded
+### log.entryAdded
 
-This event is emitted if the driver retrieves a new entry for any of the below log types. Logs collection might be disabled by the `appium:skipLogCapture` capability.
+> WebDriver BiDi documentation: [log.entryAdded](https://w3c.github.io/webdriver-bidi/#event-log-entryAdded)
 
-### crashlog
+Indicates that a new log entry is available for consumption.
 
-Events are emitted for both emulator and real devices. On real devices, crash logs require **iOS/tvOS 18+** and the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package. Each event contains a particular device crash report entry.
-Events are always emitted with the `NATIVE_APP` context.
+This event is emitted when the driver retrieves a new entry for any of the log types listed below. 
+Log capture can also be disabled using the [`appium:skipLogCapture`](./capabilities.md) capability.
 
-### syslog
-
-Events are emitted for both emulator and real devices. Each event contains a single device system log line.
-Events are always emitted with the `NATIVE_APP` context.
-
-### safariConsole
-
-Events are emitted for both emulator and real devices. Each event contains a single Safari console log line.
-Events are always emitted with the appropriate web context name from which they were generated.
-Events are only emitted if the `appium:showSafariConsoleLog` capability value is provided.
-
-### safariNetwork
-
-Events are emitted for both emulator and real devices. Each event contains a single Safari network log line.
-Events are always emitted with the appropriate web context name from which they were generated.
-Events are only emitted if the `appium:showSafariNetworkLog` capability value is provided.
-
-### performance
-
-Events are emitted for both emulator and real devices. Each event contains a single Safari performance log line.
-Events are always emitted with the appropriate web context name from which they were generated.
-Events are only emitted if the `appium:enablePerformanceLogging` capability value is provided.
-
-### server
-
-Events are emitted for both emulator and real devices. Each event contains a single Appium server log line.
-Events are always emitted with the `NATIVE_APP` context.
-Events are only emitted if the `get_server_logs` server security feature is enabled.
-
-## appium:xcuitest.contextUpdate
-
-This event is emitted upon the context change, either explicit or implicit.
-The event is always emitted upon new session initialization.
-See the [GitHub feature ticket](https://github.com/appium/appium/issues/20741) for more details.
-
-### CDDL
+#### Event Type (CDDL)
 
 ```cddl
-appium:xcuitest.contextUpdated = {
+log.entryAded = (
+  context: text,
+  method: "log.entryAdded",
+  params: {
+    type: text,
+    level: "debug" / "info" / "warn" / "error",
+    source: {
+      realm: '',
+      context: text,
+    },
+    text: text,
+    timestamp: js-uint,
+  },
+)
+```
+
+| Parameter | Description |
+| -- | -- |
+| `context` | The context in which the log was created, usually either native or webview |
+| `type` | One of the supported log types listed below |
+| `text` | Contents of the log entry |
+| `timestamp` | Timestamp of the log entry |
+
+#### Supported Types
+
+Event emission of all of these log types is supported for both real devices and emulators.
+
+* `crashlog`
+    * Each event contains a particular device crash report entry
+    * `context` is always set to `NATIVE_APP`
+    * Real devices must have iOS/tvOS 18 or later, and the `appium-ios-remotexpc` package must be installed. Refer to the [RemoteXPC Tunnels guide](../guides/remotexpc-tunnels-real-devices.md) for more details.
+* `syslog`
+    * Each event contains a single device system log line
+    * `context` is always set to `NATIVE_APP`
+* `safariConsole`
+    * Each event contains a single Safari console log line
+    * `context` is always set to the appropriate web context name
+    * Events are only emitted if the [`appium:showSafariConsoleLog`](./capabilities.md) capability is set
+* `safariNetwork`
+    * Each event contains a single Safari network log line
+    * `context` is always set to the appropriate web context name
+    * Events are only emitted if the [`appium:showSafariNetworkLog`](./capabilities.md) capability is set
+* `performance`
+    * Each event contains a single Safari performance log line
+    * `context` is always set to the appropriate web context name
+    * Events are only emitted if the [`appium:enablePerformanceLogging`](./capabilities.md) capability is set
+* `server`
+    * Each event contains a single Appium server log line
+    * `context` is always set to `NATIVE_APP`
+    * Events are only emitted if the [`get_server_logs`](./security-flags.md) insecure feature is enabled
+
+### appium:xcuitest.contextUpdated
+
+Indicates a change in the current Appium context.
+
+This event is emitted upon context change, either explicit or implicit. It is also emitted at the
+start of a new session.
+
+See the [GitHub feature ticket](https://github.com/appium/appium/issues/20741) for more details.
+
+#### Event Type (CDDL)
+
+```cddl
+appium:xcuitest.contextUpdated = (
   method: "appium:xcuitest.contextUpdated",
   params: {
     name: text,
     type: "NATIVE" / "WEB",
   },
-}
+)
 ```
 
-The event contains the following params:
+| Parameter | Description |
+| -- | -- |
+| `name` | The name of the new context |
+| `type` | The type of the currently active context. Supported values are `NATIVE` or `WEB`. |
 
-### name
+### appium:xcuitest.networkMonitor
 
-Contains the actual name of the new context, for example `NATIVE_APP`.
+Indicates that a new network event is available for consumption.
 
-### type
+This event is continuously emitted as soon as the [`mobile: startNetworkMonitor`](./execute-methods.md#mobile-startnetworkmonitor) is invoked. Event emission stops as soon as the [`mobile: stopNetworkMonitor`](./execute-methods.md#mobile-stopnetworkmonitor)
+execute method is called.
 
-Either `NATIVE` or `WEB` depending on which context is currently active in the driver session.
+Events are only supported for real devices running iOS/tvOS 18 or later, and the
+`appium-ios-remotexpc` package must be installed. Refer to the [RemoteXPC Tunnels guide](../guides/remotexpc-tunnels-real-devices.md)
+for more details.
 
-## appium:xcuitest.networkMonitor
+#### Event Type (CDDL)
 
-Emitted once per sample from Apple’s DVT networking instrument (`com.apple.instruments.server.services.networking`) while [`mobile: startNetworkMonitor`](./execute-methods.md#mobile-startnetworkmonitor) is active. **Not** a packet capture: you receive structured **interface**, **connection**, and **statistics** events (similar to Instruments’ network activity view), not raw PCAP bytes.
+The CDDL defines 3 types of network events, each of which has its own shape.
 
-**Requirements:** real device, **iOS/tvOS 18+**, and [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) installed on the Appium host. Stop the stream with [`mobile: stopNetworkMonitor`](./execute-methods.md#mobile-stopnetworkmonitor). Events use the `NATIVE_APP` context.
+```cddl
+appium:xcuitest.networkMonitor = (
+  method: "appium:xcuitest.networkMonitor",
+  context: "NATIVE_APP",
+  params: {
+    event: {
+      appium:xcuitest.networkMonitor.InterfaceDetectionEntry /
+      appium:xcuitest.networkMonitor.ConnectionDetectionEntry /
+      appium:xcuitest.networkMonitor.ConnectionUpdateEntry
+    },
+  },
+)
+```
 
 Each BiDi notification has `method: "appium:xcuitest.networkMonitor"` and `params.event`, where `params.event.type` discriminates the payload:
 
