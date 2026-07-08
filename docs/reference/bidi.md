@@ -110,7 +110,8 @@ for more details.
 
 #### Event Type (CDDL)
 
-The CDDL defines 3 types of network events, each of which has its own shape.
+There are 3 types of supported network events, each of which has its own shape. Event shapes match
+[the NetworkEvent types used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/blob/main/src/lib/types.ts).
 
 ```cddl
 appium:xcuitest.networkMonitor = (
@@ -126,112 +127,111 @@ appium:xcuitest.networkMonitor = (
 )
 ```
 
-Each BiDi notification has `method: "appium:xcuitest.networkMonitor"` and `params.event`, where `params.event.type` discriminates the payload:
+All event entries include the `type` field, which is used to distinguish them:
 
-| `type` | Name | Meaning |
+| Type| <div style="width:10em">Name</div> | Meaning |
 | --- | --- | --- |
 | `0` | Interface detection | An interface appeared or was reported (index + kernel name). |
 | `1` | Connection detection | A local/remote socket pair was observed (addresses, PID, interface, serial). |
 | `2` | Connection update | Counters and RTT for an existing flow; correlate with detection via `connectionSerial`. |
 
-### Example: interface detection (`type: 0`)
-
-```json
-{
-  "method": "appium:xcuitest.networkMonitor",
-  "params": {
-    "event": {
-      "type": 0,
-      "interfaceIndex": 25,
-      "name": "utun5"
-    }
-  },
-  "context": "NATIVE_APP"
-}
-```
-
-### Example: connection detection (`type: 1`)
-
-IPv4/IPv6 addresses are normalized strings; `family` is the raw `sockaddr` family (e.g. `2` = IPv4, `30` = IPv6).
-
-```json
-{
-  "method": "appium:xcuitest.networkMonitor",
-  "params": {
-    "event": {
-      "type": 1,
-      "localAddress": {
-        "len": 28,
-        "family": 30,
-        "port": 50063,
-        "address": "fdc2:1118:d2ac::1",
-        "flowInfo": 0,
-        "scopeId": 0
-      },
-      "remoteAddress": {
-        "len": 28,
-        "family": 30,
-        "port": 443,
-        "address": "2600:1900::",
-        "flowInfo": 0,
-        "scopeId": 0
-      },
-      "interfaceIndex": 25,
-      "pid": 1234,
-      "recvBufferSize": 131072,
-      "recvBufferUsed": 4096,
-      "serialNumber": 42,
-      "kind": 1
-    }
-  },
-  "context": "NATIVE_APP"
-}
-```
-
-### Example: connection update (`type: 2`)
-
-Use `connectionSerial` to tie updates back to a prior `type: 1` event’s `serialNumber` when you need per-flow accounting.
-
-```json
-{
-  "method": "appium:xcuitest.networkMonitor",
-  "params": {
-    "event": {
-      "type": 2,
-      "rxPackets": 120,
-      "rxBytes": 98304,
-      "txPackets": 80,
-      "txBytes": 8192,
-      "rxDups": 0,
-      "rx000": 0,
-      "txRetx": 2,
-      "minRtt": 12,
-      "avgRtt": 18,
-      "connectionSerial": 42,
-      "time": 1690000000000
-    }
-  },
-  "context": "NATIVE_APP"
-}
-```
-
-Field names and semantics match [`appium-ios-remotexpc`’s `NetworkEvent` types](https://github.com/appium/appium-ios-remotexpc/blob/main/src/lib/types.ts) (interface / connection detection / connection update).
-
-### CDDL (shape)
-
-Matches the object emitted on the driver event bus (same top-level fields as the JSON examples above), including `context`.
+#### Interface Detection Event
 
 ```cddl
-appium:xcuitest.networkMonitor = {
-  method: "appium:xcuitest.networkMonitor",
-  context: text,
-  params: {
-    event: {
-      type: 0 / 1 / 2,
-      ; type 0: interfaceIndex, name
-      ; type 1: localAddress, remoteAddress, interfaceIndex, pid, recvBufferSize, recvBufferUsed, serialNumber, kind
-      ; type 2: rxPackets, rxBytes, txPackets, txBytes, rxDups, rx000, txRetx, minRtt, avgRtt, connectionSerial, time
-    },
-  },
+appium:xcuitest.networkMonitor.InterfaceDetectionEntry = {
+  type: 0,
+  interfaceIndex: js-uint,
+  name: text,
 }
 ```
+
+| Parameter | Description |
+| -- | -- |
+| `interfaceIndex` | Interface index |
+| `name` | Interface name |
+
+#### Connection Detection Event
+
+```cddl
+appium:xcuitest.networkMonitor.ConnectionDetectionEntry = {
+  type: 1,
+  localAddress: appium:xcuitest.networkMonitor.NetworkAddress,
+  remoteAddress: appium:xcuitest.networkMonitor.NetworkAddress,
+  interfaceIndex: js-uint,
+  pid: js-uint,
+  recvBufferSize: js-uint,
+  recvBufferUsed: js-uint,
+  serialNumber: js-uint,
+  kind: js-uint,
+}
+```
+
+| Parameter | Description |
+| -- | -- |
+| `localAddress` | Local address information |
+| `remoteAddress` | Remote address information |
+| `interfaceIndex` | Interface index |
+| `pid` | ID of the process owning the connection |
+| `recvBufferSize` | Receive buffer size |
+| `recvBufferUsed` | Receive buffer used |
+| `serialNumber` | Connection serial number |
+| `kind` | Connection kind/type |
+
+```cddl
+appium:xcuitest.networkMonitor.NetworkAddress = {
+  len: js-uint,
+  family: js-uint,
+  port: js-uint,
+  address: text,
+  flowInfo: js-uint,
+  scopeId: js-uint,
+}
+```
+
+| Parameter | Description |
+| -- | -- |
+| `len` | Length of the address structure |
+| `family` | Address family |
+| `port` | Port number |
+| `address` | Parsed IP address string |
+| `flowInfo` | Flow info (IPv6 only) |
+| `scopeId` | Scope ID (IPv6 only) |
+
+IPv4/IPv6 addresses are normalized strings; `family` is the raw `sockaddr` family (e.g. `2` = IPv4,
+`30` = IPv6).
+
+#### Connection Update Event
+
+```cddl
+appium:xcuitest.networkMonitor.ConnectionUpdateEntry = {
+  type: js-uint,
+  rxPackets: js-uint,
+  rxBytes: js-uint,
+  txPackets: js-uint,
+  txBytes: js-uint,
+  rxDups: js-uint,
+  rx000: js-uint,
+  txRetx: js-uint,
+  minRtt: js-uint,
+  avgRtt: js-uint,
+  connectionSerial: js-uint,
+  time: js-uint,
+}
+```
+
+| Parameter | Description |
+| -- | -- |
+| `rxPackets` | Number of received packets |
+| `rxBytes` | Number of received bytes |
+| `txPackets` | Number of transmitted packets |
+| `txBytes` | Number of transmitted bytes |
+| `rxDups` | Number of duplicate received packets |
+| `rx000` | Reserved field |
+| `txRetx` | Number of retransmitted packets |
+| `minRtt` | Minimum round-trip time |
+| `avgRtt` | Average round-trip time |
+| `connectionSerial` | Connection serial number |
+| `time` | Timestamp |
+
+You can use the value of `connectionSerial` to link back to a prior `type: 1` event with a matching
+`serialNumber` value.
