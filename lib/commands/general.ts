@@ -1,13 +1,16 @@
 import type {Size, Rect} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client';
 import type {XCUITestDriver} from '../driver';
 import type {Viewport, ScreenInfo, ButtonName} from './types';
 
-const MOMENT_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
+const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
 /**
  * Gets the currently active element.
@@ -55,16 +58,22 @@ export async function getWindowSize(this: XCUITestDriver): Promise<Size> {
 /**
  * Retrieves the actual device time.
  *
- * @param format - The format specifier string. Read the [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
+ * @param format - The format specifier string. Read the [DayJS documentation](https://day.js.org/docs/en/display/format)
+ * to get the full list of supported datetime format
+ * specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
  * @returns Formatted datetime string or the raw command output (if formatting fails)
  */
-export async function getDeviceTime(this: XCUITestDriver, format = MOMENT_FORMAT_ISO8601): Promise<string> {
+export async function getDeviceTime(this: XCUITestDriver, format = DATETIME_FORMAT_ISO8601): Promise<string> {
+  const formatDateTime = (utcTimestamp: number, utcOffset: number): string => {
+    const utcDateTime = dayjs.unix(utcTimestamp).utc();
+    return utcDateTime.utcOffset(utcOffset).format(format);
+  };
+
   this.log.debug('Attempting to capture iOS device date and time');
   if (!this.isRealDevice()) {
     this.log.debug('On simulator. Assuming device time is the same as host time');
-    const hostNow = moment();
-    const utc = moment.unix(hostNow.unix()).utc();
-    return utc.utcOffset(hostNow.utcOffset()).format(format);
+    const hostNow = dayjs();
+    return formatDateTime(hostNow.unix(), hostNow.utcOffset());
   }
 
   const udid = this.opts.udid;
@@ -84,8 +93,7 @@ export async function getDeviceTime(this: XCUITestDriver, format = MOMENT_FORMAT
     await lockdown.close();
   }
   this.log.debug(`timestamp: ${timestamp}, utcOffset: ${utcOffset}`);
-  const utc = moment.unix(timestamp).utc();
-  return utc.utcOffset(utcOffset).format(format);
+  return formatDateTime(timestamp, utcOffset);
 }
 
 /**
@@ -96,7 +104,7 @@ export async function getDeviceTime(this: XCUITestDriver, format = MOMENT_FORMAT
  * @param format - See {@linkcode getDeviceTime.format}
  * @returns Formatted datetime string or the raw command output if formatting fails
  */
-export async function mobileGetDeviceTime(this: XCUITestDriver, format = MOMENT_FORMAT_ISO8601): Promise<string> {
+export async function mobileGetDeviceTime(this: XCUITestDriver, format = DATETIME_FORMAT_ISO8601): Promise<string> {
   return await this.getDeviceTime(format);
 }
 
