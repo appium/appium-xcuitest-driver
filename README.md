@@ -1,55 +1,35 @@
-# appium-xcuitest-driver
+## Appium XCUITest Driver
 
-[![npm version](http://img.shields.io/npm/v/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
+<p align="center">
+   <a href="https://appium.github.io/appium-xcuitest-driver/">
+      <img alt="Appium XCUITest Driver" src="./docs/assets/images/appium-plus-xctest.png" width="400">
+   </a>
+</p>
+
+<div align="center">
+
+[![NPM version](http://img.shields.io/npm/v/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
 [![Downloads](http://img.shields.io/npm/dm/appium-xcuitest-driver.svg)](https://npmjs.org/package/appium-xcuitest-driver)
-
 [![Release](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml/badge.svg)](https://github.com/appium/appium-xcuitest-driver/actions/workflows/publish.js.yml)
 
-This is an [Appium](https://appium.github.io/appium) driver for automating iOS applications on iOS,
-iPadOS, and tvOS.
+</div>
+
+---
+
+<p align="center"><b>
+   <a href="https://appium.github.io/appium-xcuitest-driver/">Documentation</a> |
+   <a href="https://appium.github.io/appium-xcuitest-driver/latest/getting-started/">Get Started</a> |
+   <a href="https://github.com/appium/appium-xcuitest-driver/blob/master/CHANGELOG.md">Changelog</a>
+</b></p>
+
+---
+
+This is an Appium driver for automating native and hybrid applications on iOS, iPadOS, and tvOS.
 
 > [!IMPORTANT]
-> Only macOS is supported as the host platform, as it requires Xcode and developer tools.
-
-> [!IMPORTANT]
-> Since major version *10.0.0*, this driver is only compatible with Appium 3. Use the `appium driver install xcuitest`
-> command to add it to your distribution.
+> Since major version *10.0.0*, this driver is only compatible with Appium 3.
 
 
 ## Documentation
 
-The [Documentation](https://appium.github.io/appium-xcuitest-driver) is hosted separately at
-[https://appium.github.io/appium-xcuitest-driver](https://appium.github.io/appium-xcuitest-driver)
-
-## Contributing & Development
-
-Clone this project from GitHub and run:
-
-```bash
-npm install
-```
-
-To watch changes during the development:
-
-```bash
-npm run watch
-```
-
-To run unit/functional tests:
-
-```bash
-npm test # unit
-npm run e2e-test # functional
-```
-
-There are also a number of environment variables that can be used when running
-the tests locally. These include:
-
-* `REAL_DEVICE` - set to anything truthy, makes the tests use real device capabilities
-* `_FORCE_LOGS` - set to `1` to get the log output, not just spec
-* `PLATFORM_VERSION` - change the version to run the tests against (defaults to `9.3`)
-* `XCCONFIG_FILE` - specify where the xcode config file is for a real device run (if
-  blank, and running a real device test, it will search for the first file in
-  the root directory of the repo with the extension "xcconfig")
-* `UICATALOG_REAL_DEVICE` - path to the real device build of UICatalog, in case
-  the npm installed one is not built for real device
+You can access the documentation here: [**https://appium.github.io/appium-xcuitest-driver**](https://appium.github.io/appium-xcuitest-driver)
