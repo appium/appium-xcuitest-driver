@@ -1,6 +1,7 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
 const xmlBody = '<some-xml/>';
@@ -42,9 +43,7 @@ describe('source commands', function () {
       await driver.updateSettings({pageSourceExcludedAttributes: 'visible'});
       await driver.getPageSource();
       expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql(
-        '/source?format=xml&scope=AppiumAUT&excluded_attributes=visible',
-      );
+      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
       expect(proxyStub.firstCall.args[1]).to.eql('GET');
     });
 

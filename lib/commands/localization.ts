@@ -1,5 +1,5 @@
-import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 import type {KeyboardOptions, LanguageOptions, LocaleOptions} from './types';
 
 /**
@@ -31,7 +31,5 @@ export async function mobileConfigureLocalization(
     // Assign skipSyncUiDialogTranslation: true option in order to avoid shutting down the WDA session
     localizationOptions.language = Object.assign(language, {skipSyncUiDialogTranslation: true});
   }
-  return await requireSimulator(this, 'Localization configuration').configureLocalization(
-    localizationOptions,
-  );
+  return await requireSimulator(this, 'Localization configuration').configureLocalization(localizationOptions);
 }

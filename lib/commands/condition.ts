@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
 import {createConditionInducer} from '../device/condition-inducer-client';
+import type {XCUITestDriver} from '../driver';
 import type {Condition} from '../types';
 import {requireRealDevice} from './helpers';
 
@@ -67,9 +67,7 @@ export async function enableConditionInducer(
     try {
       await facade.close();
     } catch {}
-    throw this.log.errorWithException(
-      `Condition inducer '${profileID}' cannot be enabled: '${err.message}'`,
-    );
+    throw this.log.errorWithException(`Condition inducer '${profileID}' cannot be enabled: '${err.message}'`);
   }
 }
 

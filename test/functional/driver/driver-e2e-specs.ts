@@ -1,9 +1,13 @@
-import {retryInterval} from 'asyncbox';
-import {getSimulator} from 'appium-ios-simulator';
-import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
-import {Simctl} from 'node-simctl';
 import {setTimeout as delay} from 'node:timers/promises';
-import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
+
+import {getSimulator} from 'appium-ios-simulator';
+import {retryInterval} from 'asyncbox';
+import axios from 'axios';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import {Simctl} from 'node-simctl';
+
+import {UICATALOG_BUNDLE_ID} from '../../setup';
 import {
   getUICatalogSimCaps,
   amendCapabilities,
@@ -11,10 +15,8 @@ import {
   PLATFORM_VERSION,
   DEVICE_NAME,
 } from '../desired';
-import {UICATALOG_BUNDLE_ID} from '../../setup';
-import axios from 'axios';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import {MOCHA_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
+import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
 
 chai.use(chaiAsPromised);
 

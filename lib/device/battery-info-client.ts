@@ -20,9 +20,8 @@ export class BatteryInfoClient {
    * Reads IOPMPowerSource data via RemoteXPC diagnostics.
    */
   async getAdvancedInfo(): Promise<AdvancedBatteryInfo> {
-    const diagnosticsService = await this.remoteXPCFacade.requireService(
-      'diagnostics',
-      (Services) => Services.startDiagnosticsService(this.udid),
+    const diagnosticsService = await this.remoteXPCFacade.requireService('diagnostics', (Services) =>
+      Services.startDiagnosticsService(this.udid),
     );
     return await diagnosticsService.ioregistry({
       ioClass: 'IOPMPowerSource',

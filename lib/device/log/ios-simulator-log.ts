@@ -1,13 +1,15 @@
-import {isEmpty} from '../../utils';
-import {exec} from 'teen_process';
-import {util} from 'appium/support';
-import {LineConsumingLog} from './line-consuming-log';
-import {transports, createLogger, format} from 'winston';
-import type {SubProcess} from 'teen_process';
-import type {Logger} from 'winston';
-import type {Simulator} from 'appium-ios-simulator';
-import type {AppiumLogger} from '@appium/types';
 import fs from 'node:fs/promises';
+
+import type {AppiumLogger} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
+import {util} from 'appium/support';
+import {exec} from 'teen_process';
+import type {SubProcess} from 'teen_process';
+import {transports, createLogger, format} from 'winston';
+import type {Logger} from 'winston';
+
+import {isEmpty} from '../../utils';
+import {LineConsumingLog} from './line-consuming-log';
 
 const EXECVP_ERROR_PATTERN = /execvp\(\)/;
 const LOG_STREAMING_PROCESS_NAME_PATTERN = /^com\.apple\.xpc\.launchd\.oneshot\.0x[0-f]+\.log$/;
@@ -65,9 +67,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
         });
         this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
-        this.log.warn(
-          `Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`,
-        );
+        this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`);
         this.syslogLogger = null;
       }
     }
@@ -111,9 +111,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       this.log.debug(`Existing iOS Syslog file: '${this.iosSyslogFile}' deleted.`);
     } catch (unlinkErr) {
       if (unlinkErr.code !== 'ENOENT') {
-        this.log.warn(
-          `Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`,
-        );
+        this.log.warn(`Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`);
       }
     }
   }
@@ -189,18 +187,14 @@ export class IOSSimulatorLog extends LineConsumingLog {
 
   private async cleanupObsoleteLogStreams(): Promise<void> {
     const processes = await this.sim.ps();
-    const pids = processes
-      .filter(({name}) => LOG_STREAMING_PROCESS_NAME_PATTERN.test(name))
-      .map(({pid}) => pid);
+    const pids = processes.filter(({name}) => LOG_STREAMING_PROCESS_NAME_PATTERN.test(name)).map(({pid}) => pid);
     if (isEmpty(pids)) {
       return;
     }
     try {
       await exec('kill', pids.map(String));
     } catch (e) {
-      this.log.warn(
-        `Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`,
-      );
+      this.log.warn(`Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`);
     }
   }
 }

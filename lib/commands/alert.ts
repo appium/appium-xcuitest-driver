@@ -29,10 +29,7 @@ export async function setAlertText(this: XCUITestDriver, value: string): Promise
  *
  * @param opts - Options including optional button label
  */
-export async function postAcceptAlert(
-  this: XCUITestDriver,
-  opts: AlertOptions = {},
-): Promise<void> {
+export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
   await this.proxyCommand('/alert/accept', 'POST', toAlertParams(opts));
 }
 
@@ -41,10 +38,7 @@ export async function postAcceptAlert(
  *
  * @param opts - Options including optional button label
  */
-export async function postDismissAlert(
-  this: XCUITestDriver,
-  opts: AlertOptions = {},
-): Promise<void> {
+export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
   await this.proxyCommand('/alert/dismiss', 'POST', toAlertParams(opts));
 }
 

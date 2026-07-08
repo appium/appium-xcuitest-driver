@@ -1,7 +1,8 @@
-import sinon from 'sinon';
-import {mergeDeep} from '../../../lib/utils';
-import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
+import {mergeDeep} from '../../../lib/utils';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -18,10 +19,7 @@ describe('general commands', function () {
 
   describe('background', function () {
     it('should deactivate app for the given time if seconds is zero or greater', async function () {
-      mockDriver
-        .expects('proxyCommand')
-        .once()
-        .withExactArgs('/wda/deactivateApp', 'POST', {duration: 0.5}, true);
+      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/deactivateApp', 'POST', {duration: 0.5}, true);
       await driver.background(0.5);
     });
 

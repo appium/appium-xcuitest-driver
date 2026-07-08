@@ -1,24 +1,23 @@
+import net from 'node:net';
+
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver';
-import {createSandbox} from 'sinon';
-import {mergeDeep} from '../../lib/utils';
-import {XCUITestDriver} from '../../lib/driver';
-import type {XCUITestDriverOpts} from '../../lib/driver';
-import {MOCHA_LONG_TIMEOUT} from './helpers';
-import {RealDevice} from '../../lib/device/real-device-management';
-import net from 'node:net';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
 import * as validationUtils from '../../lib/commands/helpers/validation';
 import * as xcodeUtils from '../../lib/commands/helpers/xcode';
+import {RealDevice} from '../../lib/device/real-device-management';
 import * as wdaHostOps from '../../lib/device/wda-host-ops';
+import {XCUITestDriver} from '../../lib/driver';
+import type {XCUITestDriverOpts} from '../../lib/driver';
+import {mergeDeep} from '../../lib/utils';
+import {MOCHA_LONG_TIMEOUT} from './helpers';
 
 chai.use(chaiAsPromised);
 
-async function withPlatformAsync(
-  platform: NodeJS.Platform,
-  fn: () => Promise<void>,
-): Promise<void> {
+async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');
   Object.defineProperty(process, 'platform', {value: platform});
   try {
@@ -197,9 +196,7 @@ describe('XCUITestDriver', function () {
         const cacheMock = sandbox.mock(driver.appInfosCache);
         cacheMock.expects('extractBundleId').once().returns('bundle.id');
         realDevice = null;
-        sandbox
-          .stub(driver, 'determineDevice')
-          .callsFake(async () => ({device, realDevice, udid: 'stuff'}));
+        sandbox.stub(driver, 'determineDevice').callsFake(async () => ({device, realDevice, udid: 'stuff'}));
         sandbox.stub(driver, 'configureApp');
         sandbox.stub(driver, 'startLogCapture');
         sandbox.stub(driver, 'startSim');
@@ -364,9 +361,7 @@ describe('XCUITestDriver', function () {
       });
 
       it('should allow execute methods with hella whitespace', async function () {
-        await expect(driver.execute('mobile:           deviceInfo')).to.eventually.eql(
-          deviceInfoResponse,
-        );
+        await expect(driver.execute('mobile:           deviceInfo')).to.eventually.eql(deviceInfoResponse);
       });
 
       it('should allow execute methods with leading/trailing whitespace', async function () {
@@ -395,11 +390,10 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice.calledOnce).to.be.true;
       expect(driver.helpers.configureApp.calledOnce).to.be.true;
       expect(
-        RealDeviceManagementModule.installToRealDevice.calledOnceWithExactly(
-          '/path/to/iosApp.app',
-          'bundle-id',
-          {skipUninstall: true, timeout: undefined},
-        ),
+        RealDeviceManagementModule.installToRealDevice.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
+          skipUninstall: true,
+          timeout: undefined,
+        }),
       ).to.be.true;
     });
 
@@ -422,18 +416,16 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice.calledTwice).to.be.true;
       expect(driver.helpers.configureApp.calledTwice).to.be.true;
       expect(
-        RealDeviceManagementModule.installToRealDevice.calledWith(
-          '/path/to/iosApp1.app',
-          'bundle-id',
-          {skipUninstall: true, timeout: undefined},
-        ),
+        RealDeviceManagementModule.installToRealDevice.calledWith('/path/to/iosApp1.app', 'bundle-id', {
+          skipUninstall: true,
+          timeout: undefined,
+        }),
       ).to.be.true;
       expect(
-        RealDeviceManagementModule.installToRealDevice.calledWith(
-          '/path/to/iosApp2.app',
-          'bundle-id2',
-          {skipUninstall: true, timeout: undefined},
-        ),
+        RealDeviceManagementModule.installToRealDevice.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
+          skipUninstall: true,
+          timeout: undefined,
+        }),
       ).to.be.true;
     });
 
@@ -450,11 +442,9 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice.calledOnce).to.be.true;
       expect(driver.helpers.configureApp.calledOnce).to.be.true;
       expect(
-        SimulatorManagementModule.installToSimulator.calledOnceWithExactly(
-          '/path/to/iosApp.app',
-          'bundle-id',
-          {newSimulator: false},
-        ),
+        SimulatorManagementModule.installToSimulator.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
+          newSimulator: false,
+        }),
       ).to.be.true;
     });
 
@@ -477,18 +467,14 @@ describe('XCUITestDriver', function () {
       expect(driver.isRealDevice.calledTwice).to.be.true;
       expect(driver.helpers.configureApp.calledTwice).to.be.true;
       expect(
-        SimulatorManagementModule.installToSimulator.calledWith(
-          '/path/to/iosApp1.app',
-          'bundle-id',
-          {newSimulator: false},
-        ),
+        SimulatorManagementModule.installToSimulator.calledWith('/path/to/iosApp1.app', 'bundle-id', {
+          newSimulator: false,
+        }),
       ).to.be.true;
       expect(
-        SimulatorManagementModule.installToSimulator.calledWith(
-          '/path/to/iosApp2.app',
-          'bundle-id2',
-          {newSimulator: false},
-        ),
+        SimulatorManagementModule.installToSimulator.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
+          newSimulator: false,
+        }),
       ).to.be.true;
     });
   });

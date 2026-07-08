@@ -1,6 +1,7 @@
 import type {AppiumLogger} from '@appium/types';
 import {utilities} from 'appium-ios-device';
 import type {LockdownService} from 'appium-ios-remotexpc';
+
 import type {LockdownInfo} from '../commands/types';
 import {log as defaultLogger} from '../logger';
 import {isRemoteXPCUnavailableError, type RemoteXPCFacade} from './remote-xpc';
@@ -40,16 +41,12 @@ export class LockdownClient {
    * @param udid - Device UDID
    * @param opts - Creation options
    */
-  static async createForDevice(
-    udid: string,
-    opts: CreateLockdownClientOptions = {},
-  ): Promise<LockdownClient> {
+  static async createForDevice(udid: string, opts: CreateLockdownClientOptions = {}): Promise<LockdownClient> {
     const {allowLegacyFallback = true, facade = null, logger = defaultLogger} = opts;
     if (!facade?.eligible) {
       if (!allowLegacyFallback) {
         throw new Error(
-          `RemoteXPC lockdown is required for '${udid}', but this session is not eligible ` +
-            `for RemoteXPC.`,
+          `RemoteXPC lockdown is required for '${udid}', but this session is not eligible ` + `for RemoteXPC.`,
         );
       }
       return new LockdownClient(udid, logger, 'ios-device');
@@ -65,9 +62,7 @@ export class LockdownClient {
       if (!allowLegacyFallback) {
         throw err;
       }
-      logger.warn(
-        'RemoteXPC lockdown is not available. Using appium-ios-device lockdown (legacy fallback).',
-      );
+      logger.warn('RemoteXPC lockdown is not available. Using appium-ios-device lockdown (legacy fallback).');
       return new LockdownClient(udid, logger, 'ios-device');
     }
   }
@@ -126,9 +121,7 @@ export class LockdownClient {
    * Fields needed to format device local time (same contract as {@linkcode utilities.getDeviceTime}).
    */
   async getDeviceTimeFields(): Promise<DeviceTimeLockdownFields> {
-    const readTimeFromLockdown = async (
-      lockdown: LockdownService,
-    ): Promise<DeviceTimeLockdownFields | undefined> => {
+    const readTimeFromLockdown = async (lockdown: LockdownService): Promise<DeviceTimeLockdownFields | undefined> => {
       const info = await lockdown.getDeviceInfo();
       const timestamp = LockdownClient.coerceFiniteNumber(info.TimeIntervalSince1970);
       const tzOffsetSeconds = LockdownClient.coerceFiniteNumber(info.TimeZoneOffsetFromUTC);
@@ -148,10 +141,7 @@ export class LockdownClient {
       }
       case 'remotexpc-usbmux':
       case 'remotexpc-tunnel':
-        return await this.runWithRemotexpcLockdownRequiringValue(
-          readTimeFromLockdown,
-          'device time fields',
-        );
+        return await this.runWithRemotexpcLockdownRequiringValue(readTimeFromLockdown, 'device time fields');
     }
   }
 

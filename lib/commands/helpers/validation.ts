@@ -1,16 +1,14 @@
+import type {StringRecord} from '@appium/types';
 import {errors} from 'appium/driver';
 import {fs} from 'appium/support';
-import {isPlainObject} from '../../utils';
+
 import {log} from '../../logger';
-import type {StringRecord} from '@appium/types';
+import {isPlainObject} from '../../utils';
 
 export const DEFAULT_TIMEOUT_KEY = 'default';
 
 /** Assert the presence of particular keys in the given object. */
-export function requireArgs(
-  argNames: string | string[],
-  opts: StringRecord<any> = {},
-): StringRecord<any> {
+export function requireArgs(argNames: string | string[], opts: StringRecord<any> = {}): StringRecord<any> {
   for (const argName of Array.isArray(argNames) ? argNames : [argNames]) {
     if (!Object.hasOwn(opts, argName)) {
       throw new errors.InvalidArgumentError(`'${argName}' argument must be provided`);
@@ -29,9 +27,7 @@ export async function checkAppPresent(app: string): Promise<void> {
 }
 
 /** Normalizes command timeout capability into a validated milliseconds map. */
-export function normalizeCommandTimeouts(
-  value: string | Record<string, number>,
-): Record<string, number> {
+export function normalizeCommandTimeouts(value: string | Record<string, number>): Record<string, number> {
   // The value is normalized already
   if (typeof value !== 'string') {
     return value;

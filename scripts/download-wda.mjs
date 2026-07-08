@@ -1,8 +1,9 @@
-import {fs, logger, zip, net, node} from 'appium/support.js';
 import {constants as fsConstants, promises as fsPromises} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
+
+import {fs, logger, zip, net, node} from 'appium/support.js';
 import {Command} from 'commander';
 
 const log = logger.getLogger('download-wda');
@@ -69,18 +70,13 @@ async function getWebdriveragentPkgVersion() {
   if (!moduleRoot) {
     throw new Error('Cannot resolve module root for appium-xcuitest-driver');
   }
-  const pkgPath = path.join(
-    moduleRoot,
-    'node_modules',
-    'appium-webdriveragent',
-    'package.json'
-  );
+  const pkgPath = path.join(moduleRoot, 'node_modules', 'appium-webdriveragent', 'package.json');
   const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8'));
   if (!pkg.version || typeof pkg.version !== 'string') {
     throw new Error(`Cannot find version in ${pkgPath}`);
   }
   return pkg.version;
-};
+}
 
 /**
  * Prepare the working root directory.
@@ -120,11 +116,7 @@ async function main() {
     .name('appium driver run xcuitest download-wda')
     .description('Download a prebuilt WebDriverAgentRunner for iOS/tvOS real devices or simulators')
     .requiredOption('--outdir <path>', 'Destination directory to download and unpack into')
-    .requiredOption(
-      '--platform <platform>',
-      'Target platform (e.g. iOS or tvOS)',
-      (value) => value,
-    )
+    .requiredOption('--platform <platform>', 'Target platform (e.g. iOS or tvOS)', (value) => value)
     .option(
       '--kind <kind>',
       `Target package type: ${WDA_KIND_REAL} (real devices) or ${WDA_KIND_SIM} (simulators). Default: ${WDA_KIND_REAL}`,
@@ -149,8 +141,7 @@ EXAMPLES:
   await program.parseAsync(process.argv);
 }
 
-const isMainModule =
-  Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
+const isMainModule = Boolean(process.argv[1]) && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMainModule) {
   await main();
 }

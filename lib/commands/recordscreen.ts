@@ -1,11 +1,12 @@
-import {fs, tempDir, logger, util} from 'appium/support';
-import {SubProcess} from 'teen_process';
-import {encodeBase64OrUpload} from './helpers';
 import {WDA_BASE_URL} from 'appium-webdriveragent';
-import {waitForCondition} from 'asyncbox';
-import type {XCUITestDriver} from '../driver';
-import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
 import type {WDASettings} from 'appium-webdriveragent';
+import {fs, tempDir, logger, util} from 'appium/support';
+import {waitForCondition} from 'asyncbox';
+import {SubProcess} from 'teen_process';
+
+import type {XCUITestDriver} from '../driver';
+import {encodeBase64OrUpload} from './helpers';
+import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types';
 
 /**
  * Optional execute-script keys for `mobile: startScreenRecording`, in Appium flattened-arg order.
@@ -151,16 +152,8 @@ export class ScreenRecorder {
       );
     }
 
-    const {
-      hardwareAcceleration,
-      remotePort,
-      remoteUrl,
-      videoFps,
-      videoType,
-      videoScale,
-      videoFilters,
-      pixelFormat,
-    } = this.opts;
+    const {hardwareAcceleration, remotePort, remoteUrl, videoFps, videoType, videoScale, videoFilters, pixelFormat} =
+      this.opts;
 
     const args: string[] = [
       '-f',
@@ -224,14 +217,11 @@ export class ScreenRecorder {
         intervalMs: 300,
       });
     } catch {
-      this.log.warn(
-        `Screen capture process did not start within ${startupTimeout}ms. Continuing anyway`,
-      );
+      this.log.warn(`Screen capture process did not start within ${startupTimeout}ms. Continuing anyway`);
     }
     if (!this.mainProcess.isRunning) {
       throw new Error(
-        `The screen capture process '${FFMPEG_BINARY}' died unexpectedly. ` +
-          `Check server logs for more details`,
+        `The screen capture process '${FFMPEG_BINARY}' died unexpectedly. ` + `Check server logs for more details`,
       );
     }
     this.log.info(
@@ -263,8 +253,7 @@ export class ScreenRecorder {
         await interruptPromise;
       } catch (e: any) {
         this.log.warn(
-          `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` +
-            `Original error: ${e.message}`,
+          `Cannot ${force ? 'terminate' : 'interrupt'} ${FFMPEG_BINARY}. ` + `Original error: ${e.message}`,
         );
         result = false;
       }
@@ -360,9 +349,7 @@ export async function startRecordingScreen(
     'GET',
   )) as WDASettings;
   if (videoQuality) {
-    const quality = Number.isInteger(videoQuality)
-      ? videoQuality
-      : QUALITY_MAPPING[String(videoQuality).toLowerCase()];
+    const quality = Number.isInteger(videoQuality) ? videoQuality : QUALITY_MAPPING[String(videoQuality).toLowerCase()];
     if (!quality) {
       throw new Error(
         `videoQuality value should be one of ${JSON.stringify(
@@ -370,18 +357,14 @@ export async function startRecordingScreen(
         )} or a number in range 1..100. ` + `'${videoQuality}' is given instead`,
       );
     }
-    mjpegServerScreenshotQuality =
-      mjpegServerScreenshotQuality !== quality ? (quality as number) : undefined;
+    mjpegServerScreenshotQuality = mjpegServerScreenshotQuality !== quality ? (quality as number) : undefined;
   } else {
     mjpegServerScreenshotQuality = undefined;
   }
   if (videoFps) {
     const fps = parseInt(String(videoFps), 10);
     if (isNaN(fps)) {
-      throw new Error(
-        `videoFps value should be a valid number in range 1..60. ` +
-          `'${videoFps}' is given instead`,
-      );
+      throw new Error(`videoFps value should be a valid number in range 1..60. ` + `'${videoFps}' is given instead`);
     }
     mjpegServerFramerate = mjpegServerFramerate !== fps ? fps : undefined;
   } else {
@@ -436,8 +419,7 @@ export async function stopRecordingScreen(
     const videoPath = await this._recentScreenRecorder.finish();
     if (!(await fs.exists(videoPath))) {
       throw this.log.errorWithException(
-        `The screen recorder utility has failed ` +
-          `to store the actual screen recording at '${videoPath}'`,
+        `The screen recorder utility has failed ` + `to store the actual screen recording at '${videoPath}'`,
       );
     }
     return await encodeBase64OrUpload(videoPath, options.remotePath, options);
@@ -453,10 +435,7 @@ export async function stopRecordingScreen(
  * per optional key (see `START_SCREEN_RECORDING_EXECUTE_OPTIONALS`); this wrapper collapses
  * them into the options object for `startRecordingScreen`.
  */
-export async function mobileStartScreenRecording(
-  this: XCUITestDriver,
-  ...args: unknown[]
-): Promise<string> {
+export async function mobileStartScreenRecording(this: XCUITestDriver, ...args: unknown[]): Promise<string> {
   const options = optionsFromFlattenedExecuteArgs<StartRecordingScreenOptions>(
     [...START_SCREEN_RECORDING_EXECUTE_OPTIONALS],
     args,
@@ -468,10 +447,7 @@ export async function mobileStartScreenRecording(
  * Execute-script entry for `mobile: stopScreenRecording`. Collapses flattened args into the
  * options object for `stopRecordingScreen`.
  */
-export async function mobileStopScreenRecording(
-  this: XCUITestDriver,
-  ...args: unknown[]
-): Promise<string | null> {
+export async function mobileStopScreenRecording(this: XCUITestDriver, ...args: unknown[]): Promise<string | null> {
   const options = optionsFromFlattenedExecuteArgs<StopRecordingScreenOptions>(
     [...STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS],
     args,
@@ -479,10 +455,7 @@ export async function mobileStopScreenRecording(
   return await this.stopRecordingScreen(options);
 }
 
-function optionsFromFlattenedExecuteArgs<T extends object>(
-  keys: readonly string[],
-  args: readonly unknown[],
-): T {
+function optionsFromFlattenedExecuteArgs<T extends object>(keys: readonly string[], args: readonly unknown[]): T {
   const out: Record<string, unknown> = {};
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];

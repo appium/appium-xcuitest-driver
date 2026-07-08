@@ -1,3 +1,5 @@
+import {expect} from 'chai';
+
 import {
   formatRemoteXPCFallbackLog,
   formatTunnelAvailabilityMessage,
@@ -6,7 +8,6 @@ import {
   TUNNEL_CREATION_COMMAND,
   wrapRemoteXPCConnectionError,
 } from '../../../lib/device/remote-xpc/utils';
-import {expect} from 'chai';
 
 describe('remotexpc-utils tunnel availability', function () {
   it('detects TunnelAvailabilityError by ERR_TUNNEL_AVAILABILITY code', function () {
@@ -23,9 +24,7 @@ describe('remotexpc-utils tunnel availability', function () {
   });
 
   it('formatTunnelAvailabilityMessage avoids repeating tunnel script hint', function () {
-    const err = new Error(
-      'No tunnel found for device ABC. Please run the tunnel creation script first',
-    );
+    const err = new Error('No tunnel found for device ABC. Please run the tunnel creation script first');
     err.name = 'TunnelAvailabilityError';
     const msg = formatTunnelAvailabilityMessage(err);
     expect(msg).to.include('Please run the tunnel creation script first');

@@ -1,8 +1,9 @@
 import {logger} from 'appium/support';
-import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
-import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
+import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils';
 
 chai.use(chaiAsPromised);
 
@@ -53,9 +54,7 @@ describe('DeviceConnectionsFactory', function () {
 
     const f = devConFactory as any;
     expect(
-      await f._releaseProxiedConnections(
-        Object.keys((DeviceConnectionsFactory as any)._connectionsMapping),
-      ),
+      await f._releaseProxiedConnections(Object.keys((DeviceConnectionsFactory as any)._connectionsMapping)),
     ).to.eql(['udid:1234', 'udid4:6545']);
   });
 

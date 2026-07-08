@@ -1,8 +1,10 @@
-import type {AppiumLogger} from '@appium/types';
 import type {EventEmitter} from 'node:events';
+
+import type {AppiumLogger} from '@appium/types';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
-import {makeNetworkMonitorEvent} from '../commands/bidi/models';
+
 import {BIDI_EVENT_NAME} from '../commands/bidi/constants';
+import {makeNetworkMonitorEvent} from '../commands/bidi/models';
 import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
@@ -77,9 +79,7 @@ export class NetworkMonitorSession {
       try {
         await runPromise;
       } catch (err: any) {
-        this.log.debug(
-          `Error while finishing network monitor consume loop: ${err?.message ?? err}`,
-        );
+        this.log.debug(`Error while finishing network monitor consume loop: ${err?.message ?? err}`);
       }
     }
   }

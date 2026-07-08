@@ -6,7 +6,7 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [master]
 
 permissions:
   contents: write
@@ -18,26 +18,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
-    - name: Use Node.js LTS
-      uses: actions/setup-node@v6.4.0
-      with:
-        node-version: 24.15 # lts/*
-        # check-latest: true
-    - run: npm install --no-package-lock
-      name: Install dependencies
-    - run: npm run test
-      name: Run NPM Test
-    - run: |
-        rm -rf node_modules package-lock.json
-        npm prune --omit=dev --omit=peer --no-package-lock
-      name: Remove dev dependencies and appium peer dependencies
-    - run: npm shrinkwrap --omit=dev --omit=peer
-      name: Create shrinkwrap
-      # "--no-package-lock" prevent adding dev dependencies in the shrinkwrap
-    - run: npm install --only=dev --no-package-lock
-      name: Install dev dependencies for the release
-    - run: npx semantic-release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      name: Release
+      - uses: actions/checkout@v7
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: 24.15 # lts/*
+          # check-latest: true
+      - run: npm install --no-package-lock
+        name: Install dependencies
+      - run: npm run test
+        name: Run NPM Test
+      - run: |
+          rm -rf node_modules package-lock.json
+          npm prune --omit=dev --omit=peer --no-package-lock
+        name: Remove dev dependencies and appium peer dependencies
+      - run: npm shrinkwrap --omit=dev --omit=peer
+        name: Create shrinkwrap
+        # "--no-package-lock" prevent adding dev dependencies in the shrinkwrap
+      - run: npm install --only=dev --no-package-lock
+        name: Install dev dependencies for the release
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: Release

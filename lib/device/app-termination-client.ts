@@ -1,7 +1,8 @@
-import {isEmpty, isIos17OrNewerPlatform} from '../utils';
-import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {AppiumLogger} from '@appium/types';
+import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {Devicectl} from 'node-devicectl';
+
+import {isEmpty, isIos17OrNewerPlatform} from '../utils';
 import {InstallationProxyClient} from './installation-proxy-client';
 import type {RemoteXPCFacade} from './remote-xpc';
 
@@ -47,9 +48,7 @@ export class AppTerminationClient {
         this.log.info(`The process of '${bundleId}' app was not running`);
         break;
       case 'error':
-        this.log.warn(
-          `Failed to kill '${bundleId}'. Original error: ${result.detail ?? 'unknown'}`,
-        );
+        this.log.warn(`Failed to kill '${bundleId}'. Original error: ${result.detail ?? 'unknown'}`);
         break;
     }
     return false;
@@ -89,19 +88,12 @@ export class AppTerminationClient {
 
       // iOS < 17: use instrument service
       instrumentService = await services.startInstrumentService(this.udid);
-      const processes = await instrumentService.callChannel(
-        INSTRUMENT_CHANNEL.DEVICE_INFO,
-        'runningProcesses',
-      );
+      const processes = await instrumentService.callChannel(INSTRUMENT_CHANNEL.DEVICE_INFO, 'runningProcesses');
       const matchingProcess = processes.selector.find((proc: any) => proc.name === executableName);
       if (!matchingProcess) {
         return {terminated: false, reason: 'not_running'};
       }
-      await instrumentService.callChannel(
-        INSTRUMENT_CHANNEL.PROCESS_CONTROL,
-        'killPid:',
-        `${matchingProcess.pid}`,
-      );
+      await instrumentService.callChannel(INSTRUMENT_CHANNEL.PROCESS_CONTROL, 'killPid:', `${matchingProcess.pid}`);
       return {terminated: true, pid: matchingProcess.pid};
     } catch (err) {
       const detail = (err as any).stderr ?? (err as Error).message;

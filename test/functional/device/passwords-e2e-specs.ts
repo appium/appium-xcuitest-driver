@@ -1,8 +1,9 @@
-import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {getUICatalogCaps, amendCapabilities, extractCapabilityValue} from '../desired';
 import {util} from 'appium/support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {getUICatalogCaps, amendCapabilities, extractCapabilityValue} from '../desired';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

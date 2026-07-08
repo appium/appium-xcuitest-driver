@@ -1,6 +1,7 @@
 import {errors, routeToCommandName} from 'appium/driver';
-import {withTimeout, TimeoutError} from './helpers';
+
 import type {XCUITestDriver} from '../driver';
+import {withTimeout, TimeoutError} from './helpers';
 
 const GET = 'GET';
 const POST = 'POST';

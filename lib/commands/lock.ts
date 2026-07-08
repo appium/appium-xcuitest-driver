@@ -1,4 +1,5 @@
 import {setTimeout as delay} from 'node:timers/promises';
+
 import type {XCUITestDriver} from '../driver';
 
 /**

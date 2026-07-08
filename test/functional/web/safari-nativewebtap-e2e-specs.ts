@@ -1,7 +1,12 @@
 /* eslint-disable mocha/no-nested-tests */
 
+import {setTimeout as delay} from 'node:timers/promises';
+
+import {retryInterval} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {isEmpty} from '../../../lib/utils';
-import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   amendCapabilities,
   SETTINGS_CAPS,
@@ -10,6 +15,8 @@ import {
   DEVICE_NAME_FOR_SAFARI_IPAD,
   isIosVersionAtLeast,
 } from '../desired';
+import {CLASS_CHAIN_SEARCH} from '../helpers/element';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {
   createGuineaPigServerSession,
   openPage,
@@ -19,11 +26,6 @@ import {
   guineaPigScrollablePage,
   guineaPigAppBannerPage,
 } from './helpers';
-import {retryInterval} from 'asyncbox';
-import {setTimeout as delay} from 'node:timers/promises';
-import {CLASS_CHAIN_SEARCH} from '../helpers/element';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
@@ -102,43 +104,31 @@ describe('Safari - coordinate conversion -', function () {
           },
         ];
         await driver.performActions(scrollAction);
-        await driver
-          .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`)
-          .click();
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`).click();
         // to check the view transition to be completed
         await driver.$(`-ios predicate string:label='Default Apps'`);
         await driver.performActions(scrollAction);
-        await driver
-          .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`)
-          .click();
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`).click();
       };
       const openSafariMenuIOS17AndBelow = async () => {
-        await driver
-          .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]')
-          .click();
+        await driver.$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]').click();
       };
 
       ////
       // To clear history and data in the safari menue
       ////
       const clearHistoryIOS18 = async () => {
-        await driver
-          .$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`)
-          .click();
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`).click();
         const closeTabEl = await driver.$(
           `-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`,
         );
         if ((await closeTabEl.getValue()) === '0') {
           await closeTabEl.click();
         }
-        await driver
-          .$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`)
-          .click();
+        await driver.$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`).click();
       };
       const clearHistoryIOS17 = async () => {
-        await driver
-          .$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`)
-          .click();
+        await driver.$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`).click();
         await driver.$$('~Clear History')[1].click();
       };
       const clearHistoryIOS16AndBelow = async () => {
@@ -150,9 +140,7 @@ describe('Safari - coordinate conversion -', function () {
           await driver.$('~Clear History and Data').click();
         }
         if (isIosVersionAtLeast('16.0')) {
-          await driver
-            .$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]')
-            .click();
+          await driver.$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]').click();
         }
       };
 
@@ -188,10 +176,7 @@ describe('Safari - coordinate conversion -', function () {
             await closeAllTabsViaSettingsApp(deviceName);
             driver = await initSession(localCaps);
           } catch (err: any) {
-            if (
-              err.message.includes('Invalid device type') ||
-              err.message.includes('Incompatible device')
-            ) {
+            if (err.message.includes('Invalid device type') || err.message.includes('Incompatible device')) {
               skipped = true;
               return this.skip();
             }
@@ -288,10 +273,7 @@ describe('Safari - coordinate conversion -', function () {
             await loadPage(driver, guineaPigPage(baseUrl));
 
             // open a new tab and go to it
-            await driver.execute(
-              'arguments[0].click();',
-              await driver.$(`=i am a new window link`),
-            );
+            await driver.execute('arguments[0].click();', await driver.$(`=i am a new window link`));
 
             await retryInterval(10, 1000, async function () {
               await expect(driver.getTitle()).to.eventually.eql('I am another page title');

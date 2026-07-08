@@ -1,12 +1,7 @@
-import type {
-  LogEntryAddedEvent,
-  ContextUpdatedEvent,
-  BiDiLogLevel,
-  NetworkMonitorBiDiEvent,
-} from './types';
 import {NATIVE_WIN} from '../constants';
-import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants';
 import type {LogEntry} from '../types';
+import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants';
+import type {LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel, NetworkMonitorBiDiEvent} from './types';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
@@ -37,11 +32,7 @@ export function makeNetworkMonitorEvent(event: object): NetworkMonitorBiDiEvent 
 }
 
 /** Builds the BiDi log.entryAdded payload from an internal log entry. */
-export function makeLogEntryAddedEvent(
-  entry: LogEntry,
-  context: string,
-  type: string,
-): LogEntryAddedEvent {
+export function makeLogEntryAddedEvent(entry: LogEntry, context: string, type: string): LogEntryAddedEvent {
   return {
     context,
     method: LOG_ENTRY_ADDED_EVENT,

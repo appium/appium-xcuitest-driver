@@ -1,6 +1,7 @@
-import {requireSimulator} from './helpers';
 import {errors} from 'appium/driver';
+
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 import type {ContentSizeAction, ContentSizeResult} from './types';
 
 const CONTENT_SIZE = [
@@ -31,14 +32,9 @@ const CONTENT_SIZE = [
  *               accessibility-extra-extra-extra-large with Xcode 16.2.
  * @throws If the current platform does not support content size appearance changes
  */
-export async function mobileSetContentSize(
-  this: XCUITestDriver,
-  size: ContentSizeAction,
-): Promise<void> {
+export async function mobileSetContentSize(this: XCUITestDriver, size: ContentSizeAction): Promise<void> {
   if (!(CONTENT_SIZE as readonly string[]).includes(String(size).toLowerCase())) {
-    throw new errors.InvalidArgumentError(
-      `The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`,
-    );
+    throw new errors.InvalidArgumentError(`The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`);
   }
 
   await requireSimulator(this, 'Setting content size').setContentSize(size);
@@ -56,8 +52,5 @@ export async function mobileSetContentSize(
  *          unknown or unsupported with Xcode 16.2.
  */
 export async function mobileGetContentSize(this: XCUITestDriver): Promise<ContentSizeResult> {
-  return (await requireSimulator(
-    this,
-    'Getting content size',
-  ).getContentSize()) as ContentSizeResult;
+  return (await requireSimulator(this, 'Getting content size').getContentSize()) as ContentSizeResult;
 }

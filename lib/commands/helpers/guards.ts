@@ -1,4 +1,5 @@
 import type {Simulator} from 'appium-ios-simulator';
+
 import type {RealDevice} from '../../device/real-device-management';
 import {upperFirst} from '../../utils';
 

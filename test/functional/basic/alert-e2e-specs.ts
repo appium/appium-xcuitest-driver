@@ -1,9 +1,11 @@
 import {setTimeout as delay} from 'node:timers/promises';
+
 import {retryInterval} from 'asyncbox';
-import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {getUICatalogCaps} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 

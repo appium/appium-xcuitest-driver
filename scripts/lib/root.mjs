@@ -1,4 +1,4 @@
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 
 const COMMAND_PREFIX = 'appium driver run xcuitest';
 
@@ -17,9 +17,7 @@ export async function assertRoot(scriptName) {
     return;
   }
   if (process.getuid() !== 0) {
-    throw new Error(
-      `This script must be run as root/admin (e.g. sudo ${COMMAND_PREFIX} "${scriptName}").`
-    );
+    throw new Error(`This script must be run as root/admin (e.g. sudo ${COMMAND_PREFIX} "${scriptName}").`);
   }
 }
 

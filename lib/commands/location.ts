@@ -1,15 +1,13 @@
-import {errors} from 'appium/driver';
-import {
-  SimulateLocationClient,
-  type SimulateLocationSession,
-} from '../device/simulate-location-client';
-import {util} from 'appium/support';
-import {AuthorizationStatus} from './enum';
-import {isIos17OrNewer} from '../utils';
-import type {XCUITestDriver} from '../driver';
 import type {Location} from '@appium/types';
-import type {LocationWithAltitude, WDALocationInfo} from './types';
 import type {Simulator} from 'appium-ios-simulator';
+import {errors} from 'appium/driver';
+import {util} from 'appium/support';
+
+import {SimulateLocationClient, type SimulateLocationSession} from '../device/simulate-location-client';
+import type {XCUITestDriver} from '../driver';
+import {isIos17OrNewer} from '../utils';
+import {AuthorizationStatus} from './enum';
+import type {LocationWithAltitude, WDALocationInfo} from './types';
 
 /**
  * Returns the geographic location of the device under test.
@@ -36,9 +34,7 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
       return {latitude, longitude, altitude: 0};
     }
 
-    this.log.warn(
-      `No location was set by mobile:setSimulatedLocation. Trying to return the location from the device.`,
-    );
+    this.log.warn(`No location was set by mobile:setSimulatedLocation. Trying to return the location from the device.`);
   }
 
   // Prefer `/wda/device/location` over `/wda/simulatedLocation` for reads: they can disagree
@@ -72,10 +68,7 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
  *
  * @param location - Must include `latitude` and `longitude` (each coerced with `Number()`).
  */
-export async function setGeoLocation(
-  this: XCUITestDriver,
-  location: Partial<Location>,
-): Promise<Location> {
+export async function setGeoLocation(this: XCUITestDriver, location: Partial<Location>): Promise<Location> {
   for (const name of ['latitude', 'longitude']) {
     if (!util.hasValue(location[name as keyof typeof location])) {
       throw new errors.InvalidArgumentError(`${name} should be set`);

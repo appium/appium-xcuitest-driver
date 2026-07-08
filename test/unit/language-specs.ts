@@ -1,7 +1,8 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../lib/driver';
 
 chai.use(chaiAsPromised);
 
@@ -42,14 +43,7 @@ describe('language and locale', function () {
             {
               ...DEFAULT_CAPS,
               bundleId: BUNDLE_ID,
-              arguments: [
-                '-AppleLanguages',
-                `(${LANGUAGE})`,
-                '-NSLanguages',
-                `(${LANGUAGE})`,
-                '-AppleLocale',
-                LOCALE,
-              ],
+              arguments: ['-AppleLanguages', `(${LANGUAGE})`, '-NSLanguages', `(${LANGUAGE})`, '-AppleLocale', LOCALE],
             },
           ],
           alwaysMatch: {},
@@ -68,16 +62,10 @@ describe('language and locale', function () {
       const driver = new XCUITestDriver(desiredCapabilities);
 
       mockDriver = sinon.mock(driver);
-      mockDriver
-        .expects('proxyCommand')
-        .once()
-        .withExactArgs('/session', 'POST', expectedWDACapabilities);
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
 
       driver.validateDesiredCaps(desiredCapabilities);
-      await driver.startWdaSession(
-        desiredCapabilities.bundleId,
-        desiredCapabilities.processArguments,
-      );
+      await driver.startWdaSession(desiredCapabilities.bundleId, desiredCapabilities.processArguments);
     });
   });
 
@@ -129,16 +117,10 @@ describe('language and locale', function () {
       const driver = new XCUITestDriver(desiredCapabilities);
 
       mockDriver = sinon.mock(driver);
-      mockDriver
-        .expects('proxyCommand')
-        .once()
-        .withExactArgs('/session', 'POST', expectedWDACapabilities);
+      mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
 
       driver.validateDesiredCaps(desiredCapabilities);
-      await driver.startWdaSession(
-        desiredCapabilities.bundleId,
-        desiredCapabilities.processArguments,
-      );
+      await driver.startWdaSession(desiredCapabilities.bundleId, desiredCapabilities.processArguments);
       expect(desiredCapabilities.processArguments).to.eql(expectedProcessArguments);
     });
   });

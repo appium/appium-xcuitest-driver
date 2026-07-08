@@ -1,8 +1,9 @@
-import {parseContainerPath} from '../../../lib/commands/file-movement';
 import {tempDir} from 'appium/support';
-import {XCUITestDriver} from '../../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {parseContainerPath} from '../../../lib/commands/file-movement';
+import {XCUITestDriver} from '../../../lib/driver';
 
 chai.use(chaiAsPromised);
 
@@ -56,8 +57,7 @@ describe('file-movement', function () {
     });
     it('should raise an error if no container path', async function () {
       const mntRoot = await tempDir.openDir();
-      await expect(parseContainerPath(driver, '@io.appium.example:documents', mntRoot)).to.be
-        .rejected;
+      await expect(parseContainerPath(driver, '@io.appium.example:documents', mntRoot)).to.be.rejected;
     });
   });
 });

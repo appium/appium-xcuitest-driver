@@ -1,14 +1,8 @@
 #!/usr/bin/env node
-/**
- * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
- * This script demonstrates the tunnel creation workflow for all connected devices.
- *
- * Must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation).
- */
-import {logger} from 'appium/support.js';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {strongbox, BaseItem} from '@appium/strongbox';
 import {
   AppleTVTunnelService,
   TunnelManager,
@@ -22,8 +16,13 @@ import {
   TUNNEL_CONTAINER_NAME,
   watchTunnelRegistryOnDead,
 } from 'appium-ios-remotexpc';
-
-import {strongbox, BaseItem} from '@appium/strongbox';
+/**
+ * Test script for creating lockdown service, starting CoreDeviceProxy, and creating tunnel
+ * This script demonstrates the tunnel creation workflow for all connected devices.
+ *
+ * Must be run as root (e.g. sudo appium driver run xcuitest tunnel-creation).
+ */
+import {logger} from 'appium/support.js';
 import {Command} from 'commander';
 
 import {parsePositiveIntegerOption} from './lib/options.mjs';
@@ -46,8 +45,7 @@ class TunnelCreator {
    */
   constructor(opts = {}) {
     this._tunnelRegistryPort = DEFAULT_TUNNEL_REGISTRY_PORT;
-    this._appleTVDiscoveryTimeoutMs =
-      opts.appleTVDiscoveryTimeoutMs ?? DEFAULT_WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS;
+    this._appleTVDiscoveryTimeoutMs = opts.appleTVDiscoveryTimeoutMs ?? DEFAULT_WIRELESS_APPLETV_DISCOVERY_TIMEOUT_MS;
     /** @type {import('appium-ios-remotexpc').TunnelRegistryServer | null} */
     this._registryServer = null;
     /** @type {import('appium-ios-remotexpc').TunnelReadinessCoordinator} */
@@ -105,14 +103,10 @@ class TunnelCreator {
         activeTunnels: 0,
       },
     };
-    this._registryServer = await startTunnelRegistryServer(
-      registry,
-      this._tunnelRegistryPort,
-      {
-        readiness: this._readiness,
-        refreshServices: async (udid, entry) => this._refreshServiceCatalog(udid, entry),
-      },
-    );
+    this._registryServer = await startTunnelRegistryServer(registry, this._tunnelRegistryPort, {
+      readiness: this._readiness,
+      refreshServices: async (udid, entry) => this._refreshServiceCatalog(udid, entry),
+    });
   }
 
   /**
@@ -205,10 +199,7 @@ class TunnelCreator {
   _registerEstablishedTunnel(udid, result) {
     this._stopLifecycleWatch(udid);
     const previous = this._establishedTunnelsByUdid.get(udid);
-    if (
-      previous?.tunnelConnection &&
-      previous.tunnelConnection !== result.tunnelConnection
-    ) {
+    if (previous?.tunnelConnection && previous.tunnelConnection !== result.tunnelConnection) {
       void closeTunnelQuietly(previous.tunnelConnection);
     }
     this._establishedTunnelsByUdid.set(udid, result);
@@ -261,9 +252,7 @@ class TunnelCreator {
         onDead: (reason) => lifecycle.notify?.(reason),
       },
     );
-    log.info(
-      `Tunnel created for address: ${tunnelConnection.Address} with RsdPort: ${tunnelConnection.RsdPort}`,
-    );
+    log.info(`Tunnel created for address: ${tunnelConnection.Address} with RsdPort: ${tunnelConnection.RsdPort}`);
 
     log.info(`✅ Tunnel creation completed successfully for device: ${udid}`);
     log.info(`   Tunnel Address: ${tunnelConnection.Address}`);
@@ -315,9 +304,7 @@ class TunnelCreator {
     const requestedUdids = specificUdids && specificUdids.length > 0 ? [...new Set(specificUdids)] : null;
     if (requestedUdids) {
       const requestedUdidSet = new Set(requestedUdids);
-      devicesToProcess = devices.filter(
-        (device) => requestedUdidSet.has(device.Properties.SerialNumber),
-      );
+      devicesToProcess = devices.filter((device) => requestedUdidSet.has(device.Properties.SerialNumber));
 
       if (devicesToProcess.length === 0) {
         log.error(`None of the requested UDID(s) were found: ${requestedUdids.join(', ')}`);
@@ -375,12 +362,11 @@ class TunnelCreator {
         log.info('Skipping Apple TV tunnel setup because wireless discovery did not find any devices.');
         return results;
       }
-      const prefetchedDevicesById = new Map(
-        (prefetchedDevices ?? []).map((device) => [device.identifier, device]),
-      );
-      const discoveredDeviceIds = specificDeviceIds && specificDeviceIds.length > 0
-        ? [...new Set(specificDeviceIds)]
-        : [...prefetchedDevicesById.keys()];
+      const prefetchedDevicesById = new Map((prefetchedDevices ?? []).map((device) => [device.identifier, device]));
+      const discoveredDeviceIds =
+        specificDeviceIds && specificDeviceIds.length > 0
+          ? [...new Set(specificDeviceIds)]
+          : [...prefetchedDevicesById.keys()];
       log.info('Starting Apple TV tunnel (WiFi)...');
       const usbDiscoveredUdidSet = new Set(this._usbDevicesByUdid.keys());
       const targetDeviceIds = discoveredDeviceIds.filter((udid) => !usbDiscoveredUdidSet.has(udid));
@@ -397,10 +383,7 @@ class TunnelCreator {
 
       for (const deviceId of targetDeviceIds) {
         try {
-          const result = await this._createAppleTVTunnelForUdid(
-            deviceId,
-            prefetchedDevicesById.get(deviceId),
-          );
+          const result = await this._createAppleTVTunnelForUdid(deviceId, prefetchedDevicesById.get(deviceId));
           results.push(result);
           log.info(`✅ Apple TV tunnel ready for ${deviceId}`);
         } catch (err) {
@@ -533,9 +516,7 @@ class TunnelCreator {
     entry.catalogUpdatedAt = now;
 
     this._registryServer.upsertReadyEntry(udid, entry);
-    log.info(
-      `Published tunnel catalog for ${udid} (${Object.keys(entry.services).length} services)`,
-    );
+    log.info(`Published tunnel catalog for ${udid} (${Object.keys(entry.services).length} services)`);
     return true;
   }
 
@@ -647,8 +628,8 @@ class TunnelCreator {
    */
   _isRetryEnabledForUdid(udid) {
     return (
-      (this._usbDevicesByUdid.has(udid) || this._appleTVDeviceIds.has(udid))
-      && this._disconnectRetryMaxAttempts !== null
+      (this._usbDevicesByUdid.has(udid) || this._appleTVDeviceIds.has(udid)) &&
+      this._disconnectRetryMaxAttempts !== null
     );
   }
 
@@ -774,9 +755,7 @@ async function waitForAppleTVDiscovery(discovery) {
     }
     return null;
   }
-  wirelessDiscoveryProgress.succeed(
-    `Wireless Apple TV discovery completed: ${devices?.length ?? 0} device(s) found`,
-  );
+  wirelessDiscoveryProgress.succeed(`Wireless Apple TV discovery completed: ${devices?.length ?? 0} device(s) found`);
   return devices;
 }
 
@@ -895,19 +874,17 @@ async function main() {
     .option(
       '--udid <udid>',
       'UDID of the device to create tunnel for (repeatable). ' +
-      'If omitted, tunnels are created for all connected devices.',
+        'If omitted, tunnels are created for all connected devices.',
       collectStringValues,
       [],
     )
-    .option(
-      '--tunnel-registry-port <port>',
-      'Port for the tunnel registry API server (1-65535)',
-      (value) => parsePortOption(value, 'tunnel registry port'),
+    .option('--tunnel-registry-port <port>', 'Port for the tunnel registry API server (1-65535)', (value) =>
+      parsePortOption(value, 'tunnel registry port'),
     )
     .option(
       '--appletv-device-id <identifier>',
       'Apple TV device identifier to tunnel (repeatable, from pair-appletv; ' +
-      'omit to tunnel all discovered paired Apple TVs)',
+        'omit to tunnel all discovered paired Apple TVs)',
       collectStringValues,
       [],
     )
@@ -974,9 +951,10 @@ async function main() {
 
     await tunnelCreator.startRegistryServer();
 
-    const appleTVDiscoveryPrefetch = shouldRunAppleTVFlow && !hasRequestedAppleTVIds
-      ? tunnelCreator.prefetchAppleTVDevices(requestedAppleTVIds)
-      : null;
+    const appleTVDiscoveryPrefetch =
+      shouldRunAppleTVFlow && !hasRequestedAppleTVIds
+        ? tunnelCreator.prefetchAppleTVDevices(requestedAppleTVIds)
+        : null;
     if (appleTVDiscoveryPrefetch) {
       log.info('Prefetching paired Apple TV devices...');
     }
@@ -1001,18 +979,12 @@ async function main() {
       const prefetchedAppleTVDevices = appleTVDiscoveryPrefetch
         ? await waitForAppleTVDiscovery(appleTVDiscoveryPrefetch)
         : null;
-      appletvResults = await tunnelCreator.setupAppleTVTunnels(
-        requestedAppleTVIds,
-        prefetchedAppleTVDevices,
-      );
+      appletvResults = await tunnelCreator.setupAppleTVTunnels(requestedAppleTVIds, prefetchedAppleTVDevices);
     } else {
       log.info('Skipping Apple TV tunnel setup because only --udid was provided.');
     }
 
-    const successfulResults = [
-      ...usbResults.filter((r) => r.success),
-      ...appletvResults.filter((r) => r.success),
-    ];
+    const successfulResults = [...usbResults.filter((r) => r.success), ...appletvResults.filter((r) => r.success)];
 
     if (successfulResults.length === 0) {
       log.warn('No tunnels created (no USB and no wireless Apple TV devices).');
@@ -1046,11 +1018,11 @@ async function main() {
     log.info('   - GET /remotexpc/tunnels/:udid?waitMs=15000 - Get tunnel (long-poll until catalog ready)');
     log.info('   - POST /remotexpc/tunnels/:udid/refresh-services - Re-discover RSD catalog');
     log.info('   - GET /remotexpc/tunnels/metadata - Get registry metadata');
-    const firstUdid = publishedResults.length > 0
-      ? getTunnelUdid(publishedResults[0])
-      : undefined;
+    const firstUdid = publishedResults.length > 0 ? getTunnelUdid(publishedResults[0]) : undefined;
     if (firstUdid) {
-      log.info(`   curl "http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}?waitMs=15000"`);
+      log.info(
+        `   curl "http://localhost:${tunnelCreator.tunnelRegistryPort}/remotexpc/tunnels/${firstUdid}?waitMs=15000"`,
+      );
     }
   } catch (err) {
     log.error('Error during tunnel setup:', err);

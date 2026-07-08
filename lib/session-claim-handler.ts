@@ -1,7 +1,9 @@
+import {setTimeout as delay} from 'node:timers/promises';
+
 import type {AppiumLogger, IAppiumIpc, IIpcSubscription, IpcMessage} from '@appium/types';
 import {node, util} from 'appium/support';
 import {waitForCondition} from 'asyncbox';
-import {setTimeout as delay} from 'node:timers/promises';
+
 import type {XCUITestDriver} from './driver';
 import {memoize} from './utils';
 
@@ -21,10 +23,7 @@ export class SessionClaimHandler {
   private static readonly CONTENTION_PROBE_MS = 10;
   private static readonly RELEASE_WAIT_MS = 15000;
 
-  private readonly subscriptionsBySessionId = new Map<
-    string,
-    IIpcSubscription<SessionUdidIpcMessage>
-  >();
+  private readonly subscriptionsBySessionId = new Map<string, IIpcSubscription<SessionUdidIpcMessage>>();
 
   constructor(private readonly getIpc: IpcProvider) {}
 
@@ -64,9 +63,7 @@ export class SessionClaimHandler {
   async claimSessionUdid(driver: XCUITestDriver): Promise<void> {
     const ipc = await this.getIpc();
     if (!ipc) {
-      driver.log.debug(
-        'Driver-instance IPC is unavailable. Skipping publication of the session udid.',
-      );
+      driver.log.debug('Driver-instance IPC is unavailable. Skipping publication of the session udid.');
       return;
     }
 
@@ -99,14 +96,10 @@ export class SessionClaimHandler {
     });
 
     try {
-      await ipc.publish<SessionUdidIpcMessage>(
-        SessionClaimHandler.CLAIMED_TOPIC,
-        this.getPublisherId(driver),
-        {
-          udid,
-          sessionId,
-        },
-      );
+      await ipc.publish<SessionUdidIpcMessage>(SessionClaimHandler.CLAIMED_TOPIC, this.getPublisherId(driver), {
+        udid,
+        sessionId,
+      });
       await delay(SessionClaimHandler.CONTENTION_PROBE_MS);
 
       if (contendingSessionIds.size === 0) {
@@ -114,21 +107,16 @@ export class SessionClaimHandler {
       }
 
       try {
-        await waitForCondition(
-          () => [...contendingSessionIds].every((id) => releasedSessionIds.has(id)),
-          {
-            waitMs: SessionClaimHandler.RELEASE_WAIT_MS,
-            intervalMs: 50,
-          },
-        );
+        await waitForCondition(() => [...contendingSessionIds].every((id) => releasedSessionIds.has(id)), {
+          waitMs: SessionClaimHandler.RELEASE_WAIT_MS,
+          intervalMs: 50,
+        });
         driver.log.debug(
           `Received release confirmation from ` +
             `${util.pluralize('session', contendingSessionIds.size, true)} for udid '${udid}'`,
         );
       } catch {
-        const pendingSessionIds = [...contendingSessionIds].filter(
-          (id) => !releasedSessionIds.has(id),
-        );
+        const pendingSessionIds = [...contendingSessionIds].filter((id) => !releasedSessionIds.has(id));
         driver.log.warn(
           `Timed out after ${SessionClaimHandler.RELEASE_WAIT_MS}ms waiting for ` +
             `${util.pluralize('session', pendingSessionIds.length, true)} ` +
@@ -177,9 +165,7 @@ export class SessionClaimHandler {
       await this.publishSessionUdidContended(driver, udid);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      driver.log.warn(
-        `Could not publish udid contention message for session '${driver.sessionId}': ${msg}`,
-      );
+      driver.log.warn(`Could not publish udid contention message for session '${driver.sessionId}': ${msg}`);
     }
 
     driver.log.warn(
@@ -199,14 +185,10 @@ export class SessionClaimHandler {
       return;
     }
 
-    await ipc.publish<SessionUdidIpcMessage>(
-      SessionClaimHandler.CONTENDED_TOPIC,
-      this.getPublisherId(driver),
-      {
-        udid,
-        sessionId,
-      },
-    );
+    await ipc.publish<SessionUdidIpcMessage>(SessionClaimHandler.CONTENDED_TOPIC, this.getPublisherId(driver), {
+      udid,
+      sessionId,
+    });
   }
 
   private async terminateSessionOnRequest(driver: XCUITestDriver, udid: string): Promise<void> {

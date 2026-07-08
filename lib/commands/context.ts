@@ -1,22 +1,19 @@
-import {
-  createRemoteDebugger,
-  RemoteDebugger,
-  type RemoteDebuggerOptions,
-} from 'appium-remote-debugger';
+import type {Simulator} from 'appium-ios-simulator';
+import {createRemoteDebugger, RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
+
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
 import type {SafariConsoleLog} from '../device/log/safari-console-log';
 import type {SafariNetworkLog} from '../device/log/safari-network-log';
-import {isEmpty} from '../utils';
-import {NATIVE_WIN} from './constants';
-import {makeContextUpdatedEvent} from './bidi/models';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {assignBiDiLogListener} from './log';
 import type {XCUITestDriver} from '../driver';
 import type {Page} from '../types';
+import {isEmpty} from '../utils';
+import {BIDI_EVENT_NAME} from './bidi/constants';
+import {makeContextUpdatedEvent} from './bidi/models';
+import {NATIVE_WIN} from './constants';
+import {assignBiDiLogListener} from './log';
 import type {ViewContext, FullContext, PageChangeNotification} from './types';
-import type {Simulator} from 'appium-ios-simulator';
 
 const WEBVIEW_WIN = 'WEBVIEW';
 const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
@@ -29,10 +26,7 @@ const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
  *
  * @param useUrl - Whether to filter webviews by URL
  */
-export async function getContextsAndViews(
-  this: XCUITestDriver,
-  useUrl: boolean = true,
-): Promise<ViewContext[]> {
+export async function getContextsAndViews(this: XCUITestDriver, useUrl: boolean = true): Promise<ViewContext[]> {
   this.log.debug('Retrieving contexts and views');
   const webviews = await this.listWebFrames(useUrl);
   const ctxs: ViewContext[] = [{id: NATIVE_WIN, view: {}}];
@@ -54,16 +48,12 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
   const timer = new timing.Timer().start();
   const contextId = await this.getRecentWebviewContextId(/.*/, /.*/);
   if (contextId) {
-    this.log.info(
-      `Picking webview '${contextId}' after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-    );
+    this.log.info(`Picking webview '${contextId}' after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
     await this.setContext(contextId);
     return;
   }
   const appDict = this.remote.appDict;
-  const errSuffix =
-    `Make sure your web application is debuggable ` +
-    `and could be inspected in Safari Web Inspector.`;
+  const errSuffix = `Make sure your web application is debuggable ` + `and could be inspected in Safari Web Inspector.`;
   if (isEmpty(appDict)) {
     throw new Error(
       `The remote debugger did not return any connected web applications after ` +
@@ -101,8 +91,7 @@ export async function activateRecentWebview(this: XCUITestDriver): Promise<void>
 export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true): Promise<Page[]> {
   const shouldFilterByUrl = useUrl && !this.isRealDevice() && !!this.getCurrentUrl();
   this.log.debug(
-    `Selecting by url: ${shouldFilterByUrl}` +
-      (shouldFilterByUrl ? ` (expected url: '${this.getCurrentUrl()}')` : ''),
+    `Selecting by url: ${shouldFilterByUrl}` + (shouldFilterByUrl ? ` (expected url: '${this.getCurrentUrl()}')` : ''),
   );
 
   if (!this._remote) {
@@ -121,9 +110,7 @@ export async function listWebFrames(this: XCUITestDriver, useUrl: boolean = true
       }
       return pageArray;
     } catch (err: any) {
-      this.log.debug(
-        `No available web pages after ${util.pluralize('retry', retries, true)}: ${err.message}`,
-      );
+      this.log.debug(`No available web pages after ${util.pluralize('retry', retries, true)}: ${err.message}`);
       return [];
     }
   };
@@ -149,11 +136,7 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
   this.remote.on(RemoteDebugger.EVENT_FRAMES_DETACHED, () => {
     if (!isEmpty(this.curWebFrames)) {
       const curWebFrames = this.curWebFrames;
-      this.log.debug(
-        `Clearing ${util.pluralize('frame', curWebFrames.length, true)}: ${curWebFrames.join(
-          ', ',
-        )}`,
-      );
+      this.log.debug(`Clearing ${util.pluralize('frame', curWebFrames.length, true)}: ${curWebFrames.join(', ')}`);
     }
     this.curWebFrames = [];
   });
@@ -184,10 +167,7 @@ export async function connectToRemoteDebugger(this: XCUITestDriver): Promise<voi
  * @param waitForWebviewMs - The period to poll for available webview(s) (in ms)
  * @returns The list of available context objects along with their properties.
  */
-export async function mobileGetContexts(
-  this: XCUITestDriver,
-  waitForWebviewMs: number = 0,
-): Promise<FullContext[]> {
+export async function mobileGetContexts(this: XCUITestDriver, waitForWebviewMs: number = 0): Promise<FullContext[]> {
   // make sure it is a number, so the duration check works properly
   if (typeof waitForWebviewMs !== 'number') {
     waitForWebviewMs = parseInt(String(waitForWebviewMs), 10);
@@ -206,9 +186,7 @@ export async function mobileGetContexts(
       contexts = (await this.getContexts()) as FullContext[];
 
       if (contexts.length >= 2) {
-        this.log.debug(
-          `Found webview context after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
-        );
+        this.log.debug(`Found webview context after ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
         return contexts;
       }
       this.log.debug(`No webviews found in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
@@ -231,9 +209,7 @@ export async function onPageChange(
   this: XCUITestDriver,
   pageChangeNotification: PageChangeNotification,
 ): Promise<void> {
-  this.log.debug(
-    `Remote debugger notified us of a new page listing: ${JSON.stringify(pageChangeNotification)}`,
-  );
+  this.log.debug(`Remote debugger notified us of a new page listing: ${JSON.stringify(pageChangeNotification)}`);
   if (this.selectingNewPage) {
     this.log.debug('We are in the middle of selecting a page, ignoring');
     return;
@@ -292,14 +268,10 @@ export async function onPageChange(
     newPage = newPages.at(-1) as string;
     this.log.debug(`We have new pages, selecting page '${newPage}'`);
   } else if (!newIds.includes(curPageIdKey)) {
-    this.log.debug(
-      'New page listing from remote debugger does not contain ' +
-        'current window; assuming it is closed',
-    );
+    this.log.debug('New page listing from remote debugger does not contain ' + 'current window; assuming it is closed');
     if (!util.hasValue(keyId)) {
       this.log.error(
-        'Do not have our current window anymore, and there ' +
-          'are not any more to load! Doing nothing...',
+        'Do not have our current window anymore, and there ' + 'are not any more to load! Doing nothing...',
       );
       this.setCurrentUrl(null);
       return;
@@ -393,9 +365,7 @@ export async function getRecentWebviewContextId(
   urlRegExp: RegExp,
 ): Promise<string | undefined> {
   if (!(titleRegExp instanceof RegExp) && !(urlRegExp instanceof RegExp)) {
-    throw new errors.InvalidArgumentError(
-      'A regular expression for either web view title or url must be provided',
-    );
+    throw new errors.InvalidArgumentError('A regular expression for either web view title or url must be provided');
   }
 
   const currentUrl = this.getCurrentUrl();
@@ -409,8 +379,7 @@ export async function getRecentWebviewContextId(
   }
   // if not, try to match by regular expression
   return contexts.find(
-    ({view}) =>
-      (view?.title && titleRegExp?.test(view.title)) || (view?.url && urlRegExp?.test(view.url)),
+    ({view}) => (view?.title && titleRegExp?.test(view.title)) || (view?.url && urlRegExp?.test(view.url)),
   )?.id;
 }
 
@@ -455,9 +424,7 @@ export async function getNewRemoteDebugger(this: XCUITestDriver): Promise<Remote
     platformVersion: this.opts.platformVersion,
     socketPath,
     remoteDebugProxy: this.opts.remoteDebugProxy,
-    garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect)
-      ? !!this.opts.safariGarbageCollect
-      : false,
+    garbageCollectOnExecute: util.hasValue(this.opts.safariGarbageCollect) ? !!this.opts.safariGarbageCollect : false,
     logAllCommunication: this.opts.safariLogAllCommunication,
     logAllCommunicationHexDump: this.opts.safariLogAllCommunicationHexDump,
     socketChunkSize: this.opts.safariSocketChunkSize,
@@ -511,9 +478,7 @@ export async function setContext(
   const strName = String(typeof name === 'object' && name && 'id' in name ? name.id : name);
 
   this.log.debug(
-    `Attempting to set context to '${strName || NATIVE_WIN}' from '${
-      this.curContext ? this.curContext : NATIVE_WIN
-    }'`,
+    `Attempting to set context to '${strName || NATIVE_WIN}' from '${this.curContext ? this.curContext : NATIVE_WIN}'`,
   );
 
   if (
@@ -629,11 +594,7 @@ export async function getContexts(this: XCUITestDriver): Promise<string[] | Full
  * @param skipReadyCheck - Whether to skip waiting for the window to be ready
  * @throws {errors.NoSuchWindowError} If the window does not exist
  */
-export async function setWindow(
-  this: XCUITestDriver,
-  name: string,
-  skipReadyCheck?: boolean,
-): Promise<void> {
+export async function setWindow(this: XCUITestDriver, name: string, skipReadyCheck?: boolean): Promise<void> {
   if (!this.isWebContext()) {
     // https://github.com/appium/appium/issues/20710
     return;

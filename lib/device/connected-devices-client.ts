@@ -1,7 +1,8 @@
-import {Devicectl} from 'node-devicectl';
 import {utilities} from 'appium-ios-device';
-import {log} from '../logger';
+import {Devicectl} from 'node-devicectl';
+
 import type {XCUITestDriverOpts} from '../driver';
+import {log} from '../logger';
 import {formatRemoteXPCFallbackLog, RemoteXPCFacade, type RemoteXPCServices} from './remote-xpc';
 
 export class ConnectedDevicesClient {
@@ -37,17 +38,13 @@ export class ConnectedDevicesClient {
     const err = tunnelSettled.reason;
     log.warn(formatRemoteXPCFallbackLog('devices listing', err));
     if (legacySettled.status === 'rejected') {
-      throw legacySettled.reason instanceof Error
-        ? legacySettled.reason
-        : new Error(String(legacySettled.reason));
+      throw legacySettled.reason instanceof Error ? legacySettled.reason : new Error(String(legacySettled.reason));
     }
     return legacySettled.value;
   }
 
   private isPreferDevicectlEnabled(): boolean {
-    return ['yes', 'true', '1'].includes(
-      String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL ?? '').toLowerCase(),
-    );
+    return ['yes', 'true', '1'].includes(String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL ?? '').toLowerCase());
   }
 
   /**

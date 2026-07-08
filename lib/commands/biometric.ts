@@ -1,5 +1,5 @@
-import {requireSimulator} from './helpers';
 import type {XCUITestDriver} from '../driver';
+import {requireSimulator} from './helpers';
 import type {BiometricFeature} from './types';
 
 /**
@@ -9,10 +9,7 @@ import type {BiometricFeature} from './types';
  * @throws If enrollment fails or the device is not a Simulator.
  * @group Simulator Only
  */
-export async function mobileEnrollBiometric(
-  this: XCUITestDriver,
-  isEnabled: boolean = true,
-): Promise<void> {
+export async function mobileEnrollBiometric(this: XCUITestDriver, isEnabled: boolean = true): Promise<void> {
   await requireSimulator(this, 'Biometric enrollment').enrollBiometric(isEnabled);
 }
 

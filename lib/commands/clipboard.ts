@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
 import {PasteboardClient} from '../device/pasteboard-client';
+import type {XCUITestDriver} from '../driver';
 import {requireRealDevice} from './helpers';
 
 /**
@@ -39,11 +39,7 @@ export async function setClipboard(
  * @returns The actual clipboard content encoded into base64 string.
  * An empty string is returned if the clipboard contains no data.
  */
-export async function getClipboard(
-  this: XCUITestDriver,
-  contentType?: string,
-  mode?: string,
-): Promise<string> {
+export async function getClipboard(this: XCUITestDriver, contentType?: string, mode?: string): Promise<string> {
   if (mode === 'xpc') {
     requireRealDevice(this, 'Getting clipboard content');
     const pasteboardClient = new PasteboardClient(this.device.udid, this.remoteXPCFacade);

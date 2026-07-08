@@ -1,15 +1,17 @@
 import https from 'node:https';
-import {promisify} from 'node:util';
-import {setTimeout as delay} from 'node:timers/promises';
-import {getFreePort} from '../helpers/ports';
 import os from 'node:os';
-import _pem from 'pem';
-import {amendCapabilities, SAFARI_CAPS} from '../desired';
-import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
-import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
+import {setTimeout as delay} from 'node:timers/promises';
+import {promisify} from 'node:util';
+
 import {waitForCondition} from 'asyncbox';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import _pem from 'pem';
+
+import {amendCapabilities, SAFARI_CAPS} from '../desired';
+import {getFreePort} from '../helpers/ports';
+import {deleteSession, initSession, MOCHA_TIMEOUT} from '../helpers/session';
+import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
 
 chai.use(chaiAsPromised);
 
@@ -63,13 +65,10 @@ describe('Safari SSL', function () {
 
   it('should open pages with untrusted certs if the cert was provided in desired capabilities', async function () {
     const assertPageSource = async () => {
-      await waitForCondition(
-        async () => (await driver.getPageSource()).includes('Arbitrary text'),
-        {
-          waitMs: 10000,
-          intervalMs: 500,
-        },
-      );
+      await waitForCondition(async () => (await driver.getPageSource()).includes('Arbitrary text'), {
+        waitMs: 10000,
+        intervalMs: 500,
+      });
     };
 
     try {

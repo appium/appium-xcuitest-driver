@@ -1,7 +1,7 @@
+import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
+import {getPath as getXcodePath} from 'appium-xcode';
 import {fs, doctor} from 'appium/support';
 import {exec} from 'teen_process';
-import {getPath as getXcodePath} from 'appium-xcode';
-import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import '@colors/colors';
 
 export class XcodeCheck implements IDoctorCheck {
@@ -38,9 +38,7 @@ export class XcodeToolsCheck implements IDoctorCheck {
     try {
       await exec('xcodebuild', ['-version']);
     } catch (err) {
-      return doctor.nok(
-        `${errPrefix}. Cannot run 'xcodebuild': ${(err as any).stderr || (err as Error).message}`,
-      );
+      return doctor.nok(`${errPrefix}. Cannot run 'xcodebuild': ${(err as any).stderr || (err as Error).message}`);
     }
     return doctor.ok(`Xcode Command Line Tools are installed and work properly`);
   }
@@ -82,14 +80,10 @@ class EnvVarAndPathCheck implements IDoctorCheck {
 
     const stat = await fs.stat(varValue);
     if (this.opts.expectDir && !stat.isDirectory()) {
-      return doctor.nok(
-        `${this.varName} is expected to be a valid folder, got a file path instead`,
-      );
+      return doctor.nok(`${this.varName} is expected to be a valid folder, got a file path instead`);
     }
     if (this.opts.expectFile && stat.isDirectory()) {
-      return doctor.nok(
-        `${this.varName} is expected to be a valid file, got a folder path instead`,
-      );
+      return doctor.nok(`${this.varName} is expected to be a valid file, got a folder path instead`);
     }
 
     return doctor.ok(`${this.varName} is set to: ${varValue}`);

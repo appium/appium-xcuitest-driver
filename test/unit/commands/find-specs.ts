@@ -1,6 +1,7 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
 import {expect} from 'chai';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -48,23 +49,11 @@ describe('general commands', function () {
 
     it('should convert xpaths from UIA to XCUI', async function () {
       await verifyFind('xpath', '//UIAButton', '//XCUIElementTypeButton');
-      await verifyFind(
-        'xpath',
-        '//UIAButton/UIATextField',
-        '//XCUIElementTypeButton/XCUIElementTypeTextField',
-      );
-      await verifyFind(
-        'xpath',
-        'UIAButton//UIATextField',
-        'XCUIElementTypeButton//XCUIElementTypeTextField',
-      );
+      await verifyFind('xpath', '//UIAButton/UIATextField', '//XCUIElementTypeButton/XCUIElementTypeTextField');
+      await verifyFind('xpath', 'UIAButton//UIATextField', 'XCUIElementTypeButton//XCUIElementTypeTextField');
       await verifyFind('xpath', '//UIAButton[@name="foo"]', '//XCUIElementTypeButton[@name="foo"]');
       await verifyFind('xpath', '//UIAButton/Weird', '//XCUIElementTypeButton/Weird');
-      await verifyFind(
-        'xpath',
-        '//UIAMapView/UIAScrollView',
-        '//XCUIElementTypeMap/XCUIElementTypeScrollView',
-      );
+      await verifyFind('xpath', '//UIAMapView/UIAScrollView', '//XCUIElementTypeMap/XCUIElementTypeScrollView');
       await verifyFind(
         'xpath',
         '//UIAMapView/UIAScrollView[@name="UIADummyData"]',
@@ -78,31 +67,23 @@ describe('general commands', function () {
     });
 
     it('should reject request for first visible child with no context', async function () {
-      await expect(
-        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false),
-      ).to.be.rejectedWith(/without a context element/);
+      await expect(driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)).to.be.rejectedWith(
+        /without a context element/,
+      );
     });
 
     it('should reject request for multiple first visible children', async function () {
-      await expect(
-        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true),
-      ).to.be.rejectedWith(/Cannot get multiple/);
+      await expect(driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)).to.be.rejectedWith(
+        /Cannot get multiple/,
+      );
     });
 
     it('should convert magic first visible child xpath to class chain', async function () {
-      const variants = [
-        '/*[@firstVisible="true"]',
-        "/*[@firstVisible='true']",
-        "/*[@firstVisible = 'true']",
-      ];
+      const variants = ['/*[@firstVisible="true"]', "/*[@firstVisible='true']", "/*[@firstVisible = 'true']"];
       const attribSpy = sinon.stub(driver, 'getAttribute');
       for (const variant of variants) {
-        proxySpy
-          .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[1]'})
-          .resolves({ELEMENT: 1});
-        proxySpy
-          .withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[2]'})
-          .resolves({ELEMENT: 2});
+        proxySpy.withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[1]'}).resolves({ELEMENT: 1});
+        proxySpy.withArgs('/element/ctx/element', 'POST', {using: 'class chain', value: '*[2]'}).resolves({ELEMENT: 2});
         attribSpy.withArgs('visible', {ELEMENT: 1}).resolves('false');
         attribSpy.withArgs('visible', {ELEMENT: 2}).resolves('true');
         const el = await driver.findNativeElementOrElements('xpath', variant, false, {

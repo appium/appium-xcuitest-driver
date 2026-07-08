@@ -1,10 +1,10 @@
-import {XCUITestDriver} from '../driver';
+import type {Element, StringRecord} from '@appium/types';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
-import type {Element, StringRecord} from '@appium/types';
 
-type ExecuteMethodArgs =
-  readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
+import {XCUITestDriver} from '../driver';
+
+type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
 
 /**
  * @template TReturn
@@ -19,10 +19,7 @@ export async function execute<TReturn = unknown>(
   // TODO: create a type that converts args to the parameters of the associated method using the `command` prop of `executeMethodMap`
   script = script.trim().replace(/^mobile:\s*/, 'mobile: ');
   if (isExecuteMethod(script)) {
-    const executeMethodArgs = preprocessExecuteMethodArgs(
-      script,
-      args as ExecuteMethodArgs | undefined,
-    );
+    const executeMethodArgs = preprocessExecuteMethodArgs(script, args as ExecuteMethodArgs | undefined);
     return await this.executeMethod(script, [executeMethodArgs]);
   } else if (this.isWebContext()) {
     const atomsArgs = this.convertElementsForAtoms(args as readonly any[] | undefined);
@@ -36,11 +33,7 @@ export async function execute<TReturn = unknown>(
 /**
  * @group Mobile Web Only
  */
-export async function executeAsync(
-  this: XCUITestDriver,
-  script: string,
-  args?: readonly any[],
-): Promise<any> {
+export async function executeAsync(this: XCUITestDriver, script: string, args?: readonly any[]): Promise<any> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError();
   }
@@ -118,9 +111,7 @@ function preprocessExecuteMethodArgs(
    * Most of these Execute Methods (typically beginning with `mobile*`) will accept an `Element|string` for `elementId`, in practice they will only ever get a `string`. `Element|string` in the method's docstring is simply for documentation purposes.
    */
   if ('elementId' in executeMethodArgs && executeMethodExpectsParam(script, 'elementId')) {
-    executeMethodArgs.elementId = util.unwrapElement(
-      executeMethodArgs.elementId as Element<string> | string,
-    );
+    executeMethodArgs.elementId = util.unwrapElement(executeMethodArgs.elementId as Element<string> | string);
   }
 
   return executeMethodArgs;

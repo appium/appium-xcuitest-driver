@@ -1,26 +1,23 @@
+import path from 'node:path';
+
+import type {AppiumLogger} from '@appium/types';
 import {fs, tempDir, zip, util, timing} from 'appium/support';
 import {asyncmap} from 'asyncbox';
-import path from 'node:path';
-import {
-  buildSafariPreferences,
-  SAFARI_BUNDLE_ID,
-  TimeoutError,
-  withTimeout,
-} from '../commands/helpers';
-import {isEmpty, isPlainObject} from '../utils';
-import {IPA_EXT} from '../commands/constants';
-import {log as defaultLogger} from '../logger';
 import {Devicectl} from 'node-devicectl';
-import type {AppiumLogger} from '@appium/types';
+
+import {IPA_EXT} from '../commands/constants';
+import {buildSafariPreferences, SAFARI_BUNDLE_ID, TimeoutError, withTimeout} from '../commands/helpers';
 import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
+import {log as defaultLogger} from '../logger';
+import {isEmpty, isPlainObject} from '../utils';
 import {AfcClient} from './afc-client';
+import {AppTerminationClient} from './app-termination-client';
 import {ConnectedDevicesClient} from './connected-devices-client';
 import {InstallationProxyClient} from './installation-proxy-client';
-import {NotificationClient} from './notification-client';
 import {LockdownClient} from './lockdown-client';
-import {AppTerminationClient} from './app-termination-client';
-import {ZipConduitClient} from './zip-conduit-client';
+import {NotificationClient} from './notification-client';
 import type {RemoteXPCFacade} from './remote-xpc';
+import {ZipConduitClient} from './zip-conduit-client';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;
@@ -115,11 +112,7 @@ export class RealDevice {
     await this.remove(bundleId);
   }
 
-  async install(
-    appPath: string,
-    bundleId: string,
-    opts: RealDeviceInstallOptions = {},
-  ): Promise<void> {
+  async install(appPath: string, bundleId: string, opts: RealDeviceInstallOptions = {}): Promise<void> {
     const {timeoutMs = IO_TIMEOUT_MS} = opts;
     const timer = new timing.Timer().start();
     const useRemoteXPC = (await this.remoteXPCFacade?.determineAvailability()) ?? false;
@@ -173,10 +166,7 @@ export class RealDevice {
     );
   }
 
-  async installOrUpgradeApplication(
-    bundlePathOnPhone: string,
-    opts: InstallOrUpgradeOptions,
-  ): Promise<void> {
+  async installOrUpgradeApplication(bundlePathOnPhone: string, opts: InstallOrUpgradeOptions): Promise<void> {
     const {isUpgrade, timeout} = opts;
     const notificationClient = await NotificationClient.create(this.udid, {
       facade: this.remoteXPCFacade,
@@ -186,9 +176,7 @@ export class RealDevice {
       facade: this.remoteXPCFacade,
       logger: this.log,
     });
-    const appInstalledNotification = notificationClient.observeNotification(
-      APPLICATION_INSTALLED_NOTIFICATION,
-    );
+    const appInstalledNotification = notificationClient.observeNotification(APPLICATION_INSTALLED_NOTIFICATION);
     const clientOptions = {PackageType: 'Developer'};
     try {
       if (isUpgrade) {
@@ -199,8 +187,7 @@ export class RealDevice {
         await installationClient.upgradeApplication(bundlePathOnPhone, clientOptions, timeout);
       } else {
         this.log.debug(
-          `A new application installation is going to be performed. ` +
-            `Will timeout in ${timeout.toFixed(0)} ms`,
+          `A new application installation is going to be performed. ` + `Will timeout in ${timeout.toFixed(0)} ms`,
         );
         await installationClient.installApplication(bundlePathOnPhone, clientOptions, timeout);
       }
@@ -223,11 +210,7 @@ export class RealDevice {
   /**
    * Alias for {@linkcode install}
    */
-  async installApp(
-    appPath: string,
-    bundleId: string,
-    opts: RealDeviceInstallOptions = {},
-  ): Promise<void> {
+  async installApp(appPath: string, bundleId: string, opts: RealDeviceInstallOptions = {}): Promise<void> {
     return await this.install(appPath, bundleId, opts);
   }
 
@@ -355,9 +338,7 @@ export class RealDevice {
     try {
       await this.remove(bundleId);
     } catch (err) {
-      this.log.error(
-        `Reset: could not remove '${bundleId}' from device: ${(err as Error).message}`,
-      );
+      this.log.error(`Reset: could not remove '${bundleId}' from device: ${(err as Error).message}`);
       throw err;
     }
     this.log.debug(`Reset: removed '${bundleId}'`);
@@ -410,11 +391,7 @@ export class RealDevice {
  * @param opts Pull file options
  * @returns The file content as a buffer
  */
-export async function pullFile(
-  client: AfcClient,
-  remotePath: string,
-  opts: PullFileOptions = {},
-): Promise<Buffer> {
+export async function pullFile(client: AfcClient, remotePath: string, opts: PullFileOptions = {}): Promise<Buffer> {
   const log = opts.log ?? defaultLogger;
   const timer = new timing.Timer().start();
   const buffer = await withTimeout(
@@ -452,10 +429,7 @@ export async function pullFolder(
       recursive: true,
       overwrite: true,
       onEntry: async (_remotePath: string, localPath: string, isDirectory: boolean) => {
-        if (
-          !localTopItem ||
-          localPath.split(path.sep).length < localTopItem.split(path.sep).length
-        ) {
+        if (!localTopItem || localPath.split(path.sep).length < localTopItem.split(path.sep).length) {
           localTopItem = localPath;
         }
         if (isDirectory) {
@@ -501,10 +475,7 @@ export async function pushFile(
 
   const pushPromise = Buffer.isBuffer(localPathOrPayload)
     ? client.setFileContents(remotePath, localPathOrPayload)
-    : client.writeFromStream(
-        remotePath,
-        fs.createReadStream(localPathOrPayload, {autoClose: true}),
-      );
+    : client.writeFromStream(remotePath, fs.createReadStream(localPathOrPayload, {autoClose: true}));
 
   const actualTimeout = Math.max(timeoutMs, 60000);
   await withTimeout(
@@ -538,10 +509,12 @@ export async function pushFolder(
 
   const timer = new timing.Timer().start();
   const allItems =
-    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (await fs.glob('**', {
-      cwd: srcRootPath,
-      withFileTypes: true,
-    })) as any[];
+    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (
+      await fs.glob('**', {
+        cwd: srcRootPath,
+        withFileTypes: true,
+      })
+    ) as any[];
   log.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
   // top-level folders go first
   const foldersToPush: string[] = allItems
@@ -553,9 +526,7 @@ export async function pushFolder(
     .filter((x) => !x.isDirectory())
     .sort((a, b) => (b.size ?? 0) - (a.size ?? 0))
     .map((x) => x.relative());
-  const totalBytes = allItems
-    .filter((x) => !x.isDirectory())
-    .reduce((sum, x) => sum + (x.size ?? 0), 0);
+  const totalBytes = allItems.filter((x) => !x.isDirectory()).reduce((sum, x) => sum + (x.size ?? 0), 0);
   log.debug(
     `Got ${util.pluralize('folder', foldersToPush.length, true)} and ` +
       `${util.pluralize('file', filesToPush.length, true)} to push`,
@@ -577,8 +548,7 @@ export async function pushFolder(
     }
   }
   log.debug(
-    `Successfully created the remote folder structure ` +
-      `(${util.pluralize('item', foldersToPush.length + 1, true)})`,
+    `Successfully created the remote folder structure ` + `(${util.pluralize('item', foldersToPush.length + 1, true)})`,
   );
 
   const _pushFile = async (relativePath: string): Promise<void> => {
@@ -670,10 +640,7 @@ export async function installToRealDevice(
   } catch (e) {
     // Want to clarify the device's application installation state in this situation.
 
-    if (
-      !skipUninstall ||
-      !(e as Error).message.includes('MismatchedApplicationIdentifierEntitlement')
-    ) {
+    if (!skipUninstall || !(e as Error).message.includes('MismatchedApplicationIdentifierEntitlement')) {
       // Other error cases that could not be recoverable by here.
       // Exact error will be in the log.
 
@@ -725,10 +692,7 @@ export function applySafariStartupArgs(this: XCUITestDriver): boolean {
     return false;
   }
 
-  const args = Object.entries(prefs).flatMap(([key, value]) => [
-    key.startsWith('-') ? key : `-${key}`,
-    String(value),
-  ]);
+  const args = Object.entries(prefs).flatMap(([key, value]) => [key.startsWith('-') ? key : `-${key}`, String(value)]);
   defaultLogger.debug(`Generated Safari command line arguments: ${args.join(' ')}`);
   const processArguments = this.opts.processArguments as {args: string[]} | undefined;
   if (processArguments && isPlainObject(processArguments)) {
@@ -751,9 +715,7 @@ export async function detectUdid(this: XCUITestDriver): Promise<string> {
   const udid = udids[udids.length - 1];
   if (udids.length > 1) {
     this.log.info(`Multiple devices found: ${udids.join(', ')}`);
-    this.log.info(
-      `Choosing '${udid}'. Consider settings the 'udid' capability if another device must be selected`,
-    );
+    this.log.info(`Choosing '${udid}'. Consider settings the 'udid' capability if another device must be selected`);
   }
   this.log.debug(`Detected real device udid: '${udid}'`);
   return udid;
@@ -785,9 +747,7 @@ function logAfcTransferPerformance(
   );
   if (elapsedSec >= 1 && byteCount > 0) {
     const bytesPerSec = Math.floor(byteCount / elapsedSec);
-    log.debug(
-      `Approximate average AFC ${direction} speed: ${util.toReadableSizeString(bytesPerSec)}/s`,
-    );
+    log.debug(`Approximate average AFC ${direction} speed: ${util.toReadableSizeString(bytesPerSec)}/s`);
   }
 }
 
@@ -797,9 +757,7 @@ function logAfcTransferPerformance(
  * @returns True if the APPIUM_XCUITEST_PREFER_DEVICECTL is set.
  */
 function isPreferDevicectlEnabled(): boolean {
-  return ['yes', 'true', '1'].includes(
-    String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL).toLowerCase(),
-  );
+  return ['yes', 'true', '1'].includes(String(process.env.APPIUM_XCUITEST_PREFER_DEVICECTL).toLowerCase());
 }
 
 /**

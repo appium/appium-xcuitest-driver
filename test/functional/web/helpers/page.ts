@@ -39,11 +39,7 @@ export async function spinTitleEquals(
   });
 }
 
-export async function spinWait(
-  fn: () => Promise<void>,
-  waitMs = 10000,
-  intMs = 500,
-): Promise<void> {
+export async function spinWait(fn: () => Promise<void>, waitMs = 10000, intMs = 500): Promise<void> {
   const tries = parseInt(String(waitMs / intMs), 10);
   await retryInterval(tries, intMs, fn);
 }
@@ -61,12 +57,7 @@ export async function resetWindows(driver: Browser): Promise<void> {
   await driver.switchToWindow(handles[0]);
 }
 
-export async function openPage(
-  driver: Browser,
-  url: string,
-  tries = 10,
-  interval = 500,
-): Promise<void> {
+export async function openPage(driver: Browser, url: string, tries = 10, interval = 500): Promise<void> {
   async function spinTitleNotEquals(wrongTitle: string): Promise<void> {
     await retryInterval(tries, interval, async function () {
       const title = await spinTitle(driver);

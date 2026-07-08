@@ -1,6 +1,8 @@
-import type {LogEntry} from '../../commands/types';
-import {fs} from 'appium/support';
 import {createInterface} from 'node:readline';
+
+import {fs} from 'appium/support';
+
+import type {LogEntry} from '../../commands/types';
 
 export const DEFAULT_LOG_LEVEL = 'ALL';
 export const MAX_JSON_LOG_LENGTH = 200;
@@ -11,11 +13,7 @@ export interface GrepOptions {
 }
 
 /** Converts raw log message fields into a WebDriver-style log entry. */
-export function toLogEntry(
-  message: string,
-  timestamp: number,
-  level: string = DEFAULT_LOG_LEVEL,
-): LogEntry {
+export function toLogEntry(message: string, timestamp: number, level: string = DEFAULT_LOG_LEVEL): LogEntry {
   return {
     timestamp,
     level,
@@ -24,11 +22,7 @@ export function toLogEntry(
 }
 
 /** Returns true if the file contains the provided string. */
-export async function grepFile(
-  fullPath: string,
-  str: string,
-  opts: GrepOptions = {},
-): Promise<boolean> {
+export async function grepFile(fullPath: string, str: string, opts: GrepOptions = {}): Promise<boolean> {
   const input = fs.createReadStream(fullPath);
   const rl = createInterface({input});
   return await new Promise((resolve, reject) => {

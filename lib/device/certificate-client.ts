@@ -1,7 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
-import type {RemoteXPCFacade} from './remote-xpc';
-import type {CertificateList} from '../commands/types';
 import type {MobileConfigService as RemoteXPCMobileConfigService} from 'appium-ios-remotexpc';
+
+import type {CertificateList} from '../commands/types';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Options for installing a certificate
@@ -34,11 +35,7 @@ export class CertificateClient {
    * @param useRemoteXPC - Must be `true` for this client; callers derive this from `isIos18OrNewer(opts)` after `start()`
    * @throws {Error} If `useRemoteXPC` is false, or RemoteXPC/mobile config setup fails
    */
-  static async create(
-    udid: string,
-    log: AppiumLogger,
-    facade: RemoteXPCFacade | null,
-  ): Promise<CertificateClient> {
+  static async create(udid: string, log: AppiumLogger, facade: RemoteXPCFacade | null): Promise<CertificateClient> {
     if (!facade) {
       throw new Error(
         'Real device SSL/certificate operations require iOS/tvOS 18 or newer with the optional ' +

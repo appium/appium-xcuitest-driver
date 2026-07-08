@@ -1,13 +1,14 @@
+import type {Simulator} from 'appium-ios-simulator';
 import type {
   RealDevicePreinstalledHostOps,
   SimulatorHostOps,
   WdaHostOps,
   WdaLaunchEnvironment,
 } from 'appium-webdriveragent';
-import type {Simulator} from 'appium-ios-simulator';
-import type {RealDevice} from './real-device-management';
+
 import type {XCUITestDriver} from '../driver';
 import {isIos18OrNewerPlatform} from '../utils';
+import type {RealDevice} from './real-device-management';
 
 const XCODE_ONLY_CAPS = [
   'usePrebuiltWDA',
@@ -33,10 +34,7 @@ interface HostStrategyCaps {
 /**
  * Whether the selected session strategy must avoid host-side Xcode/Simulator utilities.
  */
-export function isStrictHostUtilityMode(
-  opts: HostStrategyCaps,
-  platform: NodeJS.Platform = process.platform,
-): boolean {
+export function isStrictHostUtilityMode(opts: HostStrategyCaps, platform: NodeJS.Platform = process.platform): boolean {
   return platform !== 'darwin' && Boolean(opts.webDriverAgentUrl || opts.usePreinstalledWDA);
 }
 
@@ -162,15 +160,12 @@ function createSimulatorHostOps(driver: XCUITestDriver): SimulatorHostOps {
   };
 }
 
-function createRealDevicePreinstalledHostOps(
-  driver: XCUITestDriver,
-): RealDevicePreinstalledHostOps {
+function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevicePreinstalledHostOps {
   return {
     async launchPreinstalled({udid, bundleId, env}) {
       try {
-        const dvt = await driver.remoteXPCFacade.requireService(
-          'launch preinstalled WebDriverAgent',
-          (Services) => Services.startDVTService(udid),
+        const dvt = await driver.remoteXPCFacade.requireService('launch preinstalled WebDriverAgent', (Services) =>
+          Services.startDVTService(udid),
         );
         try {
           await dvt.processControl.launch({
@@ -202,16 +197,13 @@ function createRealDevicePreinstalledHostOps(
 
     async terminate({udid, bundleId}) {
       try {
-        const dvt = await driver.remoteXPCFacade.requireService(
-          'terminate preinstalled WebDriverAgent',
-          (Services) => Services.startDVTService(udid),
+        const dvt = await driver.remoteXPCFacade.requireService('terminate preinstalled WebDriverAgent', (Services) =>
+          Services.startDVTService(udid),
         );
         try {
           const pid = await dvt.processControl.getPidForBundleIdentifier(bundleId);
           if (!pid) {
-            driver.log.info(
-              `The preinstalled WebDriverAgent process '${bundleId}' was not running`,
-            );
+            driver.log.info(`The preinstalled WebDriverAgent process '${bundleId}' was not running`);
             return;
           }
           await dvt.processControl.kill(pid);

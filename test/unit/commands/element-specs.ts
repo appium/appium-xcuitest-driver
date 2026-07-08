@@ -1,8 +1,9 @@
-// eslint-disable-next-line
-import sinon, {createSandbox} from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+// eslint-disable-next-line
+import sinon, {createSandbox} from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 chai.use(chaiAsPromised);
 
@@ -405,9 +406,7 @@ describe('element commands', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
-      getNativeRectStub = sandbox
-        .stub(driver, 'getNativeRect')
-        .resolves({x: 0, y: 50, width: 100, height: 200});
+      getNativeRectStub = sandbox.stub(driver, 'getNativeRect').resolves({x: 0, y: 50, width: 100, height: 200});
       getLocationStub = sandbox.stub(driver, 'getLocation').resolves({x: 0, y: 50});
       getSizeStub = sandbox.stub(driver, 'getSize').resolves({width: 100, height: 200});
     });

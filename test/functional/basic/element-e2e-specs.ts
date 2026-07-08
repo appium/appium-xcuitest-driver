@@ -1,10 +1,12 @@
 import {setTimeout as delay} from 'node:timers/promises';
-import {retryInterval} from 'asyncbox';
-import {extractCapabilityValue, getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
+
 import {util} from 'appium/support';
+import {retryInterval} from 'asyncbox';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {extractCapabilityValue, getUICatalogCaps} from '../desired';
+import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
@@ -108,13 +110,7 @@ describe('XCUITestDriver - elements -', function () {
   describe('contentSize', function () {
     it('should get the contentSize of a table', async function () {
       const uiCatalogCaps = await getUICatalogCaps();
-      if (
-        util.compareVersions(
-          extractCapabilityValue(uiCatalogCaps, 'appium:platformVersion'),
-          '>=',
-          '13.0',
-        )
-      ) {
+      if (util.compareVersions(extractCapabilityValue(uiCatalogCaps, 'appium:platformVersion'), '>=', '13.0')) {
         return this.skip();
       }
       const table = await driver.$('XCUIElementTypeTable');

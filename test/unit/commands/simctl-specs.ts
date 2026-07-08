@@ -1,7 +1,8 @@
-import sinon from 'sinon';
-import {XCUITestDriver} from '../../../lib/driver';
-import {Simctl} from 'node-simctl';
 import {expect} from 'chai';
+import {Simctl} from 'node-simctl';
+import sinon from 'sinon';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 describe('general commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -51,8 +52,7 @@ describe('general commands', function () {
       driver.opts.udid = '60EB8FDB-92E0-4895-B466-0153C6DE7BAE';
       driver.isSimulator = () => true;
       mockSimctl.expects('exec').never();
-      await expect(driver.mobileSimctl('list', ['devices', 'booted', '--json'])).to.eventually.be
-        .rejected;
+      await expect(driver.mobileSimctl('list', ['devices', 'booted', '--json'])).to.eventually.be.rejected;
     });
 
     it('should raise an error as no udid', async function () {

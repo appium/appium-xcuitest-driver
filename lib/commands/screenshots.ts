@@ -1,10 +1,11 @@
-import {retryInterval} from 'asyncbox';
-import {capitalize} from '../utils';
+import type {Element} from '@appium/types';
+import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver';
 import {util, imageUtil} from 'appium/support';
+import {retryInterval} from 'asyncbox';
+
 import type {XCUITestDriver} from '../driver';
-import type {Simulator} from 'appium-ios-simulator';
-import type {Element} from '@appium/types';
+import {capitalize} from '../utils';
 
 /**
  * Takes a screenshot of the current screen.
@@ -81,10 +82,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
  * @param el - Element to capture
  * @returns Base64-encoded screenshot data
  */
-export async function getElementScreenshot(
-  this: XCUITestDriver,
-  el: Element<string> | string,
-): Promise<string> {
+export async function getElementScreenshot(this: XCUITestDriver, el: Element<string> | string): Promise<string> {
   el = util.unwrapElement(el);
   if (this.isWebContext()) {
     const atomsElement = this.getAtomsElement(el);

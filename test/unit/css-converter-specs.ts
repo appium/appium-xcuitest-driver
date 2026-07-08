@@ -1,5 +1,6 @@
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../../lib/css';
 
 chai.use(chaiAsPromised);
@@ -10,30 +11,18 @@ describe('css-converter.js', function () {
       ['XCUIElementTypeWindow:nth-child(2)', '**/XCUIElementTypeWindow[2]'],
       ['XCUIElementTypeWindow *', '**/XCUIElementTypeWindow/**/*'],
       ['XCUIElementTypeWindow > *', '**/XCUIElementTypeWindow/*'],
-      [
-        'XCUIElementTypeWindow[label^=foo]:nth-child(-1)',
-        '**/XCUIElementTypeWindow[`label BEGINSWITH "foo"`][-1]',
-      ],
+      ['XCUIElementTypeWindow[label^=foo]:nth-child(-1)', '**/XCUIElementTypeWindow[`label BEGINSWITH "foo"`][-1]'],
       [
         `XCUIElementTypeStaticText[name="foo"][value$='bar']`,
         '**/XCUIElementTypeStaticText[`name == "foo" AND value ENDSWITH "bar"`]',
       ],
       ['XCUIElementTypeOther[visible]', '**/XCUIElementTypeOther[`visible == 1`]'],
       ['*:visible', '**/*[`visible == 1`]'],
-      [
-        'XCUIElementTypeWindow > XCUIElementTypeText',
-        '**/XCUIElementTypeWindow/XCUIElementTypeText',
-      ],
-      [
-        'XCUIElementTypeWindow XCUIElementTypeText',
-        '**/XCUIElementTypeWindow/**/XCUIElementTypeText',
-      ],
+      ['XCUIElementTypeWindow > XCUIElementTypeText', '**/XCUIElementTypeWindow/XCUIElementTypeText'],
+      ['XCUIElementTypeWindow XCUIElementTypeText', '**/XCUIElementTypeWindow/**/XCUIElementTypeText'],
       ['XCUIElementTypeWindow#hello', '**/XCUIElementTypeWindow[`name == "hello"`]'],
       ['#foobar', '**/*[`name == "foobar"`]'],
-      [
-        'XCUIElementTypeText#foo > #bar',
-        '**/XCUIElementTypeText[`name == "foo"`]/*[`name == "bar"`]',
-      ],
+      ['XCUIElementTypeText#foo > #bar', '**/XCUIElementTypeText[`name == "foo"`]/*[`name == "bar"`]'],
       [
         'window#foo[visible=true][value^=foo] > text#bar other:nth-child(3)',
         '**/XCUIElementTypeWindow[`name == "foo" AND visible == 1 AND value BEGINSWITH "foo"`]/XCUIElementTypeText[`name == "bar"`]/**/XCUIElementTypeOther[3]',

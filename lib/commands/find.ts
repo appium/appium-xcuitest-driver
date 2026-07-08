@@ -1,9 +1,10 @@
-import {isEmpty} from '../utils';
-import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css';
+import type {Element, AppiumLogger} from '@appium/types';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
-import type {Element, AppiumLogger} from '@appium/types';
+
+import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css';
 import type {XCUITestDriver} from '../driver';
+import {isEmpty} from '../utils';
 import type {AllowedHttpMethod} from './proxy-helper';
 
 /**
@@ -271,9 +272,6 @@ function rewriteMagicScrollable(mult: boolean, log: AppiumLogger | null = null):
   if (!mult) {
     selector += '[1]';
   }
-  log?.info(
-    'Rewrote request for scrollable descendants to class chain ' +
-      `format with selector '${selector}'`,
-  );
+  log?.info('Rewrote request for scrollable descendants to class chain ' + `format with selector '${selector}'`);
   return [strategy, selector];
 }

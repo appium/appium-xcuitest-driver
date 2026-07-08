@@ -1,38 +1,25 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+
 import {expect} from 'chai';
 import ts from 'typescript';
 
 const HELPERS_DIR = path.resolve(__dirname, '../../lib/commands/helpers');
 const UTILS_DIR = path.resolve(__dirname, '../../lib/utils');
 
-const HELPERS_FORBIDDEN_SPECS = new Set([
-  './index',
-  './helpers',
-  '../helpers',
-  '../driver',
-  '../../driver',
-]);
+const HELPERS_FORBIDDEN_SPECS = new Set(['./index', './helpers', '../helpers', '../driver', '../../driver']);
 
 const LIB_DIR = path.resolve(__dirname, '../../lib');
 const UTILS_SUBMODULE_IMPORT_RE = /from\s+['"](?:\.\.\/)*utils\/(?:lang|memoize)['"]/;
 
-const UTILS_FORBIDDEN_SPECS = new Set([
-  './index',
-  './lang',
-  './memoize',
-  '../utils',
-  '../../utils',
-]);
+const UTILS_FORBIDDEN_SPECS = new Set(['./index', './lang', './memoize', '../utils', '../../utils']);
 
 async function parseTsFile(file: string): Promise<ts.SourceFile> {
   const content = await fs.readFile(file, 'utf8');
   return ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 }
 
-function moduleSpecifierText(
-  node: ts.ImportDeclaration | ts.ExportDeclaration,
-): string | undefined {
+function moduleSpecifierText(node: ts.ImportDeclaration | ts.ExportDeclaration): string | undefined {
   const specifier = node.moduleSpecifier;
   return specifier && ts.isStringLiteral(specifier) ? specifier.text : undefined;
 }
@@ -152,10 +139,7 @@ async function assertNoCycles(dir: string): Promise<void> {
   const files = await listTsFiles(dir, {excludeIndex: false});
   const graph = await buildIntraDirGraph(files);
   const cycles = findCycles(graph, dir);
-  expect(
-    cycles,
-    `cyclic imports in ${path.relative(process.cwd(), dir)}: ${JSON.stringify(cycles)}`,
-  ).to.be.empty;
+  expect(cycles, `cyclic imports in ${path.relative(process.cwd(), dir)}: ${JSON.stringify(cycles)}`).to.be.empty;
 }
 
 async function listLibTsFiles(dir: string): Promise<string[]> {

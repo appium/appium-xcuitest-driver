@@ -1,9 +1,11 @@
-import {unzipStream, unzipFile} from '../../lib/commands/helpers';
-import {fs, tempDir, zip} from 'appium/support';
 import path from 'node:path';
-import {getUIKitCatalogPath} from '../setup';
+
+import {fs, tempDir, zip} from 'appium/support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {unzipStream, unzipFile} from '../../lib/commands/helpers';
+import {getUIKitCatalogPath} from '../setup';
 
 chai.use(chaiAsPromised);
 

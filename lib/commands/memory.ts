@@ -1,7 +1,8 @@
-import {escapeRegExp, isEmpty} from '../utils';
 import {errors} from 'appium/driver';
-import {requireRealDevice} from './helpers';
+
 import type {XCUITestDriver} from '../driver';
+import {escapeRegExp, isEmpty} from '../utils';
+import {requireRealDevice} from './helpers';
 
 /**
  * Simulates Low Memory warning on the given application
@@ -10,10 +11,7 @@ import type {XCUITestDriver} from '../driver';
  * @param bundleId - The bundle identifier of the target app. The app must be running
  * @throws If the app is not running or is not installed
  */
-export async function mobileSendMemoryWarning(
-  this: XCUITestDriver,
-  bundleId: string,
-): Promise<void> {
+export async function mobileSendMemoryWarning(this: XCUITestDriver, bundleId: string): Promise<void> {
   const device = requireRealDevice(this, 'Memory warning simulation');
   const appInfos = await device.devicectl.listApps(bundleId);
   if (isEmpty(appInfos)) {
@@ -40,8 +38,6 @@ export async function mobileSendMemoryWarning(
       `The application identified by ${bundleId} must be running in order to simulate the Low Memory warning`,
     );
   }
-  this.log.info(
-    `Emulating Low Memory warning for the process id ${pids[0]}, bundle id ${bundleId}`,
-  );
+  this.log.info(`Emulating Low Memory warning for the process id ${pids[0]}, bundle id ${bundleId}`);
   await device.devicectl.sendMemoryWarning(pids[0]);
 }

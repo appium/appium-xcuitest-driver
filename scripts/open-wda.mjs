@@ -1,7 +1,8 @@
 import path from 'node:path';
-import { exec } from 'teen_process';
-import { logger } from 'appium/support.js';
-import { BOOTSTRAP_PATH } from 'appium-webdriveragent';
+
+import {BOOTSTRAP_PATH} from 'appium-webdriveragent';
+import {logger} from 'appium/support.js';
+import {exec} from 'teen_process';
 
 const log = logger.getLogger('WDA');
 const XCODEPROJ_NAME = 'WebDriverAgent.xcodeproj';

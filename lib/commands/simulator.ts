@@ -1,12 +1,13 @@
+import type {Simulator} from 'appium-ios-simulator';
+
 import {
   createSim as createSimulator,
   setLocalizationPrefs,
   setSafariPrefs,
   shutdownOtherSimulators,
 } from '../device/simulator-management';
-import {upperFirst} from '../utils';
 import type {XCUITestDriver} from '../driver';
-import type {Simulator} from 'appium-ios-simulator';
+import {upperFirst} from '../utils';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
@@ -73,8 +74,7 @@ export async function startSim(this: XCUITestDriver): Promise<void> {
 
   // This is to workaround XCTest bug about changing Simulator
   // orientation is not synchronized to the actual window orientation
-  const orientation =
-    typeof this.opts.orientation === 'string' && (this.opts.orientation as string).toUpperCase();
+  const orientation = typeof this.opts.orientation === 'string' && (this.opts.orientation as string).toUpperCase();
   switch (orientation) {
     case 'LANDSCAPE':
       devicePreferences.SimulatorWindowOrientation = 'LandscapeLeft';

@@ -1,9 +1,10 @@
-import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup';
-import {isLocalHost} from '../../lib/commands/helpers';
-import {createSandbox} from 'sinon';
 import {fs} from 'appium/support';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {createSandbox} from 'sinon';
+
+import {isLocalHost} from '../../lib/commands/helpers';
+import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup';
 
 chai.use(chaiAsPromised);
 

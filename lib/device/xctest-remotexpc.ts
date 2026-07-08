@@ -1,7 +1,8 @@
-import {logger} from 'appium/support';
-import {errors} from 'appium/driver';
 import type {StringRecord} from '@appium/types';
 import type {XCTestEvent, XCTestRunnerOptions, XCTestRunStage} from 'appium-ios-remotexpc';
+import {errors} from 'appium/driver';
+import {logger} from 'appium/support';
+
 import type {XCTestResult, RunXCTestResult} from '../commands/types';
 import {InstallationProxyClient} from './installation-proxy-client';
 import type {RemoteXPCFacade} from './remote-xpc';
@@ -109,15 +110,11 @@ export async function runXCTestViaRemoteXPC(
   }
 
   if (runResult.status === 'timed_out') {
-    throw new errors.TimeoutError(
-      `Timed out after '${timeout}ms' waiting for XCTest to complete via RemoteXPC`,
-    );
+    throw new errors.TimeoutError(`Timed out after '${timeout}ms' waiting for XCTest to complete via RemoteXPC`);
   }
 
   const allPassed =
-    results.length > 0
-      ? results.every((r) => r.passed)
-      : (runResult.testSummary?.failureCount ?? 0) === 0;
+    results.length > 0 ? results.every((r) => r.passed) : (runResult.testSummary?.failureCount ?? 0) === 0;
   return {
     results,
     code: allPassed ? 0 : 1,
@@ -130,10 +127,7 @@ export async function runXCTestViaRemoteXPC(
  * List XCTest bundles installed on the device via RemoteXPC.
  * Uses InstallationProxy to browse apps and filter for xctrunner bundles.
  */
-export async function listXCTestBundlesViaRemoteXPC(
-  udid: string,
-  facade: RemoteXPCFacade,
-): Promise<string[]> {
+export async function listXCTestBundlesViaRemoteXPC(udid: string, facade: RemoteXPCFacade): Promise<string[]> {
   const installProxy = await InstallationProxyClient.create(udid, {
     facade,
     logger: xctestLog,
@@ -169,9 +163,7 @@ export async function installXCTestBundleViaRemoteXPC(
   facade: RemoteXPCFacade,
 ): Promise<void> {
   if (xctestApp.endsWith('.xctest')) {
-    throw new Error(
-      'Bare .xctest bundles cannot be installed via RemoteXPC. Provide a .app or .ipa instead.',
-    );
+    throw new Error('Bare .xctest bundles cannot be installed via RemoteXPC. Provide a .app or .ipa instead.');
   }
 
   const installProxy = await InstallationProxyClient.create(udid, {

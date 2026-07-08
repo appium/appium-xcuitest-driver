@@ -1,21 +1,23 @@
-import {isEmpty} from '../utils';
-import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
-import {IOSCrashLog} from '../device/log/ios-crash-log';
-import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
-import {IOSDeviceLog} from '../device/log/ios-device-log';
-import WebSocket from 'ws';
-import {SafariConsoleLog} from '../device/log/safari-console-log';
-import {SafariNetworkLog} from '../device/log/safari-network-log';
-import {toLogEntry} from '../device/log/helpers';
-import {NATIVE_WIN} from './constants';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {makeLogEntryAddedEvent} from './bidi/models';
-import type {XCUITestDriver} from '../driver';
-import type {IOSLog} from '../device/log/ios-log';
-import type {LogEntry, LogListener} from './types';
+import type {EventEmitter} from 'node:events';
+
 import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import type {EventEmitter} from 'node:events';
+import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
+import WebSocket from 'ws';
+
+import {toLogEntry} from '../device/log/helpers';
+import {IOSCrashLog} from '../device/log/ios-crash-log';
+import {IOSDeviceLog} from '../device/log/ios-device-log';
+import type {IOSLog} from '../device/log/ios-log';
+import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
+import {SafariConsoleLog} from '../device/log/safari-console-log';
+import {SafariNetworkLog} from '../device/log/safari-network-log';
+import type {XCUITestDriver} from '../driver';
+import {isEmpty} from '../utils';
+import {BIDI_EVENT_NAME} from './bidi/constants';
+import {makeLogEntryAddedEvent} from './bidi/models';
+import {NATIVE_WIN} from './constants';
+import type {LogEntry, LogListener} from './types';
 
 export type DriverLogs = Record<
   'syslog' | 'crashlog' | 'safariConsole' | 'safariNetwork' | 'performance',
@@ -110,9 +112,7 @@ export async function extractLogs(
         `to the 'appium:${LOG_NAMES_TO_CAPABILITY_NAMES_MAP[logType]}' capability.`,
     );
   }
-  throw new Error(
-    `No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES)}.`,
-  );
+  throw new Error(`No logs of type '${logType}' found. Supported log types are: ${Object.keys(SUPPORTED_LOG_TYPES)}.`);
 }
 
 /**
@@ -222,9 +222,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
 export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
   if (!isEmpty(await (this.server as AppiumServer).getWebSocketHandlers(pathname))) {
-    this.log.debug(
-      `The system logs broadcasting web socket server is already listening at ${pathname}`,
-    );
+    this.log.debug(`The system logs broadcasting web socket server is already listening at ${pathname}`);
     return;
   }
 
@@ -238,9 +236,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       const remoteIp = isEmpty(req.headers['x-forwarded-for'])
         ? req.connection?.remoteAddress
         : req.headers['x-forwarded-for'];
-      this.log.debug(
-        `Established a new system logs listener web socket connection from ${remoteIp}`,
-      );
+      this.log.debug(`Established a new system logs listener web socket connection from ${remoteIp}`);
     } else {
       this.log.debug('Established a new system logs listener web socket connection');
     }

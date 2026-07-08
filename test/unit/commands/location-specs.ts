@@ -1,9 +1,10 @@
+import {services} from 'appium-ios-device';
+import {expect} from 'chai';
 import sinon from 'sinon';
+
+import {RealDevice} from '../../../lib/device/real-device-management';
 import {XCUITestDriver} from '../../../lib/driver';
 import type {XCUITestDriverOpts} from '../../../lib/driver';
-import {services} from 'appium-ios-device';
-import {RealDevice} from '../../../lib/device/real-device-management';
-import {expect} from 'chai';
 
 describe('location commands', function () {
   const udid = '1234';
@@ -26,9 +27,7 @@ describe('location commands', function () {
     });
 
     it('should be authorizationStatus !== 3', async function () {
-      proxySpy
-        .withArgs('/wda/device/location', 'GET')
-        .resolves({authorizationStatus: 0, latitude: 0, longitude: 0});
+      proxySpy.withArgs('/wda/device/location', 'GET').resolves({authorizationStatus: 0, latitude: 0, longitude: 0});
 
       await expect(driver.getGeoLocation()).to.be.rejectedWith('Location service must be');
     });
@@ -115,13 +114,9 @@ describe('location commands', function () {
       it('should use mobileSetSimulatedLocation to set a location for over platform version 17 with exception', async function () {
         const locationRequest = {latitude: 1.234, longitude: 2.789};
         driver.opts.platformVersion = '17.0.0';
-        proxySpy
-          .withArgs('/wda/simulatedLocation', 'POST', locationRequest)
-          .throws('An error in proxying the request');
+        proxySpy.withArgs('/wda/simulatedLocation', 'POST', locationRequest).throws('An error in proxying the request');
 
-        await expect(driver.setGeoLocation(locationRequest)).to.be.rejectedWith(
-          'An error in proxying the request',
-        );
+        await expect(driver.setGeoLocation(locationRequest)).to.be.rejectedWith('An error in proxying the request');
 
         expect(startSimulateLocationServiceStub.calledOnce).to.be.false;
         expect(proxySpy.firstCall.args[0]).to.eql('/wda/simulatedLocation');

@@ -1,14 +1,16 @@
-import {fs, tempDir, util} from 'appium/support';
-import {asyncfilter} from 'asyncbox';
 import path from 'node:path';
-import {isEmpty} from '../../utils';
-import {CrashReportsClient} from '../crash-reports-client';
-import {IOSLog} from './ios-log';
-import {toLogEntry, grepFile} from './helpers';
+
 import type {AppiumLogger} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import type {RemoteXPCFacade} from '../remote-xpc';
+import {fs, tempDir, util} from 'appium/support';
+import {asyncfilter} from 'asyncbox';
+
 import type {LogEntry} from '../../commands/types';
+import {isEmpty} from '../../utils';
+import {CrashReportsClient} from '../crash-reports-client';
+import type {RemoteXPCFacade} from '../remote-xpc';
+import {toLogEntry, grepFile} from './helpers';
+import {IOSLog} from './ios-log';
 
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';
@@ -126,8 +128,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
             await (this._realDeviceClient as CrashReportsClient).exportCrash(fileName, tmpRoot);
           } catch (e) {
             this.log.warn(
-              `Cannot export the crash report '${fileName}'. Skipping it. ` +
-                `Original error: ${(e as Error).message}`,
+              `Cannot export the crash report '${fileName}'. Skipping it. ` + `Original error: ${(e as Error).message}`,
             );
             return;
           }
@@ -150,10 +151,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
   private async _gatherFromRealDevice(): Promise<string[]> {
     if (!this._realDeviceClient) {
       try {
-        this._realDeviceClient = await CrashReportsClient.create(
-          this._udid as string,
-          this._remoteXPCFacade,
-        );
+        this._realDeviceClient = await CrashReportsClient.create(this._udid as string, this._remoteXPCFacade);
       } catch (err) {
         this.log.error(
           `Failed to create crash reports client: ${(err as Error).message}. ` +
@@ -208,9 +206,7 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
 
   /** Dispatches to real-device RemoteXPC listing or simulator filesystem globbing. */
   private async _listCrashFiles(): Promise<string[]> {
-    return this._isRealDevice()
-      ? await this._gatherFromRealDevice()
-      : await this._gatherFromSimulator();
+    return this._isRealDevice() ? await this._gatherFromRealDevice() : await this._gatherFromSimulator();
   }
 
   private _isRealDevice(): boolean {

@@ -1,9 +1,8 @@
-import {isEmpty, isPlainObject, isTvOs} from '../utils';
-import path from 'node:path';
-import os from 'node:os';
 import assert from 'node:assert';
-import {fs, util, tempDir, timing} from 'appium/support';
-import {exec} from 'teen_process';
+import os from 'node:os';
+import path from 'node:path';
+import type {Readable} from 'node:stream';
+
 import type {
   CachedAppInfo,
   DownloadAppOptions,
@@ -11,10 +10,13 @@ import type {
   PostProcessOptions,
   PostProcessResult,
 } from '@appium/types';
-import type {Readable} from 'node:stream';
+import {fs, util, tempDir, timing} from 'appium/support';
+import {exec} from 'teen_process';
+
 import type {XCUITestDriver} from '../driver';
-import {findApps, unzipFile, unzipStream} from './helpers';
+import {isEmpty, isPlainObject, isTvOs} from '../utils';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants';
+import {findApps, unzipFile, unzipStream} from './helpers';
 
 const ZIP_EXT = '.zip';
 const SANITIZE_REPLACEMENT = '-';
@@ -51,14 +53,8 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
     return;
   }
 
-  const executablePath = path.resolve(
-    this.opts.app,
-    await this.appInfosCache.extractExecutableName(this.opts.app),
-  );
-  const [resFile, resUname] = await Promise.all([
-    exec('lipo', ['-info', executablePath]),
-    exec('uname', ['-m']),
-  ]);
+  const executablePath = path.resolve(this.opts.app, await this.appInfosCache.extractExecutableName(this.opts.app));
+  const [resFile, resUname] = await Promise.all([exec('lipo', ['-info', executablePath]), exec('uname', ['-m'])]);
   const bundleExecutableInfo = resFile.stdout.trim();
   this.log.debug(bundleExecutableInfo);
   const processArch = resUname.stdout.trim();
@@ -100,10 +96,7 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
  * .zip and .ipa formats are supported.
  * A .zip archive can contain one or more
  */
-export async function onDownloadApp(
-  this: XCUITestDriver,
-  opts: DownloadAppOptions,
-): Promise<string> {
+export async function onDownloadApp(this: XCUITestDriver, opts: DownloadAppOptions): Promise<string> {
   return this.isRealDevice()
     ? await downloadIpa.bind(this)(opts.stream, opts.headers)
     : await unzipApp.bind(this)(opts.stream);
@@ -115,9 +108,7 @@ export async function onPostConfigureApp(
   opts: PostProcessOptions,
 ): Promise<PostProcessResult | false> {
   // Pick the previously cached entry if its integrity has been preserved
-  const appInfo = isPlainObject(opts.cachedAppInfo)
-    ? (opts.cachedAppInfo as CachedAppInfo)
-    : undefined;
+  const appInfo = isPlainObject(opts.cachedAppInfo) ? (opts.cachedAppInfo as CachedAppInfo) : undefined;
   const cachedPath = appInfo ? appInfo.fullPath : undefined;
 
   const shouldUseCachedApp = async () => {
@@ -223,11 +214,7 @@ function parseFileName(headers: HTTPHeaders): string | null {
 /**
  * Downloads and verifies remote applications for real devices
  */
-async function downloadIpa(
-  this: XCUITestDriver,
-  stream: Readable,
-  headers: HTTPHeaders,
-): Promise<string> {
+async function downloadIpa(this: XCUITestDriver, stream: Readable, headers: HTTPHeaders): Promise<string> {
   const timer = new timing.Timer().start();
 
   const logPerformance = (dstPath: string, fileSize: number, action: string) => {

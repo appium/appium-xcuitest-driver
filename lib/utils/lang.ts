@@ -48,10 +48,7 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
  * Assigns own enumerable properties of `source` onto `target` only where `target[key] === undefined`
  * (lodash `defaults` semantics).
  */
-export function assignDefaults<T extends Record<string, unknown>>(
-  target: T,
-  source: Record<string, unknown>,
-): void {
+export function assignDefaults<T extends Record<string, unknown>>(target: T, source: Record<string, unknown>): void {
   for (const key of Object.keys(source)) {
     if (target[key] === undefined) {
       (target as Record<string, unknown>)[key] = source[key];
@@ -62,10 +59,7 @@ export function assignDefaults<T extends Record<string, unknown>>(
 /**
  * Deep-merges own enumerable properties of each `source` into `target` (lodash `merge` semantics).
  */
-export function mergeDeep<T extends Record<string, unknown>>(
-  target: T,
-  ...sources: Record<string, unknown>[]
-): T {
+export function mergeDeep<T extends Record<string, unknown>>(target: T, ...sources: Record<string, unknown>[]): T {
   for (const source of sources) {
     for (const key of Object.keys(source)) {
       const sourceValue = source[key];
@@ -83,10 +77,7 @@ export function mergeDeep<T extends Record<string, unknown>>(
 /**
  * Truncates a string to `length` characters (lodash-compatible default omission).
  */
-export function truncateString(
-  value: string,
-  {length, omission = '...'}: {length: number; omission?: string},
-): string {
+export function truncateString(value: string, {length, omission = '...'}: {length: number; omission?: string}): string {
   if (value.length <= length) {
     return value;
   }

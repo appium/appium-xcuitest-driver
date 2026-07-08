@@ -1,8 +1,9 @@
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {createGuineaPigServerSession, openPage, guineaPigPage} from './helpers';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
@@ -33,8 +34,7 @@ describe('safari - execute -', function () {
   async function runTests(secure = false) {
     describe('mobile: x methods', function () {
       it('should run in native context', async function () {
-        await expect(driver.executeScript('mobile: scroll', [{direction: 'down'}])).to.not.be
-          .rejected;
+        await expect(driver.executeScript('mobile: scroll', [{direction: 'down'}])).to.not.be.rejected;
       });
     });
 
@@ -68,34 +68,25 @@ describe('safari - execute -', function () {
 
         it('should catch stale or undefined element as arg', async function () {
           const el = await driver.findElement('id', 'useragent');
-          await expect(driver.executeScript(SCROLL_INTO_VIEW, [{ELEMENT: el.value + 1}])).to.be
-            .rejected;
+          await expect(driver.executeScript(SCROLL_INTO_VIEW, [{ELEMENT: el.value + 1}])).to.be.rejected;
         });
 
         it('should be able to return multiple elements from javascript', async function () {
-          await expect(
-            driver.executeScript(GET_ELEM_BY_TAGNAME, []),
-          ).to.eventually.have.length.above(0);
+          await expect(driver.executeScript(GET_ELEM_BY_TAGNAME, [])).to.eventually.have.length.above(0);
         });
       }
 
       it('should pass along non-element arguments', async function () {
         const arg = 'non-element-argument';
         await expect(
-          driver.executeScript(
-            'var args = Array.prototype.slice.call(arguments, 0); return args[0];',
-            [arg],
-          ),
+          driver.executeScript('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [arg]),
         ).to.eventually.equal(arg);
       });
 
       it('should handle return values correctly', async function () {
         const arg = ['one', 'two', 'three'];
         await expect(
-          driver.executeScript(
-            'var args = Array.prototype.slice.call(arguments, 0); return args;',
-            arg,
-          ),
+          driver.executeScript('var args = Array.prototype.slice.call(arguments, 0); return args;', arg),
         ).to.eventually.eql(arg);
       });
     });

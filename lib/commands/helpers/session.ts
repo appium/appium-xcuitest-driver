@@ -16,9 +16,7 @@ export interface SafariUrlSessionOpts {
  * Stops and removes all web socket handlers that are listening
  * in scope of the current session.
  */
-export async function removeAllSessionWebSocketHandlers(
-  this: SessionWebSocketHandlerHost,
-): Promise<void> {
+export async function removeAllSessionWebSocketHandlers(this: SessionWebSocketHandlerHost): Promise<void> {
   if (!this.sessionId || typeof this.server?.getWebSocketHandlers !== 'function') {
     return;
   }
@@ -31,8 +29,5 @@ export async function removeAllSessionWebSocketHandlers(
 
 /** Whether the initial Safari URL should be pushed at session start. */
 export function shouldSetInitialSafariUrl(opts: SafariUrlSessionOpts): boolean {
-  return (
-    !(opts.safariInitialUrl === '' || (opts.noReset && opts.safariInitialUrl == null)) &&
-    !opts.initialDeeplinkUrl
-  );
+  return !(opts.safariInitialUrl === '' || (opts.noReset && opts.safariInitialUrl == null)) && !opts.initialDeeplinkUrl;
 }

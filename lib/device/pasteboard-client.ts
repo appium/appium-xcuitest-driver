@@ -1,5 +1,6 @@
-import type {RemoteXPCFacade} from './remote-xpc';
 import type {PasteboardService} from 'appium-ios-remotexpc';
+
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Pasteboard service on real hardware.
@@ -47,9 +48,7 @@ export class PasteboardClient {
     });
   }
 
-  private async withPasteboardService<T>(
-    operation: (pasteboardService: PasteboardService) => Promise<T>,
-  ): Promise<T> {
+  private async withPasteboardService<T>(operation: (pasteboardService: PasteboardService) => Promise<T>): Promise<T> {
     const pasteboardService = await this.remoteXPCFacade.requireService('Pasteboard', (Services) =>
       Services.startPasteboardService(this.udid),
     );

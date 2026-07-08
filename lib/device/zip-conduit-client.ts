@@ -1,7 +1,8 @@
-import type {RemoteXPCFacade} from './remote-xpc';
-import {log} from '../logger';
 import type {AppiumLogger} from '@appium/types';
 import type {ZipConduitService as RemoteXPCZipConduitService} from 'appium-ios-remotexpc';
+
+import {log} from '../logger';
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * Options accepted by {@link ZipConduitClient.install}
@@ -81,10 +82,7 @@ export class ZipConduitClient {
   }
 
   private logInstallProgress(percent: number, status: string): void {
-    if (
-      percent === this._lastLoggedProgress?.percent &&
-      status === this._lastLoggedProgress?.status
-    ) {
+    if (percent === this._lastLoggedProgress?.percent && status === this._lastLoggedProgress?.status) {
       return;
     }
     this._lastLoggedProgress = {percent, status};

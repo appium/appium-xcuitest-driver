@@ -1,6 +1,7 @@
-import {XCUITestDriver} from '../../../lib/driver';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {XCUITestDriver} from '../../../lib/driver';
 
 chai.use(chaiAsPromised);
 
@@ -48,8 +49,7 @@ describe('context', function () {
         },
       } as any;
       driver._remote = remoteMock;
-      driver.opts.safariIgnoreWebHostnames =
-        'www.google.com, www.bing.com,yahoo.com, about:blank, ';
+      driver.opts.safariIgnoreWebHostnames = 'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
       expect(selectPageArgs).to.eql(['5191', 1]);
     });
@@ -72,8 +72,7 @@ describe('context', function () {
           },
         } as any;
         driver._remote = remoteMock;
-        driver.opts.safariIgnoreWebHostnames =
-          'www.google.com, www.bing.com,www.yahoo.com, about:blank, ';
+        driver.opts.safariIgnoreWebHostnames = 'www.google.com, www.bing.com,www.yahoo.com, about:blank, ';
         await driver.onPageChange(pageChangeNotification);
         expect(selectPageArgs).to.be.null;
       }

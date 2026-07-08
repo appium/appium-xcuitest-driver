@@ -20,9 +20,9 @@
  */
 
 import {createUsbmux} from 'appium-ios-remotexpc';
-import {Devicectl} from 'node-devicectl';
 import {logger, util} from 'appium/support.js';
 import {Command, Option} from 'commander';
+import {Devicectl} from 'node-devicectl';
 
 const log = logger.getLogger('Lister');
 
@@ -70,7 +70,10 @@ class RealDevicesLister {
     /** @type {Map<string, Array<UsbmuxDevice | DeviceInfo>>} */
     const map = new Map();
     for (const d of devices) {
-      const udid = source === 'usbmux' ? this._getUsbmuxUdid(/** @type {UsbmuxDevice} */ (d)) : this._getDevicectlUdid(/** @type {DeviceInfo} */ (d));
+      const udid =
+        source === 'usbmux'
+          ? this._getUsbmuxUdid(/** @type {UsbmuxDevice} */ (d))
+          : this._getDevicectlUdid(/** @type {DeviceInfo} */ (d));
       const key = udid ?? 'unknown';
       let bucket = map.get(key);
       if (!bucket) {
@@ -163,14 +166,13 @@ class RealDevicesLister {
     try {
       raw = await new Devicectl('').listDevices();
     } catch (err) {
-      throw new Error(
-        `devicectl requires Xcode 15+ and a working \`xcrun devicectl list devices\``,
-        {cause: err},
-      );
+      throw new Error(`devicectl requires Xcode 15+ and a working \`xcrun devicectl list devices\``, {cause: err});
     }
 
     if (raw.length === 0) {
-      log.info('No devices reported by devicectl. Pair devices in Xcode / Wireless and ensure Core Device is available.');
+      log.info(
+        'No devices reported by devicectl. Pair devices in Xcode / Wireless and ensure Core Device is available.',
+      );
       return [];
     }
 
@@ -297,12 +299,7 @@ class RealDevicesLister {
     }
     // `JSON.stringify` invokes Buffer#toJSON first, so we see `{ type: 'Buffer', data: [...] }` here.
     const asRecord = /** @type {Record<string, unknown>} */ (value);
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      asRecord.type === 'Buffer' &&
-      Array.isArray(asRecord.data)
-    ) {
+    if (value !== null && typeof value === 'object' && asRecord.type === 'Buffer' && Array.isArray(asRecord.data)) {
       return this._formatBufferForJson(key, Buffer.from(/** @type {number[]} */ (asRecord.data)));
     }
     return value;

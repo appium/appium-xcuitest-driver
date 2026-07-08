@@ -1,16 +1,18 @@
+import {EventEmitter} from 'node:events';
+
 import type {IAppiumIpc, IpcData, IpcMessage} from '@appium/types';
 import {node} from 'appium/support';
-import {EventEmitter} from 'node:events';
+import {expect} from 'chai';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
-import {expect} from 'chai';
+
+import type {XCUITestDriver} from '../../lib/driver';
 import {
   resetDriverInstanceIpcForTesting,
   SessionClaimHandler,
   sessionClaimHandler,
   setSharedIpcForTesting,
 } from '../../lib/session-claim-handler';
-import type {XCUITestDriver} from '../../lib/driver';
 
 class MockIpcSubscription extends EventEmitter {
   isActive = true;
@@ -112,17 +114,14 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
     expect((oldDriver.deleteSession as sinon.SinonStub).calledOnce).to.be.true;
-    expect((oldDriver.log.warn as sinon.SinonStub).calledWithMatch(/highly discouraged/)).to.be
-      .true;
+    expect((oldDriver.log.warn as sinon.SinonStub).calledWithMatch(/highly discouraged/)).to.be.true;
     expect((newDriver.deleteSession as sinon.SinonStub).called).to.be.false;
     expect(mockIpc.getMessage(SessionClaimHandler.RELEASED_TOPIC)?.data).to.eql({
       udid: 'device-1',
       sessionId: 'old-session',
     });
     expect(
-      (newDriver.log.debug as sinon.SinonStub).calledWithMatch(
-        /Received release confirmation from 1 session for udid/,
-      ),
+      (newDriver.log.debug as sinon.SinonStub).calledWithMatch(/Received release confirmation from 1 session for udid/),
     ).to.be.true;
   });
 
@@ -233,13 +232,9 @@ describe('SessionClaimHandler', function () {
     const newDriver = makeDriver();
 
     await sessionClaimHandler.registerActiveSession(newDriver);
-    const activeSubscriptionsBeforeClaim = mockIpc.subscriptions.filter(
-      (subscription) => subscription.isActive,
-    ).length;
+    const activeSubscriptionsBeforeClaim = mockIpc.subscriptions.filter((subscription) => subscription.isActive).length;
 
-    await expect(sessionClaimHandler.claimSessionUdid(newDriver)).to.be.rejectedWith(
-      'publish failed',
-    );
+    await expect(sessionClaimHandler.claimSessionUdid(newDriver)).to.be.rejectedWith('publish failed');
 
     expect(mockIpc.subscriptions.filter((subscription) => subscription.isActive)).to.have.length(
       activeSubscriptionsBeforeClaim,

@@ -1,14 +1,11 @@
-import {truncateString} from '../../utils';
-import {LineConsumingLog} from './line-consuming-log';
-import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
 import type {AppiumLogger, StringRecord} from '@appium/types';
 
+import {truncateString} from '../../utils';
+import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
+import {LineConsumingLog} from './line-consuming-log';
+
 const EVENTS_TO_LOG = ['Network.loadingFinished', 'Network.loadingFailed'];
-const MONITORED_EVENTS = [
-  'Network.requestWillBeSent',
-  'Network.responseReceived',
-  ...EVENTS_TO_LOG,
-];
+const MONITORED_EVENTS = ['Network.requestWillBeSent', 'Network.responseReceived', ...EVENTS_TO_LOG];
 
 export interface SafariConsoleLogOptions {
   showLogs: boolean;
@@ -109,9 +106,7 @@ export class SafariNetworkLog extends LineConsumingLog {
     const serializedEntry = JSON.stringify({method, event: entry});
     this.broadcast(serializedEntry);
     if (this._showLogs && method && EVENTS_TO_LOG.includes(method)) {
-      this.log.info(
-        `[SafariNetwork] ${truncateString(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`,
-      );
+      this.log.info(`[SafariNetwork] ${truncateString(serializedEntry, {length: MAX_JSON_LOG_LENGTH})}`);
     }
   }
 }

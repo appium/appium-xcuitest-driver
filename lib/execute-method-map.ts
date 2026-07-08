@@ -1,4 +1,5 @@
 import type {ExecuteMethodMap} from '@appium/types';
+
 import {
   START_SCREEN_RECORDING_EXECUTE_OPTIONALS,
   STOP_SCREEN_RECORDING_EXECUTE_OPTIONALS,
@@ -227,16 +228,7 @@ export const executeMethodMap = {
   'mobile: stopPerfRecord': {
     command: 'mobileStopPerfRecord',
     params: {
-      optional: [
-        'remotePath',
-        'user',
-        'pass',
-        'method',
-        'profileName',
-        'headers',
-        'fileFieldName',
-        'formFields',
-      ],
+      optional: ['remotePath', 'user', 'pass', 'method', 'profileName', 'headers', 'fileFieldName', 'formFields'],
     },
   },
   'mobile: installCertificate': {
@@ -559,14 +551,7 @@ export const executeMethodMap = {
     command: 'startAudioRecording',
     params: {
       required: ['audioInput'],
-      optional: [
-        'timeLimit',
-        'audioCodec',
-        'audioBitrate',
-        'audioChannels',
-        'audioRate',
-        'forceRestart',
-      ],
+      optional: ['timeLimit', 'audioCodec', 'audioBitrate', 'audioChannels', 'audioRate', 'forceRestart'],
     },
   },
   'mobile: stopAudioRecording': {

@@ -1,11 +1,13 @@
 import {setTimeout as delay} from 'node:timers/promises';
+
 import {retryInterval} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+
 import {getUICatalogCaps} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
 import {initSession, deleteSession, MOCHA_TIMEOUT} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
-import chai, {expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
@@ -124,13 +126,11 @@ describe('XCUITestDriver - gestures', function () {
       const pickerEl = await driver.$('~Picker View');
       const loc = await pickerEl.getLocation();
 
-      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'up'})).to.not.be
-        .rejected;
+      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'up'})).to.not.be.rejected;
       const locMiddle = await pickerEl.getLocation();
       expect(locMiddle.y).to.be.below(loc.y);
 
-      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'down'})).to.not.be
-        .rejected;
+      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'down'})).to.not.be.rejected;
       const locFinal = await pickerEl.getLocation();
       expect(locFinal.y).to.be.above(locMiddle.y);
     });

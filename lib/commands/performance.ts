@@ -1,10 +1,12 @@
 import path from 'node:path';
+
 import {fs, zip, logger, util, tempDir} from 'appium/support';
-import {SubProcess, exec} from 'teen_process';
-import {encodeBase64OrUpload, type UploadOptions} from './helpers';
-import {isEmpty, truncateString} from '../utils';
 import {waitForCondition} from 'asyncbox';
+import {SubProcess, exec} from 'teen_process';
+
 import type {XCUITestDriver} from '../driver';
+import {isEmpty, truncateString} from '../utils';
+import {encodeBase64OrUpload, type UploadOptions} from './helpers';
 import type {ActiveAppInfo} from './types';
 
 const PERF_RECORD_FEAT_NAME = 'perf_record';
@@ -50,9 +52,7 @@ export class PerfRecorder {
     );
     this._pid = opts.pid;
     this._udid = udid;
-    this._logger = logger.getLogger(
-      `${truncateString(this._profileName, {length: 10})}@${this._udid.substring(0, 8)}`,
-    );
+    this._logger = logger.getLogger(`${truncateString(this._profileName, {length: 10})}@${this._udid.substring(0, 8)}`);
     this._archivePromise = null;
   }
 
@@ -120,16 +120,7 @@ export class PerfRecorder {
       }
     } else {
       // https://help.apple.com/instruments/mac/current/#/devb14ffaa5
-      args.push(
-        '-w',
-        this._udid,
-        '-t',
-        this._profileName,
-        '-D',
-        this._reportPath,
-        '-l',
-        `${this._timeout}`,
-      );
+      args.push('-w', this._udid, '-t', this._profileName, '-D', this._reportPath, '-l', `${this._timeout}`);
       if (this._pid) {
         args.push('-p', `${this._pid}`);
       }
@@ -139,9 +130,7 @@ export class PerfRecorder {
     this._archivePromise = null;
     this._logger.debug(`Starting performance recording: ${util.quote(fullCmd)}`);
     for (const streamName of ['stdout', 'stderr']) {
-      this._process.on(`line-${streamName}`, (line: string) =>
-        this._logger.debug(`[${toolName}] ${line}`),
-      );
+      this._process.on(`line-${streamName}`, (line: string) => this._logger.debug(`[${toolName}] ${line}`));
     }
     this._process.once('exit', async (code: number | null, signal: string | null) => {
       this._process = null;
@@ -177,8 +166,7 @@ export class PerfRecorder {
       );
     } catch {
       await this._enforceTermination();
-      const listProfilesCommand =
-        toolName === XCTRACE ? `${XCRUN} ${XCTRACE} list templates` : `${INSTRUMENTS} -s`;
+      const listProfilesCommand = toolName === XCTRACE ? `${XCRUN} ${XCTRACE} list templates` : `${INSTRUMENTS} -s`;
       throw this._logger.errorWithException(
         `There is no ${DEFAULT_EXT} file found for performance profile ` +
           `'${this._profileName}'. Make sure the profile is supported on this device. ` +
@@ -202,9 +190,7 @@ export class PerfRecorder {
     try {
       await this._process?.stop('SIGINT', STOP_TIMEOUT_MS);
     } catch {
-      throw this._logger.errorWithException(
-        `Performance recording has failed to exit after ${STOP_TIMEOUT_MS}ms`,
-      );
+      throw this._logger.errorWithException(`Performance recording has failed to exit after ${STOP_TIMEOUT_MS}ms`);
     }
     return await this.getZippedReportPath();
   }
@@ -234,9 +220,7 @@ export class PerfRecorder {
     }
     try {
       await Promise.all(
-        [this._zippedReportPath, path.dirname(this._reportPath)]
-          .filter(Boolean)
-          .map((x) => fs.rimraf(x)),
+        [this._zippedReportPath, path.dirname(this._reportPath)].filter(Boolean).map((x) => fs.rimraf(x)),
       );
     } catch (e: any) {
       this._logger.warn(e.message);
@@ -410,8 +394,7 @@ async function requireInstruments(): Promise<string> {
     return await fs.which(INSTRUMENTS);
   } catch {
     throw new Error(
-      `${INSTRUMENTS} has not been found in PATH. ` +
-        `Please make sure XCode development tools are installed`,
+      `${INSTRUMENTS} has not been found in PATH. ` + `Please make sure XCode development tools are installed`,
     );
   }
 }
@@ -420,9 +403,6 @@ async function requireXcrun(): Promise<string> {
   try {
     return await fs.which(XCRUN);
   } catch {
-    throw new Error(
-      `${XCRUN} has not been found in PATH. ` +
-        `Please make sure XCode development tools are installed`,
-    );
+    throw new Error(`${XCRUN} has not been found in PATH. ` + `Please make sure XCode development tools are installed`);
   }
 }

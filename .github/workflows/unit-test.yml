@@ -1,17 +1,17 @@
 name: Unit Tests
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
     paths-ignore:
-    - 'docs/**'
-    - '*.md'
-    - 'mkdocs.yml'
+      - 'docs/**'
+      - '*.md'
+      - 'mkdocs.yml'
   push:
-    branches: [ master ]
+    branches: [master]
     paths-ignore:
-    - 'docs/**'
-    - '*.md'
-    - 'mkdocs.yml'
+      - 'docs/**'
+      - '*.md'
+      - 'mkdocs.yml'
 
 jobs:
   node_matrix:
@@ -20,25 +20,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs:
-    - node_matrix
+      - node_matrix
     strategy:
       fail-fast: false
       matrix:
         node-version: ${{ fromJSON(needs.node_matrix.outputs.versions) }}
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - uses: SocketDev/action@v1
-      with:
-        mode: firewall-free
-    - run: sfw npm install --no-package-lock
-      name: Install dev dependencies
-    - run: npm run lint
-      name: Run linter
-    - run: npm run format:check
-      name: Run Prettier check
-    - run: npm run test
-      name: Unit Tests
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: SocketDev/action@v1
+        with:
+          mode: firewall-free
+      - run: sfw npm install --no-package-lock
+        name: Install dev dependencies
+      - run: npm run lint
+        name: Run linter
+      - run: npm run format:check
+        name: Run Prettier check
+      - run: npm run test
+        name: Unit Tests

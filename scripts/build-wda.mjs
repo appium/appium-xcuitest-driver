@@ -1,9 +1,9 @@
+import {getSimulator} from 'appium-ios-simulator';
 import {WebDriverAgent} from 'appium-webdriveragent';
 import * as xcode from 'appium-xcode';
-import {Simctl} from 'node-simctl';
-import {getSimulator} from 'appium-ios-simulator';
 import {logger} from 'appium/support.js';
 import {Command} from 'commander';
+import {Simctl} from 'node-simctl';
 
 const log = logger.getLogger('WDA');
 
@@ -16,7 +16,7 @@ async function build(options) {
 
   if (!platformVersion) {
     throw new Error(
-      'Cannot determine iOS SDK version to build for. Please specify --sdk=<version> or ensure Xcode and its command-line tools are installed (try `xcodebuild -showsdks` or `xcode-select --print-path`).'
+      'Cannot determine iOS SDK version to build for. Please specify --sdk=<version> or ensure Xcode and its command-line tools are installed (try `xcodebuild -showsdks` or `xcode-select --print-path`).',
     );
   }
 
@@ -29,9 +29,7 @@ async function build(options) {
     }
     return info;
   };
-  const deviceInfo = verifyDevicePresence(
-    iosDevices.find(({name}) => name.includes(customDevice || 'iPhone')),
-  );
+  const deviceInfo = verifyDevicePresence(iosDevices.find(({name}) => name.includes(customDevice || 'iPhone')));
   const device = await getSimulator(deviceInfo.udid, {
     platform: deviceInfo.platform,
     checkExistence: false,
@@ -42,9 +40,7 @@ async function build(options) {
     showXcodeLog: true,
     device,
   });
-  log.info(
-    `Building WDA for ${deviceInfo.name} ${platformVersion} with udid '${deviceInfo.udid}' Simulator...`,
-  );
+  log.info(`Building WDA for ${deviceInfo.name} ${platformVersion} with udid '${deviceInfo.udid}' Simulator...`);
   await wda.xcodebuild.start(true);
 }
 

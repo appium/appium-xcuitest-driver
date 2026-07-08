@@ -1,5 +1,6 @@
-import type {RemoteXPCFacade} from './remote-xpc';
 import type {HidButtonName, HidButtonPressOptions, HidIndigoService} from 'appium-ios-remotexpc';
+
+import type {RemoteXPCFacade} from './remote-xpc';
 
 /**
  * HID Indigo service on real hardware.
@@ -13,9 +14,7 @@ export class HidIndigoClient {
   ) {}
 
   async pressButtonByName(name: HidButtonName, options?: HidButtonPressOptions): Promise<void> {
-    await this.withHidIndigoService((hidIndigoService) =>
-      hidIndigoService.pressButton(name, options),
-    );
+    await this.withHidIndigoService((hidIndigoService) => hidIndigoService.pressButton(name, options));
   }
 
   async pressButtonByPageAndUsage(
@@ -23,14 +22,10 @@ export class HidIndigoClient {
     usageCode: number,
     options?: HidButtonPressOptions,
   ): Promise<void> {
-    await this.withHidIndigoService((hidIndigoService) =>
-      hidIndigoService.pressButton(usagePage, usageCode, options),
-    );
+    await this.withHidIndigoService((hidIndigoService) => hidIndigoService.pressButton(usagePage, usageCode, options));
   }
 
-  private async withHidIndigoService(
-    operation: (hidIndigoService: HidIndigoService) => Promise<void>,
-  ): Promise<void> {
+  private async withHidIndigoService(operation: (hidIndigoService: HidIndigoService) => Promise<void>): Promise<void> {
     const hidIndigoService = await this.remoteXPCFacade.requireService('HID Indigo', (Services) =>
       Services.startHidIndigoService(this.udid),
     );

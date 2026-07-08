@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+
 import {XCUITestDriver} from '../../../lib/driver';
 
 describe('session commands', function () {

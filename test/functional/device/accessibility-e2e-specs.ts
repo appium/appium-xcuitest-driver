@@ -1,8 +1,9 @@
-import {PREDICATE_SEARCH} from '../helpers/element';
-import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
-import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 import chai, {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
+import {SETTINGS_CAPS, amendCapabilities} from '../desired';
+import {PREDICATE_SEARCH} from '../helpers/element';
+import {MOCHA_TIMEOUT, initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
@@ -41,14 +42,10 @@ describe('Accessibility', function () {
     async function getReduceMotion(driver: any) {
       await showAccessibilityTab(driver);
       await driver
-        .$(
-          `${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`,
-        )
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeCell' AND name IN {'Reduce Motion', 'Motion', 'MOTION_TITLE'}`)
         .click();
       return await driver
-        .$(
-          `${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`,
-        )
+        .$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeSwitch' AND name IN {'Reduce Motion', 'REDUCE_MOTION'}`)
         .getAttribute('value');
     }
 
@@ -67,9 +64,7 @@ describe('Accessibility', function () {
   describe('ReduceTransparency', function () {
     async function getReduceTransparency(driver: any) {
       await showAccessibilityTab(driver);
-      await driver
-        .$(`${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`)
-        .click();
+      await driver.$(`${PREDICATE_SEARCH}:name IN {'Display & Text Size', 'DISPLAY_AND_TEXT'}`).click();
 
       return await driver
         .$(

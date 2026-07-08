@@ -1,15 +1,17 @@
-import {fs, tempDir, zip, util} from 'appium/support';
 import path from 'node:path';
+
+import type {Simulator} from 'appium-ios-simulator';
+import {errors} from 'appium/driver';
+import {fs, tempDir, zip, util} from 'appium/support';
+
+import {AfcClient} from '../device/afc-client';
 import {
   pullFile as realDevicePullFile,
   pullFolder as realDevicePullFolder,
   pushFile as realDevicePushFile,
 } from '../device/real-device-management';
-import {errors} from 'appium/driver';
-import type {Simulator} from 'appium-ios-simulator';
 import type {XCUITestDriver} from '../driver';
 import type {ContainerObject, ContainerRootSupplier} from './types';
-import {AfcClient} from '../device/afc-client';
 
 //#region Type Definitions
 
@@ -103,8 +105,7 @@ export async function pushFile(
 ): Promise<void> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` +
-        `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
     );
   }
   let b64StringData: string;
@@ -129,11 +130,7 @@ export async function pushFile(
  * or a specially formatted path, which points to an item inside an app bundle.
  * @param payload - Base64-encoded content of the file to be pushed.
  */
-export async function mobilePushFile(
-  this: XCUITestDriver,
-  remotePath: string,
-  payload: string,
-): Promise<void> {
+export async function mobilePushFile(this: XCUITestDriver, remotePath: string, payload: string): Promise<void> {
   return await this.pushFile(remotePath, payload);
 }
 
@@ -150,8 +147,7 @@ export async function mobilePushFile(
 export async function pullFile(this: XCUITestDriver, remotePath: string): Promise<string> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` +
-        `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
     );
   }
   return this.isSimulator()
@@ -192,8 +188,7 @@ export async function mobileDeleteFolder(this: XCUITestDriver, remotePath: strin
 export async function mobileDeleteFile(this: XCUITestDriver, remotePath: string): Promise<void> {
   if (remotePath.endsWith('/')) {
     throw new errors.InvalidArgumentError(
-      `It is expected that remote path points to a file and not to a folder. ` +
-        `'${remotePath}' is given instead`,
+      `It is expected that remote path points to a file and not to a folder. ` + `'${remotePath}' is given instead`,
     );
   }
   await deleteFileOrFolder.bind(this)(remotePath);
@@ -261,10 +256,7 @@ function verifyIsSubPath(originalPath: string, root: string): void {
 /**
  * Create AFC client for file operations
  */
-async function createAfcClient(
-  driver: XCUITestDriver,
-  opts: CreateAfcClientOptions = {},
-): Promise<AfcClient> {
+async function createAfcClient(driver: XCUITestDriver, opts: CreateAfcClientOptions = {}): Promise<AfcClient> {
   const {bundleId, containerType} = opts;
   const udid = driver.device.udid as string;
   const facade = driver.remoteXPCFacade;
@@ -284,15 +276,9 @@ async function createAfcClient(
 /**
  * Create service for file operations
  */
-async function createService(
-  driver: XCUITestDriver,
-  remotePath: string,
-): Promise<CreateServiceResult> {
+async function createService(driver: XCUITestDriver, remotePath: string): Promise<CreateServiceResult> {
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
-    const {bundleId, pathInContainer, containerType}: ContainerObject = await parseContainerPath(
-      driver,
-      remotePath,
-    );
+    const {bundleId, pathInContainer, containerType}: ContainerObject = await parseContainerPath(driver, remotePath);
     const client = await createAfcClient(driver, {bundleId, containerType});
     let relativePath = isDocumentsContainer(containerType)
       ? path.join(CONTAINER_DOCUMENTS_PATH, pathInContainer)
@@ -315,28 +301,20 @@ async function createService(
  *                     application containers; otherwise uploads to the default media folder.
  * @param base64Data - Base-64 encoded content of the file to be uploaded.
  */
-async function pushFileToSimulator(
-  this: XCUITestDriver,
-  remotePath: string,
-  base64Data: string,
-): Promise<void> {
+async function pushFileToSimulator(this: XCUITestDriver, remotePath: string, base64Data: string): Promise<void> {
   const buffer = Buffer.from(base64Data, 'base64');
   const device = this.device as Simulator;
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
     const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
       this,
       remotePath,
-      async (appBundle, containerType) =>
-        await device.simctl.getAppContainer(appBundle, containerType),
+      async (appBundle, containerType) => await device.simctl.getAppContainer(appBundle, containerType),
     );
     this.log.info(
-      `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` +
-        `Will put the data into '${dstPath}'`,
+      `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` + `Will put the data into '${dstPath}'`,
     );
     if (!(await fs.exists(path.dirname(dstPath)))) {
-      this.log.debug(
-        `The destination folder '${path.dirname(dstPath)}' does not exist. Creating...`,
-      );
+      this.log.debug(`The destination folder '${path.dirname(dstPath)}' does not exist. Creating...`);
       await fs.mkdirp(path.dirname(dstPath));
     }
     await fs.writeFile(dstPath, buffer);
@@ -360,11 +338,7 @@ async function pushFileToSimulator(
  *                     to target application containers; otherwise defaults to media folder.
  * @param base64Data - Base-64 encoded content of the file to be uploaded.
  */
-async function pushFileToRealDevice(
-  this: XCUITestDriver,
-  remotePath: string,
-  base64Data: string,
-): Promise<void> {
+async function pushFileToRealDevice(this: XCUITestDriver, remotePath: string, base64Data: string): Promise<void> {
   const {client, relativePath} = await createService(this, remotePath);
   try {
     await realDevicePushFile(client, Buffer.from(base64Data, 'base64'), relativePath, {
@@ -372,10 +346,7 @@ async function pushFileToRealDevice(
     });
   } catch (e) {
     this.log.debug((e as Error).stack);
-    throw new Error(
-      `Could not push the file to '${remotePath}'. Original error: ${(e as Error).message}`,
-      {cause: e},
-    );
+    throw new Error(`Could not push the file to '${remotePath}'. Original error: ${(e as Error).message}`, {cause: e});
   } finally {
     await client.close();
   }
@@ -394,23 +365,17 @@ async function pushFileToRealDevice(
  * @param isFile - Whether the destination item is a file or a folder
  * @returns Base-64 encoded content of the file.
  */
-async function pullFromSimulator(
-  this: XCUITestDriver,
-  remotePath: string,
-  isFile: boolean,
-): Promise<string> {
+async function pullFromSimulator(this: XCUITestDriver, remotePath: string, isFile: boolean): Promise<string> {
   let pathOnServer: string;
   const device = this.device as Simulator;
   if (CONTAINER_PATH_PATTERN.test(remotePath)) {
     const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
       this,
       remotePath,
-      async (appBundle, containerType) =>
-        await device.simctl.getAppContainer(appBundle, containerType),
+      async (appBundle, containerType) => await device.simctl.getAppContainer(appBundle, containerType),
     );
     this.log.info(
-      `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` +
-        `Will get the data from '${dstPath}'`,
+      `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` + `Will get the data from '${dstPath}'`,
     );
     pathOnServer = dstPath;
   } else {
@@ -420,9 +385,7 @@ async function pullFromSimulator(
     this.log.info(`Got the full item path: ${pathOnServer}`);
   }
   if (!(await fs.exists(pathOnServer))) {
-    throw this.log.errorWithException(
-      `The remote ${isFile ? 'file' : 'folder'} at '${pathOnServer}' does not exist`,
-    );
+    throw this.log.errorWithException(`The remote ${isFile ? 'file' : 'folder'} at '${pathOnServer}' does not exist`);
   }
   const buffer = isFile
     ? await util.toInMemoryBase64(pathOnServer)
@@ -450,11 +413,7 @@ async function pullFromSimulator(
  * @param isFile - Whether the destination item is a file or a folder
  * @returns Base-64 encoded content of the remote file
  */
-async function pullFromRealDevice(
-  this: XCUITestDriver,
-  remotePath: string,
-  isFile: boolean,
-): Promise<string> {
+async function pullFromRealDevice(this: XCUITestDriver, remotePath: string, isFile: boolean): Promise<string> {
   const {client, relativePath} = await createService(this, remotePath);
   try {
     // Check if path is a directory
@@ -493,13 +452,9 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
     const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
       this,
       remotePath,
-      async (appBundle, containerType) =>
-        await device.simctl.getAppContainer(appBundle, containerType),
+      async (appBundle, containerType) => await device.simctl.getAppContainer(appBundle, containerType),
     );
-    this.log.info(
-      `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` +
-        `'${dstPath}' will be deleted`,
-    );
+    this.log.info(`Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` + `'${dstPath}' will be deleted`);
     pathOnServer = dstPath;
   } else {
     const simRoot = device.getDir();
