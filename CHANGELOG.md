@@ -1,3 +1,9 @@
+## [11.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.2...v11.17.3) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Migrate moment to dayjs ([#2902](https://github.com/appium/appium-xcuitest-driver/issues/2902)) ([58d573e](https://github.com/appium/appium-xcuitest-driver/commit/58d573e9697f5af91153c8708a4fd0f59de35fbd))
+
 ## [11.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.1...v11.17.2) (2026-07-08)
 
 ### Miscellaneous Chores
