@@ -58,13 +58,15 @@ export async function getWindowSize(this: XCUITestDriver): Promise<Size> {
 /**
  * Retrieves the actual device time.
  *
- * @param format - The format specifier string. Read the [MomentJS documentation](https://momentjs.com/docs/) to get the full list of supported datetime format specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
+ * @param format - The format specifier string. Read the [DayJS documentation](https://day.js.org/docs/en/display/format)
+ * to get the full list of supported datetime format
+ * specifiers. The default format is `YYYY-MM-DDTHH:mm:ssZ`, which complies to ISO-8601.
  * @returns Formatted datetime string or the raw command output (if formatting fails)
  */
 export async function getDeviceTime(this: XCUITestDriver, format = DATETIME_FORMAT_ISO8601): Promise<string> {
   const formatDateTime = (utcTimestamp: number, utcOffset: number): string => {
-    const utc = dayjs.unix(utcTimestamp).utc();
-    return utc.utcOffset(utcOffset).format(format);
+    const utcDateTime = dayjs.unix(utcTimestamp).utc();
+    return utcDateTime.utcOffset(utcOffset).format(format);
   };
 
   this.log.debug('Attempting to capture iOS device date and time');
