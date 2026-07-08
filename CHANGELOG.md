@@ -1,3 +1,9 @@
+## [11.17.2](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.1...v11.17.2) (2026-07-08)
+
+### Miscellaneous Chores
+
+* Switch to oxfmt ([#2901](https://github.com/appium/appium-xcuitest-driver/issues/2901)) ([0eedd97](https://github.com/appium/appium-xcuitest-driver/commit/0eedd97d99af764cd16694dc9f996ab844b1a295))
+
 ## [11.17.1](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.0...v11.17.1) (2026-07-01)
 
 ### Miscellaneous Chores
