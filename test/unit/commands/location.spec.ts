@@ -1,6 +1,6 @@
 import {describe, it, afterEach, beforeEach} from 'node:test';
 
-//@ts-ignore
+//@ts-expect-error no types
 import {services} from 'appium-ios-device';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';

@@ -131,7 +131,8 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   }
 
   if (this.logs.syslog === undefined) {
-    (this.logs as Record<string, any>).crashlog = assignBiDiLogListener.bind(this)(
+    this.logs.crashlog = assignBiDiLogListener(
+      this.eventEmitter,
       new IOSCrashLog({
         sim: this.device as Simulator,
         udid: this.isRealDevice() ? this.opts.udid : undefined,
@@ -141,8 +142,9 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
       {
         type: 'crashlog',
       },
-    );
-    (this.logs as Record<string, any>).syslog = assignBiDiLogListener.bind(this)(
+    )[0];
+    this.logs.syslog = assignBiDiLogListener(
+      this.eventEmitter,
       this.isRealDevice()
         ? new IOSDeviceLog({
             udid: this.opts.udid as string,
@@ -161,9 +163,10 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
       {
         type: 'syslog',
       },
-    );
+    )[0];
     if (typeof this.opts.showSafariConsoleLog === 'boolean') {
-      (this.logs as Record<string, any>).safariConsole = assignBiDiLogListener.bind(this)(
+      this.logs.safariConsole = assignBiDiLogListener(
+        this.eventEmitter,
         new SafariConsoleLog({
           showLogs: this.opts.showSafariConsoleLog,
           log: this.log,
@@ -171,10 +174,11 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         {
           type: 'safariConsole',
         },
-      );
+      )[0];
     }
     if (typeof this.opts.showSafariNetworkLog === 'boolean') {
-      (this.logs as Record<string, any>).safariNetwork = assignBiDiLogListener.bind(this)(
+      this.logs.safariNetwork = assignBiDiLogListener(
+        this.eventEmitter,
         new SafariNetworkLog({
           showLogs: this.opts.showSafariNetworkLog,
           log: this.log,
@@ -182,14 +186,14 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         {
           type: 'safariNetwork',
         },
-      );
+      )[0];
     }
     if (this.isFeatureEnabled(GET_SERVER_LOGS_FEATURE)) {
-      [, this._bidiServerLogListener] = assignBiDiLogListener.bind(this)(this.log.unwrap(), {
+      this._bidiServerLogListener = assignBiDiLogListener(this.eventEmitter, this.log.unwrap(), {
         type: 'server',
         srcEventName: 'log',
         entryTransformer: nativeLogEntryToSeleniumEntry,
-      });
+      })[1];
     }
   }
 
@@ -295,14 +299,14 @@ export async function mobileStopLogsBroadcast(this: XCUITestDriver): Promise<voi
  * @returns A tuple containing the log emitter and the listener function
  */
 export function assignBiDiLogListener<EE extends EventEmitter>(
-  this: XCUITestDriver,
+  driverEventEmitter: EventEmitter,
   logEmitter: EE,
   properties: BiDiListenerProperties,
 ): [EE, LogListener] {
   const {type, context = NATIVE_WIN, srcEventName = 'output', entryTransformer} = properties;
   const listener: LogListener = (logEntry: LogEntry) => {
     const finalEntry = entryTransformer ? entryTransformer(logEntry) : logEntry;
-    this.eventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
+    driverEventEmitter.emit(BIDI_EVENT_NAME, makeLogEntryAddedEvent(finalEntry, context, type));
   };
   logEmitter.on(srcEventName, listener);
   return [logEmitter, listener];
