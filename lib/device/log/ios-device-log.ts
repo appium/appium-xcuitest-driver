@@ -1,4 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {services} from 'appium-ios-device';
 import type {SyslogService} from 'appium-ios-remotexpc';
 

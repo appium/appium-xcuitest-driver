@@ -1,4 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 

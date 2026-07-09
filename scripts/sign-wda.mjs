@@ -355,7 +355,7 @@ class SignWdaWorkflow extends WdaBundleWorkflow {
       await rm(tempDir, {recursive: true, force: true});
       log.info(`Cleaned up temporary directory: ${tempDir}`);
     } catch (err) {
-      log.warn(`Failed to clean up temporary directory ${tempDir}: ${err.message}`);
+      log.warn(`Failed to clean up temporary directory ${tempDir}: ${/** @type {Error} */ (err).message}`);
     }
   }
 }
@@ -465,7 +465,7 @@ EXAMPLES:
   }
 
   /**
-   * @param {object} options
+   * @param {any} options
    * @returns {Promise<void>}
    */
   async _handleParsedOptions(options) {
@@ -491,7 +491,7 @@ EXAMPLES:
   }
 
   /**
-   * @param {object} options
+   * @param {any} options
    * @param {string | undefined} p12Password
    * @returns {void}
    */

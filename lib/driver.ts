@@ -242,17 +242,17 @@ export class XCUITestDriver
 
   curWindowHandle: string | null | undefined;
   selectingNewPage: boolean | undefined;
-  contexts: string[];
-  curContext: string | null;
+  contexts: string[] = [];
+  curContext: string | null = null;
   curWebFrames: string[];
 
   webviewCalibrationResult: CalibrationData | null;
   asyncWaitMs: number | undefined;
-  _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null;
+  _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null = null;
   _perfRecorders: PerfRecorder[];
   webElementsCache: LRUCache<any, any>;
 
-  _conditionInducer: IConditionInducer | null; // Condition inducer facade that abstracts implementation details
+  _conditionInducer: IConditionInducer | null = null; // Condition inducer facade that abstracts implementation details
   _isSafariIphone: boolean | undefined;
   _isSafariNotched: boolean | undefined;
   _waitingAtoms: WaitingAtoms;
@@ -262,9 +262,9 @@ export class XCUITestDriver
   xcodeVersion: XcodeVersion | undefined;
   _networkMonitorSession: NetworkMonitorSession | null;
   _remoteXPCFacade: RemoteXPCFacade | null;
-  _recentScreenRecorder: ScreenRecorder | null;
-  _device: Simulator | RealDevice;
-  _iosSdkVersion: string | null;
+  _recentScreenRecorder: ScreenRecorder | null = null;
+  _device: Simulator | RealDevice = undefined as any;
+  _iosSdkVersion: string | null = null;
   _wda: WebDriverAgent | null;
   _remote: RemoteDebugger | null;
   logs: DriverLogs;
@@ -273,13 +273,13 @@ export class XCUITestDriver
   // Additional properties that were missing
   appInfosCache: AppInfosCache;
   doesSupportBidi: boolean;
-  jwpProxyActive: boolean;
-  proxyReqRes: ((...args: any[]) => any) | null;
-  safari: boolean;
+  jwpProxyActive: boolean = false;
+  proxyReqRes: ((...args: any[]) => any) | null = null;
+  safari: boolean = false;
   cachedWdaStatus: any;
-  _currentUrl: string | null;
-  pageLoadMs: number;
-  landscapeWebCoordsOffset: number;
+  _currentUrl: string | null = null;
+  pageLoadMs: number = undefined as any;
+  landscapeWebCoordsOffset: number = undefined as any;
   mjpegStream?: mjpeg.MJpegStream;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
@@ -786,6 +786,7 @@ export class XCUITestDriver
     this._remoteXPCFacade = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
+      // @ts-expect-error no types
       this[fn] = memoize(this[fn]);
     }
     this.lifecycleData = {};
@@ -904,7 +905,7 @@ export class XCUITestDriver
   override async deleteSession(sessionId?: string): Promise<void> {
     sessionClaimHandler.unregisterActiveSession(this);
 
-    await removeAllSessionWebSocketHandlers.bind(this)();
+    await removeAllSessionWebSocketHandlers.bind(this as any)();
 
     for (const recorder of [this._recentScreenRecorder, this._audioRecorder].filter((r): r is NonNullable<typeof r> =>
       Boolean(r),
@@ -924,7 +925,7 @@ export class XCUITestDriver
       try {
         await this.disableConditionInducer();
       } catch (err) {
-        this.log.warn(`Cannot disable condition inducer: ${err.message}`);
+        this.log.warn(`Cannot disable condition inducer: ${(err as Error).message}`);
       }
     }
 
@@ -1029,7 +1030,7 @@ export class XCUITestDriver
       );
     }
 
-    const verifyProcessArgument = (processArguments) => {
+    const verifyProcessArgument = (processArguments: {args: string[]; env: Record<string, string>}) => {
       const {args, env} = processArguments;
       if (args != null && !Array.isArray(args)) {
         throw this.log.errorWithException('processArguments.args must be an array of strings');
@@ -1045,7 +1046,7 @@ export class XCUITestDriver
         try {
           // try to parse the string as JSON
           caps.processArguments = JSON.parse(caps.processArguments as string);
-          verifyProcessArgument(caps.processArguments);
+          verifyProcessArgument(caps.processArguments as {args: string[]; env: Record<string, string>});
         } catch (err) {
           throw this.log.errorWithException(
             `processArguments must be a JSON format or an object with format {args : [], env : {a:b, c:d}}. ` +
@@ -1053,7 +1054,7 @@ export class XCUITestDriver
           );
         }
       } else if (isPlainObject(caps.processArguments)) {
-        verifyProcessArgument(caps.processArguments);
+        verifyProcessArgument(caps.processArguments as {args: string[]; env: Record<string, string>});
       } else {
         throw this.log.errorWithException(
           `'processArguments must be an object, or a string JSON object with format {args : [], env : {a:b, c:d}}. ` +
@@ -1113,7 +1114,7 @@ export class XCUITestDriver
       } catch (e) {
         throw this.log.errorWithException(
           `'${caps.permissions}' is expected to be a valid object with format ` +
-            `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}. Original error: ${e.message}`,
+            `{"<bundleId1>": {"<serviceName1>": "<serviceStatus1>", ...}, ...}. Original error: ${(e as Error).message}`,
         );
       }
     }
@@ -1190,10 +1191,12 @@ export class XCUITestDriver
     // this.cliArgs should never include anything we do not expect.
     for (const [key, value] of Object.entries(this.cliArgs ?? {})) {
       if (Object.hasOwn(this.opts, key)) {
-        this.log.info(`CLI arg '${key}' with value '${value}' overwrites value '${this.opts[key]}' sent in via caps)`);
+        this.log.info(
+          `CLI arg '${key}' with value '${value}' overwrites value '${(this.opts as Record<string, any>)[key]}' sent in via caps)`,
+        );
         didMerge = true;
       }
-      this.opts[key] = value;
+      (this.opts as Record<string, any>)[key] = value;
     }
     return didMerge;
   }
@@ -1225,7 +1228,7 @@ export class XCUITestDriver
             `Try to customize the value of 'mjpegServerPort' capability as a possible solution`,
         );
       } else {
-        this.log.debug(error.stack);
+        this.log.debug((error as Error).stack);
         throw new Error(
           `Cannot ensure MJPEG broadcast functionality by forwarding the local port ${mjpegServerPort} ` +
             `requested by the 'mjpegServerPort' capability to the device port ${mjpegServerPort}. ` +
@@ -1436,8 +1439,8 @@ export class XCUITestDriver
   }
 
   async configureApp(): Promise<void> {
-    function appIsPackageOrBundle(app) {
-      return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
+    function appIsPackageOrBundle(app: string | undefined): boolean {
+      return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app ?? '');
     }
 
     // the app name is a bundleId assign it to the bundleId property
@@ -1467,11 +1470,14 @@ export class XCUITestDriver
         return;
     }
 
-    this.opts.app = await this.helpers.configureApp(this.opts.app as string, {
-      onPostProcess: onPostConfigureApp.bind(this),
-      onDownload: onDownloadApp.bind(this),
-      supportedExtensions: SUPPORTED_EXTENSIONS,
-    });
+    this.opts.app = await this.helpers.configureApp(
+      this.opts.app as string,
+      {
+        onPostProcess: onPostConfigureApp.bind(this),
+        onDownload: onDownloadApp.bind(this),
+        supportedExtensions: SUPPORTED_EXTENSIONS,
+      } as any,
+    );
   }
 
   async determineDevice(): Promise<DeviceDiscoveryResult> {
@@ -1545,7 +1551,7 @@ export class XCUITestDriver
     try {
       shouldUpgrade = util.compareVersions(candidateBundleVersion, '>', appBundleVersion);
     } catch (err) {
-      this.log.warn(`App versions comparison is not possible: ${err.message}`);
+      this.log.warn(`App versions comparison is not possible: ${(err as Error).message}`);
       return {
         install: true,
         skipUninstall: false,
@@ -1608,7 +1614,7 @@ export class XCUITestDriver
     try {
       appsList = this.helpers.parseCapsArray(otherApps);
     } catch (e) {
-      throw this.log.errorWithException(`Could not parse "otherApps" capability: ${e.message}`);
+      throw this.log.errorWithException(`Could not parse "otherApps" capability: ${(e as Error).message}`);
     }
     if (!appsList?.length) {
       this.log.info(`Got zero apps from 'otherApps' capability value. Doing nothing`);
@@ -1621,7 +1627,7 @@ export class XCUITestDriver
           onPostProcess: onPostConfigureApp.bind(this),
           onDownload: onDownloadApp.bind(this),
           supportedExtensions: SUPPORTED_EXTENSIONS,
-        }),
+        } as any),
       ),
     );
     const appIds: string[] = await Promise.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
@@ -1653,7 +1659,7 @@ export class XCUITestDriver
     try {
       await this.proxyCommand('/orientation', 'POST', {orientation: dstOrientation});
     } catch (err) {
-      this.log.warn(`Setting initial orientation failed with: ${err.message}`);
+      this.log.warn(`Setting initial orientation failed with: ${(err as Error).message}`);
     }
   }
 
@@ -1698,9 +1704,9 @@ export class XCUITestDriver
   _getCommandTimeout(cmdName?: string): number | undefined {
     if (this.opts.commandTimeouts) {
       if (cmdName && Object.hasOwn(this.opts.commandTimeouts, cmdName)) {
-        return this.opts.commandTimeouts[cmdName];
+        return (this.opts.commandTimeouts as Record<string, number>)[cmdName];
       }
-      return this.opts.commandTimeouts[DEFAULT_TIMEOUT_KEY];
+      return (this.opts.commandTimeouts as Record<string, number>)[DEFAULT_TIMEOUT_KEY];
     }
   }
 

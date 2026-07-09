@@ -1,4 +1,5 @@
 import {killAllSimulators as simKill} from 'appium-ios-simulator';
+import type {Simulator} from 'appium-ios-simulator';
 import {resetTestProcesses} from 'appium-webdriveragent';
 import {retryInterval} from 'asyncbox';
 import {Simctl} from 'node-simctl';
@@ -20,20 +21,14 @@ export async function killAllSimulators() {
   await simKill();
 }
 
-/**
- * @param {string} udid
- */
-export async function deleteDeviceWithRetry(udid) {
+export async function deleteDeviceWithRetry(udid: string): Promise<void> {
   const simctl = new Simctl({udid});
   try {
     await retryInterval(10, 1000, simctl.deleteDevice.bind(simctl));
   } catch {}
 }
 
-/**
- * @param {import('appium-ios-simulator').Simulator} [sim]
- */
-export async function cleanupSimulator(sim) {
+export async function cleanupSimulator(sim: Simulator | null): Promise<void> {
   if (!sim) {
     return;
   }

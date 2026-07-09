@@ -67,7 +67,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
         });
         this.log.debug(`iOS syslog will be written to: '${this.iosSyslogFile}'`);
       } catch (e) {
-        this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${e.message}`);
+        this.log.warn(`Could not set up iOS syslog logger for '${this.iosSyslogFile}': ${(e as Error).message}`);
         this.syslogLogger = null;
       }
     }
@@ -88,7 +88,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
       await this.finishStartingLogCapture();
     } catch (e) {
       this.shutdownSyslogger();
-      throw new Error(`Simulator log capture failed. Original error: ${e.message}`, {cause: e});
+      throw new Error(`Simulator log capture failed. Original error: ${(e as Error).message}`, {cause: e});
     }
   }
 
@@ -110,8 +110,8 @@ export class IOSSimulatorLog extends LineConsumingLog {
       await fs.unlink(this.iosSyslogFile);
       this.log.debug(`Existing iOS Syslog file: '${this.iosSyslogFile}' deleted.`);
     } catch (unlinkErr) {
-      if (unlinkErr.code !== 'ENOENT') {
-        this.log.warn(`Could not delete existing syslog file '${this.iosSyslogFile}': ${unlinkErr.message}`);
+      if ((unlinkErr as any).code !== 'ENOENT') {
+        this.log.warn(`Could not delete existing syslog file '${this.iosSyslogFile}': ${(unlinkErr as Error).message}`);
       }
     }
   }
@@ -176,8 +176,8 @@ export class IOSSimulatorLog extends LineConsumingLog {
         this.onOutput(line, ...(streamName === 'stderr' ? ['STDERR'] : []));
       });
     }
-    const startDetector = (stdout: string, stderr: string) => {
-      if (EXECVP_ERROR_PATTERN.test(stderr)) {
+    const startDetector = (stdout: string | undefined, stderr: string | undefined) => {
+      if (EXECVP_ERROR_PATTERN.test(stderr ?? '')) {
         throw new Error('iOS log capture process failed to start');
       }
       return Boolean(stdout || stderr);
@@ -194,7 +194,9 @@ export class IOSSimulatorLog extends LineConsumingLog {
     try {
       await exec('kill', pids.map(String));
     } catch (e) {
-      this.log.warn(`Could not terminate one or more obsolete log streams: ${e.stderr || e.message}`);
+      this.log.warn(
+        `Could not terminate one or more obsolete log streams: ${(e as any).stderr || (e as Error).message}`,
+      );
     }
   }
 }

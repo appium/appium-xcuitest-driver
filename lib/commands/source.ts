@@ -1,3 +1,4 @@
+/** @ts-expect-error no types */
 import js2xml from 'js2xmlparser2';
 
 import type {XCUITestDriver} from '../driver';

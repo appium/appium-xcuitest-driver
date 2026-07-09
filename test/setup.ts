@@ -1,15 +1,21 @@
 import path from 'node:path';
 
-import {fs, net, tempDir, zip} from 'appium/support';
+import {fs, net, tempDir, zip, node} from 'appium/support';
+
+export const FIXTURES_ROOT = path.resolve(
+  node.getModuleRootSync('appium-xcuitest-driver', __filename)!,
+  'test',
+  'fixtures',
+);
 
 const UICATALOG_URL =
   'https://github.com/appium/ios-uicatalog/releases/download/v4.0.1/UIKitCatalog-iphonesimulator.zip';
-const UICATALOG_CACHE_PATH = path.resolve(__dirname, 'fixtures', 'UIKitCatalog-iphonesimulator.app');
+const UICATALOG_CACHE_PATH = path.resolve(FIXTURES_ROOT, 'UIKitCatalog-iphonesimulator.app');
 export const UICATALOG_BUNDLE_ID = 'com.example.apple-samplecode.UICatalog';
 
 const TESTAPP_URL =
   'https://github.com/appium/VodQAReactNative/releases/download/v1.2.5/VodQAReactNative-simulator-release.zip';
-const TESTAPP_CACHE_PATH = path.resolve(__dirname, 'fixtures', 'VodQAReactNative.app');
+const TESTAPP_CACHE_PATH = path.resolve(FIXTURES_ROOT, 'VodQAReactNative.app');
 export const TESTAPP_BUNDLE_ID = 'org.reactjs.native.example.VodQAReactNative';
 
 // Cache the download promises to prevent concurrent downloads

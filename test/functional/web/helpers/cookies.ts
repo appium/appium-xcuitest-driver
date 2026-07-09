@@ -1,5 +1,10 @@
 import {expect} from 'chai';
 
+type Cookie = {
+  name: string;
+  value: string;
+};
+
 export const newCookie = {
   name: 'newcookie',
   value: 'i am new here',
@@ -13,11 +18,11 @@ export const oldCookie2 = {
   value: 'cookié2',
 };
 
-export function doesIncludeCookie(cookies, cookie) {
+export function doesIncludeCookie(cookies: Cookie[], cookie: Cookie) {
   expect(cookies.map((c) => c.name)).to.include(cookie.name);
   expect(cookies.map((c) => c.value)).to.include(cookie.value);
 }
-export function doesNotIncludeCookie(cookies, cookie) {
+export function doesNotIncludeCookie(cookies: Cookie[], cookie: Cookie) {
   expect(cookies.map((c) => c.name)).to.not.include(cookie.name);
   expect(cookies.map((c) => c.value)).to.not.include(cookie.value);
 }

@@ -189,7 +189,7 @@ export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
   const {cookies} = await this.remote.getCookies();
 
   // the value is URI encoded, so decode it safely
-  return cookies.map((cookie) => {
+  return cookies.map((cookie: Cookie) => {
     if (!isEmpty(cookie.value)) {
       try {
         cookie.value = decodeURI(cookie.value);

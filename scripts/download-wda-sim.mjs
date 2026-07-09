@@ -11,7 +11,7 @@ const DEPRECATION_MESSAGE =
 async function main() {
   const program = new Command();
 
-  const oldHandler = deprecate(async (options) => {
+  const oldHandler = deprecate(async (/** @type {DownloadOptions} */ options) => {
     await getWDAPrebuiltPackage({...options, kind: 'sim'});
   }, DEPRECATION_MESSAGE);
 

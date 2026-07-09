@@ -325,7 +325,7 @@ export async function stopRemote(this: XCUITestDriver): Promise<void> {
     try {
       await notifyBiDiContextChange.bind(this)();
     } catch (err) {
-      this.log.warn(`Failed to notify BiDi context change: ${err.message}`);
+      this.log.warn(`Failed to notify BiDi context change: ${(err as Error).message}`);
     }
   } finally {
     this.curWebFrames = [];
@@ -534,7 +534,7 @@ export async function setContext(
   if (this.opts.enablePerformanceLogging && this._remote) {
     const context = this.curContext;
     this.log.debug(`Starting performance log on '${context}'`);
-    [this.logs.performance] = assignBiDiLogListener.bind(this)(
+    (this.logs as Record<string, any>).performance = assignBiDiLogListener.bind(this)(
       new IOSPerformanceLog({
         remoteDebugger: this.remote,
         log: this.log,
@@ -552,11 +552,11 @@ export async function setContext(
     const {safariConsole, safariNetwork} = this.logs;
     if (safariConsole) {
       const consoleLog = safariConsole as SafariConsoleLog;
-      this.remote.startConsole(consoleLog.onConsoleLogEvent.bind(consoleLog));
+      this.remote.startConsole(consoleLog.onConsoleLogEvent.bind(consoleLog) as any);
     }
     if (safariNetwork) {
       const networkLog = safariNetwork as SafariNetworkLog;
-      this.remote.startNetwork(networkLog.onNetworkEvent.bind(networkLog));
+      this.remote.startNetwork(networkLog.onNetworkEvent.bind(networkLog) as any);
     }
   }
 }

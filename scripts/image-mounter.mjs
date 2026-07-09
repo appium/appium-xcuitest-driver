@@ -37,6 +37,11 @@ class ImageMounter {
     }
   }
 
+  /**
+   * @param {string} filePath
+   * @param {string} fileType
+   * @returns {Promise<string>}
+   */
   async validateFile(filePath, fileType) {
     const absolutePath = path.resolve(filePath);
 
@@ -49,13 +54,17 @@ class ImageMounter {
 
       return absolutePath;
     } catch (error) {
-      if (error.code === 'ENOENT') {
+      if (/** @type {any} */ (error).code === 'ENOENT') {
         throw new Error(`${fileType} file not found: ${absolutePath}`, {cause: error});
       }
       throw error;
     }
   }
 
+  /**
+   * @param {string} [udid]
+   * @returns {Promise<{usbmux: import('appium-ios-remotexpc').Usbmux, targetDevice: any}>}
+   */
   async getTargetDevice(udid) {
     const {createUsbmux} = await this.initializeRemoteXPC();
 
@@ -94,6 +103,12 @@ class ImageMounter {
     return {usbmux, targetDevice};
   }
 
+  /**
+   *
+   * @param {string|undefined} udid
+   * @param {(imageMounterService: any, deviceUdid: string) => Promise<void>} fn
+   * @returns {Promise<void>}
+   */
   async withImageMounterService(udid, fn) {
     const {usbmux, targetDevice} = await this.getTargetDevice(udid);
     const deviceUdid = targetDevice.Properties.SerialNumber;
@@ -129,18 +144,21 @@ class ImageMounter {
       this.validateFile(trustCachePath, 'Trust Cache (.trustcache)'),
     ]);
 
-    await this.withImageMounterService(udid, async (imageMounterService, deviceUdid) => {
-      log.info(`Mounting image on device: ${deviceUdid}`);
+    await this.withImageMounterService(
+      udid,
+      async (/** @type {any} */ imageMounterService, /** @type {string} */ deviceUdid) => {
+        log.info(`Mounting image on device: ${deviceUdid}`);
 
-      if (await imageMounterService.isPersonalizedImageMounted()) {
-        log.info('✅ Personalized image is already mounted on the device');
-        return;
-      }
+        if (await imageMounterService.isPersonalizedImageMounted()) {
+          log.info('✅ Personalized image is already mounted on the device');
+          return;
+        }
 
-      await imageMounterService.mount(validatedImagePath, validatedManifestPath, validatedTrustCachePath);
+        await imageMounterService.mount(validatedImagePath, validatedManifestPath, validatedTrustCachePath);
 
-      log.info('✅ Image mounted successfully!');
-    });
+        log.info('✅ Image mounted successfully!');
+      },
+    );
   }
 
   /**
@@ -149,13 +167,16 @@ class ImageMounter {
    * @param {string} [mountPath='/System/Developer'] - Mount path to unmount
    */
   async unmount(udid, mountPath = '/System/Developer') {
-    await this.withImageMounterService(udid, async (imageMounterService, deviceUdid) => {
-      log.info(`Unmounting image from device: ${deviceUdid}`);
-      log.info(`Mount path: ${mountPath}`);
+    await this.withImageMounterService(
+      udid,
+      async (/** @type {any} */ imageMounterService, /** @type {string} */ deviceUdid) => {
+        log.info(`Unmounting image from device: ${deviceUdid}`);
+        log.info(`Mount path: ${mountPath}`);
 
-      await imageMounterService.unmountImage(mountPath);
-      log.info('✅ Image unmounted successfully!');
-    });
+        await imageMounterService.unmountImage(mountPath);
+        log.info('✅ Image unmounted successfully!');
+      },
+    );
   }
 }
 

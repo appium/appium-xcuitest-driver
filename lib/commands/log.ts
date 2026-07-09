@@ -131,7 +131,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
   }
 
   if (this.logs.syslog === undefined) {
-    [this.logs.crashlog] = assignBiDiLogListener.bind(this)(
+    (this.logs as Record<string, any>).crashlog = assignBiDiLogListener.bind(this)(
       new IOSCrashLog({
         sim: this.device as Simulator,
         udid: this.isRealDevice() ? this.opts.udid : undefined,
@@ -142,7 +142,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
         type: 'crashlog',
       },
     );
-    [this.logs.syslog] = assignBiDiLogListener.bind(this)(
+    (this.logs as Record<string, any>).syslog = assignBiDiLogListener.bind(this)(
       this.isRealDevice()
         ? new IOSDeviceLog({
             udid: this.opts.udid as string,
@@ -163,7 +163,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
       },
     );
     if (typeof this.opts.showSafariConsoleLog === 'boolean') {
-      [this.logs.safariConsole] = assignBiDiLogListener.bind(this)(
+      (this.logs as Record<string, any>).safariConsole = assignBiDiLogListener.bind(this)(
         new SafariConsoleLog({
           showLogs: this.opts.showSafariConsoleLog,
           log: this.log,
@@ -174,7 +174,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
       );
     }
     if (typeof this.opts.showSafariNetworkLog === 'boolean') {
-      [this.logs.safariNetwork] = assignBiDiLogListener.bind(this)(
+      (this.logs as Record<string, any>).safariNetwork = assignBiDiLogListener.bind(this)(
         new SafariNetworkLog({
           showLogs: this.opts.showSafariNetworkLog,
           log: this.log,

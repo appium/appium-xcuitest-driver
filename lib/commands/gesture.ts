@@ -100,7 +100,7 @@ export async function performActions(this: XCUITestDriver, actions: ActionSequen
       // Selenium API unexpectedly inserts zero pauses, which are not supported by WDA
       modifiedAction.actions = (action.actions || []).filter(
         (innerAction) => !(innerAction.type === 'pause' && innerAction.duration === 0),
-      );
+      ) as any;
       return modifiedAction;
     });
   this.log.debug(`Preprocessed actions: ${JSON.stringify(preprocessedActions, null, '  ')}`);

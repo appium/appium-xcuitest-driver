@@ -5,10 +5,9 @@ import {URL} from 'node:url';
 
 import {sleep} from 'asyncbox';
 
+import {FIXTURES_ROOT} from '../../../setup';
 import {getFreePort} from '../ports';
 import {compileLodashTemplate} from './template';
-
-const FIXTURES_ROOT = path.resolve(__dirname, '../../../fixtures/guinea-pig');
 
 const DYNAMIC_ROUTES: Record<string, string> = {
   '/test/guinea-pig': 'guinea-pig.html',

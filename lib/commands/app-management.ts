@@ -33,7 +33,7 @@ export async function mobileInstallApp(
     onPostProcess: onPostConfigureApp.bind(this),
     onDownload: onDownloadApp.bind(this),
     supportedExtensions: SUPPORTED_EXTENSIONS,
-  });
+  } as any);
   this.log.info(
     `Installing '${srcAppPath}' to the ${this.isRealDevice() ? 'real device' : 'Simulator'} ` +
       `with UDID '${this.device.udid}'`,

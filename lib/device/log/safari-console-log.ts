@@ -107,7 +107,7 @@ export class SafariConsoleLog extends IOSLog<SafariConsoleEntry, TSerializedEntr
 }
 
 function mapLogLevel(originalLevel: string): string {
-  return LOG_LEVELS_MAP[originalLevel] ?? DEFAULT_LOG_LEVEL;
+  return (LOG_LEVELS_MAP as Record<string, string>)[originalLevel] ?? DEFAULT_LOG_LEVEL;
 }
 
 export default SafariConsoleLog;

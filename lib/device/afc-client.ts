@@ -3,7 +3,9 @@ import type {Readable} from 'node:stream';
 import {Readable as ReadableStream} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 
+/** @ts-expect-error no types */
 import {services} from 'appium-ios-device';
+/** @ts-expect-error no types */
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
 import {fs, util} from 'appium/support';
@@ -327,7 +329,8 @@ export class AfcClient {
     await this.iosDeviceAfcService.walkDir(
       remotePath,
       true,
-      async (entryPath, isDirectory) => await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
+      async (entryPath: string, isDirectory: boolean) =>
+        await this.processWalkDirPullEntry(ctx, entryPath, isDirectory),
     );
 
     // Rejects still in `activePulls` surface via `Promise.all`. Pulls already spliced out after a

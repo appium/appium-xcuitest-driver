@@ -1,5 +1,7 @@
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {services} from 'appium-ios-device';
+/** @ts-expect-error no types */
 import type {NotificationProxy as IOSDeviceNotificationProxy} from 'appium-ios-device';
 import type {NotificationProxyService as RemoteXPCNotificationProxyService} from 'appium-ios-remotexpc';
 

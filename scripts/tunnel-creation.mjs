@@ -133,6 +133,10 @@ class TunnelCreator {
     log.info('Cleaning up tunnel resources...');
     /** @type {Error[]} */
     const cleanupErrors = [];
+    /**
+     * @param {string} message
+     * @param {Error} err
+     */
     const recordCleanupError = (message, err) => {
       const wrapped = err instanceof Error ? err : new Error(String(err));
       cleanupErrors.push(new Error(message, {cause: wrapped}));
@@ -144,7 +148,7 @@ class TunnelCreator {
       try {
         stop?.();
       } catch (err) {
-        recordCleanupError('Failed to stop tunnel registry watcher', err);
+        recordCleanupError('Failed to stop tunnel registry watcher', /** @type {Error} */ (err));
       }
     }
     this._lifecycleWatchStopByUdid.clear();
@@ -153,7 +157,7 @@ class TunnelCreator {
       try {
         await this._registryServer.stop();
       } catch (err) {
-        recordCleanupError('Failed to stop tunnel registry server', err);
+        recordCleanupError('Failed to stop tunnel registry server', /** @type {Error} */ (err));
       } finally {
         this._registryServer = null;
       }
@@ -165,7 +169,7 @@ class TunnelCreator {
           await established.tunnelConnection.closer();
         }
       } catch (err) {
-        recordCleanupError(`Failed to close tunnel for ${udid}`, err);
+        recordCleanupError(`Failed to close tunnel for ${udid}`, /** @type {Error} */ (err));
       }
     }
     this._establishedTunnelsByUdid.clear();
@@ -174,7 +178,7 @@ class TunnelCreator {
       try {
         tunnelService.disconnect();
       } catch (err) {
-        recordCleanupError(`Failed to disconnect Apple TV tunnel service for ${udid}`, err);
+        recordCleanupError(`Failed to disconnect Apple TV tunnel service for ${udid}`, /** @type {Error} */ (err));
       }
     }
     this._appletvTunnelServicesByUdid.clear();
@@ -182,7 +186,7 @@ class TunnelCreator {
     try {
       await TunnelManager.closeAllTunnels();
     } catch (err) {
-      recordCleanupError('Failed to close managed tunnel(s)', err);
+      recordCleanupError('Failed to close managed tunnel(s)', /** @type {Error} */ (err));
     }
     await Promise.allSettled([...this._reconnectTasks.values()]);
 
@@ -337,7 +341,6 @@ class TunnelCreator {
         results.push({
           kind: 'usb',
           device,
-          tunnel: {Address: '', RsdPort: 0},
           success: false,
           error: errorMessage,
         });
@@ -387,19 +390,21 @@ class TunnelCreator {
           results.push(result);
           log.info(`✅ Apple TV tunnel ready for ${deviceId}`);
         } catch (err) {
-          log.warn(`Apple TV tunnel setup failed for ${deviceId}: ${err?.message ?? err}`);
+          log.warn(`Apple TV tunnel setup failed for ${deviceId}: ${/** @type {Error} */ (err)?.message ?? err}`);
           results.push({
             kind: 'appletv',
             device: {identifier: deviceId},
-            tunnel: {Address: '', RsdPort: 0},
             success: false,
-            error: String(err?.message ?? err),
+            error: String(/** @type {Error} */ (err)?.message ?? err),
           });
         }
       }
       return results;
     } catch (err) {
-      log.warn('Apple TV tunnel setup failed (ensure device is paired and on same network):', err?.message ?? err);
+      log.warn(
+        'Apple TV tunnel setup failed (ensure device is paired and on same network):',
+        /** @type {Error} */ (err)?.message ?? err,
+      );
       return results;
     }
   }
@@ -513,7 +518,6 @@ class TunnelCreator {
     const existing = registry.tunnels[udid];
     const entry = buildTunnelRegistryEntry(result, existing, now);
     entry.services = servicesToCatalog(services);
-    entry.catalogUpdatedAt = now;
 
     this._registryServer.upsertReadyEntry(udid, entry);
     log.info(`Published tunnel catalog for ${udid} (${Object.keys(entry.services).length} services)`);
@@ -601,20 +605,23 @@ class TunnelCreator {
               ? await this.createUsbTunnelForDevice(device)
               : await this._createAppleTVTunnelForUdid(udid);
 
-            this.attachTunnelRegistryLifecycleWatch(result, async ({udid: droppedUdid}) => {
-              this._reconnectTunnelByUdid(droppedUdid);
-            });
-            const published = await this.publishDiscoveredTunnelEntry(result);
+            this.attachTunnelRegistryLifecycleWatch(
+              /** @type {EstablishedTunnel} */ (result),
+              async ({udid: droppedUdid}) => {
+                this._reconnectTunnelByUdid(droppedUdid);
+              },
+            );
+            const published = await this.publishDiscoveredTunnelEntry(/** @type {EstablishedTunnel} */ (result));
             if (published) {
               log.info(`Successfully recreated tunnel for ${udid}`);
               return;
             }
           } catch (retryErr) {
-            log.warn(`Failed to recreate tunnel for ${udid}: ${retryErr?.message ?? retryErr}`);
+            log.warn(`Failed to recreate tunnel for ${udid}: ${/** @type {Error} */ (retryErr)?.message ?? retryErr}`);
           }
         }
       } catch (taskErr) {
-        log.warn(`Tunnel loss handling failed for ${udid}: ${taskErr?.message ?? taskErr}`);
+        log.warn(`Tunnel loss handling failed for ${udid}: ${/** @type {Error} */ (taskErr)?.message ?? taskErr}`);
       } finally {
         this._reconnectTasks.delete(udid);
       }
@@ -820,7 +827,7 @@ function setupCleanupHandlers(tunnelCreator) {
     try {
       await tunnelCreator.cleanup();
     } catch (err) {
-      log.warn(`Error during tunnel cleanup: ${err?.message ?? err}`);
+      log.warn(`Error during tunnel cleanup: ${/** @type {Error} */ (err)?.message ?? err}`);
       if (!process.exitCode) {
         process.exitCode = 1;
       }
@@ -941,7 +948,9 @@ async function main() {
         }
       }
     } catch (error) {
-      throw new Error(`Tunnel registry port cannot be persisted: ${error.message}`, {cause: error});
+      throw new Error(`Tunnel registry port cannot be persisted: ${/** @type {Error} */ (error).message}`, {
+        cause: /** @type {Error} */ (error),
+      });
     }
 
     tunnelCreator.setDisconnectRetryPolicy(

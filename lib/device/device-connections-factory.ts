@@ -2,6 +2,7 @@ import net from 'node:net';
 import type {Socket} from 'node:net';
 
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {utilities} from 'appium-ios-device';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
 import {util, timing} from 'appium/support';

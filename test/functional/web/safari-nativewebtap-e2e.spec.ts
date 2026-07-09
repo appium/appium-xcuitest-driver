@@ -1,0 +1,354 @@
+import {describe, it, before, after, beforeEach} from 'node:test';
+import {setTimeout as delay} from 'node:timers/promises';
+
+import {retryInterval} from 'asyncbox';
+import chai, {expect} from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import type {Browser} from 'webdriverio';
+
+import {isEmpty} from '../../../lib/utils';
+import {
+  amendCapabilities,
+  SETTINGS_CAPS,
+  SAFARI_CAPS,
+  DEVICE_NAME,
+  DEVICE_NAME_FOR_SAFARI_IPAD,
+  isIosVersionAtLeast,
+} from '../desired';
+import {CLASS_CHAIN_SEARCH} from '../helpers/element';
+import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {
+  createGuineaPigServerSession,
+  openPage,
+  spinTitleEquals,
+  spinTitle,
+  guineaPigPage,
+  guineaPigScrollablePage,
+  guineaPigAppBannerPage,
+} from './helpers';
+
+chai.use(chaiAsPromised);
+
+function getCaps(baseUrl: string) {
+  return amendCapabilities(SAFARI_CAPS, {
+    'appium:safariInitialUrl': guineaPigPage(baseUrl),
+    'appium:nativeWebTap': true,
+  });
+}
+
+const SPIN_RETRIES = 25;
+
+const PAGE_3_LINK = 'i am a link to page 3';
+const PAGE_3_TITLE = 'Another Page: page 3';
+const SCROLL_AMT = 1400;
+
+describe('Safari - coordinate conversion -', {timeout: E2E_TIMEOUT * 2, skip: Boolean(process.env.CI)}, function () {
+  const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
+  const guineaPigServer = createGuineaPigServerSession();
+  let baseUrl: string;
+
+  after(async function () {
+    await guineaPigServer.teardown();
+  });
+
+  before(async function () {
+    baseUrl = (await guineaPigServer.setup()).baseUrl;
+    async function loadPage(driver: any, url: string) {
+      await retryInterval(5, 1000, async function () {
+        await openPage(driver, url);
+        await expect(spinTitle(driver)).to.eventually.not.include('Cannot Open Page');
+      });
+    }
+
+    // Close all tabs in Safari before running tests because left over tabs can affect the test results.
+    // If possible, it's probably better to kick com.apple.mobilesafari.settings.DeleteAllDataAndCachesTask
+    // task in com.apple.Preferences app or something equivalent rather than closing tabs via GUI.
+    async function closeAllTabsViaSettingsApp(deviceName: string) {
+      const newCaps = {
+        'appium:deviceName': deviceName,
+      };
+      const localSettingsCaps = amendCapabilities(SETTINGS_CAPS, newCaps);
+      const driver = await initSession(localSettingsCaps);
+
+      ////
+      // To open Safari menu in Settings app
+      ////
+      const openSafariMenuIOS18 = async () => {
+        const windowRect = await driver.getWindowRect();
+        const scrollAction = [
+          {
+            type: 'pointer',
+            id: 'touch',
+            actions: [
+              {
+                type: 'pointerMove',
+                duration: 0,
+                x: windowRect.width / 2,
+                y: windowRect.height * 0.8,
+              },
+              {type: 'pointerDown', button: 0},
+              {type: 'pause', duration: 500},
+              {
+                type: 'pointerMove',
+                duration: 0,
+                x: windowRect.width / 2,
+                y: windowRect.height * 0.2,
+              },
+              {type: 'pointerUp', button: 0},
+            ],
+          },
+        ];
+        await driver.performActions(scrollAction);
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Apps'`).click();
+        // to check the view transition to be completed
+        await driver.$(`-ios predicate string:label='Default Apps'`);
+        await driver.performActions(scrollAction);
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='Safari'`).click();
+      };
+      const openSafariMenuIOS17AndBelow = async () => {
+        await driver.$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeStaticText[`label == "Safari"`]').click();
+      };
+
+      ////
+      // To clear history and data in the safari menue
+      ////
+      const clearHistoryIOS18 = async () => {
+        await driver.$(`-ios predicate string:type='XCUIElementTypeStaticText' AND label='All history'`).click();
+        const closeTabEl = await driver.$(
+          `-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`,
+        );
+        if ((await closeTabEl.getValue()) === '0') {
+          await closeTabEl.click();
+        }
+        await driver.$(`-ios predicate string:type='XCUIElementTypeButton' AND label='Clear History'`).click();
+      };
+      const clearHistoryIOS17 = async () => {
+        await driver.$(`-ios predicate string:type='XCUIElementTypeSwitch' AND label='Close All Tabs'`).click();
+        await driver.$$('~Clear History')[1].click();
+      };
+      const clearHistoryIOS16AndBelow = async () => {
+        if ((await driver.$$('~Clear').length) > 0) {
+          // for iPad
+          await driver.$('~Clear').click();
+        } else {
+          // for iPhone
+          await driver.$('~Clear History and Data').click();
+        }
+        if (isIosVersionAtLeast('16.0')) {
+          await driver.$(CLASS_CHAIN_SEARCH + ':**/XCUIElementTypeButton[`label == "Close Tabs"`]').click();
+        }
+      };
+
+      if (isIosVersionAtLeast('18.0')) {
+        await openSafariMenuIOS18();
+      } else {
+        await openSafariMenuIOS17AndBelow();
+      }
+      await driver.$('~CLEAR_HISTORY_AND_DATA').click();
+
+      if (isIosVersionAtLeast('18.0')) {
+        await clearHistoryIOS18();
+      } else if (isIosVersionAtLeast('17.0')) {
+        await clearHistoryIOS17();
+      } else {
+        await clearHistoryIOS16AndBelow();
+      }
+      await deleteSession();
+    }
+
+    // define the tests, for each device
+    for (const deviceName of devices) {
+      describe(`${deviceName} -`, {timeout: E2E_TIMEOUT * 2}, function () {
+        let driver: Browser;
+        let skipped = false;
+
+        before(async function () {
+          const localCaps = amendCapabilities(getCaps(baseUrl), {'appium:deviceName': deviceName});
+          skipped = false;
+          try {
+            await closeAllTabsViaSettingsApp(deviceName);
+            driver = await initSession(localCaps);
+          } catch (err: any) {
+            if (err.message.includes('Invalid device type') || err.message.includes('Incompatible device')) {
+              skipped = true;
+              return;
+            }
+            throw err;
+          }
+          if (process.env.CI) {
+            await driver.setTimeouts(10000);
+          }
+        });
+        after(async function () {
+          if (!skipped) {
+            await deleteSession();
+          }
+        });
+        beforeEach(async function () {
+          if (!skipped) {
+            await driver.updateSettings({
+              nativeWebTapStrict: false,
+            });
+          }
+        });
+
+        it('should be able to tap on an element', {skip: skipped}, async function () {
+          await loadPage(driver, guineaPigPage(baseUrl));
+
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to tap on an element when the app banner is up', {skip: skipped}, async function () {
+          await loadPage(driver, guineaPigAppBannerPage(baseUrl));
+
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to bypass measuring the offset of banner', {skip: skipped}, async function () {
+          await driver.updateSettings({
+            nativeWebTapStrict: true,
+          });
+
+          await loadPage(driver, guineaPigAppBannerPage(baseUrl));
+          await spinTitleEquals(driver, 'I am a page title', SPIN_RETRIES);
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+
+          await driver.updateSettings({nativeWebTapSmartAppBannerVisibility: 'invisible'});
+          await loadPage(driver, guineaPigAppBannerPage(baseUrl));
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to tap on an element after scrolling', {skip: skipped}, async function () {
+          await loadPage(driver, guineaPigScrollablePage(baseUrl));
+          // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
+          // for now we'll just use JS to scroll
+          //await driver.execute('mobile: scroll', {direction: 'down'});
+          await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+
+          await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+          await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+        });
+
+        it('should be able to tap on a button', {skip: skipped}, async function () {
+          await loadPage(driver, guineaPigPage(baseUrl));
+
+          expect(await driver.getPageSource()).to.not.include('Your comments: Hello');
+
+          const comments = await driver.$('[name="comments"]');
+          await driver.elementSendKeys(comments.elementId as any, 'Hello');
+
+          await driver.$('[name="submit"]').click();
+
+          await retryInterval(5, 500, async function () {
+            const src = await driver.getPageSource();
+            expect(src).to.include('Your comments: Hello');
+          });
+        });
+
+        it('should be able to handle an alert', {skip: skipped}, async function () {
+          await loadPage(driver, guineaPigPage(baseUrl));
+
+          await driver.$('#alert1').click();
+          await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
+          await expect(driver.getTitle()).to.eventually.include('I am a page title');
+        });
+
+        describe('with tabs -', {skip: skipped || !deviceName.toLowerCase().includes('ipad')}, function () {
+          before(async function () {
+            await loadPage(driver, guineaPigPage(baseUrl));
+
+            // open a new tab and go to it
+            await driver.execute('arguments[0].click();', await driver.$(`=i am a new window link`));
+
+            await retryInterval(10, 1000, async function () {
+              await expect(driver.getTitle()).to.eventually.eql('I am another page title');
+            });
+          });
+
+          it('should be able to tap on an element', async function () {
+            await loadPage(driver, guineaPigPage(baseUrl));
+
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+            await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+
+            await driver.back();
+
+            // try again, just to make sure
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+            await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+          });
+
+          it('should be able to bypass measuring the offset', async function () {
+            await driver.updateSettings({
+              nativeWebTapStrict: true,
+            });
+
+            await loadPage(driver, guineaPigPage(baseUrl));
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+            await driver.updateSettings({nativeWebTapTabBarVisibility: 'visible'});
+            await loadPage(driver, guineaPigPage(baseUrl));
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+          });
+
+          it('should be able to tap on an element after scrolling', async function () {
+            await loadPage(driver, guineaPigScrollablePage(baseUrl));
+            // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
+            // for now we'll just use JS to scroll
+            //await driver.execute('mobile: scroll', {direction: 'down'});
+            await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+            await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+          });
+
+          it('should be able to tap on an element after scrolling, when the url bar is present', async function () {
+            await loadPage(driver, guineaPigScrollablePage(baseUrl));
+            // FIXME mobile: scroll is broken in safari; it selects text instead of scrolling
+            // for now we'll just use JS to scroll
+            //await driver.execute('mobile: scroll', {direction: 'down'});
+            await driver.execute(`window.scrollBy(0, ${SCROLL_AMT})`);
+
+            // to get the url bar, click on the URL bar
+            const ctx = await driver.getContext();
+            try {
+              await driver.switchContext('NATIVE_APP');
+
+              // get the reload button, as multi-element find to bypass
+              // the implicit wait
+              if (isEmpty(await driver.$$('~ReloadButton'))) {
+                // when there is no reload button, the URL bar is minimized
+                // so tap on it to bring it up
+                await driver.$('~Address Bar').click();
+              }
+
+              // time for things to happen
+              await delay(500);
+            } finally {
+              await driver.switchContext(ctx);
+            }
+
+            await driver.execute('arguments[0].click();', await driver.$(`=${PAGE_3_LINK}`));
+
+            await spinTitleEquals(driver, PAGE_3_TITLE, SPIN_RETRIES);
+          });
+        });
+      });
+    }
+  });
+
+  it.skip('should have devices array set', function () {
+    // this block is just here so that the `before` block is run
+    // it does not, however, need to actually run. Mocha FTW!
+  });
+});

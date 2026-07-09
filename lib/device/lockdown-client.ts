@@ -1,4 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {utilities} from 'appium-ios-device';
 import type {LockdownService} from 'appium-ios-remotexpc';
 

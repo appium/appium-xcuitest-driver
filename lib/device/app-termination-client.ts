@@ -1,4 +1,5 @@
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {Devicectl} from 'node-devicectl';
 
