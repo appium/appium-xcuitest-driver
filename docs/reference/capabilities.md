@@ -8,13 +8,6 @@ about capabilities, refer to the [Appium documentation](https://appium.io/docs/e
 For other capabilities recognized by the Appium server, see
 [their Appium docs reference page](https://appium.io/docs/en/latest/reference/session/caps/).
 
-Running the driver on a host other than macOS is only supported for real-device sessions that avoid
-Xcode and Simulator utilities. Such sessions must provide an explicit `appium:udid` and either
-`appium:webDriverAgentUrl` for an externally managed WebDriverAgent or `appium:usePreinstalledWDA`
-with `appium:platformVersion` set to iOS/tvOS 18.0 or newer so RemoteXPC eligibility can be checked
-without probing Xcode. Simulator sessions, automatic device selection, and the default xcodebuild
-WebDriverAgent startup strategy require macOS.
-
 ### General
 
 | <div style="width:10em">Capability</div> | Description |

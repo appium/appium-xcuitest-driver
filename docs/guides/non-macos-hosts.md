@@ -15,20 +15,25 @@ several limitations:
 ## Prerequisites
 
 Device communication on non-macOS hosts is provided by the `appium-ios-remotexpc` optional
-dependency. It will typically be automatically installed along with the XCUITest driver, but
-otherwise make sure to install version `5.1.0` or later.
+dependency. In most cases, it will be automatically installed along with the XCUITest driver. If
+installing manually, ensure you are using version `5.1.0` or later.
 
-The package has its own prerequisites, which are described in [the RemoteXPC Tunnels guide](./remotexpc-tunnels-real-devices.md).
+Once the package is installed, you should:
+
+* Set up its Windows/Linux-specific prerequisites
+* Create a RemoteXPC tunnel
+
+Check [the RemoteXPC Tunnels guide](./remotexpc-tunnels-real-devices.md) for further information.
 
 ## Creating a Session
 
 All Windows and Linux sessions must use several additional capabilities in order to avoid
 Xcode-related codepaths.
 
-Since automatic device selection is not supported, the device must be explicitly specified using
-the [`appium:udid` and `appium:platformVersion` capabilities](../reference/capabilities.md).
-Furthermore, since it is not possible to build WDA without Xcode, one of the following approaches
-must be used:
+Since automatic device selection is not supported, it is always required to use the
+[`appium:udid` and `appium:platformVersion` capabilities](../reference/capabilities.md) in order to
+explicitly specify the device under test. Furthermore, since it is not possible to build WDA without
+Xcode, one of the following approaches must be used:
 
 * WDA can be already pre-installed on the device, which can be specified using the
   `appium:usePreinstalledWDA` capability - see [the Run Preinstalled WDA guide](./run-preinstalled-wda.md).
