@@ -82,6 +82,7 @@ nav:
           - guides/gestures.md
       - Other:
           - guides/tvos.md
+          - guides/non-macos-hosts.md
           - guides/input-events.md
   - Troubleshooting:
       - troubleshooting/index.md

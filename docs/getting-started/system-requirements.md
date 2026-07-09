@@ -5,6 +5,7 @@ title: System Requirements
 There are three primary requirements to use the XCUITest driver:
 
 * macOS host machine
+    * Windows and Linux hosts have limited support - see the [Non-macOS Hosts guide](../guides/non-macos-hosts.md)
 * Xcode
 * Appium
 
@@ -23,8 +24,8 @@ to help identify your target Xcode, macOS, driver and Appium server versions.
 
 !!! note
 
-    If you already have the driver installed, you can also verify its requirements with the
-    built-in Appium Doctor support:
+    If you already have the driver installed, you can also verify most of its requirements with the
+    built-in Appium Doctor:
 
     ```
     appium driver doctor xcuitest
