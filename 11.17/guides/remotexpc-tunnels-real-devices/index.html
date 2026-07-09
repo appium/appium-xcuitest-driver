@@ -2067,39 +2067,6 @@
 
   <!-- Table of contents list -->
   
-</li>  <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#non-macos-sessions-limitations" class="md-nav__link">
-    <span class="md-ellipsis"> Non-macOS Sessions Limitations </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
 </li> 
     </ul>
   </nav>
@@ -2748,6 +2715,8 @@
       
         
       
+        
+      
     
     
     
@@ -2811,6 +2780,34 @@
     
   
     tvOS Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../non-macos-hosts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Non-macOS Hosts
   
 
     
@@ -3297,39 +3294,6 @@
 
   <!-- Table of contents list -->
   
-</li>  <!--
-  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
-
-<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
-     for the purpose of not showing all heading objects in the TOC -->
-
-<!-- Table of contents item -->
-<li class="md-nav__item">
-  <a href="#non-macos-sessions-limitations" class="md-nav__link">
-    <span class="md-ellipsis"> Non-macOS Sessions Limitations </span>
-  </a>
-
-  <!-- Table of contents list -->
-  
 </li> 
     </ul>
   </nav>
@@ -3452,6 +3416,7 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
 (non-exhaustive list):</p>
 <ul>
 <li>General communication with wireless Apple TV devices</li>
+<li>General device communication on Windows/Linux hosts</li>
 <li>Retrieval of various logs</li>
 <li>Network monitoring</li>
 <li>Certificate management</li>
@@ -3471,11 +3436,11 @@ interfaces and Remote XPC endpoints. The XCUITest driver utilizes them for the f
   the optional dependency step failed or you are wiring a custom environment.</li>
 </ul>
 </li>
-<li>On Windows hosts it is mandatory to have Apple Mobile Device drivers installed. These are required for USB
-  communication with iOS devices. Install them through Apple's standalone iTunes package for Windows
-  (the non-Microsoft Store installer already bundles them).</li>
+<li>On Windows hosts, Apple Mobile Device drivers are required. They can be installed through Apple's
+  standalone iTunes package for Windows (the non-Microsoft Store installer already bundles them).</li>
 <li>
-<p>On Linux hosts it is necessary to load the TUN/TAP kernel module and give the user permissions to tun devices:</p>
+<p>On Linux hosts, it is necessary to load the TUN/TAP kernel module and give the user permissions to
+  tun devices:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Check if the module is loaded</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>tun
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -3574,6 +3539,8 @@ should remaing running in the background, <em>in addition to</em> the Appium ser
 <li>the tunnel registry server is reachable</li>
 <li>the platform is a real device running iOS/tvOS 18 or later</li>
 </ul>
+<p>Refer to <a href="../non-macos-hosts/">the Non-macOS Hosts guide</a> for additional requirements in order to
+run sessions on Windows/Linux hosts.</p>
 <h3 id="multiple-sessions">Multiple Sessions<a class="headerlink" href="#multiple-sessions" title="Permanent link">&para;</a></h3>
 <p>The tunnel creation script is multi‑device aware: it creates and registers an independent tunnel
 for each connected device. It can also be limited to specific devices by passing <code>--udid</code>/<code>--appletv-device-id</code>
@@ -3599,12 +3566,6 @@ tunnel‑creation process per container/VM. In such cases, use distinct <code>--
 values for each isolation boundary. This keeps tunnel state scoped to each environment, but within
 that boundary you should still avoid running multiple competing tunnel‑creation scripts
 simultaneously, as they may fight over TUN/TAP configuration and <code>usbmuxd</code> connections.</p>
-<h3 id="non-macos-sessions-limitations">Non-macOS Sessions Limitations<a class="headerlink" href="#non-macos-sessions-limitations" title="Permanent link">&para;</a></h3>
-<p>Since neither Linux nor Windows supports deploying Xcode, the only way to run a test session on these
-platforms is if WebDriverAgent is already preinstalled on a real device under test (e.g., when
-the <code>appium:udid</code>, <code>appium:platformVersion</code>, and either <code>appium:webDriverAgentUrl</code> or <code>appium:usePreinstalledWDA</code>
-capabilities are provided). Simulator sessions, automatic device selection, and the default xcodebuild
-WebDriverAgent startup strategy all require macOS.</p>
 
 
 
@@ -3625,7 +3586,7 @@ WebDriverAgent startup strategy all require macOS.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 1, 2026 20:50:32 UTC"><span class="timeago" datetime="2026-07-01T20:50:32+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 1, 2026 20:50:32 UTC">2026-07-01</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="July 9, 2026 10:00:52 UTC"><span class="timeago" datetime="2026-07-09T10:00:52+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="July 9, 2026 10:00:52 UTC">2026-07-09</span>
   </span>
 
     
