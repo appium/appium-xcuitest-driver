@@ -8,14 +8,14 @@ import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 import {APPIUM_IMAGE} from '../web/helpers';
 
 chai.use(chaiAsPromised);
 
 const BTN_OK_CNCL = 'Okay / Cancel';
 
-describe('XCUITestDriver - gestures', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - gestures', function () {
   let driver: Browser;
 
   describe('dynamic gestures', function () {

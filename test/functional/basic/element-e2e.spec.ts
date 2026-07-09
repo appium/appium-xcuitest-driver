@@ -8,11 +8,11 @@ import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {extractCapabilityValue, getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver - elements -', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - elements -', function () {
   let driver: Browser;
 
   before(async function () {

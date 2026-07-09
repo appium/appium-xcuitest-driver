@@ -9,7 +9,7 @@ import type {Browser} from 'webdriverio';
 
 import {extractCapabilityValue, getUICatalogCaps, PLATFORM_VERSION} from '../desired';
 import {PREDICATE_SEARCH, CLASS_CHAIN_SEARCH} from '../helpers/element';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
@@ -21,7 +21,7 @@ const PV_ABOVE_13 = util.compareVersions(PLATFORM_VERSION, '>=', '13.0');
 const FIRST_ELEMENT = PV_ABOVE_13 ? 'Activity Indicators' : 'Action Sheets';
 const APP_TITLE = PV_ABOVE_13 ? 'UIKitCatalog' : 'UICatalog';
 
-describe('XCUITestDriver - find -', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - find -', function () {
   let driver: Browser;
 
   before(async function () {

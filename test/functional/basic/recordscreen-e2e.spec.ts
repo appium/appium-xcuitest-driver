@@ -7,9 +7,9 @@ import {exec} from 'teen_process';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps} from '../desired';
-import {deleteSession, initSession, E2E_TIMEOUT} from '../helpers/session';
+import {deleteSession, initSession} from '../helpers/session';
 
-describe('XCUITestDriver - simulator screen recording (MJPEG + ffmpeg)', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - simulator screen recording (MJPEG + ffmpeg)', function () {
   let ffmpegPath!: string;
   let driver: Browser;
   let shouldSkip: boolean = false;

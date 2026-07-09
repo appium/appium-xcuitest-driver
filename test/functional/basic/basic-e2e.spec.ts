@@ -10,11 +10,11 @@ import type {Browser} from 'webdriverio';
 
 import {isIosVersionBelow, getUICatalogCaps} from '../desired';
 import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver - basics -', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - basics -', function () {
   let driver: Browser;
   const guineaPigServer = createGuineaPigServerSession();
 

@@ -16,7 +16,7 @@ import {
   isIosVersionAtLeast,
 } from '../desired';
 import {CLASS_CHAIN_SEARCH} from '../helpers/element';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 import {
   createGuineaPigServerSession,
   openPage,
@@ -42,7 +42,7 @@ const PAGE_3_LINK = 'i am a link to page 3';
 const PAGE_3_TITLE = 'Another Page: page 3';
 const SCROLL_AMT = 1400;
 
-describe('Safari - coordinate conversion -', {timeout: E2E_TIMEOUT * 2, skip: Boolean(process.env.CI)}, function () {
+describe('Safari - coordinate conversion -', {skip: Boolean(process.env.CI)}, function () {
   const devices = [DEVICE_NAME, DEVICE_NAME_FOR_SAFARI_IPAD];
   const guineaPigServer = createGuineaPigServerSession();
   let baseUrl: string;
@@ -158,7 +158,7 @@ describe('Safari - coordinate conversion -', {timeout: E2E_TIMEOUT * 2, skip: Bo
 
     // define the tests, for each device
     for (const deviceName of devices) {
-      describe(`${deviceName} -`, {timeout: E2E_TIMEOUT * 2}, function () {
+      describe(`${deviceName} -`, function () {
         let driver: Browser;
         let skipped = false;
 

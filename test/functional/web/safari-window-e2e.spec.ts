@@ -7,7 +7,7 @@ import type {Browser} from 'webdriverio';
 
 import {isEmpty} from '../../../lib/utils';
 import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 import {
   createGuineaPigServerSession,
   openPage,
@@ -42,7 +42,7 @@ describe('safari - windows and frames', function () {
     await guineaPigServer.teardown();
   });
 
-  describe('without safariAllowPopups', {timeout: E2E_TIMEOUT}, function () {
+  describe('without safariAllowPopups', function () {
     let driver: Browser;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
@@ -62,7 +62,7 @@ describe('safari - windows and frames', function () {
     });
   });
 
-  describe('with safariAllowPopups', {timeout: E2E_TIMEOUT}, function () {
+  describe('with safariAllowPopups', function () {
     let driver: Browser;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {

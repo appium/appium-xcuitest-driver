@@ -8,7 +8,7 @@ import type {Browser} from 'webdriverio';
 
 import {UICATALOG_BUNDLE_ID} from '../../setup';
 import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
@@ -19,7 +19,7 @@ async function pullFileAsString(driver: any, remotePath: string) {
   return Buffer.from(remoteData64, 'base64').toString();
 }
 
-describe('XCUITestDriver - file movement', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - file movement', function () {
   let driver: Browser;
 
   before(async function () {

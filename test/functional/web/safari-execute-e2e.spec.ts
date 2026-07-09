@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 import {createGuineaPigServerSession, openPage, guineaPigPage} from './helpers';
 
 chai.use(chaiAsPromised);
@@ -15,7 +15,7 @@ const GET_RIGHT_INNERHTML = `return document.body.innerHTML.indexOf('I am some p
 const GET_WRONG_INNERHTML = `return document.body.innerHTML.indexOf('I am not some page content') > 0`;
 const GET_ELEM_BY_TAGNAME = `return document.getElementsByTagName('a');`;
 
-describe('safari - execute -', {timeout: E2E_TIMEOUT}, function () {
+describe('safari - execute -', function () {
   let driver: Browser;
   const guineaPigServer = createGuineaPigServerSession();
 

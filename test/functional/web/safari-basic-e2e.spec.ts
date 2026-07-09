@@ -8,7 +8,7 @@ import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {E2E_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 import {
   createGuineaPigServerSession,
   spinTitleEquals,
@@ -34,7 +34,7 @@ function getDefaultCaps(baseUrl: string) {
   });
 }
 
-describe('Safari - basics -', {timeout: E2E_TIMEOUT}, function () {
+describe('Safari - basics -', function () {
   let driver: Browser;
   let baseUrl: string;
   const guineaPigServer = createGuineaPigServerSession();

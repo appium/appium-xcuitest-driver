@@ -3,7 +3,7 @@ import type {Browser} from 'webdriverio';
 
 export const HOST = process.env.APPIUM_TEST_SERVER_HOST || '127.0.0.1';
 export const PORT = parseInt(String(process.env.APPIUM_TEST_SERVER_PORT), 10) || 4567;
-export const E2E_TIMEOUT = 60 * 1000 * 4;
+const E2E_TIMEOUT_MS = 60 * 1000 * 4;
 
 export type SessionCapabilities = Capabilities.RequestedStandaloneCapabilities;
 
@@ -28,7 +28,7 @@ export async function createRemoteSession(
     hostname: HOST,
     port: PORT,
     capabilities: caps,
-    connectionRetryTimeout: E2E_TIMEOUT,
+    connectionRetryTimeout: E2E_TIMEOUT_MS,
     connectionRetryCount: 1,
     ...remoteOpts,
   });

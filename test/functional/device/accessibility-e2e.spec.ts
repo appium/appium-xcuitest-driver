@@ -6,11 +6,11 @@ import type {Browser} from 'webdriverio';
 
 import {SETTINGS_CAPS, amendCapabilities} from '../desired';
 import {PREDICATE_SEARCH} from '../helpers/element';
-import {E2E_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
-describe('Accessibility', {timeout: E2E_TIMEOUT}, function () {
+describe('Accessibility', function () {
   let driver: Browser;
   let caps: Record<string, any>;
 

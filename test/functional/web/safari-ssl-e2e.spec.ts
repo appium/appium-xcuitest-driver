@@ -12,7 +12,7 @@ import type {Browser} from 'webdriverio';
 
 import {amendCapabilities, SAFARI_CAPS} from '../desired';
 import {getFreePort} from '../helpers/ports';
-import {deleteSession, initSession, E2E_TIMEOUT} from '../helpers/session';
+import {deleteSession, initSession} from '../helpers/session';
 import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
 
 chai.use(chaiAsPromised);
@@ -23,7 +23,7 @@ const createCertificateAsync = promisify(_pem.createCertificate);
 let caps: Record<string, any>;
 let pemCertificate: string;
 
-describe('Safari SSL', {timeout: E2E_TIMEOUT}, function () {
+describe('Safari SSL', function () {
   let sslServer: https.Server;
   let driver: Browser;
   let localHttpsUrl: string;

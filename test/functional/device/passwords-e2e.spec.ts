@@ -5,11 +5,11 @@ import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps, amendCapabilities} from '../desired';
-import {E2E_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
-describe('Passwords', {timeout: E2E_TIMEOUT}, function () {
+describe('Passwords', function () {
   let driver: Browser;
   let caps: Record<string, any>;
   let uiCatalogCaps: Record<string, any>;

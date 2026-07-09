@@ -6,11 +6,11 @@ import type {Browser} from 'webdriverio';
 
 import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup';
 import {getMultipleApps, amendCapabilities} from '../desired';
-import {E2E_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
-describe('OtherApps', {timeout: E2E_TIMEOUT}, function () {
+describe('OtherApps', function () {
   let caps: Record<string, any>;
   let driver: Browser;
 

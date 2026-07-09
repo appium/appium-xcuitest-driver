@@ -17,7 +17,7 @@ import {
   PLATFORM_VERSION,
   DEVICE_NAME,
 } from '../desired';
-import {E2E_TIMEOUT, initSession, deleteSession, HOST} from '../helpers/session';
+import {initSession, deleteSession, HOST} from '../helpers/session';
 import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
 
 chai.use(chaiAsPromised);
@@ -34,7 +34,7 @@ async function getNumSims() {
   return (await simctl.getDevices())[PLATFORM_VERSION].length;
 }
 
-describe('XCUITestDriver', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver', function () {
   let baseCaps: Record<string, any>;
   let caps: Record<string, any>;
   let driver: Browser;

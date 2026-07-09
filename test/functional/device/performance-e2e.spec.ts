@@ -6,11 +6,11 @@ import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession, E2E_TIMEOUT} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 
 chai.use(chaiAsPromised);
 
-describe('XCUITestDriver - performance', {timeout: E2E_TIMEOUT}, function () {
+describe('XCUITestDriver - performance', function () {
   const profileName = 'Time Profiler';
 
   let driver: Browser;

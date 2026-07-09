@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 
 import {TVOS_CAPS, extractCapabilityValue} from '../desired';
-import {E2E_TIMEOUT, initSession, deleteSession} from '../helpers/session';
+import {initSession, deleteSession} from '../helpers/session';
 import {cleanupSimulator} from '../helpers/simulator';
 
 chai.use(chaiAsPromised);
@@ -15,7 +15,7 @@ const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
 const simctl = new Simctl();
 
-describe('tvOS', {timeout: E2E_TIMEOUT}, function () {
+describe('tvOS', function () {
   let baseCaps: Record<string, any>;
   let udid: string;
 
