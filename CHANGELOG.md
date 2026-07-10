@@ -1,3 +1,9 @@
+## [11.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.3...v11.17.4) (2026-07-10)
+
+### Miscellaneous Chores
+
+* Ditch mocha ([#2907](https://github.com/appium/appium-xcuitest-driver/issues/2907)) ([ae7cd09](https://github.com/appium/appium-xcuitest-driver/commit/ae7cd097c0592e87762a5960de51838c2c574b81))
+
 ## [11.17.3](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.2...v11.17.3) (2026-07-08)
 
 ### Miscellaneous Chores
