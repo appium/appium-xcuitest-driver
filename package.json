@@ -56,7 +56,7 @@
     "e2e-test:long": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/long/**/*.spec.js\"",
     "e2e-test:parallel": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/parallel/**/*.spec.js\"",
     "e2e-test:web": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/**/*.spec.js\"",
-    "e2e-test:native-web-tap": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/safari-nativewebtap-e2e-specs.js\"",
+    "e2e-test:native-web-tap": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/safari-nativewebtap*.spec.js\"",
     "start": "appium --relaxed-security --port 4567 --keep-alive-timeout 1200"
   },
   "dependencies": {

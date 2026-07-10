@@ -262,9 +262,9 @@ export class XCUITestDriver
   xcodeVersion: XcodeVersion | undefined;
   _networkMonitorSession: NetworkMonitorSession | null;
   _remoteXPCFacade: RemoteXPCFacade | null;
-  _recentScreenRecorder: ScreenRecorder | null = null;
-  _device: Simulator | RealDevice = undefined as any;
-  _iosSdkVersion: string | null = null;
+  _recentScreenRecorder!: ScreenRecorder | null;
+  _device!: Simulator | RealDevice;
+  _iosSdkVersion!: string | null;
   _wda: WebDriverAgent | null;
   _remote: RemoteDebugger | null;
   logs: DriverLogs;
@@ -274,12 +274,12 @@ export class XCUITestDriver
   appInfosCache: AppInfosCache;
   doesSupportBidi: boolean;
   jwpProxyActive: boolean = false;
-  proxyReqRes: ((...args: any[]) => any) | null = null;
+  proxyReqRes!: ((...args: any[]) => any) | null;
   safari: boolean = false;
   cachedWdaStatus: any;
-  _currentUrl: string | null = null;
-  pageLoadMs: number = undefined as any;
-  landscapeWebCoordsOffset: number = undefined as any;
+  _currentUrl!: string | null;
+  pageLoadMs!: number;
+  landscapeWebCoordsOffset!: number;
   mjpegStream?: mjpeg.MJpegStream;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
