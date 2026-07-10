@@ -5,11 +5,11 @@ import {URL} from 'node:url';
 
 import {sleep} from 'asyncbox';
 
+import {FIXTURES_ROOT as GLOBAL_FIXTURES_ROOT} from '../../../setup';
 import {getFreePort} from '../ports';
 import {compileLodashTemplate} from './template';
 
-const FIXTURES_ROOT = path.resolve(__dirname, '../../../fixtures/guinea-pig');
-
+const FIXTURES_ROOT = path.join(GLOBAL_FIXTURES_ROOT, 'guinea-pig');
 const DYNAMIC_ROUTES: Record<string, string> = {
   '/test/guinea-pig': 'guinea-pig.html',
   '/test/guinea-pig-scrollable': 'guinea-pig-scrollable.html',

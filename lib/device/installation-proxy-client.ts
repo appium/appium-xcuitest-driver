@@ -1,5 +1,7 @@
 import type {AppiumLogger} from '@appium/types';
+/** @ts-expect-error no types */
 import {services} from 'appium-ios-device';
+/** @ts-expect-error no types */
 import type {InstallationProxyService as IOSDeviceInstallationProxyService} from 'appium-ios-device';
 import type {InstallationProxyService as RemoteXPCInstallationProxyService} from 'appium-ios-remotexpc';
 

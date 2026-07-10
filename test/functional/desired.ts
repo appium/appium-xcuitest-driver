@@ -2,19 +2,19 @@ import {util, node} from 'appium/support';
 
 import {getUIKitCatalogPath, getTestAppPath} from '../setup';
 
-export function amendCapabilities(baseCaps, ...newCaps) {
+export function amendCapabilities(baseCaps: any, ...newCaps: any[]) {
   return node.deepFreeze({
     alwaysMatch: structuredClone(Object.assign({}, baseCaps.alwaysMatch, ...newCaps)),
     firstMatch: [{}],
   });
 }
 
-export function extractCapabilityValue(caps, capName) {
+export function extractCapabilityValue(caps: any, capName: string) {
   return caps?.alwaysMatch?.[capName];
 }
 
 // translate integer environment variable to a boolean 0=false, !0=true
-function checkFeatureInEnv(envArg) {
+function checkFeatureInEnv(envArg: string) {
   let feature: string | number = parseInt(String(process.env[envArg]), 10);
   if (isNaN(feature)) {
     feature = String(process.env[envArg]);
@@ -54,21 +54,11 @@ export const GENERIC_CAPS = node.deepFreeze({
   firstMatch: [{}],
 });
 
-/**
- *
- * @param {string} minVersion
- * @returns {boolean}
- */
-export function isIosVersionAtLeast(minVersion) {
+export function isIosVersionAtLeast(minVersion: string): boolean {
   return util.compareVersions(PLATFORM_VERSION, '>=', minVersion);
 }
 
-/**
- *
- * @param {string} minVersion
- * @returns {boolean}
- */
-export function isIosVersionBelow(maxVersion) {
+export function isIosVersionBelow(maxVersion: string): boolean {
   return util.compareVersions(PLATFORM_VERSION, '<', maxVersion);
 }
 

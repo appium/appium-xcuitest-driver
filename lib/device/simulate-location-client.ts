@@ -1,3 +1,4 @@
+/** @ts-expect-error no types */
 import {services} from 'appium-ios-device';
 
 /**

@@ -1,3 +1,4 @@
+/** @ts-expect-error no types */
 import {utilities} from 'appium-ios-device';
 import {Devicectl} from 'node-devicectl';
 

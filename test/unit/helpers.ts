@@ -1,1 +1,1 @@
-export const MOCHA_LONG_TIMEOUT = 16000;
+export const UNIT_LONG_TIMEOUT_MS = 16000;

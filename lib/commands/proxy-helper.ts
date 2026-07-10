@@ -116,6 +116,6 @@ export async function proxyCommand<TReq = any, TRes = unknown>(
 
 function wdaRouteToCommandName(endpoint: string, method: AllowedHttpMethod): string | undefined {
   if (endpoint in WDA_ROUTES) {
-    return WDA_ROUTES[endpoint as keyof typeof WDA_ROUTES]?.[method];
+    return (WDA_ROUTES as Record<string, any>)[endpoint]?.[method];
   }
 }

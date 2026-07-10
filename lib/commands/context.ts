@@ -1,11 +1,12 @@
+import type {StringRecord} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {createRemoteDebugger, RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver';
 import {util, timing} from 'appium/support';
 
 import {IOSPerformanceLog} from '../device/log/ios-performance-log';
-import type {SafariConsoleLog} from '../device/log/safari-console-log';
-import type {SafariNetworkLog} from '../device/log/safari-network-log';
+import type {SafariConsoleEntry, SafariConsoleLog} from '../device/log/safari-console-log';
+import type {SafariNetworkLogEntry, SafariNetworkLog} from '../device/log/safari-network-log';
 import type {XCUITestDriver} from '../driver';
 import type {Page} from '../types';
 import {isEmpty} from '../utils';
@@ -325,7 +326,7 @@ export async function stopRemote(this: XCUITestDriver): Promise<void> {
     try {
       await notifyBiDiContextChange.bind(this)();
     } catch (err) {
-      this.log.warn(`Failed to notify BiDi context change: ${err.message}`);
+      this.log.warn(`Failed to notify BiDi context change: ${(err as Error).message}`);
     }
   } finally {
     this.curWebFrames = [];
@@ -534,7 +535,8 @@ export async function setContext(
   if (this.opts.enablePerformanceLogging && this._remote) {
     const context = this.curContext;
     this.log.debug(`Starting performance log on '${context}'`);
-    [this.logs.performance] = assignBiDiLogListener.bind(this)(
+    this.logs.performance = assignBiDiLogListener(
+      this.eventEmitter,
       new IOSPerformanceLog({
         remoteDebugger: this.remote,
         log: this.log,
@@ -543,7 +545,7 @@ export async function setContext(
         type: 'performance',
         context,
       },
-    );
+    )[0];
     await this.logs.performance?.startCapture();
   }
 
@@ -552,11 +554,15 @@ export async function setContext(
     const {safariConsole, safariNetwork} = this.logs;
     if (safariConsole) {
       const consoleLog = safariConsole as SafariConsoleLog;
-      this.remote.startConsole(consoleLog.onConsoleLogEvent.bind(consoleLog));
+      const eventListener = (error?: Error, event?: StringRecord) =>
+        consoleLog.onConsoleLogEvent(error, event as unknown as SafariConsoleEntry);
+      this.remote.startConsole(eventListener);
     }
     if (safariNetwork) {
       const networkLog = safariNetwork as SafariNetworkLog;
-      this.remote.startNetwork(networkLog.onNetworkEvent.bind(networkLog));
+      const eventListener = (error?: Error, event?: StringRecord) =>
+        networkLog.onNetworkEvent(error, event as unknown as SafariNetworkLogEntry);
+      this.remote.startNetwork(eventListener);
     }
   }
 }

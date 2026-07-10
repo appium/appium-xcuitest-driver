@@ -39,10 +39,11 @@ export async function initSimulator(this: XCUITestDriver): Promise<void> {
   }
 
   const promises: Promise<any>[] = ['reduceMotion', 'reduceTransparency', 'autoFillPasswords']
-    .filter((optName) => typeof this.opts[optName] === 'boolean')
+    .filter((optName) => typeof (this.opts as Record<string, any>)[optName] === 'boolean')
     .map((optName) => {
-      this.log.info(`Setting ${optName} to ${this.opts[optName]}`);
-      return device[`set${upperFirst(optName)}`](this.opts[optName]);
+      this.log.info(`Setting ${optName} to ${(this.opts as Record<string, any>)[optName]}`);
+      // @ts-expect-error no types
+      return device[`set${upperFirst(optName)}`]((this.opts as Record<string, any>)[optName]);
     });
   await Promise.all(promises);
 

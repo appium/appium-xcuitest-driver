@@ -9,6 +9,10 @@ export function startTimeoutProgressLogger({log, label, startedAt, timeoutMs, ba
   let timer = null;
   let isStopped = false;
 
+  /**
+   * @param {string} status
+   * @param {boolean} isComplete
+   */
   const logProgress = (status, isComplete = false) => {
     const elapsedMs = performance.now() - startedAt;
     const boundedElapsedMs = Math.min(elapsedMs, timeoutMs);
@@ -19,6 +23,10 @@ export function startTimeoutProgressLogger({log, label, startedAt, timeoutMs, ba
     log.info(`${label}: [${bar}]${status && status !== 'waiting' ? ` - ${status}` : ''}`);
   };
 
+  /**
+   * @param {string} status
+   * @param {boolean} isComplete
+   */
   const stop = (status, isComplete = false) => {
     if (isStopped) {
       return;

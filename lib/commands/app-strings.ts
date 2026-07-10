@@ -138,7 +138,7 @@ export async function getStrings(
   return await parseLocalizableStrings.bind(this)({
     ...this.opts,
     language,
-    stringFile,
+    stringFile: stringFile ?? undefined,
     strictMode: true,
   });
 }

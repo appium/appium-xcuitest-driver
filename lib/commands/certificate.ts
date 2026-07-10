@@ -70,17 +70,13 @@ const OPEN_SSL_PATTERN = /,\sCN\s=\s([^,]+)/;
  * Parses the common name of the certificate from the given string.
  */
 export function parseCommonName(stringCertificate: string): string {
-  const result = [LIBRE_SSL_PATTERN, OPEN_SSL_PATTERN].reduce((acc, r) => {
-    if (acc) {
-      return acc;
-    }
+  for (const r of [LIBRE_SSL_PATTERN, OPEN_SSL_PATTERN]) {
     const match = r.exec(stringCertificate);
-    return match?.[1];
-  }, null);
-  if (!result) {
-    throw new Error(`There is no common name value in '${stringCertificate}' output`);
+    if (match?.[1]) {
+      return match[1];
+    }
   }
-  return result;
+  throw new Error(`There is no common name value in '${stringCertificate}' output`);
 }
 
 /**
@@ -124,7 +120,7 @@ export async function mobileInstallCertificate(
       });
       return;
     } catch (err) {
-      this.log.error(`Failed to install the certificate: ${err.message}`);
+      this.log.error(`Failed to install the certificate: ${(err as Error).message}`);
       this.log.info('Falling back to the (slow) UI-based installation');
     }
   }
@@ -144,9 +140,12 @@ export async function mobileInstallCertificate(
     try {
       await plist.updatePlistFile(configPath, mobileConfig, false, false);
     } catch (err) {
-      throw new Error(`Cannot store the generated config as '${configPath}'. ` + `Original error: ${err.message}`, {
-        cause: err,
-      });
+      throw new Error(
+        `Cannot store the generated config as '${configPath}'. ` + `Original error: ${(err as Error).message}`,
+        {
+          cause: err,
+        },
+      );
     }
 
     try {
@@ -211,7 +210,9 @@ export async function mobileInstallCertificate(
         try {
           await this.activateApp(this.opts.bundleId);
         } catch (e) {
-          this.log.warn(`Cannot restore the application '${this.opts.bundleId}'. Original error: ${e.message}`);
+          this.log.warn(
+            `Cannot restore the application '${this.opts.bundleId}'. Original error: ${(e as Error).message}`,
+          );
         }
       }
     }
@@ -314,7 +315,7 @@ async function extractCommonName(certBuffer: Buffer): Promise<string> {
   } catch (err) {
     throw new Error(
       `Cannot parse common name value from the certificate. Is it valid and base64-encoded? ` +
-        `Original error: ${err.message}`,
+        `Original error: ${(err as Error).message}`,
       {cause: err},
     );
   } finally {

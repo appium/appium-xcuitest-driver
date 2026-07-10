@@ -21,7 +21,7 @@ async function build(options) {
   }
 
   const iosDevices = await new Simctl().getDevices(platformVersion, 'iOS');
-  const verifyDevicePresence = (info) => {
+  const verifyDevicePresence = (/** @type {import('node-simctl').DeviceInfo | undefined} */ info) => {
     if (!info) {
       throw new Error(
         `Cannot find any available iOS ${platformVersion} ${customDevice ? `${customDevice} ` : ''}simulator on your system. Only the following simulators are available:\n${iosDevices.map((e) => e.name).join('\n')}`,

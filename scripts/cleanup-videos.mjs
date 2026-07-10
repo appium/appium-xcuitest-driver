@@ -62,7 +62,7 @@ class CleanupVideos {
         fileNames.push(...names);
       } catch (err) {
         listErrors.push(err);
-        log.debug(`Could not list ${subdirectory}: ${err.message ?? err}`);
+        log.debug(`Could not list ${subdirectory}: ${/** @type {Error} */ (err)?.message ?? err}`);
       }
     }
     if (!anyListSucceeded) {
