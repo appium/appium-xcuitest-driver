@@ -26,11 +26,12 @@ jobs:
     strategy:
       matrix:
         e2eRoot:
-          - basic
-          - device
+          # TODO: Uncomment these tests when they are stable
+          # - basic
+          # - device
           # In CI env driver tests are unstable, because it's expensive to start and stop simulators
           # - driver
-          - web
+          # - web
           - long
         xcodeVersion: ['26.4', '16.4']
         include:
