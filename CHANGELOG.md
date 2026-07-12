@@ -1,3 +1,9 @@
+## [11.17.6](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.5...v11.17.6) (2026-07-12)
+
+### Bug Fixes
+
+* bump WDA to include the mjpegScalingFactor fix ([6009729](https://github.com/appium/appium-xcuitest-driver/commit/60097297352f50485537c0023a3b95b2be44b6c9))
+
 ## [11.17.5](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.4...v11.17.5) (2026-07-12)
 
 ### Bug Fixes
