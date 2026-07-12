@@ -1,3 +1,9 @@
+## [11.17.5](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.4...v11.17.5) (2026-07-12)
+
+### Bug Fixes
+
+* bump WDA to fix lock screen behavior for iOS 27 ([ec326c6](https://github.com/appium/appium-xcuitest-driver/commit/ec326c66e60a6004baf92295c8d9b7323cc519f6))
+
 ## [11.17.4](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.3...v11.17.4) (2026-07-10)
 
 ### Miscellaneous Chores
