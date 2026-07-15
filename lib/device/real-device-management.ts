@@ -508,13 +508,12 @@ export async function pushFolder(
   const {timeoutMs = IO_TIMEOUT_MS, enableParallelPush = false, log = defaultLogger} = opts;
 
   const timer = new timing.Timer().start();
-  const allItems =
-    /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (
-      await fs.glob('**', {
-        cwd: srcRootPath,
-        withFileTypes: true,
-      })
-    ) as any[];
+  const allItems = /** @type {import('path-scurry').Path[]} */ /** @type {unknown} */ (
+    await fs.glob('**', {
+      cwd: srcRootPath,
+      withFileTypes: true,
+    })
+  ) as any[];
   log.debug(`Successfully scanned the tree structure of '${srcRootPath}'`);
   // top-level folders go first
   const foldersToPush: string[] = allItems
