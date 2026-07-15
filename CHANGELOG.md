@@ -1,3 +1,9 @@
+## [11.17.7](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.6...v11.17.7) (2026-07-15)
+
+### Miscellaneous Chores
+
+* apply formatter ([08ec9db](https://github.com/appium/appium-xcuitest-driver/commit/08ec9db13fd4d4108aec35697975261c7c43dd07))
+
 ## [11.17.6](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.5...v11.17.6) (2026-07-12)
 
 ### Bug Fixes
