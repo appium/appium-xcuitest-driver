@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
+import {setTimeout as delay} from 'node:timers/promises';
 
 import type {
   CachedAppInfo,
@@ -13,8 +14,11 @@ import type {
 import {fs, util, tempDir, timing} from 'appium/support.js';
 import {exec} from 'teen_process';
 
+import {installToRealDevice} from '../device/real-device-management.js';
+import {installToSimulator} from '../device/simulator-management.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty, isPlainObject, isTvOs} from '../utils/index.js';
+import {checkAutInstallationState} from './app-management.js';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants.js';
 import {findApps, unzipFile, unzipStream} from './helpers/index.js';
 
@@ -87,6 +91,44 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
     `The ${this.opts.bundleId} application does not support the ${processArch} Simulator ` +
       `architecture:\n${bundleExecutableInfo}\n\n${advice}`,
   );
+}
+
+/**
+ * Installs the app under test (and any `otherApps`) onto the device, if needed.
+ */
+export async function installAUT(driver: XCUITestDriver): Promise<void> {
+  // install any other apps
+  if (driver.opts.otherApps) {
+    await driver.installOtherApps(driver.opts.otherApps);
+  }
+
+  if (driver.isSafari() || !driver.opts.app) {
+    return;
+  }
+
+  await verifyApplicationPlatform.bind(driver)();
+
+  const {install, skipUninstall} = await checkAutInstallationState(driver);
+  if (install) {
+    if (driver.isRealDevice()) {
+      await installToRealDevice.bind(driver)(driver.opts.app, driver.opts.bundleId, {
+        skipUninstall,
+        timeout: driver.opts.appPushTimeout,
+      });
+    } else {
+      await installToSimulator.bind(driver)(driver.opts.app, driver.opts.bundleId, {
+        skipUninstall,
+        newSimulator: driver.lifecycleData?.createSim,
+      });
+    }
+    if (util.hasValue(driver.opts.iosInstallPause)) {
+      // https://github.com/appium/appium/issues/6889
+      const pauseMs = driver.opts.iosInstallPause;
+      driver.log.debug(`iosInstallPause set. Pausing ${pauseMs} ms before continuing`);
+      await delay(pauseMs);
+    }
+    driver.logEvent('appInstalled');
+  }
 }
 
 /**

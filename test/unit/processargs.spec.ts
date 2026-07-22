@@ -4,6 +4,7 @@ import {use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
+import {startWdaSession} from '../../lib/commands/wda/startup.js';
 import {XCUITestDriver} from '../../lib/driver.js';
 
 use(chaiAsPromised);
@@ -71,7 +72,7 @@ describe('process args', function () {
         processArguments: PROCESS_ARGS_OBJECT,
       };
       driver.validateDesiredCaps(desiredWithProArgsObject);
-      await driver.startWdaSession(desiredWithProArgsObject.bundleId, desiredWithProArgsObject.processArguments);
+      await startWdaSession.call(driver, desiredWithProArgsObject.bundleId, desiredWithProArgsObject.processArguments);
     });
   });
 
@@ -88,7 +89,7 @@ describe('process args', function () {
         processArguments: processArgsString,
       };
       driver.validateDesiredCaps(desiredWithProArgsString);
-      await driver.startWdaSession(desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
+      await startWdaSession.call(driver, desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
     });
   });
 });

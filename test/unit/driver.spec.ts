@@ -29,6 +29,7 @@ let currentGetAndCheckXcodeVersion: (...args: any[]) => any = async () => ({
 });
 let currentInstallToRealDevice: (...args: any[]) => any = async () => {};
 let currentInstallToSimulator: (...args: any[]) => any = async () => {};
+let currentInstallAUT: (...args: any[]) => any = async () => {};
 
 const {XCUITestDriver} = await esmock(
   '../../lib/driver.js',
@@ -50,6 +51,9 @@ const {XCUITestDriver} = await esmock(
     },
     '../../lib/device/simulator-management.js': {
       installToSimulator: (...args: any[]) => currentInstallToSimulator(...args),
+    },
+    '../../lib/commands/app-install.js': {
+      installAUT: (...args: any[]) => currentInstallAUT(...args),
     },
   },
 );
@@ -235,9 +239,8 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'configureApp');
         sandbox.stub(driver, 'startLogCapture');
         sandbox.stub(driver, 'startSim');
-        sandbox.stub(driver, 'startWdaSession');
         sandbox.stub(driver, 'startWda');
-        sandbox.stub(driver, 'installAUT');
+        currentInstallAUT = sandbox.stub();
         sandbox.stub(driver, 'connectToRemoteDebugger');
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
         currentCheckAppPresent = sandbox.stub();

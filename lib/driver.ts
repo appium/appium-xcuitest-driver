@@ -1,5 +1,4 @@
 import EventEmitter from 'node:events';
-import {setTimeout as delay} from 'node:timers/promises';
 
 import type {
   RouteMatcher,
@@ -22,7 +21,7 @@ import {LRUCache} from 'lru-cache';
 import {AppInfosCache} from './app-infos-cache.js';
 import * as activeAppInfoCommands from './commands/active-app-info.js';
 import * as alertCommands from './commands/alert.js';
-import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install.js';
+import {installAUT, onDownloadApp, onPostConfigureApp} from './commands/app-install.js';
 import * as appManagementCommands from './commands/app-management.js';
 import * as appStringsCommands from './commands/app-strings.js';
 import * as appearanceCommands from './commands/appearance.js';
@@ -85,7 +84,7 @@ import * as timeoutCommands from './commands/timeouts.js';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types.js';
 import * as voiceOverCommands from './commands/voiceover.js';
 import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants.js';
-import {start, startWdaSession} from './commands/wda/startup.js';
+import {start} from './commands/wda/startup.js';
 import {stop} from './commands/wda/stop.js';
 import {getDerivedDataPath} from './commands/wda/utils.js';
 import * as webCommands from './commands/web.js';
@@ -96,7 +95,6 @@ import {DeviceConnectionsFactory} from './device/device-connections-factory.js';
 import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery.js';
 import type {NetworkMonitorSession} from './device/network-monitor-session.js';
 import {
-  installToRealDevice,
   runRealDeviceReset,
   applySafariStartupArgs,
   detectUdid,
@@ -106,7 +104,6 @@ import {RemoteXPCFacade} from './device/remote-xpc/index.js';
 import {
   createSim as createSimulator,
   getExistingSim as getExistingSimulator,
-  installToSimulator,
   runSimulatorReset,
   shutdownSimulator,
 } from './device/simulator-management.js';
@@ -319,6 +316,7 @@ export class XCUITestDriver
   queryAppState = appManagementCommands.queryAppState;
   mobileListApps = appManagementCommands.mobileListApps;
   mobileClearApp = appManagementCommands.mobileClearApp;
+  installOtherApps = appManagementCommands.installOtherApps;
 
   /*------------+
    | APPEARANCE |
@@ -452,7 +450,6 @@ export class XCUITestDriver
 
   initSimulator = simulatorCommands.initSimulator;
   startSim = simulatorCommands.startSim;
-  createSim = simulatorCommands.createSim;
 
   /*--------------+
    | FILEMOVEMENT |
@@ -731,10 +728,6 @@ export class XCUITestDriver
    | WDA    |
    +--------*/
   startWda = start;
-  /**
-   * @deprecated This method should be made protected/private.
-   */
-  startWdaSession = startWdaSession;
   stopWda = stop;
 
   /*--------+
@@ -750,6 +743,7 @@ export class XCUITestDriver
   mobileStartXctestScreenRecording = xctestRecordScreenCommands.mobileStartXctestScreenRecording;
   mobileGetXctestScreenRecordingInfo = xctestRecordScreenCommands.mobileGetXctestScreenRecordingInfo;
   mobileStopXctestScreenRecording = xctestRecordScreenCommands.mobileStopXctestScreenRecording;
+
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
@@ -829,7 +823,7 @@ export class XCUITestDriver
     return this.getOrCreateRemoteXPCFacade(this.isRealDevice());
   }
 
-  async onIpcInit(): Promise<void> {
+  override async onIpcInit(): Promise<void> {
     await sessionClaimHandler.registerActiveSession(this);
   }
 
@@ -1154,12 +1148,40 @@ export class XCUITestDriver
     return 'simctl' in (this.device ?? {});
   }
 
-  isXcodebuildNeeded(): boolean {
+  override async getStatus(): Promise<Record<string, any>> {
+    const status: Record<string, any> = {
+      ready: true,
+      message: 'The driver is ready to accept new connections',
+      build: await getDriverInfo(),
+    };
+    if (this.cachedWdaStatus) {
+      status.wda = this.cachedWdaStatus;
+    }
+    return status;
+  }
+
+  override async reset(): Promise<never> {
+    throw new Error(
+      `The reset API has been deprecated and is not supported anymore. ` +
+        `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
+    );
+  }
+
+  _getCommandTimeout(cmdName?: string): number | undefined {
+    if (this.opts.commandTimeouts) {
+      if (cmdName && Object.hasOwn(this.opts.commandTimeouts, cmdName)) {
+        return (this.opts.commandTimeouts as Record<string, number>)[cmdName];
+      }
+      return (this.opts.commandTimeouts as Record<string, number>)[DEFAULT_TIMEOUT_KEY];
+    }
+  }
+
+  private isXcodebuildNeeded(): boolean {
     return isWdaXcodebuildNeeded(this.opts);
   }
 
   // Core driver methods
-  async onSettingsUpdate(key: string, value: any): Promise<any> {
+  private async onSettingsUpdate(key: string, value: any): Promise<any> {
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
     if (['pageSourceExcludedAttributes'].includes(key)) {
@@ -1174,19 +1196,7 @@ export class XCUITestDriver
     this.opts[key] = !!value;
   }
 
-  async getStatus(): Promise<Record<string, any>> {
-    const status: Record<string, any> = {
-      ready: true,
-      message: 'The driver is ready to accept new connections',
-      build: await getDriverInfo(),
-    };
-    if (this.cachedWdaStatus) {
-      status.wda = this.cachedWdaStatus;
-    }
-    return status;
-  }
-
-  mergeCliArgsToOpts(): boolean {
+  private mergeCliArgsToOpts(): boolean {
     let didMerge = false;
     // this.cliArgs should never include anything we do not expect.
     for (const [key, value] of Object.entries(this.cliArgs ?? {})) {
@@ -1201,7 +1211,7 @@ export class XCUITestDriver
     return didMerge;
   }
 
-  async handleMjpegOptions(): Promise<void> {
+  private async handleMjpegOptions(): Promise<void> {
     await this.allocateMjpegServerPort();
     // turn on mjpeg stream reading if requested
     if (this.opts.mjpegScreenshotUrl) {
@@ -1211,7 +1221,7 @@ export class XCUITestDriver
     }
   }
 
-  async allocateMjpegServerPort(): Promise<void> {
+  private async allocateMjpegServerPort(): Promise<void> {
     const mjpegServerPort = Number(this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT);
     this.log.debug(`Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`);
     try {
@@ -1239,12 +1249,12 @@ export class XCUITestDriver
     }
   }
 
-  getDefaultUrl(): string {
+  private getDefaultUrl(): string {
     // Setting this to some external URL slows down the session init
     return `${this.getWdaLocalhostRoot()}/health`;
   }
 
-  async start(): Promise<void> {
+  private async start(): Promise<void> {
     this.opts.noReset = !!this.opts.noReset;
     this.opts.fullReset = !!this.opts.fullReset;
 
@@ -1371,7 +1381,7 @@ export class XCUITestDriver
       this.logEvent('customCertInstalled');
     }
 
-    await this.installAUT();
+    await installAUT(this);
 
     // if we only have bundle identifier and no app, fail if it is not already installed
     if (
@@ -1420,7 +1430,7 @@ export class XCUITestDriver
     }
   }
 
-  async runReset(enforceSimulatorShutdown = false): Promise<void> {
+  private async runReset(enforceSimulatorShutdown = false): Promise<void> {
     this.logEvent('resetStarted');
     if (this.isRealDevice()) {
       await runRealDeviceReset.bind(this)();
@@ -1430,7 +1440,7 @@ export class XCUITestDriver
     this.logEvent('resetComplete');
   }
 
-  async stop(): Promise<void> {
+  private async stop(): Promise<void> {
     this.jwpProxyActive = false;
     this.proxyReqRes = null;
 
@@ -1438,7 +1448,7 @@ export class XCUITestDriver
     await this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
-  async configureApp(): Promise<void> {
+  private async configureApp(): Promise<void> {
     function appIsPackageOrBundle(app: string | undefined): boolean {
       return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app ?? '');
     }
@@ -1480,7 +1490,7 @@ export class XCUITestDriver
     );
   }
 
-  async determineDevice(): Promise<DeviceDiscoveryResult> {
+  private async determineDevice(): Promise<DeviceDiscoveryResult> {
     const result = await new DeviceDiscovery({
       driverOpts: this.opts,
       log: this.log,
@@ -1499,153 +1509,7 @@ export class XCUITestDriver
     return result;
   }
 
-  async checkAutInstallationState(opts?: AutInstallationStateOptions): Promise<AutInstallationState> {
-    const {enforceAppInstall, fullReset, noReset, bundleId, app} = opts ?? this.opts;
-
-    const wasAppInstalled = !!bundleId && (await this.device.isAppInstalled(bundleId));
-    if (wasAppInstalled) {
-      this.log.info(`App '${bundleId}' is already installed`);
-      if (noReset) {
-        this.log.info('noReset is requested. The app will not be be (re)installed');
-        return {
-          install: false,
-          skipUninstall: true,
-        };
-      }
-    } else {
-      this.log.info(
-        `App '${bundleId}' is not installed yet or it has an offload and ` +
-          'cannot be detected, which might keep the local data.',
-      );
-    }
-    if (enforceAppInstall !== false || fullReset || !wasAppInstalled) {
-      return {
-        install: true,
-        skipUninstall: !wasAppInstalled,
-      };
-    }
-
-    const candidateBundleVersion = app ? await this.appInfosCache.extractBundleVersion(app) : undefined;
-    this.log.debug(`CFBundleVersion from Info.plist: ${candidateBundleVersion}`);
-    if (!candidateBundleVersion) {
-      return {
-        install: true,
-        skipUninstall: false,
-      };
-    }
-
-    const appBundleVersion = (
-      this.isRealDevice()
-        ? await (this.device as RealDevice).fetchAppInfo(bundleId)
-        : await (this.device as Simulator).simctl.appInfo(bundleId)
-    )?.CFBundleVersion;
-    this.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
-    if (!appBundleVersion) {
-      return {
-        install: true,
-        skipUninstall: false,
-      };
-    }
-
-    let shouldUpgrade: boolean;
-    try {
-      shouldUpgrade = util.compareVersions(candidateBundleVersion, '>', appBundleVersion);
-    } catch (err) {
-      this.log.warn(`App versions comparison is not possible: ${(err as Error).message}`);
-      return {
-        install: true,
-        skipUninstall: false,
-      };
-    }
-    if (shouldUpgrade) {
-      this.log.info(
-        `The installed version of ${bundleId} is lower than the candidate one ` +
-          `(${candidateBundleVersion} > ${appBundleVersion}). The app will be upgraded.`,
-      );
-    } else {
-      this.log.info(
-        `The candidate version of ${bundleId} is lower than the installed one ` +
-          `(${candidateBundleVersion} <= ${appBundleVersion}). The app won't be reinstalled.`,
-      );
-    }
-    return {
-      install: shouldUpgrade,
-      skipUninstall: true,
-    };
-  }
-
-  async installAUT(): Promise<void> {
-    // install any other apps
-    if (this.opts.otherApps) {
-      await this.installOtherApps(this.opts.otherApps);
-    }
-
-    if (this.isSafari() || !this.opts.app) {
-      return;
-    }
-
-    await verifyApplicationPlatform.bind(this)();
-
-    const {install, skipUninstall} = await this.checkAutInstallationState();
-    if (install) {
-      if (this.isRealDevice()) {
-        await installToRealDevice.bind(this)(this.opts.app, this.opts.bundleId, {
-          skipUninstall,
-          timeout: this.opts.appPushTimeout,
-        });
-      } else {
-        await installToSimulator.bind(this)(this.opts.app, this.opts.bundleId, {
-          skipUninstall,
-          newSimulator: this.lifecycleData?.createSim,
-        });
-      }
-      if (util.hasValue(this.opts.iosInstallPause)) {
-        // https://github.com/appium/appium/issues/6889
-        const pauseMs = this.opts.iosInstallPause;
-        this.log.debug(`iosInstallPause set. Pausing ${pauseMs} ms before continuing`);
-        await delay(pauseMs);
-      }
-      this.logEvent('appInstalled');
-    }
-  }
-
-  async installOtherApps(otherApps: string | string[]): Promise<void> {
-    let appsList: string[] | undefined;
-    try {
-      appsList = this.helpers.parseCapsArray(otherApps);
-    } catch (e) {
-      throw this.log.errorWithException(`Could not parse "otherApps" capability: ${(e as Error).message}`);
-    }
-    if (!appsList?.length) {
-      this.log.info(`Got zero apps from 'otherApps' capability value. Doing nothing`);
-      return;
-    }
-
-    const appPaths: string[] = await Promise.all(
-      appsList.map((app) =>
-        this.helpers.configureApp(app, {
-          onPostProcess: onPostConfigureApp.bind(this),
-          onDownload: onDownloadApp.bind(this),
-          supportedExtensions: SUPPORTED_EXTENSIONS,
-        } as any),
-      ),
-    );
-    const appIds: string[] = await Promise.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
-    for (const [appId, appPath] of appIds.map((v, i) => [v, appPaths[i]] as const)) {
-      if (this.isRealDevice()) {
-        await installToRealDevice.bind(this)(appPath, appId, {
-          skipUninstall: true, // to make the behavior as same as UIA2
-          timeout: this.opts.appPushTimeout,
-        });
-      } else {
-        await installToSimulator.bind(this)(appPath, appId, {
-          newSimulator: this.lifecycleData.createSim,
-        });
-      }
-    }
-  }
-
-  async setInitialOrientation(orientation: string): Promise<void> {
+  private async setInitialOrientation(orientation: string): Promise<void> {
     const dstOrientation = String(orientation).toUpperCase();
     if (!SUPPORTED_ORIENATIONS.includes(dstOrientation)) {
       this.log.debug(
@@ -1663,14 +1527,7 @@ export class XCUITestDriver
     }
   }
 
-  async reset(): Promise<never> {
-    throw new Error(
-      `The reset API has been deprecated and is not supported anymore. ` +
-        `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
-    );
-  }
-
-  resetIos(): void {
+  private resetIos(): void {
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;
@@ -1699,15 +1556,6 @@ export class XCUITestDriver
       alertMonitor: undefined,
       alertMonitorAbortController: undefined,
     };
-  }
-
-  _getCommandTimeout(cmdName?: string): number | undefined {
-    if (this.opts.commandTimeouts) {
-      if (cmdName && Object.hasOwn(this.opts.commandTimeouts, cmdName)) {
-        return (this.opts.commandTimeouts as Record<string, number>)[cmdName];
-      }
-      return (this.opts.commandTimeouts as Record<string, number>)[DEFAULT_TIMEOUT_KEY];
-    }
   }
 
   private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {

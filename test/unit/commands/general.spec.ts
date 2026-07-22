@@ -124,7 +124,7 @@ describe('general commands', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
-      startStub = sinon.stub(driver, 'start');
+      startStub = sinon.stub(driver as any, 'start');
     });
 
     afterEach(function () {
