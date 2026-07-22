@@ -1249,7 +1249,7 @@ export class XCUITestDriver
     this.opts.noReset = !!this.opts.noReset;
     this.opts.fullReset = !!this.opts.fullReset;
 
-    await printUser();
+    printUser();
     this._iosSdkVersion = null; // For WDA and xcodebuild
     assertWdaHostSessionCapsSupported(this.opts);
     const {device, udid, realDevice} = await this.determineDevice();
