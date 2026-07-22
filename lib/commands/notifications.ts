@@ -1,9 +1,9 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver';
-import {isPlainObject} from '../utils';
-import {requireSimulator} from './helpers';
-import type {PushPayload, NotificationType} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {isPlainObject} from '../utils/index.js';
+import {requireSimulator} from './helpers/index.js';
+import type {PushPayload, NotificationType} from './types.js';
 
 /**
  * Simulates push notification delivery to a simulated device.

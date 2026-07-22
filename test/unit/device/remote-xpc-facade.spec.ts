@@ -1,15 +1,31 @@
 import {describe, it, afterEach} from 'node:test';
 
 import {expect} from 'chai';
+import esmock from 'esmock';
 import sinon from 'sinon';
 
-import {RemoteXPCFacade} from '../../../lib/device/remote-xpc';
-import * as moduleLoader from '../../../lib/device/remote-xpc/module-loader';
-import * as usbmuxUtils from '../../../lib/device/remote-xpc/usbmux-utils';
+let currentTryLoadRemoteXPCModule: (...args: any[]) => any = async () => null;
+let currentIsDeviceListedInUsbmux: (...args: any[]) => any = async () => false;
+
+const {RemoteXPCFacade} = await esmock(
+  '../../../lib/device/remote-xpc/index.js',
+  import.meta.url,
+  {},
+  {
+    '../../../lib/device/remote-xpc/module-loader.js': {
+      tryLoadRemoteXPCModule: (...args: any[]) => currentTryLoadRemoteXPCModule(...args),
+    },
+    '../../../lib/device/remote-xpc/usbmux-utils.js': {
+      isDeviceListedInUsbmux: (...args: any[]) => currentIsDeviceListedInUsbmux(...args),
+    },
+  },
+);
 
 describe('RemoteXPCFacade', function () {
   afterEach(function () {
     sinon.restore();
+    currentTryLoadRemoteXPCModule = async () => null;
+    currentIsDeviceListedInUsbmux = async () => false;
   });
 
   it('returns false when the session is not eligible', async function () {
@@ -27,12 +43,12 @@ describe('RemoteXPCFacade', function () {
     const tunnelErr = new Error('No tunnel found for device udid-1');
     tunnelErr.name = 'TunnelAvailabilityError';
 
-    sinon.stub(moduleLoader, 'tryLoadRemoteXPCModule').resolves({
+    currentTryLoadRemoteXPCModule = sinon.stub().resolves({
       Services: {
         getTunnelForDevice: sinon.stub().rejects(tunnelErr),
       },
     } as any);
-    sinon.stub(usbmuxUtils, 'isDeviceListedInUsbmux').resolves(false);
+    currentIsDeviceListedInUsbmux = sinon.stub().resolves(false);
 
     const warn = sinon.stub();
     const access = new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn, info: sinon.stub()} as any, true);
@@ -40,7 +56,7 @@ describe('RemoteXPCFacade', function () {
     expect(await access.determineAvailability()).to.equal(false);
     expect(await access.determineAvailability()).to.equal(false);
     expect(warn.calledOnce).to.be.true;
-    expect((moduleLoader.tryLoadRemoteXPCModule as sinon.SinonStub).calledOnce).to.be.true;
+    expect((currentTryLoadRemoteXPCModule as sinon.SinonStub).calledOnce).to.be.true;
   });
 
   it('does not disable remotexpc when a later service call hits a tunnel error', async function () {
@@ -49,13 +65,13 @@ describe('RemoteXPCFacade', function () {
     const operation = sinon.stub().rejects(tunnelErr);
     const services = {operation};
 
-    sinon.stub(moduleLoader, 'tryLoadRemoteXPCModule').resolves({
+    currentTryLoadRemoteXPCModule = sinon.stub().resolves({
       Services: {
         getTunnelForDevice: sinon.stub().resolves({}),
         ...services,
       },
     } as any);
-    sinon.stub(usbmuxUtils, 'isDeviceListedInUsbmux').resolves(false);
+    currentIsDeviceListedInUsbmux = sinon.stub().resolves(false);
 
     const warn = sinon.stub();
     const access = new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn, info: sinon.stub()} as any, true);
@@ -71,12 +87,12 @@ describe('RemoteXPCFacade', function () {
     const tunnelErr = new Error('No tunnel found for device udid-1');
     tunnelErr.name = 'TunnelAvailabilityError';
 
-    sinon.stub(moduleLoader, 'tryLoadRemoteXPCModule').resolves({
+    currentTryLoadRemoteXPCModule = sinon.stub().resolves({
       Services: {
         getTunnelForDevice: sinon.stub().rejects(tunnelErr),
       },
     } as any);
-    sinon.stub(usbmuxUtils, 'isDeviceListedInUsbmux').resolves(false);
+    currentIsDeviceListedInUsbmux = sinon.stub().resolves(false);
 
     const access = new RemoteXPCFacade(
       'udid-1',

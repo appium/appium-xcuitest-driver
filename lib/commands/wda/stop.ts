@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../../driver';
-import {cleanup} from './cleanup';
+import type {XCUITestDriver} from '../../driver.js';
+import {cleanup} from './cleanup.js';
 
 /**
  * Stops the active WebDriverAgent session, optionally quits the WDA process, and cleans up system files.

@@ -1,9 +1,9 @@
 import type {StringRecord} from '@appium/types';
-import {errors} from 'appium/driver';
-import {fs} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {fs} from 'appium/support.js';
 
-import {log} from '../../logger';
-import {isPlainObject} from '../../utils';
+import {log} from '../../logger.js';
+import {isPlainObject} from '../../utils/index.js';
 
 export const DEFAULT_TIMEOUT_KEY = 'default';
 

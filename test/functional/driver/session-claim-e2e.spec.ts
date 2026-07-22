@@ -2,18 +2,18 @@ import {describe, it, before, afterEach, after} from 'node:test';
 
 import {getSimulator} from 'appium-ios-simulator';
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 import type {Browser} from 'webdriverio';
 
-import {amendCapabilities, extractCapabilityValue, getUICatalogSimCaps} from '../desired';
-import {assertSessionClaimIpcTraces, readAppiumLog} from '../helpers/appium-log';
-import {getFreePort} from '../helpers/ports';
-import {createRemoteSession, deleteRemoteSession} from '../helpers/session';
-import {cleanupSimulator, deleteDeviceWithRetry} from '../helpers/simulator';
+import {amendCapabilities, extractCapabilityValue, getUICatalogSimCaps} from '../desired.js';
+import {assertSessionClaimIpcTraces, readAppiumLog} from '../helpers/appium-log.js';
+import {getFreePort} from '../helpers/ports.js';
+import {createRemoteSession, deleteRemoteSession} from '../helpers/session.js';
+import {cleanupSimulator, deleteDeviceWithRetry} from '../helpers/simulator.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestSessionClaimTest';
 

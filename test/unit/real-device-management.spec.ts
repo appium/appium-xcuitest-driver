@@ -1,19 +1,19 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {fs} from 'appium/support';
-import chai, {expect} from 'chai';
+import {fs} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import type {SinonStub} from 'sinon';
 
-import {AfcClient} from '../../lib/device/afc-client';
-import {installToRealDevice, RealDevice} from '../../lib/device/real-device-management';
-import type {RemoteXPCFacade} from '../../lib/device/remote-xpc';
-import {ZipConduitClient} from '../../lib/device/zip-conduit-client';
-import {XCUITestDriver} from '../../lib/driver';
-import type {XCUITestDriverOpts} from '../../lib/driver';
+import {AfcClient} from '../../lib/device/afc-client.js';
+import {installToRealDevice, RealDevice} from '../../lib/device/real-device-management.js';
+import type {RemoteXPCFacade} from '../../lib/device/remote-xpc/index.js';
+import {ZipConduitClient} from '../../lib/device/zip-conduit-client.js';
+import {XCUITestDriver} from '../../lib/driver.js';
+import type {XCUITestDriverOpts} from '../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');

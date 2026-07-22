@@ -5,17 +5,17 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {promisify} from 'node:util';
 
 import {waitForCondition} from 'asyncbox';
-import chai from 'chai';
+import {use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _pem from 'pem';
 import type {Browser} from 'webdriverio';
 
-import {amendCapabilities, SAFARI_CAPS} from '../desired';
-import {getFreePort} from '../helpers/ports';
-import {deleteSession, initSession} from '../helpers/session';
-import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers';
+import {amendCapabilities, SAFARI_CAPS} from '../desired.js';
+import {getFreePort} from '../helpers/ports.js';
+import {deleteSession, initSession} from '../helpers/session.js';
+import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const createPrivateKeyAsync = promisify(_pem.createPrivateKey);
 const createCertificateAsync = promisify(_pem.createCertificate);

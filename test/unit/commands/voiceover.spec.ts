@@ -1,13 +1,13 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {errors} from 'appium/driver';
-import chai, {expect} from 'chai';
+import {errors} from 'appium/driver.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('voiceover commands', function () {
   let driver: XCUITestDriver;

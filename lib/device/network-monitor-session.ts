@@ -3,9 +3,9 @@ import type {EventEmitter} from 'node:events';
 import type {AppiumLogger} from '@appium/types';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 
-import {BIDI_EVENT_NAME} from '../commands/bidi/constants';
-import {makeNetworkMonitorEvent} from '../commands/bidi/models';
-import type {RemoteXPCFacade} from './remote-xpc';
+import {BIDI_EVENT_NAME} from '../commands/bidi/constants.js';
+import {makeNetworkMonitorEvent} from '../commands/bidi/models.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * Active DVT NetworkMonitor session: streams instrument events to the driver BiDi event bus.

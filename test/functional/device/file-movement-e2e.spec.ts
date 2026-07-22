@@ -1,18 +1,21 @@
 import path from 'node:path';
 import {describe, it, before, after} from 'node:test';
+import {fileURLToPath} from 'node:url';
 
-import {fs, tempDir, zip} from 'appium/support';
-import chai, {expect} from 'chai';
+import {fs, tempDir, zip} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {UICATALOG_BUNDLE_ID} from '../../setup';
-import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {UICATALOG_BUNDLE_ID} from '../../setup.js';
+import {getUICatalogCaps} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const UICAT_CONTAINER = `@${UICATALOG_BUNDLE_ID}`;
+const CURRENT_FILENAME = fileURLToPath(import.meta.url);
+const CURRENT_DIRNAME = path.dirname(CURRENT_FILENAME);
 
 async function pullFileAsString(driver: any, remotePath: string) {
   const remoteData64 = await driver.pullFile(remotePath);
@@ -33,7 +36,7 @@ describe('XCUITestDriver - file movement', function () {
   describe('sim relative', function () {
     describe('files', function () {
       it('should not be able to fetch a file from the file system at large', async function () {
-        await expect(driver.pullFile(__filename)).to.be.rejected;
+        await expect(driver.pullFile(CURRENT_FILENAME)).to.be.rejected;
       });
 
       it('should be able to fetch the Address book', async function () {
@@ -74,7 +77,7 @@ describe('XCUITestDriver - file movement', function () {
 
     describe('folders', function () {
       it('should not pull folders from file system', async function () {
-        await expect(driver.pullFolder(__dirname)).to.be.rejected;
+        await expect(driver.pullFolder(CURRENT_DIRNAME)).to.be.rejected;
       });
 
       it('should not be able to fetch a folder that does not exist', async function () {

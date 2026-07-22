@@ -3,9 +3,9 @@ import type {AppiumLogger} from '@appium/types';
 import {utilities} from 'appium-ios-device';
 import type {LockdownService} from 'appium-ios-remotexpc';
 
-import type {LockdownInfo} from '../commands/types';
-import {log as defaultLogger} from '../logger';
-import {isRemoteXPCUnavailableError, type RemoteXPCFacade} from './remote-xpc';
+import type {LockdownInfo} from '../commands/types.js';
+import {log as defaultLogger} from '../logger.js';
+import {isRemoteXPCUnavailableError, type RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * Shape returned by {@linkcode utilities.getDeviceTime} in appium-ios-device.

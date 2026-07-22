@@ -1,15 +1,15 @@
 import {describe, it, before, after, afterEach} from 'node:test';
 
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps, amendCapabilities} from '../desired';
-import {PREDICATE_SEARCH} from '../helpers/element';
-import {initSession, deleteSession} from '../helpers/session';
+import {getUICatalogCaps, amendCapabilities} from '../desired.js';
+import {PREDICATE_SEARCH} from '../helpers/element.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 // leave the long test to Travis
 const TYPING_TRIES = process.env.CI ? 100 : 10;

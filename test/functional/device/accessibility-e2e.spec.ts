@@ -1,14 +1,14 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {SETTINGS_CAPS, amendCapabilities} from '../desired';
-import {PREDICATE_SEARCH} from '../helpers/element';
-import {initSession, deleteSession} from '../helpers/session';
+import {SETTINGS_CAPS, amendCapabilities} from '../desired.js';
+import {PREDICATE_SEARCH} from '../helpers/element.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('Accessibility', function () {
   let driver: Browser;

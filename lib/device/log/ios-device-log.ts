@@ -3,8 +3,8 @@ import type {AppiumLogger} from '@appium/types';
 import {services} from 'appium-ios-device';
 import type {SyslogService} from 'appium-ios-remotexpc';
 
-import type {RemoteXPCFacade} from '../remote-xpc';
-import {LineConsumingLog} from './line-consuming-log';
+import type {RemoteXPCFacade} from '../remote-xpc/index.js';
+import {LineConsumingLog} from './line-consuming-log.js';
 
 export interface IOSDeviceLogOpts {
   udid: string;

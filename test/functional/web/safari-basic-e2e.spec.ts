@@ -1,14 +1,14 @@
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
-import {util} from 'appium/support';
+import {util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {SAFARI_CAPS, amendCapabilities} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {SAFARI_CAPS, amendCapabilities} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 import {
   createGuineaPigServerSession,
   spinTitleEquals,
@@ -21,9 +21,9 @@ import {
   newCookie,
   oldCookie1,
   oldCookie2,
-} from './helpers';
+} from './helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 function getDefaultCaps(baseUrl: string) {
   return amendCapabilities(SAFARI_CAPS, {

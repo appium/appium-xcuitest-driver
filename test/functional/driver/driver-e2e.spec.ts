@@ -4,23 +4,23 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {getSimulator} from 'appium-ios-simulator';
 import {retryInterval} from 'asyncbox';
 import axios from 'axios';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 import type {Browser} from 'webdriverio';
 
-import {UICATALOG_BUNDLE_ID} from '../../setup';
+import {UICATALOG_BUNDLE_ID} from '../../setup.js';
 import {
   getUICatalogSimCaps,
   amendCapabilities,
   extractCapabilityValue,
   PLATFORM_VERSION,
   DEVICE_NAME,
-} from '../desired';
-import {initSession, deleteSession, HOST} from '../helpers/session';
-import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator';
+} from '../desired.js';
+import {initSession, deleteSession, HOST} from '../helpers/session.js';
+import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 

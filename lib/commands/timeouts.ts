@@ -1,4 +1,4 @@
-import type {XCUITestDriver} from '../driver';
+import type {XCUITestDriver} from '../driver.js';
 
 /**
  * Sets the page load timeout using W3C protocol.

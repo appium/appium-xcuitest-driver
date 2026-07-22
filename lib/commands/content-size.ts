@@ -1,8 +1,8 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver';
-import {requireSimulator} from './helpers';
-import type {ContentSizeAction, ContentSizeResult} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {requireSimulator} from './helpers/index.js';
+import type {ContentSizeAction, ContentSizeResult} from './types.js';
 
 const CONTENT_SIZE = [
   'extra-small',

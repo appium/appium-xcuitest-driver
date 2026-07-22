@@ -2,15 +2,15 @@ import path from 'node:path';
 
 import type {AppiumLogger} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {fs, tempDir, util} from 'appium/support';
+import {fs, tempDir, util} from 'appium/support.js';
 import {asyncfilter} from 'asyncbox';
 
-import type {LogEntry} from '../../commands/types';
-import {isEmpty} from '../../utils';
-import {CrashReportsClient} from '../crash-reports-client';
-import type {RemoteXPCFacade} from '../remote-xpc';
-import {toLogEntry, grepFile} from './helpers';
-import {IOSLog} from './ios-log';
+import type {LogEntry} from '../../commands/types.js';
+import {isEmpty} from '../../utils/index.js';
+import {CrashReportsClient} from '../crash-reports-client.js';
+import type {RemoteXPCFacade} from '../remote-xpc/index.js';
+import {toLogEntry, grepFile} from './helpers.js';
+import {IOSLog} from './ios-log.js';
 
 // The file format has been changed from '.crash' to '.ips' since Monterey.
 const CRASH_REPORTS_GLOB_PATTERN = '**/*.@(crash|ips)';

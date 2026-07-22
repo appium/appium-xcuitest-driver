@@ -1,2 +1,2 @@
-export * as required from './required-checks';
-export * as optional from './optional-checks';
+export * as required from './required-checks.js';
+export * as optional from './optional-checks.js';

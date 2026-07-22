@@ -1,11 +1,11 @@
 import type {Element} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {errors} from 'appium/driver';
-import {util, imageUtil} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util, imageUtil} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
 
-import type {XCUITestDriver} from '../driver';
-import {capitalize} from '../utils';
+import type {XCUITestDriver} from '../driver.js';
+import {capitalize} from '../utils/index.js';
 
 /**
  * Takes a screenshot of the current screen.

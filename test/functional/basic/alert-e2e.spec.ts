@@ -2,14 +2,14 @@ import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {getUICatalogCaps} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('XCUITestDriver - alerts -', function () {
   let driver: Browser;

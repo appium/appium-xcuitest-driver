@@ -10,13 +10,13 @@ import type {
   PostProcessOptions,
   PostProcessResult,
 } from '@appium/types';
-import {fs, util, tempDir, timing} from 'appium/support';
+import {fs, util, tempDir, timing} from 'appium/support.js';
 import {exec} from 'teen_process';
 
-import type {XCUITestDriver} from '../driver';
-import {isEmpty, isPlainObject, isTvOs} from '../utils';
-import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants';
-import {findApps, unzipFile, unzipStream} from './helpers';
+import type {XCUITestDriver} from '../driver.js';
+import {isEmpty, isPlainObject, isTvOs} from '../utils/index.js';
+import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from './constants.js';
+import {findApps, unzipFile, unzipStream} from './helpers/index.js';
 
 const ZIP_EXT = '.zip';
 const SANITIZE_REPLACEMENT = '-';

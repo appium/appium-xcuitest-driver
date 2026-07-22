@@ -1,9 +1,9 @@
 /** @ts-expect-error no types */
 import js2xml from 'js2xmlparser2';
 
-import type {XCUITestDriver} from '../driver';
-import {isEmpty} from '../utils';
-import type {SourceFormat} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {isEmpty} from '../utils/index.js';
+import type {SourceFormat} from './types.js';
 
 const APPIUM_AUT_TAG = 'AppiumAUT';
 

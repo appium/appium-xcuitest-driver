@@ -1,12 +1,12 @@
 import type {AppiumLogger} from '@appium/types';
 import {getSimulator, type Simulator} from 'appium-ios-simulator';
 
-import {getAndCheckIosSdkVersion} from '../commands/helpers';
-import {UDID_AUTO} from '../constants';
-import type {XCUITestDriverOpts} from '../driver';
-import {normalizePlatformVersion} from '../utils';
-import {getConnectedDevices, RealDevice} from './real-device-management';
-import {isStrictHostUtilityMode} from './wda-host-ops';
+import {getAndCheckIosSdkVersion} from '../commands/helpers/index.js';
+import {UDID_AUTO} from '../constants.js';
+import type {XCUITestDriverOpts} from '../driver.js';
+import {normalizePlatformVersion} from '../utils/index.js';
+import {getConnectedDevices, RealDevice} from './real-device-management.js';
+import {isStrictHostUtilityMode} from './wda-host-ops.js';
 
 export interface DeviceDiscoveryResult {
   device: Simulator | RealDevice;

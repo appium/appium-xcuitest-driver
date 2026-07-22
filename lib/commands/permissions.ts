@@ -1,8 +1,8 @@
-import type {XCUITestDriver} from '../driver';
-import {isPlainObject} from '../utils';
-import {PermissionService} from './enum';
-import {requireSimulator} from './helpers';
-import type {PermissionState} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {isPlainObject} from '../utils/index.js';
+import {PermissionService} from './enum.js';
+import {requireSimulator} from './helpers/index.js';
+import type {PermissionState} from './types.js';
 
 /**
  * Resets the given permission for the active application under test.

@@ -1,23 +1,23 @@
 import path from 'node:path';
 
 import type {AppiumLogger} from '@appium/types';
-import {fs, tempDir, zip, util, timing} from 'appium/support';
+import {fs, tempDir, zip, util, timing} from 'appium/support.js';
 import {asyncmap} from 'asyncbox';
 import {Devicectl} from 'node-devicectl';
 
-import {IPA_EXT} from '../commands/constants';
-import {buildSafariPreferences, SAFARI_BUNDLE_ID, TimeoutError, withTimeout} from '../commands/helpers';
-import type {XCUITestDriver, XCUITestDriverOpts} from '../driver';
-import {log as defaultLogger} from '../logger';
-import {isEmpty, isPlainObject} from '../utils';
-import {AfcClient} from './afc-client';
-import {AppTerminationClient} from './app-termination-client';
-import {ConnectedDevicesClient} from './connected-devices-client';
-import {InstallationProxyClient} from './installation-proxy-client';
-import {LockdownClient} from './lockdown-client';
-import {NotificationClient} from './notification-client';
-import type {RemoteXPCFacade} from './remote-xpc';
-import {ZipConduitClient} from './zip-conduit-client';
+import {IPA_EXT} from '../commands/constants.js';
+import {buildSafariPreferences, SAFARI_BUNDLE_ID, TimeoutError, withTimeout} from '../commands/helpers/index.js';
+import type {XCUITestDriver, XCUITestDriverOpts} from '../driver.js';
+import {log as defaultLogger} from '../logger.js';
+import {isEmpty, isPlainObject} from '../utils/index.js';
+import {AfcClient} from './afc-client.js';
+import {AppTerminationClient} from './app-termination-client.js';
+import {ConnectedDevicesClient} from './connected-devices-client.js';
+import {InstallationProxyClient} from './installation-proxy-client.js';
+import {LockdownClient} from './lockdown-client.js';
+import {NotificationClient} from './notification-client.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
+import {ZipConduitClient} from './zip-conduit-client.js';
 
 const DEFAULT_APP_INSTALLATION_TIMEOUT_MS = 8 * 60 * 1000;
 export const IO_TIMEOUT_MS = 4 * 60 * 1000;

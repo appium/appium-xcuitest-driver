@@ -8,12 +8,12 @@ import {services} from 'appium-ios-device';
 /** @ts-expect-error no types */
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
-import {fs, util} from 'appium/support';
+import {fs, util} from 'appium/support.js';
 
-import {withTimeout} from '../commands/helpers';
-import {log} from '../logger';
-import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management';
-import type {RemoteXPCFacade} from './remote-xpc';
+import {withTimeout} from '../commands/helpers/index.js';
+import {log} from '../logger.js';
+import {IO_TIMEOUT_MS, MAX_IO_CHUNK_SIZE} from './real-device-management.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * Options for pulling files/folders

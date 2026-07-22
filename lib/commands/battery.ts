@@ -1,6 +1,6 @@
-import {BatteryInfoClient, type AdvancedBatteryInfo} from '../device/battery-info-client';
-import type {XCUITestDriver} from '../driver';
-import type {BatteryInfo} from './types';
+import {BatteryInfoClient, type AdvancedBatteryInfo} from '../device/battery-info-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import type {BatteryInfo} from './types.js';
 
 /**
  * Reads the battery information from the device under test.

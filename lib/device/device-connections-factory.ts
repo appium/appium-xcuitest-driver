@@ -5,13 +5,13 @@ import type {AppiumLogger} from '@appium/types';
 /** @ts-expect-error no types */
 import {utilities} from 'appium-ios-device';
 import type {DevicePortForwarder} from 'appium-ios-remotexpc';
-import {util, timing} from 'appium/support';
+import {util, timing} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 import {checkPortStatus} from 'portscanner';
 
-import {isEmpty} from '../utils';
-import type {RemoteXPCFacade} from './remote-xpc';
-import {isRemoteXPCUnavailableError} from './remote-xpc';
+import {isEmpty} from '../utils/index.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
+import {isRemoteXPCUnavailableError} from './remote-xpc/index.js';
 
 const LOCALHOST = '127.0.0.1';
 const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];

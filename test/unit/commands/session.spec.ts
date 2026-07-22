@@ -2,7 +2,7 @@ import {describe, beforeEach, afterEach} from 'node:test';
 
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('session commands', function () {
   const driver = new XCUITestDriver({} as any);

@@ -3,6 +3,6 @@ export {
   formatTunnelAvailabilityMessage,
   isRemoteXPCUnavailableError,
   isTunnelAvailabilityError,
-} from './utils';
-export type {RemoteXPCServices} from './utils';
-export {RemoteXPCFacade} from './facade';
+} from './utils.js';
+export type {RemoteXPCServices} from './utils.js';
+export {RemoteXPCFacade} from './facade.js';

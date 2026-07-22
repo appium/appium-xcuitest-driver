@@ -3,11 +3,11 @@ import path from 'node:path';
 import type {Readable} from 'node:stream';
 
 import type {DriverOpts, StringRecord} from '@appium/types';
-import {fs, tempDir, zip} from 'appium/support';
+import {fs, tempDir, zip} from 'appium/support.js';
 
-import type {XCUITestDriverConstraints} from '../../desired-caps';
-import {log} from '../../logger';
-import {isEmpty} from '../../utils';
+import type {XCUITestDriverConstraints} from '../../desired-caps.js';
+import {log} from '../../logger.js';
+import {isEmpty} from '../../utils/index.js';
 
 type SafariPreferencesOpts = Pick<DriverOpts<XCUITestDriverConstraints>, 'safariGlobalPreferences'>;
 

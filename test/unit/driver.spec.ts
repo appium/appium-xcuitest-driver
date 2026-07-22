@@ -2,21 +2,57 @@ import net from 'node:net';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import xcode from 'appium-xcode';
-import {JWProxy} from 'appium/driver';
-import chai, {expect} from 'chai';
+import {JWProxy} from 'appium/driver.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import esmock from 'esmock';
 import {createSandbox, type SinonSandbox, type SinonStubbedMember} from 'sinon';
 
-import * as validationUtils from '../../lib/commands/helpers/validation';
-import * as xcodeUtils from '../../lib/commands/helpers/xcode';
-import {RealDevice} from '../../lib/device/real-device-management';
-import * as wdaHostOps from '../../lib/device/wda-host-ops';
-import {XCUITestDriver} from '../../lib/driver';
-import type {XCUITestDriverOpts} from '../../lib/driver';
-import {mergeDeep} from '../../lib/utils';
-import {UNIT_LONG_TIMEOUT_MS} from './helpers';
+import {RealDevice} from '../../lib/device/real-device-management.js';
+import type {XCUITestDriverOpts} from '../../lib/driver.js';
+import {mergeDeep} from '../../lib/utils/index.js';
+import {UNIT_LONG_TIMEOUT_MS} from './helpers.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
+
+let currentCheckAppPresent: (...args: any[]) => any = async () => {};
+let currentAssertWdaHostSessionCapsSupported: (...args: any[]) => any = () => {};
+let currentAssertWdaHostPlatformSupported: (...args: any[]) => any = () => {};
+let currentGetAndCheckXcodeVersion: (...args: any[]) => any = async () => ({
+  versionString: '20.0',
+  versionFloat: 20.0,
+  major: 20,
+  minor: 0,
+  toString() {
+    return '20.0';
+  },
+});
+let currentInstallToRealDevice: (...args: any[]) => any = async () => {};
+let currentInstallToSimulator: (...args: any[]) => any = async () => {};
+
+const {XCUITestDriver} = await esmock(
+  '../../lib/driver.js',
+  import.meta.url,
+  {},
+  {
+    '../../lib/commands/helpers/validation.js': {
+      checkAppPresent: (...args: any[]) => currentCheckAppPresent(...args),
+    },
+    '../../lib/commands/helpers/xcode.js': {
+      getAndCheckXcodeVersion: (...args: any[]) => currentGetAndCheckXcodeVersion(...args),
+    },
+    '../../lib/device/wda-host-ops.js': {
+      assertWdaHostSessionCapsSupported: (...args: any[]) => currentAssertWdaHostSessionCapsSupported(...args),
+      assertWdaHostPlatformSupported: (...args: any[]) => currentAssertWdaHostPlatformSupported(...args),
+    },
+    '../../lib/device/real-device-management.js': {
+      installToRealDevice: (...args: any[]) => currentInstallToRealDevice(...args),
+    },
+    '../../lib/device/simulator-management.js': {
+      installToSimulator: (...args: any[]) => currentInstallToSimulator(...args),
+    },
+  },
+);
 
 async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');
@@ -52,7 +88,7 @@ describe('XCUITestDriver', function () {
   });
 
   describe('getDefaultUrl', function () {
-    let driver: XCUITestDriver;
+    let driver: InstanceType<typeof XCUITestDriver>;
     let realDevice: RealDevice;
 
     beforeEach(function () {
@@ -86,7 +122,7 @@ describe('XCUITestDriver', function () {
   });
 
   describe('determineDevice host utility gating', function () {
-    let driver: XCUITestDriver;
+    let driver: InstanceType<typeof XCUITestDriver>;
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
@@ -139,7 +175,7 @@ describe('XCUITestDriver', function () {
 
   describe('driver commands', function () {
     describe('status', function () {
-      let driver: XCUITestDriver;
+      let driver: InstanceType<typeof XCUITestDriver>;
       let jwproxyCommandSpy: SinonStubbedMember<typeof JWProxy.prototype.command>;
 
       beforeEach(function () {
@@ -168,7 +204,7 @@ describe('XCUITestDriver', function () {
     });
 
     describe('createSession', function () {
-      let driver: XCUITestDriver;
+      let driver: InstanceType<typeof XCUITestDriver>;
       let device: any;
       let realDevice: RealDevice;
 
@@ -204,10 +240,10 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'installAUT');
         sandbox.stub(driver, 'connectToRemoteDebugger');
         sandbox.stub(xcode, 'getMaxIOSSDK').resolves('10.0');
-        sandbox.stub(validationUtils, 'checkAppPresent');
-        sandbox.stub(wdaHostOps, 'assertWdaHostSessionCapsSupported');
-        sandbox.stub(wdaHostOps, 'assertWdaHostPlatformSupported');
-        sandbox.stub(xcodeUtils, 'getAndCheckXcodeVersion').resolves({
+        currentCheckAppPresent = sandbox.stub();
+        currentAssertWdaHostSessionCapsSupported = sandbox.stub();
+        currentAssertWdaHostPlatformSupported = sandbox.stub();
+        currentGetAndCheckXcodeVersion = sandbox.stub().resolves({
           versionString: '20.0',
           versionFloat: 20.0,
           major: 20,
@@ -334,7 +370,7 @@ describe('XCUITestDriver', function () {
     });
 
     describe('execute', function () {
-      let driver: XCUITestDriver;
+      let driver: InstanceType<typeof XCUITestDriver>;
       const deviceInfoResponse = {some: 'thing'};
 
       beforeEach(function () {
@@ -361,15 +397,15 @@ describe('XCUITestDriver', function () {
   });
 
   describe('installOtherApps', function () {
-    let driver: XCUITestDriver;
+    let driver: InstanceType<typeof XCUITestDriver>;
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
     });
 
     it('should install multiple apps from otherApps as string on on real devices', async function () {
-      const RealDeviceManagementModule = require('../../lib/device/real-device-management');
-      sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
+      const installToRealDeviceStub = sandbox.stub();
+      currentInstallToRealDevice = installToRealDeviceStub;
       sandbox.stub(driver, 'isRealDevice').returns(true);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
       sandbox.mock(driver.appInfosCache).expects('extractBundleId').resolves('bundle-id');
@@ -379,7 +415,7 @@ describe('XCUITestDriver', function () {
       expect((driver.isRealDevice as any).calledOnce).to.be.true;
       expect((driver.helpers.configureApp as any).calledOnce).to.be.true;
       expect(
-        RealDeviceManagementModule.installToRealDevice.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
+        installToRealDeviceStub.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
           skipUninstall: true,
           timeout: undefined,
         }),
@@ -387,8 +423,8 @@ describe('XCUITestDriver', function () {
     });
 
     it('should install multiple apps from otherApps as JSON array on on real devices', async function () {
-      const RealDeviceManagementModule = require('../../lib/device/real-device-management');
-      sandbox.stub(RealDeviceManagementModule, 'installToRealDevice');
+      const installToRealDeviceStub = sandbox.stub();
+      currentInstallToRealDevice = installToRealDeviceStub;
       sandbox.stub(driver, 'isRealDevice').returns(true);
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
@@ -405,13 +441,13 @@ describe('XCUITestDriver', function () {
       expect((driver.isRealDevice as any).calledTwice).to.be.true;
       expect((driver.helpers.configureApp as any).calledTwice).to.be.true;
       expect(
-        RealDeviceManagementModule.installToRealDevice.calledWith('/path/to/iosApp1.app', 'bundle-id', {
+        installToRealDeviceStub.calledWith('/path/to/iosApp1.app', 'bundle-id', {
           skipUninstall: true,
           timeout: undefined,
         }),
       ).to.be.true;
       expect(
-        RealDeviceManagementModule.installToRealDevice.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
+        installToRealDeviceStub.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
           skipUninstall: true,
           timeout: undefined,
         }),
@@ -419,8 +455,8 @@ describe('XCUITestDriver', function () {
     });
 
     it('should install multiple apps from otherApps as string on simulators', async function () {
-      const SimulatorManagementModule = require('../../lib/device/simulator-management');
-      sandbox.stub(SimulatorManagementModule, 'installToSimulator');
+      const installToSimulatorStub = sandbox.stub();
+      currentInstallToSimulator = installToSimulatorStub;
       sandbox.stub(driver, 'isRealDevice').returns(false);
       sandbox.stub(driver.helpers, 'configureApp').resolves('/path/to/iosApp.app');
       sandbox.mock(driver.appInfosCache).expects('extractBundleId').resolves('bundle-id');
@@ -431,15 +467,15 @@ describe('XCUITestDriver', function () {
       expect((driver.isRealDevice as any).calledOnce).to.be.true;
       expect((driver.helpers.configureApp as any).calledOnce).to.be.true;
       expect(
-        SimulatorManagementModule.installToSimulator.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
+        installToSimulatorStub.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
           newSimulator: false,
         }),
       ).to.be.true;
     });
 
     it('should install multiple apps from otherApps as JSON array on simulators', async function () {
-      const SimulatorManagementModule = require('../../lib/device/simulator-management');
-      sandbox.stub(SimulatorManagementModule, 'installToSimulator');
+      const installToSimulatorStub = sandbox.stub();
+      currentInstallToSimulator = installToSimulatorStub;
       sandbox.stub(driver, 'isRealDevice').returns(false);
       const configureAppStub = sandbox.stub(driver.helpers, 'configureApp');
       configureAppStub.onCall(0).resolves('/path/to/iosApp1.app');
@@ -456,12 +492,12 @@ describe('XCUITestDriver', function () {
       expect((driver.isRealDevice as any).calledTwice).to.be.true;
       expect((driver.helpers.configureApp as any).calledTwice).to.be.true;
       expect(
-        SimulatorManagementModule.installToSimulator.calledWith('/path/to/iosApp1.app', 'bundle-id', {
+        installToSimulatorStub.calledWith('/path/to/iosApp1.app', 'bundle-id', {
           newSimulator: false,
         }),
       ).to.be.true;
       expect(
-        SimulatorManagementModule.installToSimulator.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
+        installToSimulatorStub.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
           newSimulator: false,
         }),
       ).to.be.true;

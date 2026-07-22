@@ -2,8 +2,8 @@ import type {EventEmitter} from 'node:events';
 
 import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
 
-import type {Page} from '../types';
-import type {AuthorizationStatus, BatteryState, ThermalState} from './enum';
+import type {Page} from '../types.js';
+import type {AuthorizationStatus, BatteryState, ThermalState} from './enum.js';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 

@@ -5,9 +5,9 @@ import {
   setLocalizationPrefs,
   setSafariPrefs,
   shutdownOtherSimulators,
-} from '../device/simulator-management';
-import type {XCUITestDriver} from '../driver';
-import {upperFirst} from '../utils';
+} from '../device/simulator-management.js';
+import type {XCUITestDriver} from '../driver.js';
+import {upperFirst} from '../utils/index.js';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 

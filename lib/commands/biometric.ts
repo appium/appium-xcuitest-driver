@@ -1,6 +1,6 @@
-import type {XCUITestDriver} from '../driver';
-import {requireSimulator} from './helpers';
-import type {BiometricFeature} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {requireSimulator} from './helpers/index.js';
+import type {BiometricFeature} from './types.js';
 
 /**
  * Enrolls biometric authentication on a simulated device.

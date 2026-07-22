@@ -1,6 +1,6 @@
-import {LockdownClient} from '../device/lockdown-client';
-import type {XCUITestDriver} from '../driver';
-import type {DeviceInfo, LockdownInfo} from './types';
+import {LockdownClient} from '../device/lockdown-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import type {DeviceInfo, LockdownInfo} from './types.js';
 
 /**
  * Returns the miscellaneous information about the device under test.

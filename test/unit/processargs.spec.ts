@@ -1,12 +1,12 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import chai from 'chai';
+import {use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../lib/driver';
+import {XCUITestDriver} from '../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';

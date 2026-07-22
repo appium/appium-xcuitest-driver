@@ -1,17 +1,17 @@
 import path from 'node:path';
 
 import type {Simulator} from 'appium-ios-simulator';
-import {errors} from 'appium/driver';
-import {fs, tempDir, zip, util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {fs, tempDir, zip, util} from 'appium/support.js';
 
-import {AfcClient} from '../device/afc-client';
+import {AfcClient} from '../device/afc-client.js';
 import {
   pullFile as realDevicePullFile,
   pullFolder as realDevicePullFolder,
   pushFile as realDevicePushFile,
-} from '../device/real-device-management';
-import type {XCUITestDriver} from '../driver';
-import type {ContainerObject, ContainerRootSupplier} from './types';
+} from '../device/real-device-management.js';
+import type {XCUITestDriver} from '../driver.js';
+import type {ContainerObject, ContainerRootSupplier} from './types.js';
 
 //#region Type Definitions
 

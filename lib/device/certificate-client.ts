@@ -1,8 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
 import type {MobileConfigService as RemoteXPCMobileConfigService} from 'appium-ios-remotexpc';
 
-import type {CertificateList} from '../commands/types';
-import type {RemoteXPCFacade} from './remote-xpc';
+import type {CertificateList} from '../commands/types.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * Options for installing a certificate

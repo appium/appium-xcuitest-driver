@@ -2,11 +2,11 @@ import {describe, it, before, after, beforeEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {isEmpty} from '../../../lib/utils';
+import {isEmpty} from '../../../lib/utils/index.js';
 import {
   amendCapabilities,
   SETTINGS_CAPS,
@@ -14,9 +14,9 @@ import {
   DEVICE_NAME,
   DEVICE_NAME_FOR_SAFARI_IPAD,
   isIosVersionAtLeast,
-} from '../desired';
-import {CLASS_CHAIN_SEARCH} from '../helpers/element';
-import {initSession, deleteSession} from '../helpers/session';
+} from '../desired.js';
+import {CLASS_CHAIN_SEARCH} from '../helpers/element.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 import {
   createGuineaPigServerSession,
   openPage,
@@ -25,9 +25,9 @@ import {
   guineaPigPage,
   guineaPigScrollablePage,
   guineaPigAppBannerPage,
-} from './helpers';
+} from './helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 function getCaps(baseUrl: string) {
   return amendCapabilities(SAFARI_CAPS, {

@@ -1,15 +1,15 @@
 import {describe, it, before, after} from 'node:test';
 
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
-import {createGuineaPigServerSession, guineaPigPage} from './helpers';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
+import {createGuineaPigServerSession, guineaPigPage} from './helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const IS_CI = Boolean(process.env.CI);
 const CI_WEBVIEW_ATOM_WAIT_TIMEOUT_MS = 20000;

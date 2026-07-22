@@ -5,16 +5,16 @@ import {setTimeout as delay} from 'node:timers/promises';
 
 import type {Element} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {fs, plist, tempDir, util} from 'appium/support';
+import {fs, plist, tempDir, util} from 'appium/support.js';
 import {retryInterval, retry, waitForCondition} from 'asyncbox';
 import {findAPortNotInUse, checkPortStatus} from 'portscanner';
 import {exec} from 'teen_process';
 
-import {CertificateClient} from '../device/certificate-client';
-import type {XCUITestDriver} from '../driver';
-import {isEmpty} from '../utils';
-import {requireRealDevice} from './helpers';
-import type {CertificateList} from './types';
+import {CertificateClient} from '../device/certificate-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import {isEmpty} from '../utils/index.js';
+import {requireRealDevice} from './helpers/index.js';
+import type {CertificateList} from './types.js';
 
 const CONFIG_EXTENSION = 'mobileconfig';
 const HOST_PORT_RANGE = [38200, 38299];

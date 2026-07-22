@@ -1,12 +1,12 @@
 import {describe, it, beforeEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {runSimulatorReset} from '../../lib/device/simulator-management';
-import {XCUITestDriver} from '../../lib/driver';
+import {runSimulatorReset} from '../../lib/device/simulator-management.js';
+import {XCUITestDriver} from '../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('simulator management', function () {
   describe('runSimulatorReset', function () {

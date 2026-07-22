@@ -1,13 +1,13 @@
 import path from 'node:path';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {fs, tempDir} from 'appium/support';
-import chai, {expect} from 'chai';
+import {fs, tempDir} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {grepFile} from '../../lib/device/log/helpers';
+import {grepFile} from '../../lib/device/log/helpers.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('log-helpers', function () {
   describe('grepFile', function () {

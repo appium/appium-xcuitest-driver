@@ -1,6 +1,6 @@
 import type {MethodMap} from '@appium/types';
 
-import type {XCUITestDriver} from './driver';
+import type {XCUITestDriver} from './driver.js';
 
 export const newMethodMap = {
   '/session/:sessionId/timeouts/async_script': {

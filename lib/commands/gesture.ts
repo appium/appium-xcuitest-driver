@@ -1,11 +1,11 @@
 import type {ActionSequence, Element} from '@appium/types';
-import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 
-import type {XCUITestDriver} from '../driver';
-import {isPlainObject} from '../utils';
-import {requireSimulator} from './helpers';
-import type {Direction} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {isPlainObject} from '../utils/index.js';
+import {requireSimulator} from './helpers/index.js';
+import type {Direction} from './types.js';
 
 const SUPPORTED_GESTURE_DIRECTIONS = ['up', 'down', 'left', 'right'] as const;
 

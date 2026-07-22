@@ -1,15 +1,15 @@
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {getSimulator} from 'appium-ios-simulator';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 
-import {TVOS_CAPS, extractCapabilityValue} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
-import {cleanupSimulator} from '../helpers/simulator';
+import {TVOS_CAPS, extractCapabilityValue} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
+import {cleanupSimulator} from '../helpers/simulator.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 

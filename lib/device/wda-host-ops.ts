@@ -6,9 +6,9 @@ import type {
   WdaLaunchEnvironment,
 } from 'appium-webdriveragent';
 
-import type {XCUITestDriver} from '../driver';
-import {isIos18OrNewerPlatform} from '../utils';
-import type {RealDevice} from './real-device-management';
+import type {XCUITestDriver} from '../driver.js';
+import {isIos18OrNewerPlatform} from '../utils/index.js';
+import type {RealDevice} from './real-device-management.js';
 
 const XCODE_ONLY_CAPS = [
   'usePrebuiltWDA',

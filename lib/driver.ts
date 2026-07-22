@@ -15,35 +15,35 @@ import type {Simulator} from 'appium-ios-simulator';
 import type {RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
-import {BaseDriver, DeviceSettings} from 'appium/driver';
-import {mjpeg, util} from 'appium/support';
+import {BaseDriver, DeviceSettings} from 'appium/driver.js';
+import {mjpeg, util} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
-import {AppInfosCache} from './app-infos-cache';
-import * as activeAppInfoCommands from './commands/active-app-info';
-import * as alertCommands from './commands/alert';
-import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install';
-import * as appManagementCommands from './commands/app-management';
-import * as appStringsCommands from './commands/app-strings';
-import * as appearanceCommands from './commands/appearance';
-import * as auditCommands from './commands/audit';
-import * as batteryCommands from './commands/battery';
-import * as biometricCommands from './commands/biometric';
-import * as certificateCommands from './commands/certificate';
-import * as clipboardCommands from './commands/clipboard';
-import * as conditionCommands from './commands/condition';
-import {SUPPORTED_EXTENSIONS} from './commands/constants';
-import * as contentSizeCommands from './commands/content-size';
-import * as contextCommands from './commands/context';
-import {notifyBiDiContextChange} from './commands/context';
-import * as deviceInfoCommands from './commands/device-info';
-import * as elementCommands from './commands/element';
-import * as executeCommands from './commands/execute';
-import * as fileMovementCommands from './commands/file-movement';
-import * as findCommands from './commands/find';
-import * as generalCommands from './commands/general';
-import * as geolocationCommands from './commands/geolocation';
-import * as gestureCommands from './commands/gesture';
+import {AppInfosCache} from './app-infos-cache.js';
+import * as activeAppInfoCommands from './commands/active-app-info.js';
+import * as alertCommands from './commands/alert.js';
+import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install.js';
+import * as appManagementCommands from './commands/app-management.js';
+import * as appStringsCommands from './commands/app-strings.js';
+import * as appearanceCommands from './commands/appearance.js';
+import * as auditCommands from './commands/audit.js';
+import * as batteryCommands from './commands/battery.js';
+import * as biometricCommands from './commands/biometric.js';
+import * as certificateCommands from './commands/certificate.js';
+import * as clipboardCommands from './commands/clipboard.js';
+import * as conditionCommands from './commands/condition.js';
+import {SUPPORTED_EXTENSIONS} from './commands/constants.js';
+import * as contentSizeCommands from './commands/content-size.js';
+import * as contextCommands from './commands/context.js';
+import {notifyBiDiContextChange} from './commands/context.js';
+import * as deviceInfoCommands from './commands/device-info.js';
+import * as elementCommands from './commands/element.js';
+import * as executeCommands from './commands/execute.js';
+import * as fileMovementCommands from './commands/file-movement.js';
+import * as findCommands from './commands/find.js';
+import * as generalCommands from './commands/general.js';
+import * as geolocationCommands from './commands/geolocation.js';
+import * as gestureCommands from './commands/gesture.js';
 import {
   DEFAULT_TIMEOUT_KEY,
   SAFARI_BUNDLE_ID,
@@ -54,72 +54,72 @@ import {
   printUser,
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
-} from './commands/helpers';
-import * as increaseContrastCommands from './commands/increase-contrast';
-import * as iohidCommands from './commands/iohid';
-import * as keyboardCommands from './commands/keyboard';
-import * as keychainsCommands from './commands/keychains';
-import * as localizationCommands from './commands/localization';
-import * as locationCommands from './commands/location';
-import * as lockCommands from './commands/lock';
-import * as logCommands from './commands/log';
-import type {DriverLogs} from './commands/log';
-import * as memoryCommands from './commands/memory';
-import * as navigationCommands from './commands/navigation';
-import * as networkMonitorCommands from './commands/network-monitor';
-import * as notificationsCommands from './commands/notifications';
-import * as pasteboardCommands from './commands/pasteboard';
-import * as performanceCommands from './commands/performance';
-import type {PerfRecorder} from './commands/performance';
-import * as permissionsCommands from './commands/permissions';
-import * as proxyHelperCommands from './commands/proxy-helper';
-import * as recordAudioCommands from './commands/record-audio';
-import type {AudioRecorder} from './commands/record-audio';
-import * as recordScreenCommands from './commands/recordscreen';
-import type {ScreenRecorder} from './commands/recordscreen';
-import * as screenshotCommands from './commands/screenshots';
-import * as simctlCommands from './commands/simctl';
-import * as simulatorCommands from './commands/simulator';
-import * as sourceCommands from './commands/source';
-import * as timeoutCommands from './commands/timeouts';
-import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
-import * as voiceOverCommands from './commands/voiceover';
-import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants';
-import {start, startWdaSession} from './commands/wda/startup';
-import {stop} from './commands/wda/stop';
-import {getDerivedDataPath} from './commands/wda/utils';
-import * as webCommands from './commands/web';
-import * as xctestCommands from './commands/xctest';
-import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
-import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
-import {DeviceConnectionsFactory} from './device/device-connections-factory';
-import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery';
-import type {NetworkMonitorSession} from './device/network-monitor-session';
+} from './commands/helpers/index.js';
+import * as increaseContrastCommands from './commands/increase-contrast.js';
+import * as iohidCommands from './commands/iohid.js';
+import * as keyboardCommands from './commands/keyboard.js';
+import * as keychainsCommands from './commands/keychains.js';
+import * as localizationCommands from './commands/localization.js';
+import * as locationCommands from './commands/location.js';
+import * as lockCommands from './commands/lock.js';
+import * as logCommands from './commands/log.js';
+import type {DriverLogs} from './commands/log.js';
+import * as memoryCommands from './commands/memory.js';
+import * as navigationCommands from './commands/navigation.js';
+import * as networkMonitorCommands from './commands/network-monitor.js';
+import * as notificationsCommands from './commands/notifications.js';
+import * as pasteboardCommands from './commands/pasteboard.js';
+import * as performanceCommands from './commands/performance.js';
+import type {PerfRecorder} from './commands/performance.js';
+import * as permissionsCommands from './commands/permissions.js';
+import * as proxyHelperCommands from './commands/proxy-helper.js';
+import * as recordAudioCommands from './commands/record-audio.js';
+import type {AudioRecorder} from './commands/record-audio.js';
+import * as recordScreenCommands from './commands/recordscreen.js';
+import type {ScreenRecorder} from './commands/recordscreen.js';
+import * as screenshotCommands from './commands/screenshots.js';
+import * as simctlCommands from './commands/simctl.js';
+import * as simulatorCommands from './commands/simulator.js';
+import * as sourceCommands from './commands/source.js';
+import * as timeoutCommands from './commands/timeouts.js';
+import type {WaitingAtoms, LogListener, FullContext} from './commands/types.js';
+import * as voiceOverCommands from './commands/voiceover.js';
+import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants.js';
+import {start, startWdaSession} from './commands/wda/startup.js';
+import {stop} from './commands/wda/stop.js';
+import {getDerivedDataPath} from './commands/wda/utils.js';
+import * as webCommands from './commands/web.js';
+import * as xctestRecordScreenCommands from './commands/xctest-record-screen.js';
+import * as xctestCommands from './commands/xctest.js';
+import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps.js';
+import {DeviceConnectionsFactory} from './device/device-connections-factory.js';
+import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery.js';
+import type {NetworkMonitorSession} from './device/network-monitor-session.js';
 import {
   installToRealDevice,
   runRealDeviceReset,
   applySafariStartupArgs,
   detectUdid,
   type RealDevice,
-} from './device/real-device-management';
-import {RemoteXPCFacade} from './device/remote-xpc';
+} from './device/real-device-management.js';
+import {RemoteXPCFacade} from './device/remote-xpc/index.js';
 import {
   createSim as createSimulator,
   getExistingSim as getExistingSimulator,
   installToSimulator,
   runSimulatorReset,
   shutdownSimulator,
-} from './device/simulator-management';
+} from './device/simulator-management.js';
 import {
   assertWdaHostPlatformSupported,
   assertWdaHostSessionCapsSupported,
   createWdaHostOps,
-} from './device/wda-host-ops';
-import {executeMethodMap} from './execute-method-map';
-import {newMethodMap} from './method-map';
-import {sessionClaimHandler} from './session-claim-handler';
-import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
-import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils';
+} from './device/wda-host-ops.js';
+import {executeMethodMap} from './execute-method-map.js';
+import {newMethodMap} from './method-map.js';
+import {sessionClaimHandler} from './session-claim-handler.js';
+import type {CalibrationData, IConditionInducer, LifecycleData} from './types.js';
+import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils/index.js';
 
 const defaultServerCaps = {
   webStorageEnabled: false,

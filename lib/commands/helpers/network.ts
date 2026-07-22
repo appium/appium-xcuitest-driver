@@ -1,12 +1,12 @@
 import {isIPv6} from 'node:net';
 
 import type {HTTPHeaders} from '@appium/types';
-import {fs, net, util} from 'appium/support';
+import {fs, net, util} from 'appium/support.js';
 import {asyncfilter} from 'asyncbox';
 import {exec} from 'teen_process';
 
-import {log} from '../../logger';
-import {isEmpty} from '../../utils';
+import {log} from '../../logger.js';
+import {isEmpty} from '../../utils/index.js';
 
 export type UploadOptions = {
   /** The name of the user for remote authentication (only when `remotePath` is provided). */

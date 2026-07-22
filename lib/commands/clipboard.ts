@@ -1,6 +1,6 @@
-import {PasteboardClient} from '../device/pasteboard-client';
-import type {XCUITestDriver} from '../driver';
-import {requireRealDevice} from './helpers';
+import {PasteboardClient} from '../device/pasteboard-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import {requireRealDevice} from './helpers/index.js';
 
 /**
  * Sets the primary clipboard's content on the device under test.

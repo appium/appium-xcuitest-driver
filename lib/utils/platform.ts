@@ -1,7 +1,7 @@
-import {util} from 'appium/support';
+import {util} from 'appium/support.js';
 import * as semver from 'semver';
 
-import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../constants';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../constants.js';
 
 export interface PlatformVersionOpts {
   platformVersion?: string | null;

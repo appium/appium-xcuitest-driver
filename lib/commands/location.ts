@@ -1,13 +1,13 @@
 import type {Location} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 
-import {SimulateLocationClient, type SimulateLocationSession} from '../device/simulate-location-client';
-import type {XCUITestDriver} from '../driver';
-import {isIos17OrNewer} from '../utils';
-import {AuthorizationStatus} from './enum';
-import type {LocationWithAltitude, WDALocationInfo} from './types';
+import {SimulateLocationClient, type SimulateLocationSession} from '../device/simulate-location-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import {isIos17OrNewer} from '../utils/index.js';
+import {AuthorizationStatus} from './enum.js';
+import type {LocationWithAltitude, WDALocationInfo} from './types.js';
 
 /**
  * Returns the geographic location of the device under test.

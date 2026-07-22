@@ -2,16 +2,16 @@ import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps} from '../desired';
-import {PREDICATE_SEARCH} from '../helpers/element';
-import {initSession, deleteSession} from '../helpers/session';
-import {APPIUM_IMAGE} from '../web/helpers';
+import {getUICatalogCaps} from '../desired.js';
+import {PREDICATE_SEARCH} from '../helpers/element.js';
+import {initSession, deleteSession} from '../helpers/session.js';
+import {APPIUM_IMAGE} from '../web/helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const BTN_OK_CNCL = 'Okay / Cancel';
 

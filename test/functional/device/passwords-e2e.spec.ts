@@ -1,13 +1,13 @@
 import {describe, it, before, afterEach, beforeEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps, amendCapabilities} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {getUICatalogCaps, amendCapabilities} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('Passwords', function () {
   let driver: Browser;
