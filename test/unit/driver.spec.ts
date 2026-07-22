@@ -15,10 +15,10 @@ import {UNIT_LONG_TIMEOUT_MS} from './helpers.js';
 
 use(chaiAsPromised);
 
-let currentCheckAppPresent: (...args: any[]) => any = async () => {};
-let currentAssertWdaHostSessionCapsSupported: (...args: any[]) => any = () => {};
-let currentAssertWdaHostPlatformSupported: (...args: any[]) => any = () => {};
-let currentGetAndCheckXcodeVersion: (...args: any[]) => any = async () => ({
+const defaultCheckAppPresent = async () => {};
+const defaultAssertWdaHostSessionCapsSupported = () => {};
+const defaultAssertWdaHostPlatformSupported = () => {};
+const defaultGetAndCheckXcodeVersion = async () => ({
   versionString: '20.0',
   versionFloat: 20.0,
   major: 20,
@@ -27,9 +27,17 @@ let currentGetAndCheckXcodeVersion: (...args: any[]) => any = async () => ({
     return '20.0';
   },
 });
-let currentInstallToRealDevice: (...args: any[]) => any = async () => {};
-let currentInstallToSimulator: (...args: any[]) => any = async () => {};
-let currentInstallAUT: (...args: any[]) => any = async () => {};
+const defaultInstallToRealDevice = async () => {};
+const defaultInstallToSimulator = async () => {};
+const defaultInstallAUT = async () => {};
+
+let currentCheckAppPresent: (...args: any[]) => any = defaultCheckAppPresent;
+let currentAssertWdaHostSessionCapsSupported: (...args: any[]) => any = defaultAssertWdaHostSessionCapsSupported;
+let currentAssertWdaHostPlatformSupported: (...args: any[]) => any = defaultAssertWdaHostPlatformSupported;
+let currentGetAndCheckXcodeVersion: (...args: any[]) => any = defaultGetAndCheckXcodeVersion;
+let currentInstallToRealDevice: (...args: any[]) => any = defaultInstallToRealDevice;
+let currentInstallToSimulator: (...args: any[]) => any = defaultInstallToSimulator;
+let currentInstallAUT: (...args: any[]) => any = defaultInstallAUT;
 
 const {XCUITestDriver} = await esmock(
   '../../lib/driver.js',
@@ -103,6 +111,13 @@ describe('XCUITestDriver', function () {
 
   afterEach(function () {
     sandbox.restore();
+    currentCheckAppPresent = defaultCheckAppPresent;
+    currentAssertWdaHostSessionCapsSupported = defaultAssertWdaHostSessionCapsSupported;
+    currentAssertWdaHostPlatformSupported = defaultAssertWdaHostPlatformSupported;
+    currentGetAndCheckXcodeVersion = defaultGetAndCheckXcodeVersion;
+    currentInstallToRealDevice = defaultInstallToRealDevice;
+    currentInstallToSimulator = defaultInstallToSimulator;
+    currentInstallAUT = defaultInstallAUT;
   });
 
   describe('getDefaultUrl', function () {
