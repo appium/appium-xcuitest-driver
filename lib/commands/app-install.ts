@@ -99,7 +99,7 @@ export async function verifyApplicationPlatform(this: XCUITestDriver): Promise<v
 export async function installAUT(driver: XCUITestDriver): Promise<void> {
   // install any other apps
   if (driver.opts.otherApps) {
-    await driver.installOtherApps(driver.opts.otherApps);
+    await installOtherApps(driver, driver.opts.otherApps);
   }
 
   if (driver.isSafari() || !driver.opts.app) {
@@ -128,6 +128,45 @@ export async function installAUT(driver: XCUITestDriver): Promise<void> {
       await delay(pauseMs);
     }
     driver.logEvent('appInstalled');
+  }
+}
+
+/**
+ * Installs each app listed in the `otherApps` capability onto the device.
+ */
+export async function installOtherApps(driver: XCUITestDriver, otherApps: string | string[]): Promise<void> {
+  let appsList: string[] | undefined;
+  try {
+    appsList = driver.helpers.parseCapsArray(otherApps);
+  } catch (e) {
+    throw driver.log.errorWithException(`Could not parse "otherApps" capability: ${(e as Error).message}`);
+  }
+  if (!appsList?.length) {
+    driver.log.info(`Got zero apps from 'otherApps' capability value. Doing nothing`);
+    return;
+  }
+
+  const appPaths: string[] = await Promise.all(
+    appsList.map((app) =>
+      driver.helpers.configureApp(app, {
+        onPostProcess: onPostConfigureApp.bind(driver),
+        onDownload: onDownloadApp.bind(driver),
+        supportedExtensions: SUPPORTED_EXTENSIONS,
+      } as any),
+    ),
+  );
+  const appIds: string[] = await Promise.all(appPaths.map((appPath) => driver.appInfosCache.extractBundleId(appPath)));
+  for (const [appId, appPath] of appIds.map((v, i) => [v, appPaths[i]] as const)) {
+    if (driver.isRealDevice()) {
+      await installToRealDevice.bind(driver)(appPath, appId, {
+        skipUninstall: true, // to make the behavior as same as UIA2
+        timeout: driver.opts.appPushTimeout,
+      });
+    } else {
+      await installToSimulator.bind(driver)(appPath, appId, {
+        newSimulator: driver.lifecycleData.createSim,
+      });
+    }
   }
 }
 

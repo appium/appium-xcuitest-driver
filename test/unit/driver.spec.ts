@@ -58,6 +58,20 @@ const {XCUITestDriver} = await esmock(
   },
 );
 
+const {installOtherApps} = await esmock(
+  '../../lib/commands/app-install.js',
+  import.meta.url,
+  {},
+  {
+    '../../lib/device/real-device-management.js': {
+      installToRealDevice: (...args: any[]) => currentInstallToRealDevice(...args),
+    },
+    '../../lib/device/simulator-management.js': {
+      installToSimulator: (...args: any[]) => currentInstallToSimulator(...args),
+    },
+  },
+);
+
 async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');
   Object.defineProperty(process, 'platform', {value: platform});
@@ -414,7 +428,7 @@ describe('XCUITestDriver', function () {
       sandbox.mock(driver.appInfosCache).expects('extractBundleId').resolves('bundle-id');
       (driver.opts as any).device = 'some-device' as any;
       driver.lifecycleData = {createSim: false};
-      await driver.installOtherApps('/path/to/iosApp.app');
+      await installOtherApps(driver, '/path/to/iosApp.app');
       expect((driver.isRealDevice as any).calledOnce).to.be.true;
       expect((driver.helpers.configureApp as any).calledOnce).to.be.true;
       expect(
@@ -440,7 +454,7 @@ describe('XCUITestDriver', function () {
         .resolves('bundle-id2');
       (driver.opts as any).device = 'some-device' as any;
       driver.lifecycleData = {createSim: false};
-      await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
+      await installOtherApps(driver, '["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
       expect((driver.isRealDevice as any).calledTwice).to.be.true;
       expect((driver.helpers.configureApp as any).calledTwice).to.be.true;
       expect(
@@ -466,7 +480,7 @@ describe('XCUITestDriver', function () {
       driver.opts.noReset = false;
       (driver.opts as any).device = 'some-device' as any;
       driver.lifecycleData = {createSim: false};
-      await driver.installOtherApps('/path/to/iosApp.app');
+      await installOtherApps(driver, '/path/to/iosApp.app');
       expect((driver.isRealDevice as any).calledOnce).to.be.true;
       expect((driver.helpers.configureApp as any).calledOnce).to.be.true;
       expect(
@@ -491,7 +505,7 @@ describe('XCUITestDriver', function () {
         .resolves('bundle-id2');
       driver.opts.noReset = false;
       driver.lifecycleData = {createSim: false};
-      await driver.installOtherApps('["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
+      await installOtherApps(driver, '["/path/to/iosApp1.app","/path/to/iosApp2.app"]');
       expect((driver.isRealDevice as any).calledTwice).to.be.true;
       expect((driver.helpers.configureApp as any).calledTwice).to.be.true;
       expect(

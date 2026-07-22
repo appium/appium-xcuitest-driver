@@ -5,8 +5,7 @@ import {errors} from 'appium/driver.js';
 import {fs, util} from 'appium/support.js';
 
 import {InstallationProxyClient} from '../device/installation-proxy-client.js';
-import {installToRealDevice, type RealDevice} from '../device/real-device-management.js';
-import {installToSimulator} from '../device/simulator-management.js';
+import type {RealDevice} from '../device/real-device-management.js';
 import type {AutInstallationState, AutInstallationStateOptions, XCUITestDriver} from '../driver.js';
 import type {AppInfoMapping} from '../types.js';
 import {onDownloadApp, onPostConfigureApp} from './app-install.js';
@@ -94,45 +93,6 @@ export async function checkAutInstallationState(
     install: shouldUpgrade,
     skipUninstall: true,
   };
-}
-
-/**
- * Installs each app listed in the `otherApps` capability onto the device.
- */
-export async function installOtherApps(this: XCUITestDriver, otherApps: string | string[]): Promise<void> {
-  let appsList: string[] | undefined;
-  try {
-    appsList = this.helpers.parseCapsArray(otherApps);
-  } catch (e) {
-    throw this.log.errorWithException(`Could not parse "otherApps" capability: ${(e as Error).message}`);
-  }
-  if (!appsList?.length) {
-    this.log.info(`Got zero apps from 'otherApps' capability value. Doing nothing`);
-    return;
-  }
-
-  const appPaths: string[] = await Promise.all(
-    appsList.map((app) =>
-      this.helpers.configureApp(app, {
-        onPostProcess: onPostConfigureApp.bind(this),
-        onDownload: onDownloadApp.bind(this),
-        supportedExtensions: SUPPORTED_EXTENSIONS,
-      } as any),
-    ),
-  );
-  const appIds: string[] = await Promise.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
-  for (const [appId, appPath] of appIds.map((v, i) => [v, appPaths[i]] as const)) {
-    if (this.isRealDevice()) {
-      await installToRealDevice.bind(this)(appPath, appId, {
-        skipUninstall: true, // to make the behavior as same as UIA2
-        timeout: this.opts.appPushTimeout,
-      });
-    } else {
-      await installToSimulator.bind(this)(appPath, appId, {
-        newSimulator: this.lifecycleData.createSim,
-      });
-    }
-  }
 }
 
 /**

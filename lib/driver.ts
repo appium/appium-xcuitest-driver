@@ -316,7 +316,6 @@ export class XCUITestDriver
   queryAppState = appManagementCommands.queryAppState;
   mobileListApps = appManagementCommands.mobileListApps;
   mobileClearApp = appManagementCommands.mobileClearApp;
-  installOtherApps = appManagementCommands.installOtherApps;
 
   /*------------+
    | APPEARANCE |
