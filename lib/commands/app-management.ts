@@ -5,95 +5,11 @@ import {errors} from 'appium/driver.js';
 import {fs, util} from 'appium/support.js';
 
 import {InstallationProxyClient} from '../device/installation-proxy-client.js';
-import type {RealDevice} from '../device/real-device-management.js';
-import type {AutInstallationState, AutInstallationStateOptions, XCUITestDriver} from '../driver.js';
+import type {XCUITestDriver} from '../driver.js';
 import type {AppInfoMapping} from '../types.js';
-import {onDownloadApp, onPostConfigureApp} from './app-install.js';
 import {SUPPORTED_EXTENSIONS} from './constants.js';
 import type {AppState} from './enum.js';
-import {requireRealDevice} from './helpers/index.js';
-
-/**
- * Determines whether the app under test should be (re)installed, and whether an existing
- * installation should be uninstalled first.
- */
-export async function checkAutInstallationState(
-  driver: XCUITestDriver,
-  opts?: AutInstallationStateOptions,
-): Promise<AutInstallationState> {
-  const {enforceAppInstall, fullReset, noReset, bundleId, app} = opts ?? driver.opts;
-
-  const wasAppInstalled = !!bundleId && (await driver.device.isAppInstalled(bundleId));
-  if (wasAppInstalled) {
-    driver.log.info(`App '${bundleId}' is already installed`);
-    if (noReset) {
-      driver.log.info('noReset is requested. The app will not be be (re)installed');
-      return {
-        install: false,
-        skipUninstall: true,
-      };
-    }
-  } else {
-    driver.log.info(
-      `App '${bundleId}' is not installed yet or it has an offload and ` +
-        'cannot be detected, which might keep the local data.',
-    );
-  }
-  if (enforceAppInstall !== false || fullReset || !wasAppInstalled) {
-    return {
-      install: true,
-      skipUninstall: !wasAppInstalled,
-    };
-  }
-
-  const candidateBundleVersion = app ? await driver.appInfosCache.extractBundleVersion(app) : undefined;
-  driver.log.debug(`CFBundleVersion from Info.plist: ${candidateBundleVersion}`);
-  if (!candidateBundleVersion) {
-    return {
-      install: true,
-      skipUninstall: false,
-    };
-  }
-
-  const appBundleVersion = (
-    driver.isRealDevice()
-      ? await (driver.device as RealDevice).fetchAppInfo(bundleId)
-      : await (driver.device as Simulator).simctl.appInfo(bundleId)
-  )?.CFBundleVersion;
-  driver.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
-  if (!appBundleVersion) {
-    return {
-      install: true,
-      skipUninstall: false,
-    };
-  }
-
-  let shouldUpgrade: boolean;
-  try {
-    shouldUpgrade = util.compareVersions(candidateBundleVersion, '>', appBundleVersion);
-  } catch (err) {
-    driver.log.warn(`App versions comparison is not possible: ${(err as Error).message}`);
-    return {
-      install: true,
-      skipUninstall: false,
-    };
-  }
-  if (shouldUpgrade) {
-    driver.log.info(
-      `The installed version of ${bundleId} is lower than the candidate one ` +
-        `(${candidateBundleVersion} > ${appBundleVersion}). The app will be upgraded.`,
-    );
-  } else {
-    driver.log.info(
-      `The candidate version of ${bundleId} is lower than the installed one ` +
-        `(${candidateBundleVersion} <= ${appBundleVersion}). The app won't be reinstalled.`,
-    );
-  }
-  return {
-    install: shouldUpgrade,
-    skipUninstall: true,
-  };
-}
+import {checkAutInstallationState, onDownloadApp, onPostConfigureApp, requireRealDevice} from './helpers/index.js';
 
 /**
  * Installs the given application to the device under test.

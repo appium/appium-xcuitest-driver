@@ -5,7 +5,7 @@ import {fs, tempDir, zip} from 'appium/support.js';
 import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {unzipStream, unzipFile} from '../../lib/commands/helpers/index.js';
+import {unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
 import {getUIKitCatalogPath} from '../setup.js';
 
 use(chaiAsPromised);

@@ -21,7 +21,6 @@ import {LRUCache} from 'lru-cache';
 import {AppInfosCache} from './app-infos-cache.js';
 import * as activeAppInfoCommands from './commands/active-app-info.js';
 import * as alertCommands from './commands/alert.js';
-import {installAUT, onDownloadApp, onPostConfigureApp} from './commands/app-install.js';
 import * as appManagementCommands from './commands/app-management.js';
 import * as appStringsCommands from './commands/app-strings.js';
 import * as appearanceCommands from './commands/appearance.js';
@@ -49,7 +48,10 @@ import {
   checkAppPresent,
   getAndCheckXcodeVersion,
   getDriverInfo,
+  installAUT,
   normalizeCommandTimeouts,
+  onDownloadApp,
+  onPostConfigureApp,
   printUser,
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
@@ -214,16 +216,6 @@ const NO_PROXY_WEB_LIST: RouteMatcher[] = [
 /* eslint-enable no-useless-escape */
 
 const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
-
-export type AutInstallationStateOptions = Pick<
-  XCUITestDriverOpts,
-  'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'
->;
-
-export interface AutInstallationState {
-  install: boolean; // If the given app should install, or not need to install.
-  skipUninstall: boolean; // If the installed app should be uninstalled, or not.
-}
 
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 

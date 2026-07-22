@@ -2,12 +2,25 @@ import type {EventEmitter} from 'node:events';
 
 import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
 
+import type {XCUITestDriverOpts} from '../driver.js';
 import type {Page} from '../types.js';
 import type {AuthorizationStatus, BatteryState, ThermalState} from './enum.js';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
 export type LocationWithAltitude = Location & {altitude: number};
+
+export type AutInstallationStateOptions = Pick<
+  XCUITestDriverOpts,
+  'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'
+>;
+
+export interface AutInstallationState {
+  /** If the given app should install, or not need to install. */
+  install: boolean;
+  /** If the installed app should be uninstalled, or not. */
+  skipUninstall: boolean;
+}
 
 /**
  * Battery information. Returned by the `mobile: getBatteryInfo` execute method.
