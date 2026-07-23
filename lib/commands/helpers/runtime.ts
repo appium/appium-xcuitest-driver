@@ -30,5 +30,9 @@ export const getDriverInfo = memoize(async function getDriverInfo(): Promise<Dri
 
 /** Logs effective OS user running the current process. */
 export function printUser(): void {
-  log.debug(`Current user: '${os.userInfo().username}'`);
+  try {
+    log.debug(`Current user: '${os.userInfo().username}'`);
+  } catch (err: any) {
+    log.debug(`Cannot retrieve the current user name: ${err.message}`);
+  }
 }

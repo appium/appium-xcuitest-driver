@@ -187,7 +187,7 @@ export async function checkAutInstallationState(
   if (wasAppInstalled) {
     driver.log.info(`App '${bundleId}' is already installed`);
     if (noReset) {
-      driver.log.info('noReset is requested. The app will not be be (re)installed');
+      driver.log.info('noReset is requested. The app will not be (re)installed');
       return {
         install: false,
         skipUninstall: true,
