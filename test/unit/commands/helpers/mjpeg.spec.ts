@@ -21,9 +21,10 @@ function buildMultipartFrame(jpeg: Buffer): Buffer {
 describe('mjpeg helpers', function () {
   describe('MJpegStream', function () {
     let jpeg: Buffer;
+    let jpeg2: Buffer;
     let server: Server;
     let serverUrl: string;
-    let framesToSend: number;
+    let framesToSend: Buffer[];
     let frameIntervalMs: number;
     let stream: MJpegStream | null;
 
@@ -33,10 +34,15 @@ describe('mjpeg helpers', function () {
       })
         .jpeg()
         .toBuffer();
+      jpeg2 = await sharp({
+        create: {width: 2, height: 2, channels: 3, background: {r: 0, g: 0, b: 255}},
+      })
+        .jpeg()
+        .toBuffer();
     });
 
     beforeEach(async function () {
-      framesToSend = 1;
+      framesToSend = [jpeg];
       frameIntervalMs = 10;
       stream = null;
       server = http.createServer((_req, res) => {
@@ -44,11 +50,11 @@ describe('mjpeg helpers', function () {
         res.flushHeaders();
         let sent = 0;
         const timer = setInterval(() => {
-          if (sent >= framesToSend) {
+          if (sent >= framesToSend.length) {
             clearInterval(timer);
             return;
           }
-          res.write(buildMultipartFrame(jpeg));
+          res.write(buildMultipartFrame(framesToSend[sent]));
           sent++;
         }, frameIntervalMs);
         res.on('close', () => clearInterval(timer));
@@ -86,12 +92,13 @@ describe('mjpeg helpers', function () {
     });
 
     it('should keep track of newer frames as they arrive', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-      framesToSend = 3;
+      framesToSend = [jpeg, jpeg2];
       frameIntervalMs = 20;
       stream = new MJpegStream(serverUrl);
       await stream.start();
-      await new Promise((resolve) => setTimeout(resolve, frameIntervalMs * framesToSend + 50));
-      expect((stream as unknown as {updateCount: number}).updateCount).to.be.greaterThanOrEqual(2);
+      expect(stream.lastChunkBase64).to.equal(jpeg.toString('base64'));
+      await new Promise((resolve) => setTimeout(resolve, frameIntervalMs * framesToSend.length + 50));
+      expect(stream.lastChunkBase64).to.equal(jpeg2.toString('base64'));
     });
 
     it('should clear the last chunk on stop()', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -108,7 +115,7 @@ describe('mjpeg helpers', function () {
     });
 
     it('should reject if no frame arrives before the timeout', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-      framesToSend = 0;
+      framesToSend = [];
       stream = new MJpegStream(serverUrl);
       // The server flushes headers immediately, so axios resolves well within the deadline;
       // the rejection comes from MJpegStream's own "no frame yet" guard.

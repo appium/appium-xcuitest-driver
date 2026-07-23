@@ -65,7 +65,7 @@ class MjpegFrameParser extends Transform {
     if (!this.buffer) {
       return;
     }
-    const copyStart = start > -1 && start < end ? start : 0;
+    const copyStart = start > -1 ? start : 0;
     const copyEnd = end > -1 ? end + JPEG_EOI.length : chunk.length;
     chunk.copy(this.buffer, this.bytesWritten, copyStart, copyEnd);
     this.bytesWritten += copyEnd - copyStart;
