@@ -171,26 +171,35 @@ export class MJpegStream extends Writable {
 
     this.consumer = new MjpegFrameParser();
     const url = this.url;
+    // Bound only the connect phase with an abort signal; axios's own `timeout` option would
+    // otherwise keep ticking for the whole request lifetime and race with the "first frame"
+    // watchdog below, since both would share the same deadline.
+    const connectController = new AbortController();
+    const connectTimeoutId = setTimeout(() => connectController.abort(), serverTimeout);
     try {
-      this.responseStream = (
-        await axios({
-          url,
-          responseType: 'stream',
-          timeout: serverTimeout,
-        })
-      ).data as Readable;
-    } catch (e) {
-      let message: string;
-      if (e && typeof e === 'object' && 'response' in e) {
-        message = JSON.stringify((e as {response: unknown}).response);
-      } else if (e instanceof Error) {
-        message = e.message;
-      } else {
-        message = String(e);
+      try {
+        this.responseStream = (
+          await axios({
+            url,
+            responseType: 'stream',
+            signal: connectController.signal,
+          })
+        ).data as Readable;
+      } catch (e) {
+        let message: string;
+        if (e && typeof e === 'object' && 'response' in e) {
+          message = JSON.stringify((e as {response: unknown}).response);
+        } else if (e instanceof Error) {
+          message = e.message;
+        } else {
+          message = String(e);
+        }
+        throw new Error(`Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`, {
+          cause: e,
+        });
       }
-      throw new Error(`Cannot connect to the MJPEG stream at ${url}. Original error: ${message}`, {
-        cause: e,
-      });
+    } finally {
+      clearTimeout(connectTimeoutId);
     }
 
     const onErr = (err: Error) => {
