@@ -1,3 +1,30 @@
+## [12.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.7...v12.0.0) (2026-07-23)
+
+### ⚠ BREAKING CHANGES
+
+* Consumers using require('appium-xcuitest-driver') must switch to import/dynamic import() — the package no longer ships a CommonJS entry point.
+* start is no longer callable as driver.start(...).
+* stop is no longer callable as driver.stop(...).
+* runReset is no longer callable as driver.runReset(...).
+* configureApp is no longer callable as driver.configureApp(...).
+* determineDevice is no longer callable as driver.determineDevice(...).
+* setInitialOrientation is no longer callable as driver.setInitialOrientation(...).
+* resetIos is no longer callable as driver.resetIos(...).
+* mergeCliArgsToOpts is no longer callable as driver.mergeCliArgsToOpts(...).
+* handleMjpegOptions is no longer callable as driver.handleMjpegOptions(...).
+* allocateMjpegServerPort is no longer callable as driver.allocateMjpegServerPort(...).
+* getDefaultUrl is no longer callable as driver.getDefaultUrl(...).
+* onSettingsUpdate is no longer callable as driver.onSettingsUpdate(...).
+* isXcodebuildNeeded is no longer callable as driver.isXcodebuildNeeded(...).
+* createSim has been removed; it was already deprecated.
+* startWdaSession is no longer callable as driver.startWdaSession(...).
+* installAUT is no longer callable as driver.installAUT(...).
+* installOtherApps is no longer callable as driver.installOtherApps(...).
+
+### Features
+
+* Migrate the package to ESM ([#2914](https://github.com/appium/appium-xcuitest-driver/issues/2914)) ([045f205](https://github.com/appium/appium-xcuitest-driver/commit/045f205056b8563b06ed59226329360590e63c60))
+
 ## [11.17.7](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.6...v11.17.7) (2026-07-15)
 
 ### Miscellaneous Chores
