@@ -1,11 +1,11 @@
 import type {Element, AppiumLogger} from '@appium/types';
-import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 
-import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css';
-import type {XCUITestDriver} from '../driver';
-import {isEmpty} from '../utils';
-import type {AllowedHttpMethod} from './proxy-helper';
+import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../css/index.js';
+import type {XCUITestDriver} from '../driver.js';
+import {isEmpty} from '../utils/index.js';
+import type {AllowedHttpMethod} from './proxy-helper.js';
 
 /**
  * Finds elements, delegating to web or native based on context.

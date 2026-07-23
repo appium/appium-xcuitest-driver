@@ -1,4 +1,4 @@
-import type {XCUITestDriver} from '../driver';
+import type {XCUITestDriver} from '../driver.js';
 
 export interface GeolocationInfo {
   /** Measurement of distance north or south of the Equator, or `null` if {@linkcode XCUITestDriver.mobileSetSimulatedLocation} has not been called or {@linkcode mobileResetSimulatedLocation} has been called. */

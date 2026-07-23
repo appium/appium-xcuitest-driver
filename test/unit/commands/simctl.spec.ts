@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 

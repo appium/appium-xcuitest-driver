@@ -4,7 +4,7 @@ import {resetTestProcesses} from 'appium-webdriveragent';
 import {retryInterval} from 'asyncbox';
 import {Simctl} from 'node-simctl';
 
-import {shutdownSimulator} from '../../../lib/device/simulator-management';
+import {shutdownSimulator} from '../../../lib/device/simulator-management.js';
 
 export async function killAllSimulators() {
   const simctl = new Simctl();

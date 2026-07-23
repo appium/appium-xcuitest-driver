@@ -1,7 +1,7 @@
-import {NATIVE_WIN} from '../constants';
-import type {LogEntry} from '../types';
-import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants';
-import type {LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel, NetworkMonitorBiDiEvent} from './types';
+import {NATIVE_WIN} from '../constants.js';
+import type {LogEntry} from '../types.js';
+import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants.js';
+import type {LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel, NetworkMonitorBiDiEvent} from './types.js';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {

@@ -3,8 +3,8 @@ import type {AppiumLogger} from '@appium/types';
 import {INSTRUMENT_CHANNEL, services} from 'appium-ios-device';
 import type {DVTInstruments} from 'appium-ios-remotexpc';
 
-import type {Condition, IConditionInducer} from '../types';
-import type {RemoteXPCFacade} from './remote-xpc';
+import type {Condition, IConditionInducer} from '../types.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 type InstrumentService = {
   callChannel(channel: string, method: string, ...args: any[]): Promise<{selector: any}>;

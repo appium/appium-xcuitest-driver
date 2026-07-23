@@ -1,7 +1,7 @@
 import type {ParsedAttribute, ParsedRule, ParsedSelector, StrategyEmitter} from '@appium/css-locator-to-native';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import {escapeRegExp, isEmpty} from '../utils';
+import {escapeRegExp, isEmpty} from '../utils/index.js';
 
 const BOOLEAN_ATTRS = new Set(['visible', 'accessible', 'accessibility-container', 'enabled']);
 

@@ -1,12 +1,12 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
-import {withTimeout, TimeoutError} from '../../lib/commands/helpers';
+import {withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('utils/async', function () {
   describe('TimeoutError', function () {

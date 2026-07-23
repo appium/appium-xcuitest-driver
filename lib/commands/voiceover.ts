@@ -1,7 +1,7 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver';
-import {isIos27OrNewer} from '../utils';
+import type {XCUITestDriver} from '../driver.js';
+import {isIos27OrNewer} from '../utils/index.js';
 
 export interface VoiceOverSpeechResult {
   utterance: string | null;

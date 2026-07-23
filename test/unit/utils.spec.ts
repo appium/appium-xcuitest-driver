@@ -1,14 +1,14 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {fs} from 'appium/support';
-import chai, {expect} from 'chai';
+import {fs} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
-import {isLocalHost} from '../../lib/commands/helpers';
-import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup';
+import {isLocalHost} from '../../lib/commands/helpers/index.js';
+import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
 

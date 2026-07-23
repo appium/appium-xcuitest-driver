@@ -1,11 +1,13 @@
+import {fileURLToPath} from 'node:url';
+
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
-import {doctor, fs, node} from 'appium/support';
+import {doctor, fs, node} from 'appium/support.js';
 import axios from 'axios';
 import {exec, SubProcess} from 'teen_process';
 import '@colors/colors';
 
-import {memoize} from '../utils';
-import {resolveExecutablePath} from './utils';
+import {memoize} from '../utils/index.js';
+import {resolveExecutablePath} from './utils.js';
 
 export class OptionalSimulatorCheck implements IDoctorCheck {
   static readonly SUPPORTED_SIMULATOR_PLATFORMS: SimulatorPlatform[] = [
@@ -137,7 +139,7 @@ const isRemoteXpcDependencyAvailable = memoize(async function ensureRemoteXpcDep
 });
 
 const getXcuitestDriverRoot = memoize(function getXcuitestDriverRoot(): string | null {
-  return node.getModuleRootSync('appium-xcuitest-driver', __filename);
+  return node.getModuleRootSync('appium-xcuitest-driver', fileURLToPath(import.meta.url));
 });
 
 export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {

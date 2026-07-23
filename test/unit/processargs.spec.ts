@@ -1,12 +1,13 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import chai from 'chai';
+import {use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../lib/driver';
+import {startWdaSession} from '../../lib/commands/wda/startup.js';
+import {XCUITestDriver} from '../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';
@@ -71,7 +72,7 @@ describe('process args', function () {
         processArguments: PROCESS_ARGS_OBJECT,
       };
       driver.validateDesiredCaps(desiredWithProArgsObject);
-      await driver.startWdaSession(desiredWithProArgsObject.bundleId, desiredWithProArgsObject.processArguments);
+      await startWdaSession.call(driver, desiredWithProArgsObject.bundleId, desiredWithProArgsObject.processArguments);
     });
   });
 
@@ -88,7 +89,7 @@ describe('process args', function () {
         processArguments: processArgsString,
       };
       driver.validateDesiredCaps(desiredWithProArgsString);
-      await driver.startWdaSession(desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
+      await startWdaSession.call(driver, desiredWithProArgsString.bundleId, desiredWithProArgsString.processArguments);
     });
   });
 });

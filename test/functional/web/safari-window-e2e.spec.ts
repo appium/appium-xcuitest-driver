@@ -1,13 +1,13 @@
 import {describe, it, before, after, beforeEach, type TestContext} from 'node:test';
 
 import {waitForCondition} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {isEmpty} from '../../../lib/utils';
-import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {isEmpty} from '../../../lib/utils/index.js';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 import {
   createGuineaPigServerSession,
   openPage,
@@ -16,9 +16,9 @@ import {
   guineaPigPage,
   guineaPigFramePage,
   guineaPigIframePage,
-} from './helpers';
+} from './helpers/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`;
 const GET_ELEM_ASYNC = `arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);`;

@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
-import type {KeyboardKey} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import type {KeyboardKey} from './types.js';
 
 /**
  * Hides the keyboard.

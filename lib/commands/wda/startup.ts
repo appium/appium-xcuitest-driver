@@ -1,16 +1,16 @@
 import path from 'node:path';
 
 import type {StringRecord} from '@appium/types';
-import {errors} from 'appium/driver';
-import {fs, timing, util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {fs, timing, util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
 
-import {installToRealDevice} from '../../device/real-device-management';
-import {installToSimulator} from '../../device/simulator-management';
-import type {XCUITestDriver} from '../../driver';
-import {isIos17OrNewerPlatform, isPlainObject} from '../../utils';
-import {isLocalHost} from '../helpers';
-import {markSystemFilesForCleanup} from './cleanup';
+import {installToRealDevice} from '../../device/real-device-management.js';
+import {installToSimulator} from '../../device/simulator-management.js';
+import type {XCUITestDriver} from '../../driver.js';
+import {isIos17OrNewerPlatform, isPlainObject} from '../../utils/index.js';
+import {isLocalHost} from '../helpers/index.js';
+import {markSystemFilesForCleanup} from './cleanup.js';
 import {
   CAP_NAMES_NO_XCODEBUILD_REQUIRED,
   CUSTOMIZE_RESULT_BUNDLE_PATH,
@@ -22,8 +22,8 @@ import {
   WDA_SIM_STARTUP_RETRIES,
   WDA_STARTUP_RETRY_INTERVAL,
   XCUITEST_DRIVER_SYNC_NAME,
-} from './constants';
-import {getDerivedDataPath} from './utils';
+} from './constants.js';
+import {getDerivedDataPath} from './utils.js';
 
 interface StartupRetryOptions {
   startupRetries: number;

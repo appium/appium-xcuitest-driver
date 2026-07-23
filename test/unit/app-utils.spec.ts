@@ -1,14 +1,14 @@
 import path from 'node:path';
 import {describe, it, before} from 'node:test';
 
-import {fs, tempDir, zip} from 'appium/support';
-import chai, {expect} from 'chai';
+import {fs, tempDir, zip} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {unzipStream, unzipFile} from '../../lib/commands/helpers';
-import {getUIKitCatalogPath} from '../setup';
+import {unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
+import {getUIKitCatalogPath} from '../setup.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('app-utils', function () {
   let uiCatalogAppPath: string;

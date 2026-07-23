@@ -92,10 +92,8 @@ jobs:
           popd
         name: Install Appium Server
       - run: |
-          brew install xq
           npm install
           npm install --no-save mjpeg-consumer
-          npm install mocha-multi-reporters --save-dev
         name: Install dev dependencies
       - run: |
           export cwd=$(pwd)

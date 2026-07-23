@@ -1,10 +1,10 @@
 import path from 'node:path';
 
 import type {AppiumLogger, StringRecord} from '@appium/types';
-import {plist, fs, tempDir, zip} from 'appium/support';
+import {plist, fs, tempDir, zip} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
-import {escapeRegExp, isPlainObject} from './utils';
+import {escapeRegExp, isPlainObject} from './utils/index.js';
 
 const MANIFEST_CACHE = new LRUCache<string, StringRecord>({
   max: 40,

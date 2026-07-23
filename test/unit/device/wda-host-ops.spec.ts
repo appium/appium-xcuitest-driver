@@ -8,7 +8,7 @@ import {
   assertWdaHostSessionCapsSupported,
   createWdaHostOps,
   isStrictHostUtilityMode,
-} from '../../../lib/device/wda-host-ops';
+} from '../../../lib/device/wda-host-ops.js';
 
 function withPlatform(platform: NodeJS.Platform, fn: () => void): void {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');

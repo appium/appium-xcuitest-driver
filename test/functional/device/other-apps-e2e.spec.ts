@@ -1,14 +1,14 @@
 import {describe, it, before, afterEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup';
-import {getMultipleApps, amendCapabilities} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {UICATALOG_BUNDLE_ID, TESTAPP_BUNDLE_ID} from '../../setup.js';
+import {getMultipleApps, amendCapabilities} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('OtherApps', function () {
   let caps: Record<string, any>;

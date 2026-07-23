@@ -1,20 +1,20 @@
 import type {StringRecord} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {createRemoteDebugger, RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
-import {errors, isErrorType} from 'appium/driver';
-import {util, timing} from 'appium/support';
+import {errors, isErrorType} from 'appium/driver.js';
+import {util, timing} from 'appium/support.js';
 
-import {IOSPerformanceLog} from '../device/log/ios-performance-log';
-import type {SafariConsoleEntry, SafariConsoleLog} from '../device/log/safari-console-log';
-import type {SafariNetworkLogEntry, SafariNetworkLog} from '../device/log/safari-network-log';
-import type {XCUITestDriver} from '../driver';
-import type {Page} from '../types';
-import {isEmpty} from '../utils';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {makeContextUpdatedEvent} from './bidi/models';
-import {NATIVE_WIN} from './constants';
-import {assignBiDiLogListener} from './log';
-import type {ViewContext, FullContext, PageChangeNotification} from './types';
+import {IOSPerformanceLog} from '../device/log/ios-performance-log.js';
+import type {SafariConsoleEntry, SafariConsoleLog} from '../device/log/safari-console-log.js';
+import type {SafariNetworkLogEntry, SafariNetworkLog} from '../device/log/safari-network-log.js';
+import type {XCUITestDriver} from '../driver.js';
+import type {Page} from '../types.js';
+import {isEmpty} from '../utils/index.js';
+import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {makeContextUpdatedEvent} from './bidi/models.js';
+import {NATIVE_WIN} from './constants.js';
+import {assignBiDiLogListener} from './log.js';
+import type {ViewContext, FullContext, PageChangeNotification} from './types.js';
 
 const WEBVIEW_WIN = 'WEBVIEW';
 const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;

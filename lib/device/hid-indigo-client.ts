@@ -1,6 +1,6 @@
 import type {HidButtonName, HidButtonPressOptions, HidIndigoService} from 'appium-ios-remotexpc';
 
-import type {RemoteXPCFacade} from './remote-xpc';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * HID Indigo service on real hardware.

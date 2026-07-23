@@ -1,8 +1,8 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver';
-import {requireSimulator} from './helpers';
-import type {IncreaseContrastAction, IncreaseContrastResult} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {requireSimulator} from './helpers/index.js';
+import type {IncreaseContrastAction, IncreaseContrastResult} from './types.js';
 
 const INCREASE_CONTRAST_CONFIG = ['enabled', 'disabled'] as const;
 

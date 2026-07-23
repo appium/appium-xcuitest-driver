@@ -1,7 +1,7 @@
 import * as xcode from 'appium-xcode';
 import type {XcodeVersion} from 'appium-xcode';
 
-import {log} from '../../logger';
+import {log} from '../../logger.js';
 
 /** Returns installed Xcode version or throws a descriptive error. */
 export async function getAndCheckXcodeVersion(): Promise<XcodeVersion> {

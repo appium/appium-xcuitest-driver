@@ -1,12 +1,13 @@
 import {describe, it, afterEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../lib/driver';
+import {startWdaSession} from '../../lib/commands/wda/startup.js';
+import {XCUITestDriver} from '../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('language and locale', function () {
   const LANGUAGE = 'en';
@@ -67,7 +68,7 @@ describe('language and locale', function () {
       mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
 
       driver.validateDesiredCaps(desiredCapabilities);
-      await driver.startWdaSession(desiredCapabilities.bundleId, desiredCapabilities.processArguments);
+      await startWdaSession.call(driver, desiredCapabilities.bundleId, desiredCapabilities.processArguments);
     });
   });
 
@@ -122,7 +123,7 @@ describe('language and locale', function () {
       mockDriver.expects('proxyCommand').once().withExactArgs('/session', 'POST', expectedWDACapabilities);
 
       driver.validateDesiredCaps(desiredCapabilities);
-      await driver.startWdaSession(desiredCapabilities.bundleId, desiredCapabilities.processArguments);
+      await startWdaSession.call(driver, desiredCapabilities.bundleId, desiredCapabilities.processArguments);
       expect(desiredCapabilities.processArguments).to.eql(expectedProcessArguments);
     });
   });

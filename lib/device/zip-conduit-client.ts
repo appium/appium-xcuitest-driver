@@ -1,8 +1,8 @@
 import type {AppiumLogger} from '@appium/types';
 import type {ZipConduitService as RemoteXPCZipConduitService} from 'appium-ios-remotexpc';
 
-import {log} from '../logger';
-import type {RemoteXPCFacade} from './remote-xpc';
+import {log} from '../logger.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * Options accepted by {@link ZipConduitClient.install}

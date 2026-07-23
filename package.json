@@ -31,8 +31,16 @@
     "LICENSE",
     "npm-shrinkwrap.json"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsc -b",
     "clean": "npm run build -- --clean",
@@ -48,15 +56,15 @@
     "install-docs-deps": "appium-docs init --no-mkdocs",
     "prepare": "npm run rebuild",
     "rebuild": "npm run clean; npm run build",
-    "test": "node --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\"",
-    "e2e-test": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/**/*.spec.js\"",
-    "e2e-test:basic": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/basic/**/*.spec.js\"",
-    "e2e-test:device": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/device/**/*.spec.js\"",
-    "e2e-test:driver": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/driver/**/*.spec.js\"",
-    "e2e-test:long": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/long/**/*.spec.js\"",
-    "e2e-test:parallel": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/parallel/**/*.spec.js\"",
-    "e2e-test:web": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/**/*.spec.js\"",
-    "e2e-test:native-web-tap": "node --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/safari-nativewebtap*.spec.js\"",
+    "test": "node --enable-source-maps --test --test-force-exit --test-timeout=60000 \"./build/test/unit/**/*.spec.js\"",
+    "e2e-test": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/**/*.spec.js\"",
+    "e2e-test:basic": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/basic/**/*.spec.js\"",
+    "e2e-test:device": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/device/**/*.spec.js\"",
+    "e2e-test:driver": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/driver/**/*.spec.js\"",
+    "e2e-test:long": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/long/**/*.spec.js\"",
+    "e2e-test:parallel": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/parallel/**/*.spec.js\"",
+    "e2e-test:web": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/**/*.spec.js\"",
+    "e2e-test:native-web-tap": "node --enable-source-maps --test --test-force-exit --test-timeout=600000 \"./build/test/functional/web/safari-nativewebtap*.spec.js\"",
     "start": "appium --relaxed-security --port 4567 --keep-alive-timeout 1200"
   },
   "dependencies": {
@@ -101,6 +109,7 @@
     "chai": "^6.0.0",
     "chai-as-promised": "^8.0.0",
     "conventional-changelog-conventionalcommits": "^9.3.1",
+    "esmock": "^2.7.6",
     "oxfmt": "^0.x",
     "pem": "^1.14.8",
     "semantic-release": "^25.0.2",

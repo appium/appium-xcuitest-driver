@@ -1,7 +1,7 @@
 import type {CrashReportsService as RemoteXPCCrashReportsService} from 'appium-ios-remotexpc';
 
-import {log} from '../logger';
-import type {RemoteXPCFacade} from './remote-xpc';
+import {log} from '../logger.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 const CRASH_REPORT_EXTENSIONS = ['.ips'];
 const MAX_FILES_IN_ERROR = 10;

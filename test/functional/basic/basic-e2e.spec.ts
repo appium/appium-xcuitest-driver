@@ -3,16 +3,16 @@ import {setTimeout as delay} from 'node:timers/promises';
 import util from 'node:util';
 
 import {retryInterval} from 'asyncbox';
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import type {Browser} from 'webdriverio';
 
-import {isIosVersionBelow, getUICatalogCaps} from '../desired';
-import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig';
-import {initSession, deleteSession} from '../helpers/session';
+import {isIosVersionBelow, getUICatalogCaps} from '../desired.js';
+import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig/index.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('XCUITestDriver - basics -', function () {
   let driver: Browser;

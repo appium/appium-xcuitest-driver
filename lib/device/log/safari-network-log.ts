@@ -1,8 +1,8 @@
 import type {AppiumLogger, StringRecord} from '@appium/types';
 
-import {truncateString} from '../../utils';
-import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers';
-import {LineConsumingLog} from './line-consuming-log';
+import {truncateString} from '../../utils/index.js';
+import {MAX_JSON_LOG_LENGTH, MAX_BUFFERED_EVENTS_COUNT} from './helpers.js';
+import {LineConsumingLog} from './line-consuming-log.js';
 
 const EVENTS_TO_LOG = ['Network.loadingFinished', 'Network.loadingFailed'];
 const MONITORED_EVENTS = ['Network.requestWillBeSent', 'Network.responseReceived', ...EVENTS_TO_LOG];

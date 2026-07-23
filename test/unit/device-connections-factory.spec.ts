@@ -1,13 +1,13 @@
 import {describe, it, beforeEach} from 'node:test';
 
-import {logger} from 'appium/support';
-import chai, {expect} from 'chai';
+import {logger} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory';
-import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils';
+import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory.js';
+import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('DeviceConnectionsFactory', function () {
   let devConFactory: DeviceConnectionsFactory;

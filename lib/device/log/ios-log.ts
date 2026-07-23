@@ -1,10 +1,10 @@
 import {EventEmitter} from 'node:events';
 
 import type {AppiumLogger} from '@appium/types';
-import {logger} from 'appium/support';
+import {logger} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
-import type {LogEntry} from '../../commands/types';
+import type {LogEntry} from '../../commands/types.js';
 
 // We keep only the most recent log entries to avoid out of memory error
 const MAX_LOG_ENTRIES_COUNT = 10000;

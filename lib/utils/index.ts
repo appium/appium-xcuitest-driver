@@ -7,8 +7,8 @@ export {
   mergeDeep,
   truncateString,
   upperFirst,
-} from './lang';
-export {memoize} from './memoize';
+} from './lang.js';
+export {memoize} from './memoize.js';
 export {
   isIos17OrNewer,
   isIos17OrNewerPlatform,
@@ -19,5 +19,5 @@ export {
   isTvOs,
   normalizePlatformName,
   normalizePlatformVersion,
-} from './platform';
-export type {PlatformVersionOpts} from './platform';
+} from './platform.js';
+export type {PlatformVersionOpts} from './platform.js';

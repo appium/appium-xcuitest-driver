@@ -1,10 +1,11 @@
+import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
-import {fs} from 'appium/support';
-import {exec} from 'teen_process';
+import {fs, node} from 'appium/support.js';
 
-import {log} from '../../logger';
-import {memoize} from '../../utils';
+import {log} from '../../logger.js';
+import {memoize} from '../../utils/index.js';
 
 const MODULE_NAME = 'appium-xcuitest-driver';
 
@@ -13,41 +14,25 @@ export interface DriverInfo {
   built: string;
 }
 
-const getModuleManifest = memoize(async function getModuleManifest(): Promise<Record<string, any>> {
-  let currentDir = path.resolve(__dirname);
-  let isAtFsRoot = false;
-  while (!isAtFsRoot) {
-    const manifestPath = path.join(currentDir, 'package.json');
-    try {
-      if (await fs.exists(manifestPath)) {
-        const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
-        if (manifest.name === MODULE_NAME) {
-          return manifest;
-        }
-      }
-    } catch {}
-    const parentDir = path.dirname(currentDir);
-    isAtFsRoot = currentDir.length <= parentDir.length;
-    currentDir = parentDir;
-  }
-  throw new Error(`Cannot find the package manifest of the ${MODULE_NAME} Node.js module`);
-});
-
 /** Gets driver build/version metadata from package manifest. */
 export const getDriverInfo = memoize(async function getDriverInfo(): Promise<DriverInfo> {
-  const [stat, manifest] = await Promise.all([fs.stat(path.resolve(__dirname, '../..')), getModuleManifest()]);
+  const moduleRoot = node.getModuleRootSync(MODULE_NAME, fileURLToPath(import.meta.url));
+  if (!moduleRoot) {
+    throw new Error(`Cannot find the package manifest of ${MODULE_NAME}`);
+  }
+  const manifestPath = path.join(moduleRoot, 'package.json');
+  const [stat, manifestPayload] = await Promise.all([fs.stat(manifestPath), fs.readFile(manifestPath, 'utf8')]);
   return {
     built: stat.mtime.toString(),
-    version: manifest.version,
+    version: JSON.parse(manifestPayload).version,
   };
 });
 
 /** Logs effective OS user running the current process. */
-export async function printUser(): Promise<void> {
+export function printUser(): void {
   try {
-    const {stdout} = await exec('whoami');
-    log.debug(`Current user: '${stdout.trim()}'`);
+    log.debug(`Current user: '${os.userInfo().username}'`);
   } catch (err: any) {
-    log.debug(`Unable to get username running server: ${err.message}`);
+    log.debug(`Cannot retrieve the current user name: ${err.message}`);
   }
 }

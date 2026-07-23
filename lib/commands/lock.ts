@@ -1,6 +1,6 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
-import type {XCUITestDriver} from '../driver';
+import type {XCUITestDriver} from '../driver.js';
 
 /**
  * Lock the device (and optionally unlock the device after a certain amount of time)

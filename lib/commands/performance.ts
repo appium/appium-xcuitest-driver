@@ -1,13 +1,13 @@
 import path from 'node:path';
 
-import {fs, zip, logger, util, tempDir} from 'appium/support';
+import {fs, zip, logger, util, tempDir} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 import {SubProcess, exec} from 'teen_process';
 
-import type {XCUITestDriver} from '../driver';
-import {isEmpty, truncateString} from '../utils';
-import {encodeBase64OrUpload, type UploadOptions} from './helpers';
-import type {ActiveAppInfo} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {isEmpty, truncateString} from '../utils/index.js';
+import {encodeBase64OrUpload, type UploadOptions} from './helpers/index.js';
+import type {ActiveAppInfo} from './types.js';
 
 const PERF_RECORD_FEAT_NAME = 'perf_record';
 const PERF_RECORD_SECURITY_MESSAGE =

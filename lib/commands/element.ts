@@ -1,9 +1,9 @@
 import type {Element, Position, Size, Rect} from '@appium/types';
-import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 
-import type {XCUITestDriver} from '../driver';
-import type {AtomsElement} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import type {AtomsElement} from './types.js';
 
 /**
  * Checks whether an element is displayed.

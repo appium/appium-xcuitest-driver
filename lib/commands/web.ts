@@ -1,15 +1,15 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import type {Element, Cookie, Size, Position, Rect} from '@appium/types';
-import {errors, isErrorType} from 'appium/driver';
-import {timing, util} from 'appium/support';
+import {errors, isErrorType} from 'appium/driver.js';
+import {timing, util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
 
-import type {XCUITestDriver} from '../driver';
-import type {CalibrationData} from '../types';
-import {isEmpty, isPlainObject} from '../utils';
-import {requireSimulator, TimeoutError, withTimeout} from './helpers';
-import type {AtomsElement} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import type {CalibrationData} from '../types.js';
+import {isEmpty, isPlainObject} from '../utils/index.js';
+import {requireSimulator, TimeoutError, withTimeout} from './helpers/index.js';
+import type {AtomsElement} from './types.js';
 
 const IPHONE_TOP_BAR_HEIGHT = 71;
 const IPHONE_SCROLLED_TOP_BAR_HEIGHT = 41;

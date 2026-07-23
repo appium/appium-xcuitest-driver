@@ -1,7 +1,7 @@
-import {createConditionInducer} from '../device/condition-inducer-client';
-import type {XCUITestDriver} from '../driver';
-import type {Condition} from '../types';
-import {requireRealDevice} from './helpers';
+import {createConditionInducer} from '../device/condition-inducer-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import type {Condition} from '../types.js';
+import {requireRealDevice} from './helpers/index.js';
 
 /**
  * Get all available ConditionInducer configuration information, which can be used with

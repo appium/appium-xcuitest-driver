@@ -4,8 +4,8 @@ import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../../lib/driver';
-import {mergeDeep} from '../../../lib/utils';
+import {XCUITestDriver} from '../../../lib/driver.js';
+import {mergeDeep} from '../../../lib/utils/index.js';
 
 use(chaiAsPromised);
 
@@ -124,7 +124,7 @@ describe('general commands', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
-      startStub = sinon.stub(driver, 'start');
+      startStub = sinon.stub(driver as any, 'start');
     });
 
     afterEach(function () {

@@ -1,7 +1,7 @@
 import type {Simulator} from 'appium-ios-simulator';
 
-import type {RealDevice} from '../../device/real-device-management';
-import {upperFirst} from '../../utils';
+import type {RealDevice} from '../../device/real-device-management.js';
+import {upperFirst} from '../../utils/index.js';
 
 export interface DeviceGuardDriver {
   isSimulator(): boolean;

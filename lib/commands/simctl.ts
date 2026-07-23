@@ -1,8 +1,8 @@
 import type {Simulator} from 'appium-ios-simulator';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver';
-import {requireSimulator} from './helpers';
+import type {XCUITestDriver} from '../driver.js';
+import {requireSimulator} from './helpers/index.js';
 
 /**
  * List of subcommands for `simctl` we provide as mobile simctl command.

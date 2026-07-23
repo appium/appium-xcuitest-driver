@@ -1,8 +1,8 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import type {XCUITestDriver} from '../driver';
-import {escapeRegExp, isEmpty} from '../utils';
-import {requireRealDevice} from './helpers';
+import type {XCUITestDriver} from '../driver.js';
+import {escapeRegExp, isEmpty} from '../utils/index.js';
+import {requireRealDevice} from './helpers/index.js';
 
 /**
  * Simulates Low Memory warning on the given application

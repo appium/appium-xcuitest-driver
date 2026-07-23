@@ -1,4 +1,4 @@
-import type {RemoteXPCFacade} from './remote-xpc';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
 /**
  * IOPMPowerSource IORegistry payload from the diagnostics relay (RemoteXPC shim).

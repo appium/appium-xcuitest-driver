@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
-import {requireSimulator} from './helpers';
+import type {XCUITestDriver} from '../driver.js';
+import {requireSimulator} from './helpers/index.js';
 
 /**
  * Sets the Simulator's pasteboard content to the given value.

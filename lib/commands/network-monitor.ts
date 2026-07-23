@@ -1,9 +1,9 @@
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 
-import {NetworkMonitorSession} from '../device/network-monitor-session';
-import type {XCUITestDriver} from '../driver';
-import {isIos18OrNewer} from '../utils';
-import {requireRealDevice} from './helpers';
+import {NetworkMonitorSession} from '../device/network-monitor-session.js';
+import type {XCUITestDriver} from '../driver.js';
+import {isIos18OrNewer} from '../utils/index.js';
+import {requireRealDevice} from './helpers/index.js';
 
 /**
  * Starts streaming DVT NetworkMonitor events to WebDriver BiDi subscribers (`appium:xcuitest.networkMonitor`).

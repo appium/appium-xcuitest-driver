@@ -1,13 +1,13 @@
 import {describe, it, before, after, type TestContext} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
-import {fs, tempDir} from 'appium/support';
+import {fs, tempDir} from 'appium/support.js';
 import {expect} from 'chai';
 import {exec} from 'teen_process';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps} from '../desired';
-import {deleteSession, initSession} from '../helpers/session';
+import {getUICatalogCaps} from '../desired.js';
+import {deleteSession, initSession} from '../helpers/session.js';
 
 describe('XCUITestDriver - simulator screen recording (MJPEG + ffmpeg)', function () {
   let ffmpegPath!: string;

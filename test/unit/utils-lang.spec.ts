@@ -2,7 +2,7 @@ import {describe, it} from 'node:test';
 
 import {expect} from 'chai';
 
-import {assignDefaults, escapeRegExp, isEmpty, memoize, mergeDeep} from '../../lib/utils';
+import {assignDefaults, escapeRegExp, isEmpty, memoize, mergeDeep} from '../../lib/utils/index.js';
 
 describe('utils/lang', function () {
   describe('isEmpty', function () {

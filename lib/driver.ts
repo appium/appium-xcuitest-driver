@@ -1,5 +1,4 @@
 import EventEmitter from 'node:events';
-import {setTimeout as delay} from 'node:timers/promises';
 
 import type {
   RouteMatcher,
@@ -15,111 +14,111 @@ import type {Simulator} from 'appium-ios-simulator';
 import type {RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
-import {BaseDriver, DeviceSettings} from 'appium/driver';
-import {mjpeg, util} from 'appium/support';
+import {BaseDriver, DeviceSettings} from 'appium/driver.js';
+import {mjpeg, util} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
-import {AppInfosCache} from './app-infos-cache';
-import * as activeAppInfoCommands from './commands/active-app-info';
-import * as alertCommands from './commands/alert';
-import {onDownloadApp, onPostConfigureApp, verifyApplicationPlatform} from './commands/app-install';
-import * as appManagementCommands from './commands/app-management';
-import * as appStringsCommands from './commands/app-strings';
-import * as appearanceCommands from './commands/appearance';
-import * as auditCommands from './commands/audit';
-import * as batteryCommands from './commands/battery';
-import * as biometricCommands from './commands/biometric';
-import * as certificateCommands from './commands/certificate';
-import * as clipboardCommands from './commands/clipboard';
-import * as conditionCommands from './commands/condition';
-import {SUPPORTED_EXTENSIONS} from './commands/constants';
-import * as contentSizeCommands from './commands/content-size';
-import * as contextCommands from './commands/context';
-import {notifyBiDiContextChange} from './commands/context';
-import * as deviceInfoCommands from './commands/device-info';
-import * as elementCommands from './commands/element';
-import * as executeCommands from './commands/execute';
-import * as fileMovementCommands from './commands/file-movement';
-import * as findCommands from './commands/find';
-import * as generalCommands from './commands/general';
-import * as geolocationCommands from './commands/geolocation';
-import * as gestureCommands from './commands/gesture';
+import {AppInfosCache} from './app-infos-cache.js';
+import * as activeAppInfoCommands from './commands/active-app-info.js';
+import * as alertCommands from './commands/alert.js';
+import * as appManagementCommands from './commands/app-management.js';
+import * as appStringsCommands from './commands/app-strings.js';
+import * as appearanceCommands from './commands/appearance.js';
+import * as auditCommands from './commands/audit.js';
+import * as batteryCommands from './commands/battery.js';
+import * as biometricCommands from './commands/biometric.js';
+import * as certificateCommands from './commands/certificate.js';
+import * as clipboardCommands from './commands/clipboard.js';
+import * as conditionCommands from './commands/condition.js';
+import {SUPPORTED_EXTENSIONS} from './commands/constants.js';
+import * as contentSizeCommands from './commands/content-size.js';
+import * as contextCommands from './commands/context.js';
+import {notifyBiDiContextChange} from './commands/context.js';
+import * as deviceInfoCommands from './commands/device-info.js';
+import * as elementCommands from './commands/element.js';
+import * as executeCommands from './commands/execute.js';
+import * as fileMovementCommands from './commands/file-movement.js';
+import * as findCommands from './commands/find.js';
+import * as generalCommands from './commands/general.js';
+import * as geolocationCommands from './commands/geolocation.js';
+import * as gestureCommands from './commands/gesture.js';
 import {
   DEFAULT_TIMEOUT_KEY,
   SAFARI_BUNDLE_ID,
   checkAppPresent,
   getAndCheckXcodeVersion,
   getDriverInfo,
+  installAUT,
   normalizeCommandTimeouts,
+  onDownloadApp,
+  onPostConfigureApp,
   printUser,
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
-} from './commands/helpers';
-import * as increaseContrastCommands from './commands/increase-contrast';
-import * as iohidCommands from './commands/iohid';
-import * as keyboardCommands from './commands/keyboard';
-import * as keychainsCommands from './commands/keychains';
-import * as localizationCommands from './commands/localization';
-import * as locationCommands from './commands/location';
-import * as lockCommands from './commands/lock';
-import * as logCommands from './commands/log';
-import type {DriverLogs} from './commands/log';
-import * as memoryCommands from './commands/memory';
-import * as navigationCommands from './commands/navigation';
-import * as networkMonitorCommands from './commands/network-monitor';
-import * as notificationsCommands from './commands/notifications';
-import * as pasteboardCommands from './commands/pasteboard';
-import * as performanceCommands from './commands/performance';
-import type {PerfRecorder} from './commands/performance';
-import * as permissionsCommands from './commands/permissions';
-import * as proxyHelperCommands from './commands/proxy-helper';
-import * as recordAudioCommands from './commands/record-audio';
-import type {AudioRecorder} from './commands/record-audio';
-import * as recordScreenCommands from './commands/recordscreen';
-import type {ScreenRecorder} from './commands/recordscreen';
-import * as screenshotCommands from './commands/screenshots';
-import * as simctlCommands from './commands/simctl';
-import * as simulatorCommands from './commands/simulator';
-import * as sourceCommands from './commands/source';
-import * as timeoutCommands from './commands/timeouts';
-import type {WaitingAtoms, LogListener, FullContext} from './commands/types';
-import * as voiceOverCommands from './commands/voiceover';
-import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants';
-import {start, startWdaSession} from './commands/wda/startup';
-import {stop} from './commands/wda/stop';
-import {getDerivedDataPath} from './commands/wda/utils';
-import * as webCommands from './commands/web';
-import * as xctestCommands from './commands/xctest';
-import * as xctestRecordScreenCommands from './commands/xctest-record-screen';
-import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps';
-import {DeviceConnectionsFactory} from './device/device-connections-factory';
-import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery';
-import type {NetworkMonitorSession} from './device/network-monitor-session';
+} from './commands/helpers/index.js';
+import * as increaseContrastCommands from './commands/increase-contrast.js';
+import * as iohidCommands from './commands/iohid.js';
+import * as keyboardCommands from './commands/keyboard.js';
+import * as keychainsCommands from './commands/keychains.js';
+import * as localizationCommands from './commands/localization.js';
+import * as locationCommands from './commands/location.js';
+import * as lockCommands from './commands/lock.js';
+import * as logCommands from './commands/log.js';
+import type {DriverLogs} from './commands/log.js';
+import * as memoryCommands from './commands/memory.js';
+import * as navigationCommands from './commands/navigation.js';
+import * as networkMonitorCommands from './commands/network-monitor.js';
+import * as notificationsCommands from './commands/notifications.js';
+import * as pasteboardCommands from './commands/pasteboard.js';
+import * as performanceCommands from './commands/performance.js';
+import type {PerfRecorder} from './commands/performance.js';
+import * as permissionsCommands from './commands/permissions.js';
+import * as proxyHelperCommands from './commands/proxy-helper.js';
+import * as recordAudioCommands from './commands/record-audio.js';
+import type {AudioRecorder} from './commands/record-audio.js';
+import * as recordScreenCommands from './commands/recordscreen.js';
+import type {ScreenRecorder} from './commands/recordscreen.js';
+import * as screenshotCommands from './commands/screenshots.js';
+import * as simctlCommands from './commands/simctl.js';
+import * as simulatorCommands from './commands/simulator.js';
+import * as sourceCommands from './commands/source.js';
+import * as timeoutCommands from './commands/timeouts.js';
+import type {WaitingAtoms, LogListener, FullContext} from './commands/types.js';
+import * as voiceOverCommands from './commands/voiceover.js';
+import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants.js';
+import {start} from './commands/wda/startup.js';
+import {stop} from './commands/wda/stop.js';
+import {getDerivedDataPath} from './commands/wda/utils.js';
+import * as webCommands from './commands/web.js';
+import * as xctestRecordScreenCommands from './commands/xctest-record-screen.js';
+import * as xctestCommands from './commands/xctest.js';
+import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps.js';
+import {DeviceConnectionsFactory} from './device/device-connections-factory.js';
+import {DeviceDiscovery, type DeviceDiscoveryResult} from './device/device-discovery.js';
+import type {NetworkMonitorSession} from './device/network-monitor-session.js';
 import {
-  installToRealDevice,
   runRealDeviceReset,
   applySafariStartupArgs,
   detectUdid,
   type RealDevice,
-} from './device/real-device-management';
-import {RemoteXPCFacade} from './device/remote-xpc';
+} from './device/real-device-management.js';
+import {RemoteXPCFacade} from './device/remote-xpc/index.js';
 import {
   createSim as createSimulator,
   getExistingSim as getExistingSimulator,
-  installToSimulator,
   runSimulatorReset,
   shutdownSimulator,
-} from './device/simulator-management';
+} from './device/simulator-management.js';
 import {
   assertWdaHostPlatformSupported,
   assertWdaHostSessionCapsSupported,
   createWdaHostOps,
-} from './device/wda-host-ops';
-import {executeMethodMap} from './execute-method-map';
-import {newMethodMap} from './method-map';
-import {sessionClaimHandler} from './session-claim-handler';
-import type {CalibrationData, IConditionInducer, LifecycleData} from './types';
-import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils';
+} from './device/wda-host-ops.js';
+import {executeMethodMap} from './execute-method-map.js';
+import {newMethodMap} from './method-map.js';
+import {sessionClaimHandler} from './session-claim-handler.js';
+import type {CalibrationData, IConditionInducer, LifecycleData} from './types.js';
+import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils/index.js';
 
 const defaultServerCaps = {
   webStorageEnabled: false,
@@ -217,16 +216,6 @@ const NO_PROXY_WEB_LIST: RouteMatcher[] = [
 /* eslint-enable no-useless-escape */
 
 const MEMOIZED_FUNCTIONS = ['getStatusBarHeight', 'getDevicePixelRatio', 'getScreenInfo'];
-
-export type AutInstallationStateOptions = Pick<
-  XCUITestDriverOpts,
-  'enforceAppInstall' | 'fullReset' | 'noReset' | 'bundleId' | 'app'
->;
-
-export interface AutInstallationState {
-  install: boolean; // If the given app should install, or not need to install.
-  skipUninstall: boolean; // If the installed app should be uninstalled, or not.
-}
 
 export type XCUITestDriverOpts = DriverOpts<XCUITestDriverConstraints>;
 
@@ -452,7 +441,6 @@ export class XCUITestDriver
 
   initSimulator = simulatorCommands.initSimulator;
   startSim = simulatorCommands.startSim;
-  createSim = simulatorCommands.createSim;
 
   /*--------------+
    | FILEMOVEMENT |
@@ -731,10 +719,6 @@ export class XCUITestDriver
    | WDA    |
    +--------*/
   startWda = start;
-  /**
-   * @deprecated This method should be made protected/private.
-   */
-  startWdaSession = startWdaSession;
   stopWda = stop;
 
   /*--------+
@@ -750,6 +734,7 @@ export class XCUITestDriver
   mobileStartXctestScreenRecording = xctestRecordScreenCommands.mobileStartXctestScreenRecording;
   mobileGetXctestScreenRecordingInfo = xctestRecordScreenCommands.mobileGetXctestScreenRecordingInfo;
   mobileStopXctestScreenRecording = xctestRecordScreenCommands.mobileStopXctestScreenRecording;
+
   constructor(opts: XCUITestDriverOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
@@ -829,7 +814,7 @@ export class XCUITestDriver
     return this.getOrCreateRemoteXPCFacade(this.isRealDevice());
   }
 
-  async onIpcInit(): Promise<void> {
+  override async onIpcInit(): Promise<void> {
     await sessionClaimHandler.registerActiveSession(this);
   }
 
@@ -1154,12 +1139,40 @@ export class XCUITestDriver
     return 'simctl' in (this.device ?? {});
   }
 
-  isXcodebuildNeeded(): boolean {
+  override async getStatus(): Promise<Record<string, any>> {
+    const status: Record<string, any> = {
+      ready: true,
+      message: 'The driver is ready to accept new connections',
+      build: await getDriverInfo(),
+    };
+    if (this.cachedWdaStatus) {
+      status.wda = this.cachedWdaStatus;
+    }
+    return status;
+  }
+
+  override async reset(): Promise<never> {
+    throw new Error(
+      `The reset API has been deprecated and is not supported anymore. ` +
+        `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
+    );
+  }
+
+  _getCommandTimeout(cmdName?: string): number | undefined {
+    if (this.opts.commandTimeouts) {
+      if (cmdName && Object.hasOwn(this.opts.commandTimeouts, cmdName)) {
+        return (this.opts.commandTimeouts as Record<string, number>)[cmdName];
+      }
+      return (this.opts.commandTimeouts as Record<string, number>)[DEFAULT_TIMEOUT_KEY];
+    }
+  }
+
+  private isXcodebuildNeeded(): boolean {
     return isWdaXcodebuildNeeded(this.opts);
   }
 
   // Core driver methods
-  async onSettingsUpdate(key: string, value: any): Promise<any> {
+  private async onSettingsUpdate(key: string, value: any): Promise<any> {
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
     if (['pageSourceExcludedAttributes'].includes(key)) {
@@ -1174,19 +1187,7 @@ export class XCUITestDriver
     this.opts[key] = !!value;
   }
 
-  async getStatus(): Promise<Record<string, any>> {
-    const status: Record<string, any> = {
-      ready: true,
-      message: 'The driver is ready to accept new connections',
-      build: await getDriverInfo(),
-    };
-    if (this.cachedWdaStatus) {
-      status.wda = this.cachedWdaStatus;
-    }
-    return status;
-  }
-
-  mergeCliArgsToOpts(): boolean {
+  private mergeCliArgsToOpts(): boolean {
     let didMerge = false;
     // this.cliArgs should never include anything we do not expect.
     for (const [key, value] of Object.entries(this.cliArgs ?? {})) {
@@ -1201,7 +1202,7 @@ export class XCUITestDriver
     return didMerge;
   }
 
-  async handleMjpegOptions(): Promise<void> {
+  private async handleMjpegOptions(): Promise<void> {
     await this.allocateMjpegServerPort();
     // turn on mjpeg stream reading if requested
     if (this.opts.mjpegScreenshotUrl) {
@@ -1211,7 +1212,7 @@ export class XCUITestDriver
     }
   }
 
-  async allocateMjpegServerPort(): Promise<void> {
+  private async allocateMjpegServerPort(): Promise<void> {
     const mjpegServerPort = Number(this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT);
     this.log.debug(`Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`);
     try {
@@ -1239,16 +1240,16 @@ export class XCUITestDriver
     }
   }
 
-  getDefaultUrl(): string {
+  private getDefaultUrl(): string {
     // Setting this to some external URL slows down the session init
     return `${this.getWdaLocalhostRoot()}/health`;
   }
 
-  async start(): Promise<void> {
+  private async start(): Promise<void> {
     this.opts.noReset = !!this.opts.noReset;
     this.opts.fullReset = !!this.opts.fullReset;
 
-    await printUser();
+    printUser();
     this._iosSdkVersion = null; // For WDA and xcodebuild
     assertWdaHostSessionCapsSupported(this.opts);
     const {device, udid, realDevice} = await this.determineDevice();
@@ -1371,7 +1372,7 @@ export class XCUITestDriver
       this.logEvent('customCertInstalled');
     }
 
-    await this.installAUT();
+    await installAUT(this);
 
     // if we only have bundle identifier and no app, fail if it is not already installed
     if (
@@ -1420,7 +1421,7 @@ export class XCUITestDriver
     }
   }
 
-  async runReset(enforceSimulatorShutdown = false): Promise<void> {
+  private async runReset(enforceSimulatorShutdown = false): Promise<void> {
     this.logEvent('resetStarted');
     if (this.isRealDevice()) {
       await runRealDeviceReset.bind(this)();
@@ -1430,7 +1431,7 @@ export class XCUITestDriver
     this.logEvent('resetComplete');
   }
 
-  async stop(): Promise<void> {
+  private async stop(): Promise<void> {
     this.jwpProxyActive = false;
     this.proxyReqRes = null;
 
@@ -1438,7 +1439,7 @@ export class XCUITestDriver
     await this.deviceConnectionsFactory.releaseConnection(this.opts.udid);
   }
 
-  async configureApp(): Promise<void> {
+  private async configureApp(): Promise<void> {
     function appIsPackageOrBundle(app: string | undefined): boolean {
       return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app ?? '');
     }
@@ -1480,7 +1481,7 @@ export class XCUITestDriver
     );
   }
 
-  async determineDevice(): Promise<DeviceDiscoveryResult> {
+  private async determineDevice(): Promise<DeviceDiscoveryResult> {
     const result = await new DeviceDiscovery({
       driverOpts: this.opts,
       log: this.log,
@@ -1499,153 +1500,7 @@ export class XCUITestDriver
     return result;
   }
 
-  async checkAutInstallationState(opts?: AutInstallationStateOptions): Promise<AutInstallationState> {
-    const {enforceAppInstall, fullReset, noReset, bundleId, app} = opts ?? this.opts;
-
-    const wasAppInstalled = !!bundleId && (await this.device.isAppInstalled(bundleId));
-    if (wasAppInstalled) {
-      this.log.info(`App '${bundleId}' is already installed`);
-      if (noReset) {
-        this.log.info('noReset is requested. The app will not be be (re)installed');
-        return {
-          install: false,
-          skipUninstall: true,
-        };
-      }
-    } else {
-      this.log.info(
-        `App '${bundleId}' is not installed yet or it has an offload and ` +
-          'cannot be detected, which might keep the local data.',
-      );
-    }
-    if (enforceAppInstall !== false || fullReset || !wasAppInstalled) {
-      return {
-        install: true,
-        skipUninstall: !wasAppInstalled,
-      };
-    }
-
-    const candidateBundleVersion = app ? await this.appInfosCache.extractBundleVersion(app) : undefined;
-    this.log.debug(`CFBundleVersion from Info.plist: ${candidateBundleVersion}`);
-    if (!candidateBundleVersion) {
-      return {
-        install: true,
-        skipUninstall: false,
-      };
-    }
-
-    const appBundleVersion = (
-      this.isRealDevice()
-        ? await (this.device as RealDevice).fetchAppInfo(bundleId)
-        : await (this.device as Simulator).simctl.appInfo(bundleId)
-    )?.CFBundleVersion;
-    this.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
-    if (!appBundleVersion) {
-      return {
-        install: true,
-        skipUninstall: false,
-      };
-    }
-
-    let shouldUpgrade: boolean;
-    try {
-      shouldUpgrade = util.compareVersions(candidateBundleVersion, '>', appBundleVersion);
-    } catch (err) {
-      this.log.warn(`App versions comparison is not possible: ${(err as Error).message}`);
-      return {
-        install: true,
-        skipUninstall: false,
-      };
-    }
-    if (shouldUpgrade) {
-      this.log.info(
-        `The installed version of ${bundleId} is lower than the candidate one ` +
-          `(${candidateBundleVersion} > ${appBundleVersion}). The app will be upgraded.`,
-      );
-    } else {
-      this.log.info(
-        `The candidate version of ${bundleId} is lower than the installed one ` +
-          `(${candidateBundleVersion} <= ${appBundleVersion}). The app won't be reinstalled.`,
-      );
-    }
-    return {
-      install: shouldUpgrade,
-      skipUninstall: true,
-    };
-  }
-
-  async installAUT(): Promise<void> {
-    // install any other apps
-    if (this.opts.otherApps) {
-      await this.installOtherApps(this.opts.otherApps);
-    }
-
-    if (this.isSafari() || !this.opts.app) {
-      return;
-    }
-
-    await verifyApplicationPlatform.bind(this)();
-
-    const {install, skipUninstall} = await this.checkAutInstallationState();
-    if (install) {
-      if (this.isRealDevice()) {
-        await installToRealDevice.bind(this)(this.opts.app, this.opts.bundleId, {
-          skipUninstall,
-          timeout: this.opts.appPushTimeout,
-        });
-      } else {
-        await installToSimulator.bind(this)(this.opts.app, this.opts.bundleId, {
-          skipUninstall,
-          newSimulator: this.lifecycleData?.createSim,
-        });
-      }
-      if (util.hasValue(this.opts.iosInstallPause)) {
-        // https://github.com/appium/appium/issues/6889
-        const pauseMs = this.opts.iosInstallPause;
-        this.log.debug(`iosInstallPause set. Pausing ${pauseMs} ms before continuing`);
-        await delay(pauseMs);
-      }
-      this.logEvent('appInstalled');
-    }
-  }
-
-  async installOtherApps(otherApps: string | string[]): Promise<void> {
-    let appsList: string[] | undefined;
-    try {
-      appsList = this.helpers.parseCapsArray(otherApps);
-    } catch (e) {
-      throw this.log.errorWithException(`Could not parse "otherApps" capability: ${(e as Error).message}`);
-    }
-    if (!appsList?.length) {
-      this.log.info(`Got zero apps from 'otherApps' capability value. Doing nothing`);
-      return;
-    }
-
-    const appPaths: string[] = await Promise.all(
-      appsList.map((app) =>
-        this.helpers.configureApp(app, {
-          onPostProcess: onPostConfigureApp.bind(this),
-          onDownload: onDownloadApp.bind(this),
-          supportedExtensions: SUPPORTED_EXTENSIONS,
-        } as any),
-      ),
-    );
-    const appIds: string[] = await Promise.all(appPaths.map((appPath) => this.appInfosCache.extractBundleId(appPath)));
-    for (const [appId, appPath] of appIds.map((v, i) => [v, appPaths[i]] as const)) {
-      if (this.isRealDevice()) {
-        await installToRealDevice.bind(this)(appPath, appId, {
-          skipUninstall: true, // to make the behavior as same as UIA2
-          timeout: this.opts.appPushTimeout,
-        });
-      } else {
-        await installToSimulator.bind(this)(appPath, appId, {
-          newSimulator: this.lifecycleData.createSim,
-        });
-      }
-    }
-  }
-
-  async setInitialOrientation(orientation: string): Promise<void> {
+  private async setInitialOrientation(orientation: string): Promise<void> {
     const dstOrientation = String(orientation).toUpperCase();
     if (!SUPPORTED_ORIENATIONS.includes(dstOrientation)) {
       this.log.debug(
@@ -1663,14 +1518,7 @@ export class XCUITestDriver
     }
   }
 
-  async reset(): Promise<never> {
-    throw new Error(
-      `The reset API has been deprecated and is not supported anymore. ` +
-        `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
-    );
-  }
-
-  resetIos(): void {
+  private resetIos(): void {
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;
@@ -1699,15 +1547,6 @@ export class XCUITestDriver
       alertMonitor: undefined,
       alertMonitorAbortController: undefined,
     };
-  }
-
-  _getCommandTimeout(cmdName?: string): number | undefined {
-    if (this.opts.commandTimeouts) {
-      if (cmdName && Object.hasOwn(this.opts.commandTimeouts, cmdName)) {
-        return (this.opts.commandTimeouts as Record<string, number>)[cmdName];
-      }
-      return (this.opts.commandTimeouts as Record<string, number>)[DEFAULT_TIMEOUT_KEY];
-    }
   }
 
   private getOrCreateRemoteXPCFacade(isRealDevice: boolean): RemoteXPCFacade {

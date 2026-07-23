@@ -1,14 +1,14 @@
 import type {Size, Rect} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import utc from 'dayjs/plugin/utc.js';
 
 dayjs.extend(utc);
 
-import {LockdownClient} from '../device/lockdown-client';
-import type {XCUITestDriver} from '../driver';
-import type {Viewport, ScreenInfo, ButtonName} from './types';
+import {LockdownClient} from '../device/lockdown-client.js';
+import type {XCUITestDriver} from '../driver.js';
+import type {Viewport, ScreenInfo, ButtonName} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 

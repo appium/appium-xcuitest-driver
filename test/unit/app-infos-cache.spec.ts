@@ -1,15 +1,15 @@
 import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 
-import {fs, tempDir, zip} from 'appium/support';
-import chai, {expect} from 'chai';
+import {fs, tempDir, zip} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {AppInfosCache} from '../../lib/app-infos-cache';
-import {log} from '../../lib/logger';
-import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup';
+import {AppInfosCache} from '../../lib/app-infos-cache.js';
+import {log} from '../../lib/logger.js';
+import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('AppInfosCache', function () {
   describe('retrives info from different types of apps', function () {

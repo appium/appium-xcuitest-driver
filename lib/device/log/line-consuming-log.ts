@@ -1,6 +1,6 @@
-import type {LogEntry} from '../../commands/types';
-import {toLogEntry} from './helpers';
-import {IOSLog} from './ios-log';
+import type {LogEntry} from '../../commands/types.js';
+import {toLogEntry} from './helpers.js';
+import {IOSLog} from './ios-log.js';
 
 type TSerializedEntry = [string, number];
 

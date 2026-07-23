@@ -1,14 +1,14 @@
 import {describe, it, before, after} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps} from '../desired';
-import {initSession, deleteSession} from '../helpers/session';
+import {getUICatalogCaps} from '../desired.js';
+import {initSession, deleteSession} from '../helpers/session.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('XCUITestDriver - performance', function () {
   const profileName = 'Time Profiler';

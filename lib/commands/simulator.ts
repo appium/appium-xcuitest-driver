@@ -1,13 +1,8 @@
 import type {Simulator} from 'appium-ios-simulator';
 
-import {
-  createSim as createSimulator,
-  setLocalizationPrefs,
-  setSafariPrefs,
-  shutdownOtherSimulators,
-} from '../device/simulator-management';
-import type {XCUITestDriver} from '../driver';
-import {upperFirst} from '../utils';
+import {setLocalizationPrefs, setSafariPrefs, shutdownOtherSimulators} from '../device/simulator-management.js';
+import type {XCUITestDriver} from '../driver.js';
+import {upperFirst} from '../utils/index.js';
 
 const SHUTDOWN_OTHER_FEAT_NAME = 'shutdown_other_sims';
 
@@ -88,17 +83,4 @@ export async function startSim(this: XCUITestDriver): Promise<void> {
   }
 
   await (this.device as Simulator).run(runOpts);
-}
-
-/**
- * Creates a new Simulator matching the current session capabilities.
- *
- * @deprecated This command is deprecated and will be removed in a future version.
- */
-export async function createSim(this: XCUITestDriver): Promise<Simulator> {
-  this.lifecycleData.createSim = true;
-  // create sim for caps
-  const sim = await createSimulator.bind(this)();
-  this.log.info(`Created simulator with udid '${sim.udid}'.`);
-  return sim;
 }

@@ -1,4 +1,4 @@
-import {HOST, PORT} from '../../helpers/session';
+import {HOST, PORT} from '../../helpers/session.js';
 
 // if the phishing URL stops working for some reason, see
 // http://testsafebrowsing.appspot.com/ for alternatives

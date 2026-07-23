@@ -1,6 +1,6 @@
-import type {XCUITestDriver} from '../driver';
-import {requireSimulator} from './helpers';
-import type {KeyboardOptions, LanguageOptions, LocaleOptions} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {requireSimulator} from './helpers/index.js';
+import type {KeyboardOptions, LanguageOptions, LocaleOptions} from './types.js';
 
 /**
  * Change localization settings on the currently booted simulator

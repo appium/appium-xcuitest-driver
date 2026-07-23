@@ -1,9 +1,9 @@
 import type {Element} from '@appium/types';
-import {errors} from 'appium/driver';
+import {errors} from 'appium/driver.js';
 import {waitForCondition} from 'asyncbox';
 
-import type {XCUITestDriver} from '../driver';
-import {isTvOs} from '../utils';
+import type {XCUITestDriver} from '../driver.js';
+import {isTvOs} from '../utils/index.js';
 
 // these two constitute the wait after closing a window
 const CLOSE_WINDOW_TIMEOUT = 5000;

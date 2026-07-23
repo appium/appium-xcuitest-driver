@@ -1,6 +1,6 @@
-import {util, node} from 'appium/support';
+import {util, node} from 'appium/support.js';
 
-import {getUIKitCatalogPath, getTestAppPath} from '../setup';
+import {getUIKitCatalogPath, getTestAppPath} from '../setup.js';
 
 export function amendCapabilities(baseCaps: any, ...newCaps: any[]) {
   return node.deepFreeze({

@@ -1,4 +1,4 @@
-import {fs} from 'appium/support';
+import {fs} from 'appium/support.js';
 
 /**
  * Return an executable path of cmd

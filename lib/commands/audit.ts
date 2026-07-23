@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
-import type {AccessibilityAuditItem} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import type {AccessibilityAuditItem} from './types.js';
 
 /**
  * Performs accessibility audit of the current application according to the given type or multiple types.

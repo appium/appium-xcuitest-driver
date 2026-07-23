@@ -1,5 +1,5 @@
-import type {XCUITestDriver} from '../driver';
-import type {ActiveAppInfo} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import type {ActiveAppInfo} from './types.js';
 
 /**
  * Returns information about the active application.

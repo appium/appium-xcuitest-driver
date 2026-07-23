@@ -1,4 +1,4 @@
-import {startGuineaPigServer, type GuineaPigServer} from './server';
+import {startGuineaPigServer, type GuineaPigServer} from './server.js';
 
 export type GuineaPigServerSession = {
   setup: () => Promise<GuineaPigServer>;

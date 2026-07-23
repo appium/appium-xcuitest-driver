@@ -1,8 +1,8 @@
 import type {Simulator} from 'appium-ios-simulator';
-import {util} from 'appium/support';
+import {util} from 'appium/support.js';
 
-import type {XCUITestDriver} from '../driver';
-import type {Style} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import type {Style} from './types.js';
 
 /**
  * Set the device's UI appearance style

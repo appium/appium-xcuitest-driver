@@ -1,13 +1,13 @@
 import {describe, it, before, afterEach, beforeEach} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 // eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
 
-import {XCUITestDriver} from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('element commands', function () {
   let sandbox: sinon.SinonSandbox;
@@ -69,7 +69,7 @@ describe('element commands', function () {
 
     it('should properly parse null attribute', async function () {
       proxyStub.resolves(null);
-      await chai.expect(driver.getAttribute(attribute, elementId as any)).to.eventually.be.null;
+      await expect(driver.getAttribute(attribute, elementId as any)).to.eventually.be.null;
     });
 
     it('should properly parse string attribute', async function () {
@@ -108,7 +108,7 @@ describe('element commands', function () {
 
     it('should properly parse null attribute', async function () {
       proxyStub.resolves(null);
-      await chai.expect(driver.getProperty(property, elementId as any)).to.eventually.be.null;
+      await expect(driver.getProperty(property, elementId as any)).to.eventually.be.null;
     });
 
     it('should properly parse string attribute', async function () {

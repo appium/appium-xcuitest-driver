@@ -1,4 +1,4 @@
-import type {XCUITestDriver} from '../driver';
+import type {XCUITestDriver} from '../driver.js';
 
 export type AlertAction = 'accept' | 'dismiss' | 'getButtons';
 

@@ -2,22 +2,22 @@ import type {EventEmitter} from 'node:events';
 
 import type {LogDefRecord, AppiumServer, WSServer} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
-import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver';
-import WebSocket from 'ws';
+import {DEFAULT_WS_PATHNAME_PREFIX} from 'appium/driver.js';
+import WebSocket, {WebSocketServer} from 'ws';
 
-import {toLogEntry} from '../device/log/helpers';
-import {IOSCrashLog} from '../device/log/ios-crash-log';
-import {IOSDeviceLog} from '../device/log/ios-device-log';
-import type {IOSLog} from '../device/log/ios-log';
-import {IOSSimulatorLog} from '../device/log/ios-simulator-log';
-import {SafariConsoleLog} from '../device/log/safari-console-log';
-import {SafariNetworkLog} from '../device/log/safari-network-log';
-import type {XCUITestDriver} from '../driver';
-import {isEmpty} from '../utils';
-import {BIDI_EVENT_NAME} from './bidi/constants';
-import {makeLogEntryAddedEvent} from './bidi/models';
-import {NATIVE_WIN} from './constants';
-import type {LogEntry, LogListener} from './types';
+import {toLogEntry} from '../device/log/helpers.js';
+import {IOSCrashLog} from '../device/log/ios-crash-log.js';
+import {IOSDeviceLog} from '../device/log/ios-device-log.js';
+import type {IOSLog} from '../device/log/ios-log.js';
+import {IOSSimulatorLog} from '../device/log/ios-simulator-log.js';
+import {SafariConsoleLog} from '../device/log/safari-console-log.js';
+import {SafariNetworkLog} from '../device/log/safari-network-log.js';
+import type {XCUITestDriver} from '../driver.js';
+import {isEmpty} from '../utils/index.js';
+import {BIDI_EVENT_NAME} from './bidi/constants.js';
+import {makeLogEntryAddedEvent} from './bidi/models.js';
+import {NATIVE_WIN} from './constants.js';
+import type {LogEntry, LogListener} from './types.js';
 
 export type DriverLogs = Record<
   'syslog' | 'crashlog' | 'safariConsole' | 'safariNetwork' | 'performance',
@@ -232,7 +232,7 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
 
   this.log.info(`Assigning system logs broadcasting web socket server to ${pathname}`);
   // https://github.com/websockets/ws/blob/master/doc/ws.md
-  const wss = new WebSocket.Server({
+  const wss = new WebSocketServer({
     noServer: true,
   });
   wss.on('connection', (ws, req) => {

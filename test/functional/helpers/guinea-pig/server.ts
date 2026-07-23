@@ -5,9 +5,9 @@ import {URL} from 'node:url';
 
 import {sleep} from 'asyncbox';
 
-import {FIXTURES_ROOT as GLOBAL_FIXTURES_ROOT} from '../../../setup';
-import {getFreePort} from '../ports';
-import {compileLodashTemplate} from './template';
+import {FIXTURES_ROOT as GLOBAL_FIXTURES_ROOT} from '../../../setup.js';
+import {getFreePort} from '../ports.js';
+import {compileLodashTemplate} from './template.js';
 
 const FIXTURES_ROOT = path.join(GLOBAL_FIXTURES_ROOT, 'guinea-pig');
 const DYNAMIC_ROUTES: Record<string, string> = {

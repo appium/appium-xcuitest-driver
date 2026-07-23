@@ -1,11 +1,11 @@
 import {describe, it} from 'node:test';
 
-import chai, {expect} from 'chai';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../../lib/css';
+import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../../lib/css/index.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('css-converter.js', function () {
   describe('simple cases', function () {

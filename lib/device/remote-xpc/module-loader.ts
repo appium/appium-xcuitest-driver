@@ -1,4 +1,4 @@
-import type {RemoteXPCEsmModule} from './utils';
+import type {RemoteXPCEsmModule} from './utils.js';
 
 let cachedModule: RemoteXPCEsmModule | null = null;
 let moduleUnavailable = false;

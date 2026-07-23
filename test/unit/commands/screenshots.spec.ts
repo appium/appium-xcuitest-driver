@@ -4,7 +4,7 @@ import {expect} from 'chai';
 import {Simctl} from 'node-simctl';
 import sinon from 'sinon';
 
-import {XCUITestDriver} from '../../../lib/driver';
+import {XCUITestDriver} from '../../../lib/driver.js';
 
 describe('screenshots commands', function () {
   let driver: XCUITestDriver;

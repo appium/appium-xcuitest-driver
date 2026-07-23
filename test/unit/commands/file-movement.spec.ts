@@ -1,13 +1,13 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {tempDir} from 'appium/support';
-import chai, {expect} from 'chai';
+import {tempDir} from 'appium/support.js';
+import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {parseContainerPath} from '../../../lib/commands/file-movement';
-import {XCUITestDriver} from '../../../lib/driver';
+import {parseContainerPath} from '../../../lib/commands/file-movement.js';
+import {XCUITestDriver} from '../../../lib/driver.js';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 
 describe('file-movement', function () {
   describe('parseContainerPath', function () {

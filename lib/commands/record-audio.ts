@@ -1,10 +1,10 @@
-import {fs, tempDir, logger, util} from 'appium/support';
+import {fs, tempDir, logger, util} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
 import {SubProcess} from 'teen_process';
 
-import type {XCUITestDriver} from '../driver';
-import {encodeBase64OrUpload} from './helpers';
-import type {AudioRecorderOptions} from './types';
+import type {XCUITestDriver} from '../driver.js';
+import {encodeBase64OrUpload} from './helpers/index.js';
+import type {AudioRecorderOptions} from './types.js';
 
 const MAX_RECORDING_TIME_SEC = 43200;
 const AUDIO_RECORD_FEAT_NAME = 'audio_record';

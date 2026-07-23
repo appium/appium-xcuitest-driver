@@ -1,8 +1,8 @@
 import type {Element, StringRecord} from '@appium/types';
-import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {errors} from 'appium/driver.js';
+import {util} from 'appium/support.js';
 
-import {XCUITestDriver} from '../driver';
+import {XCUITestDriver} from '../driver.js';
 
 type ExecuteMethodArgs = readonly any[] | readonly [StringRecord<unknown>] | Readonly<StringRecord<unknown>>;
 

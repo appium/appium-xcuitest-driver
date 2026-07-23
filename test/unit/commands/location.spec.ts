@@ -6,9 +6,9 @@ import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import {RealDevice} from '../../../lib/device/real-device-management';
-import {XCUITestDriver} from '../../../lib/driver';
-import type {XCUITestDriverOpts} from '../../../lib/driver';
+import {RealDevice} from '../../../lib/device/real-device-management.js';
+import {XCUITestDriver} from '../../../lib/driver.js';
+import type {XCUITestDriverOpts} from '../../../lib/driver.js';
 
 use(chaiAsPromised);
 

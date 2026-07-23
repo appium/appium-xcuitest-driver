@@ -1,14 +1,14 @@
 import os from 'node:os';
 import path from 'node:path';
 
-import {fs} from 'appium/support';
+import {fs} from 'appium/support.js';
 import {exec} from 'teen_process';
 
-import type {XCUITestDriver} from '../../driver';
-import {log} from '../../logger';
-import {isEmpty} from '../../utils';
-import {isXcodebuildNeeded, SHARED_RESOURCES_GUARD, XCUITEST_DRIVER_SYNC_NAME} from './constants';
-import {getDerivedDataPath} from './utils';
+import type {XCUITestDriver} from '../../driver.js';
+import {log} from '../../logger.js';
+import {isEmpty} from '../../utils/index.js';
+import {isXcodebuildNeeded, SHARED_RESOURCES_GUARD, XCUITEST_DRIVER_SYNC_NAME} from './constants.js';
+import {getDerivedDataPath} from './utils.js';
 
 const XCTEST_LOG_FILES_PATTERNS = [/^Session-WebDriverAgentRunner.*\.log$/i, /^StandardOutputAndStandardError\.txt$/i];
 const XCTEST_LOGS_CACHE_FOLDER_PREFIX = 'com.apple.dt.XCTest';

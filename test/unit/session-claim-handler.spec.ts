@@ -2,19 +2,19 @@ import {EventEmitter} from 'node:events';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {IAppiumIpc, IpcData, IpcMessage} from '@appium/types';
-import {node} from 'appium/support';
+import {node} from 'appium/support.js';
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
-import type {XCUITestDriver} from '../../lib/driver';
+import type {XCUITestDriver} from '../../lib/driver.js';
 import {
   resetDriverInstanceIpcForTesting,
   SessionClaimHandler,
   sessionClaimHandler,
   setSharedIpcForTesting,
-} from '../../lib/session-claim-handler';
+} from '../../lib/session-claim-handler.js';
 
 use(chaiAsPromised);
 
