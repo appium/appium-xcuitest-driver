@@ -3,16 +3,12 @@ import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
 import {expect, use} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sharp from 'sharp';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
-import sharp from 'sharp';
 
+import {allocateMjpegServerPort, handleMjpegOptions, MJpegStream} from '../../../../lib/commands/helpers/mjpeg.js';
 import type {XCUITestDriver} from '../../../../lib/driver.js';
-import {
-  allocateMjpegServerPort,
-  handleMjpegOptions,
-  MJpegStream,
-} from '../../../../lib/commands/helpers/mjpeg.js';
 import {UNIT_LONG_TIMEOUT_MS} from '../../helpers.js';
 
 use(chaiAsPromised);
@@ -253,9 +249,7 @@ describe('mjpeg helpers', function () {
         opts: {udid: 'device-1', mjpegScreenshotUrl: 'http://127.0.0.1:9100/mjpeg'} as any,
       });
       await handleMjpegOptions(driver);
-      expect(
-        (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledBefore(startStub),
-      ).to.be.true;
+      expect((driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledBefore(startStub)).to.be.true;
     });
   });
 });

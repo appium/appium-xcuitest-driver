@@ -240,13 +240,14 @@ export class MJpegStream extends Writable {
     this.clear();
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars -- Writable.write signature requires encoding and callback */
   override write(
     data: Buffer | string | Uint8Array,
-    _encoding?: BufferEncoding | ((error: Error | null) => void),
-    _callback?: (error: Error | null) => void,
+    encoding?: BufferEncoding | ((error: Error | null) => void),
+    // eslint-disable-next-line promise/prefer-await-to-callbacks
+    callback?: (error: Error | null) => void,
   ): boolean {
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+    void encoding;
+    void callback;
     this.lastChunk = Buffer.isBuffer(data) ? data : Buffer.from(data);
     this.updateCount++;
     if (this.registerStartSuccess) {
