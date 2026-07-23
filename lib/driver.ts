@@ -15,7 +15,7 @@ import type {RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
 import {BaseDriver, DeviceSettings} from 'appium/driver.js';
-import {mjpeg, util} from 'appium/support.js';
+import {util} from 'appium/support.js';
 import {LRUCache} from 'lru-cache';
 
 import {AppInfosCache} from './app-infos-cache.js';
@@ -48,6 +48,7 @@ import {
   checkAppPresent,
   getAndCheckXcodeVersion,
   getDriverInfo,
+  handleMjpegOptions,
   installAUT,
   normalizeCommandTimeouts,
   onDownloadApp,
@@ -55,6 +56,7 @@ import {
   printUser,
   removeAllSessionWebSocketHandlers,
   shouldSetInitialSafariUrl,
+  type MJpegStream,
 } from './commands/helpers/index.js';
 import * as increaseContrastCommands from './commands/increase-contrast.js';
 import * as iohidCommands from './commands/iohid.js';
@@ -150,7 +152,6 @@ const DEFAULT_SETTINGS = {
 // affect shared resources of the other parallel sessions
 const WEB_ELEMENTS_CACHE_SIZE = 500;
 const SUPPORTED_ORIENATIONS = ['LANDSCAPE', 'PORTRAIT'];
-const DEFAULT_MJPEG_SERVER_PORT = 9100;
 
 /* eslint-disable no-useless-escape */
 const NO_PROXY_NATIVE_LIST: RouteMatcher[] = [
@@ -269,7 +270,7 @@ export class XCUITestDriver
   _currentUrl!: string | null;
   pageLoadMs!: number;
   landscapeWebCoordsOffset!: number;
-  mjpegStream?: mjpeg.MJpegStream;
+  mjpegStream?: MJpegStream;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
@@ -877,7 +878,7 @@ export class XCUITestDriver
       // ensure WDA gets our defaults instead of whatever its own might be
       await this.updateSettings(wdaSettings);
 
-      await this.handleMjpegOptions();
+      await handleMjpegOptions(this);
 
       return [sessionId, caps];
     } catch (e) {
@@ -1200,44 +1201,6 @@ export class XCUITestDriver
       (this.opts as Record<string, any>)[key] = value;
     }
     return didMerge;
-  }
-
-  private async handleMjpegOptions(): Promise<void> {
-    await this.allocateMjpegServerPort();
-    // turn on mjpeg stream reading if requested
-    if (this.opts.mjpegScreenshotUrl) {
-      this.log.info(`Starting MJPEG stream reading URL: '${this.opts.mjpegScreenshotUrl}'`);
-      this.mjpegStream = new mjpeg.MJpegStream(this.opts.mjpegScreenshotUrl);
-      await this.mjpegStream.start();
-    }
-  }
-
-  private async allocateMjpegServerPort(): Promise<void> {
-    const mjpegServerPort = Number(this.opts.mjpegServerPort || DEFAULT_MJPEG_SERVER_PORT);
-    this.log.debug(`Forwarding MJPEG server port ${mjpegServerPort} to local port ${mjpegServerPort}`);
-    try {
-      await this.deviceConnectionsFactory.requestConnection(this.opts.udid, mjpegServerPort, {
-        devicePort: mjpegServerPort,
-        usePortForwarding: this.isRealDevice(),
-        remoteXPCFacade: this.isRealDevice() ? this.remoteXPCFacade : null,
-      });
-    } catch (error) {
-      if (this.opts.mjpegServerPort === undefined) {
-        this.log.warn(
-          `Cannot forward the device port ${DEFAULT_MJPEG_SERVER_PORT} to the local port ${DEFAULT_MJPEG_SERVER_PORT}. ` +
-            `Certain features, like MJPEG-based screen recording, will be unavailable during this session. ` +
-            `Try to customize the value of 'mjpegServerPort' capability as a possible solution`,
-        );
-      } else {
-        this.log.debug((error as Error).stack);
-        throw new Error(
-          `Cannot ensure MJPEG broadcast functionality by forwarding the local port ${mjpegServerPort} ` +
-            `requested by the 'mjpegServerPort' capability to the device port ${mjpegServerPort}. ` +
-            `Original error: ${error}`,
-          {cause: error},
-        );
-      }
-    }
   }
 
   private getDefaultUrl(): string {

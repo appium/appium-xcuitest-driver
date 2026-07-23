@@ -17,6 +17,9 @@ export type {DeviceGuardDriver} from './guards.js';
 export {encodeBase64OrUpload, getPIDsListeningOnPort, isLocalHost} from './network.js';
 export type {UploadOptions} from './network.js';
 
+export {handleMjpegOptions} from './mjpeg.js';
+export type {MJpegStream} from './mjpeg.js';
+
 export {getDriverInfo, printUser} from './runtime.js';
 export type {DriverInfo} from './runtime.js';
 
