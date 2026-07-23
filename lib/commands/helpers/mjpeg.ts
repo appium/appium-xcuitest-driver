@@ -51,8 +51,9 @@ class MjpegFrameParser extends Transform {
     }
     const hasEnd = end > start;
     const copyEnd = hasEnd ? end + JPEG_EOI.length : chunk.length;
-    chunk.copy(this.buffer, 0, start, copyEnd);
-    this.bytesWritten = copyEnd - start;
+    // Buffer.copy() silently truncates if the destination has less room than requested,
+    // so bytesWritten must track what was actually copied, not the requested range size.
+    this.bytesWritten = chunk.copy(this.buffer, 0, start, copyEnd);
 
     if (hasEnd) {
       this.emitFrame();
@@ -67,8 +68,9 @@ class MjpegFrameParser extends Transform {
     }
     const copyStart = start > -1 ? start : 0;
     const copyEnd = end > -1 ? end + JPEG_EOI.length : chunk.length;
-    chunk.copy(this.buffer, this.bytesWritten, copyStart, copyEnd);
-    this.bytesWritten += copyEnd - copyStart;
+    // Buffer.copy() silently truncates if the destination has less room than requested,
+    // so bytesWritten must track what was actually copied, not the requested range size.
+    this.bytesWritten += chunk.copy(this.buffer, this.bytesWritten, copyStart, copyEnd);
 
     if (end > -1 || this.bytesWritten === this.expectedLength) {
       this.emitFrame();
@@ -249,22 +251,17 @@ export class MJpegStream extends Writable {
     this.clear();
   }
 
-  override write(
-    data: Buffer | string | Uint8Array,
-    encoding?: BufferEncoding | ((error: Error | null) => void),
-    // eslint-disable-next-line promise/prefer-await-to-callbacks
-    callback?: (error: Error | null) => void,
-  ): boolean {
-    void encoding;
-    void callback;
-    this.lastChunk = Buffer.isBuffer(data) ? data : Buffer.from(data);
+  /* eslint-disable promise/prefer-await-to-callbacks -- Writable._write is callback-based */
+  override _write(chunk: Buffer | string, _encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
+    this.lastChunk = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
     this.updateCount++;
     if (this.registerStartSuccess) {
       this.registerStartSuccess();
       this.registerStartSuccess = null;
     }
-    return true;
+    callback();
   }
+  /* eslint-enable promise/prefer-await-to-callbacks */
 }
 
 /**
