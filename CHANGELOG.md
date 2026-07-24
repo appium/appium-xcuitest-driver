@@ -1,3 +1,13 @@
+## [12.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.0.0...v12.1.0) (2026-07-24)
+
+### Features
+
+* Add codegraph support ([#2916](https://github.com/appium/appium-xcuitest-driver/issues/2916)) ([d23ae2c](https://github.com/appium/appium-xcuitest-driver/commit/d23ae2c451fa0d55da0489a2487d36dcb54ea570))
+
+### Code Refactoring
+
+* Isolate MJPEG helpers in the driver ([#2915](https://github.com/appium/appium-xcuitest-driver/issues/2915)) ([6fb7426](https://github.com/appium/appium-xcuitest-driver/commit/6fb7426c3948a91bec712bfff47bdb1b8ed35ab1))
+
 ## [12.0.0](https://github.com/appium/appium-xcuitest-driver/compare/v11.17.7...v12.0.0) (2026-07-23)
 
 ### ⚠ BREAKING CHANGES
