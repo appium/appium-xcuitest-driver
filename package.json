@@ -97,7 +97,7 @@
     "@appium/tsconfig": "^1.0.0-rc.1",
     "@appium/types": "^1.5.0",
     "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/git": "^11.0.0",
     "@types/async-lock": "1.4.2",
     "@types/chai": "5.2.3",
     "@types/chai-as-promised": "8.0.2",
