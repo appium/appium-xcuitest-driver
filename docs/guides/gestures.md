@@ -50,6 +50,6 @@ measures might be applied:
 
 Check the below tutorials for more details on how to build reliable action chains:
 
-- [Automating Complex Gestures with the W3C Actions API](https://appiumpro.com/editions/29-automating-complex-gestures-with-the-w3c-actions-api)
+- [Automating Complex Gestures with the W3C Actions API](https://www.headspin.io/blog/automating-complex-gestures-with-the-w3c-actions-api)
 - [Swiping your way through Appium by Wim Selles #AppiumConf2021](https://www.youtube.com/watch?v=oAJ7jwMNFVU)
 - [About iOS Input Events](./input-events.md)

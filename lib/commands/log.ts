@@ -221,7 +221,7 @@ export async function startLogCapture(this: XCUITestDriver): Promise<boolean> {
  * If the websocket is already running, this command does nothing.
  *
  * Each connected websocket listener will receive syslog lines as soon as they are visible to Appium.
- * @see https://appiumpro.com/editions/55-using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium
+ * @see https://www.headspin.io/blog/using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium
  */
 export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<void> {
   const pathname = WEBSOCKET_ENDPOINT(this.sessionId as string);
