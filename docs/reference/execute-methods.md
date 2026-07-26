@@ -470,7 +470,7 @@ Returns map of certificates installed on the real device. The response looks lik
 
 Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. The method will return immediately if the web socket is already listening.
 Each connected webcoket listener will receive syslog lines as soon as they are visible to Appium.
-Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Appium](https://appiumpro.com/editions/55-using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium) Appium Pro article for more details on this feature.
+Read [Using Mobile Execution Commands to Continuously Stream Device Logs with Appium](https://www.headspin.io/blog/using-mobile-execution-commands-to-continuously-stream-device-logs-with-appium) article for more details on this feature.
 
 Consider using [logs broadcast via BiDi](./bidi.md#logentryadded) over this extension.
 

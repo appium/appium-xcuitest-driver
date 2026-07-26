@@ -103,7 +103,7 @@ the active app:
   applications, it will attempt to automatically set the preferred application as active.
 
 Check the main [Troubleshooting guide](./index.md) and/or
-[Switching Between iOS Apps During a Test](https://appiumpro.com/editions/13-switching-between-ios-apps-during-a-test)
+[Switching Between iOS Apps During a Test](https://www.headspin.io/blog/switching-between-ios-apps-during-a-test)
 article for more details on how to make such elements available.
 
 
