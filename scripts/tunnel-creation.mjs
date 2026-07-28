@@ -949,7 +949,7 @@ async function main() {
       }
     } catch (error) {
       throw new Error(`Tunnel registry port cannot be persisted: ${/** @type {Error} */ (error).message}`, {
-        cause: /** @type {Error} */ (error),
+        cause: error,
       });
     }
 

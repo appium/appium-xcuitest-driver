@@ -8,7 +8,7 @@ import type {KeyboardKey} from './types.js';
  */
 export async function hideKeyboard(
   this: XCUITestDriver,
-  strategy?: string,
+  _strategy?: string,
   ...possibleKeys: string[]
 ): Promise<boolean> {
   // last parameter is the session id
