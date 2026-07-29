@@ -18,7 +18,7 @@ const CONTENT_LENGTH_RE = /Content-Length:\s*(\d+)/i;
  * Extracts individual JPEG frames out of a multipart MJPEG-over-HTTP byte stream by
  * scanning for JPEG start/end-of-image markers and the multipart `Content-Length` header.
  */
-class MjpegFrameParser extends Transform {
+export class MjpegFrameParser extends Transform {
   private buffer: Buffer | null = null;
   private expectedLength = 0;
   private bytesWritten = 0;
@@ -31,7 +31,7 @@ class MjpegFrameParser extends Transform {
     const lengthMatch = CONTENT_LENGTH_RE.exec(chunk.toString('latin1'));
 
     if (this.buffer && (this.isReading || startIdx > -1)) {
-      this.appendChunk(chunk, startIdx, endIdx);
+      this.appendChunk(chunk, endIdx);
     }
     if (lengthMatch) {
       this.startFrame(Number(lengthMatch[1]), chunk, startIdx, endIdx);
@@ -62,15 +62,19 @@ class MjpegFrameParser extends Transform {
     }
   }
 
-  private appendChunk(chunk: Buffer, start: number, end: number): void {
+  private appendChunk(chunk: Buffer, end: number): void {
     if (!this.buffer) {
       return;
     }
-    const copyStart = start > -1 ? start : 0;
+    // We are continuing a frame that is already open, so the whole chunk belongs to it
+    // and must be copied starting at offset 0. A JPEG SOI marker found anywhere in this
+    // chunk can only belong to the *next* frame (it necessarily comes after our own EOI),
+    // so it must never be used as the copy start here, or the current frame's tail bytes
+    // between offset 0 and that marker would be skipped, truncating it.
     const copyEnd = end > -1 ? end + JPEG_EOI.length : chunk.length;
     // Buffer.copy() silently truncates if the destination has less room than requested,
     // so bytesWritten must track what was actually copied, not the requested range size.
-    this.bytesWritten += chunk.copy(this.buffer, this.bytesWritten, copyStart, copyEnd);
+    this.bytesWritten += chunk.copy(this.buffer, this.bytesWritten, 0, copyEnd);
 
     if (end > -1 || this.bytesWritten === this.expectedLength) {
       this.emitFrame();
@@ -82,8 +86,17 @@ class MjpegFrameParser extends Transform {
   private emitFrame(): void {
     this.isReading = false;
     if (this.buffer) {
-      this.push(this.buffer);
+      // Only push what was actually copied: the buffer is allocated to `expectedLength`
+      // up front, so pushing it as-is would leak trailing zero bytes whenever fewer
+      // bytes were actually written (e.g. a mismatched/truncated Content-Length).
+      this.push(this.buffer.subarray(0, this.bytesWritten));
     }
+    // Clear the frame state so an unrelated later chunk (e.g. one with a JPEG SOI
+    // marker but no Content-Length header) cannot be appended onto a buffer that
+    // has already been pushed downstream.
+    this.buffer = null;
+    this.expectedLength = 0;
+    this.bytesWritten = 0;
   }
 }
 
@@ -213,6 +226,10 @@ export class MJpegStream extends Writable {
     const onClose = () => {
       log.debug(`The connection to MJPEG server at ${url} has been closed`);
       this.lastChunk = null;
+      // No-op if start() has already resolved; only rejects a still-pending start().
+      this.registerStartFailure?.(
+        new Error(`The connection to the MJPEG stream at ${url} has been closed before any frame was received`),
+      );
     };
 
     let timeoutId: NodeJS.Timeout | undefined;
@@ -233,6 +250,10 @@ export class MJpegStream extends Writable {
 
     try {
       await startPromise;
+    } catch (err) {
+      // Do not leak the underlying HTTP connection/pipes if we never reached a usable state.
+      this.stop();
+      throw err;
     } finally {
       clearTimeout(timeoutId);
     }
