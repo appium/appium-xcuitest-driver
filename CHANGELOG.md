@@ -1,3 +1,9 @@
+## [12.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.0...v12.1.1) (2026-07-29)
+
+### Miscellaneous Chores
+
+* Integrate oxc and release configs ([#2925](https://github.com/appium/appium-xcuitest-driver/issues/2925)) ([6711a34](https://github.com/appium/appium-xcuitest-driver/commit/6711a34419402894d25cae00811da25cef6cc4ae))
+
 ## [12.1.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.0.0...v12.1.0) (2026-07-24)
 
 ### Features
