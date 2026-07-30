@@ -120,16 +120,24 @@ async function downloadAndExtractApp(url: string, cachePath: string, zipFileName
           // in-memory downloadPromises dedup above only prevents races within
           // this process. Other spec files can be downloading the same app
           // concurrently. Stage the extracted app under a process-unique path
-          // next to cachePath, then move it into place without clobbering: if
-          // another process already won the race, drop our copy instead of
-          // overwriting cachePath while it might be mid-read elsewhere.
+          // next to cachePath (fs.copyFile preserves symlinks, unlike fs.mv's
+          // per-file walk which silently drops non-file/non-dir entries), then
+          // install it with a single fs.rename: atomic, and since stagingPath
+          // is a sibling of cachePath it can't hit EXDEV. If cachePath already
+          // exists the rename fails outright (never partially), so we just
+          // drop our copy and use whatever the other process installed.
           const stagingPath = `${cachePath}.download-${process.pid}-${crypto.randomUUID()}`;
-          await fs.mv(extractedAppPath, stagingPath, {mkdirp: true});
+          await fs.copyFile(extractedAppPath, stagingPath);
           try {
-            await fs.mv(stagingPath, cachePath, {mkdirp: true, clobber: false});
-          } catch {
-            // Another process already populated the cache; use its copy.
+            await fs.rename(stagingPath, cachePath);
+          } catch (e) {
             await fs.rimraf(stagingPath);
+            // Only swallow the error if another process actually won the
+            // race and cachePath is now populated; otherwise this was a
+            // genuine failure and cachePath still doesn't exist.
+            if (!(await fs.exists(cachePath))) {
+              throw e;
+            }
           }
         } finally {
           await fs.rimraf(extractDir);
