@@ -8,7 +8,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import type {Browser} from 'webdriverio';
 
-import {isIosVersionBelow, getUICatalogCaps} from '../desired.js';
+import {isIosVersionBelow, isIosVersionAtLeast, getUICatalogCaps} from '../desired.js';
 import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig/index.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 
@@ -218,7 +218,13 @@ describe('XCUITestDriver - basics -', function () {
   });
 
   describe('lock -', function () {
-    it('should properly lock and unlock the device', async function () {
+    it('should properly lock and unlock the device', async function (ctx: TestContext) {
+      if (isIosVersionAtLeast('27.0')) {
+        // WDA's IOHID-based lock workaround for iOS 27 (commit 64be2388) is not
+        // reliably locking the screen within its (WDA-internal, non-configurable)
+        // 5s timeout yet.
+        return ctx.skip();
+      }
       try {
         await driver.lock();
         expect(await driver.isLocked()).to.be.true;
