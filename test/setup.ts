@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -114,7 +115,22 @@ async function downloadAndExtractApp(url: string, cachePath: string, zipFileName
 
           // Use the first (shallowest) .app bundle found
           const extractedAppPath = path.join(extractDir, appPaths[0]);
-          await fs.mv(extractedAppPath, cachePath, {mkdirp: true});
+
+          // node's test runner puts each spec file in its own process, so the
+          // in-memory downloadPromises dedup above only prevents races within
+          // this process. Other spec files can be downloading the same app
+          // concurrently. Stage the extracted app under a process-unique path
+          // next to cachePath, then move it into place without clobbering: if
+          // another process already won the race, drop our copy instead of
+          // overwriting cachePath while it might be mid-read elsewhere.
+          const stagingPath = `${cachePath}.download-${process.pid}-${crypto.randomUUID()}`;
+          await fs.mv(extractedAppPath, stagingPath, {mkdirp: true});
+          try {
+            await fs.mv(stagingPath, cachePath, {mkdirp: true, clobber: false});
+          } catch {
+            // Another process already populated the cache; use its copy.
+            await fs.rimraf(stagingPath);
+          }
         } finally {
           await fs.rimraf(extractDir);
         }
