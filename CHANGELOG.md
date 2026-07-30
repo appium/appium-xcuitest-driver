@@ -1,3 +1,9 @@
+## [12.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.1...v12.1.2) (2026-07-30)
+
+### Miscellaneous Chores
+
+* Harden MJPEG frame parsing and stream startup ([#2927](https://github.com/appium/appium-xcuitest-driver/issues/2927)) ([36bf6a0](https://github.com/appium/appium-xcuitest-driver/commit/36bf6a00f63265cd54b561e71ddc2bdae25da91e))
+
 ## [12.1.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.0...v12.1.1) (2026-07-29)
 
 ### Miscellaneous Chores
