@@ -51,7 +51,7 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
 
-    timeout-minutes: 120
+    timeout-minutes: 90
 
     name: e2e
     steps:
@@ -140,7 +140,7 @@ jobs:
       - run: |
           export DEVICE_NAME="${{ matrix.deviceName }}"
           export PLATFORM_VERSION="${{ matrix.iosVersion }}"
-          node --test "./build/test/functional/${{ matrix.e2eRoot }}/**/*.spec.js" --test-force-exit --test-concurrency=1 --test-timeout=3600000
+          npm run "e2e-test:${{ matrix.e2eRoot }}"
         name: Run functional tests
 
       - name: Save server output
