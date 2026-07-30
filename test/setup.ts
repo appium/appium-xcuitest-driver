@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -114,7 +115,30 @@ async function downloadAndExtractApp(url: string, cachePath: string, zipFileName
 
           // Use the first (shallowest) .app bundle found
           const extractedAppPath = path.join(extractDir, appPaths[0]);
-          await fs.mv(extractedAppPath, cachePath, {mkdirp: true});
+
+          // node's test runner puts each spec file in its own process, so the
+          // in-memory downloadPromises dedup above only prevents races within
+          // this process. Other spec files can be downloading the same app
+          // concurrently. Stage the extracted app under a process-unique path
+          // next to cachePath (fs.copyFile preserves symlinks, unlike fs.mv's
+          // per-file walk which silently drops non-file/non-dir entries), then
+          // install it with a single fs.rename: atomic, and since stagingPath
+          // is a sibling of cachePath it can't hit EXDEV. If cachePath already
+          // exists the rename fails outright (never partially), so we just
+          // drop our copy and use whatever the other process installed.
+          const stagingPath = `${cachePath}.download-${process.pid}-${crypto.randomUUID()}`;
+          await fs.copyFile(extractedAppPath, stagingPath);
+          try {
+            await fs.rename(stagingPath, cachePath);
+          } catch (e) {
+            await fs.rimraf(stagingPath);
+            // Only swallow the error if another process actually won the
+            // race and cachePath is now populated; otherwise this was a
+            // genuine failure and cachePath still doesn't exist.
+            if (!(await fs.exists(cachePath))) {
+              throw e;
+            }
+          }
         } finally {
           await fs.rimraf(extractDir);
         }
