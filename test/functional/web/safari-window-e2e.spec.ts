@@ -90,18 +90,6 @@ describe('safari - windows and frames', function () {
         await openPage(driver, guineaPigPage(baseUrl));
       });
 
-      it('should be able to open js popup windows', async function () {
-        await driver.updateSettings({
-          autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]',
-        });
-
-        await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
-        await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.not.be.rejected;
-        await driver.updateSettings({autoClickAlertSelector: ''});
-
-        await driver.closeWindow();
-      });
-
       it('should throw nosuchwindow if there is not one', async function () {
         await expect(driver.switchToWindow('noexistman')).to.be.rejectedWith(/window could not be found/);
       });
@@ -173,6 +161,18 @@ describe('safari - windows and frames', function () {
         await driver.forward();
         await waitUntilNotExist('#i_am_a_textbox');
         await driver.back();
+      });
+
+      it('should be able to open js popup windows', async function () {
+        await driver.updateSettings({
+          autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]',
+        });
+
+        await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
+        await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.not.be.rejected;
+        await driver.updateSettings({autoClickAlertSelector: ''});
+
+        await driver.closeWindow();
       });
 
       // broken on real devices, see https://github.com/appium/appium/issues/5167

@@ -1,11 +1,11 @@
-import {describe, it, before, after} from 'node:test';
+import {describe, it, before, after, type TestContext} from 'node:test';
 
 import {retryInterval} from 'asyncbox';
 import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {SAFARI_CAPS, amendCapabilities, isIosVersionBelow} from '../desired.js';
+import {SAFARI_CAPS, amendCapabilities, isIosVersionAtLeast, isIosVersionBelow} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 import {createGuineaPigServerSession, guineaPigPage} from './helpers/index.js';
 
@@ -74,7 +74,13 @@ describe('safari - alerts', {skip: Boolean(process.env.CI) && isIosVersionBelow(
     expect(await driver.getAlertText()).to.include('I am an alert');
     await dismissAlert(driver);
   });
-  it('should not get text of alert that closed', async function () {
+  it('should not get text of alert that closed', async function (ctx: TestContext) {
+    if (isIosVersionAtLeast('27.0')) {
+      // WDA's alert/text endpoint on iOS 27 unreliably falls back to the
+      // underlying page's accessibility content instead of raising a
+      // "no such alert" error once the alert has actually been dismissed.
+      return ctx.skip();
+    }
     const alert = await findWithRetry('#alert1');
     await alert.click();
     await acceptAlert(driver);
