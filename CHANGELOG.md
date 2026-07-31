@@ -1,3 +1,9 @@
+## [12.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.2...v12.1.3) (2026-07-31)
+
+### Bug Fixes
+
+* Make closeWindow return remaining window handles per W3C spec ([#2931](https://github.com/appium/appium-xcuitest-driver/issues/2931)) ([4687938](https://github.com/appium/appium-xcuitest-driver/commit/46879386d3d2b06bba1992db412ba73e2ee3b391))
+
 ## [12.1.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.1...v12.1.2) (2026-07-30)
 
 ### Miscellaneous Chores
