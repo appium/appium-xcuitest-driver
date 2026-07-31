@@ -34,9 +34,10 @@ export async function forward(this: XCUITestDriver): Promise<void> {
 /**
  * Closes the current window in a web context.
  *
- * @returns Promise that resolves when the window is closed
+ * @returns Promise resolving to the handles of the windows that remain open,
+ * as required by https://www.w3.org/TR/webdriver2/#close-window
  */
-export async function closeWindow(this: XCUITestDriver): Promise<any> {
+export async function closeWindow(this: XCUITestDriver): Promise<string[]> {
   if (!this.isWebContext()) {
     throw new errors.NotImplementedError();
   }
@@ -46,7 +47,7 @@ export async function closeWindow(this: XCUITestDriver): Promise<any> {
   const script = `setTimeout(function () {window.open('','_self').close();}, 0); return true;`;
   const context = this.curContext;
   try {
-    return await this.executeAtom('execute_script', [script, []], true);
+    await this.executeAtom('execute_script', [script, []], true);
   } finally {
     // wait for the window to successfully change...
     try {
@@ -58,6 +59,7 @@ export async function closeWindow(this: XCUITestDriver): Promise<any> {
       this.log.debug('Context has not yet been changed after closing window. Continuing...');
     }
   }
+  return await this.getWindowHandles();
 }
 
 /**
