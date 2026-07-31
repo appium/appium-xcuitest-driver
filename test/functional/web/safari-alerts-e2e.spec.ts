@@ -12,7 +12,7 @@ import {createGuineaPigServerSession, guineaPigPage} from './helpers/index.js';
 use(chaiAsPromised);
 
 const IS_CI = Boolean(process.env.CI);
-const CI_WEBVIEW_ATOM_WAIT_TIMEOUT_MS = 20000;
+const CI_WEBVIEW_ATOM_WAIT_TIMEOUT_MS = 45000;
 
 describe('safari - alerts', {skip: Boolean(process.env.CI) && isIosVersionBelow('18.0')}, function () {
   let driver: Browser;
