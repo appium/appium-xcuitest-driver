@@ -1,12 +1,15 @@
+import {errors} from 'appium/driver.js';
+
 import {SystemMonitorSession} from '../device/system-monitor-session.js';
 import type {XCUITestDriver} from '../driver.js';
+import {isIos18OrNewer} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 
 /**
  * Starts streaming DVT sysmontap (CPU / memory / per-process) samples to WebDriver BiDi subscribers
  * (`appium:xcuitest.systemMonitor`).
  *
- * Requires a real device and appium-ios-remotexpc.
+ * Requires a real device on iOS/tvOS 18+ and appium-ios-remotexpc.
  *
  * @see https://github.com/appium/appium-ios-remotexpc
  *
@@ -17,6 +20,13 @@ import {requireRealDevice} from './helpers/index.js';
  */
 export async function mobileStartSystemMonitor(this: XCUITestDriver, intervalMs?: number): Promise<void> {
   requireRealDevice(this, 'DVT system monitor');
+
+  if (!isIos18OrNewer(this.opts)) {
+    throw new errors.InvalidArgumentError(
+      `mobile: startSystemMonitor requires iOS/tvOS 18 or newer. ` +
+        `The current platformVersion is '${this.opts.platformVersion ?? 'unknown'}'.`,
+    );
+  }
 
   if (this._systemMonitorSession?.isRunning()) {
     this.log.info(`DVT system monitor is already active; continuing`);

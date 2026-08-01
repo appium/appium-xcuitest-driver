@@ -244,16 +244,15 @@ consumption.
 This event is continuously emitted as soon as [`mobile: startSystemMonitor`](./execute-methods.md#mobile-startsystemmonitor) is invoked. Event emission stops as soon as the [`mobile: stopSystemMonitor`](./execute-methods.md#mobile-stopsystemmonitor)
 execute method is called.
 
-Events are only supported for real devices, and the `appium-ios-remotexpc` package must be
-installed. Refer to the [RemoteXPC Tunnels guide](../guides/remotexpc-tunnels-real-devices.md)
-for more details.
+Events are only supported for real devices running iOS/tvOS 18 or later, and the
+`appium-ios-remotexpc` package must be installed. Refer to the
+[RemoteXPC Tunnels guide](../guides/remotexpc-tunnels-real-devices.md) for more details.
 
 #### Event Type (CDDL)
 
 The device streams two kinds of samples, discriminated by `event.kind`. The attribute set for
-each kind is queried from the device at connection time (`DeviceInfo.sysmonProcessAttributes()` /
-`sysmonSystemAttributes()`), so the exact fields present can vary slightly across OS versions.
-Refer to
+each kind is queried from the device at connection time, so the exact fields present can vary
+slightly across OS versions. Refer to
 [the `Sysmontap` instrument used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/blob/main/src/services/ios/dvt/instruments/sysmontap.ts)
 for the labelling logic.
 

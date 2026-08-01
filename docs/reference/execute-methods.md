@@ -1014,7 +1014,7 @@ Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tear
 
 Starts streaming DVT sysmontap samples (CPU usage, memory footprint, and other per-process/system metrics) from the device. Each labelled sample is published on the WebDriver BiDi bus as **`appium:xcuitest.systemMonitor`** with a `params.event` object (discriminated by `event.kind`: `"system"` for a device-wide snapshot, `"processes"` for a per-process snapshot array); see [BiDi: systemMonitor](./bidi.md#appiumxcuitestsystemmonitor) for full examples and field meanings.
 
-Requires a **real** device, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package installed, and a BiDi-capable client subscribed to that method.
 
 If a monitor is already running, the call does nothing so the existing stream continues.
 
