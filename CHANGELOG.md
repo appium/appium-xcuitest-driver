@@ -1,3 +1,9 @@
+## [12.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.3...v12.1.4) (2026-08-01)
+
+### Miscellaneous Chores
+
+* Drop esmock ([#2932](https://github.com/appium/appium-xcuitest-driver/issues/2932)) ([d9798bd](https://github.com/appium/appium-xcuitest-driver/commit/d9798bd727f85d9a40e3313ffa243408e2c92760))
+
 ## [12.1.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.2...v12.1.3) (2026-07-31)
 
 ### Bug Fixes
