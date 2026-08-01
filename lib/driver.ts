@@ -84,6 +84,7 @@ import * as screenshotCommands from './commands/screenshots.js';
 import * as simctlCommands from './commands/simctl.js';
 import * as simulatorCommands from './commands/simulator.js';
 import * as sourceCommands from './commands/source.js';
+import * as systemMonitorCommands from './commands/system-monitor.js';
 import * as timeoutCommands from './commands/timeouts.js';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types.js';
 import * as voiceOverCommands from './commands/voiceover.js';
@@ -111,6 +112,7 @@ import {
   runSimulatorReset,
   shutdownSimulator,
 } from './device/simulator-management.js';
+import type {SystemMonitorSession} from './device/system-monitor-session.js';
 import {
   assertWdaHostPlatformSupported,
   assertWdaHostSessionCapsSupported,
@@ -251,6 +253,7 @@ export class XCUITestDriver
   _audioRecorder: AudioRecorder | null;
   xcodeVersion: XcodeVersion | undefined;
   _networkMonitorSession: NetworkMonitorSession | null;
+  _systemMonitorSession: SystemMonitorSession | null;
   _remoteXPCFacade: RemoteXPCFacade | null;
   _recentScreenRecorder!: ScreenRecorder | null;
   _device!: Simulator | RealDevice;
@@ -617,6 +620,13 @@ export class XCUITestDriver
   mobileStartNetworkMonitor = networkMonitorCommands.mobileStartNetworkMonitor;
   mobileStopNetworkMonitor = networkMonitorCommands.mobileStopNetworkMonitor;
 
+  /*-----------------+
+   | SYSTEM MONITOR  |
+   +-----------------+*/
+
+  mobileStartSystemMonitor = systemMonitorCommands.mobileStartSystemMonitor;
+  mobileStopSystemMonitor = systemMonitorCommands.mobileStopSystemMonitor;
+
   /*-------------+
    | PERFORMANCE |
    +-------------+*/
@@ -769,6 +779,7 @@ export class XCUITestDriver
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
     this.logs = {} as DriverLogs;
     this._networkMonitorSession = null;
+    this._systemMonitorSession = null;
     this._remoteXPCFacade = null;
     // memoize functions here, so that they are done on a per-instance basis
     for (const fn of MEMOIZED_FUNCTIONS) {
@@ -901,6 +912,8 @@ export class XCUITestDriver
     }
     await this._networkMonitorSession?.interrupt();
     this._networkMonitorSession = null;
+    await this._systemMonitorSession?.interrupt();
+    this._systemMonitorSession = null;
 
     if (!isEmpty(this._perfRecorders)) {
       await Promise.all(this._perfRecorders.map((x) => x.stop(true)));
