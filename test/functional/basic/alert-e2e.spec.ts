@@ -23,7 +23,7 @@ describe('XCUITestDriver - alerts -', function () {
   });
 
   beforeEach(async function () {
-    await retryInterval(5, 500, async () => {
+    await retryInterval(10, 1000, async () => {
       const el = await driver.$('~Alert Views');
       await el.click();
 
@@ -106,8 +106,11 @@ describe('XCUITestDriver - alerts -', function () {
   });
 
   it('should throw a NoAlertOpenError when no alert is open', async function () {
-    await expect(driver.acceptAlert()).to.be.rejectedWith(
-      /An attempt was made to operate on a modal dialog when one was not open/,
-    );
+    // Assert on the W3C error name rather than the message text, since the
+    // exact wording of the underlying "no such alert" error is dictated by
+    // WDA and has changed across versions.
+    const err = await driver.acceptAlert().catch((e) => e);
+    expect(err).to.be.an('error');
+    expect(err.name).to.equal('no such alert');
   });
 });

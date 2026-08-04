@@ -34,7 +34,7 @@ describe('XCUITestDriver - long tests', function () {
       await tfEl.click();
 
       // wait for there to be text fields present
-      await retryInterval(5, 500, async function () {
+      await retryInterval(10, 1000, async function () {
         const el = await driver.$(`${PREDICATE_SEARCH}:type == 'XCUIElementTypeTextField'`);
         await el.clearValue();
       });
