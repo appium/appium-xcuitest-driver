@@ -1,3 +1,9 @@
+## [12.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.4...v12.2.0) (2026-08-04)
+
+### Features
+
+* Add mobile extensions for DVT sysmontap system monitoring ([#2933](https://github.com/appium/appium-xcuitest-driver/issues/2933)) ([7ee1ba0](https://github.com/appium/appium-xcuitest-driver/commit/7ee1ba03862e2018488827d7bda0ce2eb1c79045))
+
 ## [12.1.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.3...v12.1.4) (2026-08-01)
 
 ### Miscellaneous Chores
