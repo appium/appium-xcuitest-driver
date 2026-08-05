@@ -1010,6 +1010,24 @@ If a monitor is already running, the call does nothing so the existing stream co
 
 Stops DVT network monitoring started with `mobile: startNetworkMonitor` and tears down the underlying Remote XPC / DVT connection.
 
+### mobile: startSystemMonitor
+
+Starts streaming DVT sysmontap samples (CPU usage, memory footprint, and other per-process/system metrics) from the device. Each labelled sample is published on the WebDriver BiDi bus as **`appium:xcuitest.systemMonitor`** with a `params.event` object (discriminated by `event.kind`: `"system"` for a device-wide snapshot, `"processes"` for a per-process snapshot array); see [BiDi: systemMonitor](./bidi.md#appiumxcuitestsystemmonitor) for full examples and field meanings.
+
+Requires a **real** device running **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package installed, and a BiDi-capable client subscribed to that method.
+
+If a monitor is already running, the call does nothing so the existing stream continues.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+intervalMs | number | no | Sampling interval in milliseconds, forwarded to the underlying sysmontap `configure()` call. Defaults to sysmontap's own default (500ms) when omitted. | 1000
+
+### mobile: stopSystemMonitor
+
+Stops DVT sysmontap streaming started with `mobile: startSystemMonitor` and tears down the underlying Remote XPC / DVT connection.
+
 ### mobile: runXCTest
 
 Runs a native XCTest suite on the device under test.

@@ -1,19 +1,36 @@
 import net from 'node:net';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach, mock} from 'node:test';
 
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver.js';
 import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import esmock from 'esmock';
 import {createSandbox, type SinonSandbox, type SinonStubbedMember} from 'sinon';
 
+import * as helpersIndexModule from '../../lib/commands/helpers/index.js';
 import {RealDevice} from '../../lib/device/real-device-management.js';
+import * as realDeviceManagementModule from '../../lib/device/real-device-management.js';
+import * as simulatorManagementModule from '../../lib/device/simulator-management.js';
+import * as wdaHostOpsModule from '../../lib/device/wda-host-ops.js';
 import type {XCUITestDriverOpts} from '../../lib/driver.js';
 import {mergeDeep} from '../../lib/utils/index.js';
 import {UNIT_LONG_TIMEOUT_MS} from './helpers.js';
 
 use(chaiAsPromised);
+
+// driver.js consumes checkAppPresent/getAndCheckXcodeVersion/installAUT through this barrel, so
+// it (not the individual modules) is what must be mocked: once a re-exporting module has been
+// evaluated, its bindings to a dependency are fixed and don't observe a later mock.module() call
+// for that dependency, only a mock.module() call for the barrel's own specifier is picked up.
+const HELPERS_INDEX_PATH = '../../lib/commands/helpers/index.js';
+const APP_PATH = '../../lib/commands/helpers/app.js';
+const REAL_DEVICE_MANAGEMENT_PATH = '../../lib/device/real-device-management.js';
+const SIMULATOR_MANAGEMENT_PATH = '../../lib/device/simulator-management.js';
+
+let importCounter = 0;
+function importFresh(specifier: string) {
+  return import(`${specifier}?mock=${importCounter++}`);
+}
 
 const defaultCheckAppPresent = async () => {};
 const defaultAssertWdaHostSessionCapsSupported = () => {};
@@ -39,46 +56,39 @@ let currentInstallToRealDevice: (...args: any[]) => any = defaultInstallToRealDe
 let currentInstallToSimulator: (...args: any[]) => any = defaultInstallToSimulator;
 let currentInstallAUT: (...args: any[]) => any = defaultInstallAUT;
 
-const {XCUITestDriver} = await esmock(
-  '../../lib/driver.js',
-  import.meta.url,
-  {},
-  {
-    '../../lib/commands/helpers/validation.js': {
-      checkAppPresent: (...args: any[]) => currentCheckAppPresent(...args),
-    },
-    '../../lib/commands/helpers/xcode.js': {
-      getAndCheckXcodeVersion: (...args: any[]) => currentGetAndCheckXcodeVersion(...args),
-    },
-    '../../lib/device/wda-host-ops.js': {
-      assertWdaHostSessionCapsSupported: (...args: any[]) => currentAssertWdaHostSessionCapsSupported(...args),
-      assertWdaHostPlatformSupported: (...args: any[]) => currentAssertWdaHostPlatformSupported(...args),
-    },
-    '../../lib/device/real-device-management.js': {
-      installToRealDevice: (...args: any[]) => currentInstallToRealDevice(...args),
-    },
-    '../../lib/device/simulator-management.js': {
-      installToSimulator: (...args: any[]) => currentInstallToSimulator(...args),
-    },
-    '../../lib/commands/helpers/app.js': {
-      installAUT: (...args: any[]) => currentInstallAUT(...args),
-    },
+mock.module(HELPERS_INDEX_PATH, {
+  namedExports: {
+    ...helpersIndexModule,
+    checkAppPresent: (...args: any[]) => currentCheckAppPresent(...args),
+    getAndCheckXcodeVersion: (...args: any[]) => currentGetAndCheckXcodeVersion(...args),
+    installAUT: (...args: any[]) => currentInstallAUT(...args),
   },
-);
+});
+mock.module('../../lib/device/wda-host-ops.js', {
+  namedExports: {
+    ...wdaHostOpsModule,
+    assertWdaHostSessionCapsSupported: (...args: any[]) => currentAssertWdaHostSessionCapsSupported(...args),
+    assertWdaHostPlatformSupported: (...args: any[]) => currentAssertWdaHostPlatformSupported(...args),
+  },
+});
+mock.module(REAL_DEVICE_MANAGEMENT_PATH, {
+  namedExports: {
+    ...realDeviceManagementModule,
+    installToRealDevice: (...args: any[]) => currentInstallToRealDevice(...args),
+  },
+});
+mock.module(SIMULATOR_MANAGEMENT_PATH, {
+  namedExports: {
+    ...simulatorManagementModule,
+    installToSimulator: (...args: any[]) => currentInstallToSimulator(...args),
+  },
+});
 
-const {installAUT: installAUTWithRealDeviceMocks} = await esmock(
-  '../../lib/commands/helpers/app.js',
-  import.meta.url,
-  {},
-  {
-    '../../lib/device/real-device-management.js': {
-      installToRealDevice: (...args: any[]) => currentInstallToRealDevice(...args),
-    },
-    '../../lib/device/simulator-management.js': {
-      installToSimulator: (...args: any[]) => currentInstallToSimulator(...args),
-    },
-  },
-);
+const {XCUITestDriver} = await importFresh('../../lib/driver.js');
+
+// app.js is imported directly (not through the mocked barrel) so its real installAUT runs, with
+// only its real-device-management.js/simulator-management.js dependencies mocked above.
+const {installAUT: installAUTWithRealDeviceMocks} = await importFresh(APP_PATH);
 
 async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');

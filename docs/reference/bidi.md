@@ -235,3 +235,66 @@ appium:xcuitest.networkMonitor.ConnectionUpdateEntry = {
 
 You can use the value of `connectionSerial` to link back to a prior `type: 1` event with a matching
 `serialNumber` value.
+
+### appium:xcuitest.systemMonitor
+
+Indicates that a new labelled DVT sysmontap sample (system-wide or per-process) is available for
+consumption.
+
+This event is continuously emitted as soon as [`mobile: startSystemMonitor`](./execute-methods.md#mobile-startsystemmonitor) is invoked. Event emission stops as soon as the [`mobile: stopSystemMonitor`](./execute-methods.md#mobile-stopsystemmonitor)
+execute method is called.
+
+Events are only supported for real devices running iOS/tvOS 18 or later, and the
+`appium-ios-remotexpc` package must be installed. Refer to the
+[RemoteXPC Tunnels guide](../guides/remotexpc-tunnels-real-devices.md) for more details.
+
+#### Event Type (CDDL)
+
+The device streams two kinds of samples, discriminated by `event.kind`. The attribute set for
+each kind is queried from the device at connection time, so the exact fields present can vary
+slightly across OS versions. Refer to
+[the `Sysmontap` instrument used in `appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc/blob/main/src/services/ios/dvt/instruments/sysmontap.ts)
+for the labelling logic.
+
+```cddl
+appium:xcuitest.systemMonitor = (
+  method: "appium:xcuitest.systemMonitor",
+  context: "NATIVE_APP",
+  params: {
+    event: appium:xcuitest.systemMonitor.SystemEntry / appium:xcuitest.systemMonitor.ProcessesEntry,
+  },
+)
+
+appium:xcuitest.systemMonitor.SystemEntry = {
+  kind: "system",
+  system: {
+    * text => any,
+  },
+}
+
+appium:xcuitest.systemMonitor.ProcessesEntry = {
+  kind: "processes",
+  processes: [* appium:xcuitest.systemMonitor.ProcessInfo],
+}
+
+appium:xcuitest.systemMonitor.ProcessInfo = {
+  pid: js-uint,
+  ? name: text,
+  ? cpuUsage: number,
+  ? physFootprint: js-uint,
+  * text => any,
+}
+```
+
+| Parameter | Description |
+| -- | -- |
+| `kind` | Discriminates the sample: `"system"` for a device-wide snapshot, `"processes"` for a per-process snapshot array |
+| `system` | Device-wide metrics, keyed by the system attribute names reported by the device (e.g. total CPU usage, memory size) |
+| `processes` | One entry per process observed in this sample |
+| `pid` | Process ID (also included as an attribute if the device reports one; the attribute value takes precedence) |
+| `name` | Process name, when reported |
+| `cpuUsage` | Per-process CPU usage, when reported |
+| `physFootprint` | Per-process physical memory footprint in bytes, when reported |
+
+The first `processes` snapshot after starting the monitor typically has uninitialised `cpuUsage`
+values (there is no prior sample to diff against) and is commonly ignored by consumers.

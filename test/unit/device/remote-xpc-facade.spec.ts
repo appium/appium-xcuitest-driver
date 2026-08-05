@@ -1,25 +1,28 @@
-import {describe, it, afterEach} from 'node:test';
+import {describe, it, afterEach, mock} from 'node:test';
 
 import {expect} from 'chai';
-import esmock from 'esmock';
 import sinon from 'sinon';
+
+import * as moduleLoaderModule from '../../../lib/device/remote-xpc/module-loader.js';
+import * as usbmuxUtilsModule from '../../../lib/device/remote-xpc/usbmux-utils.js';
 
 let currentTryLoadRemoteXPCModule: (...args: any[]) => any = async () => null;
 let currentIsDeviceListedInUsbmux: (...args: any[]) => any = async () => false;
 
-const {RemoteXPCFacade} = await esmock(
-  '../../../lib/device/remote-xpc/index.js',
-  import.meta.url,
-  {},
-  {
-    '../../../lib/device/remote-xpc/module-loader.js': {
-      tryLoadRemoteXPCModule: (...args: any[]) => currentTryLoadRemoteXPCModule(...args),
-    },
-    '../../../lib/device/remote-xpc/usbmux-utils.js': {
-      isDeviceListedInUsbmux: (...args: any[]) => currentIsDeviceListedInUsbmux(...args),
-    },
+mock.module('../../../lib/device/remote-xpc/module-loader.js', {
+  namedExports: {
+    ...moduleLoaderModule,
+    tryLoadRemoteXPCModule: (...args: any[]) => currentTryLoadRemoteXPCModule(...args),
   },
-);
+});
+mock.module('../../../lib/device/remote-xpc/usbmux-utils.js', {
+  namedExports: {
+    ...usbmuxUtilsModule,
+    isDeviceListedInUsbmux: (...args: any[]) => currentIsDeviceListedInUsbmux(...args),
+  },
+});
+
+const {RemoteXPCFacade} = await import('../../../lib/device/remote-xpc/index.js');
 
 describe('RemoteXPCFacade', function () {
   afterEach(function () {

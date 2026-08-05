@@ -1,7 +1,18 @@
 import {NATIVE_WIN} from '../constants.js';
 import type {LogEntry} from '../types.js';
-import {CONTEXT_UPDATED_EVENT, LOG_ENTRY_ADDED_EVENT, NETWORK_MONITOR_EVENT} from './constants.js';
-import type {LogEntryAddedEvent, ContextUpdatedEvent, BiDiLogLevel, NetworkMonitorBiDiEvent} from './types.js';
+import {
+  CONTEXT_UPDATED_EVENT,
+  LOG_ENTRY_ADDED_EVENT,
+  NETWORK_MONITOR_EVENT,
+  SYSTEM_MONITOR_EVENT,
+} from './constants.js';
+import type {
+  LogEntryAddedEvent,
+  ContextUpdatedEvent,
+  BiDiLogLevel,
+  NetworkMonitorBiDiEvent,
+  SystemMonitorBiDiEvent,
+} from './types.js';
 
 function toContextUpdatedEvent(method: string, contextName: string): ContextUpdatedEvent {
   return {
@@ -25,6 +36,21 @@ export function makeNetworkMonitorEvent(event: object): NetworkMonitorBiDiEvent 
   return {
     context: NATIVE_WIN,
     method: NETWORK_MONITOR_EVENT,
+    params: {
+      event: structuredClone(event) as Record<string, unknown>,
+    },
+  };
+}
+
+/**
+ * Builds a BiDi event for a single labelled DVT sysmontap sample (system or per-process snapshot).
+ * Clones the payload with `structuredClone` so subscribers get a plain snapshot (safe if anything
+ * downstream mutates) without the lossiness of `JSON.stringify` (e.g. `NaN`, `undefined` handling).
+ */
+export function makeSystemMonitorEvent(event: object): SystemMonitorBiDiEvent {
+  return {
+    context: NATIVE_WIN,
+    method: SYSTEM_MONITOR_EVENT,
     params: {
       event: structuredClone(event) as Record<string, unknown>,
     },

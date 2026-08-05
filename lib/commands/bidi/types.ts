@@ -22,6 +22,24 @@ export interface NetworkMonitorBiDiEvent extends BiDiEvent<NetworkMonitorEventPa
   context: string;
 }
 
+export interface SystemMonitorEventParams {
+  /**
+   * DVT sysmontap sample, labelled by attribute name. Tagged by `kind`:
+   * `system` carries device-wide metrics (`event.system`), `processes` carries a
+   * per-process snapshot array (`event.processes`).
+   */
+  event: Record<string, unknown>;
+}
+
+/**
+ * BiDi event emitted for each labelled DVT sysmontap sample while `mobile: startSystemMonitor` is active.
+ *
+ * @see https://github.com/appium/appium-ios-remotexpc
+ */
+export interface SystemMonitorBiDiEvent extends BiDiEvent<SystemMonitorEventParams> {
+  context: string;
+}
+
 interface BiDiEvent<TParams> {
   method: string;
   params: TParams;
