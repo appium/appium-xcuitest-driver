@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 describe('XCUITestDriver - performance', function () {
   const profileName = 'Time Profiler';
@@ -29,11 +26,10 @@ describe('XCUITestDriver - performance', function () {
         profileName,
       });
       await delay(5000);
-      expect(
-        await driver.execute('mobile: stopPerfRecord', {
-          profileName,
-        }),
-      ).to.not.be.empty;
+      const result = await driver.execute('mobile: stopPerfRecord', {
+        profileName,
+      });
+      assert.notStrictEqual((result as unknown as string).length, 0);
     });
   });
 });

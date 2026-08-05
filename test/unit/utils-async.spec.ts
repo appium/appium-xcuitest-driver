@@ -1,24 +1,21 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {withTimeout, TimeoutError} from '../../lib/commands/helpers/index.js';
-
-use(chaiAsPromised);
 
 describe('utils/async', function () {
   describe('TimeoutError', function () {
     it('should set name and default message', function () {
       const err = new TimeoutError();
-      expect(err.name).to.equal('TimeoutError');
-      expect(err.message).to.equal('Operation timed out');
+      assert.strictEqual(err.name, 'TimeoutError');
+      assert.strictEqual(err.message, 'Operation timed out');
     });
 
     it('should accept a custom message', function () {
       const err = new TimeoutError('custom deadline');
-      expect(err.message).to.equal('custom deadline');
+      assert.strictEqual(err.message, 'custom deadline');
     });
   });
 
@@ -35,7 +32,7 @@ describe('utils/async', function () {
 
     it('should resolve with the inner value when it settles before the deadline', async function () {
       const result = await withTimeout(Promise.resolve('ok'), 10_000);
-      expect(result).to.equal('ok');
+      assert.strictEqual(result, 'ok');
     });
 
     it('should propagate rejection from the inner promise', async function () {
@@ -45,10 +42,10 @@ describe('utils/async', function () {
       });
       try {
         await withTimeout(innerPromise, 10_000);
-        expect.fail('expected rejection');
+        assert.fail('expected rejection');
       } catch (err: unknown) {
-        expect(err).to.equal(inner);
-        expect((err as Error).message).to.equal('inner failure');
+        assert.strictEqual(err, inner);
+        assert.strictEqual((err as Error).message, 'inner failure');
       }
     });
 
@@ -67,8 +64,8 @@ describe('utils/async', function () {
         })();
         await clock.tickAsync(100);
         const err = await captureRejection;
-        expect(err).to.be.instanceOf(TimeoutError);
-        expect((err as TimeoutError).message).to.equal('deadline exceeded');
+        assert.ok(err instanceof TimeoutError);
+        assert.strictEqual((err as TimeoutError).message, 'deadline exceeded');
       } finally {
         clock.restore();
       }
@@ -82,7 +79,7 @@ describe('utils/async', function () {
         });
         const out = withTimeout(inner, 500);
         await clock.tickAsync(50);
-        await expect(out).to.eventually.equal(42);
+        assert.strictEqual(await out, 42);
       } finally {
         clock.restore();
       }
@@ -96,7 +93,7 @@ describe('utils/async', function () {
         });
         const out = withTimeout(inner, 10_000);
         await clock.tickAsync(20);
-        expect(await out).to.equal(1);
+        assert.strictEqual(await out, 1);
         // If the timeout were not cleared, advancing far past the deadline could still
         // surface spurious work; with cleanup, further ticks are harmless for this call.
         await clock.tickAsync(20_000);

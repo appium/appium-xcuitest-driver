@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {SAFARI_CAPS, amendCapabilities} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 import {createGuineaPigServerSession, openPage, guineaPigPage} from './helpers/index.js';
-
-use(chaiAsPromised);
 
 const SCROLL_INTO_VIEW = `return arguments[0].scrollIntoView(true);`;
 const GET_RIGHT_INNERHTML = `return document.body.innerHTML.indexOf('I am some page content') > 0`;
@@ -35,31 +32,32 @@ describe('safari - execute -', function () {
   async function runTests(secure = false) {
     describe('mobile: x methods', function () {
       it('should run in native context', async function () {
-        await expect(driver.executeScript('mobile: scroll', [{direction: 'down'}])).to.not.be.rejected;
+        await assert.doesNotReject(driver.executeScript('mobile: scroll', [{direction: 'down'}]));
       });
     });
 
     describe('synchronous', function () {
       it('should bubble up javascript errors', async function () {
-        await expect(driver.executeScript(`'nan'--`, [])).to.be.rejected;
+        await assert.rejects(driver.executeScript(`'nan'--`, []));
       });
 
       it('should eval javascript', async function () {
-        await expect(driver.executeScript('return 1 + 1', [])).to.eventually.equal(2);
+        assert.strictEqual(await driver.executeScript('return 1 + 1', []), 2);
       });
 
       it('should not be returning hardcoded results', async function () {
-        await expect(driver.executeScript('return 1+1', [])).to.eventually.equal(2);
+        assert.strictEqual(await driver.executeScript('return 1+1', []), 2);
       });
 
       it(`should return nothing when you don't explicitly return`, async function () {
-        expect(await driver.executeScript('1+1', [])).to.not.exist;
+        const result = await driver.executeScript('1+1', []);
+        assert.ok(result === undefined || result === null);
       });
 
       if (!secure) {
         it('should execute code inside the web view', async function () {
-          await expect(driver.executeScript(GET_RIGHT_INNERHTML, [])).to.eventually.be.ok;
-          await expect(driver.executeScript(GET_WRONG_INNERHTML, [])).to.eventually.not.be.ok;
+          assert.ok(await driver.executeScript(GET_RIGHT_INNERHTML, []));
+          assert.ok(!(await driver.executeScript(GET_WRONG_INNERHTML, [])));
         });
 
         it('should convert selenium element arg to webview element', async function () {
@@ -69,26 +67,29 @@ describe('safari - execute -', function () {
 
         it('should catch stale or undefined element as arg', async function () {
           const el = await driver.findElement('id', 'useragent');
-          await expect(driver.executeScript(SCROLL_INTO_VIEW, [{ELEMENT: (el as any).value + 1}])).to.be.rejected;
+          await assert.rejects(driver.executeScript(SCROLL_INTO_VIEW, [{ELEMENT: (el as any).value + 1}]));
         });
 
         it('should be able to return multiple elements from javascript', async function () {
-          await expect(driver.executeScript(GET_ELEM_BY_TAGNAME, [])).to.eventually.have.length.above(0);
+          const result = await driver.executeScript(GET_ELEM_BY_TAGNAME, []);
+          assert.ok((result as any[]).length > 0);
         });
       }
 
       it('should pass along non-element arguments', async function () {
         const arg = 'non-element-argument';
-        await expect(
-          driver.executeScript('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [arg]),
-        ).to.eventually.equal(arg);
+        assert.strictEqual(
+          await driver.executeScript('var args = Array.prototype.slice.call(arguments, 0); return args[0];', [arg]),
+          arg,
+        );
       });
 
       it('should handle return values correctly', async function () {
         const arg = ['one', 'two', 'three'];
-        await expect(
-          driver.executeScript('var args = Array.prototype.slice.call(arguments, 0); return args;', arg),
-        ).to.eventually.eql(arg);
+        assert.deepStrictEqual(
+          await driver.executeScript('var args = Array.prototype.slice.call(arguments, 0); return args;', arg),
+          arg,
+        );
       });
     });
 

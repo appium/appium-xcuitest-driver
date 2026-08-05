@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {startWdaSession} from '../../lib/commands/wda/startup.js';
 import {XCUITestDriver} from '../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('language and locale', function () {
   const LANGUAGE = 'en';
@@ -124,7 +121,7 @@ describe('language and locale', function () {
 
       driver.validateDesiredCaps(desiredCapabilities);
       await startWdaSession.call(driver, desiredCapabilities.bundleId, desiredCapabilities.processArguments);
-      expect(desiredCapabilities.processArguments).to.eql(expectedProcessArguments);
+      assert.deepStrictEqual(desiredCapabilities.processArguments, expectedProcessArguments);
     });
   });
 });

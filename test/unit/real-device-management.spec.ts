@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs} from 'appium/support.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import type {SinonStub} from 'sinon';
 
@@ -12,8 +11,6 @@ import type {RemoteXPCFacade} from '../../lib/device/remote-xpc/index.js';
 import {ZipConduitClient} from '../../lib/device/zip-conduit-client.js';
 import {XCUITestDriver} from '../../lib/driver.js';
 import type {XCUITestDriverOpts} from '../../lib/driver.js';
-
-use(chaiAsPromised);
 
 async function withPlatformAsync(platform: NodeJS.Platform, fn: () => Promise<void>): Promise<void> {
   const original = Object.getOwnPropertyDescriptor(process, 'platform');
@@ -52,8 +49,8 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
 
     await installToRealDevice.bind(driver)(undefined as any, bundleId, {});
-    expect(removeStub.called).to.be.false;
-    expect(installStub.called).to.be.false;
+    assert.strictEqual(removeStub.called, false);
+    assert.strictEqual(installStub.called, false);
   });
 
   it('nothing happen without bundle id', async function () {
@@ -64,8 +61,8 @@ describe('installToRealDevice', function () {
     driver.opts = {udid} as any;
 
     await installToRealDevice.bind(driver)(app, undefined, {});
-    expect(removeStub.called).to.be.false;
-    expect(installStub.called).to.be.false;
+    assert.strictEqual(removeStub.called, false);
+    assert.strictEqual(installStub.called, false);
   });
 
   it('should install without remove', async function () {
@@ -80,8 +77,8 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(removeStub.called).to.be.false;
-    expect(installStub.calledOnce).to.be.true;
+    assert.strictEqual(removeStub.called, false);
+    assert.strictEqual(installStub.calledOnce, true);
   });
 
   it('should install after remove', async function () {
@@ -96,8 +93,8 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(removeStub.calledOnce).to.be.true;
-    expect(installStub.calledOnce).to.be.true;
+    assert.strictEqual(removeStub.calledOnce, true);
+    assert.strictEqual(installStub.calledOnce, true);
   });
 
   it('should raise an error for invalid verification error after uninstall', async function () {
@@ -111,11 +108,11 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
-    await expect(installToRealDevice.bind(driver)(app, bundleId, opts)).to.be.rejectedWith(
-      'ApplicationVerificationFailed',
+    await assert.rejects(installToRealDevice.bind(driver)(app, bundleId, opts), (err: any) =>
+      err.message.includes('ApplicationVerificationFailed'),
     );
-    expect(removeStub.calledOnce).to.be.true;
-    expect(installStub.calledOnce).to.be.true;
+    assert.strictEqual(removeStub.calledOnce, true);
+    assert.strictEqual(installStub.calledOnce, true);
   });
 
   it('should install after removal once because of MismatchedApplicationIdentifierEntitlement error', async function () {
@@ -139,8 +136,8 @@ describe('installToRealDevice', function () {
 
     await installToRealDevice.bind(driver)(app, bundleId, opts);
 
-    expect(removeStub.calledOnce).to.be.true;
-    expect(installStub.calledTwice).to.be.true;
+    assert.strictEqual(removeStub.calledOnce, true);
+    assert.strictEqual(installStub.calledTwice, true);
   });
 
   it('should raise an error in the install ApplicationVerificationFailed error because it is not recoverable', async function () {
@@ -155,11 +152,11 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
-    await expect(installToRealDevice.bind(driver)(app, bundleId, opts)).to.be.rejectedWith(
-      'ApplicationVerificationFailed',
+    await assert.rejects(installToRealDevice.bind(driver)(app, bundleId, opts), (err: any) =>
+      err.message.includes('ApplicationVerificationFailed'),
     );
-    expect(removeStub.called).to.be.false;
-    expect(installStub.calledOnce).to.be.true;
+    assert.strictEqual(removeStub.called, false);
+    assert.strictEqual(installStub.calledOnce, true);
   });
 });
 
@@ -206,10 +203,10 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
 
     await realDevice.install(ipaPath, bundleId);
 
-    expect(createStub.calledOnce).to.be.true;
-    expect(installStub.calledOnceWith(ipaPath)).to.be.true;
-    expect(closeStub.calledOnce).to.be.true;
-    expect(afcStub.called).to.be.false;
+    assert.strictEqual(createStub.calledOnce, true);
+    assert.strictEqual(installStub.calledOnceWith(ipaPath), true);
+    assert.strictEqual(closeStub.calledOnce, true);
+    assert.strictEqual(afcStub.called, false);
   });
 
   it('falls back to the legacy AFC path and closes the client when zip_conduit fails', async function () {
@@ -223,9 +220,9 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     } as any);
     const afcStub = stubAfcSentinel();
 
-    await expect(realDevice.install(ipaPath, bundleId)).to.be.rejectedWith(/afc-sentinel/);
-    expect(closeStub.calledOnce).to.be.true;
-    expect(afcStub.calledOnce).to.be.true;
+    await assert.rejects(realDevice.install(ipaPath, bundleId), /afc-sentinel/);
+    assert.strictEqual(closeStub.calledOnce, true);
+    assert.strictEqual(afcStub.calledOnce, true);
   });
 
   it('does not use zip_conduit for unpacked .app bundles', async function () {
@@ -234,9 +231,9 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     const createStub = sandbox.stub(ZipConduitClient, 'create') as SinonStub;
     const afcStub = stubAfcSentinel();
 
-    await expect(realDevice.install(appDir, bundleId)).to.be.rejectedWith(/afc-sentinel/);
-    expect(createStub.called).to.be.false;
-    expect(afcStub.calledOnce).to.be.true;
+    await assert.rejects(realDevice.install(appDir, bundleId), /afc-sentinel/);
+    assert.strictEqual(createStub.called, false);
+    assert.strictEqual(afcStub.calledOnce, true);
   });
 
   it('does not use zip_conduit on iOS < 18', async function () {
@@ -245,9 +242,9 @@ describe('RealDevice install routing (zip_conduit fast path)', function () {
     const createStub = sandbox.stub(ZipConduitClient, 'create') as SinonStub;
     const afcStub = stubAfcSentinel();
 
-    await expect(realDevice.install(ipaPath, bundleId)).to.be.rejectedWith(/afc-sentinel/);
-    expect(createStub.called).to.be.false;
-    expect(afcStub.calledOnce).to.be.true;
+    await assert.rejects(realDevice.install(ipaPath, bundleId), /afc-sentinel/);
+    assert.strictEqual(createStub.called, false);
+    assert.strictEqual(afcStub.calledOnce, true);
   });
 });
 
@@ -283,9 +280,9 @@ describe('RealDevice host utility fallback policy', function () {
         CFBundleIdentifier: 'test.bundle.id',
       });
 
-      expect(await realDevice.isAppInstalled('test.bundle.id')).to.be.true;
-      expect(listAppsStub.notCalled).to.be.true;
-      expect(fetchAppInfoStub.calledOnce).to.be.true;
+      assert.strictEqual(await realDevice.isAppInstalled('test.bundle.id'), true);
+      assert.strictEqual(listAppsStub.notCalled, true);
+      assert.strictEqual(fetchAppInfoStub.calledOnce, true);
     });
   });
 });

@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach} from 'node:test';
 
 import {logger} from 'appium/support.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {DeviceConnectionsFactory} from '../../lib/device/device-connections-factory.js';
 import {RemoteXPCUnavailableError} from '../../lib/device/remote-xpc/utils.js';
-
-use(chaiAsPromised);
 
 describe('DeviceConnectionsFactory', function () {
   let devConFactory: DeviceConnectionsFactory;
@@ -19,11 +16,11 @@ describe('DeviceConnectionsFactory', function () {
 
   it('should properly transform udid/part pairs to keys', function () {
     const f = devConFactory as any;
-    expect(f._toKey('udid', 1234)).to.eql('udid:1234');
-    expect(f._toKey('udid', 0)).to.eql('udid:0');
-    expect(f._toKey('udid')).to.eql('udid:');
-    expect(f._toKey(null, 456)).to.eql(':456');
-    expect(f._toKey()).to.eql(':');
+    assert.strictEqual(f._toKey('udid', 1234), 'udid:1234');
+    assert.strictEqual(f._toKey('udid', 0), 'udid:0');
+    assert.strictEqual(f._toKey('udid'), 'udid:');
+    assert.strictEqual(f._toKey(null, 456), ':456');
+    assert.strictEqual(f._toKey(), ':');
   });
 
   it('should properly list connections by udid/port', function () {
@@ -34,17 +31,17 @@ describe('DeviceConnectionsFactory', function () {
       'udid:8765': {},
       'udid5:9876': {},
     };
-    expect(devConFactory.listConnections('udid', 1234)).to.eql(['udid:1234', 'udid:8765']);
-    expect(devConFactory.listConnections('udid', 1234, true)).to.eql(['udid:1234']);
-    expect(devConFactory.listConnections('udid', null, true)).to.eql(['udid:1234', 'udid:8765']);
-    expect(devConFactory.listConnections('udid2')).to.eql(['udid2:5678']);
-    expect(devConFactory.listConnections(null, 5678)).to.eql(['udid2:5678', 'udid4:5678']);
-    expect(devConFactory.listConnections(null, 9876)).to.eql(['udid5:9876']);
-    expect(devConFactory.listConnections(null, 9876, true)).to.eql(['udid5:9876']);
-    expect(devConFactory.listConnections()).to.eql([]);
-    expect(devConFactory.listConnections('asd')).to.eql([]);
-    expect(devConFactory.listConnections('asd', 23424)).to.eql([]);
-    expect(devConFactory.listConnections(null, 23424)).to.eql([]);
+    assert.deepStrictEqual(devConFactory.listConnections('udid', 1234), ['udid:1234', 'udid:8765']);
+    assert.deepStrictEqual(devConFactory.listConnections('udid', 1234, true), ['udid:1234']);
+    assert.deepStrictEqual(devConFactory.listConnections('udid', null, true), ['udid:1234', 'udid:8765']);
+    assert.deepStrictEqual(devConFactory.listConnections('udid2'), ['udid2:5678']);
+    assert.deepStrictEqual(devConFactory.listConnections(null, 5678), ['udid2:5678', 'udid4:5678']);
+    assert.deepStrictEqual(devConFactory.listConnections(null, 9876), ['udid5:9876']);
+    assert.deepStrictEqual(devConFactory.listConnections(null, 9876, true), ['udid5:9876']);
+    assert.deepStrictEqual(devConFactory.listConnections(), []);
+    assert.deepStrictEqual(devConFactory.listConnections('asd'), []);
+    assert.deepStrictEqual(devConFactory.listConnections('asd', 23424), []);
+    assert.deepStrictEqual(devConFactory.listConnections(null, 23424), []);
   });
 
   it('should properly release proxied connections', async function () {
@@ -55,17 +52,18 @@ describe('DeviceConnectionsFactory', function () {
     };
 
     const f = devConFactory as any;
-    expect(
+    assert.deepStrictEqual(
       await f._releaseProxiedConnections(Object.keys((DeviceConnectionsFactory as any)._connectionsMapping)),
-    ).to.eql(['udid:1234', 'udid4:6545']);
+      ['udid:1234', 'udid4:6545'],
+    );
   });
 
   it('should use legacy port forwarding if RemoteXPC is ineligible', async function () {
     const f = devConFactory as any;
     const portForwarder = await f._createPortForwarder('udid', 1234, 8100, {eligible: false});
 
-    expect(portForwarder).to.have.property('start').that.is.a('function');
-    expect(portForwarder).to.have.property('stop').that.is.a('function');
+    assert.strictEqual(typeof portForwarder.start, 'function');
+    assert.strictEqual(typeof portForwarder.stop, 'function');
   });
 
   it('should fall back to legacy port forwarding if RemoteXPC is unavailable', async function () {
@@ -79,7 +77,7 @@ describe('DeviceConnectionsFactory', function () {
 
     const portForwarder = await f._createPortForwarder('udid', 1234, 8100, remoteXPCFacade);
 
-    expect(portForwarder).to.have.property('start').that.is.a('function');
-    expect(portForwarder).to.have.property('stop').that.is.a('function');
+    assert.strictEqual(typeof portForwarder.start, 'function');
+    assert.strictEqual(typeof portForwarder.stop, 'function');
   });
 });

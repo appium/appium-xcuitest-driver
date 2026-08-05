@@ -1,12 +1,8 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach} from 'node:test';
-
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {runSimulatorReset} from '../../lib/device/simulator-management.js';
 import {XCUITestDriver} from '../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('simulator management', function () {
   describe('runSimulatorReset', function () {
@@ -37,7 +33,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect((result as any).bundleId).to.eql('io.appium.example');
+      assert.strictEqual((result as any).bundleId, 'io.appium.example');
     });
     it('should return immediately with noReset', async function () {
       driver.opts = {
@@ -48,7 +44,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect(result, undefined);
+      assert.strictEqual(result, undefined);
     });
     it('should call clean with fullRest', async function () {
       driver.opts = {
@@ -59,7 +55,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect(result).to.eql('cleaned');
+      assert.strictEqual(result, 'cleaned');
     });
     it('should not call scrubApp with fastReset and app', async function () {
       driver.opts = {
@@ -71,7 +67,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect(result, undefined);
+      assert.strictEqual(result, undefined);
     });
     it('should return immediately with noReset and app', async function () {
       driver.opts = {
@@ -83,7 +79,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect(result, undefined);
+      assert.strictEqual(result, undefined);
     });
     it('should call clean with fullRest and app', async function () {
       driver.opts = {
@@ -95,7 +91,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect(result).to.eql('cleaned');
+      assert.strictEqual(result, 'cleaned');
     });
     it('should not call scrubApp with fastReset, but no bundleid and app', async function () {
       driver.opts = {
@@ -105,7 +101,7 @@ describe('simulator management', function () {
       } as any;
       (driver as any)._device = stoppedDeviceDummy;
       await runSimulatorReset.bind(driver)();
-      expect(result, undefined);
+      assert.strictEqual(result, undefined);
     });
   });
 });

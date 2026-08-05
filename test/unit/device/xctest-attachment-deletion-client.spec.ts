@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import type {RemoteXPCFacade} from '../../../lib/device/remote-xpc/index.js';
 import {isTunnelAvailabilityError} from '../../../lib/device/remote-xpc/index.js';
 import type {RemoteXPCTestAttachment} from '../../../lib/device/remote-xpc/utils.js';
 import {XctestAttachmentDeletionClient} from '../../../lib/device/xctest-attachment-deletion-client.js';
-
-use(chaiAsPromised);
 
 function mockFacade(
   overrides: {
@@ -43,8 +40,8 @@ describe('XctestAttachmentDeletionClient', function () {
     });
     const client = new XctestAttachmentDeletionClient(facade);
     await client.deleteAttachmentsByUuid(['uuid-1']);
-    expect(deleteStub.calledOnce).to.equal(true);
-    expect(deleteStub.firstCall.args[0]).to.eql(['uuid-1']);
+    assert.strictEqual(deleteStub.calledOnce, true);
+    assert.deepStrictEqual(deleteStub.firstCall.args[0], ['uuid-1']);
   });
 
   it('rejects when delete fails', async function () {
@@ -54,21 +51,21 @@ describe('XctestAttachmentDeletionClient', function () {
     } as unknown as RemoteXPCTestAttachment;
     const facade = mockFacade({XCTestAttachment: MockAtt});
     const client = new XctestAttachmentDeletionClient(facade);
-    await expect(client.deleteAttachmentsByUuid(['u'])).to.be.rejectedWith('delete err');
+    await assert.rejects(client.deleteAttachmentsByUuid(['u']), (err: Error) => err.message.includes('delete err'));
   });
 
   it('detects TunnelAvailabilityError by name', function () {
     const err = new Error('tunnel down');
     err.name = 'TunnelAvailabilityError';
-    expect(isTunnelAvailabilityError(err)).to.equal(true);
+    assert.strictEqual(isTunnelAvailabilityError(err), true);
   });
 
   it('detects TunnelAvailabilityError by constructor name fallback', function () {
     const err = {constructor: {name: 'TunnelAvailabilityError'}};
-    expect(isTunnelAvailabilityError(err)).to.equal(true);
+    assert.strictEqual(isTunnelAvailabilityError(err), true);
   });
 
   it('does not misclassify unrelated errors as tunnel availability', function () {
-    expect(isTunnelAvailabilityError(new Error('other'))).to.equal(false);
+    assert.strictEqual(isTunnelAvailabilityError(new Error('other')), false);
   });
 });

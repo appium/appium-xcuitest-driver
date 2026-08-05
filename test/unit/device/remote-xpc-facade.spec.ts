@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach, mock} from 'node:test';
 
-import {expect} from 'chai';
 import sinon from 'sinon';
 
 import * as moduleLoaderModule from '../../../lib/device/remote-xpc/module-loader.js';
@@ -39,7 +39,7 @@ describe('RemoteXPCFacade', function () {
       true,
     );
 
-    expect(await access.determineAvailability()).to.equal(false);
+    assert.strictEqual(await access.determineAvailability(), false);
   });
 
   it('caches tunnel unavailability for the remainder of the session when init probe fails', async function () {
@@ -56,10 +56,10 @@ describe('RemoteXPCFacade', function () {
     const warn = sinon.stub();
     const access = new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn, info: sinon.stub()} as any, true);
 
-    expect(await access.determineAvailability()).to.equal(false);
-    expect(await access.determineAvailability()).to.equal(false);
-    expect(warn.calledOnce).to.be.true;
-    expect((currentTryLoadRemoteXPCModule as sinon.SinonStub).calledOnce).to.be.true;
+    assert.strictEqual(await access.determineAvailability(), false);
+    assert.strictEqual(await access.determineAvailability(), false);
+    assert.strictEqual(warn.calledOnce, true);
+    assert.strictEqual((currentTryLoadRemoteXPCModule as sinon.SinonStub).calledOnce, true);
   });
 
   it('does not disable remotexpc when a later service call hits a tunnel error', async function () {
@@ -79,11 +79,11 @@ describe('RemoteXPCFacade', function () {
     const warn = sinon.stub();
     const access = new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn, info: sinon.stub()} as any, true);
 
-    expect(await access.determineAvailability()).to.equal(true);
-    expect(await access.attemptService('test feature', operation)).to.equal(null);
-    expect(await access.determineAvailability()).to.equal(true);
-    expect(warn.calledOnce).to.be.true;
-    expect(operation.calledOnce).to.be.true;
+    assert.strictEqual(await access.determineAvailability(), true);
+    assert.strictEqual(await access.attemptService('test feature', operation), null);
+    assert.strictEqual(await access.determineAvailability(), true);
+    assert.strictEqual(warn.calledOnce, true);
+    assert.strictEqual(operation.calledOnce, true);
   });
 
   it('requireService throws when remotexpc is disabled', async function () {
@@ -107,9 +107,9 @@ describe('RemoteXPCFacade', function () {
     await access.determineAvailability();
     try {
       await access.requireService('test feature', async () => 'ok');
-      expect.fail('expected requireService to throw');
+      assert.fail('expected requireService to throw');
     } catch (err: any) {
-      expect(err.message).to.include('test feature');
+      assert.ok(err.message.includes('test feature'));
     }
   });
 });

@@ -1,12 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('get deviceinfo commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -27,11 +24,11 @@ describe('get deviceinfo commands', function () {
       currentLocale: 'ja_EN',
     };
     proxyStub.returns(opts);
-    await expect(driver.mobileGetDeviceInfo()).to.eventually.eql(opts);
+    assert.deepStrictEqual(await driver.mobileGetDeviceInfo(), opts);
   });
 
   it('get device info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    await expect(driver.mobileGetDeviceInfo()).to.be.rejected;
+    await assert.rejects(driver.mobileGetDeviceInfo());
   });
 });

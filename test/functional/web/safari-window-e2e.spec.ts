@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, type TestContext} from 'node:test';
 
 import {waitForCondition} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {isEmpty} from '../../../lib/utils/index.js';
@@ -17,8 +16,6 @@ import {
   guineaPigFramePage,
   guineaPigIframePage,
 } from './helpers/index.js';
-
-use(chaiAsPromised);
 
 const GET_ELEM_SYNC = `return document.getElementsByTagName('h1')[0].innerHTML;`;
 const GET_ELEM_ASYNC = `arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);`;
@@ -58,7 +55,7 @@ describe('safari - windows and frames', function () {
 
     it('should not be able to open js popup windows', async function () {
       await driver.executeScript("window.open('/test/guinea-pig2.html', null)", []);
-      await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.be.rejected;
+      await assert.rejects(spinTitleEquals(driver, 'I am another page title', 5));
     });
   });
 
@@ -96,7 +93,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should throw nosuchwindow if there is not one', async function () {
-        await expect(driver.switchToWindow('noexistman')).to.be.rejectedWith(/window could not be found/);
+        await assert.rejects(driver.switchToWindow('noexistman'), /window could not be found/);
       });
 
       it('should be able to open and close windows', async function (ctx: TestContext) {
@@ -174,7 +171,7 @@ describe('safari - windows and frames', function () {
         });
 
         await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
-        await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.not.be.rejected;
+        await assert.doesNotReject(spinTitleEquals(driver, 'I am another page title', 5));
         await driver.updateSettings({autoClickAlertSelector: ''});
 
         await driver.closeWindow();
@@ -200,58 +197,58 @@ describe('safari - windows and frames', function () {
 
       it('should switch to frame by index', async function () {
         await driver.switchToFrame(0);
-        await expect(driver.getTitle()).to.eventually.equal(FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await expect(h1.getText()).to.eventually.equal(SUB_FRAME_1_TITLE);
+        assert.strictEqual(await h1.getText(), SUB_FRAME_1_TITLE);
       });
 
       it('should switch to frame by element', async function () {
         await driver.switchToFrame(await driver.$('#frame3'));
-        await expect(driver.getTitle()).to.eventually.equal(FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await expect(h1.getText()).to.eventually.equal(SUB_FRAME_3_TITLE);
+        assert.strictEqual(await h1.getText(), SUB_FRAME_3_TITLE);
       });
 
       it('should switch back to default content from frame', async function () {
         await driver.switchToFrame(await driver.$('[name="first"]'));
-        await expect(driver.getTitle()).to.eventually.equal(FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await expect(h1.getText()).to.eventually.equal(SUB_FRAME_1_TITLE);
+        assert.strictEqual(await h1.getText(), SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        expect(isEmpty(await driver.$$('<frameset />'))).to.be.false;
+        assert.strictEqual(isEmpty(await driver.$$('<frameset />')), false);
       });
 
       it('should switch to child frames', async function () {
         await driver.switchToFrame(await driver.$('[name="third"]'));
-        await expect(driver.getTitle()).to.eventually.equal(FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), FRAMESET_TITLE);
 
         await driver.switchToFrame(await driver.$('[name="childframe"]'));
-        expect(isEmpty(await driver.$$('#only_on_page_2'))).to.be.false;
+        assert.strictEqual(isEmpty(await driver.$$('#only_on_page_2')), false);
       });
 
       it('should execute javascript in frame', async function () {
         await driver.switchToFrame(1);
-        await expect(driver.executeScript(GET_ELEM_SYNC, [])).to.eventually.equal(SUB_FRAME_2_TITLE);
+        assert.strictEqual(await driver.executeScript(GET_ELEM_SYNC, []), SUB_FRAME_2_TITLE);
       });
 
       it('should execute async javascript in frame', async function () {
         await driver.setTimeout({script: 2000});
         await driver.switchToFrame(0);
-        await expect(driver.executeAsync(GET_ELEM_ASYNC)).to.eventually.equal(SUB_FRAME_1_TITLE);
+        assert.strictEqual(await driver.executeAsync(GET_ELEM_ASYNC), SUB_FRAME_1_TITLE);
       });
 
       it('should get source within a frame', async function () {
-        await expect(driver.getPageSource()).to.eventually.include(FRAMESET_TITLE);
+        assert.ok((await driver.getPageSource()).includes(FRAMESET_TITLE));
 
         await driver.switchToFrame(0);
 
         const frameSource = await driver.getPageSource();
-        expect(frameSource).to.include(SUB_FRAME_1_TITLE);
-        expect(frameSource).to.not.include(FRAMESET_TITLE);
+        assert.ok(frameSource.includes(SUB_FRAME_1_TITLE));
+        assert.ok(!frameSource.includes(FRAMESET_TITLE));
       });
     });
 
@@ -263,44 +260,44 @@ describe('safari - windows and frames', function () {
 
       it('should switch to iframe by index', async function () {
         await driver.switchToFrame(0);
-        await expect(driver.getTitle()).to.eventually.equal(IFRAME_FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await expect(h1.getText()).to.eventually.equal(SUB_FRAME_1_TITLE);
+        assert.strictEqual(await h1.getText(), SUB_FRAME_1_TITLE);
       });
 
       it('should switch to iframe by element', async function () {
         await driver.switchToFrame(await driver.$('#id-iframe3'));
-        await expect(driver.getTitle()).to.eventually.equal(IFRAME_FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await expect(h1.getText()).to.eventually.equal(SUB_FRAME_3_TITLE);
+        assert.strictEqual(await h1.getText(), SUB_FRAME_3_TITLE);
       });
 
       it('should not switch to iframe by element of wrong type', async function () {
         const h1 = await driver.findElement('tag name', 'h1');
-        await expect(driver.switchToFrame(h1)).to.be.rejected;
+        await assert.rejects(driver.switchToFrame(h1));
       });
 
       it('should switch back to default content from iframe', async function () {
         await driver.switchToFrame(await driver.$('[name="iframe1"]'));
-        await expect(driver.getTitle()).to.eventually.equal(IFRAME_FRAMESET_TITLE);
+        assert.strictEqual(await driver.getTitle(), IFRAME_FRAMESET_TITLE);
 
         const h1 = await driver.$('<h1 />');
-        await expect(h1.getText()).to.eventually.equal(SUB_FRAME_1_TITLE);
+        assert.strictEqual(await h1.getText(), SUB_FRAME_1_TITLE);
 
         await driver.switchToFrame(null);
-        expect((await driver.$$('<iframe />')).length).to.eql(3);
+        assert.strictEqual((await driver.$$('<iframe />')).length, 3);
       });
 
       it('should get source within an iframe', async function () {
-        await expect(driver.getPageSource()).to.eventually.include(IFRAME_FRAMESET_TITLE);
+        assert.ok((await driver.getPageSource()).includes(IFRAME_FRAMESET_TITLE));
 
         await driver.switchToFrame(await driver.$('[name="iframe1"]'));
 
         const frameSource = await driver.getPageSource();
-        expect(frameSource).to.include(SUB_FRAME_1_TITLE);
-        expect(frameSource).to.not.include(IFRAME_FRAMESET_TITLE);
+        assert.ok(frameSource.includes(SUB_FRAME_1_TITLE));
+        assert.ok(!frameSource.includes(IFRAME_FRAMESET_TITLE));
       });
     });
   });

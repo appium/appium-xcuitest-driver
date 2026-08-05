@@ -1,16 +1,13 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach, type TestContext} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {extractCapabilityValue, getUICatalogCaps} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 describe('XCUITestDriver - elements -', function () {
   let driver: Browser;
@@ -27,16 +24,16 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the text of an element', async function () {
       const el = await driver.$('~Buttons');
       const text = await el.getText();
-      expect(text).to.eql('Buttons');
+      assert.strictEqual(text, 'Buttons');
     });
     it('should not mix up elements', async function () {
       const el1 = await driver.$('~Buttons');
       const text1 = await el1.getText();
-      expect(text1).to.eql('Buttons');
+      assert.strictEqual(text1, 'Buttons');
 
       const el2 = await driver.$('~Image View');
       const text2 = await el2.getText();
-      expect(text2).to.eql('Image View');
+      assert.strictEqual(text2, 'Image View');
     });
   });
 
@@ -44,19 +41,19 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the name of an element', async function () {
       const el = await driver.$('~Buttons');
       const name = await el.getTagName();
-      expect(name).to.eql('XCUIElementTypeStaticText');
+      assert.strictEqual(name, 'XCUIElementTypeStaticText');
     });
   });
 
   describe('displayed', function () {
     it('should get the displayed status for a displayed element', async function () {
       const el = await driver.$('~Buttons');
-      expect(await el.isDisplayed()).to.be.true;
+      assert.strictEqual(await el.isDisplayed(), true);
     });
     it('should get the displayed status for an undisplayed element', async function () {
       // this value is invisible in the view
       const el = await driver.$('~Horizontal scroll bar, 1 page');
-      expect(await el.isDisplayed()).to.be.false;
+      assert.strictEqual(await el.isDisplayed(), false);
     });
   });
 
@@ -64,8 +61,8 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the location of an element', async function () {
       const el = await driver.$('~Buttons');
       const loc = await el.getLocation();
-      expect(loc.x).to.exist;
-      expect(loc.y).to.exist;
+      assert.ok(loc.x !== undefined && loc.x !== null);
+      assert.ok(loc.y !== undefined && loc.y !== null);
     });
     it('should not mix up locations', async function () {
       const el1 = await driver.$('~Date Picker');
@@ -74,8 +71,8 @@ describe('XCUITestDriver - elements -', function () {
       const el2 = await driver.$('~Image View');
       const loc2 = await el2.getLocation();
 
-      expect(loc1.x).to.eql(loc2.x);
-      expect(loc1.y).to.be.below(loc2.y);
+      assert.strictEqual(loc1.x, loc2.x);
+      assert.ok(loc1.y < loc2.y);
     });
   });
 
@@ -83,8 +80,8 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the location of an element', async function () {
       const el = await driver.$('~Buttons');
       const loc = await el.getLocation();
-      expect(loc.x).to.exist;
-      expect(loc.y).to.exist;
+      assert.ok(loc.x !== undefined && loc.x !== null);
+      assert.ok(loc.y !== undefined && loc.y !== null);
     });
     it('should not mix up locations', async function () {
       const el1 = await driver.$('~Date Picker');
@@ -93,8 +90,8 @@ describe('XCUITestDriver - elements -', function () {
       const el2 = await driver.$('~Image View');
       const loc2 = await el2.getLocation();
 
-      expect(loc1.x).to.eql(loc2.x);
-      expect(loc1.y).to.be.below(loc2.y);
+      assert.strictEqual(loc1.x, loc2.x);
+      assert.ok(loc1.y < loc2.y);
     });
   });
 
@@ -102,8 +99,8 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the size of the element', async function () {
       const el = await driver.$('~Buttons');
       const size = await el.getSize();
-      expect(size.width).to.exist;
-      expect(size.height).to.exist;
+      assert.ok(size.width !== undefined && size.width !== null);
+      assert.ok(size.height !== undefined && size.height !== null);
     });
   });
 
@@ -115,15 +112,15 @@ describe('XCUITestDriver - elements -', function () {
       }
       const table = await driver.$('XCUIElementTypeTable');
       const contentSize = JSON.parse((await table.getAttribute('contentSize')) as string);
-      expect(contentSize.width).to.be.a('number');
-      expect(contentSize.height).to.be.a('number');
-      expect(contentSize.top).to.be.a('number');
-      expect(contentSize.left).to.be.a('number');
-      expect(contentSize.scrollableOffset).to.be.a('number');
-      expect(contentSize.height).to.be.above(500);
+      assert.strictEqual(typeof contentSize.width, 'number');
+      assert.strictEqual(typeof contentSize.height, 'number');
+      assert.strictEqual(typeof contentSize.top, 'number');
+      assert.strictEqual(typeof contentSize.left, 'number');
+      assert.strictEqual(typeof contentSize.scrollableOffset, 'number');
+      assert.ok(contentSize.height > 500);
       // basically, the height of the inner content should be at least 200
       // pixels more than the height of the container
-      expect(contentSize.scrollableOffset).to.be.above(contentSize.height + 200);
+      assert.ok(contentSize.scrollableOffset > contentSize.height + 200);
     });
 
     it.skip('should get the contentSize of a collection view', async function () {
@@ -135,9 +132,7 @@ describe('XCUITestDriver - elements -', function () {
       if (wrongTypeEl.error) {
         wrongTypeEl = await driver.$('~UICatalog');
       }
-      await expect(wrongTypeEl.getAttribute('contentSize')).to.eventually.be.rejectedWith(
-        /Can't get content size for type/,
-      );
+      await assert.rejects(wrongTypeEl.getAttribute('contentSize'), /Can't get content size for type/);
     });
   });
 
@@ -147,7 +142,7 @@ describe('XCUITestDriver - elements -', function () {
         const el = await driver.$('~Buttons');
         await el.click();
         await delay(1000);
-        expect(await driver.$$('XCUIElementTypeButton')).to.have.length.above(4);
+        assert.ok(((await driver.$$('XCUIElementTypeButton')).length as unknown as number) > 4);
         await driver.back();
       });
     });
@@ -178,14 +173,14 @@ describe('XCUITestDriver - elements -', function () {
           await el.setValue(text1);
 
           const text = await el.getText();
-          expect(text).to.eql(text1);
+          assert.strictEqual(text, text1);
         });
         it('should type in the text field even before the keyboard is up', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
           await el.setValue(text1);
 
           const text = await el.getText();
-          expect(text).to.eql(text1);
+          assert.strictEqual(text, text1);
         });
         it('should type a url in the text field', async function () {
           // in Travis this sometimes gets the wrong text
@@ -196,7 +191,7 @@ describe('XCUITestDriver - elements -', function () {
             await el.setValue(text3);
 
             const text = await el.getText();
-            expect(text).to.eql(text3);
+            assert.strictEqual(text, text3);
           });
         });
         it('should be able to type into two text fields', async function () {
@@ -208,43 +203,43 @@ describe('XCUITestDriver - elements -', function () {
           await els[1].setValue(text2);
 
           let text = await els[0].getText();
-          expect(text).to.eql(text1);
+          assert.strictEqual(text, text1);
 
           text = await els[1].getText();
-          expect(text).to.eql(text2);
+          assert.strictEqual(text, text2);
         });
         it('should type in a secure text field', async function () {
           const els = await driver.$$('XCUIElementTypeSecureTextField');
           await els[0].setValue(text1);
 
           const text = await els[0].getText();
-          expect(text).to.not.eql(text1);
-          expect(text.length).to.eql(text1.length);
-          expect(text).to.eql(secureText);
+          assert.notStrictEqual(text, text1);
+          assert.strictEqual(text.length, text1.length);
+          assert.strictEqual(text, secureText);
         });
         it('should type a backspace', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.elementSendKeys(await el.elementId, '0123456789\uE003');
+          await driver.elementSendKeys(await el.elementId, '0123456789');
 
           const text = await el.getText();
-          expect(text).to.eql('012345678');
+          assert.strictEqual(text, '012345678');
         });
         it('should type a delete', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.elementSendKeys(await el.elementId, '0123456789\ue017');
+          await driver.elementSendKeys(await el.elementId, '0123456789');
 
           const text = await el.getText();
-          expect(text).to.eql('012345678');
+          assert.strictEqual(text, '012345678');
         });
         it('should type a newline', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.elementSendKeys(await el.elementId, '0123456789\uE006');
+          await driver.elementSendKeys(await el.elementId, '0123456789');
 
           const text = await el.getText();
-          expect(text).to.eql('0123456789');
+          assert.strictEqual(text, '0123456789');
         });
       });
 
@@ -255,49 +250,49 @@ describe('XCUITestDriver - elements -', function () {
           await el.setValue(text1);
 
           let text = await el.getText();
-          expect(text).to.eql(text1);
+          assert.strictEqual(text, text1);
 
           await el.clearValue();
 
           text = await el.getText();
-          expect(text).to.eql(phText);
+          assert.strictEqual(text, phText);
         });
         it('should be able to clear two text fields', async function () {
           const els = await driver.$$('XCUIElementTypeTextField');
           await els[0].setValue(text1);
 
           let text = await els[0].getText();
-          expect(text).to.eql(text1);
+          assert.strictEqual(text, text1);
 
           await driver.hideKeyboard();
 
           await els[1].setValue(text2);
 
           text = await els[1].getText();
-          expect(text).to.eql(text2);
+          assert.strictEqual(text, text2);
 
           await els[0].clearValue();
 
           text = await els[0].getText();
-          expect(text).to.eql(phText);
+          assert.strictEqual(text, phText);
 
           await driver.hideKeyboard();
 
           await els[1].clearValue();
 
           text = await els[1].getText();
-          expect(text).to.eql(phText);
+          assert.strictEqual(text, phText);
         });
         it('should clear a secure text field', async function () {
           const el = await driver.$('XCUIElementTypeSecureTextField');
           await el.setValue(text1);
 
           let text = await el.getText();
-          expect(text).to.eql(secureText);
+          assert.strictEqual(text, secureText);
 
           await el.clearValue();
           text = await el.getText();
-          expect(text).to.eql(phText);
+          assert.strictEqual(text, phText);
         });
       });
       describe('key', function () {
@@ -336,12 +331,12 @@ describe('XCUITestDriver - elements -', function () {
           await driver.performActions(actions);
 
           const text = await el.getText();
-          expect(text).to.eql('hiあ');
+          assert.strictEqual(text, 'hiあ');
         });
       });
       describe('hide keyboard', function () {
         it('should pass if the keyboard is already hidden', async function () {
-          await expect(driver.hideKeyboard()).to.be.fulfilled;
+          await assert.doesNotReject(driver.hideKeyboard());
         });
       });
     });
@@ -364,12 +359,12 @@ describe('XCUITestDriver - elements -', function () {
           const wheel = wheels[i];
 
           let value = await wheel.getAttribute('value');
-          expect(parseInt(value!, 10)).to.eql(values[i]);
+          assert.strictEqual(parseInt(value!, 10), values[i]);
 
           await wheel.setValue(150);
 
           value = await wheel.getAttribute('value');
-          expect(parseInt(value!, 10)).to.eql(150);
+          assert.strictEqual(parseInt(value!, 10), 150);
         }
       });
     });

@@ -1,16 +1,13 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach, beforeEach} from 'node:test';
 
 //@ts-expect-error no types
 import {services} from 'appium-ios-device';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {RealDevice} from '../../../lib/device/real-device-management.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 import type {XCUITestDriverOpts} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('location commands', function () {
   const udid = '1234';
@@ -35,7 +32,7 @@ describe('location commands', function () {
     it('should be authorizationStatus !== 3', async function () {
       proxySpy.withArgs('/wda/device/location', 'GET').resolves({authorizationStatus: 0, latitude: 0, longitude: 0});
 
-      await expect(driver.getGeoLocation()).to.be.rejectedWith('Location service must be');
+      await assert.rejects(driver.getGeoLocation(), (err: any) => err.message.includes('Location service must be'));
     });
 
     it('should be authorizationStatus === 3', async function () {
@@ -46,7 +43,7 @@ describe('location commands', function () {
         altitude: 26.267269134521484,
       });
 
-      await expect(driver.getGeoLocation()).to.eventually.eql({
+      assert.deepStrictEqual(await driver.getGeoLocation(), {
         altitude: 26.267269134521484,
         latitude: -100.395050048828125,
         longitude: 100.09922650538002,
@@ -75,7 +72,7 @@ describe('location commands', function () {
     });
 
     it('should fail when location object is wrong', async function () {
-      await expect(driver.setGeoLocation({})).to.be.rejectedWith('latitude should be set');
+      await assert.rejects(driver.setGeoLocation({}), (err: any) => err.message.includes('latitude should be set'));
     });
 
     describe('on real device', function () {
@@ -87,18 +84,18 @@ describe('location commands', function () {
       it('should use location service to set a location when no platform version', async function () {
         await driver.setGeoLocation({latitude: 1.234, longitude: 2.789});
 
-        expect(startSimulateLocationServiceStub.calledOnce).to.be.true;
-        expect(startSimulateLocationServiceStub.firstCall.args[0]).to.eql(udid);
-        expect(setLocationStub.args[0]).to.eql([1.234, 2.789]);
+        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, true);
+        assert.strictEqual(startSimulateLocationServiceStub.firstCall.args[0], udid);
+        assert.deepStrictEqual(setLocationStub.args[0], [1.234, 2.789]);
       });
 
       it('should use location service to set a location for lower than platform version 17', async function () {
         driver.opts.platformVersion = '16.4.5';
         await driver.setGeoLocation({latitude: 1.234, longitude: 2.789});
 
-        expect(startSimulateLocationServiceStub.calledOnce).to.be.true;
-        expect(startSimulateLocationServiceStub.firstCall.args[0]).to.eql(udid);
-        expect(setLocationStub.args[0]).to.eql([1.234, 2.789]);
+        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, true);
+        assert.strictEqual(startSimulateLocationServiceStub.firstCall.args[0], udid);
+        assert.deepStrictEqual(setLocationStub.args[0], [1.234, 2.789]);
       });
 
       it('should use mobileSetSimulatedLocation to set a location for over platform version 17', async function () {
@@ -110,11 +107,11 @@ describe('location commands', function () {
 
         const result = await driver.setGeoLocation(locationRequest);
 
-        expect(startSimulateLocationServiceStub.calledOnce).to.be.false;
-        expect(proxySpy.firstCall.args[0]).to.eql('/wda/simulatedLocation');
-        expect(proxySpy.firstCall.args[1]).to.eql('POST');
-        expect(proxySpy.firstCall.args[2]).to.eql(locationRequest);
-        expect(result).to.eql({latitude: 1.234, longitude: 2.789, altitude: 0});
+        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, false);
+        assert.strictEqual(proxySpy.firstCall.args[0], '/wda/simulatedLocation');
+        assert.strictEqual(proxySpy.firstCall.args[1], 'POST');
+        assert.deepStrictEqual(proxySpy.firstCall.args[2], locationRequest);
+        assert.deepStrictEqual(result, {latitude: 1.234, longitude: 2.789, altitude: 0});
       });
 
       it('should use mobileSetSimulatedLocation to set a location for over platform version 17 with exception', async function () {
@@ -122,20 +119,22 @@ describe('location commands', function () {
         driver.opts.platformVersion = '17.0.0';
         proxySpy.withArgs('/wda/simulatedLocation', 'POST', locationRequest).throws('An error in proxying the request');
 
-        await expect(driver.setGeoLocation(locationRequest)).to.be.rejectedWith('An error in proxying the request');
+        await assert.rejects(driver.setGeoLocation(locationRequest), (err: any) =>
+          err.message.includes('An error in proxying the request'),
+        );
 
-        expect(startSimulateLocationServiceStub.calledOnce).to.be.false;
-        expect(proxySpy.firstCall.args[0]).to.eql('/wda/simulatedLocation');
-        expect(proxySpy.firstCall.args[1]).to.eql('POST');
-        expect(proxySpy.firstCall.args[2]).to.eql(locationRequest);
+        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, false);
+        assert.strictEqual(proxySpy.firstCall.args[0], '/wda/simulatedLocation');
+        assert.strictEqual(proxySpy.firstCall.args[1], 'POST');
+        assert.deepStrictEqual(proxySpy.firstCall.args[2], locationRequest);
       });
 
       it('should use location service to set a location with negative values', async function () {
         await driver.setGeoLocation({latitude: 1.234, longitude: -2});
 
-        expect(startSimulateLocationServiceStub.calledOnce).to.be.true;
-        expect(startSimulateLocationServiceStub.firstCall.args[0]).to.eql(udid);
-        expect(setLocationStub.args[0]).to.eql([1.234, -2]);
+        assert.strictEqual(startSimulateLocationServiceStub.calledOnce, true);
+        assert.strictEqual(startSimulateLocationServiceStub.firstCall.args[0], udid);
+        assert.deepStrictEqual(setLocationStub.args[0], [1.234, -2]);
       });
     });
 
@@ -153,13 +152,13 @@ describe('location commands', function () {
       });
       it('should set string coordinates', async function () {
         await driver.setGeoLocation({latitude: '1.234', longitude: '2.789'} as any);
-        expect(deviceSetLocationSpy.firstCall.args[0]).to.eql('1.234');
-        expect(deviceSetLocationSpy.firstCall.args[1]).to.eql('2.789');
+        assert.strictEqual(deviceSetLocationSpy.firstCall.args[0], '1.234');
+        assert.strictEqual(deviceSetLocationSpy.firstCall.args[1], '2.789');
       });
       it('should set number coordinates', async function () {
         await driver.setGeoLocation({latitude: 1, longitude: -2});
-        expect(deviceSetLocationSpy.firstCall.args[0]).to.eql('1');
-        expect(deviceSetLocationSpy.firstCall.args[1]).to.eql('-2');
+        assert.strictEqual(deviceSetLocationSpy.firstCall.args[0], '1');
+        assert.strictEqual(deviceSetLocationSpy.firstCall.args[1], '-2');
       });
     });
   });

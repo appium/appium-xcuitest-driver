@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, afterEach, beforeEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 // eslint-disable-next-line
 import sinon, {createSandbox} from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('element commands', function () {
   let sandbox: sinon.SinonSandbox;
@@ -34,8 +31,8 @@ describe('element commands', function () {
 
     it('should call setValue', async function () {
       await driver.setValueImmediate('hello', '2');
-      expect((driver.setValue as any).calledOnceWithExactly('hello', '2')).to.be.true;
-      expect((driver.setValue as any).returned(undefined)).to.be.true;
+      assert.strictEqual((driver.setValue as any).calledOnceWithExactly('hello', '2'), true);
+      assert.strictEqual((driver.setValue as any).returned(undefined), true);
     });
   });
 
@@ -44,37 +41,37 @@ describe('element commands', function () {
     const attribute = 'enabled';
 
     afterEach(function () {
-      expect(proxyStub.calledOnce).to.be.true;
+      assert.strictEqual(proxyStub.calledOnce, true);
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
       proxyStub.resolves(1);
-      expect(await driver.getAttribute(attribute, elementId as any)).to.eql('true');
+      assert.strictEqual(await driver.getAttribute(attribute, elementId as any), 'true');
     });
 
     it('should properly parse boolean false attribute presented as integer', async function () {
       proxyStub.resolves(0);
-      expect(await driver.getAttribute(attribute, elementId as any)).to.eql('false');
+      assert.strictEqual(await driver.getAttribute(attribute, elementId as any), 'false');
     });
 
     it('should properly parse integer attribute presented as string', async function () {
       proxyStub.resolves('0');
-      expect(await driver.getAttribute(attribute, elementId as any)).to.eql('0');
+      assert.strictEqual(await driver.getAttribute(attribute, elementId as any), '0');
     });
 
     it('should properly parse boolean attribute presented as bool', async function () {
       proxyStub.resolves(false);
-      expect(await driver.getAttribute(attribute, elementId as any)).to.eql('false');
+      assert.strictEqual(await driver.getAttribute(attribute, elementId as any), 'false');
     });
 
     it('should properly parse null attribute', async function () {
       proxyStub.resolves(null);
-      await expect(driver.getAttribute(attribute, elementId as any)).to.eventually.be.null;
+      assert.strictEqual(await driver.getAttribute(attribute, elementId as any), null);
     });
 
     it('should properly parse string attribute', async function () {
       proxyStub.resolves('value');
-      expect(await driver.getAttribute(attribute, elementId as any)).to.eql('value');
+      assert.strictEqual(await driver.getAttribute(attribute, elementId as any), 'value');
     });
   });
 
@@ -83,37 +80,37 @@ describe('element commands', function () {
     const property = 'enabled';
 
     afterEach(function () {
-      expect(proxyStub.calledOnce).to.be.true;
+      assert.strictEqual(proxyStub.calledOnce, true);
     });
 
     it('should properly parse boolean true attribute presented as integer', async function () {
       proxyStub.resolves(1);
-      expect(await driver.getProperty(property, elementId as any)).to.eql('true');
+      assert.strictEqual(await driver.getProperty(property, elementId as any), 'true');
     });
 
     it('should properly parse boolean false attribute presented as integer', async function () {
       proxyStub.resolves(0);
-      expect(await driver.getProperty(property, elementId as any)).to.eql('false');
+      assert.strictEqual(await driver.getProperty(property, elementId as any), 'false');
     });
 
     it('should properly parse integer attribute presented as string', async function () {
       proxyStub.resolves('0');
-      expect(await driver.getProperty(property, elementId as any)).to.eql('0');
+      assert.strictEqual(await driver.getProperty(property, elementId as any), '0');
     });
 
     it('should properly parse boolean attribute presented as bool', async function () {
       proxyStub.resolves(false);
-      expect(await driver.getProperty(property, elementId as any)).to.eql('false');
+      assert.strictEqual(await driver.getProperty(property, elementId as any), 'false');
     });
 
     it('should properly parse null attribute', async function () {
       proxyStub.resolves(null);
-      await expect(driver.getProperty(property, elementId as any)).to.eventually.be.null;
+      assert.strictEqual(await driver.getProperty(property, elementId as any), null);
     });
 
     it('should properly parse string attribute', async function () {
       proxyStub.resolves('value');
-      expect(await driver.getProperty(property, elementId as any)).to.eql('value');
+      assert.strictEqual(await driver.getProperty(property, elementId as any), 'value');
     });
   });
 
@@ -121,9 +118,9 @@ describe('element commands', function () {
     it('should call the internal method instead of WDA', async function () {
       const getContentSizeStub = sandbox.stub(driver, 'getContentSize');
       getContentSizeStub.resolves('foo');
-      expect(await driver.getAttribute('contentSize', 2 as any)).to.eql('foo');
-      expect(proxyStub.called).to.be.false;
-      expect(getContentSizeStub.calledOnce).to.be.true;
+      assert.strictEqual(await driver.getAttribute('contentSize', 2 as any), 'foo');
+      assert.strictEqual(proxyStub.called, false);
+      assert.strictEqual(getContentSizeStub.calledOnce, true);
     });
   });
 
@@ -159,13 +156,13 @@ describe('element commands', function () {
         driver.curContext = oldContext;
       });
       it('should throw when in a web context', async function () {
-        await expect(driver.getContentSize(el as any)).to.be.rejectedWith(/not yet implemented/);
+        await assert.rejects(driver.getContentSize(el as any), /not yet implemented/);
       });
     });
 
     it('should throw if trying to get contentSize of something other than table or collection', async function () {
       getAttrStub.resolves('XCUIElementTypeStatusBar');
-      await expect(driver.getContentSize(el as any)).to.be.rejectedWith(/Can't get content size for type/);
+      await assert.rejects(driver.getContentSize(el as any), /Can't get content size for type/);
     });
 
     it('should simply get the rect if just one child', async function () {
@@ -175,14 +172,14 @@ describe('element commands', function () {
       getSizeStub.resolves({height: 100, width: 200});
       getLocationStub.resolves({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el as any));
-      expect(contentSizeObj).to.eql({
+      assert.deepStrictEqual(contentSizeObj, {
         width: 200,
         height: 100,
         top: 0,
         left: 0,
         scrollableOffset: 100,
       });
-      expect(getRectStub.calledOnce).to.be.true;
+      assert.strictEqual(getRectStub.calledOnce, true);
     });
 
     it('should get simple difference in element positions of a table', async function () {
@@ -195,14 +192,14 @@ describe('element commands', function () {
       getSizeStub.resolves({height: 100, width: 200});
       getLocationStub.resolves({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el as any));
-      expect(contentSizeObj).to.eql({
+      assert.deepStrictEqual(contentSizeObj, {
         width: 200,
         height: 100,
         top: 0,
         left: 0,
         scrollableOffset: 170,
       });
-      expect(getRectStub.calledTwice).to.be.true;
+      assert.strictEqual(getRectStub.calledTwice, true);
     });
 
     it('should be sensitive to row items in the case of a collection view', async function () {
@@ -224,14 +221,14 @@ describe('element commands', function () {
       getSizeStub.resolves({height: 100, width: 200});
       getLocationStub.resolves({x: 0, y: 0});
       const contentSizeObj = JSON.parse(await driver.getContentSize(el as any));
-      expect(contentSizeObj).to.eql({
+      assert.deepStrictEqual(contentSizeObj, {
         width: 200,
         height: 100,
         top: 0,
         left: 0,
         scrollableOffset,
       });
-      expect(getRectStub.calledThrice).to.be.true;
+      assert.strictEqual(getRectStub.calledThrice, true);
     });
   });
 
@@ -244,52 +241,57 @@ describe('element commands', function () {
       describe('success', function () {
         it('should proxy string as array of characters', async function () {
           await driver.setValue('hello\uE006', elementId as any);
-          expect(
+          assert.strictEqual(
             proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
               value: ['h', 'e', 'l', 'l', 'o', '\n'],
             }),
-          ).to.be.true;
+            true,
+          );
         });
         it('should proxy string with smileys as array of characters', async function () {
           await driver.setValue('hello😀😎', elementId as any);
-          expect(
+          assert.strictEqual(
             proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
               value: ['h', 'e', 'l', 'l', 'o', '😀', '😎'],
             }),
-          ).to.be.true;
+            true,
+          );
         });
         it('should proxy number as array of characters', async function () {
           await driver.setValue(1234.56, elementId as any);
-          expect(
+          assert.strictEqual(
             proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
               value: ['1', '2', '3', '4', '.', '5', '6'],
             }),
-          ).to.be.true;
+            true,
+          );
         });
         it('should proxy string array as array of characters', async function () {
           await driver.setValue(['hel', 'lo'], elementId as any);
-          expect(
+          assert.strictEqual(
             proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
               value: ['h', 'e', 'l', 'l', 'o'],
             }),
-          ).to.be.true;
+            true,
+          );
         });
         it('should proxy integer array as array of characters', async function () {
           await driver.setValue([1234] as any, elementId as any);
-          expect(
+          assert.strictEqual(
             proxyStub.calledOnceWithExactly(expectedEndpoint, expectedMethod, {
               value: ['1', '2', '3', '4'],
             }),
-          ).to.be.true;
+            true,
+          );
         });
       });
 
       describe('failure', function () {
         it('should throw invalid argument exception for null', async function () {
-          await expect(driver.setValue(null as any, elementId as any)).to.be.rejectedWith(/supported/);
+          await assert.rejects(driver.setValue(null as any, elementId as any), /supported/);
         });
         it('should throw invalid argument exception for object', async function () {
-          await expect(driver.setValue({hi: 'there'} as any, elementId as any)).to.be.rejectedWith(/supported/);
+          await assert.rejects(driver.setValue({hi: 'there'} as any, elementId as any), /supported/);
         });
       });
     });
@@ -316,23 +318,23 @@ describe('element commands', function () {
         it('with default', async function () {
           driver.opts.sendKeyStrategy = undefined;
           await driver.setValue('hello\uE006😀', elementId as any);
-          expect(atomElement.calledOnce).to.be.true;
-          expect(executeAtom.calledOnce).to.be.true;
-          expect(setValueWithWebAtom.calledOnceWithExactly(webEl, 'hello\uE006😀')).to.be.true;
+          assert.strictEqual(atomElement.calledOnce, true);
+          assert.strictEqual(executeAtom.calledOnce, true);
+          assert.strictEqual(setValueWithWebAtom.calledOnceWithExactly(webEl, 'hello\uE006😀'), true);
         });
 
         it('with oneByOne', async function () {
           driver.opts.sendKeyStrategy = 'oneByOne';
           await driver.setValue('hello\uE006😀', elementId as any);
-          expect(atomElement.calledOnce).to.be.true;
-          expect(executeAtom.calledOnce).to.be.true;
-          expect(setValueWithWebAtom.getCall(0).args).to.eql([webEl, 'h']);
-          expect(setValueWithWebAtom.getCall(1).args).to.eql([webEl, 'e']);
-          expect(setValueWithWebAtom.getCall(2).args).to.eql([webEl, 'l']);
-          expect(setValueWithWebAtom.getCall(3).args).to.eql([webEl, 'l']);
-          expect(setValueWithWebAtom.getCall(4).args).to.eql([webEl, 'o']);
-          expect(setValueWithWebAtom.getCall(5).args).to.eql([webEl, '\n']);
-          expect(setValueWithWebAtom.getCall(6).args).to.eql([webEl, '😀']);
+          assert.strictEqual(atomElement.calledOnce, true);
+          assert.strictEqual(executeAtom.calledOnce, true);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(0).args, [webEl, 'h']);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(1).args, [webEl, 'e']);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(2).args, [webEl, 'l']);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(3).args, [webEl, 'l']);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(4).args, [webEl, 'o']);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(5).args, [webEl, '\n']);
+          assert.deepStrictEqual(setValueWithWebAtom.getCall(6).args, [webEl, '😀']);
         });
       });
     });
@@ -363,21 +365,21 @@ describe('element commands', function () {
 
     it('should get location relative to scroll by default', async function () {
       const loc = await driver.getLocation(webEl);
-      expect(executeStub.calledOnce).to.be.false;
-      expect(atomStub.calledOnce).to.be.true;
-      expect(atomStub.firstCall.args[0]).to.eql('get_top_left_coordinates');
-      expect(loc.x).to.equal(0);
-      expect(loc.y).to.equal(0);
+      assert.strictEqual(executeStub.calledOnce, false);
+      assert.strictEqual(atomStub.calledOnce, true);
+      assert.strictEqual(atomStub.firstCall.args[0], 'get_top_left_coordinates');
+      assert.strictEqual(loc.x, 0);
+      assert.strictEqual(loc.y, 0);
     });
 
     it('should get location relative to document with absoluteWebLocations cap', async function () {
       driver.opts.absoluteWebLocations = true;
       const loc = await driver.getLocation(webEl);
-      expect(executeStub.calledOnce).to.be.true;
-      expect(atomStub.calledOnce).to.be.true;
-      expect(atomStub.firstCall.args[0]).to.eql('get_top_left_coordinates');
-      expect(loc.x).to.equal(fixtureXOffset);
-      expect(loc.y).to.equal(fixtureYOffset);
+      assert.strictEqual(executeStub.calledOnce, true);
+      assert.strictEqual(atomStub.calledOnce, true);
+      assert.strictEqual(atomStub.firstCall.args[0], 'get_top_left_coordinates');
+      assert.strictEqual(loc.x, fixtureXOffset);
+      assert.strictEqual(loc.y, fixtureYOffset);
     });
   });
 
@@ -405,14 +407,14 @@ describe('element commands', function () {
 
       const rect = await driver.getElementRect(elem as any);
 
-      expect(isWebContextStub.calledOnce).to.be.true;
-      expect(getNativeRectStub.calledOnce).to.be.true;
-      expect(getLocationStub.calledOnce).to.be.false;
-      expect(getSizeStub.calledOnce).to.be.false;
-      expect(rect.x).to.eql(0);
-      expect(rect.y).to.eql(50);
-      expect(rect.width).to.eql(100);
-      expect(rect.height).to.eql(200);
+      assert.strictEqual(isWebContextStub.calledOnce, true);
+      assert.strictEqual(getNativeRectStub.calledOnce, true);
+      assert.strictEqual(getLocationStub.calledOnce, false);
+      assert.strictEqual(getSizeStub.calledOnce, false);
+      assert.strictEqual(rect.x, 0);
+      assert.strictEqual(rect.y, 50);
+      assert.strictEqual(rect.width, 100);
+      assert.strictEqual(rect.height, 200);
     });
 
     it('should get element rect in Web context', async function () {
@@ -420,14 +422,14 @@ describe('element commands', function () {
 
       const rect = await driver.getElementRect(elem as any);
 
-      expect(isWebContextStub.calledOnce).to.be.true;
-      expect(getNativeRectStub.calledOnce).to.be.false;
-      expect(getLocationStub.calledOnce).to.be.true;
-      expect(getSizeStub.calledOnce).to.be.true;
-      expect(rect.x).to.eql(0);
-      expect(rect.y).to.eql(50);
-      expect(rect.width).to.eql(100);
-      expect(rect.height).to.eql(200);
+      assert.strictEqual(isWebContextStub.calledOnce, true);
+      assert.strictEqual(getNativeRectStub.calledOnce, false);
+      assert.strictEqual(getLocationStub.calledOnce, true);
+      assert.strictEqual(getSizeStub.calledOnce, true);
+      assert.strictEqual(rect.x, 0);
+      assert.strictEqual(rect.y, 50);
+      assert.strictEqual(rect.width, 100);
+      assert.strictEqual(rect.height, 200);
     });
   });
 });

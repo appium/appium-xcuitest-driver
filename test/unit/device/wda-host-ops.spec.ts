@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
 
-import {expect} from 'chai';
 import sinon from 'sinon';
 
 import {
@@ -41,26 +41,29 @@ describe('wda host ops', function () {
 
   describe('assertWdaHostPlatformSupported', function () {
     it('identifies strict non-macOS host utility modes', function () {
-      expect(isStrictHostUtilityMode({webDriverAgentUrl: 'http://127.0.0.1:8100'}, 'linux')).to.be.true;
-      expect(isStrictHostUtilityMode({usePreinstalledWDA: true}, 'win32')).to.be.true;
-      expect(isStrictHostUtilityMode({usePreinstalledWDA: true}, 'darwin')).to.be.false;
+      assert.strictEqual(isStrictHostUtilityMode({webDriverAgentUrl: 'http://127.0.0.1:8100'}, 'linux'), true);
+      assert.strictEqual(isStrictHostUtilityMode({usePreinstalledWDA: true}, 'win32'), true);
+      assert.strictEqual(isStrictHostUtilityMode({usePreinstalledWDA: true}, 'darwin'), false);
     });
 
     it('rejects non-macOS sessions before device discovery if they need Xcode', function () {
-      expect(() => assertWdaHostSessionCapsSupported({}, 'linux')).to.throw(/requires macOS/);
+      assert.throws(() => assertWdaHostSessionCapsSupported({}, 'linux'), /requires macOS/);
     });
 
     it('rejects non-macOS strict sessions without explicit udid', function () {
-      expect(() =>
-        assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, platformVersion: '18.0'}, 'linux'),
-      ).to.throw(/explicit real-device 'appium:udid'/);
-      expect(() =>
-        assertWdaHostSessionCapsSupported({webDriverAgentUrl: 'http://127.0.0.1:8100', udid: 'auto'}, 'linux'),
-      ).to.throw(/explicit real-device 'appium:udid'/);
+      assert.throws(
+        () => assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, platformVersion: '18.0'}, 'linux'),
+        /explicit real-device 'appium:udid'/,
+      );
+      assert.throws(
+        () => assertWdaHostSessionCapsSupported({webDriverAgentUrl: 'http://127.0.0.1:8100', udid: 'auto'}, 'linux'),
+        /explicit real-device 'appium:udid'/,
+      );
     });
 
     it('rejects non-macOS preinstalled WDA sessions without platformVersion', function () {
-      expect(() => assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, udid: 'device-1'}, 'linux')).to.throw(
+      assert.throws(
+        () => assertWdaHostSessionCapsSupported({usePreinstalledWDA: true, udid: 'device-1'}, 'linux'),
         /requires 'appium:platformVersion'/,
       );
     });
@@ -75,39 +78,45 @@ describe('wda host ops', function () {
 
     it('rejects simulator sessions on non-macOS hosts', function () {
       withPlatform('linux', () => {
-        expect(() =>
-          assertWdaHostPlatformSupported({
-            opts: {usePreinstalledWDA: true, platformVersion: '18.0', udid: 'device-1'},
-            isRealDevice: () => false,
-          } as any),
-        ).to.throw(/simulator sessions require macOS/);
+        assert.throws(
+          () =>
+            assertWdaHostPlatformSupported({
+              opts: {usePreinstalledWDA: true, platformVersion: '18.0', udid: 'device-1'},
+              isRealDevice: () => false,
+            } as any),
+          /simulator sessions require macOS/,
+        );
       });
     });
 
     it('rejects default real-device WDA startup on non-macOS hosts', function () {
       withPlatform('win32', () => {
-        expect(() =>
-          assertWdaHostPlatformSupported({
-            opts: {platformVersion: '18.0', udid: 'device-1'},
-            isRealDevice: () => true,
-          } as any),
-        ).to.throw(/requires macOS/);
+        assert.throws(
+          () =>
+            assertWdaHostPlatformSupported({
+              opts: {platformVersion: '18.0', udid: 'device-1'},
+              isRealDevice: () => true,
+            } as any),
+          /requires macOS/,
+        );
       });
     });
 
     it('rejects Xcode-only capabilities with non-macOS preinstalled WDA startup', function () {
       withPlatform('linux', () => {
-        expect(() =>
-          assertWdaHostPlatformSupported({
-            opts: {
-              platformVersion: '18.0',
-              udid: 'device-1',
-              usePreinstalledWDA: true,
-              usePrebuiltWDA: true,
-            },
-            isRealDevice: () => true,
-          } as any),
-        ).to.throw(/usePrebuiltWDA/);
+        assert.throws(
+          () =>
+            assertWdaHostPlatformSupported({
+              opts: {
+                platformVersion: '18.0',
+                udid: 'device-1',
+                usePreinstalledWDA: true,
+                usePrebuiltWDA: true,
+              },
+              isRealDevice: () => true,
+            } as any),
+          /usePrebuiltWDA/,
+        );
       });
     });
 
@@ -146,9 +155,13 @@ describe('wda host ops', function () {
         bundleId: 'io.appium.wda.xctrunner',
       });
 
-      expect(exec.calledOnceWith('launch')).to.be.true;
-      expect(exec.firstCall.args[1].args).to.eql(['--terminate-running-process', 'sim-1', 'io.appium.wda.xctrunner']);
-      expect(terminateApp.calledOnceWith('io.appium.wda.xctrunner')).to.be.true;
+      assert.strictEqual(exec.calledOnceWith('launch'), true);
+      assert.deepStrictEqual(exec.firstCall.args[1].args, [
+        '--terminate-running-process',
+        'sim-1',
+        'io.appium.wda.xctrunner',
+      ]);
+      assert.strictEqual(terminateApp.calledOnceWith('io.appium.wda.xctrunner'), true);
     });
 
     it('delegates real-device preinstalled launch and terminate to RemoteXPC DVT', async function () {
@@ -180,19 +193,20 @@ describe('wda host ops', function () {
         bundleId: 'io.appium.wda.xctrunner',
       });
 
-      expect(startDVTService.calledTwice).to.be.true;
-      expect(startDVTService.firstCall.args).to.eql(['device-1']);
-      expect(startDVTService.secondCall.args).to.eql(['device-1']);
-      expect(
+      assert.strictEqual(startDVTService.calledTwice, true);
+      assert.deepStrictEqual(startDVTService.firstCall.args, ['device-1']);
+      assert.deepStrictEqual(startDVTService.secondCall.args, ['device-1']);
+      assert.strictEqual(
         launch.calledWithMatch({
           bundleId: 'io.appium.wda.xctrunner',
           environment: {USE_PORT: '8100'},
           killExisting: true,
         }),
-      ).to.be.true;
-      expect(getPidForBundleIdentifier.calledOnceWith('io.appium.wda.xctrunner')).to.be.true;
-      expect(kill.calledOnceWith(123)).to.be.true;
-      expect(close.calledTwice).to.be.true;
+        true,
+      );
+      assert.strictEqual(getPidForBundleIdentifier.calledOnceWith('io.appium.wda.xctrunner'), true);
+      assert.strictEqual(kill.calledOnceWith(123), true);
+      assert.strictEqual(close.calledTwice, true);
     });
 
     it('falls back to devicectl launch on macOS if RemoteXPC launch fails', async function () {
@@ -214,8 +228,8 @@ describe('wda host ops', function () {
           timeoutMs: 60000,
         });
 
-        expect(launchApp.calledOnceWith('io.appium.wda.xctrunner')).to.be.true;
-        expect(launchApp.firstCall.args[1]).to.eql({
+        assert.strictEqual(launchApp.calledOnceWith('io.appium.wda.xctrunner'), true);
+        assert.deepStrictEqual(launchApp.firstCall.args[1], {
           env: {USE_PORT: 8100},
           terminateExisting: true,
         });
@@ -238,7 +252,7 @@ describe('wda host ops', function () {
           bundleId: 'io.appium.wda.xctrunner',
         });
 
-        expect(terminateApp.calledOnceWith('io.appium.wda.xctrunner')).to.be.true;
+        assert.strictEqual(terminateApp.calledOnceWith('io.appium.wda.xctrunner'), true);
       });
     });
   });

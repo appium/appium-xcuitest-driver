@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('pasteboard commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -35,15 +32,13 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should not be called', async function () {
-      await expect(driver.mobileSetPasteboard({content: 'bla'} as any)).to.be.rejectedWith(
-        /can only be performed on Simulator/,
-      );
-      expect(setPasteboardStub.notCalled).to.be.true;
+      await assert.rejects(driver.mobileSetPasteboard({content: 'bla'} as any), /can only be performed on Simulator/);
+      assert.strictEqual(setPasteboardStub.notCalled, true);
     });
 
     it('getPasteboard should not be called', async function () {
-      await expect(driver.mobileGetPasteboard()).to.be.rejectedWith(/can only be performed on Simulator/);
-      expect(getPasteboardStub.notCalled).to.be.true;
+      await assert.rejects(driver.mobileGetPasteboard(), /can only be performed on Simulator/);
+      assert.strictEqual(getPasteboardStub.notCalled, true);
     });
   });
 
@@ -53,25 +48,25 @@ describe('pasteboard commands', function () {
     });
 
     it('setPasteboard should fail if no content is provided', async function () {
-      await expect(driver.mobileSetPasteboard(undefined as any)).to.be.rejectedWith(/mandatory to set/);
-      expect(setPasteboardStub.notCalled).to.be.true;
+      await assert.rejects(driver.mobileSetPasteboard(undefined as any), /mandatory to set/);
+      assert.strictEqual(setPasteboardStub.notCalled, true);
     });
 
     it('setPasteboard should invoke correct simctl method', async function () {
       const content = 'bla';
       const encoding = 'latin1';
       await driver.mobileSetPasteboard(content, encoding);
-      expect(setPasteboardStub.calledOnce).to.be.true;
-      expect(setPasteboardStub.firstCall.args[0]).to.eql(content);
-      expect(setPasteboardStub.firstCall.args[1]).to.eql(encoding);
+      assert.strictEqual(setPasteboardStub.calledOnce, true);
+      assert.strictEqual(setPasteboardStub.firstCall.args[0], content);
+      assert.strictEqual(setPasteboardStub.firstCall.args[1], encoding);
     });
 
     it('getPasteboard should invoke correct simctl method', async function () {
       const content = 'bla';
       getPasteboardStub.returns(content);
       const result = await driver.mobileGetPasteboard();
-      expect(getPasteboardStub.calledOnce).to.be.true;
-      expect(result).to.eql(content);
+      assert.strictEqual(getPasteboardStub.calledOnce, true);
+      assert.strictEqual(result, content);
     });
   });
 });

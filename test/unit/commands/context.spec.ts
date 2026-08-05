@@ -1,11 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('context', function () {
   describe('onPageChange', function () {
@@ -53,7 +49,7 @@ describe('context', function () {
       driver._remote = remoteMock;
       driver.opts.safariIgnoreWebHostnames = 'www.google.com, www.bing.com,yahoo.com, about:blank, ';
       await driver.onPageChange(pageChangeNotification);
-      expect(selectPageArgs).to.eql(['5191', 1]);
+      assert.deepStrictEqual(selectPageArgs, ['5191', 1]);
     });
     it('should not call selectPage if a new page is introduced and that page is blacklisted', async function () {
       const driver = new XCUITestDriver({} as any);
@@ -76,7 +72,7 @@ describe('context', function () {
         driver._remote = remoteMock;
         driver.opts.safariIgnoreWebHostnames = 'www.google.com, www.bing.com,www.yahoo.com, about:blank, ';
         await driver.onPageChange(pageChangeNotification);
-        expect(selectPageArgs).to.be.null;
+        assert.strictEqual(selectPageArgs, null);
       }
     });
   });

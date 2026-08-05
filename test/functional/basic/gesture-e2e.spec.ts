@@ -1,17 +1,14 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps} from '../desired.js';
 import {PREDICATE_SEARCH} from '../helpers/element.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 import {APPIUM_IMAGE} from '../web/helpers/index.js';
-
-use(chaiAsPromised);
 
 const BTN_OK_CNCL = 'Okay / Cancel';
 
@@ -49,7 +46,7 @@ describe('XCUITestDriver - gestures', function () {
       async function exitModal(name: string) {
         // should exist, will throw error if it doesn't
         const els = await driver.$(`~${name}`);
-        await expect(els.isExisting()).to.eventually.be.equal(true);
+        assert.strictEqual(await els.isExisting(), true);
 
         await retryInterval(5, 100, async () => {
           const el = await driver.$(`~${name}`);
@@ -90,7 +87,7 @@ describe('XCUITestDriver - gestures', function () {
       const size2 = await el2.getSize();
 
       const el3 = await driver.$('~Web View');
-      await expect(el3.isDisplayed()).to.eventually.be.false;
+      assert.strictEqual(await el3.isDisplayed(), false);
 
       await driver
         .action('pointer')
@@ -102,7 +99,7 @@ describe('XCUITestDriver - gestures', function () {
         .perform();
 
       await retryInterval(5, 1000, async function () {
-        await expect(el3.isDisplayed()).to.eventually.be.equal(true);
+        assert.strictEqual(await el3.isDisplayed(), true);
       });
     });
     it('should double tap on an element', async function () {
@@ -117,7 +114,7 @@ describe('XCUITestDriver - gestures', function () {
 
       await delay(1000);
       const num = await driver.$('~2');
-      await expect(num.isExisting()).to.eventually.be.true;
+      assert.strictEqual(await num.isExisting(), true);
     });
     // TODO: Need a scrollable screen.
     it.skip(`should swipe the table and the bottom cell's Y position should change accordingly`, async function () {
@@ -126,13 +123,13 @@ describe('XCUITestDriver - gestures', function () {
       const pickerEl = await driver.$('~Picker View');
       const loc = await pickerEl.getLocation();
 
-      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'up'})).to.not.be.rejected;
+      await assert.doesNotReject(driver.execute('mobile: swipe', {element: winEl, direction: 'up'}));
       const locMiddle = await pickerEl.getLocation();
-      expect(locMiddle.y).to.be.below(loc.y);
+      assert.ok(locMiddle.y < loc.y);
 
-      await expect(driver.execute('mobile: swipe', {element: winEl, direction: 'down'})).to.not.be.rejected;
+      await assert.doesNotReject(driver.execute('mobile: swipe', {element: winEl, direction: 'down'}));
       const locFinal = await pickerEl.getLocation();
-      expect(locFinal.y).to.be.above(locMiddle.y);
+      assert.ok(locFinal.y > locMiddle.y);
     });
     describe('pinch and zoom', function () {
       beforeEach(async function () {

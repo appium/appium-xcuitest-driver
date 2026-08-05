@@ -1,9 +1,8 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, afterEach, after} from 'node:test';
 
 import {getSimulator} from 'appium-ios-simulator';
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 import type {Browser} from 'webdriverio';
 
@@ -12,8 +11,6 @@ import {assertSessionClaimIpcTraces, readAppiumLog} from '../helpers/appium-log.
 import {getFreePort} from '../helpers/ports.js';
 import {createRemoteSession, deleteRemoteSession} from '../helpers/session.js';
 import {cleanupSimulator, deleteDeviceWithRetry} from '../helpers/simulator.js';
-
-use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestSessionClaimTest';
 
@@ -61,8 +58,9 @@ describe('XCUITestDriver - session udid claim', {skip: !process.env.APPIUM_LOG_P
 
   it('should terminate the previous session when a new session claims the same udid', async function () {
     firstDriver = await createRemoteSession(baseCaps);
-    expect(firstDriver.sessionId).to.be.a('string').that.is.not.empty;
-    expect((await firstDriver.$$('XCUIElementTypeWindow')).length).to.be.at.least(1);
+    assert.strictEqual(typeof firstDriver.sessionId, 'string');
+    assert.notStrictEqual(firstDriver.sessionId.length, 0);
+    assert.ok(((await firstDriver.$$('XCUIElementTypeWindow')).length as unknown as number) >= 1);
 
     const firstSessionId = firstDriver.sessionId;
     const wdaLocalPort = await getFreePort();
@@ -72,20 +70,22 @@ describe('XCUITestDriver - session udid claim', {skip: !process.env.APPIUM_LOG_P
       }),
     );
 
-    expect(secondDriver.sessionId).to.be.a('string').that.is.not.empty;
-    expect(secondDriver.sessionId).to.not.equal(firstSessionId);
+    assert.strictEqual(typeof secondDriver.sessionId, 'string');
+    assert.notStrictEqual(secondDriver.sessionId.length, 0);
+    assert.notStrictEqual(secondDriver.sessionId, firstSessionId);
 
     await retryInterval(20, 500, async () => {
-      await expect(firstDriver!.getWindowRect()).to.be.rejectedWith(
+      await assert.rejects(
+        firstDriver!.getWindowRect(),
         /invalid session id|session is either terminated or not started/i,
       );
     });
 
-    expect((await secondDriver.$$('XCUIElementTypeWindow')).length).to.be.at.least(1);
-    expect(extractCapabilityValue(baseCaps, 'appium:udid')).to.equal(udid);
+    assert.ok(((await secondDriver.$$('XCUIElementTypeWindow')).length as unknown as number) >= 1);
+    assert.strictEqual(extractCapabilityValue(baseCaps, 'appium:udid'), udid);
 
     const appiumLog = await readAppiumLog();
-    expect(appiumLog, 'APPIUM_LOG_PATH must point to a readable log file').to.be.a('string');
+    assert.strictEqual(typeof appiumLog, 'string', 'APPIUM_LOG_PATH must point to a readable log file');
     assertSessionClaimIpcTraces(appiumLog!);
   });
 });

@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
 
-import {expect} from 'chai';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -20,43 +20,44 @@ describe('source commands', function () {
   describe('getPageSource', function () {
     it('should send translated GET request to WDA', async function () {
       await driver.getPageSource();
-      expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT');
-      expect(proxyStub.firstCall.args[1]).to.eql('GET');
+      assert.strictEqual(proxyStub.calledOnce, true);
+      assert.strictEqual(proxyStub.firstCall.args[0], '/source?format=xml&scope=AppiumAUT');
+      assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
     });
 
     it('should send translated GET request with null excludedAttributes to WDA', async function () {
       await driver.updateSettings({pageSourceExcludedAttributes: null});
       await driver.getPageSource();
-      expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT');
-      expect(proxyStub.firstCall.args[1]).to.eql('GET');
+      assert.strictEqual(proxyStub.calledOnce, true);
+      assert.strictEqual(proxyStub.firstCall.args[0], '/source?format=xml&scope=AppiumAUT');
+      assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
     });
 
     it('should send translated GET request with empty excludedAttributes to WDA', async function () {
       await driver.updateSettings({pageSourceExcludedAttributes: ''});
       await driver.getPageSource();
-      expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT');
-      expect(proxyStub.firstCall.args[1]).to.eql('GET');
+      assert.strictEqual(proxyStub.calledOnce, true);
+      assert.strictEqual(proxyStub.firstCall.args[0], '/source?format=xml&scope=AppiumAUT');
+      assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
     });
 
     it('should send translated GET request with single excludedAttributes to WDA', async function () {
       await driver.updateSettings({pageSourceExcludedAttributes: 'visible'});
       await driver.getPageSource();
-      expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql('/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
-      expect(proxyStub.firstCall.args[1]).to.eql('GET');
+      assert.strictEqual(proxyStub.calledOnce, true);
+      assert.strictEqual(proxyStub.firstCall.args[0], '/source?format=xml&scope=AppiumAUT&excluded_attributes=visible');
+      assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
     });
 
     it('should send translated GET request with multiple excludedAttributes to WDA', async function () {
       await driver.updateSettings({pageSourceExcludedAttributes: 'visible,accessible'});
       await driver.getPageSource();
-      expect(proxyStub.calledOnce).to.be.true;
-      expect(proxyStub.firstCall.args[0]).to.eql(
+      assert.strictEqual(proxyStub.calledOnce, true);
+      assert.strictEqual(
+        proxyStub.firstCall.args[0],
         '/source?format=xml&scope=AppiumAUT&excluded_attributes=visible%2Caccessible',
       );
-      expect(proxyStub.firstCall.args[1]).to.eql('GET');
+      assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
     });
   });
 });
