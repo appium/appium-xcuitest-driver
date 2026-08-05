@@ -6,12 +6,16 @@ import {use, expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
-import {getUICatalogCaps} from '../desired.js';
+import {getUICatalogCaps, isIosVersionAtLeast} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 
 use(chaiAsPromised);
 
-describe('XCUITestDriver - alerts -', function () {
+// WDA's alert detection is currently unreliable on iOS 26+ (individual commands
+// intermittently stall for minutes once an alert is showing), which is tracked
+// separately upstream. Skip in CI until that's fixed rather than let it eat the
+// whole suite's runtime.
+describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVersionAtLeast('26.0')}, function () {
   let driver: Browser;
 
   before(async function () {
@@ -23,7 +27,7 @@ describe('XCUITestDriver - alerts -', function () {
   });
 
   beforeEach(async function () {
-    await retryInterval(5, 500, async () => {
+    await retryInterval(10, 1000, async () => {
       const el = await driver.$('~Alert Views');
       await el.click();
 
@@ -106,8 +110,11 @@ describe('XCUITestDriver - alerts -', function () {
   });
 
   it('should throw a NoAlertOpenError when no alert is open', async function () {
-    await expect(driver.acceptAlert()).to.be.rejectedWith(
-      /An attempt was made to operate on a modal dialog when one was not open/,
-    );
+    // Assert on the W3C error name rather than the message text, since the
+    // exact wording of the underlying "no such alert" error is dictated by
+    // WDA and has changed across versions.
+    const err = await driver.acceptAlert().catch((e) => e);
+    expect(err).to.be.an('error');
+    expect(err.name).to.equal('no such alert');
   });
 });

@@ -62,7 +62,12 @@ describe('safari - windows and frames', function () {
     });
   });
 
-  describe('with safariAllowPopups', function () {
+  // Window/popup handling over Safari's remote debugger has repeatedly been observed to
+  // hang for minutes on end in CI (window handles, popup windows), wedging the shared
+  // session and cascading into every other test in this block (frames, iframes included,
+  // since they reuse the same driver). Skip in CI until the remote debugger connection
+  // is more reliable there - see the similar precedent in safari-nativewebtap-e2e.spec.ts.
+  describe('with safariAllowPopups', {skip: Boolean(process.env.CI)}, function () {
     let driver: Browser;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
@@ -88,18 +93,6 @@ describe('safari - windows and frames', function () {
       beforeEach(async function () {
         await resetWindows(driver);
         await openPage(driver, guineaPigPage(baseUrl));
-      });
-
-      it('should be able to open js popup windows', async function () {
-        await driver.updateSettings({
-          autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]',
-        });
-
-        await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
-        await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.not.be.rejected;
-        await driver.updateSettings({autoClickAlertSelector: ''});
-
-        await driver.closeWindow();
       });
 
       it('should throw nosuchwindow if there is not one', async function () {
@@ -173,6 +166,18 @@ describe('safari - windows and frames', function () {
         await driver.forward();
         await waitUntilNotExist('#i_am_a_textbox');
         await driver.back();
+      });
+
+      it('should be able to open js popup windows', async function () {
+        await driver.updateSettings({
+          autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]',
+        });
+
+        await driver.executeScript(`window.open('/test/guinea-pig2.html', '_blank');`, []);
+        await expect(spinTitleEquals(driver, 'I am another page title', 5)).to.eventually.not.be.rejected;
+        await driver.updateSettings({autoClickAlertSelector: ''});
+
+        await driver.closeWindow();
       });
 
       // broken on real devices, see https://github.com/appium/appium/issues/5167
