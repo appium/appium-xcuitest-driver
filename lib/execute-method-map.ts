@@ -467,6 +467,15 @@ export const executeMethodMap = {
   'mobile: stopNetworkMonitor': {
     command: 'mobileStopNetworkMonitor',
   },
+  'mobile: startSystemMonitor': {
+    command: 'mobileStartSystemMonitor',
+    params: {
+      optional: ['intervalMs'],
+    },
+  },
+  'mobile: stopSystemMonitor': {
+    command: 'mobileStopSystemMonitor',
+  },
   'mobile: listConditionInducers': {
     command: 'listConditionInducers',
   },
