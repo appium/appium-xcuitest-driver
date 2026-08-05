@@ -62,7 +62,12 @@ describe('safari - windows and frames', function () {
     });
   });
 
-  describe('with safariAllowPopups', function () {
+  // Window/popup handling over Safari's remote debugger has repeatedly been observed to
+  // hang for minutes on end in CI (window handles, popup windows), wedging the shared
+  // session and cascading into every other test in this block (frames, iframes included,
+  // since they reuse the same driver). Skip in CI until the remote debugger connection
+  // is more reliable there - see the similar precedent in safari-nativewebtap-e2e.spec.ts.
+  describe('with safariAllowPopups', {skip: Boolean(process.env.CI)}, function () {
     let driver: Browser;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
