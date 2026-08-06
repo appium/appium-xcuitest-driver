@@ -1,12 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('general commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -34,12 +31,13 @@ describe('general commands', function () {
       try {
         await driver.findNativeElementOrElements(strategy, selector, mult);
       } catch {}
-      expect(
+      assert.strictEqual(
         proxySpy.calledOnceWith(`/element${mult ? 's' : ''}`, 'POST', {
           using: modStrategy || strategy,
           value: modSelector,
         }),
-      ).to.be.true;
+        true,
+      );
       proxySpy.reset();
     }
 
@@ -72,13 +70,15 @@ describe('general commands', function () {
     });
 
     it('should reject request for first visible child with no context', async function () {
-      await expect(driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false)).to.be.rejectedWith(
+      await assert.rejects(
+        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', false),
         /without a context element/,
       );
     });
 
     it('should reject request for multiple first visible children', async function () {
-      await expect(driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true)).to.be.rejectedWith(
+      await assert.rejects(
+        driver.findNativeElementOrElements('xpath', '/*[@firstVisible="true"]', true),
         /Cannot get multiple/,
       );
     });
@@ -94,21 +94,23 @@ describe('general commands', function () {
         const el = await driver.findNativeElementOrElements('xpath', variant, false, {
           ELEMENT: 'ctx',
         });
-        expect(proxySpy.calledTwice).to.be.true;
-        expect(
+        assert.strictEqual(proxySpy.calledTwice, true);
+        assert.strictEqual(
           proxySpy.calledWith('/element/ctx/element', 'POST', {
             using: 'class chain',
             value: '*[1]',
           }),
-        ).to.be.true;
-        expect(
+          true,
+        );
+        assert.strictEqual(
           proxySpy.calledWith('/element/ctx/element', 'POST', {
             using: 'class chain',
             value: '*[2]',
           }),
-        ).to.be.true;
-        expect(attribSpy.calledTwice).to.be.true;
-        expect(el).to.eql({ELEMENT: 2});
+          true,
+        );
+        assert.strictEqual(attribSpy.calledTwice, true);
+        assert.deepStrictEqual(el, {ELEMENT: 2});
         proxySpy.reset();
         attribSpy.reset();
       }

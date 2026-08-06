@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 
 import {fs, tempDir, zip} from 'appium/support.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {AppInfosCache} from '../../lib/app-infos-cache.js';
 import {log} from '../../lib/logger.js';
 import {getUIKitCatalogPath, UICATALOG_BUNDLE_ID} from '../setup.js';
-
-use(chaiAsPromised);
 
 describe('AppInfosCache', function () {
   describe('retrives info from different types of apps', function () {
@@ -50,22 +47,22 @@ describe('AppInfosCache', function () {
 
     it('should cache ipa', async function () {
       const info = await cache.put(ipaPath);
-      expect(info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
+      assert.strictEqual(info.CFBundleIdentifier, UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(ipaPath);
-      expect(info).to.equal(info2);
+      assert.strictEqual(info, info2);
     });
 
     it('should cache app', async function () {
       const info = await cache.put(appPath);
-      expect(info.CFBundleIdentifier).to.eql(UICATALOG_BUNDLE_ID);
+      assert.strictEqual(info.CFBundleIdentifier, UICATALOG_BUNDLE_ID);
       const info2 = await cache.put(appPath);
-      expect(info).to.equal(info2);
+      assert.strictEqual(info, info2);
     });
 
     it('should extract cached info', async function () {
-      await expect(cache.extractAppPlatforms(appPath)).to.eventually.eql(['iPhoneSimulator']);
-      await expect(cache.extractBundleId(ipaPath)).to.eventually.eql(UICATALOG_BUNDLE_ID);
-      await expect(cache.extractExecutableName(ipaPath)).to.eventually.eql('UIKitCatalog');
+      assert.deepStrictEqual(await cache.extractAppPlatforms(appPath), ['iPhoneSimulator']);
+      assert.strictEqual(await cache.extractBundleId(ipaPath), UICATALOG_BUNDLE_ID);
+      assert.strictEqual(await cache.extractExecutableName(ipaPath), 'UIKitCatalog');
     });
   });
 });

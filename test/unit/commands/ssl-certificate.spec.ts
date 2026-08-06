@@ -1,6 +1,5 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
-
-import {expect} from 'chai';
 
 import {parseCommonName} from '../../../lib/commands/certificate.js';
 
@@ -10,10 +9,10 @@ describe('ssl certificate parser command', function () {
   const expectedString = '*.badssl.com';
 
   it('try to parse LibreSSL command output', function () {
-    expect(parseCommonName(sslOutputLibreSSL)).to.eql(expectedString);
+    assert.strictEqual(parseCommonName(sslOutputLibreSSL), expectedString);
   });
 
   it('try to parse OpenSSL command output', function () {
-    expect(parseCommonName(sslOutputOpenSSL)).to.eql(expectedString);
+    assert.strictEqual(parseCommonName(sslOutputOpenSSL), expectedString);
   });
 });

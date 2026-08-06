@@ -1,13 +1,9 @@
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {startWdaSession} from '../../lib/commands/wda/startup.js';
 import {XCUITestDriver} from '../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('process args', function () {
   const BUNDLE_ID = 'com.test.app';

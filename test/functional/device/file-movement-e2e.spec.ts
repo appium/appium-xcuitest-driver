@@ -1,17 +1,14 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after} from 'node:test';
 import {fileURLToPath} from 'node:url';
 
 import {fs, tempDir, zip} from 'appium/support.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {UICATALOG_BUNDLE_ID} from '../../setup.js';
 import {getUICatalogCaps} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 const UICAT_CONTAINER = `@${UICATALOG_BUNDLE_ID}`;
 const CURRENT_FILENAME = fileURLToPath(import.meta.url);
@@ -36,16 +33,16 @@ describe('XCUITestDriver - file movement', function () {
   describe('sim relative', function () {
     describe('files', function () {
       it('should not be able to fetch a file from the file system at large', async function () {
-        await expect(driver.pullFile(CURRENT_FILENAME)).to.be.rejected;
+        await assert.rejects(driver.pullFile(CURRENT_FILENAME));
       });
 
       it('should be able to fetch the Address book', async function () {
         const stringData = await pullFileAsString(driver, `${UICAT_CONTAINER}/PkgInfo`);
-        expect(stringData.indexOf('APPL')).to.not.equal(-1);
+        assert.notStrictEqual(stringData.indexOf('APPL'), -1);
       });
 
       it('should not be able to fetch something that does not exist', async function () {
-        await expect(driver.pullFile('Library/AddressBook/nothere.txt')).to.be.rejectedWith(/does not exist/);
+        await assert.rejects(driver.pullFile('Library/AddressBook/nothere.txt'), /does not exist/);
       });
 
       it('should be able to push and pull a file', async function () {
@@ -56,7 +53,7 @@ describe('XCUITestDriver - file movement', function () {
         await driver.pushFile(remotePath, base64Data);
 
         const remoteStringData = await pullFileAsString(driver, remotePath);
-        expect(remoteStringData).to.equal(stringData);
+        assert.strictEqual(remoteStringData, stringData);
       });
 
       it('should be able to delete a file', async function () {
@@ -67,21 +64,21 @@ describe('XCUITestDriver - file movement', function () {
         await driver.pushFile(remotePath, base64Data);
 
         const remoteStringData = await pullFileAsString(driver, remotePath);
-        expect(remoteStringData).to.equal(stringData);
+        assert.strictEqual(remoteStringData, stringData);
 
         await driver.execute('mobile: deleteFile', {remotePath});
 
-        await expect(pullFileAsString(driver, remotePath)).to.be.rejectedWith(/does not exist/);
+        await assert.rejects(pullFileAsString(driver, remotePath), /does not exist/);
       });
     });
 
     describe('folders', function () {
       it('should not pull folders from file system', async function () {
-        await expect(driver.pullFolder(CURRENT_DIRNAME)).to.be.rejected;
+        await assert.rejects(driver.pullFolder(CURRENT_DIRNAME));
       });
 
       it('should not be able to fetch a folder that does not exist', async function () {
-        await expect(driver.pullFolder('Library/Rollodex')).to.be.rejectedWith(/does not exist/);
+        await assert.rejects(driver.pullFolder('Library/Rollodex'), /does not exist/);
       });
 
       it('should pull all the files in Library/AddressBook', async function () {
@@ -95,7 +92,7 @@ describe('XCUITestDriver - file movement', function () {
           await fs.mkdir(extractedDataPath);
           await zip.extractAllTo(zipPath, extractedDataPath);
           const itemsCount = (await fs.readdir(extractedDataPath)).length;
-          expect(itemsCount).to.be.above(1);
+          assert.ok(itemsCount > 1);
         } finally {
           await fs.rimraf(tmpRoot);
         }
@@ -111,7 +108,7 @@ describe('XCUITestDriver - file movement', function () {
 
       await driver.pushFile(remotePath, base64Data);
       const remoteStringData = await pullFileAsString(driver, remotePath);
-      expect(remoteStringData).to.equal(stringData);
+      assert.strictEqual(remoteStringData, stringData);
     });
 
     it('should be able to delete a file from the app directory', async function () {
@@ -122,11 +119,11 @@ describe('XCUITestDriver - file movement', function () {
       await driver.pushFile(remotePath, base64Data);
 
       const remoteStringData = await pullFileAsString(driver, remotePath);
-      expect(remoteStringData).to.equal(stringData);
+      assert.strictEqual(remoteStringData, stringData);
 
       await driver.execute('mobile: deleteFile', {remotePath});
 
-      await expect(pullFileAsString(driver, remotePath)).to.be.rejectedWith(/does not exist/);
+      await assert.rejects(pullFileAsString(driver, remotePath), /does not exist/);
     });
   });
 });

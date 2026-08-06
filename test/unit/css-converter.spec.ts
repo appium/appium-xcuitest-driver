@@ -1,11 +1,7 @@
+import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import {cssToNativeLocator, WDA_CLASS_CHAIN_STRATEGY} from '../../lib/css/index.js';
-
-use(chaiAsPromised);
 
 describe('css-converter.js', function () {
   describe('simple cases', function () {
@@ -33,7 +29,7 @@ describe('css-converter.js', function () {
     ];
     for (const [cssSelector, iosClassChainSelector] of simpleCases) {
       it(`should convert '${cssSelector}' to '${iosClassChainSelector}'`, async function () {
-        await expect(cssToNativeLocator(cssSelector)).to.eventually.deep.equal({
+        assert.deepStrictEqual(await cssToNativeLocator(cssSelector), {
           strategy: WDA_CLASS_CHAIN_STRATEGY,
           selector: iosClassChainSelector,
         });
@@ -49,7 +45,7 @@ describe('css-converter.js', function () {
     ];
     for (const cssSelector of testCases) {
       it(`should reject '${cssSelector}'`, async function () {
-        await expect(cssToNativeLocator(cssSelector)).to.be.rejected;
+        await assert.rejects(cssToNativeLocator(cssSelector));
       });
     }
   });

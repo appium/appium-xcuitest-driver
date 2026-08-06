@@ -1,13 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {errors} from 'appium/driver.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('voiceover commands', function () {
   let driver: XCUITestDriver;
@@ -32,7 +28,7 @@ describe('voiceover commands', function () {
 
       await driver.mobileEnableVoiceOver();
 
-      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/enable', 'POST')).to.be.true;
+      assert.strictEqual(proxySpy.calledOnceWithExactly('/wda/voiceOver/enable', 'POST'), true);
     });
 
     it('mobileDisableVoiceOver should proxy POST /wda/voiceOver/disable', async function () {
@@ -40,7 +36,7 @@ describe('voiceover commands', function () {
 
       await driver.mobileDisableVoiceOver();
 
-      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/disable', 'POST')).to.be.true;
+      assert.strictEqual(proxySpy.calledOnceWithExactly('/wda/voiceOver/disable', 'POST'), true);
     });
 
     it('mobileIsVoiceOverEnabled should proxy GET /wda/voiceOver/enabled', async function () {
@@ -48,8 +44,8 @@ describe('voiceover commands', function () {
 
       const result = await driver.mobileIsVoiceOverEnabled();
 
-      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/enabled', 'GET')).to.be.true;
-      expect(result).to.eql({enabled: true});
+      assert.strictEqual(proxySpy.calledOnceWithExactly('/wda/voiceOver/enabled', 'GET'), true);
+      assert.deepStrictEqual(result, {enabled: true});
     });
 
     it('mobileVoiceOverMove should proxy direction as-is to WDA', async function () {
@@ -57,8 +53,8 @@ describe('voiceover commands', function () {
 
       const result = await driver.mobileVoiceOverMove('forward');
 
-      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/move', 'POST', {direction: 'forward'})).to.be.true;
-      expect(result).to.eql({utterance: 'Button'});
+      assert.strictEqual(proxySpy.calledOnceWithExactly('/wda/voiceOver/move', 'POST', {direction: 'forward'}), true);
+      assert.deepStrictEqual(result, {utterance: 'Button'});
     });
 
     it('mobileVoiceOverCurrentSpeech should proxy GET /wda/voiceOver/currentSpeech', async function () {
@@ -66,8 +62,8 @@ describe('voiceover commands', function () {
 
       const result = await driver.mobileVoiceOverCurrentSpeech();
 
-      expect(proxySpy.calledOnceWithExactly('/wda/voiceOver/currentSpeech', 'GET')).to.be.true;
-      expect(result).to.eql({utterance: 'Current item'});
+      assert.strictEqual(proxySpy.calledOnceWithExactly('/wda/voiceOver/currentSpeech', 'GET'), true);
+      assert.deepStrictEqual(result, {utterance: 'Current item'});
     });
   });
 
@@ -79,37 +75,43 @@ describe('voiceover commands', function () {
     const versionGateMessage = /requires iOS\/tvOS 27 or newer.*The current platformVersion is '26\.0'/;
 
     it('mobileEnableVoiceOver should reject without proxying', async function () {
-      await expect(driver.mobileEnableVoiceOver()).to.be.rejectedWith(errors.InvalidArgumentError, versionGateMessage);
-      expect(proxySpy.called).to.be.false;
+      await assert.rejects(driver.mobileEnableVoiceOver(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
+      });
+      assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileDisableVoiceOver should reject without proxying', async function () {
-      await expect(driver.mobileDisableVoiceOver()).to.be.rejectedWith(errors.InvalidArgumentError, versionGateMessage);
-      expect(proxySpy.called).to.be.false;
+      await assert.rejects(driver.mobileDisableVoiceOver(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
+      });
+      assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileIsVoiceOverEnabled should reject without proxying', async function () {
-      await expect(driver.mobileIsVoiceOverEnabled()).to.be.rejectedWith(
-        errors.InvalidArgumentError,
-        versionGateMessage,
-      );
-      expect(proxySpy.called).to.be.false;
+      await assert.rejects(driver.mobileIsVoiceOverEnabled(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
+      });
+      assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileVoiceOverMove should reject without proxying', async function () {
-      await expect(driver.mobileVoiceOverMove('forward')).to.be.rejectedWith(
-        errors.InvalidArgumentError,
-        versionGateMessage,
-      );
-      expect(proxySpy.called).to.be.false;
+      await assert.rejects(driver.mobileVoiceOverMove('forward'), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
+      });
+      assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileVoiceOverCurrentSpeech should reject without proxying', async function () {
-      await expect(driver.mobileVoiceOverCurrentSpeech()).to.be.rejectedWith(
-        errors.InvalidArgumentError,
-        versionGateMessage,
-      );
-      expect(proxySpy.called).to.be.false;
+      await assert.rejects(driver.mobileVoiceOverCurrentSpeech(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
+      });
+      assert.strictEqual(proxySpy.called, false);
     });
   });
 });

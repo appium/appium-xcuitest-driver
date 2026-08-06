@@ -1,13 +1,10 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, afterEach, beforeEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps, amendCapabilities} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 describe('Passwords', function () {
   let driver: Browser;
@@ -49,12 +46,12 @@ describe('Passwords', function () {
     it('should enable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': true});
       driver = await initSession(caps);
-      await expect(isPasswordsMenuShown(driver)).to.eventually.eql(true);
+      assert.strictEqual(await isPasswordsMenuShown(driver), true);
     });
     it('should disable password autofill menu in the keyboard', async function () {
       caps = amendCapabilities(caps, {'appium:autoFillPasswords': false});
       driver = await initSession(caps);
-      await expect(isPasswordsMenuShown(driver)).to.eventually.eql(false);
+      assert.strictEqual(await isPasswordsMenuShown(driver), false);
     });
   });
 });

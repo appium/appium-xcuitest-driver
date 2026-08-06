@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {SETTINGS_CAPS, amendCapabilities} from '../desired.js';
 import {PREDICATE_SEARCH} from '../helpers/element.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 describe('Accessibility', function () {
   let driver: Browser;
@@ -54,12 +51,12 @@ describe('Accessibility', function () {
     it('should enable reduce motion', async function () {
       caps = amendCapabilities(caps, {'appium:reduceMotion': true});
       driver = await initSession(caps);
-      await expect(getReduceMotion(driver)).to.eventually.eql('1');
+      assert.strictEqual(await getReduceMotion(driver), '1');
     });
     it('should disable reduce motion', async function () {
       caps = amendCapabilities(caps, {'appium:reduceMotion': false});
       driver = await initSession(caps);
-      await expect(getReduceMotion(driver)).to.eventually.eql('0');
+      assert.strictEqual(await getReduceMotion(driver), '0');
     });
   });
 
@@ -78,12 +75,12 @@ describe('Accessibility', function () {
     it('should enable reduce transparency', async function () {
       caps = amendCapabilities(caps, {'appium:reduceTransparency': true});
       driver = await initSession(caps);
-      await expect(getReduceTransparency(driver)).to.eventually.eql('1');
+      assert.strictEqual(await getReduceTransparency(driver), '1');
     });
     it('should disable reduce transparency', async function () {
       caps = amendCapabilities(caps, {'appium:reduceTransparency': false});
       driver = await initSession(caps);
-      await expect(getReduceTransparency(driver)).to.eventually.eql('0');
+      assert.strictEqual(await getReduceTransparency(driver), '0');
     });
   });
 });

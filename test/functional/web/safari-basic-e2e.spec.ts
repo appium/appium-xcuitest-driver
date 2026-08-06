@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {SAFARI_CAPS, amendCapabilities} from '../desired.js';
@@ -22,8 +21,6 @@ import {
   oldCookie1,
   oldCookie2,
 } from './helpers/index.js';
-
-use(chaiAsPromised);
 
 function getDefaultCaps(baseUrl: string) {
   return amendCapabilities(SAFARI_CAPS, {
@@ -61,7 +58,7 @@ describe('Safari - basics -', function () {
           await openPage(driver, `${guineaPigPage(baseUrl)}?delay=30000`);
 
           // the page should not have time to load
-          await expect(driver.getPageSource()).to.eventually.include(`Let's browse!`);
+          assert.ok((await driver.getPageSource()).includes(`Let's browse!`));
         });
       });
       describe('no timeout, very slow page', function () {
@@ -73,8 +70,8 @@ describe('Safari - basics -', function () {
           await openPage(driver, `${guineaPigPage(baseUrl)}?delay=3000`);
 
           // the page should load after 70000
-          await expect(driver.getPageSource()).to.eventually.include('I am some page content');
-          expect(Date.now() - startMs).to.be.above(3000);
+          assert.ok((await driver.getPageSource()).includes('I am some page content'));
+          assert.ok(Date.now() - startMs > 3000);
         });
       });
     });
@@ -82,7 +79,7 @@ describe('Safari - basics -', function () {
     describe('context', function () {
       it('should be able to get current context initially', async function () {
         await delay(500);
-        await expect(driver.getContext()).to.eventually.be.ok;
+        assert.ok(await driver.getContext());
       });
       it('should get full context list through mobile: getContexts', async function () {
         const ctxs = (await driver.executeScript('mobile: getContexts', [])) as unknown as {
@@ -91,7 +88,10 @@ describe('Safari - basics -', function () {
           url: string;
         }[];
         const webviews = ctxs.filter((ctx) => ctx.id !== 'NATIVE_APP');
-        expect(webviews.every((ctx) => util.hasValue(ctx.title) && util.hasValue(ctx.url))).to.be.true;
+        assert.strictEqual(
+          webviews.every((ctx) => util.hasValue(ctx.title) && util.hasValue(ctx.url)),
+          true,
+        );
       });
     });
 
@@ -103,15 +103,15 @@ describe('Safari - basics -', function () {
         await driver.setTimeout({implicit: 5000});
 
         const before = new Date().getTime();
-        expect(((await driver.$('<dsfsdfsdfdsfsd />')) as any).error.error).to.eql('no such element');
+        assert.strictEqual(((await driver.$('<dsfsdfsdfdsfsd />')) as any).error.error, 'no such element');
         const after = new Date().getTime();
-        expect(after - before >= 5 * 1000).to.be.ok;
+        assert.ok(after - before >= 5 * 1000);
       });
     });
 
     describe('window title', function () {
       it('should return a valid title on web view', async function () {
-        await expect(driver.getTitle()).to.eventually.include('I am a page title');
+        assert.ok((await driver.getTitle()).includes('I am a page title'));
       });
     });
 
@@ -121,17 +121,17 @@ describe('Safari - basics -', function () {
       });
 
       it('should find a web element in the web view', async function () {
-        expect(await driver.$('#i_am_an_id')).to.exist;
+        assert.ok(await driver.$('#i_am_an_id'));
       });
       it('should find multiple web elements in the web view', async function () {
-        expect(await driver.$$('<a />')).to.have.length.at.least(5);
+        assert.ok(((await driver.$$('<a />')).length as unknown as number) >= 5);
       });
       it('should fail gracefully to find multiple missing web elements in the web view', async function () {
-        expect(await driver.$$('<blar />')).to.have.length(0);
+        assert.strictEqual((await driver.$$('<blar />')).length, 0);
       });
       it('should find element from another element', async function () {
         const el = await driver.$('.border');
-        expect(await el.$('./form')).to.exist;
+        assert.ok(await el.$('./form'));
       });
       it('should be able to click links', async function () {
         const el = await driver.$('=i am a link');
@@ -140,34 +140,34 @@ describe('Safari - basics -', function () {
       });
       it('should retrieve an element attribute', async function () {
         const el = await driver.$('#i_am_an_id');
-        await expect(el.getAttribute('id')).to.eventually.equal('i_am_an_id');
-        expect(await el.getAttribute('blar')).to.be.null;
+        assert.strictEqual(await el.getAttribute('id'), 'i_am_an_id');
+        assert.strictEqual(await el.getAttribute('blar'), null);
       });
       it('should retrieve implicit attributes', async function () {
         const els = await driver.$$('<option />');
-        expect(els).to.have.length(3);
+        assert.strictEqual(els.length, 3);
 
-        await expect(els[2].getAttribute('index')).to.eventually.equal('2');
+        assert.strictEqual(await els[2].getAttribute('index'), '2');
       });
       it('should retrieve an element text', async function () {
         const el = await driver.$('#i_am_an_id');
-        await expect(el.getText()).to.eventually.equal('I am a div');
+        assert.strictEqual(await el.getText(), 'I am a div');
       });
       // TODO: figure out what equality means here
       it.skip('should check if two elements are equal', async function () {
         const el1 = await driver.$('#i_am_an_id');
         const el2 = await driver.$('#i_am_an_id');
-        expect(el1).to.equal(el2);
+        assert.strictEqual(el1, el2);
       });
       it('should return the page source', async function () {
         const source = await driver.getPageSource();
-        expect(source).to.include('<html');
-        expect(source).to.include('I am a page title');
-        expect(source).to.include('i appear 3 times');
-        expect(source).to.include('</html>');
+        assert.ok(source.includes('<html'));
+        assert.ok(source.includes('I am a page title'));
+        assert.ok(source.includes('i appear 3 times'));
+        assert.ok(source.includes('</html>'));
       });
       it('should get current url', async function () {
-        await expect(driver.getUrl()).to.eventually.include('test/guinea-pig');
+        assert.ok((await driver.getUrl()).includes('test/guinea-pig'));
       });
       it('should get updated URL without breaking window handles', async function () {
         const el = await driver.$('=i am an anchor link');
@@ -176,66 +176,68 @@ describe('Safari - basics -', function () {
         // allow the click to happen
         await delay(500);
 
-        await expect(driver.getUrl()).to.eventually.contain('#anchor');
-        await expect(driver.getWindowHandles()).to.eventually.be.ok;
+        assert.ok((await driver.getUrl()).includes('#anchor'));
+        assert.ok(await driver.getWindowHandles());
       });
       it('should send keystrokes to specific element', async function () {
         const el = await driver.$('#comments');
         await el.clearValue();
         await el.setValue('hello world');
-        expect(['how world', 'hello world']).to.include(((await el.getAttribute('value')) as string).toLowerCase());
+        assert.ok(['how world', 'hello world'].includes(((await el.getAttribute('value')) as string).toLowerCase()));
       });
       it('should send keystrokes to active element', async function () {
         const el = await driver.$('#comments');
         await el.click();
         await el.setValue('hello world');
-        expect(['how world', 'hello world']).to.include(
-          ((await el.getAttribute('value')) as string | null)?.toLowerCase(),
+        assert.ok(
+          ['how world', 'hello world'].includes(
+            ((await el.getAttribute('value')) as string | null)?.toLowerCase() as string,
+          ),
         );
       });
       it('should clear element', async function () {
         const el = await driver.$('#comments');
         await el.setValue('hello world');
-        await expect(el.getAttribute('value')).to.eventually.have.length.above(0);
+        assert.ok(((await el.getAttribute('value')) as string).length > 0);
         await el.clearValue();
-        await expect(el.getAttribute('value')).to.eventually.equal('');
+        assert.strictEqual(await el.getAttribute('value'), '');
       });
       it('should say whether an input is selected', async function () {
         const el = await driver.$('#unchecked_checkbox');
-        await expect(el.isSelected()).to.eventually.not.be.ok;
+        assert.ok(!(await el.isSelected()));
         await el.click();
 
         await retryInterval(10, 1000, async function () {
-          await expect(el.isSelected()).to.eventually.be.ok;
+          assert.ok(await el.isSelected());
         });
       });
       it('should be able to retrieve css properties', async function () {
         const el = await driver.$('#fbemail');
-        expect((await el.getCSSProperty('background-color')).value).to.contain('rgb');
+        assert.ok(((await el.getCSSProperty('background-color')).value as string).includes('rgb'));
       });
       it('should retrieve an element size', async function () {
         const el = await driver.$('#i_am_an_id');
         const size = await el.getSize();
-        expect(size.width).to.be.above(0);
-        expect(size.height).to.be.above(0);
+        assert.ok(size.width > 0);
+        assert.ok(size.height > 0);
       });
       it('should get location of an element', async function () {
         const el = await driver.$('#fbemail');
         const loc = await el.getLocation();
-        expect(loc.x).to.be.above(0);
-        expect(loc.y).to.be.above(0);
+        assert.ok(loc.x > 0);
+        assert.ok(loc.y > 0);
       });
       // getTagName not supported by mjwp
       it.skip('should retrieve tag name of an element', async function () {
         const el = await driver.$('#fbemail');
         const a = await driver.$('<a />');
-        await expect(el.getTagName()).to.eventually.equal('input');
-        await expect(a.getTagName()).to.eventually.equal('a');
+        assert.strictEqual(await el.getTagName(), 'input');
+        assert.strictEqual(await a.getTagName(), 'a');
       });
       it('should retrieve a window size', async function () {
         const size = await driver.getWindowRect();
-        expect(size.height).to.be.above(0);
-        expect(size.width).to.be.above(0);
+        assert.ok(size.height > 0);
+        assert.ok(size.width > 0);
       });
       // TODO: Update for WdIO compatibility
       it.skip('should submit a form', async function () {
@@ -245,25 +247,25 @@ describe('Safari - basics -', function () {
         await form.submit(el as any);
         await spinWait(async function () {
           const comments = await driver.$('#your_comments');
-          await expect(comments.getText()).to.eventually.equal('Your comments: This is a comment');
+          assert.strictEqual(await comments.getText(), 'Your comments: This is a comment');
         });
       });
       it('should return true when the element is displayed', async function () {
         const el = await driver.$('=i am a link');
-        await expect(el.isDisplayed()).to.eventually.be.ok;
+        assert.ok(await el.isDisplayed());
       });
       it('should return false when the element is not displayed', async function () {
         const el = await driver.$('#invisible div');
-        await expect(el.isDisplayed()).to.eventually.not.be.ok;
+        assert.ok(!(await el.isDisplayed()));
       });
       it('should return true when the element is enabled', async function () {
         const el = await driver.$('=i am a link');
-        await expect(el.isEnabled()).to.eventually.be.ok;
+        assert.ok(await el.isEnabled());
       });
       it('should return false when the element is not enabled', async function () {
         await driver.executeScript(`$('#fbemail').attr('disabled', 'disabled');`, []);
         const el = await driver.$('#fbemail');
-        await expect(el.isEnabled()).to.eventually.not.be.ok;
+        assert.ok(!(await el.isEnabled()));
       });
       it('should return the active element', async function () {
         const testText = 'hi there';
@@ -271,7 +273,7 @@ describe('Safari - basics -', function () {
         await el.setValue(testText);
         const activeElId = await driver.getActiveElement();
         const activeEl = await driver.$(activeElId);
-        await expect(activeEl.getAttribute('value')).to.eventually.equal(testText);
+        assert.strictEqual(await activeEl.getAttribute('value'), testText);
       });
       it('should properly navigate to anchor', async function () {
         const el = await driver.$('=i am an anchor link');
@@ -283,7 +285,7 @@ describe('Safari - basics -', function () {
         const url = await driver.getUrl();
         await openPage(driver, url);
 
-        await expect(driver.getUrl()).to.eventually.include('#anchor');
+        assert.ok((await driver.getUrl()).includes('#anchor'));
       });
       it('should be able to refresh', async function () {
         await driver.refresh();
@@ -350,7 +352,7 @@ describe('Safari - basics -', function () {
           await driver.deleteAllCookies();
 
           await retryInterval(5, 1000, async function () {
-            await expect(driver.getAllCookies()).to.eventually.have.length(0);
+            assert.strictEqual((await driver.getAllCookies()).length, 0);
           });
         });
       });
@@ -364,7 +366,7 @@ describe('Safari - basics -', function () {
 
           it('should be able to get cookies for a page', async function () {
             const cookies = await driver.getAllCookies();
-            expect(cookies.length).to.equal(2);
+            assert.strictEqual(cookies.length, 2);
             doesIncludeCookie(cookies, oldCookie1);
             doesIncludeCookie(cookies, oldCookie2);
           });
@@ -421,7 +423,7 @@ describe('Safari - basics -', function () {
 
             await driver.deleteAllCookies();
             cookies = await driver.getAllCookies();
-            expect(cookies.length).to.equal(0);
+            assert.strictEqual(cookies.length, 0);
 
             doesNotIncludeCookie(cookies, oldCookie1);
             doesNotIncludeCookie(cookies, oldCookie2);
@@ -440,10 +442,10 @@ describe('Safari - basics -', function () {
               }
             });
             it('should reject all functions', async function () {
-              await expect(driver.addCookie(newCookie)).to.be.rejectedWith(notImplementedRegExp);
-              await expect(driver.getAllCookies()).to.be.rejectedWith(notImplementedRegExp);
-              await expect(driver.deleteCookie(newCookie.name)).to.be.rejectedWith(notImplementedRegExp);
-              await expect(driver.deleteAllCookies()).to.be.rejectedWith(notImplementedRegExp);
+              await assert.rejects(driver.addCookie(newCookie), notImplementedRegExp);
+              await assert.rejects(driver.getAllCookies(), notImplementedRegExp);
+              await assert.rejects(driver.deleteCookie(newCookie.name), notImplementedRegExp);
+              await assert.rejects(driver.deleteAllCookies(), notImplementedRegExp);
             });
           });
         });

@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {getSimulator} from 'appium-ios-simulator';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {Simctl} from 'node-simctl';
 
 import {TVOS_CAPS, extractCapabilityValue} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 import {cleanupSimulator} from '../helpers/simulator.js';
-
-use(chaiAsPromised);
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
 
@@ -49,13 +46,13 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSettings', async function () {
     baseCaps.autoLaunch = true;
     const driver = await initSession(baseCaps);
-    expect(await driver.$('~General')).to.exist;
+    assert.ok(await driver.$('~General'));
   });
 
   it('should launch com.apple.TVSettings with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
     await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSettings'});
-    expect(await driver.$('~General')).to.exist;
+    assert.ok(await driver.$('~General'));
   });
 });

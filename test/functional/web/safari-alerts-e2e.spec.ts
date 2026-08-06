@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, type TestContext} from 'node:test';
 
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {SAFARI_CAPS, amendCapabilities, isIosVersionAtLeast, isIosVersionBelow} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 import {createGuineaPigServerSession, guineaPigPage} from './helpers/index.js';
-
-use(chaiAsPromised);
 
 const IS_CI = Boolean(process.env.CI);
 const CI_WEBVIEW_ATOM_WAIT_TIMEOUT_MS = 45000;
@@ -58,20 +55,20 @@ describe('safari - alerts', {skip: Boolean(process.env.CI) && isIosVersionBelow(
     const alert = await findWithRetry('#alert1');
     await alert.click();
     await acceptAlert(driver);
-    expect(await driver.getTitle()).to.include('I am a page title');
+    assert.ok((await driver.getTitle()).includes('I am a page title'));
   });
 
   it('should dismiss alert', async function () {
     const alert = await findWithRetry('#alert1');
     await alert.click();
     await dismissAlert(driver);
-    expect(await driver.getTitle()).to.include('I am a page title');
+    assert.ok((await driver.getTitle()).includes('I am a page title'));
   });
 
   it('should get text of alert', async function () {
     const alert = await findWithRetry('#alert1');
     await alert.click();
-    expect(await driver.getAlertText()).to.include('I am an alert');
+    assert.ok((await driver.getAlertText()).includes('I am an alert'));
     await dismissAlert(driver);
   });
   it('should not get text of alert that closed', async function (ctx: TestContext) {
@@ -84,7 +81,8 @@ describe('safari - alerts', {skip: Boolean(process.env.CI) && isIosVersionBelow(
     const alert = await findWithRetry('#alert1');
     await alert.click();
     await acceptAlert(driver);
-    await expect(driver.getAlertText()).to.be.rejectedWith(
+    await assert.rejects(
+      driver.getAlertText(),
       /An attempt was made to operate on a modal dialog when one was not open/,
     );
   });
@@ -95,12 +93,12 @@ describe('safari - alerts', {skip: Boolean(process.env.CI) && isIosVersionBelow(
     await acceptAlert(driver);
 
     const el = await findWithRetry('#promptVal');
-    expect(await el.getAttribute('value')).to.eql('of course!');
+    assert.strictEqual(await el.getAttribute('value'), 'of course!');
   });
   it('should fail to set text of alert', async function () {
     const alert = await findWithRetry('#alert1');
     await alert.click();
-    await expect(driver.sendAlertText('yes I do!')).to.be.rejectedWith(/no input fields/);
+    await assert.rejects(driver.sendAlertText('yes I do!'), /no input fields/);
     await acceptAlert(driver);
   });
 });

@@ -1,12 +1,9 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
-
-use(chaiAsPromised);
 
 describe('get activeapp commands', function () {
   const driver = new XCUITestDriver({} as any);
@@ -30,16 +27,16 @@ describe('get activeapp commands', function () {
     });
 
     const out = await driver.mobileGetActiveAppInfo();
-    expect(out.pid).to.eq(15438);
-    expect(out.name).to.eq('');
-    expect(out.bundleId).to.eq('com.apple.DocumentsApp');
-    expect(out.processArguments.env.HAPPY).to.eq('testing');
-    expect(out.processArguments.args[0]).to.eq('happy');
-    expect(out.processArguments.args[1]).to.eq('testing');
+    assert.strictEqual(out.pid, 15438);
+    assert.strictEqual(out.name, '');
+    assert.strictEqual(out.bundleId, 'com.apple.DocumentsApp');
+    assert.strictEqual(out.processArguments.env.HAPPY, 'testing');
+    assert.strictEqual(out.processArguments.args[0], 'happy');
+    assert.strictEqual(out.processArguments.args[1], 'testing');
   });
 
   it('get active app info raise an error if the endpoint raises error', async function () {
     proxyStub.throws();
-    await expect(driver.mobileGetActiveAppInfo()).to.be.rejected;
+    await assert.rejects(driver.mobileGetActiveAppInfo());
   });
 });

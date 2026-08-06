@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {IAppiumIpc, IpcData, IpcMessage} from '@appium/types';
 import {node} from 'appium/support.js';
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
@@ -15,8 +14,6 @@ import {
   sessionClaimHandler,
   setSharedIpcForTesting,
 } from '../../lib/session-claim-handler.js';
-
-use(chaiAsPromised);
 
 class MockIpcSubscription extends EventEmitter {
   isActive = true;
@@ -117,16 +114,17 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.registerActiveSession(newDriver);
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
-    expect((oldDriver.deleteSession as sinon.SinonStub).calledOnce).to.be.true;
-    expect((oldDriver.log.warn as sinon.SinonStub).calledWithMatch(/highly discouraged/)).to.be.true;
-    expect((newDriver.deleteSession as sinon.SinonStub).called).to.be.false;
-    expect(mockIpc.getMessage(SessionClaimHandler.RELEASED_TOPIC)?.data).to.eql({
+    assert.strictEqual((oldDriver.deleteSession as sinon.SinonStub).calledOnce, true);
+    assert.strictEqual((oldDriver.log.warn as sinon.SinonStub).calledWithMatch(/highly discouraged/), true);
+    assert.strictEqual((newDriver.deleteSession as sinon.SinonStub).called, false);
+    assert.deepStrictEqual(mockIpc.getMessage(SessionClaimHandler.RELEASED_TOPIC)?.data, {
       udid: 'device-1',
       sessionId: 'old-session',
     });
-    expect(
+    assert.strictEqual(
       (newDriver.log.debug as sinon.SinonStub).calledWithMatch(/Received release confirmation from 1 session for udid/),
-    ).to.be.true;
+      true,
+    );
   });
 
   it('should not wait for release confirmation when no session contends for the udid', async function () {
@@ -136,7 +134,7 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.registerActiveSession(newDriver);
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
-    expect(Date.now() - startMs).to.be.lessThan(200);
+    assert.ok(Date.now() - startMs < 200);
   });
 
   it('should wait for all contending sessions to release the udid', async function () {
@@ -159,13 +157,14 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
     for (const oldDriver of oldDrivers) {
-      expect((oldDriver.deleteSession as sinon.SinonStub).calledOnce).to.be.true;
+      assert.strictEqual((oldDriver.deleteSession as sinon.SinonStub).calledOnce, true);
     }
-    expect(
+    assert.strictEqual(
       (newDriver.log.debug as sinon.SinonStub).calledWithMatch(
         /Received release confirmation from 2 sessions for udid/,
       ),
-    ).to.be.true;
+      true,
+    );
   });
 
   it('should publish a contended message before terminating an obsolete session', async function () {
@@ -188,10 +187,10 @@ describe('SessionClaimHandler', function () {
     const contendedCallIndex = publish
       .getCalls()
       .findIndex((call) => call.args[0] === SessionClaimHandler.CONTENDED_TOPIC);
-    expect(contendedCallIndex).to.be.greaterThan(-1);
-    expect(callOrder).to.eql(['deleteSession']);
-    expect(contendedCallIndex).to.be.lessThan(
-      publish.getCalls().findIndex((call) => call.args[0] === SessionClaimHandler.RELEASED_TOPIC),
+    assert.ok(contendedCallIndex > -1);
+    assert.deepStrictEqual(callOrder, ['deleteSession']);
+    assert.ok(
+      contendedCallIndex < publish.getCalls().findIndex((call) => call.args[0] === SessionClaimHandler.RELEASED_TOPIC),
     );
   });
 
@@ -203,7 +202,7 @@ describe('SessionClaimHandler', function () {
     publish.resetHistory();
     await sessionClaimHandler.claimSessionUdid(newDriver);
 
-    expect(publish.firstCall.args).to.eql([
+    assert.deepStrictEqual(publish.firstCall.args, [
       SessionClaimHandler.CLAIMED_TOPIC,
       node.getObjectId(newDriver),
       {
@@ -218,17 +217,17 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.registerActiveSession(driver);
     await sessionClaimHandler.claimSessionUdid(driver);
 
-    expect((driver.deleteSession as sinon.SinonStub).called).to.be.false;
+    assert.strictEqual((driver.deleteSession as sinon.SinonStub).called, false);
   });
 
   it('should unregister IPC subscriptions on session cleanup', async function () {
     const driver = makeDriver({sessionId: 'session-1'});
     await sessionClaimHandler.registerActiveSession(driver);
-    expect(mockIpc.subscriptions).to.have.length(1);
-    expect(mockIpc.subscriptions[0].isActive).to.be.true;
+    assert.strictEqual(mockIpc.subscriptions.length, 1);
+    assert.strictEqual(mockIpc.subscriptions[0].isActive, true);
 
     sessionClaimHandler.unregisterActiveSession(driver);
-    expect(mockIpc.subscriptions[0].isActive).to.be.false;
+    assert.strictEqual(mockIpc.subscriptions[0].isActive, false);
   });
 
   it('should unsubscribe contention listeners when claim publication fails', async function () {
@@ -238,9 +237,10 @@ describe('SessionClaimHandler', function () {
     await sessionClaimHandler.registerActiveSession(newDriver);
     const activeSubscriptionsBeforeClaim = mockIpc.subscriptions.filter((subscription) => subscription.isActive).length;
 
-    await expect(sessionClaimHandler.claimSessionUdid(newDriver)).to.be.rejectedWith('publish failed');
+    await assert.rejects(sessionClaimHandler.claimSessionUdid(newDriver), /publish failed/);
 
-    expect(mockIpc.subscriptions.filter((subscription) => subscription.isActive)).to.have.length(
+    assert.strictEqual(
+      mockIpc.subscriptions.filter((subscription) => subscription.isActive).length,
       activeSubscriptionsBeforeClaim,
     );
   });

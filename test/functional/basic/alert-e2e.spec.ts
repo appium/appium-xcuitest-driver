@@ -1,15 +1,12 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {getUICatalogCaps, isIosVersionAtLeast} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 // WDA's alert detection is currently unreliable on iOS 26+ (individual commands
 // intermittently stall for minutes once an alert is showing), which is tracked
@@ -31,7 +28,7 @@ describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVer
       const el = await driver.$('~Alert Views');
       await el.click();
 
-      expect(await driver.$$('~Simple')).to.have.length(1);
+      assert.strictEqual((await driver.$$('~Simple')).length, 1);
     });
   });
   afterEach(async function () {
@@ -46,7 +43,7 @@ describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVer
     await el.click();
     await delay(2000);
 
-    expect(await driver.getAlertText()).to.include('A Short Title Is Best');
+    assert.ok((await driver.getAlertText()).includes('A Short Title Is Best'));
     await driver.dismissAlert();
   });
 
@@ -57,7 +54,7 @@ describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVer
     // small pause for alert to open
     await delay(1000);
 
-    expect(await driver.getAlertText()).to.include('A Short Title Is Best');
+    assert.ok((await driver.getAlertText()).includes('A Short Title Is Best'));
     await driver.acceptAlert();
   });
 
@@ -68,7 +65,7 @@ describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVer
     // small pause for alert to open
     await delay(1000);
 
-    expect(await driver.getAlertText()).to.include('A Short Title Is Best');
+    assert.ok((await driver.getAlertText()).includes('A Short Title Is Best'));
     await driver.dismissAlert();
   });
 
@@ -101,7 +98,7 @@ describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVer
 
         const textField = await driver.$(test.field);
         const text = await textField.getText();
-        expect(text).to.equal(test.expectedText);
+        assert.strictEqual(text, test.expectedText);
 
         // on some devices the keyboard obscurs the buttons so no dismiss is possible
         await textField.setValue('\n');
@@ -114,7 +111,7 @@ describe('XCUITestDriver - alerts -', {skip: Boolean(process.env.CI) && isIosVer
     // exact wording of the underlying "no such alert" error is dictated by
     // WDA and has changed across versions.
     const err = await driver.acceptAlert().catch((e) => e);
-    expect(err).to.be.an('error');
-    expect(err.name).to.equal('no such alert');
+    assert.ok(err instanceof Error);
+    assert.strictEqual(err.name, 'no such alert');
   });
 });

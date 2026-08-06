@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import assert from 'node:assert/strict';
 
 type Cookie = {
   name: string;
@@ -19,10 +19,8 @@ export const oldCookie2 = {
 };
 
 export function doesIncludeCookie(cookies: Cookie[], cookie: Cookie) {
-  expect(cookies.map((c) => c.name)).to.include(cookie.name);
-  expect(cookies.map((c) => c.value)).to.include(cookie.value);
+  assert.ok(cookies.some((c) => c.name === cookie.name && c.value === cookie.value));
 }
 export function doesNotIncludeCookie(cookies: Cookie[], cookie: Cookie) {
-  expect(cookies.map((c) => c.name)).to.not.include(cookie.name);
-  expect(cookies.map((c) => c.value)).to.not.include(cookie.value);
+  assert.ok(!cookies.some((c) => c.name === cookie.name && c.value === cookie.value));
 }

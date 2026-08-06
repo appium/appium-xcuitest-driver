@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs} from 'appium/support.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox} from 'sinon';
 
 import {isLocalHost} from '../../lib/commands/helpers/index.js';
 import {clearSystemFiles, markSystemFilesForCleanup} from '../../lib/commands/wda/cleanup.js';
-
-use(chaiAsPromised);
 
 const DERIVED_DATA_ROOT = '/path/to/DerivedData/WebDriverAgent-eoyoecqmiqfeodgstkwbxkfyagll';
 
@@ -56,37 +53,37 @@ describe('utils', function () {
 
   describe('isLocalHost', function () {
     it('should be false with invalid input, undefined', function () {
-      expect(isLocalHost(undefined as any)).to.be.false;
+      assert.strictEqual(isLocalHost(undefined as any), false);
     });
     it('should be false with invalid input, empty', function () {
-      expect(isLocalHost('')).to.be.false;
+      assert.strictEqual(isLocalHost(''), false);
     });
     it('should be true with ipv4 localhost', function () {
-      expect(isLocalHost('http://localhost')).to.be.true;
+      assert.strictEqual(isLocalHost('http://localhost'), true);
     });
     it('should be true with ipv4 localhost with port', function () {
-      expect(isLocalHost('http://localhost:8888')).to.be.true;
+      assert.strictEqual(isLocalHost('http://localhost:8888'), true);
     });
     it('should be true with ipv4 127.0.0.1', function () {
-      expect(isLocalHost('http://127.0.0.1')).to.be.true;
+      assert.strictEqual(isLocalHost('http://127.0.0.1'), true);
     });
     it('should be true with ipv6 ::1', function () {
-      expect(isLocalHost('http://[::1]')).to.be.true;
+      assert.strictEqual(isLocalHost('http://[::1]'), true);
     });
     it('should be true with ipv6 ::ffff:127.0.0.1', function () {
-      expect(isLocalHost('http://[::ffff:127.0.0.1]')).to.be.true;
+      assert.strictEqual(isLocalHost('http://[::ffff:127.0.0.1]'), true);
     });
     it('should be true with ipv6 ::ffff:127.0.0.1 with port', function () {
-      expect(isLocalHost('http://[::ffff:127.0.0.1]:8888')).to.be.true;
+      assert.strictEqual(isLocalHost('http://[::ffff:127.0.0.1]:8888'), true);
     });
     it('should be false with ipv4 192.168.1.100', function () {
-      expect(isLocalHost('http://192.168.1.100')).to.be.false;
+      assert.strictEqual(isLocalHost('http://192.168.1.100'), false);
     });
     it('should be false with ipv4 192.168.1.100 with port', function () {
-      expect(isLocalHost('http://192.168.1.100:8888')).to.be.false;
+      assert.strictEqual(isLocalHost('http://192.168.1.100:8888'), false);
     });
     it('should be false with ipv6 2001:db8:85a3:8d3:1319:8a2e:370:7348', function () {
-      expect(isLocalHost('http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]')).to.be.false;
+      assert.strictEqual(isLocalHost('http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]'), false);
     });
   });
 });

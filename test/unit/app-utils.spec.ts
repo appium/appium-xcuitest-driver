@@ -1,14 +1,11 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before} from 'node:test';
 
 import {fs, tempDir, zip} from 'appium/support.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import {unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
 import {getUIKitCatalogPath} from '../setup.js';
-
-use(chaiAsPromised);
 
 describe('app-utils', function () {
   let uiCatalogAppPath: string;
@@ -36,7 +33,7 @@ describe('app-utils', function () {
         });
         srcStream = fs.createReadStream(tmpSrc);
         ({rootDir: appRoot} = await unzipStream(srcStream));
-        await expect(fs.exists(path.resolve(appRoot, 'Info.plist'))).to.eventually.be.true;
+        assert.strictEqual(await fs.exists(path.resolve(appRoot, 'Info.plist')), true);
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -58,7 +55,7 @@ describe('app-utils', function () {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), tmpSrc);
         srcStream = fs.createReadStream(tmpSrc);
-        await expect(unzipStream(srcStream)).to.be.rejected;
+        await assert.rejects(unzipStream(srcStream));
       } finally {
         await fs.rimraf(tmpDir);
       }
@@ -75,7 +72,7 @@ describe('app-utils', function () {
           cwd: uiCatalogAppPath,
         });
         ({rootDir: appRoot} = await unzipFile(tmpSrc));
-        await expect(fs.exists(path.resolve(appRoot, 'Info.plist'))).to.eventually.be.true;
+        assert.strictEqual(await fs.exists(path.resolve(appRoot, 'Info.plist')), true);
       } finally {
         await fs.rimraf(tmpDir);
         if (appRoot) {
@@ -89,7 +86,7 @@ describe('app-utils', function () {
       try {
         const tmpSrc = path.join(tmpDir, 'Info.plist');
         await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), tmpSrc);
-        await expect(unzipFile(tmpSrc)).to.be.rejected;
+        await assert.rejects(unzipFile(tmpSrc));
       } finally {
         await fs.rimraf(tmpDir);
       }

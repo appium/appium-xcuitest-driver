@@ -1,18 +1,15 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach, type TestContext} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 import util from 'node:util';
 
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import type {Browser} from 'webdriverio';
 
 import {isIosVersionBelow, isIosVersionAtLeast, getUICatalogCaps} from '../desired.js';
 import {createGuineaPigServerSession, guineaPigPage} from '../helpers/guinea-pig/index.js';
 import {initSession, deleteSession} from '../helpers/session.js';
-
-use(chaiAsPromised);
 
 describe('XCUITestDriver - basics -', function () {
   let driver: Browser;
@@ -30,19 +27,19 @@ describe('XCUITestDriver - basics -', function () {
   describe('status -', function () {
     it('should get the server status', async function () {
       const status = (await driver.status()) as any;
-      expect(status.build.version).to.exist;
+      assert.ok(status.build.version);
     });
 
     it('should return status immediately if another operation is in progress', async function () {
       await driver.setTimeout({implicit: 10000});
       const findElementPromise = driver.$('#WrongLocator');
       const status = (await driver.status()) as any;
-      expect(status.build.version).to.exist;
-      expect(util.inspect(findElementPromise).includes('pending')).to.be.true;
+      assert.ok(status.build.version);
+      assert.strictEqual(util.inspect(findElementPromise).includes('pending'), true);
       try {
         await findElementPromise;
       } catch (err: any) {
-        expect(err.status).to.eql(7);
+        assert.strictEqual(err.status, 7);
       }
     });
   });
@@ -50,16 +47,16 @@ describe('XCUITestDriver - basics -', function () {
   describe('source -', function () {
     function checkSource(src: string) {
       // should have full elements
-      expect(src).to.include('<AppiumAUT>');
-      expect(src).to.include('<XCUIElementTypeApplication');
+      assert.ok(src.includes('<AppiumAUT>'));
+      assert.ok(src.includes('<XCUIElementTypeApplication'));
 
       // should not have any XCTest errors
-      expect(src).to.not.include('AX error');
+      assert.ok(!src.includes('AX error'));
     }
     describe('plain -', function () {
       it('should get the source for the page', async function () {
         const src = await driver.getPageSource();
-        expect(typeof src).to.eql('string');
+        assert.strictEqual(typeof src, 'string');
         checkSource(src);
       });
     });
@@ -76,8 +73,8 @@ describe('XCUITestDriver - basics -', function () {
     it('should background the app for the specified time', async function () {
       const before = Date.now();
       await driver.background(4);
-      expect(Date.now() - before).to.be.above(4000);
-      expect((await driver.getPageSource()).indexOf('<AppiumAUT>')).to.not.eql(-1);
+      assert.ok(Date.now() - before > 4000);
+      assert.notStrictEqual((await driver.getPageSource()).indexOf('<AppiumAUT>'), -1);
     });
   });
 
@@ -89,17 +86,17 @@ describe('XCUITestDriver - basics -', function () {
     });
     it('should get an app screenshot', async function () {
       const screenshot = await driver.takeScreenshot();
-      expect(screenshot).to.exist;
-      expect(screenshot).to.be.a('string');
+      assert.ok(screenshot);
+      assert.strictEqual(typeof screenshot, 'string');
 
       // make sure WDA didn't crash, by using it again
       const els = await driver.$$('~Alert Views');
-      expect(els.length).to.eql(1);
+      assert.strictEqual(els.length, 1);
     });
 
     it('should get an app screenshot in landscape mode', async function () {
       const screenshot1 = await driver.takeScreenshot();
-      expect(screenshot1).to.exist;
+      assert.ok(screenshot1);
 
       try {
         await driver.setOrientation('LANDSCAPE');
@@ -109,8 +106,8 @@ describe('XCUITestDriver - basics -', function () {
       await delay(500);
 
       const screenshot2 = await driver.takeScreenshot();
-      expect(screenshot2).to.exist;
-      expect(screenshot2).to.not.eql(screenshot1);
+      assert.ok(screenshot2);
+      assert.notStrictEqual(screenshot2, screenshot1);
     });
   });
 
@@ -138,9 +135,9 @@ describe('XCUITestDriver - basics -', function () {
         throw new Error('Image dimensions must not be undefined');
       }
       // Viewport size can be smaller than the full image size + status bar on some devices.
-      expect(fullImgHeight).to.be.gte(viewImgHeight! + Math.round(scale * statusBarSize.height));
-      expect(viewImgHeight).to.eql(viewportRect.height);
-      expect(fullImgWidth).to.be.gte(viewImgWidth!);
+      assert.ok(fullImgHeight >= viewImgHeight! + Math.round(scale * statusBarSize.height));
+      assert.strictEqual(viewImgHeight, viewportRect.height);
+      assert.ok(fullImgWidth >= viewImgWidth!);
     });
   });
 
@@ -149,20 +146,20 @@ describe('XCUITestDriver - basics -', function () {
       it('should get the list of available logs', async function () {
         const actualTypes = await driver.getLogTypes();
         for (const expectedType of ['syslog', 'crashlog', 'performance', 'safariConsole', 'safariNetwork', 'server']) {
-          expect(actualTypes).to.include(expectedType);
+          assert.ok(actualTypes.includes(expectedType));
         }
       });
     });
 
     describe('retrieval -', function () {
       it('should throw an error when an invalid type is given', async function () {
-        await expect(driver.getLogs('something-random')).to.be.rejected;
+        await assert.rejects(driver.getLogs('something-random'));
       });
       it('should get system logs', async function () {
-        expect(await driver.getLogs('syslog')).to.be.an('array');
+        assert.ok(Array.isArray(await driver.getLogs('syslog')));
       });
       it('should get crash logs', async function () {
-        expect(await driver.getLogs('crashlog')).to.be.an('array');
+        assert.ok(Array.isArray(await driver.getLogs('crashlog')));
       });
     });
   });
@@ -176,12 +173,12 @@ describe('XCUITestDriver - basics -', function () {
     });
     it('should get the current orientation', async function () {
       const orientation = await driver.getOrientation();
-      expect(['PORTRAIT', 'LANDSCAPE']).to.include(orientation);
+      assert.ok(['PORTRAIT', 'LANDSCAPE'].includes(orientation));
     });
     it('should set the orientation', async function () {
       await driver.setOrientation('LANDSCAPE');
 
-      expect(await driver.getOrientation()).to.eql('LANDSCAPE');
+      assert.strictEqual(await driver.getOrientation(), 'LANDSCAPE');
     });
     it('should be able to interact with an element in LANDSCAPE', async function () {
       await driver.setOrientation('LANDSCAPE');
@@ -189,7 +186,7 @@ describe('XCUITestDriver - basics -', function () {
       const el = await driver.$('#Buttons');
       await el.click();
 
-      await expect(driver.findElement('css selector', '#Button')).to.not.be.rejected;
+      await assert.doesNotReject(driver.findElement('css selector', '#Button'));
 
       await driver.back();
     });
@@ -198,22 +195,23 @@ describe('XCUITestDriver - basics -', function () {
   describe('window size -', function () {
     it('should be able to get the current window size', async function () {
       const size = await driver.getWindowRect();
-      expect(size.width).to.be.a('number');
-      expect(size.height).to.be.a('number');
+      assert.strictEqual(typeof size.width, 'number');
+      assert.strictEqual(typeof size.height, 'number');
     });
   });
 
   describe('geo location -', function () {
     it('should work on Simulator', async function () {
-      await expect(driver.execute('mobile: getSimulatedLocation')).to.be.fulfilled;
-      await expect(driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'})).to.not
-        .be.rejected;
+      await assert.doesNotReject(driver.execute('mobile: getSimulatedLocation'));
+      await assert.doesNotReject(
+        driver.execute('mobile: setSimulatedLocation', {latitude: '30.0001', longitude: '21.0002'}),
+      );
     });
   });
 
   describe('shake -', function () {
     it('should work on Simulator', async function () {
-      await expect(driver.execute('mobile: shake')).to.be.fulfilled;
+      await assert.doesNotReject(driver.execute('mobile: shake'));
     });
   });
 
@@ -227,11 +225,11 @@ describe('XCUITestDriver - basics -', function () {
       }
       try {
         await driver.lock();
-        expect(await driver.isLocked()).to.be.true;
+        assert.strictEqual(await driver.isLocked(), true);
       } finally {
         await driver.unlock();
       }
-      expect(await driver.isLocked()).to.be.false;
+      assert.strictEqual(await driver.isLocked(), false);
     });
   });
 
@@ -264,7 +262,7 @@ describe('XCUITestDriver - basics -', function () {
 
       await retryInterval(100, 1000, async function () {
         const title = await driver.getTitle();
-        expect(title).to.equal('I am a page title');
+        assert.strictEqual(title, 'I am a page title');
       });
 
       await driver.switchContext(contexts[0].id);

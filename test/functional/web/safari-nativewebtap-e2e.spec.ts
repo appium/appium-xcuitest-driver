@@ -1,9 +1,8 @@
+import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
 import {retryInterval} from 'asyncbox';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import type {Browser} from 'webdriverio';
 
 import {isEmpty} from '../../../lib/utils/index.js';
@@ -26,8 +25,6 @@ import {
   guineaPigScrollablePage,
   guineaPigAppBannerPage,
 } from './helpers/index.js';
-
-use(chaiAsPromised);
 
 function getCaps(baseUrl: string) {
   return amendCapabilities(SAFARI_CAPS, {
@@ -56,7 +53,7 @@ describe('Safari - coordinate conversion -', {skip: Boolean(process.env.CI)}, fu
     async function loadPage(driver: any, url: string) {
       await retryInterval(5, 1000, async function () {
         await openPage(driver, url);
-        await expect(spinTitle(driver)).to.eventually.not.include('Cannot Open Page');
+        assert.ok(!(await spinTitle(driver)).includes('Cannot Open Page'));
       });
     }
 
@@ -239,7 +236,7 @@ describe('Safari - coordinate conversion -', {skip: Boolean(process.env.CI)}, fu
         it('should be able to tap on a button', {skip: skipped}, async function () {
           await loadPage(driver, guineaPigPage(baseUrl));
 
-          expect(await driver.getPageSource()).to.not.include('Your comments: Hello');
+          assert.ok(!(await driver.getPageSource()).includes('Your comments: Hello'));
 
           const comments = await driver.$('[name="comments"]');
           await driver.elementSendKeys(comments.elementId as any, 'Hello');
@@ -248,7 +245,7 @@ describe('Safari - coordinate conversion -', {skip: Boolean(process.env.CI)}, fu
 
           await retryInterval(5, 500, async function () {
             const src = await driver.getPageSource();
-            expect(src).to.include('Your comments: Hello');
+            assert.ok(src.includes('Your comments: Hello'));
           });
         });
 
@@ -257,7 +254,7 @@ describe('Safari - coordinate conversion -', {skip: Boolean(process.env.CI)}, fu
 
           await driver.$('#alert1').click();
           await retryInterval(5, 1000, driver.acceptAlert.bind(driver));
-          await expect(driver.getTitle()).to.eventually.include('I am a page title');
+          assert.ok((await driver.getTitle()).includes('I am a page title'));
         });
 
         describe('with tabs -', {skip: skipped || !deviceName.toLowerCase().includes('ipad')}, function () {
@@ -268,7 +265,7 @@ describe('Safari - coordinate conversion -', {skip: Boolean(process.env.CI)}, fu
             await driver.execute('arguments[0].click();', await driver.$(`=i am a new window link`));
 
             await retryInterval(10, 1000, async function () {
-              await expect(driver.getTitle()).to.eventually.eql('I am another page title');
+              assert.strictEqual(await driver.getTitle(), 'I am another page title');
             });
           });
 

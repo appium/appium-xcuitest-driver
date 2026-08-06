@@ -1,10 +1,9 @@
+import assert from 'node:assert/strict';
 import net from 'node:net';
 import {describe, it, beforeEach, afterEach, mock} from 'node:test';
 
 import xcode from 'appium-xcode';
 import {JWProxy} from 'appium/driver.js';
-import {use, expect} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {createSandbox, type SinonSandbox, type SinonStubbedMember} from 'sinon';
 
 import * as helpersIndexModule from '../../lib/commands/helpers/index.js';
@@ -15,8 +14,6 @@ import * as wdaHostOpsModule from '../../lib/device/wda-host-ops.js';
 import type {XCUITestDriverOpts} from '../../lib/driver.js';
 import {mergeDeep} from '../../lib/utils/index.js';
 import {UNIT_LONG_TIMEOUT_MS} from './helpers.js';
-
-use(chaiAsPromised);
 
 // driver.js consumes checkAppPresent/getAndCheckXcodeVersion/installAUT through this barrel, so
 // it (not the individual modules) is what must be mocked: once a re-exporting module has been
@@ -150,17 +147,17 @@ describe('XCUITestDriver', function () {
       driver._wda = {
         url: {port: 8100},
       } as any;
-      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
+      assert.strictEqual(driver.getDefaultUrl(), 'http://127.0.0.1:8100/health');
     });
 
     it('simulator with ipv4', function () {
       driver.opts.wdaLocalPort = 8111;
-      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8111/health');
+      assert.strictEqual(driver.getDefaultUrl(), 'http://127.0.0.1:8111/health');
     });
 
     it('simulator with ipv6', function () {
       driver.opts.address = '::1';
-      expect(driver.getDefaultUrl()).eq('http://127.0.0.1:8100/health');
+      assert.strictEqual(driver.getDefaultUrl(), 'http://127.0.0.1:8100/health');
     });
   });
 
@@ -180,8 +177,8 @@ describe('XCUITestDriver', function () {
         driver.lifecycleData = {} as any;
         const sdkStub = sandbox.stub(xcode, 'getMaxIOSSDK').resolves('18.0');
 
-        await expect(driver.determineDevice()).to.be.rejectedWith(/real-device 'appium:udid'/);
-        expect(sdkStub.notCalled).to.be.true;
+        await assert.rejects(driver.determineDevice(), /real-device 'appium:udid'/);
+        assert.strictEqual(sdkStub.notCalled, true);
       });
     });
 
@@ -194,7 +191,7 @@ describe('XCUITestDriver', function () {
         } as any;
         driver.lifecycleData = {} as any;
 
-        await expect(driver.determineDevice()).to.be.rejectedWith(/Automatic device selection/);
+        await assert.rejects(driver.determineDevice(), /Automatic device selection/);
       });
     });
 
@@ -209,9 +206,9 @@ describe('XCUITestDriver', function () {
 
         const result = await driver.determineDevice();
 
-        expect(result.realDevice).to.be.true;
-        expect(result.udid).to.eql('device-1');
-        expect(result.device).to.be.instanceOf(RealDevice);
+        assert.strictEqual(result.realDevice, true);
+        assert.strictEqual(result.udid, 'device-1');
+        assert.ok(result.device instanceof RealDevice);
       });
     });
   });
@@ -234,15 +231,15 @@ describe('XCUITestDriver', function () {
 
       it('should not have wda status by default', async function () {
         const status = await driver.getStatus();
-        expect(jwproxyCommandSpy.calledOnce).to.be.false;
-        expect(status.wda).to.be.undefined;
+        assert.strictEqual(jwproxyCommandSpy.calledOnce, false);
+        assert.strictEqual(status.wda, undefined);
       });
 
       it('should return wda status if cached', async function () {
         driver.cachedWdaStatus = {};
         const status = await driver.getStatus();
-        expect(jwproxyCommandSpy.called).to.be.false;
-        expect(status.wda).to.exist;
+        assert.strictEqual(jwproxyCommandSpy.called, false);
+        assert.ok(status.wda);
       });
     });
 
@@ -298,7 +295,7 @@ describe('XCUITestDriver', function () {
 
       it('should include server capabilities', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         const resCaps = await driver.createSession(null as any, null as any, structuredClone(caps) as any);
-        expect((resCaps[1] as any).javascriptEnabled).to.be.true;
+        assert.strictEqual((resCaps[1] as any).javascriptEnabled, true);
       });
 
       it('should call startLogCapture', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -311,8 +308,8 @@ describe('XCUITestDriver', function () {
             },
           }) as any,
         );
-        expect((resCaps[1] as any).javascriptEnabled).to.be.true;
-        expect((driver.startLogCapture as any).called).to.be.true;
+        assert.strictEqual((resCaps[1] as any).javascriptEnabled, true);
+        assert.strictEqual((driver.startLogCapture as any).called, true);
       });
       it('should not call startLogCapture', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         const resCaps = await driver.createSession(
@@ -324,8 +321,8 @@ describe('XCUITestDriver', function () {
             },
           }) as any,
         );
-        expect((resCaps[1] as any).javascriptEnabled).to.be.true;
-        expect((driver.startLogCapture as any).called).to.be.false;
+        assert.strictEqual((resCaps[1] as any).javascriptEnabled, true);
+        assert.strictEqual((driver.startLogCapture as any).called, false);
       });
       it('should call setReduceTransparency for a simulator', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         device.simctl = true;
@@ -338,8 +335,8 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:reduceTransparency': true},
           }) as any,
         );
-        expect(spy.calledOnce).to.be.true;
-        expect(spy.firstCall.args[0]).to.eql(true);
+        assert.strictEqual(spy.calledOnce, true);
+        assert.strictEqual(spy.firstCall.args[0], true);
       });
 
       it('should not call setReduceTransparency for a real device', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -353,7 +350,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:reduceTransparency': true},
           }) as any,
         );
-        expect(spy.notCalled).to.be.true;
+        assert.strictEqual(spy.notCalled, true);
       });
 
       it('should call setAutoFillPasswords for a simulator', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -367,8 +364,8 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:autoFillPasswords': true},
           }) as any,
         );
-        expect(spy.calledOnce).to.be.true;
-        expect(spy.firstCall.args[0]).to.eql(true);
+        assert.strictEqual(spy.calledOnce, true);
+        assert.strictEqual(spy.firstCall.args[0], true);
       });
       it('should not call setAutoFillPasswords for a real device', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         delete device.simctl;
@@ -381,7 +378,7 @@ describe('XCUITestDriver', function () {
             alwaysMatch: {'appium:setAutoFillPasswords': true},
           }) as any,
         );
-        expect(spy.notCalled).to.be.true;
+        assert.strictEqual(spy.notCalled, true);
       });
 
       it('should throw an error if mjpegServerPort is occupied', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -393,7 +390,7 @@ describe('XCUITestDriver', function () {
           server.on('error', reject);
         });
         try {
-          await expect(
+          await assert.rejects(
             driver.createSession(
               null as any,
               null as any,
@@ -401,7 +398,8 @@ describe('XCUITestDriver', function () {
                 alwaysMatch: {'appium:mjpegServerPort': 9100},
               }) as any,
             ),
-          ).to.be.rejectedWith(/mjpegServerPort.*port #9100 is occupied/);
+            /mjpegServerPort.*port #9100 is occupied/,
+          );
         } finally {
           await new Promise((resolve, reject) => {
             server.close(resolve);
@@ -425,15 +423,15 @@ describe('XCUITestDriver', function () {
       });
 
       it('should allow execute methods without whitespace', async function () {
-        await expect(driver.execute('mobile:deviceInfo')).to.eventually.eql(deviceInfoResponse);
+        assert.deepStrictEqual(await driver.execute('mobile:deviceInfo'), deviceInfoResponse);
       });
 
       it('should allow execute methods with hella whitespace', async function () {
-        await expect(driver.execute('mobile:           deviceInfo')).to.eventually.eql(deviceInfoResponse);
+        assert.deepStrictEqual(await driver.execute('mobile:           deviceInfo'), deviceInfoResponse);
       });
 
       it('should allow execute methods with leading/trailing whitespace', async function () {
-        await expect(driver.execute(' mobile: deviceInfo ')).to.eventually.eql(deviceInfoResponse);
+        assert.deepStrictEqual(await driver.execute(' mobile: deviceInfo '), deviceInfoResponse);
       });
     });
   });
@@ -455,14 +453,15 @@ describe('XCUITestDriver', function () {
       driver.lifecycleData = {createSim: false};
       driver.opts.otherApps = '/path/to/iosApp.app';
       await installAUTWithRealDeviceMocks(driver);
-      expect((driver.isRealDevice as any).calledOnce).to.be.true;
-      expect((driver.helpers.configureApp as any).calledOnce).to.be.true;
-      expect(
+      assert.strictEqual((driver.isRealDevice as any).calledOnce, true);
+      assert.strictEqual((driver.helpers.configureApp as any).calledOnce, true);
+      assert.strictEqual(
         installToRealDeviceStub.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
           skipUninstall: true,
           timeout: undefined,
         }),
-      ).to.be.true;
+        true,
+      );
     });
 
     it('should install multiple apps from otherApps as JSON array on on real devices', async function () {
@@ -482,20 +481,22 @@ describe('XCUITestDriver', function () {
       driver.lifecycleData = {createSim: false};
       driver.opts.otherApps = '["/path/to/iosApp1.app","/path/to/iosApp2.app"]';
       await installAUTWithRealDeviceMocks(driver);
-      expect((driver.isRealDevice as any).calledTwice).to.be.true;
-      expect((driver.helpers.configureApp as any).calledTwice).to.be.true;
-      expect(
+      assert.strictEqual((driver.isRealDevice as any).calledTwice, true);
+      assert.strictEqual((driver.helpers.configureApp as any).calledTwice, true);
+      assert.strictEqual(
         installToRealDeviceStub.calledWith('/path/to/iosApp1.app', 'bundle-id', {
           skipUninstall: true,
           timeout: undefined,
         }),
-      ).to.be.true;
-      expect(
+        true,
+      );
+      assert.strictEqual(
         installToRealDeviceStub.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
           skipUninstall: true,
           timeout: undefined,
         }),
-      ).to.be.true;
+        true,
+      );
     });
 
     it('should install multiple apps from otherApps as string on simulators', async function () {
@@ -509,13 +510,14 @@ describe('XCUITestDriver', function () {
       driver.lifecycleData = {createSim: false};
       driver.opts.otherApps = '/path/to/iosApp.app';
       await installAUTWithRealDeviceMocks(driver);
-      expect((driver.isRealDevice as any).calledOnce).to.be.true;
-      expect((driver.helpers.configureApp as any).calledOnce).to.be.true;
-      expect(
+      assert.strictEqual((driver.isRealDevice as any).calledOnce, true);
+      assert.strictEqual((driver.helpers.configureApp as any).calledOnce, true);
+      assert.strictEqual(
         installToSimulatorStub.calledOnceWithExactly('/path/to/iosApp.app', 'bundle-id', {
           newSimulator: false,
         }),
-      ).to.be.true;
+        true,
+      );
     });
 
     it('should install multiple apps from otherApps as JSON array on simulators', async function () {
@@ -535,18 +537,20 @@ describe('XCUITestDriver', function () {
       driver.lifecycleData = {createSim: false};
       driver.opts.otherApps = '["/path/to/iosApp1.app","/path/to/iosApp2.app"]';
       await installAUTWithRealDeviceMocks(driver);
-      expect((driver.isRealDevice as any).calledTwice).to.be.true;
-      expect((driver.helpers.configureApp as any).calledTwice).to.be.true;
-      expect(
+      assert.strictEqual((driver.isRealDevice as any).calledTwice, true);
+      assert.strictEqual((driver.helpers.configureApp as any).calledTwice, true);
+      assert.strictEqual(
         installToSimulatorStub.calledWith('/path/to/iosApp1.app', 'bundle-id', {
           newSimulator: false,
         }),
-      ).to.be.true;
-      expect(
+        true,
+      );
+      assert.strictEqual(
         installToSimulatorStub.calledWith('/path/to/iosApp2.app', 'bundle-id2', {
           newSimulator: false,
         }),
-      ).to.be.true;
+        true,
+      );
     });
   });
 });

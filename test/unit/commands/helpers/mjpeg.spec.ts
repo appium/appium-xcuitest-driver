@@ -1,8 +1,7 @@
+import assert from 'node:assert/strict';
 import http, {type Server} from 'node:http';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
-import {expect, use} from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sharp from 'sharp';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
@@ -15,8 +14,6 @@ import {
 } from '../../../../lib/commands/helpers/mjpeg.js';
 import type {XCUITestDriver} from '../../../../lib/driver.js';
 import {UNIT_LONG_TIMEOUT_MS} from '../../helpers.js';
-
-use(chaiAsPromised);
 
 function buildMultipartFrame(jpeg: Buffer): Buffer {
   const header = `--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ${jpeg.length}\r\n\r\n`;
@@ -77,23 +74,23 @@ describe('mjpeg helpers', function () {
 
     it('should have no last chunk before start() is called', function () {
       stream = new MJpegStream(serverUrl);
-      expect(stream.lastChunkBase64).to.be.null;
+      assert.strictEqual(stream.lastChunkBase64, null);
     });
 
     it('should capture the first JPEG frame once started', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
       stream = new MJpegStream(serverUrl);
       await stream.start();
-      expect(stream.lastChunkBase64).to.equal(jpeg.toString('base64'));
+      assert.strictEqual(stream.lastChunkBase64, jpeg.toString('base64'));
     });
 
     it('should convert the last chunk to a PNG', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
       stream = new MJpegStream(serverUrl);
       await stream.start();
       const pngBase64 = await stream.lastChunkPNGBase64();
-      expect(pngBase64).to.not.be.null;
+      assert.notStrictEqual(pngBase64, null);
       const png = Buffer.from(pngBase64 as string, 'base64');
       // PNG signature
-      expect(png.subarray(0, 8).toString('hex')).to.equal('89504e470d0a1a0a');
+      assert.strictEqual(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
     });
 
     it('should keep track of newer frames as they arrive', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -101,22 +98,22 @@ describe('mjpeg helpers', function () {
       frameIntervalMs = 20;
       stream = new MJpegStream(serverUrl);
       await stream.start();
-      expect(stream.lastChunkBase64).to.equal(jpeg.toString('base64'));
+      assert.strictEqual(stream.lastChunkBase64, jpeg.toString('base64'));
       await new Promise((resolve) => setTimeout(resolve, frameIntervalMs * framesToSend.length + 50));
-      expect(stream.lastChunkBase64).to.equal(jpeg2.toString('base64'));
+      assert.strictEqual(stream.lastChunkBase64, jpeg2.toString('base64'));
     });
 
     it('should clear the last chunk on stop()', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
       stream = new MJpegStream(serverUrl);
       await stream.start();
-      expect(stream.lastChunkBase64).to.not.be.null;
+      assert.notStrictEqual(stream.lastChunkBase64, null);
       stream.stop();
-      expect(stream.lastChunkBase64).to.be.null;
+      assert.strictEqual(stream.lastChunkBase64, null);
     });
 
     it('should reject if the server cannot be reached', async function () {
       stream = new MJpegStream('http://127.0.0.1:1');
-      await expect(stream.start(200)).to.be.rejectedWith(/Cannot connect to the MJPEG stream/);
+      await assert.rejects(stream.start(200), /Cannot connect to the MJPEG stream/);
     });
 
     it('should reject if no frame arrives before the timeout', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
@@ -124,9 +121,9 @@ describe('mjpeg helpers', function () {
       stream = new MJpegStream(serverUrl);
       // The server flushes headers immediately, so axios resolves well within the deadline;
       // the rejection comes from MJpegStream's own "no frame yet" guard.
-      await expect(stream.start(300)).to.be.rejectedWith(/never sent any images/);
+      await assert.rejects(stream.start(300), /never sent any images/);
       // start() must not leak the underlying connection/pipes after failing.
-      expect((stream as any).responseStream).to.be.null;
+      assert.strictEqual((stream as any).responseStream, null);
     });
 
     it('should reject quickly if the connection closes before any frame arrives', async function () {
@@ -142,9 +139,9 @@ describe('mjpeg helpers', function () {
         const startedAt = Date.now();
         // The server timeout is generous; the rejection must come from the close handler,
         // long before the timeout would otherwise fire.
-        await expect(stream.start(20000)).to.be.rejectedWith(/has been closed/);
-        expect(Date.now() - startedAt).to.be.lessThan(5000);
-        expect((stream as any).responseStream).to.be.null;
+        await assert.rejects(stream.start(20000), /has been closed/);
+        assert.ok(Date.now() - startedAt < 5000);
+        assert.strictEqual((stream as any).responseStream, null);
       } finally {
         await new Promise<void>((resolve) => closingServer.close(() => resolve()));
       }
@@ -165,8 +162,8 @@ describe('mjpeg helpers', function () {
       // Declares a 10-byte frame, but the actual SOI..EOI span is only 4 bytes.
       const chunk = Buffer.concat([Buffer.from('Content-Length: 10\r\n\r\n'), Buffer.from([0xff, 0xd8, 0xff, 0xd9])]);
       parser.write(chunk, () => {
-        expect(frames).to.have.lengthOf(1);
-        expect(frames[0]).to.deep.equal(Buffer.from([0xff, 0xd8, 0xff, 0xd9]));
+        assert.strictEqual(frames.length, 1);
+        assert.deepStrictEqual(frames[0], Buffer.from([0xff, 0xd8, 0xff, 0xd9]));
         done();
       });
     });
@@ -175,14 +172,14 @@ describe('mjpeg helpers', function () {
       const firstFrame = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
       const chunk1 = Buffer.concat([Buffer.from('Content-Length: 10\r\n\r\n'), firstFrame]);
       parser.write(chunk1, () => {
-        expect(frames).to.have.lengthOf(1);
+        assert.strictEqual(frames.length, 1);
         const emitted = frames[0];
         // No Content-Length header here on purpose: this must not be appended onto
         // the buffer that was already pushed downstream.
         const strayChunk = Buffer.from([0xff, 0xd8, 0x01, 0x02, 0x03]);
         parser.write(strayChunk, () => {
-          expect(frames).to.have.lengthOf(1);
-          expect(emitted).to.deep.equal(firstFrame);
+          assert.strictEqual(frames.length, 1);
+          assert.deepStrictEqual(emitted, firstFrame);
           done();
         });
       });
@@ -197,8 +194,8 @@ describe('mjpeg helpers', function () {
       const chunk2 = Buffer.from([0xff, 0xd9, 0xff, 0xd8, 0x01]);
       parser.write(chunk1, () => {
         parser.write(chunk2, () => {
-          expect(frames).to.have.lengthOf(1);
-          expect(frames[0]).to.deep.equal(Buffer.from([0xff, 0xd8, 0xff, 0xd9]));
+          assert.strictEqual(frames.length, 1);
+          assert.deepStrictEqual(frames[0], Buffer.from([0xff, 0xd8, 0xff, 0xd9]));
           done();
         });
       });
@@ -236,38 +233,40 @@ describe('mjpeg helpers', function () {
     it('should forward the default port when mjpegServerPort is not set', async function () {
       const driver = makeDriver();
       await allocateMjpegServerPort(driver);
-      expect(
+      assert.strictEqual(
         (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledWith('device-1', 9100, {
           devicePort: 9100,
           usePortForwarding: false,
           remoteXPCFacade: null,
         }),
-      ).to.be.true;
+        true,
+      );
     });
 
     it('should forward the requested port when mjpegServerPort is set', async function () {
       const driver = makeDriver({opts: {udid: 'device-1', mjpegServerPort: 9200} as any});
       await allocateMjpegServerPort(driver);
-      expect(
+      assert.strictEqual(
         (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledWith('device-1', 9200, {
           devicePort: 9200,
           usePortForwarding: false,
           remoteXPCFacade: null,
         }),
-      ).to.be.true;
+        true,
+      );
     });
 
     it('should only warn if the default port cannot be forwarded', async function () {
       const driver = makeDriver();
       (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).rejects(new Error('port busy'));
       await allocateMjpegServerPort(driver);
-      expect((driver.log.warn as sinon.SinonStub).calledWithMatch(/Certain features/)).to.be.true;
+      assert.strictEqual((driver.log.warn as sinon.SinonStub).calledWithMatch(/Certain features/), true);
     });
 
     it('should throw if a custom mjpegServerPort cannot be forwarded', async function () {
       const driver = makeDriver({opts: {udid: 'device-1', mjpegServerPort: 9200} as any});
       (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).rejects(new Error('port busy'));
-      await expect(allocateMjpegServerPort(driver)).to.be.rejectedWith(/mjpegServerPort.*port busy/);
+      await assert.rejects(allocateMjpegServerPort(driver), /mjpegServerPort.*port busy/);
     });
 
     it('should request a real-device connection with remoteXPCFacade when applicable', async function () {
@@ -277,13 +276,14 @@ describe('mjpeg helpers', function () {
         remoteXPCFacade: remoteXPCFacade as any,
       });
       await allocateMjpegServerPort(driver);
-      expect(
+      assert.strictEqual(
         (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledWith('device-1', 9100, {
           devicePort: 9100,
           usePortForwarding: true,
           remoteXPCFacade,
         }),
-      ).to.be.true;
+        true,
+      );
     });
   });
 
@@ -320,8 +320,8 @@ describe('mjpeg helpers', function () {
     it('should not create a stream if mjpegScreenshotUrl is not set', async function () {
       const driver = makeDriver();
       await handleMjpegOptions(driver);
-      expect(driver.mjpegStream).to.be.undefined;
-      expect(startStub.called).to.be.false;
+      assert.strictEqual(driver.mjpegStream, undefined);
+      assert.strictEqual(startStub.called, false);
     });
 
     it('should create and start a stream if mjpegScreenshotUrl is set', async function () {
@@ -329,8 +329,8 @@ describe('mjpeg helpers', function () {
         opts: {udid: 'device-1', mjpegScreenshotUrl: 'http://127.0.0.1:9100/mjpeg'} as any,
       });
       await handleMjpegOptions(driver);
-      expect(driver.mjpegStream).to.be.instanceOf(MJpegStream);
-      expect(startStub.calledOnce).to.be.true;
+      assert.ok(driver.mjpegStream instanceof MJpegStream);
+      assert.strictEqual(startStub.calledOnce, true);
     });
 
     it('should allocate the MJPEG server port before starting the stream', async function () {
@@ -338,7 +338,10 @@ describe('mjpeg helpers', function () {
         opts: {udid: 'device-1', mjpegScreenshotUrl: 'http://127.0.0.1:9100/mjpeg'} as any,
       });
       await handleMjpegOptions(driver);
-      expect((driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledBefore(startStub)).to.be.true;
+      assert.strictEqual(
+        (driver.deviceConnectionsFactory.requestConnection as sinon.SinonStub).calledBefore(startStub),
+        true,
+      );
     });
   });
 });

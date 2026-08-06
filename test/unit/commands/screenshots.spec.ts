@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {expect} from 'chai';
 import {Simctl} from 'node-simctl';
 import sinon from 'sinon';
 
@@ -41,11 +41,11 @@ describe('screenshots commands', function () {
 
         await driver.getScreenshot();
 
-        expect(proxyStub.calledOnce).to.be.true;
-        expect(proxyStub.firstCall.args[0]).to.eql('/screenshot');
-        expect(proxyStub.firstCall.args[1]).to.eql('GET');
+        assert.strictEqual(proxyStub.calledOnce, true);
+        assert.strictEqual(proxyStub.firstCall.args[0], '/screenshot');
+        assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
 
-        expect(getScreenshotStub.notCalled).to.be.true;
+        assert.strictEqual(getScreenshotStub.notCalled, true);
       });
 
       it('should get a screenshot from simctl if WDA call fails and Xcode version >= 8.1', async function () {
@@ -56,10 +56,10 @@ describe('screenshots commands', function () {
           versionFloat: 8.3,
         } as any;
         const result = await driver.getScreenshot();
-        expect(result).to.equal(base64PortraitResponse);
+        assert.strictEqual(result, base64PortraitResponse);
 
-        expect(proxyStub.calledOnce).to.be.true;
-        expect(getScreenshotStub.calledOnce).to.be.true;
+        assert.strictEqual(proxyStub.calledOnce, true);
+        assert.strictEqual(getScreenshotStub.calledOnce, true);
       });
     });
 
@@ -75,9 +75,9 @@ describe('screenshots commands', function () {
           driver._device = device;
         }
 
-        expect(proxyStub.calledOnce).to.be.true;
-        expect(proxyStub.firstCall.args[0]).to.eql('/screenshot');
-        expect(proxyStub.firstCall.args[1]).to.eql('GET');
+        assert.strictEqual(proxyStub.calledOnce, true);
+        assert.strictEqual(proxyStub.firstCall.args[0], '/screenshot');
+        assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
       });
     });
   });
