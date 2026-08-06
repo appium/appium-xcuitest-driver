@@ -121,8 +121,7 @@ describe('Safari - basics -', function () {
       });
 
       it('should find a web element in the web view', async function () {
-        const el = await driver.$('#i_am_an_id');
-        assert.ok(el !== undefined && el !== null);
+        assert.ok(await driver.$('#i_am_an_id'));
       });
       it('should find multiple web elements in the web view', async function () {
         assert.ok(((await driver.$$('<a />')).length as unknown as number) >= 5);
@@ -132,8 +131,7 @@ describe('Safari - basics -', function () {
       });
       it('should find element from another element', async function () {
         const el = await driver.$('.border');
-        const formEl = await el.$('./form');
-        assert.ok(formEl !== undefined && formEl !== null);
+        assert.ok(await el.$('./form'));
       });
       it('should be able to click links', async function () {
         const el = await driver.$('=i am a link');

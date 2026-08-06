@@ -46,15 +46,13 @@ describe('tvOS', function () {
   it('should launch com.apple.TVSettings', async function () {
     baseCaps.autoLaunch = true;
     const driver = await initSession(baseCaps);
-    const el = await driver.$('~General');
-    assert.ok(el !== undefined && el !== null);
+    assert.ok(await driver.$('~General'));
   });
 
   it('should launch com.apple.TVSettings with autoLaunch false', async function () {
     baseCaps.autoLaunch = false;
     const driver = await initSession(baseCaps);
     await driver.execute('mobile: activateApp', {bundleId: 'com.apple.TVSettings'});
-    const el = await driver.$('~General');
-    assert.ok(el !== undefined && el !== null);
+    assert.ok(await driver.$('~General'));
   });
 });

@@ -50,8 +50,7 @@ describe('safari - execute -', function () {
       });
 
       it(`should return nothing when you don't explicitly return`, async function () {
-        const result = await driver.executeScript('1+1', []);
-        assert.ok(result === undefined || result === null);
+        assert.ok(!(await driver.executeScript('1+1', [])));
       });
 
       if (!secure) {

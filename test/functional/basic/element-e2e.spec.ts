@@ -61,8 +61,8 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the location of an element', async function () {
       const el = await driver.$('~Buttons');
       const loc = await el.getLocation();
-      assert.ok(loc.x !== undefined && loc.x !== null);
-      assert.ok(loc.y !== undefined && loc.y !== null);
+      assert.ok(loc.x);
+      assert.ok(loc.y);
     });
     it('should not mix up locations', async function () {
       const el1 = await driver.$('~Date Picker');
@@ -80,8 +80,8 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the location of an element', async function () {
       const el = await driver.$('~Buttons');
       const loc = await el.getLocation();
-      assert.ok(loc.x !== undefined && loc.x !== null);
-      assert.ok(loc.y !== undefined && loc.y !== null);
+      assert.ok(loc.x);
+      assert.ok(loc.y);
     });
     it('should not mix up locations', async function () {
       const el1 = await driver.$('~Date Picker');
@@ -99,8 +99,8 @@ describe('XCUITestDriver - elements -', function () {
     it('should get the size of the element', async function () {
       const el = await driver.$('~Buttons');
       const size = await el.getSize();
-      assert.ok(size.width !== undefined && size.width !== null);
-      assert.ok(size.height !== undefined && size.height !== null);
+      assert.ok(size.width);
+      assert.ok(size.height);
     });
   });
 
@@ -220,7 +220,7 @@ describe('XCUITestDriver - elements -', function () {
         it('should type a backspace', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.elementSendKeys(await el.elementId, '0123456789');
+          await driver.elementSendKeys(await el.elementId, '0123456789\uE003');
 
           const text = await el.getText();
           assert.strictEqual(text, '012345678');
@@ -228,7 +228,7 @@ describe('XCUITestDriver - elements -', function () {
         it('should type a delete', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.elementSendKeys(await el.elementId, '0123456789');
+          await driver.elementSendKeys(await el.elementId, '0123456789\ue017');
 
           const text = await el.getText();
           assert.strictEqual(text, '012345678');
@@ -236,7 +236,7 @@ describe('XCUITestDriver - elements -', function () {
         it('should type a newline', async function () {
           const el = await driver.$('XCUIElementTypeTextField');
 
-          await driver.elementSendKeys(await el.elementId, '0123456789');
+          await driver.elementSendKeys(await el.elementId, '0123456789\uE006');
 
           const text = await el.getText();
           assert.strictEqual(text, '0123456789');

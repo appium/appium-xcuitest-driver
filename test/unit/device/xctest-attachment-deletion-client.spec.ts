@@ -51,7 +51,7 @@ describe('XctestAttachmentDeletionClient', function () {
     } as unknown as RemoteXPCTestAttachment;
     const facade = mockFacade({XCTestAttachment: MockAtt});
     const client = new XctestAttachmentDeletionClient(facade);
-    await assert.rejects(client.deleteAttachmentsByUuid(['u']), (err: Error) => err.message.includes('delete err'));
+    await assert.rejects(client.deleteAttachmentsByUuid(['u']), /delete err/);
   });
 
   it('detects TunnelAvailabilityError by name', function () {

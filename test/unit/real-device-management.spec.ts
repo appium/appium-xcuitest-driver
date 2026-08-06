@@ -108,9 +108,7 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
-    await assert.rejects(installToRealDevice.bind(driver)(app, bundleId, opts), (err: any) =>
-      err.message.includes('ApplicationVerificationFailed'),
-    );
+    await assert.rejects(installToRealDevice.bind(driver)(app, bundleId, opts), /ApplicationVerificationFailed/);
     assert.strictEqual(removeStub.calledOnce, true);
     assert.strictEqual(installStub.calledOnce, true);
   });
@@ -152,9 +150,7 @@ describe('installToRealDevice', function () {
     driver._device = realDevice;
     driver.opts = {udid} as any;
 
-    await assert.rejects(installToRealDevice.bind(driver)(app, bundleId, opts), (err: any) =>
-      err.message.includes('ApplicationVerificationFailed'),
-    );
+    await assert.rejects(installToRealDevice.bind(driver)(app, bundleId, opts), /ApplicationVerificationFailed/);
     assert.strictEqual(removeStub.called, false);
     assert.strictEqual(installStub.calledOnce, true);
   });

@@ -27,14 +27,14 @@ describe('XCUITestDriver - basics -', function () {
   describe('status -', function () {
     it('should get the server status', async function () {
       const status = (await driver.status()) as any;
-      assert.ok(status.build.version !== undefined && status.build.version !== null);
+      assert.ok(status.build.version);
     });
 
     it('should return status immediately if another operation is in progress', async function () {
       await driver.setTimeout({implicit: 10000});
       const findElementPromise = driver.$('#WrongLocator');
       const status = (await driver.status()) as any;
-      assert.ok(status.build.version !== undefined && status.build.version !== null);
+      assert.ok(status.build.version);
       assert.strictEqual(util.inspect(findElementPromise).includes('pending'), true);
       try {
         await findElementPromise;
@@ -86,7 +86,7 @@ describe('XCUITestDriver - basics -', function () {
     });
     it('should get an app screenshot', async function () {
       const screenshot = await driver.takeScreenshot();
-      assert.ok(screenshot !== undefined && screenshot !== null);
+      assert.ok(screenshot);
       assert.strictEqual(typeof screenshot, 'string');
 
       // make sure WDA didn't crash, by using it again
@@ -96,7 +96,7 @@ describe('XCUITestDriver - basics -', function () {
 
     it('should get an app screenshot in landscape mode', async function () {
       const screenshot1 = await driver.takeScreenshot();
-      assert.ok(screenshot1 !== undefined && screenshot1 !== null);
+      assert.ok(screenshot1);
 
       try {
         await driver.setOrientation('LANDSCAPE');
@@ -106,7 +106,7 @@ describe('XCUITestDriver - basics -', function () {
       await delay(500);
 
       const screenshot2 = await driver.takeScreenshot();
-      assert.ok(screenshot2 !== undefined && screenshot2 !== null);
+      assert.ok(screenshot2);
       assert.notStrictEqual(screenshot2, screenshot1);
     });
   });

@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {errors} from 'appium/driver.js';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -76,46 +75,41 @@ describe('voiceover commands', function () {
     const versionGateMessage = /requires iOS\/tvOS 27 or newer.*The current platformVersion is '26\.0'/;
 
     it('mobileEnableVoiceOver should reject without proxying', async function () {
-      await assert.rejects(driver.mobileEnableVoiceOver(), (err: any) => {
-        assert.ok(err instanceof errors.InvalidArgumentError);
-        assert.ok(versionGateMessage.test(err.message));
-        return true;
+      await assert.rejects(driver.mobileEnableVoiceOver(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
       });
       assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileDisableVoiceOver should reject without proxying', async function () {
-      await assert.rejects(driver.mobileDisableVoiceOver(), (err: any) => {
-        assert.ok(err instanceof errors.InvalidArgumentError);
-        assert.ok(versionGateMessage.test(err.message));
-        return true;
+      await assert.rejects(driver.mobileDisableVoiceOver(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
       });
       assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileIsVoiceOverEnabled should reject without proxying', async function () {
-      await assert.rejects(driver.mobileIsVoiceOverEnabled(), (err: any) => {
-        assert.ok(err instanceof errors.InvalidArgumentError);
-        assert.ok(versionGateMessage.test(err.message));
-        return true;
+      await assert.rejects(driver.mobileIsVoiceOverEnabled(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
       });
       assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileVoiceOverMove should reject without proxying', async function () {
-      await assert.rejects(driver.mobileVoiceOverMove('forward'), (err: any) => {
-        assert.ok(err instanceof errors.InvalidArgumentError);
-        assert.ok(versionGateMessage.test(err.message));
-        return true;
+      await assert.rejects(driver.mobileVoiceOverMove('forward'), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
       });
       assert.strictEqual(proxySpy.called, false);
     });
 
     it('mobileVoiceOverCurrentSpeech should reject without proxying', async function () {
-      await assert.rejects(driver.mobileVoiceOverCurrentSpeech(), (err: any) => {
-        assert.ok(err instanceof errors.InvalidArgumentError);
-        assert.ok(versionGateMessage.test(err.message));
-        return true;
+      await assert.rejects(driver.mobileVoiceOverCurrentSpeech(), {
+        name: 'InvalidArgumentError',
+        message: versionGateMessage,
       });
       assert.strictEqual(proxySpy.called, false);
     });

@@ -32,7 +32,7 @@ describe('location commands', function () {
     it('should be authorizationStatus !== 3', async function () {
       proxySpy.withArgs('/wda/device/location', 'GET').resolves({authorizationStatus: 0, latitude: 0, longitude: 0});
 
-      await assert.rejects(driver.getGeoLocation(), (err: any) => err.message.includes('Location service must be'));
+      await assert.rejects(driver.getGeoLocation(), /Location service must be/);
     });
 
     it('should be authorizationStatus === 3', async function () {
@@ -72,7 +72,7 @@ describe('location commands', function () {
     });
 
     it('should fail when location object is wrong', async function () {
-      await assert.rejects(driver.setGeoLocation({}), (err: any) => err.message.includes('latitude should be set'));
+      await assert.rejects(driver.setGeoLocation({}), /latitude should be set/);
     });
 
     describe('on real device', function () {
@@ -119,9 +119,7 @@ describe('location commands', function () {
         driver.opts.platformVersion = '17.0.0';
         proxySpy.withArgs('/wda/simulatedLocation', 'POST', locationRequest).throws('An error in proxying the request');
 
-        await assert.rejects(driver.setGeoLocation(locationRequest), (err: any) =>
-          err.message.includes('An error in proxying the request'),
-        );
+        await assert.rejects(driver.setGeoLocation(locationRequest), /An error in proxying the request/);
 
         assert.strictEqual(startSimulateLocationServiceStub.calledOnce, false);
         assert.strictEqual(proxySpy.firstCall.args[0], '/wda/simulatedLocation');

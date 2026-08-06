@@ -239,7 +239,7 @@ describe('XCUITestDriver', function () {
         driver.cachedWdaStatus = {};
         const status = await driver.getStatus();
         assert.strictEqual(jwproxyCommandSpy.called, false);
-        assert.ok(status.wda !== undefined && status.wda !== null);
+        assert.ok(status.wda);
       });
     });
 

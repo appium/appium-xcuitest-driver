@@ -34,7 +34,7 @@ describe('XCUITestDriver - find -', function () {
     let el1: any;
     before(async function () {
       el1 = await driver.$('~Buttons');
-      assert.ok(el1.elementId !== undefined && el1.elementId !== null);
+      assert.ok(el1.elementId);
     });
     it('should find an element within descendants', async function () {
       const el2 = await el1.$('XCUIElementTypeStaticText');
@@ -87,7 +87,7 @@ describe('XCUITestDriver - find -', function () {
   describe('by id', function () {
     it('should find a single element by id', async function () {
       const el = await driver.$('~Alert Views');
-      assert.ok(el.elementId !== undefined && el.elementId !== null);
+      assert.ok(el.elementId);
     });
 
     it('should find a single element by id wrapped in array for multi', async function () {
@@ -256,7 +256,7 @@ describe('XCUITestDriver - find -', function () {
     it('should find an element beneath another element', async function () {
       const el1 = await driver.$('XCUIElementTypeTable');
       const el2 = await el1.$('~Alert Views');
-      assert.ok(el2.elementId !== undefined && el2.elementId !== null);
+      assert.ok(el2.elementId);
     });
   });
 
@@ -271,7 +271,7 @@ describe('XCUITestDriver - find -', function () {
       const els = await driver.$$('XCUIElementTypeImage');
       assert.ok((els.length as unknown as number) > 0);
       for (const el of els) {
-        assert.ok(el.elementId !== undefined && el.elementId !== null);
+        assert.ok(el.elementId);
       }
     });
 

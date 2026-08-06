@@ -19,10 +19,8 @@ export const oldCookie2 = {
 };
 
 export function doesIncludeCookie(cookies: Cookie[], cookie: Cookie) {
-  assert.ok(cookies.map((c) => c.name).includes(cookie.name));
-  assert.ok(cookies.map((c) => c.value).includes(cookie.value));
+  assert.ok(cookies.some((c) => c.name === cookie.name && c.value === cookie.value));
 }
 export function doesNotIncludeCookie(cookies: Cookie[], cookie: Cookie) {
-  assert.ok(!cookies.map((c) => c.name).includes(cookie.name));
-  assert.ok(!cookies.map((c) => c.value).includes(cookie.value));
+  assert.ok(!cookies.some((c) => c.name === cookie.name && c.value === cookie.value));
 }

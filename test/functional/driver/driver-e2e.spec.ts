@@ -247,7 +247,7 @@ describe('XCUITestDriver', function () {
         'appium:udid': 'some-random-udid',
       });
 
-      await assert.rejects(initSession(caps), (err: any) => err.message.includes('Unknown device or simulator UDID'));
+      await assert.rejects(initSession(caps), /Unknown device or simulator UDID/);
     });
 
     it('with non-existent udid: throws an error', async function () {
@@ -256,7 +256,7 @@ describe('XCUITestDriver', function () {
       const uiCatalogSimCaps = await getUICatalogSimCaps();
       const caps = amendCapabilities(uiCatalogSimCaps, {'appium:udid': udid});
 
-      await assert.rejects(initSession(caps), (err: any) => err.message.includes('Unknown device or simulator UDID'));
+      await assert.rejects(initSession(caps), /Unknown device or simulator UDID/);
     });
 
     it('with noReset set to true: leaves sim booted', async function () {
