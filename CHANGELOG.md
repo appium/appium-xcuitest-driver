@@ -1,3 +1,10 @@
+## [12.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.2.0...v12.2.1) (2026-08-07)
+
+### Miscellaneous Chores
+
+* Drop chai ([#2935](https://github.com/appium/appium-xcuitest-driver/issues/2935)) ([d31bba4](https://github.com/appium/appium-xcuitest-driver/commit/d31bba46420d816098de8acc4bb0a27060c80b81))
+* rename safe occurrences of JWProxy ([#2937](https://github.com/appium/appium-xcuitest-driver/issues/2937)) ([b479f7b](https://github.com/appium/appium-xcuitest-driver/commit/b479f7b12ceb32eba97e08f0b6a1eb44b9652b81))
+
 ## [12.2.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.1.4...v12.2.0) (2026-08-04)
 
 ### Features
