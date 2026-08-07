@@ -72,7 +72,7 @@ class TunnelCreator {
     /** @type {Map<string, import('appium-ios-remotexpc').AppleTVTunnelService>} */
     this._appletvTunnelServicesByUdid = new Map();
     this._isCleaningUp = false;
-    /** @type {FixedIntervalRetryPolicy} */
+    /** @type {import('./lib/retry-policy.mjs').RetryPolicy} */
     this._disconnectRetryPolicy = new FixedIntervalRetryPolicy({
       maxAttempts: null,
       intervalMs: DEFAULT_DISCONNECT_RETRY_INTERVAL_MS,
@@ -92,7 +92,7 @@ class TunnelCreator {
   }
 
   /**
-   * @param {FixedIntervalRetryPolicy} policy
+   * @param {import('./lib/retry-policy.mjs').RetryPolicy} policy
    */
   setDisconnectRetryPolicy(policy) {
     this._disconnectRetryPolicy = policy;

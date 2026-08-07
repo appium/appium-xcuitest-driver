@@ -3,14 +3,19 @@ export const DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER = 2;
 export const DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS = 30_000;
 
 /**
- * Fixed-interval retry policy: waits the same delay between every attempt.
+ * @abstract
+ * Common attempt-counting behavior shared by all retry policies. Subclasses only need to implement
+ * `getDelayMs()`.
  */
-export class FixedIntervalRetryPolicy {
+export class RetryPolicy {
   /**
    * @param {{maxAttempts: number | null, intervalMs: number}} opts - maxAttempts: null disables
    * retries entirely; 0 means unlimited retries
    */
   constructor({maxAttempts, intervalMs}) {
+    if (new.target === RetryPolicy) {
+      throw new TypeError('RetryPolicy is abstract and cannot be instantiated directly');
+    }
     this.maxAttempts = maxAttempts;
     this._intervalMs = intervalMs;
   }
@@ -28,6 +33,20 @@ export class FixedIntervalRetryPolicy {
   }
 
   /**
+   * @abstract
+   * @param {number} _attempt - 1-based number of the attempt about to be made
+   * @returns {number}
+   */
+  getDelayMs(_attempt) {
+    throw new Error('Not implemented');
+  }
+}
+
+/**
+ * Fixed-interval retry policy: waits the same delay between every attempt.
+ */
+export class FixedIntervalRetryPolicy extends RetryPolicy {
+  /**
    * @param {number} _attempt - 1-based number of the attempt about to be made
    * @returns {number}
    */
@@ -40,7 +59,7 @@ export class FixedIntervalRetryPolicy {
  * Exponential-backoff retry policy: the delay grows by a multiplier on each attempt, capped at a
  * configured maximum.
  */
-export class ExponentialBackoffRetryPolicy extends FixedIntervalRetryPolicy {
+export class ExponentialBackoffRetryPolicy extends RetryPolicy {
   /**
    * @param {{maxAttempts: number | null, intervalMs: number, backoffMultiplier: number, backoffMaxIntervalMs: number}} opts
    */
@@ -61,14 +80,14 @@ export class ExponentialBackoffRetryPolicy extends FixedIntervalRetryPolicy {
    * @returns {number}
    */
   getDelayMs(attempt) {
-    const delayMs = super.getDelayMs(attempt) * this._backoffMultiplier ** (attempt - 1);
+    const delayMs = this._intervalMs * this._backoffMultiplier ** (attempt - 1);
     return Math.min(delayMs, this._backoffMaxIntervalMs);
   }
 }
 
 /**
  * @param {{strategy: 'fixed' | 'exponential', maxAttempts: number | null, intervalMs: number, backoffMultiplier?: number, backoffMaxIntervalMs?: number}} opts
- * @returns {FixedIntervalRetryPolicy}
+ * @returns {RetryPolicy}
  */
 export function createDisconnectRetryPolicy({
   strategy,
