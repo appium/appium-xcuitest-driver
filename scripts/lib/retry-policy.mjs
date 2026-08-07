@@ -29,7 +29,11 @@ export class RetryPolicy {
    * @returns {boolean}
    */
   hasAttemptsRemaining(attemptsMade) {
-    return !this.maxAttempts || attemptsMade < this.maxAttempts;
+    const {maxAttempts} = this;
+    if (maxAttempts === null) {
+      return false;
+    }
+    return maxAttempts === 0 || attemptsMade < maxAttempts;
   }
 
   /**
@@ -81,7 +85,10 @@ export class ExponentialBackoffRetryPolicy extends RetryPolicy {
    */
   getDelayMs(attempt) {
     const delayMs = this._intervalMs * this._backoffMultiplier ** (attempt - 1);
-    return Math.min(delayMs, this._backoffMaxIntervalMs);
+    const cappedDelayMs = Math.min(delayMs, this._backoffMaxIntervalMs);
+    // Jitter spreads out devices that dropped together instead of having them retry in lockstep
+    // and stay synchronised once they reach the cap.
+    return Math.round(cappedDelayMs * (0.5 + Math.random() * 0.5));
   }
 }
 
@@ -96,7 +103,11 @@ export function createDisconnectRetryPolicy({
   backoffMultiplier = DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER,
   backoffMaxIntervalMs = DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS,
 }) {
-  return strategy === 'exponential'
-    ? new ExponentialBackoffRetryPolicy({maxAttempts, intervalMs, backoffMultiplier, backoffMaxIntervalMs})
-    : new FixedIntervalRetryPolicy({maxAttempts, intervalMs});
+  if (strategy === 'fixed') {
+    return new FixedIntervalRetryPolicy({maxAttempts, intervalMs});
+  }
+  if (strategy === 'exponential') {
+    return new ExponentialBackoffRetryPolicy({maxAttempts, intervalMs, backoffMultiplier, backoffMaxIntervalMs});
+  }
+  throw new Error(`Invalid disconnect retry strategy: ${strategy}. Expected 'fixed' or 'exponential'.`);
 }

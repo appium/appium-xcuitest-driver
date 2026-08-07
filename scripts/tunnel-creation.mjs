@@ -969,6 +969,23 @@ async function main() {
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;
   const shouldRunAppleTVFlow = !hasRequestedUdids || hasRequestedAppleTVIds;
 
+  /** @type {import('./lib/retry-policy.mjs').RetryPolicy} */
+  let disconnectRetryPolicy;
+  try {
+    disconnectRetryPolicy = createDisconnectRetryPolicy({
+      strategy: options.disconnectRetryStrategy,
+      maxAttempts: options.disconnectRetryMaxAttempts ?? null,
+      intervalMs: options.disconnectRetryIntervalMs,
+      backoffMultiplier: options.disconnectRetryBackoffMultiplier,
+      backoffMaxIntervalMs: options.disconnectRetryBackoffMaxIntervalMs,
+    });
+  } catch (err) {
+    // program.error() never returns (it exits the process); the throw below is unreachable and
+    // only here so TS can see disconnectRetryPolicy is always assigned past this point.
+    program.error(/** @type {Error} */ (err).message);
+    throw err;
+  }
+
   await assertRoot(path.parse(fileURLToPath(import.meta.url)).name);
 
   const tunnelCreator = new TunnelCreator({
@@ -1000,15 +1017,7 @@ async function main() {
       });
     }
 
-    tunnelCreator.setDisconnectRetryPolicy(
-      createDisconnectRetryPolicy({
-        strategy: options.disconnectRetryStrategy,
-        maxAttempts: options.disconnectRetryMaxAttempts ?? null,
-        intervalMs: options.disconnectRetryIntervalMs,
-        backoffMultiplier: options.disconnectRetryBackoffMultiplier,
-        backoffMaxIntervalMs: options.disconnectRetryBackoffMaxIntervalMs,
-      }),
-    );
+    tunnelCreator.setDisconnectRetryPolicy(disconnectRetryPolicy);
 
     await tunnelCreator.startRegistryServer();
 
