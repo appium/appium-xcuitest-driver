@@ -1,6 +1,7 @@
 export const DEFAULT_DISCONNECT_RETRY_INTERVAL_MS = 1000;
 export const DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER = 2;
 export const DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS = 30_000;
+export const DEFAULT_DISCONNECT_RETRY_BACKOFF_JITTER = 0.5;
 
 /**
  * @abstract
@@ -65,9 +66,13 @@ export class FixedIntervalRetryPolicy extends RetryPolicy {
  */
 export class ExponentialBackoffRetryPolicy extends RetryPolicy {
   /**
-   * @param {{maxAttempts: number | null, intervalMs: number, backoffMultiplier: number, backoffMaxIntervalMs: number}} opts
+   * @param {{maxAttempts: number | null, intervalMs: number, backoffMultiplier: number, backoffMaxIntervalMs: number, jitter: number}} opts
+   * - jitter: fraction of the delay to randomize away, in [0, 1]. 0 always returns the exact
+   * computed delay; 1 returns a value uniformly distributed between 0 and the computed delay.
+   * Jitter spreads out devices that dropped together instead of having them retry in lockstep and
+   * stay synchronised once they reach the cap.
    */
-  constructor({maxAttempts, intervalMs, backoffMultiplier, backoffMaxIntervalMs}) {
+  constructor({maxAttempts, intervalMs, backoffMultiplier, backoffMaxIntervalMs, jitter}) {
     super({maxAttempts, intervalMs});
     if (backoffMaxIntervalMs < intervalMs) {
       throw new Error(
@@ -75,8 +80,12 @@ export class ExponentialBackoffRetryPolicy extends RetryPolicy {
           `Expected a value >= the initial interval (${intervalMs}).`,
       );
     }
+    if (jitter < 0 || jitter > 1) {
+      throw new Error(`Invalid disconnect retry backoff jitter: ${jitter}. Expected a value between 0 and 1.`);
+    }
     this._backoffMultiplier = backoffMultiplier;
     this._backoffMaxIntervalMs = backoffMaxIntervalMs;
+    this._jitter = jitter;
   }
 
   /**
@@ -86,14 +95,12 @@ export class ExponentialBackoffRetryPolicy extends RetryPolicy {
   getDelayMs(attempt) {
     const delayMs = this._intervalMs * this._backoffMultiplier ** (attempt - 1);
     const cappedDelayMs = Math.min(delayMs, this._backoffMaxIntervalMs);
-    // Jitter spreads out devices that dropped together instead of having them retry in lockstep
-    // and stay synchronised once they reach the cap.
-    return Math.round(cappedDelayMs * (0.5 + Math.random() * 0.5));
+    return Math.round(cappedDelayMs * (1 - this._jitter * Math.random()));
   }
 }
 
 /**
- * @param {{strategy: 'fixed' | 'exponential', maxAttempts: number | null, intervalMs: number, backoffMultiplier?: number, backoffMaxIntervalMs?: number}} opts
+ * @param {{strategy: 'fixed' | 'exponential', maxAttempts: number | null, intervalMs: number, backoffMultiplier?: number, backoffMaxIntervalMs?: number, jitter?: number}} opts
  * @returns {RetryPolicy}
  */
 export function createDisconnectRetryPolicy({
@@ -102,12 +109,19 @@ export function createDisconnectRetryPolicy({
   intervalMs,
   backoffMultiplier = DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER,
   backoffMaxIntervalMs = DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS,
+  jitter = DEFAULT_DISCONNECT_RETRY_BACKOFF_JITTER,
 }) {
   if (strategy === 'fixed') {
     return new FixedIntervalRetryPolicy({maxAttempts, intervalMs});
   }
   if (strategy === 'exponential') {
-    return new ExponentialBackoffRetryPolicy({maxAttempts, intervalMs, backoffMultiplier, backoffMaxIntervalMs});
+    return new ExponentialBackoffRetryPolicy({
+      maxAttempts,
+      intervalMs,
+      backoffMultiplier,
+      backoffMaxIntervalMs,
+      jitter,
+    });
   }
   throw new Error(`Invalid disconnect retry strategy: ${strategy}. Expected 'fixed' or 'exponential'.`);
 }

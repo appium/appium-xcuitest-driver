@@ -29,6 +29,7 @@ import {parsePositiveIntegerOption} from './lib/options.mjs';
 import {startTimeoutProgressLogger} from './lib/progress.mjs';
 import {
   createDisconnectRetryPolicy,
+  DEFAULT_DISCONNECT_RETRY_BACKOFF_JITTER,
   DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS,
   DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER,
   DEFAULT_DISCONNECT_RETRY_INTERVAL_MS,
@@ -830,6 +831,19 @@ function parseRetryBackoffMultiplierOption(value, label) {
 
 /**
  * @param {string} value
+ * @param {string} label
+ * @returns {number}
+ */
+function parseRetryBackoffJitterOption(value, label) {
+  const jitter = Number.parseFloat(value);
+  if (!Number.isFinite(jitter) || jitter < 0 || jitter > 1) {
+    throw new Error(`Invalid ${label}: ${value}. Expected a number between 0 and 1.`);
+  }
+  return jitter;
+}
+
+/**
+ * @param {string} value
  * @param {string[]} previous
  * @returns {string[]}
  */
@@ -958,6 +972,14 @@ async function main() {
       'Upper bound on the delay between tunnel recreation attempts when --disconnect-retry-strategy is exponential',
       (value) => parsePositiveIntegerOption(value, 'disconnect retry backoff max interval'),
       DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS,
+    )
+    .option(
+      '--disconnect-retry-backoff-jitter <factor>',
+      'Fraction of the delay to randomize away on each attempt when --disconnect-retry-strategy is exponential, ' +
+        'between 0 (no jitter) and 1 (full jitter). Spreads out devices that dropped together instead of having ' +
+        'them retry in lockstep',
+      (value) => parseRetryBackoffJitterOption(value, 'disconnect retry backoff jitter'),
+      DEFAULT_DISCONNECT_RETRY_BACKOFF_JITTER,
     );
 
   program.parse(process.argv);
@@ -978,6 +1000,7 @@ async function main() {
       intervalMs: options.disconnectRetryIntervalMs,
       backoffMultiplier: options.disconnectRetryBackoffMultiplier,
       backoffMaxIntervalMs: options.disconnectRetryBackoffMaxIntervalMs,
+      jitter: options.disconnectRetryBackoffJitter,
     });
   } catch (err) {
     // program.error() never returns (it exits the process); the throw below is unreachable and

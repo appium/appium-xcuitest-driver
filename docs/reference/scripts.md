@@ -531,6 +531,7 @@ sudo appium driver run xcuitest tunnel-creation
 |`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds. With `--disconnect-retry-strategy exponential`, this is the initial delay, before it starts growing.|integer|1000|
 |`--disconnect-retry-backoff-multiplier`|Factor the delay grows by on each attempt when `--disconnect-retry-strategy` is `exponential`. Must be greater than `1`.|number|2|
 |`--disconnect-retry-backoff-max-interval-ms`|Upper bound on the delay between tunnel recreation attempts when `--disconnect-retry-strategy` is `exponential`.|integer|30000|
+|`--disconnect-retry-backoff-jitter`|Fraction of the delay to randomize away on each attempt when `--disconnect-retry-strategy` is `exponential`, between `0` (no jitter) and `1` (full jitter). Spreads out devices that dropped together instead of having them retry in lockstep.|number|0.5|
 |`--tunnel-registry-port`|Port of the tunnel registry server, hosted at `http://localhost:<port>/remotexpc/tunnels`|integer|42314|
 |`--udid`|Identifier of a specific non-Apple TV device to create the tunnel for. Repeat this argument to target multiple specific devices. By default, the tunnel is created for all connected devices. If this is provided without `--appletv-device-id`, Apple TV discovery/setup is skipped.|string (repeatable)||
 
@@ -570,6 +571,12 @@ sudo appium driver run xcuitest tunnel-creation
 
     ```
     sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 0 --disconnect-retry-strategy exponential --disconnect-retry-backoff-max-interval-ms 30000
+    ```
+
+- Same as above, but with full jitter (delay is uniformly random between 0 and the computed value) instead of the default:
+
+    ```
+    sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 0 --disconnect-retry-strategy exponential --disconnect-retry-backoff-max-interval-ms 30000 --disconnect-retry-backoff-jitter 1
     ```
 
 - Create Apple TV tunnels with a longer wireless discovery timeout:
