@@ -3,7 +3,7 @@ import net from 'node:net';
 import {describe, it, beforeEach, afterEach, mock} from 'node:test';
 
 import xcode from 'appium-xcode';
-import {JWProxy} from 'appium/driver.js';
+import {WebDriverProxy} from 'appium/driver.js';
 import {createSandbox, type SinonSandbox, type SinonStubbedMember} from 'sinon';
 
 import * as helpersIndexModule from '../../lib/commands/helpers/index.js';
@@ -216,14 +216,14 @@ describe('XCUITestDriver', function () {
   describe('driver commands', function () {
     describe('status', function () {
       let driver: InstanceType<typeof XCUITestDriver>;
-      let jwproxyCommandSpy: SinonStubbedMember<typeof JWProxy.prototype.command>;
+      let wdProxyCommandSpy: SinonStubbedMember<typeof WebDriverProxy.prototype.command>;
 
       beforeEach(function () {
         driver = new XCUITestDriver({} as any);
 
         // fake the proxy to WDA
-        const jwproxy = new JWProxy();
-        jwproxyCommandSpy = sandbox.stub(jwproxy, 'command').resolves({some: 'thing'});
+        const jwproxy = new WebDriverProxy();
+        wdProxyCommandSpy = sandbox.stub(jwproxy, 'command').resolves({some: 'thing'});
         driver._wda = {
           jwproxy,
         } as any;
@@ -231,14 +231,14 @@ describe('XCUITestDriver', function () {
 
       it('should not have wda status by default', async function () {
         const status = await driver.getStatus();
-        assert.strictEqual(jwproxyCommandSpy.calledOnce, false);
+        assert.strictEqual(wdProxyCommandSpy.calledOnce, false);
         assert.strictEqual(status.wda, undefined);
       });
 
       it('should return wda status if cached', async function () {
         driver.cachedWdaStatus = {};
         const status = await driver.getStatus();
-        assert.strictEqual(jwproxyCommandSpy.called, false);
+        assert.strictEqual(wdProxyCommandSpy.called, false);
         assert.ok(status.wda);
       });
     });
@@ -415,7 +415,7 @@ describe('XCUITestDriver', function () {
 
       beforeEach(function () {
         driver = new XCUITestDriver({} as any);
-        const jwproxy = new JWProxy();
+        const jwproxy = new WebDriverProxy();
         sandbox.stub(jwproxy, 'command').resolves(deviceInfoResponse);
         driver._wda = {
           jwproxy,

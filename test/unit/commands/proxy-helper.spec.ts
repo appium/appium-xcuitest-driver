@@ -10,32 +10,32 @@ describe('proxy commands', function () {
   const driver = new XCUITestDriver({} as any);
   driver._wda = {jwproxy: {command: async () => ({})} as any} as any;
 
-  let mockJwproxy: sinon.SinonMock;
+  let mockWDProxy: sinon.SinonMock;
 
   beforeEach(function () {
-    mockJwproxy = sinon.mock(driver.wda.jwproxy);
+    mockWDProxy = sinon.mock(driver.wda.jwproxy);
   });
 
   afterEach(function () {
-    mockJwproxy.verify();
+    mockWDProxy.verify();
   });
 
   describe('proxyCommand', function () {
     it('should send command through WDA', async function () {
-      mockJwproxy.expects('command').once().withExactArgs('/some/endpoint', 'POST', {some: 'stuff'});
+      mockWDProxy.expects('command').once().withExactArgs('/some/endpoint', 'POST', {some: 'stuff'});
       await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
     });
 
     it('should throw an error if no endpoint is given', async function () {
-      mockJwproxy.expects('command').never().called;
+      mockWDProxy.expects('command').never().called;
       await assert.rejects(driver.proxyCommand(null as any, 'POST', {some: 'stuff'}), /endpoint/);
     });
     it('should throw an error if no method is given', async function () {
-      mockJwproxy.expects('command').never().called;
+      mockWDProxy.expects('command').never().called;
       await assert.rejects(driver.proxyCommand('/some/endpoint', null as any, {some: 'stuff'}), /GET, POST/);
     });
     it('should throw an error if wda returns an error (even if http status is 200)', async function () {
-      mockJwproxy.expects('command').once().returns({status: 13, value: 'WDA error occurred'});
+      mockWDProxy.expects('command').once().returns({status: 13, value: 'WDA error occurred'});
       try {
         await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
       } catch (err) {
@@ -45,7 +45,7 @@ describe('proxy commands', function () {
       }
     });
     it('should not throw an error if no status is returned', async function () {
-      mockJwproxy.expects('command').once().returns({value: 'WDA error occurred'});
+      mockWDProxy.expects('command').once().returns({value: 'WDA error occurred'});
       await driver.proxyCommand('/some/endpoint', 'POST', {some: 'stuff'});
     });
   });
