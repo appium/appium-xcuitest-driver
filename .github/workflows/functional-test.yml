@@ -33,8 +33,14 @@ jobs:
           # - driver
           - web
           - long
-        xcodeVersion: ['26.4', '16.4']
+        xcodeVersion: ['27.0-beta', '26.4', '16.4']
         include:
+          - xcodeVersion: '27.0-beta'
+            iosVersion: '27.0'
+            deviceName: 'iPhone 17'
+            tvosVersion: '27.0'
+            tvosDeviceName: 'Apple TV'
+            platform: xcode-27
           - xcodeVersion: '26.4'
             iosVersion: '26.4'
             deviceName: 'iPhone 17'
