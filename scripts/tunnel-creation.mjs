@@ -27,6 +27,14 @@ import {Command} from 'commander';
 
 import {parsePositiveIntegerOption} from './lib/options.mjs';
 import {startTimeoutProgressLogger} from './lib/progress.mjs';
+import {
+  createDisconnectRetryPolicy,
+  DEFAULT_DISCONNECT_RETRY_BACKOFF_JITTER,
+  DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS,
+  DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER,
+  DEFAULT_DISCONNECT_RETRY_INTERVAL_MS,
+  FixedIntervalRetryPolicy,
+} from './lib/retry-policy.mjs';
 import {assertRoot} from './lib/root.mjs';
 
 const log = logger.getLogger('TunnelCreation');
@@ -65,9 +73,11 @@ class TunnelCreator {
     /** @type {Map<string, import('appium-ios-remotexpc').AppleTVTunnelService>} */
     this._appletvTunnelServicesByUdid = new Map();
     this._isCleaningUp = false;
-    /** @type {number | null} */
-    this._disconnectRetryMaxAttempts = null;
-    this._disconnectRetryIntervalMs = 1000;
+    /** @type {import('./lib/retry-policy.mjs').RetryPolicy} */
+    this._disconnectRetryPolicy = new FixedIntervalRetryPolicy({
+      maxAttempts: null,
+      intervalMs: DEFAULT_DISCONNECT_RETRY_INTERVAL_MS,
+    });
   }
 
   get tunnelRegistryPort() {
@@ -83,12 +93,10 @@ class TunnelCreator {
   }
 
   /**
-   * @param {number | null} maxAttempts - null disables retries; 0 means unlimited retries
-   * @param {number} intervalMs
+   * @param {import('./lib/retry-policy.mjs').RetryPolicy} policy
    */
-  setDisconnectRetryPolicy(maxAttempts, intervalMs) {
-    this._disconnectRetryMaxAttempts = maxAttempts;
-    this._disconnectRetryIntervalMs = intervalMs;
+  setDisconnectRetryPolicy(policy) {
+    this._disconnectRetryPolicy = policy;
   }
 
   /**
@@ -576,10 +584,6 @@ class TunnelCreator {
         if (!this._isRetryEnabledForUdid(udid)) {
           return;
         }
-        const maxAttempts = this._disconnectRetryMaxAttempts;
-        if (maxAttempts === null) {
-          return;
-        }
 
         const device = this._usbDevicesByUdid.get(udid);
         const isAppleTV = this._appleTVDeviceIds.has(udid);
@@ -587,17 +591,19 @@ class TunnelCreator {
           return;
         }
 
-        let attempt = 0;
+        const policy = this._disconnectRetryPolicy;
+        let attemptsMade = 0;
         while (!this._isCleaningUp) {
-          if (maxAttempts !== 0 && attempt >= maxAttempts) {
+          if (!policy.hasAttemptsRemaining(attemptsMade)) {
             log.warn(`Retry limit reached for ${udid}; keeping it removed from the registry`);
             return;
           }
-          attempt += 1;
+          attemptsMade += 1;
+          const delayMs = policy.getDelayMs(attemptsMade);
           log.warn(
-            `Retrying tunnel creation for ${udid} (attempt ${attempt}${maxAttempts === 0 ? ', unlimited' : `/${maxAttempts}`}) in ${this._disconnectRetryIntervalMs}ms...`,
+            `Retrying tunnel creation for ${udid} (attempt ${attemptsMade}${policy.maxAttempts === 0 ? ', unlimited' : `/${policy.maxAttempts}`}) in ${delayMs}ms...`,
           );
-          await sleep(this._disconnectRetryIntervalMs);
+          await sleep(delayMs);
 
           try {
             this._registryServer?.markTunnelPending(udid);
@@ -635,8 +641,7 @@ class TunnelCreator {
    */
   _isRetryEnabledForUdid(udid) {
     return (
-      (this._usbDevicesByUdid.has(udid) || this._appleTVDeviceIds.has(udid)) &&
-      this._disconnectRetryMaxAttempts !== null
+      (this._usbDevicesByUdid.has(udid) || this._appleTVDeviceIds.has(udid)) && this._disconnectRetryPolicy.isEnabled
     );
   }
 
@@ -802,6 +807,43 @@ function parseNonNegativeIntegerOption(value, label) {
 
 /**
  * @param {string} value
+ * @returns {'fixed' | 'exponential'}
+ */
+function parseRetryStrategyOption(value) {
+  if (value !== 'fixed' && value !== 'exponential') {
+    throw new Error(`Invalid disconnect retry strategy: ${value}. Expected 'fixed' or 'exponential'.`);
+  }
+  return value;
+}
+
+/**
+ * @param {string} value
+ * @param {string} label
+ * @returns {number}
+ */
+function parseRetryBackoffMultiplierOption(value, label) {
+  const multiplier = Number.parseFloat(value);
+  if (!Number.isFinite(multiplier) || multiplier <= 1) {
+    throw new Error(`Invalid ${label}: ${value}. Expected a number greater than 1.`);
+  }
+  return multiplier;
+}
+
+/**
+ * @param {string} value
+ * @param {string} label
+ * @returns {number}
+ */
+function parseRetryBackoffJitterOption(value, label) {
+  const jitter = Number.parseFloat(value);
+  if (!Number.isFinite(jitter) || jitter < 0 || jitter > 1) {
+    throw new Error(`Invalid ${label}: ${value}. Expected a number between 0 and 1.`);
+  }
+  return jitter;
+}
+
+/**
+ * @param {string} value
  * @param {string[]} previous
  * @returns {string[]}
  */
@@ -907,10 +949,37 @@ async function main() {
       (value) => parseNonNegativeIntegerOption(value, 'disconnect retry max attempts'),
     )
     .option(
+      '--disconnect-retry-strategy <strategy>',
+      "Delay strategy between tunnel recreation attempts: 'fixed' or 'exponential'",
+      (value) => parseRetryStrategyOption(value),
+      'fixed',
+    )
+    .option(
       '--disconnect-retry-interval-ms <ms>',
-      'Delay between tunnel recreation attempts in milliseconds (default 1000)',
+      'Delay between tunnel recreation attempts in milliseconds. ' +
+        'With --disconnect-retry-strategy exponential, this is the initial delay, before it starts growing',
       (value) => parsePositiveIntegerOption(value, 'disconnect retry interval'),
-      1000,
+      DEFAULT_DISCONNECT_RETRY_INTERVAL_MS,
+    )
+    .option(
+      '--disconnect-retry-backoff-multiplier <factor>',
+      'Factor the delay grows by on each attempt when --disconnect-retry-strategy is exponential (must be > 1)',
+      (value) => parseRetryBackoffMultiplierOption(value, 'disconnect retry backoff multiplier'),
+      DEFAULT_DISCONNECT_RETRY_BACKOFF_MULTIPLIER,
+    )
+    .option(
+      '--disconnect-retry-backoff-max-interval-ms <ms>',
+      'Upper bound on the delay between tunnel recreation attempts when --disconnect-retry-strategy is exponential',
+      (value) => parsePositiveIntegerOption(value, 'disconnect retry backoff max interval'),
+      DEFAULT_DISCONNECT_RETRY_BACKOFF_MAX_INTERVAL_MS,
+    )
+    .option(
+      '--disconnect-retry-backoff-jitter <factor>',
+      'Fraction of the delay to randomize away on each attempt when --disconnect-retry-strategy is exponential, ' +
+        'between 0 (no jitter) and 1 (full jitter). Spreads out devices that dropped together instead of having ' +
+        'them retry in lockstep',
+      (value) => parseRetryBackoffJitterOption(value, 'disconnect retry backoff jitter'),
+      DEFAULT_DISCONNECT_RETRY_BACKOFF_JITTER,
     );
 
   program.parse(process.argv);
@@ -921,6 +990,24 @@ async function main() {
   const hasRequestedAppleTVIds = requestedAppleTVIds.length > 0;
   const shouldRunUsbFlow = !hasRequestedAppleTVIds || hasRequestedUdids;
   const shouldRunAppleTVFlow = !hasRequestedUdids || hasRequestedAppleTVIds;
+
+  /** @type {import('./lib/retry-policy.mjs').RetryPolicy} */
+  let disconnectRetryPolicy;
+  try {
+    disconnectRetryPolicy = createDisconnectRetryPolicy({
+      strategy: options.disconnectRetryStrategy,
+      maxAttempts: options.disconnectRetryMaxAttempts ?? null,
+      intervalMs: options.disconnectRetryIntervalMs,
+      backoffMultiplier: options.disconnectRetryBackoffMultiplier,
+      backoffMaxIntervalMs: options.disconnectRetryBackoffMaxIntervalMs,
+      jitter: options.disconnectRetryBackoffJitter,
+    });
+  } catch (err) {
+    // program.error() never returns (it exits the process); the throw below is unreachable and
+    // only here so TS can see disconnectRetryPolicy is always assigned past this point.
+    program.error(/** @type {Error} */ (err).message);
+    throw err;
+  }
 
   await assertRoot(path.parse(fileURLToPath(import.meta.url)).name);
 
@@ -953,10 +1040,7 @@ async function main() {
       });
     }
 
-    tunnelCreator.setDisconnectRetryPolicy(
-      options.disconnectRetryMaxAttempts ?? null,
-      options.disconnectRetryIntervalMs,
-    );
+    tunnelCreator.setDisconnectRetryPolicy(disconnectRetryPolicy);
 
     await tunnelCreator.startRegistryServer();
 

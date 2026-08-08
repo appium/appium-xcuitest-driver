@@ -527,7 +527,11 @@ sudo appium driver run xcuitest tunnel-creation
 |`--appletv-device-id`|Identifier of a paired Apple TV device (returned by [`pair-appletv`](#pair-appletv)) to create the tunnel for. Repeat this argument to target multiple paired Apple TV devices. If omitted, the script creates one tunnel per discovered paired Apple TV device. If this is provided without `--udid`, setup of non-Apple TV devices is skipped.|string (repeatable)||
 |`--appletv-discovery-timeout-ms`|Apple TV wireless discovery timeout, in milliseconds. Applies to initial discovery and Apple TV tunnel creation/reconnection.|integer|10000|
 |`--disconnect-retry-max-attempts`|Maximum number of tunnel recreation attempts after an unexpected disconnect. Set to `0` for unlimited retries. If omitted, retries are disabled and the tunnel is removed from registry.|integer||
-|`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds.|integer|1000|
+|`--disconnect-retry-strategy`|Delay strategy between tunnel recreation attempts: `fixed` (same delay every attempt) or `exponential` (delay grows on each attempt, up to a cap).|`fixed` \| `exponential`|`fixed`|
+|`--disconnect-retry-interval-ms`|Delay between tunnel recreation attempts in milliseconds. With `--disconnect-retry-strategy exponential`, this is the initial delay, before it starts growing.|integer|1000|
+|`--disconnect-retry-backoff-multiplier`|Factor the delay grows by on each attempt when `--disconnect-retry-strategy` is `exponential`. Must be greater than `1`.|number|2|
+|`--disconnect-retry-backoff-max-interval-ms`|Upper bound on the delay between tunnel recreation attempts when `--disconnect-retry-strategy` is `exponential`.|integer|30000|
+|`--disconnect-retry-backoff-jitter`|Fraction of the delay to randomize away on each attempt when `--disconnect-retry-strategy` is `exponential`, between `0` (no jitter) and `1` (full jitter). Spreads out devices that dropped together instead of having them retry in lockstep.|number|0.5|
 |`--tunnel-registry-port`|Port of the tunnel registry server, hosted at `http://localhost:<port>/remotexpc/tunnels`|integer|42314|
 |`--udid`|Identifier of a specific non-Apple TV device to create the tunnel for. Repeat this argument to target multiple specific devices. By default, the tunnel is created for all connected devices. If this is provided without `--appletv-device-id`, Apple TV discovery/setup is skipped.|string (repeatable)||
 
@@ -561,6 +565,18 @@ sudo appium driver run xcuitest tunnel-creation
 
     ```
     sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 10 --disconnect-retry-interval-ms 2000
+    ```
+
+- Recreate tunnel on disconnect indefinitely, starting at 1s and backing off exponentially up to 30s:
+
+    ```
+    sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 0 --disconnect-retry-strategy exponential --disconnect-retry-backoff-max-interval-ms 30000
+    ```
+
+- Same as above, but with full jitter (delay is uniformly random between 0 and the computed value) instead of the default:
+
+    ```
+    sudo appium driver run xcuitest tunnel-creation -- --disconnect-retry-max-attempts 0 --disconnect-retry-strategy exponential --disconnect-retry-backoff-max-interval-ms 30000 --disconnect-retry-backoff-jitter 1
     ```
 
 - Create Apple TV tunnels with a longer wireless discovery timeout:
