@@ -78,8 +78,10 @@ jobs:
       - run: xcrun simctl list runtimes
         name: List Runtimes
       - name: Start iOS Simulator UI
+        if: ${{ matrix.xcodeVersion != '27.0-beta' }}
         run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
       - name: Prepare iOS simulator
+        if: ${{ matrix.xcodeVersion != '27.0-beta' }}
         id: prepareSimulator
         uses: futureware-tech/simulator-action@v5
         with:
@@ -88,6 +90,7 @@ jobs:
           shutdown_after_job: false
           wait_for_boot: true
       - name: Finalize iOS simulator boot
+        if: ${{ matrix.xcodeVersion != '27.0-beta' }}
         run: xcrun --sdk iphonesimulator --show-sdk-version
 
       - run: |
