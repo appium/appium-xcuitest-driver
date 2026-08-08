@@ -1,3 +1,9 @@
+## [12.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.2.1...v12.3.0) (2026-08-08)
+
+### Features
+
+* Add customizable exponential backoff for tunnel reconnect retries ([#2936](https://github.com/appium/appium-xcuitest-driver/issues/2936)) ([84ed39d](https://github.com/appium/appium-xcuitest-driver/commit/84ed39dcaf274368f28fed85c980cf7d23ce470e))
+
 ## [12.2.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.2.0...v12.2.1) (2026-08-07)
 
 ### Miscellaneous Chores
