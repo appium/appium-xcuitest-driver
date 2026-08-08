@@ -59,12 +59,7 @@ describe('safari - windows and frames', function () {
     });
   });
 
-  // Window/popup handling over Safari's remote debugger has repeatedly been observed to
-  // hang for minutes on end in CI (window handles, popup windows), wedging the shared
-  // session and cascading into every other test in this block (frames, iframes included,
-  // since they reuse the same driver). Skip in CI until the remote debugger connection
-  // is more reliable there - see the similar precedent in safari-nativewebtap-e2e.spec.ts.
-  describe('with safariAllowPopups', {skip: Boolean(process.env.CI)}, function () {
+  describe('with safariAllowPopups', function () {
     let driver: Browser;
     before(async function () {
       const caps = amendCapabilities(SAFARI_CAPS, {
@@ -83,6 +78,10 @@ describe('safari - windows and frames', function () {
     });
 
     describe('windows', function () {
+      // Window/popup handling over Safari's remote debugger reliably hangs for minutes
+      // (wedging the shared session and cascading into every later test, frames/iframes
+      // included) on iOS < 18.0. Skip by actual iOS version rather than by CI, since the
+      // same hang reproduces locally against an old simulator.
       before(async function () {
         await driver.setTimeout({implicit: DEFAULT_IMPLICIT_TIMEOUT_MS});
       });
@@ -97,7 +96,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to open and close windows', async function (ctx: TestContext) {
-        if (process.env.CI && isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('18.0')) {
           return ctx.skip();
         }
 
@@ -110,7 +109,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to use window handles', async function (ctx: TestContext) {
-        if (process.env.CI && isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('18.0')) {
           return ctx.skip();
         }
 
@@ -136,7 +135,7 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to go back and forward', async function (ctx: TestContext) {
-        if (process.env.CI && isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('18.0')) {
           return ctx.skip();
         }
 
@@ -165,7 +164,11 @@ describe('safari - windows and frames', function () {
         await driver.back();
       });
 
-      it('should be able to open js popup windows', async function () {
+      it('should be able to open js popup windows', async function (ctx: TestContext) {
+        if (isIosVersionBelow('18.0')) {
+          return ctx.skip();
+        }
+
         await driver.updateSettings({
           autoClickAlertSelector: '**/XCUIElementTypeStaticText[`label == "Allow"`]',
         });
@@ -179,7 +182,7 @@ describe('safari - windows and frames', function () {
 
       // broken on real devices, see https://github.com/appium/appium/issues/5167
       it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async function (ctx: TestContext) {
-        if (process.env.CI && isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('18.0')) {
           return ctx.skip();
         }
 
