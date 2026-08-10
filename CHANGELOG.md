@@ -1,3 +1,9 @@
+## [12.3.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.0...v12.3.1) (2026-08-10)
+
+### Miscellaneous Chores
+
+* Bump appium-remote-debugger to v17 ([#2940](https://github.com/appium/appium-xcuitest-driver/issues/2940)) ([d5522ea](https://github.com/appium/appium-xcuitest-driver/commit/d5522ea68e5f0faf70b9b3e744f327346529c20f))
+
 ## [12.3.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.2.1...v12.3.0) (2026-08-08)
 
 ### Features
