@@ -73,7 +73,7 @@
     "@colors/colors": "^1.6.0",
     "appium-ios-device": "^3.1.12",
     "appium-ios-simulator": "^9.0.0",
-    "appium-remote-debugger": "^17.0.0",
+    "appium-remote-debugger": "^17.0.6",
     "appium-webdriveragent": "^16.1.4",
     "appium-xcode": "^7.0.0",
     "async-lock": "^1.4.0",
