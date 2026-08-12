@@ -14,6 +14,8 @@ title: Troubleshooting
   longer being accepted. Rebooting the device can help remedy this problem. Please read
   [this issue](https://github.com/facebook/WebDriverAgent/issues/507) for more details.
 * `shake` is implemented via AppleScript and works only on Simulator due to lack of support from Apple
+* There is no direct API to toggle Wi-Fi or cellular data on real devices. See
+  [No Direct API to Toggle Wi-Fi or Cellular Data](#no-direct-api-to-toggle-wi-fi-or-cellular-data) below.
 
 ## Interact with dialogs managed by `com.apple.springboard`
 
@@ -107,7 +109,7 @@ calling [`mobile: removeApp`](../reference/execute-methods.md#mobile-removeapp) 
 
     We observed that iOS 18+ environments can retain the permission preference even after reinstallation.
     Please refer to [this issue](https://github.com/appium/appium-xcuitest-driver/issues/2572) for more information about this behavior.
-    
+
 
 ## Weird State
 
@@ -190,6 +192,33 @@ Please try out iOS 17.6 or a newer version which includes [a possible fix by App
 Frequent Web Inspector debugger disconnection started since iOS 17.2 (or iOS 17.0), that eventually caused `Disconnecting from remote debugger` error.
 It could be improved since iOS 17.6.
 Please check [the corresponding pull request](https://github.com/appium/appium-xcuitest-driver/pull/2334) for more details.
+
+## No Direct API to Toggle Wi-Fi or Cellular Data
+
+XCUITest driver does not provide a direct command to enable/disable Wi-Fi or cellular data on real
+devices, and there is currently no plan to add one. See
+[appium/appium#15058](https://github.com/appium/appium/issues/15058) for the original feature
+request and discussion.
+
+This is not a driver-only limitation: XCTest itself has no public API for radio control, so
+WebDriverAgent cannot expose one either.
+
+### Workarounds
+
+- Use Siri to toggle the setting by voice command, then dismiss Siri: call
+  [`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand) with
+  `text` set to `turn on wifi` (or `turn off wifi`/`turn on cellular data`/`turn off cellular data`),
+  then call [`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton) with `name`
+  set to `home` to dismiss the Siri UI. This still changes the actual radio state, so it can end
+  the session if the active connection (Wi-Fi, or a real device tunnel) depends on that radio.
+
+- Prefer testing network conditions (offline, slow network, packet loss, etc.) at the app or
+  network-proxy layer instead of via the physical radio, for example by using
+  [Network Link Conditioner](https://developer.apple.com/download/all/) on Simulator, or an
+  in-app/proxy-level mechanism to simulate connectivity loss without touching the OS radio state.
+- If you do need to exercise real Wi-Fi/cellular toggling as part of a test, design the test to
+  expect the session to end when the toggle happens, and start a new session (re-establishing any
+  tunnel as needed) to continue.
 
 ## Unable to Detect Webview
 
