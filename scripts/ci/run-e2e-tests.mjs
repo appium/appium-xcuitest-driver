@@ -116,8 +116,11 @@ if (!pattern) {
       }
       // `failureType` is set by node:test at runtime but isn't part of @types/node's `Error` type.
       const failureType = /** @type {any} */ (data.details?.error)?.failureType;
-      if (IS_CI && failureType === 'testTimeoutFailure') {
-        console.error(`::warning::Ignoring CI timeout in "${data.name}" - not counted as a suite failure`);
+      // A test that itself stalled gets 'testTimeoutFailure'. A test that never even got to run
+      // because an ancestor (e.g. a `before` hook) stalled and blew the parent's own timeout budget
+      // gets 'cancelledByParent' instead - it is just as much a timeout artifact, not a real failure.
+      if (IS_CI && (failureType === 'testTimeoutFailure' || failureType === 'cancelledByParent')) {
+        console.error(`::warning::Ignoring CI timeout/cancellation in "${data.name}" - not counted as a suite failure`);
       } else {
         hasRealFailure = true;
       }
