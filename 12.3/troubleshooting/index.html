@@ -3153,6 +3153,80 @@
 
 <!-- Table of contents item -->
 <li class="md-nav__item">
+  <a href="#no-direct-api-to-toggle-wi-fi-or-cellular-data" class="md-nav__link">
+    <span class="md-ellipsis"> No Direct API to Toggle Wi-Fi or Cellular Data </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+  <nav class="md-nav" aria-label="No Direct API to Toggle Wi-Fi or Cellular Data">
+    <ul class="md-nav__list">
+       <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
+  <a href="#workarounds" class="md-nav__link">
+    <span class="md-ellipsis"> Workarounds </span>
+  </a>
+
+  <!-- Table of contents list -->
+  
+</li> 
+    </ul>
+  </nav>
+  
+</li>
+      
+        <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- modified from https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/src/templates/partials/toc-item.html
+     for the purpose of not showing all heading objects in the TOC -->
+
+<!-- Table of contents item -->
+<li class="md-nav__item">
   <a href="#unable-to-detect-webview" class="md-nav__link">
     <span class="md-ellipsis"> Unable to Detect Webview </span>
   </a>
@@ -3248,6 +3322,8 @@
   longer being accepted. Rebooting the device can help remedy this problem. Please read
   <a href="https://github.com/facebook/WebDriverAgent/issues/507">this issue</a> for more details.</li>
 <li><code>shake</code> is implemented via AppleScript and works only on Simulator due to lack of support from Apple</li>
+<li>There is no direct API to toggle Wi-Fi or cellular data on real devices. See
+  <a href="#no-direct-api-to-toggle-wi-fi-or-cellular-data">No Direct API to Toggle Wi-Fi or Cellular Data</a> below.</li>
 </ul>
 <h2 id="interact-with-dialogs-managed-by-comapplespringboard">Interact with dialogs managed by <code>com.apple.springboard</code><a class="headerlink" href="#interact-with-dialogs-managed-by-comapplespringboard" title="Permanent link">&para;</a></h2>
 <p>System dialogs, such as permission dialogs, might not be interactable directly when the active application is not <code>com.apple.springboard</code>.
@@ -3397,6 +3473,33 @@ usually found in the following locations, should they need to be deleted:</p>
 <p>Frequent Web Inspector debugger disconnection started since iOS 17.2 (or iOS 17.0), that eventually caused <code>Disconnecting from remote debugger</code> error.
 It could be improved since iOS 17.6.
 Please check <a href="https://github.com/appium/appium-xcuitest-driver/pull/2334">the corresponding pull request</a> for more details.</p>
+<h2 id="no-direct-api-to-toggle-wi-fi-or-cellular-data">No Direct API to Toggle Wi-Fi or Cellular Data<a class="headerlink" href="#no-direct-api-to-toggle-wi-fi-or-cellular-data" title="Permanent link">&para;</a></h2>
+<p>XCUITest driver does not provide a direct command to enable/disable Wi-Fi or cellular data on real
+devices, and there is currently no plan to add one. See
+<a href="https://github.com/appium/appium/issues/15058">appium/appium#15058</a> for the original feature
+request and discussion.</p>
+<p>This is not a driver-only limitation: XCTest itself has no public API for radio control, so
+WebDriverAgent cannot expose one either.</p>
+<h3 id="workarounds">Workarounds<a class="headerlink" href="#workarounds" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Use Siri to toggle the setting by voice command, then dismiss Siri: call
+  <a href="../reference/execute-methods/#mobile-siricommand"><code>mobile: siriCommand</code></a> with
+  <code>text</code> set to <code>turn on wifi</code> (or <code>turn off wifi</code>/<code>turn on cellular data</code>/<code>turn off cellular data</code>),
+  then call <a href="../reference/execute-methods/#mobile-pressbutton"><code>mobile: pressButton</code></a> with <code>name</code>
+  set to <code>home</code> to dismiss the Siri UI. This still changes the actual radio state, so it can end
+  the session if the active connection (Wi-Fi, or a real device tunnel) depends on that radio.</p>
+</li>
+<li>
+<p>Prefer testing network conditions (offline, slow network, packet loss, etc.) at the app or
+  network-proxy layer instead of via the physical radio, for example by using
+  <a href="https://developer.apple.com/download/all/">Network Link Conditioner</a> on Simulator, or an
+  in-app/proxy-level mechanism to simulate connectivity loss without touching the OS radio state.</p>
+</li>
+<li>If you do need to exercise real Wi-Fi/cellular toggling as part of a test, design the test to
+  expect the session to end when the toggle happens, and start a new session (re-establishing any
+  tunnel as needed) to continue.</li>
+</ul>
 <h2 id="unable-to-detect-webview">Unable to Detect Webview<a class="headerlink" href="#unable-to-detect-webview" title="Permanent link">&para;</a></h2>
 <p>The driver can only detect webviews that are exposed for debugging. This can be configured by the
 application developer as follows:</p>
@@ -3428,7 +3531,7 @@ application developer as follows:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="April 14, 2026 07:57:55 UTC"><span class="timeago" datetime="2026-04-14T07:57:55+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 14, 2026 07:57:55 UTC">2026-04-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="August 12, 2026 21:27:02 UTC"><span class="timeago" datetime="2026-08-12T21:27:02+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 12, 2026 21:27:02 UTC">2026-08-12</span>
   </span>
 
     
