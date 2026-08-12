@@ -205,18 +205,15 @@ WebDriverAgent cannot expose one either.
 
 ### Workarounds
 
-- Use Siri to toggle the setting by voice command, then dismiss Siri:
+- Use Siri to toggle the setting by voice command, then dismiss Siri: call
+  [`mobile: siriCommand`](../reference/execute-methods.md#mobile-siricommand) with
+  `text` set to `turn on wifi` (or `turn off wifi`/`turn on cellular data`/`turn off cellular data`),
+  then call [`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton) with `name`
+  set to `home` to dismiss the Siri UI.
 
-    ```
-    POST /session/:sessionId/execute
-    {"script": "mobile: siriCommand", "args": [{"text": "turn on wifi"}]}
+  This still changes the actual radio state, so it can end the session if the active
+  connection (Wi-Fi, or a real device tunnel) depends on that radio.
 
-    POST /session/:sessionId/execute
-    {"script": "mobile: pressButton", "args": [{"name": "home"}]}
-    ```
-
-    This still changes the actual radio state, so it can end the session if the active
-    connection (Wi-Fi, or a real device tunnel) depends on that radio.
 - Prefer testing network conditions (offline, slow network, packet loss, etc.) at the app or
   network-proxy layer instead of via the physical radio, for example by using
   [Network Link Conditioner](https://developer.apple.com/download/all/) on Simulator, or an
