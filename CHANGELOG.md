@@ -1,3 +1,9 @@
+## [12.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.2...v12.3.3) (2026-08-13)
+
+### Bug Fixes
+
+* force-kill hung performance recordings and restore device e2e tests ([#2945](https://github.com/appium/appium-xcuitest-driver/issues/2945)) ([36b4f8a](https://github.com/appium/appium-xcuitest-driver/commit/36b4f8a6b86d3d3f73fc448a27b332f78453a654))
+
 ## [12.3.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.1...v12.3.2) (2026-08-12)
 
 ### Miscellaneous Chores
