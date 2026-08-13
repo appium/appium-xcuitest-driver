@@ -190,6 +190,10 @@ export class PerfRecorder {
     try {
       await this._process?.stop('SIGINT', STOP_TIMEOUT_MS);
     } catch {
+      // SIGINT was not enough to make the process exit in time. Force-kill it, otherwise
+      // it stays orphaned and keeps the simulator's Instruments channel pinned, which then
+      // wedges every subsequent command against the same device.
+      await this._enforceTermination();
       throw this._logger.errorWithException(`Performance recording has failed to exit after ${STOP_TIMEOUT_MS}ms`);
     }
     return await this.getZippedReportPath();

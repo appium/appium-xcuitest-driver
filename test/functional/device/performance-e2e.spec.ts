@@ -8,7 +8,10 @@ import {getUICatalogCaps} from '../desired.js';
 import {initSession, deleteSession} from '../helpers/session.js';
 
 describe('XCUITestDriver - performance', function () {
-  const profileName = 'Time Profiler';
+  // 'Time Profiler' requires kernel-level CPU sampling (kperf/kdebug) that needs a one-time
+  // Instruments authorization grant on the host Mac; 'Network' needs no special permissions
+  // and is supported on simulators, so it exercises the same start/stop/report flow reliably.
+  const profileName = 'Network';
 
   let driver: Browser;
 
