@@ -708,7 +708,9 @@ export class XCUITestDriver
   executeAtomAsync = webCommands.executeAtomAsync;
   getAtomsElement = webCommands.getAtomsElement;
   convertElementsForAtoms = webCommands.convertElementsForAtoms;
+  /** @deprecated */
   getElementId = webCommands.getElementId;
+  /** @deprecated */
   hasElementId = webCommands.hasElementId;
   findWebElementOrElements = webCommands.findWebElementOrElements;
   clickWebCoords = webCommands.clickWebCoords;

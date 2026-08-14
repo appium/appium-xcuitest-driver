@@ -24,7 +24,7 @@ export async function execute<TReturn = unknown>(
   } else if (this.isWebContext()) {
     const atomsArgs = this.convertElementsForAtoms(args as readonly any[] | undefined);
     const result = await this.executeAtom('execute_script', [script, atomsArgs]);
-    return this.cacheWebElements(result);
+    return this.cacheWebElements(result) as TReturn;
   } else {
     throw new errors.NotImplementedError();
   }
