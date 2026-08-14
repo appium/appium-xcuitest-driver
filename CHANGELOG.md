@@ -1,3 +1,9 @@
+## [12.3.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.3...v12.3.4) (2026-08-14)
+
+### Bug Fixes
+
+* honor implicit wait for findElements in web contexts ([#2946](https://github.com/appium/appium-xcuitest-driver/issues/2946)) ([c575cd2](https://github.com/appium/appium-xcuitest-driver/commit/c575cd2bad05e7101e29668cda96c270c0f3e9f3))
+
 ## [12.3.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.2...v12.3.3) (2026-08-13)
 
 ### Bug Fixes
