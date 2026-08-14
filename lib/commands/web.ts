@@ -316,10 +316,13 @@ export function cacheWebElements(this: XCUITestDriver, response: unknown): unkno
     return response.map(toCached);
   } else if (isPlainObject(response)) {
     const result = {...response, ...(this.cacheWebElement(response as unknown as Element) as Element)};
-    return Object.entries(result).reduce((acc, [key, value]) => {
-      acc[key] = toCached(value);
-      return acc;
-    }, {} as Record<string, unknown>);
+    return Object.entries(result).reduce(
+      (acc, [key, value]) => {
+        acc[key] = toCached(value);
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
   }
   return response;
 }
@@ -350,11 +353,7 @@ export async function executeAtom<T = any>(
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  */
-export async function executeAtomAsync<T = unknown>(
-  this: XCUITestDriver,
-  atom: AtomName,
-  args: unknown[],
-): Promise<T> {
+export async function executeAtomAsync<T = unknown>(this: XCUITestDriver, atom: AtomName, args: unknown[]): Promise<T> {
   const promise = this.remote.executeAtomAsync(atom, args, this.curWebFrames);
   return await this.waitForAtom<T>(promise);
 }
