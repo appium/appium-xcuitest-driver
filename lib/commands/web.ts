@@ -320,17 +320,17 @@ export function cacheWebElements(this: XCUITestDriver, response: any): any {
 /**
  * Executes a Selenium atom script in the current web context.
  *
+ * @template T - Expected result type; defaults to `any` for callers that don't need it
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  * @param alwaysDefaultFrame - If true, always use the default frame instead of current frames
- * @privateRemarks This should return `Promise<T>` where `T` extends `unknown`, but that's going to cause a lot of things to break.
  */
-export async function executeAtom(
+export async function executeAtom<T = any>(
   this: XCUITestDriver,
   atom: string,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
-): Promise<any> {
+): Promise<T> {
   const frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   const promise = this.remote.executeAtom(atom, args, frames);
   return await this.waitForAtom(promise);
@@ -424,15 +424,40 @@ export async function findWebElementOrElements(
   this: XCUITestDriver,
   strategy: string,
   selector: string,
+  many: true,
+  ctx?: Element | string | null,
+): Promise<Element[]>;
+export async function findWebElementOrElements(
+  this: XCUITestDriver,
+  strategy: string,
+  selector: string,
+  many?: false,
+  ctx?: Element | string | null,
+): Promise<Element>;
+export async function findWebElementOrElements(
+  this: XCUITestDriver,
+  strategy: string,
+  selector: string,
+  many?: boolean,
+  ctx?: Element | string | null,
+): Promise<Element | Element[]>;
+export async function findWebElementOrElements(
+  this: XCUITestDriver,
+  strategy: string,
+  selector: string,
   many?: boolean,
   ctx?: Element | string | null,
 ): Promise<Element | Element[]> {
-  const contextElement = ctx == null ? null : this.getAtomsElement(ctx);
+  const contextElement: AtomsElement | null = ctx == null ? null : this.getAtomsElement(ctx);
   const atomName = many ? 'find_elements' : 'find_element_fragment';
-  let element: any;
-  const doFind = async () => {
-    element = await this.executeAtom(atomName, [strategy, selector, contextElement]);
-    return element !== null;
+  let element: AtomsElement | AtomsElement[] | null = null;
+  const doFind = async (): Promise<boolean> => {
+    element = await this.executeAtom<AtomsElement | AtomsElement[] | null>(atomName, [
+      strategy,
+      selector,
+      contextElement,
+    ]);
+    return !isEmpty(element);
   };
   try {
     await this.implicitWaitForCondition(doFind);
