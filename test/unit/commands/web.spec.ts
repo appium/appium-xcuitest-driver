@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it, afterEach} from 'node:test';
+import {performance} from 'node:perf_hooks';
 
 import sinon from 'sinon';
 
@@ -43,9 +44,9 @@ describe('web commands', function () {
       driver.implicitWaitMs = 5000;
       atomSpy.resolves({ELEMENT: 'elId'});
 
-      const started = Date.now();
+      const started = performance.now();
       await driver.findWebElementOrElements('id', 'foo', false);
-      const elapsed = Date.now() - started;
+      const elapsed = performance.now() - started;
 
       assert.strictEqual(atomSpy.callCount, 1);
       assert.ok(elapsed < 500, `expected the lookup to resolve quickly, but it took ${elapsed}ms`);
