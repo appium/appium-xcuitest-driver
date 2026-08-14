@@ -403,7 +403,6 @@ export function convertElementsForAtoms(this: XCUITestDriver, args: readonly unk
 /**
  * Extracts the element ID from an element object.
  *
- * @deprecated Use `util.unwrapElement` instead.
  * @param element - Element object
  * @returns Element ID if found, undefined otherwise
  */
@@ -414,7 +413,6 @@ export function getElementId(element: unknown): string | undefined {
 /**
  * Checks if an object has an element ID (type guard).
  *
- * @deprecated Use `util.unwrapElement` and check the result instead.
  * @param element - Object to check
  * @returns True if the object has an element ID
  */
@@ -940,26 +938,6 @@ export async function mobileWebNav(this: XCUITestDriver, navType: string): Promi
   } finally {
     this.remote.allowNavigationWithoutReload = false;
   }
-}
-
-/**
- * Gets the base URL for accessing WDA HTTP endpoints.
- *
- * @returns The base URL (e.g., 'http://127.0.0.1:8100')
- */
-export function getWdaLocalhostRoot(this: XCUITestDriver): string {
-  const wdaPort = () => {
-    try {
-      return this.wda.url?.port;
-    } catch {
-      // this.wda could raise an error when that was not initialized yet.
-      return null;
-    }
-  };
-  const remotePort =
-    ((this.isRealDevice() ? this.opts.wdaRemotePort : null) ?? wdaPort() ?? this.opts.wdaLocalPort) || 8100;
-  const remoteIp = this.opts.wdaBindingIP ?? '127.0.0.1';
-  return `http://${remoteIp}:${remotePort}`;
 }
 
 /**
