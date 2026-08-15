@@ -36,8 +36,6 @@ const NOTCHED_DEVICE_SIZES = [
   {w: 1290, h: 2796}, // 14 Pro Max
 ];
 
-const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
-
 const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
 // This value must be greater than the alerts check interval in WDA:
 // https://github.com/appium/WebDriverAgent/blob/8bc3135f021b529d916846477544f4b8ca890f59/WebDriverAgentLib/Utilities/FBAlertsMonitor.m#L17
@@ -58,6 +56,31 @@ const TAB_BAR_POSITION_TOP = 'top';
 const TAB_BAR_POSITION_BOTTOM = 'bottom';
 const TAB_BAR_POSSITIONS = [TAB_BAR_POSITION_TOP, TAB_BAR_POSITION_BOTTOM] as const;
 
+export const ATOM_NAMES = [
+  'active_element',
+  'clear',
+  'click',
+  'execute_async_script',
+  'execute_script',
+  'find_element_fragment',
+  'find_elements',
+  'frame_by_id_or_name',
+  'frame_by_index',
+  'get_attribute_value',
+  'get_frame_window',
+  'get_size',
+  'get_text',
+  'get_top_left_coordinates',
+  'get_value_of_css_property',
+  'is_displayed',
+  'is_enabled',
+  'is_selected',
+  'submit',
+  'type',
+] as const;
+
+export type AtomName = (typeof ATOM_NAMES)[number];
+
 /**
  * Sets the current web frame context.
  *
@@ -67,9 +90,7 @@ const TAB_BAR_POSSITIONS = [TAB_BAR_POSITION_TOP, TAB_BAR_POSITION_BOTTOM] as co
  * @throws {errors.NoSuchFrameError} If the specified frame is not found
  */
 export async function setFrame(this: XCUITestDriver, frame: number | string | null): Promise<void> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   if (frame === null) {
     this.curWebFrames = [];
@@ -77,13 +98,13 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
     return;
   }
 
-  if (hasElementId(frame)) {
+  if (isElementLike(frame)) {
     const atomsElement = this.getAtomsElement(frame);
     const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
     this.log.debug(`Entering new web frame: '${value.WINDOW}'`);
     this.curWebFrames.unshift(value.WINDOW);
   } else {
-    const atom = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
+    const atom: AtomName = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
     const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
     if (value?.WINDOW === undefined) {
       throw new errors.NoSuchFrameError();
@@ -106,9 +127,7 @@ export async function getCssProperty(
   propertyName: string,
   el: Element | string,
 ): Promise<string> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   const atomsElement = this.getAtomsElement(el);
   return (await this.executeAtom('get_value_of_css_property', [atomsElement, propertyName])) as string;
@@ -122,9 +141,7 @@ export async function getCssProperty(
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function submit(this: XCUITestDriver, el: string | Element): Promise<void> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   const atomsElement = this.getAtomsElement(el);
   await this.executeAtom('submit', [atomsElement]);
@@ -137,9 +154,7 @@ export async function submit(this: XCUITestDriver, el: string | Element): Promis
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function refresh(this: XCUITestDriver): Promise<void> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   await this.remote.execute('window.location.reload()');
 }
@@ -151,9 +166,7 @@ export async function refresh(this: XCUITestDriver): Promise<void> {
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function getUrl(this: XCUITestDriver): Promise<string> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   return (await this.remote.execute('window.location.href')) as string;
 }
@@ -165,9 +178,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function title(this: XCUITestDriver): Promise<string> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   return (await this.remote.execute('window.document.title')) as string;
 }
@@ -181,9 +192,7 @@ export async function title(this: XCUITestDriver): Promise<string> {
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   // get the cookies from the remote debugger, or an empty object
   const {cookies} = await this.remote.getCookies();
@@ -193,7 +202,7 @@ export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
     if (!isEmpty(cookie.value)) {
       try {
         cookie.value = decodeURI(cookie.value);
-      } catch (error: any) {
+      } catch (error) {
         this.log.debug(`Cookie ${cookie.name} was not decoded successfully. Cookie value: ${cookie.value}`);
         this.log.warn(error);
         // Keep the original value
@@ -213,9 +222,7 @@ export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<void> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   const clonedCookie = structuredClone(cookie);
   // if `path` field is not specified, Safari will not update cookies as expected; eg issue #1708
@@ -246,9 +253,7 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function deleteCookie(this: XCUITestDriver, cookieName: string): Promise<void> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   const cookies = await this.getCookies();
   const cookie = cookies.find(({name}) => name === cookieName);
@@ -267,9 +272,7 @@ export async function deleteCookie(this: XCUITestDriver, cookieName: string): Pr
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function deleteCookies(this: XCUITestDriver): Promise<void> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   const cookies = await this.getCookies();
   await Promise.all(cookies.map((cookie) => _deleteCookie.bind(this)(cookie)));
@@ -299,20 +302,27 @@ export function cacheWebElement(this: XCUITestDriver, el: Element | string): Ele
 /**
  * Recursively caches all web elements in a response object.
  *
+ * The concrete shape of the result mirrors `response`, except that any embedded
+ * atoms element gets replaced with its cached W3C element wrapper; callers should
+ * assert the concrete shape they expect back.
+ *
  * @param response - Response object that may contain web elements
  * @returns Response with cached element wrappers
  */
-export function cacheWebElements(this: XCUITestDriver, response: any): any {
-  const toCached = (v: any) => (Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v);
+export function cacheWebElements(this: XCUITestDriver, response: unknown): unknown {
+  const toCached = (v: unknown): unknown => (Array.isArray(v) || isPlainObject(v) ? this.cacheWebElements(v) : v);
 
   if (Array.isArray(response)) {
     return response.map(toCached);
   } else if (isPlainObject(response)) {
-    const result = {...response, ...(this.cacheWebElement(response as any) as Element)};
-    return Object.entries(result).reduce((acc, [key, value]) => {
-      acc[key] = toCached(value);
-      return acc;
-    }, {} as any);
+    const result = {...response, ...(this.cacheWebElement(response as unknown as Element) as Element)};
+    return Object.entries(result).reduce(
+      (acc, [key, value]) => {
+        acc[key] = toCached(value);
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
   }
   return response;
 }
@@ -327,7 +337,7 @@ export function cacheWebElements(this: XCUITestDriver, response: any): any {
  */
 export async function executeAtom<T = any>(
   this: XCUITestDriver,
-  atom: string,
+  atom: AtomName,
   args: unknown[],
   alwaysDefaultFrame: boolean = false,
 ): Promise<T> {
@@ -339,12 +349,13 @@ export async function executeAtom<T = any>(
 /**
  * Executes a Selenium atom script asynchronously.
  *
+ * @template T - Expected result type; defaults to `unknown` for callers that don't need it
  * @param atom - Name of the atom to execute
  * @param args - Arguments to pass to the atom
  */
-export async function executeAtomAsync(this: XCUITestDriver, atom: string, args: any[]): Promise<any> {
+export async function executeAtomAsync<T = unknown>(this: XCUITestDriver, atom: AtomName, args: unknown[]): Promise<T> {
   const promise = this.remote.executeAtomAsync(atom, args, this.curWebFrames);
-  return await this.waitForAtom(promise);
+  return await this.waitForAtom<T>(promise);
 }
 
 /**
@@ -372,9 +383,9 @@ export function getAtomsElement<S extends string = string>(
  * @param args - Array of arguments that may contain elements
  * @returns Array with elements converted to atoms format
  */
-export function convertElementsForAtoms(this: XCUITestDriver, args: readonly any[] = []): any[] {
+export function convertElementsForAtoms(this: XCUITestDriver, args: readonly unknown[] = []): unknown[] {
   return args.map((arg) => {
-    if (hasElementId(arg)) {
+    if (isElementLike(arg)) {
       try {
         return this.getAtomsElement(arg);
       } catch (err) {
@@ -394,8 +405,8 @@ export function convertElementsForAtoms(this: XCUITestDriver, args: readonly any
  * @param element - Element object
  * @returns Element ID if found, undefined otherwise
  */
-export function getElementId(element: any): string | undefined {
-  return element?.ELEMENT || element?.[W3C_WEB_ELEMENT_IDENTIFIER];
+export function getElementId(element: unknown): string | undefined {
+  return isElementLike(element) ? util.unwrapElement(element) : undefined;
 }
 
 /**
@@ -404,10 +415,8 @@ export function getElementId(element: any): string | undefined {
  * @param element - Object to check
  * @returns True if the object has an element ID
  */
-export function hasElementId(element: any): element is Element {
-  return (
-    util.hasValue(element) && (util.hasValue(element.ELEMENT) || util.hasValue(element[W3C_WEB_ELEMENT_IDENTIFIER]))
-  );
+export function hasElementId(element: unknown): element is Element {
+  return isElementLike(element);
 }
 
 /**
@@ -449,7 +458,7 @@ export async function findWebElementOrElements(
   ctx?: Element | string | null,
 ): Promise<Element | Element[]> {
   const contextElement: AtomsElement | null = ctx == null ? null : this.getAtomsElement(ctx);
-  const atomName = many ? 'find_elements' : 'find_element_fragment';
+  const atomName: AtomName = many ? 'find_elements' : 'find_element_fragment';
   let element: AtomsElement | AtomsElement[] | null = null;
   const doFind = async (): Promise<boolean> => {
     element = await this.executeAtom<AtomsElement | AtomsElement[] | null>(atomName, [
@@ -461,8 +470,8 @@ export async function findWebElementOrElements(
   };
   try {
     await this.implicitWaitForCondition(doFind);
-  } catch (err: any) {
-    if (err.message && typeof err.message.match === 'function' && err.message.match(/Condition unmet/)) {
+  } catch (err) {
+    if (err instanceof Error && /Condition unmet/.test(err.message)) {
       // condition was not met setting res to empty array
       element = [];
     } else {
@@ -471,12 +480,12 @@ export async function findWebElementOrElements(
   }
 
   if (many) {
-    return this.cacheWebElements(element);
+    return this.cacheWebElements(element) as Element[];
   }
   if (isEmpty(element)) {
     throw new errors.NoSuchElementError();
   }
-  return this.cacheWebElements(element);
+  return this.cacheWebElements(element) as Element;
 }
 
 /**
@@ -506,9 +515,9 @@ export async function getSafariIsIphone(this: XCUITestDriver): Promise<boolean> 
   try {
     const userAgent = (await this.execute('return navigator.userAgent')) as string;
     this._isSafariIphone = userAgent.toLowerCase().includes('iphone');
-  } catch (err: any) {
+  } catch (err) {
     this.log.warn(`Unable to find device type from useragent. Assuming iPhone`);
-    this.log.debug(`Error: ${err.message}`);
+    this.log.debug(`Error: ${errorMessage(err)}`);
   }
   return this._isSafariIphone ?? true;
 }
@@ -550,9 +559,9 @@ export async function getSafariIsNotched(this: XCUITestDriver): Promise<boolean>
         this._isSafariNotched = true;
       }
     }
-  } catch (err: any) {
+  } catch (err) {
     this.log.warn(`Unable to find device type from dimensions. Assuming the device is not notched`);
-    this.log.debug(`Error: ${err.message}`);
+    this.log.debug(`Error: ${errorMessage(err)}`);
   }
   return this._isSafariNotched ?? false;
 }
@@ -590,14 +599,14 @@ export async function getExtraTranslateWebCoordsOffset(
   let bannerVisibility = String(nativeWebTapSmartAppBannerVisibility).toLowerCase();
   const tabBarPosition = String(safariTabBarPosition).toLowerCase();
 
-  if (!VISIBILITIES.includes(tabBarVisibility as any)) {
+  if (!(VISIBILITIES as readonly string[]).includes(tabBarVisibility)) {
     tabBarVisibility = DETECT;
   }
-  if (!VISIBILITIES.includes(bannerVisibility as any)) {
+  if (!(VISIBILITIES as readonly string[]).includes(bannerVisibility)) {
     bannerVisibility = DETECT;
   }
 
-  if (!TAB_BAR_POSSITIONS.includes(tabBarPosition as any)) {
+  if (!(TAB_BAR_POSSITIONS as readonly string[]).includes(tabBarPosition)) {
     throw new errors.InvalidArgumentError(
       `${safariTabBarPosition} is invalid as Safari tab bar position. Available positions are ${TAB_BAR_POSSITIONS}.`,
     );
@@ -701,7 +710,7 @@ export async function getExtraNativeWebTapOffset(
  *
  * @param el - Element to tap
  */
-export async function nativeWebTap(this: XCUITestDriver, el: any): Promise<void> {
+export async function nativeWebTap(this: XCUITestDriver, el: Element | string): Promise<void> {
   const atomsElement = this.getAtomsElement(el);
 
   // if strict native tap, do not try to do it with WDA directly
@@ -830,12 +839,13 @@ export async function checkForAlert(this: XCUITestDriver): Promise<boolean> {
 /**
  * Waits for an atom promise to resolve, monitoring for alerts during execution.
  *
+ * @template T - Type of the atom execution result
  * @param promise - Promise returned by atom execution
  * @returns The result of the atom execution
  * @throws {errors.UnexpectedAlertOpenError} If an alert appears during execution
  * @throws {errors.TimeoutError} If the atom execution times out
  */
-export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): Promise<any> {
+export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Promise<T>): Promise<T> {
   const timer = new timing.Timer().start();
 
   const atomWaitTimeoutMs =
@@ -849,18 +859,18 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
     atomWaitTimeoutMs,
     `The atom execution has timed out after ${atomWaitTimeoutMs}ms`,
   );
-  const handlePromiseError = async (p: Promise<any>) => {
+  const handlePromiseError = async (p: Promise<T>): Promise<T> => {
     try {
       return await p;
-    } catch (err: any) {
-      this.log.debug(`Error received while executing atom: ${err.message}`);
+    } catch (err) {
+      this.log.debug(`Error received while executing atom: ${errorMessage(err)}`);
       throw err instanceof TimeoutError ? await generateAtomTimeoutError.bind(this)(timer) : err;
     }
   };
   // if the atom promise is fulfilled within ATOM_INITIAL_WAIT_MS
   // then we don't need to check for an alert presence
   let didTimedAtomPromiseSettle = false;
-  const trackedTimedAtomPromise = (async () => {
+  const trackedTimedAtomPromise = (async (): Promise<T> => {
     try {
       return await timedAtomPromise;
     } finally {
@@ -884,11 +894,11 @@ export async function waitForAtom(this: XCUITestDriver, promise: Promise<any>): 
   this._waitingAtoms.count++;
 
   let onAlertCallback: (() => void) | undefined;
-  let onAppCrashCallback: ((err: any) => void) | undefined;
+  let onAppCrashCallback: ((err: unknown) => void) | undefined;
   try {
     startAlertMonitorIfNeeded.call(this);
 
-    return await new Promise((resolve, reject) => {
+    return await new Promise<T>((resolve, reject) => {
       onAlertCallback = () => reject(new errors.UnexpectedAlertOpenError());
       onAppCrashCallback = reject;
       this._waitingAtoms.alertNotifier.once(ON_OBSTRUCTING_ALERT_EVENT, onAlertCallback);
@@ -930,26 +940,6 @@ export async function mobileWebNav(this: XCUITestDriver, navType: string): Promi
 }
 
 /**
- * Gets the base URL for accessing WDA HTTP endpoints.
- *
- * @returns The base URL (e.g., 'http://127.0.0.1:8100')
- */
-export function getWdaLocalhostRoot(this: XCUITestDriver): string {
-  const wdaPort = () => {
-    try {
-      return this.wda.url?.port;
-    } catch {
-      // this.wda could raise an error when that was not initialized yet.
-      return null;
-    }
-  };
-  const remotePort =
-    ((this.isRealDevice() ? this.opts.wdaRemotePort : null) ?? wdaPort() ?? this.opts.wdaLocalPort) || 8100;
-  const remoteIp = this.opts.wdaBindingIP ?? '127.0.0.1';
-  return `http://${remoteIp}:${remotePort}`;
-}
-
-/**
  * Calibrates web to real coordinates translation.
  * This API can only be called from Safari web context.
  * It must load a custom page to the browser, and then restore
@@ -963,9 +953,7 @@ export function getWdaLocalhostRoot(this: XCUITestDriver): string {
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUITestDriver): Promise<CalibrationData> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError('This API can only be called from a web context');
-  }
+  requireWebContext(this, 'This API can only be called from a web context');
 
   const currentUrl = await this.getUrl();
   await this.setUrl(`${this.getWdaLocalhostRoot()}/calibrate`);
@@ -980,8 +968,8 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
       const title = await this.title();
       this.log.debug(JSON.stringify(title));
       result = isPlainObject(title) ? (title as unknown as Position) : (JSON.parse(title) as Position);
-    } catch (e: any) {
-      throw new Error(`${errorPrefix} Original error: ${e.message}`, {cause: e});
+    } catch (e) {
+      throw new Error(`${errorPrefix} Original error: ${errorMessage(e)}`, {cause: e});
     }
     const {x, y} = result;
     if (!Number.isInteger(x) || !Number.isInteger(y)) {
@@ -1039,7 +1027,7 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
  */
 export async function mobileUpdateSafariPreferences(
   this: XCUITestDriver,
-  preferences: Record<string, any>,
+  preferences: Record<string, unknown>,
 ): Promise<void> {
   const simulator = requireSimulator(this, 'Updating Safari preferences');
   if (!isPlainObject(preferences)) {
@@ -1123,7 +1111,7 @@ async function alertMonitorLoop(this: XCUITestDriver, abortController: AbortCont
       if (await this.checkForAlert()) {
         this._waitingAtoms.alertNotifier.emit(ON_OBSTRUCTING_ALERT_EVENT);
       }
-    } catch (err: any) {
+    } catch (err) {
       if (isErrorType(err, errors.InvalidElementStateError)) {
         this._waitingAtoms.alertNotifier.emit(ON_APP_CRASH_EVENT, err);
       }
@@ -1181,12 +1169,26 @@ async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsEl
     }
     await this.mobileTap(rect.x + rect.width / 2, rect.y + rect.height / 2);
     return true;
-  } catch (err: any) {
+  } catch (err) {
     // any failure should fall through and trigger the more elaborate
     // method of clicking
-    this.log.warn(`Error attempting to click: ${err.message}`);
+    this.log.warn(`Error attempting to click: ${errorMessage(err)}`);
   }
   return false;
+}
+
+/**
+ * Checks whether a value looks like an atoms/W3C element wrapper.
+ *
+ * @param element - Value to check
+ * @returns True if the value has an element ID
+ */
+function isElementLike(element: unknown): element is Element {
+  if (!isPlainObject(element)) {
+    return false;
+  }
+  const unwrapped: unknown = util.unwrapElement(element as unknown as Element);
+  return unwrapped !== element;
 }
 
 /**
@@ -1195,7 +1197,7 @@ async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsEl
  * @param id - Value to validate
  * @returns True if the value is a valid element identifier
  */
-function isValidElementIdentifier(id: any): boolean {
+function isValidElementIdentifier(id: unknown): boolean {
   if (typeof id !== 'string' && typeof id !== 'number') {
     return false;
   }
@@ -1243,7 +1245,30 @@ function createJSCookie(
  *
  * @param cookie - Cookie object to delete
  */
-async function _deleteCookie(this: XCUITestDriver, cookie: Cookie): Promise<any> {
+async function _deleteCookie(this: XCUITestDriver, cookie: Cookie): Promise<void> {
   const url = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
-  return await this.remote.deleteCookie(cookie.name, url);
+  await this.remote.deleteCookie(cookie.name, url);
+}
+
+/**
+ * Extracts a human-readable message from an unknown thrown value.
+ *
+ * @param err - Value caught from a try/catch block
+ * @returns The error's message, or its string representation if it is not an `Error`
+ */
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+/**
+ * Throws if the driver is not currently in a web context.
+ *
+ * @param driver - Driver instance to check
+ * @param message - Optional message for the thrown error
+ * @throws {errors.NotImplementedError} If not in a web context
+ */
+function requireWebContext(driver: XCUITestDriver, message?: string): void {
+  if (!driver.isWebContext()) {
+    throw new errors.NotImplementedError(message);
+  }
 }

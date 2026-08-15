@@ -91,7 +91,7 @@ import * as voiceOverCommands from './commands/voiceover.js';
 import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants.js';
 import {start} from './commands/wda/startup.js';
 import {stop} from './commands/wda/stop.js';
-import {getDerivedDataPath} from './commands/wda/utils.js';
+import {getDerivedDataPath, getWdaLocalhostRoot} from './commands/wda/utils.js';
 import * as webCommands from './commands/web.js';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen.js';
 import * as xctestCommands from './commands/xctest.js';
@@ -702,27 +702,38 @@ export class XCUITestDriver
   setCookie = webCommands.setCookie;
   deleteCookie = webCommands.deleteCookie;
   deleteCookies = webCommands.deleteCookies;
+  /** @deprecated */
   cacheWebElement = webCommands.cacheWebElement;
   cacheWebElements = webCommands.cacheWebElements;
   executeAtom = webCommands.executeAtom;
+  /** @deprecated */
   executeAtomAsync = webCommands.executeAtomAsync;
   getAtomsElement = webCommands.getAtomsElement;
   convertElementsForAtoms = webCommands.convertElementsForAtoms;
+  /** @deprecated */
   getElementId = webCommands.getElementId;
+  /** @deprecated */
   hasElementId = webCommands.hasElementId;
   findWebElementOrElements = webCommands.findWebElementOrElements;
+  /** @deprecated */
   clickWebCoords = webCommands.clickWebCoords;
+  /** @deprecated */
   getSafariIsIphone = webCommands.getSafariIsIphone;
+  /** @deprecated */
   getSafariDeviceSize = webCommands.getSafariDeviceSize;
+  /** @deprecated */
   getSafariIsNotched = webCommands.getSafariIsNotched;
+  /** @deprecated */
   getExtraTranslateWebCoordsOffset = webCommands.getExtraTranslateWebCoordsOffset;
+  /** @deprecated */
   getExtraNativeWebTapOffset = webCommands.getExtraNativeWebTapOffset;
   nativeWebTap = webCommands.nativeWebTap;
+  /** @deprecated */
   translateWebCoords = webCommands.translateWebCoords;
+  /** @deprecated */
   checkForAlert = webCommands.checkForAlert;
   waitForAtom = webCommands.waitForAtom;
   mobileWebNav = webCommands.mobileWebNav;
-  getWdaLocalhostRoot = webCommands.getWdaLocalhostRoot;
   mobileCalibrateWebToRealCoordinatesTranslation = webCommands.mobileCalibrateWebToRealCoordinatesTranslation;
   mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
 
@@ -731,6 +742,7 @@ export class XCUITestDriver
    +--------*/
   startWda = start;
   stopWda = stop;
+  getWdaLocalhostRoot = getWdaLocalhostRoot;
 
   /*--------+
    | XCTEST |
