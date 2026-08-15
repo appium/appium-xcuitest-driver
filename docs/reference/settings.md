@@ -250,23 +250,18 @@ Must be in the range `1..100`. See the [MJPEG guide](../guides/mjpeg.md) for mor
 | -- | -- |
 | `boolean` | `false` |
 
-Whether to use native, non-JavaScript-based tap functionality in webview context. Warning: sometimes
-the preciseness of native taps could be broken, because there is no reliable way to map web element
-coordinates to native ones.
+Whether to use native, non-JavaScript-based tap functionality in webview context. Coordinate
+translation is calibrated automatically and transparently: the driver fits an empirical
+offset/pixel-ratio transform against the current page (see
+[`mobile: calibrateWebToRealCoordinatesTranslation`](./execute-methods.md#mobile-calibratewebtorealcoordinatestranslation)
+for details) and refits it whenever the orientation, viewport size, or scroll position changes.
 
 This property can also be set using the [`appium:nativeWebTap`](./capabilities.md) capability.
 
 ## nativeWebTapSmartAppBannerVisibility
 
-| Type | Default |
-| -- | -- |
-| `string` | `detect` |
-
-The visibility state of the smart app banner. Setting this value may speed up tap actions in webview
-context. Supported values are `detect`, `visible`, and `invisible`.
-
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) and [`nativeWebTapStrict`](#nativewebtapstrict)
-settings are both set to `true`.
+**Deprecated.** Accepted for backward compatibility but has no effect, and will be removed in a
+future major version.
 
 ## nativeWebTapStrict
 
@@ -274,10 +269,10 @@ settings are both set to `true`.
 | -- | -- |
 | `boolean` | `false` |
 
-Whether to skip additional logic that tries to match webview elements to native ones by using
-their textual descriptions. Depending on the actual webview content, this algorithm might
-sometimes be not very reliable, and may slow down each click, since a failure would cause the
-driver to fallback to the default coordinates transformation flow.
+Whether to skip the additional logic that tries to match webview elements to native ones before
+falling back to coordinate-based tapping. Depending on the actual webview content, this
+element-matching step might sometimes fail, which slows down the click since the driver then falls
+back to the coordinate transformation flow anyway.
 
 It is advised to use this setting with the [`mobile: calibrateWebToRealCoordinatesTranslation`](./execute-methods.md)
 execute method.
@@ -288,15 +283,8 @@ This property can also be set using the [`appium:nativeWebTapStrict`](./capabili
 
 ## nativeWebTapTabBarVisibility
 
-| Type | Default |
-| -- | -- |
-| `string` | `detect` |
-
-The visibility state of the browser tab bar. Setting this value may speed up tap actions in webview
-context. Supported values are `detect`, `visible`, and `invisible`.
-
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) and [`nativeWebTapStrict`](#nativewebtapstrict)
-settings are both set to `true`.
+**Deprecated.** Accepted for backward compatibility but has no effect, and will be removed in a
+future major version.
 
 ## pageSourceExcludedAttributes
 
@@ -335,13 +323,8 @@ avoid such issues.
 
 ## safariTabBarPosition
 
-| Type | Default |
-| -- | -- |
-| `string` | `bottom` for iPhones on iOS 15+, otherwise `top` |
-
-The tab bar position in Safari. Supported values are `bottom` and `top`.
-
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) setting is set to `true`.
+**Deprecated.** Accepted for backward compatibility but has no effect, and will be removed in a
+future major version.
 
 ## screenshotOrientation
 

@@ -65,7 +65,7 @@
     "e2e-test:long": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/long/**/*.spec.js\"",
     "e2e-test:parallel": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/parallel/**/*.spec.js\"",
     "e2e-test:web": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/web/**/*.spec.js\"",
-    "e2e-test:native-web-tap": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/web/safari-nativewebtap*.spec.js\"",
+    "e2e-test:native-web-tap": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/web/native-web-tap*.spec.js\"",
     "start": "appium --relaxed-security --port 4567 --keep-alive-timeout 1200"
   },
   "dependencies": {

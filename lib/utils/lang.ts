@@ -98,3 +98,13 @@ export function upperFirst(value: string): string {
 export function capitalize(value: string): string {
   return value ? upperFirst(value.toLowerCase()) : value;
 }
+
+/**
+ * Extracts a human-readable message from an unknown thrown value.
+ *
+ * @param err - Value caught from a try/catch block
+ * @returns The error's message, or its string representation if it is not an `Error`
+ */
+export function toErrorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}

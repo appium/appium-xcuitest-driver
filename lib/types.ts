@@ -1,3 +1,5 @@
+import type {Position} from '@appium/types';
+
 export interface Page {
   id: number | string;
   isKey?: boolean;
@@ -64,6 +66,38 @@ export interface CalibrationData {
    * pixel ratio y inside of the web view
    */
   pixelRatioY: number;
+}
+
+/**
+ * A single web-to-native coordinate sample gathered during calibration.
+ */
+export interface CalibrationSample {
+  /** The native screen point that was tapped */
+  native: Position;
+  /** The web viewport point the tap was observed at */
+  web: Position;
+}
+
+/**
+ * The state signature `translateWebCoords` uses to decide whether a
+ * previously fitted {@linkcode CalibrationData} is still valid, or whether the
+ * webview's chrome/scroll/orientation has changed enough to require
+ * recalibration.
+ */
+export interface ViewportState {
+  orientation: 'PORTRAIT' | 'LANDSCAPE';
+  innerWidth: number;
+  innerHeight: number;
+  isScrolledToTop: boolean;
+}
+
+/**
+ * A calibration result cached against the {@linkcode ViewportState} signature
+ * it was fitted under, so it can be transparently reused or invalidated.
+ */
+export interface CalibrationCacheEntry {
+  signature: string;
+  data: CalibrationData;
 }
 
 /**

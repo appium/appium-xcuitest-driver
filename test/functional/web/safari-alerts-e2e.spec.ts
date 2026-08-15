@@ -72,10 +72,11 @@ describe('safari - alerts', {skip: Boolean(process.env.CI) && isIosVersionBelow(
     await dismissAlert(driver);
   });
   it('should not get text of alert that closed', async function (ctx: TestContext) {
-    if (isIosVersionAtLeast('27.0')) {
-      // WDA's alert/text endpoint on iOS 27 unreliably falls back to the
-      // underlying page's accessibility content instead of raising a
-      // "no such alert" error once the alert has actually been dismissed.
+    if (IS_CI || isIosVersionAtLeast('27.0')) {
+      // WDA's alert/text endpoint unreliably falls back to the underlying
+      // page's accessibility content instead of raising a "no such alert"
+      // error once the alert has actually been dismissed. Confirmed on iOS
+      // 27 and observed intermittently on 26.4 in CI as well.
       return ctx.skip();
     }
     const alert = await findWithRetry('#alert1');

@@ -1925,18 +1925,21 @@ Either `true` or `false`, where `true` means disabling of the condition inducer 
 
 ### mobile: calibrateWebToRealCoordinatesTranslation
 
-Calibrates web to real coordinates translation.
-This API can only be called from Safari web context.
-It must load a custom page to the browser, and then restore
-the original one, so don't call it if you can potentially
-lose the current web app state.
-The outcome of this API is then used if `nativeWebTap` capability/setting is enabled.
-The returned value could also be used to manually transform web coordinates
-to real device ones in client scripts.
+Calibrates web to real coordinates translation. This API can only be called from a web context
+(Safari or a hybrid app's webview).
 
-It is advised to call this API at least once before changing the device orientation
-or device screen layout as the recetly received value is cached for the session lifetime
-and may become obsolete.
+The driver fits an empirical transform by injecting a temporary, click-capturing overlay into the
+current page, tapping it via WDA at two known points, and reading back where those taps landed in
+web coordinates. This happens automatically and transparently the first time a native web tap
+needs it, and again whenever the orientation, viewport size, or scroll position changes — so
+calling this API explicitly is optional. Because the overlay is injected into (and removed from)
+the current page in place, calling it does not navigate away from the page under test or lose web
+app state.
+
+Calling this API explicitly is useful to warm the cache ahead of a timing-sensitive interaction,
+or to force a fresh calibration without waiting for a state change to invalidate the cached one.
+The returned value could also be used to manually transform web coordinates to real device ones
+in client scripts.
 
 It is advised to enable `nativeWebTapStrict` capability/setting to speed up dynamic coordinates
 transformation if you use this extension.
