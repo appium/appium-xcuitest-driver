@@ -185,10 +185,9 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
         }
       } catch (err) {
         if (isIos27OrNewerPlatform(driver.opts.platformVersion)) {
-          throw new Error(
-            `Failed to launch the preinstalled WebDriverAgent via RemoteXPC: ${(err as Error).message}`,
-            {cause: err},
-          );
+          throw new Error(`Failed to launch the preinstalled WebDriverAgent via RemoteXPC: ${(err as Error).message}`, {
+            cause: err,
+          });
         }
         if (process.platform !== 'darwin') {
           throw err;
