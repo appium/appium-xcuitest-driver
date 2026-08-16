@@ -209,13 +209,14 @@ describe('wda host ops', function () {
       assert.strictEqual(close.calledTwice, true);
     });
 
-    it('falls back to devicectl launch on macOS if RemoteXPC launch fails', async function () {
+    it('falls back to devicectl launch on macOS below iOS 27 if RemoteXPC launch fails', async function () {
       await withPlatformAsync('darwin', async () => {
         const launchApp = sinon.stub().resolves();
         const requireService = sinon.stub().rejects(new Error('No tunnel'));
         const driver = {
           remoteXPCFacade: {requireService},
           device: {devicectl: {launchApp}},
+          opts: {platformVersion: '18.0'},
           log: {warn: sinon.stub()},
         } as any;
 
@@ -243,6 +244,7 @@ describe('wda host ops', function () {
         const driver = {
           remoteXPCFacade: {requireService},
           device: {devicectl: {terminateApp}},
+          opts: {platformVersion: '27.0'},
           log: {warn: sinon.stub()},
         } as any;
 
@@ -253,6 +255,33 @@ describe('wda host ops', function () {
         });
 
         assert.strictEqual(terminateApp.calledOnceWith('io.appium.wda.xctrunner'), true);
+      });
+    });
+
+    it('does not fall back to devicectl launch on iOS/tvOS 27+ if RemoteXPC launch fails', async function () {
+      await withPlatformAsync('darwin', async () => {
+        const launchApp = sinon.stub().resolves();
+        const requireService = sinon.stub().rejects(new Error('No tunnel'));
+        const driver = {
+          remoteXPCFacade: {requireService},
+          device: {devicectl: {launchApp}},
+          opts: {platformVersion: '27.0'},
+          log: {warn: sinon.stub()},
+        } as any;
+
+        const hostOps = createWdaHostOps(driver);
+        await assert.rejects(
+          hostOps.realDevicePreinstalled?.launchPreinstalled({
+            udid: 'device-1',
+            bundleId: 'io.appium.wda.xctrunner',
+            env: {USE_PORT: 8100},
+            wdaRemotePort: 8100,
+            timeoutMs: 60000,
+          }) as Promise<void>,
+          /Failed to launch the preinstalled WebDriverAgent via RemoteXPC/,
+        );
+
+        assert.strictEqual(launchApp.called, false);
       });
     });
   });
