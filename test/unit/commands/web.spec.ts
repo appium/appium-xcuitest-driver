@@ -117,24 +117,67 @@ describe('web commands', function () {
   });
 
   describe('viewportSignature', function () {
+    const BASE_STATE = {
+      orientation: 'PORTRAIT' as const,
+      innerWidth: 375,
+      innerHeight: 812,
+      isScrolledToTop: true,
+      visualViewportWidth: 375,
+      visualViewportHeight: 812,
+      visualViewportOffsetLeft: 0,
+      visualViewportOffsetTop: 0,
+      visualViewportScale: 1,
+    };
+
     it('should produce the same signature for identical states', function () {
-      const state = {orientation: 'PORTRAIT' as const, innerWidth: 375, innerHeight: 812, isScrolledToTop: true};
-      assert.strictEqual(viewportSignature(state), viewportSignature({...state}));
+      assert.strictEqual(viewportSignature(BASE_STATE), viewportSignature({...BASE_STATE}));
     });
 
     it('should change when orientation changes', function () {
-      const base = {orientation: 'PORTRAIT' as const, innerWidth: 375, innerHeight: 812, isScrolledToTop: true};
-      assert.notStrictEqual(viewportSignature(base), viewportSignature({...base, orientation: 'LANDSCAPE'}));
+      assert.notStrictEqual(
+        viewportSignature(BASE_STATE),
+        viewportSignature({...BASE_STATE, orientation: 'LANDSCAPE'}),
+      );
     });
 
     it('should change when the viewport size changes', function () {
-      const base = {orientation: 'PORTRAIT' as const, innerWidth: 375, innerHeight: 812, isScrolledToTop: true};
-      assert.notStrictEqual(viewportSignature(base), viewportSignature({...base, innerHeight: 700}));
+      assert.notStrictEqual(viewportSignature(BASE_STATE), viewportSignature({...BASE_STATE, innerHeight: 700}));
     });
 
     it('should change when scroll position changes', function () {
-      const base = {orientation: 'PORTRAIT' as const, innerWidth: 375, innerHeight: 812, isScrolledToTop: true};
-      assert.notStrictEqual(viewportSignature(base), viewportSignature({...base, isScrolledToTop: false}));
+      assert.notStrictEqual(viewportSignature(BASE_STATE), viewportSignature({...BASE_STATE, isScrolledToTop: false}));
+    });
+
+    it('should change when the visual viewport size changes (e.g. Safari toolbar collapsing while scrolled)', function () {
+      assert.notStrictEqual(
+        viewportSignature(BASE_STATE),
+        viewportSignature({...BASE_STATE, visualViewportHeight: 850}),
+      );
+    });
+
+    it('should change when the visual viewport offset changes (e.g. the keyboard appearing)', function () {
+      assert.notStrictEqual(
+        viewportSignature(BASE_STATE),
+        viewportSignature({...BASE_STATE, visualViewportOffsetTop: 40}),
+      );
+    });
+
+    it('should change when the visual viewport scale changes', function () {
+      assert.notStrictEqual(viewportSignature(BASE_STATE), viewportSignature({...BASE_STATE, visualViewportScale: 2}));
+    });
+  });
+
+  describe('mobileCalibrateWebToRealCoordinatesTranslation', function () {
+    afterEach(function () {
+      driver.curContext = null;
+      driver.curWebFrames = [];
+    });
+
+    it('should reject calibration while switched into a sub-frame', async function () {
+      driver.curContext = 'WEBVIEW_1';
+      driver.curWebFrames = ['frame1'];
+
+      await assert.rejects(driver.mobileCalibrateWebToRealCoordinatesTranslation(), /switched into a sub-frame/);
     });
   });
 });

@@ -4,7 +4,7 @@ import {retryInterval} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
 import type {CalibrationCacheEntry, CalibrationData, CalibrationSample, ViewportState} from '../types.js';
-import {toErrorMessage} from '../utils/index.js';
+import {isEmpty, toErrorMessage} from '../utils/index.js';
 import {requireWebContext} from './helpers/index.js';
 import type {AtomsElement} from './types.js';
 
@@ -30,6 +30,15 @@ const CALIBRATION_TAPS_MARKER = '__appiumCalibrationTaps';
 // chrome/scroll/orientation state the page is actually in, without
 // navigating away from the page under test.
 //
+// The overlay is a same-origin, srcless iframe rather than a plain element:
+// a plain element would still be part of the host document's own event
+// path, so any pre-existing capture- or bubble-phase listener the page under
+// test has registered on window/document/body would still observe (and
+// could react to) the two synthetic calibration clicks. A click that lands
+// inside an iframe's own content document never propagates into the parent
+// document's event path at all, so this isolates calibration from the page
+// under test completely, regardless of what listeners it has installed.
+//
 // Always tears down and rebuilds from scratch (rather than reusing an
 // existing overlay/taps array) so that a retry after a failed attempt can
 // never inherit stale taps left over from a previous attempt whose cleanup
@@ -38,14 +47,17 @@ const INJECT_CALIBRATION_OVERLAY_SCRIPT = `
   if (window.${CALIBRATION_OVERLAY_MARKER}) {
     window.${CALIBRATION_OVERLAY_MARKER}.remove();
   }
-  var overlay = document.createElement('div');
+  var overlay = document.createElement('iframe');
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.tabIndex = -1;
   overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;' +
     'margin:0;padding:0;border:0;background:transparent;z-index:2147483647;';
   window.${CALIBRATION_TAPS_MARKER} = [];
-  overlay.addEventListener('click', function (e) {
-    window.${CALIBRATION_TAPS_MARKER}.push({x: e.clientX, y: e.clientY});
-  }, true);
   (document.body || document.documentElement).appendChild(overlay);
+  var taps = window.${CALIBRATION_TAPS_MARKER};
+  overlay.contentDocument.addEventListener('click', function (e) {
+    taps.push({x: e.clientX, y: e.clientY});
+  }, true);
   window.${CALIBRATION_OVERLAY_MARKER} = overlay;
 `;
 
@@ -67,10 +79,16 @@ const READ_CALIBRATION_TAPS_SCRIPT = `
 `;
 
 const READ_VIEWPORT_STATE_SCRIPT = `
+  var vv = window.visualViewport;
   return {
     innerWidth: window.innerWidth,
     innerHeight: window.innerHeight,
     isScrolledToTop: document.documentElement.scrollTop === 0 && document.body.scrollTop === 0,
+    visualViewportWidth: vv ? vv.width : window.innerWidth,
+    visualViewportHeight: vv ? vv.height : window.innerHeight,
+    visualViewportOffsetLeft: vv ? vv.offsetLeft : 0,
+    visualViewportOffsetTop: vv ? vv.offsetTop : 0,
+    visualViewportScale: vv ? vv.scale : 1,
   };
 `;
 
@@ -182,7 +200,10 @@ export function fitAffineTransform(samples: readonly CalibrationSample[]): Calib
  * Pure and driver-independent so it can be unit tested directly.
  */
 export function viewportSignature(state: ViewportState): string {
-  return `${state.orientation}:${state.innerWidth}x${state.innerHeight}:${state.isScrolledToTop ? 'top' : 'scrolled'}`;
+  const vv =
+    `${state.visualViewportWidth}x${state.visualViewportHeight}` +
+    `@${state.visualViewportOffsetLeft},${state.visualViewportOffsetTop}x${state.visualViewportScale}`;
+  return `${state.orientation}:${state.innerWidth}x${state.innerHeight}:${state.isScrolledToTop ? 'top' : 'scrolled'}:${vv}`;
 }
 
 /**
@@ -215,13 +236,9 @@ async function findWebviewRect(this: XCUITestDriver): Promise<Rect> {
  * longer applies.
  */
 async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
-  const {innerWidth, innerHeight, isScrolledToTop} = (await this.execute(READ_VIEWPORT_STATE_SCRIPT)) as {
-    innerWidth: number;
-    innerHeight: number;
-    isScrolledToTop: boolean;
-  };
-  const orientation: ViewportState['orientation'] = innerHeight >= innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
-  return `${this.curContext ?? ''}::${viewportSignature({orientation, innerWidth, innerHeight, isScrolledToTop})}`;
+  const state = (await this.execute(READ_VIEWPORT_STATE_SCRIPT)) as Omit<ViewportState, 'orientation'>;
+  const orientation: ViewportState['orientation'] = state.innerHeight >= state.innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
+  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}`;
 }
 
 /**
@@ -231,8 +248,25 @@ async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
  * observed at. This never navigates away from the page under test, and
  * measures whatever chrome (or lack of it) is actually on screen right now,
  * so it works the same way for Safari and hybrid-app webviews alike.
+ *
+ * @throws {Error} If the driver is currently switched into a sub-frame (see
+ *   {@linkcode XCUITestDriver.setFrame}). The overlay this fits against is
+ *   injected into whatever frame `execute` targets, but the native tap
+ *   coordinates are always picked from the *whole* WebView's rect - a
+ *   sub-frame only covers part of that, so unless it happens to cover the
+ *   WebView's center, the overlay would never observe the calibration taps.
+ *   Calibrating from the top-level frame first still lets native web tap
+ *   work for elements inside sub-frames, as long as the page doesn't rely on
+ *   per-frame chrome/scroll offsets the top-level calibration can't see.
  */
 async function performCalibration(this: XCUITestDriver): Promise<CalibrationCacheEntry> {
+  if (!isEmpty(this.curWebFrames)) {
+    throw new Error(
+      'Cannot calibrate web-to-native coordinates translation while switched into a sub-frame. ' +
+        "Switch back to the top-level frame first (e.g. WebdriverIO's driver.switchToFrame(null)).",
+    );
+  }
+
   let entry: CalibrationCacheEntry | undefined;
   await retryInterval(CALIBRATION_RETRIES, CALIBRATION_RETRY_INTERVAL_MS, async () => {
     const rect = await findWebviewRect.call(this);
@@ -344,7 +378,6 @@ async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsEl
       return false;
     }
 
-    // use tap because on iOS 11.2 and below `nativeClick` crashes WDA
     const rect = (await this.proxyCommand(`/element/${util.unwrapElement(els[0])}/rect`, 'GET')) as Rect;
     await this.mobileTap(rect.x + rect.width / 2, rect.y + rect.height / 2);
     return true;

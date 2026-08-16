@@ -89,6 +89,17 @@ export interface ViewportState {
   innerWidth: number;
   innerHeight: number;
   isScrolledToTop: boolean;
+  /**
+   * `window.visualViewport` dimensions/offset/scale. Safari can change these independently of
+   * `innerWidth`/`innerHeight` - e.g. collapsing/expanding its toolbar while scrolled, or the
+   * keyboard appearing - so they must be part of the signature too, or a stale calibration can
+   * get reused after one of those changes.
+   */
+  visualViewportWidth: number;
+  visualViewportHeight: number;
+  visualViewportOffsetLeft: number;
+  visualViewportOffsetTop: number;
+  visualViewportScale: number;
 }
 
 /**
