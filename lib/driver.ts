@@ -92,6 +92,7 @@ import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/consta
 import {start} from './commands/wda/startup.js';
 import {stop} from './commands/wda/stop.js';
 import {getDerivedDataPath, getWdaLocalhostRoot} from './commands/wda/utils.js';
+import * as webNativeBridgeCommands from './commands/web-native-bridge.js';
 import * as webCommands from './commands/web.js';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen.js';
 import * as xctestCommands from './commands/xctest.js';
@@ -121,7 +122,7 @@ import {
 import {executeMethodMap} from './execute-method-map.js';
 import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
-import type {CalibrationData, IConditionInducer, LifecycleData} from './types.js';
+import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
 import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils/index.js';
 
 const defaultServerCaps = {
@@ -134,6 +135,15 @@ const defaultServerCaps = {
   takesScreenshot: true,
   networkConnectionEnabled: false,
 };
+// Deprecated: web-to-native coordinate translation now calibrates itself
+// automatically (see lib/commands/web.ts), so these settings no longer have
+// any effect. They are still accepted for backward compatibility and will
+// be removed in a future major version.
+const DEPRECATED_NATIVE_WEB_TAP_SETTINGS = [
+  'nativeWebTapTabBarVisibility',
+  'nativeWebTapSmartAppBannerVisibility',
+  'safariTabBarPosition',
+];
 const DEFAULT_SETTINGS = {
   nativeWebTap: false,
   nativeWebTapStrict: false,
@@ -238,15 +248,13 @@ export class XCUITestDriver
   curContext: string | null = null;
   curWebFrames: string[];
 
-  webviewCalibrationResult: CalibrationData | null;
+  _webviewCalibrationCache: CalibrationCacheEntry | null;
   asyncWaitMs: number | undefined;
   _syslogWebsocketListener: ((logRecord: {message: string}) => void) | null = null;
   _perfRecorders: PerfRecorder[];
   webElementsCache: LRUCache<any, any>;
 
   _conditionInducer: IConditionInducer | null = null; // Condition inducer facade that abstracts implementation details
-  _isSafariIphone: boolean | undefined;
-  _isSafariNotched: boolean | undefined;
   _waitingAtoms: WaitingAtoms;
   lifecycleData: LifecycleData;
 
@@ -716,26 +724,31 @@ export class XCUITestDriver
   hasElementId = webCommands.hasElementId;
   findWebElementOrElements = webCommands.findWebElementOrElements;
   /** @deprecated */
-  clickWebCoords = webCommands.clickWebCoords;
-  /** @deprecated */
-  getSafariIsIphone = webCommands.getSafariIsIphone;
-  /** @deprecated */
-  getSafariDeviceSize = webCommands.getSafariDeviceSize;
-  /** @deprecated */
-  getSafariIsNotched = webCommands.getSafariIsNotched;
-  /** @deprecated */
-  getExtraTranslateWebCoordsOffset = webCommands.getExtraTranslateWebCoordsOffset;
-  /** @deprecated */
-  getExtraNativeWebTapOffset = webCommands.getExtraNativeWebTapOffset;
-  nativeWebTap = webCommands.nativeWebTap;
-  /** @deprecated */
-  translateWebCoords = webCommands.translateWebCoords;
-  /** @deprecated */
   checkForAlert = webCommands.checkForAlert;
   waitForAtom = webCommands.waitForAtom;
   mobileWebNav = webCommands.mobileWebNav;
-  mobileCalibrateWebToRealCoordinatesTranslation = webCommands.mobileCalibrateWebToRealCoordinatesTranslation;
   mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
+
+  /*----------------+
+   | WEB NATIVE TAP |
+   +---------------+*/
+  /** @deprecated */
+  clickWebCoords = webNativeBridgeCommands.clickWebCoords;
+  nativeWebTap = webNativeBridgeCommands.nativeWebTap;
+  /** @deprecated */
+  translateWebCoords = webNativeBridgeCommands.translateWebCoords;
+  mobileCalibrateWebToRealCoordinatesTranslation =
+    webNativeBridgeCommands.mobileCalibrateWebToRealCoordinatesTranslation;
+  /** @deprecated */
+  getSafariIsIphone = webNativeBridgeCommands.getSafariIsIphone;
+  /** @deprecated */
+  getSafariDeviceSize = webNativeBridgeCommands.getSafariDeviceSize;
+  /** @deprecated */
+  getSafariIsNotched = webNativeBridgeCommands.getSafariIsNotched;
+  /** @deprecated */
+  getExtraTranslateWebCoordsOffset = webNativeBridgeCommands.getExtraTranslateWebCoordsOffset;
+  /** @deprecated */
+  getExtraNativeWebTapOffset = webNativeBridgeCommands.getExtraNativeWebTapOffset;
 
   /*--------+
    | WDA    |
@@ -780,7 +793,7 @@ export class XCUITestDriver
     this.webElementsCache = new LRUCache({
       max: WEB_ELEMENTS_CACHE_SIZE,
     });
-    this.webviewCalibrationResult = null;
+    this._webviewCalibrationCache = null;
     this._waitingAtoms = {
       count: 0,
       alertNotifier: new EventEmitter(),
@@ -1202,6 +1215,14 @@ export class XCUITestDriver
     // skip sending the update request to the WDA nor saving it in opts
     // to not spend unnecessary time.
     if (['pageSourceExcludedAttributes'].includes(key)) {
+      return;
+    }
+
+    if (DEPRECATED_NATIVE_WEB_TAP_SETTINGS.includes(key)) {
+      this.log.info(
+        `The '${key}' setting is deprecated and no longer has any effect: web-to-native coordinate ` +
+          `translation is now calibrated automatically. It will be removed in a future major version.`,
+      );
       return;
     }
 

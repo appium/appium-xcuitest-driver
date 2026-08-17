@@ -1,3 +1,5 @@
+import type {Position} from '@appium/types';
+
 export interface Page {
   id: number | string;
   isKey?: boolean;
@@ -64,6 +66,49 @@ export interface CalibrationData {
    * pixel ratio y inside of the web view
    */
   pixelRatioY: number;
+}
+
+/**
+ * A single web-to-native coordinate sample gathered during calibration.
+ */
+export interface CalibrationSample {
+  /** The native screen point that was tapped */
+  native: Position;
+  /** The web viewport point the tap was observed at */
+  web: Position;
+}
+
+/**
+ * The state signature `translateWebCoords` uses to decide whether a
+ * previously fitted {@linkcode CalibrationData} is still valid, or whether the
+ * webview's chrome/scroll/orientation has changed enough to require
+ * recalibration.
+ */
+export interface ViewportState {
+  orientation: 'PORTRAIT' | 'LANDSCAPE';
+  innerWidth: number;
+  innerHeight: number;
+  isScrolledToTop: boolean;
+  /**
+   * `window.visualViewport` dimensions/offset/scale. Safari can change these independently of
+   * `innerWidth`/`innerHeight` - e.g. collapsing/expanding its toolbar while scrolled, or the
+   * keyboard appearing - so they must be part of the signature too, or a stale calibration can
+   * get reused after one of those changes.
+   */
+  visualViewportWidth: number;
+  visualViewportHeight: number;
+  visualViewportOffsetLeft: number;
+  visualViewportOffsetTop: number;
+  visualViewportScale: number;
+}
+
+/**
+ * A calibration result cached against the {@linkcode ViewportState} signature
+ * it was fitted under, so it can be transparently reused or invalidated.
+ */
+export interface CalibrationCacheEntry {
+  signature: string;
+  data: CalibrationData;
 }
 
 /**

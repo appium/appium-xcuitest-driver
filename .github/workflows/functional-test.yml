@@ -77,10 +77,17 @@ jobs:
       - run: xcrun simctl list runtimes
         name: List Runtimes
       - name: Start iOS Simulator UI
-        if: ${{ matrix.xcodeVersion != '27.0-beta' }}
-        run: open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
+        # Xcode 27 replaced Simulator.app with DeviceHub.app, one directory level up from
+        # Simulator.app's location (Contents/Applications instead of Contents/Developer/Applications).
+        run: |
+          if [ "${IOS_VERSION%%.*}" -ge 27 ]; then
+            open -Fn "$(xcode-select --print-path)/../Applications/DeviceHub.app"
+          else
+            open -Fn "$(xcode-select --print-path)/Applications/Simulator.app"
+          fi
+        env:
+          IOS_VERSION: ${{ matrix.iosVersion }}
       - name: Prepare iOS simulator
-        if: ${{ matrix.xcodeVersion != '27.0-beta' }}
         id: prepareSimulator
         uses: futureware-tech/simulator-action@v5
         with:
@@ -89,8 +96,7 @@ jobs:
           shutdown_after_job: false
           wait_for_boot: true
       - name: Finalize iOS simulator boot
-        if: ${{ matrix.xcodeVersion != '27.0-beta' }}
-        run: xcrun --sdk iphonesimulator --show-sdk-version
+        run: node scripts/ci/wait-for-simulator-idle.mjs "${{ matrix.deviceName }}"
 
       - run: |
           appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
@@ -101,7 +107,6 @@ jobs:
         name: Install Appium Server
       - run: |
           npm install
-          npm install --no-save mjpeg-consumer
         name: Install dev dependencies
       - run: |
           export cwd=$(pwd)

@@ -96,7 +96,9 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to open and close windows', async function (ctx: TestContext) {
-        if (isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('26.0')) {
+          // Clicking #blanklink doesn't reliably open a new window/tab on iOS 18.x, not just
+          // below 18.0 - confirmed failing on 18.5 in CI, passing on 26.4+.
           return ctx.skip();
         }
 
@@ -109,7 +111,8 @@ describe('safari - windows and frames', function () {
       });
 
       it('should be able to use window handles', async function (ctx: TestContext) {
-        if (isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('26.0')) {
+          // Same #blanklink-click unreliability as above - confirmed failing on 18.5 in CI.
           return ctx.skip();
         }
 
@@ -182,7 +185,9 @@ describe('safari - windows and frames', function () {
 
       // broken on real devices, see https://github.com/appium/appium/issues/5167
       it('should be able to open js popup windows with safariAllowPopups set to true @skip-real-device', async function (ctx: TestContext) {
-        if (isIosVersionBelow('18.0')) {
+        if (isIosVersionBelow('26.0')) {
+          // Same link-click-opens-a-new-window unreliability as above - confirmed failing on
+          // 18.5 in CI.
           return ctx.skip();
         }
 

@@ -1,4 +1,5 @@
 import type {Simulator} from 'appium-ios-simulator';
+import {errors} from 'appium/driver.js';
 
 import type {RealDevice} from '../../device/real-device-management.js';
 import {upperFirst} from '../../utils/index.js';
@@ -7,6 +8,10 @@ export interface DeviceGuardDriver {
   isSimulator(): boolean;
   isRealDevice(): boolean;
   readonly device: unknown;
+}
+
+export interface WebContextGuardDriver {
+  isWebContext(): boolean;
 }
 
 /**
@@ -29,4 +34,13 @@ export function requireRealDevice(driver: DeviceGuardDriver, action: string): Re
     throw new Error(`${upperFirst(action)} can only be performed on a real device`);
   }
   return driver.device as RealDevice;
+}
+
+/**
+ * Throws if the given driver is not currently in a web context.
+ */
+export function requireWebContext(driver: WebContextGuardDriver, message?: string): void {
+  if (!driver.isWebContext()) {
+    throw new errors.NotImplementedError(message);
+  }
 }

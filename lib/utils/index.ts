@@ -5,6 +5,7 @@ export {
   isEmpty,
   isPlainObject,
   mergeDeep,
+  toErrorMessage,
   truncateString,
   upperFirst,
 } from './lang.js';

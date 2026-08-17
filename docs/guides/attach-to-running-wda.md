@@ -35,9 +35,7 @@ If the environment has port-forward to the connected device, it can be `http://l
 This method allows you to manage the WDA process by yourself. The XCUITest driver then simply
 attaches to the WDA process, which may improve the application performance.
 
-Some XCUITest driver APIs (for example,
-[mobile: calibrateWebToRealCoordinatesTranslation](../reference/execute-methods.md#mobile-calibratewebtorealcoordinatestranslation))
-might still require the port number of the remote device if it is a real device. Providing the
+Some XCUITest driver APIs might still require the port number of the remote device if it is a real device. Providing the
 `appium:webDriverAgentUrl` capability might not be sufficient to recognize the remote port number,
 in case it is different from the local one. Consider settings the `appium:wdaRemotePort` capability
 in such cases, to supply the driver with the appropriate data.
