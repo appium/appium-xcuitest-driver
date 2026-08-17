@@ -1,3 +1,13 @@
+## [12.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.4...v12.4.0) (2026-08-17)
+
+### Features
+
+* replace native web tap heuristics with automatic coordinate calibration ([#2948](https://github.com/appium/appium-xcuitest-driver/issues/2948)) ([9fd2107](https://github.com/appium/appium-xcuitest-driver/commit/9fd21077a6fda9a162713438edc635b9a7677361))
+
+### Code Refactoring
+
+* tighten typing in web commands and dedupe web-context guards ([#2947](https://github.com/appium/appium-xcuitest-driver/issues/2947)) ([96299f3](https://github.com/appium/appium-xcuitest-driver/commit/96299f38145d2fe7ba9624212933e71044c44039))
+
 ## [12.3.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.3...v12.3.4) (2026-08-14)
 
 ### Bug Fixes
