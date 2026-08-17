@@ -1,3 +1,9 @@
+## [12.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.4.0...v12.5.0) (2026-08-17)
+
+### Features
+
+* support native web tap inside same-origin iframes, bump remote-debugger ([#2950](https://github.com/appium/appium-xcuitest-driver/issues/2950)) ([6f91d47](https://github.com/appium/appium-xcuitest-driver/commit/6f91d47349484742e05d9da56148a8c4d264f9a2))
+
 ## [12.4.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.3.4...v12.4.0) (2026-08-17)
 
 ### Features
