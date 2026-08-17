@@ -29,6 +29,21 @@ export function guineaPigIframePage(baseUrl: string): string {
   return buildGuineaPigUrl(baseUrl, '/test/iframes.html');
 }
 
+// Wraps the standard guinea pig page in a same-origin iframe.
+export function guineaPigIframeWrapPage(baseUrl: string): string {
+  return buildGuineaPigUrl(baseUrl, '/test/iframe-wrap.html');
+}
+
+// Same as guineaPigIframeWrapPage, nested one level deeper.
+export function guineaPigNestedIframeWrapPage(baseUrl: string): string {
+  return buildGuineaPigUrl(baseUrl, '/test/iframe-wrap-nested.html');
+}
+
+// Wraps the standard guinea pig page, served from crossOriginBaseUrl, in an iframe.
+export function guineaPigCrossOriginIframeWrapPage(baseUrl: string, crossOriginBaseUrl: string): string {
+  return `${buildGuineaPigUrl(baseUrl, '/test/iframe-wrap-cross-origin')}?crossOriginBaseUrl=${encodeURIComponent(crossOriginBaseUrl)}`;
+}
+
 export function createGuineaPigServerSession(): GuineaPigServerSession {
   let server: GuineaPigServer | undefined;
 

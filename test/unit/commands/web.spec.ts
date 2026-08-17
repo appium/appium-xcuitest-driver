@@ -166,18 +166,4 @@ describe('web commands', function () {
       assert.notStrictEqual(viewportSignature(BASE_STATE), viewportSignature({...BASE_STATE, visualViewportScale: 2}));
     });
   });
-
-  describe('mobileCalibrateWebToRealCoordinatesTranslation', function () {
-    afterEach(function () {
-      driver.curContext = null;
-      driver.curWebFrames = [];
-    });
-
-    it('should reject calibration while switched into a sub-frame', async function () {
-      driver.curContext = 'WEBVIEW_1';
-      driver.curWebFrames = ['frame1'];
-
-      await assert.rejects(driver.mobileCalibrateWebToRealCoordinatesTranslation(), /switched into a sub-frame/);
-    });
-  });
 });

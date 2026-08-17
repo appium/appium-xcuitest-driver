@@ -6,6 +6,9 @@ export {
   guineaPigAppBannerPage,
   guineaPigFramePage,
   guineaPigIframePage,
+  guineaPigIframeWrapPage,
+  guineaPigNestedIframeWrapPage,
+  guineaPigCrossOriginIframeWrapPage,
 } from '../../helpers/guinea-pig/index.js';
 export {newCookie, oldCookie1, oldCookie2, doesIncludeCookie, doesNotIncludeCookie} from './cookies.js';
 export {spinTitle, spinBodyIncludes, spinTitleEquals, spinWait, resetWindows, openPage} from './page.js';
