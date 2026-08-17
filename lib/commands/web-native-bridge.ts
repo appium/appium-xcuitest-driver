@@ -43,7 +43,12 @@ const CALIBRATION_TAPS_MARKER = '__appiumCalibrationTaps';
 // existing overlay/taps array) so that a retry after a failed attempt can
 // never inherit stale taps left over from a previous attempt whose cleanup
 // call didn't actually reach the page (e.g. a transport hiccup).
-const INJECT_CALIBRATION_OVERLAY_SCRIPT = `
+//
+// This and the next 3 scripts are sent via `this.remote.execute` (see the
+// private helpers below), which evaluates them as a bare program, not a
+// function body - unlike the `execute_script` atom, it does not tolerate a
+// top-level `return`. Wrapped in an IIFE so they can use one anyway.
+const INJECT_CALIBRATION_OVERLAY_SCRIPT = `(function () {
   if (window.${CALIBRATION_OVERLAY_MARKER}) {
     window.${CALIBRATION_OVERLAY_MARKER}.remove();
   }
@@ -59,26 +64,26 @@ const INJECT_CALIBRATION_OVERLAY_SCRIPT = `
     taps.push({x: e.clientX, y: e.clientY});
   }, true);
   window.${CALIBRATION_OVERLAY_MARKER} = overlay;
-`;
+})();`;
 
-const REMOVE_CALIBRATION_OVERLAY_SCRIPT = `
+const REMOVE_CALIBRATION_OVERLAY_SCRIPT = `(function () {
   if (window.${CALIBRATION_OVERLAY_MARKER}) {
     window.${CALIBRATION_OVERLAY_MARKER}.remove();
     delete window.${CALIBRATION_OVERLAY_MARKER};
     delete window.${CALIBRATION_TAPS_MARKER};
   }
-`;
+})();`;
 
 // Returns every tap the overlay has observed so far, so the caller can
 // correlate a specific tap by index instead of trusting that the most
 // recently pushed entry corresponds to the tap it just issued (a native tap
 // resolves once WDA dispatches the touch, not once the webview's click
 // handler has necessarily run and recorded it).
-const READ_CALIBRATION_TAPS_SCRIPT = `
+const READ_CALIBRATION_TAPS_SCRIPT = `(function () {
   return window.${CALIBRATION_TAPS_MARKER} || [];
-`;
+})();`;
 
-const READ_VIEWPORT_STATE_SCRIPT = `
+const READ_VIEWPORT_STATE_SCRIPT = `(function () {
   var vv = window.visualViewport;
   return {
     innerWidth: window.innerWidth,
@@ -90,6 +95,26 @@ const READ_VIEWPORT_STATE_SCRIPT = `
     visualViewportOffsetTop: vv ? vv.offsetTop : 0,
     visualViewportScale: vv ? vv.scale : 1,
   };
+})();`;
+
+// Sums each ancestor iframe's own getBoundingClientRect() offset up to the
+// top document, giving the current frame's offset in top-page coordinates.
+// `frameElement` is null for a cross-origin frame, which doubles as that signal.
+const READ_FRAME_CHAIN_OFFSET_SCRIPT = `
+  var w = window;
+  var offsetX = 0;
+  var offsetY = 0;
+  while (w !== w.top) {
+    var fe = w.frameElement;
+    if (!fe) {
+      return {crossOrigin: true};
+    }
+    var rect = fe.getBoundingClientRect();
+    offsetX += rect.left;
+    offsetY += rect.top;
+    w = w.parent;
+  }
+  return {crossOrigin: false, offsetX: offsetX, offsetY: offsetY};
 `;
 
 // Marks arguments[0] with a throwaway `aria-label` (WebKit reflects this
@@ -132,6 +157,8 @@ const RESTORE_ELEMENT_ARIA_LABEL_SCRIPT = `
     el.removeAttribute('aria-label');
   }
 `;
+
+// ---- exported commands ----
 
 /**
  * Computes the affine transform (`native = offset + ratio * web`) that best
@@ -204,200 +231,6 @@ export function viewportSignature(state: ViewportState): string {
     `${state.visualViewportWidth}x${state.visualViewportHeight}` +
     `@${state.visualViewportOffsetLeft},${state.visualViewportOffsetTop}x${state.visualViewportScale}`;
   return `${state.orientation}:${state.innerWidth}x${state.innerHeight}:${state.isScrolledToTop ? 'top' : 'scrolled'}:${vv}`;
-}
-
-/**
- * Finds the current native XCUIElementTypeWebView and returns its rect.
- * Used to pick native points to tap during calibration.
- *
- * A single attempt: this is only ever called from inside
- * {@linkcode performCalibration}'s own retry loop, so retrying here too
- * would just compound into an excessive worst-case number of attempts.
- */
-async function findWebviewRect(this: XCUITestDriver): Promise<Rect> {
-  let webview: Element | undefined | string;
-  try {
-    webview = await this.findNativeElementOrElements('class name', 'XCUIElementTypeWebView', false);
-  } catch {}
-
-  if (!webview) {
-    throw new Error(`No WebView found. Unable to calibrate web coordinates for native web tap.`);
-  }
-
-  webview = util.unwrapElement(webview);
-  return (await this.proxyCommand(`/element/${webview}/rect`, 'GET')) as Rect;
-}
-
-/**
- * Reads the signals that make up the current {@linkcode ViewportState} and
- * combines them with the current context into a cache key. The context is
- * included on top of what the plan's signature covers, because switching to
- * a different webview is itself a reason any previously fitted transform no
- * longer applies.
- */
-async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
-  const state = (await this.execute(READ_VIEWPORT_STATE_SCRIPT)) as Omit<ViewportState, 'orientation'>;
-  const orientation: ViewportState['orientation'] = state.innerHeight >= state.innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
-  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}`;
-}
-
-/**
- * Fits a fresh web-to-native calibration transform by injecting a temporary,
- * full-viewport click-capturing overlay into the current DOM, tapping it
- * twice through WDA, and reading back the web coordinates each tap was
- * observed at. This never navigates away from the page under test, and
- * measures whatever chrome (or lack of it) is actually on screen right now,
- * so it works the same way for Safari and hybrid-app webviews alike.
- *
- * @throws {Error} If the driver is currently switched into a sub-frame (see
- *   {@linkcode XCUITestDriver.setFrame}). The overlay this fits against is
- *   injected into whatever frame `execute` targets, but the native tap
- *   coordinates are always picked from the *whole* WebView's rect - a
- *   sub-frame only covers part of that, so unless it happens to cover the
- *   WebView's center, the overlay would never observe the calibration taps.
- *   Calibrating from the top-level frame first still lets native web tap
- *   work for elements inside sub-frames, as long as the page doesn't rely on
- *   per-frame chrome/scroll offsets the top-level calibration can't see.
- */
-async function performCalibration(this: XCUITestDriver): Promise<CalibrationCacheEntry> {
-  if (!isEmpty(this.curWebFrames)) {
-    throw new Error(
-      'Cannot calibrate web-to-native coordinates translation while switched into a sub-frame. ' +
-        "Switch back to the top-level frame first (e.g. WebdriverIO's driver.switchToFrame(null)).",
-    );
-  }
-
-  let entry: CalibrationCacheEntry | undefined;
-  await retryInterval(CALIBRATION_RETRIES, CALIBRATION_RETRY_INTERVAL_MS, async () => {
-    const rect = await findWebviewRect.call(this);
-    const centerX = rect.x + rect.width / 2;
-    const centerY = rect.y + rect.height / 2;
-
-    await this.execute(INJECT_CALIBRATION_OVERLAY_SCRIPT);
-    try {
-      const samples: CalibrationSample[] = [];
-      for (const [i, sign] of [-1, 1].entries()) {
-        const nativeX = centerX + sign * CALIBRATION_TAP_DELTA_PX;
-        const nativeY = centerY + sign * CALIBRATION_TAP_DELTA_PX;
-        await this.mobileTap(nativeX, nativeY);
-        // Correlate by index rather than trusting "the last entry in the
-        // array" to be this tap's: WDA's tap response can resolve before the
-        // webview's own click handler has run and recorded it.
-        const expectedCount = i + 1;
-        const taps = (await retryInterval(
-          CALIBRATION_TAP_READBACK_RETRIES,
-          CALIBRATION_TAP_READBACK_INTERVAL_MS,
-          async () => {
-            const result = (await this.execute(READ_CALIBRATION_TAPS_SCRIPT)) as Position[];
-            if (!Array.isArray(result) || result.length < expectedCount) {
-              throw new Error('The calibration overlay has not observed this tap yet');
-            }
-            return result;
-          },
-        )) as Position[];
-        const web = taps[expectedCount - 1];
-        if (!web || !Number.isFinite(web.x) || !Number.isFinite(web.y)) {
-          throw new Error('The calibration overlay did not observe the expected click event');
-        }
-        samples.push({native: {x: nativeX, y: nativeY}, web});
-      }
-      const data = fitAffineTransform(samples);
-      const signature = await computeViewportSignature.call(this);
-      entry = {signature, data};
-    } finally {
-      try {
-        await this.execute(REMOVE_CALIBRATION_OVERLAY_SCRIPT);
-      } catch (err) {
-        // Don't let a cleanup hiccup mask a real error from the try block
-        // above, or abort the retry loop on its own; the overlay-inject
-        // script tears down and rebuilds from scratch regardless, so a
-        // failed removal here doesn't corrupt the next attempt.
-        this.log.debug(`Failed to remove the calibration overlay: ${toErrorMessage(err)}`);
-      }
-    }
-  });
-  return entry as CalibrationCacheEntry;
-}
-
-/**
- * Returns a cached web-to-native calibration transform if the webview's
- * orientation/size/scroll state hasn't changed since it was fitted,
- * otherwise transparently (re)calibrates. This is what makes calibration
- * automatic: callers never need to notice or handle staleness themselves.
- *
- * @param force - Recalibrate unconditionally, ignoring any cached entry
- */
-async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
-  if (!force) {
-    const signature = await computeViewportSignature.call(this);
-    if (this._webviewCalibrationCache?.signature === signature) {
-      this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
-      return this._webviewCalibrationCache.data;
-    }
-  }
-
-  this.log.debug('Fitting a new web-to-native coordinates calibration');
-  // keep track of implicit wait, and set locally to 0
-  // https://github.com/appium/appium/issues/14988
-  const implicitWaitMs = this.implicitWaitMs;
-  this.setImplicitWait(0);
-  try {
-    this._webviewCalibrationCache = await performCalibration.call(this);
-  } finally {
-    this.setImplicitWait(implicitWaitMs);
-  }
-  return this._webviewCalibrationCache.data;
-}
-
-/**
- * Attempts to tap a web element by marking it with a unique, throwaway
- * `aria-label` and looking that up as a native accessibility id. WebKit
- * reflects `aria-label` into the native accessibility label, so this
- * resolves to exactly one native element with no ambiguity heuristics,
- * including icon buttons, images, and elements with duplicate visible text.
- *
- * @param atomsElement - Atoms-compatible element to tap
- * @returns True if the native tap was successful, false otherwise
- */
-async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsElement): Promise<boolean> {
-  const uuid = util.uuidV4();
-  let marker: {hadAttribute: boolean; original: string | null} | null = null;
-  try {
-    marker = (await this.executeAtom('execute_script', [MARK_ELEMENT_FOR_NATIVE_TAP_SCRIPT, [atomsElement, uuid]])) as {
-      hadAttribute: boolean;
-      original: string | null;
-    } | null;
-    if (!marker) {
-      // element is genuinely inaccessible (aria-hidden, invisible, zero-size)
-      return false;
-    }
-
-    const els = (await this.findNativeElementOrElements('accessibility id', uuid, true)) as Element[];
-    if (els.length !== 1) {
-      this.log.debug(`Expected to find exactly 1 native element with accessibility id '${uuid}', found ${els.length}`);
-      return false;
-    }
-
-    const rect = (await this.proxyCommand(`/element/${util.unwrapElement(els[0])}/rect`, 'GET')) as Rect;
-    await this.mobileTap(rect.x + rect.width / 2, rect.y + rect.height / 2);
-    return true;
-  } catch (err) {
-    // any failure should fall through and trigger the more elaborate
-    // method of clicking
-    this.log.warn(`Error attempting to click: ${toErrorMessage(err)}`);
-    return false;
-  } finally {
-    if (marker) {
-      try {
-        await this.executeAtom('execute_script', [
-          RESTORE_ELEMENT_ARIA_LABEL_SCRIPT,
-          [atomsElement, marker.hadAttribute, marker.original],
-        ]);
-      } catch (err) {
-        this.log.debug(`Failed to restore the original 'aria-label' value: ${toErrorMessage(err)}`);
-      }
-    }
-  }
 }
 
 /**
@@ -499,31 +332,49 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
  *
  * Always uses a calibration transform, automatically (re)fitting one via
  * {@linkcode getOrCreateWebviewCalibration} whenever the cached one no
- * longer matches the current orientation/size/scroll state.
+ * longer matches the current orientation/size/scroll state. That transform
+ * is fitted against the top-level page, so `x`/`y` are first shifted by the
+ * current sub-frame's offset (see {@linkcode getFrameChainOffset}), if any.
  *
  * @param x - X coordinate in web space
  * @param y - Y coordinate in web space
  * @returns Translated position in native coordinates
- * @throws {Error} If no WebView is found or if calibration fails
+ * @throws {Error} If no WebView is found, if calibration fails, or if the
+ *   current frame (or one of its ancestors) has a different origin than the
+ *   top-level page
  */
 export async function translateWebCoords(this: XCUITestDriver, x: number, y: number): Promise<Position> {
   this.log.debug(`Translating web coordinates (${JSON.stringify({x, y})}) to native coordinates`);
 
-  const {offsetX, offsetY, pixelRatioX, pixelRatioY} = await getOrCreateWebviewCalibration.call(this);
+  const [{offsetX, offsetY, pixelRatioX, pixelRatioY}, frameOffset] = await Promise.all([
+    getOrCreateWebviewCalibration.call(this),
+    getFrameChainOffset.call(this),
+  ]);
+  if (frameOffset.crossOrigin) {
+    throw new Error(
+      'Cannot translate coordinates for the current frame: it (or one of its ancestor frames) has a ' +
+        "different origin than the top-level page. Safari's remote debugger cannot determine a cross-origin " +
+        "frame's position, which is required to compute where to tap. Switch back to the top-level frame " +
+        'or a same-origin ancestor before tapping elements here.',
+    );
+  }
+  const frameX = x + frameOffset.offsetX;
+  const frameY = y + frameOffset.offsetY;
+
   const cmd =
     '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
     'outerWidth: window.outerWidth, outerHeight: window.outerHeight}; })()';
-  const wvDims = (await this.remote.execute(cmd)) as {
+  const wvDims = await this.remote.execute<{
     innerWidth: number;
     innerHeight: number;
     outerWidth: number;
     outerHeight: number;
-  };
+  }>(cmd);
   // https://tripleodeon.com/2011/12/first-understand-your-screen/
   const shouldApplyPixelRatio = wvDims.innerWidth > wvDims.outerWidth || wvDims.innerHeight > wvDims.outerHeight;
   const newCoords = {
-    x: offsetX + x * (shouldApplyPixelRatio ? pixelRatioX : 1),
-    y: offsetY + y * (shouldApplyPixelRatio ? pixelRatioY : 1),
+    x: offsetX + frameX * (shouldApplyPixelRatio ? pixelRatioX : 1),
+    y: offsetY + frameY * (shouldApplyPixelRatio ? pixelRatioY : 1),
   };
 
   this.log.debug(`Converted web coords ${JSON.stringify({x, y})} into real coords ${JSON.stringify(newCoords)}`);
@@ -554,4 +405,205 @@ export async function mobileCalibrateWebToRealCoordinatesTranslation(this: XCUIT
     offsetX: Math.round(result.offsetX),
     offsetY: Math.round(result.offsetY),
   };
+}
+
+// ---- private helpers ----
+
+/**
+ * Finds the current native XCUIElementTypeWebView and returns its rect.
+ * Used to pick native points to tap during calibration.
+ *
+ * A single attempt: this is only ever called from inside
+ * {@linkcode performCalibration}'s own retry loop, so retrying here too
+ * would just compound into an excessive worst-case number of attempts.
+ */
+async function findWebviewRect(this: XCUITestDriver): Promise<Rect> {
+  let webview: Element | undefined | string;
+  try {
+    webview = await this.findNativeElementOrElements('class name', 'XCUIElementTypeWebView', false);
+  } catch {}
+
+  if (!webview) {
+    throw new Error(`No WebView found. Unable to calibrate web coordinates for native web tap.`);
+  }
+
+  webview = util.unwrapElement(webview);
+  return (await this.proxyCommand(`/element/${webview}/rect`, 'GET')) as Rect;
+}
+
+/**
+ * Reads the signals that make up the current {@linkcode ViewportState} and
+ * combines them with the current context into a cache key. The context is
+ * included on top of what the plan's signature covers, because switching to
+ * a different webview is itself a reason any previously fitted transform no
+ * longer applies.
+ *
+ * Uses `this.remote.execute` (not `this.execute`) to always read the
+ * top-level page's viewport, regardless of the current frame.
+ */
+async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
+  const state = await this.remote.execute<Omit<ViewportState, 'orientation'>>(READ_VIEWPORT_STATE_SCRIPT);
+  const orientation: ViewportState['orientation'] = state.innerHeight >= state.innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
+  return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}`;
+}
+
+/**
+ * Fits a fresh web-to-native calibration transform by injecting a temporary,
+ * full-viewport click-capturing overlay into the current DOM, tapping it
+ * twice through WDA, and reading back the web coordinates each tap was
+ * observed at. This never navigates away from the page under test, and
+ * measures whatever chrome (or lack of it) is actually on screen right now,
+ * so it works the same way for Safari and hybrid-app webviews alike.
+ *
+ * Uses `this.remote.execute` (not `this.execute`) to always fit against the
+ * top-level page, regardless of the current frame; {@linkcode translateWebCoords}
+ * adds a sub-frame's own offset (via {@linkcode getFrameChainOffset}) on top.
+ */
+async function performCalibration(this: XCUITestDriver): Promise<CalibrationCacheEntry> {
+  let entry: CalibrationCacheEntry | undefined;
+  await retryInterval(CALIBRATION_RETRIES, CALIBRATION_RETRY_INTERVAL_MS, async () => {
+    const rect = await findWebviewRect.call(this);
+    const centerX = rect.x + rect.width / 2;
+    const centerY = rect.y + rect.height / 2;
+
+    await this.remote.execute(INJECT_CALIBRATION_OVERLAY_SCRIPT);
+    try {
+      const samples: CalibrationSample[] = [];
+      for (const [i, sign] of [-1, 1].entries()) {
+        const nativeX = centerX + sign * CALIBRATION_TAP_DELTA_PX;
+        const nativeY = centerY + sign * CALIBRATION_TAP_DELTA_PX;
+        await this.mobileTap(nativeX, nativeY);
+        // Correlate by index rather than trusting "the last entry in the
+        // array" to be this tap's: WDA's tap response can resolve before the
+        // webview's own click handler has run and recorded it.
+        const expectedCount = i + 1;
+        const taps = (await retryInterval(
+          CALIBRATION_TAP_READBACK_RETRIES,
+          CALIBRATION_TAP_READBACK_INTERVAL_MS,
+          async () => {
+            const result = await this.remote.execute<Position[]>(READ_CALIBRATION_TAPS_SCRIPT);
+            if (!Array.isArray(result) || result.length < expectedCount) {
+              throw new Error('The calibration overlay has not observed this tap yet');
+            }
+            return result;
+          },
+        )) as Position[];
+        const web = taps[expectedCount - 1];
+        if (!web || !Number.isFinite(web.x) || !Number.isFinite(web.y)) {
+          throw new Error('The calibration overlay did not observe the expected click event');
+        }
+        samples.push({native: {x: nativeX, y: nativeY}, web});
+      }
+      const data = fitAffineTransform(samples);
+      const signature = await computeViewportSignature.call(this);
+      entry = {signature, data};
+    } finally {
+      try {
+        await this.remote.execute(REMOVE_CALIBRATION_OVERLAY_SCRIPT);
+      } catch (err) {
+        // Don't let a cleanup hiccup mask a real error from the try block
+        // above, or abort the retry loop on its own; the overlay-inject
+        // script tears down and rebuilds from scratch regardless, so a
+        // failed removal here doesn't corrupt the next attempt.
+        this.log.debug(`Failed to remove the calibration overlay: ${toErrorMessage(err)}`);
+      }
+    }
+  });
+  return entry as CalibrationCacheEntry;
+}
+
+/** Result of {@linkcode READ_FRAME_CHAIN_OFFSET_SCRIPT}. */
+type FrameChainOffset = {crossOrigin: true} | {crossOrigin: false; offsetX: number; offsetY: number};
+
+/**
+ * Offset of the current frame's viewport origin from the top-level page's,
+ * for converting a frame-relative coordinate into the top-level-relative
+ * space {@linkcode performCalibration} fits against.
+ */
+async function getFrameChainOffset(this: XCUITestDriver): Promise<FrameChainOffset> {
+  if (isEmpty(this.curWebFrames)) {
+    return {crossOrigin: false, offsetX: 0, offsetY: 0};
+  }
+  return await this.execute<FrameChainOffset>(READ_FRAME_CHAIN_OFFSET_SCRIPT);
+}
+
+/**
+ * Returns a cached web-to-native calibration transform if the webview's
+ * orientation/size/scroll state hasn't changed since it was fitted,
+ * otherwise transparently (re)calibrates. This is what makes calibration
+ * automatic: callers never need to notice or handle staleness themselves.
+ *
+ * @param force - Recalibrate unconditionally, ignoring any cached entry
+ */
+async function getOrCreateWebviewCalibration(this: XCUITestDriver, force = false): Promise<CalibrationData> {
+  if (!force) {
+    const signature = await computeViewportSignature.call(this);
+    if (this._webviewCalibrationCache?.signature === signature) {
+      this.log.debug(`Reusing cached web-to-native calibration for signature '${signature}'`);
+      return this._webviewCalibrationCache.data;
+    }
+  }
+
+  this.log.debug('Fitting a new web-to-native coordinates calibration');
+  // keep track of implicit wait, and set locally to 0
+  // https://github.com/appium/appium/issues/14988
+  const implicitWaitMs = this.implicitWaitMs;
+  this.setImplicitWait(0);
+  try {
+    this._webviewCalibrationCache = await performCalibration.call(this);
+  } finally {
+    this.setImplicitWait(implicitWaitMs);
+  }
+  return this._webviewCalibrationCache.data;
+}
+
+/**
+ * Attempts to tap a web element by marking it with a unique, throwaway
+ * `aria-label` and looking that up as a native accessibility id. WebKit
+ * reflects `aria-label` into the native accessibility label, so this
+ * resolves to exactly one native element with no ambiguity heuristics,
+ * including icon buttons, images, and elements with duplicate visible text.
+ *
+ * @param atomsElement - Atoms-compatible element to tap
+ * @returns True if the native tap was successful, false otherwise
+ */
+async function tapWebElementNatively(this: XCUITestDriver, atomsElement: AtomsElement): Promise<boolean> {
+  const uuid = util.uuidV4();
+  let marker: {hadAttribute: boolean; original: string | null} | null = null;
+  try {
+    marker = (await this.executeAtom('execute_script', [MARK_ELEMENT_FOR_NATIVE_TAP_SCRIPT, [atomsElement, uuid]])) as {
+      hadAttribute: boolean;
+      original: string | null;
+    } | null;
+    if (!marker) {
+      // element is genuinely inaccessible (aria-hidden, invisible, zero-size)
+      return false;
+    }
+
+    const els = (await this.findNativeElementOrElements('accessibility id', uuid, true)) as Element[];
+    if (els.length !== 1) {
+      this.log.debug(`Expected to find exactly 1 native element with accessibility id '${uuid}', found ${els.length}`);
+      return false;
+    }
+
+    const rect = (await this.proxyCommand(`/element/${util.unwrapElement(els[0])}/rect`, 'GET')) as Rect;
+    await this.mobileTap(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    return true;
+  } catch (err) {
+    // any failure should fall through and trigger the more elaborate
+    // method of clicking
+    this.log.warn(`Error attempting to click: ${toErrorMessage(err)}`);
+    return false;
+  } finally {
+    if (marker) {
+      try {
+        await this.executeAtom('execute_script', [
+          RESTORE_ELEMENT_ARIA_LABEL_SCRIPT,
+          [atomsElement, marker.hadAttribute, marker.original],
+        ]);
+      } catch (err) {
+        this.log.debug(`Failed to restore the original 'aria-label' value: ${toErrorMessage(err)}`);
+      }
+    }
+  }
 }

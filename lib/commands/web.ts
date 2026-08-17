@@ -1,6 +1,7 @@
 import {setTimeout as delay} from 'node:timers/promises';
 
 import type {Element, Cookie} from '@appium/types';
+import type {AtomName} from 'appium-remote-debugger';
 import {errors, isErrorType} from 'appium/driver.js';
 import {timing, util} from 'appium/support.js';
 
@@ -18,38 +19,21 @@ const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
 const ON_APP_CRASH_EVENT = 'app_crash';
 
-export const ATOM_NAMES = [
-  'active_element',
-  'clear',
-  'click',
-  'execute_async_script',
-  'execute_script',
-  'find_element_fragment',
-  'find_elements',
-  'frame_by_id_or_name',
-  'frame_by_index',
-  'get_attribute_value',
-  'get_frame_window',
-  'get_size',
-  'get_text',
-  'get_top_left_coordinates',
-  'get_value_of_css_property',
-  'is_displayed',
-  'is_enabled',
-  'is_selected',
-  'submit',
-  'type',
-] as const;
-
-export type AtomName = (typeof ATOM_NAMES)[number];
+// WebKit's wording for a cross-origin frame access failure (see setFrame below).
+const CROSS_ORIGIN_FRAME_ERROR_PATTERN = /cross-origin frame|blocked a frame with origin/i;
 
 /**
  * Sets the current web frame context.
+ *
+ * A cross-origin frame can be entered but not scripted, so entering verifies
+ * the frame is actually usable and rolls back immediately if not, rather
+ * than failing later on some unrelated command.
  *
  * @param frame - Frame identifier (number, string, or null to return to default content)
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context
  * @throws {errors.NoSuchFrameError} If the specified frame is not found
+ * @throws {Error} If the frame (or one of its ancestors) has a different origin than the top-level page
  */
 export async function setFrame(this: XCUITestDriver, frame: number | string | null): Promise<void> {
   requireWebContext(this);
@@ -60,19 +44,39 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
     return;
   }
 
-  if (isElementLike(frame)) {
-    const atomsElement = this.getAtomsElement(frame);
-    const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
-    this.log.debug(`Entering new web frame: '${value.WINDOW}'`);
-    this.curWebFrames.unshift(value.WINDOW);
-  } else {
-    const atom: AtomName = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
-    const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
-    if (value?.WINDOW === undefined) {
-      throw new errors.NoSuchFrameError();
+  try {
+    let windowId: string;
+    if (isElementLike(frame)) {
+      const atomsElement = this.getAtomsElement(frame);
+      const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
+      windowId = value.WINDOW;
+    } else {
+      const atom: AtomName = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
+      const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
+      if (value?.WINDOW === undefined) {
+        throw new errors.NoSuchFrameError();
+      }
+      windowId = value.WINDOW;
     }
-    this.log.debug(`Entering new web frame: '${value.WINDOW}'`);
-    this.curWebFrames.unshift(value.WINDOW);
+
+    this.log.debug(`Entering new web frame: '${windowId}'`);
+    this.curWebFrames.unshift(windowId);
+    try {
+      await this.executeAtom('execute_script', ['return true;', []]);
+    } catch (err) {
+      this.curWebFrames.shift();
+      throw err;
+    }
+  } catch (err) {
+    if (CROSS_ORIGIN_FRAME_ERROR_PATTERN.test(toErrorMessage(err))) {
+      throw new Error(
+        'Cannot switch into this frame: it (or one of its ancestor frames) has a different origin than ' +
+          "the top-level page. Safari's remote debugger can only execute JavaScript inside same-origin " +
+          `frames. Switch to a same-origin frame instead. Original error: ${toErrorMessage(err)}`,
+        {cause: err},
+      );
+    }
+    throw err;
   }
 }
 
@@ -130,7 +134,7 @@ export async function refresh(this: XCUITestDriver): Promise<void> {
 export async function getUrl(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return (await this.remote.execute('window.location.href')) as string;
+  return await this.remote.execute<string>('window.location.href');
 }
 
 /**
@@ -142,7 +146,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
 export async function title(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return (await this.remote.execute('window.document.title')) as string;
+  return await this.remote.execute<string>('window.document.title');
 }
 
 /**

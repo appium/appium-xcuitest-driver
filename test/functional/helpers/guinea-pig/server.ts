@@ -14,6 +14,7 @@ const DYNAMIC_ROUTES: Record<string, string> = {
   '/test/guinea-pig': 'guinea-pig.html',
   '/test/guinea-pig-scrollable': 'guinea-pig-scrollable.html',
   '/test/guinea-pig-app-banner': 'guinea-pig-app-banner.html',
+  '/test/iframe-wrap-cross-origin': 'iframe-wrap-cross-origin.html',
 };
 
 const MIME_TYPES: Record<string, string> = {
@@ -118,6 +119,7 @@ async function handleGuineaPigTemplate(
     serverTime: new Date(),
     userAgent: req.headers['user-agent'],
     comment: 'None',
+    crossOriginBaseUrl: url.searchParams.get('crossOriginBaseUrl') ?? '',
   };
 
   if (req.method === 'POST') {
