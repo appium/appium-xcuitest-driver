@@ -486,8 +486,7 @@ export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Pr
         throw new Error(
           'Cannot run JavaScript inside this frame: it (or one of its ancestor frames) has a different ' +
             "origin than the top-level page. Safari's remote debugger can only execute JavaScript inside " +
-            "same-origin frames. Switch to a same-origin frame (e.g. WebdriverIO's driver.switchToFrame(null) " +
-            `for the top-level frame) instead. Original error: ${toErrorMessage(err)}`,
+            `same-origin frames. Switch to a same-origin frame instead. Original error: ${toErrorMessage(err)}`,
           {cause: err},
         );
       }
