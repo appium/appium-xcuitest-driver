@@ -19,7 +19,7 @@ const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
 const ON_APP_CRASH_EVENT = 'app_crash';
 
-// WebKit's wording for a cross-origin frame access failure (see setFrame/waitForAtom below).
+// WebKit's wording for a cross-origin frame access failure (see setFrame below).
 const CROSS_ORIGIN_FRAME_ERROR_PATTERN = /cross-origin frame|blocked a frame with origin/i;
 
 /**
@@ -44,26 +44,38 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
     return;
   }
 
-  let windowId: string;
-  if (isElementLike(frame)) {
-    const atomsElement = this.getAtomsElement(frame);
-    const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
-    windowId = value.WINDOW;
-  } else {
-    const atom: AtomName = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
-    const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
-    if (value?.WINDOW === undefined) {
-      throw new errors.NoSuchFrameError();
-    }
-    windowId = value.WINDOW;
-  }
-
-  this.log.debug(`Entering new web frame: '${windowId}'`);
-  this.curWebFrames.unshift(windowId);
   try {
-    await this.executeAtom('execute_script', ['return true;', []]);
+    let windowId: string;
+    if (isElementLike(frame)) {
+      const atomsElement = this.getAtomsElement(frame);
+      const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
+      windowId = value.WINDOW;
+    } else {
+      const atom: AtomName = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
+      const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
+      if (value?.WINDOW === undefined) {
+        throw new errors.NoSuchFrameError();
+      }
+      windowId = value.WINDOW;
+    }
+
+    this.log.debug(`Entering new web frame: '${windowId}'`);
+    this.curWebFrames.unshift(windowId);
+    try {
+      await this.executeAtom('execute_script', ['return true;', []]);
+    } catch (err) {
+      this.curWebFrames.shift();
+      throw err;
+    }
   } catch (err) {
-    this.curWebFrames.shift();
+    if (CROSS_ORIGIN_FRAME_ERROR_PATTERN.test(toErrorMessage(err))) {
+      throw new Error(
+        'Cannot switch into this frame: it (or one of its ancestor frames) has a different origin than ' +
+          "the top-level page. Safari's remote debugger can only execute JavaScript inside same-origin " +
+          `frames. Switch to a same-origin frame instead. Original error: ${toErrorMessage(err)}`,
+        {cause: err},
+      );
+    }
     throw err;
   }
 }
@@ -479,18 +491,7 @@ export async function waitForAtom<T = unknown>(this: XCUITestDriver, promise: Pr
       return await p;
     } catch (err) {
       this.log.debug(`Error received while executing atom: ${toErrorMessage(err)}`);
-      if (err instanceof TimeoutError) {
-        throw await generateAtomTimeoutError.bind(this)(timer);
-      }
-      if (CROSS_ORIGIN_FRAME_ERROR_PATTERN.test(toErrorMessage(err))) {
-        throw new Error(
-          'Cannot run JavaScript inside this frame: it (or one of its ancestor frames) has a different ' +
-            "origin than the top-level page. Safari's remote debugger can only execute JavaScript inside " +
-            `same-origin frames. Switch to a same-origin frame instead. Original error: ${toErrorMessage(err)}`,
-          {cause: err},
-        );
-      }
-      throw err;
+      throw err instanceof TimeoutError ? await generateAtomTimeoutError.bind(this)(timer) : err;
     }
   };
   // if the atom promise is fulfilled within ATOM_INITIAL_WAIT_MS
