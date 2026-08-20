@@ -1,3 +1,9 @@
+## [12.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.5.0...v12.5.1) (2026-08-20)
+
+### Bug Fixes
+
+* disable devicectl launch fallback for preinstalled WDA on iOS/tvOS 27+ ([#2949](https://github.com/appium/appium-xcuitest-driver/issues/2949)) ([2ecb946](https://github.com/appium/appium-xcuitest-driver/commit/2ecb9461ebc8ba81fccab94dbe5d47e92a09e9e3))
+
 ## [12.5.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.4.0...v12.5.0) (2026-08-17)
 
 ### Features
