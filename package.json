@@ -66,6 +66,8 @@
     "e2e-test:parallel": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/parallel/**/*.spec.js\"",
     "e2e-test:web": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/web/**/*.spec.js\"",
     "e2e-test:native-web-tap": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/web/native-web-tap*.spec.js\"",
+    "e2e-test:tv": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/tv/**/*.spec.js\"",
+    "e2e-test:watch": "node --enable-source-maps scripts/ci/run-e2e-tests.mjs \"./build/test/functional/watch/**/*.spec.js\"",
     "start": "appium --relaxed-security --port 4567 --keep-alive-timeout 1200"
   },
   "dependencies": {
@@ -75,7 +77,7 @@
     "appium-ios-device": "^3.1.12",
     "appium-ios-simulator": "^9.0.0",
     "appium-remote-debugger": "^17.1.0",
-    "appium-webdriveragent": "^16.1.4",
+    "appium-webdriveragent": "^16.5.0",
     "appium-xcode": "^7.0.0",
     "async-lock": "^1.4.0",
     "asyncbox": "^6.3.0",
@@ -125,7 +127,8 @@
     "automationName": "XCUITest",
     "platformNames": [
       "iOS",
-      "tvOS"
+      "tvOS",
+      "watchOS"
     ],
     "mainClass": "XCUITestDriver",
     "scripts": {

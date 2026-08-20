@@ -40,8 +40,11 @@ export async function getWDAPrebuiltPackage(options) {
   }
 }
 
+/** @type {Record<string, string>} */
+const PLATFORM_SCHEME_SUFFIXES = {tvos: '_tvOS', watchos: '_watchOS'};
+
 const destZip = (/** @type {string} */ platform, /** @type {WDAKind} */ kind) => {
-  const scheme = `WebDriverAgentRunner${String(platform).toLowerCase() === 'tvos' ? '_tvOS' : ''}`;
+  const scheme = `WebDriverAgentRunner${PLATFORM_SCHEME_SUFFIXES[String(platform).toLowerCase()] ?? ''}`;
   if (kind === WDA_KIND_SIM) {
     return `${scheme}-Build-Sim-${os.arch() === 'arm64' ? 'arm64' : 'x86_64'}.zip`;
   }
@@ -114,9 +117,9 @@ async function main() {
 
   program
     .name('appium driver run xcuitest download-wda')
-    .description('Download a prebuilt WebDriverAgentRunner for iOS/tvOS real devices or simulators')
+    .description('Download a prebuilt WebDriverAgentRunner for iOS/tvOS/watchOS real devices or simulators')
     .requiredOption('--outdir <path>', 'Destination directory to download and unpack into')
-    .requiredOption('--platform <platform>', 'Target platform (e.g. iOS or tvOS)', (value) => value)
+    .requiredOption('--platform <platform>', 'Target platform (e.g. iOS, tvOS or watchOS)', (value) => value)
     .option(
       '--kind <kind>',
       `Target package type: ${WDA_KIND_REAL} (real devices) or ${WDA_KIND_SIM} (simulators). Default: ${WDA_KIND_REAL}`,
@@ -129,7 +132,10 @@ EXAMPLES:
   appium driver run xcuitest download-wda -- --outdir ./wda-real --platform iOS
 
   # Download WDA for tvOS simulator
-  appium driver run xcuitest download-wda -- --outdir ./wda-sim-tvos --platform tvOS --kind sim`,
+  appium driver run xcuitest download-wda -- --outdir ./wda-sim-tvos --platform tvOS --kind sim
+
+  # Download WDA for watchOS simulator (watchOS only supports the Simulator, not real devices)
+  appium driver run xcuitest download-wda -- --outdir ./wda-sim-watchos --platform watchOS --kind sim`,
     )
     .action(async (options) => {
       await getWDAPrebuiltPackage({

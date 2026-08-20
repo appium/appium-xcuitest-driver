@@ -23,7 +23,7 @@ import {installToRealDevice, type RealDevice} from '../../device/real-device-man
 import {installToSimulator} from '../../device/simulator-management.js';
 import type {XCUITestDriver} from '../../driver.js';
 import {log} from '../../logger.js';
-import {isEmpty, isPlainObject, isTvOs} from '../../utils/index.js';
+import {isEmpty, isPlainObject, isTvOs, isWatchOs} from '../../utils/index.js';
 import {APP_EXT, IPA_EXT, SUPPORTED_EXTENSIONS} from '../constants.js';
 import type {AutInstallationState, AutInstallationStateOptions} from '../types.js';
 
@@ -371,6 +371,17 @@ export async function onPostConfigureApp(
 }
 
 // Private functions
+/** @returns The `CFBundleSupportedPlatforms` prefix (e.g. `AppleTVSimulator`/`AppleTVOS`) for the given platform. */
+function getBundlePlatformPrefix(platformName: string | null | undefined): string {
+  if (isTvOs(platformName)) {
+    return 'AppleTV';
+  }
+  if (isWatchOs(platformName)) {
+    return 'Watch';
+  }
+  return 'iPhone';
+}
+
 /**
  * Verify whether the given application is compatible to the
  * platform where it is going to be installed and tested.
@@ -385,8 +396,7 @@ async function verifyApplicationPlatform(driver: XCUITestDriver): Promise<void> 
   }
 
   const supportedPlatforms = await driver.appInfosCache.extractAppPlatforms(driver.opts.app);
-  const isTvOS = isTvOs(driver.opts.platformName);
-  const prefix = isTvOS ? 'AppleTV' : 'iPhone';
+  const prefix = getBundlePlatformPrefix(driver.opts.platformName);
   const suffix = driver.isSimulator() ? 'Simulator' : 'OS';
   const dstPlatform = `${prefix}${suffix}`;
   if (!supportedPlatforms.includes(dstPlatform)) {

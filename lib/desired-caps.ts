@@ -1,13 +1,13 @@
 import type {Constraints} from '@appium/types';
 
-import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from './constants.js';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS, PLATFORM_NAME_WATCHOS} from './constants.js';
 
 export const desiredCapConstraints = {
   platformName: {
     // override
     presence: true,
     isString: true,
-    inclusionCaseInsensitive: [PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS],
+    inclusionCaseInsensitive: [PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS, PLATFORM_NAME_WATCHOS],
   },
   browserName: {
     isString: true,
