@@ -123,7 +123,7 @@ import {executeMethodMap} from './execute-method-map.js';
 import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
 import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
-import {isEmpty, isPlainObject, memoize, normalizePlatformVersion} from './utils/index.js';
+import {isEmpty, isPlainObject, isWatchOs, memoize, normalizePlatformVersion} from './utils/index.js';
 
 const defaultServerCaps = {
   webStorageEnabled: false,
@@ -1265,6 +1265,13 @@ export class XCUITestDriver
     this.log.info(`Determining device to run tests on: udid: '${udid}', real device: ${realDevice}`);
     this._device = device;
     this.opts.udid = udid;
+
+    if (realDevice && isWatchOs(this.opts.platformName)) {
+      throw new Error(
+        'Real watchOS device testing is not supported; watchOS is only available via the Simulator. ' +
+          'Make sure the requested deviceName/platformVersion match an existing watchOS Simulator.',
+      );
+    }
 
     await sessionClaimHandler.registerActiveSession(this);
     await sessionClaimHandler.claimSessionUdid(this);

@@ -381,6 +381,24 @@ describe('XCUITestDriver', function () {
         assert.strictEqual(spy.notCalled, true);
       });
 
+      it(
+        'should reject watchOS sessions that resolved to a real device',
+        {timeout: UNIT_LONG_TIMEOUT_MS},
+        async function () {
+          realDevice = {} as any;
+          await assert.rejects(
+            driver.createSession(
+              null as any,
+              null as any,
+              mergeDeep({}, structuredClone(caps), {
+                alwaysMatch: {platformName: 'watchOS'},
+              }) as any,
+            ),
+            /Real watchOS device testing is not supported/,
+          );
+        },
+      );
+
       it('should throw an error if mjpegServerPort is occupied', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         delete device.simctl;
         device.devicectl = true;
