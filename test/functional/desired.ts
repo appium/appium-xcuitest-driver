@@ -25,6 +25,10 @@ function checkFeatureInEnv(envArg: string) {
 export const PLATFORM_VERSION = process.env.PLATFORM_VERSION || '17.4';
 export const DEVICE_NAME = process.env.DEVICE_NAME || 'iPhone 15';
 export const DEVICE_NAME_FOR_SAFARI_IPAD = process.env.DEVICE_NAME_FOR_SAFARI_IPAD || 'iPad Simulator';
+export const TVOS_PLATFORM_VERSION = process.env.TVOS_PLATFORM_VERSION || '18.5';
+export const TVOS_DEVICE_NAME = process.env.TVOS_DEVICE_NAME || 'Apple TV';
+export const WATCHOS_PLATFORM_VERSION = process.env.WATCHOS_PLATFORM_VERSION || '11.5';
+export const WATCHOS_DEVICE_NAME = process.env.WATCHOS_DEVICE_NAME || 'Apple Watch Series 11 (46mm)';
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 
 const initTimeout = 60 * 1000 * 4;
@@ -104,14 +108,19 @@ export async function getTestAppCaps() {
   });
 }
 
+// PREBUILT_WDA_PATH is platform-specific (CI downloads whichever platform's binary matches the
+// job it's running - see functional-test.yml), so GENERIC_CAPS' prebuiltWdaOpts spread already
+// points at the right one for whichever cap set is used here; no override needed.
 export const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   platformName: 'tvOS',
+  'appium:platformVersion': TVOS_PLATFORM_VERSION,
   'appium:bundleId': 'com.apple.TVSettings',
-  'appium:deviceName': 'Apple TV',
+  'appium:deviceName': TVOS_DEVICE_NAME,
 });
 
 export const WATCHOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   platformName: 'watchOS',
+  'appium:platformVersion': WATCHOS_PLATFORM_VERSION,
   'appium:bundleId': 'com.apple.NanoSettings',
-  'appium:deviceName': 'Apple Watch Series 11 (46mm)',
+  'appium:deviceName': WATCHOS_DEVICE_NAME,
 });
