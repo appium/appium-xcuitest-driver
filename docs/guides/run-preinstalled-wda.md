@@ -53,13 +53,19 @@ The app can then be installed without `xcodebuild` using the 3rd party tools.
 
 ### Additional requirement for real devices on iOS/tvOS 17+
 
-Preinstalled WDA on real devices is started with `xcrun devicectl device process launch`. The runner app should not
+Preinstalled WDA on real devices is started over a RemoteXPC tunnel via CoreDevice's process control
+service, falling back to `xcrun devicectl device process launch` when RemoteXPC itself is unavailable.
+On iOS/tvOS 27+, this `devicectl` launch fallback is disabled: on that stack, the XCTest runner
+launched via `devicectl` never enters the background and never starts its HTTP server (see
+[appium/appium#22636](https://github.com/appium/appium/issues/22636)), so a missing/broken RemoteXPC
+tunnel now fails fast there with an actionable error instead of hanging for the WDA launch timeout.
+On iOS/tvOS 17-26, the `devicectl` fallback still applies as before. The runner app should not
 include embedded `Frameworks/XC**` copies (use the device's local XCTest frameworks instead).
 
 For example, after building the WebDriverAgent with Xcode with proper sign, it generates `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app`.
 Then you can remove `Frameworks/XC**` in `WebDriverAgentRunner-Runner.app` like `rm Frameworks/WebDriverAgentRunner-Runner.app/XC**`.
 
-Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the `WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it with `devicectl` command as part of `appium:usePreinstalledWDA` functionality.
+Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xcode/DerivedData/WebDriverAgent-ezumztihszjoxgacuhatrhxoklbh/Build/Products/Debug-appletvos/WebDriverAgentRunner-Runner.app` would install the `WebDriverAgentRunner-Runner.app`, which has no `Frameworks/XC**` to the target device and launch it as part of `appium:usePreinstalledWDA` functionality.
 
 !!! note
 

@@ -7,7 +7,7 @@ import type {
 } from 'appium-webdriveragent';
 
 import type {XCUITestDriver} from '../driver.js';
-import {isIos18OrNewerPlatform} from '../utils/index.js';
+import {isIos18OrNewerPlatform, isIos27OrNewerPlatform} from '../utils/index.js';
 import type {RealDevice} from './real-device-management.js';
 
 const XCODE_ONLY_CAPS = [
@@ -160,6 +160,13 @@ function createSimulatorHostOps(driver: XCUITestDriver): SimulatorHostOps {
   };
 }
 
+/**
+ * `devicectl device process launch` starts the XCTest runner as a plain app process, without the
+ * testmanagerd/DVT test-session handshake that RemoteXPC's process control provides. Starting with
+ * the iOS/tvOS 27 DDI/XCTest stack, the runner launched that way fails to background itself and
+ * never starts its HTTP server, so devicectl is no longer a reliable launch fallback there (see
+ * appium/appium#22636). It remains a reasonable fallback for older platforms.
+ */
 function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevicePreinstalledHostOps {
   return {
     async launchPreinstalled({udid, bundleId, env}) {
@@ -177,6 +184,11 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
           await dvt.dvtService.close();
         }
       } catch (err) {
+        if (isIos27OrNewerPlatform(driver.opts.platformVersion)) {
+          throw new Error(`Failed to launch the preinstalled WebDriverAgent via RemoteXPC: ${(err as Error).message}`, {
+            cause: err,
+          });
+        }
         if (process.platform !== 'darwin') {
           throw err;
         }
