@@ -46,3 +46,4 @@ hardware Action button).
 * <https://github.com/appium/WebDriverAgent/pull/1215>
 * <https://github.com/appium/WebDriverAgent/pull/1216>
 * <https://github.com/appium/WebDriverAgent/pull/1217>
+* <https://github.com/appium/appium-xcuitest-driver/pull/2952>

@@ -17,12 +17,6 @@ to help identify your target Xcode, macOS, driver and Appium server versions.
 
 !!! note
 
-    watchOS Simulator SDKs ship alongside the same Xcode releases as iOS/iPadOS/tvOS, so the same
-    Xcode/macOS compatibility tables below apply to watchOS. See [watchOS Automation](../guides/watchos.md)
-    for details - only the Simulator is supported, real watchOS devices are not.
-
-!!! note
-
     This document only lists compatibility information starting from iOS/tvOS 9.3 and Xcode 11, as
     these were the minimum supported versions in XCUITest driver 4.0.0, which was the first
     version supporting Appium 2. For iOS/tvOS/Xcode support in driver versions older than 4.0.0

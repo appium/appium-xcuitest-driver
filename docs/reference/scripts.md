@@ -136,13 +136,6 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
     appium driver run xcuitest download-wda -- --platform=tvos --outdir=/path/to/dir --kind=sim
     ```
 
-- Download the watchOS simulator version of the WDA app (`WebDriverAgentRunner_watchOS-Runner.app`)
-  into `/path/to/dir`:
-
-    ```
-    appium driver run xcuitest download-wda -- --platform=watchos --outdir=/path/to/dir --kind=sim
-    ```
-
 
 ### `download-wda-sim`
 
