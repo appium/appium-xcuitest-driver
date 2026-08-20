@@ -1,3 +1,9 @@
+## [12.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.5.1...v12.6.0) (2026-08-20)
+
+### Features
+
+* wire watchOS support into the TS driver ([#2952](https://github.com/appium/appium-xcuitest-driver/issues/2952)) ([4075323](https://github.com/appium/appium-xcuitest-driver/commit/407532359115c1467b666a28b26a5e6c05b40e8a))
+
 ## [12.5.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.5.0...v12.5.1) (2026-08-20)
 
 ### Bug Fixes
