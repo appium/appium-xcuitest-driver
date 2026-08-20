@@ -24,7 +24,8 @@
 
 ---
 
-This is an Appium driver for automating native and hybrid applications on iOS, iPadOS, and tvOS.
+This is an Appium driver for automating native and hybrid applications on iOS, iPadOS, tvOS, and
+watchOS (Simulator only).
 
 > [!IMPORTANT]
 > Since major version *10.0.0*, this driver is only compatible with Appium 3.

@@ -580,6 +580,11 @@ The following values are supported on iOS:
 * `action` (Xcode 15+, iOS 16+ supported devices only)
 * `camera` (Xcode 16+, iOS 16+ supported real devices only)
 
+The following values are supported on watchOS (Simulator only):
+
+* `home`
+* `action` (Xcode 15+, watchOS 9+ supported devices only)
+
 The following values are supported on tvOS:
 
 * `home`

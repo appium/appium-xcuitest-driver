@@ -16,8 +16,8 @@ title: Welcome
 </div>
 
 Welcome to the Appium XCUITest Driver documentation! The XCUITest driver is a test automation
-framework for iOS, iPadOS and tvOS devices, enabling automated black-box testing of native, hybrid
-and WebKit web apps, on both emulators and real devices. 
+framework for iOS, iPadOS, tvOS and watchOS devices, enabling automated black-box testing of
+native, hybrid and WebKit web apps, on both emulators and real devices (watchOS: Simulator only). 
 
 The XCUITest driver is part of the Appium test automation tool. For information on Appium itself,
 please visit [the Appium documentation](https://appium.io).
