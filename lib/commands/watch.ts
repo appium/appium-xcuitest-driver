@@ -13,11 +13,7 @@ import type {HandGestureName} from './types.js';
  * velocity is used.
  * @group watchOS Only
  */
-export async function mobileRotateDigitalCrown(
-  this: XCUITestDriver,
-  delta: number,
-  velocity?: number,
-): Promise<void> {
+export async function mobileRotateDigitalCrown(this: XCUITestDriver, delta: number, velocity?: number): Promise<void> {
   requireWatchOs(this, 'Digital Crown rotation');
   return await this.proxyCommand('/wda/rotateDigitalCrown', 'POST', {delta, velocity});
 }
