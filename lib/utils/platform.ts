@@ -1,7 +1,7 @@
 import {util} from 'appium/support.js';
 import * as semver from 'semver';
 
-import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS} from '../constants.js';
+import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS, PLATFORM_NAME_WATCHOS} from '../constants.js';
 
 export interface PlatformVersionOpts {
   platformVersion?: string | null;
@@ -12,9 +12,20 @@ export function isTvOs(platformName: string | null | undefined): boolean {
   return String(platformName ?? '').toLowerCase() === PLATFORM_NAME_TVOS.toLowerCase();
 }
 
+/** Check if platform name is the watchOS one. */
+export function isWatchOs(platformName: string | null | undefined): boolean {
+  return String(platformName ?? '').toLowerCase() === PLATFORM_NAME_WATCHOS.toLowerCase();
+}
+
 /** Return normalized platform name. */
 export function normalizePlatformName(platformName: string | null | undefined): string {
-  return isTvOs(platformName) ? PLATFORM_NAME_TVOS : PLATFORM_NAME_IOS;
+  if (isTvOs(platformName)) {
+    return PLATFORM_NAME_TVOS;
+  }
+  if (isWatchOs(platformName)) {
+    return PLATFORM_NAME_WATCHOS;
+  }
+  return PLATFORM_NAME_IOS;
 }
 
 /** Normalizes platformVersion to a valid iOS version string. */

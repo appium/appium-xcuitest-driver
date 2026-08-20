@@ -111,8 +111,8 @@ appium driver run xcuitest download-wda -- --outdir=<outdir> --platform=<platfor
 |<div style="width:6em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
 |`--outdir`|Target directory where the WDA app should be downloaded. The directory must not exist. Relative paths are resolved starting from the XCUITest driver install directory.|string| - |
-|`--platform`|Target platform of the WDA app. Supported values are `ios` and `tvos` (case-insensitive)|string| - |
-|`--kind`|Kind of the WDA app to download. Supported values are `real` and `sim`.|string|`real`|
+|`--platform`|Target platform of the WDA app. Supported values are `ios`, `tvos` and `watchos` (case-insensitive)|string| - |
+|`--kind`|Kind of the WDA app to download. Supported values are `real` and `sim`. Note that watchOS only supports `sim`, since real watchOS device testing is not supported.|string|`real`|
 
 ##### Optional Arguments
 

@@ -17,7 +17,7 @@ The driver supports the following Apple platforms as automation targets:
 |iOS|:white_check_mark:|:white_check_mark:|
 |iPadOS|:white_check_mark:|:white_check_mark:|
 |tvOS|:white_check_mark:|:white_check_mark:|
-|watchOS|:x:|:x:|
+|watchOS|:white_check_mark:|:x: [^watchos]|
 |visionOS|:x:|:x:|
 |macOS|N/A|:x: [^macos]|
 |Safari (mobile)|:white_check_mark: [^safari-mob]|:white_check_mark: [^safari-mob]|
@@ -133,5 +133,6 @@ flowchart TD
 - This driver to simulators: host-simulator communication uses `xcrun simctl` (plus related CoreSimulator tooling).
 
 [^macos]: Supported by the [Appium Mac2 driver](https://github.com/appium/appium-mac2-driver)
+[^watchos]: There is no viable real-device WDA distribution/testing story for watchOS, so only the Simulator is supported. See [watchOS Automation](./guides/watchos.md).
 [^safari-mob]: Also supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
 [^safari-desktop]: Supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)

@@ -109,3 +109,9 @@ export const TVOS_CAPS = amendCapabilities(GENERIC_CAPS, {
   'appium:bundleId': 'com.apple.TVSettings',
   'appium:deviceName': 'Apple TV',
 });
+
+export const WATCHOS_CAPS = amendCapabilities(GENERIC_CAPS, {
+  platformName: 'watchOS',
+  'appium:bundleId': 'com.apple.NanoSettings',
+  'appium:deviceName': 'Apple Watch Series 11 (46mm)',
+});

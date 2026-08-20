@@ -18,6 +18,7 @@ export {
   isIos27OrNewer,
   isIos27OrNewerPlatform,
   isTvOs,
+  isWatchOs,
   normalizePlatformName,
   normalizePlatformVersion,
 } from './platform.js';
