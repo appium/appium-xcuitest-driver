@@ -61,7 +61,7 @@ export function supportsApiLevel27(platformVersion?: string | null): boolean {
  * iOS/tvOS version number that has no watchOS equivalent. Falls back to a platform-agnostic
  * `"API level N"` when `platformName` isn't set.
  */
-export function apiLevelRequirementText(apiLevel: number, platformName?: string | null): string {
+export function toApiLevelRequirementText(apiLevel: number, platformName?: string | null): string {
   if (!platformName) {
     return `API level ${apiLevel}`;
   }
