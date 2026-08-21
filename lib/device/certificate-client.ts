@@ -16,7 +16,7 @@ export interface InstallCertificateOptions {
  *
  * Requires **iOS/tvOS 18+**, the optional **`appium-ios-remotexpc`** package, and
  * {@link CertificateClient.create} to be called with `useRemoteXPC: true` (typically from
- * `isIos18OrNewer` after session startup).
+ * `supportsApiLevel18` after session startup).
  */
 export class CertificateClient {
   private readonly mobileConfigService: RemoteXPCMobileConfigService;
@@ -32,7 +32,7 @@ export class CertificateClient {
    *
    * @param udid - Device UDID
    * @param log - Appium logger instance
-   * @param useRemoteXPC - Must be `true` for this client; callers derive this from `isIos18OrNewer(opts)` after `start()`
+   * @param useRemoteXPC - Must be `true` for this client; callers derive this from `supportsApiLevel18(opts)` after `start()`
    * @throws {Error} If `useRemoteXPC` is false, or RemoteXPC/mobile config setup fails
    */
   static async create(udid: string, log: AppiumLogger, facade: RemoteXPCFacade | null): Promise<CertificateClient> {

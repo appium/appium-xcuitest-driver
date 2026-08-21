@@ -72,7 +72,7 @@ describe('voiceover commands', function () {
       driver.opts.platformVersion = '26.0';
     });
 
-    const versionGateMessage = /requires iOS\/tvOS 27 or newer.*The current platformVersion is '26\.0'/;
+    const versionGateMessage = /requires API level 27 or newer.*The current platformVersion is '26\.0'/;
 
     it('mobileEnableVoiceOver should reject without proxying', async function () {
       await assert.rejects(driver.mobileEnableVoiceOver(), {

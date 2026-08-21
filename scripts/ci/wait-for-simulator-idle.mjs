@@ -15,25 +15,19 @@ const CONSECUTIVE_SAMPLES_NEEDED = Number(process.env.WAIT_SIM_IDLE_CONSECUTIVE 
 const POLL_INTERVAL_MS = Number(process.env.WAIT_SIM_IDLE_INTERVAL_MS ?? 2000);
 const MAX_WAIT_MS = Number(process.env.WAIT_SIM_IDLE_MAX_WAIT_MS ?? 150_000);
 
-const DEVICE_NAME = process.argv[2];
-if (!DEVICE_NAME) {
-  console.error('Usage: wait-for-simulator-idle.mjs <device name>');
+const UDID = process.argv[2];
+if (!UDID) {
+  console.error('Usage: wait-for-simulator-idle.mjs <udid>');
   process.exitCode = 1;
 } else {
-  await main(DEVICE_NAME);
+  await main(UDID);
 }
 
 /**
- * @param {string} deviceName
+ * @param {string} udid
  */
-async function main(deviceName) {
-  const udid = await findBootedUdid(deviceName);
-  if (!udid) {
-    console.warn(`::warning::Could not find a booted simulator named '${deviceName}' to wait on; skipping idle check`);
-    return;
-  }
-
-  console.log(`Waiting for simulator '${deviceName}' (${udid}) background services to settle...`);
+async function main(udid) {
+  console.log(`Waiting for simulator '${udid}' background services to settle...`);
 
   const start = Date.now();
   let consecutive = 0;
@@ -42,9 +36,7 @@ async function main(deviceName) {
     const elapsedSec = Math.round((Date.now() - start) / 1000);
 
     if (cpuPercent === null) {
-      console.warn(
-        `::warning::Simulator '${deviceName}' (${udid}) process tree disappeared while waiting; skipping idle check`,
-      );
+      console.warn(`::warning::Simulator '${udid}' process tree disappeared while waiting; skipping idle check`);
       return;
     }
 
@@ -60,7 +52,7 @@ async function main(deviceName) {
 
     if (Date.now() - start >= MAX_WAIT_MS) {
       console.warn(
-        `::warning::Simulator '${deviceName}' (${udid}) did not settle within ${Math.round(MAX_WAIT_MS / 1000)}s (last cpu=${cpuPercent}%); proceeding anyway`,
+        `::warning::Simulator '${udid}' did not settle within ${Math.round(MAX_WAIT_MS / 1000)}s (last cpu=${cpuPercent}%); proceeding anyway`,
       );
       return;
     }
@@ -70,22 +62,6 @@ async function main(deviceName) {
     );
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
   }
-}
-
-/**
- * @param {string} deviceName
- * @returns {Promise<string|null>}
- */
-async function findBootedUdid(deviceName) {
-  const {stdout: raw} = await execFileAsync('xcrun', ['simctl', 'list', 'devices', 'booted', '-j']);
-  const {devices} = JSON.parse(raw);
-  for (const runtimeDevices of Object.values(devices)) {
-    const match = /** @type {{name: string, udid: string}[]} */ (runtimeDevices).find((d) => d.name === deviceName);
-    if (match) {
-      return match.udid;
-    }
-  }
-  return null;
 }
 
 /**

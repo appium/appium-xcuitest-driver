@@ -2,7 +2,7 @@ import type {StringRecord} from '@appium/types';
 
 import type {RunXCTestResult} from '../commands/types.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isIos18OrNewerPlatform} from '../utils/index.js';
+import {supportsApiLevel18} from '../utils/index.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 import {
   runXCTestViaRemoteXPC,
@@ -80,7 +80,7 @@ export class XCTestClient {
   }
 
   private assertRealDeviceRemoteXpc(): void {
-    if (!this.deps.isRealDevice || !isIos18OrNewerPlatform(this.deps.platformVersion)) {
+    if (!this.deps.isRealDevice || !supportsApiLevel18(this.deps.platformVersion)) {
       throw new Error(XCTEST_REAL_DEVICE_MSG);
     }
   }

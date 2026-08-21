@@ -5,7 +5,7 @@ import {util} from 'appium/support.js';
 
 import {SimulateLocationClient, type SimulateLocationSession} from '../device/simulate-location-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isIos17OrNewer} from '../utils/index.js';
+import {supportsApiLevel17} from '../utils/index.js';
 import {AuthorizationStatus} from './enum.js';
 import type {LocationWithAltitude, WDALocationInfo} from './types.js';
 
@@ -24,7 +24,7 @@ import type {LocationWithAltitude, WDALocationInfo} from './types.js';
  * @throws {Error} If WDA returns an error (for example, tvOS may report unsupported).
  */
 export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWithAltitude> {
-  if (isIos17OrNewer(this.opts)) {
+  if (supportsApiLevel17(this.opts.platformVersion, this.opts.platformName)) {
     const {latitude, longitude} = await this.mobileGetSimulatedLocation();
     if (util.hasValue(latitude) && util.hasValue(longitude)) {
       this.log.debug(
@@ -86,7 +86,7 @@ export async function setGeoLocation(this: XCUITestDriver, location: Partial<Loc
     return {latitude: latitudeNumber, longitude: longitudeNumber, altitude: 0};
   }
 
-  if (isIos17OrNewer(this.opts)) {
+  if (supportsApiLevel17(this.opts.platformVersion, this.opts.platformName)) {
     this.log.info(`Proxying to mobile:setSimulatedLocation method for iOS 17+`);
     await this.mobileSetSimulatedLocation(latitudeNumber, longitudeNumber);
   } else {
@@ -113,7 +113,7 @@ export async function setGeoLocation(this: XCUITestDriver, location: Partial<Loc
  * @throws {Error} When the underlying reset fails.
  */
 export async function mobileResetLocationService(this: XCUITestDriver): Promise<void> {
-  if (isIos17OrNewer(this.opts)) {
+  if (supportsApiLevel17(this.opts.platformVersion, this.opts.platformName)) {
     this.log.info(`Proxying to mobile:resetSimulatedLocation method for iOS 17+`);
     await this.mobileResetSimulatedLocation();
     return;

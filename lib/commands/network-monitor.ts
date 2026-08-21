@@ -2,7 +2,7 @@ import {errors} from 'appium/driver.js';
 
 import {NetworkMonitorSession} from '../device/network-monitor-session.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isIos18OrNewer} from '../utils/index.js';
+import {supportsApiLevel18} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 
 /**
@@ -17,7 +17,7 @@ import {requireRealDevice} from './helpers/index.js';
 export async function mobileStartNetworkMonitor(this: XCUITestDriver): Promise<void> {
   requireRealDevice(this, 'DVT network monitor');
 
-  if (!isIos18OrNewer(this.opts)) {
+  if (!supportsApiLevel18(this.opts.platformVersion, this.opts.platformName)) {
     throw new errors.InvalidArgumentError(
       `mobile: startNetworkMonitor requires iOS/tvOS 18 or newer. ` +
         `The current platformVersion is '${this.opts.platformVersion ?? 'unknown'}'.`,

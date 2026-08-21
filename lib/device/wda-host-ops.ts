@@ -7,7 +7,7 @@ import type {
 } from 'appium-webdriveragent';
 
 import type {XCUITestDriver} from '../driver.js';
-import {isIos18OrNewerPlatform, isIos27OrNewerPlatform} from '../utils/index.js';
+import {supportsApiLevel18, supportsApiLevel27} from '../utils/index.js';
 import type {RealDevice} from './real-device-management.js';
 
 const XCODE_ONLY_CAPS = [
@@ -121,7 +121,7 @@ export function assertWdaHostPlatformSupported(driver: XCUITestDriver): void {
     );
   }
 
-  if (driver.opts.platformVersion && !isIos18OrNewerPlatform(driver.opts.platformVersion)) {
+  if (driver.opts.platformVersion && !supportsApiLevel18(driver.opts.platformVersion, driver.opts.platformName)) {
     throw new Error(
       `Running preinstalled WebDriverAgent from '${process.platform}' requires a real device ` +
         `with RemoteXPC tunnel support. The current platformVersion is ` +
@@ -184,7 +184,7 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
           await dvt.dvtService.close();
         }
       } catch (err) {
-        if (isIos27OrNewerPlatform(driver.opts.platformVersion)) {
+        if (supportsApiLevel27(driver.opts.platformVersion)) {
           throw new Error(`Failed to launch the preinstalled WebDriverAgent via RemoteXPC: ${(err as Error).message}`, {
             cause: err,
           });

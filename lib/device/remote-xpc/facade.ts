@@ -1,7 +1,7 @@
 import type {AppiumLogger} from '@appium/types';
 import type {DevicePortForwarder, LockdownService} from 'appium-ios-remotexpc';
 
-import {isIos18OrNewerPlatform} from '../../utils/index.js';
+import {supportsApiLevel18} from '../../utils/index.js';
 import {getLastRemoteXPCImportError, tryLoadRemoteXPCModule} from './module-loader.js';
 import {isDeviceListedInUsbmux} from './usbmux-utils.js';
 import {
@@ -43,11 +43,11 @@ export class RemoteXPCFacade {
   ) {}
 
   get eligible(): boolean {
-    return this.isRealDevice && isIos18OrNewerPlatform(this.platformVersion);
+    return this.isRealDevice && supportsApiLevel18(this.platformVersion);
   }
 
   static async tryGetServicesStatic(platformVersion: string | null | undefined): Promise<RemoteXPCServices | null> {
-    if (platformVersion && !isIos18OrNewerPlatform(platformVersion)) {
+    if (platformVersion && !supportsApiLevel18(platformVersion)) {
       return null;
     }
     const mod = await tryLoadRemoteXPCModule();
