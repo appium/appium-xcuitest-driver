@@ -1,7 +1,7 @@
 import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {supportsApiLevel27} from '../utils/index.js';
+import {apiLevelRequirementText, supportsApiLevel27} from '../utils/index.js';
 
 export interface VoiceOverSpeechResult {
   utterance: string | null;
@@ -66,9 +66,9 @@ export async function mobileVoiceOverCurrentSpeech(this: XCUITestDriver): Promis
 }
 
 function requireIos27VoiceOver(driver: XCUITestDriver, script: string): void {
-  if (!supportsApiLevel27(driver.opts.platformVersion, driver.opts.platformName)) {
+  if (!supportsApiLevel27(driver.opts.platformVersion)) {
     throw new errors.InvalidArgumentError(
-      `${script} requires iOS/tvOS 27 or newer. ` +
+      `${script} requires ${apiLevelRequirementText(27, driver.opts.platformName)} or newer. ` +
         `The current platformVersion is '${driver.opts.platformVersion ?? 'unknown'}'.`,
     );
   }

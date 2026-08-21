@@ -8,7 +8,7 @@ import {retryInterval} from 'asyncbox';
 import {installToRealDevice} from '../../device/real-device-management.js';
 import {installToSimulator} from '../../device/simulator-management.js';
 import type {XCUITestDriver} from '../../driver.js';
-import {isPlainObject, supportsApiLevel17} from '../../utils/index.js';
+import {apiLevelRequirementText, isPlainObject, supportsApiLevel17} from '../../utils/index.js';
 import {isLocalHost} from '../helpers/index.js';
 import {markSystemFilesForCleanup} from './cleanup.js';
 import {
@@ -140,11 +140,11 @@ function assertUsePreinstalledWdaSupported(driver: XCUITestDriver): void {
   }
 
   if (!supportsApiLevel17(driver.opts.platformVersion, driver.opts.platformName)) {
-    const {platformVersion} = driver.opts;
+    const {platformVersion, platformName} = driver.opts;
     throw new Error(
-      `The 'usePreinstalledWDA' capability is only supported on iOS/tvOS 17.0 and newer ` +
+      `The 'usePreinstalledWDA' capability is only supported on ${apiLevelRequirementText(17, platformName)} and newer ` +
         `(the current 'platformVersion' capability value is '${platformVersion}'). ` +
-        `WebDriverAgent v13 no longer uses the legacy XCTest launch path that was required on iOS 16 and below. ` +
+        `WebDriverAgent v13 no longer uses the legacy XCTest launch path that was required before that. ` +
         `Use the default xcodebuild flow or provide 'webDriverAgentUrl' instead.`,
     );
   }

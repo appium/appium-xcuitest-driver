@@ -11,6 +11,7 @@ export {
 } from './lang.js';
 export {memoize} from './memoize.js';
 export {
+  apiLevelRequirementText,
   isTvOs,
   isWatchOs,
   normalizePlatformName,

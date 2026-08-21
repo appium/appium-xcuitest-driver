@@ -184,7 +184,7 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
           await dvt.dvtService.close();
         }
       } catch (err) {
-        if (supportsApiLevel27(driver.opts.platformVersion, driver.opts.platformName)) {
+        if (supportsApiLevel27(driver.opts.platformVersion)) {
           throw new Error(`Failed to launch the preinstalled WebDriverAgent via RemoteXPC: ${(err as Error).message}`, {
             cause: err,
           });

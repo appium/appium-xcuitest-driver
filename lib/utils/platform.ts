@@ -43,9 +43,30 @@ export function supportsApiLevel18(platformVersion?: string | null, platformName
   return supportsApiLevel(18, platformVersion, platformName);
 }
 
-/** Like {@link supportsApiLevel17}, gated at API level 27 instead. */
-export function supportsApiLevel27(platformVersion?: string | null, platformName?: string | null): boolean {
-  return supportsApiLevel(27, platformVersion, platformName);
+/**
+ * Like {@link supportsApiLevel17}, gated at API level 27 instead.
+ *
+ * No `platformName` param: watchOS 26+ is already numerically aligned with iOS/tvOS (see
+ * {@link WATCHOS_EQUIVALENT_VERSION}), so a raw compare against `platformVersion` is correct here
+ * regardless of platform.
+ */
+export function supportsApiLevel27(platformVersion?: string | null): boolean {
+  return supportsApiLevel(27, platformVersion);
+}
+
+/**
+ * Human-readable minimum-version requirement text for an API level gate (e.g.
+ * {@link supportsApiLevel17}), phrased for the given `platformName` when known - e.g.
+ * `"watchOS 10.0"` or `"tvOS 17.0"` - so error messages don't tell a watchOS user to upgrade to an
+ * iOS/tvOS version number that has no watchOS equivalent. Falls back to a platform-agnostic
+ * `"API level N"` when `platformName` isn't set.
+ */
+export function apiLevelRequirementText(apiLevel: number, platformName?: string | null): string {
+  if (!platformName) {
+    return `API level ${apiLevel}`;
+  }
+  const version = isWatchOs(platformName) ? watchOsEquivalentVersion(apiLevel) : `${apiLevel}.0`;
+  return `${platformName} ${version}`;
 }
 
 /**
@@ -61,6 +82,11 @@ const WATCHOS_EQUIVALENT_VERSION: Readonly<Record<number, string>> = {
   18: '11.0',
 };
 
+/** The watchOS-native version that corresponds to the given iOS/tvOS API level. */
+function watchOsEquivalentVersion(apiLevel: number): string {
+  return WATCHOS_EQUIVALENT_VERSION[apiLevel] ?? `${apiLevel}.0`;
+}
+
 /**
  * Whether the session's WDA build exposes the feature set introduced at the given iOS/tvOS API
  * level, accounting for watchOS's differently-numbered (and, pre-26, offset) platformVersion.
@@ -69,6 +95,6 @@ function supportsApiLevel(apiLevel: number, platformVersion?: string | null, pla
   if (!platformVersion) {
     return false;
   }
-  const threshold = (isWatchOs(platformName) && WATCHOS_EQUIVALENT_VERSION[apiLevel]) || `${apiLevel}.0`;
+  const threshold = isWatchOs(platformName) ? watchOsEquivalentVersion(apiLevel) : `${apiLevel}.0`;
   return util.compareVersions(platformVersion, '>=', threshold);
 }
