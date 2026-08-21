@@ -39,9 +39,7 @@ Digital Crown rotation and hand gestures are available through the
 ## Known Limitations
 
 * Only the Simulator is supported; real watchOS devices cannot be used as automation targets
-* Standard W3C gesture/touch actions (e.g. tap/swipe via the Actions API) do not work; use
-  [`mobile: performHandGesture`](../reference/execute-methods.md#mobile-performhandgesture) instead
-* The `flick` hand gesture requires watchOS 26+; only `doubleTap` is universally supported
+* Standard W3C gesture/touch actions (e.g. tap/swipe via the Actions API) do not work
 
 ## Related Tickets
 
