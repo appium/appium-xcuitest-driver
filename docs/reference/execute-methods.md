@@ -609,6 +609,34 @@ Name | Type | Required | Description | Example
 name | string | yes | The name of the button to be pressed. Must match one of the values listed above (case-insensitive)  | `home`
 durationSeconds | number | no | (tvOS only) Duration to keep the button pressed for, in float seconds | 10
 
+### mobile: rotateDigitalCrown
+
+Rotates the Digital Crown on a watchOS Simulator. Only supported on watchOS. Wraps
+[`rotateDigitalCrown(delta:velocity:)`](https://developer.apple.com/documentation/xcuiautomation/xcuidevice/rotatedigitalcrown(delta:velocity:)).
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+delta | number | yes | The number of full crown rotations, e.g. `1.0` is one complete turn. The sign gives the direction: positive rotates up/clockwise, negative rotates down/counterclockwise | `0.2`
+velocity | number | no | The rotation speed, in rotations per second. If not provided, XCTest's own default velocity is used | `1.0`
+
+### mobile: performHandGesture
+
+Performs a hand gesture on a watchOS Simulator. Only supported on watchOS. Wraps
+[`perform(handGesture:)`](https://developer.apple.com/documentation/xcuiautomation/xcuidevice/perform(handgesture:)).
+
+The following values are supported for `name`:
+
+* `doubleTap` (watchOS 10+)
+* `flick` (watchOS 26+)
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+name | string | yes | The name of the hand gesture to perform (case-insensitive). Must match one of the values listed above | `doubleTap`
+
 ### mobile: pushNotification
 
 Simulates push notification delivery to Simulator.

@@ -88,6 +88,7 @@ import * as systemMonitorCommands from './commands/system-monitor.js';
 import * as timeoutCommands from './commands/timeouts.js';
 import type {WaitingAtoms, LogListener, FullContext} from './commands/types.js';
 import * as voiceOverCommands from './commands/voiceover.js';
+import * as watchCommands from './commands/watch.js';
 import {isXcodebuildNeeded as isWdaXcodebuildNeeded} from './commands/wda/constants.js';
 import {start} from './commands/wda/startup.js';
 import {stop} from './commands/wda/stop.js';
@@ -521,6 +522,12 @@ export class XCUITestDriver
   mobileIsVoiceOverEnabled = voiceOverCommands.mobileIsVoiceOverEnabled;
   mobileVoiceOverMove = voiceOverCommands.mobileVoiceOverMove;
   mobileVoiceOverCurrentSpeech = voiceOverCommands.mobileVoiceOverCurrentSpeech;
+
+  /*-------+
+   | WATCH |
+   +-------+*/
+  mobileRotateDigitalCrown = watchCommands.mobileRotateDigitalCrown;
+  mobilePerformHandGesture = watchCommands.mobilePerformHandGesture;
 
   /*---------+
    | GESTURE |

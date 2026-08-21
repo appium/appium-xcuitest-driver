@@ -370,6 +370,11 @@ export type ButtonName = AnyCase<
 >;
 
 /**
+ * watchOS hand gesture names; used by the {@linkcode XCUITest.mobilePerformHandGesture mobile: performHandGesture} command.
+ */
+export type HandGestureName = AnyCase<'doubleTap' | 'flick'>;
+
+/**
  * Returned in the {@linkcode XCUITest.mobileGetAppearance mobile: getAppearance} command response.
  */
 export type Style = 'dark' | 'light' | 'unsupported' | 'unknown';

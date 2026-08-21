@@ -2,7 +2,7 @@ import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 
 import type {RealDevice} from '../../device/real-device-management.js';
-import {upperFirst} from '../../utils/index.js';
+import {isWatchOs, upperFirst} from '../../utils/index.js';
 
 export interface DeviceGuardDriver {
   isSimulator(): boolean;
@@ -12,6 +12,10 @@ export interface DeviceGuardDriver {
 
 export interface WebContextGuardDriver {
   isWebContext(): boolean;
+}
+
+export interface PlatformGuardDriver {
+  readonly opts: {platformName?: string | null};
 }
 
 /**
@@ -42,5 +46,14 @@ export function requireRealDevice(driver: DeviceGuardDriver, action: string): Re
 export function requireWebContext(driver: WebContextGuardDriver, message?: string): void {
   if (!driver.isWebContext()) {
     throw new errors.NotImplementedError(message);
+  }
+}
+
+/**
+ * Requires that the given driver's session was started with `platformName: watchOS`.
+ */
+export function requireWatchOs(driver: PlatformGuardDriver, action: string): void {
+  if (!isWatchOs(driver.opts.platformName)) {
+    throw new errors.NotImplementedError(`${upperFirst(action)} can only be performed on watchOS`);
   }
 }

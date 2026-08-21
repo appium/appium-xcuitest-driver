@@ -284,6 +284,19 @@ export const executeMethodMap = {
       optional: ['durationSeconds'],
     },
   },
+  'mobile: rotateDigitalCrown': {
+    command: 'mobileRotateDigitalCrown',
+    params: {
+      required: ['delta'],
+      optional: ['velocity'],
+    },
+  },
+  'mobile: performHandGesture': {
+    command: 'mobilePerformHandGesture',
+    params: {
+      required: ['name'],
+    },
+  },
   'mobile: enrollBiometric': {
     command: 'mobileEnrollBiometric',
     params: {
