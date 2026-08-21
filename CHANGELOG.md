@@ -1,3 +1,9 @@
+## [12.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.6.0...v12.7.0) (2026-08-21)
+
+### Features
+
+* add mobile: rotateDigitalCrown and mobile: performHandGesture for watchOS ([#2953](https://github.com/appium/appium-xcuitest-driver/issues/2953)) ([db6877c](https://github.com/appium/appium-xcuitest-driver/commit/db6877cd743981a8d16f579d224dcae127668e1f))
+
 ## [12.6.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.5.1...v12.6.0) (2026-08-20)
 
 ### Features
