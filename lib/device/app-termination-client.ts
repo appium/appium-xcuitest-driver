@@ -3,7 +3,7 @@ import type {AppiumLogger} from '@appium/types';
 import {services, INSTRUMENT_CHANNEL} from 'appium-ios-device';
 import type {Devicectl} from 'node-devicectl';
 
-import {isEmpty, isIos17OrNewerPlatform} from '../utils/index.js';
+import {isEmpty, supportsApiLevel17} from '../utils/index.js';
 import {InstallationProxyClient} from './installation-proxy-client.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
@@ -68,7 +68,7 @@ export class AppTerminationClient {
       }
       const executableName = apps[bundleId].CFBundleExecutable;
       this.log.debug(`The executable name for the bundle id '${bundleId}' was '${executableName}'`);
-      if (isIos17OrNewerPlatform(this.platformVersion)) {
+      if (supportsApiLevel17(this.platformVersion)) {
         if (process.platform !== 'darwin') {
           return {
             terminated: false,

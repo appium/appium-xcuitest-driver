@@ -3,10 +3,6 @@ import * as semver from 'semver';
 
 import {PLATFORM_NAME_IOS, PLATFORM_NAME_TVOS, PLATFORM_NAME_WATCHOS} from '../constants.js';
 
-export interface PlatformVersionOpts {
-  platformVersion?: string | null;
-}
-
 /** Check if platform name is the TV OS one. */
 export function isTvOs(platformName: string | null | undefined): boolean {
   return String(platformName ?? '').toLowerCase() === PLATFORM_NAME_TVOS.toLowerCase();
@@ -37,32 +33,42 @@ export function normalizePlatformVersion(originalVersion: string): string {
   return `${normalizedVersion.major}.${normalizedVersion.minor}`;
 }
 
-/** Platform-version predicate for iOS 17+. */
-export function isIos17OrNewerPlatform(platformVersion?: string | null): boolean {
-  return !!platformVersion && util.compareVersions(platformVersion, '>=', '17.0');
+/** Whether the session's WDA build exposes the API-17-era feature set (e.g. XCTest simulated location). */
+export function supportsApiLevel17(platformVersion?: string | null, platformName?: string | null): boolean {
+  return supportsApiLevel(17, platformVersion, platformName);
 }
 
-/** Platform-version predicate for iOS 18+. */
-export function isIos18OrNewerPlatform(platformVersion?: string | null): boolean {
-  return !!platformVersion && util.compareVersions(platformVersion, '>=', '18.0');
+/** Like {@link supportsApiLevel17}, gated at API level 18 instead. */
+export function supportsApiLevel18(platformVersion?: string | null, platformName?: string | null): boolean {
+  return supportsApiLevel(18, platformVersion, platformName);
 }
 
-/** Platform-version predicate for iOS 27+. */
-export function isIos27OrNewerPlatform(platformVersion?: string | null): boolean {
-  return !!platformVersion && util.compareVersions(platformVersion, '>=', '27.0');
+/** Like {@link supportsApiLevel17}, gated at API level 27 instead. */
+export function supportsApiLevel27(platformVersion?: string | null, platformName?: string | null): boolean {
+  return supportsApiLevel(27, platformVersion, platformName);
 }
 
-/** Version-gate helper for iOS 17+ capabilities. */
-export function isIos17OrNewer(opts: PlatformVersionOpts): boolean {
-  return isIos17OrNewerPlatform(opts.platformVersion);
-}
+/**
+ * watchOS's own version numbering only aligns with iOS/tvOS's from version 26 onward (Apple's 2025
+ * unification to year-based versioning). Before that, watchOS had its own, offset numbering -
+ * watchOS 10 shipped alongside iOS/tvOS 17, watchOS 11 alongside iOS/tvOS 18 - so an API-level gate
+ * below 26 needs watchOS's own equivalent version, not a raw compare against the iOS/tvOS number.
+ * There is no watchOS 12-25: Apple jumped straight from 11 (2024) to 26 (2025), so every API level
+ * from 26 up is already numerically aligned and needs no entry here.
+ */
+const WATCHOS_EQUIVALENT_VERSION: Readonly<Record<number, string>> = {
+  17: '10.0',
+  18: '11.0',
+};
 
-/** Version-gate helper for iOS 18+ capabilities. */
-export function isIos18OrNewer(opts: PlatformVersionOpts): boolean {
-  return isIos18OrNewerPlatform(opts.platformVersion);
-}
-
-/** Version-gate helper for iOS 27+ capabilities. */
-export function isIos27OrNewer(opts: PlatformVersionOpts): boolean {
-  return isIos27OrNewerPlatform(opts.platformVersion);
+/**
+ * Whether the session's WDA build exposes the feature set introduced at the given iOS/tvOS API
+ * level, accounting for watchOS's differently-numbered (and, pre-26, offset) platformVersion.
+ */
+function supportsApiLevel(apiLevel: number, platformVersion?: string | null, platformName?: string | null): boolean {
+  if (!platformVersion) {
+    return false;
+  }
+  const threshold = (isWatchOs(platformName) && WATCHOS_EQUIVALENT_VERSION[apiLevel]) || `${apiLevel}.0`;
+  return util.compareVersions(platformVersion, '>=', threshold);
 }

@@ -39,7 +39,7 @@ jobs:
             iosVersion: '27.0'
             deviceName: 'iPhone 17'
             tvosVersion: '27.0'
-            tvosDeviceName: 'Apple TV'
+            tvosDeviceName: 'Apple TV 4K (3rd generation)'
             watchosVersion: '27.0'
             watchosDeviceName: 'Apple Watch Series 11 (46mm)'
             platform: xcode-27
@@ -47,7 +47,7 @@ jobs:
             iosVersion: '26.4'
             deviceName: 'iPhone 17'
             tvosVersion: '26.4'
-            tvosDeviceName: 'Apple TV'
+            tvosDeviceName: 'Apple TV 4K (3rd generation)'
             watchosVersion: '26.4'
             watchosDeviceName: 'Apple Watch Series 11 (46mm)'
             platform: macos-26
@@ -55,7 +55,7 @@ jobs:
             iosVersion: '18.5'
             deviceName: 'iPhone 16'
             tvosVersion: '18.5'
-            tvosDeviceName: 'Apple TV'
+            tvosDeviceName: 'Apple TV 4K (3rd generation)'
             watchosVersion: '11.5'
             watchosDeviceName: 'Apple Watch Series 10 (46mm)'
             platform: macos-15

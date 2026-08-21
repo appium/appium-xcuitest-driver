@@ -8,7 +8,7 @@ import {retryInterval} from 'asyncbox';
 import {installToRealDevice} from '../../device/real-device-management.js';
 import {installToSimulator} from '../../device/simulator-management.js';
 import type {XCUITestDriver} from '../../driver.js';
-import {isIos17OrNewerPlatform, isPlainObject} from '../../utils/index.js';
+import {isPlainObject, supportsApiLevel17} from '../../utils/index.js';
 import {isLocalHost} from '../helpers/index.js';
 import {markSystemFilesForCleanup} from './cleanup.js';
 import {
@@ -139,8 +139,8 @@ function assertUsePreinstalledWdaSupported(driver: XCUITestDriver): void {
     return;
   }
 
-  const {platformVersion} = driver.opts;
-  if (!isIos17OrNewerPlatform(platformVersion)) {
+  if (!supportsApiLevel17(driver.opts.platformVersion, driver.opts.platformName)) {
+    const {platformVersion} = driver.opts;
     throw new Error(
       `The 'usePreinstalledWDA' capability is only supported on iOS/tvOS 17.0 and newer ` +
         `(the current 'platformVersion' capability value is '${platformVersion}'). ` +

@@ -2,7 +2,7 @@ import {errors} from 'appium/driver.js';
 
 import {SystemMonitorSession} from '../device/system-monitor-session.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isIos18OrNewer} from '../utils/index.js';
+import {supportsApiLevel18} from '../utils/index.js';
 import {requireRealDevice} from './helpers/index.js';
 
 /**
@@ -21,7 +21,7 @@ import {requireRealDevice} from './helpers/index.js';
 export async function mobileStartSystemMonitor(this: XCUITestDriver, intervalMs?: number): Promise<void> {
   requireRealDevice(this, 'DVT system monitor');
 
-  if (!isIos18OrNewer(this.opts)) {
+  if (!supportsApiLevel18(this.opts.platformVersion, this.opts.platformName)) {
     throw new errors.InvalidArgumentError(
       `mobile: startSystemMonitor requires iOS/tvOS 18 or newer. ` +
         `The current platformVersion is '${this.opts.platformVersion ?? 'unknown'}'.`,
