@@ -6,11 +6,11 @@ The XCUITest driver can be configured to launch an already-installed `WebDriverA
 application (WDA) on a real device and a simulator. This allows you to start a session without the `xcodebuild`
 command execution, improving the session startup performance.
 
-!!! warning "iOS/tvOS 17+ required (WebDriverAgent v13+)"
+!!! warning "iOS/tvOS 17 / watchOS 10 or later required (WebDriverAgent v13+)"
 
-    As of WebDriverAgent v13 (XCUITest driver v11.5.0), this approach is only supported on
-    iOS/tvOS 17 and newer. For older OS versions, use the default `xcodebuild` flow, or provide
-    `appium:webDriverAgentUrl` if you already have a running WDA server.
+    As of WebDriverAgent v13 (XCUITest driver v11.5.0), this approach is only supported starting
+    from iOS/tvOS 17 and watchOS 10. For older OS versions, use the default `xcodebuild` flow, or
+    provide `appium:webDriverAgentUrl` if you already have a running WDA server.
 
 ## Capabilities
 

@@ -165,10 +165,11 @@ as normal:
 
 ## Session Actions
 
-Unlike iOS/iPadOS, interactions with tvOS use [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/)
+Unlike iOS/iPadOS/watchOS, interactions with tvOS use [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/)
 based actions. The XCUITest driver implements these actions using the
 [`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton) extension, with support
-for over 10 different buttons. The `menu` button functions as a back button in the iOS context.
+for over 10 different buttons. The `menu` button functions the same as a back button in the iOS
+context.
 
 All actions are performed on the _focused_ element (which has the `focus` attribute set). The
 focused element is automatically changed after using `mobile: pressButton`.
