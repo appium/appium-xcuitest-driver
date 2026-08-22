@@ -62,7 +62,7 @@ server versions is not straightforward, the following approach is recommended:
 Xcode compatibility with a device under test requires Xcode to bundle the SDK for the
 iOS/iPadOS/tvOS/watchOS version running on the device. Apple lists the minimum required Xcode
 versions in their device SDK release notes, which are linked here. Open the page for the OS version
-of your device under test, and look for the line `The SDK comes bundled with Xcode`:
+of your device under test, and look for the line 'The SDK comes bundled with Xcode':
 
 * [iOS & iPadOS Release Notes](https://developer.apple.com/documentation/ios-ipados-release-notes)
 * [tvOS Release Notes](https://developer.apple.com/documentation/tvos-release-notes)
@@ -140,29 +140,26 @@ versions, and any major workarounds are unlikely.
 
 ## Xcode to macOS
 
-Any Xcode version has a minimum and maximum supported macOS version, though the aforementioned
-Xcode Release Notes only list the minimum version (with exceptions). Still, it can generally be
-assumed that if a major Xcode version requires at least macOS version `X`, then it will no longer
-run on macOS version `X+2`.[^xcode-macos] The following table combines this information:
+Similarly to device OS compatibility with Xcode, any Xcode version also has a minimum and maximum
+supported macOS version. Apple lists the minimum required macOS versions in the
+[Xcode Release Notes](https://developer.apple.com/documentation/xcode-release-notes/):
+open the page for the your Xcode version and look for the line 'requires a Mac running`.
 
-| Xcode version | Supported macOS versions |
+Maximum supported macOS versions are not listed in the release notes (with exceptions), but it can
+generally be assumed that if the first release of a major Xcode version requires at least macOS
+version `X`, then it will no longer run on macOS version `X+2`:[^xcode-macos]
+
+| Xcode version | Last supported macOS version |
 | --- | --- |
-| 27.0 | macOS >= 26.4 |
-| 26.4 - 26.6 | macOS 26.2 - 26.x |
-| 26.0 - 26.3 | macOS 15.6 - 26.x |
-| 16.4 | macOS 15.3 - 26.1 |
-| 16.3 | macOS 15.2 - 15.x |
-| 16.0 - 16.2 | macOS 14.5 - 15.x |
-| 15.3 - 15.4 | macOS 14.0 - 14.x |
-| 15.0 - 15.2 | macOS 13.5 - 14.x |
-| 14.3 - 14.3.1 | macOS 13.0 - 13.x |
-| 14.0 - 14.2 | macOS 12.5 - 13.x |
-| 13.3 - 13.4.1 | macOS 12.0 - 12.x |
-| 13.0 - 13.2.1 | macOS 11.3 - 12.x |
-| 12.5 - 12.5.1 | macOS 11.0 - 11.x |
-| 12.0 - 12.4 | macOS 10.15.4 - 11.x |
-| 11.4 - 11.7 | macOS 10.15.2 - 10.15.x |
-| 11.0 - 11.3.1 | macOS 10.14.4 - 10.15.x |
+| 27.0 | N/A |
+| 26.0 - 26.x | macOS 26.x |
+| 16.4 | macOS 26.1 |
+| 16.0 - 16.3 | macOS 15.x |
+| 15.0 - 15.x | macOS 14.x |
+| 14.0 - 14.x | macOS 13.x |
+| 13.0 - 13.x | macOS 12.x |
+| 12.0 - 12.x | macOS 11.x |
+| 11.0 - 11.x | macOS 10.15.x |
 
 ## Driver to Appium Server
 
