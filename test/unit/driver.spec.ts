@@ -267,6 +267,7 @@ describe('XCUITestDriver', function () {
           setReduceTransparency: () => {},
           setAutoFillPasswords: () => {},
           reset: () => {},
+          attachRemoteXPCFacade: () => {},
         };
         const cacheMock = sandbox.mock(driver.appInfosCache);
         cacheMock.expects('extractBundleId').once().returns('bundle.id');
