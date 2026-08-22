@@ -807,7 +807,7 @@ export class XCUITestDriver
       alertMonitor: undefined,
       alertMonitorAbortController: undefined,
     };
-    this.resetIos();
+    this.resetProperties();
     this.settings = new DeviceSettings(DEFAULT_SETTINGS, this.onSettingsUpdate.bind(this));
     this.logs = {} as DriverLogs;
     this._networkMonitorSession = null;
@@ -862,7 +862,6 @@ export class XCUITestDriver
     await sessionClaimHandler.registerActiveSession(this);
   }
 
-  // Override methods from BaseDriver
   override async createSession(
     w3cCaps1: W3CXCUITestDriverCaps,
     w3cCaps2?: W3CXCUITestDriverCaps,
@@ -885,41 +884,7 @@ export class XCUITestDriver
       caps = {...defaultServerCaps, ...caps};
       // update the udid with what is actually used
       caps.udid = this.opts.udid;
-      // ensure we track nativeWebTap capability as a setting as well
-      if (Object.hasOwn(this.opts, 'nativeWebTap')) {
-        await this.updateSettings({nativeWebTap: this.opts.nativeWebTap});
-      }
-      // ensure we track nativeWebTapStrict capability as a setting as well
-      if (Object.hasOwn(this.opts, 'nativeWebTapStrict')) {
-        await this.updateSettings({nativeWebTapStrict: this.opts.nativeWebTapStrict});
-      }
-      // ensure we track useJSONSource capability as a setting as well
-      if (Object.hasOwn(this.opts, 'useJSONSource')) {
-        await this.updateSettings({useJSONSource: this.opts.useJSONSource});
-      }
-
-      const wdaSettings: StringRecord = {
-        elementResponseAttributes: DEFAULT_SETTINGS.elementResponseAttributes,
-        shouldUseCompactResponses: DEFAULT_SETTINGS.shouldUseCompactResponses,
-      };
-      if ('elementResponseAttributes' in this.opts && typeof this.opts.elementResponseAttributes === 'string') {
-        wdaSettings.elementResponseAttributes = this.opts.elementResponseAttributes;
-      }
-      if ('shouldUseCompactResponses' in this.opts && typeof this.opts.shouldUseCompactResponses === 'boolean') {
-        wdaSettings.shouldUseCompactResponses = this.opts.shouldUseCompactResponses;
-      }
-      if ('mjpegServerScreenshotQuality' in this.opts && typeof this.opts.mjpegServerScreenshotQuality === 'number') {
-        wdaSettings.mjpegServerScreenshotQuality = this.opts.mjpegServerScreenshotQuality;
-      }
-      if ('mjpegServerFramerate' in this.opts && typeof this.opts.mjpegServerFramerate === 'number') {
-        wdaSettings.mjpegServerFramerate = this.opts.mjpegServerFramerate;
-      }
-      if (Object.hasOwn(this.opts, 'screenshotQuality')) {
-        this.log.info(`Setting the quality of phone screenshot: '${this.opts.screenshotQuality}'`);
-        wdaSettings.screenshotQuality = this.opts.screenshotQuality;
-      }
-      // ensure WDA gets our defaults instead of whatever its own might be
-      await this.updateSettings(wdaSettings);
+      await this.setupSessionSettings();
 
       await handleMjpegOptions(this);
 
@@ -1005,7 +970,7 @@ export class XCUITestDriver
       this.mjpegStream.stop();
     }
 
-    this.resetIos();
+    this.resetProperties();
 
     this._remoteXPCFacade = null;
 
@@ -1265,6 +1230,17 @@ export class XCUITestDriver
     this.opts.noReset = !!this.opts.noReset;
     this.opts.fullReset = !!this.opts.fullReset;
 
+    await this.resolveTargetDevice();
+    await this.preparePlatformEnvironment();
+    await this.configureAUT();
+    await this.runReset();
+    this.setupWda();
+    await this.setupDevice();
+    await this.installAppUnderTest();
+    await this.finalizeSessionStartup();
+  }
+
+  private async resolveTargetDevice(): Promise<void> {
     printUser();
     this._iosSdkVersion = null; // For WDA and xcodebuild
     assertWdaHostSessionCapsSupported(this.opts);
@@ -1291,7 +1267,9 @@ export class XCUITestDriver
         (this.device as Simulator).devicesSetPath = this.opts.simulatorDevicesSetPath;
       }
     }
+  }
 
+  private async preparePlatformEnvironment(): Promise<void> {
     if (!this.opts.platformVersion) {
       throw new Error('Could not determine platformVersion for the selected device');
     }
@@ -1304,8 +1282,8 @@ export class XCUITestDriver
     }
     this.caps.platformVersion = this.opts.platformVersion;
 
-    if (realDevice) {
-      (device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade(true));
+    if (this.isRealDevice()) {
+      (this.device as RealDevice).attachRemoteXPCFacade(this.getOrCreateRemoteXPCFacade(true));
     }
 
     assertWdaHostPlatformSupported(this);
@@ -1315,7 +1293,9 @@ export class XCUITestDriver
       this.xcodeVersion = await getAndCheckXcodeVersion();
     }
     this.logEvent('xcodeDetailsRetrieved');
+  }
 
+  private async configureAUT(): Promise<void> {
     if (String(this.opts.browserName).toLowerCase() === 'safari') {
       this.log.info('Safari test requested');
       this.safari = true;
@@ -1338,9 +1318,9 @@ export class XCUITestDriver
         this.opts.bundleId = await this.appInfosCache.extractBundleId(this.opts.app);
       }
     }
+  }
 
-    await this.runReset();
-
+  private setupWda(): void {
     this._wda = new WebDriverAgent(
       {
         ...this.opts,
@@ -1362,7 +1342,9 @@ export class XCUITestDriver
         this.log.debug(e);
       }
     })();
+  }
 
+  private async setupDevice(): Promise<void> {
     const memoizedLogInfo = memoize(() => {
       this.log.info(
         "'skipLogCapture' is set. Skipping starting logs such as crash, system, safari console and safari network.",
@@ -1394,7 +1376,9 @@ export class XCUITestDriver
       await certificateCommands.installCustomSslCertFromCapability.bind(this)();
       this.logEvent('customCertInstalled');
     }
+  }
 
+  private async installAppUnderTest(): Promise<void> {
     await installAUT(this);
 
     // if we only have bundle identifier and no app, fail if it is not already installed
@@ -1415,7 +1399,9 @@ export class XCUITestDriver
         }
       }
     }
+  }
 
+  private async finalizeSessionStartup(): Promise<void> {
     await this.startWda();
 
     if (typeof this.opts.orientation === 'string') {
@@ -1442,6 +1428,44 @@ export class XCUITestDriver
         this.setCurrentUrl(currentUrl);
       }
     }
+  }
+
+  private async setupSessionSettings(): Promise<void> {
+    // ensure we track nativeWebTap capability as a setting as well
+    if (Object.hasOwn(this.opts, 'nativeWebTap')) {
+      await this.updateSettings({nativeWebTap: this.opts.nativeWebTap});
+    }
+    // ensure we track nativeWebTapStrict capability as a setting as well
+    if (Object.hasOwn(this.opts, 'nativeWebTapStrict')) {
+      await this.updateSettings({nativeWebTapStrict: this.opts.nativeWebTapStrict});
+    }
+    // ensure we track useJSONSource capability as a setting as well
+    if (Object.hasOwn(this.opts, 'useJSONSource')) {
+      await this.updateSettings({useJSONSource: this.opts.useJSONSource});
+    }
+
+    const wdaSettings: StringRecord = {
+      elementResponseAttributes: DEFAULT_SETTINGS.elementResponseAttributes,
+      shouldUseCompactResponses: DEFAULT_SETTINGS.shouldUseCompactResponses,
+    };
+    if ('elementResponseAttributes' in this.opts && typeof this.opts.elementResponseAttributes === 'string') {
+      wdaSettings.elementResponseAttributes = this.opts.elementResponseAttributes;
+    }
+    if ('shouldUseCompactResponses' in this.opts && typeof this.opts.shouldUseCompactResponses === 'boolean') {
+      wdaSettings.shouldUseCompactResponses = this.opts.shouldUseCompactResponses;
+    }
+    if ('mjpegServerScreenshotQuality' in this.opts && typeof this.opts.mjpegServerScreenshotQuality === 'number') {
+      wdaSettings.mjpegServerScreenshotQuality = this.opts.mjpegServerScreenshotQuality;
+    }
+    if ('mjpegServerFramerate' in this.opts && typeof this.opts.mjpegServerFramerate === 'number') {
+      wdaSettings.mjpegServerFramerate = this.opts.mjpegServerFramerate;
+    }
+    if (Object.hasOwn(this.opts, 'screenshotQuality')) {
+      this.log.info(`Setting the quality of phone screenshot: '${this.opts.screenshotQuality}'`);
+      wdaSettings.screenshotQuality = this.opts.screenshotQuality;
+    }
+    // ensure WDA gets our defaults instead of whatever its own might be
+    await this.updateSettings(wdaSettings);
   }
 
   private async runReset(enforceSimulatorShutdown = false): Promise<void> {
@@ -1541,7 +1565,7 @@ export class XCUITestDriver
     }
   }
 
-  private resetIos(): void {
+  private resetProperties(): void {
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;
