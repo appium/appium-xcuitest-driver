@@ -186,6 +186,27 @@ All suggestions mentioned for the [Slow Element Search Using XPath pattern](#sol
 here.
 
 
+## Unresponsive Application
+
+You observe WebDriverAgent hanging indefinitely (e.g. on element lookups or active app detection)
+when the application under test stops responding, instead of failing with a timeout error.
+
+### Causes
+
+Most element/attribute lookups rely on an underlying accessibility snapshot request, for which
+XCTest provides no bounded timeout. If the application's main run loop stops responding, this
+request can block WDA forever. This can happen if the app deadlocks, but also if it simply keeps
+the main thread constantly busy (e.g. playing video/animations without yielding), which prevents
+it from acknowledging the accessibility request in time.
+
+### Solutions
+
+Set the [`accessibilityDeadline`](../reference/settings.md#accessibilitydeadline) setting to a
+positive value (in seconds). Once enabled, WDA first confirms the application is responsive before
+proceeding with the snapshot request, and aborts with an error if it does not respond within the
+deadline, instead of hanging indefinitely. This setting is disabled by default.
+
+
 ## Slow Element Interactions
 
 You observe timeouts or unusual slowness while clicking elements or performing other
