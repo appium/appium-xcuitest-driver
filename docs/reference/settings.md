@@ -32,7 +32,13 @@ playback) could otherwise block WebDriverAgent forever.
 
 Setting this value to `0` (the default) or a negative number disables the check, restoring the
 unbounded behavior. Once the deadline is exceeded, the pending request is aborted with an error
-instead of hanging indefinitely. See the
+instead of hanging indefinitely.
+
+This is not a silver bullet: if the application under test genuinely has long-running animations
+or transitions, a low deadline would make requests fail (or retry, and thus become much slower)
+rather than simply waiting them out. Since this is a per-session setting, it is best applied
+surgically, e.g. only around the specific steps of your test where an unresponsive app is a real
+risk, rather than left enabled for the whole session. See the
 [WebDriverAgent Slowness](../troubleshooting/wda-slowness.md#unresponsive-application) guide for
 more details.
 

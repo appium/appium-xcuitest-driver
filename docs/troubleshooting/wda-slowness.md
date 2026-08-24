@@ -206,6 +206,14 @@ positive value (in seconds). Once enabled, WDA first confirms the application is
 proceeding with the snapshot request, and aborts with an error if it does not respond within the
 deadline, instead of hanging indefinitely. This setting is disabled by default.
 
+This setting is not a silver bullet: it only helps avoid situations where the driver/WDA response
+is blocked for too long, and does not speed up or fix genuinely slow interactions. If the
+application under test has legitimately long animations or transitions, enabling this setting for
+the whole session may make unrelated requests fail or retry, and thus become (much) slower.
+Because it is a per-session setting, it is best applied surgically, i.e. toggled on only around the
+critical steps of your test where an unresponsive app is an actual risk, and toggled back off
+afterwards.
+
 
 ## Slow Element Interactions
 
