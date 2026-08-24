@@ -18,6 +18,30 @@ expression, where the search root is the alert element itself, for example, ```*
 If the provided selector is wrong or does not match any element, the default button location
 algorithm is used.
 
+## accessibilityDeadline
+
+| Type | Default |
+| -- | -- |
+| `float` | `0` |
+
+The maximum time in seconds to wait for the frontmost application to confirm its main run loop is
+responsive before an accessibility snapshot request (element attribute lookups, active app
+detection, etc). XCTest has no bounded timeout of its own for this, so an application whose main
+thread stops responding (e.g. it deadlocks, or is kept constantly busy by video/animation
+playback) could otherwise block WebDriverAgent forever.
+
+Setting this value to `0` (the default) or a negative number disables the check, restoring the
+unbounded behavior. Once the deadline is exceeded, the pending request is aborted with an error
+instead of hanging indefinitely.
+
+This is not a silver bullet: if the application under test genuinely has long-running animations
+or transitions, a low deadline would make requests fail (or retry, and thus become much slower)
+rather than simply waiting them out. Since this is a per-session setting, it is best applied
+surgically, e.g. only around the specific steps of your test where an unresponsive app is a real
+risk, rather than left enabled for the whole session. See the
+[WebDriverAgent Slowness](../troubleshooting/wda-slowness.md#unresponsive-application) guide for
+more details.
+
 ## activeAppDetectionPoint
 
 | Type | Default |
