@@ -1,3 +1,13 @@
+## [12.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.7.0...v12.8.0) (2026-08-24)
+
+### Features
+
+* bump appium-webdriveragent to 16.8.0 and document accessibilityDeadline ([#2957](https://github.com/appium/appium-xcuitest-driver/issues/2957)) ([2e68d58](https://github.com/appium/appium-xcuitest-driver/commit/2e68d5827d0845655936fb0c64b7a9c45bcc493f))
+
+### Code Refactoring
+
+* Split some driver methods ([#2956](https://github.com/appium/appium-xcuitest-driver/issues/2956)) ([ec4dc7e](https://github.com/appium/appium-xcuitest-driver/commit/ec4dc7e2fb8f7db94551466e7c5b293f9b5d133f))
+
 ## [12.7.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.6.0...v12.7.0) (2026-08-21)
 
 ### Features
