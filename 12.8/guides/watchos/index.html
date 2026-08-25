@@ -3210,8 +3210,13 @@
   <h1>watchOS Automation</h1>
 
 <p>The XCUITest driver supports automation of the watchOS platform. <strong>Only the Simulator is
-supported</strong> - there is no viable real-device WDA distribution/testing story for watchOS, so
-sessions requesting a real watchOS device will fail.</p>
+supported</strong> - sessions requesting a real watchOS device will fail.</p>
+<p>Sessions running on watchOS have the following minimum requirements:</p>
+<ul>
+<li>XCUITest driver 12.6.0 or later (WebDriverAgent 16.5.0 or later)</li>
+<li>Xcode 15.4 or later</li>
+<li>watchOS 10 or later</li>
+</ul>
 <p>All watchOS sessions must set their <code>platformName</code> capability to <code>watchOS</code> (instead of <code>iOS</code>).</p>
 <h2 id="simulator-setup">Simulator Setup<a class="headerlink" href="#simulator-setup" title="Permanent link">&para;</a></h2>
 <p>Apart from installing the simulator itself, no additional configuration is needed - you can start a
@@ -3225,7 +3230,7 @@ session right away. Make sure to provide the simulator's <code>deviceName</code>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="session-actions">Session Actions<a class="headerlink" href="#session-actions" title="Permanent link">&para;</a></h2>
-<p>Unlike tvOS, watchOS apps are automated the same way as regular iOS/iPadOS apps - the standard
+<p>watchOS apps are automated the same way as regular iOS/iPadOS apps - the standard
 <code>findElement</code>/<code>click</code> methods and other native element interactions work as usual.</p>
 <p>Hardware button presses are available through the <a href="../../reference/execute-methods/#mobile-pressbutton"><code>mobile: pressButton</code></a>
 extension. watchOS only exposes the <code>home</code> button (and <code>action</code>, on models/OS versions that have a
@@ -3266,7 +3271,7 @@ hardware Action button).</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="August 21, 2026 10:34:24 UTC"><span class="timeago" datetime="2026-08-21T10:34:24+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 21, 2026 10:34:24 UTC">2026-08-21</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="August 25, 2026 17:15:19 UTC"><span class="timeago" datetime="2026-08-25T17:15:19+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="August 25, 2026 17:15:19 UTC">2026-08-25</span>
   </span>
 
     
