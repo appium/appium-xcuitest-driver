@@ -49,7 +49,7 @@ Under the hood, the driver combines several different technologies to achieve it
     - Based on Safari's WebKit Remote Debugger Protocol (not officially documented)
     - Provided by the [`appium-remote-debugger`](https://github.com/appium/appium-remote-debugger) library
     - Interaction with webpages relies on Selenium-style "atoms", which are based on the original [Selenium atoms](https://github.com/SeleniumHQ/selenium/tree/trunk/javascript/atoms)
-    - Can use both the W3C WebDriver protocol and the legacy [JSONWP protocol](https://www.selenium.dev/documentation/legacy/json_wire_protocol/)
+    - Uses the W3C WebDriver protocol
     - Alternative support for Safari automation is also provided by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
 - Simulator communication
     - Based on the `xcrun simctl` and other `xcrun` command line utility calls

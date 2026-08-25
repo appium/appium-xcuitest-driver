@@ -147,19 +147,7 @@ open the page for the your Xcode version and look for the line 'requires a Mac r
 
 Maximum supported macOS versions are not listed in the release notes (with exceptions), but it can
 generally be assumed that if the first release of a major Xcode version requires at least macOS
-version `X`, then it will no longer run on macOS version `X+2`:[^xcode-macos]
-
-| Xcode version | Last supported macOS version |
-| --- | --- |
-| 27.0 | N/A |
-| 26.0 - 26.x | macOS 26.x |
-| 16.4 | macOS 26.1 |
-| 16.0 - 16.3 | macOS 15.x |
-| 15.0 - 15.x | macOS 14.x |
-| 14.0 - 14.x | macOS 13.x |
-| 13.0 - 13.x | macOS 12.x |
-| 12.0 - 12.x | macOS 11.x |
-| 11.0 - 11.x | macOS 10.15.x |
+version `X`, then it will no longer run on macOS version `X+2`.[^xcode-macos]
 
 ## Driver to Appium Server
 
