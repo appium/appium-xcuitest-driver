@@ -23,7 +23,7 @@ The driver supports the following Apple platforms as automation targets:
 |Safari (mobile)|:white_check_mark: [^safari-mob]|:white_check_mark: [^safari-mob]|
 |Safari (desktop)|:x: [^safari-desktop]|:x: [^safari-desktop]|
 
-A detailed breakdown of the supported platform versions can be found in [the Installation page](./getting-started/system-requirements.md#driver-version).
+A detailed breakdown of the supported platform versions can be found in [the System Requirements page](./getting-started/system-requirements.md#device-os-to-driver).
 
 ## Contexts
 
@@ -48,9 +48,9 @@ Under the hood, the driver combines several different technologies to achieve it
 - Webview testing
     - Based on Safari's WebKit Remote Debugger Protocol (not officially documented)
     - Provided by the [`appium-remote-debugger`](https://github.com/appium/appium-remote-debugger) library
-    - Interaction with webpages is based on [Selenium atoms](https://github.com/SeleniumHQ/selenium/tree/trunk/javascript/atoms)
-    - Can only use the legacy [JSONWP protocol](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) due to the atoms
-    - Better, WebDriver protocol-compatible support is also provided by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
+    - Interaction with webpages relies on Selenium-style "atoms", which are based on the original [Selenium atoms](https://github.com/SeleniumHQ/selenium/tree/trunk/javascript/atoms)
+    - Uses the W3C WebDriver protocol
+    - Alternative support for Safari automation is also provided by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
 - Simulator communication
     - Based on the `xcrun simctl` and other `xcrun` command line utility calls
     - Provided by the [`appium-ios-simulator`](https://github.com/appium/appium-ios-simulator) library
@@ -94,7 +94,7 @@ flowchart TD
 
   T --> CL
   CL -->|"W3C WebDriver over HTTP"| AS
-  AS -->|"Routes iOS commands"| XD
+  AS -->|"Routes device commands"| XD
   XD -->|"Starts/monitors WDA, proxies commands"| HWS
   XD -->|"Starts/monitors WDA, proxies commands"| HWR
   HWS -->|"xcrun simctl + CoreSimulator tooling"| WDAS
@@ -132,7 +132,7 @@ flowchart TD
 - This driver to real devices: host-device communication uses `usbmux`-based transport, Remote XPC tunneling, and `xcrun devicectl` depending on iOS/tvOS version and environment setup.
 - This driver to simulators: host-simulator communication uses `xcrun simctl` (plus related CoreSimulator tooling).
 
+[^watchos]: Only the Simulator is supported - see [watchOS Automation](./guides/watchos.md)
 [^macos]: Supported by the [Appium Mac2 driver](https://github.com/appium/appium-mac2-driver)
-[^watchos]: There is no viable real-device WDA distribution/testing story for watchOS, so only the Simulator is supported. See [watchOS Automation](./guides/watchos.md).
 [^safari-mob]: Also supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)
 [^safari-desktop]: Supported by the [Appium Safari driver](https://github.com/appium/appium-safari-driver)

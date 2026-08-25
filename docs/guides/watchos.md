@@ -3,8 +3,13 @@ title: watchOS Automation
 ---
 
 The XCUITest driver supports automation of the watchOS platform. **Only the Simulator is
-supported** - there is no viable real-device WDA distribution/testing story for watchOS, so
-sessions requesting a real watchOS device will fail.
+supported** - sessions requesting a real watchOS device will fail.
+
+Sessions running on watchOS have the following minimum requirements:
+
+* XCUITest driver 12.6.0 or later (WebDriverAgent 16.5.0 or later)
+* Xcode 15.4 or later
+* watchOS 10 or later
 
 All watchOS sessions must set their `platformName` capability to `watchOS` (instead of `iOS`).
 
@@ -25,7 +30,7 @@ session right away. Make sure to provide the simulator's `deviceName` and `platf
 
 ## Session Actions
 
-Unlike tvOS, watchOS apps are automated the same way as regular iOS/iPadOS apps - the standard
+watchOS apps are automated the same way as regular iOS/iPadOS apps - the standard
 `findElement`/`click` methods and other native element interactions work as usual.
 
 Hardware button presses are available through the [`mobile: pressButton`](../reference/execute-methods.md#mobile-pressbutton)

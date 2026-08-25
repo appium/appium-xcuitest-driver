@@ -2213,25 +2213,20 @@ elementAttributes | dict | JSON object containing various attributes of the elem
 
 ### mobile: enableVoiceOver
 
-Enables VoiceOver on the device under test. Wraps WebDriverAgent's `/wda/voiceOver/enable` route, which uses XCTest's `XCUIDevice.voiceOverService`.
+Enables VoiceOver on the device under test. Requires iOS/tvOS/watchOS 27 or later.
 
-Requires **iOS/tvOS 27+** (`appium:platformVersion`). The driver rejects the command on older platform versions before proxying to WDA.
+!!! warning
 
-> **Warning**
-> Do not forget to call [mobile: disableVoiceOver](#mobile-disablevoiceover) in test teardown.
-> If VoiceOver is not disabled explicitly, it may remain enabled until disabled explicitly.
+    Do not forget to call [`mobile: disableVoiceOver`](#mobile-disablevoiceover) in test teardown.
+    If VoiceOver is not disabled explicitly, it may remain enabled.
 
 ### mobile: disableVoiceOver
 
-Disables VoiceOver on the device under test.
-
-Requires **iOS/tvOS 27+** (`appium:platformVersion`).
+Disables VoiceOver on the device under test. Requires iOS/tvOS/watchOS 27 or later.
 
 ### mobile: isVoiceOverEnabled
 
-Returns whether VoiceOver is currently enabled.
-
-Requires **iOS/tvOS 27+** (`appium:platformVersion`).
+Returns whether VoiceOver is currently enabled. Requires iOS/tvOS/watchOS 27 or later.
 
 #### Returned Result
 
@@ -2242,8 +2237,9 @@ enabled | boolean | Whether VoiceOver is enabled | true
 ### mobile: voiceOverMove
 
 Moves VoiceOver focus in the given direction and returns the utterance spoken after the move.
+Requires iOS/tvOS/watchOS 27 or later.
 
-Requires **iOS/tvOS 27+** (`appium:platformVersion`). On tvOS, only `forward` and `backward` are supported; `in` and `out` are iOS-only.
+On tvOS/watchOS, only `forward` and `backward` are supported; `in` and `out` are iOS-only.
 
 #### Arguments
 
@@ -2254,14 +2250,13 @@ direction | string | yes | One of `forward`, `backward`, `in` (iOS only), or `ou
 #### Returned Result
 
 Name | Type | Description | Example
---- | --- | --- | --- |
+--- | --- | --- | ---
 utterance | string or null | The spoken utterance after the move, or `null` | Button
 
 ### mobile: voiceOverCurrentSpeech
 
-Returns the current VoiceOver utterance without moving focus.
-
-Requires **iOS/tvOS 27+** (`appium:platformVersion`).
+Returns the current VoiceOver utterance without moving focus. Requires iOS/tvOS/watchOS 27 or
+later.
 
 #### Returned Result
 

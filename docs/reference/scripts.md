@@ -31,7 +31,7 @@ appium driver run xcuitest build-wda
 |<div style="width:6em">Argument</div>|Description|Type|Default|
 |--|--|--|--|
 |`--name`|Name of the simulator device for which WDA should be built. By default, the first available iPhone simulator is used.|string|`iPhone`|
-|`--sdk`|iOS/tvOS version for which WDA should be built. By default, the latest installed iPhone SDK is used (note that this may be different from the latest installed simulator OS version).|string|Result of `xcrun --sdk iphonesimulator --show-sdk-version`|
+|`--sdk`|iOS/tvOS/watchOS version for which WDA should be built. By default, the latest installed iPhone SDK is used (note that this may be different from the latest installed simulator OS version).|string|Result of `xcrun --sdk iphonesimulator --show-sdk-version`|
 |`--help`, `-h`|Return help text and exit|||
 
 #### Examples
