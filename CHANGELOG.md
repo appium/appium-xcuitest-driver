@@ -1,3 +1,9 @@
+## [12.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.1...v12.8.2) (2026-08-26)
+
+### Bug Fixes
+
+* route refresh/getUrl/title through waitForAtom for alert detection ([#2959](https://github.com/appium/appium-xcuitest-driver/issues/2959)) ([0fa28a3](https://github.com/appium/appium-xcuitest-driver/commit/0fa28a30cfa1a0a28919c888e60d4d7815beb7de))
+
 ## [12.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.0...v12.8.1) (2026-08-26)
 
 ### Bug Fixes
