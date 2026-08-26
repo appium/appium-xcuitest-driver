@@ -364,12 +364,14 @@ export async function translateWebCoords(this: XCUITestDriver, x: number, y: num
   const cmd =
     '(function () {return {innerWidth: window.innerWidth, innerHeight: window.innerHeight, ' +
     'outerWidth: window.outerWidth, outerHeight: window.outerHeight}; })()';
-  const wvDims = await this.remote.execute<{
-    innerWidth: number;
-    innerHeight: number;
-    outerWidth: number;
-    outerHeight: number;
-  }>(cmd);
+  const wvDims = await this.waitForAtom(
+    this.remote.execute<{
+      innerWidth: number;
+      innerHeight: number;
+      outerWidth: number;
+      outerHeight: number;
+    }>(cmd),
+  );
   // https://tripleodeon.com/2011/12/first-understand-your-screen/
   const shouldApplyPixelRatio = wvDims.innerWidth > wvDims.outerWidth || wvDims.innerHeight > wvDims.outerHeight;
   const newCoords = {
@@ -442,7 +444,9 @@ async function findWebviewRect(this: XCUITestDriver): Promise<Rect> {
  * top-level page's viewport, regardless of the current frame.
  */
 async function computeViewportSignature(this: XCUITestDriver): Promise<string> {
-  const state = await this.remote.execute<Omit<ViewportState, 'orientation'>>(READ_VIEWPORT_STATE_SCRIPT);
+  const state = await this.waitForAtom(
+    this.remote.execute<Omit<ViewportState, 'orientation'>>(READ_VIEWPORT_STATE_SCRIPT),
+  );
   const orientation: ViewportState['orientation'] = state.innerHeight >= state.innerWidth ? 'PORTRAIT' : 'LANDSCAPE';
   return `${this.curContext ?? ''}::${viewportSignature({...state, orientation})}`;
 }
@@ -466,7 +470,7 @@ async function performCalibration(this: XCUITestDriver): Promise<CalibrationCach
     const centerX = rect.x + rect.width / 2;
     const centerY = rect.y + rect.height / 2;
 
-    await this.remote.execute(INJECT_CALIBRATION_OVERLAY_SCRIPT);
+    await this.waitForAtom(this.remote.execute(INJECT_CALIBRATION_OVERLAY_SCRIPT));
     try {
       const samples: CalibrationSample[] = [];
       for (const [i, sign] of [-1, 1].entries()) {
@@ -481,7 +485,7 @@ async function performCalibration(this: XCUITestDriver): Promise<CalibrationCach
           CALIBRATION_TAP_READBACK_RETRIES,
           CALIBRATION_TAP_READBACK_INTERVAL_MS,
           async () => {
-            const result = await this.remote.execute<Position[]>(READ_CALIBRATION_TAPS_SCRIPT);
+            const result = await this.waitForAtom(this.remote.execute<Position[]>(READ_CALIBRATION_TAPS_SCRIPT));
             if (!Array.isArray(result) || result.length < expectedCount) {
               throw new Error('The calibration overlay has not observed this tap yet');
             }
@@ -499,7 +503,7 @@ async function performCalibration(this: XCUITestDriver): Promise<CalibrationCach
       entry = {signature, data};
     } finally {
       try {
-        await this.remote.execute(REMOVE_CALIBRATION_OVERLAY_SCRIPT);
+        await this.waitForAtom(this.remote.execute(REMOVE_CALIBRATION_OVERLAY_SCRIPT));
       } catch (err) {
         // Don't let a cleanup hiccup mask a real error from the try block
         // above, or abort the retry loop on its own; the overlay-inject
