@@ -122,7 +122,7 @@ export async function submit(this: XCUITestDriver, el: string | Element): Promis
 export async function refresh(this: XCUITestDriver): Promise<void> {
   requireWebContext(this);
 
-  await this.remote.execute('window.location.reload()');
+  await this.waitForAtom(this.remote.execute('window.location.reload()'));
 }
 
 /**
@@ -134,7 +134,7 @@ export async function refresh(this: XCUITestDriver): Promise<void> {
 export async function getUrl(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return await this.remote.execute<string>('window.location.href');
+  return await this.waitForAtom(this.remote.execute<string>('window.location.href'));
 }
 
 /**
@@ -146,7 +146,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
 export async function title(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return await this.remote.execute<string>('window.document.title');
+  return await this.waitForAtom(this.remote.execute<string>('window.document.title'));
 }
 
 /**
