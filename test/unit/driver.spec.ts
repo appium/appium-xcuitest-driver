@@ -299,6 +299,27 @@ describe('XCUITestDriver', function () {
         assert.strictEqual((resCaps[1] as any).javascriptEnabled, true);
       });
 
+      it('logs the real error when session startup fails', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
+        const bootError = new Error('WDA failed to start on port 8100');
+        sandbox.stub(driver, 'start').rejects(bootError);
+        sandbox.stub(driver, 'deleteSession').resolves();
+        const errorSpy = sandbox.spy(driver.log, 'error');
+
+        await assert.rejects(
+          driver.createSession(null as any, null as any, structuredClone(caps) as any),
+          /WDA failed to start on port 8100/,
+        );
+
+        const logged = errorSpy
+          .getCalls()
+          .map((c: any) => String(c.args[0]))
+          .join('\n');
+        assert.ok(
+          logged.includes('WDA failed to start on port 8100'),
+          `Expected the startup failure to be logged, got: ${JSON.stringify(logged)}`,
+        );
+      });
+
       it('should call startLogCapture', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         const resCaps = await driver.createSession(
           null as any,

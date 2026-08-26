@@ -890,7 +890,7 @@ export class XCUITestDriver
 
       return [sessionId, caps];
     } catch (e) {
-      this.log.error(JSON.stringify(e));
+      this.log.error((e as Error).stack ?? String(e));
       await this.deleteSession();
       throw e;
     }
