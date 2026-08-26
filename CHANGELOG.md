@@ -1,3 +1,9 @@
+## [12.8.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.0...v12.8.1) (2026-08-26)
+
+### Bug Fixes
+
+* log the real error when session creation fails ([#2958](https://github.com/appium/appium-xcuitest-driver/issues/2958)) ([280d6d5](https://github.com/appium/appium-xcuitest-driver/commit/280d6d5fca1c69d2d9ca1cc987fc85e24bf08d50))
+
 ## [12.8.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.7.0...v12.8.0) (2026-08-24)
 
 ### Features
