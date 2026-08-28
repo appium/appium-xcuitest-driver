@@ -72,7 +72,7 @@
   },
   "dependencies": {
     "@appium/css-locator-to-native": "^1.0.1",
-    "@appium/strongbox": "^1.0.0-rc.1",
+    "@appium/strongbox": "^2.0.0",
     "@colors/colors": "^1.6.0",
     "appium-ios-device": "^3.1.12",
     "appium-ios-simulator": "^9.0.0",
