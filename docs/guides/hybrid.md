@@ -63,6 +63,22 @@ the web view context on session initialization by setting the `autoWebview`
 [capability](../reference/capabilities.md) to `true`.
 
 
+### Using a native WebKit automation session
+
+By default, once in a web view context, commands are executed against the DOM by injecting
+Selenium atom scripts through the remote debugger connection described above. As an alternative,
+you can opt a session into driving the web view through WebKit's own `Automation` protocol instead,
+by invoking the [mobile: startAutomationSession](../reference/execute-methods.md#mobile-startautomationsession)
+extension once you're in a web context. From that point on, navigation, element find/interact,
+cookies, window/frame management, script execution, screenshots, W3C Actions, and JS-dialog
+handling are all routed through that automation session, until you call
+[mobile: stopAutomationSession](../reference/execute-methods.md#mobile-stopautomationsession) (or
+the session/app disconnects). This is the only way to perform real W3C Actions against a web
+element, or to resize/maximize/minimize the browser window - atoms never supported either.
+
+Switching context does not implicitly stop the session, so leaving the web view for
+`'NATIVE_APP'` and coming back resumes driving through it automatically.
+
 ### Examples
 
 === "Java"

@@ -157,6 +157,36 @@ The list of available context objects along with their properties:
 - title: The title associated with the webview content. Could be `null`
 - url: The url associated with the webview content. Could be `null`
 
+### mobile: startAutomationSession
+
+Starts a WebKit `Automation`-domain session against the current Safari web view, using
+[appium-remote-debugger](https://github.com/appium/appium-remote-debugger)'s `AutomationSession`.
+The driver must already be switched to a Safari web context (see [mobile: getContexts](#mobile-getcontexts)
+and the [Hybrid Apps](../guides/hybrid.md) guide) before calling this method. This API
+throws if called from native context or from a non-Safari-based web view.
+
+Once started, the commands that operate against the web content - navigation, element
+find/interact, cookies, window/frame management, script execution, screenshots, W3C Actions, and
+JS-dialog handling - are routed through the automation session's own WebKit protocol methods
+instead of the driver's usual Selenium-atoms-based execution, until
+[mobile: stopAutomationSession](#mobile-stopautomationsession) is called. This unlocks a few
+things atoms could never do, most notably real W3C Actions with a web element as their origin, and
+window sizing (`setWindowRect`/`maximizeWindow`/`minimizeWindow`/`fullScreenWindow`).
+
+Switching context does **not** implicitly stop the session - it stays alive until explicitly
+stopped, or until the session/app disconnects.
+
+An element handle obtained before the session started (or obtained while it was active, once it's
+stopped) is meaningless to the other execution mode - passing one across the swap surfaces as a
+stale-element error, not a crash or a silently wrong action.
+
+### mobile: stopAutomationSession
+
+Stops the automation session started by
+[mobile: startAutomationSession](#mobile-startautomationsession), if any, reverting the commands
+listed above back to Selenium-atoms-based execution. This is a no-op if no automation session is
+currently active.
+
 ### mobile: installApp
 
 Installs the given application to the device under test. Make sure the application is built for a correct architecture and is signed with a proper developer signature (for real devices) prior to install it.
