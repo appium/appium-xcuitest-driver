@@ -2,9 +2,30 @@ import type {Rect, Size} from '@appium/types';
 import {errors, isErrorType} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {requireAutomationSessionActive} from './helpers/index.js';
+import {requireAutomationSessionActive, requireWebContext} from './helpers/index.js';
+
+/**
+ * Two different guards show up in this file, matching two different kinds of command:
+ * - `setWindow`/`getWindowHandle(s)`/`getWindowRect`/`closeWindow` have an atoms-based
+ *   implementation, so they gate on `isWebContext()`/`requireWebContext` and dispatch through
+ *   `_webExecutionBackend`, which already picks the right execution mode.
+ * - `setWindowRect`/`maximizeWindow`/`minimizeWindow`/`fullScreenWindow` have no atoms
+ *   equivalent at all - atoms never supported them - so they gate on
+ *   `requireAutomationSessionActive` directly instead, since there's no atoms fallback to
+ *   dispatch to.
+ */
 
 const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
+
+/**
+ * Window/tab handles have no native-context equivalent, so the window-handle commands below
+ * return a fixed placeholder (or no-op) there instead of throwing.
+ *
+ * @see https://github.com/appium/appium/issues/20710
+ */
+function isNativeContext(driver: XCUITestDriver): boolean {
+  return !driver.isWebContext();
+}
 
 /**
  * Sets the current window (context) in a web context.
@@ -16,8 +37,7 @@ const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
  * @throws {errors.NoSuchWindowError} If the window does not exist
  */
 export async function setWindow(this: XCUITestDriver, name: string, skipReadyCheck?: boolean): Promise<void> {
-  if (!this.isWebContext()) {
-    // https://github.com/appium/appium/issues/20710
+  if (isNativeContext(this)) {
     return;
   }
   try {
@@ -37,8 +57,7 @@ export async function setWindow(this: XCUITestDriver, name: string, skipReadyChe
  * @throws {errors.InvalidContextError} If not in a valid context
  */
 export async function getWindowHandle(this: XCUITestDriver): Promise<string> {
-  if (!this.isWebContext()) {
-    // https://github.com/appium/appium/issues/20710
+  if (isNativeContext(this)) {
     return DEFAULT_NATIVE_WINDOW_HANDLE;
   }
   if (!this.curContext) {
@@ -56,8 +75,7 @@ export async function getWindowHandle(this: XCUITestDriver): Promise<string> {
  * @returns Array of window handle strings
  */
 export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> {
-  if (!this.isWebContext()) {
-    // https://github.com/appium/appium/issues/20710
+  if (isNativeContext(this)) {
     return [DEFAULT_NATIVE_WINDOW_HANDLE];
   }
   this.log.debug('Getting list of available window handles');
@@ -159,9 +177,7 @@ export async function fullScreenWindow(this: XCUITestDriver): Promise<Rect> {
  * as required by https://www.w3.org/TR/webdriver2/#close-window
  */
 export async function closeWindow(this: XCUITestDriver): Promise<string[]> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
+  requireWebContext(this);
 
   await this._webExecutionBackend.closeWindow();
   return await this.getWindowHandles();
