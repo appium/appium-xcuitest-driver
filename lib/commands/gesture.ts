@@ -38,7 +38,7 @@ export async function click(this: XCUITestDriver, el: Element | string): Promise
     // there are multiple commands that map here, so manually proxy
     return await this.nativeClick(el);
   }
-  await this.webExecutionBackend.click(util.unwrapElement(el));
+  await this._webExecutionBackend.click(util.unwrapElement(el));
 }
 
 /**
@@ -51,7 +51,7 @@ export async function releaseActions(this: XCUITestDriver): Promise<void> {
     this.log.info('On this platform, releaseActions is a no-op');
     return;
   }
-  await this.webExecutionBackend.releaseActions();
+  await this._webExecutionBackend.releaseActions();
 }
 
 /**
@@ -66,7 +66,7 @@ export async function releaseActions(this: XCUITestDriver): Promise<void> {
 export async function performActions(this: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
   this.log.debug(`Received the following W3C actions: ${JSON.stringify(actions, null, '  ')}`);
   if (this.isWebContext()) {
-    await this.webExecutionBackend.performActions(actions);
+    await this._webExecutionBackend.performActions(actions);
     return;
   }
 

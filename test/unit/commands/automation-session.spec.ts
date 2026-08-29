@@ -56,10 +56,10 @@ describe('automation-session commands', function () {
       assert.throws(() => requireAutomationSessionActive(driver, 'Doing the thing'), errors.NotImplementedError);
     });
 
-    it('returns the active webExecutionBackend when an automation session is started', function () {
+    it('returns the active _webExecutionBackend when an automation session is started', function () {
       const fakeBackend = {setWindowRect: sandbox.stub()};
       driver._remote = {automationSession: {isStarted: true}} as any;
-      sandbox.stub(driver, 'webExecutionBackend').get(() => fakeBackend);
+      sandbox.stub(driver, '_webExecutionBackend').get(() => fakeBackend);
       assert.strictEqual(requireAutomationSessionActive(driver, 'Doing the thing'), fakeBackend);
     });
   });

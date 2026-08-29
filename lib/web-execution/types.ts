@@ -7,7 +7,7 @@ import type {ActionSequence, Cookie, Element, Rect} from '@appium/types';
  *
  * There are two implementations - {@linkcode AtomsBackend}, wrapping the driver's existing
  * Selenium-atoms machinery, and {@linkcode AutomationSessionBackend}, wrapping an
- * `appium-remote-debugger` `AutomationSession` - selected by `XCUITestDriver#webExecutionBackend`
+ * `appium-remote-debugger` `AutomationSession` - selected by `XCUITestDriver#_webExecutionBackend`
  * depending on whether an automation session is currently active. Command handlers call through
  * this interface without knowing (or caring) which one is live.
  *

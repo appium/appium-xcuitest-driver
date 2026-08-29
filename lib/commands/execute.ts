@@ -22,7 +22,7 @@ export async function execute<TReturn = unknown>(
     const executeMethodArgs = preprocessExecuteMethodArgs(script, args as ExecuteMethodArgs | undefined);
     return await this.executeMethod(script, [executeMethodArgs]);
   } else if (this.isWebContext()) {
-    return await this.webExecutionBackend.executeScript<TReturn>(script, args as unknown[] | undefined);
+    return await this._webExecutionBackend.executeScript<TReturn>(script, args as unknown[] | undefined);
   } else {
     throw new errors.NotImplementedError();
   }
@@ -36,7 +36,7 @@ export async function executeAsync(this: XCUITestDriver, script: string, args?: 
     throw new errors.NotImplementedError();
   }
 
-  return await this.webExecutionBackend.executeAsyncScript(script, args as unknown[] | undefined);
+  return await this._webExecutionBackend.executeAsyncScript(script, args as unknown[] | undefined);
 }
 
 /**

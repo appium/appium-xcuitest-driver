@@ -630,7 +630,7 @@ export async function getWindowHandle(this: XCUITestDriver): Promise<string> {
     throw new errors.InvalidContextError();
   }
   this.log.debug(`Getting current window handle`);
-  return await this.webExecutionBackend.getWindowHandle();
+  return await this._webExecutionBackend.getWindowHandle();
 }
 
 /**
@@ -646,7 +646,7 @@ export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> 
     return [DEFAULT_NATIVE_WINDOW_HANDLE];
   }
   this.log.debug('Getting list of available window handles');
-  return await this.webExecutionBackend.getWindowHandles();
+  return await this._webExecutionBackend.getWindowHandles();
 }
 
 /**

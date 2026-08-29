@@ -12,7 +12,7 @@ export async function back(this: XCUITestDriver): Promise<void> {
     await this.nativeBack();
     return;
   }
-  await this.webExecutionBackend.back();
+  await this._webExecutionBackend.back();
 }
 
 /**
@@ -23,7 +23,7 @@ export async function forward(this: XCUITestDriver): Promise<void> {
     // No-op for native context
     return;
   }
-  await this.webExecutionBackend.forward();
+  await this._webExecutionBackend.forward();
 }
 
 /**
@@ -37,7 +37,7 @@ export async function closeWindow(this: XCUITestDriver): Promise<string[]> {
     throw new errors.NotImplementedError();
   }
 
-  await this.webExecutionBackend.closeWindow();
+  await this._webExecutionBackend.closeWindow();
   return await this.getWindowHandles();
 }
 

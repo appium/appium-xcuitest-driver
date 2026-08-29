@@ -868,7 +868,7 @@ export class XCUITestDriver
    * Only ever consulted from inside a command handler's `isWebContext()` branch - a session
    * left running in the background can never be consulted by a native command by accident.
    */
-  get webExecutionBackend(): WebExecutionBackend {
+  get _webExecutionBackend(): WebExecutionBackend {
     return this._remote?.automationSession?.isStarted
       ? (this._automationSessionBackend ??= new AutomationSessionBackend(this._remote.automationSession))
       : (this._atomsBackend ??= new AtomsBackend(this));

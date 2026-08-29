@@ -47,8 +47,8 @@ export async function findElOrEls(
 ): Promise<Element | Element[]> {
   if (this.isWebview()) {
     return mult
-      ? await this.webExecutionBackend.findElements(strategy, selector, context)
-      : await this.webExecutionBackend.findElement(strategy, selector, context);
+      ? await this._webExecutionBackend.findElements(strategy, selector, context)
+      : await this._webExecutionBackend.findElement(strategy, selector, context);
   }
   return mult
     ? await this.findNativeElementOrElements(strategy, selector, true, context)

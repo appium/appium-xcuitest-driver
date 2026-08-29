@@ -13,7 +13,7 @@ interface AlertOptions {
  */
 export async function getAlertText(this: XCUITestDriver): Promise<string | null> {
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getDialogMessage();
+    return await this._webExecutionBackend.getDialogMessage();
   }
   return await this.proxyCommand<any, string | null>('/alert/text', 'GET');
 }
@@ -25,7 +25,7 @@ export async function getAlertText(this: XCUITestDriver): Promise<string | null>
  */
 export async function setAlertText(this: XCUITestDriver, value: string): Promise<void> {
   if (this.isWebContext()) {
-    await this.webExecutionBackend.setDialogUserInput(value);
+    await this._webExecutionBackend.setDialogUserInput(value);
     return;
   }
   await this.proxyCommand('/alert/text', 'POST', {value});
@@ -38,7 +38,7 @@ export async function setAlertText(this: XCUITestDriver, value: string): Promise
  */
 export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
   if (this.isWebContext()) {
-    await this.webExecutionBackend.acceptDialog();
+    await this._webExecutionBackend.acceptDialog();
     return;
   }
   await this.proxyCommand('/alert/accept', 'POST', toAlertParams(opts));
@@ -51,7 +51,7 @@ export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions =
  */
 export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
   if (this.isWebContext()) {
-    await this.webExecutionBackend.dismissDialog();
+    await this._webExecutionBackend.dismissDialog();
     return;
   }
   await this.proxyCommand('/alert/dismiss', 'POST', toAlertParams(opts));
@@ -65,7 +65,7 @@ export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions 
  */
 export async function getAlertButtons(this: XCUITestDriver): Promise<string[]> {
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getAlertButtons();
+    return await this._webExecutionBackend.getAlertButtons();
   }
   return await this.proxyCommand<any, string[]>('/wda/alert/buttons', 'GET');
 }

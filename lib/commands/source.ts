@@ -14,7 +14,7 @@ const APPIUM_AUT_TAG = 'AppiumAUT';
  */
 export async function getPageSource(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getPageSource();
+    return await this._webExecutionBackend.getPageSource();
   }
 
   const {pageSourceExcludedAttributes: excludedAttributes, useJSONSource} = await this.settings.getSettings();

@@ -23,7 +23,7 @@ const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
  */
 export async function active(this: XCUITestDriver): Promise<any> {
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getActiveElement();
+    return await this._webExecutionBackend.getActiveElement();
   }
   return await this.proxyCommand(`/element/active`, 'GET');
 }
@@ -119,7 +119,7 @@ export async function mobileGetDeviceTime(this: XCUITestDriver, format = DATETIM
  */
 export async function getWindowRect(this: XCUITestDriver): Promise<Rect> {
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getWindowRect();
+    return await this._webExecutionBackend.getWindowRect();
   }
 
   return (await this.proxyCommand('/window/rect', 'GET')) as Rect;
@@ -243,7 +243,7 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
     this.setCurrentUrl(url);
     // make sure to clear out any leftover web frames
     this.curWebFrames = [];
-    await this.webExecutionBackend.navigate(url);
+    await this._webExecutionBackend.navigate(url);
     return;
   }
 

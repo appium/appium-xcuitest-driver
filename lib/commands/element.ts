@@ -13,7 +13,7 @@ import type {AtomsElement} from './types.js';
 export async function elementDisplayed(this: XCUITestDriver, el: Element | string): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.isDisplayed(elementId);
+    return await this._webExecutionBackend.isDisplayed(elementId);
   }
   return (await this.proxyCommand(`/element/${elementId}/displayed`, 'GET')) as boolean;
 }
@@ -26,7 +26,7 @@ export async function elementDisplayed(this: XCUITestDriver, el: Element | strin
 export async function elementEnabled(this: XCUITestDriver, el: Element | string): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.isEnabled(elementId);
+    return await this._webExecutionBackend.isEnabled(elementId);
   }
   return (await this.proxyCommand(`/element/${elementId}/enabled`, 'GET')) as boolean;
 }
@@ -39,7 +39,7 @@ export async function elementEnabled(this: XCUITestDriver, el: Element | string)
 export async function elementSelected(this: XCUITestDriver, el: Element | string): Promise<boolean> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.isSelected(elementId);
+    return await this._webExecutionBackend.isSelected(elementId);
   }
   return (await this.proxyCommand(`/element/${elementId}/selected`, 'GET')) as boolean;
 }
@@ -52,7 +52,7 @@ export async function elementSelected(this: XCUITestDriver, el: Element | string
 export async function getName(this: XCUITestDriver, el: Element | string): Promise<string> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getTagName(elementId);
+    return await this._webExecutionBackend.getTagName(elementId);
   }
   return (await this.proxyCommand(`/element/${elementId}/name`, 'GET')) as string;
 }
@@ -100,7 +100,7 @@ export async function getAttribute(
   if (!this.isWebContext()) {
     return await this.getNativeAttribute(attribute, elementId);
   }
-  return await this.webExecutionBackend.getAttribute(elementId, attribute);
+  return await this._webExecutionBackend.getAttribute(elementId, attribute);
 }
 
 /**
@@ -118,7 +118,7 @@ export async function getProperty(
   if (!this.isWebContext()) {
     return await this.getNativeAttribute(property, elementId);
   }
-  return await this.webExecutionBackend.getProperty(elementId, property);
+  return await this._webExecutionBackend.getProperty(elementId, property);
 }
 
 /**
@@ -131,7 +131,7 @@ export async function getText(this: XCUITestDriver, el: Element | string): Promi
   if (!this.isWebContext()) {
     return (await this.proxyCommand(`/element/${elementId}/text`, 'GET')) as string;
   }
-  return await this.webExecutionBackend.getText(elementId);
+  return await this._webExecutionBackend.getText(elementId);
 }
 
 /**
@@ -142,7 +142,7 @@ export async function getText(this: XCUITestDriver, el: Element | string): Promi
 export async function getElementRect(this: XCUITestDriver, el: Element | string): Promise<Rect> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.getRect(elementId);
+    return await this._webExecutionBackend.getRect(elementId);
   }
   return await this.getNativeRect(elementId);
 }
@@ -155,7 +155,7 @@ export async function getElementRect(this: XCUITestDriver, el: Element | string)
 export async function getLocation(this: XCUITestDriver, elementId: Element | string): Promise<Position> {
   const el = util.unwrapElement(elementId);
   if (this.isWebContext()) {
-    const loc = await this.webExecutionBackend.getRect(el);
+    const loc = await this._webExecutionBackend.getRect(el);
     if (this.opts.absoluteWebLocations) {
       const script =
         'return [' +
@@ -188,7 +188,7 @@ export async function getLocationInView(this: XCUITestDriver, elementId: Element
 export async function getSize(this: XCUITestDriver, el: Element | string): Promise<Size> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    const {width, height} = await this.webExecutionBackend.getRect(elementId);
+    const {width, height} = await this._webExecutionBackend.getRect(elementId);
     return {width, height};
   }
   const rect = await this.getElementRect(elementId);
@@ -229,8 +229,8 @@ export async function setValue(
     return;
   }
 
-  await this.webExecutionBackend.click(elementId);
-  await this.webExecutionBackend.sendKeys(elementId, value);
+  await this._webExecutionBackend.click(elementId);
+  await this._webExecutionBackend.sendKeys(elementId, value);
 }
 
 /**
@@ -283,7 +283,7 @@ export async function keys(this: XCUITestDriver, value: string[] | string | numb
 export async function clear(this: XCUITestDriver, el: Element | string): Promise<void> {
   const elementId = util.unwrapElement(el);
   if (this.isWebContext()) {
-    await this.webExecutionBackend.clear(elementId);
+    await this._webExecutionBackend.clear(elementId);
     return;
   }
   await this.proxyCommand(`/element/${elementId}/clear`, 'POST');

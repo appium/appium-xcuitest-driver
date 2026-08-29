@@ -42,10 +42,10 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
   requireWebContext(this);
 
   if (frame === null) {
-    await this.webExecutionBackend.switchToDefaultContent();
+    await this._webExecutionBackend.switchToDefaultContent();
     return;
   }
-  await this.webExecutionBackend.switchToFrame(frame as number | Element | string);
+  await this._webExecutionBackend.switchToFrame(frame as number | Element | string);
 }
 
 /**
@@ -75,7 +75,7 @@ export async function getCssProperty(
 ): Promise<string> {
   requireWebContext(this);
 
-  return await this.webExecutionBackend.getCssValue(util.unwrapElement(el), propertyName);
+  return await this._webExecutionBackend.getCssValue(util.unwrapElement(el), propertyName);
 }
 
 /**
@@ -88,7 +88,7 @@ export async function getCssProperty(
 export async function submit(this: XCUITestDriver, el: string | Element): Promise<void> {
   requireWebContext(this);
 
-  await this.webExecutionBackend.submit(util.unwrapElement(el));
+  await this._webExecutionBackend.submit(util.unwrapElement(el));
 }
 
 /**
@@ -100,7 +100,7 @@ export async function submit(this: XCUITestDriver, el: string | Element): Promis
 export async function refresh(this: XCUITestDriver): Promise<void> {
   requireWebContext(this);
 
-  await this.webExecutionBackend.refresh();
+  await this._webExecutionBackend.refresh();
 }
 
 /**
@@ -112,7 +112,7 @@ export async function refresh(this: XCUITestDriver): Promise<void> {
 export async function getUrl(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return await this.webExecutionBackend.getCurrentUrl();
+  return await this._webExecutionBackend.getCurrentUrl();
 }
 
 /**
@@ -124,7 +124,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
 export async function title(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return await this.webExecutionBackend.getTitle();
+  return await this._webExecutionBackend.getTitle();
 }
 
 /**
@@ -138,7 +138,7 @@ export async function title(this: XCUITestDriver): Promise<string> {
 export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
   requireWebContext(this);
 
-  return await this.webExecutionBackend.getCookies();
+  return await this._webExecutionBackend.getCookies();
 }
 
 /**
@@ -158,7 +158,7 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
   if (!clonedCookie.path) {
     clonedCookie.path = '/';
   }
-  await this.webExecutionBackend.addCookie(clonedCookie);
+  await this._webExecutionBackend.addCookie(clonedCookie);
 }
 
 /**
@@ -173,7 +173,7 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
 export async function deleteCookie(this: XCUITestDriver, cookieName: string): Promise<void> {
   requireWebContext(this);
 
-  await this.webExecutionBackend.deleteCookie(cookieName);
+  await this._webExecutionBackend.deleteCookie(cookieName);
 }
 
 /**
@@ -185,7 +185,7 @@ export async function deleteCookie(this: XCUITestDriver, cookieName: string): Pr
 export async function deleteCookies(this: XCUITestDriver): Promise<void> {
   requireWebContext(this);
 
-  await this.webExecutionBackend.deleteAllCookies();
+  await this._webExecutionBackend.deleteAllCookies();
 }
 
 /**

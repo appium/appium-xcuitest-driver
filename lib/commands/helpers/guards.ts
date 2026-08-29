@@ -22,7 +22,7 @@ export interface PlatformGuardDriver {
 
 export interface AutomationSessionGuardDriver {
   readonly _remote?: {readonly automationSession?: {readonly isStarted: boolean}} | null;
-  readonly webExecutionBackend: WebExecutionBackend;
+  readonly _webExecutionBackend: WebExecutionBackend;
 }
 
 /**
@@ -68,7 +68,7 @@ export function requireWatchOs(driver: PlatformGuardDriver, action: string): voi
 /**
  * Requires that the given driver currently has an active `AutomationSession` and returns its
  * backend. Used only by commands with no atoms equivalent at all (window sizing, parent frame
- * navigation) - every other web-execution command dispatches through `webExecutionBackend`
+ * navigation) - every other web-execution command dispatches through `_webExecutionBackend`
  * unconditionally instead.
  */
 export function requireAutomationSessionActive(
@@ -80,5 +80,5 @@ export function requireAutomationSessionActive(
       `${upperFirst(action)} requires an active automation session (see 'mobile: startAutomationSession')`,
     );
   }
-  return driver.webExecutionBackend as AutomationSessionBackend;
+  return driver._webExecutionBackend as AutomationSessionBackend;
 }

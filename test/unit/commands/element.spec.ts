@@ -305,7 +305,7 @@ describe('element commands', function () {
         driver.curContext = 'fake web context';
         clickStub = sandbox.stub();
         sendKeysStub = sandbox.stub();
-        sandbox.stub(driver, 'webExecutionBackend').get(() => ({click: clickStub, sendKeys: sendKeysStub}));
+        sandbox.stub(driver, '_webExecutionBackend').get(() => ({click: clickStub, sendKeys: sendKeysStub}));
       });
 
       afterEach(function () {
@@ -335,7 +335,7 @@ describe('element commands', function () {
       driver.curContext = 'fake web context';
       executeStub = sandbox.stub(driver, 'execute').resolves([fixtureXOffset, fixtureYOffset]);
       getRectStub = sandbox.stub();
-      sandbox.stub(driver, 'webExecutionBackend').get(() => ({getRect: getRectStub}));
+      sandbox.stub(driver, '_webExecutionBackend').get(() => ({getRect: getRectStub}));
       getRectStub.resolves({x: 0, y: 0, width: 0, height: 0});
     });
 
@@ -372,7 +372,7 @@ describe('element commands', function () {
       driver = new XCUITestDriver({} as any);
       getNativeRectStub = sandbox.stub(driver, 'getNativeRect').resolves({x: 0, y: 50, width: 100, height: 200});
       getRectStub = sandbox.stub().resolves({x: 0, y: 50, width: 100, height: 200});
-      sandbox.stub(driver, 'webExecutionBackend').get(() => ({getRect: getRectStub}));
+      sandbox.stub(driver, '_webExecutionBackend').get(() => ({getRect: getRectStub}));
     });
 
     afterEach(function () {

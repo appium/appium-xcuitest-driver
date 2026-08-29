@@ -18,7 +18,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     switch (String(webScreenshotMode).toLowerCase()) {
       case 'page':
       case 'viewport':
-        return await this.webExecutionBackend.screenshot(capitalize(String(webScreenshotMode)) as 'Viewport' | 'Page');
+        return await this._webExecutionBackend.screenshot(capitalize(String(webScreenshotMode)) as 'Viewport' | 'Page');
       case 'native':
       case undefined:
       case null:
@@ -83,7 +83,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
 export async function getElementScreenshot(this: XCUITestDriver, el: Element<string> | string): Promise<string> {
   el = util.unwrapElement(el);
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.elementScreenshot(el);
+    return await this._webExecutionBackend.elementScreenshot(el);
   }
 
   const data = await this.proxyCommand(`/element/${el}/screenshot`, 'GET');
@@ -102,7 +102,7 @@ export async function getElementScreenshot(this: XCUITestDriver, el: Element<str
  */
 export async function getViewportScreenshot(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
-    return await this.webExecutionBackend.screenshot();
+    return await this._webExecutionBackend.screenshot();
   }
 
   const screenshot = await this.getScreenshot();
