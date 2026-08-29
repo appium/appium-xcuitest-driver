@@ -22,9 +22,7 @@ export async function execute<TReturn = unknown>(
     const executeMethodArgs = preprocessExecuteMethodArgs(script, args as ExecuteMethodArgs | undefined);
     return await this.executeMethod(script, [executeMethodArgs]);
   } else if (this.isWebContext()) {
-    const atomsArgs = this.convertElementsForAtoms(args as readonly any[] | undefined);
-    const result = await this.executeAtom('execute_script', [script, atomsArgs]);
-    return this.cacheWebElements(result) as TReturn;
+    return await this.webExecutionBackend.executeScript<TReturn>(script, args as unknown[] | undefined);
   } else {
     throw new errors.NotImplementedError();
   }
@@ -38,14 +36,7 @@ export async function executeAsync(this: XCUITestDriver, script: string, args?: 
     throw new errors.NotImplementedError();
   }
 
-  args = this.convertElementsForAtoms(args);
-  this.asyncWaitMs = this.asyncWaitMs || 0;
-  const promise = this.remote.executeAtomAsync(
-    'execute_async_script',
-    [script, args, this.asyncWaitMs],
-    this.curWebFrames,
-  );
-  return this.cacheWebElements(await this.waitForAtom(promise));
+  return await this.webExecutionBackend.executeAsyncScript(script, args as unknown[] | undefined);
 }
 
 /**

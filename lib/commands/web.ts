@@ -7,7 +7,13 @@ import {timing, util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
-import {requireSimulator, requireWebContext, TimeoutError, withTimeout} from './helpers/index.js';
+import {
+  requireAutomationSessionActive,
+  requireSimulator,
+  requireWebContext,
+  TimeoutError,
+  withTimeout,
+} from './helpers/index.js';
 import type {AtomsElement} from './types.js';
 
 const ATOM_WAIT_TIMEOUT_MS = 2 * 60000;
@@ -18,9 +24,6 @@ const OBSTRUCTING_ALERT_PRESENCE_CHECK_INTERVAL_MS = 500;
 
 const ON_OBSTRUCTING_ALERT_EVENT = 'alert';
 const ON_APP_CRASH_EVENT = 'app_crash';
-
-// WebKit's wording for a cross-origin frame access failure (see setFrame below).
-const CROSS_ORIGIN_FRAME_ERROR_PATTERN = /cross-origin frame|blocked a frame with origin/i;
 
 /**
  * Sets the current web frame context.
@@ -39,45 +42,22 @@ export async function setFrame(this: XCUITestDriver, frame: number | string | nu
   requireWebContext(this);
 
   if (frame === null) {
-    this.curWebFrames = [];
-    this.log.debug('Leaving web frame and going back to default content');
+    await this.webExecutionBackend.switchToDefaultContent();
     return;
   }
+  await this.webExecutionBackend.switchToFrame(frame as number | Element | string);
+}
 
-  try {
-    let windowId: string;
-    if (isElementLike(frame)) {
-      const atomsElement = this.getAtomsElement(frame);
-      const value = (await this.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
-      windowId = value.WINDOW;
-    } else {
-      const atom: AtomName = typeof frame === 'number' ? 'frame_by_index' : 'frame_by_id_or_name';
-      const value = (await this.executeAtom(atom, [frame])) as {WINDOW?: string} | null;
-      if (value?.WINDOW === undefined) {
-        throw new errors.NoSuchFrameError();
-      }
-      windowId = value.WINDOW;
-    }
-
-    this.log.debug(`Entering new web frame: '${windowId}'`);
-    this.curWebFrames.unshift(windowId);
-    try {
-      await this.executeAtom('execute_script', ['return true;', []]);
-    } catch (err) {
-      this.curWebFrames.shift();
-      throw err;
-    }
-  } catch (err) {
-    if (CROSS_ORIGIN_FRAME_ERROR_PATTERN.test(toErrorMessage(err))) {
-      throw new Error(
-        'Cannot switch into this frame: it (or one of its ancestor frames) has a different origin than ' +
-          "the top-level page. Safari's remote debugger can only execute JavaScript inside same-origin " +
-          `frames. Switch to a same-origin frame instead. Original error: ${toErrorMessage(err)}`,
-        {cause: err},
-      );
-    }
-    throw err;
-  }
+/**
+ * Switches to the immediate parent of the current frame.
+ *
+ * Has no atoms equivalent - only supported once an automation session is active.
+ *
+ * @group Mobile Web Only
+ * @throws {errors.NotImplementedError} If no automation session is active
+ */
+export async function switchToParentFrame(this: XCUITestDriver): Promise<void> {
+  await requireAutomationSessionActive(this, 'Switching to the parent frame').switchToParentFrame();
 }
 
 /**
@@ -95,8 +75,7 @@ export async function getCssProperty(
 ): Promise<string> {
   requireWebContext(this);
 
-  const atomsElement = this.getAtomsElement(el);
-  return (await this.executeAtom('get_value_of_css_property', [atomsElement, propertyName])) as string;
+  return await this.webExecutionBackend.getCssValue(util.unwrapElement(el), propertyName);
 }
 
 /**
@@ -109,8 +88,7 @@ export async function getCssProperty(
 export async function submit(this: XCUITestDriver, el: string | Element): Promise<void> {
   requireWebContext(this);
 
-  const atomsElement = this.getAtomsElement(el);
-  await this.executeAtom('submit', [atomsElement]);
+  await this.webExecutionBackend.submit(util.unwrapElement(el));
 }
 
 /**
@@ -122,7 +100,7 @@ export async function submit(this: XCUITestDriver, el: string | Element): Promis
 export async function refresh(this: XCUITestDriver): Promise<void> {
   requireWebContext(this);
 
-  await this.waitForAtom(this.remote.execute('window.location.reload()'));
+  await this.webExecutionBackend.refresh();
 }
 
 /**
@@ -134,7 +112,7 @@ export async function refresh(this: XCUITestDriver): Promise<void> {
 export async function getUrl(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return await this.waitForAtom(this.remote.execute<string>('window.location.href'));
+  return await this.webExecutionBackend.getCurrentUrl();
 }
 
 /**
@@ -146,7 +124,7 @@ export async function getUrl(this: XCUITestDriver): Promise<string> {
 export async function title(this: XCUITestDriver): Promise<string> {
   requireWebContext(this);
 
-  return await this.waitForAtom(this.remote.execute<string>('window.document.title'));
+  return await this.webExecutionBackend.getTitle();
 }
 
 /**
@@ -160,22 +138,7 @@ export async function title(this: XCUITestDriver): Promise<string> {
 export async function getCookies(this: XCUITestDriver): Promise<Cookie[]> {
   requireWebContext(this);
 
-  // get the cookies from the remote debugger, or an empty object
-  const {cookies} = await this.remote.getCookies();
-
-  // the value is URI encoded, so decode it safely
-  return cookies.map((cookie: Cookie) => {
-    if (!isEmpty(cookie.value)) {
-      try {
-        cookie.value = decodeURI(cookie.value);
-      } catch (error) {
-        this.log.debug(`Cookie ${cookie.name} was not decoded successfully. Cookie value: ${cookie.value}`);
-        this.log.warn(error);
-        // Keep the original value
-      }
-    }
-    return cookie;
-  });
+  return await this.webExecutionBackend.getCookies();
 }
 
 /**
@@ -195,18 +158,7 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
   if (!clonedCookie.path) {
     clonedCookie.path = '/';
   }
-  const jsCookie = createJSCookie(clonedCookie.name, clonedCookie.value, {
-    expires:
-      typeof clonedCookie.expiry === 'number'
-        ? new Date(clonedCookie.expiry * 1000).toUTCString()
-        : clonedCookie.expiry,
-    path: clonedCookie.path,
-    domain: clonedCookie.domain,
-    httpOnly: clonedCookie.httpOnly,
-    secure: clonedCookie.secure,
-  });
-  const script = `document.cookie = ${JSON.stringify(jsCookie)}`;
-  await this.executeAtom('execute_script', [script, []]);
+  await this.webExecutionBackend.addCookie(clonedCookie);
 }
 
 /**
@@ -221,14 +173,7 @@ export async function setCookie(this: XCUITestDriver, cookie: Cookie): Promise<v
 export async function deleteCookie(this: XCUITestDriver, cookieName: string): Promise<void> {
   requireWebContext(this);
 
-  const cookies = await this.getCookies();
-  const cookie = cookies.find(({name}) => name === cookieName);
-  if (!cookie) {
-    this.log.debug(`Cookie '${cookieName}' not found. Ignoring.`);
-    return;
-  }
-
-  await _deleteCookie.bind(this)(cookie);
+  await this.webExecutionBackend.deleteCookie(cookieName);
 }
 
 /**
@@ -240,8 +185,7 @@ export async function deleteCookie(this: XCUITestDriver, cookieName: string): Pr
 export async function deleteCookies(this: XCUITestDriver): Promise<void> {
   requireWebContext(this);
 
-  const cookies = await this.getCookies();
-  await Promise.all(cookies.map((cookie) => _deleteCookie.bind(this)(cookie)));
+  await this.webExecutionBackend.deleteAllCookies();
 }
 
 /**
@@ -727,7 +671,7 @@ function isValidElementIdentifier(id: unknown): boolean {
  * @param options - Cookie options (expires, path, domain, secure, httpOnly)
  * @returns Cookie string suitable for document.cookie
  */
-function createJSCookie(
+export function createJSCookie(
   key: string,
   value: string,
   options: {
@@ -747,14 +691,4 @@ function createJSCookie(
     options.domain ? `; domain=${options.domain}` : '',
     options.secure ? '; secure' : '',
   ].join('');
-}
-
-/**
- * Deletes a cookie via the remote debugger.
- *
- * @param cookie - Cookie object to delete
- */
-async function _deleteCookie(this: XCUITestDriver, cookie: Cookie): Promise<void> {
-  const url = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
-  await this.remote.deleteCookie(cookie.name, url);
 }

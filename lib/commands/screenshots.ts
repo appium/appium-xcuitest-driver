@@ -18,9 +18,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     switch (String(webScreenshotMode).toLowerCase()) {
       case 'page':
       case 'viewport':
-        return await this.remote.captureScreenshot({
-          coordinateSystem: capitalize(String(webScreenshotMode)) as 'Viewport' | 'Page',
-        });
+        return await this.webExecutionBackend.screenshot(capitalize(String(webScreenshotMode)) as 'Viewport' | 'Page');
       case 'native':
       case undefined:
       case null:
@@ -85,13 +83,7 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
 export async function getElementScreenshot(this: XCUITestDriver, el: Element<string> | string): Promise<string> {
   el = util.unwrapElement(el);
   if (this.isWebContext()) {
-    const atomsElement = this.getAtomsElement(el);
-    const {width, height} = await this.executeAtom('get_size', [atomsElement]);
-    if (!width || !height) {
-      throw new errors.UnableToCaptureScreen('Cannot take a screenshot of a zero-size element');
-    }
-    const {x, y} = await this.executeAtom('get_top_left_coordinates', [atomsElement]);
-    return await this.remote.captureScreenshot({rect: {x, y, width, height}});
+    return await this.webExecutionBackend.elementScreenshot(el);
   }
 
   const data = await this.proxyCommand(`/element/${el}/screenshot`, 'GET');
@@ -110,7 +102,7 @@ export async function getElementScreenshot(this: XCUITestDriver, el: Element<str
  */
 export async function getViewportScreenshot(this: XCUITestDriver): Promise<string> {
   if (this.isWebContext()) {
-    return await this.remote.captureScreenshot();
+    return await this.webExecutionBackend.screenshot();
   }
 
   const screenshot = await this.getScreenshot();

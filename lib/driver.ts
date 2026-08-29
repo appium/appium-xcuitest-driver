@@ -25,6 +25,7 @@ import * as appManagementCommands from './commands/app-management.js';
 import * as appStringsCommands from './commands/app-strings.js';
 import * as appearanceCommands from './commands/appearance.js';
 import * as auditCommands from './commands/audit.js';
+import * as automationSessionCommands from './commands/automation-session.js';
 import * as batteryCommands from './commands/battery.js';
 import * as biometricCommands from './commands/biometric.js';
 import * as certificateCommands from './commands/certificate.js';
@@ -125,6 +126,9 @@ import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
 import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
 import {isEmpty, isPlainObject, isWatchOs, memoize, normalizePlatformVersion} from './utils/index.js';
+import {AtomsBackend} from './web-execution/atoms-backend.js';
+import {AutomationSessionBackend} from './web-execution/automation-session-backend.js';
+import type {WebExecutionBackend} from './web-execution/types.js';
 
 const defaultServerCaps = {
   webStorageEnabled: false,
@@ -269,6 +273,8 @@ export class XCUITestDriver
   _iosSdkVersion!: string | null;
   _wda: WebDriverAgent | null;
   _remote: RemoteDebugger | null;
+  _atomsBackend?: AtomsBackend;
+  _automationSessionBackend?: AutomationSessionBackend;
   logs: DriverLogs;
   _bidiServerLogListener: LogListener | undefined;
 
@@ -348,6 +354,13 @@ export class XCUITestDriver
    +------------+*/
 
   mobilePerformAccessibilityAudit = auditCommands.mobilePerformAccessibilityAudit;
+
+  /*-------------------+
+   | AUTOMATION SESSION |
+   +-------------------+*/
+
+  mobileStartAutomationSession = automationSessionCommands.mobileStartAutomationSession;
+  mobileStopAutomationSession = automationSessionCommands.mobileStopAutomationSession;
 
   /*---------+
    | BATTERY |
@@ -495,6 +508,10 @@ export class XCUITestDriver
   getDeviceTime = generalCommands.getDeviceTime;
   mobileGetDeviceTime = generalCommands.mobileGetDeviceTime;
   getWindowRect = generalCommands.getWindowRect;
+  setWindowRect = generalCommands.setWindowRect;
+  maximizeWindow = generalCommands.maximizeWindow;
+  minimizeWindow = generalCommands.minimizeWindow;
+  fullScreenWindow = generalCommands.fullScreenWindow;
   getStrings = appStringsCommands.getStrings;
   removeApp = generalCommands.removeApp;
   launchApp = generalCommands.launchApp;
@@ -708,6 +725,7 @@ export class XCUITestDriver
    | WEB |
    +-----+*/
   setFrame = webCommands.setFrame;
+  switchToParentFrame = webCommands.switchToParentFrame;
   getCssProperty = webCommands.getCssProperty;
   submit = webCommands.submit;
   refresh = webCommands.refresh;
@@ -839,6 +857,21 @@ export class XCUITestDriver
       throw new Error('Remote debugger is not initialized');
     }
     return this._remote;
+  }
+
+  /**
+   * The web-execution backend for the currently active automation session, if any, otherwise
+   * the atoms-based one. Re-evaluated on every access (no stale cached "which backend is
+   * active" flag), so switching contexts and back automatically resumes routing through
+   * whichever backend is actually live.
+   *
+   * Only ever consulted from inside a command handler's `isWebContext()` branch - a session
+   * left running in the background can never be consulted by a native command by accident.
+   */
+  get webExecutionBackend(): WebExecutionBackend {
+    return this._remote?.automationSession?.isStarted
+      ? (this._automationSessionBackend ??= new AutomationSessionBackend(this._remote.automationSession))
+      : (this._atomsBackend ??= new AtomsBackend(this));
   }
 
   override get driverData(): Record<string, any> {

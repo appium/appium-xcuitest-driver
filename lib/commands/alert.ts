@@ -12,6 +12,9 @@ interface AlertOptions {
  * @returns The alert text, or null if no alert is displayed
  */
 export async function getAlertText(this: XCUITestDriver): Promise<string | null> {
+  if (this.isWebContext()) {
+    return await this.webExecutionBackend.getDialogMessage();
+  }
   return await this.proxyCommand<any, string | null>('/alert/text', 'GET');
 }
 
@@ -21,6 +24,10 @@ export async function getAlertText(this: XCUITestDriver): Promise<string | null>
  * @param value - The text to set
  */
 export async function setAlertText(this: XCUITestDriver, value: string): Promise<void> {
+  if (this.isWebContext()) {
+    await this.webExecutionBackend.setDialogUserInput(value);
+    return;
+  }
   await this.proxyCommand('/alert/text', 'POST', {value});
 }
 
@@ -30,6 +37,10 @@ export async function setAlertText(this: XCUITestDriver, value: string): Promise
  * @param opts - Options including optional button label
  */
 export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
+  if (this.isWebContext()) {
+    await this.webExecutionBackend.acceptDialog();
+    return;
+  }
   await this.proxyCommand('/alert/accept', 'POST', toAlertParams(opts));
 }
 
@@ -39,6 +50,10 @@ export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions =
  * @param opts - Options including optional button label
  */
 export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
+  if (this.isWebContext()) {
+    await this.webExecutionBackend.dismissDialog();
+    return;
+  }
   await this.proxyCommand('/alert/dismiss', 'POST', toAlertParams(opts));
 }
 
@@ -49,6 +64,9 @@ export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions 
  * @internal
  */
 export async function getAlertButtons(this: XCUITestDriver): Promise<string[]> {
+  if (this.isWebContext()) {
+    return await this.webExecutionBackend.getAlertButtons();
+  }
   return await this.proxyCommand<any, string[]>('/wda/alert/buttons', 'GET');
 }
 

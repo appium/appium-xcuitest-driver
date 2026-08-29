@@ -3,6 +3,8 @@ import {errors} from 'appium/driver.js';
 
 import type {RealDevice} from '../../device/real-device-management.js';
 import {isWatchOs, upperFirst} from '../../utils/index.js';
+import type {AutomationSessionBackend} from '../../web-execution/automation-session-backend.js';
+import type {WebExecutionBackend} from '../../web-execution/types.js';
 
 export interface DeviceGuardDriver {
   isSimulator(): boolean;
@@ -16,6 +18,11 @@ export interface WebContextGuardDriver {
 
 export interface PlatformGuardDriver {
   readonly opts: {platformName?: string | null};
+}
+
+export interface AutomationSessionGuardDriver {
+  readonly _remote?: {readonly automationSession?: {readonly isStarted: boolean}} | null;
+  readonly webExecutionBackend: WebExecutionBackend;
 }
 
 /**
@@ -56,4 +63,22 @@ export function requireWatchOs(driver: PlatformGuardDriver, action: string): voi
   if (!isWatchOs(driver.opts.platformName)) {
     throw new errors.NotImplementedError(`${upperFirst(action)} can only be performed on watchOS`);
   }
+}
+
+/**
+ * Requires that the given driver currently has an active `AutomationSession` and returns its
+ * backend. Used only by commands with no atoms equivalent at all (window sizing, parent frame
+ * navigation) - every other web-execution command dispatches through `webExecutionBackend`
+ * unconditionally instead.
+ */
+export function requireAutomationSessionActive(
+  driver: AutomationSessionGuardDriver,
+  action: string,
+): AutomationSessionBackend {
+  if (!driver._remote?.automationSession?.isStarted) {
+    throw new errors.NotImplementedError(
+      `${upperFirst(action)} requires an active automation session (see 'mobile: startAutomationSession')`,
+    );
+  }
+  return driver.webExecutionBackend as AutomationSessionBackend;
 }

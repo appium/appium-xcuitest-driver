@@ -8,6 +8,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
+import {requireAutomationSessionActive} from './helpers/index.js';
 import type {Viewport, ScreenInfo, ButtonName} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
@@ -22,7 +23,7 @@ const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
  */
 export async function active(this: XCUITestDriver): Promise<any> {
   if (this.isWebContext()) {
-    return this.cacheWebElements(await this.executeAtom('active_element', []));
+    return await this.webExecutionBackend.getActiveElement();
   }
   return await this.proxyCommand(`/element/active`, 'GET');
 }
@@ -118,17 +119,72 @@ export async function mobileGetDeviceTime(this: XCUITestDriver, format = DATETIM
  */
 export async function getWindowRect(this: XCUITestDriver): Promise<Rect> {
   if (this.isWebContext()) {
-    const script =
-      'return {' +
-      'x: window.screenX || 0,' +
-      'y: window.screenY || 0,' +
-      'width: window.innerWidth,' +
-      'height: window.innerHeight' +
-      '}';
-    return await this.executeAtom('execute_script', [script]);
+    return await this.webExecutionBackend.getWindowRect();
   }
 
   return (await this.proxyCommand('/window/rect', 'GET')) as Rect;
+}
+
+/**
+ * Sets the current window's position and/or size.
+ *
+ * Has no atoms equivalent - only supported once an automation session is active.
+ *
+ * @group Mobile Web Only
+ * @throws {errors.NotImplementedError} If no automation session is active
+ */
+export async function setWindowRect(
+  this: XCUITestDriver,
+  x?: number,
+  y?: number,
+  width?: number,
+  height?: number,
+): Promise<Rect> {
+  const backend = requireAutomationSessionActive(this, 'Setting the window rect');
+  await backend.setWindowRect(x, y, width, height);
+  return await backend.getWindowRect();
+}
+
+/**
+ * Maximizes the current window.
+ *
+ * Has no atoms equivalent - only supported once an automation session is active.
+ *
+ * @group Mobile Web Only
+ * @throws {errors.NotImplementedError} If no automation session is active
+ */
+export async function maximizeWindow(this: XCUITestDriver): Promise<Rect> {
+  const backend = requireAutomationSessionActive(this, 'Maximizing the window');
+  await backend.maximizeWindow();
+  return await backend.getWindowRect();
+}
+
+/**
+ * Minimizes the current window.
+ *
+ * Has no atoms equivalent - only supported once an automation session is active.
+ *
+ * @group Mobile Web Only
+ * @throws {errors.NotImplementedError} If no automation session is active
+ */
+export async function minimizeWindow(this: XCUITestDriver): Promise<Rect> {
+  const backend = requireAutomationSessionActive(this, 'Minimizing the window');
+  await backend.minimizeWindow();
+  return await backend.getWindowRect();
+}
+
+/**
+ * Requests fullscreen for the current window.
+ *
+ * Has no atoms equivalent - only supported once an automation session is active.
+ *
+ * @group Mobile Web Only
+ * @throws {errors.NotImplementedError} If no automation session is active
+ */
+export async function fullScreenWindow(this: XCUITestDriver): Promise<Rect> {
+  const backend = requireAutomationSessionActive(this, 'Requesting fullscreen for the window');
+  await backend.fullscreenWindow();
+  return await backend.getWindowRect();
 }
 
 /**
@@ -187,7 +243,7 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
     this.setCurrentUrl(url);
     // make sure to clear out any leftover web frames
     this.curWebFrames = [];
-    await this.remote.navToUrl(url);
+    await this.webExecutionBackend.navigate(url);
     return;
   }
 

@@ -1,13 +1,8 @@
 import type {Element} from '@appium/types';
 import {errors} from 'appium/driver.js';
-import {waitForCondition} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
 import {isTvOs} from '../utils/index.js';
-
-// these two constitute the wait after closing a window
-const CLOSE_WINDOW_TIMEOUT = 5000;
-const CLOSE_WINDOW_INTERVAL = 100;
 
 /**
  * Navigate back in the browser history or native app navigation.
@@ -15,9 +10,9 @@ const CLOSE_WINDOW_INTERVAL = 100;
 export async function back(this: XCUITestDriver): Promise<void> {
   if (!this.isWebContext()) {
     await this.nativeBack();
-  } else {
-    await this.mobileWebNav('back');
+    return;
   }
+  await this.webExecutionBackend.back();
 }
 
 /**
@@ -28,7 +23,7 @@ export async function forward(this: XCUITestDriver): Promise<void> {
     // No-op for native context
     return;
   }
-  await this.mobileWebNav('forward');
+  await this.webExecutionBackend.forward();
 }
 
 /**
@@ -42,23 +37,7 @@ export async function closeWindow(this: XCUITestDriver): Promise<string[]> {
     throw new errors.NotImplementedError();
   }
 
-  // since the window will be closed and the execution context gone, return
-  // first before closing. Waiting for close will happen in the finally block
-  const script = `setTimeout(function () {window.open('','_self').close();}, 0); return true;`;
-  const context = this.curContext;
-  try {
-    await this.executeAtom('execute_script', [script, []], true);
-  } finally {
-    // wait for the window to successfully change...
-    try {
-      await waitForCondition(() => this.curContext !== context, {
-        waitMs: CLOSE_WINDOW_TIMEOUT,
-        intervalMs: CLOSE_WINDOW_INTERVAL,
-      });
-    } catch {
-      this.log.debug('Context has not yet been changed after closing window. Continuing...');
-    }
-  }
+  await this.webExecutionBackend.closeWindow();
   return await this.getWindowHandles();
 }
 

@@ -630,7 +630,7 @@ export async function getWindowHandle(this: XCUITestDriver): Promise<string> {
     throw new errors.InvalidContextError();
   }
   this.log.debug(`Getting current window handle`);
-  return this.curContext;
+  return await this.webExecutionBackend.getWindowHandle();
 }
 
 /**
@@ -646,19 +646,7 @@ export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> 
     return [DEFAULT_NATIVE_WINDOW_HANDLE];
   }
   this.log.debug('Getting list of available window handles');
-  const contexts = await this.getContextsAndViews(false);
-  return (
-    contexts
-      // get rid of the native app context
-      .filter((context) => context.id !== NATIVE_WIN)
-      // get the `app.id` format expected
-      .map(
-        (context) =>
-          // This is non-nullable because the `FullContext` having `id` `NATIVE_WIN`
-          // _looks like_ the only with an empty view.
-          context.view?.id?.toString() ?? '',
-      )
-  );
+  return await this.webExecutionBackend.getWindowHandles();
 }
 
 /**
