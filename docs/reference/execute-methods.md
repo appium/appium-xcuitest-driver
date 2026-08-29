@@ -180,6 +180,13 @@ An element handle obtained before the session started (or obtained while it was 
 stopped) is meaningless to the other execution mode - passing one across the swap surfaces as a
 stale-element error, not a crash or a silently wrong action.
 
+The [`nativeWebTap`](./settings.md#nativewebtap)/[`nativeWebTapStrict`](./settings.md#nativewebtapstrict)
+settings (and their matching capabilities) and the
+[mobile: calibrateWebToRealCoordinatesTranslation](#mobile-calibratewebtorealcoordinatestranslation)
+extension have no effect while a session is active - clicks are dispatched as real WebKit touch
+interactions against the element's own on-page position instead, with no native-tap coordinate
+calibration involved.
+
 ### mobile: stopAutomationSession
 
 Stops the automation session started by
@@ -2018,6 +2025,10 @@ An object with three properties used to properly shift Safari web element coordi
 The following formulas are used for coordinates translation:
 `RealX = offsetX + webviewX * pixelRatioX`
 `RealY = offsetY + webviewY * pixelRatioY`
+
+Not applicable once a [mobile: startAutomationSession](#mobile-startautomationsession) is active:
+clicks are then dispatched as real WebKit touch interactions against the element's own on-page
+position, so there is no native-tap coordinate mapping to calibrate.
 
 ### mobile: updateSafariPreferences
 
