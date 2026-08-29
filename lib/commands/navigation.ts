@@ -1,5 +1,4 @@
 import type {Element} from '@appium/types';
-import {errors} from 'appium/driver.js';
 
 import type {XCUITestDriver} from '../driver.js';
 import {isTvOs} from '../utils/index.js';
@@ -24,21 +23,6 @@ export async function forward(this: XCUITestDriver): Promise<void> {
     return;
   }
   await this._webExecutionBackend.forward();
-}
-
-/**
- * Closes the current window in a web context.
- *
- * @returns Promise resolving to the handles of the windows that remain open,
- * as required by https://www.w3.org/TR/webdriver2/#close-window
- */
-export async function closeWindow(this: XCUITestDriver): Promise<string[]> {
-  if (!this.isWebContext()) {
-    throw new errors.NotImplementedError();
-  }
-
-  await this._webExecutionBackend.closeWindow();
-  return await this.getWindowHandles();
 }
 
 /**

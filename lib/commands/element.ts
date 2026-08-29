@@ -6,6 +6,21 @@ import type {XCUITestDriver} from '../driver.js';
 import type {AtomsElement} from './types.js';
 
 /**
+ * Gets the currently active element.
+ *
+ * In web context, returns the active element from the DOM.
+ * In native context, returns the active element from the current view.
+ *
+ * @returns The active element
+ */
+export async function active(this: XCUITestDriver): Promise<any> {
+  if (this.isWebContext()) {
+    return await this._webExecutionBackend.getActiveElement();
+  }
+  return await this.proxyCommand(`/element/active`, 'GET');
+}
+
+/**
  * Checks whether an element is displayed.
  *
  * @param el - Element or element ID

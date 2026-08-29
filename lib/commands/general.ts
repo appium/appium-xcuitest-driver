@@ -1,4 +1,3 @@
-import type {Size, Rect} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 import dayjs from 'dayjs';
@@ -8,25 +7,9 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import {requireAutomationSessionActive} from './helpers/index.js';
 import type {Viewport, ScreenInfo, ButtonName} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
-
-/**
- * Gets the currently active element.
- *
- * In web context, returns the active element from the DOM.
- * In native context, returns the active element from the current view.
- *
- * @returns The active element
- */
-export async function active(this: XCUITestDriver): Promise<any> {
-  if (this.isWebContext()) {
-    return await this._webExecutionBackend.getActiveElement();
-  }
-  return await this.proxyCommand(`/element/active`, 'GET');
-}
 
 /**
  * Trigger a touch/fingerprint match or match failure.
@@ -44,16 +27,6 @@ export async function touchId(this: XCUITestDriver, match = true): Promise<void>
  */
 export async function toggleEnrollTouchId(this: XCUITestDriver, isEnabled = true): Promise<void> {
   await this.mobileEnrollBiometric(isEnabled);
-}
-
-/**
- * Get the window size.
- *
- * @returns The window size (width and height)
- */
-export async function getWindowSize(this: XCUITestDriver): Promise<Size> {
-  const {width, height} = await this.getWindowRect();
-  return {width, height};
 }
 
 /**
@@ -107,84 +80,6 @@ export async function getDeviceTime(this: XCUITestDriver, format = DATETIME_FORM
  */
 export async function mobileGetDeviceTime(this: XCUITestDriver, format = DATETIME_FORMAT_ISO8601): Promise<string> {
   return await this.getDeviceTime(format);
-}
-
-/**
- * Gets the window rectangle (position and size).
- *
- * For W3C compatibility. In web context, returns the browser window dimensions.
- * In native context, returns the device window dimensions.
- *
- * @returns The window rectangle
- */
-export async function getWindowRect(this: XCUITestDriver): Promise<Rect> {
-  if (this.isWebContext()) {
-    return await this._webExecutionBackend.getWindowRect();
-  }
-
-  return (await this.proxyCommand('/window/rect', 'GET')) as Rect;
-}
-
-/**
- * Sets the current window's position and/or size.
- *
- * Has no atoms equivalent - only supported once an automation session is active.
- *
- * @group Mobile Web Only
- * @throws {errors.NotImplementedError} If no automation session is active
- */
-export async function setWindowRect(
-  this: XCUITestDriver,
-  x?: number,
-  y?: number,
-  width?: number,
-  height?: number,
-): Promise<Rect> {
-  const backend = requireAutomationSessionActive(this, 'Setting the window rect');
-  await backend.setWindowRect(x, y, width, height);
-  return await backend.getWindowRect();
-}
-
-/**
- * Maximizes the current window.
- *
- * Has no atoms equivalent - only supported once an automation session is active.
- *
- * @group Mobile Web Only
- * @throws {errors.NotImplementedError} If no automation session is active
- */
-export async function maximizeWindow(this: XCUITestDriver): Promise<Rect> {
-  const backend = requireAutomationSessionActive(this, 'Maximizing the window');
-  await backend.maximizeWindow();
-  return await backend.getWindowRect();
-}
-
-/**
- * Minimizes the current window.
- *
- * Has no atoms equivalent - only supported once an automation session is active.
- *
- * @group Mobile Web Only
- * @throws {errors.NotImplementedError} If no automation session is active
- */
-export async function minimizeWindow(this: XCUITestDriver): Promise<Rect> {
-  const backend = requireAutomationSessionActive(this, 'Minimizing the window');
-  await backend.minimizeWindow();
-  return await backend.getWindowRect();
-}
-
-/**
- * Requests fullscreen for the current window.
- *
- * Has no atoms equivalent - only supported once an automation session is active.
- *
- * @group Mobile Web Only
- * @throws {errors.NotImplementedError} If no automation session is active
- */
-export async function fullScreenWindow(this: XCUITestDriver): Promise<Rect> {
-  const backend = requireAutomationSessionActive(this, 'Requesting fullscreen for the window');
-  await backend.fullscreenWindow();
-  return await backend.getWindowRect();
 }
 
 /**

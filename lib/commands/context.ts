@@ -1,7 +1,7 @@
 import type {StringRecord} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {createRemoteDebugger, RemoteDebugger, type RemoteDebuggerOptions} from 'appium-remote-debugger';
-import {errors, isErrorType} from 'appium/driver.js';
+import {errors} from 'appium/driver.js';
 import {util, timing} from 'appium/support.js';
 
 import {IOSPerformanceLog} from '../device/log/ios-performance-log.js';
@@ -20,7 +20,6 @@ const WEBVIEW_WIN = 'WEBVIEW';
 const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
 const DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS = 5000;
 const DEFAULT_LIST_WEB_FRAMES_RETRIES = 20;
-const DEFAULT_NATIVE_WINDOW_HANDLE = '1';
 
 /**
  * Retrieves the list of available contexts and their associated views.
@@ -589,64 +588,6 @@ export async function getContexts(this: XCUITestDriver): Promise<string[] | Full
     })) as FullContext[];
   }
   return contexts.map((context) => context.id.toString());
-}
-
-/**
- * Sets the current window (context) in a web context.
- *
- * This is a wrapper around {@linkcode setContext} that translates errors appropriately.
- *
- * @param name - The window/context name to switch to
- * @param skipReadyCheck - Whether to skip waiting for the window to be ready
- * @throws {errors.NoSuchWindowError} If the window does not exist
- */
-export async function setWindow(this: XCUITestDriver, name: string, skipReadyCheck?: boolean): Promise<void> {
-  if (!this.isWebContext()) {
-    // https://github.com/appium/appium/issues/20710
-    return;
-  }
-  try {
-    await this.setContext(name, () => {}, skipReadyCheck);
-  } catch (err) {
-    // translate the error in terms of windows
-    throw isErrorType(err, errors.NoSuchContextError) ? new errors.NoSuchWindowError() : err;
-  }
-}
-
-/**
- * Gets the handle of the current window.
- *
- * In native context, returns a default handle. In web context, returns the current context ID.
- *
- * @returns The window handle
- * @throws {errors.InvalidContextError} If not in a valid context
- */
-export async function getWindowHandle(this: XCUITestDriver): Promise<string> {
-  if (!this.isWebContext()) {
-    // https://github.com/appium/appium/issues/20710
-    return DEFAULT_NATIVE_WINDOW_HANDLE;
-  }
-  if (!this.curContext) {
-    throw new errors.InvalidContextError();
-  }
-  this.log.debug(`Getting current window handle`);
-  return await this._webExecutionBackend.getWindowHandle();
-}
-
-/**
- * Gets the list of all available window handles.
- *
- * In native context, returns a single default handle. In web context, returns all webview handles.
- *
- * @returns Array of window handle strings
- */
-export async function getWindowHandles(this: XCUITestDriver): Promise<string[]> {
-  if (!this.isWebContext()) {
-    // https://github.com/appium/appium/issues/20710
-    return [DEFAULT_NATIVE_WINDOW_HANDLE];
-  }
-  this.log.debug('Getting list of available window handles');
-  return await this._webExecutionBackend.getWindowHandles();
 }
 
 /**

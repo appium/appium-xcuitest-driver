@@ -96,6 +96,7 @@ import {stop} from './commands/wda/stop.js';
 import {getDerivedDataPath, getWdaLocalhostRoot} from './commands/wda/utils.js';
 import * as webNativeBridgeCommands from './commands/web-native-bridge.js';
 import * as webCommands from './commands/web.js';
+import * as windowCommands from './commands/window.js';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen.js';
 import * as xctestCommands from './commands/xctest.js';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps.js';
@@ -403,10 +404,7 @@ export class XCUITestDriver
 
   getContexts = contextCommands.getContexts;
   getCurrentContext = contextCommands.getCurrentContext;
-  getWindowHandle = contextCommands.getWindowHandle;
-  getWindowHandles = contextCommands.getWindowHandles;
   setContext = contextCommands.setContext;
-  setWindow = contextCommands.setWindow;
   activateRecentWebview = contextCommands.activateRecentWebview;
   connectToRemoteDebugger = contextCommands.connectToRemoteDebugger;
   getContextsAndViews = contextCommands.getContextsAndViews;
@@ -431,6 +429,7 @@ export class XCUITestDriver
    | ELEMENT |
    +---------+*/
 
+  active = elementCommands.active;
   elementDisplayed = elementCommands.elementDisplayed;
   elementEnabled = elementCommands.elementEnabled;
   elementSelected = elementCommands.elementSelected;
@@ -500,18 +499,11 @@ export class XCUITestDriver
    | GENERAL |
    +---------+*/
 
-  active = generalCommands.active;
   background = appManagementCommands.background;
   touchId = generalCommands.touchId;
   toggleEnrollTouchId = generalCommands.toggleEnrollTouchId;
-  getWindowSize = generalCommands.getWindowSize;
   getDeviceTime = generalCommands.getDeviceTime;
   mobileGetDeviceTime = generalCommands.mobileGetDeviceTime;
-  getWindowRect = generalCommands.getWindowRect;
-  setWindowRect = generalCommands.setWindowRect;
-  maximizeWindow = generalCommands.maximizeWindow;
-  minimizeWindow = generalCommands.minimizeWindow;
-  fullScreenWindow = generalCommands.fullScreenWindow;
   getStrings = appStringsCommands.getStrings;
   removeApp = generalCommands.removeApp;
   launchApp = generalCommands.launchApp;
@@ -627,7 +619,6 @@ export class XCUITestDriver
 
   back = navigationCommands.back;
   forward = navigationCommands.forward;
-  closeWindow = navigationCommands.closeWindow;
   nativeBack = navigationCommands.nativeBack;
   mobileDeepLink = navigationCommands.mobileDeepLink;
 
@@ -753,6 +744,21 @@ export class XCUITestDriver
   waitForAtom = webCommands.waitForAtom;
   mobileWebNav = webCommands.mobileWebNav;
   mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
+
+  /*--------+
+   | WINDOW |
+   +--------+*/
+
+  setWindow = windowCommands.setWindow;
+  getWindowHandle = windowCommands.getWindowHandle;
+  getWindowHandles = windowCommands.getWindowHandles;
+  getWindowSize = windowCommands.getWindowSize;
+  getWindowRect = windowCommands.getWindowRect;
+  setWindowRect = windowCommands.setWindowRect;
+  maximizeWindow = windowCommands.maximizeWindow;
+  minimizeWindow = windowCommands.minimizeWindow;
+  fullScreenWindow = windowCommands.fullScreenWindow;
+  closeWindow = windowCommands.closeWindow;
 
   /*----------------+
    | WEB NATIVE TAP |
