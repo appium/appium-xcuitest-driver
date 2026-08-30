@@ -176,6 +176,13 @@ window sizing (`setWindowRect`/`maximizeWindow`/`minimizeWindow`/`fullScreenWind
 Switching context does **not** implicitly stop the session - it stays alive until explicitly
 stopped, or until the session/app disconnects.
 
+Calling this again while a session is already active against the same web view is a no-op. The
+check for which app owns the current web view is re-evaluated dynamically against the web view
+itself on every call, not against a static "is this a Safari session" flag from session creation
+- so calling it from a *different*, non-Safari web view throws without disturbing an existing,
+otherwise valid session on the original one, even in a hybrid app session that later switched into
+a dynamically-opened Safari web view.
+
 An element handle obtained before the session started (or obtained while it was active, once it's
 stopped) is meaningless to the other execution mode - passing one across the swap surfaces as a
 stale-element error, not a crash or a silently wrong action.
