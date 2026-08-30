@@ -37,11 +37,28 @@ describe('automation-session commands', function () {
   });
 
   describe('mobileStopAutomationSession', function () {
-    it('stops the automation session on the remote debugger', async function () {
+    it('is a no-op when no automation session is active', async function () {
+      const stopRemoteStub = sandbox.stub(driver, 'stopRemote');
+      driver._remote = null;
+      await driver.mobileStopAutomationSession();
+      assert.strictEqual(stopRemoteStub.called, false);
+
+      driver._remote = {automationSession: {isStarted: false}} as any;
+      await driver.mobileStopAutomationSession();
+      assert.strictEqual(stopRemoteStub.called, false);
+    });
+
+    it('stops the automation session and reconnects the remote debugger to release the automation grant', async function () {
       const stopAutomationSessionStub = sandbox.stub();
-      driver._remote = {stopAutomationSession: stopAutomationSessionStub} as any;
+      const stopRemoteStub = sandbox.stub(driver, 'stopRemote');
+      driver._remote = {
+        automationSession: {isStarted: true},
+        stopAutomationSession: stopAutomationSessionStub,
+      } as any;
       await driver.mobileStopAutomationSession();
       assert.strictEqual(stopAutomationSessionStub.calledOnceWithExactly(), true);
+      assert.strictEqual(stopRemoteStub.calledOnceWithExactly(), true);
+      assert.strictEqual(stopAutomationSessionStub.calledBefore(stopRemoteStub), true);
     });
   });
 

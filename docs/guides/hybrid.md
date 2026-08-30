@@ -79,6 +79,11 @@ element, or to resize/maximize/minimize the browser window - atoms never support
 Switching context does not implicitly stop the session, so leaving the web view for
 `'NATIVE_APP'` and coming back resumes driving through it automatically.
 
+Stopping the session, on the other hand, always leaves the driver in `'NATIVE_APP'` context -
+see [mobile: stopAutomationSession](../reference/execute-methods.md#mobile-stopautomationsession)
+for why. For background on this private WebKit `Automation` protocol in general, see
+[WebDriver is coming to Safari in iOS 13](https://webkit.org/blog/9395/webdriver-is-coming-to-safari-in-ios-13).
+
 ### Examples
 
 === "Java"
