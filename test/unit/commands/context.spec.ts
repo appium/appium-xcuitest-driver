@@ -35,24 +35,25 @@ describe('context', function () {
       assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
     });
 
-    it('caches the backend instance across repeated accesses while state is unchanged', function () {
+    it('constructs a fresh backend instance on every access rather than caching one on the driver', function () {
+      // Backends are stateless wrappers; not caching them avoids the driver holding a
+      // permanent reference back to itself through a cached backend field.
       const driver = new XCUITestDriver({} as any);
       driver._remote = null;
-      assert.strictEqual(driver._webExecutionBackend, driver._webExecutionBackend);
+      assert.notStrictEqual(driver._webExecutionBackend, driver._webExecutionBackend);
     });
 
     it('re-evaluates on every access, resuming the automation-session backend after a native detour', function () {
       const driver = new XCUITestDriver({} as any);
       const fakeSession = {isStarted: true};
       driver._remote = {automationSession: fakeSession} as any;
-      const started = driver._webExecutionBackend;
-      assert.strictEqual(started instanceof AutomationSessionBackend, true);
+      assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
 
       fakeSession.isStarted = false;
       assert.strictEqual(driver._webExecutionBackend instanceof AtomsBackend, true);
 
       fakeSession.isStarted = true;
-      assert.strictEqual(driver._webExecutionBackend, started);
+      assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
     });
   });
 

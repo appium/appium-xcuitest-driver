@@ -5,7 +5,7 @@ import {waitForCondition} from 'asyncbox';
 
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
-import {createJSCookie} from '../commands/web.js';
+import {checkForAlert, createJSCookie, hasElementId} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
@@ -169,7 +169,7 @@ export class AtomsBackend implements WebExecutionBackend {
   async switchToFrame(target: number | Element | string): Promise<void> {
     try {
       let windowId: string;
-      if (this.driver.hasElementId(target)) {
+      if (hasElementId(target)) {
         const atomsElement = this.driver.getAtomsElement(target);
         const value = (await this.driver.executeAtom('get_frame_window', [atomsElement])) as {WINDOW: string};
         windowId = value.WINDOW;
@@ -350,7 +350,7 @@ export class AtomsBackend implements WebExecutionBackend {
   }
 
   async isShowingJavaScriptDialog(): Promise<boolean> {
-    return await this.driver.checkForAlert();
+    return await checkForAlert.call(this.driver);
   }
 
   async getDialogMessage(): Promise<string> {

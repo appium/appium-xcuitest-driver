@@ -274,8 +274,6 @@ export class XCUITestDriver
   _iosSdkVersion!: string | null;
   _wda: WebDriverAgent | null;
   _remote: RemoteDebugger | null;
-  _atomsBackend?: AtomsBackend;
-  _automationSessionBackend?: AutomationSessionBackend;
   logs: DriverLogs;
   _bidiServerLogListener: LogListener | undefined;
 
@@ -871,13 +869,17 @@ export class XCUITestDriver
    * active" flag), so switching contexts and back automatically resumes routing through
    * whichever backend is actually live.
    *
+   * A fresh backend is constructed on every access rather than cached on the driver - both
+   * backends are stateless wrappers, and caching would leave the driver holding a permanent
+   * reference back to itself through `_atomsBackend`/`_automationSessionBackend`.
+   *
    * Only ever consulted from inside a command handler's `isWebContext()` branch - a session
    * left running in the background can never be consulted by a native command by accident.
    */
   get _webExecutionBackend(): WebExecutionBackend {
     return this._remote?.automationSession?.isStarted
-      ? (this._automationSessionBackend ??= new AutomationSessionBackend(this._remote.automationSession))
-      : (this._atomsBackend ??= new AtomsBackend(this));
+      ? new AutomationSessionBackend(this._remote.automationSession)
+      : new AtomsBackend(this);
   }
 
   override get driverData(): Record<string, any> {

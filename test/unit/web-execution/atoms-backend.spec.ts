@@ -437,9 +437,9 @@ describe('AtomsBackend', function () {
     });
 
     it('isShowingJavaScriptDialog reuses checkForAlert', async function () {
-      const checkForAlertStub = sandbox.stub(driver, 'checkForAlert').resolves(true);
+      const getAlertTextStub = sandbox.stub(driver, 'getAlertText').resolves('some alert text');
       assert.strictEqual(await backend.isShowingJavaScriptDialog(), true);
-      assert.strictEqual(checkForAlertStub.calledOnce, true);
+      assert.strictEqual(getAlertTextStub.calledOnce, true);
     });
 
     it('getDialogMessage returns the proxied alert text', async function () {
