@@ -2,9 +2,9 @@ import {Transform, Writable, type Readable, type TransformCallback, type Writabl
 
 import {logger} from 'appium/support.js';
 import axios from 'axios';
-import type sharp from 'sharp';
 
 import type {XCUITestDriver} from '../../driver.js';
+import {requireSharp} from '../../utils/index.js';
 
 const log = logger.getLogger('MJPEG');
 
@@ -97,26 +97,6 @@ export class MjpegFrameParser extends Transform {
     this.buffer = null;
     this.expectedLength = 0;
     this.bytesWritten = 0;
-  }
-}
-
-let sharpModule: typeof sharp | null = null;
-
-async function requireSharp(): Promise<typeof sharp> {
-  if (sharpModule) {
-    return sharpModule;
-  }
-  try {
-    sharpModule = (await import('sharp')).default;
-    return sharpModule;
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    throw new Error(
-      `Cannot load the 'sharp' module needed for MJPEG frame processing. ` +
-        `Consider visiting https://sharp.pixelplumbing.com/install for troubleshooting. ` +
-        `Original error: ${message}`,
-      {cause: err},
-    );
   }
 }
 
