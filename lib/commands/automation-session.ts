@@ -1,17 +1,22 @@
 import type {XCUITestDriver} from '../driver.js';
 import {WEBVIEW_BASE} from './context.js';
-import {requireWebContext} from './helpers/index.js';
+import {requireSimulator, requireWebContext} from './helpers/index.js';
 
 /**
  * Starts a WebKit `Automation`-domain session against the current Safari web view. From this
  * point on, web-execution commands route through the automation session instead of atoms, until
  * `mobile: stopAutomationSession` is called.
  *
+ * Simulator only for now - on a real device, starting a session has been observed to kill WDA
+ * (no recovery) and to break restoring the previous context on stop.
+ *
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context
+ * @throws {Error} If not running on a Simulator
  */
 export async function mobileStartAutomationSession(this: XCUITestDriver): Promise<void> {
   requireWebContext(this, 'Starting an automation session');
+  requireSimulator(this, 'Starting an automation session');
   this._preAutomationSessionContext = this.curContext;
   await this.remote.startAutomationSession();
 }

@@ -165,6 +165,10 @@ The driver must already be switched to a Safari web context (see [mobile: getCon
 and the [Hybrid Apps](../guides/hybrid.md) guide) before calling this method. This API
 throws if called from native context or from a non-Safari-based web view.
 
+**Simulator only for now.** On a real device, starting a session has been observed to kill
+WebDriverAgent with no recovery, and to break restoring the previous context on stop. This API
+throws on a real device until the underlying WebKit issue is fixed.
+
 Once started, the commands that operate against the web content - navigation, element
 find/interact, cookies, window/frame management, script execution, screenshots, W3C Actions, and
 JS-dialog handling - are routed through the automation session's own WebKit protocol methods

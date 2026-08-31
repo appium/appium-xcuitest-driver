@@ -27,8 +27,15 @@ describe('automation-session commands', function () {
       await assert.rejects(driver.mobileStartAutomationSession(), errors.NotImplementedError);
     });
 
-    it('starts an automation session on the remote debugger when in a web context', async function () {
+    it('throws when not running on a Simulator', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(false);
+      await assert.rejects(driver.mobileStartAutomationSession());
+    });
+
+    it('starts an automation session on the remote debugger when in a web context on a Simulator', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
       const startAutomationSessionStub = sandbox.stub();
       driver._remote = {startAutomationSession: startAutomationSessionStub} as any;
       await driver.mobileStartAutomationSession();
@@ -37,6 +44,7 @@ describe('automation-session commands', function () {
 
     it('remembers the current context so it can be restored on stop', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
       driver._remote = {startAutomationSession: sandbox.stub()} as any;
       driver.curContext = 'PID:123.4';
       await driver.mobileStartAutomationSession();
