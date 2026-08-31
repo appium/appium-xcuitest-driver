@@ -1,41 +1,61 @@
 import type {XCUITestDriver} from '../driver.js';
+import {WEBVIEW_BASE} from './context.js';
 import {requireWebContext} from './helpers/index.js';
 
 /**
- * Starts a WebKit `Automation`-domain session against the current Safari web view.
- *
- * From this point on, the W3C web-execution commands (navigation, element find/interact,
- * cookies, window/frame management, script execution, screenshots, W3C Actions, JS-dialog
- * handling) route through the automation session's own protocol methods instead of atoms,
- * until `mobile: stopAutomationSession` is called. Switching contexts does not implicitly stop
- * the session - it stays alive until explicitly stopped (or the session/app disconnects).
+ * Starts a WebKit `Automation`-domain session against the current Safari web view. From this
+ * point on, web-execution commands route through the automation session instead of atoms, until
+ * `mobile: stopAutomationSession` is called.
  *
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context
  */
 export async function mobileStartAutomationSession(this: XCUITestDriver): Promise<void> {
   requireWebContext(this, 'Starting an automation session');
+  this._preAutomationSessionContext = this.curContext;
   await this.remote.startAutomationSession();
 }
 
 /**
- * Stops the active WebKit `Automation`-domain session, if any. A no-op if no automation session
- * is currently active.
+ * Stops the active WebKit `Automation`-domain session, if any. A no-op if none is active.
  *
- * WebKit's remote-automation grant - the on-device "Safari is Running Automated Software..."
- * banner - is scoped to the whole remote debugger connection, not to the individual automation
- * session; there is no protocol message that ends just the automation portion of it (see
- * [WebDriver is coming to Safari in iOS 13](https://webkit.org/blog/9395/webdriver-is-coming-to-safari-in-ios-13)
- * for background on this private `Automation` domain). The only way to actually clear it is to
- * close and reopen the whole connection, which this does. Since the session only ever drives
- * tabs it created itself, and those are closed as part of stopping it, there is normally nothing
- * left to resume into anyway - so this always leaves the driver back in `NATIVE_APP` context
- * rather than a (likely nonexistent) web view.
+ * The on-device remote-automation grant is scoped to the whole remote debugger connection, not
+ * the individual session - the only way to clear it is a full reconnect, which this does.
+ *
+ * @param closeAllWindows - Close every tab the automation session drove first. On by default -
+ *        leaving them open leaks a tab permanently stuck under remote automation control. Can
+ *        wedge the connection for minutes (https://bugs.webkit.org/show_bug.cgi?id=322937), so
+ *        callers hitting that may pass `false` to accept the leak instead of the wedge risk.
+ * @param restorePreviousContext - Switch back to whichever web view was active before `mobile:
+ *        startAutomationSession`, if it still exists after the reconnect. On by default.
  */
-export async function mobileStopAutomationSession(this: XCUITestDriver): Promise<void> {
+export async function mobileStopAutomationSession(
+  this: XCUITestDriver,
+  closeAllWindows: boolean = true,
+  restorePreviousContext: boolean = true,
+): Promise<void> {
   if (!this._remote?.automationSession?.isStarted) {
     return;
   }
-  await this.remote.stopAutomationSession();
+  const previousContext = this._preAutomationSessionContext;
+  this._preAutomationSessionContext = null;
+  await this.remote.stopAutomationSession({closeAllWindows});
   await this.stopRemote();
+
+  if (!restorePreviousContext || !previousContext) {
+    return;
+  }
+  try {
+    // getContextsAndViews() reports webview ids prefixed (`WEBVIEW_<id>`); curContext (and so
+    // previousContext, captured from it) is stored unprefixed - normalize before comparing.
+    const previousContextId = `${WEBVIEW_BASE}${previousContext}`;
+    const stillExists = (await this.getContextsAndViews(false)).some(
+      (context) => `${context.id}` === previousContextId,
+    );
+    if (stillExists) {
+      await this.setContext(previousContext);
+    }
+  } catch (err: any) {
+    this.log.info(`Could not switch back to the pre-automation-session context: ${err.message}`);
+  }
 }

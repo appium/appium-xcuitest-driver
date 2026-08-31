@@ -156,6 +156,9 @@ export const executeMethodMap = {
   },
   'mobile: stopAutomationSession': {
     command: 'mobileStopAutomationSession',
+    params: {
+      optional: ['closeAllWindows', 'restorePreviousContext'],
+    },
   },
   'mobile: installApp': {
     command: 'mobileInstallApp',

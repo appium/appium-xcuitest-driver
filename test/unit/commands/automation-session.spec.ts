@@ -34,6 +34,14 @@ describe('automation-session commands', function () {
       await driver.mobileStartAutomationSession();
       assert.strictEqual(startAutomationSessionStub.calledOnceWithExactly(), true);
     });
+
+    it('remembers the current context so it can be restored on stop', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      driver._remote = {startAutomationSession: sandbox.stub()} as any;
+      driver.curContext = 'PID:123.4';
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(driver._preAutomationSessionContext, 'PID:123.4');
+    });
   });
 
   describe('mobileStopAutomationSession', function () {
@@ -48,7 +56,7 @@ describe('automation-session commands', function () {
       assert.strictEqual(stopRemoteStub.called, false);
     });
 
-    it('stops the automation session and reconnects the remote debugger to release the automation grant', async function () {
+    it('stops the automation session (closeAllWindows on by default) and reconnects the remote debugger', async function () {
       const stopAutomationSessionStub = sandbox.stub();
       const stopRemoteStub = sandbox.stub(driver, 'stopRemote');
       driver._remote = {
@@ -56,9 +64,81 @@ describe('automation-session commands', function () {
         stopAutomationSession: stopAutomationSessionStub,
       } as any;
       await driver.mobileStopAutomationSession();
-      assert.strictEqual(stopAutomationSessionStub.calledOnceWithExactly(), true);
+      assert.strictEqual(stopAutomationSessionStub.calledOnceWithExactly({closeAllWindows: true}), true);
       assert.strictEqual(stopRemoteStub.calledOnceWithExactly(), true);
       assert.strictEqual(stopAutomationSessionStub.calledBefore(stopRemoteStub), true);
+    });
+
+    it('passes closeAllWindows through to remote.stopAutomationSession', async function () {
+      const stopAutomationSessionStub = sandbox.stub();
+      sandbox.stub(driver, 'stopRemote').resolves();
+      driver._remote = {
+        automationSession: {isStarted: true},
+        stopAutomationSession: stopAutomationSessionStub,
+      } as any;
+      await driver.mobileStopAutomationSession(false);
+      assert.strictEqual(stopAutomationSessionStub.calledOnceWithExactly({closeAllWindows: false}), true);
+    });
+
+    it('switches back to the pre-automation-session context if it still exists after reconnecting', async function () {
+      sandbox.stub(driver, 'stopRemote').resolves();
+      driver._remote = {
+        automationSession: {isStarted: true},
+        stopAutomationSession: sandbox.stub(),
+      } as any;
+      driver._preAutomationSessionContext = 'PID:123.4';
+      // getContextsAndViews() reports webview ids WEBVIEW_-prefixed; curContext is unprefixed.
+      sandbox.stub(driver, 'getContextsAndViews').resolves([{id: 'WEBVIEW_PID:123.4'}, {id: 'WEBVIEW_PID:123.5'}] as any);
+      const setContextStub = sandbox.stub(driver, 'setContext').resolves();
+
+      await driver.mobileStopAutomationSession();
+
+      assert.strictEqual(setContextStub.calledOnceWithExactly('PID:123.4'), true);
+      assert.strictEqual(driver._preAutomationSessionContext, null);
+    });
+
+    it('does not try to switch back if the pre-automation-session context no longer exists', async function () {
+      sandbox.stub(driver, 'stopRemote').resolves();
+      driver._remote = {
+        automationSession: {isStarted: true},
+        stopAutomationSession: sandbox.stub(),
+      } as any;
+      driver._preAutomationSessionContext = 'PID:123.4';
+      sandbox.stub(driver, 'getContextsAndViews').resolves([{id: 'WEBVIEW_PID:123.5'}] as any);
+      const setContextStub = sandbox.stub(driver, 'setContext').resolves();
+
+      await driver.mobileStopAutomationSession();
+
+      assert.strictEqual(setContextStub.called, false);
+    });
+
+    it('does not attempt a restore when no context was recorded before starting', async function () {
+      sandbox.stub(driver, 'stopRemote').resolves();
+      driver._remote = {
+        automationSession: {isStarted: true},
+        stopAutomationSession: sandbox.stub(),
+      } as any;
+      driver._preAutomationSessionContext = null;
+      const getContextsStub = sandbox.stub(driver, 'getContextsAndViews').resolves([] as any);
+
+      await driver.mobileStopAutomationSession();
+
+      assert.strictEqual(getContextsStub.called, false);
+    });
+
+    it('does not attempt a restore when restorePreviousContext is false', async function () {
+      sandbox.stub(driver, 'stopRemote').resolves();
+      driver._remote = {
+        automationSession: {isStarted: true},
+        stopAutomationSession: sandbox.stub(),
+      } as any;
+      driver._preAutomationSessionContext = 'PID:123.4';
+      const getContextsStub = sandbox.stub(driver, 'getContextsAndViews').resolves([] as any);
+
+      await driver.mobileStopAutomationSession(false, false);
+
+      assert.strictEqual(getContextsStub.called, false);
+      assert.strictEqual(driver._preAutomationSessionContext, null);
     });
   });
 

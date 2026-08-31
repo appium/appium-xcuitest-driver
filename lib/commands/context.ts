@@ -17,7 +17,7 @@ import {assignBiDiLogListener} from './log.js';
 import type {ViewContext, FullContext, PageChangeNotification} from './types.js';
 
 const WEBVIEW_WIN = 'WEBVIEW';
-const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
+export const WEBVIEW_BASE = `${WEBVIEW_WIN}_`;
 const DEFAULT_REMOTE_DEBUGGER_CONNECT_TIMEOUT_MS = 5000;
 const DEFAULT_LIST_WEB_FRAMES_RETRIES = 20;
 

@@ -253,6 +253,8 @@ export class XCUITestDriver
   contexts: string[] = [];
   curContext: string | null = null;
   curWebFrames: string[];
+  /** `curContext` before `mobile: startAutomationSession`, to restore it on stop. */
+  _preAutomationSessionContext: string | null = null;
 
   _webviewCalibrationCache: CalibrationCacheEntry | null;
   asyncWaitMs: number | undefined;

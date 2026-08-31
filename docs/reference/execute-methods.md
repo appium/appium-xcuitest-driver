@@ -205,11 +205,20 @@ banner - is scoped to the whole remote debugger connection, not to the individua
 session, and there is no protocol message that ends just the automation portion of it (see
 [WebDriver is coming to Safari in iOS 13](https://webkit.org/blog/9395/webdriver-is-coming-to-safari-in-ios-13)
 for background on this private `Automation` domain). The only way to actually clear it is to
-close and reopen the whole connection, which this does. Since the session only ever drives tabs
-it created itself, and those are closed as part of stopping it, there is normally no web view
-left to resume into anyway - so this always leaves the driver back in `NATIVE_APP` context,
-rather than the (by then likely nonexistent) web view the session was driving. Switch context
-again explicitly afterward to resume automating a web view.
+close and reopen the whole connection, which this does.
+
+By default this switches back to whichever web view was active before
+[mobile: startAutomationSession](#mobile-startautomationsession), if it still exists after the
+reconnect (see `restorePreviousContext` below). It also closes the tabs the automation
+session drove first, by default (see `closeAllWindows` below). Even though all tabs are closed,
+one empty tab always remains open, which is a safari session limitation/bug.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+closeAllWindows | boolean | no | Close every tab the automation session drove before tearing it down. Defaults to `true`. Pass `false` to leave them open instead, if this is observed to wedge the connection ([WebKit bug 322937](https://bugs.webkit.org/show_bug.cgi?id=322937)). | true
+restorePreviousContext | boolean | no | Switch back to whichever web view was active before `mobile: startAutomationSession`, if it still exists after the reconnect. Defaults to `true`. | false
 
 ### mobile: installApp
 
