@@ -1,3 +1,9 @@
+## [12.8.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.2...v12.8.3) (2026-08-31)
+
+### Bug Fixes
+
+* stop using deprecated appium/support imageUtil, rely on local sharp ([#2963](https://github.com/appium/appium-xcuitest-driver/issues/2963)) ([8a913a1](https://github.com/appium/appium-xcuitest-driver/commit/8a913a1defbf34a117a717671fbf4c944b302398))
+
 ## [12.8.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.1...v12.8.2) (2026-08-26)
 
 ### Bug Fixes
