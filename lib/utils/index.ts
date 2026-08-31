@@ -9,6 +9,7 @@ export {
   truncateString,
   upperFirst,
 } from './lang.js';
+export {cropBase64Image, requireSharp} from './image.js';
 export {memoize} from './memoize.js';
 export {
   toApiLevelRequirementText,

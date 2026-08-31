@@ -1,11 +1,11 @@
 import type {Element} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
-import {util, imageUtil} from 'appium/support.js';
+import {util} from 'appium/support.js';
 import {retryInterval} from 'asyncbox';
 
 import type {XCUITestDriver} from '../driver.js';
-import {capitalize} from '../utils/index.js';
+import {capitalize, cropBase64Image, requireSharp} from '../utils/index.js';
 
 /**
  * Takes a screenshot of the current screen.
@@ -120,7 +120,7 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
     return screenshot;
   }
 
-  const sharp = imageUtil.requireSharp();
+  const sharp = await requireSharp();
   const {width, height} = await sharp(Buffer.from(screenshot, 'base64')).metadata();
   if (!width || !height) {
     throw new errors.UnableToCaptureScreen('The device screenshot is empty');
@@ -136,5 +136,5 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
     region.height = height - region.top;
   }
   this.log.debug(`Calculated viewport rect: ${JSON.stringify(region)}`);
-  return await imageUtil.cropBase64Image(screenshot, region);
+  return await cropBase64Image(screenshot, region);
 }
