@@ -88,7 +88,9 @@ describe('automation-session commands', function () {
       } as any;
       driver._preAutomationSessionContext = 'PID:123.4';
       // getContextsAndViews() reports webview ids WEBVIEW_-prefixed; curContext is unprefixed.
-      sandbox.stub(driver, 'getContextsAndViews').resolves([{id: 'WEBVIEW_PID:123.4'}, {id: 'WEBVIEW_PID:123.5'}] as any);
+      sandbox
+        .stub(driver, 'getContextsAndViews')
+        .resolves([{id: 'WEBVIEW_PID:123.4'}, {id: 'WEBVIEW_PID:123.5'}] as any);
       const setContextStub = sandbox.stub(driver, 'setContext').resolves();
 
       await driver.mobileStopAutomationSession();
