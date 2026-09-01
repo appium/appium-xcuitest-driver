@@ -711,6 +711,7 @@ export class XCUITestDriver
   asyncScriptTimeout = timeoutCommands.asyncScriptTimeout;
   setPageLoadTimeout = timeoutCommands.setPageLoadTimeout;
   setAsyncScriptTimeout = timeoutCommands.setAsyncScriptTimeout;
+  override setImplicitWait = timeoutCommands.setImplicitWait;
 
   /*-----+
    | WEB |
@@ -871,6 +872,11 @@ export class XCUITestDriver
    * active" flag), so switching contexts and back automatically resumes routing through
    * whichever backend is actually live.
    *
+   * An automation session is scoped to the single app it was started against (the app id key,
+   * e.g. `PID:1656`) - if `curContext` has since moved to a *different* app (another webview or
+   * a hybrid app's WKWebView), commands must go through atoms instead, even while the session is
+   * still running in the background for its own app.
+   *
    * A fresh backend is constructed on every access rather than cached on the driver - both
    * backends are stateless wrappers, and caching would leave the driver holding a permanent
    * reference back to itself through `_atomsBackend`/`_automationSessionBackend`.
@@ -879,8 +885,14 @@ export class XCUITestDriver
    * left running in the background can never be consulted by a native command by accident.
    */
   get _webExecutionBackend(): WebExecutionBackend {
-    return this._remote?.automationSession?.isStarted
-      ? new AutomationSessionBackend(this._remote.automationSession)
+    const automationSession = this._remote?.automationSession;
+    const currentAppIdKey = this.curContext?.split('.')[0];
+    const trackedAppIdKey =
+      automationSession?.trackedAppIdKey !== undefined
+        ? `${automationSession.trackedAppIdKey}`.replace(/^PID:/, '')
+        : undefined;
+    return automationSession?.isStarted && trackedAppIdKey === currentAppIdKey
+      ? new AutomationSessionBackend(automationSession)
       : new AtomsBackend(this);
   }
 

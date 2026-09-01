@@ -84,7 +84,14 @@ export class AutomationSessionBackend implements WebExecutionBackend {
   }
 
   async getRect(elementId: string): Promise<Rect> {
-    return await this.session.getRect(util.wrapElement(elementId));
+    const rect = await this.session.getRect(util.wrapElement(elementId));
+    // AutomationSession.getRect() returns page-relative (scroll-adjusted) coordinates, but the
+    // WebExecutionBackend contract - matching AtomsBackend's viewport-relative atom and the W3C
+    // Get Element Rect spec - is viewport-relative. Subtract the current scroll offset.
+    const [xOffset, yOffset] = await this.session.executeScript<[number, number]>(
+      'return [window.pageXOffset || 0, window.pageYOffset || 0];',
+    );
+    return {...rect, x: rect.x - xOffset, y: rect.y - yOffset};
   }
 
   async elementScreenshot(elementId: string): Promise<string> {
@@ -157,6 +164,10 @@ export class AutomationSessionBackend implements WebExecutionBackend {
     return await this.session.getWindowHandles();
   }
 
+  async switchToWindow(handle: string): Promise<void> {
+    await this.session.switchToWindow(handle);
+  }
+
   async getWindowRect(): Promise<Rect> {
     return await this.session.getWindowRect();
   }
@@ -205,7 +216,16 @@ export class AutomationSessionBackend implements WebExecutionBackend {
     return await this.session.executeAsyncScript<T>(script, args);
   }
 
-  async screenshot(): Promise<string> {
+  async screenshot(coordinateSystem?: 'Viewport' | 'Page'): Promise<string> {
+    if (coordinateSystem === 'Page') {
+      // AutomationSession.screenshot() always clips to the viewport - there is no full-page
+      // capture through the Automation domain. Reject explicitly rather than silently returning
+      // a viewport-only image under a 'page' setting.
+      throw new errors.NotImplementedError(
+        `Full-page screenshots ('webScreenshotMode' set to 'page') are not supported while an ` +
+          `automation session is active - only 'viewport' and 'native' are.`,
+      );
+    }
     return await this.session.screenshot();
   }
 

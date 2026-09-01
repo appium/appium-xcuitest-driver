@@ -41,7 +41,7 @@ export async function setWindow(this: XCUITestDriver, name: string, skipReadyChe
     return;
   }
   try {
-    await this.setContext(name, () => {}, skipReadyCheck);
+    await this._webExecutionBackend.switchToWindow(name, skipReadyCheck);
   } catch (err) {
     // translate the error in terms of windows
     throw isErrorType(err, errors.NoSuchContextError) ? new errors.NoSuchWindowError() : err;

@@ -50,6 +50,14 @@ export interface WebExecutionBackend {
   getActiveElement(): Promise<Element | null>;
   getWindowHandle(): Promise<string>;
   getWindowHandles(): Promise<string[]>;
+  /**
+   * Switches the driven window/tab to the one identified by `handle` - a value previously
+   * returned by {@linkcode getWindowHandle}/{@linkcode getWindowHandles} from the *same* backend.
+   * Handles are not portable across backends: atoms addresses windows by XCUITest webview
+   * context id, while an automation session addresses them by WebKit's own opaque browsing-context
+   * handle.
+   */
+  switchToWindow(handle: string, skipReadyCheck?: boolean): Promise<void>;
   getWindowRect(): Promise<Rect>;
   setWindowRect(x?: number, y?: number, width?: number, height?: number): Promise<void>;
   maximizeWindow(): Promise<void>;

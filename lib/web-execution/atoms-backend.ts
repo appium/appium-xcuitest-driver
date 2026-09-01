@@ -5,6 +5,7 @@ import {waitForCondition} from 'asyncbox';
 
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
+import {performActionsViaWDA} from '../commands/gesture.js';
 import {checkForAlert, createJSCookie, hasElementId} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {isEmpty, toErrorMessage} from '../utils/index.js';
@@ -225,6 +226,10 @@ export class AtomsBackend implements WebExecutionBackend {
     return contexts.filter((context) => context.id !== NATIVE_WIN).map((context) => context.view?.id?.toString() ?? '');
   }
 
+  async switchToWindow(handle: string, skipReadyCheck?: boolean): Promise<void> {
+    await this.driver.setContext(handle, () => {}, skipReadyCheck);
+  }
+
   async getWindowRect(): Promise<Rect> {
     const script =
       'return {' +
@@ -339,10 +344,11 @@ export class AtomsBackend implements WebExecutionBackend {
     return await this.driver.remote.captureScreenshot(coordinateSystem ? {coordinateSystem} : undefined);
   }
 
-  async performActions(_actions: ActionSequence[]): Promise<void> {
-    throw new errors.NotImplementedError(
-      `W3C actions in a web context require an active automation session ` + `(see 'mobile: startAutomationSession').`,
-    );
+  async performActions(actions: ActionSequence[]): Promise<void> {
+    // atoms have no actions implementation of their own, but WDA can still drive real touch
+    // input against on-screen web content - as long as no action originates from a web element,
+    // which requires an automation session (see 'mobile: startAutomationSession').
+    await performActionsViaWDA(this.driver, actions);
   }
 
   async releaseActions(): Promise<void> {

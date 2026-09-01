@@ -421,8 +421,21 @@ describe('AtomsBackend', function () {
     assert.strictEqual(remoteStub.captureScreenshot.calledOnceWithExactly(undefined), true);
   });
 
-  it('performActions is not implemented for atoms - use an automation session instead', async function () {
-    await assert.rejects(backend.performActions([]), errors.NotImplementedError);
+  it('performActions has no atoms implementation, but still proxies non-web-element sequences to WDA', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    const actions = [{type: 'pointer', id: 'finger1', parameters: {pointerType: 'mouse'}, actions: []}] as any;
+
+    await backend.performActions(actions);
+
+    assert.strictEqual(proxyStub.calledOnce, true);
+    assert.strictEqual(proxyStub.firstCall.args[0], '/actions');
+  });
+
+  it('performActions rejects a web-element-origin sequence - atoms/WDA cannot resolve those', async function () {
+    const actions = [
+      {type: 'pointer', id: 'finger1', actions: [{type: 'pointerMove', origin: {ELEMENT: ':wdc:123'}}]},
+    ] as any;
+    await assert.rejects(backend.performActions(actions), errors.InvalidArgumentError);
   });
 
   it('releaseActions is a harmless no-op', async function () {

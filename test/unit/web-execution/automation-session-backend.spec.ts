@@ -39,7 +39,6 @@ describe('AutomationSessionBackend', function () {
       ['isDisplayed', 'isDisplayed', [], []],
       ['isEnabled', 'isEnabled', [], []],
       ['isSelected', 'isSelected', [], []],
-      ['getRect', 'getRect', [], []],
       ['elementScreenshot', 'elementScreenshot', [], []],
       ['getAttribute', 'getAttribute', ['name'], ['name']],
       ['getProperty', 'getProperty', ['name'], ['name']],
@@ -68,6 +67,27 @@ describe('AutomationSessionBackend', function () {
         assert.deepStrictEqual(s.firstCall.args, [wrapped('el-123')]);
       });
     }
+  });
+
+  describe('getRect', function () {
+    it('converts session.getRect page-relative coordinates to viewport-relative by subtracting the scroll offset', async function () {
+      const getRectStub = stub('getRect', {x: 150, y: 250, width: 40, height: 20});
+      const scriptStub = stub('executeScript', [100, 200]);
+
+      const result = await backend.getRect('el-123');
+
+      assert.deepStrictEqual(result, {x: 50, y: 50, width: 40, height: 20});
+      assert.deepStrictEqual(getRectStub.firstCall.args, [wrapped('el-123')]);
+      assert.strictEqual(scriptStub.calledOnce, true);
+    });
+  });
+
+  describe('switchToWindow', function () {
+    it('delegates to session.switchToWindow with the given handle', async function () {
+      const s = stub('switchToWindow');
+      await backend.switchToWindow('page-ABC123');
+      assert.strictEqual(s.calledOnceWithExactly('page-ABC123'), true);
+    });
   });
 
   describe('sendKeys', function () {
@@ -193,6 +213,18 @@ describe('AutomationSessionBackend', function () {
     const result = await backend.screenshot();
     assert.strictEqual(result, 'base64==');
     assert.strictEqual(s.calledOnceWithExactly(), true);
+  });
+
+  it('screenshot delegates for the Viewport coordinate system too', async function () {
+    const s = stub('screenshot', 'base64==');
+    const result = await backend.screenshot('Viewport');
+    assert.strictEqual(result, 'base64==');
+    assert.strictEqual(s.calledOnceWithExactly(), true);
+  });
+
+  it('screenshot rejects the Page coordinate system - AutomationSession always clips to the viewport', async function () {
+    stub('screenshot');
+    await assert.rejects(backend.screenshot('Page'), errors.NotImplementedError);
   });
 
   it('performActions delegates to session.performW3CActions', async function () {

@@ -3,7 +3,7 @@ import {errors} from 'appium/driver.js';
 
 import type {RealDevice} from '../../device/real-device-management.js';
 import {isWatchOs, upperFirst} from '../../utils/index.js';
-import type {AutomationSessionBackend} from '../../web-execution/automation-session-backend.js';
+import {AutomationSessionBackend} from '../../web-execution/automation-session-backend.js';
 import type {WebExecutionBackend} from '../../web-execution/types.js';
 
 export interface DeviceGuardDriver {
@@ -20,8 +20,7 @@ export interface PlatformGuardDriver {
   readonly opts: {platformName?: string | null};
 }
 
-export interface AutomationSessionGuardDriver {
-  readonly _remote?: {readonly automationSession?: {readonly isStarted: boolean}} | null;
+export interface AutomationSessionGuardDriver extends WebContextGuardDriver {
   readonly _webExecutionBackend: WebExecutionBackend;
 }
 
@@ -66,19 +65,25 @@ export function requireWatchOs(driver: PlatformGuardDriver, action: string): voi
 }
 
 /**
- * Requires that the given driver currently has an active `AutomationSession` and returns its
- * backend. Used only by commands with no atoms equivalent at all (window sizing, parent frame
- * navigation) - every other web-execution command dispatches through `_webExecutionBackend`
- * unconditionally instead.
+ * Requires that the given driver is in a web context currently driven by an active
+ * `AutomationSession`, and returns its backend. Used only by commands with no atoms equivalent
+ * at all (window sizing, parent frame navigation) - every other web-execution command dispatches
+ * through `_webExecutionBackend` unconditionally instead.
+ *
+ * Checking `isStarted` alone isn't enough: the session is scoped to a single app, and
+ * `_webExecutionBackend` already falls back to atoms once `curContext` has moved elsewhere (or
+ * to native) - so the resolved backend, not just `isStarted`, is what determines whether the
+ * session actually applies here.
  */
 export function requireAutomationSessionActive(
   driver: AutomationSessionGuardDriver,
   action: string,
 ): AutomationSessionBackend {
-  if (!driver._remote?.automationSession?.isStarted) {
+  const backend = driver.isWebContext() ? driver._webExecutionBackend : undefined;
+  if (!(backend instanceof AutomationSessionBackend)) {
     throw new errors.NotImplementedError(
       `${upperFirst(action)} requires an active automation session (see 'mobile: startAutomationSession')`,
     );
   }
-  return driver._webExecutionBackend as AutomationSessionBackend;
+  return backend;
 }

@@ -7,6 +7,7 @@ import type sinon from 'sinon';
 
 import {requireAutomationSessionActive} from '../../../lib/commands/helpers/index.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
+import {AutomationSessionBackend} from '../../../lib/web-execution/automation-session-backend.js';
 
 describe('automation-session commands', function () {
   let sandbox: sinon.SinonSandbox;
@@ -36,7 +37,8 @@ describe('automation-session commands', function () {
     it('starts an automation session on the remote debugger when in a web context on a Simulator', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
       sandbox.stub(driver, 'isSimulator').returns(true);
-      const startAutomationSessionStub = sandbox.stub();
+      const session = {} as any;
+      const startAutomationSessionStub = sandbox.stub().resolves(session);
       driver._remote = {startAutomationSession: startAutomationSessionStub} as any;
       await driver.mobileStartAutomationSession();
       assert.strictEqual(startAutomationSessionStub.calledOnceWithExactly(), true);
@@ -45,10 +47,24 @@ describe('automation-session commands', function () {
     it('remembers the current context so it can be restored on stop', async function () {
       sandbox.stub(driver, 'isWebContext').returns(true);
       sandbox.stub(driver, 'isSimulator').returns(true);
-      driver._remote = {startAutomationSession: sandbox.stub()} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves({})} as any;
       driver.curContext = 'PID:123.4';
       await driver.mobileStartAutomationSession();
       assert.strictEqual(driver._preAutomationSessionContext, 'PID:123.4');
+    });
+
+    it('seeds the session with the driver current page-load/script/implicit-wait timeouts', async function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      sandbox.stub(driver, 'isSimulator').returns(true);
+      const session = {} as any;
+      driver._remote = {startAutomationSession: sandbox.stub().resolves(session)} as any;
+      driver.pageLoadMs = 12345;
+      driver.asyncWaitMs = 6789;
+      driver.implicitWaitMs = 42;
+      await driver.mobileStartAutomationSession();
+      assert.strictEqual(session.pageLoadTimeoutMs, 12345);
+      assert.strictEqual(session.scriptTimeoutMs, 6789);
+      assert.strictEqual(session.implicitWaitTimeoutMs, 42);
     });
   });
 
@@ -163,11 +179,26 @@ describe('automation-session commands', function () {
       assert.throws(() => requireAutomationSessionActive(driver, 'Doing the thing'), errors.NotImplementedError);
     });
 
-    it('returns the active _webExecutionBackend when an automation session is started', function () {
-      const fakeBackend = {setWindowRect: sandbox.stub()};
+    it('throws NotImplementedError when not in a web context', function () {
+      sandbox.stub(driver, 'isWebContext').returns(false);
       driver._remote = {automationSession: {isStarted: true}} as any;
-      sandbox.stub(driver, '_webExecutionBackend').get(() => fakeBackend);
-      assert.strictEqual(requireAutomationSessionActive(driver, 'Doing the thing'), fakeBackend);
+      sandbox.stub(driver, '_webExecutionBackend').get(() => new AutomationSessionBackend({} as any));
+      assert.throws(() => requireAutomationSessionActive(driver, 'Doing the thing'), errors.NotImplementedError);
+    });
+
+    it('returns the active _webExecutionBackend when an automation session is started for the current context', function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      driver._remote = {automationSession: {isStarted: true}} as any;
+      const backend = new AutomationSessionBackend({} as any);
+      sandbox.stub(driver, '_webExecutionBackend').get(() => backend);
+      assert.strictEqual(requireAutomationSessionActive(driver, 'Doing the thing'), backend);
+    });
+
+    it('throws NotImplementedError when the automation session belongs to a different context (atoms backend resolved instead)', function () {
+      sandbox.stub(driver, 'isWebContext').returns(true);
+      driver._remote = {automationSession: {isStarted: true}} as any;
+      sandbox.stub(driver, '_webExecutionBackend').get(() => ({}) as any);
+      assert.throws(() => requireAutomationSessionActive(driver, 'Doing the thing'), errors.NotImplementedError);
     });
   });
 });

@@ -10,6 +10,12 @@ import {requireSimulator, requireWebContext} from './helpers/index.js';
  * Simulator only for now - on a real device, starting a session has been observed to kill WDA
  * (no recovery) and to break restoring the previous context on stop.
  *
+ * Seeded with the driver's current page-load/script/implicit-wait timeouts - the session's own
+ * defaults (in particular a `0` implicit wait) otherwise differ from what the client configured,
+ * silently changing WebDriver timeout behavior on session start. Later timeout updates are kept
+ * in sync too, by {@linkcode setPageLoadTimeout}/{@linkcode setAsyncScriptTimeout}/
+ * {@linkcode setImplicitWait}.
+ *
  * @group Mobile Web Only
  * @throws {errors.NotImplementedError} If not in a web context
  * @throws {Error} If not running on a Simulator
@@ -18,7 +24,16 @@ export async function mobileStartAutomationSession(this: XCUITestDriver): Promis
   requireWebContext(this, 'Starting an automation session');
   requireSimulator(this, 'Starting an automation session');
   this._preAutomationSessionContext = this.curContext;
-  await this.remote.startAutomationSession();
+  const session = await this.remote.startAutomationSession();
+  if (this.pageLoadMs != null) {
+    session.pageLoadTimeoutMs = this.pageLoadMs;
+  }
+  if (this.asyncWaitMs != null) {
+    session.scriptTimeoutMs = this.asyncWaitMs;
+  }
+  if (this.implicitWaitMs != null) {
+    session.implicitWaitTimeoutMs = this.implicitWaitMs;
+  }
 }
 
 /**

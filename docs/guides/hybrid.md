@@ -69,19 +69,27 @@ By default, once in a web view context, commands are executed against the DOM by
 Selenium atom scripts through the remote debugger connection described above. As an alternative,
 you can opt a session into driving the web view through WebKit's own `Automation` protocol instead,
 by invoking the [mobile: startAutomationSession](../reference/execute-methods.md#mobile-startautomationsession)
-extension once you're in a web context. From that point on, navigation, element find/interact,
+extension once you're in a web context. Simulator only for now - see
+[mobile: startAutomationSession](../reference/execute-methods.md#mobile-startautomationsession)
+for why. From that point on, navigation, element find/interact,
 cookies, window/frame management, script execution, screenshots, W3C Actions, and JS-dialog
 handling are all routed through that automation session, until you call
 [mobile: stopAutomationSession](../reference/execute-methods.md#mobile-stopautomationsession) (or
 the session/app disconnects). This is the only way to perform real W3C Actions against a web
 element, or to resize/maximize/minimize the browser window - atoms never supported either.
 
+**W3C Actions are currently unreliable through this session**: a `performInteractionSequence`
+call has been observed to wedge the WebKit connection, leaving the next command unanswered. See
+[WebKit bug 322937](https://bugs.webkit.org/show_bug.cgi?id=322937); avoid W3C Actions here until
+it's fixed upstream.
+
 Switching context does not implicitly stop the session, so leaving the web view for
 `'NATIVE_APP'` and coming back resumes driving through it automatically.
 
-Stopping the session, on the other hand, always leaves the driver in `'NATIVE_APP'` context -
-see [mobile: stopAutomationSession](../reference/execute-methods.md#mobile-stopautomationsession)
-for why. For background on this private WebKit `Automation` protocol in general, see
+Stopping the session switches back to whichever web view was active before it started, if it
+still exists - see
+[mobile: stopAutomationSession](../reference/execute-methods.md#mobile-stopautomationsession) for
+details. For background on this private WebKit `Automation` protocol in general, see
 [WebDriver is coming to Safari in iOS 13](https://webkit.org/blog/9395/webdriver-is-coming-to-safari-in-ios-13).
 
 ### Examples

@@ -1,3 +1,5 @@
+import {BaseDriver} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
 
 /**
@@ -58,6 +60,9 @@ export function setPageLoadTimeout(this: XCUITestDriver, ms: number): void {
   this.pageLoadMs = ms;
   if (this._remote) {
     this.remote.pageLoadMs = ms;
+    if (this._remote.automationSession?.isStarted) {
+      this._remote.automationSession.pageLoadTimeoutMs = ms;
+    }
   }
   this.log.debug(`Set page load timeout to ${ms}ms`);
 }
@@ -69,5 +74,24 @@ export function setPageLoadTimeout(this: XCUITestDriver, ms: number): void {
  */
 export function setAsyncScriptTimeout(this: XCUITestDriver, ms: number): void {
   this.asyncWaitMs = ms;
+  if (this._remote?.automationSession?.isStarted) {
+    this._remote.automationSession.scriptTimeoutMs = ms;
+  }
   this.log.debug(`Set async script timeout to ${ms}ms`);
+}
+
+/**
+ * Sets the implicit wait timeout.
+ *
+ * Defers to `BaseDriver`'s own `setImplicitWait`, additionally keeping the active automation
+ * session (if any) in sync - its implicit wait defaults to `0` independently of the rest of the
+ * driver, so it would otherwise silently diverge from what the client configured.
+ *
+ * @param ms - Timeout in milliseconds
+ */
+export function setImplicitWait(this: XCUITestDriver, ms: number): void {
+  BaseDriver.prototype.setImplicitWait.call(this, ms);
+  if (this._remote?.automationSession?.isStarted) {
+    this._remote.automationSession.implicitWaitTimeoutMs = ms;
+  }
 }
