@@ -20,6 +20,43 @@ describe('alert commands', function () {
       assert.strictEqual(proxySpy.firstCall.args[0], '/alert/text');
       assert.strictEqual(proxySpy.firstCall.args[1], 'GET');
     });
+
+    describe('in a web context', function () {
+      let sandbox: sinon.SinonSandbox;
+
+      afterEach(function () {
+        sandbox.restore();
+      });
+
+      it('returns null without calling getDialogMessage when no dialog is showing', async function () {
+        sandbox = sinon.createSandbox();
+        sandbox.stub(driver, 'isWebContext').returns(true);
+        const backendStub = {
+          isShowingJavaScriptDialog: sandbox.stub().resolves(false),
+          getDialogMessage: sandbox.stub(),
+        };
+        sandbox.stub(driver, '_webExecutionBackend').get(() => backendStub as any);
+
+        const result = await driver.getAlertText();
+
+        assert.strictEqual(result, null);
+        assert.strictEqual(backendStub.getDialogMessage.called, false);
+      });
+
+      it('returns the dialog message when a dialog is showing', async function () {
+        sandbox = sinon.createSandbox();
+        sandbox.stub(driver, 'isWebContext').returns(true);
+        const backendStub = {
+          isShowingJavaScriptDialog: sandbox.stub().resolves(true),
+          getDialogMessage: sandbox.stub().resolves('hello'),
+        };
+        sandbox.stub(driver, '_webExecutionBackend').get(() => backendStub as any);
+
+        const result = await driver.getAlertText();
+
+        assert.strictEqual(result, 'hello');
+      });
+    });
   });
   describe('setAlertText', function () {
     it('should send translated POST request to WDA', async function () {

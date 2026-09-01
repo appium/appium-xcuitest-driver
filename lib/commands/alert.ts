@@ -13,7 +13,14 @@ interface AlertOptions {
  */
 export async function getAlertText(this: XCUITestDriver): Promise<string | null> {
   if (this.isWebContext()) {
-    return await this._webExecutionBackend.getDialogMessage();
+    const backend = this._webExecutionBackend;
+    // getDialogMessage() throws when no dialog is showing (NoAlertOpenError for atoms, a raw
+    // WebKit protocol error for an automation session) - check first to honor the documented
+    // null-when-no-alert contract instead of letting either error type escape.
+    if (!(await backend.isShowingJavaScriptDialog())) {
+      return null;
+    }
+    return await backend.getDialogMessage();
   }
   return await this.proxyCommand<any, string | null>('/alert/text', 'GET');
 }
