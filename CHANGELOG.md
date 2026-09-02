@@ -1,3 +1,9 @@
+## [12.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.9.0...v12.9.1) (2026-09-02)
+
+### Miscellaneous Chores
+
+* bump support-related dependencies ([#2965](https://github.com/appium/appium-xcuitest-driver/issues/2965)) ([b4da83a](https://github.com/appium/appium-xcuitest-driver/commit/b4da83a70cfb761ba162f133223f264d1f4959f3))
+
 ## [12.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.3...v12.9.0) (2026-09-02)
 
 ### Features
