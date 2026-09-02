@@ -436,6 +436,7 @@ describe('AtomsBackend', function () {
     executeAtomStub.withArgs('get_size').resolves({width: 40, height: 20});
     executeAtomStub.withArgs('get_top_left_coordinates').resolves({x: 100, y: 200});
     const translateStub = sandbox.stub(driver, 'translateWebCoords').resolves({x: 321, y: 654});
+    driver.webElementsCache.set(':wdc:123', ':wdc:123');
     const actions = [
       {
         type: 'pointer',
@@ -453,6 +454,26 @@ describe('AtomsBackend', function () {
     assert.strictEqual(proxiedAction.origin, 'viewport');
     assert.strictEqual(proxiedAction.x, 321);
     assert.strictEqual(proxiedAction.y, 654);
+  });
+
+  it('performActions leaves a native element origin untouched - it is shaped just like a web element, but is not one', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    const translateStub = sandbox.stub(driver, 'translateWebCoords');
+    // never cached via the web-execution machinery, so this is a native element, not a web one
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: 'native-element-id'}, x: 5, y: -5}],
+      },
+    ] as any;
+
+    await backend.performActions(actions);
+
+    assert.strictEqual(translateStub.called, false);
+    assert.strictEqual(executeAtomStub.called, false);
+    const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
+    assert.deepStrictEqual(proxiedAction.origin, {ELEMENT: 'native-element-id'});
   });
 
   it('releaseActions is a harmless no-op', async function () {

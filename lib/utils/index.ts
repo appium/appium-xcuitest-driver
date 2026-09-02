@@ -9,7 +9,7 @@ export {
   truncateString,
   upperFirst,
 } from './lang.js';
-export {hasElementId} from './element.js';
+export {hasElementId, hasWebElementId} from './element.js';
 export {cropBase64Image, requireSharp} from './image.js';
 export {memoize} from './memoize.js';
 export {

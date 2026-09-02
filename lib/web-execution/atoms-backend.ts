@@ -8,7 +8,7 @@ import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
 import {checkForAlert, createJSCookie} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
-import {hasElementId, isEmpty, toErrorMessage} from '../utils/index.js';
+import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
 
 const CLOSE_WINDOW_TIMEOUT_MS = 5000;
@@ -395,6 +395,10 @@ export class AtomsBackend implements WebExecutionBackend {
    * into a `'viewport'`-relative native screen coordinate, so the result can be driven through
    * WDA's `/actions` endpoint via {@linkcode performActionsViaWDA}.
    *
+   * An origin shaped like an element but not tracked in `webElementsCache` is a native element,
+   * not a web one - {@linkcode hasWebElementId} tells the two apart, since WDA understands native
+   * elements just fine, such an origin is left untouched for `performActionsViaWDA` to pass through.
+   *
    * @param actions - Array of action sequences, potentially containing web element origins
    * @returns A deep copy of `actions` with every web element origin replaced by native coordinates
    */
@@ -402,7 +406,7 @@ export class AtomsBackend implements WebExecutionBackend {
     const resolvedActions = structuredClone(actions);
     for (const sequence of resolvedActions) {
       for (const action of ((sequence as any).actions ?? []) as any[]) {
-        if (!hasElementId(action?.origin)) {
+        if (!hasWebElementId(this.driver.webElementsCache, action?.origin)) {
           continue;
         }
         const {x, y} = await this.resolveElementOriginToNativeCoords(action.origin, action.x, action.y);

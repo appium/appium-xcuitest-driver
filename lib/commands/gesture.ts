@@ -3,7 +3,7 @@ import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {hasElementId, isPlainObject} from '../utils/index.js';
+import {hasWebElementId, isPlainObject} from '../utils/index.js';
 import {requireSimulator} from './helpers/index.js';
 import type {Direction} from './types.js';
 
@@ -598,10 +598,9 @@ export async function mobileRotateElement(
  * Asserts that the action sequence does not contain web elements.
  *
  * A native-context action legitimately can reference a native element as its origin (WDA
- * understands those just fine) - it is wrapped exactly the same way a web element is
- * ({@linkcode hasElementId} can't tell the two apart by shape alone), so this also checks
- * `webElementsCache` (populated only by the atoms/web-execution machinery) to confirm an
- * element-shaped origin is actually a *web* element before rejecting it.
+ * understands those just fine) - it is wrapped exactly the same way a web element is, so
+ * {@linkcode hasWebElementId} is used to confirm an element-shaped origin is actually a *web*
+ * element (tracked in `webElementsCache`) before rejecting it.
  *
  * @param driver - The driver instance, used to distinguish web elements from native ones
  * @param actionSeq - Action sequence to check
@@ -609,9 +608,7 @@ export async function mobileRotateElement(
  */
 function assertNoWebElements(driver: XCUITestDriver, actionSeq: ActionSequence[]): void {
   const isOriginWebElement = (gesture: any) =>
-    isPlainObject(gesture) &&
-    hasElementId(gesture.origin) &&
-    driver.webElementsCache.has(util.unwrapElement(gesture.origin));
+    isPlainObject(gesture) && hasWebElementId(driver.webElementsCache, gesture.origin);
   const hasWebElements = actionSeq.some((action) => (action?.actions || []).some(isOriginWebElement));
   if (hasWebElements) {
     throw new errors.InvalidArgumentError(
