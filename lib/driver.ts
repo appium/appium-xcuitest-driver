@@ -872,10 +872,12 @@ export class XCUITestDriver
    * active" flag), so switching contexts and back automatically resumes routing through
    * whichever backend is actually live.
    *
-   * An automation session is scoped to the single app it was started against (the app id key,
-   * e.g. `PID:1656`) - if `curContext` has since moved to a *different* app (another webview or
-   * a hybrid app's WKWebView), commands must go through atoms instead, even while the session is
-   * still running in the background for its own app.
+   * An automation session drives its own, separately-created browsing context - starting one
+   * never changes `curContext`, which stays pinned to whatever webview was active at the time
+   * (tracked in `_preAutomationSessionContext`). So routing to the session is only correct while
+   * `curContext` is still exactly that context: switching to a *different* webview - even a
+   * sibling tab in the same app - must go through atoms for that tab instead, even while the
+   * session keeps running in the background for its own.
    *
    * A fresh backend is constructed on every access rather than cached on the driver - both
    * backends are stateless wrappers, and caching would leave the driver holding a permanent
@@ -886,12 +888,7 @@ export class XCUITestDriver
    */
   get _webExecutionBackend(): WebExecutionBackend {
     const automationSession = this._remote?.automationSession;
-    const currentAppIdKey = this.curContext?.split('.')[0];
-    const trackedAppIdKey =
-      automationSession?.trackedAppIdKey !== undefined
-        ? `${automationSession.trackedAppIdKey}`.replace(/^PID:/, '')
-        : undefined;
-    return automationSession?.isStarted && trackedAppIdKey === currentAppIdKey
+    return automationSession?.isStarted && this.curContext === this._preAutomationSessionContext
       ? new AutomationSessionBackend(automationSession)
       : new AtomsBackend(this);
   }

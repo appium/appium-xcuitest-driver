@@ -7,6 +7,7 @@ import type sinon from 'sinon';
 
 import {requireAutomationSessionActive} from '../../../lib/commands/helpers/index.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
+import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
 import {AutomationSessionBackend} from '../../../lib/web-execution/automation-session-backend.js';
 
 describe('automation-session commands', function () {
@@ -165,6 +166,36 @@ describe('automation-session commands', function () {
 
       assert.strictEqual(getContextsStub.called, false);
       assert.strictEqual(driver._preAutomationSessionContext, null);
+    });
+  });
+
+  describe('_webExecutionBackend', function () {
+    it('routes to the automation session while curContext is still the one it was started from', function () {
+      driver._remote = {automationSession: {isStarted: true}} as any;
+      driver._preAutomationSessionContext = '123.1';
+      driver.curContext = '123.1';
+      assert.ok(driver._webExecutionBackend instanceof AutomationSessionBackend);
+    });
+
+    it('routes to atoms after switching to a different tab in the same app (same-app/different-page)', function () {
+      driver._remote = {automationSession: {isStarted: true}} as any;
+      driver._preAutomationSessionContext = '123.1';
+      driver.curContext = '123.2';
+      assert.ok(driver._webExecutionBackend instanceof AtomsBackend);
+    });
+
+    it('routes to atoms after switching to a different app entirely', function () {
+      driver._remote = {automationSession: {isStarted: true}} as any;
+      driver._preAutomationSessionContext = '123.1';
+      driver.curContext = '456.1';
+      assert.ok(driver._webExecutionBackend instanceof AtomsBackend);
+    });
+
+    it('routes to atoms when no automation session is active, regardless of curContext', function () {
+      driver._remote = {automationSession: {isStarted: false}} as any;
+      driver._preAutomationSessionContext = '123.1';
+      driver.curContext = '123.1';
+      assert.ok(driver._webExecutionBackend instanceof AtomsBackend);
     });
   });
 
