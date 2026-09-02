@@ -6,6 +6,7 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
+import {translateWebCoords} from '../commands/web-native-bridge.js';
 import {checkForAlert, createJSCookie} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
 import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
@@ -436,7 +437,8 @@ export class AtomsBackend implements WebExecutionBackend {
       this.driver.executeAtom('get_size', [atomsElement]),
       this.driver.executeAtom('get_top_left_coordinates', [atomsElement]),
     ])) as [Size, Position];
-    return await this.driver.translateWebCoords(
+    return await translateWebCoords.call(
+      this.driver,
       coordinates.x + size.width / 2 + offsetX,
       coordinates.y + size.height / 2 + offsetY,
     );

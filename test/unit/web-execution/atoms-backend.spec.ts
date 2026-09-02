@@ -5,6 +5,7 @@ import {errors} from 'appium/driver.js';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
+import {viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
 
@@ -435,8 +436,31 @@ describe('AtomsBackend', function () {
     const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
     executeAtomStub.withArgs('get_size').resolves({width: 40, height: 20});
     executeAtomStub.withArgs('get_top_left_coordinates').resolves({x: 100, y: 200});
-    const translateStub = sandbox.stub(driver, 'translateWebCoords').resolves({x: 321, y: 654});
     driver.webElementsCache.set(':wdc:123', ':wdc:123');
+
+    // translateWebCoords is no longer a stubbable driver method (it's imported directly from
+    // web-native-bridge.js), so drive its real calibration transform instead: an identity
+    // transform pre-seeded into the cache under the signature it will actually compute from the
+    // (stubbed) viewport state, so no real calibration tap sequence runs.
+    sandbox.stub(driver, 'waitForAtom').callsFake((p: any) => p);
+    const viewportState = {
+      innerWidth: 400,
+      innerHeight: 800,
+      outerWidth: 400,
+      outerHeight: 800,
+      isScrolledToTop: true,
+      visualViewportWidth: 400,
+      visualViewportHeight: 800,
+      visualViewportOffsetLeft: 0,
+      visualViewportOffsetTop: 0,
+      visualViewportScale: 1,
+    };
+    remoteStub.execute.returns(viewportState);
+    driver._webviewCalibrationCache = {
+      signature: `${driver.curContext}::${viewportSignature({...viewportState, orientation: 'PORTRAIT'})}`,
+      data: {offsetX: 0, offsetY: 0, pixelRatioX: 1, pixelRatioY: 1},
+    };
+
     const actions = [
       {
         type: 'pointer',
@@ -447,18 +471,17 @@ describe('AtomsBackend', function () {
 
     await backend.performActions(actions);
 
-    // center (100 + 20, 200 + 10) offset by the action's own (5, -5)
-    assert.strictEqual(translateStub.calledOnceWithExactly(125, 205), true);
     assert.strictEqual(proxyStub.calledOnce, true);
     const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
     assert.strictEqual(proxiedAction.origin, 'viewport');
-    assert.strictEqual(proxiedAction.x, 321);
-    assert.strictEqual(proxiedAction.y, 654);
+    // identity transform, so native coords equal the web ones: center (100 + 20, 200 + 10)
+    // offset by the action's own (5, -5)
+    assert.strictEqual(proxiedAction.x, 125);
+    assert.strictEqual(proxiedAction.y, 205);
   });
 
   it('performActions leaves a native element origin untouched - it is shaped just like a web element, but is not one', async function () {
     const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
-    const translateStub = sandbox.stub(driver, 'translateWebCoords');
     // never cached via the web-execution machinery, so this is a native element, not a web one
     const actions = [
       {
@@ -470,7 +493,6 @@ describe('AtomsBackend', function () {
 
     await backend.performActions(actions);
 
-    assert.strictEqual(translateStub.called, false);
     assert.strictEqual(executeAtomStub.called, false);
     const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
     assert.deepStrictEqual(proxiedAction.origin, {ELEMENT: 'native-element-id'});
