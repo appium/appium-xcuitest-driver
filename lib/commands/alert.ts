@@ -1,3 +1,5 @@
+import {errors, isErrorType} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
 
 export type AlertAction = 'accept' | 'dismiss' | 'getButtons';
@@ -13,14 +15,18 @@ interface AlertOptions {
  */
 export async function getAlertText(this: XCUITestDriver): Promise<string | null> {
   if (this.isWebContext()) {
-    const backend = this._webExecutionBackend;
-    // getDialogMessage() throws when no dialog is showing (NoAlertOpenError for atoms, a raw
-    // WebKit protocol error for an automation session) - check first to honor the documented
-    // null-when-no-alert contract instead of letting either error type escape.
-    if (!(await backend.isShowingJavaScriptDialog())) {
-      return null;
+    try {
+      return await this._webExecutionBackend.getDialogMessage();
+    } catch (err) {
+      // getDialogMessage() throws NoAlertOpenError when no dialog is showing - for both backends,
+      // WebKit's own NoJavaScriptDialog error maps to the same class (see appium-remote-debugger's
+      // mapAutomationError). Checking isShowingJavaScriptDialog() first instead would recurse:
+      // AtomsBackend's implementation is checkForAlert(), which itself calls this function.
+      if (isErrorType(err, errors.NoAlertOpenError)) {
+        return null;
+      }
+      throw err;
     }
-    return await backend.getDialogMessage();
   }
   return await this.proxyCommand<any, string | null>('/alert/text', 'GET');
 }
