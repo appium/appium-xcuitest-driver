@@ -1,3 +1,9 @@
+## [12.9.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.3...v12.9.0) (2026-09-02)
+
+### Features
+
+* Add native Safari automation support ([#2962](https://github.com/appium/appium-xcuitest-driver/issues/2962)) ([3f43f95](https://github.com/appium/appium-xcuitest-driver/commit/3f43f9583bf9bee3bc611b8f83d325120c34ceed))
+
 ## [12.8.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.8.2...v12.8.3) (2026-08-31)
 
 ### Bug Fixes
