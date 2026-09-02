@@ -6,7 +6,7 @@ import {errors, isErrorType} from 'appium/driver.js';
 import {timing, util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
+import {hasElementId, isEmpty, isPlainObject, toErrorMessage} from '../utils/index.js';
 import {
   requireAutomationSessionActive,
   requireSimulator,
@@ -295,7 +295,7 @@ export function getAtomsElement<S extends string = string>(
  */
 export function convertElementsForAtoms(this: XCUITestDriver, args: readonly unknown[] = []): unknown[] {
   return args.map((arg) => {
-    if (isElementLike(arg)) {
+    if (hasElementId(arg)) {
       try {
         return this.getAtomsElement(arg);
       } catch (err) {
@@ -316,17 +316,7 @@ export function convertElementsForAtoms(this: XCUITestDriver, args: readonly unk
  * @returns Element ID if found, undefined otherwise
  */
 export function getElementId(element: unknown): string | undefined {
-  return isElementLike(element) ? util.unwrapElement(element) : undefined;
-}
-
-/**
- * Checks if an object has an element ID (type guard).
- *
- * @param element - Object to check
- * @returns True if the object has an element ID
- */
-export function hasElementId(element: unknown): element is Element {
-  return isElementLike(element);
+  return hasElementId(element) ? util.unwrapElement(element) : undefined;
 }
 
 /**
@@ -628,20 +618,6 @@ async function alertMonitorLoop(this: XCUITestDriver, abortController: AbortCont
       break;
     }
   }
-}
-
-/**
- * Checks whether a value looks like an atoms/W3C element wrapper.
- *
- * @param element - Value to check
- * @returns True if the value has an element ID
- */
-function isElementLike(element: unknown): element is Element {
-  if (!isPlainObject(element)) {
-    return false;
-  }
-  const unwrapped: unknown = util.unwrapElement(element as unknown as Element);
-  return unwrapped !== element;
 }
 
 /**

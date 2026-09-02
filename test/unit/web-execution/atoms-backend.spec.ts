@@ -431,11 +431,28 @@ describe('AtomsBackend', function () {
     assert.strictEqual(proxyStub.firstCall.args[0], '/actions');
   });
 
-  it('performActions rejects a web-element-origin sequence - atoms/WDA cannot resolve those', async function () {
+  it('performActions resolves a web-element origin to native coordinates before proxying to WDA', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    executeAtomStub.withArgs('get_size').resolves({width: 40, height: 20});
+    executeAtomStub.withArgs('get_top_left_coordinates').resolves({x: 100, y: 200});
+    const translateStub = sandbox.stub(driver, 'translateWebCoords').resolves({x: 321, y: 654});
     const actions = [
-      {type: 'pointer', id: 'finger1', actions: [{type: 'pointerMove', origin: {ELEMENT: ':wdc:123'}}]},
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:123'}, x: 5, y: -5}],
+      },
     ] as any;
-    await assert.rejects(backend.performActions(actions), errors.InvalidArgumentError);
+
+    await backend.performActions(actions);
+
+    // center (100 + 20, 200 + 10) offset by the action's own (5, -5)
+    assert.strictEqual(translateStub.calledOnceWithExactly(125, 205), true);
+    assert.strictEqual(proxyStub.calledOnce, true);
+    const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
+    assert.strictEqual(proxiedAction.origin, 'viewport');
+    assert.strictEqual(proxiedAction.x, 321);
+    assert.strictEqual(proxiedAction.y, 654);
   });
 
   it('releaseActions is a harmless no-op', async function () {

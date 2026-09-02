@@ -6,9 +6,9 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
-import {checkForAlert, createJSCookie, hasElementId} from '../commands/web.js';
+import {checkForAlert, createJSCookie} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isEmpty, toErrorMessage} from '../utils/index.js';
+import {hasElementId, isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
 
 const CLOSE_WINDOW_TIMEOUT_MS = 5000;
@@ -346,9 +346,10 @@ export class AtomsBackend implements WebExecutionBackend {
 
   async performActions(actions: ActionSequence[]): Promise<void> {
     // atoms have no actions implementation of their own, but WDA can still drive real touch
-    // input against on-screen web content - as long as no action originates from a web element,
-    // which requires an automation session (see 'mobile: startAutomationSession').
-    await performActionsViaWDA(this.driver, actions);
+    // input against on-screen web content. Web element origins are resolved to native
+    // coordinates first, the same way `nativeWebTap` does, since WDA has no notion of them.
+    const resolvedActions = await this.resolveWebElementActionOrigins(actions);
+    await performActionsViaWDA(this.driver, resolvedActions);
   }
 
   async releaseActions(): Promise<void> {
@@ -386,5 +387,54 @@ export class AtomsBackend implements WebExecutionBackend {
   private async removeCookie(cookie: Cookie): Promise<void> {
     const url = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
     await this.driver.remote.deleteCookie(cookie.name, url);
+  }
+
+  /**
+   * Resolves every web element origin in a W3C action sequence (a `pointerMove` or `scroll`
+   * action whose `origin` is a web element, e.g. `driver.action('pointer').move({origin: el})`)
+   * into a `'viewport'`-relative native screen coordinate, so the result can be driven through
+   * WDA's `/actions` endpoint via {@linkcode performActionsViaWDA}.
+   *
+   * @param actions - Array of action sequences, potentially containing web element origins
+   * @returns A deep copy of `actions` with every web element origin replaced by native coordinates
+   */
+  private async resolveWebElementActionOrigins(actions: ActionSequence[]): Promise<ActionSequence[]> {
+    const resolvedActions = structuredClone(actions);
+    for (const sequence of resolvedActions) {
+      for (const action of ((sequence as any).actions ?? []) as any[]) {
+        if (!hasElementId(action?.origin)) {
+          continue;
+        }
+        const {x, y} = await this.resolveElementOriginToNativeCoords(action.origin, action.x, action.y);
+        action.origin = 'viewport';
+        action.x = x;
+        action.y = y;
+      }
+    }
+    return resolvedActions;
+  }
+
+  /**
+   * Converts a single web element origin (plus its action's own `x`/`y` offset from the element's
+   * center) into native screen coordinates, using the same web-to-native coordinate translation
+   * `nativeWebTap` falls back on. Unlike `nativeWebTap`, this never performs a tap itself - it
+   * only resolves a coordinate, since a `pointerMove` action doesn't imply one.
+   *
+   * @see {@linkcode resolveWebElementActionOrigins}
+   */
+  private async resolveElementOriginToNativeCoords(
+    origin: Element,
+    offsetX: number,
+    offsetY: number,
+  ): Promise<Position> {
+    const atomsElement = this.driver.getAtomsElement(origin);
+    const [size, coordinates] = (await Promise.all([
+      this.driver.executeAtom('get_size', [atomsElement]),
+      this.driver.executeAtom('get_top_left_coordinates', [atomsElement]),
+    ])) as [Size, Position];
+    return await this.driver.translateWebCoords(
+      coordinates.x + size.width / 2 + offsetX,
+      coordinates.y + size.height / 2 + offsetY,
+    );
   }
 }

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Drag and Drop</title>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    #columns { width: 100%; }
+    .column {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      float: left;
+      box-sizing: border-box;
+      text-align: center;
+      font: bold 40px sans-serif;
+      opacity: 1;
+      /* Prevents the browser's default touch gesture handling (scrolling, etc.) from
+         interfering with the synthetic touch input driving this page. */
+      touch-action: none;
+    }
+    .column.over { border: 4px dashed #333; }
+    #column-a { background: red; }
+    #column-b { background: blue; }
+  </style>
+</head>
+<body>
+  <div id="columns">
+    <div id="column-a" class="column">A</div>
+    <div id="column-b" class="column">B</div>
+  </div>
+  <script>
+    // Mirrors the-internet.herokuapp.com/drag_and_drop's dragstart/dragover/drop/dragend
+    // behavior (swap the two columns' text, dim the dragged column, highlight the column
+    // underneath it), but driven by Pointer Events instead of the native HTML5 Drag and Drop
+    // API: iOS WebKit does not dispatch dragstart/dragover/drop from touch input, only mouse.
+    var dragged = null;
+
+    function columnUnder(x, y) {
+      var hit = document.elementFromPoint(x, y);
+      return hit && hit.closest ? hit.closest('.column') : null;
+    }
+
+    document.addEventListener('pointerdown', function (e) {
+      var col = columnUnder(e.clientX, e.clientY);
+      if (!col) {
+        return;
+      }
+      dragged = col;
+      col.style.opacity = '0.5';
+    }, true);
+
+    document.addEventListener('pointermove', function (e) {
+      if (!dragged) {
+        return;
+      }
+      var col = columnUnder(e.clientX, e.clientY);
+      document.querySelectorAll('.column').forEach(function (c) {
+        c.classList.remove('over');
+      });
+      if (col && col !== dragged) {
+        col.classList.add('over');
+      }
+    }, true);
+
+    document.addEventListener('pointerup', function (e) {
+      if (!dragged) {
+        return;
+      }
+      var target = columnUnder(e.clientX, e.clientY);
+      if (target && target !== dragged) {
+        var draggedText = dragged.textContent;
+        dragged.textContent = target.textContent;
+        target.textContent = draggedText;
+      }
+      dragged.style.opacity = '1';
+      document.querySelectorAll('.column').forEach(function (c) {
+        c.classList.remove('over');
+      });
+      dragged = null;
+    }, true);
+  </script>
+</body>
+</html>
