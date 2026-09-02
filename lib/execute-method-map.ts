@@ -151,6 +151,15 @@ export const executeMethodMap = {
       optional: ['waitForWebviewMs'],
     },
   },
+  'mobile: startAutomationSession': {
+    command: 'mobileStartAutomationSession',
+  },
+  'mobile: stopAutomationSession': {
+    command: 'mobileStopAutomationSession',
+    params: {
+      optional: ['closeAllWindows', 'restorePreviousContext'],
+    },
+  },
   'mobile: installApp': {
     command: 'mobileInstallApp',
     params: {

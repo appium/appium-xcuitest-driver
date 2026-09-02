@@ -38,28 +38,7 @@ export async function click(this: XCUITestDriver, el: Element | string): Promise
     // there are multiple commands that map here, so manually proxy
     return await this.nativeClick(el);
   }
-  el = util.unwrapElement(el);
-  const {nativeWebTap, nativeWebTapStrict} = this.settings.getSettings();
-  if (nativeWebTap || nativeWebTapStrict) {
-    // atoms-based clicks don't always work in safari 7
-    this.log.debug('Using native web tap');
-    await this.nativeWebTap(el);
-  } else {
-    const atomsElement = this.getAtomsElement(el);
-    // clicking can cause an alert to pop up and freeze the event loop, meaning the click atom
-    // itself never returns. we have alert handling in `waitForAtom` but with click, we create
-    // a special case where if a click results in an unexpected alert error, we just return
-    // control to the client. they will encounter the error on their next command, which mirrors
-    // the behaviour of selenium.
-    try {
-      return await this.executeAtom('click', [atomsElement]);
-    } catch (err: any) {
-      if (err.error === errors.UnexpectedAlertOpenError.error()) {
-        return;
-      }
-      throw err;
-    }
-  }
+  await this._webExecutionBackend.click(util.unwrapElement(el));
 }
 
 /**
@@ -68,19 +47,46 @@ export async function click(this: XCUITestDriver, el: Element | string): Promise
  * On this platform, this is a no-op.
  */
 export async function releaseActions(this: XCUITestDriver): Promise<void> {
-  this.log.info('On this platform, releaseActions is a no-op');
+  if (!this.isWebContext()) {
+    this.log.info('On this platform, releaseActions is a no-op');
+    return;
+  }
+  await this._webExecutionBackend.releaseActions();
 }
 
 /**
  * Performs a sequence of W3C actions.
  *
- * Automatically converts MOUSE pointer type to TOUCH and filters out zero-duration pauses.
+ * In a native context, or in a web context against a non-automation-session backend that has no
+ * actions support of its own, this proxies to WDA - see {@linkcode performActionsViaWDA}.
  *
  * @param actions - Array of action sequences to perform
- * @throws {errors.InvalidArgumentError} If actions contain web elements
+ * @throws {errors.InvalidArgumentError} If actions contain web elements while proxying to WDA
  */
 export async function performActions(this: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
   this.log.debug(`Received the following W3C actions: ${JSON.stringify(actions, null, '  ')}`);
+  if (this.isWebContext()) {
+    await this._webExecutionBackend.performActions(actions);
+    return;
+  }
+  await performActionsViaWDA(this, actions);
+}
+
+/**
+ * Proxies a W3C action sequence to WDA's native `/actions` endpoint, which drives real touch
+ * input against whatever's on screen - including the rendered content of a web view, as long as
+ * no action in the sequence originates from a web element (WDA has no notion of those).
+ *
+ * Automatically converts MOUSE pointer type to TOUCH and filters out zero-duration pauses, since
+ * these exist only to paper over WDA's limitations.
+ *
+ * Shared by the native-context path above and {@linkcode AtomsBackend}'s `performActions` -
+ * atoms have no actions implementation of their own, but WDA can still drive on-screen web
+ * content this way.
+ *
+ * @throws {errors.InvalidArgumentError} If actions contain web elements
+ */
+export async function performActionsViaWDA(driver: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
   assertNoWebElements(actions);
   // This is mandatory, since WDA only supports TOUCH pointer type
   // and Selenium API uses MOUSE as the default one
@@ -103,8 +109,8 @@ export async function performActions(this: XCUITestDriver, actions: ActionSequen
       ) as any;
       return modifiedAction;
     });
-  this.log.debug(`Preprocessed actions: ${JSON.stringify(preprocessedActions, null, '  ')}`);
-  await this.proxyCommand('/actions', 'POST', {actions: preprocessedActions});
+  driver.log.debug(`Preprocessed actions: ${JSON.stringify(preprocessedActions, null, '  ')}`);
+  await driver.proxyCommand('/actions', 'POST', {actions: preprocessedActions});
 }
 
 /**

@@ -298,44 +298,24 @@ describe('element commands', function () {
 
     describe('Web contest', function () {
       const elementId = 2;
-      let atomElement: sinon.SinonStub;
-      let executeAtom: sinon.SinonStub;
-      let setValueWithWebAtom: sinon.SinonStub;
-      const webEl = {ELEMENT: '5000', 'element-6066-11e4-a52e-4f735466cecf': '5000'};
+      let clickStub: sinon.SinonStub;
+      let sendKeysStub: sinon.SinonStub;
 
       beforeEach(function () {
         driver.curContext = 'fake web context';
-        atomElement = sandbox.stub(driver, 'getAtomsElement').returns(webEl);
-        executeAtom = sandbox.stub(driver, 'executeAtom');
-        setValueWithWebAtom = sandbox.stub(driver, 'setValueWithWebAtom');
+        clickStub = sandbox.stub();
+        sendKeysStub = sandbox.stub();
+        sandbox.stub(driver, '_webExecutionBackend').get(() => ({click: clickStub, sendKeys: sendKeysStub}));
       });
 
       afterEach(function () {
         sandbox.restore();
       });
 
-      describe('setValueWithWebAtom', function () {
-        it('with default', async function () {
-          driver.opts.sendKeyStrategy = undefined;
-          await driver.setValue('hello\uE006😀', elementId as any);
-          assert.strictEqual(atomElement.calledOnce, true);
-          assert.strictEqual(executeAtom.calledOnce, true);
-          assert.strictEqual(setValueWithWebAtom.calledOnceWithExactly(webEl, 'hello\uE006😀'), true);
-        });
-
-        it('with oneByOne', async function () {
-          driver.opts.sendKeyStrategy = 'oneByOne';
-          await driver.setValue('hello\uE006😀', elementId as any);
-          assert.strictEqual(atomElement.calledOnce, true);
-          assert.strictEqual(executeAtom.calledOnce, true);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(0).args, [webEl, 'h']);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(1).args, [webEl, 'e']);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(2).args, [webEl, 'l']);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(3).args, [webEl, 'l']);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(4).args, [webEl, 'o']);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(5).args, [webEl, '\n']);
-          assert.deepStrictEqual(setValueWithWebAtom.getCall(6).args, [webEl, '😀']);
-        });
+      it('clicks the element for focus, then sends the raw value through the backend', async function () {
+        await driver.setValue('hello😀', elementId as any);
+        assert.strictEqual(clickStub.calledOnceWithExactly(elementId), true);
+        assert.strictEqual(sendKeysStub.calledOnceWithExactly(elementId, 'hello😀'), true);
       });
     });
   });
@@ -348,15 +328,15 @@ describe('element commands', function () {
     const fixtureYOffset = 200;
 
     let executeStub: sinon.SinonStub;
-    let atomStub: sinon.SinonStub;
+    let getRectStub: sinon.SinonStub;
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
       driver.curContext = 'fake web context';
       executeStub = sandbox.stub(driver, 'execute').resolves([fixtureXOffset, fixtureYOffset]);
-      sandbox.stub(driver, 'getAtomsElement').resolvesArg(0);
-      atomStub = sandbox.stub(driver, 'executeAtom').resolves({x: 0, y: 0});
-      proxyStub = sandbox.stub(driver, 'proxyCommand');
+      getRectStub = sandbox.stub();
+      sandbox.stub(driver, '_webExecutionBackend').get(() => ({getRect: getRectStub}));
+      getRectStub.resolves({x: 0, y: 0, width: 0, height: 0});
     });
 
     afterEach(function () {
@@ -366,8 +346,7 @@ describe('element commands', function () {
     it('should get location relative to scroll by default', async function () {
       const loc = await driver.getLocation(webEl);
       assert.strictEqual(executeStub.calledOnce, false);
-      assert.strictEqual(atomStub.calledOnce, true);
-      assert.strictEqual(atomStub.firstCall.args[0], 'get_top_left_coordinates');
+      assert.strictEqual(getRectStub.calledOnceWithExactly('5000'), true);
       assert.strictEqual(loc.x, 0);
       assert.strictEqual(loc.y, 0);
     });
@@ -376,8 +355,7 @@ describe('element commands', function () {
       driver.opts.absoluteWebLocations = true;
       const loc = await driver.getLocation(webEl);
       assert.strictEqual(executeStub.calledOnce, true);
-      assert.strictEqual(atomStub.calledOnce, true);
-      assert.strictEqual(atomStub.firstCall.args[0], 'get_top_left_coordinates');
+      assert.strictEqual(getRectStub.calledOnceWithExactly('5000'), true);
       assert.strictEqual(loc.x, fixtureXOffset);
       assert.strictEqual(loc.y, fixtureYOffset);
     });
@@ -386,16 +364,15 @@ describe('element commands', function () {
   describe('getElementRect', function () {
     let driver: XCUITestDriver;
     let getNativeRectStub: sinon.SinonStub;
-    let getLocationStub: sinon.SinonStub;
-    let getSizeStub: sinon.SinonStub;
+    let getRectStub: sinon.SinonStub;
     let isWebContextStub: sinon.SinonStub;
     const elem = {ELEMENT: '5000'};
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
       getNativeRectStub = sandbox.stub(driver, 'getNativeRect').resolves({x: 0, y: 50, width: 100, height: 200});
-      getLocationStub = sandbox.stub(driver, 'getLocation').resolves({x: 0, y: 50});
-      getSizeStub = sandbox.stub(driver, 'getSize').resolves({width: 100, height: 200});
+      getRectStub = sandbox.stub().resolves({x: 0, y: 50, width: 100, height: 200});
+      sandbox.stub(driver, '_webExecutionBackend').get(() => ({getRect: getRectStub}));
     });
 
     afterEach(function () {
@@ -409,8 +386,7 @@ describe('element commands', function () {
 
       assert.strictEqual(isWebContextStub.calledOnce, true);
       assert.strictEqual(getNativeRectStub.calledOnce, true);
-      assert.strictEqual(getLocationStub.calledOnce, false);
-      assert.strictEqual(getSizeStub.calledOnce, false);
+      assert.strictEqual(getRectStub.called, false);
       assert.strictEqual(rect.x, 0);
       assert.strictEqual(rect.y, 50);
       assert.strictEqual(rect.width, 100);
@@ -424,8 +400,7 @@ describe('element commands', function () {
 
       assert.strictEqual(isWebContextStub.calledOnce, true);
       assert.strictEqual(getNativeRectStub.calledOnce, false);
-      assert.strictEqual(getLocationStub.calledOnce, true);
-      assert.strictEqual(getSizeStub.calledOnce, true);
+      assert.strictEqual(getRectStub.calledOnceWithExactly('5000'), true);
       assert.strictEqual(rect.x, 0);
       assert.strictEqual(rect.y, 50);
       assert.strictEqual(rect.width, 100);

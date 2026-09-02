@@ -1,3 +1,5 @@
+import {errors, isErrorType} from 'appium/driver.js';
+
 import type {XCUITestDriver} from '../driver.js';
 
 export type AlertAction = 'accept' | 'dismiss' | 'getButtons';
@@ -12,6 +14,20 @@ interface AlertOptions {
  * @returns The alert text, or null if no alert is displayed
  */
 export async function getAlertText(this: XCUITestDriver): Promise<string | null> {
+  if (this.isWebContext()) {
+    try {
+      return await this._webExecutionBackend.getDialogMessage();
+    } catch (err) {
+      // getDialogMessage() throws NoAlertOpenError when no dialog is showing - for both backends,
+      // WebKit's own NoJavaScriptDialog error maps to the same class (see appium-remote-debugger's
+      // mapAutomationError). Checking isShowingJavaScriptDialog() first instead would recurse:
+      // AtomsBackend's implementation is checkForAlert(), which itself calls this function.
+      if (isErrorType(err, errors.NoAlertOpenError)) {
+        return null;
+      }
+      throw err;
+    }
+  }
   return await this.proxyCommand<any, string | null>('/alert/text', 'GET');
 }
 
@@ -21,6 +37,10 @@ export async function getAlertText(this: XCUITestDriver): Promise<string | null>
  * @param value - The text to set
  */
 export async function setAlertText(this: XCUITestDriver, value: string): Promise<void> {
+  if (this.isWebContext()) {
+    await this._webExecutionBackend.setDialogUserInput(value);
+    return;
+  }
   await this.proxyCommand('/alert/text', 'POST', {value});
 }
 
@@ -30,6 +50,10 @@ export async function setAlertText(this: XCUITestDriver, value: string): Promise
  * @param opts - Options including optional button label
  */
 export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
+  if (this.isWebContext()) {
+    await this._webExecutionBackend.acceptDialog();
+    return;
+  }
   await this.proxyCommand('/alert/accept', 'POST', toAlertParams(opts));
 }
 
@@ -39,6 +63,10 @@ export async function postAcceptAlert(this: XCUITestDriver, opts: AlertOptions =
  * @param opts - Options including optional button label
  */
 export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions = {}): Promise<void> {
+  if (this.isWebContext()) {
+    await this._webExecutionBackend.dismissDialog();
+    return;
+  }
   await this.proxyCommand('/alert/dismiss', 'POST', toAlertParams(opts));
 }
 
@@ -49,6 +77,9 @@ export async function postDismissAlert(this: XCUITestDriver, opts: AlertOptions 
  * @internal
  */
 export async function getAlertButtons(this: XCUITestDriver): Promise<string[]> {
+  if (this.isWebContext()) {
+    return await this._webExecutionBackend.getAlertButtons();
+  }
   return await this.proxyCommand<any, string[]>('/wda/alert/buttons', 'GET');
 }
 

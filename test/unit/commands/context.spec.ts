@@ -2,8 +2,61 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
+import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
+import {AutomationSessionBackend} from '../../../lib/web-execution/automation-session-backend.js';
 
 describe('context', function () {
+  describe('_webExecutionBackend', function () {
+    it('returns an AtomsBackend when there is no remote debugger connection', function () {
+      const driver = new XCUITestDriver({} as any);
+      driver._remote = null;
+      assert.strictEqual(driver._webExecutionBackend instanceof AtomsBackend, true);
+    });
+
+    it('returns an AtomsBackend when no automation session has been started', function () {
+      const driver = new XCUITestDriver({} as any);
+      driver._remote = {automationSession: {isStarted: false}} as any;
+      assert.strictEqual(driver._webExecutionBackend instanceof AtomsBackend, true);
+    });
+
+    it('returns an AutomationSessionBackend once an automation session has started', function () {
+      const driver = new XCUITestDriver({} as any);
+      const fakeSession = {isStarted: true};
+      driver._remote = {automationSession: fakeSession} as any;
+      assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
+    });
+
+    it('routes through the automation-session backend even when curContext is native', function () {
+      // Session lifecycle is independent of curContext: switching to native does not
+      // implicitly stop it, and the getter does not gate on isWebContext() itself.
+      const driver = new XCUITestDriver({} as any);
+      driver.curContext = null;
+      driver._remote = {automationSession: {isStarted: true}} as any;
+      assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
+    });
+
+    it('constructs a fresh backend instance on every access rather than caching one on the driver', function () {
+      // Backends are stateless wrappers; not caching them avoids the driver holding a
+      // permanent reference back to itself through a cached backend field.
+      const driver = new XCUITestDriver({} as any);
+      driver._remote = null;
+      assert.notStrictEqual(driver._webExecutionBackend, driver._webExecutionBackend);
+    });
+
+    it('re-evaluates on every access, resuming the automation-session backend after a native detour', function () {
+      const driver = new XCUITestDriver({} as any);
+      const fakeSession = {isStarted: true};
+      driver._remote = {automationSession: fakeSession} as any;
+      assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
+
+      fakeSession.isStarted = false;
+      assert.strictEqual(driver._webExecutionBackend instanceof AtomsBackend, true);
+
+      fakeSession.isStarted = true;
+      assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
+    });
+  });
+
   describe('onPageChange', function () {
     const pageChangeNotification = {
       appIdKey: '5191',

@@ -157,6 +157,73 @@ The list of available context objects along with their properties:
 - title: The title associated with the webview content. Could be `null`
 - url: The url associated with the webview content. Could be `null`
 
+### mobile: startAutomationSession
+
+Starts a WebKit `Automation`-domain session against the current Safari web view, using
+[appium-remote-debugger](https://github.com/appium/appium-remote-debugger)'s `AutomationSession`.
+The driver must already be switched to a Safari web context (see [mobile: getContexts](#mobile-getcontexts)
+and the [Hybrid Apps](../guides/hybrid.md) guide) before calling this method. This API
+throws if called from native context or from a non-Safari-based web view.
+
+**Simulator only for now.** On a real device, starting a session has been observed to kill
+WebDriverAgent with no recovery, and to break restoring the previous context on stop. This API
+throws on a real device until the underlying WebKit issue is fixed.
+
+Once started, the commands that operate against the web content - navigation, element
+find/interact, cookies, window/frame management, script execution, screenshots, W3C Actions, and
+JS-dialog handling - are routed through the automation session's own WebKit protocol methods
+instead of the driver's usual Selenium-atoms-based execution, until
+[mobile: stopAutomationSession](#mobile-stopautomationsession) is called. This unlocks a few
+things atoms could never do, most notably real W3C Actions with a web element as their origin, and
+window sizing (`setWindowRect`/`maximizeWindow`/`minimizeWindow`/`fullScreenWindow`).
+
+Switching context does **not** implicitly stop the session - it stays alive until explicitly
+stopped, or until the session/app disconnects.
+
+Calling this again while a session is already active against the same web view is a no-op. The
+check for which app owns the current web view is re-evaluated dynamically against the web view
+itself on every call, not against a static "is this a Safari session" flag from session creation
+- so calling it from a *different*, non-Safari web view throws without disturbing an existing,
+otherwise valid session on the original one, even in a hybrid app session that later switched into
+a dynamically-opened Safari web view.
+
+An element handle obtained before the session started (or obtained while it was active, once it's
+stopped) is meaningless to the other execution mode - passing one across the swap surfaces as a
+stale-element error, not a crash or a silently wrong action.
+
+The [`nativeWebTap`](./settings.md#nativewebtap)/[`nativeWebTapStrict`](./settings.md#nativewebtapstrict)
+settings (and their matching capabilities) and the
+[mobile: calibrateWebToRealCoordinatesTranslation](#mobile-calibratewebtorealcoordinatestranslation)
+extension have no effect while a session is active - clicks are dispatched as real WebKit touch
+interactions against the element's own on-page position instead, with no native-tap coordinate
+calibration involved.
+
+### mobile: stopAutomationSession
+
+Stops the automation session started by
+[mobile: startAutomationSession](#mobile-startautomationsession), if any. This is a no-op if no
+automation session is currently active.
+
+WebKit's remote-automation grant - the on-device "Safari is Running Automated Software..."
+banner - is scoped to the whole remote debugger connection, not to the individual automation
+session, and there is no protocol message that ends just the automation portion of it (see
+[WebDriver is coming to Safari in iOS 13](https://webkit.org/blog/9395/webdriver-is-coming-to-safari-in-ios-13)
+for background on this private `Automation` domain). The only way to actually clear it is to
+close and reopen the whole connection, which this does.
+
+By default this switches back to whichever web view was active before
+[mobile: startAutomationSession](#mobile-startautomationsession), if it still exists after the
+reconnect (see `restorePreviousContext` below). It also closes the tabs the automation
+session drove first, by default (see `closeAllWindows` below). Even though all tabs are closed,
+one empty tab always remains open, which is a safari session limitation/bug.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+closeAllWindows | boolean | no | Close every tab the automation session drove before tearing it down. Defaults to `true`. Pass `false` to leave them open instead, if this is observed to wedge the connection ([WebKit bug 322937](https://bugs.webkit.org/show_bug.cgi?id=322937)). | true
+restorePreviousContext | boolean | no | Switch back to whichever web view was active before `mobile: startAutomationSession`, if it still exists after the reconnect. Defaults to `true`. | false
+
 ### mobile: installApp
 
 Installs the given application to the device under test. Make sure the application is built for a correct architecture and is signed with a proper developer signature (for real devices) prior to install it.
@@ -1988,6 +2055,10 @@ An object with three properties used to properly shift Safari web element coordi
 The following formulas are used for coordinates translation:
 `RealX = offsetX + webviewX * pixelRatioX`
 `RealY = offsetY + webviewY * pixelRatioY`
+
+Not applicable once a [mobile: startAutomationSession](#mobile-startautomationsession) is active:
+clicks are then dispatched as real WebKit touch interactions against the element's own on-page
+position, so there is no native-tap coordinate mapping to calibrate.
 
 ### mobile: updateSafariPreferences
 

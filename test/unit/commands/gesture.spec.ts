@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
+import {errors} from 'appium/driver.js';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -383,5 +384,68 @@ describe('W3C actions', function () {
   const driver = new XCUITestDriver({} as any);
   it('releaseActions should exist and do nothing', async function () {
     await driver.releaseActions();
+  });
+});
+
+describe('performActions', function () {
+  let sandbox: sinon.SinonSandbox;
+  let driver: XCUITestDriver;
+
+  beforeEach(function () {
+    sandbox = sinon.createSandbox();
+    driver = new XCUITestDriver({} as any);
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('in a web context, delegates to _webExecutionBackend.performActions', async function () {
+    sandbox.stub(driver, 'isWebContext').returns(true);
+    const backendStub = {performActions: sandbox.stub().resolves()};
+    sandbox.stub(driver, '_webExecutionBackend').get(() => backendStub as any);
+    const actions = [{type: 'pointer', id: 'finger1', actions: []}] as any;
+
+    await driver.performActions(actions);
+
+    assert.strictEqual(backendStub.performActions.calledOnceWithExactly(actions), true);
+  });
+
+  it('outside a web context (or via AtomsBackend), normalizes pointer type to touch, strips zero-duration pauses, and proxies to WDA', async function () {
+    sandbox.stub(driver, 'isWebContext').returns(false);
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        parameters: {pointerType: 'mouse'},
+        actions: [
+          {type: 'pause', duration: 0},
+          {type: 'pointerDown', button: 0},
+        ],
+      },
+    ] as any;
+
+    await driver.performActions(actions);
+
+    assert.strictEqual(proxyStub.calledOnce, true);
+    const [endpoint, method, body] = proxyStub.firstCall.args as [string, string, any];
+    assert.strictEqual(endpoint, '/actions');
+    assert.strictEqual(method, 'POST');
+    assert.strictEqual(body.actions[0].parameters.pointerType, 'touch');
+    assert.deepStrictEqual(
+      body.actions[0].actions.map((a: any) => a.type),
+      ['pointerDown'],
+    );
+  });
+
+  it('rejects an action sequence that references a web element when proxying to WDA', async function () {
+    sandbox.stub(driver, 'isWebContext').returns(false);
+    sandbox.stub(driver, 'proxyCommand');
+    const actions = [
+      {type: 'pointer', id: 'finger1', actions: [{type: 'pointerMove', origin: {ELEMENT: ':wdc:123'}}]},
+    ] as any;
+
+    await assert.rejects(driver.performActions(actions), errors.InvalidArgumentError);
   });
 });

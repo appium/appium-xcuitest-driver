@@ -280,6 +280,11 @@ offset/pixel-ratio transform against the current page (see
 [`mobile: calibrateWebToRealCoordinatesTranslation`](./execute-methods.md#mobile-calibratewebtorealcoordinatestranslation)
 for details) and refits it whenever the orientation, viewport size, or scroll position changes.
 
+This setting has no effect once a
+[`mobile: startAutomationSession`](./execute-methods.md#mobile-startautomationsession) is active -
+clicks are then dispatched as real WebKit touch interactions against the element's own on-page
+position, bypassing the native-tap/coordinate-calibration path entirely.
+
 This property can also be set using the [`appium:nativeWebTap`](./capabilities.md) capability.
 
 ## nativeWebTapSmartAppBannerVisibility
@@ -313,7 +318,9 @@ back to the coordinate transformation flow anyway.
 It is advised to use this setting with the [`mobile: calibrateWebToRealCoordinatesTranslation`](./execute-methods.md)
 execute method.
 
-This setting only has an effect if the [`nativeWebTap`](#nativewebtap) setting is set to `true`.
+This setting only has an effect if the [`nativeWebTap`](#nativewebtap) setting is set to `true`,
+which itself has no effect once a
+[`mobile: startAutomationSession`](./execute-methods.md#mobile-startautomationsession) is active.
 
 This property can also be set using the [`appium:nativeWebTapStrict`](./capabilities.md) capability.
 

@@ -1,4 +1,3 @@
-import type {Size, Rect} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 import dayjs from 'dayjs';
@@ -11,21 +10,6 @@ import type {XCUITestDriver} from '../driver.js';
 import type {Viewport, ScreenInfo, ButtonName} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
-
-/**
- * Gets the currently active element.
- *
- * In web context, returns the active element from the DOM.
- * In native context, returns the active element from the current view.
- *
- * @returns The active element
- */
-export async function active(this: XCUITestDriver): Promise<any> {
-  if (this.isWebContext()) {
-    return this.cacheWebElements(await this.executeAtom('active_element', []));
-  }
-  return await this.proxyCommand(`/element/active`, 'GET');
-}
 
 /**
  * Trigger a touch/fingerprint match or match failure.
@@ -43,16 +27,6 @@ export async function touchId(this: XCUITestDriver, match = true): Promise<void>
  */
 export async function toggleEnrollTouchId(this: XCUITestDriver, isEnabled = true): Promise<void> {
   await this.mobileEnrollBiometric(isEnabled);
-}
-
-/**
- * Get the window size.
- *
- * @returns The window size (width and height)
- */
-export async function getWindowSize(this: XCUITestDriver): Promise<Size> {
-  const {width, height} = await this.getWindowRect();
-  return {width, height};
 }
 
 /**
@@ -106,29 +80,6 @@ export async function getDeviceTime(this: XCUITestDriver, format = DATETIME_FORM
  */
 export async function mobileGetDeviceTime(this: XCUITestDriver, format = DATETIME_FORMAT_ISO8601): Promise<string> {
   return await this.getDeviceTime(format);
-}
-
-/**
- * Gets the window rectangle (position and size).
- *
- * For W3C compatibility. In web context, returns the browser window dimensions.
- * In native context, returns the device window dimensions.
- *
- * @returns The window rectangle
- */
-export async function getWindowRect(this: XCUITestDriver): Promise<Rect> {
-  if (this.isWebContext()) {
-    const script =
-      'return {' +
-      'x: window.screenX || 0,' +
-      'y: window.screenY || 0,' +
-      'width: window.innerWidth,' +
-      'height: window.innerHeight' +
-      '}';
-    return await this.executeAtom('execute_script', [script]);
-  }
-
-  return (await this.proxyCommand('/window/rect', 'GET')) as Rect;
 }
 
 /**
@@ -187,7 +138,7 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
     this.setCurrentUrl(url);
     // make sure to clear out any leftover web frames
     this.curWebFrames = [];
-    await this.remote.navToUrl(url);
+    await this._webExecutionBackend.navigate(url);
     return;
   }
 

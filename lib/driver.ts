@@ -25,6 +25,7 @@ import * as appManagementCommands from './commands/app-management.js';
 import * as appStringsCommands from './commands/app-strings.js';
 import * as appearanceCommands from './commands/appearance.js';
 import * as auditCommands from './commands/audit.js';
+import * as automationSessionCommands from './commands/automation-session.js';
 import * as batteryCommands from './commands/battery.js';
 import * as biometricCommands from './commands/biometric.js';
 import * as certificateCommands from './commands/certificate.js';
@@ -95,6 +96,7 @@ import {stop} from './commands/wda/stop.js';
 import {getDerivedDataPath, getWdaLocalhostRoot} from './commands/wda/utils.js';
 import * as webNativeBridgeCommands from './commands/web-native-bridge.js';
 import * as webCommands from './commands/web.js';
+import * as windowCommands from './commands/window.js';
 import * as xctestRecordScreenCommands from './commands/xctest-record-screen.js';
 import * as xctestCommands from './commands/xctest.js';
 import {desiredCapConstraints, type XCUITestDriverConstraints} from './desired-caps.js';
@@ -125,6 +127,9 @@ import {newMethodMap} from './method-map.js';
 import {sessionClaimHandler} from './session-claim-handler.js';
 import type {CalibrationCacheEntry, IConditionInducer, LifecycleData} from './types.js';
 import {isEmpty, isPlainObject, isWatchOs, memoize, normalizePlatformVersion} from './utils/index.js';
+import {AtomsBackend} from './web-execution/atoms-backend.js';
+import {AutomationSessionBackend} from './web-execution/automation-session-backend.js';
+import type {WebExecutionBackend} from './web-execution/types.js';
 
 const defaultServerCaps = {
   webStorageEnabled: false,
@@ -248,6 +253,8 @@ export class XCUITestDriver
   contexts: string[] = [];
   curContext: string | null = null;
   curWebFrames: string[];
+  /** `curContext` before `mobile: startAutomationSession`, to restore it on stop. */
+  _preAutomationSessionContext: string | null = null;
 
   _webviewCalibrationCache: CalibrationCacheEntry | null;
   asyncWaitMs: number | undefined;
@@ -349,6 +356,13 @@ export class XCUITestDriver
 
   mobilePerformAccessibilityAudit = auditCommands.mobilePerformAccessibilityAudit;
 
+  /*-------------------+
+   | AUTOMATION SESSION |
+   +-------------------+*/
+
+  mobileStartAutomationSession = automationSessionCommands.mobileStartAutomationSession;
+  mobileStopAutomationSession = automationSessionCommands.mobileStopAutomationSession;
+
   /*---------+
    | BATTERY |
    +---------+*/
@@ -390,10 +404,7 @@ export class XCUITestDriver
 
   getContexts = contextCommands.getContexts;
   getCurrentContext = contextCommands.getCurrentContext;
-  getWindowHandle = contextCommands.getWindowHandle;
-  getWindowHandles = contextCommands.getWindowHandles;
   setContext = contextCommands.setContext;
-  setWindow = contextCommands.setWindow;
   activateRecentWebview = contextCommands.activateRecentWebview;
   connectToRemoteDebugger = contextCommands.connectToRemoteDebugger;
   getContextsAndViews = contextCommands.getContextsAndViews;
@@ -418,6 +429,7 @@ export class XCUITestDriver
    | ELEMENT |
    +---------+*/
 
+  active = elementCommands.active;
   elementDisplayed = elementCommands.elementDisplayed;
   elementEnabled = elementCommands.elementEnabled;
   elementSelected = elementCommands.elementSelected;
@@ -487,14 +499,11 @@ export class XCUITestDriver
    | GENERAL |
    +---------+*/
 
-  active = generalCommands.active;
   background = appManagementCommands.background;
   touchId = generalCommands.touchId;
   toggleEnrollTouchId = generalCommands.toggleEnrollTouchId;
-  getWindowSize = generalCommands.getWindowSize;
   getDeviceTime = generalCommands.getDeviceTime;
   mobileGetDeviceTime = generalCommands.mobileGetDeviceTime;
-  getWindowRect = generalCommands.getWindowRect;
   getStrings = appStringsCommands.getStrings;
   removeApp = generalCommands.removeApp;
   launchApp = generalCommands.launchApp;
@@ -610,7 +619,6 @@ export class XCUITestDriver
 
   back = navigationCommands.back;
   forward = navigationCommands.forward;
-  closeWindow = navigationCommands.closeWindow;
   nativeBack = navigationCommands.nativeBack;
   mobileDeepLink = navigationCommands.mobileDeepLink;
 
@@ -703,11 +711,13 @@ export class XCUITestDriver
   asyncScriptTimeout = timeoutCommands.asyncScriptTimeout;
   setPageLoadTimeout = timeoutCommands.setPageLoadTimeout;
   setAsyncScriptTimeout = timeoutCommands.setAsyncScriptTimeout;
+  override setImplicitWait = timeoutCommands.setImplicitWait;
 
   /*-----+
    | WEB |
    +-----+*/
   setFrame = webCommands.setFrame;
+  switchToParentFrame = webCommands.switchToParentFrame;
   getCssProperty = webCommands.getCssProperty;
   submit = webCommands.submit;
   refresh = webCommands.refresh;
@@ -735,6 +745,21 @@ export class XCUITestDriver
   waitForAtom = webCommands.waitForAtom;
   mobileWebNav = webCommands.mobileWebNav;
   mobileUpdateSafariPreferences = webCommands.mobileUpdateSafariPreferences;
+
+  /*--------+
+   | WINDOW |
+   +--------+*/
+
+  setWindow = windowCommands.setWindow;
+  getWindowHandle = windowCommands.getWindowHandle;
+  getWindowHandles = windowCommands.getWindowHandles;
+  getWindowSize = windowCommands.getWindowSize;
+  getWindowRect = windowCommands.getWindowRect;
+  setWindowRect = windowCommands.setWindowRect;
+  maximizeWindow = windowCommands.maximizeWindow;
+  minimizeWindow = windowCommands.minimizeWindow;
+  fullScreenWindow = windowCommands.fullScreenWindow;
+  closeWindow = windowCommands.closeWindow;
 
   /*----------------+
    | WEB NATIVE TAP |
@@ -839,6 +864,33 @@ export class XCUITestDriver
       throw new Error('Remote debugger is not initialized');
     }
     return this._remote;
+  }
+
+  /**
+   * The web-execution backend for the currently active automation session, if any, otherwise
+   * the atoms-based one. Re-evaluated on every access (no stale cached "which backend is
+   * active" flag), so switching contexts and back automatically resumes routing through
+   * whichever backend is actually live.
+   *
+   * An automation session drives its own, separately-created browsing context - starting one
+   * never changes `curContext`, which stays pinned to whatever webview was active at the time
+   * (tracked in `_preAutomationSessionContext`). So routing to the session is only correct while
+   * `curContext` is still exactly that context: switching to a *different* webview - even a
+   * sibling tab in the same app - must go through atoms for that tab instead, even while the
+   * session keeps running in the background for its own.
+   *
+   * A fresh backend is constructed on every access rather than cached on the driver - both
+   * backends are stateless wrappers, and caching would leave the driver holding a permanent
+   * reference back to itself through `_atomsBackend`/`_automationSessionBackend`.
+   *
+   * Only ever consulted from inside a command handler's `isWebContext()` branch - a session
+   * left running in the background can never be consulted by a native command by accident.
+   */
+  get _webExecutionBackend(): WebExecutionBackend {
+    const automationSession = this._remote?.automationSession;
+    return automationSession?.isStarted && this.curContext === this._preAutomationSessionContext
+      ? new AutomationSessionBackend(automationSession)
+      : new AtomsBackend(this);
   }
 
   override get driverData(): Record<string, any> {

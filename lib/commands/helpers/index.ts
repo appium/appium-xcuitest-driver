@@ -11,8 +11,19 @@ export {
 
 export {TimeoutError, withTimeout} from './async.js';
 
-export {requireRealDevice, requireSimulator, requireWatchOs, requireWebContext} from './guards.js';
-export type {DeviceGuardDriver, PlatformGuardDriver, WebContextGuardDriver} from './guards.js';
+export {
+  requireAutomationSessionActive,
+  requireRealDevice,
+  requireSimulator,
+  requireWatchOs,
+  requireWebContext,
+} from './guards.js';
+export type {
+  AutomationSessionGuardDriver,
+  DeviceGuardDriver,
+  PlatformGuardDriver,
+  WebContextGuardDriver,
+} from './guards.js';
 
 export {encodeBase64OrUpload, getPIDsListeningOnPort, isLocalHost} from './network.js';
 export type {UploadOptions} from './network.js';
