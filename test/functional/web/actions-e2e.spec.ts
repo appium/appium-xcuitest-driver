@@ -72,4 +72,27 @@ describe('w3c actions - webview -', function () {
     assert.ok(!aClass.includes('over'), `Expected column-a to not have the "over" class, got "${aClass}"`);
     assert.ok(!bClass.includes('over'), `Expected column-b to not have the "over" class, got "${bClass}"`);
   });
+
+  it('should reject a W3C action whose element origin is currently out of view', async function () {
+    await openPage(driver, guineaPigDragAndDropPage(baseUrl));
+
+    // never scrolled into view - a native-context action can't be driven against it, since WDA
+    // can only see whatever's actually on screen right now
+    const offScreenColumn = await driver.$('#off-screen-column');
+    await offScreenColumn.waitForExist({timeout: 5000});
+
+    let rejected = false;
+    try {
+      await driver
+        .action('pointer', {parameters: {pointerType: 'touch'}})
+        .move({duration: 0, origin: offScreenColumn})
+        .down({button: 0})
+        .up({button: 0})
+        .perform();
+    } catch (err) {
+      rejected = true;
+      assert.match((err as Error).message, /out of (view|bounds)/i);
+    }
+    assert.ok(rejected, 'Expected the action to be rejected for an out-of-view element origin');
+  });
 });

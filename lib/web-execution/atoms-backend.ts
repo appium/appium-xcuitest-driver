@@ -18,6 +18,28 @@ const CLOSE_WINDOW_INTERVAL_MS = 100;
 // WebKit's wording for a cross-origin frame access failure.
 const CROSS_ORIGIN_FRAME_ERROR_PATTERN = /cross-origin frame|blocked a frame with origin/i;
 
+// Calculates the W3C "in-view center point" of arguments[0] - its getBoundingClientRect(),
+// clipped to the current viewport - returning null when the clipped rectangle is empty (the
+// element is entirely out of view). Deliberately reads via getBoundingClientRect() rather than
+// the get_top_left_coordinates/get_size atoms, which scroll the element into view as a side
+// effect: resolveWebElementActionOrigins resolves every origin in a sequence up front, before WDA
+// drives any input, so a lookup that scrolls could shift the page and invalidate coordinates
+// already resolved for an earlier origin in that same sequence.
+const IN_VIEW_CENTER_POINT_SCRIPT = `
+  var el = arguments[0];
+  var rect = el.getBoundingClientRect();
+  var clientWidth = document.documentElement.clientWidth;
+  var clientHeight = document.documentElement.clientHeight;
+  var x0 = Math.max(0, Math.min(rect.left, rect.left + rect.width));
+  var x1 = Math.min(clientWidth, Math.max(rect.left, rect.left + rect.width));
+  var y0 = Math.max(0, Math.min(rect.top, rect.top + rect.height));
+  var y1 = Math.min(clientHeight, Math.max(rect.top, rect.top + rect.height));
+  if (x0 >= x1 || y0 >= y1) {
+    return null;
+  }
+  return {x: (x0 + x1) / 2, y: (y0 + y1) / 2};
+`;
+
 /**
  * Routes web-execution commands through the driver's existing Selenium-atoms machinery
  * (`executeAtom`, `getAtomsElement`, `convertElementsForAtoms`, `cacheWebElements`, the remote
@@ -421,11 +443,11 @@ export class AtomsBackend implements WebExecutionBackend {
 
   /**
    * Converts a single web element origin (plus its action's own `x`/`y` offset from the element's
-   * center) into native screen coordinates, using the same web-to-native coordinate translation
-   * `nativeWebTap` falls back on. Unlike `nativeWebTap`, this never performs a tap itself - it
-   * only resolves a coordinate, since a `pointerMove` action doesn't imply one.
+   * W3C "in-view center point" - its bounding rectangle, clipped to the current viewport) into
+   * native screen coordinates via {@linkcode translateWebCoords}'s calibrated transform.
    *
    * @see {@linkcode resolveWebElementActionOrigins}
+   * @throws {errors.MoveTargetOutOfBoundsError} If the element is currently entirely out of view
    */
   private async resolveElementOriginToNativeCoords(
     origin: Element,
@@ -433,14 +455,15 @@ export class AtomsBackend implements WebExecutionBackend {
     offsetY: number,
   ): Promise<Position> {
     const atomsElement = this.driver.getAtomsElement(origin);
-    const [size, coordinates] = (await Promise.all([
-      this.driver.executeAtom('get_size', [atomsElement]),
-      this.driver.executeAtom('get_top_left_coordinates', [atomsElement]),
-    ])) as [Size, Position];
-    return await translateWebCoords.call(
-      this.driver,
-      coordinates.x + size.width / 2 + offsetX,
-      coordinates.y + size.height / 2 + offsetY,
-    );
+    const center = (await this.driver.executeAtom('execute_script', [
+      IN_VIEW_CENTER_POINT_SCRIPT,
+      [atomsElement],
+    ])) as Position | null;
+    if (!center) {
+      throw new errors.MoveTargetOutOfBoundsError(
+        'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
+      );
+    }
+    return await translateWebCoords.call(this.driver, center.x + offsetX, center.y + offsetY);
   }
 }

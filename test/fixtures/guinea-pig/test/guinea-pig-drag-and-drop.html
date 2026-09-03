@@ -21,6 +21,13 @@
     .column.over { border: 4px dashed #333; }
     #column-a { background: red; }
     #column-b { background: blue; }
+    /* Far below the fold - out of view without scrolling the page down to it. */
+    #off-screen-column {
+      width: 100px;
+      height: 100px;
+      margin-top: 3000px;
+      background: green;
+    }
   </style>
 </head>
 <body>
@@ -28,6 +35,7 @@
     <div id="column-a" class="column">A</div>
     <div id="column-b" class="column">B</div>
   </div>
+  <div id="off-screen-column" class="column">C</div>
   <script>
     // Mirrors the-internet.herokuapp.com/drag_and_drop's dragstart/dragover/drop/dragend
     // behavior (swap the two columns' text, dim the dragged column, highlight the column
