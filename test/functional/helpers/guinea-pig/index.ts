@@ -21,6 +21,10 @@ export function guineaPigAppBannerPage(baseUrl: string): string {
   return buildGuineaPigUrl(baseUrl, '/test/guinea-pig-app-banner');
 }
 
+export function guineaPigDragAndDropPage(baseUrl: string): string {
+  return buildGuineaPigUrl(baseUrl, '/test/guinea-pig-drag-and-drop.html');
+}
+
 export function guineaPigFramePage(baseUrl: string): string {
   return buildGuineaPigUrl(baseUrl, '/test/frameset.html');
 }

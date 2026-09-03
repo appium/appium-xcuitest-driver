@@ -4,6 +4,7 @@ export {
   guineaPigPage,
   guineaPigScrollablePage,
   guineaPigAppBannerPage,
+  guineaPigDragAndDropPage,
   guineaPigFramePage,
   guineaPigIframePage,
   guineaPigIframeWrapPage,

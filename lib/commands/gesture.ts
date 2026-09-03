@@ -3,7 +3,7 @@ import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 
 import type {XCUITestDriver} from '../driver.js';
-import {isPlainObject} from '../utils/index.js';
+import {hasWebElementId, isPlainObject} from '../utils/index.js';
 import {requireSimulator} from './helpers/index.js';
 import type {Direction} from './types.js';
 
@@ -82,12 +82,13 @@ export async function performActions(this: XCUITestDriver, actions: ActionSequen
  *
  * Shared by the native-context path above and {@linkcode AtomsBackend}'s `performActions` -
  * atoms have no actions implementation of their own, but WDA can still drive on-screen web
- * content this way.
+ * content this way. `AtomsBackend` resolves web element origins into native coordinates before
+ * calling this, so by the time actions reach here from that path they are already element-free.
  *
- * @throws {errors.InvalidArgumentError} If actions contain web elements
+ * @throws {errors.InvalidArgumentError} If actions still contain web elements
  */
 export async function performActionsViaWDA(driver: XCUITestDriver, actions: ActionSequence[]): Promise<void> {
-  assertNoWebElements(actions);
+  assertNoWebElements(driver, actions);
   // This is mandatory, since WDA only supports TOUCH pointer type
   // and Selenium API uses MOUSE as the default one
   const preprocessedActions = actions
@@ -596,20 +597,26 @@ export async function mobileRotateElement(
 /**
  * Asserts that the action sequence does not contain web elements.
  *
+ * A native-context action legitimately can reference a native element as its origin (WDA
+ * understands those just fine) - it is wrapped exactly the same way a web element is, so
+ * {@linkcode hasWebElementId} is used to confirm an element-shaped origin is actually a *web*
+ * element (tracked in `webElementsCache`) before rejecting it.
+ *
+ * @param driver - The driver instance, used to distinguish web elements from native ones
  * @param actionSeq - Action sequence to check
  * @throws {errors.InvalidArgumentError} If web elements are found in the action sequence
  */
-function assertNoWebElements(actionSeq: ActionSequence[]): void {
+function assertNoWebElements(driver: XCUITestDriver, actionSeq: ActionSequence[]): void {
   const isOriginWebElement = (gesture: any) =>
-    isPlainObject(gesture) && 'origin' in gesture && JSON.stringify(gesture.origin).includes(':wdc:');
+    isPlainObject(gesture) && hasWebElementId(driver.webElementsCache, gesture.origin);
   const hasWebElements = actionSeq.some((action) => (action?.actions || []).some(isOriginWebElement));
   if (hasWebElements) {
     throw new errors.InvalidArgumentError(
-      `The XCUITest driver only supports W3C actions execution in the native context. ` +
-        `Although, your W3C action contains one or more web elements, ` +
-        `which cannot be automatically mapped to the native context. ` +
-        `Consider mapping their absolute web coordinates to native context coordinates ` +
-        `and passing them to your gesture instead.`,
+      `Your W3C action contains one or more web elements, which cannot be automatically mapped ` +
+        `to the current context. Web elements are only automatically resolved to native ` +
+        `coordinates when performActions is called from within the web view context they came ` +
+        `from. Switch back into that web view context before performing this action, or map ` +
+        `their absolute web coordinates to native context coordinates yourself and pass those instead.`,
     );
   }
 }

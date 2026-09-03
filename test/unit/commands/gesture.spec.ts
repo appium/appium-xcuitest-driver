@@ -442,10 +442,25 @@ describe('performActions', function () {
   it('rejects an action sequence that references a web element when proxying to WDA', async function () {
     sandbox.stub(driver, 'isWebContext').returns(false);
     sandbox.stub(driver, 'proxyCommand');
+    driver.webElementsCache.set(':wdc:123', ':wdc:123');
     const actions = [
       {type: 'pointer', id: 'finger1', actions: [{type: 'pointerMove', origin: {ELEMENT: ':wdc:123'}}]},
     ] as any;
 
     await assert.rejects(driver.performActions(actions), errors.InvalidArgumentError);
+  });
+
+  it('allows a native element origin through to WDA - it is shaped just like a web element, but is not one', async function () {
+    sandbox.stub(driver, 'isWebContext').returns(false);
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    // never cached via the web-execution machinery, so this is a native element, not a web one
+    const actions = [
+      {type: 'pointer', id: 'finger1', actions: [{type: 'pointerMove', origin: {ELEMENT: 'native-element-id'}}]},
+    ] as any;
+
+    await driver.performActions(actions);
+
+    assert.strictEqual(proxyStub.calledOnce, true);
+    assert.strictEqual(proxyStub.firstCall.args[0], '/actions');
   });
 });

@@ -5,6 +5,7 @@ import {errors} from 'appium/driver.js';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
+import {viewportSignature} from '../../../lib/commands/web-native-bridge.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
 
@@ -37,6 +38,32 @@ describe('AtomsBackend', function () {
   afterEach(function () {
     sandbox.restore();
   });
+
+  // translateWebCoords is no longer a stubbable driver method (it's imported directly from
+  // web-native-bridge.js), so tests that need it drive its real calibration transform instead:
+  // an identity transform pre-seeded into the cache under the signature it will actually compute
+  // from the (stubbed) viewport state, so no real calibration tap sequence runs, and native
+  // coordinates come out equal to the web ones passed in.
+  function seedIdentityCalibration(): void {
+    sandbox.stub(driver, 'waitForAtom').callsFake((p: any) => p);
+    const viewportState = {
+      innerWidth: 400,
+      innerHeight: 800,
+      outerWidth: 400,
+      outerHeight: 800,
+      isScrolledToTop: true,
+      visualViewportWidth: 400,
+      visualViewportHeight: 800,
+      visualViewportOffsetLeft: 0,
+      visualViewportOffsetTop: 0,
+      visualViewportScale: 1,
+    };
+    remoteStub.execute.returns(viewportState);
+    driver._webviewCalibrationCache = {
+      signature: `${driver.curContext}::${viewportSignature({...viewportState, orientation: 'PORTRAIT'})}`,
+      data: {offsetX: 0, offsetY: 0, pixelRatioX: 1, pixelRatioY: 1},
+    };
+  }
 
   describe('elements backed by a single atom call', function () {
     const cases: [string, string][] = [
@@ -431,11 +458,99 @@ describe('AtomsBackend', function () {
     assert.strictEqual(proxyStub.firstCall.args[0], '/actions');
   });
 
-  it('performActions rejects a web-element-origin sequence - atoms/WDA cannot resolve those', async function () {
+  it('performActions resolves a web-element origin to native coordinates before proxying to WDA', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    // the element's in-view center point (already clipped to the viewport by the script)
+    executeAtomStub.withArgs('execute_script').resolves({x: 120, y: 210});
+    driver.webElementsCache.set(':wdc:123', ':wdc:123');
+    seedIdentityCalibration();
+
     const actions = [
-      {type: 'pointer', id: 'finger1', actions: [{type: 'pointerMove', origin: {ELEMENT: ':wdc:123'}}]},
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:123'}, x: 5, y: -5}],
+      },
     ] as any;
-    await assert.rejects(backend.performActions(actions), errors.InvalidArgumentError);
+
+    await backend.performActions(actions);
+
+    assert.strictEqual(proxyStub.calledOnce, true);
+    const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
+    assert.strictEqual(proxiedAction.origin, 'viewport');
+    // identity transform, so native coords equal the web ones: in-view center (120, 210)
+    // offset by the action's own (5, -5)
+    assert.strictEqual(proxiedAction.x, 125);
+    assert.strictEqual(proxiedAction.y, 205);
+  });
+
+  it('performActions throws MoveTargetOutOfBoundsError for a web-element origin currently out of view', async function () {
+    sandbox.stub(driver, 'proxyCommand').resolves();
+    // the in-view center point script returns null when the element's clipped rectangle is empty
+    executeAtomStub.withArgs('execute_script').resolves(null);
+    driver.webElementsCache.set(':wdc:123', ':wdc:123');
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:123'}, x: 0, y: 0}],
+      },
+    ] as any;
+
+    await assert.rejects(backend.performActions(actions), errors.MoveTargetOutOfBoundsError);
+  });
+
+  it('performActions resolves each web-element origin independently - a lookup that scrolled could invalidate an earlier one', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    driver.webElementsCache.set(':wdc:source', ':wdc:source');
+    driver.webElementsCache.set(':wdc:target', ':wdc:target');
+    seedIdentityCalibration();
+    // distinct, already-in-view centers for each element - if resolving the second element's
+    // coordinates scrolled the page (as get_top_left_coordinates/get_size would), the first
+    // element's already-resolved coordinates would no longer point at it
+    executeAtomStub
+      .withArgs('execute_script')
+      .onFirstCall()
+      .resolves({x: 10, y: 10})
+      .onSecondCall()
+      .resolves({x: 300, y: 300});
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [
+          {type: 'pointerMove', duration: 0, origin: {ELEMENT: ':wdc:source'}, x: 0, y: 0},
+          {type: 'pointerMove', duration: 60, origin: {ELEMENT: ':wdc:target'}, x: 0, y: 0},
+        ],
+      },
+    ] as any;
+
+    await backend.performActions(actions);
+
+    // executeAtom is stubbed for every call, so no scroll-triggering get_top_left_coordinates or
+    // get_size call is possible here in the first place - this asserts the two lookups instead
+    // resolve to the two distinct, independent coordinates set up above
+    const [moveToSource, moveToTarget] = (proxyStub.firstCall.args[2] as any).actions[0].actions;
+    assert.deepStrictEqual({x: moveToSource.x, y: moveToSource.y}, {x: 10, y: 10});
+    assert.deepStrictEqual({x: moveToTarget.x, y: moveToTarget.y}, {x: 300, y: 300});
+  });
+
+  it('performActions leaves a native element origin untouched - it is shaped just like a web element, but is not one', async function () {
+    const proxyStub = sandbox.stub(driver, 'proxyCommand').resolves();
+    // never cached via the web-execution machinery, so this is a native element, not a web one
+    const actions = [
+      {
+        type: 'pointer',
+        id: 'finger1',
+        actions: [{type: 'pointerMove', duration: 0, origin: {ELEMENT: 'native-element-id'}, x: 5, y: -5}],
+      },
+    ] as any;
+
+    await backend.performActions(actions);
+
+    assert.strictEqual(executeAtomStub.called, false);
+    const proxiedAction = (proxyStub.firstCall.args[2] as any).actions[0].actions[0];
+    assert.deepStrictEqual(proxiedAction.origin, {ELEMENT: 'native-element-id'});
   });
 
   it('releaseActions is a harmless no-op', async function () {

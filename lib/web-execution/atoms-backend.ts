@@ -6,9 +6,10 @@ import {waitForCondition} from 'asyncbox';
 import {NATIVE_WIN} from '../commands/constants.js';
 import {prepareInputValue} from '../commands/element.js';
 import {performActionsViaWDA} from '../commands/gesture.js';
-import {checkForAlert, createJSCookie, hasElementId} from '../commands/web.js';
+import {translateWebCoords} from '../commands/web-native-bridge.js';
+import {checkForAlert, createJSCookie} from '../commands/web.js';
 import type {XCUITestDriver} from '../driver.js';
-import {isEmpty, toErrorMessage} from '../utils/index.js';
+import {hasElementId, hasWebElementId, isEmpty, toErrorMessage} from '../utils/index.js';
 import type {WebExecutionBackend} from './types.js';
 
 const CLOSE_WINDOW_TIMEOUT_MS = 5000;
@@ -16,6 +17,28 @@ const CLOSE_WINDOW_INTERVAL_MS = 100;
 
 // WebKit's wording for a cross-origin frame access failure.
 const CROSS_ORIGIN_FRAME_ERROR_PATTERN = /cross-origin frame|blocked a frame with origin/i;
+
+// Calculates the W3C "in-view center point" of arguments[0] - its getBoundingClientRect(),
+// clipped to the current viewport - returning null when the clipped rectangle is empty (the
+// element is entirely out of view). Deliberately reads via getBoundingClientRect() rather than
+// the get_top_left_coordinates/get_size atoms, which scroll the element into view as a side
+// effect: resolveWebElementActionOrigins resolves every origin in a sequence up front, before WDA
+// drives any input, so a lookup that scrolls could shift the page and invalidate coordinates
+// already resolved for an earlier origin in that same sequence.
+const IN_VIEW_CENTER_POINT_SCRIPT = `
+  var el = arguments[0];
+  var rect = el.getBoundingClientRect();
+  var clientWidth = document.documentElement.clientWidth;
+  var clientHeight = document.documentElement.clientHeight;
+  var x0 = Math.max(0, Math.min(rect.left, rect.left + rect.width));
+  var x1 = Math.min(clientWidth, Math.max(rect.left, rect.left + rect.width));
+  var y0 = Math.max(0, Math.min(rect.top, rect.top + rect.height));
+  var y1 = Math.min(clientHeight, Math.max(rect.top, rect.top + rect.height));
+  if (x0 >= x1 || y0 >= y1) {
+    return null;
+  }
+  return {x: (x0 + x1) / 2, y: (y0 + y1) / 2};
+`;
 
 /**
  * Routes web-execution commands through the driver's existing Selenium-atoms machinery
@@ -346,9 +369,10 @@ export class AtomsBackend implements WebExecutionBackend {
 
   async performActions(actions: ActionSequence[]): Promise<void> {
     // atoms have no actions implementation of their own, but WDA can still drive real touch
-    // input against on-screen web content - as long as no action originates from a web element,
-    // which requires an automation session (see 'mobile: startAutomationSession').
-    await performActionsViaWDA(this.driver, actions);
+    // input against on-screen web content. Web element origins are resolved to native
+    // coordinates first, the same way `nativeWebTap` does, since WDA has no notion of them.
+    const resolvedActions = await this.resolveWebElementActionOrigins(actions);
+    await performActionsViaWDA(this.driver, resolvedActions);
   }
 
   async releaseActions(): Promise<void> {
@@ -386,5 +410,60 @@ export class AtomsBackend implements WebExecutionBackend {
   private async removeCookie(cookie: Cookie): Promise<void> {
     const url = `http${cookie.secure ? 's' : ''}://${cookie.domain}${cookie.path}`;
     await this.driver.remote.deleteCookie(cookie.name, url);
+  }
+
+  /**
+   * Resolves every web element origin in a W3C action sequence (a `pointerMove` or `scroll`
+   * action whose `origin` is a web element, e.g. `driver.action('pointer').move({origin: el})`)
+   * into a `'viewport'`-relative native screen coordinate, so the result can be driven through
+   * WDA's `/actions` endpoint via {@linkcode performActionsViaWDA}.
+   *
+   * An origin shaped like an element but not tracked in `webElementsCache` is a native element,
+   * not a web one - {@linkcode hasWebElementId} tells the two apart, since WDA understands native
+   * elements just fine, such an origin is left untouched for `performActionsViaWDA` to pass through.
+   *
+   * @param actions - Array of action sequences, potentially containing web element origins
+   * @returns A deep copy of `actions` with every web element origin replaced by native coordinates
+   */
+  private async resolveWebElementActionOrigins(actions: ActionSequence[]): Promise<ActionSequence[]> {
+    const resolvedActions = structuredClone(actions);
+    for (const sequence of resolvedActions) {
+      for (const action of ((sequence as any).actions ?? []) as any[]) {
+        if (!hasWebElementId(this.driver.webElementsCache, action?.origin)) {
+          continue;
+        }
+        const {x, y} = await this.resolveElementOriginToNativeCoords(action.origin, action.x, action.y);
+        action.origin = 'viewport';
+        action.x = x;
+        action.y = y;
+      }
+    }
+    return resolvedActions;
+  }
+
+  /**
+   * Converts a single web element origin (plus its action's own `x`/`y` offset from the element's
+   * W3C "in-view center point" - its bounding rectangle, clipped to the current viewport) into
+   * native screen coordinates via {@linkcode translateWebCoords}'s calibrated transform.
+   *
+   * @see {@linkcode resolveWebElementActionOrigins}
+   * @throws {errors.MoveTargetOutOfBoundsError} If the element is currently entirely out of view
+   */
+  private async resolveElementOriginToNativeCoords(
+    origin: Element,
+    offsetX: number,
+    offsetY: number,
+  ): Promise<Position> {
+    const atomsElement = this.driver.getAtomsElement(origin);
+    const center = (await this.driver.executeAtom('execute_script', [
+      IN_VIEW_CENTER_POINT_SCRIPT,
+      [atomsElement],
+    ])) as Position | null;
+    if (!center) {
+      throw new errors.MoveTargetOutOfBoundsError(
+        'The element used as a W3C action origin is currently out of view, so its coordinates cannot be resolved',
+      );
+    }
+    return await translateWebCoords.call(this.driver, center.x + offsetX, center.y + offsetY);
   }
 }
