@@ -1,3 +1,9 @@
+## [12.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.9.1...v12.10.0) (2026-09-03)
+
+### Features
+
+* resolve web element origins to native coordinates in W3C actions ([#2966](https://github.com/appium/appium-xcuitest-driver/issues/2966)) ([988c54c](https://github.com/appium/appium-xcuitest-driver/commit/988c54c2a555e60dbb9d3f64c796fb489e0b22b9))
+
 ## [12.9.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.9.0...v12.9.1) (2026-09-02)
 
 ### Miscellaneous Chores
