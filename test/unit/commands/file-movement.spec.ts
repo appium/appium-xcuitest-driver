@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {tempDir} from 'appium/support.js';
+import {errors} from 'appium/driver.js';
+import {fs, tempDir} from 'appium/support.js';
+import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
 import {parseContainerPath} from '../../../lib/commands/file-movement.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -58,5 +60,39 @@ describe('file-movement', function () {
       const mntRoot = await tempDir.openDir();
       await assert.rejects(parseContainerPath(driver, '@io.appium.example:documents', mntRoot));
     });
+  });
+
+  describe('mobileDeleteFile', function () {
+    const simRoot = '/Users/me/Library/Developer/CoreSimulator/Devices/UDID/data';
+    let driver: XCUITestDriver;
+    let sandbox: SinonSandbox;
+    let rimrafStub: SinonStub;
+
+    beforeEach(function () {
+      sandbox = createSandbox();
+      driver = new XCUITestDriver({} as any);
+      driver._device = {simctl: {}, getDir: () => simRoot} as any;
+      sandbox.stub(fs, 'exists').resolves(true);
+      rimrafStub = sandbox.stub(fs, 'rimraf').resolves();
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+      driver = null as any;
+    });
+
+    it('should delete a file inside the simulator data directory', async function () {
+      await driver.mobileDeleteFile('Library/foo.txt');
+
+      assert.strictEqual(rimrafStub.calledOnceWithExactly(`${simRoot}/Library/foo.txt`), true);
+    });
+
+    for (const remotePath of ['', '.', 'x/..', '../data']) {
+      it(`should refuse to delete the simulator data directory for '${remotePath}'`, async function () {
+        await assert.rejects(driver.mobileDeleteFile(remotePath), errors.InvalidArgumentError);
+
+        assert.strictEqual(rimrafStub.notCalled, true);
+      });
+    }
   });
 });

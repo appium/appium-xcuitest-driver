@@ -459,6 +459,9 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
   } else {
     const simRoot = device.getDir();
     pathOnServer = path.posix.join(simRoot, remotePath);
+    if (path.normalize(pathOnServer) === path.normalize(simRoot)) {
+      throw new errors.InvalidArgumentError(`Refusing to delete the Simulator root '${simRoot}'`);
+    }
     verifyIsSubPath(pathOnServer, simRoot);
     this.log.info(`Got the full path: ${pathOnServer}`);
   }
