@@ -1,3 +1,9 @@
+## [12.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.11.0...v12.11.1) (2026-09-08)
+
+### Bug Fixes
+
+* refuse to delete the Simulator root in mobile: deleteFile ([#2968](https://github.com/appium/appium-xcuitest-driver/issues/2968)) ([ed7dc6b](https://github.com/appium/appium-xcuitest-driver/commit/ed7dc6bbf25716b7f9d3b68bbff009f5bf83fcae))
+
 ## [12.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.10.0...v12.11.0) (2026-09-08)
 
 ### Features
