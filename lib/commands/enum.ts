@@ -4,22 +4,30 @@
  */
 
 export enum PermissionService {
-  calendar = 2,
-  camera = 6,
   contacts = 1,
-  health = -0x40000003,
-  homekit = 8,
-  keyboardnet = -0x40000001,
-  location = -0x40000002,
-  medialibrary = 7,
-  microphone = 5,
-  photos = 4,
+  calendar = 2,
   reminders = 3,
+  photos = 4,
+  microphone = 5,
+  camera = 6,
+  medialibrary = 7,
+  homekit = 8,
+  focus = 9,
+  // macOS specific
   systemroot = 0x40000000,
   userdesktop = 0x40000001,
-  userdocuments = 0x40000003,
   userdownloads = 0x40000002,
+  userdocuments = 0x40000003,
+  networkvolumes = 0x40000004,
+  removablevolumes = 0x40000005,
+  appleevents = 0x40000006,
+  // iOS Family-specific
   bluetooth = -0x40000000,
+  keyboardnet = -0x40000001,
+  location = -0x40000002,
+  health = -0x40000003,
+  usertracking = -0x40000004,
+  localnetwork = -0x40000005,
 }
 
 /**

@@ -1,3 +1,9 @@
+## [12.11.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.10.0...v12.11.0) (2026-09-08)
+
+### Features
+
+* update supported HID and protected resource values ([#2967](https://github.com/appium/appium-xcuitest-driver/issues/2967)) ([a053cb3](https://github.com/appium/appium-xcuitest-driver/commit/a053cb3aae8deec90dfc77b41ec97a0a2a6c7d84))
+
 ## [12.10.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.9.1...v12.10.0) (2026-09-03)
 
 ### Features
