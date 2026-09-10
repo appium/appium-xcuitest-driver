@@ -190,4 +190,11 @@ export const newMethodMap = {
       deprecated: true,
     },
   },
+  '/session/:sessionId/context': {
+    GET: {command: 'getCurrentContext'},
+    POST: {command: 'setContext', payloadParams: {required: ['name']}},
+  },
+  '/session/:sessionId/contexts': {
+    GET: {command: 'getContexts'},
+  },
 } as const satisfies MethodMap<XCUITestDriver>;
