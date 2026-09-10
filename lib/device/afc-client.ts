@@ -8,6 +8,7 @@ import {services} from 'appium-ios-device';
 /** @ts-expect-error no types */
 import type {AfcService as IOSDeviceAfcService} from 'appium-ios-device';
 import type {AfcService as RemoteXPCAfcService} from 'appium-ios-remotexpc';
+import {errors} from 'appium/driver.js';
 import {fs, util} from 'appium/support.js';
 
 import {withTimeout} from '../commands/helpers/index.js';
@@ -353,9 +354,8 @@ export class AfcClient {
     overwrite: boolean,
     onEntry?: AfcPullOptions['onEntry'],
   ): Promise<void> {
-    const localFilePath = (await this.isLocalDirectory(localPath))
-      ? path.join(localPath, path.posix.basename(remotePath))
-      : localPath;
+    const baseName = requireRemoteBaseName(remotePath);
+    const localFilePath = (await this.isLocalDirectory(localPath)) ? path.join(localPath, baseName) : localPath;
 
     await this.checkOverwrite(localFilePath, overwrite);
     await this.pullSingleFile(remotePath, localFilePath);
@@ -371,8 +371,9 @@ export class AfcClient {
     localPath: string,
     onEntry?: AfcPullOptions['onEntry'],
   ): Promise<string> {
+    const baseName = requireRemoteBaseName(remotePath);
     const localDstIsDirectory = await this.isLocalDirectory(localPath);
-    const localRootDir = localDstIsDirectory ? path.join(localPath, path.posix.basename(remotePath)) : localPath;
+    const localRootDir = localDstIsDirectory ? path.join(localPath, baseName) : localPath;
 
     await fs.mkdirp(localRootDir);
 
@@ -512,6 +513,15 @@ export class AfcClient {
       return false;
     }
   }
+}
+
+/** Returns the basename of a remote path, rejecting root-like paths that have none. */
+function requireRemoteBaseName(remotePath: string): string {
+  const baseName = path.posix.basename(remotePath);
+  if (!baseName) {
+    throw new errors.InvalidArgumentError(`Cannot pull the root path '${remotePath}'`);
+  }
+  return baseName;
 }
 
 /**

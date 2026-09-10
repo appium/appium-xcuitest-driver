@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
+import {Readable} from 'node:stream';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
+import {errors} from 'appium/driver.js';
 import {fs} from 'appium/support.js';
 import {createSandbox} from 'sinon';
 import type {SinonStub} from 'sinon';
 
 import {AfcClient} from '../../lib/device/afc-client.js';
-import {installToRealDevice, RealDevice} from '../../lib/device/real-device-management.js';
+import {installToRealDevice, pullFolder, RealDevice} from '../../lib/device/real-device-management.js';
 import type {RemoteXPCFacade} from '../../lib/device/remote-xpc/index.js';
 import {ZipConduitClient} from '../../lib/device/zip-conduit-client.js';
 import {XCUITestDriver} from '../../lib/driver.js';
@@ -280,5 +282,39 @@ describe('RealDevice host utility fallback policy', function () {
       assert.strictEqual(listAppsStub.notCalled, true);
       assert.strictEqual(fetchAppInfoStub.calledOnce, true);
     });
+  });
+});
+
+describe('pullFolder', function () {
+  /** Fake legacy (non-RemoteXPC) AFC service serving a fixed tree rooted at '/'. */
+  const createWalkDirService = (tree: Record<string, string[]>) => {
+    const walk = async (dir: string, onPath: (p: string, isDirectory: boolean) => unknown): Promise<void> => {
+      for (const entry of tree[dir] ?? []) {
+        const isDirectory = entry in tree;
+        await onPath(entry, isDirectory);
+        if (isDirectory) {
+          await walk(entry, onPath);
+        }
+      }
+    };
+    return {
+      getFileInfo: async (p: string) => ({isDirectory: () => p in tree}),
+      createReadStream: async (p: string) => Readable.from([`content of ${p}`]),
+      walkDir: async (dir: string, _recursive: boolean, onPath: (p: string, isDirectory: boolean) => unknown) =>
+        await walk(dir, onPath),
+    };
+  };
+
+  it('rejects pulling the container root instead of zipping the temp folder parent', async function () {
+    const service = createWalkDirService({'/': ['/a.txt', '/sub'], '/sub': ['/sub/b.txt']});
+    const client: AfcClient = Reflect.construct(AfcClient, [service, false]);
+
+    await assert.rejects(pullFolder(client, '/'), errors.InvalidArgumentError);
+  });
+
+  it('rejects a single-file pull of a remote path without a basename', async function () {
+    const client: AfcClient = Reflect.construct(AfcClient, [createWalkDirService({}), false]);
+
+    await assert.rejects(client.pull('/', '/nonexistent/local'), errors.InvalidArgumentError);
   });
 });
