@@ -29,8 +29,7 @@
     "build/lib",
     "!.DS_Store",
     "CHANGELOG.md",
-    "LICENSE",
-    "npm-shrinkwrap.json"
+    "LICENSE"
   ],
   "type": "module",
   "main": "./build/lib/index.js",
