@@ -22,8 +22,7 @@ jobs:
       - name: Use Node.js LTS
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 24.15 # lts/*
-          # check-latest: true
+          node-version: lts/*
       - run: npm install --no-package-lock
         name: Install dependencies
       - run: npm run test
@@ -42,4 +41,4 @@ jobs:
       - uses: appium/appium-workflows/.github/actions/publish-npm-bundle@main
         if: env.PREV_VERSION != env.NEW_VERSION
         with:
-          unbundled-packages: appium-ios-device appium-ios-simulator appium-remote-debugger appium-webdriveragent appium-xcode appium-ios-remotexpc sharp
+          unbundled-packages: appium-ios-remotexpc sharp
