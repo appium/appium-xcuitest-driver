@@ -1,3 +1,9 @@
+## [12.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.11.1...v12.12.0) (2026-09-10)
+
+### Features
+
+* own the context/contexts legacy MJSONWP routes ([#2973](https://github.com/appium/appium-xcuitest-driver/issues/2973)) ([15dce63](https://github.com/appium/appium-xcuitest-driver/commit/15dce6320d94bc66d0cfc255f48ff38c9f6022d5))
+
 ## [12.11.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.11.0...v12.11.1) (2026-09-08)
 
 ### Bug Fixes

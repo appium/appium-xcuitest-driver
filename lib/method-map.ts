@@ -190,4 +190,17 @@ export const newMethodMap = {
       deprecated: true,
     },
   },
+  '/session/:sessionId/context': {
+    GET: {command: 'getCurrentContext'},
+    POST: {command: 'setContext', payloadParams: {required: ['name']}},
+  },
+  '/session/:sessionId/contexts': {
+    GET: {command: 'getContexts'},
+  },
+  '/session/:sessionId/rotation': {
+    // Not implemented locally - WDA supports this endpoint natively, so the
+    // request is proxied straight through (see NO_PROXY_NATIVE_LIST/NO_PROXY_WEB_LIST).
+    GET: {command: 'getRotation'},
+    POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},
+  },
 } as const satisfies MethodMap<XCUITestDriver>;
