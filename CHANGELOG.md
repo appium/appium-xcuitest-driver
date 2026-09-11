@@ -1,3 +1,9 @@
+## [12.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.0...v12.12.1) (2026-09-11)
+
+### Bug Fixes
+
+* do not zip the host temp dir when pulling a container root on real devices ([#2971](https://github.com/appium/appium-xcuitest-driver/issues/2971)) ([ec787a2](https://github.com/appium/appium-xcuitest-driver/commit/ec787a2be7b655f111431d634a3dabc5097f83ce))
+
 ## [12.12.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.11.1...v12.12.0) (2026-09-10)
 
 ### Features
