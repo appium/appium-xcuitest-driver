@@ -563,15 +563,16 @@ async function downloadIpa(driver: XCUITestDriver, stream: Readable, headers: HT
         );
       }
       for (const matchedPath of matchedPaths) {
+        const fullPath = path.join(rootDir, matchedPath);
         try {
-          await driver.appInfosCache.put(matchedPath);
+          await driver.appInfosCache.put(fullPath);
         } catch (e: any) {
           driver.log.info(e.message);
           continue;
         }
         driver.log.debug(`Selecting the application at '${matchedPath}'`);
-        const isolatedPath = path.join(await tempDir.openDir(), path.basename(matchedPath));
-        await fs.mv(matchedPath, isolatedPath);
+        const isolatedPath = path.join(await tempDir.openDir(), path.basename(fullPath));
+        await fs.mv(fullPath, isolatedPath);
         return isolatedPath;
       }
       throw new Error(`The remote archive does not contain any valid ${IPA_EXT} applications`);
