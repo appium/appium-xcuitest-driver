@@ -1,3 +1,9 @@
+## [12.12.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.2...v12.12.3) (2026-09-12)
+
+### Miscellaneous Chores
+
+* **ci:** publish via bundled dependencies instead of npm-shrinkwrap ([#2972](https://github.com/appium/appium-xcuitest-driver/issues/2972)) ([eb94173](https://github.com/appium/appium-xcuitest-driver/commit/eb941732aa9fa5a3e79a3cada0d4f1494b0b2e37))
+
 ## [12.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.1...v12.12.2) (2026-09-12)
 
 ### Bug Fixes
