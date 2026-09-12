@@ -1,3 +1,9 @@
+## [12.12.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.1...v12.12.2) (2026-09-12)
+
+### Bug Fixes
+
+* resolve nested .ipa paths when downloading a remote .zip on real devices ([#2974](https://github.com/appium/appium-xcuitest-driver/issues/2974)) ([5b7f643](https://github.com/appium/appium-xcuitest-driver/commit/5b7f643358006907dd6847aac5d65b07897ef234))
+
 ## [12.12.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.0...v12.12.1) (2026-09-11)
 
 ### Bug Fixes
