@@ -22,22 +22,24 @@ jobs:
       - name: Use Node.js LTS
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 24.15 # lts/*
-          # check-latest: true
+          node-version: lts/*
       - run: npm install --no-package-lock
         name: Install dependencies
       - run: npm run test
         name: Run NPM Test
-      - run: |
-          rm -rf node_modules package-lock.json
-          npm prune --omit=dev --omit=peer --no-package-lock
-        name: Remove dev dependencies and appium peer dependencies
-      - run: npm shrinkwrap --omit=dev --omit=peer
-        name: Create shrinkwrap
-        # "--no-package-lock" prevent adding dev dependencies in the shrinkwrap
-      - run: npm install --only=dev --no-package-lock
-        name: Install dev dependencies for the release
+      - run: echo "PREV_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+        name: Record current version
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         name: Release
+      - run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+        name: Record released version
+      # semantic-release only bumps package.json (npmPublish: false in release.config.mjs);
+      # the actual publish happens below from a staged, bundled copy of the package so that
+      # published node_modules never include devDependencies. Skipped when there was no release.
+      - uses: appium/appium-workflows/.github/actions/publish-npm-bundle@main
+        if: env.PREV_VERSION != env.NEW_VERSION
+        with:
+          unbundled-packages: sharp
+          native-platforms: linux-x64 linux-arm64 darwin-arm64 win32-x64
