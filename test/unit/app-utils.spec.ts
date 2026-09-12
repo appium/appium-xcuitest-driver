@@ -3,8 +3,10 @@ import path from 'node:path';
 import {describe, it, before} from 'node:test';
 
 import {fs, tempDir, zip} from 'appium/support.js';
+import {createSandbox} from 'sinon';
 
-import {unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
+import {onDownloadApp, unzipStream, unzipFile} from '../../lib/commands/helpers/app.js';
+import {XCUITestDriver} from '../../lib/driver.js';
 import {getUIKitCatalogPath} from '../setup.js';
 
 describe('app-utils', function () {
@@ -89,6 +91,46 @@ describe('app-utils', function () {
         await assert.rejects(unzipFile(tmpSrc));
       } finally {
         await fs.rimraf(tmpDir);
+      }
+    });
+  });
+
+  describe('onDownloadApp', function () {
+    it('should select an .ipa nested in a remote .zip on a real device', async function () {
+      try {
+        await fs.which('bsdtar');
+      } catch {
+        return;
+      }
+
+      const sandbox = createSandbox();
+      const tmpDir = await tempDir.openDir();
+      let resultPath: string | undefined;
+      try {
+        const payloadDir = path.join(tmpDir, 'stage', 'Payload', 'UIKitCatalog.app');
+        await fs.mkdirp(payloadDir);
+        await fs.copyFile(path.join(uiCatalogAppPath, 'Info.plist'), path.join(payloadDir, 'Info.plist'));
+        const archiveRoot = path.join(tmpDir, 'archive', 'sub');
+        await fs.mkdirp(archiveRoot);
+        await zip.toArchive(path.join(archiveRoot, 'Foo.ipa'), {cwd: path.join(tmpDir, 'stage')});
+        const zipPath = path.join(tmpDir, 'build.zip');
+        await zip.toArchive(zipPath, {cwd: path.join(tmpDir, 'archive')});
+
+        const driver = new XCUITestDriver({} as any);
+        sandbox.stub(driver, 'isRealDevice').returns(true);
+        resultPath = await onDownloadApp.call(driver, {
+          url: 'http://example.com/build.zip',
+          headers: {'content-disposition': 'attachment; filename="build.zip"'},
+          stream: fs.createReadStream(zipPath),
+        });
+        assert.strictEqual(path.basename(resultPath), 'Foo.ipa');
+        assert.strictEqual(await fs.exists(resultPath), true);
+      } finally {
+        sandbox.restore();
+        await fs.rimraf(tmpDir);
+        if (resultPath) {
+          await fs.rimraf(path.dirname(resultPath));
+        }
       }
     });
   });
