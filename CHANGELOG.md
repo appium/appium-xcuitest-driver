@@ -1,3 +1,9 @@
+## [12.12.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.3...v12.12.4) (2026-09-14)
+
+### Bug Fixes
+
+* forward the network event method name to the Safari network log listener ([#2975](https://github.com/appium/appium-xcuitest-driver/issues/2975)) ([96b0fc8](https://github.com/appium/appium-xcuitest-driver/commit/96b0fc8e37ee92dfd40d2e2d2ae334c7e207a5be))
+
 ## [12.12.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.2...v12.12.3) (2026-09-12)
 
 ### Miscellaneous Chores
