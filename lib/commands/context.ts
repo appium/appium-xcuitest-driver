@@ -559,8 +559,8 @@ export async function setContext(
     }
     if (safariNetwork) {
       const networkLog = safariNetwork as SafariNetworkLog;
-      const eventListener = (error?: Error, event?: StringRecord) =>
-        networkLog.onNetworkEvent(error, event as unknown as SafariNetworkLogEntry);
+      const eventListener = (error?: Error, event?: StringRecord, method?: string) =>
+        networkLog.onNetworkEvent(error, event as unknown as SafariNetworkLogEntry, method);
       this.remote.startNetwork(eventListener);
     }
   }
