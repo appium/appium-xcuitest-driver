@@ -150,7 +150,7 @@ export class DeviceDiscovery {
       } else {
         const devices = await getConnectedDevices(this.sessionOpts);
         this.log.debug(`Available real devices: ${devices.join(', ')}`);
-        isRealDeviceUdid = devices.includes(udid);
+        isRealDeviceUdid = devices.some((deviceUdid) => deviceUdid.toLowerCase() === udid.toLowerCase());
       }
     }
 
