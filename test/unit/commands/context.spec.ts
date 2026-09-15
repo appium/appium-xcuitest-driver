@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
+import {EventEmitter} from 'node:events';
 import {describe, it} from 'node:test';
 
+import type {RemoteDebugger} from 'appium-remote-debugger';
+
+import {BIDI_EVENT_NAME, LOG_ENTRY_ADDED_EVENT} from '../../../lib/commands/bidi/constants.js';
+import type {LogEntryAddedEvent} from '../../../lib/commands/bidi/types.js';
+import {assignBiDiLogListener} from '../../../lib/commands/log.js';
+import {SafariNetworkLog} from '../../../lib/device/log/safari-network-log.js';
 import {XCUITestDriver} from '../../../lib/driver.js';
 import {AtomsBackend} from '../../../lib/web-execution/atoms-backend.js';
 import {AutomationSessionBackend} from '../../../lib/web-execution/automation-session-backend.js';
@@ -55,6 +62,60 @@ describe('context', function () {
       fakeSession.isStarted = true;
       assert.strictEqual(driver._webExecutionBackend instanceof AutomationSessionBackend, true);
     });
+  });
+
+  describe('setContext', function () {
+    for (const method of [
+      'Network.requestWillBeSent',
+      'Network.responseReceived',
+      'Network.loadingFinished',
+      'Network.loadingFailed',
+      'Network.dataReceived',
+    ]) {
+      const monitored = method !== 'Network.dataReceived';
+      it(`${monitored ? 'records and broadcasts' : 'ignores'} ${method} through the network listener`, async function () {
+        const driver = new XCUITestDriver({} as any);
+        driver.curContext = null;
+        driver.contexts = ['5191.1'];
+        const networkEvents = new EventEmitter();
+        driver._remote = {
+          selectPage: async () => {},
+          startNetwork: (listener: Parameters<RemoteDebugger['startNetwork']>[0]) => {
+            networkEvents.on('NetworkEvent', listener);
+          },
+        } as any;
+        const networkLog = new SafariNetworkLog({showLogs: false, log: driver.log});
+        driver.logs.safariNetwork = assignBiDiLogListener(driver.eventEmitter, networkLog, {
+          type: 'safariNetwork',
+        })[0];
+        const bidiEvents: LogEntryAddedEvent[] = [];
+        driver.eventEmitter.on(BIDI_EVENT_NAME, (event: LogEntryAddedEvent) => {
+          if (event.method === LOG_ENTRY_ADDED_EVENT) {
+            bidiEvents.push(event);
+          }
+        });
+
+        await driver.setContext('WEBVIEW_5191.1');
+        assert.strictEqual(networkEvents.listenerCount('NetworkEvent'), 1);
+        const entry = {requestId: 'request-1', timestamp: 42};
+        // The remote debugger supplies the original method as the third argument.
+        networkEvents.emit('NetworkEvent', undefined, entry, method);
+
+        const expected = monitored ? [{method, event: entry}] : [];
+        const logs = await driver.extractLogs('safariNetwork', driver.logs);
+        assert.deepStrictEqual(
+          logs.map((log: {message: string}) => JSON.parse(log.message)),
+          expected,
+        );
+        assert.deepStrictEqual(
+          bidiEvents.map(({params}) => JSON.parse(params.text)),
+          expected,
+        );
+        for (const {params} of bidiEvents) {
+          assert.strictEqual(params.type, 'safariNetwork');
+        }
+      });
+    }
   });
 
   describe('onPageChange', function () {
