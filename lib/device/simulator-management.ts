@@ -75,6 +75,25 @@ export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts =
 }
 
 /**
+ * Case-insensitively resolves a simulator udid to the exact case `simctl` reports it in.
+ * Different callers (a user-supplied capability vs. simctl's own CoreSimulator-reported
+ * list) do not necessarily agree on letter case.
+ *
+ * @returns The matching device's canonical udid, or `undefined` if no device matches.
+ */
+export async function findSimulatorUdidCase(
+  udid: string,
+  devicesSetPath: string | undefined,
+  platform: string,
+): Promise<string | undefined> {
+  const simctl = new Simctl({devicesSetPath});
+  const devicesMap = await simctl.getDevices(null, platform);
+  return Object.values(devicesMap)
+    .flatMap((x) => x)
+    .find((device) => device.udid.toLowerCase() === udid.toLowerCase())?.udid;
+}
+
+/**
  * Get an existing simulator matching the provided capabilities.
  *
  * @returns The matched Simulator instance or `null` if no matching device is found.
@@ -94,17 +113,10 @@ export async function getExistingSim(
       logger: this.log,
     });
 
-  const simctl = new Simctl({devicesSetPath});
-  let devicesMap: Record<string, any[]> | undefined;
   if (udid && String(udid).toLowerCase() !== UDID_AUTO) {
     this.log.debug(`Looking for an existing Simulator with UDID '${udid}'`);
-    devicesMap = await simctl.getDevices(null, platform);
-    for (const device of Object.values(devicesMap).flatMap((x) => x)) {
-      if (device.udid === udid) {
-        return await selectSim(device);
-      }
-    }
-    return null;
+    const canonicalUdid = await findSimulatorUdidCase(String(udid), devicesSetPath, platform);
+    return canonicalUdid ? await selectSim({udid: canonicalUdid, platform}) : null;
   }
 
   if (!platformVersion) {
@@ -112,7 +124,8 @@ export async function getExistingSim(
     return null;
   }
 
-  const devices = devicesMap?.[platformVersion] ?? (await simctl.getDevices(platformVersion, platform));
+  const simctl = new Simctl({devicesSetPath});
+  const devices = await simctl.getDevices(platformVersion, platform);
   this.log.debug(
     `Looking for an existing Simulator with platformName: ${platform}, ` +
       `platformVersion: ${platformVersion}, deviceName: ${deviceName}`,
