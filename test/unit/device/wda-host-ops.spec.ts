@@ -201,6 +201,7 @@ describe('wda host ops', function () {
           bundleId: 'io.appium.wda.xctrunner',
           environment: {USE_PORT: '8100'},
           killExisting: true,
+          extraOptions: {ActivateSuspended: true},
         }),
         true,
       );
