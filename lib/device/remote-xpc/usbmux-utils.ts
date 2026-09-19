@@ -18,7 +18,7 @@ export async function isDeviceListedInUsbmux(
   try {
     usbmux = await remotexpc.createUsbmux();
     const devices = await usbmux.listDevices();
-    return devices.some((x) => x.Properties?.SerialNumber === udid);
+    return devices.some((x) => x.Properties?.SerialNumber?.toLowerCase() === udid.toLowerCase());
   } catch (err) {
     log?.debug?.(`Failed to query usbmux devices for '${udid}': ${(err as Error).message}`);
     return false;
