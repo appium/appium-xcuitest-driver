@@ -1,3 +1,9 @@
+## [12.12.6](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.5...v12.12.6) (2026-09-19)
+
+### Bug Fixes
+
+* match udid capabilities case-insensitively across remaining device/simulator lookups ([#2981](https://github.com/appium/appium-xcuitest-driver/issues/2981)) ([4451076](https://github.com/appium/appium-xcuitest-driver/commit/4451076f82d2e0f241e848c3be1498bc751d0573))
+
 ## [12.12.5](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.4...v12.12.5) (2026-09-18)
 
 ### Bug Fixes
