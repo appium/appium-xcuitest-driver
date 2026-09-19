@@ -41,7 +41,7 @@ jobs:
             tvosVersion: '27.0'
             tvosDeviceName: 'Apple TV 4K (3rd generation)'
             watchosVersion: '27.0'
-            watchosDeviceName: 'Apple Watch Series 11 (46mm)'
+            watchosDeviceName: 'Apple Watch Series 12 (46mm)'
             platform: xcode-27
           - xcodeVersion: '26.4'
             iosVersion: '26.4'
