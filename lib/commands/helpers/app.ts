@@ -218,7 +218,7 @@ export async function checkAutInstallationState(
   const appBundleVersion = (
     driver.isRealDevice()
       ? await (driver.device as RealDevice).fetchAppInfo(bundleId)
-      : await (driver.device as Simulator).simctl.appInfo(bundleId)
+      : await (driver.device as Simulator).appInfo(bundleId)
   )?.CFBundleVersion;
   driver.log.debug(`CFBundleVersion from installed app info: ${appBundleVersion}`);
   if (!appBundleVersion) {

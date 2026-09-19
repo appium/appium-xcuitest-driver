@@ -132,12 +132,12 @@ describe('wda host ops', function () {
   });
 
   describe('createWdaHostOps', function () {
-    it('delegates simulator preinstalled launch and terminate to simctl/simulator APIs', async function () {
-      const exec = sinon.stub().resolves();
+    it('delegates simulator preinstalled launch and terminate to Simulator APIs', async function () {
+      const launchApp = sinon.stub().resolves();
       const terminateApp = sinon.stub().resolves();
       const driver = {
         device: {
-          simctl: {exec},
+          launchApp,
           terminateApp,
         },
       } as any;
@@ -155,12 +155,11 @@ describe('wda host ops', function () {
         bundleId: 'io.appium.wda.xctrunner',
       });
 
-      assert.strictEqual(exec.calledOnceWith('launch'), true);
-      assert.deepStrictEqual(exec.firstCall.args[1].args, [
-        '--terminate-running-process',
-        'sim-1',
-        'io.appium.wda.xctrunner',
-      ]);
+      assert.strictEqual(launchApp.calledOnceWith('io.appium.wda.xctrunner'), true);
+      assert.deepStrictEqual(launchApp.firstCall.args[1], {
+        environment: {USE_PORT: '8100'},
+        terminateExisting: true,
+      });
       assert.strictEqual(terminateApp.calledOnceWith('io.appium.wda.xctrunner'), true);
     });
 

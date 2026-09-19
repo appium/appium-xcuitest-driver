@@ -63,11 +63,11 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
   // simulator attempt
   if (this.isSimulator()) {
     this.log.info(`Falling back to 'simctl io screenshot' API`);
-    const payload = await (this.device as Simulator).simctl.getScreenshot();
-    if (!payload) {
+    const payload = await (this.device as Simulator).getScreenshot();
+    if (!payload || payload.length === 0) {
       throw new errors.UnableToCaptureScreen();
     }
-    return payload;
+    return payload.toString('base64');
   }
 
   // Retry for real devices only. Fail fast on Simulator if simctl does not work as expected
