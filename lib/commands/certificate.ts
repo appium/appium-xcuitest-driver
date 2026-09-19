@@ -104,10 +104,7 @@ export async function mobileInstallCertificate(
 
   if (this.isSimulator()) {
     try {
-      const methodName: 'addRootCertificate' | 'addCertificate' = isRoot ? 'addRootCertificate' : 'addCertificate';
-      await (this.device as Simulator).simctl[methodName](Buffer.from(content, 'base64').toString(), {
-        raw: true,
-      });
+      await (this.device as Simulator).addCertificate(Buffer.from(content, 'base64').toString(), {isRoot});
       return;
     } catch (e) {
       this.log.debug(e);

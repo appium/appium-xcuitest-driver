@@ -71,7 +71,8 @@ describe('file-movement', function () {
     beforeEach(function () {
       sandbox = createSandbox();
       driver = new XCUITestDriver({} as any);
-      driver._device = {simctl: {}, getDir: () => simRoot} as any;
+      driver.isSimulator = () => true;
+      driver._device = {getDir: () => simRoot} as any;
       sandbox.stub(fs, 'exists').resolves(true);
       rimrafStub = sandbox.stub(fs, 'rimraf').resolves();
     });

@@ -145,7 +145,7 @@ export async function setUrl(this: XCUITestDriver, url: string): Promise<void> {
   if (this.isRealDevice()) {
     await this.proxyCommand('/url', 'POST', {url});
   } else {
-    await (this.device as Simulator).simctl.openUrl(url);
+    await (this.device as Simulator).openUrl(url);
   }
 }
 

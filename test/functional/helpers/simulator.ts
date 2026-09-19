@@ -1,22 +1,20 @@
-import {killAllSimulators as simKill} from 'appium-ios-simulator';
+import {killAllSimulators as simKill, listSimulators, getSimulator} from 'appium-ios-simulator';
 import type {Simulator} from 'appium-ios-simulator';
 import {resetTestProcesses} from 'appium-webdriveragent';
 import {retryInterval} from 'asyncbox';
-import {Simctl} from 'node-simctl';
 
 import {shutdownSimulator} from '../../../lib/device/simulator-management.js';
 
 export async function killAllSimulators() {
-  const simctl = new Simctl();
-  const allDevices = Object.values(await simctl.getDevices()).flat();
+  const allDevices = await listSimulators();
   const bootedDevices = allDevices.filter((device) => device.state === 'Booted');
 
-  for (const {udid} of bootedDevices) {
+  for (const {udid, platform} of bootedDevices) {
     // It is necessary to stop the corresponding xcodebuild process before killing
     // the simulator, otherwise it will be automatically restarted
     await resetTestProcesses(udid, true);
-    simctl.udid = udid;
-    await simctl.shutdownDevice();
+    const sim = await getSimulator(udid, {platform, checkExistence: false});
+    await sim.shutdown();
   }
   await simKill();
 }
@@ -46,8 +44,7 @@ export async function getTargetDevice(deviceName: string): Promise<string> {
     return process.env.SIMULATOR_UDID;
   }
 
-  const simctl = new Simctl();
-  const allDevices = Object.values(await simctl.getDevices()).flat();
+  const allDevices = await listSimulators();
   const device = allDevices.find((d) => d.name === deviceName);
   if (!device) {
     const available = [...new Set(allDevices.map((d) => d.name))].sort().join(', ');
@@ -55,17 +52,20 @@ export async function getTargetDevice(deviceName: string): Promise<string> {
   }
 
   if (device.state !== 'Booted') {
-    simctl.udid = device.udid;
-    await simctl.startBootMonitor({shouldPreboot: true, timeout: LOCAL_SIM_BOOT_TIMEOUT_MS});
+    const sim = await getSimulator(device.udid, {platform: device.platform, checkExistence: false});
+    await sim.boot();
+    await sim.waitForBoot(LOCAL_SIM_BOOT_TIMEOUT_MS);
   }
 
   return device.udid;
 }
 
 export async function deleteDeviceWithRetry(udid: string): Promise<void> {
-  const simctl = new Simctl({udid});
   try {
-    await retryInterval(10, 1000, simctl.deleteDevice.bind(simctl));
+    await retryInterval(10, 1000, async () => {
+      const sim = await getSimulator(udid, {checkExistence: false});
+      await sim.delete();
+    });
   } catch {}
 }
 

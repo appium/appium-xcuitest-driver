@@ -10,7 +10,7 @@ import type {
   DriverCaps,
   DriverOpts,
 } from '@appium/types';
-import type {Simulator} from 'appium-ios-simulator';
+import {BaseSimulator, type Simulator} from 'appium-ios-simulator';
 import type {RemoteDebugger} from 'appium-remote-debugger';
 import {WebDriverAgent, type WebDriverAgentArgs} from 'appium-webdriveragent';
 import type {XcodeVersion} from 'appium-xcode';
@@ -1206,7 +1206,7 @@ export class XCUITestDriver
   }
 
   isSimulator(): boolean {
-    return 'simctl' in (this.device ?? {});
+    return this.device instanceof BaseSimulator;
   }
 
   override async getStatus(): Promise<Record<string, any>> {

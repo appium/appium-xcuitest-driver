@@ -108,7 +108,7 @@ Sets the Simulator's pasteboard content to the given value. Does not work for re
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 content | string | yes | The content to set | hello
-encoding | string | no | The content's encoding. `utf8` by default | ascii
+encoding | string | no | Deprecated and ignored; pasteboard content is always handled as UTF-8. | utf8
 
 ### mobile: getPasteboard
 
@@ -118,7 +118,7 @@ Gets the Simulator's pasteboard content. Does not work for real devices.
 
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
-encoding | string | no | The expected encoding of the returned string. `utf8` by default | ascii
+encoding | string | no | Deprecated and ignored; pasteboard content is always returned as UTF-8. | utf8
 
 #### Returned Result
 
