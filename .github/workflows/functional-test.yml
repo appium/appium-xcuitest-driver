@@ -33,9 +33,9 @@ jobs:
           - long
           - tv
           - watch
-        xcodeVersion: ['27.0-beta', '26.4', '16.4']
+        xcodeVersion: ['27.0', '26.4', '16.4']
         include:
-          - xcodeVersion: '27.0-beta'
+          - xcodeVersion: '27.0'
             iosVersion: '27.0'
             deviceName: 'iPhone 17'
             tvosVersion: '27.0'
