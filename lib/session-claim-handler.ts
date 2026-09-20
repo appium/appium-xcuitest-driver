@@ -237,7 +237,7 @@ export class SessionClaimHandler {
     udid: string,
     sessionId: string | undefined,
   ): boolean {
-    return message.data.udid === udid && message.data.sessionId !== sessionId;
+    return message.data.udid.toLowerCase() === udid.toLowerCase() && message.data.sessionId !== sessionId;
   }
 }
 
