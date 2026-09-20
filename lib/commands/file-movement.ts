@@ -308,7 +308,7 @@ async function pushFileToSimulator(this: XCUITestDriver, remotePath: string, bas
     const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
       this,
       remotePath,
-      async (appBundle, containerType) => await device.simctl.getAppContainer(appBundle, containerType),
+      async (appBundle, containerType) => await device.getAppContainer(appBundle, containerType ?? undefined),
     );
     this.log.info(
       `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` + `Will put the data into '${dstPath}'`,
@@ -324,7 +324,7 @@ async function pushFileToSimulator(this: XCUITestDriver, remotePath: string, bas
   const dstPath = path.resolve(dstFolder, path.basename(remotePath));
   try {
     await fs.writeFile(dstPath, buffer);
-    await device.simctl.addMedia(dstPath);
+    await device.addMedia([dstPath]);
   } finally {
     await fs.rimraf(dstFolder);
   }
@@ -372,7 +372,7 @@ async function pullFromSimulator(this: XCUITestDriver, remotePath: string, isFil
     const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
       this,
       remotePath,
-      async (appBundle, containerType) => await device.simctl.getAppContainer(appBundle, containerType),
+      async (appBundle, containerType) => await device.getAppContainer(appBundle, containerType ?? undefined),
     );
     this.log.info(
       `Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` + `Will get the data from '${dstPath}'`,
@@ -452,7 +452,7 @@ async function deleteFromSimulator(this: XCUITestDriver, remotePath: string): Pr
     const {bundleId, pathInContainer: dstPath} = await parseContainerPath(
       this,
       remotePath,
-      async (appBundle, containerType) => await device.simctl.getAppContainer(appBundle, containerType),
+      async (appBundle, containerType) => await device.getAppContainer(appBundle, containerType ?? undefined),
     );
     this.log.info(`Parsed bundle identifier '${bundleId}' from '${remotePath}'. ` + `'${dstPath}' will be deleted`);
     pathOnServer = dstPath;

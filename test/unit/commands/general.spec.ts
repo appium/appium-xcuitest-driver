@@ -39,15 +39,16 @@ describe('general commands', function () {
   describe('touch id', function () {
     let sandbox: sinon.SinonSandbox;
 
-    let device: {sendBiometricMatch: sinon.SinonStub; simctl?: any; devicectl?: any};
+    let device: {sendBiometricMatch: sinon.SinonStub; devicectl?: any};
+    let isSimulatorStub: sinon.SinonStub;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
       device = {
-        simctl: true,
         sendBiometricMatch: sandbox.stub(),
       };
       driver._device = device as any;
+      isSimulatorStub = sandbox.stub(driver, 'isSimulator').returns(true);
     });
 
     afterEach(function () {
@@ -65,7 +66,7 @@ describe('general commands', function () {
     });
 
     it('should not be called on a real device', async function () {
-      delete device.simctl;
+      isSimulatorStub.returns(false);
       device.devicectl = true;
       await assert.rejects(driver.touchId());
 
@@ -75,15 +76,16 @@ describe('general commands', function () {
 
   describe('toggleEnrollTouchID', function () {
     let sandbox: sinon.SinonSandbox;
-    let device: {enrollBiometric: sinon.SinonStub; simctl?: any; devicectl?: any};
+    let device: {enrollBiometric: sinon.SinonStub; devicectl?: any};
+    let isSimulatorStub: sinon.SinonStub;
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();
       device = {
-        simctl: true,
         enrollBiometric: sandbox.stub(),
       };
       driver._device = device as any;
+      isSimulatorStub = sandbox.stub(driver, 'isSimulator').returns(true);
     });
 
     afterEach(function () {
@@ -97,7 +99,7 @@ describe('general commands', function () {
     });
 
     it('should not be called on a real device', async function () {
-      delete device.simctl;
+      isSimulatorStub.returns(false);
       device.devicectl = true;
       (driver.opts as Record<string, any>).allowTouchIdEnroll = true;
       await assert.rejects(driver.toggleEnrollTouchId());

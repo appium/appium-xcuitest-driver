@@ -147,10 +147,10 @@ function stringifyLaunchEnvironment(env: WdaLaunchEnvironment): Record<string, s
 
 function createSimulatorHostOps(driver: XCUITestDriver): SimulatorHostOps {
   return {
-    async launchPreinstalled({udid, bundleId, env}) {
-      await (driver.device as Simulator).simctl.exec('launch', {
-        args: ['--terminate-running-process', udid, bundleId],
-        env,
+    async launchPreinstalled({bundleId, env}) {
+      await (driver.device as Simulator).launchApp(bundleId, {
+        environment: stringifyLaunchEnvironment(env),
+        terminateExisting: true,
       });
     },
 

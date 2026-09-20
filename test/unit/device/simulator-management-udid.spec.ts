@@ -5,30 +5,22 @@ import * as iosSimulatorModule from 'appium-ios-simulator';
 
 const CANONICAL_UDID = '9A7D25307EE8ABD1A0B3C4D5E6F70819AABBCCDD';
 
-class FakeSimctl {
-  constructor(_opts: Record<string, unknown> = {}) {}
-
-  async getDevices(_forSdk?: string | null, _platform?: string | null): Promise<Record<string, any[]>> {
-    return {
-      '18.0': [{udid: CANONICAL_UDID, name: 'iPhone 15', state: 'Shutdown'}],
-    };
-  }
-}
-
 let requestedUdid: string | undefined;
 
-// Only Simctl is provided (not a `...nodeSimctlModule` spread): node-simctl's build also has a
-// `default` export, and spreading a module namespace that includes one into `namedExports` hits
-// a node:test module-mocking bug on Node 22 (`export let default = ...` — a SyntaxError, since
-// `default` can't be used as a plain binding name).
-mock.module('node-simctl', {
-  namedExports: {
-    Simctl: FakeSimctl,
-  },
-});
 mock.module('appium-ios-simulator', {
   namedExports: {
     ...iosSimulatorModule,
+    listSimulators: async () => [
+      {
+        udid: CANONICAL_UDID,
+        name: 'iPhone 15',
+        state: 'Shutdown',
+        platform: 'iOS',
+        sdk: '18.0',
+        deviceTypeIdentifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-15',
+        runtimeIdentifier: 'com.apple.CoreSimulator.SimRuntime.iOS-18-0',
+      },
+    ],
     getSimulator: async (udid: string) => {
       requestedUdid = udid;
       return {udid, getPlatformVersion: async () => '18.0'};

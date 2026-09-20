@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict';
 import {describe, it, before, afterEach, after} from 'node:test';
 
-import {getSimulator} from 'appium-ios-simulator';
+import {createSimulator, getSimulator} from 'appium-ios-simulator';
 import {retryInterval} from 'asyncbox';
-import {Simctl} from 'node-simctl';
 import type {Browser} from 'webdriverio';
 
 import {amendCapabilities, extractCapabilityValue, getUICatalogSimCaps} from '../desired.js';
@@ -15,8 +14,7 @@ import {cleanupSimulator, deleteDeviceWithRetry} from '../helpers/simulator.js';
 const SIM_DEVICE_NAME = 'xcuitestSessionClaimTest';
 
 async function createDevice() {
-  const simctl = new Simctl();
-  return await simctl.createDevice(
+  return await createSimulator(
     SIM_DEVICE_NAME,
     process.env.DEVICE_NAME || 'iPhone 15',
     process.env.PLATFORM_VERSION || '17.4',

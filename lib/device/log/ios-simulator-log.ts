@@ -1,20 +1,21 @@
+import {once} from 'node:events';
 import fs from 'node:fs/promises';
+import {createInterface} from 'node:readline';
 
 import type {AppiumLogger} from '@appium/types';
-import type {Simulator} from 'appium-ios-simulator';
+import type {Simulator, SpawnedProcess} from 'appium-ios-simulator';
 import {util} from 'appium/support.js';
 import {exec} from 'teen_process';
-import type {SubProcess} from 'teen_process';
 import {transports, createLogger, format} from 'winston';
 import type {Logger} from 'winston';
 
 import {isEmpty} from '../../utils/index.js';
 import {LineConsumingLog} from './line-consuming-log.js';
 
-const EXECVP_ERROR_PATTERN = /execvp\(\)/;
 const LOG_STREAMING_PROCESS_NAME_PATTERN = /^com\.apple\.xpc\.launchd\.oneshot\.0x[0-f]+\.log$/;
-
-const START_TIMEOUT = 10000;
+const LOG_BINARY_PATH = '/usr/bin/log';
+const STOP_TIMEOUT_MS = 1000;
+const START_GRACE_MS = 1000;
 
 export interface IOSSimulatorLogOptions {
   sim: Simulator;
@@ -30,7 +31,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
   private readonly showLogs: boolean;
   private readonly predicate?: string;
   private readonly logLevel?: string;
-  private proc: SubProcess | null;
+  private proc: SpawnedProcess | null;
   private readonly iosSyslogFile?: string;
   private syslogLogger: Logger | null;
 
@@ -46,7 +47,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
   }
 
   override get isCapturing(): boolean {
-    return Boolean(this.proc?.isRunning);
+    return Boolean(this.proc?.running);
   }
 
   override async startCapture(): Promise<void> {
@@ -71,7 +72,7 @@ export class IOSSimulatorLog extends LineConsumingLog {
         this.syslogLogger = null;
       }
     }
-    const spawnArgs = ['log', 'stream', '--style', 'compact'];
+    const spawnArgs = ['stream', '--style', 'compact'];
     if (this.predicate) {
       spawnArgs.push('--predicate', this.predicate);
     }
@@ -80,15 +81,49 @@ export class IOSSimulatorLog extends LineConsumingLog {
     }
     this.log.debug(
       `Starting log capture for iOS Simulator with udid '${this.sim.udid}' ` +
-        `via simctl using the following arguments '${util.quote(spawnArgs)}'`,
+        `via '${LOG_BINARY_PATH}' using the following arguments '${util.quote(spawnArgs)}'`,
     );
     await this.cleanupObsoleteLogStreams();
     try {
-      this.proc = await this.sim.simctl.spawnSubProcess(spawnArgs);
-      await this.finishStartingLogCapture();
+      this.proc = await this.sim.spawnProcess(LOG_BINARY_PATH, {arguments: [LOG_BINARY_PATH, ...spawnArgs]});
+      this.wireOutputListeners(this.proc);
+      await this.assertStarted(this.proc);
     } catch (e) {
       this.shutdownSyslogger();
       throw new Error(`Simulator log capture failed. Original error: ${(e as Error).message}`, {cause: e});
+    }
+  }
+
+  /**
+   * `spawnProcess()` can resolve with a live pid for a process that crashes moments later (e.g. a
+   * dyld failure) - briefly race an early exit against a grace period so such a crash surfaces as
+   * a startup failure instead of a silently inactive capture.
+   */
+  private async assertStarted(proc: SpawnedProcess): Promise<void> {
+    // `exited` outlives the grace window if `proc` keeps running - `pastGrace` keeps its eventual
+    // (normal, e.g. SIGTERM-stopped) exit from throwing as an unhandled rejection long after this
+    // method has already returned successfully.
+    let pastGrace = false;
+    let timer!: NodeJS.Timeout;
+    const settled = new Promise<void>((resolve) => {
+      timer = setTimeout(() => {
+        pastGrace = true;
+        resolve();
+      }, START_GRACE_MS);
+    });
+    const exited = once(proc, 'exit').then((args: unknown[]) => {
+      if (pastGrace) {
+        return;
+      }
+      const [code, signal] = args as [number | null, NodeJS.Signals | null];
+      if (code !== 0 || signal !== null) {
+        throw new Error(`'${LOG_BINARY_PATH}' exited immediately with ${signal ? `signal ${signal}` : `code ${code}`}`);
+      }
+    });
+    try {
+      await Promise.race([settled, exited]);
+    } finally {
+      clearTimeout(timer);
     }
   }
 
@@ -152,37 +187,47 @@ export class IOSSimulatorLog extends LineConsumingLog {
   }
 
   private async killLogSubProcess(): Promise<void> {
-    if (!this.proc?.isRunning) {
+    if (!this.proc?.running) {
       return;
     }
     this.log.debug('Stopping iOS log capture');
+    const proc = this.proc;
+    proc.kill('SIGTERM');
+    if (await this.waitForProcExit(proc, STOP_TIMEOUT_MS)) {
+      return;
+    }
+    if (!proc.running) {
+      return;
+    }
+    this.log.warn('Cannot stop log capture process. Sending SIGKILL');
+    proc.kill('SIGKILL');
+    await this.waitForProcExit(proc, STOP_TIMEOUT_MS);
+  }
+
+  private async waitForProcExit(proc: SpawnedProcess, timeoutMs: number): Promise<boolean> {
+    if (!proc.running) {
+      return true;
+    }
+    let timer!: NodeJS.Timeout;
+    const timedOut = new Promise<false>((resolve) => {
+      timer = setTimeout(() => resolve(false), timeoutMs);
+    });
     try {
-      await this.proc.stop('SIGTERM', 1000);
-    } catch {
-      if (!this.proc.isRunning) {
-        return;
-      }
-      this.log.warn('Cannot stop log capture process. Sending SIGKILL');
-      await this.proc.stop('SIGKILL');
+      return await Promise.race([once(proc, 'exit').then(() => true), timedOut]);
+    } finally {
+      clearTimeout(timer);
     }
   }
 
-  private async finishStartingLogCapture(): Promise<void> {
-    if (!this.proc) {
-      throw this.log.errorWithException('Could not capture simulator log');
+  private wireOutputListeners(proc: SpawnedProcess): void {
+    proc.on('error', (e: Error) => this.log.debug(`iOS log capture process error: ${e.message}`));
+    for (const [stream, prefix] of [
+      [proc.stdout, ''],
+      [proc.stderr, 'STDERR'],
+    ] as const) {
+      stream.on('error', (e: Error) => this.log.debug(`iOS log capture stream error: ${e.message}`));
+      createInterface({input: stream}).on('line', (line) => this.onOutput(line, prefix));
     }
-    for (const streamName of ['stdout', 'stderr']) {
-      this.proc.on(`line-${streamName}`, (line: string) => {
-        this.onOutput(line, ...(streamName === 'stderr' ? ['STDERR'] : []));
-      });
-    }
-    const startDetector = (stdout: string | undefined, stderr: string | undefined) => {
-      if (EXECVP_ERROR_PATTERN.test(stderr ?? '')) {
-        throw new Error('iOS log capture process failed to start');
-      }
-      return Boolean(stdout || stderr);
-    };
-    await this.proc.start(startDetector, START_TIMEOUT);
   }
 
   private async cleanupObsoleteLogStreams(): Promise<void> {

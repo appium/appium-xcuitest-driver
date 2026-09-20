@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
-import {Simctl} from 'node-simctl';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -13,17 +12,14 @@ describe('pasteboard commands', function () {
   let getPasteboardStub: sinon.SinonStub;
 
   beforeEach(function () {
-    const simctl = new Simctl();
-    setPasteboardStub = sinon.stub(simctl, 'setPasteboard');
-    getPasteboardStub = sinon.stub(simctl, 'getPasteboard');
-    driver._device = {simctl} as any;
+    setPasteboardStub = sinon.stub().resolves();
+    getPasteboardStub = sinon.stub().resolves('');
+    driver._device = {setPasteboard: setPasteboardStub, getPasteboard: getPasteboardStub} as any;
     isSimulatorStub = sinon.stub(driver, 'isSimulator');
   });
 
   afterEach(function () {
     isSimulatorStub.restore();
-    setPasteboardStub.restore();
-    getPasteboardStub.restore();
   });
 
   describe('real device', function () {
@@ -52,19 +48,17 @@ describe('pasteboard commands', function () {
       assert.strictEqual(setPasteboardStub.notCalled, true);
     });
 
-    it('setPasteboard should invoke correct simctl method', async function () {
+    it('setPasteboard should invoke setPasteboard with content, ignoring the deprecated encoding option', async function () {
       const content = 'bla';
-      const encoding = 'latin1';
-      await driver.mobileSetPasteboard(content, encoding);
+      await driver.mobileSetPasteboard(content, 'latin1');
       assert.strictEqual(setPasteboardStub.calledOnce, true);
-      assert.strictEqual(setPasteboardStub.firstCall.args[0], content);
-      assert.strictEqual(setPasteboardStub.firstCall.args[1], encoding);
+      assert.deepStrictEqual(setPasteboardStub.firstCall.args, [content]);
     });
 
-    it('getPasteboard should invoke correct simctl method', async function () {
+    it('getPasteboard should invoke getPasteboard, ignoring the deprecated encoding option', async function () {
       const content = 'bla';
-      getPasteboardStub.returns(content);
-      const result = await driver.mobileGetPasteboard();
+      getPasteboardStub.resolves(content);
+      const result = await driver.mobileGetPasteboard('latin1');
       assert.strictEqual(getPasteboardStub.calledOnce, true);
       assert.strictEqual(result, content);
     });

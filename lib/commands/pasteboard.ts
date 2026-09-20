@@ -7,7 +7,7 @@ import {requireSimulator} from './helpers/index.js';
  * Does not work for real devices.
  *
  * @param content - The content to set
- * @param encoding - The content's encoding
+ * @param encoding - Deprecated and ignored; pasteboard content is always handled as UTF-8.
  * @group Simulator Only
  */
 export async function mobileSetPasteboard(
@@ -20,7 +20,8 @@ export async function mobileSetPasteboard(
     // can be empty string
     throw new Error('Pasteboard content is mandatory to set');
   }
-  await simulator.simctl.setPasteboard(content, encoding);
+  warnIfNonUtf8Encoding(this, encoding);
+  await simulator.setPasteboard(content);
 }
 
 /**
@@ -28,10 +29,19 @@ export async function mobileSetPasteboard(
  *
  * Does not work for real devices.
  *
- * @param encoding - Expected encoding of returned string
+ * @param encoding - Deprecated and ignored; pasteboard content is always returned as UTF-8.
  * @group Simulator Only
  * @returns The pasteboard content string
  */
 export async function mobileGetPasteboard(this: XCUITestDriver, encoding: BufferEncoding = 'utf8'): Promise<string> {
-  return await requireSimulator(this, 'Getting pasteboard content').simctl.getPasteboard(encoding);
+  warnIfNonUtf8Encoding(this, encoding);
+  return await requireSimulator(this, 'Getting pasteboard content').getPasteboard();
+}
+
+function warnIfNonUtf8Encoding(driver: XCUITestDriver, encoding: BufferEncoding): void {
+  if (encoding !== 'utf8' && encoding !== 'utf-8') {
+    driver.log.info(
+      `The 'encoding' option is deprecated and ignored; the Simulator pasteboard is always handled as UTF-8`,
+    );
+  }
 }
