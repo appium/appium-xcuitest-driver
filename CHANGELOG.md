@@ -1,3 +1,9 @@
+## [12.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.6...v12.13.0) (2026-09-20)
+
+### Features
+
+* Bump appium-ios-simulator major version ([#2979](https://github.com/appium/appium-xcuitest-driver/issues/2979)) ([af42a33](https://github.com/appium/appium-xcuitest-driver/commit/af42a3339e3b79ece2513f5bca6d6f84ad706e33))
+
 ## [12.12.6](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.5...v12.12.6) (2026-09-19)
 
 ### Bug Fixes
