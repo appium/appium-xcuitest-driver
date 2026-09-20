@@ -11,6 +11,11 @@ on:
         required: true
         type: boolean
         default: true
+      dist_tag:
+        description: 'npm dist-tag to publish under. Set to "beta" to release this run''s branch as a beta prerelease; leave empty for a normal release.'
+        required: false
+        type: string
+        default: ''
   push:
     branches: [master]
 
@@ -44,6 +49,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
+          # Only opts release.config.mjs into treating this run's branch as the beta channel
+          # when dist_tag was explicitly set to "beta" - see release.config.mjs's betaBranch.
+          BETA_BRANCH_NAME: ${{ inputs.dist_tag == 'beta' && github.ref_name || '' }}
         name: Release
       - run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
         name: Record released version
