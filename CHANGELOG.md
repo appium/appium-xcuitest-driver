@@ -1,3 +1,9 @@
+## [12.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.0...v12.13.1) (2026-09-20)
+
+### Bug Fixes
+
+* **opts:** pass `ActivateSuspended: true` to host opts for backgrounding WDA ([#2980](https://github.com/appium/appium-xcuitest-driver/issues/2980)) ([78361a2](https://github.com/appium/appium-xcuitest-driver/commit/78361a2cad2e66a34f64272113f519a35ce24407))
+
 ## [12.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.6...v12.13.0) (2026-09-20)
 
 ### Features
