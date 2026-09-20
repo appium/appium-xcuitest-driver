@@ -5,6 +5,12 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no publishing, tagging, or git changes)'
+        required: true
+        type: boolean
+        default: true
   push:
     branches: [master]
 
@@ -29,12 +35,22 @@ jobs:
         name: Run NPM Test
       - run: echo "PREV_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
         name: Record current version
-      - run: npx semantic-release
+      - run: |
+          dry_run_flag=""
+          if [ "$DRY_RUN" = "true" ]; then
+            dry_run_flag="--dry-run"
+          fi
+          npx semantic-release $dry_run_flag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
         name: Release
       - run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
         name: Record released version
+      - run: |
+          dist_tag="$(node -p "require('semver').prerelease('$NEW_VERSION')?.[0] ?? ''")"
+          echo "NPM_DIST_TAG=$dist_tag" >> "$GITHUB_ENV"
+        name: Derive npm dist-tag from released version
       # semantic-release only bumps package.json (npmPublish: false in release.config.mjs);
       # the actual publish happens below from a staged, bundled copy of the package so that
       # published node_modules never include devDependencies. Skipped when there was no release.
@@ -43,3 +59,4 @@ jobs:
         with:
           unbundled-packages: sharp
           native-platforms: linux-x64 linux-arm64 darwin-arm64 win32-x64
+          npm-dist-tag: ${{ env.NPM_DIST_TAG }}
