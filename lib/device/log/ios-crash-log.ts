@@ -188,10 +188,10 @@ export class IOSCrashLog extends IOSLog<TSerializedEntry, TSerializedEntry> {
       return [];
     }
 
-    const foundFiles = await fs.glob(CRASH_REPORTS_GLOB_PATTERN, {
+    const foundFiles = (await fs.glob(CRASH_REPORTS_GLOB_PATTERN, {
       cwd: this._logDir,
       absolute: true,
-    });
+    })) as string[];
     const simUdid = (this._sim as Simulator).udid;
     // For Simulator only include files, that contain current UDID
     return await asyncfilter(foundFiles, async (filePath) => {

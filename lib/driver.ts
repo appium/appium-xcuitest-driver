@@ -3,7 +3,6 @@ import EventEmitter from 'node:events';
 import type {
   RouteMatcher,
   DefaultCreateSessionResult,
-  DriverData,
   StringRecord,
   ExternalDriver,
   W3CDriverCaps,
@@ -711,13 +710,9 @@ export class XCUITestDriver
    | TIMEOUTS |
    +----------+*/
 
-  pageLoadTimeoutW3C = timeoutCommands.pageLoadTimeoutW3C;
-  pageLoadTimeoutMJSONWP = timeoutCommands.pageLoadTimeoutMJSONWP;
-  scriptTimeoutW3C = timeoutCommands.scriptTimeoutW3C;
-  scriptTimeoutMJSONWP = timeoutCommands.scriptTimeoutMJSONWP;
   asyncScriptTimeout = timeoutCommands.asyncScriptTimeout;
-  setPageLoadTimeout = timeoutCommands.setPageLoadTimeout;
-  setAsyncScriptTimeout = timeoutCommands.setAsyncScriptTimeout;
+  override setPageLoadTimeout = timeoutCommands.setPageLoadTimeout;
+  override setScriptTimeout = timeoutCommands.setScriptTimeout;
   override setImplicitWait = timeoutCommands.setImplicitWait;
 
   /*-----+
@@ -900,10 +895,6 @@ export class XCUITestDriver
       : new AtomsBackend(this);
   }
 
-  override get driverData(): Record<string, any> {
-    return {};
-  }
-
   get device(): Simulator | RealDevice {
     return this._device;
   }
@@ -922,13 +913,10 @@ export class XCUITestDriver
   }
 
   override async createSession(
-    w3cCaps1: W3CXCUITestDriverCaps,
-    w3cCaps2?: W3CXCUITestDriverCaps,
-    w3cCaps3?: W3CXCUITestDriverCaps,
-    driverData?: DriverData[],
+    w3cCapabilities: W3CXCUITestDriverCaps,
   ): Promise<DefaultCreateSessionResult<XCUITestDriverConstraints>> {
     try {
-      const [sessionId, initialCaps] = await super.createSession(w3cCaps1, w3cCaps2, w3cCaps3, driverData);
+      const [sessionId, initialCaps] = await super.createSession(w3cCapabilities);
       let caps = initialCaps;
 
       // merge cli args to opts, and if we did merge any, revalidate opts to ensure the final set
@@ -1221,13 +1209,6 @@ export class XCUITestDriver
     return status;
   }
 
-  override async reset(): Promise<never> {
-    throw new Error(
-      `The reset API has been deprecated and is not supported anymore. ` +
-        `Consider using corresponding 'mobile:' extensions to manage the state of the app under test.`,
-    );
-  }
-
   _getCommandTimeout(cmdName?: string): number | undefined {
     if (this.opts.commandTimeouts) {
       if (cmdName && Object.hasOwn(this.opts.commandTimeouts, cmdName)) {
@@ -1389,7 +1370,9 @@ export class XCUITestDriver
         reqBasePath: this.basePath,
         hostOps: createWdaHostOps(this),
       } as WebDriverAgentArgs,
-      this.log,
+      // appium-webdriveragent still resolves AppiumLogger from a pre-Appium4 @appium/types
+      // copy; structurally compatible at runtime, just not nominally typed yet.
+      this.log as any,
     );
     // Derived data path retrieval is an expensive operation
     // We could start that now in background and get the cached result

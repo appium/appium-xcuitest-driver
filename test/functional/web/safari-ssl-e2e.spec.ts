@@ -1,20 +1,18 @@
 import https from 'node:https';
 import os from 'node:os';
+import path from 'node:path';
 import {describe, it, before, after, beforeEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
-import {promisify} from 'node:util';
 
+import {fs, tempDir} from 'appium/support.js';
 import {waitForCondition} from 'asyncbox';
-import _pem from 'pem';
+import {exec} from 'teen_process';
 import type {Browser} from 'webdriverio';
 
 import {amendCapabilities, SAFARI_CAPS} from '../desired.js';
 import {getFreePort} from '../helpers/ports.js';
 import {deleteSession, initSession} from '../helpers/session.js';
 import {doesIncludeCookie, doesNotIncludeCookie, newCookie, oldCookie1} from './helpers/index.js';
-
-const createPrivateKeyAsync = promisify(_pem.createPrivateKey);
-const createCertificateAsync = promisify(_pem.createCertificate);
 
 let caps: Record<string, any>;
 let pemCertificate: string;
@@ -23,22 +21,36 @@ describe('Safari SSL', function () {
   let sslServer: https.Server;
   let driver: Browser;
   let localHttpsUrl: string;
+  let certDir: string | undefined;
 
   before(async function () {
-    // Create a random pem certificate
-    const privateKey = await createPrivateKeyAsync();
-    // @ts-expect-error no types
-    const keys = await createCertificateAsync({
-      days: 1,
-      selfSigned: true,
-      serviceKey: privateKey.key,
-      altNames: ['localhost'],
-    });
-    pemCertificate = keys.certificate;
+    // Create a random self-signed cert/key pair
+    certDir = await tempDir.openDir();
+    const keyPath = path.join(certDir, 'key.pem');
+    const certPath = path.join(certDir, 'cert.pem');
+    await exec('openssl', [
+      'req',
+      '-x509',
+      '-newkey',
+      'rsa:2048',
+      '-keyout',
+      keyPath,
+      '-out',
+      certPath,
+      '-days',
+      '1',
+      '-nodes',
+      '-subj',
+      '/CN=localhost',
+      '-addext',
+      'subjectAltName=DNS:localhost',
+    ]);
+    const [privateKey, certificate] = await Promise.all([fs.readFile(keyPath, 'utf8'), fs.readFile(certPath, 'utf8')]);
+    pemCertificate = certificate;
     const port = await getFreePort();
     localHttpsUrl = `https://localhost:${port}/`;
     // Host an SSL server that uses that certificate
-    const serverOpts = {key: keys.serviceKey, cert: pemCertificate};
+    const serverOpts = {key: privateKey, cert: pemCertificate};
     sslServer = https
       .createServer(serverOpts, (req, res) => {
         res.end('Arbitrary text');
@@ -55,6 +67,9 @@ describe('Safari SSL', function () {
     await deleteSession();
     if (sslServer) {
       await sslServer.close();
+    }
+    if (certDir) {
+      await fs.rimraf(certDir);
     }
   });
 

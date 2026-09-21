@@ -405,11 +405,11 @@ Trigger a touch/fingerprint match or match failure
 
 !!! warning "Deprecated"
 
-    This method is deprecated. Please use `scriptTimeoutW3C` instead
+    This method is deprecated. Please use `setScriptTimeout` instead
 
 `POST` **`/session/:sessionId/timeouts/async_script`**
 
-Alias for XCUITestDriver.scriptTimeoutW3C.
+Alias for XCUITestDriver.setScriptTimeout.
 
 #### Arguments
 

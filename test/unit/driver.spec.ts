@@ -295,7 +295,7 @@ describe('XCUITestDriver', function () {
       });
 
       it('should include server capabilities', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-        const resCaps = await driver.createSession(null as any, null as any, structuredClone(caps) as any);
+        const resCaps = await driver.createSession(structuredClone(caps) as any);
         assert.strictEqual((resCaps[1] as any).javascriptEnabled, true);
       });
 
@@ -305,10 +305,7 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'deleteSession').resolves();
         const errorSpy = sandbox.spy(driver.log, 'error');
 
-        await assert.rejects(
-          driver.createSession(null as any, null as any, structuredClone(caps) as any),
-          /WDA failed to start on port 8100/,
-        );
+        await assert.rejects(driver.createSession(structuredClone(caps) as any), /WDA failed to start on port 8100/);
 
         const logged = errorSpy
           .getCalls()
@@ -322,8 +319,6 @@ describe('XCUITestDriver', function () {
 
       it('should call startLogCapture', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         const resCaps = await driver.createSession(
-          null as any,
-          null as any,
           mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {
               'appium:skipLogCapture': false,
@@ -335,8 +330,6 @@ describe('XCUITestDriver', function () {
       });
       it('should not call startLogCapture', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
         const resCaps = await driver.createSession(
-          null as any,
-          null as any,
           mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {
               'appium:skipLogCapture': true,
@@ -350,8 +343,6 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'isSimulator').returns(true);
         const spy = sandbox.stub(device, 'setReduceTransparency').resolves({device, realDevice});
         await driver.createSession(
-          null as any,
-          null as any,
           mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:reduceTransparency': true},
           }) as any,
@@ -364,8 +355,6 @@ describe('XCUITestDriver', function () {
         device.devicectl = true;
         const spy = sandbox.stub(device, 'setReduceTransparency').resolves({device, realDevice});
         await driver.createSession(
-          null as any,
-          null as any,
           mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:reduceTransparency': true},
           }) as any,
@@ -377,8 +366,6 @@ describe('XCUITestDriver', function () {
         sandbox.stub(driver, 'isSimulator').returns(true);
         const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
         await driver.createSession(
-          null as any,
-          null as any,
           mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:autoFillPasswords': true},
           }) as any,
@@ -390,8 +377,6 @@ describe('XCUITestDriver', function () {
         device.devicectl = true;
         const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
         await driver.createSession(
-          null as any,
-          null as any,
           mergeDeep({}, structuredClone(caps), {
             alwaysMatch: {'appium:setAutoFillPasswords': true},
           }) as any,
@@ -406,8 +391,6 @@ describe('XCUITestDriver', function () {
           realDevice = {} as any;
           await assert.rejects(
             driver.createSession(
-              null as any,
-              null as any,
               mergeDeep({}, structuredClone(caps), {
                 alwaysMatch: {platformName: 'watchOS'},
               }) as any,
@@ -427,8 +410,6 @@ describe('XCUITestDriver', function () {
         try {
           await assert.rejects(
             driver.createSession(
-              null as any,
-              null as any,
               mergeDeep({}, structuredClone(caps), {
                 alwaysMatch: {'appium:mjpegServerPort': 9100},
               }) as any,
@@ -476,6 +457,8 @@ describe('XCUITestDriver', function () {
 
     beforeEach(function () {
       driver = new XCUITestDriver({} as any);
+      // base-driver seals `helpers`, so give it a plain, stubbable clone here.
+      driver.helpers = {...driver.helpers};
     });
 
     it('should install multiple apps from otherApps as string on on real devices', async function () {

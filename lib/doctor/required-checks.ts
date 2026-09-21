@@ -1,8 +1,7 @@
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
 import {getPath as getXcodePath} from 'appium-xcode';
-import {fs, doctor} from 'appium/support.js';
+import {console as consoleUtils, fs, doctor} from 'appium/support.js';
 import {exec} from 'teen_process';
-import '@colors/colors';
 
 export class XcodeCheck implements IDoctorCheck {
   log!: AppiumLogger;
@@ -91,7 +90,7 @@ class EnvVarAndPathCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `Make sure the environment variable ${this.varName.bold} is properly configured for the Appium process. ` +
+      `Make sure the environment variable ${consoleUtils.styleText('bold', this.varName)} is properly configured for the Appium process. ` +
       `Refer ${EnvVarAndPathCheck.ENVIRONMENT_VARS_TUTORIAL_URL} for more details.`
     );
   }

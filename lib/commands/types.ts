@@ -1,6 +1,6 @@
 import type {EventEmitter} from 'node:events';
 
-import type {AnyCase, Element, HTTPHeaders, Location, Size, StringRecord} from '@appium/types';
+import type {AnyCase, Element, HTTPHeaders, Size, StringRecord} from '@appium/types';
 
 import type {XCUITestDriverOpts} from '../driver.js';
 import type {Page} from '../types.js';
@@ -8,7 +8,11 @@ import type {AuthorizationStatus, BatteryState, ThermalState} from './enum.js';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-export type LocationWithAltitude = Location & {altitude: number};
+export interface LocationWithAltitude {
+  latitude: number;
+  longitude: number;
+  altitude: number;
+}
 
 export type AutInstallationStateOptions = Pick<
   XCUITestDriverOpts,

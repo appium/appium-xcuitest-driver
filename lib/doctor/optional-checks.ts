@@ -1,10 +1,9 @@
 import {fileURLToPath} from 'node:url';
 
 import type {IDoctorCheck, AppiumLogger, DoctorCheckResult} from '@appium/types';
-import {doctor, fs, node} from 'appium/support.js';
+import {console as consoleUtils, doctor, fs, node} from 'appium/support.js';
 import axios from 'axios';
 import {exec, SubProcess} from 'teen_process';
-import '@colors/colors';
 
 import {memoize} from '../utils/index.js';
 import {resolveExecutablePath} from './utils.js';
@@ -83,7 +82,7 @@ export class OptionalApplesimutilsCommandCheck implements IDoctorCheck {
   }
 
   async fix(): Promise<string> {
-    return `Why ${'applesimutils'.bold} is needed and how to install it: ${OptionalApplesimutilsCommandCheck.README_LINK}`;
+    return `Why ${consoleUtils.styleText('bold', 'applesimutils')} is needed and how to install it: ${OptionalApplesimutilsCommandCheck.README_LINK}`;
   }
 
   hasAutofix(): boolean {
@@ -111,7 +110,7 @@ export class OptionalFfmpegCheck implements IDoctorCheck {
 
   async fix(): Promise<string> {
     return (
-      `${`${OptionalFfmpegCheck.FFMPEG_BINARY}`.bold} is used to capture screen recordings from the device under test. ` +
+      `${consoleUtils.styleText('bold', OptionalFfmpegCheck.FFMPEG_BINARY)} is used to capture screen recordings from the device under test. ` +
       `Please read ${OptionalFfmpegCheck.FFMPEG_INSTALL_LINK}.`
     );
   }
@@ -166,7 +165,7 @@ export class OptionalIosRemoteXpcDependencyCheck implements IDoctorCheck {
     const driverRoot = getXcuitestDriverRoot();
     const locationHint = driverRoot ? `cd "${driverRoot}"; ` : '';
     return (
-      `${`${REMOTE_XPC_PACKAGE_NAME}`.bold} provides Remote XPC communication ` +
+      `${consoleUtils.styleText('bold', REMOTE_XPC_PACKAGE_NAME)} provides Remote XPC communication ` +
       `and tunneling support for real devices (iOS/tvOS 18+). ` +
       `Run '${locationHint}npm install ${REMOTE_XPC_PACKAGE_NAME}'. ` +
       `For more information, see ${OptionalIosRemoteXpcDependencyCheck.README_LINK}.`

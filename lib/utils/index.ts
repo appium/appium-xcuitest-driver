@@ -1,17 +1,9 @@
-export {
-  assignDefaults,
-  capitalize,
-  escapeRegExp,
-  isEmpty,
-  isPlainObject,
-  mergeDeep,
-  toErrorMessage,
-  truncateString,
-  upperFirst,
-} from './lang.js';
+import {util} from 'appium/support.js';
+
+export const {escapeRegExp, isEmpty, isPlainObject, memoize, truncateString} = util;
+export {assignDefaults, capitalize, mergeDeep, toErrorMessage, upperFirst} from './lang.js';
 export {hasElementId, hasWebElementId} from './element.js';
 export {cropBase64Image, requireSharp} from './image.js';
-export {memoize} from './memoize.js';
 export {
   toApiLevelRequirementText,
   isTvOs,

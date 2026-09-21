@@ -71,8 +71,7 @@
   },
   "dependencies": {
     "@appium/css-locator-to-native": "^1.0.1",
-    "@appium/strongbox": "^2.0.0",
-    "@colors/colors": "^1.6.0",
+    "@appium/strongbox": "^3.0.0-beta.0",
     "appium-ios-device": "^3.1.22",
     "appium-ios-simulator": "^10.1.0",
     "appium-remote-debugger": "^17.4.2",
@@ -81,7 +80,7 @@
     "async-lock": "^1.4.0",
     "asyncbox": "^6.4.3",
     "axios": "^1.18.0",
-    "commander": "^14.0.1",
+    "commander": "^15.0.0",
     "dayjs": "^1.11.21",
     "js2xmlparser2": "^0.x",
     "lru-cache": "^11.1.0",
@@ -93,31 +92,29 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@appium/docutils": "^3.0.0",
-    "@appium/oxc-config": "^1.1.0",
-    "@appium/semantic-release-config": "^1.2.0",
-    "@appium/tsconfig": "^1.2.0",
-    "@appium/types": "^1.5.0",
-    "@types/async-lock": "1.4.2",
+    "@appium/docutils": "^4.0.0-beta.0",
+    "@appium/oxc-config": "^2.0.0-beta.0",
+    "@appium/semantic-release-config": "^2.0.0-beta.0",
+    "@appium/tsconfig": "^2.0.0-beta.0",
+    "@appium/types": "^2.0.0-beta.0",
+    "@types/async-lock": "^1.4.2",
     "@types/node": "^26.0.0",
-    "@types/pem": "1.14.4",
     "@types/portscanner": "^2.1.1",
-    "@types/semver": "7.8.0",
-    "@types/sinon": "22.0.0",
-    "pem": "^1.14.8",
+    "@types/semver": "^7.8.0",
+    "@types/sinon": "^22.0.0",
     "sharp": "^0.x",
     "sinon": "^22.0.0",
     "webdriverio": "^9.4.1"
   },
   "peerDependencies": {
-    "appium": "^3.0.0-rc.2"
+    "appium": "^4.0.0-beta.0"
   },
   "optionalDependencies": {
     "appium-ios-remotexpc": "^5.20.1",
     "sharp": "^0.x"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"
   },
   "appium": {
