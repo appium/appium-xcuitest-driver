@@ -1,4 +1,3 @@
-import type {Location} from '@appium/types';
 import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
@@ -68,7 +67,10 @@ export async function getGeoLocation(this: XCUITestDriver): Promise<LocationWith
  *
  * @param location - Must include `latitude` and `longitude` (each coerced with `Number()`).
  */
-export async function setGeoLocation(this: XCUITestDriver, location: Partial<Location>): Promise<Location> {
+export async function setGeoLocation(
+  this: XCUITestDriver,
+  location: Partial<LocationWithAltitude>,
+): Promise<LocationWithAltitude> {
   for (const name of ['latitude', 'longitude']) {
     if (!util.hasValue(location[name as keyof typeof location])) {
       throw new errors.InvalidArgumentError(`${name} should be set`);

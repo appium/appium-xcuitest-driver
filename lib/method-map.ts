@@ -124,12 +124,6 @@ export const newMethodMap = {
       deprecated: true,
     },
   },
-  '/session/:sessionId/appium/app/reset': {
-    POST: {
-      command: 'reset',
-      deprecated: true,
-    },
-  },
   '/session/:sessionId/appium/app/background': {
     POST: {
       command: 'background',

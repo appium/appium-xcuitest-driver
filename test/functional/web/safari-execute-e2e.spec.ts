@@ -95,7 +95,7 @@ describe('safari - execute -', function () {
     // TODO: Update for WdIO compatibility
     // describe('asynchronous', function () {
     //   it('should execute async javascript', async function () {
-    //     await driver.setAsyncScriptTimeout(1000);
+    //     await driver.setScriptTimeout(1000);
     //     await driver.executeAsync(`arguments[arguments.length - 1](123);`)
     //       .should.eventually.equal(123);
     //   });
@@ -106,7 +106,7 @@ describe('safari - execute -', function () {
     //   });
 
     //   it('should timeout when callback is not invoked', async function () {
-    //     await driver.setAsyncScriptTimeout(1000);
+    //     await driver.setScriptTimeout(1000);
     //     await driver.executeAsync(`return 1 + 2`)
     //       .should.be.rejectedWith(/Timed out waiting for/);
     //   });
@@ -138,7 +138,7 @@ describe('safari - execute -', function () {
 
     //     it('should execute async javascript from a different site', async function () {
     //       await driver.navigateTo(`http://${host}:${port}`);
-    //       await driver.setAsyncScriptTimeout(1000);
+    //       await driver.setScriptTimeout(1000);
     //       await driver.executeAsync(`arguments[arguments.length - 1](123);`)
     //         .should.eventually.equal(123);
     //     });

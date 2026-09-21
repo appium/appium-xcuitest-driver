@@ -53,9 +53,9 @@ export async function getTestAppPath(): Promise<string> {
 async function findApps(searchPath: string): Promise<string[]> {
   const globPattern = '**/*.app';
   const sortedBundleItems = (
-    await fs.glob(globPattern, {
+    (await fs.glob(globPattern, {
       cwd: searchPath,
-    })
+    })) as string[]
   ).sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
   return sortedBundleItems;
 }

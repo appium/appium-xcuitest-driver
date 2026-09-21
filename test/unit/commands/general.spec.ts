@@ -138,8 +138,6 @@ describe('general commands', function () {
     it('should default to value sent in caps after session starts', async function () {
       assert.strictEqual((await driver.getSettings()).nativeWebTap, false);
       await driver.createSession(
-        null as any,
-        null as any,
         mergeDeep({}, structuredClone(baseCaps), {
           alwaysMatch: {
             'appium:nativeWebTap': true,

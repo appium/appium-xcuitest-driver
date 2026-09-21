@@ -55,7 +55,7 @@ export async function clearSystemFiles(retrieveDerivedDataPath: RetrieveDerivedD
 
   // Cleaning up big temporary files created by XCTest: https://github.com/appium/appium/issues/9410
   const globPattern = `${os.tmpdir()}/${XCTEST_LOGS_CACHE_FOLDER_PREFIX}*/`;
-  const dstFolders = await fs.glob(globPattern);
+  const dstFolders = (await fs.glob(globPattern)) as string[];
   if (isEmpty(dstFolders)) {
     log.debug(`Did not find the temporary XCTest logs root at '${globPattern}'`);
   } else {

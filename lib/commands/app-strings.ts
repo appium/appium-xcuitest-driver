@@ -131,7 +131,7 @@ export async function parseLocalizableStrings(
  */
 export async function getStrings(
   this: XCUITestDriver,
-  language: string,
+  language?: string,
   stringFile: string | null = null,
 ): Promise<StringRecord<string>> {
   this.log.debug(`Gettings strings for language '${language}' and string file '${stringFile}'`);

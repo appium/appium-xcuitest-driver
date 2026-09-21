@@ -8,7 +8,11 @@ import type {AuthorizationStatus, BatteryState, ThermalState} from './enum.js';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-export type LocationWithAltitude = Location & {altitude: number};
+export interface LocationWithAltitude {
+  latitude: number;
+  longitude: number;
+  altitude: number;
+}
 
 export type AutInstallationStateOptions = Pick<
   XCUITestDriverOpts,

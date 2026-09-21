@@ -166,9 +166,9 @@ export function buildSafariPreferences(opts: SafariPreferencesOpts & StringRecor
 export async function findApps(appPath: string, appExtensions: string[]): Promise<string[]> {
   const globPattern = `**/*.+(${appExtensions.map((ext) => ext.replace(/^\./, '')).join('|')})`;
   const sortedBundleItems = (
-    await fs.glob(globPattern, {
+    (await fs.glob(globPattern, {
       cwd: appPath,
-    })
+    })) as string[]
   ).sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
   return sortedBundleItems;
 }
@@ -334,7 +334,7 @@ export async function onPostConfigureApp(
     ) {
       const nestedItemsCountInCache = (appInfo.integrity as any)?.folder;
       if (nestedItemsCountInCache !== undefined) {
-        return (await fs.glob('**/*', {cwd: cachedPath})).length >= nestedItemsCountInCache;
+        return ((await fs.glob('**/*', {cwd: cachedPath})) as string[]).length >= nestedItemsCountInCache;
       }
     }
 

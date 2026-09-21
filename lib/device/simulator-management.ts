@@ -69,7 +69,9 @@ export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts =
     platform,
     checkExistence: false,
     devicesSetPath,
-    logger: this.log,
+    // appium-ios-simulator still resolves AppiumLogger from a pre-Appium4 @appium/types copy;
+    // structurally compatible at runtime, just not nominally typed yet.
+    logger: this.log as any,
   });
 }
 
@@ -106,7 +108,7 @@ export async function getExistingSim(
       platform,
       checkExistence: false,
       devicesSetPath,
-      logger: this.log,
+      logger: this.log as any,
     });
 
   if (udid && String(udid).toLowerCase() !== UDID_AUTO) {
@@ -271,7 +273,12 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
     // It is necessary to stop the corresponding xcodebuild process before killing
     // the simulator, otherwise it will be automatically restarted
     await resetTestProcesses(udid, true);
-    const otherSim = await getSimulator(udid, {platform, checkExistence: false, devicesSetPath, logger: this.log});
+    const otherSim = await getSimulator(udid, {
+      platform,
+      checkExistence: false,
+      devicesSetPath,
+      logger: this.log as any,
+    });
     await otherSim.shutdown();
   }
 }

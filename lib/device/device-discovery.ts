@@ -188,7 +188,7 @@ export class DeviceDiscovery {
       const canonicalUdid = (await findSimulatorUdidCase(udid, devicesSetPath, platform)) ?? udid;
       const device = await getSimulator(canonicalUdid, {
         devicesSetPath,
-        logger: this.log,
+        logger: this.log as any,
       });
       await this.ensurePlatformVersion(device);
       return this.toResult({device, realDevice: false, udid});

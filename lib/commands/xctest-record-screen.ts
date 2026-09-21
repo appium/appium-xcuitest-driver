@@ -51,10 +51,10 @@ class SimulatorXcTestScreenRecordingRetriever extends XcTestScreenRecordingRetri
     // e.g. .../CoreSimulator/Devices/<udid>/data/Containers/Data/InternalDaemon/<daemon-id>/Attachments/<uuid>
     // or .../InternalDaemon/<daemon-id>/tmp/Attachments/<uuid> (Xcode 26.5+)
     const internalDaemonRoot = path.resolve(dataRoot, 'Containers', 'Data', 'InternalDaemon');
-    const attachmentPaths = await fs.glob(SIMULATOR_XCTEST_RECORDING_ATTACHMENT_GLOB, {
+    const attachmentPaths = (await fs.glob(SIMULATOR_XCTEST_RECORDING_ATTACHMENT_GLOB, {
       cwd: internalDaemonRoot,
       absolute: true,
-    });
+    })) as string[];
     const videoPath = attachmentPaths.find((fp) =>
       XcTestScreenRecordingRetriever.nameMatchesUuid(path.basename(fp), uuid),
     );
