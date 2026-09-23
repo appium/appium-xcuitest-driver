@@ -1,3 +1,9 @@
+## [12.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.1...v12.13.2) (2026-09-23)
+
+### Bug Fixes
+
+* grepFile error handling ([#2989](https://github.com/appium/appium-xcuitest-driver/issues/2989)) ([79b387b](https://github.com/appium/appium-xcuitest-driver/commit/79b387bbd9c8e265851fae91d555b798b528eb3e))
+
 ## [12.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.0...v12.13.1) (2026-09-20)
 
 ### Bug Fixes
