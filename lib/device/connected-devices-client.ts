@@ -30,14 +30,15 @@ export class ConnectedDevicesClient {
       this.listLegacyUdids(),
     ]);
 
-    // Tunnels succeeded → short-circuit: return tunnel UDIDs only (legacy not used)
-    if (tunnelSettled.status === 'fulfilled') {
+    // Prefer tunnel UDIDs when present, but an empty registry must not hide legacy devices.
+    if (tunnelSettled.status === 'fulfilled' && tunnelSettled.value.length > 0) {
       return tunnelSettled.value;
     }
 
-    // Tunnels rejected (only other status after fulfilled) → use legacy; throw if legacy failed
-    const err = tunnelSettled.reason;
-    log.warn(formatRemoteXPCFallbackLog('devices listing', err));
+    if (tunnelSettled.status === 'rejected') {
+      log.warn(formatRemoteXPCFallbackLog('devices listing', tunnelSettled.reason));
+    }
+    // Registry unavailable or empty: use legacy; throw if legacy failed.
     if (legacySettled.status === 'rejected') {
       throw legacySettled.reason instanceof Error ? legacySettled.reason : new Error(String(legacySettled.reason));
     }
