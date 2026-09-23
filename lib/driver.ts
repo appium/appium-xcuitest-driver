@@ -1620,11 +1620,14 @@ export class XCUITestDriver
     this.curContext = null;
     this.xcodeVersion = undefined;
     this.contexts = [];
-    this.implicitWaitMs = 0;
-    this.pageLoadMs = 6000;
     this.landscapeWebCoordsOffset = 0;
     this._remote = null;
     this._conditionInducer = null;
+    // Go through the setters so BaseDriver's own scriptTimeoutMs/pageLoadTimeoutMs/implicitWaitMs
+    // (what GET /timeouts reports) start out in sync with our pageLoadMs/asyncWaitMs defaults.
+    this.setImplicitWait(0);
+    this.setPageLoadTimeout(6000);
+    this.setScriptTimeout(0);
 
     this.webElementsCache = new LRUCache({
       max: WEB_ELEMENTS_CACHE_SIZE,

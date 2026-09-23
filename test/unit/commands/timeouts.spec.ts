@@ -48,4 +48,21 @@ describe('timeouts commands', function () {
       assert.strictEqual((await driver.getTimeouts()).pageLoad, 6000);
     });
   });
+
+  describe('initial (post-construction) defaults', function () {
+    // Regression test: GET /timeouts used to report BaseDriver's own stock defaults
+    // (script: 30000, pageLoad: 300000) while pageLoadMs/asyncWaitMs (what actually
+    // drives browser timeouts) started out at 6000/0 - a fresh session's reported
+    // timeouts didn't match its effective behavior.
+    it('keeps GET /timeouts in sync with pageLoadMs/asyncWaitMs from the start, before any explicit timeout command', async function () {
+      assert.strictEqual(driver.pageLoadMs, 6000);
+      assert.strictEqual(driver.asyncWaitMs, 0);
+      assert.strictEqual(driver.implicitWaitMs, 0);
+
+      const timeouts = await driver.getTimeouts();
+      assert.strictEqual(timeouts.pageLoad, driver.pageLoadMs);
+      assert.strictEqual(timeouts.script, driver.asyncWaitMs);
+      assert.strictEqual(timeouts.implicit, driver.implicitWaitMs);
+    });
+  });
 });
