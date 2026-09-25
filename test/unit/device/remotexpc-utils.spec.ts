@@ -55,6 +55,6 @@ describe('remotexpc-utils tunnel availability', function () {
     const msg = formatRemoteXPCFallbackLog('AFC', err);
     assert.match(msg, /RemoteXPC AFC unavailable:/);
     assert.ok(msg.includes(REMOTE_XPC_TUNNEL_SETUP_DOC_LINK));
-    assert.ok(msg.includes('those that require RemoteXPC will fail'));
+    assert.ok(msg.includes('Falling back to appium-ios-device.'));
   });
 });
