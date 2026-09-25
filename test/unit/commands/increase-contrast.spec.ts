@@ -60,10 +60,7 @@ describe('increase contrast commands', function () {
   describe('argument validation', function () {
     it('should reject an unknown value before touching any device', async function () {
       asRealDevice();
-      await assert.rejects(
-        driver.mobileSetIncreaseContrast('bla' as any),
-        /expected to be one of enabled,disabled/,
-      );
+      await assert.rejects(driver.mobileSetIncreaseContrast('bla' as any), /expected to be one of enabled,disabled/);
       assert.strictEqual(requireService.notCalled, true);
     });
   });
