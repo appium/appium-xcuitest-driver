@@ -4,6 +4,7 @@ import {Devicectl} from 'node-devicectl';
 
 import type {XCUITestDriverOpts} from '../driver.js';
 import {log} from '../logger.js';
+import {toErrorMessage} from '../utils/index.js';
 import {formatRemoteXPCFallbackLog, RemoteXPCFacade, type RemoteXPCServices} from './remote-xpc/index.js';
 
 export class ConnectedDevicesClient {
@@ -20,9 +21,9 @@ export class ConnectedDevicesClient {
   }
 
   /**
-   * Returns the list of connected real device UDIDs.
-   * Only considers tunnel registry UDIDs when remotexpc is loaded and tunnels are running;
-   * otherwise returns the legacy list only.
+   * Returns the case-insensitive union of tunnel registry and legacy real-device UDIDs.
+   * Legacy-only devices precede tunneled devices so automatic UDID selection prefers a tunnel.
+   * Uses either successful lookup, including an empty result, and throws only if both fail.
    */
   async getConnectedDevices(): Promise<string[]> {
     const [tunnelSettled, legacySettled] = await Promise.allSettled([
@@ -30,19 +31,38 @@ export class ConnectedDevicesClient {
       this.listLegacyUdids(),
     ]);
 
-    // Prefer tunnel UDIDs when present, but an empty registry must not hide legacy devices.
-    if (tunnelSettled.status === 'fulfilled' && tunnelSettled.value.length > 0) {
-      return tunnelSettled.value;
+    if (tunnelSettled.status === 'rejected' && legacySettled.status === 'rejected') {
+      throw new Error(
+        `Could not list connected devices: tunnel registry failed (${toErrorMessage(tunnelSettled.reason)}); ` +
+          `legacy lookup failed (${toErrorMessage(legacySettled.reason)})`,
+        {cause: new AggregateError([tunnelSettled.reason, legacySettled.reason], 'Both device lookups failed')},
+      );
     }
 
     if (tunnelSettled.status === 'rejected') {
       log.warn(formatRemoteXPCFallbackLog('devices listing', tunnelSettled.reason));
     }
-    // Registry unavailable or empty: use legacy; throw if legacy failed.
     if (legacySettled.status === 'rejected') {
-      throw legacySettled.reason instanceof Error ? legacySettled.reason : new Error(String(legacySettled.reason));
+      log.warn(
+        `Legacy devices listing failed: ${toErrorMessage(legacySettled.reason)}. Using tunnel registry results.`,
+      );
     }
-    return legacySettled.value;
+
+    const tunnelUdids = tunnelSettled.status === 'fulfilled' ? tunnelSettled.value : [];
+    const legacyUdids = legacySettled.status === 'fulfilled' ? legacySettled.value : [];
+    const tunnelKeys = new Set(tunnelUdids.map((udid) => udid.toLowerCase()));
+    const seen = new Set<string>();
+    const result: string[] = [];
+
+    // Keep all legacy-only devices first, then use the registry's spelling and order for tunnels.
+    for (const udid of [...legacyUdids.filter((value) => !tunnelKeys.has(value.toLowerCase())), ...tunnelUdids]) {
+      const key = udid.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push(udid);
+      }
+    }
+    return result;
   }
 
   private isPreferDevicectlEnabled(): boolean {
