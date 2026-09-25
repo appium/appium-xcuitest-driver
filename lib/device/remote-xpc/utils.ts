@@ -75,16 +75,10 @@ export function wrapRemoteXPCConnectionError(err: unknown, context: string): Err
 }
 
 /**
- * Log line when RemoteXPC is unavailable.
- *
- * Emitted per feature and once per session from {@link RemoteXPCFacade}, which cannot know what
- * the session will go on to use - so the note states both outcomes rather than promising a
- * fallback. Some features (appearance and accessibility settings among them) are reachable only
- * over RemoteXPC and fail outright.
+ * Log line when an optional RemoteXPC feature falls back after a connection failure.
  */
 export function formatRemoteXPCFallbackLog(feature: string, err: unknown): string {
-  const legacyNote =
-    'Features with a legacy path fall back to appium-ios-device; those that require RemoteXPC will fail.';
+  const legacyNote = 'Falling back to appium-ios-device.';
   if (isTunnelAvailabilityError(err)) {
     return `RemoteXPC ${feature} unavailable: ${formatTunnelAvailabilityMessage(err)} ${legacyNote}`;
   }
