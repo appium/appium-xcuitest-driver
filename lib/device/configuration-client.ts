@@ -10,25 +10,11 @@ import type {
 import {supportsApiLevel18, upperFirst} from '../utils/index.js';
 import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
-/**
- * Shape of `ConfigurationService`'s own action dispatcher. It is TypeScript-private in
- * `appium-ios-remotexpc` but a plain method at runtime, so {@link ConfigurationClient.applyContentSize}
- * can reach it for the sizes the package's typed helper refuses to send.
- */
+/** `ConfigurationService`'s own dispatcher: TypeScript-private, but a plain method at runtime. */
 type InvokeCoreDeviceAction = (
   actionIdentifier: string,
   input: Record<string, unknown>,
 ) => Promise<Record<string, unknown>>;
-
-/**
- * Spellings `simctl` uses when reporting a size, for the two it does not report in lowercase.
- * Applied to real-device readings so both device types answer `mobile: contentSize` identically.
- * Only the value handed back is affected; everything internal stays canonical kebab-case.
- */
-const SIMCTL_SPELLING: Readonly<Record<string, ContentSizeResult>> = {
-  'extra-small': 'extra-Small',
-  small: 'Small',
-};
 
 /** The CoreDevice action identifier behind {@link ConfigurationService.setDeviceTextSize}. */
 const SET_DEVICE_TEXT_SIZE_ACTION = 'com.apple.coredevice.action.setdevicetextsize';
@@ -38,10 +24,8 @@ const SET_DEVICE_TEXT_SIZE_ACTION = 'com.apple.coredevice.action.setdevicetextsi
  * CoreDevice daemon's camelCase names. Order is significant: `increment` / `decrement` step
  * through this list.
  *
- * All twelve sizes the Simulator accepts are present, so real devices and Simulators take and
- * report the same values. The five `accessibility-*` sizes additionally require *Larger
- * Accessibility Sizes* to be enabled on the device (Settings -> Accessibility -> Display & Text
- * Size -> Larger Text); the daemon rejects them with its own message when it is off.
+ * All twelve sizes the Simulator accepts are present. The five `accessibility-*` ones also need
+ * *Larger Accessibility Sizes* enabled on the device; the daemon says so itself when it is off.
  */
 const CORE_DEVICE_SIZE_BY_CONTENT_SIZE = {
   'extra-small': 'extraSmall',
@@ -116,18 +100,14 @@ export class ConfigurationClient {
   /**
    * Reads the current Dynamic Type size.
    *
-   * @returns The size spelled exactly as a Simulator would report it (see {@link SIMCTL_SPELLING}),
-   *          or `unknown` if the device reports nothing or a size this driver does not know about.
+   * @returns The size in the driver's canonical kebab-case spelling, or `unknown` if the device
+   *          reports nothing or a size this driver does not know about.
    */
   async getContentSize(): Promise<ContentSizeResult> {
     const coreDeviceSize = await this.withConfigurationService((configurationService) =>
       configurationService.getDeviceTextSize(),
     );
-    const contentSize = coreDeviceSize ? CONTENT_SIZE_BY_CORE_DEVICE_SIZE[coreDeviceSize] : undefined;
-    if (!contentSize) {
-      return 'unknown';
-    }
-    return SIMCTL_SPELLING[contentSize] ?? contentSize;
+    return (coreDeviceSize ? CONTENT_SIZE_BY_CORE_DEVICE_SIZE[coreDeviceSize] : undefined) ?? 'unknown';
   }
 
   /**
@@ -142,7 +122,10 @@ export class ConfigurationClient {
     if (size === 'increment' || size === 'decrement') {
       return await this.stepContentSize(size);
     }
-    const coreDeviceSize = toCoreDeviceSize(size);
+    const coreDeviceSize = CORE_DEVICE_SIZE_BY_CONTENT_SIZE[size as KnownContentSize];
+    if (!coreDeviceSize) {
+      throw new errors.InvalidArgumentError(`Unknown content size '${size}'`);
+    }
     await this.withConfigurationService((configurationService) =>
       this.applyContentSize(configurationService, coreDeviceSize),
     );
@@ -175,14 +158,10 @@ export class ConfigurationClient {
   /**
    * Writes a Dynamic Type size.
    *
-   * `appium-ios-remotexpc` validates against its own seven-name list and throws a `TypeError`
-   * before sending, but the daemon understands the five `accessibility*` names too - it answers
-   * them with *"Enable Larger Accessibility Sizes on the device before setting"* rather than an
-   * unknown-value error. Those are therefore retried through the same action the typed helper
-   * invokes, with an identical payload.
-   *
-   * Preferring the typed helper and falling through only on `TypeError` keeps this self-healing:
-   * if the package widens its list, the fallback simply stops being reached.
+   * `appium-ios-remotexpc` rejects the five `accessibility*` names before sending, but the daemon
+   * understands them - it answers with a "Larger Accessibility Sizes" precondition error, not an
+   * unknown-value one. Those are retried through the action its typed helper invokes. Falling
+   * through only on `TypeError` keeps this self-healing if the package widens its list.
    */
   private async applyContentSize(configurationService: ConfigurationService, coreDeviceSize: string): Promise<void> {
     try {
@@ -234,14 +213,4 @@ export function createConfigurationClient(driver: ConfigurationClientHost, actio
     );
   }
   return new ConfigurationClient(driver.device.udid, driver.remoteXPCFacade);
-}
-
-function toCoreDeviceSize(size: ContentSizeAction): string {
-  const coreDeviceSize = CORE_DEVICE_SIZE_BY_CONTENT_SIZE[size as KnownContentSize];
-  if (!coreDeviceSize) {
-    throw new errors.InvalidArgumentError(
-      `The '${size}' value is expected to be one of ${CONTENT_SIZE_ORDER.join(', ')}, increment, decrement`,
-    );
-  }
-  return coreDeviceSize;
 }

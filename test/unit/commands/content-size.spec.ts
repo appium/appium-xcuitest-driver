@@ -115,12 +115,12 @@ describe('content size commands', function () {
       assert.strictEqual(await driver.mobileGetContentSize(), 'extra-extra-extra-large');
     });
 
-    it('should report the two capitalised sizes exactly as a Simulator does', async function () {
+    it('should report the canonical lowercase spelling, unlike simctl', async function () {
       asRealDevice();
       configurationService.getDeviceTextSize.resolves('extraSmall');
-      assert.strictEqual(await driver.mobileGetContentSize(), 'extra-Small');
+      assert.strictEqual(await driver.mobileGetContentSize(), 'extra-small');
       configurationService.getDeviceTextSize.resolves('small');
-      assert.strictEqual(await driver.mobileGetContentSize(), 'Small');
+      assert.strictEqual(await driver.mobileGetContentSize(), 'small');
     });
 
     it('should still step correctly from a capitalised size', async function () {

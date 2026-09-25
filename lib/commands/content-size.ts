@@ -73,5 +73,10 @@ export async function mobileGetContentSize(this: XCUITestDriver): Promise<Conten
     return await createConfigurationClient(this, 'Getting content size').getContentSize();
   }
 
-  return (await requireSimulator(this, 'Getting content size').getContentSize()) as ContentSizeResult;
+  // `simctl` prints `extra-Small` and `Small` capitalised on Xcode 27, though Apple's own help
+  // text, node-simctl and this driver all document every size lowercase - and node-simctl passes
+  // stdout through verbatim. Normalizing keeps the value matching the declared return type, and
+  // identical to what a real device reports, on whichever Xcode is installed.
+  const size = await requireSimulator(this, 'Getting content size').getContentSize();
+  return String(size).toLowerCase() as ContentSizeResult;
 }
