@@ -412,6 +412,10 @@ export type ContentSizeAction =
  * Returned in the {@linkcode XCUITest.mobileGetContentSize mobile: getContentSize} command response.
  */
 export type ContentSizeResult =
+  // `simctl` reports these two with a capital S, unlike the other ten. Real devices mirror that
+  // spelling so Simulator and real-device readings stay identical.
+  | 'extra-Small'
+  | 'Small'
   | 'extra-small'
   | 'small'
   | 'medium'
