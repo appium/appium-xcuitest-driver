@@ -16,6 +16,7 @@ describe('increase contrast commands', function () {
   };
   let startConfigurationService: sinon.SinonStub;
   let requireService: sinon.SinonStub;
+  let determineAvailability: sinon.SinonStub;
 
   beforeEach(function () {
     driver = new XCUITestDriver({} as any);
@@ -38,8 +39,9 @@ describe('increase contrast commands', function () {
       .callsFake(async (_feature: string, operation: (services: any) => Promise<any>) =>
         operation({startConfigurationService}),
       );
+    determineAvailability = sinon.stub().resolves(true);
     Object.defineProperty(driver, 'remoteXPCFacade', {
-      value: {requireService},
+      value: {requireService, determineAvailability},
       configurable: true,
     });
   });
@@ -116,6 +118,20 @@ describe('increase contrast commands', function () {
       asRealDevice('17.4');
       await assert.rejects(driver.mobileSetIncreaseContrast('enabled'), /requires iOS\/tvOS 18 or newer/);
       assert.strictEqual(requireService.notCalled, true);
+    });
+
+    it('should fail with tunnel setup guidance when RemoteXPC is unavailable', async function () {
+      asRealDevice();
+      determineAvailability.resolves(false);
+      await assert.rejects(
+        driver.mobileGetIncreaseContrast(),
+        (err: Error) =>
+          /no fallback, so nothing was changed or read/.test(err.message) &&
+          /appium driver run xcuitest tunnel-creation/.test(err.message) &&
+          /remotexpc-tunnels-real-devices/.test(err.message),
+      );
+      assert.strictEqual(requireService.notCalled, true);
+      assert.strictEqual(simulatorGetStub.notCalled, true);
     });
 
     it('should propagate RemoteXPC failures instead of falling back', async function () {

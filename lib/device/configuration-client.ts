@@ -8,7 +8,8 @@ import type {
   IncreaseContrastResult,
 } from '../commands/types.js';
 import {supportsApiLevel18, upperFirst} from '../utils/index.js';
-import type {RemoteXPCFacade} from './remote-xpc/index.js';
+import {RemoteXPCFacade} from './remote-xpc/index.js';
+import {REMOTE_XPC_TUNNEL_SETUP_DOC_LINK, TUNNEL_CREATION_COMMAND} from './remote-xpc/utils.js';
 
 /** `ConfigurationService`'s own dispatcher: TypeScript-private, but a plain method at runtime. */
 type InvokeCoreDeviceAction = (
@@ -188,6 +189,13 @@ export class ConfigurationClient {
   }
 
   private async withConfigurationService<T>(operation: (service: ConfigurationService) => Promise<T>): Promise<T> {
+    // Checked up front so this reports the actual cause instead of the facade's generic
+    // "not available for this session". There is no fallback for these settings, so the message
+    // leads with the command that fixes it.
+    if (!(await this.remoteXPCFacade.determineAvailability())) {
+      throw new Error(await buildUnavailableMessage(this.udid));
+    }
+
     const configurationService = await this.remoteXPCFacade.requireService('Configuration', (Services) =>
       Services.startConfigurationService(this.udid),
     );
@@ -213,4 +221,33 @@ export function createConfigurationClient(driver: ConfigurationClientHost, actio
     );
   }
   return new ConfigurationClient(driver.device.udid, driver.remoteXPCFacade);
+}
+
+/**
+ * Explains why RemoteXPC could not be used, and what to do about it.
+ *
+ * `determineAvailability` is false both when the optional package is missing and when no tunnel
+ * is reachable, which need different fixes - so they are separated here. Module loading is cached
+ * process-wide, making the extra probe free after the first call.
+ */
+async function buildUnavailableMessage(udid: string): Promise<string> {
+  const noFallbackNote =
+    'Appearance and accessibility settings on a real device are reachable only over RemoteXPC ' +
+    'and have no fallback, so nothing was changed or read.';
+  const isPackageInstalled = Boolean(await RemoteXPCFacade.tryGetServicesStatic(undefined));
+
+  if (!isPackageInstalled) {
+    return (
+      `The optional appium-ios-remotexpc package could not be loaded. ${noFallbackNote}\n` +
+      `Install it, then start a tunnel with:\n` +
+      `  ${TUNNEL_CREATION_COMMAND}   (requires root)\n` +
+      `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
+    );
+  }
+  return (
+    `No RemoteXPC tunnel is available for '${udid}'. Start one with:\n` +
+    `  ${TUNNEL_CREATION_COMMAND}   (requires root)\n` +
+    `${noFallbackNote}\n` +
+    `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
+  );
 }
