@@ -7,7 +7,7 @@ dayjs.extend(utc);
 
 import {LockdownClient} from '../device/lockdown-client.js';
 import type {XCUITestDriver} from '../driver.js';
-import type {Viewport, ScreenInfo, ButtonName} from './types.js';
+import type {Viewport, ScreenInfo, ButtonName, DisplayInfo} from './types.js';
 
 const DATETIME_FORMAT_ISO8601 = 'YYYY-MM-DDTHH:mm:ssZ';
 
@@ -180,6 +180,15 @@ export async function getViewportRect(this: XCUITestDriver): Promise<Viewport> {
  */
 export async function getScreenInfo(this: XCUITestDriver): Promise<ScreenInfo> {
   return (await this.proxyCommand('/wda/screen', 'GET')) as ScreenInfo;
+}
+
+/**
+ * Lists the displays available to the device under test.
+ *
+ * @returns Information about each display, including its identifier
+ */
+export async function mobileGetScreens(this: XCUITestDriver): Promise<DisplayInfo[]> {
+  return (await this.proxyCommand('/wda/screens', 'GET')) as DisplayInfo[];
 }
 
 /**

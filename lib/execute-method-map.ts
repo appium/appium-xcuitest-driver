@@ -286,6 +286,9 @@ export const executeMethodMap = {
   'mobile: deviceScreenInfo': {
     command: 'getScreenInfo',
   },
+  'mobile: getScreens': {
+    command: 'mobileGetScreens',
+  },
   'mobile: pressButton': {
     command: 'mobilePressButton',
     params: {

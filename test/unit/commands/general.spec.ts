@@ -36,6 +36,21 @@ describe('general commands', function () {
     });
   });
 
+  describe('getScreens', function () {
+    it('should return the displays reported by WDA', async function () {
+      const screens = [
+        {displayId: 1, isMain: true, scale: 3, bounds: {x: 0, y: 0, width: 1206, height: 2622}, traits: 0},
+        {displayId: 3, isMain: false, scale: 3, bounds: {x: 0, y: 0, width: 2007, height: 2853}, traits: 0},
+      ];
+      mockDriver.expects('proxyCommand').once().withExactArgs('/wda/screens', 'GET').resolves(screens);
+      assert.deepEqual(await driver.execute('mobile: getScreens'), screens);
+    });
+
+    it('should target the main display by default', async function () {
+      assert.strictEqual((await driver.getSettings()).currentDisplayId, null);
+    });
+  });
+
   describe('touch id', function () {
     let sandbox: sinon.SinonSandbox;
 
