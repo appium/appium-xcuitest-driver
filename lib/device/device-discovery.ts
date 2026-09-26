@@ -4,8 +4,9 @@ import {getSimulator, type Simulator} from 'appium-ios-simulator';
 import {getAndCheckIosSdkVersion} from '../commands/helpers/index.js';
 import {UDID_AUTO} from '../constants.js';
 import type {XCUITestDriverOpts} from '../driver.js';
-import {normalizePlatformVersion} from '../utils/index.js';
+import {normalizePlatformName, normalizePlatformVersion} from '../utils/index.js';
 import {getConnectedDevices, RealDevice} from './real-device-management.js';
+import {findSimulatorUdidCase} from './simulator-management.js';
 import {isStrictHostUtilityMode} from './wda-host-ops.js';
 
 export interface DeviceDiscoveryResult {
@@ -150,7 +151,7 @@ export class DeviceDiscovery {
       } else {
         const devices = await getConnectedDevices(this.sessionOpts);
         this.log.debug(`Available real devices: ${devices.join(', ')}`);
-        isRealDeviceUdid = devices.includes(udid);
+        isRealDeviceUdid = devices.some((deviceUdid) => deviceUdid.toLowerCase() === udid.toLowerCase());
       }
     }
 
@@ -182,8 +183,11 @@ export class DeviceDiscovery {
     }
 
     try {
-      const device = await getSimulator(udid, {
-        devicesSetPath: this.sessionOpts.simulatorDevicesSetPath,
+      const devicesSetPath = this.sessionOpts.simulatorDevicesSetPath;
+      const platform = normalizePlatformName(this.sessionOpts.platformName);
+      const canonicalUdid = (await findSimulatorUdidCase(udid, devicesSetPath, platform)) ?? udid;
+      const device = await getSimulator(canonicalUdid, {
+        devicesSetPath,
         logger: this.log,
       });
       await this.ensurePlatformVersion(device);

@@ -147,10 +147,10 @@ function stringifyLaunchEnvironment(env: WdaLaunchEnvironment): Record<string, s
 
 function createSimulatorHostOps(driver: XCUITestDriver): SimulatorHostOps {
   return {
-    async launchPreinstalled({udid, bundleId, env}) {
-      await (driver.device as Simulator).simctl.exec('launch', {
-        args: ['--terminate-running-process', udid, bundleId],
-        env,
+    async launchPreinstalled({bundleId, env}) {
+      await (driver.device as Simulator).launchApp(bundleId, {
+        environment: stringifyLaunchEnvironment(env),
+        terminateExisting: true,
       });
     },
 
@@ -161,11 +161,13 @@ function createSimulatorHostOps(driver: XCUITestDriver): SimulatorHostOps {
 }
 
 /**
- * `devicectl device process launch` starts the XCTest runner as a plain app process, without the
- * testmanagerd/DVT test-session handshake that RemoteXPC's process control provides. Starting with
- * the iOS/tvOS 27 DDI/XCTest stack, the runner launched that way fails to background itself and
- * never starts its HTTP server, so devicectl is no longer a reliable launch fallback there (see
- * appium/appium#22636). It remains a reasonable fallback for older platforms.
+ * An XCTest runner started in the foreground has to press the Home button to background itself
+ * before running UI tests. With the Xcode 27 DDI/XCTest stack that synthesized press is ignored on
+ * older iOS versions, so the runner exits with "Failed to background test runner" and never starts
+ * its HTTP server (see appium/appium#22636 and #2978). RemoteXPC's process control launches the
+ * runner directly in the background, like Xcode does, which skips that step. `devicectl` always
+ * brings the runner to the foreground, so it is no longer a reliable launch fallback on
+ * iOS/tvOS 27+. It remains a reasonable fallback for older platforms.
  */
 function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevicePreinstalledHostOps {
   return {
@@ -179,6 +181,7 @@ function createRealDevicePreinstalledHostOps(driver: XCUITestDriver): RealDevice
             bundleId,
             environment: stringifyLaunchEnvironment(env),
             killExisting: true,
+            extraOptions: {ActivateSuspended: true},
           });
         } finally {
           await dvt.dvtService.close();

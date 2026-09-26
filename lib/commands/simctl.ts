@@ -1,5 +1,5 @@
-import type {Simulator} from 'appium-ios-simulator';
 import {errors} from 'appium/driver.js';
+import {exec} from 'teen_process';
 
 import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
@@ -60,7 +60,7 @@ export async function mobileSimctl(
   args: string[] = [],
   timeout?: number,
 ): Promise<SimctlExecResponse> {
-  const simulator: Simulator = requireSimulator(this, 'simctl command');
+  const simulator = requireSimulator(this, 'simctl command');
 
   if (!this.opts.udid) {
     throw new errors.InvalidArgumentError(`Unknown simulator UDID: '${this.opts.udid}'`);
@@ -73,10 +73,8 @@ export async function mobileSimctl(
     );
   }
 
-  const result = await simulator.simctl.exec(command as (typeof SUBCOMMANDS_HAS_DEVICE)[number], {
-    args: [this.opts.udid, ...args],
-    timeout,
-  });
+  const setArgs = simulator.devicesSetPath ? ['--set', simulator.devicesSetPath] : [];
+  const result = await exec('xcrun', ['simctl', ...setArgs, command, this.opts.udid, ...args], {timeout});
   return {
     stdout: result?.stdout ?? '',
     stderr: result?.stderr ?? '',

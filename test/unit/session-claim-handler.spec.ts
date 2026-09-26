@@ -127,6 +127,24 @@ describe('SessionClaimHandler', function () {
     );
   });
 
+  it('should detect contention when udids differ only by letter case', async function () {
+    const oldDriver = makeDriver({
+      sessionId: 'old-session',
+      opts: {udid: 'DEVICE-1'} as any,
+    });
+    oldDriver.deleteSession = sandbox.stub().callsFake(async () => {
+      sessionClaimHandler.unregisterActiveSession(oldDriver);
+    });
+    await sessionClaimHandler.registerActiveSession(oldDriver);
+    await sessionClaimHandler.claimSessionUdid(oldDriver);
+
+    const newDriver = makeDriver({opts: {udid: 'device-1'} as any});
+    await sessionClaimHandler.registerActiveSession(newDriver);
+    await sessionClaimHandler.claimSessionUdid(newDriver);
+
+    assert.strictEqual((oldDriver.deleteSession as sinon.SinonStub).calledOnce, true);
+  });
+
   it('should not wait for release confirmation when no session contends for the udid', async function () {
     const newDriver = makeDriver();
     const startMs = Date.now();

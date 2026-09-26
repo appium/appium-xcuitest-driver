@@ -1,3 +1,33 @@
+## [12.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.1...v12.13.2) (2026-09-23)
+
+### Bug Fixes
+
+* grepFile error handling ([#2989](https://github.com/appium/appium-xcuitest-driver/issues/2989)) ([79b387b](https://github.com/appium/appium-xcuitest-driver/commit/79b387bbd9c8e265851fae91d555b798b528eb3e))
+
+## [12.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.0...v12.13.1) (2026-09-20)
+
+### Bug Fixes
+
+* **opts:** pass `ActivateSuspended: true` to host opts for backgrounding WDA ([#2980](https://github.com/appium/appium-xcuitest-driver/issues/2980)) ([78361a2](https://github.com/appium/appium-xcuitest-driver/commit/78361a2cad2e66a34f64272113f519a35ce24407))
+
+## [12.13.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.6...v12.13.0) (2026-09-20)
+
+### Features
+
+* Bump appium-ios-simulator major version ([#2979](https://github.com/appium/appium-xcuitest-driver/issues/2979)) ([af42a33](https://github.com/appium/appium-xcuitest-driver/commit/af42a3339e3b79ece2513f5bca6d6f84ad706e33))
+
+## [12.12.6](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.5...v12.12.6) (2026-09-19)
+
+### Bug Fixes
+
+* match udid capabilities case-insensitively across remaining device/simulator lookups ([#2981](https://github.com/appium/appium-xcuitest-driver/issues/2981)) ([4451076](https://github.com/appium/appium-xcuitest-driver/commit/4451076f82d2e0f241e848c3be1498bc751d0573))
+
+## [12.12.5](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.4...v12.12.5) (2026-09-18)
+
+### Bug Fixes
+
+* match explicit udid capability against connected devices case-insensitively ([#2977](https://github.com/appium/appium-xcuitest-driver/issues/2977)) ([f1f8b15](https://github.com/appium/appium-xcuitest-driver/commit/f1f8b158ccfa55c796c8d1a5ec89366b5ae44e94))
+
 ## [12.12.4](https://github.com/appium/appium-xcuitest-driver/compare/v12.12.3...v12.12.4) (2026-09-14)
 
 ### Bug Fixes

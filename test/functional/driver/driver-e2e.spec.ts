@@ -2,10 +2,9 @@ import assert from 'node:assert/strict';
 import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 import {setTimeout as delay} from 'node:timers/promises';
 
-import {getSimulator} from 'appium-ios-simulator';
+import {createSimulator, getSimulator, listSimulators} from 'appium-ios-simulator';
 import {retryInterval} from 'asyncbox';
 import axios from 'axios';
-import {Simctl} from 'node-simctl';
 import type {Browser} from 'webdriverio';
 
 import {UICATALOG_BUNDLE_ID} from '../../setup.js';
@@ -20,15 +19,15 @@ import {initSession, deleteSession, HOST} from '../helpers/session.js';
 import {killAllSimulators, deleteDeviceWithRetry, cleanupSimulator} from '../helpers/simulator.js';
 
 const SIM_DEVICE_NAME = 'xcuitestDriverTest';
-
-const simctl = new Simctl();
+const DEFAULT_WDA_LOCAL_PORT = 8100;
+const CUSTOM_WDA_LOCAL_PORT = 6000;
 
 async function createDevice() {
-  return await simctl.createDevice(SIM_DEVICE_NAME, DEVICE_NAME, PLATFORM_VERSION);
+  return await createSimulator(SIM_DEVICE_NAME, DEVICE_NAME, PLATFORM_VERSION);
 }
 
 async function getNumSims() {
-  return (await simctl.getDevices())[PLATFORM_VERSION].length;
+  return (await listSimulators()).filter((d) => d.platform === 'iOS' && d.sdk === PLATFORM_VERSION).length;
 }
 
 describe('XCUITestDriver', function () {
@@ -115,17 +114,17 @@ describe('XCUITestDriver', function () {
         'appium:wdaLocalPort': undefined,
       });
       driver = await initSession(localCaps);
-      await assert.doesNotReject(axios({url: `http://${HOST}:8100/status`}));
+      await assert.doesNotReject(axios({url: `http://${HOST}:${DEFAULT_WDA_LOCAL_PORT}/status`}));
     });
     it('should run on port specified', async function () {
       const localCaps = amendCapabilities(baseCaps, {
         'appium:fullReset': true,
         'appium:useNewWDA': true,
-        'appium:wdaLocalPort': 6000,
+        'appium:wdaLocalPort': CUSTOM_WDA_LOCAL_PORT,
       });
       driver = await initSession(localCaps);
-      await assert.rejects(axios({url: `http://${HOST}:8100/status`}), /ECONNREFUSED/);
-      await assert.doesNotReject(axios({url: `http://${HOST}:8100/status`}));
+      await assert.rejects(axios({url: `http://${HOST}:${DEFAULT_WDA_LOCAL_PORT}/status`}), /ECONNREFUSED/);
+      await assert.doesNotReject(axios({url: `http://${HOST}:${CUSTOM_WDA_LOCAL_PORT}/status`}));
     });
   });
 

@@ -1,9 +1,8 @@
-import {getSimulator} from 'appium-ios-simulator';
+import {getSimulator, listSimulators} from 'appium-ios-simulator';
 import {WebDriverAgent} from 'appium-webdriveragent';
 import * as xcode from 'appium-xcode';
 import {logger} from 'appium/support.js';
 import {Command} from 'commander';
-import {Simctl} from 'node-simctl';
 
 const log = logger.getLogger('WDA');
 
@@ -20,8 +19,8 @@ async function build(options) {
     );
   }
 
-  const iosDevices = await new Simctl().getDevices(platformVersion, 'iOS');
-  const verifyDevicePresence = (/** @type {import('node-simctl').DeviceInfo | undefined} */ info) => {
+  const iosDevices = (await listSimulators()).filter((d) => d.platform === 'iOS' && d.sdk === platformVersion);
+  const verifyDevicePresence = (/** @type {import('appium-ios-simulator').SimulatorListEntry | undefined} */ info) => {
     if (!info) {
       throw new Error(
         `Cannot find any available iOS ${platformVersion} ${customDevice ? `${customDevice} ` : ''}simulator on your system. Only the following simulators are available:\n${iosDevices.map((e) => e.name).join('\n')}`,

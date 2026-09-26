@@ -1,8 +1,13 @@
-import {getSimulator, type Simulator, type LocalizationOptions} from 'appium-ios-simulator';
+import {
+  createSimulator,
+  listSimulators,
+  getSimulator,
+  type SimulatorListEntry,
+  type Simulator,
+  type LocalizationOptions,
+} from 'appium-ios-simulator';
 import {resetTestProcesses} from 'appium-webdriveragent';
 import {util, timing} from 'appium/support.js';
-import {Simctl} from 'node-simctl';
-import type {DeviceInfo} from 'node-simctl';
 
 import {buildSafariPreferences} from '../commands/helpers/index.js';
 import {UDID_AUTO} from '../constants.js';
@@ -39,19 +44,13 @@ export interface SimulatorInstallOptions {
 export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts = this.opts): Promise<Simulator> {
   const {simulatorDevicesSetPath: devicesSetPath, deviceName, platformVersion} = opts;
   const platform = normalizePlatformName(opts.platformName);
-  const simctl = new Simctl({devicesSetPath});
   if (!deviceName) {
     let deviceNames: string[] = [];
     try {
-      const devices = platformVersion
-        ? await simctl.getDevices(platformVersion, platform)
-        : await simctl.getDevices(null, platform);
-      const nameMapper = (device: DeviceInfo) => device.name;
-      deviceNames = Array.isArray(devices)
-        ? devices.map(nameMapper)
-        : Object.values(devices)
-            .flatMap((x) => x)
-            .map(nameMapper);
+      const devices = await listSimulators({devicesSetPath});
+      deviceNames = devices
+        .filter((d) => d.platform === platform && (!platformVersion || d.sdk === platformVersion))
+        .map((d) => d.name);
     } catch {}
     throw new Error(
       `'deviceName' must be provided in order to create a new Simulator for ${platform} platform. ` +
@@ -65,13 +64,29 @@ export async function createSim(this: XCUITestDriver, opts: XCUITestDriverOpts =
 
   const simName = `${APPIUM_SIM_PREFIX}-${util.uuidV4().toUpperCase()}-${deviceName}`;
   this.log.debug(`Creating a temporary Simulator device '${simName}'`);
-  const udid = await simctl.createDevice(simName, deviceName, platformVersion, {platform});
+  const udid = await createSimulator(simName, deviceName, platformVersion, {platform, devicesSetPath});
   return await getSimulator(udid, {
     platform,
     checkExistence: false,
     devicesSetPath,
     logger: this.log,
   });
+}
+
+/**
+ * Case-insensitively resolves a simulator udid to the exact case `simctl` reports it in.
+ * Different callers (a user-supplied capability vs. simctl's own CoreSimulator-reported
+ * list) do not necessarily agree on letter case.
+ *
+ * @returns The matching device's canonical udid, or `undefined` if no device matches.
+ */
+export async function findSimulatorUdidCase(
+  udid: string,
+  devicesSetPath: string | undefined,
+  platform: string,
+): Promise<string | undefined> {
+  const devices = await listSimulators({devicesSetPath});
+  return devices.find((d) => d.platform === platform && d.udid.toLowerCase() === udid.toLowerCase())?.udid;
 }
 
 /**
@@ -86,7 +101,7 @@ export async function getExistingSim(
   const {platformVersion, deviceName, udid, simulatorDevicesSetPath: devicesSetPath, platformName} = opts;
 
   const platform = normalizePlatformName(platformName);
-  const selectSim = async (dev: {udid: string; platform: string}): Promise<Simulator> =>
+  const selectSim = async (dev: Pick<SimulatorListEntry, 'udid'>): Promise<Simulator> =>
     await getSimulator(dev.udid, {
       platform,
       checkExistence: false,
@@ -94,17 +109,10 @@ export async function getExistingSim(
       logger: this.log,
     });
 
-  const simctl = new Simctl({devicesSetPath});
-  let devicesMap: Record<string, any[]> | undefined;
   if (udid && String(udid).toLowerCase() !== UDID_AUTO) {
     this.log.debug(`Looking for an existing Simulator with UDID '${udid}'`);
-    devicesMap = await simctl.getDevices(null, platform);
-    for (const device of Object.values(devicesMap).flatMap((x) => x)) {
-      if (device.udid === udid) {
-        return await selectSim(device);
-      }
-    }
-    return null;
+    const canonicalUdid = await findSimulatorUdidCase(String(udid), devicesSetPath, platform);
+    return canonicalUdid ? await selectSim({udid: canonicalUdid}) : null;
   }
 
   if (!platformVersion) {
@@ -112,7 +120,9 @@ export async function getExistingSim(
     return null;
   }
 
-  const devices = devicesMap?.[platformVersion] ?? (await simctl.getDevices(platformVersion, platform));
+  const devices = (await listSimulators({devicesSetPath})).filter(
+    (d) => d.platform === platform && d.sdk === platformVersion,
+  );
   this.log.debug(
     `Looking for an existing Simulator with platformName: ${platform}, ` +
       `platformVersion: ${platformVersion}, deviceName: ${deviceName}`,
@@ -247,10 +257,8 @@ export async function installToSimulator(
  */
 export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<void> {
   const device = this.device as Simulator;
-  const simctl = new Simctl({
-    devicesSetPath: device.devicesSetPath,
-  });
-  const allDevices = Object.values(await simctl.getDevices()).flatMap((x) => x);
+  const devicesSetPath = device.devicesSetPath ?? undefined;
+  const allDevices = await listSimulators({devicesSetPath});
   const otherBootedDevices = allDevices.filter(({udid, state}) => udid !== device.udid && state === 'Booted');
   if (isEmpty(otherBootedDevices)) {
     this.log.info('No other running simulators have been detected');
@@ -259,12 +267,12 @@ export async function shutdownOtherSimulators(this: XCUITestDriver): Promise<voi
   this.log.info(
     `Detected ${util.pluralize('other running Simulator', otherBootedDevices.length, true)}. Shutting them down...`,
   );
-  for (const {udid} of otherBootedDevices) {
+  for (const {udid, platform} of otherBootedDevices) {
     // It is necessary to stop the corresponding xcodebuild process before killing
     // the simulator, otherwise it will be automatically restarted
     await resetTestProcesses(udid, true);
-    simctl.udid = udid;
-    await simctl.shutdownDevice();
+    const otherSim = await getSimulator(udid, {platform, checkExistence: false, devicesSetPath, logger: this.log});
+    await otherSim.shutdown();
   }
 }
 

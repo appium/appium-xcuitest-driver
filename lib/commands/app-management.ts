@@ -299,8 +299,8 @@ export async function mobileClearApp(this: XCUITestDriver, bundleId: string): Pr
     );
   }
 
-  const simctl = (this.device as Simulator).simctl;
-  const dataRoot = await simctl.getAppContainer(bundleId, 'data');
+  const simulator = this.device as Simulator;
+  const dataRoot = await simulator.getAppContainer(bundleId, 'data');
   this.log.debug(`Got the data container root of ${bundleId} at '${dataRoot}'`);
   if (!(await fs.exists(dataRoot))) {
     return false;

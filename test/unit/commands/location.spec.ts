@@ -140,8 +140,8 @@ describe('location commands', function () {
       let deviceSetLocationSpy: sinon.SinonSpy;
       beforeEach(function () {
         deviceSetLocationSpy = sinon.spy();
+        driver.isSimulator = () => true;
         driver._device = {
-          simctl: true as any,
           setGeolocation: deviceSetLocationSpy,
         } as any;
       });

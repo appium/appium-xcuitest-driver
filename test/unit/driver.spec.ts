@@ -347,8 +347,7 @@ describe('XCUITestDriver', function () {
         assert.strictEqual((driver.startLogCapture as any).called, false);
       });
       it('should call setReduceTransparency for a simulator', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-        device.simctl = true;
-        delete device.devicectl;
+        sandbox.stub(driver, 'isSimulator').returns(true);
         const spy = sandbox.stub(device, 'setReduceTransparency').resolves({device, realDevice});
         await driver.createSession(
           null as any,
@@ -362,7 +361,6 @@ describe('XCUITestDriver', function () {
       });
 
       it('should not call setReduceTransparency for a real device', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-        delete device.simctl;
         device.devicectl = true;
         const spy = sandbox.stub(device, 'setReduceTransparency').resolves({device, realDevice});
         await driver.createSession(
@@ -376,8 +374,7 @@ describe('XCUITestDriver', function () {
       });
 
       it('should call setAutoFillPasswords for a simulator', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-        device.simctl = true;
-        delete device.devicectl;
+        sandbox.stub(driver, 'isSimulator').returns(true);
         const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
         await driver.createSession(
           null as any,
@@ -390,7 +387,6 @@ describe('XCUITestDriver', function () {
         assert.strictEqual(spy.firstCall.args[0], true);
       });
       it('should not call setAutoFillPasswords for a real device', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-        delete device.simctl;
         device.devicectl = true;
         const spy = sandbox.stub(device, 'setAutoFillPasswords').resolves({device, realDevice});
         await driver.createSession(
@@ -422,7 +418,6 @@ describe('XCUITestDriver', function () {
       );
 
       it('should throw an error if mjpegServerPort is occupied', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
-        delete device.simctl;
         device.devicectl = true;
         const server = net.createServer();
         await new Promise<void>((resolve, reject) => {
