@@ -7,7 +7,7 @@ on:
       - '*.md'
       - 'mkdocs.yml'
   push:
-    branches: [master]
+    branches: [master, beta]
     paths-ignore:
       - 'docs/**'
       - '*.md'
