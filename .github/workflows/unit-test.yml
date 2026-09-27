@@ -1,7 +1,7 @@
 name: Unit Tests
 on:
   pull_request:
-    branches: [master]
+    branches: [master, beta]
     paths-ignore:
       - 'docs/**'
       - '*.md'
