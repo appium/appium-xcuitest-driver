@@ -1,3 +1,27 @@
+## [13.0.0-beta.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.1...v13.0.0-beta.1) (2026-09-27)
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** requires Appium >=4.0.0-beta.0 and drops Node 20
+support (minimum is now ^22.22.2 || ^24.15.0 || >=26.0.0), matching
+Appium 4's own minimum supported Node engine. The appium/app/reset
+endpoint is also gone; use the corresponding 'mobile:' extensions to
+manage app state instead.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+### Features
+
+* **deps:** target Appium 4 beta ([a8a87f9](https://github.com/appium/appium-xcuitest-driver/commit/a8a87f98ef6ecfbc44828504bf50eafa78ee8e3a)), closes [appium/appium#22790](https://github.com/appium/appium/issues/22790)
+
+### Bug Fixes
+
+* **timeouts:** sync initial script/pageLoad timeouts on session (re)start ([faede8e](https://github.com/appium/appium-xcuitest-driver/commit/faede8ebde54407470b9f2eb64f27e5fb4353b87))
+
+### Miscellaneous Chores
+
+* **deps:** bump appium and lockstep packages to 4.0.0-beta.2 ([#2995](https://github.com/appium/appium-xcuitest-driver/issues/2995)) ([8c108ff](https://github.com/appium/appium-xcuitest-driver/commit/8c108ffa4abd97447c97b906a3e458e4ae57b8f1))
+
 ## [12.13.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.0...v12.13.1) (2026-09-20)
 
 ### Bug Fixes
