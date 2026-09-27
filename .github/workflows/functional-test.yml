@@ -4,6 +4,14 @@ on:
   pull_request:
     branches:
       - master
+      - beta
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'mkdocs.yml'
+  push:
+    branches:
+      - beta
     paths-ignore:
       - 'docs/**'
       - '*.md'
