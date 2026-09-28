@@ -883,7 +883,7 @@ style | string | yes | Either `light` or `dark` | dark
 ### mobile: getIncreaseContrast
 
 Get the device's "increase contrast" accessibility mode.
-On **Simulator** this uses `simctl`. On **real devices** it requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
+On **real devices** this requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
 
 #### Returned Result
 
@@ -900,7 +900,7 @@ Real devices only ever report `enabled` or `disabled`.
 ### mobile: setIncreaseContrast
 
 Enable or disable the device's "increase contrast" accessibility mode.
-On **Simulator** this uses `simctl`. On **real devices** it requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
+On **real devices** this requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
 
 #### Arguments
 
@@ -911,7 +911,7 @@ increaseContrast | string | yes | Either `enabled` or `disabled` (case insensiti
 ### mobile: contentSize
 
 Get the device's content size.
-On **Simulator** this uses `simctl`. On **real devices** it requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
+On **real devices** this requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
 
 #### Returned Result
 
@@ -937,7 +937,7 @@ Simulators and real devices report the same values.
 ### mobile: setContentSize
 
 Set the device's content size.
-On **Simulator** this uses `simctl`. On **real devices** it requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
+On **real devices** this requires **iOS/tvOS 18+**, the optional [`appium-ios-remotexpc`](https://github.com/appium/appium-ios-remotexpc) package and an active RemoteXPC tunnel: the setting is read and written through the CoreDevice configuration service. There is no fallback, so the command throws if RemoteXPC is unavailable.
 
 #### Arguments
 

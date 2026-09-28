@@ -110,7 +110,7 @@
     "appium": "^4.0.0-beta.2"
   },
   "optionalDependencies": {
-    "appium-ios-remotexpc": "^5.20.1",
+    "appium-ios-remotexpc": "^5.22.1",
     "sharp": "^0.x"
   },
   "engines": {

@@ -5,17 +5,6 @@ import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
 
-/** The sizes `appium-ios-remotexpc` accepts through its typed `setDeviceTextSize` helper. */
-const REMOTE_XPC_SIZES = [
-  'extraSmall',
-  'small',
-  'medium',
-  'large',
-  'extraLarge',
-  'extraExtraLarge',
-  'extraExtraExtraLarge',
-];
-
 describe('content size commands', function () {
   let driver: XCUITestDriver;
   let simulatorSetStub: sinon.SinonStub;
@@ -23,7 +12,6 @@ describe('content size commands', function () {
   let configurationService: {
     getDeviceTextSize: sinon.SinonStub;
     setDeviceTextSize: sinon.SinonStub;
-    action: sinon.SinonStub;
     close: sinon.SinonStub;
   };
   let startConfigurationService: sinon.SinonStub;
@@ -42,14 +30,7 @@ describe('content size commands', function () {
 
     configurationService = {
       getDeviceTextSize: sinon.stub().resolves('medium'),
-      // Mirrors appium-ios-remotexpc: it validates against its own seven-name list and throws a
-      // TypeError before sending anything, which is what makes the client fall back to `action`.
-      setDeviceTextSize: sinon.stub().callsFake(async (size: string) => {
-        if (!REMOTE_XPC_SIZES.includes(size)) {
-          throw new TypeError(`size must be one of ${REMOTE_XPC_SIZES.join(', ')}, got '${size}'`);
-        }
-      }),
-      action: sinon.stub().resolves({}),
+      setDeviceTextSize: sinon.stub().resolves(),
       close: sinon.stub().resolves(),
     };
     startConfigurationService = sinon.stub().resolves(configurationService);
@@ -144,16 +125,10 @@ describe('content size commands', function () {
       assert.strictEqual(await driver.mobileGetContentSize(), 'unknown');
     });
 
-    it('should set accessibility sizes through the underlying action', async function () {
+    it('should set accessibility sizes', async function () {
       asRealDevice();
       await driver.mobileSetContentSize('accessibility-large');
-      // The typed helper is tried first and throws; the raw action then carries the same payload.
       assert.strictEqual(configurationService.setDeviceTextSize.calledOnceWithExactly('accessibilityLarge'), true);
-      assert.strictEqual(configurationService.action.calledOnce, true);
-      assert.deepStrictEqual(configurationService.action.firstCall.args, [
-        'com.apple.coredevice.action.setdevicetextsize',
-        {textSize: {size: {accessibilityLarge: {}}}},
-      ]);
     });
 
     it('should translate an accessibility size reading back to kebab-case', async function () {
@@ -166,10 +141,7 @@ describe('content size commands', function () {
       asRealDevice();
       configurationService.getDeviceTextSize.resolves('extraExtraExtraLarge');
       await driver.mobileSetContentSize('increment');
-      assert.strictEqual(configurationService.action.calledOnce, true);
-      assert.deepStrictEqual(configurationService.action.firstCall.args[1], {
-        textSize: {size: {accessibilityMedium: {}}},
-      });
+      assert.strictEqual(configurationService.setDeviceTextSize.calledOnceWithExactly('accessibilityMedium'), true);
     });
 
     it('should step up one size on increment', async function () {
@@ -191,7 +163,6 @@ describe('content size commands', function () {
       configurationService.getDeviceTextSize.resolves('accessibilityExtraExtraExtraLarge');
       await driver.mobileSetContentSize('increment');
       assert.strictEqual(configurationService.setDeviceTextSize.notCalled, true);
-      assert.strictEqual(configurationService.action.notCalled, true);
     });
 
     it('should do nothing when decrementing past the smallest size', async function () {
