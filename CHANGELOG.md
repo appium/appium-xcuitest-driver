@@ -1,3 +1,9 @@
+## [12.13.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.2...v12.13.3) (2026-09-28)
+
+### Bug Fixes
+
+* bump WDA for package creation with Xcode 26+ ([#2996](https://github.com/appium/appium-xcuitest-driver/issues/2996)) ([b9750ba](https://github.com/appium/appium-xcuitest-driver/commit/b9750ba58bb490895bc0e1f5f0f9c027617c30b2))
+
 ## [12.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.1...v12.13.2) (2026-09-23)
 
 ### Bug Fixes
