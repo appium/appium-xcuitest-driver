@@ -9,13 +9,6 @@ on:
       - 'docs/**'
       - '*.md'
       - 'mkdocs.yml'
-  push:
-    branches:
-      - beta
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
-      - 'mkdocs.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
