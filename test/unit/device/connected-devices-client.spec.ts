@@ -67,7 +67,7 @@ describe('connected real-device discovery', function () {
             return true;
           });
         } else {
-          assert.deepEqual(await client.getConnectedDevices(), [...legacyUdids, ...tunnelUdids]);
+          assert.deepEqual(await client.getConnectedDevices(), [...tunnelUdids, ...legacyUdids]);
           const oneFailed = tunnelOutcome === 'rejected' || legacyOutcome === 'rejected';
           assert.equal(warn.callCount, oneFailed ? 1 : 0);
           if (legacyOutcome === 'rejected') {
@@ -82,15 +82,15 @@ describe('connected real-device discovery', function () {
 
   it('retains a device whose tunnel disappeared while another tunnel remains', async function () {
     const {client} = await createClient(['Device-A'], ['Device-A', 'Device-B']);
-    assert.deepEqual(await client.getConnectedDevices(), ['Device-B', 'Device-A']);
+    assert.deepEqual(await client.getConnectedDevices(), ['Device-A', 'Device-B']);
   });
 
-  it('deduplicates case-insensitively with tunnel spelling and a final tunnel block', async function () {
+  it('lists tunnels first in registry order and appends only unseen legacy devices', async function () {
     const {client} = await createClient(
       ['Tunnel-A', 'tunnel-a', 'Tunnel-B'],
       ['Legacy-A', 'legacy-a', 'TUNNEL-A', 'Legacy-B', 'TUNNEL-B'],
     );
-    assert.deepEqual(await client.getConnectedDevices(), ['Legacy-A', 'Legacy-B', 'Tunnel-A', 'Tunnel-B']);
+    assert.deepEqual(await client.getConnectedDevices(), ['Tunnel-A', 'Tunnel-B', 'Legacy-A', 'Legacy-B']);
   });
 
   it('does not mutate either source list', async function () {
@@ -99,7 +99,7 @@ describe('connected real-device discovery', function () {
     Object.freeze(tunnels);
     Object.freeze(legacy);
     const {client} = await createClient(tunnels, legacy);
-    assert.deepEqual(await client.getConnectedDevices(), ['Device-B', 'Device-A']);
+    assert.deepEqual(await client.getConnectedDevices(), ['Device-A', 'Device-B']);
     assert.deepEqual(tunnels, ['Device-A', 'device-a']);
     assert.deepEqual(legacy, ['device-a', 'Device-B', 'device-b']);
   });
@@ -131,7 +131,7 @@ describe('connected real-device discovery', function () {
   it('refreshes both sources between calls instead of retaining stale tunnel membership', async function () {
     const {client, getAvailableDevices} = await createClient(['Device-A', 'Device-B'], ['Device-A', 'Device-B']);
     assert.deepEqual(await client.getConnectedDevices(), ['Device-A', 'Device-B']);
-    getAvailableDevices.resolves(['Device-A']);
+    getAvailableDevices.resolves(['Device-B']);
     assert.deepEqual(await client.getConnectedDevices(), ['Device-B', 'Device-A']);
     assert.equal(getAvailableDevices.callCount, 2);
   });

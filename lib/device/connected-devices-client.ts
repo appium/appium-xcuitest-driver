@@ -22,7 +22,7 @@ export class ConnectedDevicesClient {
 
   /**
    * Returns the case-insensitive union of tunnel registry and legacy real-device UDIDs.
-   * Legacy-only devices precede tunneled devices so automatic UDID selection prefers a tunnel.
+   * Tunnel registry UDIDs come first, followed by legacy-only devices.
    * Uses either successful lookup, including an empty result, and throws only if both fail.
    */
   async getConnectedDevices(): Promise<string[]> {
@@ -50,12 +50,11 @@ export class ConnectedDevicesClient {
 
     const tunnelUdids = tunnelSettled.status === 'fulfilled' ? tunnelSettled.value : [];
     const legacyUdids = legacySettled.status === 'fulfilled' ? legacySettled.value : [];
-    const tunnelKeys = new Set(tunnelUdids.map((udid) => udid.toLowerCase()));
     const seen = new Set<string>();
     const result: string[] = [];
 
-    // Keep all legacy-only devices first, then use the registry's spelling and order for tunnels.
-    for (const udid of [...legacyUdids.filter((value) => !tunnelKeys.has(value.toLowerCase())), ...tunnelUdids]) {
+    // Preserve tunnel registry spelling and order, then append unseen legacy-only devices.
+    for (const udid of [...tunnelUdids, ...legacyUdids]) {
       const key = udid.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
