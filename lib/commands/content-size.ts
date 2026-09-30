@@ -1,31 +1,10 @@
 import {errors} from 'appium/driver.js';
 
+import {CONTENT_SIZE_ACTIONS, isContentSizeStep, stepContentSize} from '../content-size-model.js';
 import {createConfigurationClient} from '../device/configuration-client.js';
 import type {XCUITestDriver} from '../driver.js';
 import {requireSimulator} from './helpers/index.js';
 import type {ContentSizeAction, ContentSizeResult} from './types.js';
-
-const CONTENT_SIZE = [
-  'extra-small',
-  'small',
-  'medium',
-  'large',
-  'extra-large',
-  'extra-extra-large',
-  'extra-extra-extra-large',
-  'accessibility-medium',
-  'accessibility-large',
-  'accessibility-extra-large',
-  'accessibility-extra-extra-large',
-  'accessibility-extra-extra-extra-large',
-  'increment',
-  'decrement',
-] as const;
-
-/** The sizes from {@link CONTENT_SIZE}, in ascending order, without the two step actions. */
-const CONTENT_SIZE_LADDER = CONTENT_SIZE.filter(
-  (size) => size !== 'increment' && size !== 'decrement',
-) as ContentSizeAction[];
 
 /**
  * Sets content size for the given simulator or real device.
@@ -45,9 +24,11 @@ const CONTENT_SIZE_LADDER = CONTENT_SIZE.filter(
  * @throws If the current platform does not support content size appearance changes
  */
 export async function mobileSetContentSize(this: XCUITestDriver, size: ContentSizeAction): Promise<void> {
-  const normalizedSize = String(size).toLowerCase();
-  if (!(CONTENT_SIZE as readonly string[]).includes(normalizedSize)) {
-    throw new errors.InvalidArgumentError(`The 'size' value is expected to be one of ${CONTENT_SIZE.join(',')}`);
+  const normalizedSize = String(size).toLowerCase() as ContentSizeAction;
+  if (!(CONTENT_SIZE_ACTIONS as readonly string[]).includes(normalizedSize)) {
+    throw new errors.InvalidArgumentError(
+      `The 'size' value is expected to be one of ${CONTENT_SIZE_ACTIONS.join(',')}`,
+    );
   }
 
   if (this.isRealDevice()) {
@@ -56,38 +37,19 @@ export async function mobileSetContentSize(this: XCUITestDriver, size: ContentSi
   }
 
   const simulator = requireSimulator(this, 'Setting content size');
-  if (normalizedSize === 'increment' || normalizedSize === 'decrement') {
+  if (isContentSizeStep(normalizedSize)) {
     // Only newer Xcode versions accept `increment`/`decrement`; older ones answer
     // `'increment' is not a valid content size`. Resolving the step here makes these work on any
     // Xcode, and behave the same as they do on a real device, where they are resolved too.
-    await simulator.setContentSize(await stepContentSize(this, normalizedSize));
+    const currentSize = String(await mobileGetContentSize.call(this)).toLowerCase();
+    const nextSize = stepContentSize(currentSize, normalizedSize);
+    if (nextSize !== currentSize) {
+      await simulator.setContentSize(nextSize);
+    }
     return;
   }
 
   await simulator.setContentSize(size);
-}
-
-/**
- * Resolves `increment` / `decrement` to the neighbouring size, based on what the device currently
- * reports. Stepping past either end stays put.
- */
-async function stepContentSize(
-  driver: XCUITestDriver,
-  direction: 'increment' | 'decrement',
-): Promise<ContentSizeAction> {
-  const currentSize = String(await driver.mobileGetContentSize()).toLowerCase();
-  const currentIndex = (CONTENT_SIZE_LADDER as readonly string[]).indexOf(currentSize);
-  if (currentIndex < 0) {
-    throw new errors.InvalidArgumentError(
-      `Cannot ${direction} the content size because the current value ('${currentSize}') is not one of ` +
-        `${CONTENT_SIZE_LADDER.join(', ')}. Set an explicit size first.`,
-    );
-  }
-  const nextIndex = Math.min(
-    Math.max(currentIndex + (direction === 'increment' ? 1 : -1), 0),
-    CONTENT_SIZE_LADDER.length - 1,
-  );
-  return CONTENT_SIZE_LADDER[nextIndex];
 }
 
 /**

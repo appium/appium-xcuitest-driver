@@ -1,4 +1,4 @@
-import type {ConfigurationService, DeviceTextSize} from 'appium-ios-remotexpc';
+import type {ConfigurationService} from 'appium-ios-remotexpc';
 import {errors} from 'appium/driver.js';
 
 import type {
@@ -7,45 +7,19 @@ import type {
   IncreaseContrastAction,
   IncreaseContrastResult,
 } from '../commands/types.js';
+import {
+  CONTENT_SIZE_BY_CORE_DEVICE_SIZE,
+  CORE_DEVICE_SIZE_BY_CONTENT_SIZE,
+  isContentSizeStep,
+  stepContentSize,
+} from '../content-size-model.js';
 import {supportsApiLevel18, upperFirst} from '../utils/index.js';
-import {RemoteXPCFacade} from './remote-xpc/index.js';
-import {REMOTE_XPC_TUNNEL_SETUP_DOC_LINK, TUNNEL_CREATION_COMMAND} from './remote-xpc/utils.js';
+import type {RemoteXPCFacade} from './remote-xpc/index.js';
 
-/**
- * Dynamic Type sizes in ascending order, mapping the driver's kebab-case command values to the
- * CoreDevice daemon's camelCase names. Order is significant: `increment` / `decrement` step
- * through this list.
- *
- * All twelve sizes the Simulator accepts are present. The five `accessibility-*` ones also need
- * *Larger Accessibility Sizes* enabled on the device; the daemon says so itself when it is off.
- *
- * @see https://github.com/appium/appium-ios-remotexpc/pull/338
- */
-const CORE_DEVICE_SIZE_BY_CONTENT_SIZE = {
-  'extra-small': 'extraSmall',
-  small: 'small',
-  medium: 'medium',
-  large: 'large',
-  'extra-large': 'extraLarge',
-  'extra-extra-large': 'extraExtraLarge',
-  'extra-extra-extra-large': 'extraExtraExtraLarge',
-  'accessibility-medium': 'accessibilityMedium',
-  'accessibility-large': 'accessibilityLarge',
-  'accessibility-extra-large': 'accessibilityExtraLarge',
-  'accessibility-extra-extra-large': 'accessibilityExtraExtraLarge',
-  'accessibility-extra-extra-extra-large': 'accessibilityExtraExtraExtraLarge',
-} as const satisfies Partial<Record<ContentSizeAction, DeviceTextSize>>;
-
-type KnownContentSize = keyof typeof CORE_DEVICE_SIZE_BY_CONTENT_SIZE;
-
-const CONTENT_SIZE_ORDER = Object.keys(CORE_DEVICE_SIZE_BY_CONTENT_SIZE) as KnownContentSize[];
-
-const CONTENT_SIZE_BY_CORE_DEVICE_SIZE = Object.fromEntries(
-  Object.entries(CORE_DEVICE_SIZE_BY_CONTENT_SIZE).map(([contentSize, coreDeviceSize]) => [
-    coreDeviceSize,
-    contentSize,
-  ]),
-) as Record<string, KnownContentSize | undefined>;
+/** Handed to the facade so its message says what specifically could not be done. */
+const NO_FALLBACK_NOTE =
+  'Appearance and accessibility settings on a real device are reachable only over RemoteXPC ' +
+  'and have no fallback, so nothing was changed or read.';
 
 /**
  * Minimal driver surface needed to build a {@link ConfigurationClient}.
@@ -108,15 +82,15 @@ export class ConfigurationClient {
    * Sets the Dynamic Type size.
    *
    * `increment` / `decrement` are emulated by reading the current size and stepping one place
-   * through {@link CONTENT_SIZE_ORDER}; stepping past either end is a no-op.
+   * through {@link CONTENT_SIZES}; stepping past either end is a no-op.
    *
    * @throws {errors.InvalidArgumentError} If the size is not a known Dynamic Type size.
    */
   async setContentSize(size: ContentSizeAction): Promise<void> {
-    if (size === 'increment' || size === 'decrement') {
+    if (isContentSizeStep(size)) {
       return await this.stepContentSize(size);
     }
-    const coreDeviceSize = CORE_DEVICE_SIZE_BY_CONTENT_SIZE[size as KnownContentSize];
+    const coreDeviceSize = CORE_DEVICE_SIZE_BY_CONTENT_SIZE[size];
     if (!coreDeviceSize) {
       throw new errors.InvalidArgumentError(`Unknown content size '${size}'`);
     }
@@ -128,21 +102,12 @@ export class ConfigurationClient {
   private async stepContentSize(direction: 'increment' | 'decrement'): Promise<void> {
     await this.withConfigurationService(async (configurationService) => {
       const coreDeviceSize = await configurationService.getDeviceTextSize();
-      const currentSize = coreDeviceSize ? CONTENT_SIZE_BY_CORE_DEVICE_SIZE[coreDeviceSize] : undefined;
-      if (!currentSize) {
-        throw new Error(
-          `Cannot ${direction} the content size because the current value ` +
-            `(${coreDeviceSize ?? 'none'}) is not one of ${CONTENT_SIZE_ORDER.join(', ')}. ` +
-            `Set an explicit size first.`,
-        );
-      }
-
-      const currentIndex = CONTENT_SIZE_ORDER.indexOf(currentSize);
-      const nextIndex = currentIndex + (direction === 'increment' ? 1 : -1);
-      if (nextIndex < 0 || nextIndex >= CONTENT_SIZE_ORDER.length) {
+      const currentSize = (coreDeviceSize ? CONTENT_SIZE_BY_CORE_DEVICE_SIZE[coreDeviceSize] : undefined) ?? '';
+      const nextSize = stepContentSize(currentSize, direction);
+      if (nextSize === currentSize) {
         return;
       }
-      await configurationService.setDeviceTextSize(CORE_DEVICE_SIZE_BY_CONTENT_SIZE[CONTENT_SIZE_ORDER[nextIndex]]);
+      await configurationService.setDeviceTextSize(CORE_DEVICE_SIZE_BY_CONTENT_SIZE[nextSize]);
     });
   }
 
@@ -151,7 +116,7 @@ export class ConfigurationClient {
     // "not available for this session". There is no fallback for these settings, so the message
     // leads with the command that fixes it.
     if (!(await this.remoteXPCFacade.determineAvailability())) {
-      throw new Error(await buildUnavailableMessage(this.udid));
+      throw new Error(await this.remoteXPCFacade.describeUnavailability(NO_FALLBACK_NOTE));
     }
 
     const configurationService = await this.remoteXPCFacade.requireService('Configuration', (Services) =>
@@ -179,33 +144,4 @@ export function createConfigurationClient(driver: ConfigurationClientHost, actio
     );
   }
   return new ConfigurationClient(driver.device.udid, driver.remoteXPCFacade);
-}
-
-/**
- * Explains why RemoteXPC could not be used, and what to do about it.
- *
- * `determineAvailability` is false both when the optional package is missing and when no tunnel
- * is reachable, which need different fixes - so they are separated here. Module loading is cached
- * process-wide, making the extra probe free after the first call.
- */
-async function buildUnavailableMessage(udid: string): Promise<string> {
-  const noFallbackNote =
-    'Appearance and accessibility settings on a real device are reachable only over RemoteXPC ' +
-    'and have no fallback, so nothing was changed or read.';
-  const isPackageInstalled = Boolean(await RemoteXPCFacade.tryGetServicesStatic(undefined));
-
-  if (!isPackageInstalled) {
-    return (
-      `The optional appium-ios-remotexpc package could not be loaded. ${noFallbackNote}\n` +
-      `Install it, then start a tunnel with:\n` +
-      `  ${TUNNEL_CREATION_COMMAND}   (requires root)\n` +
-      `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
-    );
-  }
-  return (
-    `No RemoteXPC tunnel is available for '${udid}'. Start one with:\n` +
-    `  ${TUNNEL_CREATION_COMMAND}   (requires root)\n` +
-    `${noFallbackNote}\n` +
-    `See ${REMOTE_XPC_TUNNEL_SETUP_DOC_LINK}`
-  );
 }

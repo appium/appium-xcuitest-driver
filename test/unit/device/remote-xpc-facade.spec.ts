@@ -31,6 +31,32 @@ describe('RemoteXPCFacade', function () {
     currentIsDeviceListedInUsbmux = async () => false;
   });
 
+  describe('describeUnavailability', function () {
+    const makeFacade = () =>
+      new RemoteXPCFacade('udid-1', '18.0', {debug: sinon.stub(), warn: sinon.stub(), info: sinon.stub()} as any, true);
+
+    it('tells the caller to start a tunnel when the package is present', async function () {
+      currentTryLoadRemoteXPCModule = async () => ({Services: {}}) as any;
+
+      const message = await makeFacade().describeUnavailability('Some feature has no fallback.');
+
+      assert.match(message, /No RemoteXPC tunnel is available for 'udid-1'/);
+      assert.match(message, /appium driver run xcuitest tunnel-creation/);
+      assert.match(message, /Some feature has no fallback\./);
+      assert.match(message, /remotexpc-tunnels-real-devices/);
+    });
+
+    it('tells the caller to install the package when it cannot be loaded', async function () {
+      currentTryLoadRemoteXPCModule = async () => null;
+
+      const message = await makeFacade().describeUnavailability('Some feature has no fallback.');
+
+      assert.match(message, /appium-ios-remotexpc package could not be loaded/);
+      assert.match(message, /Install it, then start a tunnel with/);
+      assert.match(message, /Some feature has no fallback\./);
+    });
+  });
+
   it('returns false when the session is not eligible', async function () {
     const access = new RemoteXPCFacade(
       'udid-1',

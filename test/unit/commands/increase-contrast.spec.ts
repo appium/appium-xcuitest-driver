@@ -17,6 +17,7 @@ describe('increase contrast commands', function () {
   let startConfigurationService: sinon.SinonStub;
   let requireService: sinon.SinonStub;
   let determineAvailability: sinon.SinonStub;
+  let describeUnavailability: sinon.SinonStub;
 
   beforeEach(function () {
     driver = new XCUITestDriver({} as any);
@@ -40,8 +41,10 @@ describe('increase contrast commands', function () {
         operation({startConfigurationService}),
       );
     determineAvailability = sinon.stub().resolves(true);
+    // The wording lives on the facade now; see remote-xpc-facade.spec.ts for its content.
+    describeUnavailability = sinon.stub().resolves('<facade explains how to start a tunnel>');
     Object.defineProperty(driver, 'remoteXPCFacade', {
-      value: {requireService, determineAvailability},
+      value: {requireService, determineAvailability, describeUnavailability},
       configurable: true,
     });
   });
@@ -120,13 +123,9 @@ describe('increase contrast commands', function () {
     it('should fail with tunnel setup guidance when RemoteXPC is unavailable', async function () {
       asRealDevice();
       determineAvailability.resolves(false);
-      await assert.rejects(
-        driver.mobileGetIncreaseContrast(),
-        (err: Error) =>
-          /no fallback, so nothing was changed or read/.test(err.message) &&
-          /appium driver run xcuitest tunnel-creation/.test(err.message) &&
-          /remotexpc-tunnels-real-devices/.test(err.message),
-      );
+      await assert.rejects(driver.mobileGetIncreaseContrast(), /<facade explains how to start a tunnel>/);
+      // The facade is told what specifically failed, so its message can name it.
+      assert.match(describeUnavailability.firstCall.args[0], /no fallback, so nothing was changed or read/);
       assert.strictEqual(requireService.notCalled, true);
       assert.strictEqual(simulatorGetStub.notCalled, true);
     });
