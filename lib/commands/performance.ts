@@ -177,7 +177,7 @@ export class PerfRecorder {
     this._logger.info(`The performance recording has started. Will timeout in ${this._timeout}ms`);
   }
 
-  async stop(force = false): Promise<string> {
+  async stop(force = false, timeoutMs = STOP_TIMEOUT_MS): Promise<string> {
     if (force) {
       return await this._enforceTermination();
     }
@@ -188,13 +188,13 @@ export class PerfRecorder {
     }
 
     try {
-      await this._process?.stop('SIGINT', STOP_TIMEOUT_MS);
+      await this._process?.stop('SIGINT', timeoutMs);
     } catch {
       // SIGINT was not enough to make the process exit in time. Force-kill it, otherwise
       // it stays orphaned and keeps the simulator's Instruments channel pinned, which then
       // wedges every subsequent command against the same device.
       await this._enforceTermination();
-      throw this._logger.errorWithException(`Performance recording has failed to exit after ${STOP_TIMEOUT_MS}ms`);
+      throw this._logger.errorWithException(`Performance recording has failed to exit after ${timeoutMs}ms`);
     }
     return await this.getZippedReportPath();
   }
@@ -317,6 +317,8 @@ export async function mobileStartPerfRecord(
  * @param headers - Additional headers mapping for multipart http(s) uploads
  * @param fileFieldName - The name of the form field, where the file content BLOB should be stored for http(s) uploads. Defaults to `file`
  * @param formFields - Additional form fields for multipart http(s) uploads
+ * @param timeoutMs - The maximum count of milliseconds to wait until the recording process exits
+ * after it has been asked to stop. Large traces may need longer. 180000 (3 minutes) by default.
  * @returns The resulting file in `.trace` format. This file can either be returned directly as base64-encoded `.zip` archive or uploaded to a remote location (note that such files may be large), _depending on the `remotePath` argument value._ Thereafter, the file may be unarchived and opened with Xcode Developer Tools.
  * @throws {Error} If no performance recording with given profile name/device udid combination
  * has been started before or the resulting .trace file has not been generated properly.
@@ -331,6 +333,7 @@ export async function mobileStopPerfRecord(
   headers?: Record<string, any>,
   fileFieldName?: string,
   formFields?: Record<string, any> | [string, any][],
+  timeoutMs?: number,
 ): Promise<string> {
   if (!this.isFeatureEnabled(PERF_RECORD_FEAT_NAME) && !this.isRealDevice()) {
     throw this.log.errorWithException(PERF_RECORD_SECURITY_MESSAGE);
@@ -355,7 +358,8 @@ export async function mobileStopPerfRecord(
       `No recorder found for performance profile '${profileName}' and device ${this.device.udid}`,
     );
   }
-  const resultPath = await recorder.stop();
+  const stopTimeoutMs = parseInt(String(timeoutMs), 10);
+  const resultPath = await recorder.stop(false, stopTimeoutMs > 0 ? stopTimeoutMs : undefined);
   if (!(await fs.exists(resultPath))) {
     throw this.log.errorWithException(
       `There is no ${DEFAULT_EXT} file found for performance profile '${profileName}' ` +
