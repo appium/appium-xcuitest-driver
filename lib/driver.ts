@@ -172,6 +172,8 @@ const DEFAULT_SETTINGS = {
   // set `reduceMotion` to `null` so that it will be verified but still set either true/false
   reduceMotion: null,
   pageSourceExcludedAttributes: '',
+  // `null` targets the main display
+  currentDisplayId: null,
 };
 // This lock assures, that each driver session does not
 // affect shared resources of the other parallel sessions
@@ -518,6 +520,7 @@ export class XCUITestDriver
   setUrl = generalCommands.setUrl;
   getViewportRect = generalCommands.getViewportRect;
   getScreenInfo = generalCommands.getScreenInfo;
+  mobileGetScreens = generalCommands.mobileGetScreens;
   getStatusBarHeight = generalCommands.getStatusBarHeight;
   getDevicePixelRatio = generalCommands.getDevicePixelRatio;
   mobilePressButton = generalCommands.mobilePressButton;

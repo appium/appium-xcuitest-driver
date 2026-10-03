@@ -41,6 +41,13 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return data;
   };
 
+  // The MJPEG stream and simctl only capture the main display, so they must not
+  // be used as a fallback when another display has been selected
+  const {currentDisplayId} = await this.settings.getSettings();
+  if (currentDisplayId !== undefined && currentDisplayId !== null) {
+    return await getScreenshotFromWDA();
+  }
+
   // if we've specified an mjpeg server, use that
   if (this.mjpegStream) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);

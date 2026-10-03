@@ -98,6 +98,26 @@ as opposed to the default approach using [`allElementsBoundByAccessibilityElemen
 [This Stack Overflow topic](https://stackoverflow.com/questions/49307513/meaning-of-allelementsboundbyaccessibilityelement)
 explains the difference.
 
+## currentDisplayId
+
+| Type | Default |
+| -- | -- |
+| `int` | `null` (the main display) |
+
+The display targeted by screenshots and W3C actions, for devices with more than one display.
+Use a `displayId` returned by [`mobile: getScreens`](./execute-methods.md#mobile-getscreens).
+Display IDs are assigned at runtime, so look them up rather than hardcoding them. Setting an ID
+that no display has is an error. Setting it to `null` goes back to the main display. The value
+is reset for each new session.
+
+While this setting has a value, screenshots are only taken by WebDriverAgent. The MJPEG stream
+and the `simctl` fallback always capture the main display, so they are skipped. If the selected
+display goes away, screenshots and actions fail rather than falling back to the main display.
+
+W3C action coordinates are in points, relative to the selected display in the application's
+current orientation. Page source and element lookup are not affected, because the accessibility
+hierarchy belongs to the application rather than to a display.
+
 ## defaultActiveApplication
 
 | Type | Default |

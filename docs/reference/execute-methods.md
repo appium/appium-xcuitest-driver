@@ -1219,6 +1219,23 @@ The response looks like `{"value":{"statusBarSize":{"width":414,"height":48},"sc
 `statusBarSize` contains status bar dimensions. It is the result of [status bar](https://developer.apple.com/documentation/xctest/xcuielementtypequeryprovider/1500428-statusbars).
 `scale` is [screen scale](https://developer.apple.com/documentation/uikit/uiscreen/1617836-scale).
 
+### mobile: getScreens
+
+Lists the displays of the device under test. Use a returned `displayId` as the
+[`currentDisplayId`](./settings.md#currentdisplayid) setting value to target that display.
+
+#### Returned Result
+
+An array of display entries, where each entry contains:
+
+Name | Type | Description
+--- | --- | ---
+displayId | number | The display identifier
+isMain | boolean | Whether this is the device's main display
+scale | number | The display scale
+bounds | object | `x`, `y`, `width` and `height` of the display in native pixels
+traits | number | Display traits as reported by XCTest
+
 ### mobile: swipe
 
 This gesture performs a simple "swipe" gesture on the particular screen element or
