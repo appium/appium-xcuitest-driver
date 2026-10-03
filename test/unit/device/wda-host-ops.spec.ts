@@ -159,6 +159,7 @@ describe('wda host ops', function () {
       assert.deepStrictEqual(launchApp.firstCall.args[1], {
         environment: {USE_PORT: '8100'},
         terminateExisting: true,
+        activateSuspended: true,
       });
       assert.strictEqual(terminateApp.calledOnceWith('io.appium.wda.xctrunner'), true);
     });
