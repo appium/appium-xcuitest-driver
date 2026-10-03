@@ -1,3 +1,9 @@
+## [12.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.14.0...v12.14.1) (2026-10-03)
+
+### Bug Fixes
+
+* merge tunnel and legacy device discovery ([#2991](https://github.com/appium/appium-xcuitest-driver/issues/2991)) ([77b451f](https://github.com/appium/appium-xcuitest-driver/commit/77b451fe482cf383b802ffde5068ee01f50e1cfd))
+
 ## [12.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.3...v12.14.0) (2026-10-03)
 
 ### Features
