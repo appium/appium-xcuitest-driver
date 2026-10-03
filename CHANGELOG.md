@@ -1,3 +1,9 @@
+## [12.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.3...v12.14.0) (2026-10-03)
+
+### Features
+
+* support simulatorPasteboardAutomaticSync and connect hardware preference for Device Hub ([#2999](https://github.com/appium/appium-xcuitest-driver/issues/2999)) ([3cda6b2](https://github.com/appium/appium-xcuitest-driver/commit/3cda6b203eaa9e497bc998748506ba75bc9e51f3))
+
 ## [12.13.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.2...v12.13.3) (2026-09-28)
 
 ### Bug Fixes

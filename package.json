@@ -1,6 +1,6 @@
 {
   "name": "appium-xcuitest-driver",
-  "version": "12.13.3",
+  "version": "12.14.0",
   "description": "Appium driver for iOS using XCUITest for backend",
   "keywords": [
     "appium",
