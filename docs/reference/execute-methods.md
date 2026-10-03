@@ -2098,13 +2098,44 @@ Name | Type | Description | Example
 latitude | number | Measurement of distance north or south of the Equator. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation). | 50.08546
 longitude | number | Measurement of distance east or west of the prime meridian. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation).  | -20.12345
 
+### mobile: getSimulatedHingeAngle
+
+Reads the current hinge angle in degrees, including changes made outside Appium.
+Requires a WebDriverAgent build with hinge angle reading support and an iOS
+simulator or device with an available hinge. tvOS, watchOS, and devices without
+hinge angle reading support are unsupported.
+
+This command has been tested only on the Duo simulator. We have not tested it on a
+real Duo device and are awaiting feedback on whether hinge angle reading works on
+real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
+for real-device feedback.
+
+The command waits up to five seconds for a valid reading and returns an error if
+none arrives. A reading during folding may reflect an intermediate angle; it does
+not wait for the transition to finish or change the hinge angle or `currentDisplayId`.
+
+#### Returned Result
+
+The current hinge angle as a number in degrees, for example `90.5`.
+
+```js
+const angle = await driver.execute('mobile: getSimulatedHingeAngle');
+```
+
 ### mobile: setSimulatedHingeAngle
 
-Sets the iPhone Duo simulator's hinge angle without interacting with Device Hub.
-Requires the iOS 27.1 Duo simulator and a WebDriverAgent build that supports
-`POST /wda/device/hingeAngle`. Other simulator models and real devices are unsupported.
+Requests a simulated hinge angle change. Requires a WebDriverAgent build with
+simulated hinge angle support and an iOS simulator or device with an available
+hinge. Support is checked at runtime. tvOS, watchOS, and devices without simulated
+hinge angle support are unsupported.
 
-The command returns after dispatching the event. Wait for the expected application
+This command has been tested only on the Duo simulator. We have not tested it on a
+real Duo device and are awaiting feedback on whether simulated hinge angle changes
+work on real Duo devices as well. See [WebDriverAgent PR #1287](https://github.com/appium/WebDriverAgent/pull/1287)
+for real-device feedback.
+
+Successful completion does not guarantee that the requested angle was applied.
+Wait for the expected application
 layout before issuing subsequent commands because folding completes asynchronously.
 It does not change device orientation or the `currentDisplayId` setting. Enumerate
 available screens and select the appropriate display separately.

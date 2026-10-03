@@ -537,6 +537,9 @@ export const executeMethodMap = {
     command: 'mobileSetSimulatedHingeAngle',
     params: {required: ['angle']},
   },
+  'mobile: getSimulatedHingeAngle': {
+    command: 'mobileGetSimulatedHingeAngle',
+  },
   'mobile: setSimulatedLocation': {
     command: 'mobileSetSimulatedLocation',
     params: {

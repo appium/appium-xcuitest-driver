@@ -8,13 +8,49 @@ import {XCUITestDriver} from '../../../lib/driver.js';
 describe('simulated hinge angle', () => {
   afterEach(() => sinon.restore());
 
-  it('maps execute arguments and preserves fractional angles', async () => {
+  it('reads current angles through execute on simulators and real devices', async () => {
     const driver = new XCUITestDriver({} as any);
-    sinon.stub(driver, 'isRealDevice').returns(false);
+    const realDevice = sinon.stub(driver, 'isRealDevice');
+    const proxy = sinon.stub(driver, 'proxyCommand');
+    for (const isReal of [false, true]) {
+      realDevice.returns(isReal);
+      for (const angle of [0, 90.5, 180]) {
+        proxy.resolves(angle);
+        assert.equal(await driver.execute('mobile: getSimulatedHingeAngle', []), angle);
+        assert.deepEqual(proxy.lastCall.args, ['/wda/device/hingeAngle', 'GET']);
+      }
+    }
+  });
+
+  it('rejects reading on unsupported platforms without dispatching', async () => {
+    const driver = new XCUITestDriver({} as any);
+    const proxy = sinon.stub(driver, 'proxyCommand');
+    for (const platformName of ['tvOS', 'watchOS']) {
+      driver.opts.platformName = platformName;
+      await assert.rejects(driver.execute('mobile: getSimulatedHingeAngle', []), /only supported/);
+    }
+    sinon.assert.notCalled(proxy);
+  });
+
+  it('propagates WDA reading errors', async () => {
+    const driver = new XCUITestDriver({} as any);
+    const proxy = sinon.stub(driver, 'proxyCommand');
+    for (const message of ['Hinge angle reading is unavailable', 'Timed out waiting for a valid hinge angle']) {
+      proxy.rejects(new Error(message));
+      await assert.rejects(driver.execute('mobile: getSimulatedHingeAngle', []), {message});
+    }
+  });
+
+  it('maps execute arguments and preserves fractional angles on simulators and real devices', async () => {
+    const driver = new XCUITestDriver({} as any);
+    const realDevice = sinon.stub(driver, 'isRealDevice');
     const proxy = sinon.stub(driver, 'proxyCommand').resolves();
-    for (const angle of [0, 90.5, 180]) {
-      await driver.execute('mobile: setSimulatedHingeAngle', [{angle}]);
-      assert.deepEqual(proxy.lastCall.args, ['/wda/device/hingeAngle', 'POST', {angle}]);
+    for (const isReal of [false, true]) {
+      realDevice.returns(isReal);
+      for (const angle of [0, 90.5, 180]) {
+        await driver.execute('mobile: setSimulatedHingeAngle', [{angle}]);
+        assert.deepEqual(proxy.lastCall.args, ['/wda/device/hingeAngle', 'POST', {angle}]);
+      }
     }
   });
 
@@ -28,12 +64,9 @@ describe('simulated hinge angle', () => {
     sinon.assert.notCalled(proxy);
   });
 
-  it('rejects real devices and other platforms without dispatching', async () => {
+  it('rejects setting on unsupported platforms without dispatching', async () => {
     const driver = new XCUITestDriver({} as any);
-    const realDevice = sinon.stub(driver, 'isRealDevice').returns(true);
     const proxy = sinon.stub(driver, 'proxyCommand');
-    await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), /only supported/);
-    realDevice.returns(false);
     for (const platformName of ['tvOS', 'watchOS']) {
       driver.opts.platformName = platformName;
       await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), /only supported/);

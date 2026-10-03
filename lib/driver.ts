@@ -573,6 +573,7 @@ export class XCUITestDriver
    | IOHID |
    +-------+*/
   mobileSetSimulatedHingeAngle = hingeCommands.mobileSetSimulatedHingeAngle;
+  mobileGetSimulatedHingeAngle = hingeCommands.mobileGetSimulatedHingeAngle;
   mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
   mobilePerformIndigoHidEvent = iohidCommands.mobilePerformIndigoHidEvent;
 
