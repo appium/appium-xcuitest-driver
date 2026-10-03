@@ -59,6 +59,7 @@ import {
   shouldSetInitialSafariUrl,
   type MJpegStream,
 } from './commands/helpers/index.js';
+import * as hingeCommands from './commands/hinge.js';
 import * as increaseContrastCommands from './commands/increase-contrast.js';
 import * as iohidCommands from './commands/iohid.js';
 import * as keyboardCommands from './commands/keyboard.js';
@@ -571,6 +572,7 @@ export class XCUITestDriver
   /*-------+
    | IOHID |
    +-------+*/
+  mobileSetSimulatedHingeAngle = hingeCommands.mobileSetSimulatedHingeAngle;
   mobilePerformIoHidEvent = iohidCommands.mobilePerformIoHidEvent;
   mobilePerformIndigoHidEvent = iohidCommands.mobilePerformIndigoHidEvent;
 

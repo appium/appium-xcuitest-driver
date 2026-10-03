@@ -2098,6 +2098,27 @@ Name | Type | Description | Example
 latitude | number | Measurement of distance north or south of the Equator. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation). | 50.08546
 longitude | number | Measurement of distance east or west of the prime meridian. `null` if [mobile: setSimulatedLocation](#mobile-setsimulatedlocation) has not been called before or the simulated geolocation has been reset by [mobile: resetSimulatedLocation](#mobile-resetsimulatedlocation).  | -20.12345
 
+### mobile: setSimulatedHingeAngle
+
+Sets the iPhone Duo simulator's hinge angle without interacting with Device Hub.
+Requires the iOS 27.1 Duo simulator and a WebDriverAgent build that supports
+`POST /wda/device/hingeAngle`. Other simulator models and real devices are unsupported.
+
+The command returns after dispatching the event. Wait for the expected application
+layout before issuing subsequent commands because folding completes asynchronously.
+It does not change device orientation or the `currentDisplayId` setting. Enumerate
+available screens and select the appropriate display separately.
+
+#### Arguments
+
+Name | Type | Required | Description | Example
+--- | --- | --- | --- | ---
+angle | number | yes | Finite hinge angle in degrees, from `0` (closed) to `180` (fully open). Fractional values are accepted. | 90
+
+```js
+await driver.execute('mobile: setSimulatedHingeAngle', {angle: 90});
+```
+
 ### mobile: setSimulatedLocation
 
 Sets simulated geolocation value.
