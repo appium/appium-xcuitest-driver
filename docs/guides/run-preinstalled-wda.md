@@ -69,9 +69,11 @@ Configuring `appium:prebuiltWDAPath` to the `/Users/<user>/Library/Developer/Xco
 
 !!! note
 
-    You can also remove `Frameworks/Testing.framework` and `Frameworks/libXCTestSwiftSupport.dylib` to reduce the package size
-    because WebDriverAgent doesn't need both. Then, the total size of the WebDriverAgent runner app can be 3MB or less.
+    You can also remove other frameworks such as  `Frameworks/Testing.framework` to reduce the package size
+    because WebDriverAgent doesn't need them. Then, the total size of the WebDriverAgent runner app can be 3MB or less.
     `Testing.framework` is almost 6MB and `libXCTestSwiftSupport.dylib` is 2.6MB with Xcode 16 build.
+    Please check prebuilt packages in [the Appium WebDriverAgent GitHub page](https://github.com/appium/WebDriverAgent/releases)
+    to see what frameworks are needed.
 
 ## Launch the Session
 
