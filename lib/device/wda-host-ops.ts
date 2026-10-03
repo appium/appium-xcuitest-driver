@@ -148,9 +148,12 @@ function stringifyLaunchEnvironment(env: WdaLaunchEnvironment): Record<string, s
 function createSimulatorHostOps(driver: XCUITestDriver): SimulatorHostOps {
   return {
     async launchPreinstalled({bundleId, env}) {
+      // XCTest backgrounds a foreground runner with a Home-button press, which can
+      // stall on iPhone Duo. Start in the background, as xcodebuild does.
       await (driver.device as Simulator).launchApp(bundleId, {
         environment: stringifyLaunchEnvironment(env),
         terminateExisting: true,
+        activateSuspended: true,
       });
     },
 
