@@ -1,3 +1,9 @@
+## [12.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.14.1...v12.15.0) (2026-10-03)
+
+### Features
+
+* support launching WDA on Duo ([#3000](https://github.com/appium/appium-xcuitest-driver/issues/3000)) ([a097de0](https://github.com/appium/appium-xcuitest-driver/commit/a097de0798995ffff1ee40882bab6a0e6eb430dd))
+
 ## [12.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.14.0...v12.14.1) (2026-10-03)
 
 ### Bug Fixes
