@@ -463,6 +463,7 @@ method | string | no | The http multipart upload method name. Only works if `rem
 headers | dict | no | Additional headers mapping for multipart http(s) uploads | {'User-Agent': 'Myserver 1.0'}
 fileFieldName | string | no | The name of the form field, where the file content BLOB should be stored for http(s) uploads. `file` by default | payload
 formFields | dict or array | no | Additional form fields for multipart http(s) uploads | {'field2': 'value2'}
+timeoutMs | number | no | The maximum count of milliseconds to wait until the recording process exits after it has been asked to stop. Large traces may need longer to be finalized. The recording is killed and its data discarded if it does not exit in time. `180000`ms by default (3 minutes) | `600000`
 
 #### Returned Result
 
