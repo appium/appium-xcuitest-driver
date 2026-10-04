@@ -2118,10 +2118,6 @@ not wait for the transition to finish or change the hinge angle or `currentDispl
 
 The current hinge angle as a number in degrees, for example `90.5`.
 
-```js
-const angle = await driver.execute('mobile: getSimulatedHingeAngle');
-```
-
 ### mobile: setSimulatedHingeAngle
 
 Requests a simulated hinge angle change. Requires a WebDriverAgent build with
@@ -2145,10 +2141,6 @@ available screens and select the appropriate display separately.
 Name | Type | Required | Description | Example
 --- | --- | --- | --- | ---
 angle | number | yes | Finite hinge angle in degrees, from `0` (closed) to `180` (fully open). Fractional values are accepted. | 90
-
-```js
-await driver.execute('mobile: setSimulatedHingeAngle', {angle: 90});
-```
 
 ### mobile: setSimulatedLocation
 
