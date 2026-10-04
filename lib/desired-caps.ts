@@ -343,6 +343,9 @@ export const desiredCapConstraints = {
   forceAppLaunch: {
     isBoolean: true,
   },
+  forceAppUnderTest: {
+    isBoolean: true,
+  },
   useNativeCachingStrategy: {
     isBoolean: true,
   },
