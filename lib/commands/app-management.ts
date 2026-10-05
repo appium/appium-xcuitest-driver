@@ -105,23 +105,30 @@ export async function mobileRemoveApp(this: XCUITestDriver, bundleId: string): P
  * @param bundleId - The bundle identifier of the application to be launched
  * @param args - One or more command line arguments for the app. If the app is already running then this argument is ignored.
  * @param environment - Environment variables mapping for the app. If the app is already running then this argument is ignored.
+ * @param asAppUnderTest - Whether to make the app the application under test of the current WebDriverAgent session,
+ * the same way as if it was launched on session startup. Defaults to `false`.
  */
 export async function mobileLaunchApp(
   this: XCUITestDriver,
   bundleId: string,
   args?: string | string[],
   environment?: Record<string, any>,
+  asAppUnderTest?: boolean,
 ): Promise<void> {
   const launchOptions: {
     bundleId: string;
     arguments?: any[];
     environment?: any;
+    asAppUnderTest?: boolean;
   } = {bundleId};
   if (args) {
     launchOptions.arguments = Array.isArray(args) ? args : [args];
   }
   if (environment) {
     launchOptions.environment = environment;
+  }
+  if (asAppUnderTest) {
+    launchOptions.asAppUnderTest = true;
   }
   await this.proxyCommand('/wda/apps/launch', 'POST', launchOptions);
 }

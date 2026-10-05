@@ -382,10 +382,8 @@ async function createWdaSession(driver: XCUITestDriver, bundleId?: string, proce
     env.TZ = driver.opts.appTimeZone;
   }
 
-  const shouldLaunchApp = driver.opts.autoLaunch !== false;
-  const isAppUnderTest = shouldLaunchApp || driver.opts.forceAppUnderTest === true;
   const wdaCaps: StringRecord = {
-    bundleId: isAppUnderTest ? bundleId : undefined,
+    bundleId: driver.opts.autoLaunch === false ? undefined : bundleId,
     arguments: args,
     environment: env,
     eventloopIdleDelaySec: driver.opts.wdaEventloopIdleDelay ?? 0,
@@ -404,9 +402,6 @@ async function createWdaSession(driver: XCUITestDriver, bundleId?: string, proce
       driver.opts.forceSimulatorSoftwareKeyboardPresence ??
       (driver.opts.connectHardwareKeyboard === true ? false : true),
   };
-  if (isAppUnderTest && !shouldLaunchApp) {
-    wdaCaps.shouldLaunchApp = false;
-  }
   if (driver.opts.autoAcceptAlerts) {
     wdaCaps.defaultAlertAction = 'accept';
   } else if (driver.opts.autoDismissAlerts) {
