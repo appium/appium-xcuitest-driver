@@ -235,6 +235,9 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
   const wss = new WebSocketServer({
     noServer: true,
   });
+  // Tracks every currently connected listener socket so log lines get
+  // broadcast to all of them, not just the one that connected first.
+  const connectedSockets = new Set<WebSocket>();
   wss.on('connection', (ws, req) => {
     if (req) {
       const remoteIp = isEmpty(req.headers['x-forwarded-for'])
@@ -245,23 +248,27 @@ export async function mobileStartLogsBroadcast(this: XCUITestDriver): Promise<vo
       this.log.debug('Established a new system logs listener web socket connection');
     }
 
+    connectedSockets.add(ws);
     if (!this._syslogWebsocketListener) {
       this._syslogWebsocketListener = (logRecord: {message: string}) => {
-        if (ws?.readyState === WebSocket.OPEN) {
-          ws.send(logRecord.message);
+        for (const socket of connectedSockets) {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(logRecord.message);
+          }
         }
       };
+      this.logs.syslog?.on('output', this._syslogWebsocketListener);
     }
-    this.logs.syslog?.on('output', this._syslogWebsocketListener);
 
     ws.on('close', (code: number, reason: Buffer) => {
-      if (this._syslogWebsocketListener) {
+      connectedSockets.delete(ws);
+      if (connectedSockets.size === 0 && this._syslogWebsocketListener) {
         this.logs.syslog?.removeListener('output', this._syslogWebsocketListener);
         this._syslogWebsocketListener = null;
       }
 
       let closeMsg = 'System logs listener web socket is closed.';
-      if (!isEmpty(code)) {
+      if (code) {
         closeMsg += ` Code: ${code}.`;
       }
       if (!isEmpty(reason)) {
