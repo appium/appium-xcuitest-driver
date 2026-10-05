@@ -237,7 +237,17 @@ export const executeMethodMap = {
   'mobile: stopPerfRecord': {
     command: 'mobileStopPerfRecord',
     params: {
-      optional: ['remotePath', 'user', 'pass', 'method', 'profileName', 'headers', 'fileFieldName', 'formFields'],
+      optional: [
+        'remotePath',
+        'user',
+        'pass',
+        'method',
+        'profileName',
+        'headers',
+        'fileFieldName',
+        'formFields',
+        'timeoutMs',
+      ],
     },
   },
   'mobile: installCertificate': {
