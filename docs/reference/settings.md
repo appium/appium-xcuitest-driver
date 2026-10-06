@@ -234,11 +234,15 @@ smaller value may help if your tests are failing due to typing errors.
 
 | Type | Default |
 | -- | -- |
-| `boolean` | `false` |
+| `boolean` | `true` |
 
 Whether to automatically normalize the orientation of MJPEG frames so that they match the current
 device orientation. Affects only the MJPEG screenshots broadcaster and does not change regular
 screenshot responses. See the [MJPEG guide](../guides/mjpeg.md) for more details.
+
+When using `appium:mjpegScreenshotUrl`, explicitly setting `mjpegFixOrientation` to `true`
+also applies JPEG EXIF orientation before the driver converts cached frames to PNG screenshots.
+If the setting is omitted or explicitly `false`, conversion preserves its previous behavior.
 
 ## mjpegServerFramerate
 

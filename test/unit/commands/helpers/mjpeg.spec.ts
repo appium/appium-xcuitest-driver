@@ -113,7 +113,16 @@ describe('mjpeg helpers', function () {
         framesToSend = [source];
         stream = new MJpegStream(serverUrl);
         await stream.start();
-        const png = await stream.lastChunkPNG();
+        // Unconfigured and explicitly disabled conversion retain the original pixels.
+        for (const fixOrientation of [undefined, false]) {
+          const legacyPng = await stream.lastChunkPNG(fixOrientation);
+          assert.ok(legacyPng);
+          assert.deepEqual(await sharp(legacyPng).raw().toBuffer(), await sharp(source).raw().toBuffer());
+          const legacyMetadata: sharp.Metadata = await sharp(legacyPng).metadata();
+          assert.equal(legacyMetadata.width, 40);
+          assert.equal(legacyMetadata.height, 20);
+        }
+        const png = Buffer.from((await stream.lastChunkPNGBase64(true))!, 'base64');
         assert.ok(png);
         const metadata = await sharp(png).metadata();
         assert.equal(metadata.width, orientation >= 5 ? 20 : 40);
