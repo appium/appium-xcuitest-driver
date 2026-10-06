@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import http, {type Server} from 'node:http';
 import {describe, it, before, beforeEach, afterEach} from 'node:test';
 
-import sharp from 'sharp';
+import sharp, {type Metadata} from 'sharp';
 import {createSandbox} from 'sinon';
 import type sinon from 'sinon';
 
@@ -118,7 +118,7 @@ describe('mjpeg helpers', function () {
           const legacyPng = await stream.lastChunkPNG(fixOrientation);
           assert.ok(legacyPng);
           assert.deepEqual(await sharp(legacyPng).raw().toBuffer(), await sharp(source).raw().toBuffer());
-          const legacyMetadata: sharp.Metadata = await sharp(legacyPng).metadata();
+          const legacyMetadata: Metadata = await sharp(legacyPng).metadata();
           assert.equal(legacyMetadata.width, 40);
           assert.equal(legacyMetadata.height, 20);
         }
