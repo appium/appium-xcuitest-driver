@@ -108,7 +108,8 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
   const screenshot = await this.getScreenshot();
   // if we don't have a status bar, there's nothing to crop, so we can avoid
   // extra calls and return straight away
-  if ((await this.getStatusBarHeight()) === 0) {
+  const {scale, statusBarSize} = await this.getScreenInfo();
+  if (statusBarSize.height === 0) {
     return screenshot;
   }
 
@@ -118,15 +119,16 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
     throw new errors.UnableToCaptureScreen('The device screenshot is empty');
   }
   this.log.debug(`Screenshot dimensions: ${width}x${height}`);
-  const region = await this.getViewportRect();
-  if (region.width + region.left > width) {
-    this.log.info('Viewport region exceeds screenshot width, adjusting region to fit');
-    region.width = width - region.left;
+  // A screenshot covers the selected display, which need not have the same
+  // dimensions as the active app window. Preserve its full width and bottom edge,
+  // including fractional-scale rounding in the captured image.
+  const top = Math.trunc(statusBarSize.height * scale);
+  if (!Number.isFinite(top) || top < 0 || top >= height) {
+    throw new errors.UnableToCaptureScreen(
+      `Status bar height ${top} is outside the screenshot bounds (${width}x${height})`,
+    );
   }
-  if (region.height + region.top > height) {
-    this.log.info('Viewport region exceeds screenshot height, adjusting region to fit');
-    region.height = height - region.top;
-  }
+  const region = {left: 0, top, width, height: height - top};
   this.log.debug(`Calculated viewport rect: ${JSON.stringify(region)}`);
   return await cropBase64Image(screenshot, region);
 }

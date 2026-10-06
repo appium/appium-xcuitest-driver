@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {errors} from 'appium/driver.js';
+import sharp from 'sharp';
 import sinon from 'sinon';
 
 import {XCUITestDriver} from '../../../lib/driver.js';
@@ -80,6 +81,65 @@ describe('screenshots commands', function () {
         assert.strictEqual(proxyStub.firstCall.args[0], '/screenshot');
         assert.strictEqual(proxyStub.firstCall.args[1], 'GET');
       });
+    });
+  });
+  describe('getViewportScreenshot', function () {
+    async function screenshot(width: number, height: number): Promise<string> {
+      return (
+        await sharp({create: {width, height, channels: 3, background: '#abcdef'}})
+          .png()
+          .toBuffer()
+      ).toString('base64');
+    }
+
+    it('should crop each display using fresh geometry and the captured image bounds', async function () {
+      // The image is one pixel larger than the logical window scaled by two.
+      // Cropping must retain the right and bottom edges, including in a smaller app window.
+      const capture = sinon.stub(driver, 'getScreenshot');
+      sinon.stub(driver, 'getWindowRect').resolves({x: 0, y: 0, width: 400, height: 600});
+      for (const [width, height, scale, bar] of [
+        [1398, 2034, 3, 20],
+        [1903, 1339, 2, 24.5],
+        [1903, 1339, 2, 0],
+        [1398, 2034, 3, 24],
+      ]) {
+        const original = await screenshot(width, height);
+        capture.resolves(original);
+        proxyStub.withArgs('/wda/screen', 'GET').resolves({scale, statusBarSize: {width: width / scale, height: bar}});
+        proxyStub.resetHistory();
+        const result = await driver.getViewportScreenshot();
+        const expected = await sharp(Buffer.from(original, 'base64'))
+          .extract({left: 0, top: Math.trunc(bar * scale), width, height: height - Math.trunc(bar * scale)})
+          .raw()
+          .toBuffer();
+        assert.deepEqual(await sharp(Buffer.from(result, 'base64')).raw().toBuffer(), expected);
+        const dimensions = await sharp(Buffer.from(result, 'base64')).metadata();
+        assert.equal(dimensions.width, width);
+        assert.equal(dimensions.height, height - Math.trunc(bar * scale));
+        if (!bar) {
+          assert.equal(result, original);
+        }
+        sinon.assert.calledOnce(proxyStub);
+      }
+    });
+
+    it('should reject a crop that removes the whole image', async function () {
+      sinon.stub(driver, 'getScreenshot').resolves(await screenshot(10, 10));
+      proxyStub.resolves({scale: 2, statusBarSize: {width: 5, height: 5}});
+      await assert.rejects(driver.getViewportScreenshot(), errors.UnableToCaptureScreen);
+    });
+
+    it('should return web viewport screenshots without requesting native geometry', async function () {
+      sinon.stub(driver, 'isWebContext').returns(true);
+      const capture = sinon.stub(driver, '_webExecutionBackend').get(() => ({
+        screenshot: async () => 'web screenshot',
+      }));
+      try {
+        assert.equal(await driver.getViewportScreenshot(), 'web screenshot');
+        sinon.assert.notCalled(proxyStub);
+      } finally {
+        capture.restore();
+      }
     });
   });
 });
