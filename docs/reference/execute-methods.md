@@ -2339,6 +2339,13 @@ utterance | string or null | The current spoken utterance, or `null` | Button
 
 Starts recording the device screen to an MPEG-4 file using **ffmpeg** and the WebDriverAgent **MJPEG** stream. Equivalent to [`startRecordingScreen`](./commands.md#startrecordingscreen) over HTTP. Requires `ffmpeg` on `PATH`. Audio is not recorded.
 
+With software recording and no explicit `videoFilters` or `videoScale`, the first MJPEG frame
+sets the output canvas (rounded up to even dimensions). Later frames fit this canvas with their
+aspect ratio preserved and black padding, including when folding a device or switching displays.
+This requires an initial MJPEG frame and the driver’s optional `sharp` image module before ffmpeg
+starts. Explicit filters/scaling and hardware
+acceleration retain their configured behavior; configure a fixed canvas in your filters if needed.
+
 #### Arguments
 
 Pass the same fields as for HTTP [`startRecordingScreen`](./commands.md#startrecordingscreen) `options`, as **top-level** keys on the execute argument object (they are forwarded into one options object server-side). Example:

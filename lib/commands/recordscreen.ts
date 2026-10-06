@@ -5,7 +5,9 @@ import {waitForCondition} from 'asyncbox';
 import {SubProcess} from 'teen_process';
 
 import type {XCUITestDriver} from '../driver.js';
+import {requireSharp} from '../utils/index.js';
 import {encodeBase64OrUpload} from './helpers/index.js';
+import {MJpegStream} from './helpers/mjpeg.js';
 import type {StartRecordingScreenOptions, StopRecordingScreenOptions} from './types.js';
 
 /**
@@ -179,15 +181,38 @@ export class ScreenRecorder {
       args.push('-hwaccel_output_format', hwaccelOutputFormat);
     }
 
-    //Parameter `-r` is optional. See details: https://github.com/appium/appium/issues/12067
-    if ((videoFps && videoType === 'libx264') || videoTypeHWAccel) {
-      args.push('-r', String(videoFps));
-    }
+    // Raw MJPEG has no timestamps. Use the broadcaster's configured frame rate
+    // for every codec; ffmpeg otherwise assumes 25 fps.
+    args.push('-r', String(videoFps || DEFAULT_FPS));
     const parsed = new URL(remoteUrl);
-    args.push('-i', `${parsed.protocol}//${parsed.hostname}:${remotePort}`);
+    const inputUrl = `${parsed.protocol}//${parsed.hostname}:${remotePort}`;
+    args.push('-i', inputUrl);
 
     if (videoFilters || videoScale) {
       args.push('-vf', videoFilters || `${scaleFilterHWAccel || 'scale'}=${videoScale}`);
+    } else if (!hardwareAcceleration) {
+      // Encoders keep their initial dimensions. Fit later display sizes into a
+      // fixed canvas instead of letting ffmpeg stretch them to the initial size.
+      const stream = new MJpegStream(inputUrl);
+      try {
+        await stream.start(Math.min(timeoutMs, 10000));
+        const frame = stream.lastChunkBase64;
+        if (!frame) {
+          throw new Error('The MJPEG stream did not provide a frame for recording dimensions');
+        }
+        const sharp = await requireSharp();
+        const {width, height} = (await sharp(Buffer.from(frame, 'base64')).metadata()).autoOrient;
+        // Even canvas dimensions also work with yuv420p encoders.
+        const canvasWidth = Math.ceil(width / 2) * 2;
+        const canvasHeight = Math.ceil(height / 2) * 2;
+        args.push(
+          '-vf',
+          `scale=${canvasWidth}:${canvasHeight}:force_original_aspect_ratio=decrease:force_divisible_by=2,` +
+            `pad=${canvasWidth}:${canvasHeight}:(ow-iw)/2:(oh-ih)/2,setsar=1`,
+        );
+      } finally {
+        stream.stop();
+      }
     }
 
     // Quicktime compatibility via pixelFormat: 'yuv420p'
