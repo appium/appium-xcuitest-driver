@@ -140,7 +140,7 @@ export class MJpegStream extends Writable {
     }
     try {
       const sharp = await requireSharp();
-      return await sharp(chunk).png().toBuffer();
+      return await sharp(chunk).autoOrient().png().toBuffer();
     } catch (err: any) {
       log.warn(`Cannot convert MJPEG chunk to PNG: ${err.message}`);
       return null;

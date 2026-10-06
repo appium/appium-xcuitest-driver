@@ -234,7 +234,7 @@ smaller value may help if your tests are failing due to typing errors.
 
 | Type | Default |
 | -- | -- |
-| `boolean` | `true` |
+| `boolean` | `false` |
 
 Whether to automatically normalize the orientation of MJPEG frames so that they match the current
 device orientation. Affects only the MJPEG screenshots broadcaster and does not change regular

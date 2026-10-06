@@ -93,6 +93,37 @@ describe('mjpeg helpers', function () {
       assert.strictEqual(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
     });
 
+    for (const orientation of [1, 3, 6, 8]) {
+      it(`should apply EXIF orientation ${orientation} before dropping JPEG metadata`, async function () {
+        const source = await sharp({
+          create: {width: 40, height: 20, channels: 3, background: 'red'},
+        })
+          .composite([
+            {
+              input: await sharp({create: {width: 20, height: 20, channels: 3, background: 'blue'}})
+                .png()
+                .toBuffer(),
+              left: 0,
+              top: 0,
+            },
+          ])
+          .withMetadata({orientation})
+          .jpeg()
+          .toBuffer();
+        framesToSend = [source];
+        stream = new MJpegStream(serverUrl);
+        await stream.start();
+        const png = await stream.lastChunkPNG();
+        assert.ok(png);
+        const metadata = await sharp(png).metadata();
+        assert.equal(metadata.width, orientation >= 5 ? 20 : 40);
+        assert.equal(metadata.height, orientation >= 5 ? 40 : 20);
+        assert.equal(metadata.orientation, undefined);
+        const angle = {1: 0, 3: 180, 6: 90, 8: 270}[orientation];
+        assert.deepEqual(await sharp(png).raw().toBuffer(), await sharp(source).rotate(angle).raw().toBuffer());
+      });
+    }
+
     it('should keep track of newer frames as they arrive', {timeout: UNIT_LONG_TIMEOUT_MS}, async function () {
       framesToSend = [jpeg, jpeg2];
       frameIntervalMs = 20;
