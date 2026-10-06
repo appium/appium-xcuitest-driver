@@ -1,3 +1,27 @@
+## [12.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.14.1...v12.15.0) (2026-10-03)
+
+### Features
+
+* support launching WDA on Duo ([#3000](https://github.com/appium/appium-xcuitest-driver/issues/3000)) ([a097de0](https://github.com/appium/appium-xcuitest-driver/commit/a097de0798995ffff1ee40882bab6a0e6eb430dd))
+
+## [12.14.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.14.0...v12.14.1) (2026-10-03)
+
+### Bug Fixes
+
+* merge tunnel and legacy device discovery ([#2991](https://github.com/appium/appium-xcuitest-driver/issues/2991)) ([77b451f](https://github.com/appium/appium-xcuitest-driver/commit/77b451fe482cf383b802ffde5068ee01f50e1cfd))
+
+## [12.14.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.3...v12.14.0) (2026-10-03)
+
+### Features
+
+* support simulatorPasteboardAutomaticSync and connect hardware preference for Device Hub ([#2999](https://github.com/appium/appium-xcuitest-driver/issues/2999)) ([3cda6b2](https://github.com/appium/appium-xcuitest-driver/commit/3cda6b203eaa9e497bc998748506ba75bc9e51f3))
+
+## [12.13.3](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.2...v12.13.3) (2026-09-28)
+
+### Bug Fixes
+
+* bump WDA for package creation with Xcode 26+ ([#2996](https://github.com/appium/appium-xcuitest-driver/issues/2996)) ([b9750ba](https://github.com/appium/appium-xcuitest-driver/commit/b9750ba58bb490895bc0e1f5f0f9c027617c30b2))
+
 ## [12.13.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.13.1...v12.13.2) (2026-09-23)
 
 ### Bug Fixes
