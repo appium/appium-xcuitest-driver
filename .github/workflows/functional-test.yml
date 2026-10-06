@@ -131,7 +131,7 @@ jobs:
           PLATFORM_VERSION: ${{ steps.simTarget.outputs.platformVersion }}
       - name: Prepare simulator
         id: prepareSimulator
-        uses: futureware-tech/simulator-action@v5
+        uses: futureware-tech/simulator-action@v6
         with:
           model: '${{ steps.simTarget.outputs.deviceName }}'
           os: '${{ steps.simTarget.outputs.os }}'
