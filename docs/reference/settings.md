@@ -118,6 +118,10 @@ W3C action coordinates are in points, relative to the selected display in the ap
 current orientation. Page source and element lookup are not affected, because the accessibility
 hierarchy belongs to the application rather than to a display.
 
+After changing this setting, screenshots bypass the MJPEG screenshot cache for the rest of the
+session, including after resetting the setting to `null`. MJPEG frames do not identify their
+source display, so buffered frames cannot safely be reused after a display change.
+
 ## defaultActiveApplication
 
 | Type | Default |

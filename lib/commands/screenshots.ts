@@ -48,8 +48,9 @@ export async function getScreenshot(this: XCUITestDriver): Promise<string> {
     return await getScreenshotFromWDA();
   }
 
-  // if we've specified an mjpeg server, use that
-  if (this.mjpegStream) {
+  // Frames carry no display identity. Once selection changes, even resetting to
+  // the main display cannot safely reuse this stream (old frames may be queued).
+  if (this.mjpegStream && !this.hasUpdatedDisplaySelection) {
     this.log.info(`mjpeg video stream provided, returning latest frame as screenshot`);
     const data = await this.mjpegStream.lastChunkPNGBase64();
     if (data) {

@@ -99,6 +99,18 @@ describe('screenshots commands', function () {
         sinon.assert.notCalled(getScreenshotStub);
       });
 
+      it('should capture a fresh main-display image after resetting display selection', async function () {
+        const lastChunkStub = sinon.stub().resolves('previous-inner-display');
+        driver.mjpegStream = {lastChunkPNGBase64: lastChunkStub} as any;
+        await driver.updateSettings({currentDisplayId: null});
+        proxyStub.reset();
+        proxyStub.resolves(base64PortraitResponse);
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.notCalled(lastChunkStub);
+        sinon.assert.calledTwice(proxyStub);
+      });
+
       it('should restore the fallback after the setting is cleared', async function () {
         await driver.updateSettings({currentDisplayId: null});
         proxyStub.reset();
