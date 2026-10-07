@@ -1,3 +1,9 @@
+## [12.15.2](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.1...v12.15.2) (2026-10-07)
+
+### Bug Fixes
+
+* preserve app iframe selection after native tap calibration ([#3015](https://github.com/appium/appium-xcuitest-driver/issues/3015)) ([9de5422](https://github.com/appium/appium-xcuitest-driver/commit/9de5422ec99291e04566eba39b28a4f968721f8b))
+
 ## [12.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.0...v12.15.1) (2026-10-07)
 
 ### Bug Fixes
