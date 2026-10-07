@@ -2103,7 +2103,8 @@ longitude | number | Measurement of distance east or west of the prime meridian.
 Reads the current hinge angle in degrees, including changes made outside Appium.
 Requires a WebDriverAgent build with hinge angle reading support and an iOS
 simulator or device with an available hinge. tvOS, watchOS, and devices without
-hinge angle reading support are unsupported.
+hinge angle reading support are unsupported. WDA determines support at runtime;
+the driver forwards the request and propagates WDA errors.
 
 This command has been tested only on the Duo simulator. We have not tested it on a
 real Duo device and are awaiting feedback on whether hinge angle reading works on
@@ -2122,8 +2123,9 @@ The current hinge angle as a number in degrees, for example `90.5`.
 
 Requests a simulated hinge angle change. Requires a WebDriverAgent build with
 simulated hinge angle support and an iOS simulator or device with an available
-hinge. Support is checked at runtime. tvOS, watchOS, and devices without simulated
-hinge angle support are unsupported.
+hinge. WDA checks platform and device support at runtime; the driver validates
+`angle`, forwards the request, and propagates WDA errors. tvOS, watchOS, and devices
+without simulated hinge angle support are unsupported by the current WDA implementation.
 
 This command has been tested only on the Duo simulator. We have not tested it on a
 real Duo device and are awaiting feedback on whether simulated hinge angle changes

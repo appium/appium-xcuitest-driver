@@ -22,14 +22,25 @@ describe('simulated hinge angle', () => {
     }
   });
 
-  it('rejects reading on unsupported platforms without dispatching', async () => {
+  it('delegates platform and device support checks to WDA', async () => {
     const driver = new XCUITestDriver({} as any);
-    const proxy = sinon.stub(driver, 'proxyCommand');
-    for (const platformName of ['tvOS', 'watchOS']) {
+    const realDevice = sinon.stub(driver, 'isRealDevice');
+    const wdaError = new Error('Hinge is unavailable on this device');
+    const proxy = sinon.stub(driver, 'proxyCommand').rejects(wdaError);
+    for (const platformName of ['iOS', 'tvOS', 'watchOS']) {
       driver.opts.platformName = platformName;
-      await assert.rejects(driver.execute('mobile: getSimulatedHingeAngle', []), /only supported/);
+      for (const isReal of [false, true]) {
+        realDevice.returns(isReal);
+        await assert.rejects(driver.execute('mobile: getSimulatedHingeAngle', []), (err) => err === wdaError);
+        assert.deepEqual(proxy.lastCall.args, ['/wda/device/hingeAngle', 'GET']);
+        await assert.rejects(
+          driver.execute('mobile: setSimulatedHingeAngle', [{angle: 90}]),
+          (err) => err === wdaError,
+        );
+        assert.deepEqual(proxy.lastCall.args, ['/wda/device/hingeAngle', 'POST', {angle: 90}]);
+      }
     }
-    sinon.assert.notCalled(proxy);
+    assert.equal(proxy.callCount, 12);
   });
 
   it('propagates WDA reading errors', async () => {
@@ -61,16 +72,6 @@ describe('simulated hinge angle', () => {
       await assert.rejects(driver.mobileSetSimulatedHingeAngle(angle as any), /finite number/);
     }
     await assert.rejects(driver.execute('mobile: setSimulatedHingeAngle', [{}]));
-    sinon.assert.notCalled(proxy);
-  });
-
-  it('rejects setting on unsupported platforms without dispatching', async () => {
-    const driver = new XCUITestDriver({} as any);
-    const proxy = sinon.stub(driver, 'proxyCommand');
-    for (const platformName of ['tvOS', 'watchOS']) {
-      driver.opts.platformName = platformName;
-      await assert.rejects(driver.mobileSetSimulatedHingeAngle(90), /only supported/);
-    }
     sinon.assert.notCalled(proxy);
   });
 
