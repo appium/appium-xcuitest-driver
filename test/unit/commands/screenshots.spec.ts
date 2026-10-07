@@ -137,12 +137,20 @@ describe('screenshots commands', function () {
     });
 
     it('should return the original screenshot when status bar geometry cannot be cropped', async function () {
-      const original = await screenshot(10, 10);
+      // Use a distinct encoding so an accidental full-image crop/re-encode
+      // cannot pass the byte-for-byte preservation assertion.
+      const original = (
+        await sharp(Buffer.from(await screenshot(10, 10), 'base64'))
+          .png({compressionLevel: 0})
+          .toBuffer()
+      ).toString('base64');
       sinon.stub(driver, 'getScreenshot').resolves(original);
       for (const [scale, bar] of [
         [2, 5],
         [2, 6],
         [2, -1],
+        [2, -0.1],
+        [0.5, -1],
         [2, NaN],
         [Infinity, 1],
       ]) {

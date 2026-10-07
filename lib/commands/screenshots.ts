@@ -124,13 +124,14 @@ export async function getViewportScreenshot(this: XCUITestDriver): Promise<strin
   // A screenshot covers the selected display, which need not have the same
   // dimensions as the active app window. Preserve its full width and bottom edge,
   // including fractional-scale rounding in the captured image.
-  const top = Math.trunc(statusBarSize.height * scale);
-  if (!Number.isFinite(top) || top < 0 || top >= height) {
+  const cropHeight = statusBarSize.height * scale;
+  if (!Number.isFinite(cropHeight) || cropHeight < 0 || cropHeight >= height) {
     this.log.info(
-      `Status bar height ${top} is outside the screenshot bounds (${width}x${height}); returning the uncropped screenshot`,
+      `Status bar height ${cropHeight} is outside the screenshot bounds (${width}x${height}); returning the uncropped screenshot`,
     );
     return screenshot;
   }
+  const top = Math.trunc(cropHeight);
   const region = {left: 0, top, width, height: height - top};
   this.log.debug(`Calculated viewport rect: ${JSON.stringify(region)}`);
   return await cropBase64Image(screenshot, region);
