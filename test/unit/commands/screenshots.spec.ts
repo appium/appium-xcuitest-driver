@@ -23,6 +23,19 @@ describe('screenshots commands', function () {
   });
 
   describe('getScreenshot', function () {
+    it('should only correct MJPEG orientation when explicitly enabled', async function () {
+      const convert = sinon.stub().resolves(base64PortraitResponse);
+      driver.mjpegStream = {lastChunkPNGBase64: convert} as any;
+      for (const setting of [undefined, true, false]) {
+        if (setting !== undefined) {
+          await driver.updateSettings({mjpegFixOrientation: setting});
+        }
+        convert.resetHistory();
+        assert.equal(await driver.getScreenshot(), base64PortraitResponse);
+        sinon.assert.calledOnceWithExactly(convert, setting === true);
+      }
+    });
+
     describe('simulator', function () {
       let getScreenshotStub: sinon.SinonStub;
 

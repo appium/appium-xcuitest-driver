@@ -1,3 +1,10 @@
+## [12.15.1](https://github.com/appium/appium-xcuitest-driver/compare/v12.15.0...v12.15.1) (2026-10-07)
+
+### Bug Fixes
+
+* honor explicit MJPEG screenshot orientation correction ([#3008](https://github.com/appium/appium-xcuitest-driver/issues/3008)) ([4205137](https://github.com/appium/appium-xcuitest-driver/commit/42051377b3420655dc0f9b3b762df84bcf0e4c66))
+* include native geometry in web calibration cache ([#3009](https://github.com/appium/appium-xcuitest-driver/issues/3009)) ([c73578f](https://github.com/appium/appium-xcuitest-driver/commit/c73578fac918e8e3e1dadff8f0d62b8f3404a761))
+
 ## [12.15.0](https://github.com/appium/appium-xcuitest-driver/compare/v12.14.1...v12.15.0) (2026-10-03)
 
 ### Features
