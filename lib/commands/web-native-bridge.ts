@@ -318,10 +318,11 @@ export async function nativeWebTap(this: XCUITestDriver, el: Element | string): 
   }
   this.log.warn('Unable to do simple native web tap. Attempting to convert coordinates');
 
-  const [size, coordinates] = (await Promise.all([
-    this.executeAtom('get_size', [atomsElement]),
-    this.executeAtom('get_top_left_coordinates', [atomsElement]),
-  ])) as [Size, Position];
+  // Keep these atom requests sequential. Concurrent requests can leave one
+  // response unresolved through the real-device Safari Web Inspector transport,
+  // timing out before calibration or a native tap can run (also inside iframes).
+  const size = (await this.executeAtom('get_size', [atomsElement])) as Size;
+  const coordinates = (await this.executeAtom('get_top_left_coordinates', [atomsElement])) as Position;
   const {width, height} = size;
   const {x, y} = coordinates;
   await this.clickWebCoords(x + width / 2, y + height / 2);

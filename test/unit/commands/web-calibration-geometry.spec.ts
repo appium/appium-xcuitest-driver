@@ -131,3 +131,49 @@ describe('web calibration iframe selection', () => {
     });
   }
 });
+
+
+describe('native web tap atom requests', () => {
+  it('waits for the size response before requesting coordinates', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    const sandbox = sinon.createSandbox();
+    let resolveSize!: (value: {width: number; height: number}) => void;
+    const size = new Promise<{width: number; height: number}>((resolve) => { resolveSize = resolve; });
+    try {
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom');
+      execute.withArgs('get_size').returns(size);
+      execute.withArgs('get_top_left_coordinates').resolves({x: 20, y: 30});
+      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      const result = driver.nativeWebTap('target');
+      try {
+        assert.equal(execute.callCount, 1, 'the transport must not receive overlapping atom requests');
+        assert.equal(tap.callCount, 0);
+      } finally {
+        resolveSize({width: 100, height: 80});
+        await result;
+      }
+      assert.equal(execute.callCount, 2);
+      assert.ok(tap.calledOnceWithExactly(70, 70));
+    } finally {
+      sandbox.restore();
+    }
+  });
+
+  it('does not request coordinates or tap after a size request fails', async () => {
+    const driver = new XCUITestDriver({} as any);
+    await driver.updateSettings({nativeWebTapStrict: true});
+    const sandbox = sinon.createSandbox();
+    try {
+      sandbox.stub(driver, 'getAtomsElement').returns({ELEMENT: 'target'});
+      const execute = sandbox.stub(driver, 'executeAtom').rejects(new Error('transport failed'));
+      const tap = sandbox.stub(driver, 'clickWebCoords').resolves();
+      await assert.rejects(driver.nativeWebTap('target'), /transport failed/);
+      assert.equal(execute.callCount, 1);
+      assert.equal(tap.callCount, 0);
+    } finally {
+      sandbox.restore();
+    }
+  });
+});
