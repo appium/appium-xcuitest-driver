@@ -328,10 +328,10 @@ export async function startRecordingScreen(
     pixelFormat,
     hardwareAcceleration,
   });
-  if (!(await screenRecorder.interrupt(true))) {
-    throw this.log.errorWithException('Unable to stop screen recording process');
-  }
   if (this._recentScreenRecorder) {
+    if (!(await this._recentScreenRecorder.interrupt(true))) {
+      throw this.log.errorWithException('Unable to stop screen recording process');
+    }
     await this._recentScreenRecorder.cleanup();
     this._recentScreenRecorder = null;
   }
