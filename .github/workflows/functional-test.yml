@@ -138,8 +138,8 @@ jobs:
           os_version: '${{ steps.simTarget.outputs.platformVersion }}'
           shutdown_after_job: false
           wait_for_boot: true
-      - name: Finalize simulator boot
-        run: node scripts/ci/wait-for-simulator-idle.mjs "${{ steps.prepareSimulator.outputs.udid }}"
+          settle_timeout_seconds: 150
+          settle_cpu_threshold_percent: 30
 
       - run: |
           appium_ver=$(node -p "require('./package.json').peerDependencies?.appium")
@@ -168,7 +168,8 @@ jobs:
             --keep-alive-timeout 1200 \
             2>&1 > "$cwd/appium.log" &
 
-          TIMEOUT_SEC=15
+          # Port opens only after the driver is loaded, which is slow on CPU-starved runners
+          TIMEOUT_SEC=60
           INTERVAL_SEC=1
 
           start_time=$(date +%s)
@@ -185,6 +186,7 @@ jobs:
 
             if [[ "$elapsed" -ge "$TIMEOUT_SEC" ]]; then
               echo "${elapsed} seconds timeout reached: Appium server is NOT running"
+              cat "$cwd/appium.log"
               exit 1
             fi
 
