@@ -172,6 +172,8 @@ const DEFAULT_SETTINGS = {
   // set `reduceMotion` to `null` so that it will be verified but still set either true/false
   reduceMotion: null,
   pageSourceExcludedAttributes: '',
+  // `null` targets the main display
+  currentDisplayId: null,
 };
 // This lock assures, that each driver session does not
 // affect shared resources of the other parallel sessions
@@ -297,6 +299,8 @@ export class XCUITestDriver
   pageLoadMs!: number;
   landscapeWebCoordsOffset!: number;
   mjpegStream?: MJpegStream;
+  // MJPEG frames do not identify their display, including frames queued before a reset.
+  hasUpdatedDisplaySelection = false;
 
   readonly deviceConnectionsFactory: DeviceConnectionsFactory;
 
@@ -518,6 +522,7 @@ export class XCUITestDriver
   setUrl = generalCommands.setUrl;
   getViewportRect = generalCommands.getViewportRect;
   getScreenInfo = generalCommands.getScreenInfo;
+  mobileGetScreens = generalCommands.mobileGetScreens;
   getStatusBarHeight = generalCommands.getStatusBarHeight;
   getDevicePixelRatio = generalCommands.getDevicePixelRatio;
   mobilePressButton = generalCommands.mobilePressButton;
@@ -1258,9 +1263,13 @@ export class XCUITestDriver
     }
 
     if (key !== 'nativeWebTap' && key !== 'nativeWebTapStrict') {
-      return await this.proxyCommand('/appium/settings', 'POST', {
+      const result = await this.proxyCommand('/appium/settings', 'POST', {
         settings: {[key]: value},
       });
+      if (key === 'currentDisplayId') {
+        this.hasUpdatedDisplaySelection = true;
+      }
+      return result;
     }
     this.opts[key] = !!value;
   }
@@ -1625,6 +1634,7 @@ export class XCUITestDriver
   }
 
   private resetProperties(): void {
+    this.hasUpdatedDisplaySelection = false;
     this.opts = this.opts || {};
     this._wda = null;
     this.jwpProxyActive = false;
