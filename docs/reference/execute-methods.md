@@ -2407,6 +2407,16 @@ If the screen recording is already running this API is a noop.
 
 The feature is only available since Xcode 15/iOS 17.
 
+On the iPhone Duo simulator running iOS 27.1 (24A94401) with Xcode 27.2 beta 2,
+XCTest recording of the closed device's outer display produced a one-frame black
+video, even though WDA supplied the selected display ID to XCTest and ordinary
+screenshots were correct. The inner-display recording contained visible content.
+This also reproduced with a freshly started WDA runner; successful start/stop
+responses alone do not confirm useful video. Other runtimes and physical Duo
+recording remain unverified. Use [`startRecordingScreen`](./commands.md#startrecordingscreen)
+(the MJPEG/ffmpeg path) when affected. To encode upright MJPEG pixels, opt in to
+[`mjpegFixOrientation`](./settings.md); its default behavior is unchanged.
+
 #### Arguments
 
 Name | Type | Required | Description | Example
